@@ -37,6 +37,7 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
 	forcefield_ = NULL;
 	attachedAtomListsGenerated_ = false;
+	usedAtomTypesPoint_ = -1;
 }
 
 // Destructor

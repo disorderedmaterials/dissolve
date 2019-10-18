@@ -77,12 +77,16 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
+	// Version of the atom types
+	VersionCounter atomTypesVersion_;
 	// List of selected Atoms
 	RefList<SpeciesAtom> selectedAtoms_;
-	// List of AtomTypes, and their populations, used in the Species
-	AtomTypeList usedAtomTypes_;
 	// Version of the atom selection
 	VersionCounter atomSelectionVersion_;
+	// List of AtomTypes, and their populations, used in the Species
+	AtomTypeList usedAtomTypes_;
+	// Point at which the used atom types list was last update
+	int usedAtomTypesPoint_;
 	
 	public:
 	// Add a new atom to the Species
@@ -121,9 +125,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
-	// Update used AtomTypeList
-	void updateUsedAtomTypes();
-	// Return used AtomTypesList
+	// Bump AtomTypes version
+	void bumpAtomTypesVersion();
+	// Update and return used AtomTypesList
 	const AtomTypeList& usedAtomTypes();
 	// Clear AtomType assignments for all atoms
 	void clearAtomTypes();

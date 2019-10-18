@@ -188,16 +188,23 @@ double Species::mass() const
 	return m;
 }
 
-// Update used AtomTypeList
-void Species::updateUsedAtomTypes()
+// Bump AtomTypes version
+void Species::bumpAtomTypesVersion()
 {
-	usedAtomTypes_.clear();
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) usedAtomTypes_.add(i->atomType(), 1);
+	++atomTypesVersion_;
 }
 
 // Return used AtomTypesList
 const AtomTypeList& Species::usedAtomTypes()
 {
+	if (usedAtomTypesPoint_ != atomTypesVersion_)
+	{
+		usedAtomTypes_.clear();
+		for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) if (i->atomType()) usedAtomTypes_.add(i->atomType(), 1);
+	
+		usedAtomTypesPoint_ = atomTypesVersion_;
+	}
+
 	return usedAtomTypes_;
 }
 
@@ -205,5 +212,6 @@ const AtomTypeList& Species::usedAtomTypes()
 void Species::clearAtomTypes()
 {
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setAtomType(NULL);
-	usedAtomTypes_.clear();
+
+	++atomTypesVersion_;
 }

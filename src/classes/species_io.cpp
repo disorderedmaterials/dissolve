@@ -314,7 +314,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				}
 				break;
 			case (Species::EndSpeciesKeyword):
-				updateUsedAtomTypes();
 				updateGrains();
 				centreAtOrigin();
 				orderAtomsWithinGrains();
