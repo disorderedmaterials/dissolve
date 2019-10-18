@@ -118,10 +118,6 @@ class Dissolve
 	Species* species(int n);
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
-	// Update Species (or all) Isotopologues (or specified)
-	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
-	// Remove Isotopologue from Species
-	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
 	// Copy AtomType, creating a new one if necessary
 	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary

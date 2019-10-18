@@ -69,32 +69,6 @@ Species* Dissolve::findSpecies(const char* name) const
 	return coreData_.findSpecies(name);
 }
 
-// Update Species (or all) Isotopologues (or specified)
-void Dissolve::updateIsotopologues(Species* species, Isotopologue* iso)
-{
-	if (iso) iso->update(coreData_.atomTypes());
-	else if (species) species->updateIsotopologues(coreData_.atomTypes());
-	else for (species = coreData_.species().first(); species != NULL; species = species->next()) species->updateIsotopologues(coreData_.atomTypes());
-}
-
-// Remove Isotopologue from Species
-void Dissolve::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
-{
-	// NULL pointer check
-	if (species == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Species passed to Dissolve::removeSpeciesIsotopologue.\n");
-		return;
-	}
-	if (iso == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Isotopologue passed to Dissolve::removeSpeciesIsotopologue.\n");
-		return;
-	}
-	
-	species->removeIsotopologue(iso);
-}
-
 // Copy AtomType, creating a new one if necessary
 void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 {
