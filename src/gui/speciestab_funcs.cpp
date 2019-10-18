@@ -509,18 +509,14 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int col
 		if (column == 0)
 		{
 			// Name of the Isotopologue has been changed - make sure it doesn't exist in the Species already
-			ListIterator<Isotopologue> topeIterator(species_->isotopologues());
-			while (Isotopologue* tope = topeIterator.iterate())
-			{
-				if (isotopologue == tope) continue;
+			isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text(0)), isotopologue));
 
-				if (item->text(0) == tope->name())
-				{
-					isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text(0))));
-					Messenger::warn("An Isotopologue named '%s' already exists in the Species, so it has been renamed to '%s'.\n", qPrintable(item->text(0)), isotopologue->name());
-					break;
-				}
-			}
+			// Update the item text (we may have modified the name to avoid a clash)
+			refreshing_ = true;
+			item->setText(0, isotopologue->name());
+			refreshing_ = false;
+
+			dissolveWindow_->setModified();
 		}
 	}
 	else if (column == 1)
