@@ -465,6 +465,8 @@ void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {
 	species_->addIsotopologue("NewIsotopologue");
 
+	dissolveWindow_->setModified();
+
 	updateControls();
 }
 
@@ -479,6 +481,8 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 
 	// Finally, remove the Isotopologue from the Species
 	species_->removeIsotopologue(iso);
+
+	dissolveWindow_->setModified();
 
 	updateControls();
 }
