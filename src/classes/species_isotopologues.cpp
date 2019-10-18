@@ -106,6 +106,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
 	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
+	if (DissolveSys::sameString(baseName, "Natural")) highest = 0;
 	for (iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
 		if (iso == exclude) continue;
@@ -119,9 +120,13 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 }
 
 // Search for Isotopologue by name
-Isotopologue* Species::findIsotopologue(const char* name) const
+Isotopologue* Species::findIsotopologue(const char* name)
 {
+	// Check for the natural Isotopologue
+	if (DissolveSys::sameString("Natural", name)) return naturalIsotopologue();
+
 	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next()) if (DissolveSys::sameString(name, iso->name())) return iso;
+
 	return NULL;
 }
 

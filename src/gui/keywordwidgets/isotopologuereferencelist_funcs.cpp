@@ -98,7 +98,7 @@ void IsotopologueReferenceListKeywordWidget::autoButton_clicked(bool checked)
 		while (Species* sp = missingIterator.iterate())
 		{
 			IsotopologueReference* topeRef = topeReferences.add();
-			topeRef->set(missingIterator.currentData(), sp, sp->isotopologues().first());
+			topeRef->set(missingIterator.currentData(), sp, sp->naturalIsotopologue());
 		}
 
 		// Manually flag that the keyword data has changed
@@ -122,7 +122,7 @@ void IsotopologueReferenceListKeywordWidget::addButton_clicked(bool checked)
 		if (spInfo)
 		{
 			isoRef->setSpecies(spInfo->species());
-			isoRef->setIsotopologue(spInfo->species()->isotopologues().first());
+			isoRef->setIsotopologue(spInfo->species()->naturalIsotopologue());
 		}
 	}
 

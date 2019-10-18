@@ -120,12 +120,13 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 				++nAdded;
 			}
 
-			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+			// Use the natural isotopologue if a species in the Configuration is not covered by at least one explicit Isotopologue definition
 			if (nAdded == 0)
 			{
-				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so can't generate summed Weights.\n", spInfo->species()->name(), cfg->name());
-				summedWeights.clear();
-				return false;
+				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
+
+				Species* sp = spInfo->species();
+				summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
 			}
 		}
 	}

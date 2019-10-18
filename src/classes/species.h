@@ -267,12 +267,18 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	 * Isotopologues
 	 */
 	private:
+	// Natural Isotopologue
+	Isotopologue naturalIsotopologue_;
+	// Point at which natural Isotopologue was last updated
+	int naturalIsotopologuePoint_;
 	// List of isotopic variants defined for this species
 	List<Isotopologue> isotopologues_;
 
 	public:
 	// Update current Isotopologues
 	void updateIsotopologues();
+	// Update and return natural isotopologue
+	Isotopologue* naturalIsotopologue();
 	// Add a new Isotopologue to this Species
 	Isotopologue* addIsotopologue(const char* baseName);
 	// Remove specified Isotopologue from this Species
@@ -288,7 +294,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Generate unique Isotopologue name with base name provided
 	const char* uniqueIsotopologueName(const char* baseName, Isotopologue* exclude = NULL) const;
 	// Search for Isotopologue by name
-	Isotopologue* findIsotopologue(const char* name) const;
+	Isotopologue* findIsotopologue(const char* name);
 	// Return index of specified Isotopologue
 	int indexOfIsotopologue(Isotopologue* iso) const;
 
