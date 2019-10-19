@@ -494,7 +494,7 @@ bool Dissolve::saveRestart(const char* filename)
 			// If the keyword is not flagged to be saved in the restart file, skip it
 			if (!keyword->isOptionSet(KeywordBase::InRestartFileOption)) continue;
 
-			if (!keyword->write(parser, CharString("Keyword  %s  ", module->uniqueName()).get())) return false;
+			if (!keyword->write(parser, CharString("Keyword  %s  %s  ", module->uniqueName(), keyword->name()).get())) return false;
 		}
 	}
 
