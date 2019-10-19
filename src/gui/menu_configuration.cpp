@@ -26,6 +26,8 @@
 #include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/parameters.h"
+#include "io/export/coordinates.h"
+#include <QFileDialog>
 #include <QMessageBox>
 
 void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
@@ -146,4 +148,19 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 		setModified();
 		fullUpdate();
 	}
+}
+
+void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
+{
+	// Get the currently-displayed Configuration
+	Configuration* cfg = currentConfiguration();
+	if (!cfg) return;
+
+	// Get a suitable export file name
+	QString exportFile = QFileDialog::getSaveFileName(this, "Choose XYZ export file name", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
+	if (exportFile.isEmpty()) return;
+
+	CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::XYZCoordinates);
+	if (!fileAndFormat.exportData(cfg)) QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.", QMessageBox::Ok, QMessageBox::Ok);
+	else Messenger::print("Successfully exported configuration '%s' to '%s'.\n", cfg->name(), fileAndFormat.filename());
 }

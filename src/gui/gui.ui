@@ -958,9 +958,22 @@ Remote Simulation</string>
      <addaction name="ConfigurationCreateSimpleRandomMixAction"/>
      <addaction name="ConfigurationCreateRelativeRandomMixAction"/>
     </widget>
+    <widget class="QMenu" name="ConfigurationExportToMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Export to...</string>
+     </property>
+     <addaction name="ConfigurationExportToXYZAction"/>
+    </widget>
     <addaction name="ConfigurationCreateMenu"/>
     <addaction name="ConfigurationRenameAction"/>
     <addaction name="ConfigurationDeleteAction"/>
+    <addaction name="separator"/>
+    <addaction name="ConfigurationExportToMenu"/>
    </widget>
    <widget class="QMenu" name="LayerMenu">
     <property name="font">
@@ -1405,6 +1418,11 @@ Remote Simulation</string>
   <action name="LayerCreateCalculateRDFAction">
    <property name="text">
     <string>&amp;RDF Only</string>
+   </property>
+  </action>
+  <action name="ConfigurationExportToXYZAction">
+   <property name="text">
+    <string>XYZ Coordinates</string>
    </property>
   </action>
  </widget>
