@@ -28,7 +28,6 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
-class KeywordBase;
 class KeywordList;
 
 // Keyword Group

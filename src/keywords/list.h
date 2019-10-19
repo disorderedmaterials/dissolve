@@ -28,7 +28,7 @@
 #include "templates/list.h"
 
 // Forward Declarations
-class Module;
+/* none */
 
 // Keyword List
 class KeywordList
