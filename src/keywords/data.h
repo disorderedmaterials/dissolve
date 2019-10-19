@@ -26,8 +26,7 @@
 #include "keywords/base.h"
 
 // Forward Declarations
-class GenericList;
-class LineParser;
+/* none */
 
 // Keyword Interface
 template <class T> class KeywordData : public KeywordBase

@@ -4,7 +4,6 @@ add_library(base
   enumoption.cpp
   enumoptionsbase.cpp
   enumoptionslist.cpp
-  fileandformat.cpp
   geometry.cpp
   lineparser.cpp
   messenger.cpp
@@ -25,7 +24,6 @@ add_library(base
   enumoptionsbase.h
   enumoptions.h
   enumoptionslist.h
-  fileandformat.h
   geometry.h
   lineparser.h
   messenger.h

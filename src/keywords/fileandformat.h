@@ -32,9 +32,17 @@ class FileAndFormatKeyword : public KeywordData<FileAndFormat&>
 {
 	public:
 	// Constructor
-	FileAndFormatKeyword(FileAndFormat& fileAndFormat);
+	FileAndFormatKeyword(FileAndFormat& fileAndFormat, const char* endKeyword);
 	// Destructor
 	~FileAndFormatKeyword();
+
+
+	/*
+	 * End Keyword
+	 */
+	private:
+	// Keyword that signals the end of 'block' for the data
+	CharString endKeyword_;
 
 
 	/*

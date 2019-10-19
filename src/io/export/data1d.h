@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_EXPORT_DATA1D_H
 #define DISSOLVE_EXPORT_DATA1D_H
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 
 // Forward Declarations
 class Data1D;

@@ -22,7 +22,7 @@
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "main/dissolve.h"
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 #include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>

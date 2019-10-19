@@ -1,6 +1,6 @@
 /*
 	*** File/Format Base Class
-	*** src/base/fileandformat.h
+	*** src/io/fileandformat.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -23,8 +23,11 @@
 #define DISSOLVE_FILEANDFORMAT_H
 
 #include "base/charstring.h"
+#include "keywords/list.h"
+#include "templates/list.h"
 
 // Forward Declarations
+class CoreData;
 class LineParser;
 
 // File / Format Base
@@ -100,12 +103,12 @@ class FileAndFormat
 	 * Additional Options
 	 */
 	protected:
-	// Parse additional option
-	virtual bool parseOption(const char* arg);
-	// Return whether this file/format has any additional options to write
-	virtual bool hasAdditionalOptions() const;
-	// Return additional options as string
-	virtual const char* additionalOptionsAsString() const;
+	// Available keywords options
+	KeywordList keywords_;
+
+	protected:
+	// Return available keywords
+	KeywordList& keywords();
 
 
 	/*
@@ -113,9 +116,11 @@ class FileAndFormat
 	 */
 	public:
 	// Read format / filename from specified parser
-	bool read(LineParser& parser, int startArg);
-	// Return formatted string for writing
-	const char* asString() const;
+	bool read(LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData);
+	// Write format / filename to specified parser
+	bool writeFilenameAndFormat(LineParser& parser, const char* prefix);
+	// Write options and end block
+	bool writeBlock(LineParser& parser, const char* prefix);
 };
 
 #endif

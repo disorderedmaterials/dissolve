@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_IMPORT_DATA3D_H
 #define DISSOLVE_IMPORT_DATA3D_H
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 
 // Forward Declarations
 class Data3D;
@@ -38,6 +38,10 @@ class Data3DImportFileFormat : public FileAndFormat
 	Data3DImportFileFormat(Data3DImportFormat format = CartesianData3D);
 	// Destructor
 	~Data3DImportFileFormat();
+	// Copy Constructor
+	Data3DImportFileFormat(const Data3DImportFileFormat& source);
+	// Assignment Operator
+	void operator=(const Data3DImportFileFormat& source);
 
 
 	/*

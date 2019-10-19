@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_EXPORT_TRAJECTORY_H
 #define DISSOLVE_EXPORT_TRAJECTORY_H
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 
 // Forward Declarations
 class Configuration;

@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_IMPORT_COORDINATES_H
 #define DISSOLVE_IMPORT_COORDINATES_H
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 #include "templates/array.h"
 
 // Forward Declarations

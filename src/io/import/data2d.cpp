@@ -20,6 +20,7 @@
 */
 
 #include "io/import/data2d.h"
+#include "keywords/types.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -30,7 +31,8 @@ const char* NiceData2DImportFormatKeywords[] = { "Cartesian X,Y,f(X,Y) data" };
 // Constructor
 Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFormat format) : FileAndFormat(format)
 {
-	axisRangeSet_.set(false, false, false);
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "XAxis", "Min, max, and delta to assume for x axis");
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "YAxis", "Min, max, and delta to assume for y axis");
 }
 
 // Destructor
@@ -64,76 +66,6 @@ const char** Data2DImportFileFormat::niceFormats() const
 Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const
 {
 	return (Data2DImportFileFormat::Data2DImportFormat) format_;
-}
-
-/*
- * Additional Options
- */
-
-// Return enum option info for AdditionalOption
-EnumOptions<Data2DImportFileFormat::AdditionalOption> Data2DImportFileFormat::additionalOptions()
-{
-	static EnumOptionsList AdditionalOptionOptions = EnumOptionsList() <<
-		EnumOption(Data2DImportFileFormat::XAxisOption, 	"xaxis",	3) <<
-		EnumOption(Data2DImportFileFormat::YAxisOption, 	"yaxis",	3);
-
-	static EnumOptions<Data2DImportFileFormat::AdditionalOption> options("Data2DImportOption", AdditionalOptionOptions);
-
-	return options;
-}
-
-// Parse additional option
-bool Data2DImportFileFormat::parseOption(const char* arg)
-{
-	// Split arg into parts before and after the '=', and parse the value string into comma-delimited parts
-	CharString key = DissolveSys::beforeChar(arg, '=');
-	CharString value = DissolveSys::afterChar(arg, '=');
-	LineParser valueParser;
-	valueParser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
-
-	// Check if we have a valid key and, if so, have appropriately been provided a value
-	if (!additionalOptions().isValid(key)) return additionalOptions().errorAndPrintValid(key);
-	AdditionalOption aa = additionalOptions().enumeration(key);
-	if (!additionalOptions().validNArgs(aa, valueParser.nArgs())) return false;
-
-	// Act on the option
-	switch (aa)
-	{
-		case (Data2DImportFileFormat::XAxisOption):
-			axisMinimum_.x = valueParser.argd(0);
-			axisMaximum_.x = valueParser.argd(1);
-			axisDelta_.x = valueParser.argd(2);
-			axisRangeSet_.x = true;
-			break;
-		case (Data2DImportFileFormat::YAxisOption):
-			axisMinimum_.y = valueParser.argd(0);
-			axisMaximum_.y = valueParser.argd(1);
-			axisDelta_.y = valueParser.argd(2);
-			axisRangeSet_.y = true;
-			break;
-		default:
-			return Messenger::error("Epic Developer Fail - Don't know how to deal with the %s additional option.\n", key.get());
-			break;
-	}
-
-	return true;
-}
-
-// Return whether this file/format has any additional options to write
-bool Data2DImportFileFormat::hasAdditionalOptions() const
-{
-	return true;
-}
-
-// Return additional options as string
-const char* Data2DImportFileFormat::additionalOptionsAsString() const
-{
-	static CharString args;
-
-	args.clear();
-	for (int n=0; n<2; ++n) if (axisRangeSet_.get(n)) args.strcatf(" %caxis=%f,%f,%f", 120+n, axisMinimum_.get(n), axisMaximum_.get(n), axisDelta_.get(n));
-
-	return args.get();
 }
 
 /*

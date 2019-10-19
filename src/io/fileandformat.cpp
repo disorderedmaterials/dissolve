@@ -1,6 +1,6 @@
 /*
 	*** File/Format Base Class
-	*** src/base/fileandformat.cpp
+	*** src/io/fileandformat.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -136,33 +136,11 @@ bool FileAndFormat::hasValidFileAndFormat() const
 }
 
 /*
- * Additional Options
- */
-
-// Parse additional option
-bool FileAndFormat::parseOption(const char* arg)
-{
-	return Messenger::error("This file type accepts no additional options (found '%s'.\n", arg);
-}
-
-// Return whether this file/format has any additional options to write
-bool FileAndFormat::hasAdditionalOptions() const
-{
-	return false;
-}
-
-// Return additional options as string
-const char* FileAndFormat::additionalOptionsAsString() const
-{
-	return "";
-}
-
-/*
  * Read / Write
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser& parser, int startArg)
+bool FileAndFormat::read(LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData)
 {
 	// Convert first argument to format type
 	format_ = format(parser.argc(startArg));
@@ -184,22 +162,34 @@ bool FileAndFormat::read(LineParser& parser, int startArg)
 		if (fileMustExist() && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
 	}
 
-	// Parse any additional options
-	for (int n=startArg+2; n<parser.nArgs(); ++n)
+	// Parse any additional options until we find the end of the block
+	while (!parser.eofOrBlank())
 	{
-		if (!parseOption(parser.argc(n))) return false;
+		// Read the next line
+		if (parser.getArgsDelim() != LineParser::Success) return false;
+
+		// Is this the end of the block?
+		if (DissolveSys::sameString(parser.argc(0), endKeyword)) break;
+
+		// Do we recognise the keyword?
+		KeywordBase* keyword = keywords_.find(parser.argc(0));
+		if (!keyword) return Messenger::error("Unrecognised option '%s' found in file and format block.\n", parser.argc(0));
+
+		// Read in the keyword's data
+		if (!keyword->read(parser, 1, coreData)) return Messenger::error("Error reading option '%s'.\n", keyword->name());
 	}
 
 	return true;
 }
 
-// Return formatted string for writing
-const char* FileAndFormat::asString() const
+// Write format / filename to specified parser
+bool FileAndFormat::writeFilenameAndFormat(LineParser& parser, const char* prefix)
 {
-	static CharString result;
+	return parser.writeLineF("%s%s  '%s'", prefix, format(format_), filename_.get());
+}
 
-	if (hasAdditionalOptions()) result.sprintf("%s  '%s'  %s", format(format_), filename_.get(), additionalOptionsAsString());
-	else result.sprintf("%s  '%s'", format(format_), filename_.get());
-
-	return result.get();
+// Write options and end block
+bool FileAndFormat::writeBlock(LineParser& parser, const char* prefix)
+{
+	return keywords_.write(parser, CharString("%s  ", prefix));
 }

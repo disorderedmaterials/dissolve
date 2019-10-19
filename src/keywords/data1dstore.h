@@ -23,10 +23,9 @@
 #define DISSOLVE_KEYWORD_DATA1DSTORE_H
 
 #include "keywords/data.h"
-#include "classes/data1dstore.h"
 
 // Forward Declarations
-/* none */
+class Data1DStore;
 
 // Keyword with a store of Data1D
 class Data1DStoreKeyword : public KeywordData<Data1DStore&>

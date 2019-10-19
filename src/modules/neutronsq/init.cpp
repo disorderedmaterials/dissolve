@@ -55,7 +55,7 @@ void NeutronSQModule::initialise()
 	keywords_.add("Bragg Scattering", new BroadeningFunctionKeyword(BroadeningFunction()), "BraggQBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
 
 	// Reference Data
-	keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_), "Reference", "F(Q) reference data", "<format> <filename>");
+	keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data", "<format> <filename>");
 	keywords_.add("Reference Data", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
 	keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst", "Ignore the first point in the supplied reference data");
 

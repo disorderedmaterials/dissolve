@@ -251,7 +251,12 @@ bool Dissolve::saveInput(const char* filename)
 		if (!parser.writeLineF("  End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
  
 		// Input Coordinates
-		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
+		if (cfg->inputCoordinates().hasValidFileAndFormat())
+		{
+			if (!cfg->inputCoordinates().writeFilenameAndFormat(parser, CharString("    %s  ", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)))) return false;
+			if (!cfg->inputCoordinates().writeBlock(parser, "      ")) return false;
+			if (!parser.writeLineF("    End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))) return false;
+		}
 
 		if (!parser.writeLineF("\n")) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
