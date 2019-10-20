@@ -27,6 +27,7 @@ Configuration  'Bulk'
   EndGenerator
 
   InputCoordinates  dlpoly  'dlpoly_vdw/CONFIG'
+  EndInputCoordinates
 
   # Test analytical energy against production and reference energy
   Module Energy
@@ -41,6 +42,7 @@ Configuration  'Bulk'
     TestAnalytic  on
     TestThreshold  3.2   # See README
     TestReference  dlpoly  'dlpoly_vdw/REVCON'
+    EndTestReference
   EndModule
 EndConfiguration
 
@@ -56,13 +58,6 @@ PairPotentials
   Range  15.000000
   ShortRangeTruncation  None
   Delta  0.001
-  Parameters  'OW'  0.0      0.6503    3.165492
-  Parameters  'HW'  0.0      0.0       0.0
-  Generate  'LJ'  'OW'  'OW'
-  Generate  'LJ'  'OW'  'HW'
-  Generate  'LJ'  'HW'  'HW'
+  Parameters  'OW'  0.0   LJGeometric   0.6503    3.165492
+  Parameters  'HW'  0.0    LJGeometric  0.0       0.0
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
