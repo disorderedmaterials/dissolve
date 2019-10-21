@@ -36,9 +36,13 @@ void Dissolve::removeProcessingLayer(ModuleLayer* layer)
 {
 	if (!layer) return;
 
-	// Remove any references to the Modules in the layer before we delete it
+	// Remove any references to the Modules in the layer before we delete them
 	ListIterator<Module> moduleIterator(layer->modules());
 	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+
+	// Delete the module instances themselves
+	moduleIterator.restart();
+	while (Module* module = moduleIterator.iterate()) moduleInstances_.remove(module);
 
 	// Now safe to remove the layer
 	processingLayers_.remove(layer);
