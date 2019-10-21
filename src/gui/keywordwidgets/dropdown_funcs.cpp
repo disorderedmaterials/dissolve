@@ -24,7 +24,7 @@
 // Constructor
 KeywordDropDown::KeywordDropDown(QWidget* parent)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Connect signals/slots
 	connect(&dropWidget_, SIGNAL(hidden()), this, SLOT(dropWidgetHidden()));
@@ -59,7 +59,7 @@ void KeywordDropDown::on_CallDropWidgetButton_clicked(bool checked)
 void KeywordDropDown::dropWidgetHidden()
 {
 	// Un-check the call button
-	ui.CallDropWidgetButton->setChecked(false);
+	ui_.CallDropWidgetButton->setChecked(false);
 
 	// Need to store data from widget, in case it has changed
 	updateKeywordData();
@@ -72,11 +72,11 @@ void KeywordDropDown::dropWidgetHidden()
 // Set summary text on call button
 void KeywordDropDown::setSummaryText(const char* text)
 {
-	ui.CallDropWidgetButton->setText(text);
+	ui_.CallDropWidgetButton->setText(text);
 }
 
 // Set icon on call button
 void KeywordDropDown::setSummaryIcon(QIcon icon)
 {
-	ui.CallDropWidgetButton->setIcon(icon);
+	ui_.CallDropWidgetButton->setIcon(icon);
 }

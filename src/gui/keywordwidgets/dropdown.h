@@ -37,14 +37,14 @@ class KeywordDropDown : public QWidget
 	public:
 	// Constructor
 	KeywordDropDown(QWidget* parent);
-        // Main form declaration
-        Ui::KeywordDropDownControlWidget ui;
 
 
 	/*
-	 * Drop Widget
+	 * UI
 	 */
 	private:
+        // Main form declaration
+        Ui::KeywordDropDownControlWidget ui_;
 	// Widget to display as the drop-down
 	DropWidget dropWidget_;
 
