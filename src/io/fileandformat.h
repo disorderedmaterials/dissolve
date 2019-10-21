@@ -106,7 +106,7 @@ class FileAndFormat
 	// Available keywords options
 	KeywordList keywords_;
 
-	protected:
+	public:
 	// Return available keywords
 	KeywordList& keywords();
 

@@ -136,6 +136,16 @@ bool FileAndFormat::hasValidFileAndFormat() const
 }
 
 /*
+ * Additional Options
+ */
+
+// Return available keywords
+KeywordList& FileAndFormat::keywords()
+{
+	return keywords_;
+}
+
+/*
  * Read / Write
  */
 
