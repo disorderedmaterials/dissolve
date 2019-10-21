@@ -18,8 +18,13 @@ We'll now describe the interactions for your argon species by taking the terms f
 - Note that when assigning atom types to species, Dissolve will always check to see if the names of the new atom types conflict with any already defined in the _Forcefield_{: .text-green-100} tab. In the general case you have the option of renaming the new atom types to avoid such conflicts, or to simply overwrite the existing atom type parameters with the new values (_Overwrite parameters in existing AtomTypes_{: .text-green-100}). We have no such issues here, so click _Next_{: .text-green-100}.
 - Similarly, if master intramolecular terms are to be created / imported they are also checked for naming conflicts. We have no intramolecular terms to worry about, so click _Finish_{: .text-green-100} to complete the wizard.
 
-If you now return to the _Forcefield_{: .text-green-100} you will see in the _Atom Types_{: .text-green-100} section that we now have an atom type for our argon atom that contains the necessary interaction parameters. The short range type (_SR Form_{: .text-green-100} in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising geometric combination rules. Note that all atom types are strictly associated with a chemical element, and can only be applied to that element within a species.
+If you now return to the _Forcefield_{: .text-green-100} you will see in the _Atom Types_{: .text-green-100} section that we now have an atom type for our argon atom that contains the necessary interaction parameters. The short range type (_SR Form_{: .text-green-100} in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising geometric combination rules.
+
+> Atom types are strictly associated with a chemical element, and can only be applied to that element within a species.
+{: .warn}
 
 By default, Dissolve will generate all the necessary pair potentials for the current set of atom types automatically - these are listed in the _Pair Potentials_{: .text-green-100} section where you can select individual potentials and visualise them in the associated plot.
+
+Finally, while you're in the _Pair Potentials_{: .text-green-100} section you should reduce the pair potential range from 15.0 to 10.0 Angstroms - since we're simulating an atomic liquid, there's no need for anything longer than that.
 
 [Previous Step](step1.md){: .btn }   [Next Step](step3.md){: .btn .right}

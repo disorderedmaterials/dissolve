@@ -23,9 +23,12 @@ You will now see that the _Generator_{: .text-green-100} section has been popula
 |------|---------|
 |Parameters | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. |
 |Box   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
-|AddSpecies | Adds a numner of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 cubic Angstrom) but the full population of molecules will still be added. |
+|AddSpecies | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 cubic Angstrom) but the full population of molecules will still be added. |
 
-In the `AddSpecies` node see how we have referenced the `rho` parameter for the density. Many numerical options can be specified in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.
+In the `AddSpecies` node note how we have used the `rho` parameter for the density.
+
+> Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.
+{: .tip}
 
 Let's change the settings of our configuration and its generator to give us a suitable system.
 
@@ -33,6 +36,9 @@ Let's change the settings of our configuration and its generator to give us a su
 - Increase the _Population_{: .text-green-100} of the argon atom in the `AddSpecies` node to 1000.
 - Set the _Temperature_{: .text-green-100} of the configuration 85 K to match that of the experimental measurement.
 
-Because we've changed some settings, we need to hit the _Regenerate_{: .text-green-100} button to recreate our inital configuration.
+Because we've changed some settings, we need to hit the _Regenerate_{: .text-green-100} button to recreate our initial configuration.
+
+> You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run from the _Simulation_{: .text-green-100} menu (_Simulation→Clear Module Data_{: .text-green-100}).
+{: .tip}
 
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn .right}
