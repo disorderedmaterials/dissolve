@@ -32,7 +32,6 @@ libgui_la_SOURCES += modulechart.hui
 # UI - Editors
 libgui_la_SOURCES += procedureeditor.ui
 # UI - Widgets
-libgui_la_SOURCES += keywordswidget.hui
 libgui_la_SOURCES += selectconfigurationwidget.ui selectforcefieldwidget.ui selectspecieswidget.ui
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 # UI - Wizards
@@ -62,7 +61,6 @@ libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getmodulelayernamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp
 libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_io.cpp gui_start.cpp gui_tabs.cpp
 libgui_la_SOURCES += importspeciesdialog_funcs.cpp importspecieswizard_funcs.cpp
-libgui_la_SOURCES += keywordswidget_funcs.cpp
 libgui_la_SOURCES += layereditor_funcs.cpp layertab_funcs.cpp
 libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += menu_configuration.cpp menu_file.cpp menu_help.cpp menu_layer.cpp menu_simulation.cpp menu_species.cpp menu_workspace.cpp
@@ -80,7 +78,6 @@ noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += getconfigurationnamedialog.h getmodulelayernamedialog.h getspeciesnamedialog.h gui.h
 noinst_HEADERS += importspeciesdialog.h importspecieswizard.h
-noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h layertab.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h

@@ -22,7 +22,7 @@
 #include "gui/modulechartmoduleblock.h"
 #include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets.h"
+#include "gui/keywordwidgets/widgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "templates/variantpointer.h"

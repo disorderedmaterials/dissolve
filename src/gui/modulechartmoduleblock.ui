@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>194</height>
+    <height>198</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -523,7 +523,7 @@
   <customwidget>
    <class>KeywordsWidget</class>
    <extends>QWidget</extends>
-   <header>gui/keywordswidget.hui</header>
+   <header>gui/keywordwidgets/widget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

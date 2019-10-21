@@ -24,7 +24,6 @@ SET(gui_MOC_HDRS
   addconfigurationwizard.h
   addforcefieldtermswizard.h
   importspecieswizard.h
-  keywordswidget.hui
   pairpotentialwidget.h
   selectconfigurationwidget.h
   selectforcefieldwidget.h
@@ -131,7 +130,6 @@ SET(gui_SRCS
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
   importspecieswizard_funcs.cpp
-  keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
   selectconfigurationwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp

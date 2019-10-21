@@ -21,7 +21,7 @@
 
 #include "gui/charts/procedurenode.h"
 #include "gui/charts/proceduremetrics.h"
-#include "gui/keywordwidgets.h"
+// #include "gui/keywordwidgets/widget.h"
 #include "procedure/nodes/node.h"
 #include "templates/variantpointer.h"
 #include <QPainter>

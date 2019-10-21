@@ -1,6 +1,6 @@
 /*
 	*** Keywords Widget - Functions
-	*** src/gui/keywordswidget_funcs.cpp
+	*** src/gui/keywordwidgets/widget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,9 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordswidget.hui"
-#include "gui/gui.h"
-#include "gui/keywordwidgets.h"
+#include "gui/keywordwidgets/widget.hui"
+#include "gui/keywordwidgets/widgets.h"
 #include "module/module.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
@@ -33,6 +32,7 @@
 KeywordsWidget::KeywordsWidget(QWidget* parent) : QToolBox(parent)
 {
 	refreshing_ = false;
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 }
 
 KeywordsWidget::~KeywordsWidget()
