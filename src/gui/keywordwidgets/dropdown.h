@@ -67,6 +67,8 @@ class KeywordDropDown : public QWidget
 	protected:
 	// Set summary text on call button
 	void setSummaryText(const char* text);
+	// Set icon on call button
+	void setSummaryIcon(QIcon icon);
 	// Update widget values data based on keyword data
 	virtual void updateWidgetValues(const CoreData& coreData) = 0;
 	// Update keyword data based on widget values

@@ -75,3 +75,8 @@ void KeywordDropDown::setSummaryText(const char* text)
 	ui.CallDropWidgetButton->setText(text);
 }
 
+// Set icon on call button
+void KeywordDropDown::setSummaryIcon(QIcon icon)
+{
+	ui.CallDropWidgetButton->setIcon(icon);
+}
