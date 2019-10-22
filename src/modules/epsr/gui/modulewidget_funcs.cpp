@@ -209,7 +209,7 @@ EPSRModuleWidget::~EPSRModuleWidget()
 }
 
 // Update controls within widget
-void EPSRModuleWidget::updateControls()
+void EPSRModuleWidget::updateControls(int flags)
 {
 	refreshing_ = true;
 

@@ -118,7 +118,7 @@ NeutronSQModuleWidget::~NeutronSQModuleWidget()
 }
 
 // Update controls within widget
-void NeutronSQModuleWidget::updateControls()
+void NeutronSQModuleWidget::updateControls(int flags)
 {
 	ui_.PartialGRPlotWidget->updateToolbar();
 	ui_.PartialSQPlotWidget->updateToolbar();

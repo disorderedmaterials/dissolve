@@ -72,7 +72,7 @@ BraggModuleWidget::~BraggModuleWidget()
 }
 
 // Update controls within widget
-void BraggModuleWidget::updateControls()
+void BraggModuleWidget::updateControls(int flags)
 {
 	ui.ReflectionsPlotWidget->updateToolbar();
 	ui.TotalsPlotWidget->updateToolbar();

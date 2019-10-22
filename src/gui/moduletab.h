@@ -98,7 +98,7 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 
 	public slots:
 	// Update controls in module widget only
-	void updateModuleWidget();
+	void updateModuleWidget(int flags);
 
 
 	/*

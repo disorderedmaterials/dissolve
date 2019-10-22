@@ -22,6 +22,7 @@
 #include "gui/modulechartmoduleblock.h"
 #include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
+#include "gui/modulewidget.h"
 #include "gui/keywordwidgets/widgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
@@ -50,6 +51,7 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	// Set up our keywords widget
 	ui.ModuleKeywordsWidget->setUp(module_->keywords(), dissolveWindow_->dissolve().coreData());
 	connect(ui.ModuleKeywordsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 
 	// Set the icon label
 	ui.IconLabel->setPixmap(modulePixmap(module_));
@@ -65,6 +67,17 @@ ModuleChartModuleBlock::~ModuleChartModuleBlock()
 /*
  * Module
  */
+
+// Run the set-up stage of the associated Module
+void ModuleChartModuleBlock::setUpModule()
+{
+	if (!module_) return;
+
+	// Run the Module's set-up stage
+	module_->setUp(dissolve_, dissolve_.worldPool());
+
+	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
+}
 
 // Return associated Module
 Module* ModuleChartModuleBlock::module()

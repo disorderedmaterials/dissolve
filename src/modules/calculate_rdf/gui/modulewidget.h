@@ -47,7 +47,7 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	// Main form declaration
 	Ui::CalculateRDFModuleWidget ui;
 	// Update controls within widget
-	void updateControls();
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget

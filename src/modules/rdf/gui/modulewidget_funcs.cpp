@@ -83,7 +83,7 @@ RDFModuleWidget::~RDFModuleWidget()
 }
 
 // Update controls within widget
-void RDFModuleWidget::updateControls()
+void RDFModuleWidget::updateControls(int flags)
 {
 	ui.PartialsPlotWidget->updateToolbar();
 	ui.TotalsPlotWidget->updateToolbar();

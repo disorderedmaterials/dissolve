@@ -55,9 +55,16 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 
+	private slots:
+	// Run the set-up stage of the associated Module
+	void setUpModule();
+
 	public:
 	// Return associated Module
 	Module* module();
+
+	signals:
+	void updateModuleWidget(int flags);
 
 
 	/*
