@@ -12,9 +12,9 @@ We almost always want to move the contents of our configurations around, so firs
 
 | Module | Purpose |
 |--------|---------|
-| AtomShake | Performs standard Monte Carlo moves on individual atoms, one per atom |
-| MD | Performs a number of molecular dynamics steps, evolving the system according to Newton's equations of motion |
-| Energy | Calculates the total energy, including contributions from intramolecular terms if present |
+| [`AtomShake`](/modules/atomshake) | Performs standard Monte Carlo moves on individual atoms, one per atom |
+| [`MD`](/modules/md) | Performs a number of molecular dynamics steps, evolving the system according to Newton's equations of motion |
+| [`Energy`](/modules/energy) | Calculates the total energy, including contributions from intramolecular terms if present |
 
 Most modules need configuration targets to work on, and all available configurations (one in our case) will have been automatically set as a target in each of the new modules in the layer. Each module has its own defined frequency at which it will run, and can be temporarily disabled if necessary. There are usually a bunch of settings (accessed via the cog button) that control its action and, most importantly, the module may have entire control panels of other functionality (e.g. graphing output for various properties etc.). The latter cannot be viewed in layer tabs - instead, double-click on the module block to open an additional tab containing these controls, in addition to all of its settings.
 
