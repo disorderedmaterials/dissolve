@@ -46,6 +46,14 @@ class FileAndFormatKeyword : public KeywordData<FileAndFormat&>
 
 
 	/*
+	 * Keyword Options
+	 */
+	public:
+	// Return whether the underlying FileAndFormat has any options
+	bool hasOptions() const;
+
+
+	/*
 	 * Arguments
 	 */
 	public:
