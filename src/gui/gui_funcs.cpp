@@ -148,6 +148,7 @@ void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
 	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesBrowser, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesBrowser, SLOT(setTextColor(const QColor&)));
 }
 
 /*

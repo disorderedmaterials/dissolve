@@ -810,6 +810,9 @@ Remote Simulation</string>
              <pointsize>8</pointsize>
             </font>
            </property>
+           <property name="acceptRichText">
+            <bool>true</bool>
+           </property>
           </widget>
          </widget>
         </item>

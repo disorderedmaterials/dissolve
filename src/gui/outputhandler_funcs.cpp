@@ -20,6 +20,7 @@
 */
 
 #include "gui/outputhandler.hui"
+#include <QColor>
 
 // Constructor
 GUIOutputHandler::GUIOutputHandler()
@@ -30,6 +31,35 @@ GUIOutputHandler::GUIOutputHandler()
 GUIOutputHandler::~GUIOutputHandler()
 {
 }
+
+/*
+ * Styling
+ */
+
+// Set styling for warning message
+void GUIOutputHandler::styleForWarning()
+{
+	static QColor orange(251,154,73);
+	emit(setColour(orange));
+}
+
+// Set styling for error message
+void GUIOutputHandler::styleForError()
+{
+	static QColor red(251,0,0);
+	emit(setColour(red));
+}
+
+// Reset styling for normal text
+void GUIOutputHandler::resetStyling()
+{
+	static QColor black(0,0,0);
+	emit(setColour(black));
+}
+
+/*
+ * Output
+ */
 
 // Print text
 void GUIOutputHandler::outputText(const char* text)
