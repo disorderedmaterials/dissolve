@@ -78,22 +78,14 @@ class NeutronSQModule : public Module
 	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-	
 
 	public:
 	// Normalisation Type enum
 	enum NormalisationType { NoNormalisation, AverageOfSquaresNormalisation, SquareOfAverageNormalisation, nNormalisationTypes };
 	// Return enum option info for NormalisationType
 	EnumOptions<NeutronSQModule::NormalisationType> normalisationTypes();
-
-
-	/*
-	 * Reference Data
-	 */
-	private:
-	// Reference total F(Q) filename
-	CharString referenceDataFileName_;
-
+	// Return file and format for reference total F(Q)
+	const Data1DImportFileFormat& referenceFQFileAndFormat();
 
 	/*
 	 * Processing

@@ -64,3 +64,9 @@ void NeutronSQModule::initialise()
 	keywords_.add("Export", new BoolKeyword(false), "SaveUnweighted", "Whether to save unweighted totals / partials to disk after calculation", "<True|False>");
 	keywords_.add("Export", new BoolKeyword(false), "SaveWeighted", "Whether to save weighted totals / partials to disk after calculation", "<True|False>");
 }
+
+// Return file and format for reference total F(Q)
+const Data1DImportFileFormat& NeutronSQModule::referenceFQFileAndFormat()
+{
+	return referenceFQ_;
+}
