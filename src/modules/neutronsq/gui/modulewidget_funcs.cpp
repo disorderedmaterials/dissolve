@@ -125,6 +125,9 @@ void NeutronSQModuleWidget::updateControls(int flags)
 	ui_.TotalGRPlotWidget->updateToolbar();
 	ui_.TotalSQPlotWidget->updateToolbar();
 
+	// Clear and recreate graph data targets?
+	if (flags&ModuleWidget::ResetGraphDataTargetsFlag) setGraphDataTargets(module_);
+
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
 	totalGRGraph_->postRedisplay();
@@ -176,6 +179,12 @@ bool NeutronSQModuleWidget::readState(LineParser& parser)
 // Set data targets in graphs
 void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 {
+	// Clear any current renderables
+	ui_.PartialGRPlotWidget->clearRenderableData();
+	ui_.PartialSQPlotWidget->clearRenderableData();
+	ui_.TotalGRPlotWidget->clearRenderableData();
+	ui_.TotalSQPlotWidget->clearRenderableData();
+
 	CharString blockData;
 
 	// Add partials
@@ -224,7 +233,8 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 	totalFQGraph_->addRenderableToGroup(totalFQ, "Calculated");
 
 	// Add on reference data if present
-	if (module->keywords().find("Reference"))
+	const Data1DImportFileFormat& referenceFileAndFormat = module->referenceFQFileAndFormat();
+	if (referenceFileAndFormat.hasValidFileAndFormat())
 	{
 		// Add FT of reference data total G(r)
 		Renderable* refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "Reference");
