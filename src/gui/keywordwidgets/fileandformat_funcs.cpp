@@ -80,7 +80,7 @@ void FileAndFormatKeywordWidget::fileEdit_editingFinished()
 	checkFileValidity();
 
 	// Set summary text on KeywordDropDown button
-	setSummaryText(keyword_->data().filename());
+	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "Set...");
 
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -94,7 +94,7 @@ void FileAndFormatKeywordWidget::fileEdit_returnPressed()
 	checkFileValidity();
 
 	// Set summary text on KeywordDropDown button
-	setSummaryText(keyword_->data().filename());
+	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "Set...");
 
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -163,7 +163,8 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 		bool ok = fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false;
 		ui_.FileExistsIndicator->setOK(ok);
 		if (ok) setSummaryIcon(QPixmap(":/general/icons/general_true.svg"));
-		else setSummaryIcon(QPixmap(":/general/icons/general_false.svg"));
+		else if (fileAndFormat.hasFilename()) setSummaryIcon(QPixmap(":/general/icons/general_false.svg"));
+		else setSummaryIcon(QIcon());
 	}
 	else
 	{
@@ -191,7 +192,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	checkFileValidity();
 
 	// Set summary text on KeywordDropDown button
-	setSummaryText(fileAndFormat.filename());
+	setSummaryText(fileAndFormat.hasFilename() ? fileAndFormat.filename() : "Set...");
 	
 	refreshing_ = false;
 }
