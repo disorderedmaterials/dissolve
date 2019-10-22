@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>181</width>
-    <height>68</height>
+    <width>269</width>
+    <height>54</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -29,16 +29,16 @@
     <number>4</number>
    </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>4</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>4</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>4</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>4</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -84,13 +84,6 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-     <property name="spacing">
-      <number>4</number>
-     </property>
      <item>
       <widget class="QComboBox" name="FormatCombo">
        <property name="sizePolicy">
@@ -101,30 +94,17 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QToolButton" name="FormatOptionsButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../main.qrc">
-         <normaloff>:/general/icons/general_options.svg</normaloff>:/general/icons/general_options.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="KeywordsWidget" name="OptionsWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -133,6 +113,12 @@
    <class>CheckIndicator</class>
    <extends>QLabel</extends>
    <header>gui/widgets/checkindicator.hui</header>
+  </customwidget>
+  <customwidget>
+   <class>KeywordsWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/keywordwidgets/widget.hui</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

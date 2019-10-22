@@ -61,8 +61,8 @@ class FileAndFormatKeywordWidget : public KeywordDropDown, public KeywordWidgetB
 	void fileEdit_editingFinished();
 	void fileEdit_returnPressed();
 	void formatCombo_currentIndexChanged(int index);
-	void formatOptionsButton_clicked(bool checked);
 	void fileSelectButton_clicked(bool checked);
+	void optionChanged();
 
 	signals:
 	// Keyword value changed

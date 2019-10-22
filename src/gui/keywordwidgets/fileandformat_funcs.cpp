@@ -51,15 +51,16 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 	ui_.FormatCombo->clear();
 	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FormatCombo->addItem(keyword_->data().format(n));
 
-	// Set the availability of the setting button
-	ui_.FormatOptionsButton->setEnabled(keyword_->data().keywords().keywords().nItems());
+	// If the FileAndFormat has keyword options, set them up in the OptionsWidget. Otherwise, hide it.
+	ui_.OptionsWidget->setVisible(keyword_->hasOptions());
+	if (keyword_->hasOptions()) ui_.OptionsWidget->setUp(keyword_->data().keywords(), coreData_);
 
 	// Connect signals / slots
 	connect(ui_.FileEdit, SIGNAL(editingFinished()), this, SLOT(fileEdit_editingFinished()));
 	connect(ui_.FileEdit, SIGNAL(returnPressed()), this, SLOT(fileEdit_returnPressed()));
 	connect(ui_.FileSelectButton, SIGNAL(clicked(bool)), this, SLOT(fileSelectButton_clicked(bool)));
 	connect(ui_.FormatCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(formatCombo_currentIndexChanged(int)));
-	connect(ui_.FormatOptionsButton, SIGNAL(clicked(bool)), this, SLOT(formatOptionsButton_clicked(bool)));
+	connect(ui_.OptionsWidget, SIGNAL(dataModified()), this, SLOT(optionChanged()));
 
 	// Set current information
 	updateWidgetValues(coreData_);
@@ -108,13 +109,6 @@ void FileAndFormatKeywordWidget::formatCombo_currentIndexChanged(int index)
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
-void FileAndFormatKeywordWidget::formatOptionsButton_clicked(bool checked)
-{
-	// Construct a keywords dialog to edit the values
-	KeywordsDialog keywordsDialog(this, keyword_->data().keywords(), coreData_);
-	if (keywordsDialog.showOptions()) emit(keywordValueChanged(keyword_->optionMask()));
-}
-
 void FileAndFormatKeywordWidget::fileSelectButton_clicked(bool checked)
 {
 	// Grab the target FileAndFormat
@@ -144,6 +138,11 @@ void FileAndFormatKeywordWidget::fileSelectButton_clicked(bool checked)
 		updateWidgetValues(coreData_);
 		emit(keywordValueChanged(keyword_->optionMask()));
 	}
+}
+
+void FileAndFormatKeywordWidget::optionChanged()
+{
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
