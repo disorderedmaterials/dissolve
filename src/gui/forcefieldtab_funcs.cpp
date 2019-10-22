@@ -467,6 +467,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	refreshing_ = false;
+
+	dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
