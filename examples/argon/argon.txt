@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.3 at 22:02:13 on 21-10-2019.
+# Input file written by Dissolve v0.4.3 at 23:26:09 on 22-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -60,6 +60,7 @@ EndConfiguration
 #------------------------------------------------------------------------------#
 
 Layer  'Evolve (Atomic)'
+  Frequency  1
 
   Module  AtomShake  'AtomShake01'
     Frequency  1
@@ -81,6 +82,8 @@ Layer  'Evolve (Atomic)'
 EndLayer
 
 Layer  'RDF / Neutron S(Q)'
+  Frequency  5
+  Disabled
 
   Module  RDF  'RDF01'
     Frequency  1
@@ -92,6 +95,10 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
+    Reference  xy  'data/yarnell.sq'
+      RemoveAverage   9.00000e+00
+    EndReference
+    ReferenceNormalisation  AverageSquared
   EndModule
 EndLayer
 
