@@ -54,7 +54,7 @@ void Vec3NodeValueKeywordWidget::on_ValueAEdit_editingFinished()
 	keyword_->setValue(0, qPrintable(ui_.ValueAEdit->text()));
 	ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueAEdit_returnPressed()
@@ -64,7 +64,7 @@ void Vec3NodeValueKeywordWidget::on_ValueAEdit_returnPressed()
 	keyword_->setValue(0, qPrintable(ui_.ValueAEdit->text()));
 	ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueBEdit_editingFinished()
@@ -74,7 +74,7 @@ void Vec3NodeValueKeywordWidget::on_ValueBEdit_editingFinished()
 	keyword_->setValue(1, qPrintable(ui_.ValueBEdit->text()));
 	ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueBEdit_returnPressed()
@@ -84,7 +84,7 @@ void Vec3NodeValueKeywordWidget::on_ValueBEdit_returnPressed()
 	keyword_->setValue(1, qPrintable(ui_.ValueBEdit->text()));
 	ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueCEdit_editingFinished()
@@ -94,7 +94,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_editingFinished()
 	keyword_->setValue(2, qPrintable(ui_.ValueCEdit->text()));
 	ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void Vec3NodeValueKeywordWidget::on_ValueCEdit_returnPressed()
@@ -104,7 +104,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_returnPressed()
 	keyword_->setValue(2, qPrintable(ui_.ValueCEdit->text()));
 	ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

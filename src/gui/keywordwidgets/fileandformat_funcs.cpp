@@ -82,7 +82,7 @@ void FileAndFormatKeywordWidget::fileEdit_editingFinished()
 	// Set summary text on KeywordDropDown button
 	setSummaryText(keyword_->data().filename());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void FileAndFormatKeywordWidget::fileEdit_returnPressed()
@@ -96,7 +96,7 @@ void FileAndFormatKeywordWidget::fileEdit_returnPressed()
 	// Set summary text on KeywordDropDown button
 	setSummaryText(keyword_->data().filename());
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void FileAndFormatKeywordWidget::formatCombo_currentIndexChanged(int index)
@@ -105,14 +105,14 @@ void FileAndFormatKeywordWidget::formatCombo_currentIndexChanged(int index)
 
 	updateKeywordData();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void FileAndFormatKeywordWidget::formatOptionsButton_clicked(bool checked)
 {
 	// Construct a keywords dialog to edit the values
 	KeywordsDialog keywordsDialog(this, keyword_->data().keywords(), coreData_);
-	if (keywordsDialog.showOptions()) emit(keywordValueChanged());
+	if (keywordsDialog.showOptions()) emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void FileAndFormatKeywordWidget::fileSelectButton_clicked(bool checked)
@@ -142,7 +142,7 @@ void FileAndFormatKeywordWidget::fileSelectButton_clicked(bool checked)
 		ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
 		updateKeywordData();
 		updateWidgetValues(coreData_);
-		emit(keywordValueChanged());
+		emit(keywordValueChanged(keyword_->optionMask()));
 	}
 }
 

@@ -66,7 +66,7 @@ class FileAndFormatKeywordWidget : public KeywordDropDown, public KeywordWidgetB
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

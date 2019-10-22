@@ -115,7 +115,7 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
 			break;
 	}
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

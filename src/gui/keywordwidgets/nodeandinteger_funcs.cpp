@@ -59,7 +59,7 @@ void NodeAndIntegerKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
 	ProcedureNode* node = VariantPointer<ProcedureNode>(ui_.NodeCombo->itemData(index, Qt::UserRole));
 	keyword_->setNode(node);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

@@ -94,7 +94,7 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem* item)
 
 	updateSummaryText();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

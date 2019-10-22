@@ -106,7 +106,7 @@ void IsotopologueReferenceListKeywordWidget::autoButton_clicked(bool checked)
 
 		updateWidgetValues(coreData_);
 
-		emit(keywordValueChanged());
+		emit(keywordValueChanged(keyword_->optionMask()));
 	}
 }
 
@@ -131,7 +131,7 @@ void IsotopologueReferenceListKeywordWidget::addButton_clicked(bool checked)
 
 	updateWidgetValues(coreData_);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void IsotopologueReferenceListKeywordWidget::removeButton_clicked(bool checked)
@@ -158,7 +158,7 @@ void IsotopologueReferenceListKeywordWidget::removeButton_clicked(bool checked)
 
 	updateWidgetValues(coreData_);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetItem* w)
@@ -198,7 +198,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 				// Manually flag that the keyword data has changed
 				keyword_->dataHasBeenSet();
 
-				emit(keywordValueChanged());
+				emit(keywordValueChanged(keyword_->optionMask()));
 			}
 			else Messenger::error("Couldn't find Configuration '%s'.\n", qPrintable(w->text()));
 			break;
@@ -225,7 +225,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 					// Manually flag that the keyword data has changed
 					keyword_->dataHasBeenSet();
 
-					emit(keywordValueChanged());
+					emit(keywordValueChanged(keyword_->optionMask()));
 				}
 				else Messenger::error("Configuration '%s' doesn't contain Species '%s'.\n", cfg->name(), sp->name());
 			}
@@ -249,7 +249,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 			// Manually flag that the keyword data has changed
 			keyword_->dataHasBeenSet();
 
-			emit(keywordValueChanged());
+			emit(keywordValueChanged(keyword_->optionMask()));
 			break;
 		// Weight
 		case (3):
@@ -258,7 +258,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 			// Manually flag that the keyword data has changed
 			keyword_->dataHasBeenSet();
 
-			emit(keywordValueChanged());
+			emit(keywordValueChanged(keyword_->optionMask()));
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", w->column());

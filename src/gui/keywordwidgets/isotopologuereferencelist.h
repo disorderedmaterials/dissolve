@@ -65,7 +65,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

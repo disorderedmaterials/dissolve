@@ -56,7 +56,7 @@ void DoubleKeywordWidget::myValueChanged(double newValue)
 
 	keyword_->setData(newValue);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

@@ -64,7 +64,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

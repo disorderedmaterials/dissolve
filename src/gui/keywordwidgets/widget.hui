@@ -69,11 +69,13 @@ class KeywordsWidget : public QToolBox
 	 */
 	private slots:
 	// Keyword data changed
-	void keywordDataChanged();
+	void keywordDataChanged(int flags);
 
 	signals:
 	// Displayed keyword widget value / data changed
 	void dataModified();
+	// Set-up in encompassing class required after keyword change
+	void setUpRequired();
 };
 
 #endif

@@ -65,7 +65,7 @@ class ExpressionVariableListKeywordWidget : public QWidget, public KeywordWidget
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

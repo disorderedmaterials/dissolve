@@ -82,7 +82,12 @@ class KeywordBase : public ListItem<KeywordBase>
 	 */
 	public:
 	// Keyword Options
-	enum KeywordOption { NoOptions = 0, InRestartFileOption = 1 };
+	enum KeywordOption
+	{
+		NoOptions = 0, 				/* Keyword has no options set */
+		InRestartFileOption = 1,		/* Keyword should have its data written to the restart file */
+		ModificationRequiresSetUpOption = 2	/* Modifying the keyword's data requires that the owning object requires setting up */
+	};
 
 	private:
 	// Data type stored by keyword

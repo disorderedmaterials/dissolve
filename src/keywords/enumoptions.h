@@ -60,6 +60,14 @@ class EnumOptionsBaseKeyword
 	public:
 	// Set new option index, informing KeywordBase
 	virtual void setEnumerationByIndex(int optionIndex) = 0;
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	virtual int optionMask() const = 0;
 };
 
 // Keyword based on EnumOptions
@@ -138,17 +146,6 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 
 
 	/*
-	 * Conversion
-	 */
-	public:
-	// Return value (as string)
-	const char* asString()
-	{
-		return KeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
-	}
-
-
-	/*
 	 * Set (implementing pure virtual from EnumOptionsBaseKeyword)
 	 */
 	public:
@@ -157,6 +154,28 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	{
 		KeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
 		KeywordData< EnumOptions<E> >::dataHasBeenSet();
+	}
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	int optionMask() const
+	{
+		return KeywordBase::optionMask();
+	}
+
+
+	/*
+	 * Conversion
+	 */
+	public:
+	// Return value (as string)
+	const char* asString()
+	{
+		return KeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
 	}
 };
 
