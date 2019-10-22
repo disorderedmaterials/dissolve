@@ -439,7 +439,6 @@ void ForcefieldTab::enableSensitiveControls()
  */
 
 // Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
-
 void ForcefieldTab::atomTypeDataModified()
 {
 	dissolve_.coreData().bumpAtomTypesVersion();
