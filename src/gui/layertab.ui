@@ -95,9 +95,27 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="FrequencyLabelPre">
+      <widget class="QLabel" name="FrequencyLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Every</string>
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="main.qrc">:/general/icons/general_frequency.svg</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -120,13 +138,6 @@
        </property>
        <property name="value">
         <number>10</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="FrequencylabelPost">
-       <property name="text">
-        <string>Iterations</string>
        </property>
       </widget>
      </item>
