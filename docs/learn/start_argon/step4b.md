@@ -44,11 +44,10 @@ Now you can return to the tab for your [`NeutronSQ`](/modules/neutronsq) module 
 
 The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related experimental reference data. Go to the _Reference Data_{: .text-green-100} group and set up our reference argon data:
 
-- Click the "Set..." button for the **Reference** keyword.
-- Open the file `yarnell.sq` from the `examples/argon` data directory.
-- The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword.
-- Click again on the button for the **Reference** and press the cog button in the lower right corner to bring up the import options. We need to subtract the average level from the experimental data as it oscillates around 1.0, so go to _Manipulations_{: .text-green-100} and set the **RemoveAverage** value to 9.0.
-- The data is normalised to the average squared value of the atomic scattering, so choose `AverageSquared` for the **ReferenceNormalisation** to instruct Dissolve to remove this normalisation.
+- Click the "Set..." button for the **Reference** keyword to show the file selection dropdown.
+- Open the file `yarnell.sq` from the `examples/argon` data directory (the format of the file is simple `xy` data).
+- We need to subtract the average level from the experimental data as it oscillates around 1.0, so go to _Manipulations_{: .text-green-100} in the options and set the **RemoveAverage** value to 9.0.
 
+The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so choose `AverageSquared` for the **ReferenceNormalisation** to instruct Dissolve to remove this normalisation.
 
 [Previous Step](step4a.md){: .btn }   [Next Step](step4c.md){: .btn .right}
