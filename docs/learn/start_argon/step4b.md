@@ -13,11 +13,11 @@ The experimental data we'll be fitting to is neutron scattering data, so we will
 | Module | Purpose |
 |--------|---------|
 | RDF | Calculates partial g(r) between every pair of atom types, and sums them into the total G(r) |
-| NeutronSQ | Fourier transforms the g(r) calculated by an `RDF` module to generate S(Q) and the total structure factor F(Q) |
+| NeutronSQ | Fourier transforms the g(r) calculated by an `RDF` module to generate S(Q) and the neutron-weighted total structure factor F(Q) |
 
 This time we will need to set a few parameters in the `NeutronSQ` module, in particular informing it of the isotopic composition of our system and loading in reference data.
 
-> A `NeutronSQ` module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a `NeutronSQ` for each composition.
+> A `NeutronSQ` module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a `NeutronSQ` for each distinct isotopic composition.
 {: .warn }
 
 ### Set up Isotopes
@@ -41,6 +41,7 @@ The experimental measurement was made on Ar<sup>36</sup> since its coherent scat
 Now you can return to the tab for your `NeutronSQ` module and _Edit..._{: .text-green-100} the isotopologues section. You'll now find that the options for the isotopologues for your Ar species now include the one you just created, so select it.
 
 ### Import Reference Data
+
 
 
 [Previous Step](step4a.md){: .btn }   [Next Step](step4c.md){: .btn .right}
