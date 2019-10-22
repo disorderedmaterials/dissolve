@@ -195,7 +195,7 @@ bool FileAndFormat::read(LineParser& parser, int startArg, const char* endKeywor
 // Write format / filename to specified parser
 bool FileAndFormat::writeFilenameAndFormat(LineParser& parser, const char* prefix)
 {
-	return parser.writeLineF("%s%s  '%s'", prefix, format(format_), filename_.get());
+	return parser.writeLineF("%s%s  '%s'\n", prefix, format(format_), filename_.get());
 }
 
 // Write options and end block

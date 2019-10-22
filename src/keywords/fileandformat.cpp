@@ -58,8 +58,8 @@ int FileAndFormatKeyword::minArguments() const
 // Return maximum number of arguments accepted
 int FileAndFormatKeyword::maxArguments() const
 {
-	// Data format and filename, plus some number of optional arguments
-	return 99;
+	// Data format and filename
+	return 2;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
@@ -76,7 +76,7 @@ bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData
 bool FileAndFormatKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	if (!data_.writeFilenameAndFormat(parser, CharString("%s%s  ", prefix, keywordName))) return false;
-	if (!data_.writeBlock(parser, CharString("%s  ", prefix))) return false;
+	if (!data_.writeBlock(parser, prefix)) return false;
 	if (!parser.writeLineF("%sEnd%s\n", prefix, keywordName)) return false;
 
 	return true;
