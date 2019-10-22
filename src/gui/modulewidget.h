@@ -27,7 +27,7 @@
 // Forward Declarations
 class LineParser;
 
-// ModuleWidget, base class for any Module-specific widget displayed in a ModuleControlWidget
+// ModuleWidget, base class for any Module-specific control widget
 class ModuleWidget : public QWidget
 {
 	protected:
