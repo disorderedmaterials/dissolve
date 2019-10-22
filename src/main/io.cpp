@@ -290,8 +290,8 @@ bool Dissolve::saveInput(const char* filename)
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), layer->name())) return false;
 
 		// Write frequency and disabled lines
-		if (!parser.writeLineF("    Frequency  %i\n", layer->frequency())) return false;
-		if (!layer->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
+		if (!parser.writeLineF("  Frequency  %i\n", layer->frequency())) return false;
+		if (!layer->enabled() && (!parser.writeLineF("  Disabled\n"))) return false;
 
 		ListIterator<Module> processingIterator(layer->modules());
 		while (Module* module= processingIterator.iterate())
