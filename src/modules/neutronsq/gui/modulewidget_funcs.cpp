@@ -25,17 +25,17 @@
 #include "main/dissolve.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "classes/atomtype.h"
-#include "templates/variantpointer.h"
 #include "genericitems/listhelper.h"
+#include "templates/variantpointer.h"
 
 // Constructor
 NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<NeutronSQModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up partial g(r) graph
-	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
+	partialGRGraph_ = ui_.PartialGRPlotWidget->dataViewer();
 	// -- Set view
 	partialGRGraph_->view().setViewType(View::FlatXYView);
 	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -56,7 +56,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	partialGRGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up partial S(Q) graph
-	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
+	partialSQGraph_ = ui_.PartialSQPlotWidget->dataViewer();
 	// -- Set view
 	partialSQGraph_->view().setViewType(View::FlatXYView);
 	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -77,7 +77,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	partialSQGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up total G(r) graph
-	totalGRGraph_ = ui.TotalGRPlotWidget->dataViewer();
+	totalGRGraph_ = ui_.TotalGRPlotWidget->dataViewer();
 	// -- Set view
 	totalGRGraph_->view().setViewType(View::FlatXYView);
 	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -92,7 +92,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
 	// Set up total S(Q) graph
-	totalFQGraph_ = ui.TotalSQPlotWidget->dataViewer();
+	totalFQGraph_ = ui_.TotalSQPlotWidget->dataViewer();
 	// -- Set view
 	totalFQGraph_->view().setViewType(View::FlatXYView);
 	totalFQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -120,10 +120,10 @@ NeutronSQModuleWidget::~NeutronSQModuleWidget()
 // Update controls within widget
 void NeutronSQModuleWidget::updateControls()
 {
-	ui.PartialGRPlotWidget->updateToolbar();
-	ui.PartialSQPlotWidget->updateToolbar();
-	ui.TotalGRPlotWidget->updateToolbar();
-	ui.TotalSQPlotWidget->updateToolbar();
+	ui_.PartialGRPlotWidget->updateToolbar();
+	ui_.PartialSQPlotWidget->updateToolbar();
+	ui_.TotalGRPlotWidget->updateToolbar();
+	ui_.TotalSQPlotWidget->updateToolbar();
 
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
