@@ -82,6 +82,8 @@ class DataWidget : public QWidget
 	void on_DataTree_itemChanged(QTreeWidgetItem* item, int column);
 
 	public slots:
+	// Clear renderable data
+	void clearRenderableData();
 	// Update toolbar
 	void updateToolbar();
 	// Update status bar

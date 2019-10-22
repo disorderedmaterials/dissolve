@@ -87,6 +87,7 @@ void BaseViewer::removeRenderable(Renderable* data)
 // Clear all Renderables
 void BaseViewer::clearRenderables()
 {
+	groupManager_.emptyGroups();
 	renderables_.clear();
 
 	postRedisplay();
