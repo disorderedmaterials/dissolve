@@ -175,7 +175,8 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::heading("'%s'", cfg->name());
 
 			// Perform any necessary actions before we start processing this Configuration's Modules
-			if (!cfg->prepare(worldPool(), potentialMap_, pairPotentialRange_)) return false;
+			// -- Apply the current size factor
+			cfg->applySizeFactor(potentialMap_);
 
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe())

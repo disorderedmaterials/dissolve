@@ -67,6 +67,9 @@ bool Dissolve::loadInput(LineParser& parser)
 				cfg->setName(parser.argc(1));
 				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
+
+				// Prepare the Configuration
+				if (!cfg->initialiseContent(worldPool(), pairPotentialRange_)) Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
 				break;
 			case (BlockKeywords::LayerBlockKeyword):
 				// Check to see if a processing layer with this name already exists...

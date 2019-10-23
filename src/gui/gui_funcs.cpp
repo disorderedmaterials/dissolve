@@ -176,10 +176,6 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	}
 	else return Messenger::error("Input file does not exist.\n");
 
-	// For any defined configurations, prepare them now (generate contents, load coordinates etc.)
-	ListIterator<Configuration> configIterator(dissolve_.configurations());
-	while (Configuration* cfg = configIterator.iterate()) if (!cfg->prepare(dissolve_.worldPool(), dissolve_.potentialMap(), dissolve_.pairPotentialRange())) Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
-
 	// Load restart file if it exists
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestartFile)
