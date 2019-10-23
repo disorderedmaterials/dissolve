@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.3 at 12:29:08 on 23-10-2019.
+# Input file written by Dissolve v0.4.3 at 21:36:21 on 23-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -32,7 +32,7 @@ Configuration  'Bulk'
   # Modules
   Generator
     Parameters
-      Real  rho  1.000000e-01
+      Real  rho  2.130000e-02
     EndParameters
     Box
       Lengths  1.000000e+00  1.000000e+00  1.000000e+00
@@ -49,7 +49,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
 
-  Temperature  300.000000
+  Temperature  85.000000
 
   # Modules
   # -- None
