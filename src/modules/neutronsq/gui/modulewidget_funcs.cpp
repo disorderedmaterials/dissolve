@@ -82,7 +82,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalGRGraph_->view().setViewType(View::FlatXYView);
 	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	totalGRGraph_->view().axes().setMax(0, 10.0);
-	totalGRGraph_->view().axes().setTitle(1, "g(r)");
+	totalGRGraph_->view().axes().setTitle(1, "G(r)");
 	totalGRGraph_->view().axes().setMin(1, -1.0);
 	totalGRGraph_->view().axes().setMax(1, 1.0);
 	totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
@@ -91,13 +91,13 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
 	totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
-	// Set up total S(Q) graph
+	// Set up total F(Q) graph
 	totalFQGraph_ = ui_.TotalSQPlotWidget->dataViewer();
 	// -- Set view
 	totalFQGraph_->view().setViewType(View::FlatXYView);
 	totalFQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	totalFQGraph_->view().axes().setMax(0, 10.0);
-	totalFQGraph_->view().axes().setTitle(1, "S(Q)");
+	totalFQGraph_->view().axes().setTitle(1, "F(Q)");
 	totalFQGraph_->view().axes().setMin(1, -1.0);
 	totalFQGraph_->view().axes().setMax(1, 1.0);
 	totalFQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
