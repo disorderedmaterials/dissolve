@@ -157,10 +157,10 @@ bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileForm
 }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool clearCurrentContent)
+bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent)
 {
 	// Clear existing content?
-	if (clearCurrentContent) clear();
+	if (emptyCurrentContent) empty();
 
 	/*
 	 * Content Initialisation

@@ -98,7 +98,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Load coordinates from specified parser
 	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 	// Initialise (generate or load) the basic contents of the Configuration
-	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool clearCurrentContent = false);
+	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent = false);
 	// Finalise Configuration after loading contents from restart file
 	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Set configuration temperature
