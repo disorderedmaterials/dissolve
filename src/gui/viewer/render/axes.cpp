@@ -65,6 +65,7 @@ Axes::Axes(View& parent, FontInstance& fontInstance) : parentView_(parent), font
 	minorTicks_.set(1,1,1);
 
 	// Labels
+	autoNumberFormat_.set(true, true, true);
 	labelAnchor_[0] = TextPrimitive::TopMiddleAnchor;
 	labelAnchor_[1] = TextPrimitive::MiddleRightAnchor;
 	labelAnchor_[2] = TextPrimitive::MiddleRightAnchor;
@@ -756,10 +757,88 @@ int Axes::minorTicks(int axis) const
  * Labels
  */
 
+// Determine suitable label format for the supplied axis
+void Axes::determineLabelFormat(int axis)
+{
+	// Set axis value format based on tick delta
+	int logTick = int(log10(tickDelta_[axis]));
+	if (abs(logTick) > 3)
+	{
+		numberFormat_[axis].setType(NumberFormat::ScientificFormat);
+		numberFormat_[axis].setUseENotation(true);
+		numberFormat_[axis].setNDecimals(3);
+	}
+	else if (logTick < 0)
+	{
+		int nDecimals = abs(logTick);
+
+		numberFormat_[axis].setType(NumberFormat::DecimalFormat);
+		numberFormat_[axis].setUseENotation(false);
+		numberFormat_[axis].setNDecimals(nDecimals);
+
+		// Check here that all tick values are now different
+		while (true)
+		{
+			// Loop over labels and check that they are all different
+			bool allDifferent = true;
+			QString tickLabel, oldLabel;
+			int nTicks = (max_[axis] - min_[axis]) / tickDelta_[axis];
+			double axisValue = tickFirst_[axis];
+			for (int n=0; n<nTicks; ++n)
+			{
+				// Print the current label value
+				tickLabel = numberFormat_[axis].format(axisValue);
+				if (tickLabel == oldLabel)
+				{
+					allDifferent = false;
+					break;
+				}
+
+				axisValue += tickDelta_[axis];
+				oldLabel = tickLabel;
+			}
+
+			// If all are different, we're done
+			if (allDifferent) break;
+
+			// Increase decimals by one
+			++nDecimals;
+
+			// If we're now at the threshold where we use exponential notation, set it and break now.
+			if (nDecimals > 3)
+			{
+				numberFormat_[axis].setType(NumberFormat::ScientificFormat);
+				numberFormat_[axis].setUseENotation(true);
+				numberFormat_[axis].setNDecimals(3);
+				break;
+			}
+			else numberFormat_[axis].setNDecimals(nDecimals);
+		}
+	}
+	else
+	{
+		numberFormat_[axis].setType(NumberFormat::IntegerFormat);
+		numberFormat_[axis].setUseENotation(false);
+		numberFormat_[axis].setNDecimals(0);
+	}
+}
+
 // Return number format for specified axis
 NumberFormat& Axes::numberFormat(int axis)
 {
 	return numberFormat_[axis];
+}
+
+// Return whether to determine number format automatically for the specified axis
+bool Axes::autoNumberFormat(int axis) const
+{
+	return autoNumberFormat_.get(axis);
+}
+
+// Set whether to determine number format automatically for the specified axis
+void Axes::setAutoNumberFormat(int axis, bool b)
+{
+	autoNumberFormat_[axis] = b;
 }
 
 // Set orientation of labels for specified axis
@@ -1108,8 +1187,11 @@ void Axes::updateAxisPrimitives()
 		}
 		else
 		{
-			// Calculate autoticks if necessary
+			// Calculate autoticks if requested
 			if (autoTicks_[axis]) calculateTickDeltas(axis);
+
+			// Autoformat the axia labels if requested
+			if (autoNumberFormat_[axis]) determineLabelFormat(axis);
 
 			// Draw a line from min to max limits, passing through the defined position
 			axisPrimitives_[axis].line(coordMin_[axis], coordMax_[axis]);
