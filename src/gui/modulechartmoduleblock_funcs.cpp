@@ -151,6 +151,12 @@ void ModuleChartModuleBlock::hideRemoveButton()
 	ui.RemoveButton->setVisible(false);
 }
 
+// Hide the settings button (e.g. when shown in a ModuleTab)
+void ModuleChartModuleBlock::hideSettingsButton()
+{
+	ui.ToggleSettingsButton->setVisible(false);
+}
+
 // Update controls within widget
 void ModuleChartModuleBlock::updateControls()
 {
