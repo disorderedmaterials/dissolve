@@ -623,7 +623,7 @@ Remote Simulation</string>
                  </font>
                 </property>
                 <property name="toolTip">
-                 <string>Start running the current simulation</string>
+                 <string>Run the current simulation</string>
                 </property>
                 <property name="text">
                  <string>Run</string>
