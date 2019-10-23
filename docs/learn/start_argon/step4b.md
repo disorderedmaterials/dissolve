@@ -22,7 +22,7 @@ This time we will need to set a few parameters in the [`NeutronSQ`](/modules/neu
 
 ### Set up Isotopes
 
-Double-click the [`NeutronSQ`](/modules/neutronsq) module to open it up in a new tab. Now we have access to the options for the module, as well as any graphing or other facilities the module might provide. On the left you'll see a categorised list of all available options - find and click the _Neutron Isotopes_{: .text-green-100} group, and you'll see an Isotopologue{: .text-green-100} option. This is where the isotopologues for all species in the configurations targetted by the [`NeutronSQ`](/modules/neutronsq) module must be set, so that the proper weighting of the calculated structure factors can be performed. Click the _Edit..._{: .text-green-100} button to show a drop-down list of all assigned isotopologues, which will currently be empty. Clicking the _Auto_{: .text-green-100} button will populate the list with any missing species (based on the current contents of the configuration) and assign them the natural isotopologue.
+Double-click the [`NeutronSQ`](/modules/neutronsq) module to open it up in a new tab. Now we have access to the options for the module, as well as any graphing or other facilities the module might provide. On the left you'll see a categorised list of all available options - find and click the _Neutron Isotopes_{: .text-green-100} group, and you'll see an **Isotopologue** option. This is where the isotopologues for all species in the configurations targetted by the [`NeutronSQ`](/modules/neutronsq) module must be set, so that the proper weighting of the calculated structure factors can be performed. Click the _Edit..._{: .text-green-100} button to show a drop-down list of all assigned isotopologues, which will currently be empty. Clicking the _Auto_{: .text-green-100} button will populate the list with any missing species (based on the current contents of the configuration) and assign them the natural isotopologue.
 
 > The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available.
 {: .tip }
@@ -50,4 +50,4 @@ The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related expe
 
 The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so choose `AverageSquared` for the **ReferenceNormalisation** to instruct Dissolve to remove this normalisation.
 
-[Previous Step](step4a.md){: .btn }   [Next Step](step4c.md){: .btn .right}
+[Previous Step](step4a.md){: .btn }   [Next Step](step5.md){: .btn .right}

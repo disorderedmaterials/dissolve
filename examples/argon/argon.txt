@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.3 at 23:26:09 on 22-10-2019.
+# Input file written by Dissolve v0.4.3 at 12:29:08 on 23-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -83,7 +83,6 @@ EndLayer
 
 Layer  'RDF / Neutron S(Q)'
   Frequency  5
-  Disabled
 
   Module  RDF  'RDF01'
     Frequency  1
