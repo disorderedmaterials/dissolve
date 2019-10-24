@@ -70,6 +70,9 @@ void RenderableGroup::associateRenderable(Renderable* renderable)
 
 	// Apply vertical shift to the renderable if necessary
 	setRenderableVerticalShift(renderable, renderables_.nItems()-1);
+
+	// Apply line style if necessary
+	setRenderableLineStyle(renderable);
 }
 
 // Remove Renderable from group (if it exists)
