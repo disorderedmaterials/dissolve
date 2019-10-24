@@ -167,13 +167,24 @@ Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* dest
 	return module;
 }
 
-// Search for any instance of any module with the specified unique name
+// Search for any instance of any Module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
 	RefListIterator<Module> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
+}
+
+// Search for any instance of any Module with the specified Module type
+RefList<Module> Dissolve::findModuleInstances(const char* moduleType)
+{
+	RefList<Module> instances;
+
+	RefListIterator<Module> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) instances.append(module);
+
+	return instances;
 }
 
 // Delete specified Module instance
