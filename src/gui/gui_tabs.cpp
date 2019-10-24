@@ -410,6 +410,15 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 	return tab;
 }
 
+// Remove the ModuleTab for the specifeid Module, if it exists
+void DissolveWindow::removeModuleTab(Module* module)
+{
+	ModuleTab* tab = moduleTab(module);
+	if (!tab) return;
+
+	removeTab(tab);
+}
+
 /*
  * Public Slots
  */
