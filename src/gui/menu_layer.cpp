@@ -23,6 +23,7 @@
 #include "gui/selectconfigurationdialog.h"
 #include "gui/layertab.h"
 #include "main/dissolve.h"
+#include "modules/epsr/epsr.h"
 #include <QMessageBox>
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
@@ -115,7 +116,11 @@ void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
 	newLayer->setFrequency(5);
 
 	// Add the EPSR module
-	dissolve_.createModuleInstance("EPSR", newLayer);
+	EPSRModule* epsr = dynamic_cast<EPSRModule*>(dissolve_.createModuleInstance("EPSR", newLayer));
+
+	// Set any suitable module targets
+	RefList<Module> neutronSQ = dissolve_.findModuleInstances("NeutronSQ");
+	epsr->addTargets(neutronSQ);
 
 	setModified();
 	fullUpdate();
