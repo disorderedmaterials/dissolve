@@ -192,12 +192,6 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
 	FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
 	FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
-
-
-
-
-
-
 	
 	updateControls();
 
