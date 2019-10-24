@@ -110,6 +110,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	void set(const char* name, const char* description, const char* arguments, int optionMask = NoOptions);
 	// Return whether data has been set
 	bool isSet() const;
+	// Flag that data has been set by some other means
+	void hasBeenSet();
 	// Return data type stored by keyword
 	KeywordDataType type() const;
 	// Return name of data type stored by keyword

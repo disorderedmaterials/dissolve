@@ -102,7 +102,7 @@ void IsotopologueReferenceListKeywordWidget::autoButton_clicked(bool checked)
 		}
 
 		// Manually flag that the keyword data has changed
-		keyword_->dataHasBeenSet();
+		keyword_->hasBeenSet();
 
 		updateWidgetValues(coreData_);
 
@@ -127,7 +127,7 @@ void IsotopologueReferenceListKeywordWidget::addButton_clicked(bool checked)
 	}
 
 	// Manually flag that the keyword data has changed
-	keyword_->dataHasBeenSet();
+	keyword_->hasBeenSet();
 
 	updateWidgetValues(coreData_);
 
@@ -154,7 +154,7 @@ void IsotopologueReferenceListKeywordWidget::removeButton_clicked(bool checked)
 	}
 
 	// Manually flag that the keyword data has changed
-	keyword_->dataHasBeenSet();
+	keyword_->hasBeenSet();
 
 	updateWidgetValues(coreData_);
 
@@ -196,7 +196,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 				if (speciesItem) speciesItem->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
 
 				// Manually flag that the keyword data has changed
-				keyword_->dataHasBeenSet();
+				keyword_->hasBeenSet();
 
 				emit(keywordValueChanged(keyword_->optionMask()));
 			}
@@ -223,7 +223,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 					if (topeItem) topeItem->setData(Qt::UserRole, VariantPointer<Species>(sp));
 
 					// Manually flag that the keyword data has changed
-					keyword_->dataHasBeenSet();
+					keyword_->hasBeenSet();
 
 					emit(keywordValueChanged(keyword_->optionMask()));
 				}
@@ -247,7 +247,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 			isoRef->setIsotopologue(iso);
 
 			// Manually flag that the keyword data has changed
-			keyword_->dataHasBeenSet();
+			keyword_->hasBeenSet();
 
 			emit(keywordValueChanged(keyword_->optionMask()));
 			break;
@@ -256,7 +256,7 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 			isoRef->setWeight(w->text().toDouble());
 
 			// Manually flag that the keyword data has changed
-			keyword_->dataHasBeenSet();
+			keyword_->hasBeenSet();
 
 			emit(keywordValueChanged(keyword_->optionMask()));
 			break;

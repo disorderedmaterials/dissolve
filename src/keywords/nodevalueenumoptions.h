@@ -133,7 +133,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 			// Now the enum option
 			if (!KeywordData< Venum<NodeValue,E> >::data_.setEnumeration(parser.argc(startArg+1))) return false;
 
-			KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+			KeywordData< Venum<NodeValue,E> >::hasBeenSet();
 
 			return true;
 		}
@@ -158,7 +158,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 
 		bool result = KeywordData< Venum<NodeValue,E> >::data_.value().set(expressionText, parentNode_->parametersInScope());
 
-		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+		KeywordData< Venum<NodeValue,E> >::hasBeenSet();
 
 		return result;
 	}
@@ -167,7 +167,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	{
 		bool result = KeywordData< Venum<NodeValue,E> >::data_.setEnumerationByIndex(optionIndex);
 
-		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+		KeywordData< Venum<NodeValue,E> >::hasBeenSet();
 
 		return result;
 	}

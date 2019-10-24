@@ -202,6 +202,8 @@ class KeywordList
 	Vec3<double> asVec3Double(const char* name) const;
 	// Return whether the specified keyword data has ever been set
 	bool isSet(const char* name) const;
+	// Flag that the specified keyword has been set by some external means
+	void hasBeenSet(const char* name);
 
 
 	/*

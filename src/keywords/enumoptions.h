@@ -153,7 +153,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	void setEnumerationByIndex(int optionIndex)
 	{
 		KeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
-		KeywordData< EnumOptions<E> >::dataHasBeenSet();
+		KeywordData< EnumOptions<E> >::hasBeenSet();
 	}
 
 
