@@ -403,6 +403,9 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 
 		// Add a close button
 		ui_.MainTabs->addTabCloseButton(tab->page());
+
+		// If we are currently running, disable the necessary controls in widget
+		if (dissolveState_ == DissolveWindow::RunningState) tab->disableSensitiveControls();
 	}
 
 	setCurrentTab(tab);
