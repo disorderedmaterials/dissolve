@@ -66,7 +66,7 @@ bool Transformer::enabled() const
 	return enabled_;
 }
 
-// Set equation, returning if Tree construction was successful
+// Set equation, returning if construction was successful
 bool Transformer::setEquation(const char* equation)
 {
 	text_ = equation;
@@ -122,7 +122,7 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 		return Array<double>();
 	}
 
-	// Create new array, and create reference to target array
+	// Create new array
 	Array<double> newArray(sourceX.nItems());
 
 	z_->set(z);
