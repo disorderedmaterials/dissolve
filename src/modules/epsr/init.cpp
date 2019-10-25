@@ -71,5 +71,6 @@ void EPSRModule::initialise()
 	keywords_.add("Export", new BoolKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit", "<True|False>");
 	keywords_.add("Export", new BoolKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials", "<True|False>");
 	keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials", "<True|False>");
+	keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients", "<True|False>");
 }
 

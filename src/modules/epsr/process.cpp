@@ -119,6 +119,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
 	const bool saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
 	const bool saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
+	const bool savePotentialCoefficients = keywords_.asBool("SavePCof");
 	const bool testMode = keywords_.asBool("Test");
 	const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
@@ -142,8 +143,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("EPSR: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
 	Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is %f\n", weighting);
 	if (saveDifferences) Messenger::print("EPSR: Difference functions will be saved.\n");
-	if (saveEstimatedPartials) Messenger::print("EPSR: Estimated partials will be saved.\n");
 	if (saveEmpiricalPotentials) Messenger::print("EPSR: Empirical potentials will be saved.\n");
+	if (saveEstimatedPartials) Messenger::print("EPSR: Estimated partials will be saved.\n");
+	if (savePotentialCoefficients) Messenger::print("EPSR: Potential coefficients will be saved.\n");
 	if (testMode) Messenger::print("EPSR: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
@@ -740,6 +742,31 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					Data1DExportFileFormat exportFormat(CharString("EP-%s-%s.txt", at1->name(), at2->name()));
 					if (!exportFormat.exportData(pp->uAdditional())) return procPool.decideFalse();
+				}
+			}
+			procPool.decideTrue();
+		}
+		else if (!procPool.decision()) return false;
+	}
+	if (savePotentialCoefficients)
+	{
+		if (procPool.isMaster())
+		{
+			Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
+
+			i = 0;
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+			{
+				j = i;
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+				{
+					// Grab reference to coefficients
+					Array<double>& potCoeff = coefficients.at(i, j);
+
+					LineParser fileParser;
+					if (!fileParser.openOutput(CharString("PCof-%s-%s.txt", at1->name(), at2->name()))) return procPool.decideFalse();
+					for (int n=0; n<potCoeff.nItems(); ++n) if (!fileParser.writeLineF("%f\n", potCoeff[n])) return procPool.decideFalse();
+					fileParser.closeFiles();
 				}
 			}
 			procPool.decideTrue();
