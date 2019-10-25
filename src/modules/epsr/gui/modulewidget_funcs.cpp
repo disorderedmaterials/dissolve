@@ -202,6 +202,10 @@ EPSRModuleWidget::~EPSRModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void EPSRModuleWidget::updateControls(int flags)
 {
