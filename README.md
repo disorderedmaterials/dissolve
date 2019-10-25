@@ -1,6 +1,6 @@
 ![Dissolve's Logo](icon/logo.png)
 
-_Current Version: 0.4.3, Wednesday 12th June 2019_
+_Current Version: 0.4.4, Friday 25th October 2019_
 
 **Dissolve** is a simulation tool for the interrogation of neutron scattering data, typically total neutron scattering data. It builds on the techniques established in the Empirical Potential Structure Refinement (EPSR) method by Soper.
 
