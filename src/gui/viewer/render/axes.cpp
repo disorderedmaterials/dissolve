@@ -768,7 +768,7 @@ void Axes::determineLabelFormat(int axis)
 		numberFormat_[axis].setUseENotation(true);
 		numberFormat_[axis].setNDecimals(3);
 	}
-	else if (logTick < 0)
+	else if (logTick <= 0)
 	{
 		int nDecimals = abs(logTick);
 
