@@ -264,7 +264,7 @@ void RenderableGroup::setRenderableVerticalShift(Renderable* renderable, int ren
 	renderable->setTransformEnabled(1, verticalShiftStyle_ != PreventVerticalShifting);
 
 	if (verticalShiftStyle_ == GroupVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * verticalShiftMultiplier_));
-	if (verticalShiftStyle_ == IndividualVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * rendIndex));
+	else if (verticalShiftStyle_ == IndividualVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * rendIndex));
 	else renderable->setTransformEquation(1, "y");
 }
 
