@@ -11,7 +11,7 @@ add_library(classes
   box_nonperiodic.cpp
   box_orthorhombic.cpp
   box_triclinic.cpp
-  braggpeak.cpp
+  braggreflection.cpp
   cell.cpp
   cellarray.cpp
   celldistributor.cpp
@@ -20,12 +20,13 @@ add_library(classes
   changestore.cpp
   configuration.cpp
   configuration_box.cpp
-  configuration_composition.cpp
   configuration_contents.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
   coredata.cpp
-  datastore.cpp
+  data1dstore.cpp
+  data2dstore.cpp
+  data3dstore.cpp
   distributor.cpp
   empiricalformula.cpp
   energykernel.cpp
@@ -47,12 +48,14 @@ add_library(classes
   scaledenergykernel.cpp
   scatteringmatrix.cpp
   site.cpp
+  sitereference.cpp
   sitestack.cpp
   speciesangle.cpp
   speciesatom.cpp
   speciesbond.cpp
   species.cpp
   species_atomic.cpp
+  species_ff.cpp
   species_grains.cpp
   species_intra.cpp
   species_io.cpp
@@ -74,7 +77,7 @@ add_library(classes
   atomtypelist.h
   bond.h
   box.h
-  braggpeak.h
+  braggreflection.h
   cell.h
   cellarray.h
   celldistributor.h
@@ -83,7 +86,9 @@ add_library(classes
   changestore.h
   configuration.h
   coredata.h
-  datastore.h
+  data1dstore.h
+  data2dstore.h
+  data3dstore.h
   distributor.h
   empiricalformula.h
   energykernel.h
@@ -106,6 +111,7 @@ add_library(classes
   scaledenergykernel.h
   scatteringmatrix.h
   site.h
+  sitereference.h
   sitestack.h
   species.h
   speciesangle.h

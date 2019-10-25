@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_SUPERTABWIDGET_H
 #define DISSOLVE_SUPERTABWIDGET_H
 
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 #include <QTabWidget>
 
 // Forward declarations
@@ -59,12 +59,14 @@ class SuperTabWidget : public QTabWidget
 	 * Widget Functions
 	 */
 	private:
-	// RefList of close buttons and their associated pageWidgets
-	RefList<QToolButton,QWidget*> closeButtons_;
+	// List of close buttons and their associated pageWidgets
+	RefDataList<QToolButton,QWidget*> closeButtons_;
 
 	private slots:
 	// Tab close button clicked
 	void tabCloseButtonClicked(bool);
+	// Tab bar double-clicked
+	void tabBarDoubleClicked(int index);
 
 	signals:
 	void tabClosed(QWidget*);

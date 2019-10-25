@@ -25,37 +25,24 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Master Block Keywords
-KeywordData MasterBlockData[] = {
-	{ "Angle",			3,	"Define master Angle parameters that can be referred to" },
-	{ "Bond",			2,	"Define master Bond parameters that can be referred to" },
-	{ "EndMaster",			0,	"Ends the current Species definition" },
-	{ "Torsion",			4,	"Define master Torsion parameters that can be referred to" },
-};
-
-// Convert text string to MasterKeyword
-MasterBlock::MasterKeyword MasterBlock::keyword(const char* s)
+// Return enum option info for MasterKeyword
+EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 {
-	for (int n=0; n<nMasterKeywords; ++n) if (DissolveSys::sameString(s, MasterBlockData[n].name)) return (MasterBlock::MasterKeyword) n;
-	return nMasterKeywords;
-}
+	static EnumOptionsList MasterKeywords = EnumOptionsList() <<
+		EnumOption(MasterBlock::AngleKeyword, 		"Angle",	3,7) <<
+		EnumOption(MasterBlock::BondKeyword, 		"Bond",		2,6) <<
+		EnumOption(MasterBlock::EndMasterKeyword,	"EndMaster") <<
+		EnumOption(MasterBlock::TorsionKeyword, 	"Torsion",	4,8);
 
-// Convert MasterKeyword to text string
-const char* MasterBlock::keyword(MasterBlock::MasterKeyword id)
-{
-	return MasterBlockData[id].name;
-}
+	static EnumOptions<MasterBlock::MasterKeyword> options("MasterKeyword", MasterKeywords);
 
-// Return minimum number of expected arguments
-int MasterBlock::nArguments(MasterBlock::MasterKeyword id)
-{
-	return MasterBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Master block
-bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
+bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 {
-	Messenger::print("\nParsing %s block...\n", BlockKeywords::blockKeyword(BlockKeywords::MasterBlockKeyword));
+	Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword));
 
 	CharString arg1, arg2;
 	MasterIntra* masterIntra;
@@ -67,15 +54,15 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
-		MasterBlock::MasterKeyword masterKeyword = MasterBlock::keyword(parser.argc(0));
-		if ((masterKeyword != MasterBlock::nMasterKeywords) && ((parser.nArgs()-1) < MasterBlock::nArguments(masterKeyword)))
-		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", MasterBlock::keyword(masterKeyword));
-			error = true;
-			break;
-		}
-		switch (masterKeyword)
+		if (parser.getArgsDelim() != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		MasterKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			case (MasterBlock::AngleKeyword):
 				// Check the functional form specified
@@ -86,12 +73,15 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 					error = true;
 					break;
 				}
+
 				// Create a new master angle definition
-				masterIntra= dissolve->addMasterAngle(parser.argc(1));
+				masterIntra = coreData.addMasterAngle(parser.argc(1));
 				if (masterIntra)
 				{
-					masterIntra->setName(parser.argc(1));
 					masterIntra->setForm(af);
+
+					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) masterIntra->form()));
+
 					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -101,7 +91,10 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 							break;
 						}
 						masterIntra->setParameter(n, parser.argd(n+3));
+						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
+
+					Messenger::printVerbose("Defined master angle term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
@@ -114,11 +107,15 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 					error = true;
 					break;
 				}
+
 				// Create a new master bond definition
-				masterIntra = dissolve->addMasterBond(parser.argc(1));
+				masterIntra = coreData.addMasterBond(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(bf);
+
+					CharString termInfo("%-10s  %-12s", masterIntra->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) masterIntra->form()));
+
 					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -128,7 +125,10 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 							break;
 						}
 						masterIntra->setParameter(n, parser.argd(n+3));
+						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
+
+					Messenger::printVerbose("Defined master bond term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
@@ -145,11 +145,15 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 					error = true;
 					break;
 				}
+
 				// Create a new master torsion definition
-				masterIntra = dissolve->addMasterTorsion(parser.argc(1));
+				masterIntra = coreData.addMasterTorsion(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(tf);
+
+					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) masterIntra->form()));
+
 					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -159,17 +163,15 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 							break;
 						}
 						masterIntra->setParameter(n, parser.argd(n+3));
+						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
+
+					Messenger::printVerbose("Defined master torsion term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
-			case (MasterBlock::nMasterKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::MasterBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::MasterBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::MasterBlockKeyword), MasterBlock::keyword(masterKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -184,7 +186,7 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::MasterBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword));
 		error = true;
 	}
 

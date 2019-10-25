@@ -1,14 +1,28 @@
 <RCC>
-  <qresource prefix="file">
-    <file>icons/file_new.svg</file>
-    <file>icons/file_recent.svg</file>
-    <file>icons/file_open.svg</file>
-    <file>icons/file_save.svg</file>
-    <file>icons/file_connect.svg</file>
+  <qresource prefix="menu">
+    <file>icons/menu_new.svg</file>
+    <file>icons/menu_species.svg</file>
+    <file>icons/menu_wizard.svg</file>
+    <file>icons/menu_recent.svg</file>
+    <file>icons/menu_open.svg</file>
+    <file>icons/menu_save.svg</file>
+    <file>icons/menu_connect.svg</file>
+  </qresource>
+  <qresource prefix="data">
+    <file>systemtemplates/simple_two/info.xml</file>
+    <file>systemtemplates/simple_two/icon.svg</file>
+    <file>systemtemplates/simple_two/input.txt</file>
+    <file>systemtemplates/simple_one/icon.svg</file>
+    <file>systemtemplates/simple_one/info.xml</file>
+    <file>systemtemplates/simple_one/input.txt</file>
+  </qresource>
+  <qresource prefix="dissolve">
+    <file>icons/dissolve.png</file>
   </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
     <file>icons/viewer_toolbar_view.svg</file>
+    <file>icons/viewer_toolbar_graph.svg</file>
     <file>icons/viewer_toolbar_tools.svg</file>
   </qresource>
   <qresource prefix="viewer">
@@ -23,39 +37,17 @@
     <file>icons/viewer_medic.svg</file>
     <file>icons/viewer_followx.svg</file>
     <file>icons/viewer_axes.svg</file>
+    <file>icons/viewer_spheres.svg</file>
+    <file>icons/viewer_spheres_on.svg</file>
     <file>icons/viewer_axes_on.svg</file>
     <file>icons/viewer_delete.svg</file>
     <file>icons/viewer_snapshot.svg</file>
+    <file>icons/viewer_data.svg</file>
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
     <file>fonts/FreeSerif.ttf</file>
     <file>fonts/SourceSansPro-Regular.ttf</file>
-  </qresource>
-  <qresource prefix="dguided">
-    <file>icons/dguided_redo.svg</file>
-    <file>icons/dguided_clearformat.svg</file>
-    <file>icons/dguided_listcircle.svg</file>
-    <file>icons/dguided_listnone.svg</file>
-    <file>icons/dguided_listnumber.svg</file>
-    <file>icons/dguided_listsquare.svg</file>
-    <file>icons/dguided_undo.svg</file>
-    <file>icons/dguided_formatsteps.svg</file>
-    <file>icons/dguided_formatmodule.svg</file>
-    <file>icons/dguided_formatwidget.svg</file>
-    <file>icons/dguided_copy.svg</file>
-    <file>icons/dguided_angstrom.svg</file>
-    <file>icons/dguided_subscript.svg</file>
-    <file>icons/dguided_superscript.svg</file>
-    <file>icons/dguided_cut.svg</file>
-    <file>icons/dguided_paste.svg</file>
-    <file>icons/dguided_aligncentre.svg</file>
-    <file>icons/dguided_alignjustify.svg</file>
-    <file>icons/dguided_alignleft.svg</file>
-    <file>icons/dguided_alignright.svg</file>
-    <file>icons/dguided_bold.svg</file>
-    <file>icons/dguided_italic.svg</file>
-    <file>icons/dguided_underline.svg</file>
   </qresource>
   <qresource prefix="modules">
     <file>icons/modules_export.svg</file>
@@ -73,25 +65,8 @@
     <file>icons/modules_generic.svg</file>
     <file>icons/modules_import.svg</file>
   </qresource>
-  <qresource prefix="quickstart">
-    <file>guides/quickstart/quickstart.guide</file>
-    <file>guides/quickstart/quickstart_tabs_configurations.png</file>
-    <file>guides/quickstart/quickstart_tabs_forcefield.png</file>
-    <file>guides/quickstart/quickstart_tabs_modules.png</file>
-    <file>guides/quickstart/quickstart_tabs_species.png</file>
-    <file>guides/quickstart/quickstart_tour.png</file>
-    <file>guides/quickstart/quickstart_tour_controls.png</file>
-    <file>guides/quickstart/quickstart_tour_messages.png</file>
-    <file>guides/quickstart/quickstart_tour_tabs.png</file>
-  </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
-  </qresource>
-  <qresource prefix="special">
-    <file>icons/special_learn.svg</file>
-    <file>icons/special_wizard.svg</file>
-    <file>icons/special_guide.svg</file>
-    <file>icons/special_multiplespecies.svg</file>
   </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
@@ -100,7 +75,17 @@
     <file>icons/tabs_species.svg</file>
     <file>icons/tabs_modulelayer.svg</file>
   </qresource>
+  <qresource prefix="start">
+    <file>icons/start_connect.svg</file>
+    <file>icons/start_openrecent.svg</file>
+    <file>icons/start_template.svg</file>
+    <file>icons/start_manual.svg</file>
+    <file>icons/start_tutorials.svg</file>
+    <file>icons/start_new.svg</file>
+    <file>icons/start_openlocal.svg</file>
+  </qresource>
   <qresource prefix="general">
+    <file>icons/general_filter.svg</file>
     <file>icons/general_false.svg</file>
     <file>icons/general_true.svg</file>
     <file>icons/general_warn.svg</file>
@@ -134,6 +119,7 @@
     <file>icons/control_pause.svg</file>
     <file>icons/control_locked.svg</file>
     <file>icons/control_unlocked.svg</file>
+    <file>icons/control_step.svg</file>
     <file>icons/control_play.svg</file>
   </qresource>
 </RCC>

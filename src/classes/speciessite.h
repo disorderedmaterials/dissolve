@@ -23,19 +23,18 @@
 #define DISSOLVE_SPECIESSITE_H
 
 #include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "templates/array.h"
-#include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
+class LineParser;
 class Species;
 class SpeciesAtom;
 
-/*
- * Species Site Definition
- */
+// Species Site Definition
 class SpeciesSite : public ListItem<SpeciesSite>
 {
 	public:
@@ -54,13 +53,13 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Parent Species
 	Species* parent_;
 	// List of SpeciesAtoms whose average position is the origin of the site
-	RefList<SpeciesAtom,bool> originAtoms_;
+	RefList<SpeciesAtom> originAtoms_;
 	// Whether the origin should be calculated with mass-weighted positions
 	bool originMassWeighted_;
 	// SpeciesAtom(s) that indicate the x axis with the origin
-	RefList<SpeciesAtom,bool> xAxisAtoms_;
+	RefList<SpeciesAtom> xAxisAtoms_;
 	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
-	RefList<SpeciesAtom,bool> yAxisAtoms_;
+	RefList<SpeciesAtom> yAxisAtoms_;
 
 	public:
 	// Set name of site
@@ -76,7 +75,7 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Add origin atom from index
 	bool addOriginAtom(int atomIndex);
 	// Return list of origin atoms
-	const RefList<SpeciesAtom,bool>& originAtoms();
+	const RefList<SpeciesAtom>& originAtoms();
 	// Return integer array of indices from which the origin should be formed
 	Array<int> originAtomIndices() const;
 	// Set whether the origin should be calculated with mass-weighted positions
@@ -88,7 +87,7 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Add x-axis atom from index
 	bool addXAxisAtom(int atomIndex);
 	// Return list of x-axis atoms
-	const RefList<SpeciesAtom,bool>& xAxisAtoms();
+	const RefList<SpeciesAtom>& xAxisAtoms();
 	// Return integer array of indices from which x-axis should be formed
 	Array<int> xAxisAtomIndices() const;
 	// Add y-axis atom
@@ -96,11 +95,33 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Add y-axis atom from indey
 	bool addYAxisAtom(int atomIndex);
 	// Return list of y-axis atoms
-	const RefList<SpeciesAtom,bool>& yAxisAtoms();
+	const RefList<SpeciesAtom>& yAxisAtoms();
 	// Return integer array of indices from which y-axis should be formed
 	Array<int> yAxisAtomIndices() const;
 	// Return whether the site has defined axes sites
 	bool hasAxes() const;
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Site Block Keyword Enum
+	enum SiteKeyword
+	{
+		EndSiteKeyword,			/* 'EndSite' - Signals the end of the Site */
+		OriginKeyword,			/* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
+		OriginMassWeightedKeyword,	/* 'OriginMassWeighted' - Control whether the origin should be calculated with mass-weighted coordinates */
+		XAxisKeyword,			/* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x axis */
+		YAxisKeyword,			/* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
+		nSiteKeywords			/* Number of keywords defined for this block */
+	};
+	// Return enum option info for SiteKeyword
+	static EnumOptions<SpeciesSite::SiteKeyword> keywords();
+	// Read site definition from specified LineParser
+	bool read(LineParser& parser);
+	// Write site definition to specified LineParser
+	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

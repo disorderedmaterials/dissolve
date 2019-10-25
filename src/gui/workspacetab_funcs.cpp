@@ -49,13 +49,13 @@ WorkspaceTab::~WorkspaceTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* WorkspaceTab::tabType() const
+MainTab::TabType WorkspaceTab::type() const
 {
-	return "WorkspaceTab";
+	return MainTab::WorkspaceTabType;
 }
 
 // Return whether the title of the tab can be changed
@@ -76,7 +76,7 @@ void WorkspaceTab::updateControls()
 	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void WorkspaceTab::disableSensitiveControls()
 {
 	// Disable sensitive controls in subwindows
@@ -84,7 +84,7 @@ void WorkspaceTab::disableSensitiveControls()
 	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void WorkspaceTab::enableSensitiveControls()
 {
 	// Enable sensitive controls in subwindows
@@ -353,7 +353,7 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 	for (int n=0; n<nWidgets; ++n)
 	{
 		// Read line from the file, which should contain the window type, title, and any identifying info
-		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		SubWindow* subWindow = NULL;
 		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
 		{

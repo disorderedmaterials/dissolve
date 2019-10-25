@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Module Interface
+	*** Module Interface
 	*** src/module/module.h
 	Copyright T. Youngs 2012-2019
 
@@ -25,8 +25,8 @@
 #include "base/messenger.h"
 #include "genericitems/list.h"
 #include "math/sampleddouble.h"
-#include "module/keywordgroup.h"
-#include "module/keywordlist.h"
+#include "keywords/group.h"
+#include "keywords/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -82,42 +82,39 @@ class Module : public ListItem<Module>
 	 */
 	protected:
 	// Keywords recognised by Module
-	ModuleKeywordList keywords_;
-	// Keywords organised by group
-	List<ModuleKeywordGroup> keywordGroups_;
+	KeywordList keywords_;
 
-	protected:
-	// Create and return named keyword group
-	ModuleKeywordGroup* addKeywordGroup(const char* name);
-	// Set up keywords for Module
-	virtual void setUpKeywords() = 0;
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
-
+	
 	public:
 	// Return list of recognised keywords
-	ModuleKeywordList& keywords();
-	// Return list of defined keyword groups
-	const List<ModuleKeywordGroup>& keywordGroups() const;
+	KeywordList& keywords();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	KeywordBase::ParseResult parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 	// Print valid keywords
 	void printValidKeywords();
+
+
+	/*
+	 * Initialisation
+	 */
+	public:
+	// Perform any necessary initialisation for the Module
+	virtual void initialise() = 0;
 
 
 	/*
 	 * Control
 	 */
 	protected:
-	// Frequency with which to run Module (relative to layer execution count)
+	// Frequency at which to run Module (relative to layer execution count)
 	int frequency_;
 	// Whether the Module is enabled
 	bool enabled_;
 
 	public:
-	// Set frequency with which to run Module (relative to layer execution count)
+	// Set frequency at which to run Module (relative to layer execution count)
 	void setFrequency(int freq);
-	// Return frequency with which to run Module (relative to layer execution count)
+	// Return frequency at which to run Module (relative to layer execution count)
 	int frequency() const;
 	// Return whether the Module should run this iteration
 	bool runThisIteration(int iteration) const;
@@ -134,19 +131,21 @@ class Module : public ListItem<Module>
 	 */
 	protected:
 	// Configurations that are targeted by this Module
-	RefList<Configuration,bool> targetConfigurations_;
+	RefList<Configuration> targetConfigurations_;
 	// Whether this module is a local Module in a Configuration 
 	bool configurationLocal_;
 
 	public:
 	// Add Configuration target
 	bool addTargetConfiguration(Configuration* cfg);
+	// Add Configuration targets
+	bool addTargetConfigurations(List<Configuration>& configs);
 	// Remove Configuration target
 	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations
 	int nTargetConfigurations() const;
 	// Return targeted Configurations
-	const RefList<Configuration,bool>& targetConfigurations() const;
+	const RefList<Configuration>& targetConfigurations() const;
 	// Return if the specified Configuration is in the targets list
 	bool isTargetConfiguration(Configuration* cfg) const;
 	// Copy Configuration targets from specified Module

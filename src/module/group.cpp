@@ -55,6 +55,12 @@ void ModuleGroup::add(Module* module)
 	modules_.addUnique(module);
 }
 
+// Remove Module from group
+void ModuleGroup::remove(Module* module)
+{
+	modules_.remove(module);
+}
+
 // Return whether the specified Module is in the group
 bool ModuleGroup::contains(Module* module) const
 {
@@ -68,8 +74,7 @@ int ModuleGroup::nModules() const
 }
 
 // Return reflist of Modules
-const RefList<Module,bool>& ModuleGroup::modules() const
+const RefList<Module>& ModuleGroup::modules() const
 {
 	return modules_;
 }
-

@@ -209,7 +209,7 @@ void SpeciesIntra::deleteAttachedAtomArrays()
 }
 
 // Set attached SpeciesAtoms for the terminus specified
-void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,bool>& atoms)
+void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom>& atoms)
 {
 	// Is the current array non-existent or too small to hold the new list?
 	if ((!attached_[terminus]) || (atoms.nItems() > arraySize_[terminus]))
@@ -226,14 +226,14 @@ void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,bool
 	nAttached_[terminus] = 0;
 
 	// Add the SpeciesAtoms in the list
-	for (RefListItem<SpeciesAtom,bool>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][nAttached_[terminus]++] = refAtom->item->index();
+	for (RefListItem<SpeciesAtom>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next()) attached_[terminus][nAttached_[terminus]++] = refAtom->item()->index();
 }
 
 // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
 void SpeciesIntra::setAttachedAtoms(int terminus, SpeciesAtom* atom)
 {
-	RefList<SpeciesAtom,bool> atoms;
-	atoms.add(atom);
+	RefList<SpeciesAtom> atoms;
+	atoms.append(atom);
 	setAttachedAtoms(terminus, atoms);
 }
 

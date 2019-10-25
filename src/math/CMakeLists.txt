@@ -1,4 +1,5 @@
 add_library(math
+  averaging.cpp
   broadeningfunction.cpp
   cuboid.cpp
   data1d.cpp
@@ -27,6 +28,7 @@ add_library(math
   transformer.cpp
   windowfunction.cpp
 
+  averaging.h
   broadeningfunction.h
   constants.h
   cuboid.h

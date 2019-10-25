@@ -24,7 +24,6 @@
 
 #include "classes/changedata.h"
 #include "templates/vector3.h"
-#include "templates/pair.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
 

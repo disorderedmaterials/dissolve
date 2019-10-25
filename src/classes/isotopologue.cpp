@@ -68,10 +68,8 @@ const char* Isotopologue::name() const
  * Isotope Definition
  */
 
-/*
- * Update AtomType/Isotope RefList
- */
-void Isotopologue::update(const List<AtomType>& atomTypes)
+// Update AtomType/Isotope RefList
+void Isotopologue::update()
 {
 	/*
 	 * This function reconstructs the current RefList of AtomType/Isotope pairs and ensures that
@@ -87,8 +85,8 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 	}
 
 	// Construct a temporary RefList, and move all existing RefListItems to it
-	RefList<AtomType,Isotope*> oldItems;
-	RefListItem<AtomType,Isotope*>* rli;
+	RefDataList<AtomType,Isotope*> oldItems;
+	RefDataItem<AtomType,Isotope*>* rli;
 	while (isotopes_.last() != NULL)
 	{
 		rli = isotopes_.last();
@@ -97,17 +95,12 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 	}
 	
 	// Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
-	for (SpeciesAtom* i = parent_->firstAtom(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = parent_->firstAtom(); i != NULL; i = i->next())
 	{
 		AtomType* at = i->atomType();
 		if (at == NULL)
 		{
 			Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n", i->userIndex());
-			continue;
-		}
-		if (!atomTypes.contains(at))
-		{
-			Messenger::print("BAD_POINTER - Atom %i references a non-existent AtomType.\n", i->userIndex());
 			continue;
 		}
 
@@ -122,7 +115,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 			oldItems.cut(rli);
 			isotopes_.own(rli);
 		}
-		else isotopes_.add(at, Isotopes::naturalIsotope(at->element()));
+		else isotopes_.append(at, Isotopes::naturalIsotope(at->element()));
 	}
 }
 
@@ -137,14 +130,14 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	}
 
 	// Find the requested AtomType in the list
-	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
-	if (!rli)
+	RefDataItem<AtomType,Isotope*>* rdi = isotopes_.contains(at);
+	if (!rdi)
 	{
 		Messenger::error("AtomType '%s' not found in Isotopologue '%s'.\n", at->name(), name_.get());
 		return false;
 	}
 	
-	rli->data = isotope;
+	rdi->data() = isotope;
 
 	return true;
 }
@@ -152,23 +145,23 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 // Return Isotope for specified AtomType
 Isotope* Isotopologue::atomTypeIsotope(AtomType* at) const
 {
-	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
-	if (!rli)
+	RefDataItem<AtomType,Isotope*>* rdi = isotopes_.contains(at);
+	if (!rdi)
 	{
 		Messenger::error("Couldn't retrieve AtomType '%s' from Isotopologue '%s' as it doesn't exist.\n", at->name(), name_.get());
 		return NULL;
 	}
-	return rli->data;
+	return rdi->data();
 }
 
 // Return AtomType/Isotope pairs list
-const RefList<AtomType,Isotope*>& Isotopologue::isotopes() const
+const RefDataList<AtomType,Isotope*>& Isotopologue::isotopes() const
 {
 	return isotopes_;
 }
 
 // Return nth AtomType/Isotope pair
-RefListItem<AtomType,Isotope*>* Isotopologue::isotope(int n)
+RefDataItem<AtomType,Isotope*>* Isotopologue::isotope(int n)
 {
 	return isotopes_[n];
 }

@@ -56,11 +56,12 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0;	// To convert from kJ/mol to 10 J/mol
 	double cutoffDistance = keywords_.asDouble("CutoffDistance");
 	if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
-	double deltaT = GenericListHelper<double>::value(moduleData, "DeltaT", uniqueName(), keywords_.asDouble("DeltaT"));
+	double deltaT = keywords_.asDouble("DeltaT");
 	const int energyFrequency = keywords_.asInt("EnergyFrequency");
 	const int nSteps = keywords_.asInt("NSteps");
 	const int outputFrequency = keywords_.asInt("OutputFrequency");
 	bool randomVelocities = keywords_.asBool("RandomVelocities");
+	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
 	const int trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
 	const bool variableTimestep = keywords_.asBool("VariableTimestep");
 	bool writeTraj = trajectoryFrequency > 0;
@@ -68,6 +69,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
 	Messenger::print("MD: Number of steps = %i\n", nSteps);
+	if (onlyWhenEnergyStable) Messenger::print("MD: Only peform MD if target Configuration energies are stable.\n");
 	if (writeTraj) Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
 	else Messenger::print("MD: Trajectory file off.\n");
 	if (capForce) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
@@ -80,17 +82,25 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (restrictToSpecies_.nItems() > 0)
 	{
 		CharString speciesNames;
-		RefListIterator<Species,bool> speciesIterator(restrictToSpecies_);
+		RefListIterator<Species> speciesIterator(restrictToSpecies_);
 		while (Species* sp = speciesIterator.iterate()) speciesNames.strcatf("  %s", sp->name());
 		Messenger::print("MD: Calculation will be restricted to Species:%s\n", speciesNames.get());
 	}
 	Messenger::print("\n");
 
-	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
+
+		int stabilityResult = EnergyModule::checkStability(cfg);
+		if (stabilityResult == -1) return false;
+		else if (stabilityResult == 1)
+		{
+			Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
+			continue;
+		}
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)
 		Array<Molecule*> targetMolecules;
@@ -332,7 +342,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 		// Increment configuration changeCount
-		cfg->incrementCoordinateIndex();
+		cfg->incrementContentsVersion();
 
 		/*
 		 * Calculation End

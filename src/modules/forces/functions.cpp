@@ -163,7 +163,7 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 	const DynamicArray<Atom>& atoms = cfg->atoms();
 	for (int n=start; n<targetIndices.nItems(); n += stride)
 	{
-		const Atom* i = atoms.constValue(targetIndices.at(n));
+		const Atom* i = atoms.constValue(targetIndices.constAt(n));
 
 		// Calculate contributions from all bonds that this atom takes part in
 		for (int m=0; m<i->bonds().nItems(); ++m) kernel.forces(i->bonds().at(m), i);
@@ -199,7 +199,7 @@ void ForcesModule::interatomicForces(ProcessPool& procPool, Configuration* cfg, 
 	const DynamicArray<Atom>& atoms = cfg->atoms();
 	for (int n=start; n<targetIndices.nItems(); n += stride)
 	{
-		const Atom* i = atoms.constValue(targetIndices.at(n));
+		const Atom* i = atoms.constValue(targetIndices.constAt(n));
 
 		kernel.forces(i, ProcessPool::subDivisionStrategy(strategy));
 	}
@@ -258,7 +258,7 @@ void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const 
 	Array<int> indices;
 	for (int n=0; n<targetMolecules.nItems(); ++n)
 	{
-		Molecule* mol = targetMolecules.at(n);
+		Molecule* mol = targetMolecules.constAt(n);
 
 		for (int i=0; i<mol->nAtoms(); ++i)
 		{

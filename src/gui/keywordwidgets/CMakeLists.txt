@@ -5,20 +5,35 @@
 SET(keywordwidgets_MOC_HDRS
   atomtypeselection.h
   broadeningfunction.h
-  fileandformat.h
-  isotopologuelist.h
-  modulegroups.h
-  modulereferencelist.h
-  pairbroadeningfunction.h
-  speciesreferencelist.h
+  dialog.h
   dropdown.h
+  expressionvariablelist.h
+  fileandformat.h
+  isotopologuereferencelist.h
+  modulegroups.h
+  modulereflist.h
+  node.h
+  nodeandinteger.h
+  nodereflist.h
+  nodevalue.h
+  nodevalueenumoptions.h
+  pairbroadeningfunction.h
+  speciesreflist.h
+  speciessitereflist.h
+  vec3double.h
+  vec3integer.h
+  vec3labels.h
+  vec3nodevalue.h
 
   bool.hui
   charstring.hui
   double.hui
   dropwidget.hui
-  enumstring.hui
-  int.hui
+  enumoptions.hui
+  integer.hui
+  species.hui
+  widget.hui
+
   windowfunction.hui
 )
 QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
@@ -27,13 +42,24 @@ QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 SET(keywordwidgets_UIS
   atomtypeselection.ui
   broadeningfunction.ui
+  dialog.ui
   dropdown.ui
+  expressionvariablelist.ui
   fileandformat.ui
-  isotopologuelist.ui
+  isotopologuereferencelist.ui
   modulegroups.ui
-  modulereferencelist.ui
+  modulereflist.ui
+  node.ui
+  nodeandinteger.ui
+  nodereflist.ui
+  nodevalue.ui
+  nodevalueenumoptions.ui
   pairbroadeningfunction.ui
-  speciesreferencelist.ui
+  speciesreflist.ui
+  speciessitereflist.ui
+  vec3double.ui
+  vec3integer.ui
+  vec3nodevalue.ui
 )
 QT5_WRAP_UI(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 
@@ -45,18 +71,32 @@ SET(keywordwidgets_SRCS
   bool_funcs.cpp
   broadeningfunction_funcs.cpp
   charstring_funcs.cpp
+  dialog_funcs.cpp
   double_funcs.cpp
   dropdown_funcs.cpp
   dropwidget_funcs.cpp
-  enumstring_funcs.cpp
+  enumoptions_funcs.cpp
+  expressionvariablelist_funcs.cpp
   fileandformat_funcs.cpp
-  int_funcs.cpp
-  isotopologuelist_funcs.cpp
+  integer_funcs.cpp
+  isotopologuereferencelist_funcs.cpp
   modulegroups_funcs.cpp
-  modulereferencelist_funcs.cpp
+  modulereflist_funcs.cpp
+  node_funcs.cpp
+  nodeandinteger_funcs.cpp
+  nodereflist_funcs.cpp
+  nodevalue_funcs.cpp
+  nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp
-  speciesreferencelist_funcs.cpp
+  species_funcs.cpp
+  speciesreflist_funcs.cpp
+  speciessitereflist_funcs.cpp
+  widget_funcs.cpp
   windowfunction_funcs.cpp
+  vec3double_funcs.cpp
+  vec3integer_funcs.cpp
+  vec3labels.cpp
+  vec3nodevalue_funcs.cpp
 
   base.h
 )

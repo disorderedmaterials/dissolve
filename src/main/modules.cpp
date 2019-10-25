@@ -22,8 +22,10 @@
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
-#include "modules/calculate/rdf/rdf.h"
-#include "modules/calibrate/calibrate.h"
+#include "modules/bragg/bragg.h"
+#include "modules/calculate_dangle/dangle.h"
+#include "modules/calculate_rdf/rdf.h"
+#include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
@@ -76,6 +78,8 @@ bool Dissolve::registerMasterModules()
 {
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
+	if (!registerMasterModule(new BraggModule)) return false;
+	if (!registerMasterModule(new CalculateDAngleModule)) return false;
 	if (!registerMasterModule(new CalculateRDFModule)) return false;
 	if (!registerMasterModule(new CalibrationModule)) return false;
 	if (!registerMasterModule(new ChecksModule)) return false;
@@ -145,17 +149,54 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 
 	// Create a new instance of the specified Module and add it to our list
 	Module* instance = masterModule->createInstance();
-	moduleInstances_.add(instance);
+	moduleInstances_.append(instance);
 	instance->setUniqueName(uniqueName);
 
 	return instance;
 }
 
-// Search for any instance of any module with the specified unique name
+// Create a Module instance for the named Module type, and add it to the specified layer
+Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer)
+{
+	Module* module = createModuleInstance(moduleType);
+	if (!module) return NULL;
+
+	// Add the new module instance to the specified destination layer
+	destinationLayer->own(module);
+
+	return module;
+}
+
+// Search for any instance of any Module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
-	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	RefListIterator<Module> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
+}
+
+// Search for any instance of any Module with the specified Module type
+RefList<Module> Dissolve::findModuleInstances(const char* moduleType)
+{
+	RefList<Module> instances;
+
+	RefListIterator<Module> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) instances.append(module);
+
+	return instances;
+}
+
+// Delete specified Module instance
+bool Dissolve::deleteModuleInstance(Module* instance)
+{
+	if (!moduleInstances_.contains(instance)) return Messenger::error("Can't find Module instance to remove.\n");
+
+	// Remove the reference from our list
+	moduleInstances_.remove(instance);
+
+	// Delete the actual Module - we assume that it has been removed from any ModuleList
+	delete instance;
+
+	return true;
 }

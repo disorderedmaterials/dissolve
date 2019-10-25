@@ -87,7 +87,7 @@ void Species::transmuteAtom(SpeciesAtom* i, Element* el)
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setSelected(false);
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setSelected(false);
 
 	selectedAtoms_.clear();
 
@@ -101,7 +101,7 @@ void Species::selectAtom(SpeciesAtom* i)
 	{
 		i->setSelected(true);
 
-		selectedAtoms_.add(i);
+		selectedAtoms_.append(i);
 
 		++atomSelectionVersion_;
 	}
@@ -133,7 +133,7 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	RefListIterator<SpeciesBond> bondIterator(i->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate())
 	{
 		// Is this either of the excluded bonds?
@@ -149,7 +149,7 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 }
 
 // Return current atom selection
-const RefList<SpeciesAtom,bool>& Species::selectedAtoms() const
+const RefList<SpeciesAtom>& Species::selectedAtoms() const
 {
 	return selectedAtoms_;
 }
@@ -157,9 +157,9 @@ const RefList<SpeciesAtom,bool>& Species::selectedAtoms() const
 // Return nth selected Atom
 SpeciesAtom* Species::selectedAtom(int n)
 {
-	RefListItem<SpeciesAtom,bool>* ri = selectedAtoms_[n];
+	RefListItem<SpeciesAtom>* ri = selectedAtoms_[n];
 	if (ri == NULL) return NULL;
-	else return ri->item;
+	else return ri->item();
 }
 
 // Return number of selected Atoms
@@ -184,26 +184,34 @@ const int Species::atomSelectionVersion() const
 double Species::mass() const
 {
 	double m = 0.0;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += AtomicMass::mass(i->element());
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) m += AtomicMass::mass(i->element());
 	return m;
 }
 
-// Update used AtomTypeList
-void Species::updateUsedAtomTypes()
+// Bump AtomTypes version
+void Species::bumpAtomTypesVersion()
 {
-	usedAtomTypes_.clear();
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) usedAtomTypes_.add(i->atomType(), 1);
+	++atomTypesVersion_;
 }
 
 // Return used AtomTypesList
 const AtomTypeList& Species::usedAtomTypes()
 {
+	if (usedAtomTypesPoint_ != atomTypesVersion_)
+	{
+		usedAtomTypes_.clear();
+		for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) if (i->atomType()) usedAtomTypes_.add(i->atomType(), 1);
+	
+		usedAtomTypesPoint_ = atomTypesVersion_;
+	}
+
 	return usedAtomTypes_;
 }
 
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
 {
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setAtomType(NULL);
-	usedAtomTypes_.clear();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setAtomType(NULL);
+
+	++atomTypesVersion_;
 }

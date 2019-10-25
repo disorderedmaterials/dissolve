@@ -190,7 +190,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../gui/icons.qrc"/>
+  <include location="../../../gui/main.qrc"/>
  </resources>
  <connections/>
 </ui>

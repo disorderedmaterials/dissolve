@@ -1,6 +1,6 @@
 /*
-	*** UsedSpecies Delegate
-	*** src/gui/delegates/userdspecies.hui
+	*** UsedSpecies Combo Delegate
+	*** src/gui/delegates/usedspecies.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,14 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_USEDSPECIESCOMBODELEGATE_H
-#define DISSOLVE_USEDSPECIESCOMBODELEGATE_H
+#ifndef DISSOLVE_DELEGATES_USEDSPECIESCOMBO_H
+#define DISSOLVE_DELEGATES_USEDSPECIESCOMBO_H
 
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
 #include <QComboBox>
-#include "classes/configuration.h"
 #include "templates/list.h"
 
 // Forward Declarations

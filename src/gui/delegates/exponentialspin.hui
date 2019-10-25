@@ -1,6 +1,6 @@
 /*
-	*** ExponentialSpinDelegate
-	*** src/gui/delegates/exponentialspin.h
+	*** ExponentialSpin Delegate
+	*** src/gui/delegates/exponentialspin.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TDOUBLESPINDELEGATE_H
-#define DISSOLVE_TDOUBLESPINDELEGATE_H
+#ifndef DISSOLVE_DELEGATES_EXPONENTIALSPIN_H
+#define DISSOLVE_DELEGATES_EXPONENTIALSPIN_H
 
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>

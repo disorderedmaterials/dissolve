@@ -48,8 +48,12 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
 
-        // Set up the font instance
-	fontInstance_.setUp();
+	// Set a surface format to enable multisampling
+	// NOTE This used to be performed by setting the default surface format within main(), but this created severe unwanted widget behaviour
+	QSurfaceFormat surfaceFormat;
+	surfaceFormat.setSamples(4);
+	setFormat(surfaceFormat);
+	
 }
 
 // Destructor

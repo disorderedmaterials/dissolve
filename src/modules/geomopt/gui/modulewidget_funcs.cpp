@@ -31,16 +31,16 @@ GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* pare
 }
 
 // Update controls within widget
-void GeometryOptimisationModuleWidget::updateControls()
+void GeometryOptimisationModuleWidget::updateControls(int flags)
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void GeometryOptimisationModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void GeometryOptimisationModuleWidget::enableSensitiveControls()
 {
 }

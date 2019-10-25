@@ -132,11 +132,18 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Liquid'
-  CellLengths  30.769064857500   46.153597286200  30.769064857500
-  Multiplier  200
-  SpeciesInfo  'Hexane'  1.0
+  Generator
+    Box
+      Lengths  30.769064857500  46.153597286200  30.769064857500
+    EndBox
+    AddSpecies
+      Population  200
+      Species  'Hexane'
+      ScaleBox  False
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  dlpoly  'dlpoly_torsions/CONFIG'
-  RDFBinWidth 0.03
+  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
@@ -151,6 +158,7 @@ Module Forces
   Test  On
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly_torsions/REVCON'
+  EndTestReference
   TestThreshold  0.1
 EndModule
 
@@ -163,12 +171,6 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'CT'   0.0       0.0      3.500000  
-  Parameters  'HC'   0.0       0.0      2.500000 
-  GenerateAll  'LJ'
+  Parameters  'CT'   0.0       LJGeometric  0.0      3.500000  
+  Parameters  'HC'   0.0       LJGeometric  0.0      2.500000 
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
-

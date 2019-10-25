@@ -49,10 +49,10 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item;
+		Configuration* cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -63,12 +63,12 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Retrieve control parameters from Configuration
 		double cutoffDistance = keywords_.asDouble("CutoffDistance");
 		if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
-		double rotationStepSize = GenericListHelper<double>::value(moduleData, "RotationStepSize", uniqueName(), keywords_.asDouble("RotationStepSize"));
+		double& rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
 		const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
 		const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
 		const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-		double translationStepSize = GenericListHelper<double>::value(moduleData, "TranslationStepSize", uniqueName(), keywords_.asDouble("TranslationStepSize"));
+		double& translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
 		const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
 		const double translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
 		const double rRT = 1.0/(.008314472*cfg->temperature());
@@ -258,7 +258,6 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		else if (translationStepSize > translationStepSizeMax) translationStepSize = translationStepSizeMax;
 
 		Messenger::print("Updated step size for translations is %f Angstroms.\n", translationStepSize); 
-		GenericListHelper<double>::realise(moduleData, "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
 
 		// Update and set rotation step size
 		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate/targetAcceptanceRate;
@@ -266,12 +265,10 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		else if (rotationStepSize > rotationStepSizeMax) rotationStepSize = rotationStepSizeMax;
 
 		Messenger::print("Updated step size for rotations is %f degrees.\n", rotationStepSize); 
-		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 
-		// Increase coordinate index in Configuration
-		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
+		// Increase contents version in Configuration
+		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementContentsVersion();
 	}
 
 	return true;
 }
-

@@ -20,14 +20,14 @@
 */
 
 #include "classes/kvector.h"
-#include "classes/braggpeak.h"
+#include "classes/braggreflection.h"
 #include "base/processpool.h"
 
 // Constructor
-KVector::KVector(int h, int k, int l, int peakIndex, int nAtomTypes) : MPIListItem<KVector>()
+KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) : MPIListItem<KVector>()
 {
 	hkl_.set(h, k, l);
-	braggPeakIndex_ = peakIndex;
+	braggReflectionIndex_ = reflectionIndex;
 
 	// Create atomtype contribution arrays
 	cosTerms_.initialise(nAtomTypes);
@@ -49,7 +49,7 @@ KVector::KVector(const KVector& source)
 void KVector::operator=(const KVector& source)
 {
 	hkl_ = source.hkl_;
-	braggPeakIndex_ = source.braggPeakIndex_;
+	braggReflectionIndex_ = source.braggReflectionIndex_;
 	cosTerms_ = source.cosTerms_;
 	sinTerms_ = source.sinTerms_;
 }
@@ -59,10 +59,10 @@ void KVector::operator=(const KVector& source)
  */
 
 // Initialise
-void KVector::initialise(int h, int k, int l, int peakIndex, int nAtomTypes)
+void KVector::initialise(int h, int k, int l, int reflectionIndex, int nAtomTypes)
 {
 	hkl_.set(h, k, l);
-	braggPeakIndex_ = peakIndex;
+	braggReflectionIndex_ = reflectionIndex;
 
 	// Create atomtype contribution arrays
 	cosTerms_.initialise(nAtomTypes);
@@ -93,16 +93,16 @@ int KVector::l() const
 	return hkl_.z;
 }
 
-// Set BraggPeak index 
-void KVector::setBraggPeakIndex(int index)
+// Set BraggReflection index 
+void KVector::setBraggReflectionIndex(int index)
 {
-	braggPeakIndex_ = index;
+	braggReflectionIndex_ = index;
 }
 
-// Return associated BraggPeak index
-int KVector::braggPeakIndex() const
+// Return associated BraggReflection index
+int KVector::braggReflectionIndex() const
 {
-	return braggPeakIndex_;
+	return braggReflectionIndex_;
 }
 
 // Zero cos/sin term arrays
@@ -139,27 +139,28 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 }
 
 // Calculate intensities from stored cos and sin term arrays
-void KVector::calculateIntensities(BraggPeak* peakArray)
+void KVector::calculateIntensities(BraggReflection* reflectionArray)
 {
 #ifdef CHECKS
-	if (peakArray == NULL)
+	if (reflectionArray == NULL)
 	{
-		Messenger::print("NULL_POINTER - NULL braggPeak array found in KVector::calculateIntensities().\n");
+		Messenger::print("NULL_POINTER - NULL BraggReflection array found in KVector::calculateIntensities().\n");
 		return;
 	}
 #endif
 	// Calculate final intensities from stored cos/sin terms
 	// Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
+	// Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with other objects
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
-	BraggPeak& braggPeak = peakArray[braggPeakIndex_];
-	braggPeak.addKVectors(halfSphereNorm);
+	BraggReflection& braggReflection = reflectionArray[braggReflectionIndex_];
+	braggReflection.addKVectors(halfSphereNorm);
 	for (i = 0; i<nTypes; ++i)
 	{
 		for (j = i; j < nTypes; ++j)
 		{
 			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]);
-			braggPeak.addIntensity(i, j, intensity * halfSphereNorm);
+			braggReflection.addIntensity(i, j, intensity * halfSphereNorm);
 		}
 	}
 }
@@ -189,7 +190,7 @@ bool KVector::broadcast(ProcessPool& procPool, const int root, const CoreData& c
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(hkl_, root)) return false;
-	if (!procPool.broadcast(braggPeakIndex_, root)) return false;
+	if (!procPool.broadcast(braggReflectionIndex_, root)) return false;
 	if (!procPool.broadcast(cosTerms_, root)) return false;
 	if (!procPool.broadcast(sinTerms_, root)) return false;
 #endif
@@ -201,7 +202,7 @@ bool KVector::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(hkl_)) return Messenger::error("KVector hkl value is not equivalent.\n");
-	if (!procPool.equality(braggPeakIndex_)) return Messenger::error("KVector bragg peak index is not equivalent (process %i has %i).\n", procPool.poolRank(), braggPeakIndex_);
+	if (!procPool.equality(braggReflectionIndex_)) return Messenger::error("KVector bragg reflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), braggReflectionIndex_);
 	if (!procPool.equality(cosTerms_)) return Messenger::error("KVector cos terms are not equivalent.\n");
 	if (!procPool.equality(sinTerms_)) return Messenger::error("KVector sin terms are not equivalent.\n");
 #endif

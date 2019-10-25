@@ -38,6 +38,25 @@ class GUIOutputHandler : public QObject, public OutputHandler
 	// Destructor
 	~GUIOutputHandler();
 
+
+	/*
+	 * Styling
+	 */
+	public:
+	// Set styling for warning message
+	void styleForWarning();
+	// Set styling for error message
+	void styleForError();
+	// Reset styling for normal text
+	void resetStyling();
+
+	signals:
+	void setColour(const QColor&);
+
+
+	/*
+	 * Output
+	 */
 	public:
 	// Print text
 	void outputText(const char* text);

@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libmath.la
 
-libmath_la_SOURCES = broadeningfunction.cpp
+libmath_la_SOURCES = averaging.cpp
+libmath_la_SOURCES += broadeningfunction.cpp
 libmath_la_SOURCES += cuboid.cpp
 libmath_la_SOURCES += data1d.cpp data2d.cpp data3d.cpp doubleexp.cpp
 libmath_la_SOURCES += error.cpp
@@ -15,7 +16,8 @@ libmath_la_SOURCES += transformer.cpp
 libmath_la_SOURCES += sampleddouble.cpp svd.cpp
 libmath_la_SOURCES += windowfunction.cpp
 
-noinst_HEADERS = broadeningfunction.h
+noinst_HEADERS = averaging.h
+noinst_HEADERS += broadeningfunction.h
 noinst_HEADERS += constants.h cuboid.h
 noinst_HEADERS += data1d.h data2d.h data3d.h doubleexp.h
 noinst_HEADERS += error.h
@@ -27,7 +29,7 @@ noinst_HEADERS += mathfunc.h matrix3.h matrix4.h mc.h minimiser.h
 noinst_HEADERS += pairbroadeningfunction.h plottable.h poissonfit.h praxis.h
 noinst_HEADERS += regression.h
 noinst_HEADERS += transformer.h
-noinst_HEADERS += sampleddouble.h svd.h
+noinst_HEADERS += sampleddouble.h sd.h svd.h
 noinst_HEADERS += windowfunction.h
 
 AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@

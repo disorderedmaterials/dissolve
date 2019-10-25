@@ -25,66 +25,86 @@
 #include "main/dissolve.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "classes/atomtype.h"
-#include "templates/variantpointer.h"
 #include "genericitems/listhelper.h"
+#include "templates/variantpointer.h"
 
 // Constructor
 NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<NeutronSQModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up partial g(r) graph
-
-	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
-
+	partialGRGraph_ = ui_.PartialGRPlotWidget->dataViewer();
+	// -- Set view
 	partialGRGraph_->view().setViewType(View::FlatXYView);
 	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	partialGRGraph_->view().axes().setMax(0, 10.0);
 	partialGRGraph_->view().axes().setTitle(1, "g(r)");
 	partialGRGraph_->view().axes().setMin(1, -1.0);
 	partialGRGraph_->view().axes().setMax(1, 1.0);
-	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	partialGRGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+	partialGRGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+	partialGRGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+	partialGRGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+	partialGRGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up partial S(Q) graph
-
-	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
-
+	partialSQGraph_ = ui_.PartialSQPlotWidget->dataViewer();
+	// -- Set view
 	partialSQGraph_->view().setViewType(View::FlatXYView);
 	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	partialSQGraph_->view().axes().setMax(0, 10.0);
 	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
 	partialSQGraph_->view().axes().setMin(1, -1.0);
 	partialSQGraph_->view().axes().setMax(1, 1.0);
-	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	partialSQGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+	partialSQGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+	partialSQGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+	partialSQGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+	partialSQGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up total G(r) graph
-
-	totalGRGraph_ = ui.TotalGRPlotWidget->dataViewer();
-
+	totalGRGraph_ = ui_.TotalGRPlotWidget->dataViewer();
+	// -- Set view
 	totalGRGraph_->view().setViewType(View::FlatXYView);
 	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	totalGRGraph_->view().axes().setMax(0, 10.0);
-	totalGRGraph_->view().axes().setTitle(1, "g(r)");
+	totalGRGraph_->view().axes().setTitle(1, "G(r)");
 	totalGRGraph_->view().axes().setMin(1, -1.0);
 	totalGRGraph_->view().axes().setMax(1, 1.0);
-	totalGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
+	totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
-	// Set up total S(Q) graph
-
-	totalFQGraph_ = ui.TotalSQPlotWidget->dataViewer();
-
+	// Set up total F(Q) graph
+	totalFQGraph_ = ui_.TotalSQPlotWidget->dataViewer();
+	// -- Set view
 	totalFQGraph_->view().setViewType(View::FlatXYView);
 	totalFQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	totalFQGraph_->view().axes().setMax(0, 10.0);
-	totalFQGraph_->view().axes().setTitle(1, "S(Q)");
+	totalFQGraph_->view().axes().setTitle(1, "F(Q)");
 	totalFQGraph_->view().axes().setMin(1, -1.0);
 	totalFQGraph_->view().axes().setMax(1, 1.0);
-	totalFQGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalFQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalFQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
+	totalFQGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
 	setGraphDataTargets(module_);
 
@@ -98,12 +118,15 @@ NeutronSQModuleWidget::~NeutronSQModuleWidget()
 }
 
 // Update controls within widget
-void NeutronSQModuleWidget::updateControls()
+void NeutronSQModuleWidget::updateControls(int flags)
 {
-	ui.PartialGRPlotWidget->updateToolbar();
-	ui.PartialSQPlotWidget->updateToolbar();
-	ui.TotalGRPlotWidget->updateToolbar();
-	ui.TotalSQPlotWidget->updateToolbar();
+	ui_.PartialGRPlotWidget->updateToolbar();
+	ui_.PartialSQPlotWidget->updateToolbar();
+	ui_.TotalGRPlotWidget->updateToolbar();
+	ui_.TotalSQPlotWidget->updateToolbar();
+
+	// Clear and recreate graph data targets?
+	if (flags&ModuleWidget::ResetGraphDataTargetsFlag) setGraphDataTargets(module_);
 
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
@@ -111,12 +134,12 @@ void NeutronSQModuleWidget::updateControls()
 	totalFQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void NeutronSQModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void NeutronSQModuleWidget::enableSensitiveControls()
 {
 }
@@ -156,14 +179,20 @@ bool NeutronSQModuleWidget::readState(LineParser& parser)
 // Set data targets in graphs
 void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 {
+	// Clear any current renderables
+	ui_.PartialGRPlotWidget->clearRenderableData();
+	ui_.PartialSQPlotWidget->clearRenderableData();
+	ui_.TotalGRPlotWidget->clearRenderableData();
+	ui_.TotalSQPlotWidget->clearRenderableData();
+
 	CharString blockData;
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
@@ -172,56 +201,47 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 			 */
 
 			// Full partial
-			Renderable* fullGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()), CharString("Total//%s", id.get()), id.get());
-			partialGRGraph_->groupManager().addToGroup(fullGR, id.get());
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()), "Full");
 
 			// Bound partial
-			Renderable* boundGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s-%s//Bound", module_->uniqueName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), CharString("%s Bound", id.get()));
-			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-			partialGRGraph_->groupManager().addToGroup(boundGR, id.get());
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()), "Bound");
 
 			// Unbound partial
-			Renderable* unboundGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s-%s//Unbound", module_->uniqueName(), at1->name(), at2->name()), CharString("Unbound//%s", id.get()), CharString("%s Unbound", id.get()));
-			unboundGR->lineStyle().setStipple(LineStipple::DotStipple);
-			partialGRGraph_->groupManager().addToGroup(unboundGR, id.get());
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
 
 			/*
 			 * Partial S(Q)
 			 */
 
 			// Full partial
-			Renderable* fullSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()), CharString("Total//%s", id.get()), id.get());
-			partialSQGraph_->groupManager().addToGroup(fullSQ, id.get());
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()), "Full");
 
 			// Bound partial
-			Renderable* boundSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s-%s//Bound", module_->uniqueName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), CharString("%s Bound", id.get()));
-			boundSQ->lineStyle().setStipple(LineStipple::HalfDashStipple);
-			partialSQGraph_->groupManager().addToGroup(boundSQ, id.get());
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()), "Bound");
 
 			// Unbound partial
-			Renderable* unboundSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s-%s//Unbound", module_->uniqueName(), at1->name(), at2->name()), CharString("Unbound//%s", id.get()), CharString("%s Unbound", id.get()));
-			unboundSQ->lineStyle().setStipple(LineStipple::DotStipple);
-			partialSQGraph_->groupManager().addToGroup(unboundSQ, id.get());
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
 		}
 	}
 
 	// Add calculated total G(r)
 	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated");
-	totalGRGraph_->groupManager().addToGroup(totalGR, "Calc");
+	totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
 
 	// Add calculate total F(Q)
 	Renderable* totalFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "Calculated");
-	totalFQGraph_->groupManager().addToGroup(totalFQ, "Calc");
+	totalFQGraph_->addRenderableToGroup(totalFQ, "Calculated");
 
 	// Add on reference data if present
-	if (module->keywords().find("Reference"))
+	const Data1DImportFileFormat& referenceFileAndFormat = module->referenceFQFileAndFormat();
+	if (referenceFileAndFormat.hasValidFileAndFormat())
 	{
 		// Add FT of reference data total G(r)
 		Renderable* refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "Reference");
-		totalGRGraph_->groupManager().addToGroup(refGR, "Reference");
+		totalGRGraph_->addRenderableToGroup(refGR, "Reference");
 
 		// Add calculate total F(Q)
 		Renderable* refFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "Reference");
-		totalFQGraph_->groupManager().addToGroup(refFQ, "Reference");
+		totalFQGraph_->addRenderableToGroup(refFQ, "Reference");
 	}
 }

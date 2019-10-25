@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGMODULE_H
-#define DISSOLVE_BRAGGMODULE_H
+#ifndef DISSOLVE_MODULE_BRAGG_H
+#define DISSOLVE_MODULE_BRAGG_H
 
 #include "module/module.h"
 #include "math/broadeningfunction.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/braggpeak.h"
+#include "classes/braggreflection.h"
 
 // Forward Declarations
 class PartialSet;
@@ -65,17 +65,11 @@ class BraggModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
-	private:
-	// Isotopologue references
-	List<IsotopologueReference> isotopologues_;
-
 	protected:
-	// Set up keywords for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 
 	/*
@@ -91,9 +85,11 @@ class BraggModule : public Module
 	 */
 	public:
 	// Calculate Bragg terms for specified Configuration
-	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, double braggQMin, double braggQResolution, double braggQMax, double braggMultiplicity);
-	// Calculate unweighted Bragg partials from calculated peak data
-	bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array<BraggPeak>& braggPeaks, PartialSet& partialsq, const BroadeningFunction& broadening);
+	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate);
+	// Form partial and total reflection functions from calculated reflection data
+	bool formReflectionFunctions(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax);
+	// Re-bin reflection data into supplied arrays
+	static bool reBinReflections(ProcessPool& procPool, Configuration* cfg, Array2D<Data1D>& braggPartials);
 
 
 	/*

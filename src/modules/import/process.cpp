@@ -41,10 +41,10 @@ bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item;
+		Configuration* cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -77,7 +77,7 @@ bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			{
 				case (TrajectoryImportFileFormat::XYZTrajectory):
 					if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates)) return false;
-					cfg->incrementCoordinateIndex();
+					cfg->incrementContentsVersion();
 					break;
 				default:
 					return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n", trajectoryFile_.trajectoryFormat());

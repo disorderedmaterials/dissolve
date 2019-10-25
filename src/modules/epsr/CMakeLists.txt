@@ -4,7 +4,7 @@ add_library(epsrmodule
   definition.cpp
   functions.cpp
   io.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
   epsr.h

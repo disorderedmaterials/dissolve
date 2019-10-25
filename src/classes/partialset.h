@@ -49,6 +49,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	private:
 	// AtomTypes used to generate matrices
 	AtomTypeList atomTypes_;
+	// RDF range used to initialise arrays
+	double rdfRange_;
+	// RDF bin width used to initialise arrays
+	double rdfBinWidth_;
 	// Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
 	CharString fingerprint_;
 	// Abscissa units for contained data
@@ -65,8 +69,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Array2D<Data1D> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of bound pairs
 	Array2D<Data1D> boundPartials_;
-	// Bragg matrix, derived from summation of HKL terms
-	Array2D<Data1D> braggPartials_;
 	// Bound flag matrix, specifying if bound partials are empty
 	Array2D<bool> emptyBoundPartials_;
 	// Total function
@@ -75,8 +77,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	CharString objectNamePrefix_;
 
 	public:
-	// Set up using supplied Configuration
-	bool setUp(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Set up PartialSet, including initialising histograms for g(r) use
 	bool setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Set up PartialSet without initialising histogram arrays
@@ -89,6 +89,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	int nAtomTypes() const;
 	// Return atom types list
 	const AtomTypeList& atomTypes() const;
+	// Return RDF range used to initialise arrays
+	double rdfRange() const;
+	// Return RDF bin width used to initialise arrays
+	double rdfBinWidth() const;
 	// Set new fingerprint
 	void setFingerprint(const char* fingerprint);
 	// Return fingerprint of partials
@@ -111,10 +115,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Data1D& boundPartial(int i, int j);
 	// Return atom-atom partial for bound pairs (const)
 	Data1D& constBoundPartial(int i, int j) const;
-	// Return atom-atom Bragg partial
-	Data1D& braggPartial(int i, int j);
-	// Return atom-atom Bragg partial (const)
-	Data1D& constBraggPartial(int i, int j) const;
 	// Return whether specified bound partial is empty
 	bool isBoundPartialEmpty(int i, int j) const;
 	// Sum partials into total
@@ -146,13 +146,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 
 	public:
 	// Form partials from stored Histogram data
-	void formPartials(double boxVolume, Interpolator& boxNormalisation);
+	void formPartials(double boxVolume);
 	// Add in partials from source PartialSet to our own, with specified weighting
 	bool addPartials(PartialSet& source, double weighting);
-	// Re-weight partials (including total) with supplied weighting factor
-	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation);
+	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier);
 
 
 	/*
@@ -160,7 +158,9 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	 */
 	public:
 	void operator+=(const double delta);
+	void operator+=(const PartialSet& source);
 	void operator-=(const double delta);
+	void operator*=(const double factor);
 
 
 	/*

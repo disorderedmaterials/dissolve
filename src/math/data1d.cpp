@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Data1D> RefList<Data1D,int> ObjectStore<Data1D>::objects_;
+template<class Data1D> RefDataList<Data1D,int> ObjectStore<Data1D>::objects_;
 template<class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
 template<class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
 template<class Data1D> const char* ObjectStore<Data1D>::objectTypeName_ = "Data1D";
@@ -33,6 +33,9 @@ template<class Data1D> const char* ObjectStore<Data1D>::objectTypeName_ = "Data1
 // Constructor
 Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
 {
+	static int count = 0;
+	name_ = CharString("Data1D_%i", ++count);
+
 	hasError_ = false;
 
 	clear();
@@ -454,110 +457,6 @@ void Data1D::operator/=(const double factor)
 }
 
 /*
- * File I/O
- */
-
-// Load data from specified LineParser, using columns specified
-bool Data1D::load(LineParser& parser, int xcol, int ycol)
-{
-	int success;
-	clear();
-	while (!parser.eofOrBlank())
-	{
-		success = parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments);
-		if (success != 0)
-		{
-			parser.closeFiles();
-			Messenger::error("Error reading from '%s'.\n", parser.inputFilename());
-			return false;
-		}
-
-		if ((xcol >= parser.nArgs()) || (ycol >= parser.nArgs()))
-		{
-			Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xcol+1, ycol+1);
-			return false;
-		}
-
-		addPoint(parser.argd(xcol), parser.argd(ycol));
-	}
-
-	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nValues(), parser.inputFilename(), xcol+1, ycol+1);
-
-	return true;
-}
-
-// Load data from specified file
-bool Data1D::load(const char* filename, int xcol, int ycol)
-{
-	// Open file and check that we're OK to proceed reading from it
-	LineParser parser;
-
-	if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
-	{
-		Messenger::error("Couldn't open file '%s' for reading.\n", filename);
-		return false;
-	}
-
-	bool result = load(parser, xcol, ycol);
-
-	parser.closeFiles();
-
-	return result;
-}
-
-// Load data from specified file through ProcessPool, using columns specified
-bool Data1D::load(ProcessPool& pool, const char* filename, int xcol, int ycol)
-{
-	// Open file across ProcessPool and check that we're OK to proceed reading from it
-	LineParser parser(&pool);
-
-	if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
-	{
-		Messenger::error("Couldn't open file '%s' for reading.\n", filename);
-		return false;
-	}
-
-	bool result = load(parser, xcol, ycol);
-
-	parser.closeFiles();
-
-	return result;
-}
-
-// Save data to specified file
-bool Data1D::save(const char* filename) const
-{
-	// Open file and check that we're OK to proceed writing to it
-	LineParser parser;
-
-	parser.openOutput(filename, true);
-	if (!parser.isFileGoodForWriting())
-	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
-		return false;
-	}
-
-	// Write the data
-	bool result = save(parser);
-
-	parser.closeFiles();
-
-	return result;
-}
-
-// Save data to specified file
-bool Data1D::save(LineParser& parser) const
-{
-	if (hasError_)
-	{
-		for (int n = 0; n<x_.nItems(); ++n) if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n), errors_.constAt(n))) return false;
-	}
-	else for (int n = 0; n<x_.nItems(); ++n) if (!parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n))) return false;
-
-	return true;
-}
-
-/*
  * GenericItemBase Implementations
  */
 
@@ -577,7 +476,7 @@ bool Data1D::read(LineParser& parser, const CoreData& coreData)
 	setObjectTag(parser.line());
 
 	// Read object name
-	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success) return false;
 	name_ = parser.line();
 
 	// Read number of points and whether errors are present

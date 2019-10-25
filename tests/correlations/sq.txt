@@ -19,12 +19,15 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  1000
-  SpeciesInfo  'Water'  1.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr/waterbox.ato'
-  RDFBinWidth 0.03
-  RDFRange 15.5
+  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
@@ -32,29 +35,43 @@ Layer  'Processing'
   # Calculate and test RDFs
   Module  RDF
     Configuration  'Bulk'
-    # Save  On
     Frequency  1
+    BinWidth 0.03
   EndModule
 
 # -- Partial g(r) (unbound terms)
 Module  DataTest  'Partial g(r) (unbound)'
-  Threshold  3.4
-  Data1D  'epsr/water.EPSR.g01'  'Bulk//OriginalGR//OW-OW//Unbound'  1  2
-  Data1D  'epsr/water.EPSR.g01'  'Bulk//OriginalGR//OW-HW//Unbound'  1  4
-  Data1D  'epsr/water.EPSR.g01'  'Bulk//OriginalGR//HW-HW//Unbound'  1  6
+  Threshold  0.31
+  ErrorType  RMSE
+  Data1D  'Bulk//OriginalGR//OW-OW//Unbound'  xy  'epsr/water.EPSR.g01'
+    Y  2
+  EndData1D
+  Data1D  'Bulk//OriginalGR//OW-HW//Unbound'  xy  'epsr/water.EPSR.g01'
+    Y  4
+  EndData1D
+  Data1D  'Bulk//OriginalGR//HW-HW//Unbound'  xy  'epsr/water.EPSR.g01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
-  Threshold  4.9
-  Data1D  'epsr/water.EPSR.y01'  'Bulk//OriginalGR//OW-HW//Bound'  1  4
-  Data1D  'epsr/water.EPSR.y01'  'Bulk//OriginalGR//HW-HW//Bound'  1  6
+  ErrorType  RMSE
+  Threshold  2.15
+  Data1D  'Bulk//OriginalGR//OW-HW//Bound'  xy  'epsr/water.EPSR.y01'
+    Y  4
+  EndData1D
+  Data1D  'Bulk//OriginalGR//HW-HW//Bound'  xy  'epsr/water.EPSR.y01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (zeroed bound)'
   Threshold  0.001
-  Data1D  'epsr/water.EPSR.y01'  'Bulk//OriginalGR//OW-OW//Bound'  1  2
+  Data1D  'Bulk//OriginalGR//OW-OW//Bound'  xy  'epsr/water.EPSR.y01'
+    Y  2
+  EndData1D
 EndModule
 
 Module  NeutronSQ  'D2O'
@@ -63,35 +80,53 @@ Module  NeutronSQ  'D2O'
   WindowFunction  None
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
-  # Save  On
+  SaveUnweighted  On
   Frequency  1
 EndModule
 
 # -- Partial S(Q) (unbound terms)
 Module  DataTest  'Partial S(Q) (unbound)'
-  Threshold  1.3
-  Data1D  'epsr/water.EPSR.f01'  'D2O//UnweightedSQ//OW-OW//Unbound'  1  2
-  Data1D  'epsr/water.EPSR.f01'  'D2O//UnweightedSQ//OW-HW//Unbound'  1  4
-  Data1D  'epsr/water.EPSR.f01'  'D2O//UnweightedSQ//HW-HW//Unbound'  1  6
+  ErrorType  RMSE
+  Threshold  0.25
+  Data1D  'D2O//UnweightedSQ//OW-OW//Unbound'  xy  'epsr/water.EPSR.f01'
+    Y  2
+  EndData1D
+  Data1D  'D2O//UnweightedSQ//OW-HW//Unbound'  xy  'epsr/water.EPSR.f01'
+    Y  4
+  EndData1D
+  Data1D  'D2O//UnweightedSQ//HW-HW//Unbound'  xy  'epsr/water.EPSR.f01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (bound terms)
 Module  DataTest  'Partial S(Q) (bound)'
-  Threshold  0.45
-  Data1D  'epsr/water.EPSR.s01'  'D2O//UnweightedSQ//OW-HW//Bound'  1  4
-  Data1D  'epsr/water.EPSR.s01'  'D2O//UnweightedSQ//HW-HW//Bound'  1  6
+  ErrorType  RMSE
+  Threshold  0.7
+  Data1D  'D2O//UnweightedSQ//OW-HW//Bound'  xy  'epsr/water.EPSR.s01'
+    Y  4
+  EndData1D
+  Data1D  'D2O//UnweightedSQ//HW-HW//Bound'  xy  'epsr/water.EPSR.s01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (bound terms)
 Module  DataTest  'Partial S(Q) (zeroed bound)'
+  ErrorType  RMSE
   Threshold  0.001
-  Data1D  'epsr/water.EPSR.s01'  'D2O//UnweightedSQ//OW-OW//Bound'  1  2
+  Data1D  'D2O//UnweightedSQ//OW-OW//Bound'  xy  'epsr/water.EPSR.s01'
+    Y  2
+  EndData1D
 EndModule
 
 # -- Total neutron-weighted F(Q)
 Module  DataTest  'F(Q) D2O'
-  Threshold  0.9
-  Data1D  'epsr/water.EPSR.u01'  'D2O//WeightedSQ//Total'  1  2
+  ErrorType  RMSE
+  Threshold  2.0e-3
+  Data1D  'D2O//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'
+    Y  2
+  EndData1D
 EndModule
 
 Module  NeutronSQ  'H2O'
@@ -106,8 +141,11 @@ EndModule
 
 # -- Total neutron-weighted F(Q)
 Module  DataTest  'F(Q) H2O'
-  Threshold  1.1
-  Data1D  'epsr/water.EPSR.u01'  'H2O//WeightedSQ//Total'  1  4
+  ErrorType  RMSE
+  Threshold  0.09
+  Data1D  'H2O//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'
+    Y  4
+  EndData1D
 EndModule
 
 Module  NeutronSQ  'HDO'
@@ -124,8 +162,11 @@ EndModule
 
 # -- Total neutron-weighted F(Q)
 Module  DataTest  'F(Q) HDO'
-  Threshold  0.75
-  Data1D  'epsr/water.EPSR.u01'  'HDO//WeightedSQ//Total'  1  6
+  ErrorType  RMSE
+  Threshold  0.06
+  Data1D  'HDO//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'
+    Y  6
+  EndData1D
 EndModule
 
 Module SanityCheck
@@ -137,12 +178,6 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'OW'  -0.82      0.6503    3.165492
-  Parameters  'HW'  0.41       0.0       0.0
-  GenerateAll  LJ
+  Parameters  'OW'  -0.82  LJGeometric    0.6503    3.165492
+  Parameters  'HW'  0.41   LJGeometric    0.0       0.0
 EndPairPotentials
-
-Simulation
-   RestartFileFrequency  -1
-EndSimulation
-

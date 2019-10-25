@@ -50,8 +50,8 @@ void ModuleList::clear()
 	modules_.clear();
 }
 
-// Add module to list
-bool ModuleList::add(Module* module, Module* addBeforeThis)
+// Associate module to list
+bool ModuleList::own(Module* module, Module* addBeforeThis)
 {
 	// Add the module pointer to the list
 	if (addBeforeThis)
@@ -69,11 +69,17 @@ bool ModuleList::add(Module* module, Module* addBeforeThis)
 	return true;
 }
 
-// Find associated module by name
-Module* ModuleList::find(const char* name) const
+// Remove specified Module from list (but don't delete it)
+void ModuleList::cut(Module* module)
+{
+	modules_.cut(module);
+}
+
+// Find associated Module by unique name
+Module* ModuleList::find(const char* uniqueName) const
 {
 	ListIterator<Module> moduleIterator(modules_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), name)) return module;
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }

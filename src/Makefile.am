@@ -4,11 +4,11 @@
 
 EXTRA_DIST = version.h
 
-SUBDIRS = analyse base classes data expression genericitems main math module templates
+SUBDIRS = base classes data expression genericitems io keywords main math module procedure templates
 
 noinst_LTLIBRARIES = libdissolve.la
 libdissolve_la_SOURCES = 
-libdissolve_la_LIBADD = main/libmain.la module/libmodule.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la analyse/libanalyse.la analyse/nodes/libanalysisnodes.la expression/libexpression.la genericitems/libgenericitems.la base/libbase.la math/libmath.la data/libdata.la data/ff/libff.la @MPI_LDLIBS@
+libdissolve_la_LIBADD = main/libmain.la module/libmodule.la io/libimportexport.la keywords/libkeywords.la modules/libmodules.la classes/libclasses.la procedure/libprocedure.la procedure/nodes/libprocedurenodes.la expression/libexpression.la genericitems/libgenericitems.la base/libbase.la math/libmath.la data/libdata.la data/ff/libff.la @MPI_LDLIBS@
 libdissolve_la_LDFLAGS = -static
 
 #
@@ -49,22 +49,13 @@ SUBDIRS += gui
 
 noinst_LTLIBRARIES += libdissolvegui.la
 libdissolvegui_la_SOURCES =
-libdissolvegui_la_LIBADD = libdissolve.la modules/libmodulewidgets.la gui/libgui.la gui/delegates/libdelegates.la gui/keywordwidgets/libkeywordwidgets.la gui/viewer/libviewer.la gui/viewer/render/librender.la gui/widgets/libwidgets.la libdissolve.la
+libdissolvegui_la_LIBADD = libdissolve.la modules/libmodulewidgets.la io/libimportexport.la gui/libgui.la gui/delegates/libdelegates.la gui/charts/libcharts.la gui/keywordwidgets/libkeywordwidgets.la gui/viewer/libviewer.la gui/viewer/render/librender.la gui/widgets/libwidgets.la libdissolve.la
 libdissolvegui_la_LDFLAGS = -static
 libdissolvegui_la_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 dissolve_gui_LDADD = libdissolvegui.la @GUI_LDLIBS@ @MPI_LDLIBS@
 
 dissolve_gui_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
-
-# Guide Editor
-bin_PROGRAMS += dguided
-
-dguided_SOURCES = dguided.cpp
-
-dguided_LDADD = gui/libdguided.la libdissolvegui.la @GUI_LDLIBS@ @MPI_LDLIBS@
-
-dguided_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 endif
 

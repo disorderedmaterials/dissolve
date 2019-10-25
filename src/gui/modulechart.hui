@@ -26,6 +26,7 @@
 #include "gui/modulechartmoduleblock.h"
 #include "templates/array.h"
 #include "templates/list.h"
+#include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <QWidget>
 
@@ -124,26 +125,26 @@ class ModuleChart : public QWidget
 	// Parent Configuration (if we are local to one)
 	Configuration* localConfiguration_;
 	// Module widgets for Modules in target ModuleList
-	RefList<ModuleChartModuleBlock,bool> moduleWidgets_;
+	RefList<ModuleChartModuleBlock> moduleWidgets_;
 	// Insertion point widget
 	ModuleChartInsertionBlock* insertionWidget_;
 	// List of block widgets to display, in order, in the chart
-	RefList<ModuleChartBlock,ModuleChartModuleBlock*> displayBlocks_;
+	RefDataList<ModuleChartBlock,ModuleChartModuleBlock*> displayBlocks_;
 
 	private:
 	// Recreate list of widgets for display, reflecting current state of widget (e.g. drag/drop etc.)
 	void recreateDisplayWidgets();
 	// Find ModuleChartModuleBlock displaying specified Module
-	RefListItem<ModuleChartModuleBlock,bool>* moduleChartModuleBlockReference(Module* module);
+	RefListItem<ModuleChartModuleBlock>* moduleChartModuleBlockReference(Module* module);
 	// Return the ModuleChartModuleBlock clicked on its header at the specified position (if any)
 	ModuleChartModuleBlock* moduleChartModuleBlockHeaderAt(QPoint pos);
 
 	public:
 	// Update controls within widget
 	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
 
@@ -181,6 +182,14 @@ class ModuleChart : public QWidget
 	public slots:
 	// Recalculate layout (after widget size change etc.)
 	void recalculateLayout();
+
+
+	/*
+	 * Module Management
+	 */
+	private slots:
+	// Remove Module with specified uniqueName
+	void removeModule(QString uniqueName);
 
 
 	/*

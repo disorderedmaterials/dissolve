@@ -26,10 +26,10 @@
  */
 
 // Constructor
-AnalyseModule::AnalyseModule() : Module()
+AnalyseModule::AnalyseModule() : Module(), analyser_(ProcedureNode::AnalysisContext, "EndAnalyser")
 {
-	// Set up variables / control parameters
-	setUpKeywords();
+	// Initialise Module - set up keywords etc.
+	initialise();
 }
 
 // Destructor

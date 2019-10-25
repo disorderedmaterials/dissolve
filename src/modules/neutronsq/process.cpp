@@ -28,7 +28,9 @@
 #include "classes/weights.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "io/export/data1d.h"
 #include "modules/import/import.h"
+#include "modules/bragg/bragg.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "genericitems/listhelper.h"
@@ -43,9 +45,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		// Load the data
 		Data1D referenceData;
-		LineParser parser(&procPool);
-		if (!parser.openInput(referenceFQ_.filename())) return 0;
-		if (!ImportModule::readData1D(referenceFQ_.data1DFormat(), parser, referenceData))
+		if (!referenceFQ_.importData(referenceData, &procPool))
 		{
 			Messenger::error("Failed to load reference data '%s'.\n", referenceFQ_.filename());
 			return false;
@@ -63,16 +63,8 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Removed first point from supplied reference data - new Qmin = %e Angstroms**-1.\n", referenceData.constXAxis().firstValue());
 		}
 
-		// Subtract average level from data?
-		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
-		if (removeAverage >= 0.0)
-		{
-			double level = Filters::subtractAverage(referenceData, removeAverage);
-			Messenger::print("NeutronSQ: Removed average level of %f from reference data, forming average over x >= %f.\n", level, removeAverage);
-		}
-
 		// Remove normalisation factor from data
-		NeutronSQModule::NormalisationType normType = NeutronSQModule::normalisationType(keywords_.asString("ReferenceNormalisation"));
+		NeutronSQModule::NormalisationType normType = keywords_.enumeration<NeutronSQModule::NormalisationType>("ReferenceNormalisation");
 		if (normType != NeutronSQModule::NoNormalisation)
 		{
 			// We need the summed Weights in order to do the normalisation
@@ -110,10 +102,17 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
 		// Save data?
-		if (keywords_.asBool("SaveReferenceData"))
+		if (keywords_.asBool("SaveReference"))
 		{
-			if (!storedData.save(CharString("%s-ReferenceData.q", uniqueName()))) return false;
-			if (!storedDataFT.save(CharString("%s-ReferenceData.r", uniqueName()))) return false;
+			if (procPool.isMaster())
+			{
+				Data1DExportFileFormat exportFormat(CharString("%s-ReferenceData.q", uniqueName()));
+				if (!exportFormat.exportData(storedData)) return procPool.decideFalse();
+				Data1DExportFileFormat exportFormatFT(CharString("%s-ReferenceData.r", uniqueName()));
+				if (!exportFormatFT.exportData(storedDataFT)) return procPool.decideFalse();
+				procPool.decideTrue();
+			}
+			else if (!procPool.decision()) return false;
 		}
 	}
 
@@ -139,16 +138,17 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	CharString varName;
 
-	NeutronSQModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
-	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("NeutronSQ: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
-	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
+	const bool includeBragg = keywords_.asBool("IncludeBragg");
+	const BroadeningFunction& braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
+	NeutronSQModule::NormalisationType normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
+	const BroadeningFunction& qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMin = keywords_.asDouble("QMin");
 	double qMax = keywords_.asDouble("QMax");
 	if (qMax < 0.0) qMax = 30.0;
 	const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
 	const bool saveWeighted = keywords_.asBool("SaveWeighted");
-	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
+	const WindowFunction& windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
 	Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
@@ -161,6 +161,12 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
 	if (saveUnweighted) Messenger::print("NeutronSQ: Unweighted partials and totals will be saved.\n");
 	if (saveWeighted) Messenger::print("NeutronSQ: Weighted partials and totals will be saved.\n");
+	if (includeBragg)
+	{
+		Messenger::print("NeutronSQ: Bragg scattering will be calculated from reflection data in target Configurations, if present.\n");
+		if (braggQBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No additional broadening will be applied to calculated Bragg S(Q).");
+		else Messenger::print("NeutronSQ: Additional broadening to be applied in calculated Bragg S(Q) is %s (%s).", BroadeningFunction::functionType(braggQBroadening.function()), braggQBroadening.parameterSummary().get());
+	}
 	Messenger::print("\n");
 
 
@@ -170,7 +176,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	bool created;
 
-	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
@@ -186,7 +192,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Is the PartialSet already up-to-date? Do we force its calculation anyway?
 		bool& forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
-		if ((!forceCalculation) && DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->moduleData().version("UnweightedGR"))))
+		const bool sqUpToDate = DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i/%i", cfg->moduleData().version("UnweightedGR"), includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
+		if ((!forceCalculation) && sqUpToDate)
 		{
 			Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
@@ -196,14 +203,98 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Transform g(r) into S(Q)
 		if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
 
+		// Include Bragg scattering?
+		if (includeBragg)
+		{
+			// Check if reflection data is present
+			if (!cfg->moduleData().contains("BraggReflections")) return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' contains no reflection data.\n", cfg->name());
+			const Array<BraggReflection>& braggReflections = GenericListHelper< Array<BraggReflection> >::value(cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
+			const int nReflections = braggReflections.nItems();
+			const double braggQMax = braggReflections.constAt(nReflections-1).q();
+			Messenger::print("Found BraggReflections data for Configuration '%s' (nReflections = %i, QMax = %f Angstroms**-1).\n", cfg->name(), nReflections, braggQMax);
+
+			// Create a temporary array into which our broadened Bragg partials will be placed
+			Array2D< Data1D >& braggPartials = GenericListHelper< Array2D< Data1D > >::realise(cfg->moduleData(), "BraggPartials", uniqueName(), GenericItem::NoFlag, &created);
+			if (created)
+			{
+				// Initialise the array
+				braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+
+				for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+				{
+					for (int j=i; j<unweightedsq.nAtomTypes(); ++j) braggPartials.at(i,j) = unweightedsq.constPartial(0,0);
+				}
+			}
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) braggPartials.at(i,j).values() = 0.0;
+			}
+
+			// First, re-bin the reflection data into the arrays we have just set up
+			if (!BraggModule::reBinReflections(procPool, cfg, braggPartials)) return false;
+
+			// Apply necessary broadening
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
+				{
+					// Bragg-specific broadening
+					Filters::convolve(braggPartials.at(i,j), braggQBroadening, true);
+
+					// Local 'QBroadening' term
+					Filters::convolve(braggPartials.at(i,j), qBroadening, true);
+				}
+			}
+
+			// Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
+				{
+					// Subtract self-scattering level if types are equivalent
+					if (i == j) braggPartials.at(i,i) -= cfg->usedAtomTypeData(i)->fraction();
+
+					// Remove atomic fraction normalisation
+					braggPartials.at(i,j) /= cfg->usedAtomTypeData(i)->fraction()*cfg->usedAtomTypeData(j)->fraction();
+				}
+			}
+
+			// Blend the bound/unbound and Bragg partials at the higher Q limit
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
+				{
+					// Note: Intramolecular broadening will not be applied to bound terms within the calculated Bragg scattering
+					Data1D& bound = unweightedsq.boundPartial(i,j);
+					Data1D& unbound = unweightedsq.unboundPartial(i,j);
+					Data1D& partial = unweightedsq.partial(i,j);
+					Data1D& bragg = braggPartials.at(i,j);
+
+					for (int n=0; n<bound.nValues(); ++n)
+					{
+						const double q = bound.xAxis(n);
+						if (q <= braggQMax)
+						{
+							bound.value(n) = 0.0;
+							unbound.value(n) = bragg.value(n);
+							partial.value(n) = bragg.value(n);
+						}
+					}
+				}
+			}
+
+			// Re-form the total function
+			unweightedsq.formTotal(true);
+		}
+
 		// Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
 		unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
-		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
+		unweightedsq.setFingerprint(CharString("%i/%i", cfg->moduleData().version("UnweightedGR"), includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
 
 		// Save data if requested
 		if (saveUnweighted && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
-		// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
+		// Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the Configuration
 		Weights weights;
 		ListIterator<IsotopologueReference> refIterator(isotopologues_);
 		while (IsotopologueReference* ref = refIterator.iterate())
@@ -213,18 +304,20 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Find the referenced Species in our SpeciesInfo list
 			SpeciesInfo* spInfo = cfg->usedSpeciesInfo(ref->species());
-			int speciesPopulation = spInfo->population() * cfg->multiplier();
+			if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", ref->species()->name(), cfg->niceName());
 
 			// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-			weights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
+			weights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
 		}
 
 		// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(spInfo->species())) 
 		{
-			Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", spInfo->species()->name(), cfg->name());
-			return false;
+			Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing - natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
+
+			Species* sp = spInfo->species();
+			weights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
 		}
 
 		// Create, print, and store weights

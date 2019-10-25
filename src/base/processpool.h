@@ -370,15 +370,15 @@ class ProcessPool
 	// Check equality of long int array across involved processes
 	bool equality(long int* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<int> across involved processes
-	bool equality(Array<int> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array<int>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<double> across involved processes
-	bool equality(Array<double> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array<double>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<int> across involved processes
-	bool equality(Array2D<int> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array2D<int>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<double> across involved processes
-	bool equality(Array2D<double> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array2D<double>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<bool> across involved processes
-	bool equality(Array2D<bool> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array2D<bool>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 
 	/*

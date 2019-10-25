@@ -3,13 +3,15 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DISSOLVE_VERSION],[0.4.3])
+m4_define([DISSOLVE_VERSION],[0.4.4])
 AC_INIT([dissolve], DISSOLVE_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE
+
+# Initialise automake with the 'foreign' argument to stop it complaining about the lack of ChangeLog etc.
+AM_INIT_AUTOMAKE([foreign])
 
 
 # Set initial variable values
@@ -81,7 +83,7 @@ if test "$with_gui" = "yes"; then
 
   # Update CFLAGS, includes etc.
   GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS $QTPRINT_LIBS $FTGL_LIBS $FREETYPE_LIBS -lGL"
-  GUI_CFLAGS="-fPIC -std=c++11"
+  GUI_CFLAGS="-fPIC"
   GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTOPENGL_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
 
@@ -117,7 +119,7 @@ AC_SUBST(BUILDDIR)
 AC_SUBST(INSTALLDIR)
 VERSION=DISSOLVE_VERSION
 AC_SUBST(VERSION)
-DISSOLVE_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
+DISSOLVE_CFLAGS="-std=c++11 $PARALLEL_CFLAGS $CHECK_CFLAGS"
 AC_SUBST(DISSOLVE_CFLAGS)
 AC_SUBST(QTMOC)
 AC_SUBST(QTUIC)
@@ -143,25 +145,27 @@ AC_CHECK_FUNCS([floor pow select sqrt strchr strrchr strstr])
 # Define Makefiles in AC_OUTPUT 
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(src/Makefile)
-AC_CONFIG_FILES(src/analyse/Makefile)
-AC_CONFIG_FILES(src/analyse/nodes/Makefile)
 AC_CONFIG_FILES(src/base/Makefile)
 AC_CONFIG_FILES(src/classes/Makefile)
 AC_CONFIG_FILES(src/data/Makefile)
 AC_CONFIG_FILES(src/data/ff/Makefile)
+AC_CONFIG_FILES(src/data/sg/Makefile)
 AC_CONFIG_FILES(src/expression/Makefile)
+AC_CONFIG_FILES(src/genericitems/Makefile)
+AC_CONFIG_FILES(src/io/Makefile)
+AC_CONFIG_FILES(src/io/export/Makefile)
+AC_CONFIG_FILES(src/io/import/Makefile)
+AC_CONFIG_FILES(src/keywords/Makefile)
 AC_CONFIG_FILES(src/main/Makefile)
 AC_CONFIG_FILES(src/math/Makefile)
 AC_CONFIG_FILES(src/module/Makefile)
-AC_CONFIG_FILES(src/module/keywordtypes/Makefile)
 AC_CONFIG_FILES(src/modules/Makefile)
 AC_CONFIG_FILES(src/modules/analyse/Makefile)
 AC_CONFIG_FILES(src/modules/atomshake/Makefile)
 AC_CONFIG_FILES(src/modules/bragg/Makefile)
-AC_CONFIG_FILES(src/modules/calculate/Makefile)
-AC_CONFIG_FILES(src/modules/calculate/rdf/Makefile)
-AC_CONFIG_FILES(src/modules/calculate/dangle/Makefile)
-AC_CONFIG_FILES(src/modules/calibrate/Makefile)
+AC_CONFIG_FILES(src/modules/calculate_dangle/Makefile)
+AC_CONFIG_FILES(src/modules/calculate_rdf/Makefile)
+AC_CONFIG_FILES(src/modules/calibration/Makefile)
 AC_CONFIG_FILES(src/modules/checks/Makefile)
 AC_CONFIG_FILES(src/modules/datatest/Makefile)
 AC_CONFIG_FILES(src/modules/energy/Makefile)
@@ -180,11 +184,14 @@ AC_CONFIG_FILES(src/modules/sanitycheck/Makefile)
 AC_CONFIG_FILES(src/modules/skeleton/Makefile)
 AC_CONFIG_FILES(src/modules/sq/Makefile)
 AC_CONFIG_FILES(src/modules/test/Makefile)
-AC_CONFIG_FILES(src/genericitems/Makefile)
+AC_CONFIG_FILES(src/procedure/Makefile)
+AC_CONFIG_FILES(src/procedure/nodes/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
+  AC_CONFIG_FILES(src/gui/charts/Makefile)
   AC_CONFIG_FILES(src/gui/delegates/Makefile)
+  AC_CONFIG_FILES(src/gui/helpers/Makefile)
   AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
   AC_CONFIG_FILES(src/gui/viewer/Makefile)
   AC_CONFIG_FILES(src/gui/viewer/render/Makefile)
@@ -192,9 +199,9 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/modules/analyse/gui/Makefile)
   AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
   AC_CONFIG_FILES(src/modules/bragg/gui/Makefile)
-  AC_CONFIG_FILES(src/modules/calculate/rdf/gui/Makefile)
-  AC_CONFIG_FILES(src/modules/calculate/dangle/gui/Makefile)
-  AC_CONFIG_FILES(src/modules/calibrate/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/calculate_dangle/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/calculate_rdf/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/calibration/gui/Makefile)
   AC_CONFIG_FILES(src/modules/datatest/gui/Makefile)
   AC_CONFIG_FILES(src/modules/energy/gui/Makefile)
   AC_CONFIG_FILES(src/modules/epsr/gui/Makefile)

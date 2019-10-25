@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_atomtypeselection.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/atomtypeselection.h"
+#include "keywords/atomtypeselection.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -38,7 +38,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 
 	public:
 	// Constructor
-	AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	AtomTypeSelectionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::AtomTypeSelectionWidget ui;
 
@@ -48,7 +48,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	 */
 	private:
 	// Associated keyword
-	AtomTypeSelectionModuleKeyword* keyword_;
+	AtomTypeSelectionKeyword* keyword_;
 
 
 	/*
@@ -64,14 +64,14 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

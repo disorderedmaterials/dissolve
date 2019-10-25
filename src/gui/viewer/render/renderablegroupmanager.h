@@ -55,6 +55,8 @@ class RenderableGroupManager
 	RenderableGroup* group(const char* name);
 	// Return group for specified Renderable, if one has been assigned
 	RenderableGroup* group(Renderable* renderable);
+	// Return current RenderableGroups in use
+	const List<RenderableGroup>& groups() const;
 	// Remove Renderable from its specified group
 	void removeFromGroup(Renderable* renderable);
 	// Empty all groups of Renderables
@@ -62,11 +64,29 @@ class RenderableGroupManager
 
 
 	/*
-	 * Properties
+	 * Colouring
 	 */
 	public:
-	// Vertical shifts enum
-	enum VerticalShift
+	// Set colouring style for named group
+	void setGroupColouring(const char* groupName, RenderableGroup::GroupColouring colouringStyle);
+	// Set fixed colour for named group
+	void setGroupFixedColour(const char* groupName, StockColours::StockColour stockColour);
+
+
+	/*
+	 * Line Styling
+	 */
+	public:
+	// Line stipple to use for group
+	void setGroupStipple(const char* groupName, LineStipple::StippleType stipple);
+
+
+	/*
+	 * Vertical Shifting
+	 */
+	public:
+	// Vertical Shift Amounts
+	enum VerticalShiftAmount
 	{
 		NoVerticalShift,
 		HalfVerticalShift,
@@ -77,21 +97,21 @@ class RenderableGroupManager
 
 	private:
 	// Current vertical shift delta index being applied to groups
-	VerticalShift verticalShift_;
+	VerticalShiftAmount verticalShiftAmount_;
 
 	private:
 	// Set vertical shifts for current RenderableGroups
 	void setRenderableGroupShifts();
 
 	public:
-	// Return colour definition for specified Renderable
-	const ColourDefinition& colourDefinition(Renderable* renderable) const;
-	// Cycle vertical shift applied to RenderableGroups
-	void cycleVerticalShifts();
-	// Set vertical shift applied to RenderableGroups
-	void setVerticalShift(VerticalShift shiftType);
-	// Return current vertical shift type
-	VerticalShift verticalShift() const;
+	// Set vertical shifting style for named group
+	void setGroupVerticalShifting(const char* groupName, RenderableGroup::VerticalShiftStyle shiftStyle);
+	// Cycle vertical shift amount applied to RenderableGroups
+	void cycleVerticalShiftAmount();
+	// Set vertical shift amount applied to RenderableGroups
+	void setVerticalShiftAmount(VerticalShiftAmount shiftAmount);
+	// Return current vertical shift amount
+	VerticalShiftAmount verticalShiftAmount() const;
 	// Remove all vertical shifts from RenderableGroups
 	void removeVerticalShifts();
 };

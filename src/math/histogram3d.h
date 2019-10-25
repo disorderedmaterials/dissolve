@@ -123,10 +123,10 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	double zBinWidth() const;
 	// Return number of z bins
 	int nZBins() const;
-	// Bin specified value
-	void bin(double x, double y, double z);
-	// Bin specified value (as Vec3)
-	void bin(Vec3<double> v);
+	// Bin specified value, returning success
+	bool bin(double x, double y, double z);
+	// Bin specified value (as Vec3), returning success
+	bool bin(Vec3<double> v);
 	// Return number of values binned over all bins
 	long int nBinned() const;
 	// Accumulate current histogram bins into averages

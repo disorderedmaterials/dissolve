@@ -31,16 +31,16 @@ SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : Mo
 }
 
 // Update controls within widget
-void SkeletonModuleWidget::updateControls()
+void SkeletonModuleWidget::updateControls(int flags)
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void SkeletonModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void SkeletonModuleWidget::enableSensitiveControls()
 {
 }

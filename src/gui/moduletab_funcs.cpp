@@ -30,7 +30,7 @@
 // Constructor / Destructor
 ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	controlsWidget_ = NULL;
 	moduleWidget_ = NULL;
@@ -54,13 +54,13 @@ ModuleTab::~ModuleTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ModuleTab::tabType() const
+MainTab::TabType ModuleTab::type() const
 {
-	return "ModuleTab";
+	return MainTab::ModuleTabType;
 }
 
 /*
@@ -92,6 +92,8 @@ void ModuleTab::initialiseControls(Module* module)
 	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
 	controlsWidget_->setSettingsExpanded(true, true);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	controlsWidget_->hideRemoveButton();
+	controlsWidget_->hideSettingsButton();
 	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module
@@ -102,10 +104,10 @@ void ModuleTab::initialiseControls(Module* module)
 		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		splitter_->addWidget(moduleWidget_);
 		splitter_->setStretchFactor(1, 5);
-
-		// Connect signals/slots between the controlsWidget_ and the moduleWidget_
-		connect(controlsWidget_, SIGNAL(moduleRun()), this, SLOT(updateModuleWidget()));
 	}
+
+	// Connect signals/slots
+	connect(controlsWidget_, SIGNAL(updateModuleWidget(int)), this, SLOT(updateModuleWidget(int)));
 }
 
 /*
@@ -125,7 +127,7 @@ void ModuleTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ModuleTab::disableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
@@ -133,7 +135,7 @@ void ModuleTab::disableSensitiveControls()
 	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ModuleTab::enableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->enableSensitiveControls();
@@ -142,9 +144,9 @@ void ModuleTab::enableSensitiveControls()
 }
 
 // Update controls in module widget only
-void ModuleTab::updateModuleWidget()
+void ModuleTab::updateModuleWidget(int flags)
 {
-	if (moduleWidget_) moduleWidget_->updateControls();
+	if (moduleWidget_) moduleWidget_->updateControls(flags);
 }
 
 /*

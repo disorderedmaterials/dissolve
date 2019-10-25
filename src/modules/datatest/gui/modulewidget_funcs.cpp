@@ -31,16 +31,16 @@ DataTestModuleWidget::DataTestModuleWidget(QWidget* parent, Module* module) : Mo
 }
 
 // Update controls within widget
-void DataTestModuleWidget::updateControls()
+void DataTestModuleWidget::updateControls(int flags)
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void DataTestModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void DataTestModuleWidget::enableSensitiveControls()
 {
 }

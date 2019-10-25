@@ -2,3 +2,73 @@
 
 $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe ui", arial, sans-serif;
 // $mono-font-family: "SFMono-Regular", Menlo, Consolas, Monospace;
+
+// Centred image
+.img-centre {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Right-aligned button
+.btn.right {
+  float: right;
+}
+
+/*
+ * Blockquote Basic Style
+ */
+
+blockquote {
+  width: 60%;
+  margin: 50px auto;
+  color: #555555;
+  padding-left: 50px;
+  padding-top: 15px;
+  padding-bottom: 1px;
+  border-left: 8px solid #ddd ;
+  line-height: 1.6;
+  position: relative;
+  background: #f9f9f9;
+}
+
+blockquote::before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  color: #ddd;
+  left: 15px;
+  top: 12px;
+  background-repeat: no-repeat;
+}
+
+blockquote::after {
+  content: '';
+}
+
+blockquote strong {
+  display: block;
+  color: #333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+/*
+ * Blockquote Specific Stylings
+ */
+
+blockquote.tip {
+  border-left: 8px solid #78C0A8;
+}
+blockquote.tip::before {
+  background-image: url(blocktip.svg);
+}
+
+blockquote.warn {
+  border-left: 8px solid #fb9a49;
+}
+blockquote.warn::before {
+  background-image: url(blockwarn.svg);
+}

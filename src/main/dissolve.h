@@ -29,7 +29,6 @@
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
-#include "classes/masterintra.h"
 
 // Forward Declarations
 class Atom;
@@ -56,22 +55,16 @@ class Dissolve
 	private:
 	// Reference to CoreData 
 	CoreData& coreData_;
-	// Whether we are set up, ready for simulation
-	bool setUp_;
 
 	public:
 	// Return reference to CoreData
-	const CoreData& coreData() const;
+	CoreData& coreData();
+	// Return const reference to CoreData
+	const CoreData& constCoreData() const;
 	// Clear all data
 	void clear();
 	// Register GenericItems
 	void registerGenericItems();
-	// Set up everything needed to run the simulation
-	bool setUp();
-	// Flag that the set up is no longer valid and should be done again
-	void invalidateSetUp();
-	// Return whether the simulation has been set up
-	bool isSetUp() const;
 
 
 	/*
@@ -94,51 +87,18 @@ class Dissolve
 
 
 	/*
-	 * Master Terms for Species
+	 * Master Terms
+	 * (Exposes lists in coreData_)
 	 */
-	private:
-	// List of master Bond parameters for Species
-	List<MasterIntra> masterBonds_;
-	// List of master Angles parameters for Species
-	List<MasterIntra> masterAngles_;
-	// List of master Torsions parameters for Species
-	List<MasterIntra> masterTorsions_;
-
 	public:
-	// Add new master Bond parameters
-	MasterIntra* addMasterBond(const char* name);
-	// Return number of master Bond parameters in list
-	int nMasterBonds() const;
 	// Return list of master Bond parameters
 	const List<MasterIntra>& masterBonds() const;
-	// Return nth master Bond 
-	MasterIntra* masterBond(int n);
-	// Return whether named master Bond parameters exist
-	MasterIntra* hasMasterBond(const char* name) const;
-	// Add new master Angle parameters
-	MasterIntra* addMasterAngle(const char* name);
-	// Return number of master Angles parameters in list
-	int nMasterAngles() const;
 	// Return list of master Angle parameters
 	const List<MasterIntra>& masterAngles() const;
-	// Return nth master Angle parameters
-	MasterIntra* masterAngle(int n);
-	// Return whether named master Angle parameters exist
-	MasterIntra* hasMasterAngle(const char* name) const;
-	// Add new master Torsion parameters
-	MasterIntra* addMasterTorsion(const char* name);
-	// Return number of master Torsions parameters in list
-	int nMasterTorsions() const;
 	// Return list of master Torsion parameters
 	const List<MasterIntra>& masterTorsions() const;
-	// Return nth master Torsion parameters
-	MasterIntra* masterTorsion(int n);
-	// Return whether named master Torsion parameters exist
-	MasterIntra* hasMasterTorsion(const char* name) const;
-	// Return the named master term (of any form) if it exists
-	MasterIntra* findMasterTerm(const char* name) const;
-	// Clear all MasterTerms
-	void clearMasterTerms();
+	// Check and print MasterTerm usage
+	void checkMasterTermUsage() const;
 
 
 	/*
@@ -158,10 +118,6 @@ class Dissolve
 	Species* species(int n);
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
-	// Update Species (or all) Isotopologues (or specified)
-	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
-	// Remove Isotopologue from Species
-	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
 	// Copy AtomType, creating a new one if necessary
 	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
@@ -184,6 +140,8 @@ class Dissolve
 	bool pairPotentialsIncludeCoulomb_;
 	// Simulation PairPotentials
 	List<PairPotential> pairPotentials_;
+	// Version of AtomTypes at which PairPotential were last generated
+	int pairPotentialAtomTypeVersion_;
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
 
@@ -218,12 +176,10 @@ class Dissolve
 	PairPotential* pairPotential(const char* at1, const char* at2) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
-	// Regenerate all PairPotentials, replacing those currently defined
-	void regeneratePairPotentials(PairPotential::ShortRangeType srType);
-	// Update all currently-defined PairPotentials
-	void updateCurrentPairPotentials();
-	// Generate any missing PairPotentials using the supplied short-range form
-	bool generateMissingPairPotentials(PairPotential::ShortRangeType srType);
+	// Clear and regenerate all PairPotentials, replacing those currently defined
+	void regeneratePairPotentials();
+	// Generate all necessary PairPotentials, adding missing terms where necessary
+	bool generatePairPotentials(AtomType* onlyInvolving = NULL);
 
 
 	/*
@@ -235,6 +191,8 @@ class Dissolve
 	Configuration* addConfiguration();
 	// Own the specified Configuration
 	bool ownConfiguration(Configuration* cfg);
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list
@@ -256,7 +214,7 @@ class Dissolve
 	 */
 	private:
 	// List of all instances of all used Modules
-	RefList<Module,bool> moduleInstances_;
+	RefList<Module> moduleInstances_;
 	// List of master Module instances
 	List<Module> masterModules_;
 
@@ -273,8 +231,14 @@ class Dissolve
 	Module* findMasterModule(const char* moduleType) const;
 	// Create a Module instance for the named Module type
 	Module* createModuleInstance(const char* moduleType);
-	// Search for any instance of any module with the specified unique name
+	// Create a Module instance for the named Module type, and add it to the specified layer
+	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer);
+	// Search for any instance of any Module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
+	// Search for any instance of any Module with the specified Module type
+	RefList<Module> findModuleInstances(const char* moduleType);
+	// Delete specified Module instance
+	bool deleteModuleInstance(Module* instance);
 
 
 	/*
@@ -289,6 +253,8 @@ class Dissolve
 	public:
 	// Add new processing layer
 	ModuleLayer* addProcessingLayer();
+	// Remove specified processing layer
+	void removeProcessingLayer(ModuleLayer* layer);
 	// Find named processing layer
 	ModuleLayer* findProcessingLayer(const char* name) const;
 	// Own the specified processing layer
@@ -309,8 +275,6 @@ class Dissolve
 	 * Simulation
 	 */
 	private:
-	// Number of test points to use when calculating Box normalisation arrays
-	int nBoxNormalisationPoints_;
 	// Random seed
 	int seed_;
 	// Frequency at which to write restart file
@@ -333,10 +297,12 @@ class Dissolve
 	void setSeed(int seed);
 	// Return random seed
 	int seed() const;
-	// Set frequency with which to write various iteration data
+	// Set frequency with which to write various iteration data	
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
+	// Prepare for main simulation
+	bool prepare();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
 	// Return current simulation step
@@ -346,27 +312,27 @@ class Dissolve
 
 
 	/*
-	 * Setup
-	 */
-	public:
-	// Set up all simulation data, checking it as we go
-	bool setUpSimulation();
-
-
-	/*
 	 * I/O
 	 */
-	private:
+	private:  
 	// Filename of current input file
 	CharString inputFilename_;
 	// Filename of current restart file
 	CharString restartFilename_;
 	// Accumulated timing information for saving restart file
 	SampledDouble saveRestartTimes_;
+	// Check if heartbeat file needs to be written or not
+	bool writeHeartBeat_;
 
+	private:
+	// Load input file through supplied parser
+	bool loadInput(LineParser& parser);
+	
 	public:
 	// Load input file
 	bool loadInput(const char* filename);
+	// Load input from supplied string
+	bool loadInputFromString(const char* inputString);
 	// Save input file
 	bool saveInput(const char* filename);
 	// Load restart file
@@ -375,6 +341,10 @@ class Dissolve
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
 	bool saveHeartBeat(const char* filename, double estimatedNSecs);
+	// Set bool for heartbeat file to be written
+	void setWriteHeartBeat(bool b);
+	// write heartbeat file
+	bool writeHeartBeat() const;
 	// Return whether an input filename has been set
 	bool hasInputFilename() const;
 	// Set current input filenamea
@@ -387,6 +357,18 @@ class Dissolve
 	const char* restartFilename() const;
 	// Return whether a restart filename has been set
 	bool hasRestartFilename() const;
+
+
+	/*
+	 * Object Management
+	 */
+	public:
+	// Remove all references to the specified Configuration
+	void removeReferencesTo(Configuration* cfg);
+	// Remove all references to the specified Module
+	void removeReferencesTo(Module* module);
+	// Remove all references to the specified Species
+	void removeReferencesTo(Species* sp);
 
 
 	/*

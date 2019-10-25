@@ -132,11 +132,18 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Liquid'
-  CellLengths  30.769064857500   46.153597286200  30.769064857500
-  Multiplier  1
-  SpeciesInfo  'Hexane'  1.0
+  Generator
+    Box
+      Lengths  30.769064857500  46.153597286200  30.769064857500
+    EndBox
+    AddSpecies
+      Population  1
+      Species  'Hexane'
+      ScaleBox  False
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  dlpoly  'dlpoly_one/CONFIG'
-  RDFBinWidth 0.03
+  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
@@ -152,6 +159,7 @@ Module Forces
   Test  On
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly_one/REVCON'
+  EndTestReference
   TestThreshold  0.50
 EndModule
 
@@ -164,14 +172,8 @@ EndLayer
 PairPotentials
   Range  12.000000
   Delta  0.01000
-  Parameters  'CT'   0.0       0.276144      3.500000  
-  Parameters  'HC'   0.0       0.125520      2.500000 
-  GenerateAll  'LJGeometric'
+  Parameters  'CT'   0.0       LJGeometric  0.276144      3.500000  
+  Parameters  'HC'   0.0       LJGeometric  0.125520      2.500000 
   IncludeCoulomb  False
   CoulombTruncation  None
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
-

@@ -22,8 +22,11 @@
 #ifndef DISSOLVE_KEYWORDS_H
 #define DISSOLVE_KEYWORDS_H
 
+#include "base/enumoptions.h"
+
 // Forward Declarations
 class LineParser;
+class CoreData;
 class Dissolve;
 class Sample;
 class Configuration;
@@ -35,26 +38,11 @@ class Data;
 class SpeciesInfo;
 class SpeciesSite;
 
-// Keyword Data
-class KeywordData
-{
-	public:
-	// Keyword name
-	const char* name;
-	// Number of arguments expected by keyword
-	int nArguments;
-	// Argument description
-	const char* argumentDescription;
-};
-
 /*
  * Block Keywords
  */
 namespace BlockKeywords
 {
-	/*
-	 * Block Keywords
-	 */
 	// Block Keyword Enum
 	enum BlockKeyword
 	{
@@ -66,15 +54,10 @@ namespace BlockKeywords
 		SimulationBlockKeyword,			/* 'Simulation' - Setting of simulation variables affecting the calculation */
 		SiteBlockKeyword,			/* 'Site' - Defines an analysis site within a Species */
 		SpeciesBlockKeyword,			/* 'Species' - Begins a definition of a Species */
-		SpeciesInfoBlockKeyword,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
 		nBlockKeywords				/* Number of defined BlockKeyword keywords */
 	};
-	// Convert text string to BlockKeyword
-	BlockKeyword blockKeyword(const char* s);
-	// Convert BlockKeyword to text string
-	const char* blockKeyword(BlockKeyword id);
-	// Print list of valid keywords for the block specified
-	void printValidKeywords(BlockKeyword block);
+	// Return enum option info for BlockKeyword
+	EnumOptions<BlockKeywords::BlockKeyword> keywords();
 };
 
 
@@ -86,32 +69,17 @@ namespace ConfigurationBlock
 	// Configuration Block Keyword Enum
 	enum ConfigurationKeyword
 	{
-		BoxNormalisationFileKeyword,	/* 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
-		BraggMultiplicityKeyword,	/* 'BraggMultiplicity' - Multiplicity of a primitive cell within the unit cell */
-		BraggQMaxKeyword,		/* 'BraggQMax' - Maximum Q value for Bragg calculation */
-		BraggQMinKeyword,		/* 'BraggQMin' - Minimum Q value for Bragg calculation */
-		CellAnglesKeyword,		/* 'CellAngles' - Gives the angles of the unit cell */
 		CellDivisionLengthKeyword,	/* 'CellDivisionLength' - Set the requested side length for regions when partitioning the unit cell */
-		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
-		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
+		GeneratorKeyword,		/* 'Generator' - Define the generator procedure for the Configuration */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
-		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
-		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
-		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
-		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF calculation */
 		SizeFactorKeyword,		/* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
-		SpeciesInfoKeyword,		/* 'SpeciesInfo' - Specifies a Species to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
 	};
-	// Convert text string to ConfigurationKeyword
-	ConfigurationKeyword keyword(const char* s);
-	// Convert ConfigurationKeyword to text string
-	const char* keyword(ConfigurationKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(ConfigurationKeyword id);
+	// Return enum option info for ConfigurationKeyword
+	EnumOptions<ConfigurationBlock::ConfigurationKeyword> keywords();
 	// Parse Configuration block
 	bool parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg);
 };
@@ -125,18 +93,14 @@ namespace LayerBlock
 	// Layer Block Keyword Enum
 	enum LayerKeyword
 	{
-		EnabledKeyword,			/* 'Enabled' - Specify whether the layer is enabled or not */
+		DisabledKeyword,		/* 'Disabled' - Specify that the layer is currently disabled */
 		EndLayerKeyword,		/* 'EndLayer' - Signals the end of the Layer block */
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
 		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */
 		nLayerKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to LayerKeyword
-	LayerKeyword keyword(const char* s);
-	// Convert LayerKeyword to text string
-	const char* keyword(LayerKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(LayerKeyword id);
+	// Return enum option info for LayerKeyword
+	EnumOptions<LayerBlock::LayerKeyword> keywords();
 	// Parse Layer block
 	bool parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer);
 };
@@ -156,14 +120,10 @@ namespace MasterBlock
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to MasterKeyword
-	MasterKeyword keyword(const char* s);
-	// Convert MasterKeyword to text string
-	const char* keyword(MasterKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(MasterKeyword id);
+	// Return enum option info for MasterKeyword
+	EnumOptions<MasterBlock::MasterKeyword> keywords();
 	// Parse Master block
-	bool parse(LineParser& parser, Dissolve* dissolve);
+	bool parse(LineParser& parser, CoreData& coreData);
 };
 
 
@@ -181,12 +141,8 @@ namespace ModuleBlock
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the Module is run */
 		nModuleKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to ModuleKeyword
-	ModuleKeyword keyword(const char* s);
-	// Convert ModuleKeyword to text string
-	const char* keyword(ModuleKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(ModuleKeyword id);
+	// Return enum option info for ModuleKeyword
+	EnumOptions<ModuleBlock::ModuleKeyword> keywords();
 	// Parse Module block
 	bool parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration);
 };
@@ -200,24 +156,19 @@ namespace PairPotentialsBlock
 	// PairPotential Block Keyword Enum
 	enum PairPotentialsKeyword
 	{
-		CoulombTruncationKeyword,	/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
-		DeltaKeyword,			/* 'Delta' - Gives the spacing between points in the tabulated potentials */
-		EndPairPotentialsKeyword,	/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
-		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
-		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
-		IncludeCoulombKeyword,		/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
-		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
-		RangeKeyword,			/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
-		ShortRangeTruncationKeyword,	/* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
-		ShortRangeTruncationWidthKeyword,/* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
-		nPairPotentialsKeywords		/* Number of keywords defined for this block */
+		CoulombTruncationKeyword,		/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
+		DeltaKeyword,				/* 'Delta' - Gives the spacing between points in the tabulated potentials */
+		EndPairPotentialsKeyword,		/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
+		GenerateKeyword,			/* 'Generate' - Generates a single PairPotential with the specified contributions */
+		IncludeCoulombKeyword,			/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
+		ParametersKeyword,			/* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
+		RangeKeyword,				/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
+		ShortRangeTruncationKeyword,		/* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
+		ShortRangeTruncationWidthKeyword,	/* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
+		nPairPotentialsKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to PairPotentialKeyword
-	PairPotentialsKeyword keyword(const char* s);
-	// Convert PairPotentialsKeyword to text string
-	const char* keyword(PairPotentialsKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(PairPotentialsKeyword id);
+	// Return enum option info for PairPotentialsKeyword
+	EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> keywords();
 	// Parse PairPotentials block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
@@ -231,7 +182,6 @@ namespace SimulationBlock
 	// Simulation Block Keyword Enum
 	enum SimulationKeyword
 	{
-		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Number of random insertions to use when generating the normalisation array */
 		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
 		ParallelGroupPopulationKeyword,	/* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes in a pool in to */
@@ -239,97 +189,10 @@ namespace SimulationBlock
 		SeedKeyword,			/* 'Seed' - Random seed to use */
 		nSimulationKeywords		/* Number of keywords defined for this block */
 	};
-	// Convert text string to SimulationKeyword
-	SimulationKeyword keyword(const char* s);
-	// Convert SimulationKeyword to text string
-	const char* keyword(SimulationKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SimulationKeyword id);
+	// Return enum option info for SimulationKeyword
+	EnumOptions<SimulationBlock::SimulationKeyword> keywords();
 	// Parse Simulation block
 	bool parse(LineParser& parser, Dissolve* dissolve);
-};
-
-
-/*
- * Site Block Keywords
- */
-namespace SiteBlock
-{
-	// Site Block Keyword Enum
-	enum SiteKeyword
-	{
-		EndSiteKeyword,			/* 'EndSite' - Signals the end of the Site */
-		OriginKeyword,			/* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
-		OriginMassWeightedKeyword,	/* 'OriginMassWeighted' - Control whether the origin should be calculated with mass-weighted coordinates */
-		XAxisKeyword,			/* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x axis */
-		YAxisKeyword,			/* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
-		nSiteKeywords			/* Number of keywords defined for this block */
-	};
-	// Convert text string to SiteKeyword
-	SiteKeyword keyword(const char* s);
-	// Convert SiteKeyword to text string
-	const char* keyword(SiteKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SiteKeyword id);
-	// Parse Site block
-	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site);
-};
-
-
-/*
- * Species Block Keywords
- */
-namespace SpeciesBlock
-{
-	// Species Block Keyword Enum
-	enum SpeciesKeyword
-	{
-		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
-		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
-		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
-		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
-		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
-		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
-		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
-		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
-		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
-		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
-		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
-		nSpeciesKeywords		/* Number of keywords defined for this block */
-	};
-	// Convert text string to SpeciesKeyword
-	SpeciesKeyword keyword(const char* s);
-	// Convert SpeciesKeyword to text string
-	const char* keyword(SpeciesKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SpeciesKeyword id);
-	// Parse Species block
-	bool parse(LineParser& parser, Dissolve* dissolve, Species* species);
-};
-
-
-/*
- * SpeciesInfo Block Keywords
- */
-namespace SpeciesInfoBlock
-{
-	// SpeciesInfo Block Keyword Enum
-	enum SpeciesInfoKeyword
-	{
-		EndSpeciesInfoKeyword,		/* 'EndSpeciesInfo' - Signals the end of the SpeciesInfo */
-		NoRotationKeyword,		/* Flag that the Species should not be rotated when making a random configuration */
-		PopulationKeyword,		/* Relative population of the Species */
-		PositioningKeyword,		/* Positioning type to use for Species */
-		nSpeciesInfoKeywords		/* Number of keywords defined for this block */
-	};
-	// Convert text string to SpeciesInfoKeyword
-	SpeciesInfoKeyword keyword(const char* s);
-	// Convert SpeciesInfoKeyword to text string
-	const char* keyword(SpeciesInfoKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SpeciesInfoKeyword id);
-	// Parse SpeciesInfo block
-	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo* speciesInfo);
 };
 
 #endif

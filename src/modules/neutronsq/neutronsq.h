@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NEUTRONSQMODULE_H
-#define DISSOLVE_NEUTRONSQMODULE_H
+#ifndef DISSOLVE_MODULE_NEUTRONSQ_H
+#define DISSOLVE_MODULE_NEUTRONSQ_H
 
 #include "module/module.h"
-#include "modules/import/formats.h"
+#include "io/import/data1d.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -65,7 +65,7 @@ class NeutronSQModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	private:
 	// Isotopologue references
@@ -76,27 +76,16 @@ class NeutronSQModule : public Module
 	Data1DImportFileFormat referenceFQ_;
 
 	protected:
-	// Set up keywords for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	public:
 	// Normalisation Type enum
 	enum NormalisationType { NoNormalisation, AverageOfSquaresNormalisation, SquareOfAverageNormalisation, nNormalisationTypes };
-	// Convert character string to NormalisationType
-	static NormalisationType normalisationType(const char* s);
-	// Return character string for NormalisationType
-	static const char* normalisationType(NormalisationType nt);
-
-
-	/*
-	 * Reference Data
-	 */
-	private:
-	// Reference total F(Q) filename
-	CharString referenceDataFileName_;
-
+	// Return enum option info for NormalisationType
+	EnumOptions<NeutronSQModule::NormalisationType> normalisationTypes();
+	// Return file and format for reference total F(Q)
+	const Data1DImportFileFormat& referenceFQFileAndFormat();
 
 	/*
 	 * Processing
@@ -115,7 +104,7 @@ class NeutronSQModule : public Module
 	 */
 	private:
 	// Test data
-	DataStore testData_;
+	Data1DStore testData_;
 
 	public:
 	// Calculate weighted g(r) from supplied unweighted g(r) and Weights

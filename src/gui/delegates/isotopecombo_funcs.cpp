@@ -1,5 +1,5 @@
 /*
-	*** IsotopeCombo Functions
+	*** Isotope Combo Functions
 	*** src/gui/delegates/isotopecombo_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -23,7 +23,6 @@
 #include "data/isotopes.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject* parent) : QItemDelegate(parent)
 {

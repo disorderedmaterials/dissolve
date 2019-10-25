@@ -67,14 +67,14 @@ bool LayerEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer
 
 		// Find category for this Module (if it exists) or create a new one
 		MimeTreeWidgetItem* categoryItem = NULL;
-		RefListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
+		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
 		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
 		if (categoryItem == NULL)
 		{
 			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
 			categoryItem->setText(0, module->category());
 			categoryItem->setFlags(Qt::ItemIsEnabled);
-			moduleCategories_.add(categoryItem, module->category());
+			moduleCategories_.append(categoryItem, module->category());
 		}
 
 		// Create item for the Module
@@ -89,7 +89,7 @@ bool LayerEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer
 
 	// Populate the available Modules tree with the categories we now have
 	ui.AvailableModulesTree->clear();
-	RefListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
+	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
 	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui.AvailableModulesTree->addTopLevelItem(categoryItem);
 	ui.AvailableModulesTree->resizeColumnToContents(0);
 	ui.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
@@ -118,14 +118,14 @@ void LayerEditor::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void LayerEditor::disableSensitiveControls()
 {
 	ui.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void LayerEditor::enableSensitiveControls()
 {
 	ui.AvailableModulesTree->setEnabled(true);
@@ -163,7 +163,7 @@ void LayerEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* ite
 		}
 	}
 
-	moduleLayer_->add(newInstance);
+	moduleLayer_->own(newInstance);
 
 	updateControls();
 

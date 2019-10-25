@@ -31,7 +31,7 @@
 #include <QString>
 
 // Constructor
-AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
+AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -40,8 +40,8 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, 
 	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<AtomTypeSelectionModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into AtomTypeSelectionModuleKeyword.\n");
+	keyword_ = dynamic_cast<AtomTypeSelectionKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into AtomTypeSelectionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -80,27 +80,16 @@ void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem* item)
 
 	updateSummaryText();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void AtomTypeSelectionKeywordWidget::updateValue()
 {
-	refreshing_ = true;
-
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list and set our widgets
-		keyword_->selection() = GenericListHelper<AtomTypeList>::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-
-	refreshing_ = false;
-
 	updateWidgetValues(coreData_);
 }
 

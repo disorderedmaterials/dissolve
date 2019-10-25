@@ -27,7 +27,7 @@
 #include "genericitems/listhelper.h"
 
 // Return list of target Modules / data for refeinement
-const RefList<Module,ModuleGroup*>& EPSRModule::allTargets() const
+const RefDataList<Module,ModuleGroup*>& EPSRModule::allTargets() const
 {
 	return groupedTargets_.modules();
 }
@@ -36,6 +36,16 @@ const RefList<Module,ModuleGroup*>& EPSRModule::allTargets() const
 const ModuleGroups& EPSRModule::groupedTargets() const
 {
 	return groupedTargets_;
+}
+
+// Add target Modules
+void EPSRModule::addTargets(RefList<Module> targets, const char* groupName)
+{
+	RefListIterator<Module> targetIterator(targets);
+	while (Module* module = targetIterator.iterate()) groupedTargets_.addModule(module, groupName);
+
+	// Must flag that the associated keyword has been set by other means
+	if (targets.nItems() > 0) keywords_.hasBeenSet("Target");
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
@@ -65,10 +75,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			Array<double>& potCoeff = coefficients.at(i, j);
 
@@ -84,13 +94,11 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 			else if (functionType == EPSRModule::PoissonExpansionFunction)
 			{
 				// Construct our fitting object and generate the potential using it
+				// We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho not present in our denominator
 				PoissonFit generator(ep);
 				generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
-				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+				ep = generator.approximation(FunctionSpace::RealSpace, 1.0/averagedRho, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
 			}
-
-			// Normalise by density
-			ep.values() /= averagedRho;
 
 			// Multiply by truncation function
 			truncate(ep, rminpt, rmaxpt);
@@ -114,7 +122,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
-	ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+	ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 	const double gsigma1 = keywords_.asDouble("GSigma1");
 	const double gsigma2 = keywords_.asDouble("GSigma2");
 	int ncoeffp = keywords_.asInt("NCoeffP");
@@ -175,10 +183,10 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 	double absEnergyEP = 0.0;
 
 	int i = 0;
-	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		int j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			Array<double>& potCoeff = coefficients.at(i, j);
 

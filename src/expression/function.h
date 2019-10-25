@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSIONFUNCTION_H
-#define DISSOLVE_EXPRESSIONFUNCTION_H
+#ifndef DISSOLVE_EXPRESSION_FUNCTIONNODE_H
+#define DISSOLVE_EXPRESSION_FUNCTIONNODE_H
 
 #include "expression/functions.h"
 #include "expression/node.h"
@@ -49,11 +49,11 @@ class ExpressionFunction : public ExpressionNode
 	// Get command function
 	ExpressionFunctions::Function function() const;
 	// Execute command
-	bool execute(double& rv);
+	bool execute(ExpressionValue& result);
 	// Print node contents
 	void nodePrint(int offset, const char* prefix = "");
-	// Set from double value
-	bool set(double value);
+	// Set from ExpressionValue
+	bool set(ExpressionValue value);
 	// Initialise node
 	bool initialise();
 };

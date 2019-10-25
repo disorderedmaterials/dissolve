@@ -24,8 +24,8 @@
 
 #include "gui/ui_gui.h"
 #include "gui/widgets/subwindow.h"
-#include "gui/guide.h"
 #include "gui/outputhandler.hui"
+#include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
 #include "base/charstring.h"
@@ -37,11 +37,13 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
-class ModuleLayerTab;
+class QLCDNumber;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
 class ModuleTab;
+class ModuleLayer;
+class LayerTab;
 class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
@@ -53,8 +55,14 @@ class DissolveWindow : public QMainWindow
 	// Constructor / Destructor
 	DissolveWindow(Dissolve& dissolve);
 	~DissolveWindow();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::DissolveWindow ui;
+	Ui::DissolveWindow ui_;
 
 	protected:
 	void closeEvent(QCloseEvent* event);
@@ -81,10 +89,6 @@ class DissolveWindow : public QMainWindow
 	public slots:
 	// Flag that data has been modified via the GUI
 	void setModified();
-	// Flag that data has been modified via the GUI, and whether this invalidates the current setup
-	void setModified(bool invalidatesSetUp);
-	// Flag that data has been modified via the GUI, and that the setup is now invalid
-	void setModifiedAndInvalidated();
 
 	public:
 	// Return reference to Dissolve
@@ -96,11 +100,35 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
+	 * StatusBar
+	 */
+	private:
+	// Label for local / remote simulation indicator
+	QLabel* localSimulationIndicator_;
+	// Label for restart file indicator
+	QLabel* restartFileIndicator_;
+	// Label for heartbeat file indicator
+	QLabel* heartbeatFileIndicator_;
+
+
+	/*
 	 * File
 	 */
 	public:
-	// Open specified input file from the CLI
-	bool openFileFromCLI(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+	// Open specified input file
+	bool openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+
+
+	/*
+	 * System Templates
+	 */
+	private:
+	// List of available SystemTemplates
+	List<SystemTemplate> systemTemplates_;
+
+	private:
+	// Initialise system templates from the main resource
+	void initialiseSystemTemplates();
 
 
 	/*
@@ -113,6 +141,8 @@ class DissolveWindow : public QMainWindow
 	void updateWindowTitle();
 	// Update controls frame
 	void updateControlsFrame();
+	// Update menus
+	void updateMenus();
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
 
@@ -127,32 +157,53 @@ class DissolveWindow : public QMainWindow
 	void startNew();
 
 	private slots:
-	// Session
-	void on_SessionNewAction_triggered(bool checked);
-	void on_SessionSetupWizardAction_triggered(bool checked);
-	void on_SessionOpenLocalAction_triggered(bool checked);
-	void on_SessionOpenRemoteAction_triggered(bool checked);
-	void on_SessionOpenRecentAction_triggered(bool checked);
-	void on_SessionCloseAction_triggered(bool checked);
-	void on_SessionSaveAction_triggered(bool checked);
-	void on_SessionSaveAsAction_triggered(bool checked);
-	void on_SessionQuitAction_triggered(bool checked);
+	// File
+	void on_FileNewAction_triggered(bool checked);
+	void on_FileNewFromTemplateAction_triggered(bool checked);
+	void on_FileOpenLocalAction_triggered(bool checked);
+	void on_FileOpenRecentAction_triggered(bool checked);
+	void on_FileConnectAction_triggered(bool checked);
+	void on_FileCloseAction_triggered(bool checked);
+	void on_FileSaveAction_triggered(bool checked);
+	void on_FileSaveAsAction_triggered(bool checked);
+	void on_FileQuitAction_triggered(bool checked);
 	// Simulation
-	void on_SimulationAddSpeciesAction_triggered(bool checked);
-	void on_SimulationAddConfigurationAction_triggered(bool checked);
-	void on_SimulationAddProcessingLayerAction_triggered(bool checked);
-	void on_SimulationAddForcefieldTermsAction_triggered(bool checked);
-	void on_SimulationSetRandomSeedAction_triggered(bool checked);
-	// Control
 	void on_SimulationRunAction_triggered(bool checked);
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
+	void on_SimulationSetRandomSeedAction_triggered(bool checked);
+	// Species
+	void on_SpeciesCreateEmptyAction_triggered(bool checked);
+	void on_SpeciesCreateAtomicAction_triggered(bool checked);
+	void on_SpeciesImportDissolveAction_triggered(bool checked);
+	void on_SpeciesRenameAction_triggered(bool checked);
+	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
+	void on_SpeciesDeleteAction_triggered(bool checked);
+	// Configuration
+	void on_ConfigurationCreateEmptyAction_triggered(bool checked);
+	void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
+	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
+	void on_ConfigurationRenameAction_triggered(bool checked);
+	void on_ConfigurationDeleteAction_triggered(bool checked);
+	void on_ConfigurationExportToXYZAction_triggered(bool checked);
+	// Layer
+	void on_LayerCreateEmptyAction_triggered(bool checked);
+	void on_LayerCreateEvolutionMolecularAction_triggered(bool checked);
+	void on_LayerCreateEvolutionAtomicAction_triggered(bool checked);
+	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
+	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
+	void on_LayerRenameAction_triggered(bool checked);
+	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	// Help
-	void on_HelpViewQuickStartGuideAction_triggered(bool checked);
-	void on_HelpRunATutorialAction_triggered(bool checked);
+	void on_HelpOnlineManualAction_triggered(bool checked);
+	void on_HelpOnlineTutorialsAction_triggered(bool checked);
 
 
 	/*
@@ -163,7 +214,6 @@ class DissolveWindow : public QMainWindow
 	enum MainStackPage
 	{
 		StartStackPage,		/* Start Page - Routes to load, create, and monitor simulations */
-		WizardStackPage,	/* Wizard Page - Simulation creation wizard */
 		SimulationStackPage,	/* Simulation Page - Controls for current simulation */
 		nStackPages
 	};
@@ -176,21 +226,17 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
-	private:
-	// Guide object for QuickStart
-	Guide quickStartGuide_;
-
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
-	void on_StartSetupWizardButton_clicked(bool checked);
+	void on_StartCreateFromTemplateButton_clicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
-	void on_StartOpenRemoteButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
-	// 'Learn' Group
-	void on_StartQuickStartButton_clicked(bool checked);
-	void on_StartRunTutorialButton_clicked(bool checked);
+	void on_StartConnectButton_clicked(bool checked);
+	// Help
+	void on_StartOnlineManualButton_clicked(bool checked);
+	void on_StartOnlineTutorialsButton_clicked(bool checked);
 
 
 	/*
@@ -216,8 +262,8 @@ class DissolveWindow : public QMainWindow
 	DissolveState dissolveState() const;
 
 	private slots: 
-	void on_ControlSetUpButton_clicked(bool checked);
 	void on_ControlRunButton_clicked(bool checked);
+	void on_ControlStepButton_clicked(bool checked);
 	void on_ControlPauseButton_clicked(bool checked);
 	void on_ControlReloadButton_clicked(bool checked);
 
@@ -245,7 +291,7 @@ class DissolveWindow : public QMainWindow
 	// List of Configuration tabs
 	List<ConfigurationTab> configurationTabs_;
 	// List of processing layer tabs
-	List<ModuleLayerTab> processingLayerTabs_;
+	List<LayerTab> processingLayerTabs_;
 	// List of Module tabs
 	List<ModuleTab> moduleTabs_;
 	// List of Workspace tabs
@@ -253,7 +299,6 @@ class DissolveWindow : public QMainWindow
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
-	void mainTabsDoubleClicked(int index);
 
 	private:
 	// Remove tabs related to the current data
@@ -272,8 +317,8 @@ class DissolveWindow : public QMainWindow
 	SpeciesTab* speciesTab(QWidget* page);
 	// Find ConfigurationTab containing specified page widget
 	ConfigurationTab* configurationTab(QWidget* page);
-	// Find ModuleLayerTab containing specified page widget
-	ModuleLayerTab* processingLayerTab(QWidget* page);
+	// Find LayerTab containing specified page widget
+	LayerTab* processingLayerTab(QWidget* page);
 	// Find ModuleTab containing specified page widget
 	ModuleTab* moduleTab(QWidget* page);
 	// Find ModuleTab containing specified Module
@@ -281,7 +326,7 @@ class DissolveWindow : public QMainWindow
 	// Find WorkspaceTab containing specified page widget
 	WorkspaceTab* workspaceTab(QWidget* page);
 	// Return current tab
-	MainTab* currentTab();
+	MainTab* currentTab() const;
 	// Make specified tab the current one
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
@@ -295,23 +340,23 @@ class DissolveWindow : public QMainWindow
 	// Make specified processing layer tab the current one
 	void setCurrentTab(ModuleLayer* layer);
 	// Return reference list of all current tabs
-	RefList<MainTab,bool> allTabs() const;
+	RefList<MainTab> allTabs() const;
+	// Return currently-selected Species (if a SpeciesTab is the current one)
+	Species* currentSpecies() const;
+	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
+	Configuration* currentConfiguration() const;
+	// Return currently-selected ModuleLayer (if a LayerTab is the current one)
+	ModuleLayer* currentLayer() const;
 
 	public:
 	// Add tab for specified Module target
 	MainTab* addModuleTab(Module* module);
+	// Remove the ModuleTab for the specifeid Module, if it exists
+	void removeModuleTab(Module* module);
 
 	public slots:
 	// Remove tab containing the specified page widget
 	void removeTab(QWidget* page);
-
-
-	/*
-	 * 'Simulation' Stack Page - Guide
-	 */
-	private slots:
-	void guideWidgetCanceled();
-	void guideWidgetFinished();
 
 
 	/*

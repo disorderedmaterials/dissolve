@@ -31,6 +31,23 @@ ModuleLayer* Dissolve::addProcessingLayer()
 	return processingLayers_.add();
 }
 
+// Remove specified processing layer
+void Dissolve::removeProcessingLayer(ModuleLayer* layer)
+{
+	if (!layer) return;
+
+	// Remove any references to the Modules in the layer before we delete them
+	ListIterator<Module> moduleIterator(layer->modules());
+	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+
+	// Delete the module instances themselves
+	moduleIterator.restart();
+	while (Module* module = moduleIterator.iterate()) moduleInstances_.remove(module);
+
+	// Now safe to remove the layer
+	processingLayers_.remove(layer);
+}
+
 // Find named processing layer
 ModuleLayer* Dissolve::findProcessingLayer(const char* name) const
 {
@@ -47,8 +64,6 @@ bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
 	if (processingLayers_.contains(layer)) return Messenger::error("Already own ModuleLayer '%s', so nothing to do.\n", layer->name());
 
 	processingLayers_.own(layer);
-
-	setUp_ = false;
 
 	return true;
 }
@@ -109,7 +124,7 @@ Module* Dissolve::createModuleInLayer(const char* moduleType, const char* layerN
 	}
 
 	// Add the new Module to the layer
-	layer->add(module);
+	layer->own(module);
 
 	// Set Configuration target in the Module if specified
 	if (cfg) module->addTargetConfiguration(cfg);

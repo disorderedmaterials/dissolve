@@ -42,11 +42,7 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget* parent)
 
 	// Register pages with the wizard
 	registerChoicePage(AddConfigurationWizard::StartPage, "Create Configuration");
-	registerPage(AddConfigurationWizard::MonoSpeciesPage, "Single-Species Configuration", AddConfigurationWizard::BoxTypePage);
-	registerPage(AddConfigurationWizard::MultiSpeciesPage, "Mixture of Species", AddConfigurationWizard::BoxTypePage);
-	registerPage(AddConfigurationWizard::BoxTypePage, "Basic Box Type");
-	registerPage(AddConfigurationWizard::BoxGeometryPage, "Box Geometry", AddConfigurationWizard::MultiplierPage);
-	registerPage(AddConfigurationWizard::MultiplierPage, "Box Multiplier", AddConfigurationWizard::FinishPage);
+	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template", AddConfigurationWizard::FinishPage);
 	registerFinishPage(AddConfigurationWizard::FinishPage, "Name and Temperature");
 
 	// Connect signals / slots
@@ -70,24 +66,6 @@ void AddConfigurationWizard::setMainDissolveReference(const Dissolve* dissolveRe
 	dissolveReference_ = dissolveReference;
 }
 
-// Get Box details from controls and put into target Configuration
-void AddConfigurationWizard::getBoxDetails()
-{
-	// Set Configuration multiplier
-	importTarget_->setMultiplier(ui_.MultiplierSpin->value());
-
-	// Set the Box angles and relative lengths in the Configuration
-	importTarget_->setBoxAngles(Vec3<double>(ui_.BoxAbsoluteAngleAlphaSpin->value(), ui_.BoxAbsoluteAngleBetaSpin->value(), ui_.BoxAbsoluteAngleGammaSpin->value()));
-	if (ui_.BoxNonPeriodicRadio->isChecked())
-	{
-		importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
-		importTarget_->setNonPeriodic(true);
-	}
-	else if (ui_.BoxCubicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
-	else if (ui_.BoxOrthorhombicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
-	else importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
-}
-
 // Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
 Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 {
@@ -98,10 +76,6 @@ Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 
 	// Set the Configuration's temperature
 	importTarget_->setTemperature(ui_.FinishTemperatureSpin->value());
-
-	getBoxDetails();
-
-	importTarget_->initialise(dissolve.worldPool(), true, dissolve.pairPotentialRange(), dissolve.nBoxNormalisationPoints());
 
 	dissolve.ownConfiguration(importTarget_);
 
@@ -157,78 +131,9 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-		case (AddConfigurationWizard::MonoSpeciesPage):
+		case (AddConfigurationWizard::SelectTemplatePage):
 			// Clear Configuration, and add used Species
 			importTarget_->clear();
-			sp = VariantPointer<Species>(ui_.MonoSpeciesSpeciesCombo->currentData());
-			importTarget_->addUsedSpecies(sp, 1.0);
-			if (ui_.MonoSpeciesDensityUnitsCombo->currentIndex() == 0) importTarget_->setAtomicDensity(ui_.MonoSpeciesDensitySpin->value());
-			else importTarget_->setChemicalDensity(ui_.MonoSpeciesDensitySpin->value());
-			break;
-		case (AddConfigurationWizard::BoxTypePage):
-			// Set relevant controls on the Box geometry page
-			ui_.BoxRelativeLengthASpin->setVisible(true);
-			ui_.BoxRelativeLengthASpin->setEnabled(true);
-			ui_.BoxRelativeLengthBSpin->setVisible(true);
-			ui_.BoxRelativeLengthCSpin->setVisible(true);
-			if (ui_.BoxNonPeriodicRadio->isChecked())
-			{
-				ui_.BoxAbsoluteAngleAlphaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleAlphaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleBetaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleGammaSpin->setValue(90.0);
-				ui_.BoxRelativeLengthASpin->setVisible(false);
-				ui_.BoxRelativeLengthBSpin->setVisible(false);
-				ui_.BoxRelativeLengthCSpin->setVisible(false);
-			}
-			else if (ui_.BoxCubicRadio->isChecked())
-			{
-				ui_.BoxAbsoluteAngleAlphaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleAlphaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleBetaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleGammaSpin->setValue(90.0);
-				ui_.BoxRelativeLengthASpin->setEnabled(false);
-				ui_.BoxRelativeLengthBSpin->setVisible(false);
-				ui_.BoxRelativeLengthCSpin->setVisible(false);
-			}
-			else if (ui_.BoxOrthorhombicRadio->isChecked())
-			{
-				ui_.BoxAbsoluteAngleAlphaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleAlphaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleBetaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleGammaSpin->setValue(90.0);
-			}
-			else if (ui_.BoxMonoclinicRadio->isChecked())
-			{
-				ui_.BoxAbsoluteAngleAlphaSpin->setEnabled(true);
-				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(false);
-				ui_.BoxAbsoluteAngleBetaSpin->setValue(90.0);
-				ui_.BoxAbsoluteAngleGammaSpin->setValue(90.0);
-			}
-			else if (ui_.BoxTriclinicRadio->isChecked())
-			{
-				ui_.BoxAbsoluteAngleAlphaSpin->setEnabled(true);
-				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(true);
-				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(true);
-			}
-
-			// Set box angles and lengths
-			getBoxDetails();
-
-			updateMultiplierPage();
-			break;
-		case (AddConfigurationWizard::BoxGeometryPage):
-			// Set box angles and lengths
-			getBoxDetails();
-
-			updateMultiplierPage();
 			break;
 		default:
 			break;
@@ -244,10 +149,6 @@ int AddConfigurationWizard::determineNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-		case (AddConfigurationWizard::BoxTypePage):
-			if (ui_.BoxCubicRadio->isChecked() || ui_.BoxNonPeriodicRadio->isChecked()) result = AddConfigurationWizard::MultiplierPage;
-			else result = AddConfigurationWizard::BoxGeometryPage;
-			break;
 		default:
 			break;
 	}
@@ -277,19 +178,12 @@ void AddConfigurationWizard::reset()
 	// Reset the underlying WizardWidget
 	resetToPage(AddConfigurationWizard::StartPage);
 
-	// Update available Species where appropriate
-	ComboNameListPopulator<Species> monoSpeciesComboPopulator(ui_.MonoSpeciesSpeciesCombo, dissolveReference_->coreData().constSpecies());
-
-	// Restrict start page options based on number of Species available
-	ui_.StartMonoSpeciesButton->setEnabled(dissolveReference_->nSpecies() != 0);
-	ui_.StartMultiSpeciesButton->setEnabled(dissolveReference_->nSpecies() > 1);
-
 	// Create a new Configuration to tinker with
 	if (importTarget_) delete importTarget_;
 	importTarget_ = new Configuration;
 
 	// Set a new, unique name ready on the final page
-	ui_.FinishNameEdit->setText(dissolveReference_->coreData().uniqueConfigurationName("NewConfiguration"));
+	ui_.FinishNameEdit->setText(dissolveReference_->constCoreData().uniqueConfigurationName("NewConfiguration"));
 }
 
 /*
@@ -301,92 +195,16 @@ void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked)
 	goToPage(AddConfigurationWizard::FinishPage);
 }
 
-void AddConfigurationWizard::on_StartMonoSpeciesButton_clicked(bool checked)
+void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked)
 {
-	goToPage(AddConfigurationWizard::MonoSpeciesPage);
-}
-
-void AddConfigurationWizard::on_StartMultiSpeciesButton_clicked(bool checked)
-{
-	goToPage(AddConfigurationWizard::MultiSpeciesPage);
+	goToPage(AddConfigurationWizard::SelectTemplatePage);
 }
 
 /*
- * Multiplier Page
+ * Select Template Page
  */
 
-// Species population row update function
-void AddConfigurationWizard::updatePopulationTableRow(int row, Species* sp, int population, bool createItems)
-{
-	QTableWidgetItem* item;
-
-	// Species Name
-	if (createItems)
-	{
-		item = new QTableWidgetItem;
-		item->setFlags(Qt::NoItemFlags);
-		ui_.MultiplierPopulationsTable->setItem(row, 0, item);
-	}
-	else item = ui_.MultiplierPopulationsTable->item(row, 0);
-	item->setText(sp->name());
-
-	// Population
-	if (createItems)
-	{
-		item = new QTableWidgetItem;
-		item->setFlags(Qt::NoItemFlags);
-		ui_.MultiplierPopulationsTable->setItem(row, 1, item);
-	}
-	else item = ui_.MultiplierPopulationsTable->item(row, 1);
-	if (population == 0)
-	{
-		item->setIcon(QIcon(":/general/icons/general_warn.svg"));
-		item->setText("Zero");
-	}
-	else item->setText(QString::number(population));
-}
-
-// Update controls on MultiplierPage
-void AddConfigurationWizard::updateMultiplierPage()
-{
-	// Calculate expected number of atoms, and individual species populations
-	RefList<Species,int> populations;
-	int nExpectedAtoms = 0;
-	ListIterator<SpeciesInfo> usedSpeciesIterator(importTarget_->usedSpecies());
-	while (SpeciesInfo* spInfo = usedSpeciesIterator.iterate())
-	{
-		// Get Species pointer
-		Species* sp = spInfo->species();
-
-		// Determine the number of molecules of this component
-		int count =  spInfo->population() * importTarget_->multiplier();
-
-		populations.add(sp, count);
-
-		nExpectedAtoms += count * sp->nAtoms();
-	}
-
-	// Determine required volume, and generate a temporary Box to get hte relevant info
-	double volume = nExpectedAtoms / importTarget_->atomicDensity();
-	Box* temporaryBox = Box::generate(importTarget_->relativeBoxLengths(), importTarget_->boxAngles(), volume);
-
-	TableWidgetRefListUpdater<AddConfigurationWizard,Species,int> populationsUpdater(ui_.MultiplierPopulationsTable, populations, this, &AddConfigurationWizard::updatePopulationTableRow);
-	ui_.MultiplierNAtomsLabel->setText(QString::number(nExpectedAtoms));
-	ui_.MultiplierBoxALabel->setText(QString::number(temporaryBox->axisLength(0)));
-	ui_.MultiplierBoxBLabel->setText(QString::number(temporaryBox->axisLength(1)));
-	ui_.MultiplierBoxCLabel->setText(QString::number(temporaryBox->axisLength(2)));
-	ui_.MultiplierPPRangeLabel->setText(QString::number(temporaryBox->inscribedSphereRadius()));
-	QPalette palette = ui_.MultiplierBoxCLabel->palette();
-	if (temporaryBox->inscribedSphereRadius() < dissolveReference_->pairPotentialRange()) palette.setColor(QPalette::WindowText, Qt::red);
-	ui_.MultiplierPPRangeLabel->setPalette(palette);
-}
-
-void AddConfigurationWizard::on_MultiplierSpin_valueChanged(int value)
-{
-	getBoxDetails();
-
-	updateMultiplierPage();
-}
+// TODO
 
 /*
  * Configuration Name Page

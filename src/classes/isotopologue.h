@@ -25,7 +25,7 @@
 #include "base/charstring.h"
 #include "data/elements.h"
 #include "templates/list.h"
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 class AtomType;
@@ -70,19 +70,19 @@ class Isotopologue : public ListItem<Isotopologue>
 	 */
 	private:
 	// List of AtomType references and their assigned Isotopes
-	RefList<AtomType,Isotope*> isotopes_;
+	RefDataList<AtomType,Isotope*> isotopes_;
 	
 	public:
 	// Update AtomType/Isotope RefList
-	void update(const List<AtomType>& atomTypes);
+	void update();
 	// Set AtomType/Isotope pair in list
 	bool setAtomTypeIsotope(AtomType* at, Isotope* isotope);
 	// Return Isotope for specified AtomType
 	Isotope* atomTypeIsotope(AtomType* at) const;
 	// Return AtomType/Isotope pairs list
-	const RefList<AtomType,Isotope*>& isotopes() const;
+	const RefDataList<AtomType,Isotope*>& isotopes() const;
 	// Return nth Atom/Isotope pair
-	RefListItem<AtomType,Isotope*>* isotope(int n);
+	RefDataItem<AtomType,Isotope*>* isotope(int n);
 };
 
 #endif

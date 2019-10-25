@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGETBASE_H
-#define DISSOLVE_KEYWORDWIDGETBASE_H
+#ifndef DISSOLVE_KEYWORDWIDGET_BASE_H
+#define DISSOLVE_KEYWORDWIDGET_BASE_H
 
 #include "templates/listitem.h"
 
@@ -28,23 +28,20 @@
 class CoreData;
 class GenericList;
 
+// Keyword Widget Base Class
 class KeywordWidgetBase
 {
 	public:
 	// Constructor
-	KeywordWidgetBase(const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	KeywordWidgetBase(const CoreData& coreData);
 
 
 	/*
-	 * Module List
+	 * CoreData Reference
 	 */
 	protected:
 	// CoreData source
 	const CoreData& coreData_;
-	// Module data list to be searched for reading/setting existing widget value
-	GenericList& moduleData_;
-	// Module prefix to use when searching module data list
-	const char* modulePrefix_;
 
 
 	/*

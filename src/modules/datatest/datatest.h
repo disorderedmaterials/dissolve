@@ -19,11 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATATESTMODULE_H
-#define DISSOLVE_DATATESTMODULE_H
+#ifndef DISSOLVE_MODULE_DATATEST_H
+#define DISSOLVE_MODULE_DATATEST_H
 
 #include "module/module.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
+#include "classes/data2dstore.h"
+#include "classes/data3dstore.h"
+#include "classes/configuration.h"
+#include "genericitems/listhelper.h"
+
 
 // Forward Declarations
 /* none */
@@ -61,14 +66,11 @@ class DataTestModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	/*
 	 * Processing
@@ -83,9 +85,70 @@ class DataTestModule : public Module
 	 */
 	private:
 	// Target module containing / owning data to test
-	RefList<Module,bool> targetModule_;
-	// Test datasets
-	DataStore testData_;
+	RefList<Module> targetModule_;
+	// Test 1D datasets
+	Data1DStore test1DData_;
+	// Test 2D datasets
+	Data2DStore test2DData_;
+	// Test 3D datasets
+	Data3DStore test3DData_;
+
+	private:
+	// Find reference Data
+	template <class T> const T& findReferenceData(const char* dataIdentifier, Module* targetModule, GenericList& processingModuleData, bool& found)
+	{
+		static T dummy;
+
+		found = false;
+
+		// If a target module was supplied, search there first
+		if (targetModule)
+		{
+			// Get target module data list
+			GenericList& moduleData = targetModule->configurationLocal() ? targetModule->targetConfigurations().firstItem()->moduleData() : processingModuleData;
+
+			// The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in the target list?
+			if (moduleData.contains(dataIdentifier, targetModule->uniqueName()))
+			{
+				// Try to retrieve the data as the current type
+				found = false;
+				const T& data = GenericListHelper<T>::value(moduleData, dataIdentifier, targetModule->uniqueName(), T(), &found);
+
+				if (!found)
+				{
+					Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than %s).\n", targetModule->uniqueName(), dataIdentifier, moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
+					return dummy;
+				}
+				else return data;
+			}
+			else if (moduleData.contains(dataIdentifier))
+			{
+				// Try to retrieve the data as the current type
+				found = false;
+				const T& data = GenericListHelper<T>::value(moduleData, dataIdentifier, NULL, T(), &found);
+
+				if (!found)
+				{
+					Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than %s).\n", dataIdentifier, moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
+					return dummy;
+				}
+				else return data;
+			}
+		}
+
+		// If we haven't found it yet, try a search by object tag
+		if ((!found) && T::findObject(dataIdentifier))
+		{
+			// The tagged data exists...
+			const T& data = *T::findObject(dataIdentifier);
+			found = true;
+			return data;
+		}
+
+		// Failed to find data
+		found = false;
+		return dummy;
+	}
 
 
 	/*
@@ -97,4 +160,3 @@ class DataTestModule : public Module
 };
 
 #endif
-

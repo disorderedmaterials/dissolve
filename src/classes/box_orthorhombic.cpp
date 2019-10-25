@@ -24,25 +24,25 @@
 #include "classes/cell.h"
 
 // Constructor
-OrthorhombicBox::OrthorhombicBox(double volume, const Vec3<double> relativeLengths) : Box()
+OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
 {
 	type_ = Box::OrthorhombicBoxType;
 	
 	// Construct axes_
-	axes_.setColumn(0, relativeLengths.x, 0.0, 0.0);
-	axes_.setColumn(1, 0.0, relativeLengths.y, 0.0);
-	axes_.setColumn(2, 0.0, 0.0, relativeLengths.z);
-	
-	// Set up box, rescaling to desired volume
-	setUp(volume);
-	
-	// Grab new cell lengths
-	a_ = axes_.columnMagnitude(0);
-	b_ = axes_.columnMagnitude(1);
-	c_ = axes_.columnMagnitude(2);
+	axes_.setColumn(0, lengths.x, 0.0, 0.0);
+	axes_.setColumn(1, 0.0, lengths.y, 0.0);
+	axes_.setColumn(2, 0.0, 0.0, lengths.z);
+
+	// Store Box lengths
+	a_ = lengths.x;
+	b_ = lengths.y;
+	c_ = lengths.z;
 	ra_ = 1.0/a_;
 	rb_ = 1.0/b_;
 	rc_ = 1.0/c_;
+
+	// Finalise associated data
+	finalise();
 }
 
 // Destructor

@@ -43,6 +43,12 @@ void AddForcefieldTermsDialog::reset()
 	ui_.AddForcefieldTermsWidget->reset();
 }
 
+// Set target Species that we are acquiring forcefield terms for
+void AddForcefieldTermsDialog::setTargetSpecies(Species* sp)
+{
+	ui_.AddForcefieldTermsWidget->setTargetSpecies(sp);
+}
+
 // Apply Forcefield terms to the targetted Species within the specified Dissolve object
 bool AddForcefieldTermsDialog::applyForcefieldTerms(Dissolve& dissolve)
 {

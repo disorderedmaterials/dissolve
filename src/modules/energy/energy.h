@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYMODULE_H
-#define DISSOLVE_ENERGYMODULE_H
+#ifndef DISSOLVE_MODULE_ENERGY_H
+#define DISSOLVE_MODULE_ENERGY_H
 
 #include "module/module.h"
 
@@ -64,13 +64,11 @@ class EnergyModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 
 	/*
@@ -101,8 +99,10 @@ class EnergyModule : public Module
 	static double totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& interEnergy, double& bondEnergy, double& angleEnergy, double& torsionEnergy);
 	// Return total intermolecular energy
 	static double interMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
+	// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not be assessed
+	static int checkStability(Configuration* cfg);
 	// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
-	static int checkStability(const RefList<Configuration,bool>& configurations);
+	static int checkStability(const RefList<Configuration>& configurations);
 
 
 	/*

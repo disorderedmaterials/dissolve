@@ -1,5 +1,5 @@
 /*
-	*** Graph Widget - Functions 
+	*** Data Widget - Functions
 	*** src/gui/viewer/datawidget_funcs.cpp
 	Copyright T. Youngs 2013-2019
 
@@ -21,6 +21,7 @@
 
 #include "gui/viewer/datawidget.h"
 #include "gui/viewer/render/view.h"
+#include "gui/helpers/treewidgetupdater.h"
 #include <QButtonGroup>
 
 // Constructor
@@ -33,14 +34,23 @@ DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 	QButtonGroup* interactionToolsGroup = new QButtonGroup;
 	interactionToolsGroup->addButton(ui_.InteractionViewButton);
 
+	// Hide data group by default
+	ui_.DataGroup->setVisible(false);
+
 	// Connect signals / slots
 	connect(ui_.DataView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateStatusBar()));
 	connect(ui_.DataView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 	connect(ui_.DataView, SIGNAL(controlAspectChanged()), this, SLOT(updateToolbar()));
+	connect(ui_.DataView, SIGNAL(renderableAdded()), this, SLOT(updateDataTree()));
+	connect(ui_.DataView, SIGNAL(renderableRemoved()), this, SLOT(updateDataTree()));
+	connect(ui_.DataView, SIGNAL(renderableChanged()), this, SLOT(updateDataTree()));
+
+	refreshing_ = false;
 
 	// Make sure that our controls reflect the state of the underlying DataViewer
 	updateToolbar();
 	updateStatusBar();
+	updateDataTree();
 }
 
 // Destructor
@@ -64,12 +74,49 @@ void DataWidget::on_InteractionViewButton_clicked(bool checked)
 	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
 }
 
-// View
-void DataWidget::on_ViewResetButton_clicked(bool checked)
+// Graph
+void DataWidget::on_GraphResetButton_clicked(bool checked)
 {
 	dataViewer()->view().showAllData();
 
 	dataViewer()->postRedisplay();
+}
+
+void DataWidget::on_GraphFollowAllButton_clicked(bool checked)
+{
+	if (checked)
+	{
+		dataViewer()->view().setAutoFollowType(View::AllAutoFollow);
+		if (ui_.GraphFollowXButton->isChecked()) ui_.GraphFollowXButton->setChecked(false);
+	}
+	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
+
+	dataViewer()->postRedisplay();
+}
+
+void DataWidget::on_GraphFollowXButton_clicked(bool checked)
+{
+	if (checked)
+	{
+		dataViewer()->view().setAutoFollowType(View::XAutoFollow);
+		if (ui_.GraphFollowAllButton->isChecked()) ui_.GraphFollowAllButton->setChecked(false);
+	}
+	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
+
+	dataViewer()->postRedisplay();
+}
+
+void DataWidget::on_GraphFollowXLengthSpin_valueChanged(double value)
+{
+	dataViewer()->view().setAutoFollowXLength(value);
+
+	dataViewer()->postRedisplay();
+}
+
+// View
+void DataWidget::on_ViewToggleDataButton_clicked(bool checked)
+{
+	ui_.DataGroup->setVisible(checked);
 }
 
 void DataWidget::on_ViewAxesVisibleButton_clicked(bool checked)
@@ -84,40 +131,83 @@ void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
 	dataViewer()->copyViewToClipboard(checked);
 }
 
-void DataWidget::on_ViewFollowAllButton_clicked(bool checked)
-{
-	if (checked)
-	{
-		dataViewer()->view().setAutoFollowType(View::AllAutoFollow);
-		if (ui_.ViewFollowXButton->isChecked()) ui_.ViewFollowXButton->setChecked(false);
-	}
-	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
-
-	dataViewer()->postRedisplay();
-}
-
-void DataWidget::on_ViewFollowXButton_clicked(bool checked)
-{
-	if (checked)
-	{
-		dataViewer()->view().setAutoFollowType(View::XAutoFollow);
-		if (ui_.ViewFollowAllButton->isChecked()) ui_.ViewFollowAllButton->setChecked(false);
-	}
-	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
-
-	dataViewer()->postRedisplay();
-}
-
-void DataWidget::on_ViewFollowXLengthSpin_valueChanged(double value)
-{
-	dataViewer()->view().setAutoFollowXLength(value);
-
-	dataViewer()->postRedisplay();
-}
-
 /*
- * Signals / Slots
+ * Update Functions
  */
+
+// Data tree top-level item update function
+void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int topLevelItemIndex, RenderableGroup* data, bool createItem)
+{
+	QTreeWidgetItem* item;
+	if (createItem)
+	{
+		item = new QTreeWidgetItem;
+		item->setData(0, Qt::UserRole, VariantPointer<RenderableGroup>(data));
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+		treeWidget->insertTopLevelItem(topLevelItemIndex, item);
+	}
+	else item = treeWidget->topLevelItem(topLevelItemIndex);
+
+	// Set item data
+	item->setText(0, data->name());
+// 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
+	item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
+
+	// Update child items
+	TreeWidgetRefListUpdater<DataWidget,Renderable> renderableUpdater(item, data->renderables(), this, &DataWidget::dataTreeItemUpdateFunction);
+}
+
+// Data tree item update function
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int childIndex, Renderable* data, bool createItem)
+{
+	QTreeWidgetItem* item;
+	if (createItem)
+	{
+		item = new QTreeWidgetItem;
+		item->setData(0, Qt::UserRole, VariantPointer<Renderable>(data));
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+		parentItem->insertChild(childIndex, item);
+	}
+	else item = parentItem->child(childIndex);
+
+	// Set item data
+	item->setText(0, data->name());
+// 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
+	item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
+}
+
+// Data tree item changed
+void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem* item, int column)
+{
+	if (refreshing_) return;
+
+	// If this is a top-level item (parent() == NULL) then retrieve the Renderable Group. If not, get the associated Renderable.
+	if (item->parent())
+	{
+		Renderable* renderable= VariantPointer<Renderable>(item->data(0, Qt::UserRole));
+		if (!renderable) return;
+		renderable->setVisible(item->checkState(0) == Qt::Checked);
+	}
+	else
+	{
+		RenderableGroup* group = VariantPointer<RenderableGroup>(item->data(0, Qt::UserRole));
+		if (!group) return;
+		group->setVisible(item->checkState(0) == Qt::Checked);
+	}
+
+	// Refresh the data display
+	dataViewer()->postRedisplay();
+}
+
+// Clear renderable data
+void DataWidget::clearRenderableData()
+{
+	// Clear our data tree first
+	ui_.DataTree->clear();
+
+	// Now clear the renderables
+	dataViewer()->clearRenderables();
+}
 
 // Update toolbar
 void DataWidget::updateToolbar()
@@ -134,14 +224,16 @@ void DataWidget::updateToolbar()
 	}
 
 	// Controls reflecting the state of options in the underlying DataViewer
-	ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
+	// -- Graph
 	View::ViewType vt = dataViewer()->view().viewType();
 	View::AutoFollowType aft = dataViewer()->view().autoFollowType();
-	ui_.ViewFollowAllButton->setChecked(aft == View::AllAutoFollow);
-	ui_.ViewFollowXButton->setChecked(aft == View::XAutoFollow);
-	ui_.ViewFollowXLengthSpin->setValue(dataViewer()->view().autoFollowXLength());
-	ui_.ViewFollowXButton->setEnabled(vt == View::FlatXYView);
-	ui_.ViewFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
+	ui_.GraphFollowAllButton->setChecked(aft == View::AllAutoFollow);
+	ui_.GraphFollowXButton->setChecked(aft == View::XAutoFollow);
+	ui_.GraphFollowXLengthSpin->setValue(dataViewer()->view().autoFollowXLength());
+	ui_.GraphFollowXButton->setEnabled(vt == View::FlatXYView);
+	ui_.GraphFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
+	// View
+	ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 }
 
 // Update status bar
@@ -171,4 +263,14 @@ void DataWidget::updateStatusBar()
 	}
 
 	ui_.CoordinateLabel->setText(text);
+}
+
+// Update data tree
+void DataWidget::updateDataTree()
+{
+	refreshing_ = true;
+
+	TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this, &DataWidget::dataTreeTopLevelUpdateFunction);
+
+	refreshing_ = false;
 }

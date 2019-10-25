@@ -18,11 +18,16 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  1000
-  SpeciesInfo 'Water'  1.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
 
   InputCoordinates  dlpoly  'dlpoly_coul/CONFIG'
+  EndInputCoordinates
 
   # Test analytical energy against production and reference energy
   Module Energy
@@ -36,6 +41,7 @@ Configuration  'Bulk'
     Test on
     TestAnalytic  on
     TestReference  dlpoly  'dlpoly_coul/REVCON'
+    EndTestReference
   EndModule
 EndConfiguration
 
@@ -52,13 +58,6 @@ PairPotentials
   Delta  0.0010000
   CoulombTruncation  None
   IncludeCoulomb  Off
-  Parameters  'OW'	-0.82	0.0        0.0
-  Parameters  'HW'	0.41	0.0        0.0
-  Generate  'LJ'  'OW'  'OW'
-  Generate  'LJ'  'OW'  'HW'
-  Generate  'LJ'  'HW'  'HW'
+  Parameters  'OW'	-0.82	LJGeometric  0.0        0.0
+  Parameters  'HW'	0.41	LJGeometric  0.0        0.0
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation

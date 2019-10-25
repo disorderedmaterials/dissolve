@@ -29,6 +29,7 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Source data
 	species_ = NULL;
+	speciesRenderable_ = NULL;
 
 	// Interaction
 	setInteractionMode(SpeciesViewer::DefaultInteraction);
@@ -37,6 +38,9 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 
 	// Set up the view
 	view_.setViewType(View::NormalView);
+	view_.axes().setTitle(0, "X");
+	view_.axes().setTitle(1, "Y");
+	view_.axes().setTitle(2, "Z");
 
 	// Tweak the options of the underlying BaseViewer
 	setClipToAxesVolume(false);
@@ -76,4 +80,24 @@ void SpeciesViewer::setSpecies(Species *sp)
 Species* SpeciesViewer::species() const
 {
 	return species_;
+}
+
+/*
+ * Renderable
+ */
+
+// Set renderable drawing style
+void SpeciesViewer::setRenderableDrawStyle(RenderableSpecies::DisplayStyle ds)
+{
+	if (speciesRenderable_) speciesRenderable_->setDisplayStyle(ds);
+// 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
+}
+
+// Return current renderable draw style
+RenderableSpecies::DisplayStyle SpeciesViewer::renderableDrawStyle() const
+{
+	if (speciesRenderable_) return (RenderableSpecies::DisplayStyle) speciesRenderable_->displayStyleIndex();
+// 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
+
+	return RenderableSpecies::LinesStyle;
 }

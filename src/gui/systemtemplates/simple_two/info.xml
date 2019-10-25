@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<systemtemplate>
+	<name>Two Component Liquid / Glass</name>
+	<description>Two species representing a liquid or glassy mixture</description>
+	<group>Simple</group>
+	<icon>icon.svg</icon>
+	<input>input.txt</input>
+</systemtemplate>

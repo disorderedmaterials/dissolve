@@ -24,6 +24,10 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
+/*
+ * Renderable Data
+ */
+
 // Clear existing data
 void BaseViewer::clear()
 {
@@ -45,17 +49,18 @@ void BaseViewer::ownRenderable(Renderable* newRenderable)
 
 	// Own the new Renderable
 	renderables_.own(newRenderable);
+
+	emit(renderableAdded());
 }
 
 // Create Renderable by type and object identifier
-Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* legendText, const char* groupName)
+Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* groupName)
 {
 	Renderable* renderable = RenderableFactory::create(type, objectTag);
 	if (renderable)
 	{
-		// Set name and title
+		// Set Renderable name
 		renderable->setName(name);
-		renderable->setLegendText(legendText ? legendText : name);
 
 		// Own the new Renderable
 		renderables_.own(renderable);
@@ -63,6 +68,8 @@ Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const 
 		// Set the group, if one was provided
 		if (groupName) groupManager_.addToGroup(renderable, groupName);
 	}
+
+	emit(renderableAdded());
 
 	return renderable;
 }
@@ -73,14 +80,19 @@ void BaseViewer::removeRenderable(Renderable* data)
 	renderables_.remove(data);
 
 	postRedisplay();
+
+	emit(renderableRemoved());
 }
 
 // Clear all Renderables
 void BaseViewer::clearRenderables()
 {
+	groupManager_.emptyGroups();
 	renderables_.clear();
 
 	postRedisplay();
+
+	emit(renderableRemoved());
 }
 
 // Return number of Renderables
@@ -132,11 +144,27 @@ bool BaseViewer::isRenderableVisible(const char* name) const
 	return rend->isVisible();
 }
 
+/*
+ * Renderable Groups
+ */
+
 // Return the group manager for Renderables
 RenderableGroupManager& BaseViewer::groupManager()
 {
 	return groupManager_;
 }
+
+// Add Renderable to specified group
+void BaseViewer::addRenderableToGroup(Renderable* rend, const char* group)
+{
+	groupManager_.addToGroup(rend, group);
+
+	emit(renderableChanged());
+}
+
+/*
+ * Options
+ */
 
 // Return the View definition
 View& BaseViewer::view()

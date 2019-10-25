@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSEMODULE_H
-#define DISSOLVE_ANALYSEMODULE_H
+#ifndef DISSOLVE_MODULE_ANALYSE_H
+#define DISSOLVE_MODULE_ANALYSE_H
 
 #include "module/module.h"
-#include "analyse/analyser.h"
+#include "procedure/procedure.h"
 
 // Forward Declarations
 /* none */
@@ -61,14 +61,11 @@ class AnalyseModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	/*
 	 * Processing
@@ -82,12 +79,12 @@ class AnalyseModule : public Module
 	 * Function Data
 	 */
 	private:
-	// Analyser to be run
-	Analyser analyser_;
+	// Analysis procedure to be run
+	Procedure analyser_;
 
 	public:
-	// Return the Analyser's context stack
-	const NodeContextStack& analyserContextStack() const;
+	// Return the analyser
+	Procedure& analyser();
 
 
 	/*

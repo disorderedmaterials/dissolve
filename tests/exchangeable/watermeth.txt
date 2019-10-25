@@ -50,17 +50,26 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Mix'
-  Density  0.1  atoms/A3
-  Multiplier  100
-  SpeciesInfo  'Water'  3.0
-  SpeciesInfo  'Methanol'  6.0
+  Generator
+    AddSpecies
+     Density  0.1  atoms/A3
+     Population  300
+     Species  'Water'
+    EndAddSpecies
+    AddSpecies
+     Density  0.1  atoms/A3
+     Population  600
+     Species  'Methanol'
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr/watermeth.ato'
-  RDFBinWidth 0.03
+  EndInputCoordinates
 
   # Calculate and test g(r)
   Module  RDF  RDFs
     # Save  On
     Frequency  1
+    BinWidth 0.03
   EndModule
 
   # Sample Structure Factor Calculations
@@ -71,7 +80,6 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
     Exchangeable  HW  HO
-    # Save  On
     Frequency  1
   EndModule
   
@@ -167,131 +175,322 @@ Layer  'Processing'
 
 # -- Partial g(r) (unbound terms)
 Module DataTest  'Unbound g(r)'
-  Threshold  2.6
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-OW//Unbound'  1  2
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-HW//Unbound'  1  4
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-CT//Unbound'  1  6
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-HC//Unbound'  1  8
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-OH//Unbound'  1  10
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-HO//Unbound'  1  12
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-HW//Unbound'  1  14
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-CT//Unbound'  1  16
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-HC//Unbound'  1  18
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-OH//Unbound'  1  20
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-HO//Unbound'  1  22
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-CT//Unbound'  1  24
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-HC//Unbound'  1  26
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-OH//Unbound'  1  28
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-HO//Unbound'  1  30
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HC-HC//Unbound'  1  32
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HC-OH//Unbound'  1  34
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HC-HO//Unbound'  1  36
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OH-OH//Unbound'  1  38
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OH-HO//Unbound'  1  40
-  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HO-HO//Unbound'  1  42
+  ErrorType  RMSE
+  Threshold  0.92
+  Data1D  'Mix//OriginalGR//OW-OW//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  2
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-HW//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  4
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-CT//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  6
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-HC//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  8
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-OH//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  10
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-HO//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  12
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-HW//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  14
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-CT//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  16
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-HC//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  18
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-OH//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  20
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-HO//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  22
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-CT//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  24
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-HC//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  26
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-OH//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  28
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-HO//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  30
+  EndData1D
+  Data1D  'Mix//OriginalGR//HC-HC//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  32
+  EndData1D
+  Data1D  'Mix//OriginalGR//HC-OH//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  34
+  EndData1D
+  Data1D  'Mix//OriginalGR//HC-HO//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  36
+  EndData1D
+  Data1D  'Mix//OriginalGR//OH-OH//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  38
+  EndData1D
+  Data1D  'Mix//OriginalGR//OH-HO//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  40
+  EndData1D
+  Data1D  'Mix//OriginalGR//HO-HO//Unbound'  xy  'epsr/watermeth.EPSR.g01'
+    Y  42
+  EndData1D
 EndModule
 
 # -- Partial g(r) (intramolecular terms)
 Module DataTest  'Bound g(r)'
-  Threshold  4.9
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-HW//Bound'  1  4
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-HW//Bound'  1  14
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-HC//Bound'  1  26
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-OH//Bound'  1  28
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-HO//Bound'  1  30
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HC-HC//Bound'  1  32
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HC-OH//Bound'  1  34
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HC-HO//Bound'  1  36
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OH-HO//Bound'  1  40
+  ErrorType  RMSE
+  Threshold  5.8
+  Data1D  'Mix//OriginalGR//OW-HW//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  4
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-HW//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  14
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-HC//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  26
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-OH//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  28
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-HO//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  30
+  EndData1D
+  Data1D  'Mix//OriginalGR//HC-HC//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  32
+  EndData1D
+  Data1D  'Mix//OriginalGR//HC-OH//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  34
+  EndData1D
+  Data1D  'Mix//OriginalGR//HC-HO//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  36
+  EndData1D
+  Data1D  'Mix//OriginalGR//OH-HO//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  40
+  EndData1D
 EndModule
 
 # -- Partial g(r) (intramolecular terms, zero)
 Module DataTest  'Zeroed bound g(r)
+  ErrorType  RMSE
   Threshold  0.001
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-OW//Bound'  1  2
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-CT//Bound'  1  6
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-HC//Bound'  1  8
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-OH//Bound'  1  10
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-HO//Bound'  1  12
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-CT//Bound'  1  16
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-HC//Bound'  1  18
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-OH//Bound'  1  20
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-HO//Bound'  1  22
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-CT//Bound'  1  24
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OH-OH//Bound'  1  38
-  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HO-HO//Bound'  1  42
+  Data1D  'Mix//OriginalGR//OW-OW//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  2
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-CT//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  6
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-HC//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  8
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-OH//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  10
+  EndData1D
+  Data1D  'Mix//OriginalGR//OW-HO//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  12
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-CT//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  16
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-HC//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  18
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-OH//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  20
+  EndData1D
+  Data1D  'Mix//OriginalGR//HW-HO//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  22
+  EndData1D
+  Data1D  'Mix//OriginalGR//CT-CT//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  24
+  EndData1D
+  Data1D  'Mix//OriginalGR//OH-OH//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  38
+  EndData1D
+  Data1D  'Mix//OriginalGR//HO-HO//Bound'  xy  'epsr/watermeth.EPSR.y01'
+    Y  42
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (unbound terms), unweighted
 Module DataTest  'Partial unweighted unbound S(Q)'
+  ErrorType  RMSE
   Threshold  5.0
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-OW//Unbound'  1  2
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-HW//Unbound'  1  4
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-CT//Unbound'  1  6
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-HC//Unbound'  1  8
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-OH//Unbound'  1  10
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-HO//Unbound'  1  12
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-HW//Unbound'  1  14
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-CT//Unbound'  1  16
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-HC//Unbound'  1  18
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-OH//Unbound'  1  20
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-HO//Unbound'  1  22
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-CT//Unbound'  1  24
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-HC//Unbound'  1  26
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-OH//Unbound'  1  28
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-HO//Unbound'  1  30
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HC-HC//Unbound'  1  32
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HC-OH//Unbound'  1  34
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HC-HO//Unbound'  1  36
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OH-OH//Unbound'  1  38
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OH-HO//Unbound'  1  40
-  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HO-HO//Unbound'  1  42
+  Data1D  'HHH//UnweightedSQ//OW-OW//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  2
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-HW//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  4
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-CT//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  6
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-HC//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  8
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-OH//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  10
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-HO//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  12
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-HW//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  14
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-CT//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  16
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-HC//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  18
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-OH//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  20
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-HO//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  22
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-CT//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  24
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-HC//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  26
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-OH//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  28
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-HO//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  30
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HC-HC//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  32
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HC-OH//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  34
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HC-HO//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  36
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OH-OH//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  38
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OH-HO//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  40
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HO-HO//Unbound'  xy  'epsr/watermeth.EPSR.f01'
+    Y  42
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (bound terms)
 Module DataTest  'Partial unweighted bound S(Q)'
-  Threshold  0.29
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-HW//Bound'  1  4
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-HW//Bound'  1  14
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-HC//Bound'  1  26
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-OH//Bound'  1  28
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-HO//Bound'  1  30
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HC-HC//Bound'  1  32
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HC-OH//Bound'  1  34
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HC-HO//Bound'  1  36
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OH-HO//Bound'  1  40
+  ErrorType  RMSE
+  Threshold  3.5
+  Data1D  'HHH//UnweightedSQ//OW-HW//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  4
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-HW//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  14
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-HC//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  26
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-OH//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  28
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-HO//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  30
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HC-HC//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  32
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HC-OH//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  34
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HC-HO//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  36
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OH-HO//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  40
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (bound terms, zero)
 Module DataTest  'Partial unweighted zeroed bound S(Q)'
+  ErrorType  RMSE
   Threshold  0.001
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-OW//Bound'  1  2
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-CT//Bound'  1  6
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-HC//Bound'  1  8
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-OH//Bound'  1  10
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-HO//Bound'  1  12
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-CT//Bound'  1  16
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-HC//Bound'  1  18
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-OH//Bound'  1  20
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-HO//Bound'  1  22
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-CT//Bound'  1  24
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OH-OH//Bound'  1  38
-  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HO-HO//Bound'  1  42
+  Data1D  'HHH//UnweightedSQ//OW-OW//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  2
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-CT//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  6
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-HC//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  8
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-OH//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  10
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OW-HO//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  12
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-CT//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  16
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-HC//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  18
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-OH//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  20
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HW-HO//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  22
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//CT-CT//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  24
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//OH-OH//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  38
+  EndData1D
+  Data1D  'HHH//UnweightedSQ//HO-HO//Bound'  xy  'epsr/watermeth.EPSR.s01'
+    Y  42
+  EndData1D
 EndModule
 
 # -- Total neutron-weighted S(Q)
 # u01 file: 1  2   4   6   8   10  12  14  16
 #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
 Module DataTest  'Total weighted S(Q)'
-  Threshold  2.1
-  Data1D  'epsr/watermeth.EPSR.u01'  'HHH//WeightedSQ//Total'  1  2
-  Data1D  'epsr/watermeth.EPSR.u01'  'H5H//WeightedSQ//Total'  1  4
-  Data1D  'epsr/watermeth.EPSR.u01'  'DHH//WeightedSQ//Total'  1  6
-  Data1D  'epsr/watermeth.EPSR.u01'  'HDH//WeightedSQ//Total'  1  8
-  Data1D  'epsr/watermeth.EPSR.u01'  'HHD//WeightedSQ//Total'  1  10
-  Data1D  'epsr/watermeth.EPSR.u01'  'DDH//WeightedSQ//Total'  1  12
-  Data1D  'epsr/watermeth.EPSR.u01'  'HDD//WeightedSQ//Total'  1  14
-  Data1D  'epsr/watermeth.EPSR.u01'  'DDD//WeightedSQ//Total'  1  16
+  ErrorType  RMSE
+  Threshold  0.09
+  Data1D  'HHH//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  2
+  EndData1D
+  Data1D  'H5H//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  4
+  EndData1D
+  Data1D  'DHH//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  6
+  EndData1D
+  Data1D  'HDH//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  8
+  EndData1D
+  Data1D  'HHD//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  10
+  EndData1D
+  Data1D  'DDH//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  12
+  EndData1D
+  Data1D  'HDD//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  14
+  EndData1D
+  Data1D  'DDD//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
+    Y  16
+  EndData1D
 EndModule
 
 Module SanityCheck
@@ -303,16 +502,10 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'OW'  -0.82      0.6503    3.165492
-  Parameters  'HW'  0.41       0.0       0.0
-  Parameters  'CT'  -0.18      0.276     3.55
-  Parameters  'HC'  0.06       0.126     2.5
-  Parameters  'OH'  -0.68	0.711	3.12
-  Parameters  'HO'  -0.48	0.126	2.4
-  GenerateAll  'LJ'
+  Parameters  'OW'  -0.82   LJGeometric   0.6503    3.165492
+  Parameters  'HW'  0.41   LJGeometric    0.0       0.0
+  Parameters  'CT'  -0.18   LJGeometric   0.276     3.55
+  Parameters  'HC'  0.06    LJGeometric   0.126     2.5
+  Parameters  'OH'  -0.68 LJGeometric	0.711	3.12
+  Parameters  'HO'  -0.48 LJGeometric	0.126	2.4
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
-

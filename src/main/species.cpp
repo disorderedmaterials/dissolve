@@ -30,18 +30,19 @@ Species* Dissolve::addSpecies()
 {
 	Species* newSpecies = coreData_.addSpecies();
 
-	setUp_ = false;
-
 	return newSpecies;
 }
 
 // Remove the specified Species from the list
 void Dissolve::removeSpecies(Species* sp)
 {
-	// Remove Species
-	coreData_.species().remove(sp);
+	if (!sp) return;
 
-	setUp_ = false;
+	// Remove references to the Species itself
+	removeReferencesTo(sp);
+
+	// Now safe to remove the Species
+	coreData_.removeSpecies(sp);
 }
 
 // Return number of defined Species
@@ -68,34 +69,6 @@ Species* Dissolve::findSpecies(const char* name) const
 	return coreData_.findSpecies(name);
 }
 
-// Update Species (or all) Isotopologues (or specified)
-void Dissolve::updateIsotopologues(Species* species, Isotopologue* iso)
-{
-	if (iso) iso->update(coreData_.atomTypes());
-	else if (species) species->updateIsotopologues(coreData_.atomTypes());
-	else for (species = coreData_.species().first(); species != NULL; species = species->next) species->updateIsotopologues(coreData_.atomTypes());
-}
-
-// Remove Isotopologue from Species
-void Dissolve::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
-{
-	// NULL pointer check
-	if (species == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Species passed to Dissolve::removeSpeciesIsotopologue.\n");
-		return;
-	}
-	if (iso == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Isotopologue passed to Dissolve::removeSpeciesIsotopologue.\n");
-		return;
-	}
-	
-	species->removeIsotopologue(iso);
-
-	setUp_ = false;
-}
-
 // Copy AtomType, creating a new one if necessary
 void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 {
@@ -113,6 +86,7 @@ void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 		at = addAtomType(sourceAtom->element());
 		at->setName(sourceAtom->atomType()->name());
 		at->parameters() = sourceAtom->atomType()->parameters();
+		at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
 	}
 
 	destAtom->setAtomType(at);
@@ -131,28 +105,28 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 		MasterIntra* master = NULL;
 		if (sourceIntra->type() == SpeciesIntra::IntramolecularBond)
 		{
-			master = hasMasterBond(sourceIntra->masterParameters()->name());
+			master = coreData_.hasMasterBond(sourceIntra->masterParameters()->name());
 			if (!master)
 			{
-				master = addMasterBond(sourceIntra->masterParameters()->name());
+				master = coreData_.addMasterBond(sourceIntra->masterParameters()->name());
 				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 		else if (sourceIntra->type() == SpeciesIntra::IntramolecularAngle)
 		{
-			master = hasMasterAngle(sourceIntra->masterParameters()->name());
+			master = coreData_.hasMasterAngle(sourceIntra->masterParameters()->name());
 			if (!master)
 			{
-				master = addMasterAngle(sourceIntra->masterParameters()->name());
+				master = coreData_.addMasterAngle(sourceIntra->masterParameters()->name());
 				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 		else if (sourceIntra->type() == SpeciesIntra::IntramolecularTorsion)
 		{
-			master = hasMasterTorsion(sourceIntra->masterParameters()->name());
+			master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
 			if (!master)
 			{
-				master = addMasterTorsion(sourceIntra->masterParameters()->name());
+				master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
 				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
@@ -222,8 +196,6 @@ Species* Dissolve::copySpecies(const Species* species)
 	}
 
 	// Finalise the new Species
-	newSpecies->updateUsedAtomTypes();
-	newSpecies->addNaturalIsotopologue(atomTypes());
 	newSpecies->updateGrains();
 	newSpecies->centreAtOrigin();
 	newSpecies->orderAtomsWithinGrains();

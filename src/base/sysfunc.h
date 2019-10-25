@@ -79,6 +79,10 @@ class DissolveSys
 	static bool isEmpty(const char* s);
 	// Return nice version of string (no spaces, slashes etc.)
 	static const char* niceName(const char* original);
+	// Return whether the supplied string is a number
+	static bool isNumber(const char* text);
+	// Return whether the supplied string is a number, and also whether it is floating-point
+	static bool isNumber(const char* text, bool& isFloatingPoint);
 
 
 	/*

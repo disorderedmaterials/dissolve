@@ -208,7 +208,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	// In case the number of cells required to cover the pairpotential range exceeds the number across the box, we need to check
 	// for and trim off negative indices which would in reality be equivalent to a folded, positive index.
 	neighbourIndices_.clear();
-	RefList<Cell,int> cellNbrs;
+	RefList<Cell> cellNbrs;
 	Cell* nbr;
 	for (x=-extents_.x; x<=extents_.x; ++x)
 	{
@@ -237,7 +237,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 					nbr = cell(x, y, z);
 					if (cellNbrs.contains(nbr)) continue;
 					neighbourIndices_.add()->set(x, y, z);
-					cellNbrs.add(nbr);
+					cellNbrs.append(nbr);
 				}
 			}
 		}
@@ -260,7 +260,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		adjacentNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
-		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next)
+		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next())
 		{
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);

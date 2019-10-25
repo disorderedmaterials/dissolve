@@ -21,6 +21,8 @@
 
 #include "gui/viewer/specieswidget.h"
 #include "gui/widgets/elementselector.hui"
+#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/box.h"
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
@@ -50,6 +52,12 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 // Destructor
 SpeciesWidget::~SpeciesWidget()
 {
+}
+
+// Set main CoreData pointer
+void SpeciesWidget::setCoreData(CoreData* coreData)
+{
+	coreData_ = coreData;
 }
 
 // Return contained SpeciesViewer
@@ -92,6 +100,16 @@ void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 	speciesViewer()->postRedisplay();
 }
 
+void SpeciesWidget::on_ViewSpheresButton_clicked(bool checked)
+{
+	speciesViewer()->setRenderableDrawStyle(checked ? RenderableSpecies::SpheresStyle : RenderableSpecies::LinesStyle);
+
+	speciesViewer()->notifyDataModified();
+	speciesViewer()->notifyDataChanged();
+
+	speciesViewer()->postRedisplay();
+}
+
 void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
 	speciesViewer()->setAxesVisible(checked);
@@ -111,6 +129,15 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	Species* sp = speciesViewer()->species();
 	if (!sp) return;
 
+	// Apply forcefield terms now?
+	if (sp->forcefield())
+	{
+		sp->applyForcefieldTerms(*coreData_);
+	}
+
+	// Check that the Species set up is valid
+	if (!sp->checkSetUp()) return;
+
 	// Create a temporary CoreData and Dissolve
 	CoreData temporaryCoreData;
 	Dissolve temporaryDissolve(temporaryCoreData);
@@ -119,19 +146,21 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	// Copy our target species to the temporary structure, and create a simple Configuration from it
 	Species* temporarySpecies = temporaryDissolve.copySpecies(sp);
 	Configuration* temporaryCfg = temporaryDissolve.addConfiguration();
-	SpeciesInfo* spInfo = temporaryCfg->addUsedSpecies(temporarySpecies, 1.0);
-	spInfo->setRotateOnInsertion(false);
-	spInfo->setInsertionPositioning(SpeciesInfo::CentralPositioning);
-	temporaryCfg->setMultiplier(1);
-	temporaryCfg->setNonPeriodic(true);
-	temporaryCfg->setAtomicDensity(0.001);
+	temporaryCfg->addMolecule(temporarySpecies);
+	Procedure& generator = temporaryCfg->generator();
+	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0,1.0,1.0), Vec3<double>(90,90,90), true));
+	AddSpeciesProcedureNode* addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
+	addSpeciesNode->setKeyword<bool>("Rotate", false);
+	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
+	generator.addRootSequenceNode(addSpeciesNode);
+	if (!temporaryCfg->generate(temporaryDissolve.worldPool())) return;
 
-	// Create an Geometry Optimisation Module in a new processing layer, and set everything up
-	if (!temporaryDissolve.createModuleInLayer("Optimise", "Processing", temporaryCfg)) return;
-	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
-	if (!temporaryDissolve.setUp()) return;
+	// Create a Geometry Optimisation Module in a new processing layer, and set everything up
+	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
+	if (!temporaryDissolve.generatePairPotentials()) return;
 
 	// Run the calculation
+	if (!temporaryDissolve.prepare()) return;
 	temporaryDissolve.iterate(1);
 
 	// Copy the optimised coordinates from the temporary Configuration to the target Species
@@ -172,6 +201,7 @@ void SpeciesWidget::updateToolbar()
 
 	// Set checkable buttons
 	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
+	ui_.ViewSpheresButton->setChecked(speciesViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
 }
 
 // Update status bar

@@ -85,29 +85,6 @@ const char* ColourDefinition::colourStyle(ColourStyle cs)
 	return ColourStyleKeywords[cs];
 }
 
-// Stock Colours
-QColor StockColours[] = {
-	QColor(0, 0, 0),	/* BlackStockColour */
-	QColor(200, 0, 0),	/* RedStockColour */
-	QColor(0, 200, 0),	/* GreenStockColour */
-	QColor(0, 0, 200),	/* BlueStockColour */
-	QColor(200, 0, 200),	/* PurpleStockColour */
-	QColor(0, 200, 200),	/* CyanStockColour */
-	QColor(255, 128, 0),	/* OrangeStockColour */
-	QColor(255, 100, 255),	/* PinkStockColour */
-	QColor(255, 100, 100),	/* LightRedStockColour */
-	QColor(100, 255, 100),	/* LightGreenStockColour */
-	QColor(100, 100, 255),	/* LightBlueStockColour */
-	QColor(128, 128, 128),	/* SilverStockColour */
-	QColor(128, 128, 50)	/* GoldStockColour */
-};
-
-// Return stock colour (as QColor)
-QColor ColourDefinition::stockColour(ColourDefinition::StockColour colour)
-{
-	return StockColours[colour];
-}
-
 /*
  * Style
  */

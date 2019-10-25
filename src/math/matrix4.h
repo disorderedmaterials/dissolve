@@ -24,14 +24,6 @@
 
 #include "templates/vector3.h"
 #include "templates/vector4.h"
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#ifdef _MAC
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
 
 // Forward Declarations
 class Matrix3;
@@ -219,8 +211,6 @@ class Matrix4
 	Vec3<double> rotateVector(Vec3<double> &v) const;
 	// Apply rotational part of matrix to supplied vector coordinates
 	Vec3<double> rotateVector(double x, double y, double z) const;
-	// Multiply against coordinates provided (in GLfloats)
-	void multiply(GLfloat* r, GLfloat* transformed) const;
 	// Multiply against other matrix, but only rotational part, keeping translation/scaling intact
 	void multiplyRotation(Matrix4 B);
 	// Remove translation and scaling parts, leaving rotation only

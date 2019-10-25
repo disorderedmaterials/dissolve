@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTRASHAKEMODULE_H
-#define DISSOLVE_INTRASHAKEMODULE_H
+#ifndef DISSOLVE_MODULE_INTRASHAKE_H
+#define DISSOLVE_MODULE_INTRASHAKE_H
 
 #include "module/module.h"
 
@@ -64,14 +64,12 @@ class IntraShakeModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
+	
 
 	/*
 	 * Processing

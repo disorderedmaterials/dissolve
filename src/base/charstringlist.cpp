@@ -32,16 +32,16 @@ CharStringList::~CharStringList()
 {
 }
 
-// Conversion operator
-CharStringList::operator const List<CharString>&() const
-{
-	return strings_;
-}
-
 // Copy constructor
 CharStringList::CharStringList(const CharStringList& source)
 {
 	(*this) = source;
+}
+
+// Conversion from const char*
+CharStringList::CharStringList(const char* text)
+{
+	strings_.add(text);
 }
 
 // Assignment operator
@@ -49,7 +49,7 @@ void CharStringList::operator=(const CharStringList& source)
 {
 	clear();
 
-	for (CharString* s = source.strings_.first(); s != NULL; s = s->next) add(s->get());
+	strings_ = source.strings_;
 }
 
 /*
@@ -65,8 +65,7 @@ void CharStringList::clear()
 // Add string to list
 void CharStringList::add(const char* s)
 {
-	CharString* newString = strings_.add();
-	newString->set(s);
+	strings_.add(s);
 }
 
 // Return number of strings in list
@@ -75,26 +74,32 @@ int CharStringList::nItems() const
 	return strings_.nItems();
 }
 
+// Return nth string in list
+const char* CharStringList::at(int index) const
+{
+	return strings_.constAt(index);
+}
+
 // Return whether specified string is currently in the list
 bool CharStringList::contains(const char* s, bool caseSensitive) const
 {
-	ListIterator<CharString> stringIterator(strings_);
-	while (CharString* str = stringIterator.iterate()) if (DissolveSys::sameString(str->get(), s, caseSensitive)) return true;
+	for (int n=0; n<strings_.nItems(); ++n) if (DissolveSys::sameString(strings_.constAt(n), s, caseSensitive)) return true;
 
 	return false;
 }
 
 // Return list as comma-separated string
-const char* CharStringList::get() const
+const char* CharStringList::asCommaSeparatedList() const
 {
 	static CharString result;
+
 	result.clear();
-	ListIterator<CharString> stringIterator(strings_);
-	while (CharString* str = stringIterator.iterate())
+
+	for (int n=0; n<strings_.nItems(); ++n)
 	{
-		if (stringIterator.isFirst()) result = str->get();
-		else result.strcatf(", %s", str->get());
-	};
+		if (n == 0) result = strings_.constAt(n);
+		else result.strcatf(", %s", strings_.constAt(n).get());
+	}
 
 	return result.get();
 }

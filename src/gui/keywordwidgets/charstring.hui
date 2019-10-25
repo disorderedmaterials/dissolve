@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
-#define DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_CHARSTRING_H
+#define DISSOLVE_KEYWORDWIDGET_CHARSTRING_H
 
-#include "module/keywordtypes/charstring.h"
+#include "keywords/charstring.h"
 #include "gui/keywordwidgets/base.h"
 #include <QLineEdit>
 
@@ -36,7 +36,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -44,7 +44,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	CharStringModuleKeyword* keyword_;
+	CharStringKeyword* keyword_;
 
 
 	/*
@@ -56,14 +56,14 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 };
 

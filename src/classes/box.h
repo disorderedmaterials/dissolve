@@ -23,6 +23,7 @@
 #define DISSOLVE_BOX_H
 
 #include "math/matrix3.h"
+#include "base/enumoptions.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -39,6 +40,14 @@ class Box
 	Box();
 	// Virtual Destructor
 	virtual ~Box();
+	// Assignment operator
+	void operator=(const Box& source);
+
+
+	/*
+	 * Basic Definition
+	 */
+	public:
 	// Box Type Enum
 	enum BoxType {
 		NonPeriodicBoxType,		/* Non-periodic system - cubic box, but no minimum image calculation */
@@ -48,17 +57,9 @@ class Box
 		TriclinicBoxType,		/* Triclinic box with cell angles a != b != c != 90 */
 		nBoxTypes			/* Number of Box types */
 	};
-	// Convert text string to BoxType
-	static BoxType boxType(const char* s);
-	// Convert BoxType to text string
-	static const char* boxType(BoxType id);
-	// Assignment operator
-	void operator=(const Box& source);
+	// Return enum options for BoxType
+	static EnumOptions<BoxType> boxTypes();
 
-
-	/*
-	 * Basic Definition
-	 */
 	protected:
 	// Box type
 	BoxType type_;
@@ -82,10 +83,10 @@ class Box
 	double reciprocalVolume_;
 
 	public:
+	// Finalise Box, storing volume and reciprocal and inverted axes
+	void finalise();
 	// Return Box type
 	BoxType type() const;
-	// Set up box, scaling to volume specified (in cubic Angstroms)
-	void setUp(double volume);
 	// Return volume
 	double volume() const;
 	// Return axis lengths
@@ -151,7 +152,7 @@ class Box
 	 */
 	public:
 	// Generate a suitable Box given the supplied relative lengths, angles, and volume
-	static Box* generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume);
+	static Box* generate(Vec3<double> lengths, Vec3<double> angles);
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
@@ -178,19 +179,21 @@ class Box
 	public:
 	// Return angle (in degrees, no MIM) between Atoms
 	double angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const;
-	// Return angle (in degrees, no MIM) between coordinates
-	static double angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
+	// Return angle (in degrees) between coordinates
+	double angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k) const;
 	// Return angle (in degrees) between supplied normalised vectors
 	static double angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk);
 	// Return angle (in degrees) between supplied normalised vectors (storing dot product)
 	static double angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct);
-	// Return torsion (in degrees, no MIM) between supplied unnormalised vectors
+	// Return literal angle (in degrees) between coordinates, without applying minimum image convention
+	static double literalAngleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
+	// Return torsion (in degrees) between supplied unnormalised vectors
 	static double torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl);
-	// Return torsion (in degrees, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
+	// Return torsion (in degrees) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
 	static double torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
-	// Return torsion (in radians, no MIM) between supplied unnormalised vectors
+	// Return torsion (in radians) between supplied unnormalised vectors
 	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl);
-	// Return torsion (in radians, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
+	// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
 	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
 };
 
@@ -199,7 +202,7 @@ class NonPeriodicBox : public Box
 {
 	public:
 	// Constructor
-	NonPeriodicBox(double volume);
+	NonPeriodicBox(double length);
 	// Destructor
 	~NonPeriodicBox();
 
@@ -259,7 +262,7 @@ class CubicBox : public Box
 {
 	public:
 	// Constructor
-	CubicBox(double volume, double boxLength);
+	CubicBox(double length);
 	// Destructor
 	~CubicBox();
 
@@ -319,7 +322,7 @@ class OrthorhombicBox : public Box
 {
 	public:
 	// Constructor
-	OrthorhombicBox(double volume, const Vec3<double> relativeLengths);
+	OrthorhombicBox(const Vec3<double> lengths);
 	// Destructor
 	~OrthorhombicBox();
 
@@ -379,7 +382,7 @@ class MonoclinicBox : public Box
 {
 	public:
 	// Constructor
-	MonoclinicBox(double volume, const Vec3<double> relativeLengths, double alpha);
+	MonoclinicBox(const Vec3<double> lengths, double beta);
 	// Destructor
 	~MonoclinicBox();
 
@@ -439,7 +442,7 @@ class TriclinicBox : public Box
 {
 	public:
 	// Constructor
-	TriclinicBox(double volume, const Vec3<double> relativeLengths, const Vec3<double> cellAngles);
+	TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
 	// Destructor
 	~TriclinicBox();
 

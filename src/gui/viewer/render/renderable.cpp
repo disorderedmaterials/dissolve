@@ -27,20 +27,19 @@
 #include "base/sysfunc.h"
 #include <limits>
 
-// Renderable Type
-const char* RenderableTypeKeywords[] = { "Configuration", "Data1D", "Species" };
-
-// Convert text string to RenderableType
-Renderable::RenderableType Renderable::renderableType(const char* s)
+// Return enum options for RenderableType
+EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-	for (int n=0; n<nRenderableTypes; ++n) if (DissolveSys::sameString(s, RenderableTypeKeywords[n])) return (Renderable::RenderableType) n;
-	return nRenderableTypes;
-}
+	static EnumOptionsList RenderableTypeOptions = EnumOptionsList() <<
+		EnumOption(Renderable::ConfigurationRenderable, 	"Configuration") <<
+		EnumOption(Renderable::Data1DRenderable, 		"Data1D") <<
+		EnumOption(Renderable::Data2DRenderable, 		"Data2D") <<
+		EnumOption(Renderable::Data3DRenderable, 		"Data3D") <<
+		EnumOption(Renderable::SpeciesRenderable, 		"Species");
 
-// Convert RenderableType to text string
-const char* Renderable::renderableType(RenderableType rt)
-{
-	return RenderableTypeKeywords[rt];
+	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
+
+	return options;
 }
 
 // Constructor
@@ -106,18 +105,6 @@ const char* Renderable::name()
 Renderable::RenderableType Renderable::type() const
 {
 	return type_;
-}
-
-// Set legend text to display
-void Renderable::setLegendText(const char* legendText)
-{
-	legendText_ = legendText;
-}
-
-// Return legend text to display
-const char* Renderable::legendText() const
-{
-	return legendText_.get();
 }
 
 /*
@@ -240,7 +227,8 @@ void Renderable::setVisible(bool visible)
 // Return whether data is visible
 bool Renderable::isVisible() const
 {
-	return visible_;
+	// Group visibility overrides our own (*if* we are currently visible)...
+	return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
 }
 
 // Set display style index
@@ -252,7 +240,7 @@ void Renderable::setDisplayStyle(int id)
 }
 
 // Return display style index
-int Renderable::displayStyle() const
+int Renderable::displayStyleIndex() const
 {
 	return displayStyle_;
 }
@@ -264,9 +252,9 @@ void Renderable::setColour(int r, int g, int b, int a)
 }
 
 // Set basic colour
-void Renderable::setColour(ColourDefinition::StockColour stockColour)
+void Renderable::setColour(StockColours::StockColour stockColour)
 {
-	colour_.setSingleColour(ColourDefinition::stockColour(stockColour));
+	colour_.setSingleColour(StockColours::stockColour(stockColour));
 }
 
 // Return local colour definition for display
@@ -319,7 +307,7 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	const Axes& axes = view.constAxes();
 
 	// Grab copy of the relevant colour definition for this Renderable
-	const ColourDefinition& colourDefinition = groupManager.colourDefinition(this);
+	const ColourDefinition& colourDefinition = colour();
 
 	// Check whether the primitive for this Renderable needs updating
 	bool upToDate = true;

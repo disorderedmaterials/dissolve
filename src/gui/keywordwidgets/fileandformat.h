@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_fileandformat.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/fileandformat.h"
+#include "keywords/fileandformat.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -32,24 +32,14 @@
 class Dissolve;
 class QComboBox;
 
-class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
+class FileAndFormatKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	FileAndFormatKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::FileAndFormatWidget ui;
-
-
-	/*
-	 * Reference to Dissolve
-	 */
-	private:
-	// Reference to Dissolve (used to get input file dir in order to generate relative path names)
-	const Dissolve& dissolve_;
+	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -57,21 +47,26 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	FileAndFormatModuleKeyword* keyword_;
+	FileAndFormatKeyword* keyword_;
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::FileAndFormatWidget ui_;
+
 	private slots:
-	void on_FileEdit_editingFinished();
-	void on_FileEdit_returnPressed();
-	void on_FileFormatCombo_currentIndexChanged(int index);
-	void on_FileSelectButton_clicked(bool checked);
+	void fileEdit_editingFinished();
+	void fileEdit_returnPressed();
+	void formatCombo_currentIndexChanged(int index);
+	void fileSelectButton_clicked(bool checked);
+	void optionChanged();
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*
@@ -82,7 +77,7 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 	void checkFileValidity();
 
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

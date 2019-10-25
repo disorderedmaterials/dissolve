@@ -36,16 +36,16 @@ AtomShakeModuleWidget::~AtomShakeModuleWidget()
 }
 
 // Update controls within widget
-void AtomShakeModuleWidget::updateControls()
+void AtomShakeModuleWidget::updateControls(int flags)
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void AtomShakeModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void AtomShakeModuleWidget::enableSensitiveControls()
 {
 }

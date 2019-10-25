@@ -22,7 +22,9 @@
 #ifndef DISSOLVE_COREDATA_H
 #define DISSOLVE_COREDATA_H
 
+#include "classes/masterintra.h"
 #include "base/charstringlist.h"
+#include "base/version.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -40,6 +42,8 @@ class CoreData
 	// Constructor / Destructor
 	CoreData();
 	~CoreData();
+	// Clear all data
+	void clear();
 
 
 	/*
@@ -48,10 +52,14 @@ class CoreData
 	private:
 	// Core AtomTypes list
 	List<AtomType> atomTypes_;
+	// AtomTypes version
+	VersionCounter atomTypesVersion_;
 
 	public:
 	// Add new AtomType
 	AtomType* addAtomType(Element* el);
+	// Remove specified AtomType
+	void removeAtomType(AtomType* at);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return core AtomTypes list
@@ -64,6 +72,58 @@ class CoreData
 	const char* uniqueAtomTypeName(const char* baseName) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
+	// Bump AtomTypes version
+	void bumpAtomTypesVersion();
+	// Return AtomTypes version
+	int atomTypesVersion() const;
+
+
+	/*
+	 * Master Intramolecular Terms
+	 */
+	private:
+	// List of master Bond parameters for Species
+	List<MasterIntra> masterBonds_;
+	// List of master Angles parameters for Species
+	List<MasterIntra> masterAngles_;
+	// List of master Torsions parameters for Species
+	List<MasterIntra> masterTorsions_;
+
+	public:
+	// Add new master Bond parameters
+	MasterIntra* addMasterBond(const char* name);
+	// Return number of master Bond parameters in list
+	int nMasterBonds() const;
+	// Return list of master Bond parameters
+	const List<MasterIntra>& masterBonds() const;
+	// Return nth master Bond 
+	MasterIntra* masterBond(int n);
+	// Return whether named master Bond parameters exist
+	MasterIntra* hasMasterBond(const char* name) const;
+	// Add new master Angle parameters
+	MasterIntra* addMasterAngle(const char* name);
+	// Return number of master Angles parameters in list
+	int nMasterAngles() const;
+	// Return list of master Angle parameters
+	const List<MasterIntra>& masterAngles() const;
+	// Return nth master Angle parameters
+	MasterIntra* masterAngle(int n);
+	// Return whether named master Angle parameters exist
+	MasterIntra* hasMasterAngle(const char* name) const;
+	// Add new master Torsion parameters
+	MasterIntra* addMasterTorsion(const char* name);
+	// Return number of master Torsions parameters in list
+	int nMasterTorsions() const;
+	// Return list of master Torsion parameters
+	const List<MasterIntra>& masterTorsions() const;
+	// Return nth master Torsion parameters
+	MasterIntra* masterTorsion(int n);
+	// Return whether named master Torsion parameters exist
+	MasterIntra* hasMasterTorsion(const char* name) const;
+	// Return the named master term (of any form) if it exists
+	MasterIntra* findMasterTerm(const char* name) const;
+	// Clear all master terms
+	void clearMasterTerms();
 
 
 	/*
@@ -76,6 +136,8 @@ class CoreData
 	public:
 	// Add new Species
 	Species* addSpecies();
+	// Remove specified Species
+	void removeSpecies(Species* sp);
 	// Return number of Species in list
 	int nSpecies() const;
 	// Return core Species list
@@ -100,6 +162,8 @@ class CoreData
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of Configuration in list
 	int nConfigurations() const;
 	// Return core Configuration list
@@ -119,17 +183,31 @@ class CoreData
 	 */
 	private:
 	// Pointer to Module instances list
-	RefList<Module,bool>* moduleInstances_;
+	const RefList<Module>* moduleInstances_;
 
 	public:
 	// Set target Module instances list
-	void setModuleInstances(RefList<Module,bool>* moduleInstances);
+	void setModuleInstances(RefList<Module>* moduleInstances);
 	// Search for any instance of any module with the specified unique name
 	Module* findModule(const char* uniqueName) const;
 	// Search for and return any instance(s) of the specified Module type
-	RefList<Module,bool> findModules(const char* moduleType) const;
+	RefList<Module> findModules(const char* moduleType) const;
 	// Search for and return any instance(s) of the specified List of Module types
-	RefList<Module,bool> findModules(const CharStringList& moduleTypes) const;
+	RefList<Module> findModules(const CharStringList& moduleTypes) const;
+
+
+	/*
+	 * Input Filename
+	 */
+	private:
+	// Pointer to the current input filename (from Dissolve)
+	const CharString* inputFilename_;
+
+	public:
+	// Set pointer to the current input filename
+	void setInputFilename(const CharString* inputFilePtr);
+	// Return the current input filename (from Dissolve)
+	const char* inputFilename() const;
 };
 
 #endif

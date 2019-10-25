@@ -26,6 +26,7 @@
 #include "gui/viewer/render/primitivelist.h"
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestyle.h"
+#include "gui/stockcolours.h"
 #include "math/transformer.h"
 #include "base/charstring.h"
 
@@ -39,12 +40,9 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { ConfigurationRenderable, Data1DRenderable, SpeciesRenderable, nRenderableTypes };
-	// Convert text string to RenderableType
-	static RenderableType renderableType(const char* s);
-	// Convert RenderableType to text string
-	static const char* renderableType(RenderableType rt);
-
+	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, nRenderableTypes };
+	// Return enum options for RenderableType
+	static EnumOptions<RenderableType> renderableTypes();
 	// Constructor / Destructor
 	Renderable(RenderableType type, const char* objectTag);
 	virtual ~Renderable();
@@ -58,8 +56,6 @@ class Renderable : public ListItem<Renderable>
 	CharString name_;
 	// Type of Renderable
 	RenderableType type_;
-	// Legend text to display
-	CharString legendText_;
 
 	public:
 	// Set name of Renderable
@@ -68,10 +64,6 @@ class Renderable : public ListItem<Renderable>
 	const char* name();
 	// Return type of Renderable
 	RenderableType type() const;
-	// Set legend text to display
-	void setLegendText(const char* legendText);
-	// Return legend text to display
-	const char* legendText() const;
 
 
 	/*
@@ -175,11 +167,11 @@ class Renderable : public ListItem<Renderable>
 	// Set display style index
 	void setDisplayStyle(int id);
 	// Return display style index
-	int displayStyle() const;
+	int displayStyleIndex() const;
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
-	void setColour(ColourDefinition::StockColour stockColour);
+	void setColour(StockColours::StockColour stockColour);
 	// Return local colour definition for display
 	ColourDefinition& colour();
 	// Return local colour definition for display (const)

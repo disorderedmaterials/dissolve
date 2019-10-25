@@ -20,6 +20,7 @@
 */
 
 #include "main/dissolve.h"
+#include "classes/box.h"
 #include "classes/grain.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
@@ -29,8 +30,6 @@
 Configuration* Dissolve::addConfiguration()
 {
 	Configuration* cfg = coreData_.addConfiguration();
-
-	setUp_ = false;
 
 	return cfg;
 }
@@ -43,9 +42,23 @@ bool Dissolve::ownConfiguration(Configuration* cfg)
 
 	coreData_.configurations().own(cfg);
 
-	setUp_ = false;
-
 	return true;
+}
+
+// Remove specified Configuration
+void Dissolve::removeConfiguration(Configuration* cfg)
+{
+	if (!cfg) return;
+
+	// Remove any references to the Modules in the Configuration's local processing layer before we delete it
+	ListIterator<Module> moduleIterator(cfg->modules());
+	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+
+	// Remove references to the Configuration itself
+	removeReferencesTo(cfg);
+
+	// Now safe to remove the Configuration
+	coreData_.removeConfiguration(cfg);
 }
 
 // Return number of defined Configurations
@@ -75,7 +88,7 @@ Configuration* Dissolve::findConfiguration(const char* name) const
 // Find configuration by 'nice' name
 Configuration* Dissolve::findConfigurationByNiceName(const char* name) const
 {
-	for (Configuration* cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(name, cfg->niceName())) return cfg;
+	for (Configuration* cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next()) if (DissolveSys::sameString(name, cfg->niceName())) return cfg;
 
 	return NULL;
 }
@@ -91,8 +104,10 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("'%s'  %i  %i  # nMolecules  nGrains\n", cfg->name(), cfg->nMolecules(), cfg->nGrains())) return false;
 
 	// Write unit cell (box) lengths and angles
-	if (!parser.writeLineF("%12e %12e %12e  %f\n", cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z, cfg->requestedSizeFactor())) return false;
-	if (!parser.writeLineF("%12e %12e %12e\n", cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z)) return false;
+	Vec3<double> lengths = cfg->box()->axisLengths();
+	Vec3<double> angles = cfg->box()->axisAngles();
+	if (!parser.writeLineF("%12e %12e %12e  %f  %s\n", lengths.x, lengths.y, lengths.z, cfg->requestedSizeFactor(), DissolveSys::btoa(cfg->box()->type() == Box::NonPeriodicBoxType))) return false;
+	if (!parser.writeLineF("%12e %12e %12e\n", angles.x, angles.y, angles.z)) return false;
 
 	// Write Molecule types - write sequential Molecules with same type as single line
 	int moleculeCount = 1;
@@ -173,14 +188,15 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	// Read configuration name, nMolecules, and nGrains, and initialise those arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setName(parser.argc(0));
-	cfg->initialise(parser.argi(1), parser.argi(2)); 
+	cfg->initialiseArrays(parser.argi(1), parser.argi(2)); 
 
-	// Read unit cell (box) lengths and angles
+	// Read Box lengths and angles, and create the Box
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	cfg->setRelativeBoxLengths(parser.arg3d(0));
+	Vec3<double> lengths = parser.arg3d(0);
 	cfg->setRequestedSizeFactor(parser.hasArg(3) ? parser.argd(3) : 1.0);
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	cfg->setBoxAngles(parser.arg3d(0));
+	Vec3<double> angles = parser.arg3d(0);
+	if (!cfg->createBox(lengths, angles)) return false;
 
 	// Read Species types for Molecules
 	int nMolsRead = 0;
@@ -192,7 +208,13 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		if (!sp) return Messenger::error("Unrecognised Species '%s' found in Configuration '%s' in restart file.\n", parser.argc(1), cfg->name());
 
 		// Set Species pointers for this range of Molecules
-		for (int n=0; n<parser.argi(0); ++n) cfg->molecule(nMolsRead+n)->setSpecies(sp);
+		int nMols = parser.argi(0);
+		for (int n=0; n<nMols; ++n) cfg->molecule(nMolsRead+n)->setSpecies(sp);
+
+		// Update the used species population
+		cfg->addUsedSpecies(sp, nMols);
+
+		// Increase our counter
 		nMolsRead += parser.argi(0);
 	}
 
@@ -260,7 +282,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		torsion->setSpeciesTorsion(species(parser.argi(5))->torsion(parser.argi(6)));
 	}
 
-	cfg->finaliseAfterLoad(worldPool(), pairPotentialRange_, nBoxNormalisationPoints_);
+	cfg->finaliseAfterLoad(worldPool(), pairPotentialRange_);
 
 	return true;
 }

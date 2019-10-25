@@ -25,37 +25,24 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Layer Block Keywords
-KeywordData LayerBlockData[] = {
-	{ "Enabled",			1,	"Specify whether the layer is enabled or not" },
-	{ "EndLayer",			0,	"Signals the end of the layer" },
-	{ "Frequency",			1,	"Frequency at which the layer is executed, relative to the main iteration counter" },
-	{ "Module",			1,	"Begin a Module definition within this layer" }
-};
-
-// Convert text string to LayerKeyword
-LayerBlock::LayerKeyword LayerBlock::keyword(const char* s)
+// Return enum option info for LayerKeyword
+EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 {
-	for (int n=0; n<nLayerKeywords; ++n) if (DissolveSys::sameString(s,LayerBlockData[n].name)) return (LayerBlock::LayerKeyword) n;
-	return nLayerKeywords;
-}
+	static EnumOptionsList LayerKeywords = EnumOptionsList() <<
+		EnumOption(LayerBlock::DisabledKeyword, 	"Disabled") <<
+		EnumOption(LayerBlock::EndLayerKeyword, 	"EndLayer") <<
+		EnumOption(LayerBlock::FrequencyKeyword,	"Frequency",	1) <<
+		EnumOption(LayerBlock::ModuleKeyword, 		"Module",	EnumOption::OptionalSecondArgument);
 
-// Convert LayerKeyword to text string
-const char* LayerBlock::keyword(LayerBlock::LayerKeyword id)
-{
-	return LayerBlockData[id].name;
-}
+	static EnumOptions<LayerBlock::LayerKeyword> options("LayerKeyword", LayerKeywords);
 
-// Return minimum number of expected arguments
-int LayerBlock::nArguments(LayerBlock::LayerKeyword id)
-{
-	return LayerBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Layer block
 bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::LayerBlockKeyword), layer->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), layer->name());
 
 	bool blockDone = false, error = false;
 	Module* module = NULL;
@@ -64,21 +51,21 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
-		LayerBlock::LayerKeyword layerKeyword = LayerBlock::keyword(parser.argc(0));
-		if ((layerKeyword != LayerBlock::nLayerKeywords) && ((parser.nArgs()-1) < LayerBlock::nArguments(layerKeyword)))
+		if (parser.getArgsDelim() != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		LayerKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", LayerBlock::keyword(layerKeyword));
-			error = true;
-			break;
-		}
-		switch (layerKeyword)
-		{
-			case (LayerBlock::EnabledKeyword):
-				layer->setEnabled(parser.argb(1));
+			case (LayerBlock::DisabledKeyword):
+				layer->setEnabled(false);
 				break;
 			case (LayerBlock::EndLayerKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::LayerBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
 				blockDone = true;
 				break;
 			case (LayerBlock::FrequencyKeyword):
@@ -94,7 +81,7 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 				}
 
 				// Add the new instance to the processing list
-				if (!layer->add(module))
+				if (!layer->own(module))
 				{
 					Messenger::error("Failed to add Module '%s' as processing layer task.\n", parser.argc(1));
 					error = true;
@@ -124,15 +111,11 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 				// Parse rest of Module block
 				module->setConfigurationLocal(false);
 				if (!ModuleBlock::parse(parser, dissolve, module, dissolve->processingModuleData(), false)) error = true;
+				else if (!module->setUp(*dissolve, dissolve->worldPool())) error = true;
 				if (error) break;
 				break;
-			case (LayerBlock::nLayerKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::LayerBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::LayerBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::LayerBlockKeyword), LayerBlock::keyword(layerKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -147,7 +130,7 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::LayerBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
 		error = true;
 	}
 

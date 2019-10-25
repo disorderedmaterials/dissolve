@@ -230,7 +230,7 @@ Torsion* Molecule::torsion(int n) const
  */
 
 // Select Atoms along any path from the specified one
-void Molecule::selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* excludedBond1, Bond* excludedBond2)
+void Molecule::selectFromAtom(Atom* i, RefList<Atom>& selectedAtoms, Bond* excludedBond1, Bond* excludedBond2)
 {
 	// Add this Atom to our list
 	selectedAtoms.addUnique(i);

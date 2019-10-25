@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Histogram3D> RefList<Histogram3D,int> ObjectStore<Histogram3D>::objects_;
+template<class Histogram3D> RefDataList<Histogram3D,int> ObjectStore<Histogram3D>::objects_;
 template<class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
 template<class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
 template<class Histogram3D> const char* ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";
@@ -187,15 +187,15 @@ int Histogram3D::nYBins() const
 	return nYBins_;
 }
 
-// Bin specified value
-void Histogram3D::bin(double x, double y, double z)
+// Bin specified value, returning success
+bool Histogram3D::bin(double x, double y, double z)
 {
 	// Calculate target bin along x
 	int xBin = (x - xMinimum_) / xBinWidth_;
 	if ((xBin < 0) || (xBin >= nXBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	// Calculate target bin along y
@@ -203,7 +203,7 @@ void Histogram3D::bin(double x, double y, double z)
 	if ((yBin < 0) || (yBin >= nYBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	// Calculate target bin along z
@@ -211,17 +211,19 @@ void Histogram3D::bin(double x, double y, double z)
 	if ((zBin < 0) || (zBin >= nZBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	++bins_.at(xBin, yBin, zBin);
 	++nBinned_;
+
+	return true;
 }
 
-// Bin specified value (as Vec3)
-void Histogram3D::bin(Vec3<double> v)
+// Bin specified value (as Vec3), returning success
+bool Histogram3D::bin(Vec3<double> v)
 {
-	bin(v.x, v.y, v.z);
+	return bin(v.x, v.y, v.z);
 }
 
 // Return number of values binned over all bins

@@ -40,16 +40,26 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// Constructor / Destructor
 	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg);
 	~ConfigurationTab();
-	// Main form declaration
-	Ui::ConfigurationTab ui;
 
 
 	/*
-	 * Data
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::ConfigurationTab ui_;
+
+
+	/*
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle() const;
 
 
 	/*
@@ -61,7 +71,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 	public:
 	// Return displayed Configuration
-	const Configuration* configuration() const;
+	Configuration* configuration() const;
 
 
 	/*
@@ -84,43 +94,23 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	protected:
 	// Update controls in tab
 	void updateControls();
-	// Disable sensitive controls within tab, ready for main code to run
+	// Disable sensitive controls within tab
 	void disableSensitiveControls();
-	// Enable sensitive controls within tab, ready for main code to run
+	// Enable sensitive controls within tab
 	void enableSensitiveControls();
 
 
 	/*
 	 * Signals / Slots
 	 */
-	private:
-	// Return current SpeciesInfo
-	SpeciesInfo* currentSpeciesInfo() const;
-
 	private slots:
 	// Definition
-	void on_NameEdit_textChanged(QString text);
 	void on_TemperatureSpin_valueChanged(double value);
-	// Box
-	void on_BoxASpin_valueChanged(double value);
-	void on_BoxBSpin_valueChanged(double value);
-	void on_BoxCSpin_valueChanged(double value);
-	void on_BoxAlphaSpin_valueChanged(double value);
-	void on_BoxBetaSpin_valueChanged(double value);
-	void on_BoxGammaSpin_valueChanged(double value);
-	// Contents
-	void on_MultiplierSpin_valueChanged(int value);
-	void on_DensitySpin_valueChanged(double value);
-	void on_SpeciesInfoAddButton_clicked(bool checked);
-	void on_SpeciesInfoRemoveButton_clicked(bool checked);
-	void on_DensityUnitsCombo_currentIndexChanged(int index);
-	void on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
-	// Actions
-	void on_RegenerateNowButton_clicked(bool checked);
-	void on_ExportButton_clicked(bool checked);
+	// Content
+	void on_GeneratorRegenerateButton_clicked(bool checked);
 
 
 	/*

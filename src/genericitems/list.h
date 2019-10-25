@@ -46,7 +46,7 @@ class GenericList
 	GenericItem* create(const char* name, const char* itemClassName, int version = 0);
 	// Return whether the named item is contained in the list
 	bool contains(const char* name, const char* prefix = NULL);
-	// Return if named named item, if it exists, is of specified type
+	// Return if named item, if it exists, is of specified type
 	bool isItemOfType(const char* type, const char* name, const char* prefix = NULL);
 	// Return head of the list
 	GenericItem* items();
@@ -57,7 +57,7 @@ class GenericList
 	// Return the version of the named item from the list
 	int version(const char* name, const char* prefix = NULL) const;
 	// Return list of all items with specified prefix (before first '_')
-	RefList<GenericItem,bool> listWithPrefix(const char* prefix);
+	RefList<GenericItem> listWithPrefix(const char* prefix);
 	// List all items
 	void listItems();
 	// Remove named item

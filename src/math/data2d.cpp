@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Data2D> RefList<Data2D,int> ObjectStore<Data2D>::objects_;
+template<class Data2D> RefDataList<Data2D,int> ObjectStore<Data2D>::objects_;
 template<class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
 template<class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
 template<class Data2D> const char* ObjectStore<Data2D>::objectTypeName_ = "Data2D";
@@ -77,7 +77,7 @@ void Data2D::initialise(int xSize, int ySize, bool withError)
 	++version_;
 }
 
-// Initialise to be consistent in size and x axis with supplied object
+// Initialise to be consistent in size and axes with supplied object
 void Data2D::initialise(const Data2D& source)
 {
 	x_ = source.x_;
@@ -85,6 +85,39 @@ void Data2D::initialise(const Data2D& source)
 	values_.initialise(x_.nItems(), y_.nItems());
 	hasError_ = source.hasError_;
 	if (hasError_) errors_.initialise(x_.nItems(), y_.nItems());
+	else errors_.clear();
+
+	++version_;
+}
+
+// Initialise from supplied axis ranges
+void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, double yMax, double yBin, bool withError)
+{
+	double xRange = xMax - xMin;
+	double yRange = yMax - yMin;
+	int nXBins = xRange / xBin;
+	int nYBins = yRange / yBin;
+
+	// We will clamp the maxima to the nearest bin boundary (not less than the supplied axis maxima)
+	if ((xMin + nXBins*xBin) < xMax) ++nXBins;
+	if ((yMin + nYBins*yBin) < yMax) ++nYBins;
+
+	// Create x_ axis array
+	x_.initialise(nXBins);
+	double xCentre = xMin + xBin*0.5;
+	for (int n=0; n<nXBins; ++n, xCentre += xBin) x_[n] = xCentre;
+
+	// Create y_ axis array
+	y_.initialise(nYBins);
+	double yCentre = yMin + yBin*0.5;
+	for (int n=0; n<nYBins; ++n, yCentre += yBin) y_[n] = yCentre;
+
+	// Initialise values array
+	values_.initialise(nXBins, nYBins);
+
+	// Initialise errors array if required
+	hasError_ = withError;
+	if (hasError_) errors_.initialise(nXBins, nYBins);
 	else errors_.clear();
 
 	++version_;
@@ -384,6 +417,7 @@ void Data2D::operator=(const Data2D& source)
 {
 	name_ = source.name_;
 	x_ = source.x_;
+	y_ = source.y_;
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
@@ -445,7 +479,7 @@ bool Data2D::read(LineParser& parser, const CoreData& coreData)
 	setObjectTag(parser.line());
 
 	// Read object name
-	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success) return false;
 	name_ = parser.line();
 
 	// Read axis sizes and initialise arrays

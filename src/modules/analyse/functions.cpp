@@ -21,8 +21,8 @@
 
 #include "modules/analyse/analyse.h"
 
-// Return the Analyser's context stack
-const NodeContextStack& AnalyseModule::analyserContextStack() const
+// Return the analyser
+Procedure& AnalyseModule::analyser()
 {
-	return analyser_.contextStack();
+	return analyser_;
 }

@@ -1,7 +1,10 @@
 noinst_LTLIBRARIES = libimport.la
 
-libimport_la_SOURCES = core.cpp definition.cpp formats.cpp functions_coordinates.cpp functions_data1d.cpp functions_forces.cpp options.cpp process.cpp
+libimport_la_SOURCES = core.cpp
+libimport_la_SOURCES += definition.cpp
+libimport_la_SOURCES += init.cpp
+libimport_la_SOURCES += process.cpp
 
-noinst_HEADERS = formats.h import.h
+noinst_HEADERS = import.h
 
 AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@

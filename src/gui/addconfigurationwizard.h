@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDCONFIGURATIONWIZARD_H
-#define DISSOLVE_ADDCONFIGURATIONWIZARD_H
+#ifndef DISSOLVE_WIZARD_ADDCONFIGURATION_H
+#define DISSOLVE_WIZARD_ADDCONFIGURATION_H
 
 #include "gui/ui_addconfigurationwizard.h"
 #include "gui/wizardwidget.hui"
@@ -53,8 +53,6 @@ class AddConfigurationWizard : public WizardWidget
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
-	// Get Box details from controls and put into target Configuration
-	void getBoxDetails();
 	// Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
 	Configuration* importConfiguration(Dissolve& dissolve);
 
@@ -71,11 +69,7 @@ class AddConfigurationWizard : public WizardWidget
 	enum WidgetPage
 	{
 		StartPage,			/* Starting page, offering choices of how to proceed */
-		MonoSpeciesPage,		/* Create from single Species */
-		MultiSpeciesPage,		/* Create from multiple Species */
-		BoxTypePage,			/* Choose Box type */
-		BoxGeometryPage,		/* Set relative box lengths and absolute angles */
-		MultiplierPage,			/* Multiplier page, with calculation of final nAtoms etc. */
+		SelectTemplatePage,		/* Select template to apply  */
 		FinishPage,			/* Final page, setting name and temperature for Configuration */
 		nPages
 	};
@@ -102,21 +96,13 @@ class AddConfigurationWizard : public WizardWidget
 	 */
 	private slots:
 	void on_StartCreateEmptyButton_clicked(bool checked);
-	void on_StartMonoSpeciesButton_clicked(bool checked);
-	void on_StartMultiSpeciesButton_clicked(bool checked);
+	void on_StartCreateTemplateButton_clicked(bool checked);
 
 
 	/*
-	 * Multiplier Page
+	 * Select Template Page
 	 */
-	private:
-	// Species population row update function
-	void updatePopulationTableRow(int row, Species* sp, int population, bool createItems);
-	// Update controls on MultiplierPage
-	void updateMultiplierPage();
-
-	private slots:
-	void on_MultiplierSpin_valueChanged(int value);
+	// TODO
 
 
 	/*

@@ -65,12 +65,12 @@ int IsotopologueMix::speciesPopulation() const
 void IsotopologueMix::update()
 {
 	// Go through list of Isotopologues present in this mix, removing any that no longer exist
-	RefListItem<Isotopologue,double>* ri = mix_.first(), *next;
+	RefDataItem<const Isotopologue,double>* ri = mix_.first(), *next;
 	while (ri)
 	{
-		next = ri->next;
+		next = ri->next();
 		// Check parent Species for presence of this Isotopologue
-		if (!species_->hasIsotopologue(ri->item))
+		if (!species_->hasIsotopologue(ri->item()))
 		{
 			mix_.remove(ri);
 			Messenger::print("Removed Isotopologue from mixture for Species '%s' since it no longer existed.\n", species_->name());
@@ -98,7 +98,7 @@ bool IsotopologueMix::addNextIsotopologue()
 	
 	// Find unique (unused) Isotopologue
 	Isotopologue* iso;
-	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next) if (!mix_.contains(iso)) break;
+	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next()) if (!mix_.contains(iso)) break;
 
 	if (iso == NULL)
 	{
@@ -106,13 +106,13 @@ bool IsotopologueMix::addNextIsotopologue()
 		return false;
 	}
 	
-	mix_.add(iso, 1.0);
+	mix_.append(iso, 1.0);
 	
 	return true;
 }
 
 // Add specific Isotopologue to list
-bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
+bool IsotopologueMix::addIsotopologue(const Isotopologue* iso, double relPop)
 {
 	// Search current list to see if the specified Isotopologue already exists
 	if (hasIsotopologue(iso))
@@ -121,13 +121,13 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 		return false;
 	}
 
-	mix_.add(iso, relPop);
+	mix_.append(iso, relPop);
 
 	return true;
 }
 
 // Set Isotopologue component in list
-bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
+bool IsotopologueMix::setIsotopologue(const Isotopologue* iso, double relPop)
 {
 	// NULL Pointer?
 	if (iso == NULL)
@@ -137,24 +137,25 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	}
 	
 	// Find this Isotopologue in the list
-	RefListItem<Isotopologue,double>* tope = mix_.contains(iso);
+	RefDataItem<const Isotopologue,double>* tope = mix_.contains(iso);
 	if (tope == NULL)
 	{
 		Messenger::warn("Warning: IsotopologueMix does not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
 		return false;
 	}
-	tope->data = relPop;
+	tope->data() = relPop;
+
 	return true;
 }
 
 // Return Isotopologue components
-const RefList<Isotopologue,double>& IsotopologueMix::isotopologues() const
+const RefDataList<const Isotopologue,double>& IsotopologueMix::isotopologues() const
 {
 	return mix_;
 }
 
 // Return nth Isotopologue component
-RefListItem<Isotopologue,double>* IsotopologueMix::isotopologue(int n)
+RefDataItem<const Isotopologue,double>* IsotopologueMix::isotopologue(int n)
 {
 	return mix_[n];
 }
@@ -166,7 +167,7 @@ int IsotopologueMix::nIsotopologues() const
 }
 
 // Return whether the mix contains the specified Isotopologue
-RefListItem<Isotopologue,double>* IsotopologueMix::hasIsotopologue(Isotopologue* iso) const
+RefDataItem<const Isotopologue,double>* IsotopologueMix::hasIsotopologue(const Isotopologue* iso) const
 {
 	return mix_.contains(iso);
 }
@@ -175,7 +176,10 @@ RefListItem<Isotopologue,double>* IsotopologueMix::hasIsotopologue(Isotopologue*
 double IsotopologueMix::totalRelative() const
 {
 	double total = 0.0;
-	for (RefListItem<Isotopologue,double>* ri = mix_.first(); ri != NULL; ri = ri->next) total += ri->data;
+
+	RefDataListIterator<const Isotopologue,double> topeIterator(mix_);
+	while (const Isotopologue* tope = topeIterator.iterate()) total += topeIterator.currentData();
+
 	return total;
 }
 
@@ -183,7 +187,9 @@ double IsotopologueMix::totalRelative() const
 void IsotopologueMix::normalise()
 {
 	double total = totalRelative();
-	for (RefListItem<Isotopologue,double>* ri = mix_.first(); ri != NULL; ri = ri->next) ri->data /= total;
+
+	RefDataListIterator<const Isotopologue,double> topeIterator(mix_);
+	while (const Isotopologue* tope = topeIterator.iterate()) topeIterator.setCurrentData(topeIterator.currentData() / total);
 }
 
 /*
@@ -200,7 +206,7 @@ const char* IsotopologueMix::itemClassName()
 bool IsotopologueMix::read(LineParser& parser, const CoreData& coreData)
 {
 	// Read Species name
-	if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success) return false;
 	species_ = coreData.findSpecies(parser.argc(0));
 	if (species_ == NULL)
 	{
@@ -212,7 +218,7 @@ bool IsotopologueMix::read(LineParser& parser, const CoreData& coreData)
 	mix_.clear();
 	for (int n=0; n<nIso; ++n)
 	{
-		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		// Search for the named Isotopologue in the Species
 		Isotopologue* top = species_->findIsotopologue(parser.argc(0));
 		if (!top)
@@ -220,7 +226,7 @@ bool IsotopologueMix::read(LineParser& parser, const CoreData& coreData)
 			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading IsotopologueMix.\n", parser.argc(0), species_->name());
 			return false;
 		}
-		mix_.add(top, parser.argd(1));
+		mix_.append(top, parser.argd(1));
 	}
 
 	return true;
@@ -233,8 +239,8 @@ bool IsotopologueMix::write(LineParser& parser)
 	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
 
 	// Write Isotopologues
-	RefListIterator<Isotopologue,double> mixIterator(mix_);
-	while (Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
+	RefDataListIterator<const Isotopologue,double> mixIterator(mix_);
+	while (const Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
 
 	return true;
 }
@@ -263,11 +269,11 @@ bool IsotopologueMix::broadcast(ProcessPool& procPool, const int root, const Cor
 		for (int n=0; n<nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
-			topIndex = species_->indexOfIsotopologue(mix_[n]->item);
+			topIndex = species_->indexOfIsotopologue(mix_[n]->item());
 			if (!procPool.broadcast(topIndex, root)) return false;
 
 			// Broadcast relative population data
-			if (!procPool.broadcast(mix_[n]->data, root)) return false;
+			if (!procPool.broadcast(mix_[n]->data(), root)) return false;
 		}
 	}
 	else
@@ -283,7 +289,7 @@ bool IsotopologueMix::broadcast(ProcessPool& procPool, const int root, const Cor
 			if (!procPool.broadcast(relPop, root)) return false;
 
 			// Add mix data
-			mix_.add(species_->isotopologue(topIndex), relPop);
+			mix_.append(species_->isotopologue(topIndex), relPop);
 		}
 	}
 #endif
@@ -298,7 +304,7 @@ bool IsotopologueMix::equality(ProcessPool& procPool)
 	if (!procPool.equality(speciesPopulation_)) return Messenger::error("IsotopologueMix species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
 	if (!procPool.equality(mix_.nItems())) return Messenger::error("IsotopologueMix mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
-	RefListIterator<Isotopologue,double> mixIterator(mix_);
+	RefDataListIterator<Isotopologue,double> mixIterator(mix_);
 	int count = 0;
 	while (Isotopologue* top = mixIterator.iterate())
 	{

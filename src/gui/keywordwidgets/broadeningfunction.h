@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_broadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/broadeningfunction.h"
+#include "keywords/broadeningfunction.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -38,9 +38,7 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 
 	public:
 	// Constructor
-	BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::BroadeningFunctionWidget ui;
+	BroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -48,12 +46,16 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	 */
 	private:
 	// Associated keyword
-	BroadeningFunctionModuleKeyword* keyword_;
+	BroadeningFunctionKeyword* keyword_;
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::BroadeningFunctionWidget ui_;
+
 	private slots:
 	// Function type combo changed
 	void functionCombo_currentIndexChanged(int index);
@@ -62,14 +64,14 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

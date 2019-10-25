@@ -30,7 +30,7 @@ Renderable* RenderableFactory::create(Renderable::RenderableType renderableType,
 
 	if (renderableType == Renderable::Data1DRenderable) renderable = new RenderableData1D(Data1D::findObject(objectTag), objectTag);
 	else if (renderableType == Renderable::SpeciesRenderable) renderable = new RenderableSpecies(Species::findObject(objectTag), objectTag);
-	else Messenger::error("Don't know how to create a Renderable of type '%s' (object tag = '%s'.\n", Renderable::renderableType(renderableType), objectTag);
+	else Messenger::error("Don't know how to create a Renderable of type '%s' (object tag = '%s'.\n", Renderable::renderableTypes().keyword(renderableType), objectTag);
 
 	return renderable;
 }

@@ -36,7 +36,7 @@
 // Constructor
 GrainShakeModule::GrainShakeModule() : Module()
 {
-	// Set up variables / control parameters
+	// Initialise Module - set up keywords etc.
 	setVariable("cutoffDistance", -1.0);
 	setVariable("nShakesPerGrain", 1);
 	setVariable("targetAcceptanceRate", 0.33);
@@ -248,7 +248,7 @@ bool GrainShakeModule::execute(Dissolve& dissolve)
 	cfg->registerEnergyChange(totalDelta);
 	cfg->accumulateEnergyChange();
 
-	// Increase coordinate index in Configuration
+	// Increase contents version in Configuration
 	if (nAccepted > 0) cfg->incrementCoordinateIndex();
 
 	return true;

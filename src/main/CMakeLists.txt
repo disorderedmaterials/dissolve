@@ -11,14 +11,11 @@ add_library(main
   keywords_module.cpp
   keywords_pairpotentials.cpp
   keywords_simulation.cpp
-  keywords_site.cpp
-  keywords_species.cpp
-  keywords_speciesinfo.cpp
   layers.cpp
   masterterms.cpp
   modules.cpp
+  objects.cpp
   pairpotentials.cpp
-  setup.cpp
   simulation.cpp
   species.cpp
 

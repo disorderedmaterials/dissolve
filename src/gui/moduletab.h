@@ -41,16 +41,22 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// Constructor / Destructor
 	ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module);
 	~ModuleTab();
-	// Main form declaration
-	Ui::ModuleTab ui;
 
 
 	/*
-	 * Data
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::ModuleTab ui_;
+
+
+	/*
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 
 
 	/*
@@ -85,14 +91,14 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	public:
 	// Update controls in tab
 	void updateControls();
-	// Disable sensitive controls within tab, ready for main code to run
+	// Disable sensitive controls within tab
 	void disableSensitiveControls();
-	// Enable sensitive controls within tab, ready for main code to run
+	// Enable sensitive controls within tab
 	void enableSensitiveControls();
 
 	public slots:
 	// Update controls in module widget only
-	void updateModuleWidget();
+	void updateModuleWidget(int flags);
 
 
 	/*

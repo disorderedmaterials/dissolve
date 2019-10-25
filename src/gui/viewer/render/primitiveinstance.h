@@ -22,15 +22,7 @@
 #ifndef DISSOLVE_PRIMITIVEINSTANCE_H
 #define DISSOLVE_PRIMITIVEINSTANCE_H
 
-#ifndef __APPLE__
-#include <GL/gl.h>
-#else
-#include <OpenGL/gl3.h>
-#endif
-#ifdef _WIN32
-#include <windows.h>
-#include "glext.h"
-#endif
+#include <QtGui/qopengl.h>
 #include "templates/listitem.h"
 
 // Forward Declarations

@@ -23,7 +23,6 @@
 #define DISSOLVE_POTENTIALMAP_H
 
 #include "classes/atomtypelist.h"
-#include "base/constants.h"
 #include "templates/array2d.h"
 
 // Forward Declarations

@@ -26,6 +26,8 @@
 
 // Forward Declarations
 class CoreData;
+template <class T> class List;
+template <class T> class ListIterator;
 class ProcessPool;
 
 /*
@@ -39,15 +41,34 @@ template <class T> class MPIListItem
 	// Constructor
 	MPIListItem<T>()
 	{
-		prev = NULL;
-		next = NULL;
+		prev_ = NULL;
+		next_ = NULL;
 	}
 	// Destructor (virtual)
 	virtual ~MPIListItem<T>()
 	{
 	}
-	// List pointers
-	T* prev, *next;
+
+	private:
+	// Pointer to previous item in list
+	T* prev_;
+	// Pointer to next item in list
+	T* next_;
+
+	public:
+	// Return previous item in list
+	T* prev() const
+	{
+		return prev_;
+	}
+	// Return next item in list
+	T* next() const
+	{
+		return next_;
+	}
+	// Declare the list and iterator as friends
+	friend class List<T>;
+	friend class ListIterator<T>;
 
 	public:
 	// Broadcast data from Master to all Slaves

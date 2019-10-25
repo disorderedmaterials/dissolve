@@ -32,7 +32,8 @@
 #include "classes/speciesinfo.h"
 #include "classes/sitestack.h"
 #include "module/layer.h"
-#include "modules/import/formats.h"
+#include "io/import/coordinates.h"
+#include "procedure/procedure.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
 #include "math/data1d.h"
@@ -46,7 +47,6 @@
 #include "templates/dynamicarray.h"
 
 // Forward Declarations
-class Atom;
 class Box;
 class Cell;
 class Grain;
@@ -68,81 +68,55 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
 
 	/*
-	 * Basic Information
+	 * Definition
 	 */
 	private:
 	// Name of the Configuration
 	CharString name_;
 	// Nice name (generated from name_) used for output files
 	CharString niceName_;
-	// Version of the Configuration
-	VersionCounter version_;
-
-	public:
-	// Set name of the Configuration
-	void setName(const char* name);
-	// Return name of the Configuration
-	const char* name();
-	// Return nice name of the Configuration
-	const char* niceName();
-	// Return version
-	int version() const;
-
-
-	/*
-	 * Composition
-	 */
-	private:
-	// Reference list of Species used by the Configuration and their relative populations
-	List<SpeciesInfo> usedSpecies_;
-	// Integer multiplier of used relative species populations
-	int multiplier_;
-	// Density of the configuration
-	double density_;
-	// Whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-	bool densityIsAtomic_;
-	// File / format of input coordinates file
+	// Procedure to generate the Configuration
+	Procedure generator_;
+	// File / format of input coordinates file, if provided
 	CoordinateImportFileFormat inputCoordinates_;
 	// Temperature of this configuration (K)
 	double temperature_;
 
 	public:
-	// Add Species to list of those used by the Configuration
-	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
-	// Return SpeciesInfo for specified Species
-	SpeciesInfo* usedSpeciesInfo(Species* sp);
-	// Return list of SpeciesInfo for the Configuration
-	List<SpeciesInfo>& usedSpecies();
-	// Return if the specified Species is present in the usedSpecies list
-	bool hasUsedSpecies(Species* sp);
-	// Return total relative population of Species used by this Configuration
-	double totalRelative() const;
-	// Set multiplier for System components
-	void setMultiplier(int mult);
-	// Return multiplier for System components
-	int multiplier() const;
-	// Set the atomic density of the system (atoms/A3)
-	void setAtomicDensity(double density);
-	// Set the chemical density of the system (g/cm3)
-	void setChemicalDensity(double density);
-	// Return the density of the system
-	double density() const;
-	// Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-	bool densityIsAtomic() const;
-	// Return the atomic density of the system
-	double atomicDensity() const;
+	// Set name of the Configuration
+	void setName(const char* name);
+	// Return name of the Configuration
+	const char* name() const;
+	// Return nice name of the Configuration
+	const char* niceName() const;
+	// Return the current generator
+	Procedure& generator();
+	// Create the Configuration according to its generator Procedure
+	bool generate(ProcessPool& procPool);
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
+	// Load coordinates from specified parser
+	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
+	// Initialise (generate or load) the basic contents of the Configuration
+	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent = false);
+	// Finalise Configuration after loading contents from restart file
+	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
-	double temperature();
+	double temperature() const;
 
 
 	/*
 	 * Content
 	 */
 	private:
+	// List of Species used by the Configuration and their populations
+	List<SpeciesInfo> usedSpecies_;
+	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
+	AtomTypeList usedAtomTypes_;
+	// Contents version, incremented whenever Configuration content or Atom positions change
+	VersionCounter contentsVersion_;
 	// Array of Molecules
 	DynamicArray<Molecule> molecules_;
 	// Array of Grains
@@ -155,20 +129,36 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Angle> angles_;
 	// Array of Torsions between Atoms
 	DynamicArray<Torsion> torsions_;
-	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
-	AtomTypeList usedAtomTypes_;
-	// Coordinate index, incremented whenever Atom positions change
-	int coordinateIndex_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
-	// Initialise empty Molecule and Grain arrays
-	void initialise(int nMolecules, int nGrains);
-	// Initialise from assigned Species populations
-	bool initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints);
-	// Finalise Configuration after loading contents from restart file
-	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
+	// Initialise content arrays
+	void initialiseArrays(int nMolecules, int nGrains);
+	// Return specified used type
+	AtomType* usedAtomType(int index);
+	// Return specified used type data
+	AtomTypeData* usedAtomTypeData(int index);
+	// Return first AtomTypeData for this Configuration
+	AtomTypeData* usedAtomTypes();
+	// Return AtomTypeList for this Configuration
+	const AtomTypeList& usedAtomTypesList() const;
+	// Return number of atom types used in this Configuration
+	int nUsedAtomTypes() const;
+	// Add Species to list of those used by the Configuration, setting/adding the population specified
+	SpeciesInfo* addUsedSpecies(Species* sp, int population);
+	// Return SpeciesInfo for specified Species
+	SpeciesInfo* usedSpeciesInfo(Species* sp);
+	// Return list of SpeciesInfo for the Configuration
+	List<SpeciesInfo>& usedSpecies();
+	// Return if the specified Species is present in the usedSpecies list
+	bool hasUsedSpecies(Species* sp);
+	// Return the atomic density of the Configuration
+	double atomicDensity() const;
+	// Return version of current contents
+	int contentsVersion() const;
+	// Increment version of current contents
+	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
 	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration
@@ -229,138 +219,46 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Torsion>& torsions();
 	// Return nth Torsion
 	Torsion* torsion(int n);
-	// Return specified used type
-	AtomType* usedAtomType(int index);
-	// Return first AtomTypeData for this Configuration
-	AtomTypeData* usedAtomTypes();
-	// Return AtomTypeList for this Configuration
-	const AtomTypeList& usedAtomTypesList() const;
-	// Return number of atom types used in this Configuration
-	int nUsedAtomTypes() const;
-	// Return current coordinate index
-	int coordinateIndex() const;
-	// Increment current coordinate index
-	void incrementCoordinateIndex();
-	// Load coordinates from specified parser
-	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 
 
 	/*
 	 * Periodic Box and Cells
 	 */
 	private:
-	// Relative Box lengths
-	Vec3<double> relativeBoxLengths_;
-	// Box angles
-	Vec3<double> boxAngles_;
 	// Requested size factor for Box
 	double requestedSizeFactor_;
 	// Size factor currently applied to Box / Cells
 	double appliedSizeFactor_;
-	// Whether the Configuration is non-periodic
-	bool nonPeriodic_;
 	// Periodic Box definition for the Configuration
 	Box* box_;
 	// Requested side length for individual Cell
 	double requestedCellDivisionLength_;
-	// Box normalisation array to load/save for this configuration
-	CharString boxNormalisationFileName_;
-	// Normalisation function for Box shape/extent in radial distribution functions
-	Data1D boxNormalisation_;
-	// Interpolation of Box normalisation function
-	Interpolator boxNormalisationInterpolation_;
 	// Cell array
 	CellArray cells_;
 
 	public:
-	// Set relative Box lengths
-	void setRelativeBoxLengths(const Vec3<double> lengths);
-	// Set relative Box length
-	void setRelativeBoxLength(int index, double length);
-	// Return relative Box lengths
-	Vec3<double> relativeBoxLengths() const;
-	// Set Box angles
-	void setBoxAngles(const Vec3<double> angles);
-	// Set Box angle
-	void setBoxAngle(int index, double angle);
-	// Return Box angles
-	Vec3<double> boxAngles() const;
+	// Create Box definition with specified lengths and angles
+	bool createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+	// Return Box
+	const Box* box() const;
+	// Scale Box (and associated Cells) by specified factor
+	void scaleBox(double factor);
 	// Set requested size factor for Box
 	void setRequestedSizeFactor(double factor);
 	// Return requested size factor for Box
 	double requestedSizeFactor();
 	// Return last size factor applied to Box / Cells
 	double appliedSizeFactor();
-	// Set whether the Box is non-periodic
-	void setNonPeriodic(bool b);
-	// Return whether the Box is non-periodic
-	bool nonPeriodic() const;
 	// Set requested side length for individual Cell
 	void setRequestedCellDivisionLength(double a);
 	// Return requested side length for individual Cell
 	double requestedCellDivisionLength() const;
-	// Return Box
-	const Box* box() const;
-	// Set up periodic Box
-	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints);
-	// Scale Box (and associated Cells) by specified factor
-	void scaleBox(double factor);
-	// Set box normalisation array to load/save for this configuration
-	void setBoxNormalisationFile(const char* filename);
-	// Return box normalisation file to load/save for this configuration
-	const char* boxNormalisationFileName() const;
-	// Load Box normalisation array from specified file
-	bool loadBoxNormalisationFile();
-	// Return current Box normalisation array
-	const Data1D& boxNormalisation() const;
-	// Return interpolation of Box normalisation function
-	Interpolator& boxNormalisationInterpolation();
 	// Return cell array
 	CellArray& cells();
 	// Return cell array
 	const CellArray& constCells() const;
-
-
-	/*
-	 * Calculation Limits
-	 */
-	private:
-	// RDF bin width
-	double rdfBinWidth_;
-	// Maximum extent (actual) of calculated g(r)
-	double rdfRange_;
-	// Maximum extent (requested) of calculated g(r)
-	double requestedRDFRange_;
-	// Minimum Q value for Bragg calculation
-	double braggQMin_;
-	// Maximum Q value for Bragg calculation
-	double braggQMax_;
-	// Multiplicities reflecting any crystal supercell
-	Vec3<int> braggMultiplicity_;
-
-	public:
-	// Set RDF bin width
-	void setRDFBinWidth(double width);
-	// Return RDF bin width
-	double rdfBinWidth();
-	// Return working RDF extent
-	double rdfRange();
-	// Set requested RDF extent
-	void setRequestedRDFRange(double range);
-	// Return requested RDF extent
-	double requestedRDFRange();
-	// Set minimum Q value for Bragg calculation
-	void setBraggQMin(double qMin);
-	// Return minimum Q value for Bragg calculation
-	double braggQMin();
-	// Set maximum Q value for Bragg calculation
-	void setBraggQMax(double qMax);
-	// Return maximum Q value for Bragg calculation
-	double braggQMax();
-	// Set multiplicities reflecting any crystal supercell
-	void setBraggMultiplicity(Vec3<int> mult);
-	// Return multiplicities reflecting any crystal supercell
-	Vec3<int> braggMultiplicity();
+	// Scale Box, Cells, and Molecule geometric centres according to current size factor
+	void applySizeFactor(const PotentialMap& potentialMap);
 
 
 	/*
@@ -387,8 +285,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	GenericList moduleData_;
 
 	public:
-	// Add Module to the Configuration
-	bool addModule(Module* module);
+	// Associate Module to the Configuration
+	bool ownModule(Module* module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
 	// Return Module layer for this Configuration
@@ -397,14 +295,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	ModuleList& modules();
 	// Return list of variables set by Modules
 	GenericList& moduleData();
-
-
-	/*
-	 * Preparation
-	 */
-	public:
-	// Perform any preparative tasks for the Configuration, before Module processing begins
-	bool prepare(const PotentialMap& potentialMap);
 
 
 	/*

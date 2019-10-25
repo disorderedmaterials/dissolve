@@ -33,15 +33,16 @@
 #include "modules/export/export.h"
 
 // Static Members (ObjectStore)
-template<class Configuration> RefList<Configuration,int> ObjectStore<Configuration>::objects_;
+template<class Configuration> RefDataList<Configuration,int> ObjectStore<Configuration>::objects_;
 template<class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
 template<class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
 template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
 	box_ = NULL;
+
 	clear();
 }
 
@@ -63,35 +64,21 @@ void Configuration::clear()
 	// Clear generated content
 	empty();
 
-	// Clear used species
-	usedSpecies_.clear();
-
 	// Reset composition
-	multiplier_ = 1;
-	density_ = -1.0;
-	densityIsAtomic_ = true;
-	boxAngles_.set(90.0, 90.0, 90.0);
-	relativeBoxLengths_.set(1.0, 1.0, 1.0);
 	requestedSizeFactor_ = 1.0;
 	appliedSizeFactor_ = 1.0;
-	nonPeriodic_ = false;
 
 	// Reset box / Cells
 	requestedCellDivisionLength_ = 10.0;
-	coordinateIndex_ = 0;
+	contentsVersion_.zero();
 
-	// Reset set-up
-	rdfBinWidth_ = 0.025;
-	rdfRange_ = -1.0;
-	requestedRDFRange_ = -2.0;
+	// Reset definition
 	temperature_ = 300.0;
-	braggQMax_ = 0.01;
-	braggQMax_ = 2.0;
-	braggMultiplicity_.set(1,1,1);
+	generator_.clear();
 }
 
 /*
- * Basic Information
+ * Definition
  */
 
 // Set name of the Configuration
@@ -101,108 +88,174 @@ void Configuration::setName(const char* name)
 
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = DissolveSys::niceName(name_);
-
-	// Set box normalisation filename based on Configuration name
-	boxNormalisationFileName_ = niceName_;
-	boxNormalisationFileName_.strcat(".boxnorm");
 }
 
 // Return name of the Configuration
-const char* Configuration::name()
+const char* Configuration::name() const
 {
 	return name_.get();
 }
 
 // Return nice name of the Configuration
-const char* Configuration::niceName()
+const char* Configuration::niceName() const
 {
 	return niceName_.get();
 }
 
-// Return version
-int Configuration::version() const
+// Return the current generator
+Procedure& Configuration::generator()
 {
-	return version_;
+	return generator_;
 }
 
-/*
- * Calculation Limits
- */
-
-// Set RDF bin width
-void Configuration::setRDFBinWidth(double width)
+// Create the Configuration according to its generator Procedure
+bool Configuration::generate(ProcessPool& procPool)
 {
-	rdfBinWidth_ = width;
+	// Empty the current contents
+	empty();
+
+	// Generate the contents
+	Messenger::print("\nExecuting generator procedure for Configuration '%s'...\n\n", niceName());
+	bool result = generator_.execute(procPool, this, "Generator", moduleData_);
+	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+	Messenger::print("\n");
+
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+
+	// Sanity check the contents - if we have zero atoms then there's a problem!
+	if (nAtoms() == 0) return Messenger::error("Generated contents for Configuration '%s' contains no atoms!\n", name());
+
+	return true;
 }
 
-// Return RDF bin width
-double Configuration::rdfBinWidth()
+// Return import coordinates file / format
+CoordinateImportFileFormat& Configuration::inputCoordinates()
 {
-	return rdfBinWidth_;
+	return inputCoordinates_;
 }
 
-// Return working RDF extent
-double Configuration::rdfRange()
+// Load coordinates from file
+bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format)
 {
-	return rdfRange_;
+	// Load coordinates into temporary array
+	Array< Vec3<double> > r;
+	CoordinateImportFileFormat coordinateFormat(format);
+	if (!coordinateFormat.importData(parser, r)) return false;
+
+	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
+	if (atoms_.nItems() != r.nItems())
+	{
+		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), atoms_.nItems());
+		return false;
+	}
+
+	// All good, so copy atom coordinates over into our array
+	for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(r[n]);
+
+	return true;
 }
 
-// Set requested RDF extent
-void Configuration::setRequestedRDFRange(double range)
+// Initialise (generate or load) the basic contents of the Configuration
+bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent)
 {
-	requestedRDFRange_ = range;
+	// Clear existing content?
+	if (emptyCurrentContent) empty();
+
+	/*
+	 * Content Initialisation
+	 */
+
+	// If the Configuation is currently empty, run the generator Procedure and potentially load coordinates from file
+	if (nAtoms() == 0)
+	{
+		// Run the generator procedure (we will need species / atom info to load any coordinates in to anyway)
+		if (!generate(procPool)) return false;
+
+		// If there are still no atoms, complain.
+		if (nAtoms() == 0) return false;
+
+		// If an input file was specified, try to load it
+		if (inputCoordinates_.hasValidFileAndFormat())
+		{
+			if (DissolveSys::fileExists(inputCoordinates_))
+			{
+				Messenger::print("Loading initial coordinates from file '%s'...\n", inputCoordinates_.filename());
+				LineParser inputFileParser(&procPool);
+				if (!inputFileParser.openInput(inputCoordinates_)) return false;
+				if (!loadCoordinates(inputFileParser, inputCoordinates_.coordinateFormat())) return false;
+				inputFileParser.closeFiles();
+			}
+			else return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the file doesn't exist.\n", name(), inputCoordinates_.filename());
+		}
+	}
+
+	/*
+	 * Cell Generation
+	 */
+
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// OK, so set-up Cells for the Box if they don't already exist
+	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
+	// Make sure Cell contents / Atom locations are up-to-date
+	updateCellContents();
+
+	return true;
 }
 
-// Return requested RDF extent
-double Configuration::requestedRDFRange()
+// Finalise Configuration after loading contents from restart file
+bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
 {
-	return requestedRDFRange_;
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// Set-up Cells for the Box
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
+	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
+	scaleBox(requestedSizeFactor_);
+	appliedSizeFactor_ = requestedSizeFactor_;
+
+	// Update Cell locations for Atoms
+	updateCellContents();
+
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+
+	return true;
 }
 
-// Set minimum Q value for Bragg calculation
-void Configuration::setBraggQMin(double qMin)
+// Set configuration temperature
+void Configuration::setTemperature(double t)
 {
-	braggQMin_ = qMin;
+	temperature_ = t;
 }
 
-// Return minimum Q value for Bragg calculation
-double Configuration::braggQMin()
+// Return configuration temperature
+double Configuration::temperature() const
 {
-	return braggQMin_;
-}
-
-// Set maximum Q value for Bragg calculation
-void Configuration::setBraggQMax(double qMax)
-{
-	braggQMax_ = qMax;
-}
-
-// Return maximum Q value for Bragg calculation
-double Configuration::braggQMax()
-{
-	return braggQMax_;
-}
-
-// Set multiplicities reflecting any crystal supercell
-void Configuration::setBraggMultiplicity(Vec3<int> mult)
-{
-	braggMultiplicity_ = mult;
-}
-
-// Return multiplicities reflecting any crystal supercell
-Vec3<int> Configuration::braggMultiplicity()
-{
-	return braggMultiplicity_;
+	return temperature_;
 }
 
 /*
  * Modules
  */
 
-// Add Module to the Configuration
-bool Configuration::addModule(Module* module)
+// Associate Module to the Configuration
+bool Configuration::ownModule(Module* module)
 {
-	return moduleLayer_.add(module);
+	return moduleLayer_.own(module);
 }
 
 // Return number of Modules associated to this Configuration
@@ -227,99 +280,6 @@ ModuleList& Configuration::modules()
 GenericList& Configuration::moduleData()
 {
 	return moduleData_;
-}
-
-/*
- * Preparation
- */
-
-// Perform any pre-processing tasks for the Configuration
-bool Configuration::prepare(const PotentialMap& potentialMap)
-{
-	/*
-	 * Size Factor Scaling
-	 * 
-	 * Scale Box, Cells, and Molecule geometric centres according to current sizeFactor_
-	 */
-
-	const double reductionFactor = 0.95;
-
-	while (true)
-	{
-		// Calculate ratio between current and applied size factors for use later on
-		const double sizeFactorRatio = requestedSizeFactor_ / appliedSizeFactor_;
-
-		// Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied size factor
-		if (fabs(sizeFactorRatio - 1.0) > 1.0e-5)
-		{
-			Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling Box contents.\n", requestedSizeFactor_, appliedSizeFactor_);
-
-			/*
-			 * Recalculate all Atom positions, molecule-by-molecule
-			 * 
-			 * First, work out the centre of geometry of the Molecule, and fold it into the Box.
-			 * Calculate the scaled centre of geometry coordinate by dividing by the old scale factor, and multiplying by the new one.
-			 * Calculate the minimum image delta between each Atom and the original center of geometry.
-			 * Add this delta on to the new centre of geometry to get the new Atom coordinate.
-			 */
-
-			Vec3<double> oldCog, newCog, newPos;
-			for (int n=0; n<molecules_.nItems(); ++n)
-			{
-				// Get Molecule pointer
-				Molecule* mol = molecules_[n];
-
-				// Calculate current and new centre of geometry
-				oldCog = box()->fold(mol->centreOfGeometry(box()));
-				newCog = oldCog * sizeFactorRatio;
-
-				// Loop over Atoms in Molecule, setting new coordinates as we go. Remove Atom from its current Cell at the same time
-				for (int m=0; m<mol->nAtoms(); ++m)
-				{
-					// Get Atom pointer
-					Atom* i = mol->atom(m);
-
-					// Remove from its current Cell
-					if (i->cell()) i->cell()->removeAtom(i);
-
-					// Calculate and set new position
-					newPos = newCog + box()->minimumVector(i->r(), oldCog);
-					i->setCoordinates(newPos);
-				}
-			}
-
-			// Now scale the Box and its Cells
-			scaleBox(sizeFactorRatio);
-
-			// Re-assign all Atoms to Cells
-			updateCellContents();
-
-			// Store new size factors
-			appliedSizeFactor_ = requestedSizeFactor_;
-
-			// Can now break out of the loop
-			break;
-		}
-
-		// Now check the current sizeFactor or energy
-		//  -- If the current sizeFactor is 1.0, break
-		//  -- Otherwise, check energy - if it is negative, reduce requested size factor and loop
-		//  -- If energy is positive, break
-		if (fabs(requestedSizeFactor_ - 1.0) < 1.0e-5) break;
-		else if (EnergyModule::interMolecularEnergy(processPool_, this, potentialMap) <= 0.0)
-		{
-			requestedSizeFactor_ *= reductionFactor;
-			if (requestedSizeFactor_ < 1.0) requestedSizeFactor_ = 1.0;
-			Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to %f\n", requestedSizeFactor_);
-		}
-		else
-		{
-			Messenger::print("Intermolecular energy is positive, so SizeFactor remains at %f\n", requestedSizeFactor_);
-			break;
-		}
-	}
-
-	return true;
 }
 
 /*
@@ -377,8 +337,8 @@ bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
 	delete[] y;
 	delete[] z;
 
-	// Update coordinate index
-	if (!procPool.broadcast(coordinateIndex_, rootRank)) return false;
+	// Broadcast contents version
+	if (!contentsVersion_.broadcast(procPool, rootRank)) return false;
 #endif
 	return true;
 }

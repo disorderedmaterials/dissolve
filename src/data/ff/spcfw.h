@@ -23,16 +23,10 @@
 #define DISSOLVE_FORCEFIELD_SPCFW_H
 
 #include "data/ff.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class CoreData;
-class Species;
-class SpeciesAngle;
 class SpeciesAtom;
-class SpeciesBond;
-class SpeciesIntra;
-class SpeciesTorsion;
 
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
@@ -48,7 +42,11 @@ class Forcefield_SPCFw : public Forcefield
 	 */
 	public:
 	// Return name of Forcefield
-	const char* name();
+	const char* name() const;
+	// Return description for Forcefield
+	const char* description() const;
+	// Return short-range interaction style for AtomTypes
+	Forcefield::ShortRangeType shortRangeType() const;
 
 
 	/*
@@ -57,22 +55,6 @@ class Forcefield_SPCFw : public Forcefield
 	public:
 	// Determine and return atom type for specified SpeciesAtom
 	ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
-
-
-	/*
-	 * Term Generation
-	 */
-	private:
-	// Generate bond parameters for the supplied UFF atom types
-	bool generateBondTerm(const Species* sp, SpeciesBond* bondTerm, ForcefieldAtomType* i, ForcefieldAtomType* j) const;
-	// Generate angle parameters for the supplied UFF atom types
-	bool generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k) const;
-	// Generate torsion parameters for the supplied UFF atom types
-	bool generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k, ForcefieldAtomType* l) const;
-
-	public:
-	// Assign suitable atom types to the supplied Species
-	bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 };
 
 #endif

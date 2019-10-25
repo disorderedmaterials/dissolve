@@ -45,10 +45,10 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		else
 		{
 			// Loop over target Configurations
-			for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+			for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 			{
 				// Grab Configuration pointer
-				Configuration* cfg = ri->item;
+				Configuration* cfg = ri->item();
 
 				// Set up process pool - must do this to ensure we are using all available processes
 				procPool.assignProcessesToGroups(cfg->processPool());
@@ -58,7 +58,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				{
 					Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", coordinatesFormat_.niceFormat(), cfg->name());
 
-					if (!ExportModule::writeCoordinates(coordinatesFormat_.coordinateFormat(), coordinatesFormat_.filename(), cfg))
+					if (!coordinatesFormat_.exportData(cfg))
 					{
 						Messenger::print("Export: Failed to export coordinates file '%s'.\n", coordinatesFormat_.filename());
 						procPool.decideFalse();
@@ -81,23 +81,30 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Only the pool master saves the data
 		if (procPool.isMaster())
 		{
-			for (PairPotential* pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next)
+			// Store the current (root) pair potential filename
+			CharString rootPPName = pairPotentialFormat_.filename();
+
+			for (PairPotential* pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next())
 			{
 				Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.niceFormat(), pp->atomTypeNameI(), pp->atomTypeNameJ());
 
 				// Generate filename
-				CharString ppName("%s-%s-%s.pp", pairPotentialFormat_.filename(), pp->atomTypeNameI(), pp->atomTypeNameJ());
+				pairPotentialFormat_.setFilename(CharString("%s-%s-%s.pp", rootPPName.get(), pp->atomTypeNameI(), pp->atomTypeNameJ()));
 
 				// Append pair potential
-				if (!ExportModule::writePairPotential(pairPotentialFormat_.pairPotentialFormat(), ppName, pp))
+				if (!pairPotentialFormat_.exportData(pp))
 				{
-					Messenger::print("Export: Failed to export pair potential file '%s'.\n", ppName.get());
+					Messenger::print("Export: Failed to export pair potential file '%s'.\n", pairPotentialFormat_.filename());
+					pairPotentialFormat_.setFilename(rootPPName);
 					procPool.decideFalse();
 					return false;
 				}
 
 				procPool.decideTrue();
 			}
+
+			// Revert root name in FileAndFormat
+			pairPotentialFormat_.setFilename(rootPPName);
 		}
 		else if (!procPool.decision()) return false; 
 	}
@@ -113,10 +120,10 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		else
 		{
 			// Loop over target Configurations
-			for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+			for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 			{
 				// Grab Configuration pointer
-				Configuration* cfg = ri->item;
+				Configuration* cfg = ri->item();
 
 				// Set up process pool - must do this to ensure we are using all available processes
 				procPool.assignProcessesToGroups(cfg->processPool());
@@ -126,7 +133,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				{
 					Messenger::print("Export: Appending trajectory file (%s) for Configuration '%s'...\n", trajectoryFormat_.niceFormat(), cfg->name());
 
-					if (!ExportModule::writeTrajectory(trajectoryFormat_.trajectoryFormat(), trajectoryFormat_.filename(), cfg))
+					if (!trajectoryFormat_.exportData(cfg))
 					{
 						Messenger::print("Export: Failed to append trajectory file '%s'.\n", trajectoryFormat_.filename());
 						procPool.decideFalse();

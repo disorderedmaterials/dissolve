@@ -39,22 +39,6 @@ Box::~Box()
 {
 }
 
-// Box Type Keywords
-const char* BoxTypeKeywords[] = { "Non-Periodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
-
-// Convert text string to BoxType
-Box::BoxType Box::boxType(const char* s)
-{
-	for (int n=0; n<Box::nBoxTypes; ++n) if (strcmp(s,BoxTypeKeywords[n]) == 0) return (Box::BoxType) n;
-	return Box::nBoxTypes;
-}
-
-// Convert BoxType to text string
-const char* Box::boxType(Box::BoxType id)
-{
-	return BoxTypeKeywords[id];
-}
-
 // Assignment operator
 void Box::operator=(const Box& source)
 {
@@ -78,24 +62,33 @@ void Box::operator=(const Box& source)
  * Basic Definition
  */
 
+// Box Type Keywords
+const char* BoxTypeKeywords[] = { "NonPeriodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
+
+// Return enum options for BoxType
+EnumOptions<Box::BoxType> Box::boxTypes()
+{
+	static EnumOptionsList BoxTypeOptions = EnumOptionsList() <<
+		EnumOption(Box::NonPeriodicBoxType,	"NonPeriodic") <<
+		EnumOption(Box::CubicBoxType,		"Cubic") <<
+		EnumOption(Box::OrthorhombicBoxType,	"Orthorhombic") <<
+		EnumOption(Box::MonoclinicBoxType,	"Monoclinic") <<
+		EnumOption(Box::TriclinicBoxType,	"Triclinic");
+
+	static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
+
+	return options;
+}
+
 // Return Box type
 Box::BoxType Box::type() const
 {
 	return type_;
 }
 
-// Set up box, scaling to specified volume (in cubic Angstroms)
-void Box::setUp(double volume)
+// Finalise Box, storing volume and reciprocal and inverted axes
+void Box::finalise()
 {
-	if (volume > 0.0)
-	{
-		Messenger::printVerbose("Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
-		double factor = pow(volume,1.0/3.0) / pow(axes_.determinant(),1.0/3.0);
-		Messenger::printVerbose("...scaling factor = %f\n", factor);
-		axes_.applyScaling(factor, factor, factor);
-	}
-	else Messenger::printVerbose("Current box volume is %f cubic Angstroms and will not be altered.\n", axes_.determinant());
-
 	// Calculate box volume
 	volume_ = axes_.determinant();
 
@@ -236,7 +229,7 @@ void Box::scale(double factor)
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles, and volume
-Box* Box::generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume)
+Box* Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
 	// Determine box type from supplied lengths / angles
 	bool rightAlpha = (fabs(angles.x-90.0) < 0.001);
@@ -246,20 +239,20 @@ Box* Box::generate(Vec3<double> relativeLengths, Vec3<double> angles, double vol
 	if (rightAlpha && rightBeta && rightGamma)
 	{
 		// Cubic or orthorhombic
-		bool abSame = (fabs(relativeLengths.x-relativeLengths.y) < 0.0001);
-		bool acSame = (fabs(relativeLengths.x-relativeLengths.z) < 0.0001);
-		if (abSame && acSame) return new CubicBox(volume, relativeLengths.x);
-		else return new OrthorhombicBox(volume, relativeLengths);
+		bool abSame = (fabs(lengths.x-lengths.y) < 0.0001);
+		bool acSame = (fabs(lengths.x-lengths.z) < 0.0001);
+		if (abSame && acSame) return new CubicBox(lengths.x);
+		else return new OrthorhombicBox(lengths);
 	}
 	else if (rightAlpha && (!rightBeta) && rightGamma)
 	{
 		// Monoclinic
-		return new MonoclinicBox(volume, relativeLengths, angles.y);
+		return new MonoclinicBox(lengths, angles.y);
 	}
 	else
 	{
 		// Triclinic
-		return new TriclinicBox(volume, relativeLengths, angles);
+		return new TriclinicBox(lengths, angles);
 	}
 }
 
@@ -347,7 +340,7 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data1D& boxNorm, doub
  * Utility Routines
  */
 
-// Return angle (in degrees, no MIM) between Atoms
+// Return angle (in degrees) between Atoms
 double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
 {
 	Vec3<double> vecji, vecjk;
@@ -360,19 +353,23 @@ double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
 	vecji.normalise();
 	vecjk.normalise();
 
-	// Determine Angle energy
+	// Determine Angle
 	return angleInDegrees(vecji, vecjk);
 }
 
-// Return angle (in degrees, no MIM) between coordinates
-double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
+// Return angle (in degrees) between coordinates
+double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k) const
 {
 	static Vec3<double> vecji, vecjk;
-	vecji = i - j;
+	vecji = minimumVector(j, i);
+	vecjk = minimumVector(j, k);
+	
+	// Normalise vectors
 	vecji.normalise();
-	vecjk = k - j;
 	vecjk.normalise();
-	return acos(vecji.dp(vecjk)) * DEGRAD;
+
+	// Determine Angle
+	return angleInDegrees(vecji, vecjk);
 }
 
 // Return angle (in degrees) between supplied normalised vectors
@@ -388,7 +385,18 @@ double Box::angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normj
 	return acos(dotProduct) * DEGRAD;
 }
 
-// Return torsion (in degrees, no MIM) between supplied unnormalised vectors
+// Return literal angle (in degrees) between coordinates, without applying minimum image convention
+double Box::literalAngleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
+{
+	static Vec3<double> vecji, vecjk;
+	vecji = i - j;
+	vecji.normalise();
+	vecjk = k - j;
+	vecjk.normalise();
+	return acos(vecji.dp(vecjk)) * DEGRAD;
+}
+
+// Return torsion (in degrees) between supplied unnormalised vectors
 double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl)
 {
 	// Calculate cross products and torsion angle formed (in radians)
@@ -398,13 +406,13 @@ double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecj
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk)*DEGRAD;
 }
 
-// Return torsion (in degrees, no MIM) between supplied unnormalised vectors
+// Return torsion (in degrees) between supplied unnormalised vectors
 double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
 {
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk)*DEGRAD;
 }
 
-// Return torsion (in radians, no MIM) between supplied unnormalised vectors
+// Return torsion (in radians) between supplied unnormalised vectors
 double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl)
 {
 	// Calculate cross products and torsion angle formed (in radians)
@@ -414,7 +422,7 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk);
 }
 
-// Return torsion (in radians, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
+// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
 double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
 {
 	xpj = vecjk * vecji;
@@ -423,4 +431,3 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 	magxpk = xpk.magAndNormalise();
 	return atan2(vecjk.dp(xpj*xpk) / vecjk.magnitude(), xpj.dp(xpk));
 }
-

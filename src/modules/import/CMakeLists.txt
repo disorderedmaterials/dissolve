@@ -2,14 +2,9 @@
 add_library(importmodule
   core.cpp
   definition.cpp
-  formats.cpp
-  functions_coordinates.cpp
-  functions_data1d.cpp
-  functions_forces.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
-  formats.h
   import.h
 )
 

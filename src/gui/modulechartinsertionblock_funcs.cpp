@@ -23,7 +23,7 @@
 #include "gui/modulechartmoduleblock.h"
 #include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets.h"
+#include "gui/keywordwidgets/widgets.h"
 #include "main/dissolve.h"
 #include <QPainter>
 
@@ -96,12 +96,12 @@ void ModuleChartInsertionBlock::updateControls()
 {
 }
 
-// Disable sensitive controls, ready for main code to run
+// Disable sensitive controls
 void ModuleChartInsertionBlock::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls, ready for main code to run
+// Enable sensitive controls
 void ModuleChartInsertionBlock::enableSensitiveControls()
 {
 }

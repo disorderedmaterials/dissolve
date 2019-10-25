@@ -1,7 +1,9 @@
 add_library(base
   charstring.cpp
   charstringlist.cpp
-  fileandformat.cpp
+  enumoption.cpp
+  enumoptionsbase.cpp
+  enumoptionslist.cpp
   geometry.cpp
   lineparser.cpp
   messenger.cpp
@@ -13,12 +15,15 @@ add_library(base
   processpool.cpp
   sysfunc.cpp
   timer.cpp
+  units.cpp
   version.cpp
   
   charstring.h
   charstringlist.h
-  constants.h
-  fileandformat.h
+  enumoption.h
+  enumoptionsbase.h
+  enumoptions.h
+  enumoptionslist.h
   geometry.h
   lineparser.h
   messenger.h
@@ -30,6 +35,7 @@ add_library(base
   processpool.h
   sysfunc.h
   timer.h
+  units.h
   version.h
 )
 

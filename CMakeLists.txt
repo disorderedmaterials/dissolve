@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "3")
+set(VERSION_PATCH "4")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -23,7 +23,7 @@ set(CMAKE_AUTOMOC OFF)
 # Set policy for automatic linkage of Qt libs to project
 CMAKE_POLICY(SET CMP0020 NEW)
 
-# Request C++11 Standard Support (Required for Qt 5.7)
+# Request C++11 Standard Support (Required for Qt 5.7 and certain other parts of the code)
 set(CMAKE_CXX_STANDARD 11)
 
 # Catch defines
@@ -48,7 +48,7 @@ if(GUI)
   # Add extra functions
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
   include(FindFTGL)
-  include(FindGLEXT)
+
   find_package(Qt5Widgets 5.4 REQUIRED)
   find_package(Qt5Core 5.4 REQUIRED)
   find_package(Qt5Gui 5.4 REQUIRED)
@@ -56,7 +56,6 @@ if(GUI)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
-  find_package(GLEXT REQUIRED)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
   set(CMAKE_AUTOMOC OFF)
@@ -73,14 +72,12 @@ if(WIN32)
   else(PARALLEL)
     set (target_name Dissolve-Serial)
     set (gui_target_name Dissolve-GUI)
-    set (ed_target_name DGuidEd)
   endif(PARALLEL)
 
   # Adjust external include directories for GUI
   if(GUI)
     include_directories(
       ${FTGL_INCLUDE_DIRS}
-      ${GLEXT_INCLUDE_DIRS}
     )
   endif(GUI)
  
@@ -99,7 +96,6 @@ if(UNIX)
   else(PARALLEL)
     set (target_name dissolve-serial)
     set (gui_target_name dissolve-gui)
-    set (ed_target_name dguided)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
@@ -114,7 +110,6 @@ if(APPLE)
   else(PARALLEL)
     set (target_name dissolve-serial)
     set (gui_target_name dissolve-gui)
-    set (ed_target_name dguided)
   endif(PARALLEL)
 
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
@@ -176,29 +171,13 @@ if(GUI)
     ${Qt5Widgets_INCLUDE_DIRS}
   )
 
-  # Dissolve Guide Editor (dguided)
-  add_executable(${ed_target_name}
-    MACOSX_BUNDLE
-    ${SRCS}/dguided.cpp 
-  )
-
-  # Set project-local include directories for target
-  target_include_directories(${ed_target_name} PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_BINARY_DIR}/src
-    ${FREETYPE_INCLUDE_DIRS}
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Gui_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-  )
-
 endif(GUI)
 
 # Set basic link libs for executables
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module analyse analysisnodes keywordtypes expression genericitems base math data ff 
+  main classes module io export import procedure procedurenodes keywords expression genericitems base math data ff
 
   # Modules
   analysemodule
@@ -206,7 +185,7 @@ set(BASIC_LINK_LIBS
   braggmodule
   calculatedanglemodule
   calculaterdfmodule
-  calibratemodule
+  calibrationmodule
   checksmodule
   datatestmodule
   energymodule
@@ -248,7 +227,7 @@ target_link_libraries( ${target_name}
   braggmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
-  calibratemodulenogui
+  calibrationmodulenogui
   datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
@@ -279,7 +258,7 @@ if(GUI)
     braggmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
-    calibratemodulegui
+    calibrationmodulegui
     datatestmodulegui
     energymodulegui
     epsrmodulegui
@@ -297,51 +276,8 @@ if(GUI)
     widgets
     keywordwidgets
     delegates
+    charts
     gui
-
-    ${NO_WHOLE_ARCHIVE_FLAG}
-
-    # External libs
-    Qt5::Widgets Qt5::Core Qt5::PrintSupport
-    ${FTGL_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
-
-    ${EXTRA_LINK_LIBS}
-  )
-
-  # Dissolve Guide Editor
-  target_link_libraries( ${ed_target_name}
-    ${WHOLE_ARCHIVE_FLAG}
-
-    ${BASIC_LINK_LIBS}
-
-    # Module gui libs
-    analysemodulegui
-    atomshakemodulegui
-    braggmodulegui
-    calculatedanglemodulegui
-    calculaterdfmodulegui
-    calibratemodulegui
-    datatestmodulegui
-    energymodulegui
-    epsrmodulegui
-    geomoptmodulegui
-    neutronsqmodulegui
-    rdfmodulegui
-    refinemodulegui
-    skeletonmodulegui
-    sqmodulegui
-    testmodulegui
-
-    # Main gui libs
-    render
-    viewer
-    widgets
-    keywordwidgets
-    delegates
-    gui
-    ed
 
     ${NO_WHOLE_ARCHIVE_FLAG}
 
@@ -354,18 +290,4 @@ if(GUI)
     ${EXTRA_LINK_LIBS}
   )
 endif(GUI)
-
-# Install target for unix
-#if(UNIX AND NOT APPLE)
-#  INSTALL_TARGET(${target_name} "")
-#  configure_file(${PROJECT_SOURCE_DIR}/desktop.cmake Dissolve.desktop)
-#  install(FILES ${PROJECT_SOURCE_DIR}/src/gui/icons/dissolve.png
-#        DESTINATION share/dissolve)
-#  install(FILES ${PROJECT_BINARY_DIR}/Dissolve.desktop
-#        DESTINATION share/applications)
-#  foreach(i ff filters fftesting fragments partitions scripts test includes)
-#    install(DIRECTORY ${PROJECT_SOURCE_DIR}/data/${i}
-#          DESTINATION share/dissolve)
-#  endforeach(i)
-#endif(UNIX AND NOT APPLE)
 

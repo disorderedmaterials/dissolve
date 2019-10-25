@@ -92,12 +92,6 @@ bool FontInstance::fontOK() const
 	return (font_ != NULL);
 }
 
-// Return current font
-FTFont* FontInstance::font() const
-{
-	return font_;
-}
-
 // Return base height of font
 double FontInstance::fontBaseHeight() const
 {
@@ -132,6 +126,30 @@ void FontInstance::setScaleFactor(double scaleFactor)
 double FontInstance::scaleFactor() const
 {
 	return scaleFactor_;
+}
+
+/*
+ * Rendering
+ */
+
+// Set face size
+bool FontInstance::setFaceSize(double faceSize)
+{
+	if (!font_) return false;
+
+	font_->FaceSize(faceSize);
+
+	return true;
+}
+
+// Render supplied text
+bool FontInstance::renderText(const char* text) const
+{
+	if (!font_) return false;
+
+	font_->Render(text);
+
+	return true;
 }
 
 /*

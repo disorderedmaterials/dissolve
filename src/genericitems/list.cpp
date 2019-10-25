@@ -69,11 +69,12 @@ bool GenericList::contains(const char* name, const char* prefix)
 	if (DissolveSys::isEmpty(prefix)) varName = name;
 	else varName.sprintf("%s_%s", prefix, name);
 
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return true;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->name(), varName.get())) return true;
+
 	return false;
 }
 
-// Return if named named item, if it exists, is of specified type
+// Return if named item, if it exists, is of specified type
 bool GenericList::isItemOfType(const char* type, const char* name, const char* prefix)
 {
 	GenericItem* item = find(name, prefix);
@@ -91,7 +92,7 @@ GenericItem* GenericList::items()
 // Return the named item from the list
 GenericItem* GenericList::find(const char* name)
 {
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), name)) return item;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->name(), name)) return item;
 	return NULL;
 }
 
@@ -103,7 +104,7 @@ GenericItem* GenericList::find(const char* name, const char* prefix)
 	if (DissolveSys::isEmpty(prefix)) varName = name;
 	else varName.sprintf("%s_%s", prefix, name);
 
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return item;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->name(), varName.get())) return item;
 	return NULL;
 }
 
@@ -115,20 +116,20 @@ int GenericList::version(const char* name, const char* prefix) const
 	if (DissolveSys::isEmpty(prefix)) varName = name;
 	else varName.sprintf("%s_%s", prefix, name);
 
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return item->version();
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->name(), varName.get())) return item->version();
 
 	return -99;
 }
 
 // Return list of all items with specified prefix (before first '_')
-RefList<GenericItem,bool> GenericList::listWithPrefix(const char* prefix)
+RefList<GenericItem> GenericList::listWithPrefix(const char* prefix)
 {
-	RefList<GenericItem,bool> items;
+	RefList<GenericItem> items;
 	CharString itemUniqueName;
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next)
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next())
 	{
 		itemUniqueName = DissolveSys::beforeChar(item->name(), '_');
-		if (itemUniqueName == prefix) items.add(item);
+		if (itemUniqueName == prefix) items.append(item);
 	}
 
 	return items;
@@ -138,7 +139,7 @@ RefList<GenericItem,bool> GenericList::listWithPrefix(const char* prefix)
 void GenericList::listItems()
 {
 	int count = 0;
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next, ++count) Messenger::print("  %3i  %s", count, item->name());
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next(), ++count) Messenger::print("  %3i  %s", count, item->name());
 }
 
 // Remove named item
@@ -180,7 +181,7 @@ bool GenericList::rename(const char* oldName, const char* oldPrefix, const char*
 // Broadcast all data
 bool GenericList::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) 
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) 
 	{
 		Messenger::printVerbose("Broadcasting data '%s' (%s)...\n", item->name(), item->itemClassName());
 		if (!item->broadcast(procPool, root, coreData)) return false;
@@ -194,7 +195,7 @@ bool GenericList::equality(ProcessPool& procPool)
 	// Loop over processes - the target process will loop over its module data, sending out the name to the slaves.
 	// If found, we note that we've already done this data, check it for equality, and move on.
 	// If we can't find the data, we'll complain but move on.
-	RefList<GenericItem,bool> checkedItems;
+	RefList<GenericItem> checkedItems;
 	CharString itemName, itemClassName;
 	int nFailed = 0;
 	for (int n=0; n<procPool.nProcesses(); ++n)
@@ -203,7 +204,7 @@ bool GenericList::equality(ProcessPool& procPool)
 		if (procPool.poolRank() == n)
 		{
 			// Loop over GenericItems in list
-			for (GenericItem* item = items_.first(); item != NULL; item = item->next)
+			for (GenericItem* item = items_.first(); item != NULL; item = item->next())
 			{
 				// If we have already checked this item, move on...
 				if (checkedItems.contains(item)) continue;
@@ -237,7 +238,7 @@ bool GenericList::equality(ProcessPool& procPool)
 				if (!item->equality(procPool)) return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
 
 				// Add the item to our checked list
-				checkedItems.add(item);
+				checkedItems.append(item);
 			}
 
 			// No more items, so send the 'false' signal
@@ -272,7 +273,7 @@ bool GenericList::equality(ProcessPool& procPool)
 			if (!item->equality(procPool)) return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
 
 			// Add the item to our checked list
-			checkedItems.add(item);
+			checkedItems.append(item);
 		}
 	}
 

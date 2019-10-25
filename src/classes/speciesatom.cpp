@@ -22,6 +22,7 @@
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "base/processpool.h"
 
@@ -105,8 +106,11 @@ void SpeciesAtom::setAtomType(AtomType* at)
 	if (at && (at->element() != element_))
 	{
 		Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n", at->name(), element_->symbol(), at->element()->symbol());
+		return;
 	}
-	else atomType_ = at;
+
+	atomType_ = at;
+	if (parent_) parent_->bumpAtomTypesVersion();
 }
 
 // Return SpeciesAtomType of SpeciesAtom
@@ -196,7 +200,7 @@ SpeciesBond* SpeciesAtom::bond(int index)
 }
 
 // Return bonds list
-const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
+const RefList<SpeciesBond>& SpeciesAtom::bonds() const
 {
 	return bonds_;
 }
@@ -204,7 +208,7 @@ const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
 // Return whether Bond to specified Atom exists
 SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
 {
-	for (RefListItem<SpeciesBond,int>* ri = bonds_.first(); ri != NULL; ri = ri->next) if (ri->item->partner(this) == j) return ri->item;
+	for (RefListItem<SpeciesBond>* ri = bonds_.first(); ri != NULL; ri = ri->next()) if (ri->item()->partner(this) == j) return ri->item();
 	return NULL;
 }
 

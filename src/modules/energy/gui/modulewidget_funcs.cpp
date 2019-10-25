@@ -64,7 +64,7 @@ EnergyModuleWidget::~EnergyModuleWidget()
 }
 
 // Update controls within widget
-void EnergyModuleWidget::updateControls()
+void EnergyModuleWidget::updateControls(int flags)
 {
 	// Set gradient and stability labels
 	int stabilityWindow = module_->keywords().asInt("StabilityWindow");
@@ -107,12 +107,12 @@ void EnergyModuleWidget::updateControls()
 	energyGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void EnergyModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void EnergyModuleWidget::enableSensitiveControls()
 {
 }
@@ -150,7 +150,7 @@ void EnergyModuleWidget::setGraphDataTargets(EnergyModule* module)
 
 	// Add Configuration targets to the combo box
 	ui.TargetCombo->clear();
-	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+	RefListIterator<Configuration> configIterator(module->targetConfigurations());
 	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 }
 
@@ -164,12 +164,19 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	if (!currentConfiguration_) return;
 
 	// Add data targets
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Total", "GROUP");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Inter", "GROUP1");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Intra", "GROUP2");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Bond", "GROUP3");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Angle", "GROUP4");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Torsion", "GROUP5");
+	Renderable* rend;
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
+	rend->setColour(StockColours::RedStockColour);
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Totals");
+	rend->setColour(StockColours::BlueStockColour);
+
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Intramolecular");
+	rend->setColour(StockColours::GreenStockColour);
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Intramolecular");
+	rend->setColour(StockColours::PurpleStockColour);
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
+	rend->setColour(StockColours::OrangeStockColour);
 
 	updateControls();
 }

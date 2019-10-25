@@ -1,5 +1,5 @@
 /*
-	*** Dissolve - Master Terms
+	*** Dissolve - Master Ternms
 	*** src/main/masterterms.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -24,161 +24,94 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 
-// Add new master Bond parameters
-MasterIntra* Dissolve::addMasterBond(const char* name)
-{
-	// Check for existence of master Bond already
-	if (hasMasterBond(name))
-	{
-		Messenger::error("Refused to add a new master Bond named '%s' since one with the same name already exists.\n", name);
-		return NULL;
-	}
-
-	// OK to add new master Bond
-	MasterIntra* b = masterBonds_.add();
-	b->setName(name);
-	b->setType(SpeciesIntra::IntramolecularBond);
-
-	return b;
-}
-
-// Return number of master Bond parameters in list
-int Dissolve::nMasterBonds() const
-{
-	return masterBonds_.nItems();
-}
-
 // Return list of master Bond parameters
 const List<MasterIntra>& Dissolve::masterBonds() const
 {
-	return masterBonds_;
-}
-
-// Return nth master Bond parameters
-MasterIntra* Dissolve::masterBond(int n)
-{
-	return masterBonds_[n];
-}
-
-// Return whether named master Bond parameters exist
-MasterIntra* Dissolve::hasMasterBond(const char* name) const
-{
-	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
-
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
-	return NULL;
-}
-
-// Add new master Angle parameters
-MasterIntra* Dissolve::addMasterAngle(const char* name)
-{
-	// Check for existence of master Angle already
-	if (hasMasterAngle(name))
-	{
-		Messenger::error("Refused to add a new master Angle named '%s' since one with the same name already exists.\n", name);
-		return NULL;
-	}
-
-	// OK to add new master Angle
-	MasterIntra* a = masterAngles_.add();
-	a->setName(name);
-	a->setType(SpeciesIntra::IntramolecularAngle);
-
-	return a;
-}
-
-// Return number of master Angle parameters in list
-int Dissolve::nMasterAngles() const
-{
-	return masterAngles_.nItems();
+	return coreData_.masterBonds();
 }
 
 // Return list of master Angle parameters
 const List<MasterIntra>& Dissolve::masterAngles() const
 {
-	return masterAngles_;
-}
-
-// Return nth master Angle parameters
-MasterIntra* Dissolve::masterAngle(int n)
-{
-	return masterAngles_[n];
-}
-
-// Return whether named master Angle parameters exist
-MasterIntra* Dissolve::hasMasterAngle(const char* name) const
-{
-	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
-
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
-	return NULL;
-}
-
-// Add new master Torsion parameters
-MasterIntra* Dissolve::addMasterTorsion(const char* name)
-{
-	// Check for existence of master Torsion already
-	if (hasMasterTorsion(name))
-	{
-		Messenger::error("Refused to add a new master Torsion named '%s' since one with the same name already exists.\n", name);
-		return NULL;
-	}
-
-	// OK to add new master Torsion
-	MasterIntra* t = masterTorsions_.add();
-	t->setName(name);
-	t->setType(SpeciesIntra::IntramolecularTorsion);
-
-	return t;
-}
-
-// Return number of master Torsion parameters in list
-int Dissolve::nMasterTorsions() const
-{
-	return masterTorsions_.nItems();
+	return coreData_.masterAngles();
 }
 
 // Return list of master Torsion parameters
 const List<MasterIntra>& Dissolve::masterTorsions() const
 {
-	return masterTorsions_;
+	return coreData_.masterTorsions();
 }
 
-// Return nth master Torsion parameters
-MasterIntra* Dissolve::masterTorsion(int n)
+// Check and print MasterTerm usage
+void Dissolve::checkMasterTermUsage() const
 {
-	return masterTorsions_[n];
-}
+	Array<int> bondCounts(coreData_.masterBonds().nItems());
+	Array<int> angleCounts(coreData_.masterAngles().nItems());
+	Array<int> torsionCounts(coreData_.masterTorsions().nItems());
+	bondCounts = 0;
+	angleCounts = 0;
+	torsionCounts = 0;
 
-// Return whether named master Torsion parameters exist
-MasterIntra* Dissolve::hasMasterTorsion(const char* name) const
-{
-	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+	// Loop over Configurations and count term usage
+	int termIndex;
+	ListIterator<Configuration> configIterator(coreData_.constConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Bonds
+		DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
+		while (Bond* b = bondIterator.iterate())
+		{
+			if (!b->speciesBond()->masterParameters()) continue;
+			termIndex = coreData_.masterBonds().indexOf(b->speciesBond()->masterParameters());
+			++bondCounts[termIndex];
+		}
 
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
-	return NULL;
-}
+		// Angles
+		DynamicArrayIterator<Angle> angleIterator(cfg->angles());
+		while (Angle* a = angleIterator.iterate())
+		{
+			if (!a->speciesAngle()->masterParameters()) continue;
+			termIndex = coreData_.masterAngles().indexOf(a->speciesAngle()->masterParameters());
+			++angleCounts[termIndex];
+		}
 
-// Return the named master term (of any form) if it exists
-MasterIntra* Dissolve::findMasterTerm(const char* name) const
-{
-	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+		// Torsions
+		DynamicArrayIterator<Torsion> torsionIterator(cfg->torsions());
+		while (Torsion* t = torsionIterator.iterate())
+		{
+			if (!t->speciesTorsion()->masterParameters()) continue;
+			termIndex = coreData_.masterTorsions().indexOf(t->speciesTorsion()->masterParameters());
+			++torsionCounts[termIndex];
+		}
+	}
 
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	if (coreData_.nMasterBonds() > 0)
+	{
+		Messenger::print("\n  Bond Masters:\n");
 
-	return NULL;
-}
+		Messenger::print("\n     Name        Usage Count\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		int n = 0;
+		for (MasterIntra* b = coreData_.masterBonds().first(); b != NULL; b = b->next(), ++n) Messenger::print("     %-10s   %i", b->name(), bondCounts[n]);
+	}
 
-// Clear all MasterTerms
-void Dissolve::clearMasterTerms()
-{
-	masterBonds_.clear();
-	masterAngles_.clear();
-	masterTorsions_.clear();
+	if (coreData_.nMasterAngles() > 0)
+	{
+		Messenger::print("\n  Angle Masters:\n");
+
+		Messenger::print("\n     Name        Usage Count\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		int n = 0;
+		for (MasterIntra* a = coreData_.masterAngles().first(); a != NULL; a = a->next(), ++n) Messenger::print("     %-10s   %i", a->name(), angleCounts[n]);
+	}
+
+	if (coreData_.nMasterTorsions() > 0)
+	{
+		Messenger::print("\n  Torsion Masters:\n");
+
+		Messenger::print("\n     Name        Usage Count\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		int n = 0;
+		for (MasterIntra* t = coreData_.masterTorsions().first(); t != NULL; t = t->next(), ++n) Messenger::print("     %-10s   %i", t->name(), torsionCounts[n]);
+	}
 }

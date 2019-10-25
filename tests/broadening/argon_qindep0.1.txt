@@ -11,10 +11,18 @@ EndSpecies
 
 # Define Configuration
 Configuration 'liquid'
-  Multiplier  10000
-  CellLengths  77.721314  77.721314  77.721314
-  SpeciesInfo  'Argon'  1.0
+  Generator
+    Box
+      Lengths  77.721314  77.721314  77.721314
+    EndBox
+    AddSpecies
+      Species  'Argon'
+      Population  10000
+      ScaleBox  False
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr_qindep0.1/argonbox.ato'
+  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
@@ -34,7 +42,9 @@ EndModule
 
 Module DataTest
   Threshold  0.5
-  Data1D  'epsr_qindep0.1/argon.EPSR.u01'  'liquid//NeutronSQ01//WeightedSQ//Total'  1  2
+  Data1D  'liquid//NeutronSQ01//WeightedSQ//Total'  xy  'epsr_qindep0.1/argon.EPSR.u01'
+    Y  2
+  EndData1D
 EndModule
 
 Module SanityCheck
@@ -43,9 +53,5 @@ EndModule
 EndLayer
 
 PairPotentials
-  Generate  LJ  Ar  Ar  0.0  0.0  0.979   3.401
+  Parameters  Ar  0.0  LJGeometric  0.979   3.401
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation

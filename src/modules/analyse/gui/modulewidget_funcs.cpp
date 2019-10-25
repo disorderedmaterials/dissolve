@@ -20,27 +20,31 @@
 */
 
 #include "modules/analyse/gui/modulewidget.h"
+#include "modules/analyse/analyse.h"
 
 // Constructor
-AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData) : ModuleWidget(parent), module_(dynamic_cast<AnalyseModule*>(module))
 {
 	// Set up user interface
 	ui.setupUi(this);
+
+	// Set Procedure target
+	ui.EditorWidget->setUp(&module_->analyser(), coreData);
 
 	refreshing_ = false;
 }
 
 // Update controls within widget
-void AnalyseModuleWidget::updateControls()
+void AnalyseModuleWidget::updateControls(int flags)
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void AnalyseModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void AnalyseModuleWidget::enableSensitiveControls()
 {
 }

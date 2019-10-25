@@ -24,7 +24,7 @@
 
 #include "gui/ui_layereditor.h"
 #include "base/charstring.h"
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 class Configuration;
@@ -60,7 +60,7 @@ class LayerEditor : public QWidget
 	// Parent Configuration (if we are local to one)
 	Configuration* localConfiguration_;
 	// Module categories and their associated MimeTreeWidgetItems
-	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
+	RefDataList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
 	public:
 	// Set up the LayerEditor for the specified ModuleLayer
@@ -77,9 +77,9 @@ class LayerEditor : public QWidget
 	public:
 	// Update controls
 	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
 

@@ -24,6 +24,7 @@
 #include "gui/viewer/render/fontinstance.h"
 #include "gui/viewer/render/symbol.h"
 #include "base/sysfunc.h"
+#include <QtGui/qopengl.h>
 
 // Static members
 TextPrimitive* TextPrimitive::target_ = NULL;
@@ -174,7 +175,7 @@ void TextPrimitive::boundingBox(FontInstance& fontInstance, Vec3<double>& lowerL
 	// Loop over remaining fragments, keeping track of the total width of the primitive and the max/min y values
 	Vec3<double> ll, ur;
 // 	double width = upperRight.x - lowerLeft.x;
-	for (TextFragment* fragment = fragments_.first()->next; fragment != NULL; fragment = fragment->next)
+	for (TextFragment* fragment = fragments_.first()->next(); fragment != NULL; fragment = fragment->next())
 	{
 		// Get bounding box for this fragment
 		fontInstance.boundingBox(fragment->text(), ll, ur);
@@ -200,7 +201,7 @@ void TextPrimitive::render(FontInstance& fontInstance, const Matrix4& viewMatrix
 	Matrix4 textMatrix;
 
 	// Loop over fragments
-	for (TextFragment* fragment = fragments_.first(); fragment != NULL; fragment = fragment->next)
+	for (TextFragment* fragment = fragments_.first(); fragment != NULL; fragment = fragment->next())
 	{
 		textMatrix = viewMatrix * transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize, fragment);
 		glLoadMatrixd(textMatrix.matrix());
@@ -227,11 +228,11 @@ void TextPrimitive::render(FontInstance& fontInstance, const Matrix4& viewMatrix
 		{
 			// Render the text twice - once with lines, and once with polygon fill
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			fontInstance.font()->Render(fragment->text().toUtf8());
+			fontInstance.renderText(fragment->text().toUtf8());
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			fontInstance.font()->Render(fragment->text().toUtf8());
+			fontInstance.renderText(fragment->text().toUtf8());
 		}
-		else fontInstance.font()->Render(fragment->text().toUtf8());
+		else fontInstance.renderText(fragment->text().toUtf8());
 	}
 }
 
@@ -324,15 +325,15 @@ int TextPrimitive::lex()
 		if (es == TextPrimitive::nEscapeSequences)
 		{
 			Messenger::printVerbose("Error: String '%s' is not a valid escape sequence.\n", qPrintable(token));
-			return UCR_TP_FAIL;
+			return DISSOLVE_TEXT_FAIL;
 		}
 		TextPrimitiveParser_lval.escSeq = es;
-		return UCR_TP_ESCAPE;
+		return DISSOLVE_TEXT_ESCAPE;
 	}
 	else
 	{
 		TextPrimitiveParser_lval.text = &token;
-		return UCR_TP_TEXT;
+		return DISSOLVE_TEXT_TEXT;
 	}
 
 	return 0;

@@ -24,61 +24,43 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Simulation Block Keywords
-KeywordData SimulationBlockData[] = {
-	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
-	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
-	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
-	{ "ParallelGroupPopulation",		1,	"Maximum number of groups to split processes in a pool in to" },
-	{ "RestartFileFrequency",		1,	"Frequency with which to write restart file (0 = never)" },
-	{ "Seed",				1,	"Random seed to use" }
-};
-
-// Convert text string to SimulationKeyword
-SimulationBlock::SimulationKeyword SimulationBlock::keyword(const char* s)
+// Return enum option info for SimulationKeyword
+EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 {
-	for (int n=0; n<SimulationBlock::nSimulationKeywords; ++n) if (DissolveSys::sameString(s,SimulationBlockData[n].name)) return (SimulationBlock::SimulationKeyword) n;
-	return SimulationBlock::nSimulationKeywords;
-}
+	static EnumOptionsList SimulationKeywords = EnumOptionsList() <<
+		EnumOption(SimulationBlock::EndSimulationKeyword,		"EndSimulation") <<
+		EnumOption(SimulationBlock::ParallelStrategyKeyword, 		"ParallelStrategy",		1) <<
+		EnumOption(SimulationBlock::ParallelGroupPopulationKeyword,	"ParallelGroupPopulation",	1) <<
+		EnumOption(SimulationBlock::RestartFileFrequencyKeyword,	"RestartFileFrequency",		1) <<
+		EnumOption(SimulationBlock::SeedKeyword, 			"Seed",				1);
 
-// Convert SimulationKeyword to text string
-const char* SimulationBlock::keyword(SimulationBlock::SimulationKeyword id)
-{
-	return SimulationBlockData[id].name;
-}
+	static EnumOptions<SimulationBlock::SimulationKeyword> options("SimulationKeyword", SimulationKeywords);
 
-// Return minimum number of expected arguments
-int SimulationBlock::nArguments(SimulationBlock::SimulationKeyword id)
-{
-	return SimulationBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Simulation block
 bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
-	Messenger::print("\nParsing %s block...\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
+	Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
-		SimulationBlock::SimulationKeyword simKeyword = SimulationBlock::keyword(parser.argc(0));
-		if ((simKeyword != SimulationBlock::nSimulationKeywords) && ((parser.nArgs()-1) < SimulationBlock::nArguments(simKeyword)))
+		if (parser.getArgsDelim() != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		SimulationKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", SimulationBlock::keyword(simKeyword));
-			error = true;
-			break;
-		}
-		switch (simKeyword)
-		{
-			case (SimulationBlock::BoxNormalisationPointsKeyword):
-				dissolve->setNBoxNormalisationPoints(parser.argi(1));
-				Messenger::print("Number of points to use in Box normalisation calculation = %i\n", dissolve->nBoxNormalisationPoints());
-				break;
 			case (SimulationBlock::EndSimulationKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 				blockDone = true;
 				break;
 			case (SimulationBlock::ParallelStrategyKeyword):
@@ -100,13 +82,8 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 				dissolve->setSeed(parser.argi(1));
 				Messenger::print("Random seed set to %i.\n", dissolve->seed());
 				break;
-			case (SimulationBlock::nSimulationKeywords):
-				Messenger::print("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::SimulationBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword), SimulationBlock::keyword(simKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -121,7 +98,7 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 		error = true;
 	}
 

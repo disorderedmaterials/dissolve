@@ -1,0 +1,90 @@
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species 'A'
+  Isotopologue  'Natural'
+EndSpecies
+
+Species 'B'
+  Isotopologue  'Natural'
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
+
+Configuration  'Mix'
+  Generator
+    Parameters
+      Integer  multiplier  1000
+      Real   ratioAtoB   1.0
+      Real   mixDensity    0.1
+    EndParameters
+    Box
+      Angles  90.0  90.0  90.0
+      Lengths  1.0  1.0  1.0
+    EndBox
+    AddSpecies
+      Species  'A'
+      Population  multiplier*ratioAtoB
+      Density  mixDensity  g/cm3
+    EndAddSpecies
+    AddSpecies
+      Species  'B'
+      Population  multiplier
+      Density  mixDensity  g/cm3
+    EndAddSpecies
+  EndGenerator
+EndConfiguration
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+Layer  'Evolve'
+
+  Module  MolShake
+    Configuration  'Mix'
+  EndModule
+
+  Module  MD
+    Frequency  5
+    Configuration  'Mix'
+    OnlyWhenEnergyStable  True
+  EndModule
+
+  Module  Energy
+    Configuration  'Mix'
+  EndModule
+
+EndLayer
+
+Layer  'Calculate'
+
+  Frequency  5
+
+  Module  RDF
+    Intrabroadening  Gaussian  0.18
+    Configuration  'Mix'
+  EndModule
+
+  Module  NeutronSQ  'Natural'
+    Configuration  'Mix'
+
+    Isotopologue  'Mix'  'A'  'Natural'  1.000000
+    Isotopologue  'Mix'  'B'  'Natural'  1.000000
+  EndModule
+
+EndLayer
+
+Layer  'Refine'
+
+  Frequency  5
+
+  Module  EPSR  'EPSR01'
+    Target  'Natural'  'Default'
+    OnlyWhenEnergyStable  True
+  EndModule
+
+EndLayer

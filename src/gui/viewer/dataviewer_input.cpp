@@ -58,6 +58,13 @@ void DataViewer::mouseMoved(int dx, int dy)
 			}
 			break;
 		case (DataViewer::TranslateViewInteraction):
+			// Turn off autofollow if it is currently on...
+			if (view_.autoFollowType() != View::NoAutoFollow)
+			{
+				view_.setAutoFollowType(View::NoAutoFollow);
+				emit(controlAspectChanged());
+			}
+
 			// If this is a flat view, shift the axis limits rather than translating the view
 			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
 			else view_.translateView(dx/15.0, dy/15.0, 0.0);
@@ -80,12 +87,30 @@ void DataViewer::mouseMoved(int dx, int dy)
 // Mouse 'wheeled'
 void DataViewer::mouseWheeled(int delta)
 {
-	bool scrollup = delta > 0;
+	// Turn off autofollow if it is currently on...
+	if (view_.autoFollowType() != View::NoAutoFollow)
+	{
+		view_.setAutoFollowType(View::NoAutoFollow);
+		emit(controlAspectChanged());
+	}
 
-	// Perform camera zoom
-	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
-	if (zrange < 1.0) zrange = 1.0;
-	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
+	bool scrollUp = delta > 0;
+
+	// Perform camera zoom in a 3D view, or view scaling in a 2D view
+	if (view_.isFlatView())
+	{
+		// Scale the range
+		view_.scaleRange(scrollUp ? 0.9 : 1.1);
+
+		// Move the centre of the axes towards the current mouse position
+		view_.centre2DAt(current2DAxesCoordinates(), 0.1);
+	}
+	else
+	{
+		double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
+		if (zrange < 1.0) zrange = 1.0;
+		view_.translateView(0.0, 0.0, 0.5*zrange*(scrollUp ? -1.0 : 1.0));
+	}
 
 	postRedisplay();
 }
@@ -146,6 +171,13 @@ bool DataViewer::keyPressed(int key)
 			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
 		case (Qt::Key_A):
+			// Turn off autofollow if it is currently on...
+			if (view_.autoFollowType() != View::NoAutoFollow)
+			{
+				view_.setAutoFollowType(View::NoAutoFollow);
+				emit(controlAspectChanged());
+			}
+
 			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 				// Show only top 20% of vertical axis
@@ -164,7 +196,7 @@ bool DataViewer::keyPressed(int key)
 			else view_.axes().toggleLogarithmic(view_.viewType() == View::FlatZYView ? 2 : 0);
 			break;
 		case (Qt::Key_S):
-			groupManager_.cycleVerticalShifts();
+			groupManager_.cycleVerticalShiftAmount();
 			break;
 		default:
 			refresh = false;

@@ -28,7 +28,7 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
-// Clear contents of Configuration, leaving core definitions intact
+// Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
 {
 	bonds_.clear();
@@ -39,15 +39,17 @@ void Configuration::empty()
 	atoms_.clear();
 	usedAtomTypes_.clear();
 	if (box_ != NULL) delete box_;
-	box_ = NULL;
+	box_ = new CubicBox(1.0);
 	cells_.clear();
 
-	coordinateIndex_ = 0;
-	++version_;
+	// Clear used species
+	usedSpecies_.clear();
+
+	++contentsVersion_;
 }
 
-// Initialise all content arrays
-void Configuration::initialise(int nMolecules, int nGrains)
+// Initialise content arrays
+void Configuration::initialiseArrays(int nMolecules, int nGrains)
 {
 	// Clear current contents
 	empty();
@@ -56,130 +58,91 @@ void Configuration::initialise(int nMolecules, int nGrains)
 	grains_.initialise(nGrains);
 }
 
-// Initialise from assigned Species populations
-bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints)
+// Return specified used type
+AtomType* Configuration::usedAtomType(int index)
 {
-	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
-
-	// Clear current contents
-	empty();
-
-	/*
-	 * Check Species populations, and calculate total number of expected Atoms
-	 */
-	if (multiplier_ < 1)
-	{
-		Messenger::error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
-		return false;
-	}
-	int nExpectedAtoms = 0;
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
-	{
-		// Get Species pointer
-		Species* sp = spInfo->species();
-
-		// Determine the number of molecules of this component
-		int count =  spInfo->population() * multiplier_;
-
-		// Check for zero count
-		if (count == 0)
-		{
-			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n",  sp->name(),  spInfo->population());
-			return false;
-		}
-
-		nExpectedAtoms += count * sp->nAtoms();
-	}
-
-	/*
-	 * Create a Box to contain the system
-	 */
-	Messenger::print("Creating periodic Box and Cell partitioning...\n");
-	if (!setUpBox(procPool, pairPotentialRange, nExpectedAtoms, boxNormalisationNPoints))
-	{
-		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
-		return false;
-	}
-
-	/*
-	 * Create Molecules
-	 */
-	Messenger::print("Setting up Molecules...\n");
-
-	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
-	Vec3<double> r, cog, newCentre, fr;
-	Matrix3 transform;
-
-	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
-	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
-	{
-		// Determine the number of molecules of this component
-		int count = spInfo->population() * multiplier_;
-
-		// Add copies of Species as Molecules
-		for (int n=0; n<count; ++n)
-		{
-			// Add the Molecule
-			Molecule* mol = addMolecule(spInfo->species());
-
-			// Generate random positions and orientations if needed
-			if (randomise)
-			{
-				// Set / generate position of Molecule
-				switch (spInfo->insertionPositioning())
-				{
-					case (SpeciesInfo::RandomPositioning):
-						fr.set(procPool.random(), procPool.random(), procPool.random());
-						newCentre = box_->fracToReal(fr);
-						mol->setCentreOfGeometry(box_, newCentre);
-						break;
-					case (SpeciesInfo::CentralPositioning):
-						fr.set(0.5, 0.5, 0.5);
-						newCentre = box_->fracToReal(fr);
-						mol->setCentreOfGeometry(box_, newCentre);
-						break;
-					case (SpeciesInfo::CurrentPositioning):
-						break;
-					default:
-						Messenger::error("Unrecognised positioning type.\n");
-						break;
-				}
-
-				// Generate and apply a random rotation matrix
-				if (spInfo->rotateOnInsertion())
-				{
-					transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
-					mol->transform(box_, transform);
-				}
-
-				// Explore conformation space within the molecule by rotating bonds
-				// TODO
-			}
-		}
-	}
-
-	// Set fractional populations in usedAtomTypes_
-	usedAtomTypes_.finalise();
-
-	++version_;
-
-	return true;
+	return usedAtomTypes_.atomType(index);
 }
 
-// Finalise Configuration after loading contents from restart file
-bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints)
+// Return specified used type data
+AtomTypeData* Configuration::usedAtomTypeData(int index)
 {
-	// Set up Box and Cells
-	if (!setUpBox(procPool, pairPotentialRange, -1, boxNormalisationNPoints)) return false;
+	return usedAtomTypes_[index];
+}
 
-	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
-	scaleBox(requestedSizeFactor_);
-	appliedSizeFactor_ = requestedSizeFactor_;
+// Return first AtomTypeData for this Configuration
+AtomTypeData* Configuration::usedAtomTypes()
+{
+	return usedAtomTypes_.first();
+}
 
-	// Finalise used AtomType list
-	usedAtomTypes_.finalise();
+// Return AtomTypeList for this Configuration
+const AtomTypeList& Configuration::usedAtomTypesList() const
+{
+	return usedAtomTypes_;
+}
 
-	return true;
+// Return number of atom types used in this Configuration
+int Configuration::nUsedAtomTypes() const
+{
+	return usedAtomTypes_.nItems();
+}
+
+// Add Species to list of those used by the Configuration, setting/adding the population specified
+SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
+{
+	// Check if we have an existing info for this Species
+	SpeciesInfo* spInfo = usedSpeciesInfo(sp);
+	if (!spInfo)
+	{
+		spInfo = usedSpecies_.add();
+		spInfo->setSpecies(sp);
+	}
+
+	// Increase the population
+	spInfo->addPopulation(population);
+
+	return spInfo;
+}
+
+// Return SpeciesInfo for specified Species
+SpeciesInfo* Configuration::usedSpeciesInfo(Species* sp)
+{
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return spInfo;
+
+	return NULL;
+}
+
+// Return list of SpeciesInfo for the Configuration
+List<SpeciesInfo>& Configuration::usedSpecies()
+{
+	return usedSpecies_;
+}
+
+// Return if the specified Species is present in the usedSpecies list
+bool Configuration::hasUsedSpecies(Species* sp)
+{
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return true;
+
+	return false;
+}
+
+// Return the atomic density of the Configuration
+double Configuration::atomicDensity() const
+{
+	return nAtoms() / box_->volume();
+}
+
+// Return version of current contents
+int Configuration::contentsVersion() const
+{
+	return contentsVersion_;
+}
+
+// Increment version of current contents
+void Configuration::incrementContentsVersion()
+{
+	++contentsVersion_;
 }
 
 // Add Molecule to Configuration based on the supplied Species
@@ -189,9 +152,12 @@ Molecule* Configuration::addMolecule(Species* sp)
 	Molecule* newMolecule = molecules_.add();
 	newMolecule->setSpecies(sp);
 
+	// Update the relevant SpeciesInfo population
+	addUsedSpecies(sp, 1);
+
 	// Add Atoms from Species to the Molecule
 	SpeciesAtom* spi = sp->firstAtom();
-	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next)
+	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next())
 	{
 		// Create new Atom
 		Atom* i = addAtom(newMolecule);
@@ -209,7 +175,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Grains from Species into the Molecule
 	SpeciesGrain* spg = sp->grains();
-	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next)
+	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next())
 	{
 		// Create new Grain
 		Grain* g = addGrain(newMolecule);
@@ -217,13 +183,13 @@ Molecule* Configuration::addMolecule(Species* sp)
 		// Add Atoms to the Grain
 		for (int m=0; m<spg->nAtoms(); ++m)
 		{
-			g->addAtom(newMolecule->atom(spg->atom(m)->item->index()));
+			g->addAtom(newMolecule->atom(spg->atom(m)->item()->index()));
 		}
 	}
 
 	// Add Bonds
 	SpeciesBond* spb = sp->bonds().first();
-	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next)
+	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next())
 	{
 		// Get Atom pointers involved in Bond
 		Atom* i = newMolecule->atom(spb->indexI());
@@ -236,7 +202,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Angles
 	SpeciesAngle* spa = sp->angles().first();
-	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next)
+	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next())
 	{
 		// Get Atom pointers involved in Angle
 		Atom* i = newMolecule->atom(spa->indexI());
@@ -250,7 +216,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Torsions
 	SpeciesTorsion* spt = sp->torsions().first();
-	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next)
+	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next())
 	{
 		// Get Atom pointers involved in Torsion
 		Atom* i = newMolecule->atom(spt->indexI());
@@ -508,61 +474,4 @@ DynamicArray<Torsion>& Configuration::torsions()
 Torsion* Configuration::torsion(int n)
 {
 	return torsions_[n];
-}
-
-// Return specified used type
-AtomType* Configuration::usedAtomType(int index)
-{
-	return usedAtomTypes_.atomType(index);
-}
-
-// Return first AtomTypeData for this Configuration
-AtomTypeData* Configuration::usedAtomTypes()
-{
-	return usedAtomTypes_.first();
-}
-
-// Return AtomTypeList for this Configuration
-const AtomTypeList& Configuration::usedAtomTypesList() const
-{
-	return usedAtomTypes_;
-}
-
-// Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes() const
-{
-	return usedAtomTypes_.nItems();
-}
-
-// Return current coordinate index
-int Configuration::coordinateIndex() const
-{
-	return coordinateIndex_;
-}
-
-// Increment current coordinate index
-void Configuration::incrementCoordinateIndex()
-{
-	++coordinateIndex_;
-	++version_;
-}
-
-// Load coordinates from file
-bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format)
-{
-	// Load coordinates into temporary array
-	Array< Vec3<double> > r;
-	if (!ImportModule::readCoordinates(format, parser, r)) return false;
-
-	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
-	if (atoms_.nItems() != r.nItems())
-	{
-		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), atoms_.nItems());
-		return false;
-	}
-
-	// All good, so copy atom coordinates over into our array
-	for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(r[n]);
-
-	return true;
 }

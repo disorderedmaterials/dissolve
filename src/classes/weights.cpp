@@ -99,7 +99,7 @@ bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* 
 // Return whether the IsotopologueSet contains a mixtures definition for the provided Species
 IsotopologueMix* Weights::hasSpeciesIsotopologueMixture(Species* sp) const
 {
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) if (mix->species() == sp) return mix;
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next()) if (mix->species() == sp) return mix;
 	return NULL;
 }
 
@@ -108,10 +108,10 @@ void Weights::print() const
 {
 	Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
 	Messenger::print("  ------------------------------------------------------\n");
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
 	{
-		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
-		while (Isotopologue* tope = topeIterator.iterate())
+		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->name(), mix->speciesPopulation(), topeIterator.currentData());
 			else Messenger::print("                   %-15s              %f\n", tope->name(), topeIterator.currentData());
@@ -145,7 +145,7 @@ void Weights::calculateWeightingMatrices()
 
 	// Determine atomic concentration products, bound coherent products, and full scattering weights
 	AtomTypeData* atd1 = atomTypes_.first(), *atd2;
-	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next)
+	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next())
 	{
 		ci = atd1->fraction();
 		bi = atd1->boundCoherent() * 0.1;
@@ -155,7 +155,7 @@ void Weights::calculateWeightingMatrices()
 		boundCoherentAverageOfSquares_ += ci*bi*bi;
 
 		atd2 = atd1;
-		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next)
+		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next())
 		{
 			cj = atd2->fraction();
 			bj = atd2->boundCoherent() * 0.1;
@@ -177,7 +177,7 @@ void Weights::calculateWeightingMatrices()
 	Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	intraNorm = 0.0;
 	globalFlag = false;
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
 	{
 		// Get weighting for associated Species population
 		double speciesWeight = double(mix->speciesPopulation());
@@ -187,14 +187,14 @@ void Weights::calculateWeightingMatrices()
 		const AtomTypeList& speciesAtomTypes = sp->usedAtomTypes();
 		const int nAtoms = sp->nAtoms();
 		intraFlag = false;
-		for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next)
+		for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next())
 		{
 			// Find this AtomType in our local AtomTypeList
 			int typeI = atomTypes_.indexOf(atd1->atomType());
 			if (typeI == -1) Messenger::error("Failed to find AtomType '%s' in local Weights.\n", atd1->atomTypeName());
 
 			// Inner loop
-			for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next)
+			for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next())
 			{
 				// Get AtomType for this Atom and find it in our local AtomTypeList
 				int typeJ = atomTypes_.indexOf(atd2->atomType());
@@ -205,13 +205,13 @@ void Weights::calculateWeightingMatrices()
 		}
 
 		// Loop over Isotopologues defined for this mixture
-		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
-		while (Isotopologue* tope = topeIterator.iterate())
+		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
 			double weight = speciesWeight * topeIterator.currentData();
 
-			for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next)
+			for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next())
 			{
 				// Get the local index of this AtomType, as well as its pointer
 				int typeI = atomTypes_.indexOf(atd1->atomType());
@@ -228,7 +228,7 @@ void Weights::calculateWeightingMatrices()
 				bi *= 0.1;
 
 				// Inner loop
-				for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next)
+				for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next())
 				{
 					// Get the local index of this AtomType, as well as its pointer
 					int typeJ = atomTypes_.indexOf(atd2->atomType());
@@ -257,12 +257,12 @@ void Weights::calculateWeightingMatrices()
 
 	// Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
 	atd1 = atomTypes_.first();
-	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next)
+	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next())
 	{
 		ci = atd1->fraction();
 
 		atd2 = atd1;
-		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next)
+		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next())
 		{
 			// Skip this pair if there are no such intramolecular interactions
 			if (!globalFlag.at(typeI, typeJ)) continue;
@@ -279,18 +279,18 @@ void Weights::calculateWeightingMatrices()
 void Weights::createFromIsotopologues(const AtomTypeList& exchangeableTypes)
 {
 	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next()) mix->normalise();
 
 	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
 	atomTypes_.clear();
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
 	{
 		// We must now loop over the Isotopologues in the mixture
-		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
-		while (Isotopologue* tope = topeIterator.iterate())
+		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next)
+			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next())
 			{
 				Isotope* iso = tope->atomTypeIsotope(i->atomType());
 				atomTypes_.addIsotope(i->atomType(), iso, topeIterator.currentData() * mix->speciesPopulation());

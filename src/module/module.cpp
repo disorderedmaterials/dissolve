@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Module Interface
+	*** Module Interface
 	*** src/module/module.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -26,7 +26,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Module::Module() : keywords_(this)
+Module::Module()
 {
 	frequency_ = 1;
 	enabled_ = true;
@@ -62,74 +62,35 @@ const char* Module::uniqueName() const
  * Keywords
  */
 
-// Create and return named keyword group
-ModuleKeywordGroup* Module::addKeywordGroup(const char* name)
-{
-	// Check that a group with the specified name doesn't already exist
-	ModuleKeywordGroup* group = NULL;
-	for (group = keywordGroups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
-
-	if (!group)
-	{
-		group = new ModuleKeywordGroup(keywords_);
-		group->setName(name);
-		keywordGroups_.own(group);
-	}
-
-	return group;
-}
-
 // Return list of recognised keywords
-ModuleKeywordList& Module::keywords()
+KeywordList& Module::keywords()
 {
 	return keywords_;
 }
 
-// Return list of defined keyword groups
-const List<ModuleKeywordGroup>& Module::keywordGroups() const
-{
-	return keywordGroups_;
-}
-
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	// The LineParser currently contains a parsed line from the input file...
 
 	// Do we recognise the first item (the 'keyword')?
-	ModuleKeywordBase* keyword = keywords_.find(parser.argc(0));
-	if (!keyword) return -1;
+	KeywordBase* keyword = keywords_.find(parser.argc(0));
+	if (!keyword) return KeywordBase::Unrecognised;
 
-	// We recognised the keyword - what should we try to do with it?
-	if (keyword->type() == ModuleKeywordBase::ComplexData)
-	{
-		// It's a 'complex' keyword, one that either sets up a complicated object, or does something specific within the Module
-		return parseComplexKeyword(keyword, parser, dissolve, targetList, prefix);
-	}
 	else
 	{
-		// It's a keyword that sets a simple POD or class
 		// Check the number of arguments we have against the min / max for the keyword
-		if ((parser.nArgs() - 1) < keyword->minArguments())
-		{
-			Messenger::error("Not enough arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return 0;
-		}
-		if ((keyword->maxArguments() >= 0) && ((parser.nArgs() - 1) > keyword->maxArguments()))
-		{
-			Messenger::error("Too many arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return 0;
-		}
+		if (!keyword->validNArgs(parser.nArgs() - 1)) return KeywordBase::Failed;
 
 		// All OK, so parse the keyword
-		if (!keyword->read(parser, 1, dissolve->coreData(), dissolve->worldPool()))
+		if (!keyword->read(parser, 1, dissolve->coreData()))
 		{
-			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
-			return 0;
+			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->name());
+			return KeywordBase::Failed;
 		}
 	}
 
-	return true;
+	return KeywordBase::Success;
 }
 
 // Print valid keywords
@@ -137,21 +98,21 @@ void Module::printValidKeywords()
 {
 	Messenger::print("Valid keywords for '%s' Module are:\n", type());
 
-	ListIterator<ModuleKeywordBase> keywordIterator(keywords_.keywords());
-	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
+	ListIterator<KeywordBase> keywordIterator(keywords_.keywords());
+	while (KeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->name(), keyword->description());
 }
 
 /*
  * Control
  */
 
-// Frequency with which to run Module (relative to master simulation loop counter)
+// Set frequency at which to run Module (relative to master simulation loop counter)
 void Module::setFrequency(int freq)
 {
 	frequency_ = freq;
 }
 
-// Frequency with which to run Module (relative to master simulation loop counter)
+// Return frequency at which to run Module (relative to master simulation loop counter)
 int Module::frequency() const
 {
 	return frequency_;
@@ -207,16 +168,25 @@ bool Module::addTargetConfiguration(Configuration* cfg)
 	// Check how many Configurations we accept before we do anything else
 	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
 	{
-		targetConfigurations_.add(cfg);
+		targetConfigurations_.append(cfg);
 		return true;
 	}
 	else
 	{
 		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
-		else Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
+		else Messenger::warn("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
 	}
 
 	return false;
+}
+
+// Add Configuration targets
+bool Module::addTargetConfigurations(List<Configuration>& configs)
+{
+	ListIterator<Configuration> configIterator(configs);
+	while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return false;
+
+	return true;
 }
 
 // Remove Configuration target
@@ -236,7 +206,7 @@ int Module::nTargetConfigurations() const
 }
 
 // Return first targeted Configuration
-const RefList<Configuration,bool>& Module::targetConfigurations() const
+const RefList<Configuration>& Module::targetConfigurations() const
 {
 	return targetConfigurations_;
 }
@@ -256,7 +226,7 @@ void Module::copyTargetConfigurations(Module* sourceModule)
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
-	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());
+	RefListIterator<Configuration> configIterator(sourceModule->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate()) addTargetConfiguration(cfg);
 }
 

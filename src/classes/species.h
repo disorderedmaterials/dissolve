@@ -36,6 +36,7 @@
 
 // Forward Declarations
 class Box;
+class Forcefield;
 
 //Species Definition
 class Species : public ListItem<Species>, public ObjectStore<Species>
@@ -63,7 +64,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return the name of the Species
 	const char* name() const;
 	// Check set-up of Species
-	bool checkSetUp(const List<AtomType>& atomTypes);
+	bool checkSetUp();
 	// Print Species information
 	void print();
 	// Return version
@@ -76,12 +77,16 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
+	// Version of the atom types
+	VersionCounter atomTypesVersion_;
 	// List of selected Atoms
-	RefList<SpeciesAtom,bool> selectedAtoms_;
-	// List of AtomTypes, and their populations, used in the Species
-	AtomTypeList usedAtomTypes_;
+	RefList<SpeciesAtom> selectedAtoms_;
 	// Version of the atom selection
 	VersionCounter atomSelectionVersion_;
+	// List of AtomTypes, and their populations, used in the Species
+	AtomTypeList usedAtomTypes_;
+	// Point at which the used atom types list was last update
+	int usedAtomTypesPoint_;
 	
 	public:
 	// Add a new atom to the Species
@@ -109,7 +114,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Select atoms along any path from the specified one, ignoring the bond(s) provided
 	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo = NULL);
 	// Return current atom selection
-	const RefList<SpeciesAtom,bool>& selectedAtoms() const;
+	const RefList<SpeciesAtom>& selectedAtoms() const;
 	// Return nth selected atom
 	SpeciesAtom* selectedAtom(int n);
 	// Return number of selected atoms
@@ -120,9 +125,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
-	// Update used AtomTypeList
-	void updateUsedAtomTypes();
-	// Return used AtomTypesList
+	// Bump AtomTypes version
+	void bumpAtomTypesVersion();
+	// Update and return used AtomTypesList
 	const AtomTypeList& usedAtomTypes();
 	// Clear AtomType assignments for all atoms
 	void clearAtomTypes();
@@ -177,7 +182,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return nth SpeciesAngle
 	SpeciesAngle* angle(int n);
 	// Return whether SpeciesAngle between SpeciesAtoms exists
-	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
+	SpeciesAngle* hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
 	// Return index of specified SpeciesAngle
 	int angleIndex(SpeciesAngle* spa);
 	// Add new SpeciesTorsion definition (from SpeciesAtom*)
@@ -195,7 +200,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return nth SpeciesTorsion
 	SpeciesTorsion* torsion(int n);
 	// Return whether SpeciesTorsion between SpeciesAtoms exists
-	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	SpeciesTorsion* hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
 	// Return whether the attached atoms lists have been created
@@ -204,6 +209,26 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	void generateAttachedAtomLists();
 	// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 	void detachFromMasterTerms();
+
+
+	/*
+	 * Source Forcefield (if any)
+	 */
+	private:
+	// Forcefield to source terms from
+	Forcefield* forcefield_;
+
+	private:
+	// Add missing higher order intramolecular terms from current bond connectivity
+	void completeIntramolecularTerms();
+
+	public:
+	// Set Forcefield to source terms from
+	void setForcefield(Forcefield* ff);
+	// Return Forcefield to source terms from
+	Forcefield* forcefield() const;
+	// Apply terms from source Forcefield
+	bool applyForcefieldTerms(CoreData& coreData);
 
 
 	/*
@@ -242,30 +267,32 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	 * Isotopologues
 	 */
 	private:
+	// Natural Isotopologue
+	Isotopologue naturalIsotopologue_;
+	// Point at which natural Isotopologue was last updated
+	int naturalIsotopologuePoint_;
 	// List of isotopic variants defined for this species
 	List<Isotopologue> isotopologues_;
 
 	public:
 	// Update current Isotopologues
-	void updateIsotopologues(const List<AtomType>& atomTypes);
+	void updateIsotopologues();
+	// Update and return natural isotopologue
+	Isotopologue* naturalIsotopologue();
 	// Add a new Isotopologue to this Species
-	Isotopologue* addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes);
-	// Add natural isotopologue to this species, if it hasn't already been defined
-	Isotopologue* addNaturalIsotopologue(const List<AtomType>& masterAtomTypes);
+	Isotopologue* addIsotopologue(const char* baseName);
 	// Remove specified Isotopologue from this Species
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues
 	int nIsotopologues() const;
 	// Return Isotopologue List
 	const List<Isotopologue>& isotopologues() const;
-	// Return nth Isotopologue defined
-	Isotopologue* isotopologue(int n);
 	// Return whether the specified Isotopologue exists
-	bool hasIsotopologue(Isotopologue* iso) const;
+	bool hasIsotopologue(const Isotopologue* iso) const;
 	// Generate unique Isotopologue name with base name provided
-	const char* uniqueIsotopologueName(const char* baseName, Isotopologue* exclude = NULL) const;
+	const char* uniqueIsotopologueName(const char* baseName, const Isotopologue* exclude = NULL) const;
 	// Search for Isotopologue by name
-	Isotopologue* findIsotopologue(const char* name) const;
+	Isotopologue* findIsotopologue(const char* name);
 	// Return index of specified Isotopologue
 	int indexOfIsotopologue(Isotopologue* iso) const;
 
@@ -314,6 +341,35 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	bool loadFromXYZ(const char* filename);
 	// Load Species from file
 	bool load(const char* filename);
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Species Block Keyword Enum
+	enum SpeciesKeyword
+	{
+		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
+		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
+		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
+		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
+		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
+		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
+		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
+		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
+		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
+		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
+		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
+		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
+		nSpeciesKeywords		/* Number of keywords defined for this block */
+	};
+	// Return enum option info for SpeciesKeyword
+	static EnumOptions<Species::SpeciesKeyword> keywords();
+	// Read Species definition from specified LineParser
+	bool read(LineParser& parser, CoreData& coreData);
+	// Write Species definition to specified LineParser
+	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

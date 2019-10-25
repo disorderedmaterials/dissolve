@@ -74,9 +74,13 @@ void RenderableData1D::transformData()
 	transformMax_ = 0.0;
 	transformMinPositive_ = 0.1;
 	transformMaxPositive_ = -1.0;
-	
-	transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.minValue(), 0.0);
-	transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.maxValue(), 0.0);
+
+	// Set initial limits if we can
+	if (transformedData_.nValues() > 0)
+	{
+		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.minValue(), 0.0);
+		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.maxValue(), 0.0);
+	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
 	for (int n=0; n<transformedData_.nValues(); ++n)

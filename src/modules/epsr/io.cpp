@@ -20,7 +20,7 @@
 */
 
 #include "main/dissolve.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "modules/epsr/epsr.h"
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
@@ -69,14 +69,14 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 			case (EPSRModule::ExpecFPCofKeyword):
 				break;
 			case (EPSRModule::GaussianPCofKeyword):
-				KeywordListHelper<CharString>::set(keywords_, "expansionfunction", (DissolveSys::sameString(parser.argc(1), "Poisson") || DissolveSys::sameString(parser.argc(1), "T") ? "Poisson" : "Gaussian"));
+				keywords_.set<EPSRModule::ExpansionFunctionType>("expansionfunction", (DissolveSys::sameString(parser.argc(1), "Poisson") || DissolveSys::sameString(parser.argc(1), "T") ? EPSRModule::PoissonExpansionFunction : EPSRModule::GaussianExpansionFunction));
 				break;
 			case (EPSRModule::NCoeffPPCofKeyword):
 				ncoeffp = parser.argi(1);
-				KeywordListHelper<int>::set(keywords_, "ncoeffp", ncoeffp);
+				keywords_.set<int>("ncoeffp", ncoeffp);
 				break;
 			case (EPSRModule::NPItSSPCofKeyword):
-				KeywordListHelper<int>::set(keywords_, "npitss", parser.argi(1));
+				keywords_.set<int>("npitss", parser.argi(1));
 				break;
 			case (EPSRModule::PAcceptPCofKeyword):
 				break;
@@ -87,11 +87,11 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 			case (EPSRModule::PowerPCofKeyword):
 				break;
 			case (EPSRModule::PSigma2PCofKeyword):
-				KeywordListHelper<double>::set(keywords_, "psigma1", parser.argd(1));
-				KeywordListHelper<double>::set(keywords_, "psigma2", parser.argd(1));
-				KeywordListHelper<double>::set(keywords_, "gsigma1", parser.argd(1));
+				keywords_.set <double>("psigma1", parser.argd(1));
+				keywords_.set<double>("psigma2", parser.argd(1));
+				keywords_.set<double>("gsigma1", parser.argd(1));
 				// Note - the factor of two applied here is used to reproduce the broadening applied by ESPR to the r-space Gaussian transformation
-				KeywordListHelper<double>::set(keywords_, "gsigma2", parser.argd(1) * 2.0);
+				keywords_.set<double>("gsigma2", parser.argd(1) * 2.0);
 				break;
 			case (EPSRModule::QuitPCofKeyword):
 				done = true;
@@ -105,12 +105,12 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 			case (EPSRModule::RepPotTypePCofKeyword):
 				break;
 			case (EPSRModule::RMaxPtPCofKeyword):
-				KeywordListHelper<double>::set(keywords_, "rmaxpt", parser.argd(1));
+				keywords_.set<double>("rmaxpt", parser.argd(1));
 				break;
 			case (EPSRModule::RMinFacPCofKeyword):
 				break;
 			case (EPSRModule::RMinPtPCofKeyword):
-				KeywordListHelper<double>::set(keywords_, "rminpt", parser.argd(1));
+				keywords_.set<double>("rminpt", parser.argd(1));
 				break;
 			case (EPSRModule::ROverlapPCofKeyword):
 				break;
@@ -131,9 +131,6 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 		potentialCoefficients.linearArray()[n].initialise(ncoeffp);
 		potentialCoefficients.linearArray()[n] = 0.0;
 	}
-
-	// Get density to apply to coefficients (as 1.0/rho)
-	const double rho = keywords_.asDouble("PCofRho");
 
 	// Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect coefficients for
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
@@ -162,9 +159,6 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 
 		// Zero the first coefficient, which EPSR ignores
 		coefficients[0] = 0.0;
-
-		// Apply factor of (1.0/rho), since our Poisson function normalisations do not contain this term
-		coefficients /= rho;
 	}
 
 	return true;

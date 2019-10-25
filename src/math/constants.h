@@ -1,5 +1,5 @@
 /*
-	*** Numerical constants
+	*** Numerical Constants
 	*** src/math/constants.h
 	Copyright T. Youngs 2012-2019
 
@@ -18,8 +18,6 @@
 	You should have received a copy of the GNU General Public License
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include "base/constants.h"
 
 #ifndef DISSOLVE_CONSTANTS_H
 #define DISSOLVE_CONSTANTS_H

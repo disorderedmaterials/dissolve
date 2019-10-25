@@ -116,7 +116,7 @@ class CharString : public ListItem<CharString>
 	// String addition operator
 	void operator+=(const char*);
 	// Conversion operators
-	operator const char*();
+	operator const char*() const;
 
 
 	/*

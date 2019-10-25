@@ -22,7 +22,8 @@
 #include "gui/modulechartmoduleblock.h"
 #include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets.h"
+#include "gui/modulewidget.h"
+#include "gui/keywordwidgets/widgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "templates/variantpointer.h"
@@ -48,7 +49,9 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	module_ = module;
 
 	// Set up our keywords widget
-	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
+	ui.ModuleKeywordsWidget->setUp(module_->keywords(), dissolveWindow_->dissolve().coreData());
+	connect(ui.ModuleKeywordsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 
 	// Set the icon label
 	ui.IconLabel->setPixmap(modulePixmap(module_));
@@ -64,6 +67,17 @@ ModuleChartModuleBlock::~ModuleChartModuleBlock()
 /*
  * Module
  */
+
+// Run the set-up stage of the associated Module
+void ModuleChartModuleBlock::setUpModule()
+{
+	if (!module_) return;
+
+	// Run the Module's set-up stage
+	module_->setUp(dissolve_, dissolve_.worldPool());
+
+	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
+}
 
 // Return associated Module
 Module* ModuleChartModuleBlock::module()
@@ -131,6 +145,18 @@ void ModuleChartModuleBlock::setSettingsExpanded(bool expanded, bool permanent)
 	ui.ToggleSettingsButton->setDisabled(permanent);
 }
 
+// Hide the remove button (e.g. when shown in a ModuleTab)
+void ModuleChartModuleBlock::hideRemoveButton()
+{
+	ui.RemoveButton->setVisible(false);
+}
+
+// Hide the settings button (e.g. when shown in a ModuleTab)
+void ModuleChartModuleBlock::hideSettingsButton()
+{
+	ui.ToggleSettingsButton->setVisible(false);
+}
+
 // Update controls within widget
 void ModuleChartModuleBlock::updateControls()
 {
@@ -168,11 +194,11 @@ void ModuleChartModuleBlock::updateControls()
 		}
 		else item->setCheckState(Qt::Unchecked);
 	}
-	ui.ConfigurationTargetGroup->setVisible(!module_->configurationLocal());
+	ui.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nTargetableConfigurations() != 0));
 	ui.HeaderFrame->setToolTip(toolTip.get());
 
 	// Update keywords
-	ui.KeywordsWidget->updateControls();
+	ui.ModuleKeywordsWidget->updateControls();
 
 	refreshing_ = false;
 }
@@ -195,7 +221,7 @@ QPixmap ModuleChartModuleBlock::modulePixmap(QString moduleType)
 	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
-// Disable sensitive controls, ready for main code to run
+// Disable sensitive controls
 void ModuleChartModuleBlock::disableSensitiveControls()
 {
 	ui.KeywordsControlWidget->setEnabled(false);
@@ -205,7 +231,7 @@ void ModuleChartModuleBlock::disableSensitiveControls()
 	ui.RemoveButton->setEnabled(false);
 }
 
-// Enable sensitive controls, ready for main code to run
+// Enable sensitive controls
 void ModuleChartModuleBlock::enableSensitiveControls()
 {
 	ui.KeywordsControlWidget->setEnabled(true);
@@ -227,7 +253,7 @@ void ModuleChartModuleBlock::on_ToggleSettingsButton_clicked(bool checked)
 
 void ModuleChartModuleBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (removeModule(module_));
+	emit (remove(module_->uniqueName()));
 }
 
 void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
@@ -238,7 +264,7 @@ void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
 
 	updateControls();
 
-	emit moduleRun();
+	emit run();
 }
 
 void ModuleChartModuleBlock::on_EnabledButton_clicked(bool checked)
@@ -259,6 +285,8 @@ void ModuleChartModuleBlock::on_FrequencySpin_valueChanged(int value)
 	module_->setFrequency(value);
 
 	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
+
+	dissolveWindow_->setModified();
 }
 
 void ModuleChartModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)

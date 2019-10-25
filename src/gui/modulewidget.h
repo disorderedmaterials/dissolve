@@ -27,22 +27,34 @@
 // Forward Declarations
 class LineParser;
 
-// ModuleWidget, base class for any Module-specific widget displayed in a ModuleControlWidget
+// ModuleWidget, base class for any Module-specific control widget
 class ModuleWidget : public QWidget
 {
+	public:
+	// Constructor / Destructor
+	ModuleWidget(QWidget* parent);
+	virtual ~ModuleWidget();
+
+
+	/*
+	 * UI
+	 */
 	protected:
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
 	public:
-	// Constructor / Destructor
-	ModuleWidget(QWidget* parent);
-	virtual ~ModuleWidget();
+	// Update flags
+	enum UpdateFlags
+	{
+		DefaultUpdateFlag = 0,			/* Standard update */
+		ResetGraphDataTargetsFlag = 1		/* Any renderables should be cleared and regenerated in viewers */
+	};
 	// Update controls within widget
-	virtual void updateControls() = 0;
-	// Disable sensitive controls within widget, ready for main code to run
+	virtual void updateControls(int flags = ModuleWidget::DefaultUpdateFlag) = 0;
+	// Disable sensitive controls within widget
 	virtual void disableSensitiveControls() = 0;
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	virtual void enableSensitiveControls() = 0;
 
 

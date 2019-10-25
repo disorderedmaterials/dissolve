@@ -53,11 +53,18 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	// Associated Module
 	Module* module_;
 	// List of keyword widgets displayed
-	RefList<KeywordWidgetBase,bool> keywordWidgets_;
+	RefList<KeywordWidgetBase> keywordWidgets_;
+
+	private slots:
+	// Run the set-up stage of the associated Module
+	void setUpModule();
 
 	public:
 	// Return associated Module
 	Module* module();
+
+	signals:
+	void updateModuleWidget(int flags);
 
 
 	/*
@@ -84,15 +91,19 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	QWidget* widget();
 	// Set whether the settings are expanded or not, and whether this is permanent
 	void setSettingsExpanded(bool expanded, bool permanent = false);
+	// Hide the remove button (e.g. when shown in a ModuleTab)
+	void hideRemoveButton();
+	// Hide the settings button (e.g. when shown in a ModuleTab)
+	void hideSettingsButton();
 	// Update controls within widget
 	void updateControls();
 	// Return suitable QPixmap for supplied Module
 	static QPixmap modulePixmap(const Module* module);
 	// Return suitable QPixmap for supplied Module type
 	static QPixmap modulePixmap(QString moduleType);
-	// Disable sensitive controls, ready for main code to run
+	// Disable sensitive controls
 	void disableSensitiveControls();
-	// Enable sensitive controls, ready for main code to run
+	// Enable sensitive controls
 	void enableSensitiveControls();
 
 	public slots:
@@ -105,8 +116,8 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 
 	signals:
 	void settingsToggled();
-	void removeModule(void* module);
-	void moduleRun();
+	void remove(QString myUniqueName);
+	void run();
 
 
 	/*

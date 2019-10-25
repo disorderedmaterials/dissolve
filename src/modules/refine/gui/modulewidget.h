@@ -53,10 +53,10 @@ class RefineModuleWidget : public ModuleWidget
 	// Main form declaration
 	Ui::RefineModuleWidget ui;
 	// Update controls within widget
-	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
 

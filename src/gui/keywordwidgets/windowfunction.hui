@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WINDOWFUNCTIONKEYWORDWIDGET_H
-#define DISSOLVE_WINDOWFUNCTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_WINDOWFUNCTION_H
+#define DISSOLVE_KEYWORDWIDGET_WINDOWFUNCTION_H
 
-#include "module/keywordtypes/windowfunction.h"
+#include "keywords/windowfunction.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -36,7 +36,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -44,7 +44,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	WindowFunctionModuleKeyword* keyword_;
+	WindowFunctionKeyword* keyword_;
 
 
 	/*
@@ -60,14 +60,14 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Set widgets from supplied object
 	void setWidgets(const WindowFunction& windowFunction);

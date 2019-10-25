@@ -54,7 +54,7 @@ ElementSelector::ElementSelector(QWidget* parent) : QWidget(parent)
 		button->setAutoRaise(true);
 		button->setCheckable(true);
 		button->setAutoExclusive(true);
-		elementButtons_.add(button, &Elements::element(n));
+		elementButtons_.append(button, &Elements::element(n));
 		button->setText(Elements::symbol(n));
 		button->setMinimumSize(24,24);
 // 		button->setMaximumSize(24,24);
@@ -161,8 +161,8 @@ void ElementSelector::elementButtonClicked(bool checked)
 		currentElement_ = NULL;
         }
 
-        RefListItem<QToolButton,Element*>* ri = elementButtons_.contains(button);
-	currentElement_ = ri ? ri->data : NULL;
+        RefDataItem<QToolButton,Element*>* ri = elementButtons_.contains(button);
+	currentElement_ = ri ? ri->data() : NULL;
 
 	// Was this a double-click? Check the timer
 	if (doubleClickTimer_.isActive()) emit(elementDoubleClicked());

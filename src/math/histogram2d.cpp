@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Histogram2D> RefList<Histogram2D,int> ObjectStore<Histogram2D>::objects_;
+template<class Histogram2D> RefDataList<Histogram2D,int> ObjectStore<Histogram2D>::objects_;
 template<class Histogram2D> int ObjectStore<Histogram2D>::objectCount_ = 0;
 template<class Histogram2D> int ObjectStore<Histogram2D>::objectType_ = ObjectInfo::Histogram2DObject;
 template<class Histogram2D> const char* ObjectStore<Histogram2D>::objectTypeName_ = "Histogram2D";
@@ -72,26 +72,6 @@ void Histogram2D::clear()
  * Data
  */
 
-// Update accumulated data
-void Histogram2D::updateAccumulatedData()
-{
-	// Set up arrays
-	accumulatedData_.initialise(nXBins_, nYBins_, true);
-
-	// Store bin centres and accumulated averages in the object
-	for (int x=0; x<nXBins_; ++x)
-	{
-		accumulatedData_.xAxis(x) = xBinCentres_[x];
-		for (int y=0; y<nYBins_; ++y)
-		{
-			if (x == 0) accumulatedData_.yAxis(y) = yBinCentres_[y];
-
-			accumulatedData_.value(x, y) = averages_.constAt(x, y);
-			accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
-		}
-	}
-}
-
 // Initialise with specified bin range
 void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth)
 {
@@ -112,6 +92,11 @@ void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double 
 	// Create the main bins array
 	bins_.initialise(nXBins_, nYBins_);
 	averages_.initialise(nXBins_, nYBins_);
+
+	// Set up accumulated data array and set bin centres
+	accumulatedData_.initialise(nXBins_, nYBins_, true);
+	for (int x=0; x<nXBins_; ++x) accumulatedData_.xAxis(x) = xBinCentres_[x];
+	for (int y=0; y<nYBins_; ++y) accumulatedData_.yAxis(y) = yBinCentres_[y];
 }
 
 // Zero histogram bins
@@ -170,15 +155,15 @@ int Histogram2D::nYBins() const
 	return nYBins_;
 }
 
-// Bin specified value
-void Histogram2D::bin(double x, double y)
+// Bin specified value, returning success
+bool Histogram2D::bin(double x, double y)
 {
 	// Calculate target bin along x
 	int xBin = (x - xMinimum_) / xBinWidth_;
 	if ((xBin < 0) || (xBin >= nXBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	// Calculate target bin along y
@@ -186,11 +171,13 @@ void Histogram2D::bin(double x, double y)
 	if ((yBin < 0) || (yBin >= nYBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	++bins_.at(xBin, yBin);
 	++nBinned_;
+
+	return true;
 }
 
 // Return number of values binned over all bins
@@ -204,11 +191,16 @@ void Histogram2D::accumulate()
 {
 	for (int x=0; x<nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y) averages_.at(x,y) += double(bins_.at(x,y));
-	}
+		for (int y=0; y<nYBins_; ++y)
+		{
+			// Update averages
+			averages_.at(x,y) += double(bins_.at(x,y));
 
-	// Update accumulated data
-	updateAccumulatedData();
+			// Update accumulated data
+			accumulatedData_.value(x, y) = averages_.constAt(x, y);
+			accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
+		}
+	}
 }
 
 // Return Array of x centre-bin values

@@ -28,7 +28,7 @@
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
-	displayStyle_ = LinesStyle;
+	displayStyle_ = SpheresStyle;
 	linesAtomRadius_ = 0.05;
 	spheresAtomRadius_ = 0.3;
 	spheresBondRadius_ = 0.1;
@@ -199,7 +199,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next())
 		{
 			// Determine half delta i-j for bond
 			const Vec3<double> ri = b->i()->r();
@@ -237,7 +237,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next()) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
 	}
 }
 
@@ -295,7 +295,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			}
 			else
 			{
-				RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+				RefListIterator<SpeciesBond> bondIterator(i->bonds());
 				while (SpeciesBond* b = bondIterator.iterate())
 				{
 					// Determine half delta i-j for bond

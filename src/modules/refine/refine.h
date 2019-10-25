@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFINEMODULE_H
-#define DISSOLVE_REFINEMODULE_H
+#ifndef DISSOLVE_MODULE_REFINE_H
+#define DISSOLVE_MODULE_REFINE_H
 
 #include "module/module.h"
 #include "module/groups.h"
@@ -70,7 +70,7 @@ class RefineModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	public:
 	// Potential Inversion Method Enum
@@ -82,10 +82,8 @@ class RefineModule : public Module
 		HypernettedChainPotentialInversion,	/* Use the hypernetted chain closure to generate potential from delta S(Q) */
 		nPotentialInversionMethods
 	};
-	// Convert text string to PotentialInversionMethod
-	static PotentialInversionMethod potentialInversionMethod(const char* s);
-	// Convert PotentialInversionMethod to text string
-	static const char* potentialInversionMethod(PotentialInversionMethod pim);
+	// Return enum options for PotentialInversionMethod
+	static EnumOptions<RefineModule::PotentialInversionMethod> potentialInversionMethods();
 	// Matrix Augmentation Style
 	enum MatrixAugmentationStyle
 	{
@@ -93,17 +91,12 @@ class RefineModule : public Module
 		PartialsAugmentation,			/* Augment scattering matrix with individual partial S(Q), as EPSR does */
 		nMatrixAugmentationStyles
 	};
-	// Convert text string to MatrixAugmentationStyle
-	static MatrixAugmentationStyle matrixAugmentationStyle(const char* s);
-	// Convert MatrixAugmentationStyle to text string
-	static const char* matrixAugmentationStyle(MatrixAugmentationStyle mas);
+	// Return enum options for MatrixAugmentationStyle
+	static EnumOptions<RefineModule::MatrixAugmentationStyle> matrixAugmentationStyles();
 
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	/*
 	 * Processing
@@ -134,7 +127,7 @@ class RefineModule : public Module
 	// Calculate c(r) from supplied S(Q)
 	Data1D calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
-	bool modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond);
+	bool modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond);
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 	// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
@@ -146,7 +139,7 @@ class RefineModule : public Module
 
 	public:
 	// Return list of target Modules / data for fitting process
-	const RefList<Module,ModuleGroup*>& allTargets() const;
+	const RefDataList<Module,ModuleGroup*>& allTargets() const;
 	// Return grouped target Modules
 	const ModuleGroups& groupedTargets() const;
 

@@ -1,0 +1,3 @@
+## Recent Changes
+- Add Bragg calculation.
+- Add editing / UI presence for ProcedureNodes.

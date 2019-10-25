@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libchecks.la
 
-libchecks_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process.cpp
+libchecks_la_SOURCES = core.cpp definition.cpp functions.cpp init.cpp process.cpp
 
 noinst_HEADERS = checks.h
 

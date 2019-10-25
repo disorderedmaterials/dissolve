@@ -75,16 +75,23 @@ template <class T, class I> class ListWidgetUpdater
 
 			++currentRow;
 		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentRow < listWidget->count())
+		{
+			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+			if (oldItem) delete oldItem;
+		}
 	}
 
 	// Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the list
-	ListWidgetUpdater(QListWidget* listWidget, const List<I>& data, Qt::ItemFlags flags = Qt::NoItemFlags)
+	ListWidgetUpdater(QListWidget* listWidget, const List<I>& list, Qt::ItemFlags flags = Qt::NoItemFlags)
 	{
 		QListWidgetItem* listWidgetItem;
 
 		int currentRow = 0;
 
-		ListIterator<I> dataIterator(data);
+		ListIterator<I> dataIterator(list);
 		while (I* dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
@@ -122,16 +129,23 @@ template <class T, class I> class ListWidgetUpdater
 
 			++currentRow;
 		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentRow < listWidget->count())
+		{
+			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+			if (oldItem) delete oldItem;
+		}
 	}
 
 	// Update widget from supplied RefList, calling supplied function to create / modify data
-	ListWidgetUpdater(QListWidget* listWidget, const RefList<I,bool>& data, T* functionParent, ListWidgetRowUpdateFunction updateRow)
+	ListWidgetUpdater(QListWidget* listWidget, const RefList<I>& list, T* functionParent, ListWidgetRowUpdateFunction updateRow)
 	{
 		QListWidgetItem* listWidgetItem;
 
 		int currentRow = 0;
 
-		RefListIterator<I,bool> dataIterator(data);
+		RefListIterator<I> dataIterator(list);
 		while (I* dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
@@ -164,6 +178,13 @@ template <class T, class I> class ListWidgetUpdater
 			}
 
 			++currentRow;
+		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentRow < listWidget->count())
+		{
+			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+			if (oldItem) delete oldItem;
 		}
 	}
 };

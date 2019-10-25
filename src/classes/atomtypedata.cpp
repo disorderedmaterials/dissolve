@@ -24,7 +24,6 @@
 #include "classes/coredata.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
-#include "base/constants.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/processpool.h"
@@ -89,7 +88,7 @@ void AtomTypeData::add(Isotope* tope, double nAdd)
 {
 	// Has this isotope already been added to the list?
 	IsotopeData* topeData = NULL;
-	for (topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) if (topeData->isotope() == tope) break;
+	for (topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next()) if (topeData->isotope() == tope) break;
 	if (topeData == NULL)
 	{
 		topeData = isotopes_.add();
@@ -107,7 +106,7 @@ void AtomTypeData::add(Isotope* tope, double nAdd)
 void AtomTypeData::zeroPopulations()
 {
 	// Zero individual isotope counts
-	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->zeroPopulation();
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next()) topeData->zeroPopulation();
 
 	// Zero totals
 	population_ = 0.0;
@@ -145,11 +144,11 @@ void AtomTypeData::finalise(double totalAtoms)
 	fraction_ = population_ / totalAtoms;
 
 	// Calculate isotope fractional populations (of AtomType)
-	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->finalise(population_);
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next()) topeData->finalise(population_);
 
 	// Determine bound coherent scattering for AtomType, based on Isotope populations
 	boundCoherent_ = 0.0;
-	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) boundCoherent_ += topeData->fraction()*topeData->isotope()->boundCoherent();
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next()) boundCoherent_ += topeData->fraction()*topeData->isotope()->boundCoherent();
 }
 
 // Remove any existing isotopes, and add only the natural isotope
@@ -167,7 +166,7 @@ void AtomTypeData::naturalise()
 // Return if specified Isotope is already in the list
 bool AtomTypeData::hasIsotope(Isotope* tope)
 {
-	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) if (topeData->isotope() == tope) return true;
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next()) if (topeData->isotope() == tope) return true;
 
 	return false;
 }

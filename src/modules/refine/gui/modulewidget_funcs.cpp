@@ -49,7 +49,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	dataGraph_->view().axes().setTitle(1, "S(Q)");
 	dataGraph_->view().axes().setMin(1, -1.0);
 	dataGraph_->view().axes().setMax(1, 1.0);
-	dataGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	dataGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	dataGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
@@ -63,7 +63,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
 	partialSQGraph_->view().axes().setMin(1, -1.0);
 	partialSQGraph_->view().axes().setMax(1, 1.0);
-	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial g(r) Graph
@@ -77,7 +77,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	partialGRGraph_->view().axes().setTitle(1, "g(r)");
 	partialGRGraph_->view().axes().setMin(1, -1.0);
 	partialGRGraph_->view().axes().setMax(1, 1.0);
-	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Delta phi(r) Graph
@@ -91,7 +91,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	deltaPhiRGraph_->view().axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
 	deltaPhiRGraph_->view().axes().setMin(1, -1.0);
 	deltaPhiRGraph_->view().axes().setMax(1, 1.0);
-	deltaPhiRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	deltaPhiRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	deltaPhiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Phi(r) Magnitude Graph
@@ -134,7 +134,7 @@ RefineModuleWidget::~RefineModuleWidget()
 }
 
 // Update controls within widget
-void RefineModuleWidget::updateControls()
+void RefineModuleWidget::updateControls(int flags)
 {
 	refreshing_ = true;
 
@@ -161,12 +161,12 @@ void RefineModuleWidget::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void RefineModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void RefineModuleWidget::enableSensitiveControls()
 {
 }
@@ -220,37 +220,37 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
-		RefListIterator<Module,bool> targetIterator(group->modules());
+		RefListIterator<Module> targetIterator(group->modules());
 		while (Module* targetModule = targetIterator.iterate())
 		{
 			// Reference data
 			Renderable* refData = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("ExpFQ//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
-			dataGraph_->groupManager().addToGroup(refData, targetModule->uniqueName());
+			dataGraph_->addRenderableToGroup(refData, targetModule->uniqueName());
 
 			// Calculated data from associated module
 			if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
 			{
 				// Calculated F(Q)
 				Renderable* calcFQ = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("CalcFQ//%s", targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
-				dataGraph_->groupManager().addToGroup(calcFQ, targetModule->uniqueName());
+				dataGraph_->addRenderableToGroup(calcFQ, targetModule->uniqueName());
 
 				// F(Q) diff w.r.t. reference
 				Renderable* diffFQ = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DiffFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Diff", targetModule->uniqueName()));
 				diffFQ->lineStyle().setStipple(LineStipple::DotStipple);
-				dataGraph_->groupManager().addToGroup(diffFQ, targetModule->uniqueName());
+				dataGraph_->addRenderableToGroup(diffFQ, targetModule->uniqueName());
 
 				// Error
 				Renderable* error = errorsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Error//%s", module->uniqueName(), targetModule->uniqueName()), CharString("Error//%s//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName());
-				dataGraph_->groupManager().addToGroup(error, targetModule->uniqueName());
+				dataGraph_->addRenderableToGroup(error, targetModule->uniqueName());
 			}
 		}
 
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
 		n = 0;
-		for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+		for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 		{
 			m = n;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 			{
 				CharString id("%s-%s/%s", at1->name(), at2->name(), group->name());
 
@@ -260,17 +260,17 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 
 				// Experimentally-determined unweighted partial
 				Renderable* expSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Exp", id.get()));
-				partialSQGraph_->groupManager().addToGroup(expSQ, id.get());
+				partialSQGraph_->addRenderableToGroup(expSQ, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
 				calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-				partialSQGraph_->groupManager().addToGroup(calcSQ, id.get());
+				partialSQGraph_->addRenderableToGroup(calcSQ, id.get());
 
 				// Deltas
 				Renderable* deltaSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
 				deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
-				partialSQGraph_->groupManager().addToGroup(deltaSQ, id.get());
+				partialSQGraph_->addRenderableToGroup(deltaSQ, id.get());
 
 				/*
 				 * Partial RDFs
@@ -278,12 +278,12 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 
 				// Experimentally-determined unweighted partial
 				Renderable* expGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Exp", id.get()));
-				partialGRGraph_->groupManager().addToGroup(expGR, id.get());
+				partialGRGraph_->addRenderableToGroup(expGR, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
 				calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-				partialGRGraph_->groupManager().addToGroup(calcGR, id.get());
+				partialGRGraph_->addRenderableToGroup(calcGR, id.get());
 
 				/*
 				 * Phi(r)

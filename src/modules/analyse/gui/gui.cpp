@@ -21,10 +21,11 @@
 
 #include "modules/analyse/analyse.h"
 #include "modules/analyse/gui/modulewidget.h"
+#include "main/dissolve.h"
 
 // Return a new widget controlling this Module
 ModuleWidget* AnalyseModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new AnalyseModuleWidget(parent, this);
+	return new AnalyseModuleWidget(parent, this, dissolve.coreData());
 }
 

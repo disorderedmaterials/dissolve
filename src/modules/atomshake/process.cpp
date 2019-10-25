@@ -47,7 +47,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 
 	// Loop over target Configurations
-	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
@@ -61,7 +61,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
 		const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-		double stepSize = GenericListHelper<double>::value(moduleData, "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
+		double& stepSize = keywords_.retrieve<double>("StepSize");
 		const double stepSizeMax = keywords_.asDouble("StepSizeMax");
 		const double stepSizeMin = keywords_.asDouble("StepSizeMin");
 		const double termScale = 1.0;
@@ -212,10 +212,9 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		else if (stepSize > stepSizeMax) stepSize = stepSizeMax;
 
 		Messenger::print("Updated step size is %f Angstroms.\n", stepSize); 
-		GenericListHelper<double>::realise(moduleData, "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
 
-		// Increase coordinate index in Configuration
-		if (nAccepted > 0) cfg->incrementCoordinateIndex();
+		// Increase contents version in Configuration
+		if (nAccepted > 0) cfg->incrementContentsVersion();
 	}
 
 	return true;

@@ -20,6 +20,7 @@
 */
 
 #include "math/transformer.h"
+#include "expression/generator.h"
 #include "expression/variable.h"
 #include "math/data1d.h"
 #include "templates/array.h"
@@ -28,9 +29,9 @@
 Transformer::Transformer()
 {
 	// Add persistent variable trio to equation
-	x_ = equation_.createVariable("x", true);
-	y_ = equation_.createVariable("y", true);
-	z_ = equation_.createVariable("z", true);
+	x_ = equation_.createDoubleVariable("x", true);
+	y_ = equation_.createDoubleVariable("y", true);
+	z_ = equation_.createDoubleVariable("z", true);
 	valid_ = false;
 }
 
@@ -65,11 +66,12 @@ bool Transformer::enabled() const
 	return enabled_;
 }
 
-// Set equation, returning if Tree construction was successful
+// Set equation, returning if construction was successful
 bool Transformer::setEquation(const char* equation)
 {
 	text_ = equation;
-	valid_ = equation_.generate(equation);
+	valid_ = equation_.set(text_);
+
 	return valid_;
 }
 
@@ -91,7 +93,7 @@ double Transformer::transform(double x, double y, double z)
 	// If equation is not valid, just return
 	if (!valid_)
 	{
-		Messenger::print("Equation is not valid, so returning 0.0.\n");
+		Messenger::printVerbose("Equation is not valid, so returning 0.0.\n");
 		return 0.0;
 	}
 
@@ -99,8 +101,7 @@ double Transformer::transform(double x, double y, double z)
 	y_->set(y);
 	z_->set(z);
 
-	bool success;
-	return equation_.execute(success);
+	return equation_.asDouble();
 }
 
 // Transform whole array, including application of pre/post transform shift
@@ -112,7 +113,7 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	// If equation is not valid, just return original array
 	if (!valid_)
 	{
-		Messenger::print("Equation is not valid, so returning original array.\n");
+		Messenger::printVerbose("Equation is not valid, so returning original array.\n");
 		return (target == 0 ? sourceX : sourceY);
 	}
 
@@ -122,19 +123,17 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 		return Array<double>();
 	}
 
-	// Create new array, and create reference to target array
+	// Create new array
 	Array<double> newArray(sourceX.nItems());
 
 	z_->set(z);
-	bool success;
 	// Loop over x points
 	for (int n=0; n<sourceX.nItems(); ++n)
 	{
 		// Set x and y values in equation
 		x_->set(sourceX[n]);
 		y_->set(sourceY[n]);
-		newArray[n] = equation_.execute(success);
-		if (!success) break;
+		newArray[n] = equation_.asDouble();
 	}
 
 	return newArray;

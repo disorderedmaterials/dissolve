@@ -21,6 +21,7 @@
 
 #include "gui/widgets/supertabwidget.hui"
 #include "gui/widgets/supertabbar.hui"
+#include "gui/maintab.h"
 #include "base/messenger.h"
 #include <QToolButton>
 
@@ -30,6 +31,7 @@ SuperTabWidget::SuperTabWidget(QWidget* parent) : QTabWidget(parent)
 	// Create our own tab bar
 	superTabBar_ = new SuperTabBar(this);
 	setTabBar(superTabBar_);
+	connect(superTabBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
 }
 
 /*
@@ -84,7 +86,7 @@ QToolButton* SuperTabWidget::addTabCloseButton(QWidget* pageWidget)
 	closeButton->setAutoRaise(true);
 	superTabBar_->setTabButton(tabIndex, QTabBar::RightSide	, closeButton);
 	connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(tabCloseButtonClicked(bool)));
-	closeButtons_.add(closeButton, pageWidget);
+	closeButtons_.append(closeButton, pageWidget);
 
 	return closeButton;
 }
@@ -100,19 +102,19 @@ void SuperTabWidget::tabCloseButtonClicked(bool checked)
 	QToolButton* toolButton = dynamic_cast<QToolButton*>(sender());
 	if (!toolButton) return;
 
-	RefListItem<QToolButton,QWidget*>* item = closeButtons_.contains(toolButton);
+	RefDataItem<QToolButton,QWidget*>* item = closeButtons_.contains(toolButton);
 	if (item)
 	{
 		// Find the tab containing the page widget (stored as the RefListItem's data)
-		int tabIndex = indexOf(item->data);
+		int tabIndex = indexOf(item->data());
 		if (tabIndex == -1)
 		{
-			Messenger::error("SuperTabWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n", item->data);
+			Messenger::error("SuperTabWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n", item->data());
 			return;
 		}
 
 		// Grab the widget pointer before we delete the button item
-		QWidget* button = item->data;
+		QWidget* button = item->data();
 
 		// Remove the button item
 		closeButtons_.remove(item);
@@ -121,4 +123,17 @@ void SuperTabWidget::tabCloseButtonClicked(bool checked)
 		emit(tabClosed(button));
 	}
 	else printf("Tabs received a close event from an unknown button...\n");
+}
+
+// Tab bar double-clicked
+void SuperTabWidget::tabBarDoubleClicked(int index)
+{
+	if (index == -1) return;
+
+	// Get the relevant widget (as a MainTab)
+	MainTab* tab = dynamic_cast<MainTab*>(widget(index));
+	if (!tab) return;
+
+	// Call the rename function in the tab
+	tab->rename();
 }

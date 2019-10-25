@@ -31,16 +31,16 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module) : ModuleWidg
 }
 
 // Update controls within widget
-void TestModuleWidget::updateControls()
+void TestModuleWidget::updateControls(int flags)
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void TestModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void TestModuleWidget::enableSensitiveControls()
 {
 }

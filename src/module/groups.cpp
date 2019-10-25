@@ -52,9 +52,8 @@ void ModuleGroups::setAllowedModuleTypes(const CharStringList& moduleTypes)
 	// Clear existing list
 	allowedModuleTypes_.clear();
 
-	// Add types from source list
-	ListIterator<CharString> stringIterator(moduleTypes);
-	while (CharString* s = stringIterator.iterate()) addAllowedModuleType(*s);
+	// Add types from source list by hand, rather than copying, so we prune out duplicates
+	for (int n=0; n<moduleTypes.nItems(); ++n) addAllowedModuleType(moduleTypes.at(n));
 }
 
 // Return if specified Module type is allowed in any group
@@ -78,14 +77,14 @@ ModuleGroup* ModuleGroups::addModule(Module* module, const char* groupName)
 {
 	// Does the specified group exist?
 	ModuleGroup* moduleGroup;
-	for (moduleGroup = groups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), groupName)) break;
+	for (moduleGroup = groups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next()) if (DissolveSys::sameString(moduleGroup->name(), groupName)) break;
 	if (moduleGroup == NULL)
 	{
 		moduleGroup = new ModuleGroup(groupName);
 		groups_.own(moduleGroup);
 	}
 
-	allModules_.add(module, moduleGroup);
+	allModules_.append(module, moduleGroup);
 	moduleGroup->add(module);
 
 	return moduleGroup;
@@ -104,7 +103,7 @@ const List<ModuleGroup>& ModuleGroups::groups() const
 }
 
 // Return reflist of all Modules present over all groups
-const RefList<Module,ModuleGroup*>& ModuleGroups::modules() const
+const RefDataList<Module,ModuleGroup*>& ModuleGroups::modules() const
 {
 	return allModules_;
 }
@@ -118,7 +117,7 @@ bool ModuleGroups::contains(Module* module) const
 // Return name of group assigned to specified Module (if present)
 const char* ModuleGroups::groupName(Module* module) const
 {
-	RefListItem<Module,ModuleGroup*>* ri = allModules_.contains(module);
+	RefDataItem<Module,ModuleGroup*>* ri = allModules_.contains(module);
 
-	return (ri ? ri->data->name() : "Default");
+	return (ri ? ri->data()->name() : "Default");
 }

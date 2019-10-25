@@ -19,17 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPORTMODULE_H
-#define DISSOLVE_EXPORTMODULE_H
+#ifndef DISSOLVE_MODULE_EXPORT_H
+#define DISSOLVE_MODULE_EXPORT_H
 
 #include "module/module.h"
-#include "modules/export/formats.h"
+#include "io/export/coordinates.h"
+#include "io/export/pairpotential.h"
+#include "io/export/trajectory.h"
 
 // Forward Declarations
-class Data1D;
-class Data2D;
-class Data3D;
-class PairPotential;
+/* none */
 
 // Export Module
 class ExportModule : public Module
@@ -68,13 +67,11 @@ class ExportModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 
 	/*
@@ -95,56 +92,6 @@ class ExportModule : public Module
 	private:
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
-
-	/*
-	 * Static Functions - Coordinates
-	 */
-	public:
-	// Write Configuration in specified format through parser
-	static bool writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, LineParser& parser, Configuration* cfg);
-	// Write Configuration in specified format to file
-	static bool writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, const char* filename, Configuration* cfg);
-	// Write Configuration as XYZ
-	static bool writeXYZCoordinates(LineParser& parser, Configuration* cfg);
-	// Write Configuration as DL_POLY CONFIG
-	static bool writeDLPOLYCoordinates(LineParser& parser, Configuration* cfg);
-
-
-	/*
-	 * Static Functions - Data2D
-	 */
-	public:
-	// Write Data2D in specified format through parser
-	static bool writeData2D(Data2DExportFileFormat::Data2DExportFormat format, LineParser& parser, Data2D& data);
-	// Write Data2D in specified format to file
-	static bool writeData2D(Data2DExportFileFormat::Data2DExportFormat format, const char* filename, Data2D& data);
-	// Write Data2D as simple block data
-	static bool writeBlockData2D(LineParser& parser, Data2D& data);
-
-
-	/*
-	 * Static Functions - PairPotentials
-	 */
-	public:
-	// Write PairPotential in specified format through parser
-	static bool writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, LineParser& parser, PairPotential* pp);
-	// Write PairPotential in specified format to file
-	static bool writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, const char* filename, PairPotential* pp);
-	// Write PairPotential as simple block data
-	static bool writeBlockPairPotential(LineParser& parser, PairPotential* pp);
-	// Write PairPotential as a DL_POLY TABLE file
-	static bool writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotential* pp);
-
-
-	/*
-	 * Static Functions - Trajectory
-	 */
-	public:
-	// Append trajectory in specified format to file
-	static bool writeTrajectory(TrajectoryExportFileFormat::TrajectoryExportFormat format, const char* filename, Configuration* cfg);
-	// Append XYZ frame to trajectory
-	static bool writeXYZTrajectory(LineParser& parser, Configuration* cfg);
 };
 
 #endif

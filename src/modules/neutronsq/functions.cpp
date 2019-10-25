@@ -48,11 +48,6 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& 
 			// Full partial, summing bound and unbound terms
 			weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));
 			weightedgr.partial(typeI, typeJ) += weightedgr.boundPartial(typeI, typeJ);
-
-			weightedgr.braggPartial(typeI, typeJ).copyArrays(unweightedgr.braggPartial(typeI, typeJ));
-			// TODO Subtract 1.0 from Bragg partials before weighting?
-			weightedgr.braggPartial(typeI, typeJ).values() -= 1.0;
-			weightedgr.braggPartial(typeI, typeJ).values() *= weight;
 		}
 	}
 
@@ -72,7 +67,7 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 	{
 		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
 		{
-			// Weight S(Q), Bragg S(Q) and full partial S(Q)
+			// Weight bound and unbound S(Q) and sum into full partial
 			double weight = weights.weight(typeI, typeJ);
 			double boundWeight = weights.boundWeight(typeI, typeJ);
 
@@ -87,9 +82,6 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 			// Full partial (sum of bound and unbound terms)
 			weightedsq.partial(typeI, typeJ).copyArrays(weightedsq.unboundPartial(typeI, typeJ));
 			weightedsq.partial(typeI, typeJ) += weightedsq.boundPartial(typeI, typeJ);
-
-			weightedsq.braggPartial(typeI, typeJ).copyArrays(unweightedsq.braggPartial(typeI, typeJ));
-			weightedsq.braggPartial(typeI, typeJ).values() *= weight;
 		}
 	}
 
@@ -107,7 +99,7 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 	summedWeights.clear();
 
 	// Loop over Configurations
-	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Loop over Species used in this Configuration and find its entry in the defined Isotopologues for the Module
@@ -123,18 +115,18 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 				if ((ref->configuration() != cfg) || (ref->species() != spInfo->species())) continue;
 
 				// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-				int speciesPopulation = spInfo->population() * cfg->multiplier();
-				summedWeights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
+				summedWeights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
 
 				++nAdded;
 			}
 
-			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+			// Use the natural isotopologue if a species in the Configuration is not covered by at least one explicit Isotopologue definition
 			if (nAdded == 0)
 			{
-				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so can't generate summed Weights.\n", spInfo->species()->name(), cfg->name());
-				summedWeights.clear();
-				return false;
+				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
+
+				Species* sp = spInfo->species();
+				summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
 			}
 		}
 	}

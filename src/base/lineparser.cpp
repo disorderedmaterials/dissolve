@@ -27,15 +27,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-// Constructors
-LineParser::LineParser()
-{
-	arguments_.clear();
-	reset();
-
-	processPool_ = NULL;
-}
-
+// Constructor
 LineParser::LineParser(ProcessPool* procPool)
 {
 	arguments_.clear();
@@ -47,6 +39,8 @@ LineParser::LineParser(ProcessPool* procPool)
 // Destructor
 LineParser::~LineParser()
 {
+	closeFiles();
+
 	if (inputFile_ != NULL) delete inputFile_;
 	if (outputFile_ != NULL) delete outputFile_;
 	if (cachedFile_ != NULL) delete cachedFile_;
@@ -59,6 +53,10 @@ istream* LineParser::inputStream() const
 	if (fileInput_) return inputFile_;
 	return inputStrings_;
 }
+
+/*
+ * Source line/file and read options
+ */
 
 // Reset data
 void LineParser::reset()
@@ -78,9 +76,11 @@ void LineParser::reset()
 	arguments_.clear();
 }
 
-/*
- * Source line/file and read options
- */
+// Return associated process pool (if any)
+ProcessPool* LineParser::processPool() const
+{
+	return processPool_;
+}
 
 // Return filename of current input file (if any)
 const char* LineParser::inputFilename() const
@@ -185,72 +185,93 @@ bool LineParser::openInputString(const char* string)
 // Open new stream for writing
 bool LineParser::openOutput(const char* filename, bool directOutput)
 {
-	// Check existing input file
-	if ((outputFile_ != NULL) || (cachedFile_ != NULL))
+	bool result = true;
+
+	// Master handles the opening of the output file
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		printf("Warning - LineParser already appears to have an open file/cache...\n");
-		if (outputFile_ != NULL)
+		// Check for existing output file
+		if ((outputFile_ != NULL) || (cachedFile_ != NULL))
 		{
-			outputFile_->close();
-			delete outputFile_;
-			outputFile_ = NULL;
+			printf("Warning - LineParser already appears to have an open file/cache...\n");
+			if (outputFile_ != NULL)
+			{
+				outputFile_->close();
+				delete outputFile_;
+				outputFile_ = NULL;
+			}
+			if (cachedFile_ != NULL)
+			{
+				delete cachedFile_;
+				cachedFile_ = NULL;
+			}
 		}
-		if (cachedFile_ != NULL)
+
+		// Open new file
+		directOutput_ = directOutput;
+		if (directOutput_)
 		{
-			delete cachedFile_;
-			cachedFile_ = NULL;
+			outputFile_ = new ofstream(filename, ios::out);
+			if (!outputFile_->is_open())
+			{
+				closeFiles();
+				Messenger::error("Failed to open file '%s' for writing.\n", filename);
+				result = false;
+			}
 		}
+		else cachedFile_ = new stringstream;
 	}
-	// Open new file
-	directOutput_ = directOutput;
-	if (directOutput_)
-	{
-		outputFile_ = new ofstream(filename, ios::out);
-		if (!outputFile_->is_open())
-		{
-			closeFiles();
-			Messenger::error("Failed to open file '%s' for writing.\n", filename);
-			return false;
-		}
-	}
-	else cachedFile_ = new stringstream;
+
+	// Broadcast result of open
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
 
 	outputFilename_ = filename;
-	return true;
+
+	return result;
 }
 
 // Open existing stream for writing
 bool LineParser::appendOutput(const char* filename)
 {
-	// Check existing input file
-	if ((outputFile_ != NULL) || (cachedFile_ != NULL))
+	bool result = true;
+
+	// Master handles the opening of the output file
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		printf("Warning - LineParser already appears to have an open file/cache...\n");
-		if (outputFile_ != NULL)
+		// Check for existing output file
+		if ((outputFile_ != NULL) || (cachedFile_ != NULL))
 		{
-			outputFile_->close();
-			delete outputFile_;
-			outputFile_ = NULL;
+			printf("Warning - LineParser already appears to have an open file/cache...\n");
+			if (outputFile_ != NULL)
+			{
+				outputFile_->close();
+				delete outputFile_;
+				outputFile_ = NULL;
+			}
+			if (cachedFile_ != NULL)
+			{
+				delete cachedFile_;
+				cachedFile_ = NULL;
+			}
 		}
-		if (cachedFile_ != NULL)
+
+		// Open file for appending
+		directOutput_ = true;
+		outputFile_ = new ofstream(filename, ios::app);
+		if (!outputFile_->is_open())
 		{
-			delete cachedFile_;
-			cachedFile_ = NULL;
+			closeFiles();
+			Messenger::error("Failed to open file '%s' for writing.\n", filename);
+			result = false;
 		}
 	}
 
-	// Open new file
-	directOutput_ = true;
-	outputFile_ = new ofstream(filename, ios::app);
-	if (!outputFile_->is_open())
-	{
-		closeFiles();
-		Messenger::error("Failed to open file '%s' for writing.\n", filename);
-		return false;
-	}
+	// Broadcast result of open
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
 
 	outputFilename_ = filename;
-	return true;
+
+	return result;
 }
 
 // Close file 
@@ -296,13 +317,21 @@ bool LineParser::isFileGoodForReading() const
 // Return whether current file source is good for writing
 bool LineParser::isFileGoodForWriting() const
 {
-	if (directOutput_)
+	// Master performs the checks
+	bool result = true;
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		if (outputFile_ == NULL) return false;
-		else if (!outputFile_->is_open()) return false;
-		return true;
+		if (directOutput_)
+		{
+			if (outputFile_ == NULL) result = false;
+			else if (!outputFile_->is_open()) result = false;
+		}
 	}
-	else return true;
+
+	// Broadcast result of open
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
+	return result;
 }
 
 // Peek next character in input stream
@@ -353,10 +382,21 @@ bool LineParser::eofOrBlank() const
 	bool result = false;
 	if ((!processPool_) || processPool_->isMaster())
 	{
-		if (inputStream() == NULL) return true;
+		// Do we have a valid input stream?
+		if (inputStream() == NULL)
+		{
+			result = true;
+			if (processPool_ && (!processPool_->broadcast(result))) return false;
+			return true;
+		}
 
 		// Simple check first - is this the end of the file?
-		if (inputStream()->eof()) return true;
+		if (inputStream()->eof())
+		{
+			result = true;
+			if (processPool_ && (!processPool_->broadcast(result))) return false;
+			return true;
+		}
 
 		// Otherwise, store the current file position and search for a non-whitespace character (or end of file)
 		streampos pos = inputStream()->tellg();
@@ -444,10 +484,10 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 			Messenger::printVerbose("Line from file is: [%s]\n", line_);
 
 			// Remove comments from line
-			if (optionMask&LineParser::StripComments) DissolveSys::removeComments(line_);
+			if (!(optionMask&LineParser::KeepComments)) DissolveSys::removeComments(line_);
 			
 			// If we are skipping blank lines, check for a blank line here
-			if (optionMask&LineParser::SkipBlanks)
+			if (!(optionMask&LineParser::KeepBlanks))
 			{
 				// Now, see if our line contains only blanks
 				nchars = 0;
@@ -543,7 +583,7 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 			// Delimiters
 			// If we encounter one and arg length != 0 this signals the end of the argument.
 			case (','):	// Comma
-				if (optionMask&LineParser::NormalCommas)
+				if (!(optionMask&LineParser::CommasAreDelimiters))
 				{
 					tempArg_[arglen++] = c;
 					break;
@@ -554,10 +594,10 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 				else if (arglen != 0) done = true;
 				break;
 			// Quote marks
-			// If LineParser::UseQuotes, keep delimiters and other quote marks inside the quoted text.
+			// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
 			case (34):	// Double quotes
 			case (39):	// Single quotes
-				if (!(optionMask&LineParser::UseQuotes)) break;
+				if (optionMask&LineParser::IgnoreQuotes) break;
 				if (quotechar == '\0') quotechar = c;
 				else if (quotechar == c)
 				{
@@ -598,7 +638,7 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 				done = true;
 				break;
 			// Normal character
-			default: 
+			default:
 				tempArg_[arglen++] = c;
 				break;
 		}
@@ -809,10 +849,10 @@ bool LineParser::getCharsDelim(int optionMask, CharString* source, CharString* d
 				else if (arglen != 0) done = true;
 				break;
 			// Quote marks
-			// If LineParser::UseQuotes, keep delimiters and other quote marks inside the quoted text.
+			// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
 			case (34):	// Double quotes
 			case (39):	// Single quotes
-				if (!(optionMask&LineParser::UseQuotes)) break;
+				if (optionMask&LineParser::IgnoreQuotes) break;
 				if (quotechar == '\0') quotechar = c;
 				else if (quotechar == c)
 				{
@@ -926,53 +966,77 @@ const char* LineParser::getChars(int nchars, bool skipeol)
 // Write line to file
 bool LineParser::writeLine(const char* s) const
 {
-	if (!directOutput_)
+	bool result = true;
+
+	// Master handles the writing
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		if (cachedFile_ == NULL)
+		if (!directOutput_)
 		{
-			Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
+			if (cachedFile_ == NULL)
+			{
+				Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
+				return false;
+			}
+			else (*cachedFile_) << s;
+		}
+		else if (outputFile_ == NULL)
+		{
+			Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
 			return false;
 		}
-		else (*cachedFile_) << s;
+		else (*outputFile_) << s;
 	}
-	else if (outputFile_ == NULL)
-	{
-		Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
-		return false;
-	}
-	else (*outputFile_) << s;
-	return true;
+
+	// Broadcast result of write
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
+	return result;
 }
 
 // Write formatted line to file
 bool LineParser::writeLineF(const char* fmt, ...) const
 {
-	if (!directOutput_)
+	bool result = true;
+
+	// Master handles the writing
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		if (cachedFile_ == NULL)
+		if (!directOutput_)
 		{
-			Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
+			if (cachedFile_ == NULL)
+			{
+				Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
+				result = false;
+				if (processPool_ && (!processPool_->broadcast(result))) return false;
+				return false;
+			}
+		}
+		else if (outputFile_ == NULL)
+		{
+			Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
+			result = false;
+			if (processPool_ && (!processPool_->broadcast(result))) return false;
 			return false;
 		}
-	}
-	else if (outputFile_ == NULL)
-	{
-		Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
-		return false;
-	}
-	
-	// Construct line
-	va_list arguments;
-	static char s[8096];
-	s[0] = '\0';
+		
+		// Construct line
+		va_list arguments;
+		static char s[8096];
+		s[0] = '\0';
 
-	// Parse the argument list (...) and internally write the output string into s[]
-	va_start(arguments,fmt);
-	vsprintf(s,fmt,arguments);
-	va_end(arguments);
-	if (directOutput_) (*outputFile_) << s;
-	else (*cachedFile_) << s;
-	return true;
+		// Parse the argument list (...) and internally write the output string into s[]
+		va_start(arguments,fmt);
+		vsprintf(s,fmt,arguments);
+		va_end(arguments);
+		if (directOutput_) (*outputFile_) << s;
+		else (*cachedFile_) << s;
+	}
+
+	// Broadcast result of write
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
+	return result;
 }
 
 // Print banner comment of fixed width
@@ -1044,24 +1108,37 @@ bool LineParser::readArg(long long int& i)
 // Commit cached output stream to actual output file
 bool LineParser::commitCache()
 {
-	// Were we using cached writing?
-	if (directOutput_)
+	bool result = true;
+
+	// Master handles the writing
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		printf("Internal Error: Tried to commit cached writes when direct output was enabled.\n");
-		return false;
+		// Were we using cached writing?
+		if (directOutput_)
+		{
+			printf("Internal Error: Tried to commit cached writes when direct output was enabled.\n");
+			result = false;
+			if (processPool_ && (!processPool_->broadcast(result))) return false;
+			return false;
+		}
+
+		ofstream outputFile(outputFilename_);
+		if (outputFile.is_open())
+		{
+			outputFile << cachedFile_->str();
+			outputFile.close();
+		}
+		else
+		{
+			Messenger::error("Couldn't open output file '%s' for writing.\n", outputFilename_.get());
+			result = false;
+		}
 	}
-	ofstream outputFile(outputFilename_);
-	if (outputFile.is_open())
-	{
-		outputFile << cachedFile_->str();
-		outputFile.close();
-	}
-	else
-	{
-		Messenger::error("Couldn't open output file '%s' for writing.\n", outputFilename_.get());
-		return false;
-	}
-	return true;
+
+	// Broadcast result of write
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
+	return result;
 }
 
 // Skip lines from file

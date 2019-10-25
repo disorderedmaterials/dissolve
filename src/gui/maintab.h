@@ -25,8 +25,10 @@
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include <QString>
 
 // Forward Declarations
 class Dissolve;
@@ -37,13 +39,17 @@ class QMdiArea;
 class QTabWidget;
 class QWidget;
 
-// Base 
+// Base Tab
 class MainTab
 {
 	public:
 	// Constructor / Destructor
 	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
+	// Tab Types
+	enum TabType { ConfigurationTabType, ForcefieldTabType, LayerTabType, ModuleTabType, SpeciesTabType, WorkspaceTabType };
+	// Return enum options for TabType
+	static EnumOptions<MainTab::TabType> tabTypes();
 
 
 	/*
@@ -61,17 +67,21 @@ class MainTab
 	// Unique title (name) of tab
 	CharString title_;
 
+	protected:
+	// Raise suitable dialog for entering / checking new tab name
+	virtual QString getNewTitle(bool& ok);
+
 	public:
 	// Return tab type
-	virtual const char* tabType() const = 0;
+	virtual TabType type() const = 0;
 	// Return page widget
 	QWidget* page() const;
-	// Set title of tab
-	void setTitle(const char* title);
-	// Return title of tab
-	const char* title() const;
 	// Return whether the title of the tab can be changed
 	virtual bool canChangeTitle() const;
+	// Rename tab through suitable dialog / widget
+	bool rename();
+	// Return title of tab
+	const char* title() const;
 
 
 	/*
@@ -84,9 +94,9 @@ class MainTab
 	public:
 	// Update controls in tab
 	virtual void updateControls() = 0;
-	// Disable sensitive controls within the tab, ready for main code to run
+	// Disable sensitive controls within the tab
 	virtual void disableSensitiveControls() = 0;
-	// Enable sensitive controls within the tab, ready for main code to run
+	// Enable sensitive controls within the tab
 	virtual void enableSensitiveControls() = 0;
 
 

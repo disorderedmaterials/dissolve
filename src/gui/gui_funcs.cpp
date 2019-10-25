@@ -24,15 +24,18 @@
 #include "gui/gui.h"
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
+#include "gui/layertab.h"
 #include "gui/moduletab.h"
-#include "gui/modulelayertab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QDir>
+#include <QDirIterator>
 #include <QFontDatabase>
+#include <QLCDNumber>
 #include <QMdiSubWindow>
+#include <QMessageBox>
 #include <QFileInfo>
 
 // Constructor
@@ -45,32 +48,45 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	QFontDatabase::addApplicationFont(":/fonts/fonts/SourceSansPro-Regular.ttf");
 
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Connect signals to thread controller
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
 	// Connect signals from our main tab widget / bar
-	connect(ui.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
-	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
+	connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
 	dissolveState_ = EditingState;
-
-	// Set up GuideWidget
-	ui.GuideWidget->setMainDissolveReference(&dissolve);
-	ui.GuideWidget->setDissolveWindow(this);
-	connect(ui.GuideWidget, SIGNAL(canceled()), this, SLOT(guideWidgetCanceled()));
-	connect(ui.GuideWidget, SIGNAL(finished()), this, SLOT(guideWidgetFinished()));
 
 	refreshing_ = false;
 	modified_ = false;
 	localSimulation_ = true;
+
+	// Create statusbar widgets
+	localSimulationIndicator_ = new QLabel;
+	localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
+	localSimulationIndicator_->setMaximumSize(QSize(20,20));
+	localSimulationIndicator_->setScaledContents(true);
+	restartFileIndicator_ = new QLabel;
+	restartFileIndicator_->setPixmap(QPixmap(":/general/icons/general_restartfile.svg"));
+	restartFileIndicator_->setMaximumSize(QSize(20,20));
+	restartFileIndicator_->setScaledContents(true);
+	heartbeatFileIndicator_ = new QLabel;
+	heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
+	heartbeatFileIndicator_->setMaximumSize(QSize(20,20));
+	heartbeatFileIndicator_->setScaledContents(true);
+	statusBar()->addPermanentWidget(heartbeatFileIndicator_);
+	statusBar()->addPermanentWidget(restartFileIndicator_);
+	statusBar()->addPermanentWidget(localSimulationIndicator_);
 
 	addCoreTabs();
 
 	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
+
+	// Initialise the available system templates
+	initialiseSystemTemplates();
 
 	// Show the Start stack page (we call this mostly to ensure correct availability of other controls)
 	showMainStackPage(DissolveWindow::StartStackPage);
@@ -115,26 +131,6 @@ void DissolveWindow::setModified()
 	updateWindowTitle();
 }
 
-// Flag that data has been modified via the GUI, and whether this invalidates the current setup
-void DissolveWindow::setModified(bool invalidatesSetUp)
-{
-	modified_ = true;
-
-	if (invalidatesSetUp) dissolve_.invalidateSetUp();
-
-	updateWindowTitle();
-}
-
-// Flag that data has been modified via the GUI, and that the set up is now invalid
-void DissolveWindow::setModifiedAndInvalidated()
-{
-	modified_ = true;
-
-	dissolve_.invalidateSetUp();
-
-	updateWindowTitle();
-}
-
 // Return reference to Dissolve
 Dissolve& DissolveWindow::dissolve()
 {
@@ -151,7 +147,8 @@ const Dissolve& DissolveWindow::constDissolve() const
 void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesBrowser, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesBrowser, SLOT(setTextColor(const QColor&)));
 }
 
 /*
@@ -159,7 +156,7 @@ void DissolveWindow::addOutputHandler()
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	clearTabs();
@@ -167,30 +164,29 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 	// Clear Dissolve itself
 	dissolve_.clear();
 
+	// Set the current dir to the location of the new file
+	QFileInfo inputFileInfo(inputFile);
+	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+
 	// Load the input file
 	Messenger::banner("Parse Input File");
-	if (!dissolve_.loadInput(inputFile))
+	if (DissolveSys::fileExists(qPrintable(inputFileInfo.fileName())))
 	{
-		dissolve_.clear();
-		return false;
+		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName()))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
+	else return Messenger::error("Input file does not exist.\n");
 
 	// Load restart file if it exists
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestartFile)
 	{
 		CharString actualRestartFile = restartFile;
-		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", inputFile);
+		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", qPrintable(inputFileInfo.fileName()));
 		
 		if (DissolveSys::fileExists(actualRestartFile))
 		{
 			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile.get());
-			if (!dissolve_.loadRestart(actualRestartFile))
-			{
-				Messenger::error("Restart file contained errors.\n");
-				ProcessPool::finalise();
-				return 1;
-			}
+			if (!dissolve_.loadRestart(actualRestartFile)) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 
 			// Reset the restart filename to be the standard one
 			dissolve_.setRestartFilename(CharString("%s.restart", inputFile));
@@ -198,9 +194,6 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 		else Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
 	}
 	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
-
-	// Try to set-up simulation
-	dissolve_.setUp();
 
 	refreshing_ = true;
 
@@ -214,13 +207,49 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 	// Try to load in the window state file
 	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
 
-	// Switch to the Simulation stack page
-	showMainStackPage(DissolveWindow::SimulationStackPage);
+	localSimulation_ = true;
+
+	// Check the beat file
+	CharString beatFile("%s.beat", qPrintable(inputFile));
+	if (DissolveSys::fileExists(beatFile))
+	{
+		// TODO
+// 		if (
+	}
+
+	dissolveState_ = EditingState;
 
 	// Fully update GUI
 	fullUpdate();
 
+	// Make sure we are now on the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
+
 	return true;
+}
+
+/*
+ * System Templates
+ */
+
+// Initialise system templates from the main resource
+void DissolveWindow::initialiseSystemTemplates()
+{
+	// Probe our main resource object for the templates, and create local data from them
+	QDirIterator templateIterator(":/data/systemtemplates/");
+	while (templateIterator.hasNext())
+	{
+		QDir dir = templateIterator.next();
+
+		// Open the associated xml file
+		SystemTemplate* sysTemp = systemTemplates_.add();
+		if (!sysTemp->read(dir))
+		{
+			Messenger::error("Error reading the template info file '%s'.\n", qPrintable(dir.filePath("info.xml")));
+			systemTemplates_.remove(sysTemp);
+			continue;
+		}
+	}
 }
 
 /*
@@ -230,8 +259,8 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 // Update all tabs
 void DissolveWindow::updateTabs()
 {
-	RefList<MainTab,bool> tabs = allTabs();
-	RefListIterator<MainTab,bool> tabIterator(tabs);
+	RefList<MainTab> tabs = allTabs();
+	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
 }
 
@@ -241,75 +270,87 @@ void DissolveWindow::updateWindowTitle()
 	// Window Title
 	QString title = QString("Dissolve v%1 - %2%3").arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : "");
 	setWindowTitle(title);
+
+	// Update save menu item
+	ui_.FileSaveAction->setEnabled(modified_);
 }
 
 // Update controls frame
 void DissolveWindow::updateControlsFrame()
 {
 	// Update ControlFrame to reflect Dissolve's current state
-	if (dissolveState_ == DissolveWindow::EditingState)
-	{
-		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_edit.svg"));
-		ui.ControlStateLabel->setText("EDITING");
-		ui.ControlSetUpButton->setEnabled(!dissolve_.isSetUp());
-		ui.ControlSetUpButton->setIcon(dissolve_.isSetUp() ? QIcon(":/general/icons/general_true.svg") : QIcon(":/general/icons/general_false.svg"));
-		ui.ControlRunButton->setEnabled(dissolve_.isSetUp());
-		ui.ControlPauseButton->setEnabled(false);
-		ui.ControlReloadButton->setEnabled(false);
-	}
-	else if (dissolveState_ == DissolveWindow::RunningState)
-	{
-		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_edit.svg"));
-		ui.ControlStateLabel->setText("RUNNING");
-		ui.ControlSetUpButton->setEnabled(false);
-		ui.ControlSetUpButton->setIcon(QIcon(":/general/icons/general_true.svg"));
-		ui.ControlRunButton->setEnabled(false);
-		ui.ControlPauseButton->setEnabled(true);
-		ui.ControlReloadButton->setEnabled(false);
-	}
-	else if (dissolveState_ == DissolveWindow::MonitoringState)
-	{
-		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_monitor.svg"));
-		ui.ControlStateLabel->setText("MONITOR");
-		ui.ControlSetUpButton->setEnabled(false);
-		ui.ControlSetUpButton->setIcon(QIcon(":/general/icons/general_true.svg"));
-		ui.ControlRunButton->setEnabled(false);
-		ui.ControlPauseButton->setEnabled(false);
-		ui.ControlReloadButton->setEnabled(true);
-	}
+	ui_.ControlRunButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui_.ControlStepButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui_.ControlPauseButton->setEnabled(dissolveState_ == DissolveWindow::RunningState);
+	ui_.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
 
 	// Set current iteration number
-	ui.ControlIterationNumberLCD->display(DissolveSys::itoa(dissolve_.iteration()));
+	ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
 
 	// Set relevant file locations
 	if (localSimulation_)
 	{
-		if (dissolve_.hasInputFilename())
-		{
-			ui.ControlLocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
-			ui.ControlInputFileLabel->setText(dissolve_.inputFilename());
-		}
-		else
-		{
-			ui.ControlLocationLabel->setText(QDir::current().absolutePath() + " (Local)");
-			ui.ControlInputFileLabel->setText("<untitled>");
-		}
-		ui.ControlRestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
+		localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
+		restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
+		restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename() ? CharString("Current restart file is '%s'", dissolve_.restartFilename()).get() : "No restart file available");
+		heartbeatFileIndicator_->setEnabled(false);
+		heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
 	}
 	else
 	{
-		ui.ControlLocationLabel->setText("UNKNOWN NETWORK LOCATION");
-		ui.ControlInputFileLabel->setText(dissolve_.inputFilename());
-		ui.ControlRestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
+		localSimulationIndicator_->setPixmap(QPixmap(":/menu/icons/menu_connect.svg"));
+		// TODO!
 	}
+}
+
+// Update menus
+void DissolveWindow::updateMenus()
+{
+	MainTab* activeTab = currentTab();
+	if (!activeTab) return;
+
+	// Species Menu
+	ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+
+	// Configuration Menu
+	ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+	ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+
+	// Layer Menu
+	ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
+	ui_.LayerDeleteAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
 }
 
 // Perform full update of the GUI, including tab reconciliation
 void DissolveWindow::fullUpdate()
 {
+	refreshing_ = true;
+
 	reconcileTabs();
 
 	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
+	updateMenus();
+
+	refreshing_ = false;
+}
+
+/*
+ * Stack
+ */
+
+// Set currently-visible main stack page
+void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
+{
+	ui_.MainStack->setCurrentIndex(page);
+
+	// Enable / disable main menu items as appropriate
+	ui_.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.SpeciesMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.ConfigurationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.LayerMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 }

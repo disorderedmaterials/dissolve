@@ -61,24 +61,6 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 
 
 	/*
-	 * Usage Counting
-	 */
-	private:
-	// Use counts by specific AtomType pairs
-	Array2D<int> usageCounts_;
-
-	public:
-	// Initialise usage count array
-	void initialiseUsageArray(int nAtomTypes);
-	// Return usage between specified pair of AtomType indices
-	int usageCount(int idI, int idJ);
-	// Register single usage of this term by the specified pair of AtomType indices
-	void registerUsage(int idI, int idJ);
-	// Unregister single usage of this term by the specified pair of AtomType indices
-	void unregisterUsage(int idI, int idJ);
-
-
-	/*
 	 * SpeciesIntra Virtuals
 	 */
 	public:

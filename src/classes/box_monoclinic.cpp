@@ -24,7 +24,7 @@
 #include "classes/cell.h"
 
 // Constructor
-MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeLengths, double beta) : Box()
+MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
 {
 	type_ = Box::MonoclinicBoxType;
 	
@@ -39,20 +39,18 @@ MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeLengths, 
 	double cosBeta = cos(beta_/DEGRAD);
 	axes_.setColumn(2, cosBeta, 0.0, sqrt(1.0-cosBeta*cosBeta));
 
-	// Multiply the unit vectors to have the correct relative lengths
-	axes_.columnMultiply(0, relativeLengths.x);
-	axes_.columnMultiply(1, relativeLengths.y);
-	axes_.columnMultiply(2, relativeLengths.z);
+	// Multiply the unit vectors to have the correct lengths
+	axes_.columnMultiply(0, lengths.x);
+	axes_.columnMultiply(1, lengths.y);
+	axes_.columnMultiply(2, lengths.z);
 
-	// Set up box, rescaling to desired volume
-	setUp(volume);
+	// Store Box lengths
+	a_ = lengths.x;
+	b_ = lengths.y;
+	c_ = lengths.z;
 
-	// Grab new cell lengths
-	a_ = axes_.columnMagnitude(0);
-	b_ = axes_.columnMagnitude(1);
-	c_ = axes_.columnMagnitude(2);
-
-	axes_.print();
+	// Finalise associated data
+	finalise();
 }
 
 // Destructor

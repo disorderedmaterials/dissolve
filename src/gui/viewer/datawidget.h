@@ -1,5 +1,5 @@
 /*
-	*** Graph Widget
+	*** Data Widget
 	*** src/gui/viewer/datawidget.h
 	Copyright T. Youngs 2013-2019
 
@@ -27,7 +27,7 @@
 // Forward Declarations
 /* none */
 
-// Graph Widget
+// Data Widget
 class DataWidget : public QWidget
 {
 	// All Qt declarations must include this macro
@@ -53,23 +53,43 @@ class DataWidget : public QWidget
 	private slots:
 	// Interaction
 	void on_InteractionViewButton_clicked(bool checked);
+	// Graph
+	void on_GraphResetButton_clicked(bool checked);
+	void on_GraphFollowAllButton_clicked(bool checked);
+	void on_GraphFollowXButton_clicked(bool checked);
+	void on_GraphFollowXLengthSpin_valueChanged(double value);
 	// View
-	void on_ViewResetButton_clicked(bool checked);
+	void on_ViewToggleDataButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
-	void on_ViewFollowAllButton_clicked(bool checked);
-	void on_ViewFollowXButton_clicked(bool checked);
-	void on_ViewFollowXLengthSpin_valueChanged(double value);
 
 
 	/*
-	 * Signals / Slots
+	 * Update Functions
 	 */
+	private:
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+
+	private:
+	// Data tree top-level item update function
+	void dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int topLevelItemIndex, RenderableGroup* data, bool createItem);
+	// Data tree item update function
+	void dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int childIndex, Renderable* data, bool createItem);
+
+	private slots:
+	// Data tree item changed
+	void on_DataTree_itemChanged(QTreeWidgetItem* item, int column);
+
 	public slots:
+	// Clear renderable data
+	void clearRenderableData();
 	// Update toolbar
 	void updateToolbar();
 	// Update status bar
 	void updateStatusBar();
+	// Update data tree
+	void updateDataTree();
 };
 
 #endif

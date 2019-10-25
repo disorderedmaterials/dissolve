@@ -22,15 +22,12 @@
 #include "classes/species.h"
 #include "classes/masterintra.h"
 #include "classes/atomtype.h"
-#include "classes/box.h"
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
-#include <string.h>
-#include <base/sysfunc.h>
 
 // Static Members (ObjectStore)
-template<class Species> RefList<Species,int> ObjectStore<Species>::objects_;
+template<class Species> RefDataList<Species,int> ObjectStore<Species>::objects_;
 template<class Species> int ObjectStore<Species>::objectCount_ = 0;
 template<class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
 template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Species";
@@ -38,7 +35,14 @@ template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Spe
 // Constructor
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
+	forcefield_ = NULL;
 	attachedAtomListsGenerated_ = false;
+	usedAtomTypesPoint_ = -1;
+
+	// Set up natural Isotopologue
+	naturalIsotopologue_.setName("Natural");
+	naturalIsotopologue_.setParent(this);
+	naturalIsotopologuePoint_ = -1;
 }
 
 // Destructor
@@ -73,7 +77,7 @@ const char* Species::name() const
 }
 
 // Check set-up of Species
-bool Species::checkSetUp(const List<AtomType>& atomTypes)
+bool Species::checkSetUp()
 {
 	int nErrors = 0;
 
@@ -87,16 +91,11 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	/*
 	 * AtomTypes
 	 */
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
 		if (i->atomType() == NULL)
 		{
 			Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
-			++nErrors;
-		}
-		else if (!atomTypes.contains(i->atomType()))
-		{
-			Messenger::error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 	}
@@ -106,31 +105,31 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	 * GrainDefinitions
 	 * Each Atom must be in exactly one GrainDefinition
 	 */
-	RefList<SpeciesAtom,int> grainCount;
-	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next) grainCount.add(sa, 0);
-	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
+	RefDataList<SpeciesAtom,int> grainCount;
+	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next()) grainCount.append(sa, 0);
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next())
 	{
-		for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next)
+		for (RefListItem<SpeciesAtom>* ri = sg->atoms(); ri != NULL; ri = ri->next())
 		{
-			RefListItem<SpeciesAtom,int>* rj = grainCount.contains(ri->item);
+			RefDataItem<SpeciesAtom,int>* rj = grainCount.contains(ri->item());
 			if (rj == NULL)
 			{
 				Messenger::error("GrainDefinition '%s' references a non-existent Atom.\n", sg->name());
 				++nErrors;
 			}
-			else ++rj->data;
+			else ++rj->data();
 		}
 	}
-	for (RefListItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next)
+	for (RefDataItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next())
 	{
-		if (ri->data > 1)
+		if (ri->data() > 1)
 		{
-			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), ri->item->element()->symbol(), ri->data);
+			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item()->userIndex(), ri->item()->element()->symbol(), ri->data());
 			++nErrors;
 		}
 // 		else if (ri->data == 0)
 // 		{
-// 			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
+// 			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item()->userIndex(), PeriodicTable::element(ri->item()->element()).symbol());
 // 			++nErrors;
 // 		}
 	}
@@ -139,7 +138,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	/*
 	 * IntraMolecular Data
 	 */
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
@@ -148,7 +147,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		}
 		
 		/* Check each Bond for two-way consistency */
-		RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+		RefListIterator<SpeciesBond> bondIterator(i->bonds());
 		while (SpeciesBond* bond = bondIterator.iterate())
 		{
 			SpeciesAtom* j = bond->partner(i);
@@ -164,22 +163,12 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	/*
 	 * Check Isotopologues
 	 */
-	if (isotopologues_.nItems() == 0)
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
-		Messenger::error("No Isotopologues defined in Species.\n");
-		++nErrors;
-	}
-	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next)
-	{
-		RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
 		{
-			if (!atomTypes.contains(atomType))
-			{
-				Messenger::error("Isotopologue '%s' refers to an unknown AtomType.\n", iso->name());
-				++nErrors;
-			}
-			else if (isotopeIterator.currentData() == NULL)
+			if (isotopeIterator.currentData() == NULL)
 			{
 				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
@@ -210,51 +199,39 @@ void Species::print()
 	if (nBonds() > 0)
 	{
 		Messenger::print("\n  Bonds:\n");
-		Messenger::print("      I     J    Form            Parameters\n");
+		Messenger::print("      I     J    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------\n");
-		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
 		{
-			if (b->masterParameters()) Messenger::print("   %4i  %4i    @%-12s\n", b->indexI()+1, b->indexJ()+1, b->masterParameters()->name());
-			else
-			{
-				CharString s("   %4i  %4i    %-12s", b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
-				Messenger::print("%s\n", s.get());
-			}
+			CharString s("   %4i  %4i    %c%-12s", b->indexI()+1, b->indexJ()+1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 
 	if (nAngles() > 0)
 	{
 		Messenger::print("\n  Angles:\n");
-		Messenger::print("      I     J     K    Form            Parameters\n");
+		Messenger::print("      I     J     K    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------\n");
-		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
+		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next())
 		{
-			if (a->masterParameters()) Messenger::print("   %4i  %4i  %4i    @%-12s\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name());
-			else
-			{
-				CharString s("   %4i  %4i  %4i    %-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
-				Messenger::print("%s\n", s.get());
-			}
+			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 
 	if (nTorsions() > 0)
 	{
 		Messenger::print("\n  Torsions:\n");
-		Messenger::print("      I     J     K     L    Form            Parameters\n");
+		Messenger::print("      I     J     K     L    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
-		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next)
+		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next())
 		{
-			if (t->masterParameters()) Messenger::print("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name());
-			else
-			{
-				CharString s("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
-				Messenger::print("%s\n", s.get());
-			}
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 
@@ -265,7 +242,7 @@ void Species::print()
 		{
 			SpeciesGrain* grain = grains_[n];
 			CharString grainAtoms;
-			for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item->userIndex());
+			for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item()->userIndex());
 			Messenger::print("  %4i  '%s'\n", n+1, grain->name());
 			Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
 		}

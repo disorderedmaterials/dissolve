@@ -19,13 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EPSRMODULE_H
-#define DISSOLVE_EPSRMODULE_H
+#ifndef DISSOLVE_MODULE_EPSR_H
+#define DISSOLVE_MODULE_EPSR_H
 
 #include "module/module.h"
 #include "module/groups.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 #include "math/data1d.h"
+#include "base/enumoptions.h"
 #include "templates/array3d.h"
 
 // Forward Declarations
@@ -69,7 +70,7 @@ class EPSRModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	public:
 	// Expansion Function Type Enum
@@ -79,17 +80,12 @@ class EPSRModule : public Module
 		GaussianExpansionFunction,		/* Fit difference functiuns using Gaussian functions */
 		nExpansionFunctionTypes
 	};
-	// Convert text string to ExpansionFunctionType
-	static ExpansionFunctionType expansionFunctionType(const char* s);
-	// Convert ExpansionFunctionType to text string
-	static const char* expansionFunctionType(ExpansionFunctionType eft);
+	// Return enum option info for ExpansionFunctionType
+	static EnumOptions<EPSRModule::ExpansionFunctionType> expansionFunctionTypes();
 
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	/*
 	 * Processing
@@ -108,7 +104,7 @@ class EPSRModule : public Module
 	 */
 	private:
 	// Test datasets (if any)
-	DataStore testData_;
+	Data1DStore testData_;
 	// Target Modules, divided into groups
 	ModuleGroups groupedTargets_;
 	// Simulated data added as reference data
@@ -116,9 +112,11 @@ class EPSRModule : public Module
 
 	public:
 	// Return list of target Modules / data for refeinement
-	const RefList<Module,ModuleGroup*>& allTargets() const;
+	const RefDataList<Module,ModuleGroup*>& allTargets() const;
 	// Return grouped target Modules
 	const ModuleGroups& groupedTargets() const;
+	// Add target Modules
+	void addTargets(RefList<Module> targets, const char* groupName = "Default");
 	// Create / retrieve arrays for storage of empirical potential coefficients
 	Array2D< Array<double> >& potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp = -1);
 	// Generate empirical potentials from current coefficients

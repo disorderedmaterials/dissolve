@@ -72,7 +72,7 @@ class ExponentialSpin : public QAbstractSpinBox
 	// Set minimum limit
 	void setMaximum(double value);
 	// Set allowable range of value
-	void setRange(bool limitMin, double minValue, bool limitMax, double maxValue, int nSteps = -1);
+	void setRange(bool limitMin, double minValue, bool limitMax = false, double maxValue = 0.0, int nSteps = -1);
 	// Remove range limits
 	void setUnlimitedRange();
 	// Set single step value

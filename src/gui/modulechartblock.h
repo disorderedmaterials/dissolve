@@ -69,9 +69,9 @@ class ModuleChartBlock : public ListItem<ModuleChartBlock>
 	virtual QWidget* widget() = 0;
 	// Update controls within widget
 	virtual void updateControls() = 0;
-	// Disable sensitive controls, ready for main code to run
+	// Disable sensitive controls
 	virtual void disableSensitiveControls() = 0;
-	// Enable sensitive controls, ready for main code to run
+	// Enable sensitive controls
 	virtual void enableSensitiveControls() = 0;
 
 

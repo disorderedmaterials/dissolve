@@ -66,12 +66,12 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	void initialise(int xSize, int ySize, bool withError = false);
 	// Initialise to be consistent in size and axes with supplied object
 	void initialise(const Data2D& source);
+	// Initialise from supplied axis ranges
+	void initialise(double xMin, double xMax, double xBin, double yMin, double yMax, double yBin, bool withError = false);
 	// Copy arrays from supplied object
 	void copyArrays(const Data2D& source);
 	// Zero values array
 	void zero();
-	// Accumulate specified histogram data
-	void accumulate(const Histogram2D& source);
 	// Return data version
 	int version() const;
 	// Return x axis value specified

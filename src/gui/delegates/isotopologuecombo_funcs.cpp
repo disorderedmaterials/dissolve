@@ -1,5 +1,5 @@
 /*
-	*** IsotopologueComboDelegate Functions
+	*** IsotopologueCombo Delegate Functions
 	*** src/gui/delegates/isotopologuecombo_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -24,7 +24,6 @@
 #include "classes/species.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 IsotopologueComboDelegate::IsotopologueComboDelegate(QObject* parent) : QItemDelegate(parent)
 {
@@ -45,7 +44,11 @@ QWidget* IsotopologueComboDelegate::createEditor(QWidget* parent, const QStyleOp
 	Species* sp = VariantPointer<Species>(index.data(Qt::UserRole));
 	if (sp)
 	{
-		ComboNameListPopulator<Isotopologue>(editor, sp->isotopologues());
+		// Add the natural Isotopologue
+		editor->addItem("Natural", VariantPointer<Isotopologue>(sp->naturalIsotopologue()));
+
+		// Add user-defined Isotopologues
+		ComboNameListPopulator<Isotopologue>(editor, sp->isotopologues(), true);
 	}
 	else Messenger::error("Underlying model did not contain a Species*, so IsotopologueCombo cannot provide options.\n");
 

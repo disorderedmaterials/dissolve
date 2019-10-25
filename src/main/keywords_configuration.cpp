@@ -26,51 +26,27 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Configuration Block Keywords
-KeywordData ConfigurationBlockData[] = {
-	{ "BoxNormalisationFile", 	1,	"File from which to load the RDF normalisation array" },
-	{ "BraggMultiplicity",		3,	"Multiplicity of a primitive cell within the unit cell" },
-	{ "BraggQMax",			1,	"Maximum Q value for Bragg calculation" },
-	{ "BraggQMin",			1,	"Minimum Q value for Bragg calculation" },
-	{ "CellAngles", 		3,	"Angles of the unit cell" },
-	{ "CellDivisionLength",		1,	"Requested side length for regions when partitioning the unit cell" },
-	{ "CellLengths",		3,	"Relative lengths of the unit cell" },
-	{ "Density",			2,	"Density of the Configuration, along with its units" },
-	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
-	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
-	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
-	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
-	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
-	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
-	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
-	{ "SizeFactor",			1,	"Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry" },
-	{ "SpeciesInfo",		1,	"Specify a Species to add to this Configuration" },
-	{ "Temperature",		1,	"Simulation temperature of the Configuration" }
-};
-
-// Convert text string to ConfigurationKeyword
-ConfigurationBlock::ConfigurationKeyword ConfigurationBlock::keyword(const char* s)
+// Return enum option info for ConfigurationKeyword
+EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywords()
 {
-	for (int n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) if (DissolveSys::sameString(s,ConfigurationBlockData[n].name)) return (ConfigurationBlock::ConfigurationKeyword) n;
-	return ConfigurationBlock::nConfigurationKeywords;
-}
+	static EnumOptionsList ConfigurationKeywords = EnumOptionsList() <<
+		EnumOption(ConfigurationBlock::CellDivisionLengthKeyword, 	"CellDivisionLength",	1) <<
+		EnumOption(ConfigurationBlock::EndConfigurationKeyword, 	"EndConfiguration") <<
+		EnumOption(ConfigurationBlock::GeneratorKeyword,		"Generator") <<
+		EnumOption(ConfigurationBlock::InputCoordinatesKeyword,		"InputCoordinates",	2) <<
+		EnumOption(ConfigurationBlock::ModuleKeyword,			"Module",		EnumOption::OptionalSecondArgument) <<
+		EnumOption(ConfigurationBlock::SizeFactorKeyword,		"SizeFactor",		1) <<
+		EnumOption(ConfigurationBlock::TemperatureKeyword, 		"Temperature",		1);
 
-// Convert ConfigurationKeyword to text string
-const char* ConfigurationBlock::keyword(ConfigurationBlock::ConfigurationKeyword id)
-{
-	return ConfigurationBlockData[id].name;
-}
+	static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options("ConfigurationKeyword", ConfigurationKeywords);
 
-// Return minimum number of expected arguments
-int ConfigurationBlock::nArguments(ConfigurationBlock::ConfigurationKeyword id)
-{
-	return ConfigurationBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Configuration block
 bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
 	Species* sp;
 	Module* module;
@@ -81,59 +57,38 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
-		ConfigurationBlock::ConfigurationKeyword conKeyword = ConfigurationBlock::keyword(parser.argc(0));
-		if ((conKeyword != ConfigurationBlock::nConfigurationKeywords) && ((parser.nArgs()-1) < ConfigurationBlock::nArguments(conKeyword)))
+		if (parser.getArgsDelim() != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		ConfigurationKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", ConfigurationBlock::keyword(conKeyword));
-			error = true;
-			break;
-		}
-		switch (conKeyword)
-		{
-			case (ConfigurationBlock::BoxNormalisationFileKeyword):
-				cfg->setBoxNormalisationFile(parser.argc(1));
-				break;
-			case (ConfigurationBlock::BraggQMaxKeyword):
-				cfg->setBraggQMax(parser.argd(1));
-				break;
-			case (ConfigurationBlock::BraggQMinKeyword):
-				cfg->setBraggQMin(parser.argd(1));
-				break;
-			case (ConfigurationBlock::BraggMultiplicityKeyword):
-				cfg->setBraggMultiplicity(parser.arg3i(1));
-				break;
-			case (ConfigurationBlock::CellAnglesKeyword):
-				cfg->setBoxAngles(parser.arg3d(1));
-				break;
 			case (ConfigurationBlock::CellDivisionLengthKeyword):
 				cfg->setRequestedCellDivisionLength(parser.argd(1));
 				break;
-			case (ConfigurationBlock::CellLengthsKeyword):
-				cfg->setRelativeBoxLengths(parser.arg3d(1));
+			case (ConfigurationBlock::EndConfigurationKeyword):
+				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
+				blockDone = true;
 				break;
-			case (ConfigurationBlock::DensityKeyword):
-				// Determine units given
-				if (DissolveSys::sameString(parser.argc(2),"atoms/A3")) cfg->setAtomicDensity(parser.argd(1));
-				else if (DissolveSys::sameString(parser.argc(2),"g/cm3")) cfg->setChemicalDensity(parser.argd(1));
-				else
+			case (ConfigurationBlock::GeneratorKeyword):
+				if (!cfg->generator().read(parser, dissolve->coreData()))
 				{
-					Messenger::error("Unrecognised density unit given - '%s'\nValid values are 'atoms/A3' or 'g/cm3'.\n", parser.argc(2));
+					Messenger::error("Failed to read generator procedure for Configuration.\n");
 					error = true;
 				}
 				break;
-			case (ConfigurationBlock::EndConfigurationKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
-				blockDone = true;
-				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
-				if (!cfg->inputCoordinates().read(parser, 1))
+				if (!cfg->inputCoordinates().read(parser, 1, CharString("End%s", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)), dissolve->coreData()))
 				{
 					Messenger::error("Failed to set input coordinates file / format.\n");
 					error = true;
 					break;
 				}
-				Messenger::print("Initial coordinates will be loaded from file '%s' (%s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
+				Messenger::printVerbose("Initial coordinates will be loaded from file '%s' (%s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name, so try to create an instance of that Module
@@ -145,7 +100,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				}
 
 				// Add the new instance to the current Configuration
-				if (cfg->addModule(module))
+				if (cfg->ownModule(module))
 				{
 					// Add our pointer to the Module's list of associated Configurations
 					if (!module->addTargetConfiguration(cfg))
@@ -184,66 +139,16 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				// Parse rest of Module block
 				module->setConfigurationLocal(true);
 				if (!ModuleBlock::parse(parser, dissolve, module, cfg->moduleData(), true)) error = true;
-				break;
-			case (ConfigurationBlock::MultiplierKeyword):
-				cfg->setMultiplier(parser.argd(1));
-				Messenger::print("Set Configuration contents multiplier to %i.\n", cfg->multiplier());
-				break;
-			case (ConfigurationBlock::NonPeriodicKeyword):
-				cfg->setNonPeriodic(true);
-				Messenger::print("Flag set for a non-periodic calculation.\n");
-				break;
-			case (ConfigurationBlock::RDFBinWidthKeyword):
-				cfg->setRDFBinWidth(parser.argd(1));
-				break;
-			case (ConfigurationBlock::RDFRangeKeyword):
-				cfg->setRequestedRDFRange(parser.argd(1));
+				else if (!module->setUp(*dissolve, dissolve->worldPool())) error = true;
 				break;
 			case (ConfigurationBlock::SizeFactorKeyword):
 				cfg->setRequestedSizeFactor(parser.argd(1));
 				break;
-			case (ConfigurationBlock::SpeciesInfoKeyword):
-				sp = dissolve->findSpecies(parser.argc(1));
-				if (sp == NULL)
-				{
-					Messenger::error("Configuration refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
-					error = true;
-				}
-				else
-				{
-					// Are we already using this species
-					if (cfg->hasUsedSpecies(sp))
-					{
-						Messenger::error("Configuration already uses Species '%s' - cannot add it a second time.\n", sp->name());
-						error = true;
-					}
-
-					// Add this species to the list of those used by the Configuration
-					spInfo = cfg->addUsedSpecies(sp, parser.hasArg(2) ? parser.argd(2) : 1.0);
-
-					// If no population was given, assume that a block will follow with additional information
-					if (!parser.hasArg(2))
-					{
-						if (!SpeciesInfoBlock::parse(parser, dissolve, spInfo))
-						{
-							error = true;
-							break;
-						}
-					}
-
-					Messenger::print("Set composition for Species '%s' (relative population = %f).\n", sp->name(), spInfo->population());
-				}
-				break;
 			case (ConfigurationBlock::TemperatureKeyword):
 				cfg->setTemperature(parser.argd(1));
 				break;
-			case (ConfigurationBlock::nConfigurationKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::ConfigurationBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), ConfigurationBlock::keyword(conKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -258,7 +163,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
 		error = true;
 	}
 

@@ -1,6 +1,6 @@
 /*
-	*** Dissolve GUI - Main Stack Functions
-	*** src/gui/gui_stack.cpp
+	*** Dissolve GUI - Start Page Functions
+	*** src/gui/gui_start.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -20,35 +20,51 @@
 */
 
 #include "gui/gui.h"
+#include "main/dissolve.h"
+
+/*
+ * Create
+ */
+
+void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
+{
+	ui_.FileNewAction->trigger();
+}
+
+void DissolveWindow::on_StartCreateFromTemplateButton_clicked(bool checked)
+{
+	ui_.FileNewFromTemplateAction->trigger();
+}
+
+/*
+ * Open / Connect
+ */
 
 void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
 {
-	ui.SessionOpenLocalAction->trigger();
-}
-
-void DissolveWindow::on_StartOpenRemoteButton_clicked(bool checked)
-{
+	ui_.FileOpenLocalAction->trigger();
 }
 
 void DissolveWindow::on_StartOpenRecentButton_clicked(bool checked)
 {
+	ui_.FileOpenRecentAction->trigger();
 }
 
-void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
+void DissolveWindow::on_StartConnectButton_clicked(bool checked)
 {
-	ui.SessionNewAction->trigger();
+	ui_.FileConnectAction->trigger();
 }
 
-void DissolveWindow::on_StartSetupWizardButton_clicked(bool checked)
+/*
+ * Help
+ */
+
+void DissolveWindow::on_StartOnlineManualButton_clicked(bool checked)
 {
+	ui_.HelpOnlineManualAction->trigger();
 }
 
-void DissolveWindow::on_StartQuickStartButton_clicked(bool checked)
+void DissolveWindow::on_StartOnlineTutorialsButton_clicked(bool checked)
 {
-	ui.HelpViewQuickStartGuideAction->trigger();
-}
-
-void DissolveWindow::on_StartRunTutorialButton_clicked(bool checked)
-{
-	ui.HelpRunATutorialAction->trigger();
+	ui_.HelpOnlineTutorialsAction->trigger();
 }
