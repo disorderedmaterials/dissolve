@@ -9,7 +9,7 @@ noinst_HEADERS += objectstore.h ordereddaoarray.h orderedlist.h orderedpointerar
 noinst_HEADERS += pair.h pointerarray.h
 noinst_HEADERS += refdatalist.h reflist.h
 noinst_HEADERS += simplex.h
-noinst_HEADERS += variantpointer.h vector3.h vector4.h
+noinst_HEADERS += variantpointer.h vector3.h vector4.h venum.h
 
 AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@
 
