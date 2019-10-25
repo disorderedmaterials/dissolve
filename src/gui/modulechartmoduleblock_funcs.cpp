@@ -285,6 +285,8 @@ void ModuleChartModuleBlock::on_FrequencySpin_valueChanged(int value)
 	module_->setFrequency(value);
 
 	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
+
+	dissolveWindow_->setModified();
 }
 
 void ModuleChartModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)
