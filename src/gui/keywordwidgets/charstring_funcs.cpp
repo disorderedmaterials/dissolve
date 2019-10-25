@@ -48,7 +48,7 @@ void CharStringKeywordWidget::myTextChanged(const QString& text)
 
 	keyword_->setData(qPrintable(text));
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

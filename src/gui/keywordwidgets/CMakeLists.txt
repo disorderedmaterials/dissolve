@@ -5,6 +5,7 @@
 SET(keywordwidgets_MOC_HDRS
   atomtypeselection.h
   broadeningfunction.h
+  dialog.h
   dropdown.h
   expressionvariablelist.h
   fileandformat.h
@@ -31,6 +32,8 @@ SET(keywordwidgets_MOC_HDRS
   enumoptions.hui
   integer.hui
   species.hui
+  widget.hui
+
   windowfunction.hui
 )
 QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
@@ -39,6 +42,7 @@ QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 SET(keywordwidgets_UIS
   atomtypeselection.ui
   broadeningfunction.ui
+  dialog.ui
   dropdown.ui
   expressionvariablelist.ui
   fileandformat.ui
@@ -67,6 +71,7 @@ SET(keywordwidgets_SRCS
   bool_funcs.cpp
   broadeningfunction_funcs.cpp
   charstring_funcs.cpp
+  dialog_funcs.cpp
   double_funcs.cpp
   dropdown_funcs.cpp
   dropwidget_funcs.cpp
@@ -86,6 +91,7 @@ SET(keywordwidgets_SRCS
   species_funcs.cpp
   speciesreflist_funcs.cpp
   speciessitereflist_funcs.cpp
+  widget_funcs.cpp
   windowfunction_funcs.cpp
   vec3double_funcs.cpp
   vec3integer_funcs.cpp

@@ -50,10 +50,8 @@ class Data2DStore
 	RefDataList<Data2D,Data2DImportFileFormat> dataReferences_;
 
 	public:
-	// Load  data into store
-	bool addData(Data2DImportFileFormat fileAndFormat, const char* name);
-	// Load data into store using specified pool
-	bool addData(ProcessPool* pool, Data2DImportFileFormat fileAndFormat, const char* name);
+	// Add named data reference to store, reading file and format from specified parser / starting argument
+	bool addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData);
 	// Check to see if the named data is present in the store
 	bool containsData(const char* name) const;
 	// Return named data

@@ -66,7 +66,7 @@ void PairBroadeningFunctionKeywordWidget::functionRadioChanged(bool checked)
 
 	updateWidgetValues(coreData_);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 // Parameter value changed
@@ -76,7 +76,7 @@ void PairBroadeningFunctionKeywordWidget::functionParameterChanged(double value)
 
 	updateKeywordData();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

@@ -61,7 +61,7 @@ class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

@@ -83,6 +83,14 @@ class NodeAndIntegerKeywordBase
 	virtual int index() const = 0;
 	// Return whether index has been set
 	virtual bool indexSet() const = 0;
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	virtual int optionMask() const = 0;
 };
 
 // Keyword with ProcedureNode and integer index
@@ -193,6 +201,17 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	bool indexSet() const
 	{
 		return KeywordData< Pair<N*,int> >::data_.isBSet();
+	}
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	int optionMask() const
+	{
+		return KeywordBase::optionMask();
 	}
 
 

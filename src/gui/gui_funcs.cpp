@@ -24,8 +24,8 @@
 #include "gui/gui.h"
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
+#include "gui/layertab.h"
 #include "gui/moduletab.h"
-#include "gui/modulelayertab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "base/lineparser.h"
@@ -148,6 +148,7 @@ void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
 	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesBrowser, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesBrowser, SLOT(setTextColor(const QColor&)));
 }
 
 /*
@@ -310,10 +311,16 @@ void DissolveWindow::updateMenus()
 
 	// Species Menu
 	ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
 	ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
 
 	// Configuration Menu
 	ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+	ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+
+	// Layer Menu
+	ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
+	ui_.LayerDeleteAction->setEnabled(activeTab->type() == MainTab::LayerTabType);
 }
 
 // Perform full update of the GUI, including tab reconciliation

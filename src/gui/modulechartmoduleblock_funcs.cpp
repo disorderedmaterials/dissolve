@@ -22,7 +22,8 @@
 #include "gui/modulechartmoduleblock.h"
 #include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets.h"
+#include "gui/modulewidget.h"
+#include "gui/keywordwidgets/widgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "templates/variantpointer.h"
@@ -50,6 +51,7 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	// Set up our keywords widget
 	ui.ModuleKeywordsWidget->setUp(module_->keywords(), dissolveWindow_->dissolve().coreData());
 	connect(ui.ModuleKeywordsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 
 	// Set the icon label
 	ui.IconLabel->setPixmap(modulePixmap(module_));
@@ -65,6 +67,17 @@ ModuleChartModuleBlock::~ModuleChartModuleBlock()
 /*
  * Module
  */
+
+// Run the set-up stage of the associated Module
+void ModuleChartModuleBlock::setUpModule()
+{
+	if (!module_) return;
+
+	// Run the Module's set-up stage
+	module_->setUp(dissolve_, dissolve_.worldPool());
+
+	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
+}
 
 // Return associated Module
 Module* ModuleChartModuleBlock::module()
@@ -136,6 +149,12 @@ void ModuleChartModuleBlock::setSettingsExpanded(bool expanded, bool permanent)
 void ModuleChartModuleBlock::hideRemoveButton()
 {
 	ui.RemoveButton->setVisible(false);
+}
+
+// Hide the settings button (e.g. when shown in a ModuleTab)
+void ModuleChartModuleBlock::hideSettingsButton()
+{
+	ui.ToggleSettingsButton->setVisible(false);
 }
 
 // Update controls within widget
@@ -266,6 +285,8 @@ void ModuleChartModuleBlock::on_FrequencySpin_valueChanged(int value)
 	module_->setFrequency(value);
 
 	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
+
+	dissolveWindow_->setModified();
 }
 
 void ModuleChartModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)

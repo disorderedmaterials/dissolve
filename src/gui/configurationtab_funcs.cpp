@@ -184,7 +184,7 @@ void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 	if (refreshing_) return;
 }
 
-void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
+void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 {
 	// Are we sure that's what we want to do?
 	QMessageBox queryBox;
@@ -196,7 +196,7 @@ void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
 
 	if (ret == QMessageBox::Yes)
 	{
-		configuration_->generate(dissolve_.worldPool());
+		configuration_->initialiseContent(dissolve_.worldPool(), dissolve_.pairPotentialRange(), true);
 		updateControls();
 	}
 }

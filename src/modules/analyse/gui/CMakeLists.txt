@@ -39,3 +39,4 @@ target_include_directories(${lib_name} PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
+add_dependencies(${lib_name} gui)

@@ -50,7 +50,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 }
 
 // Update controls within widget
-void CalculateRDFModuleWidget::updateControls()
+void CalculateRDFModuleWidget::updateControls(int flags)
 {
 	ui.RDFPlotWidget->updateToolbar();
 

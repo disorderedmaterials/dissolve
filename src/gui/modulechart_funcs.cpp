@@ -823,7 +823,14 @@ void ModuleChart::removeModule(QString uniqueName)
 	if (ret == QMessageBox::Yes)
 	{
 		modules_.cut(module);
+
+		// If the Module is currently displayed in its own ModuleTab, remove that first
+		dissolveWindow_->removeModuleTab(module);
+
+		// Remove the Module instance
 		dissolveWindow_->dissolve().deleteModuleInstance(module);
+
+		dissolveWindow_->setModified();
 		updateControls();
 	}
 }

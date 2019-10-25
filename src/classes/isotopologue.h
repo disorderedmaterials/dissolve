@@ -74,7 +74,7 @@ class Isotopologue : public ListItem<Isotopologue>
 	
 	public:
 	// Update AtomType/Isotope RefList
-	void update(const List<AtomType>& atomTypes);
+	void update();
 	// Set AtomType/Isotope pair in list
 	bool setAtomTypeIsotope(AtomType* at, Isotope* isotope);
 	// Return Isotope for specified AtomType

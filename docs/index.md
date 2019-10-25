@@ -69,58 +69,61 @@ All of Dissolve's modules - their purpose, options, and inner workings.
 TODO
 {: .label .label-red }
 
-[Overview](modules/index.md){: .btn .btn-blue}
+[Overview](modules/index/index.md){: .btn .btn-blue}
 
 ### Analysis
 Calculation of properties of interest from configurations.
 
 #### General
-[Analyse](modules/analyse.md){: .btn .btn-outline}
+[Analyse](modules/analyse/index.md){: .btn .btn-outline}
 
-#### Two-Body Correlation Functions
-[CalculateRDF](modules/calculateRDF.md){: .btn .btn-outline}
+#### Two-Centre Correlation Functions
+[CalculateRDF](modules/calculaterdf/index.md){: .btn .btn-outline}
+
+#### Three-Centre Correlation Functions
+[CalculateDAngle](modules/calculatedangle/index.md){: .btn .btn-outline}
 
 ### Checks & Tests
 Modules for checking, testing, and ensuring consistency.
 
-[Checks](modules/checks.md){: .btn .btn-outline}
-[DataTest](modules/dataTest.md){: .btn .btn-outline}
-[SanityCheck](modules/sanityCheck.md){: .btn .btn-outline}
+[Checks](modules/checks/index.md){: .btn .btn-outline}
+[DataTest](modules/datatest/index.md){: .btn .btn-outline}
+[SanityCheck](modules/sanitycheck/index.md){: .btn .btn-outline}
 
 ### Correlation Functions
 Methods to calculate real- and reciprocal-space correlation functions.
 
-[NeutronSQ](modules/neutronSQ.md){: .btn .btn-outline}
-[RDF](modules/rDF.md){: .btn .btn-outline}
-[SQ](modules/sQ.md){: .btn .btn-outline}
+[NeutronSQ](modules/neutronsq/index.md){: .btn .btn-outline}
+[RDF](modules/rdf/index.md){: .btn .btn-outline}
+[SQ](modules/sq/index.md){: .btn .btn-outline}
 
 ### Evolution
 Methods to evolve the coordinates of configurations.
 
-[AtomShake](modules/atomShake.md){: .btn .btn-outline}
-[IntraShake](modules/intraShake.md){: .btn .btn-outline}
-[MD](modules/mD.md){: .btn .btn-outline}
-[MolShake](modules/molShake.md){: .btn .btn-outline}
+[AtomShake](modules/atomshake/index.md){: .btn .btn-outline}
+[IntraShake](modules/intrashake/index.md){: .btn .btn-outline}
+[MD](modules/md/index.md){: .btn .btn-outline}
+[MolShake](modules/molshake/index.md){: .btn .btn-outline}
 
 ### Forcefield
 Energy evaluation, force calculation, and forcefield modification.
 
-[Energy](modules/energy.md){: .btn .btn-outline}
+[Energy](modules/energy/index.md){: .btn .btn-outline}
 [EPSR](modules/EPSR.md){: .btn .btn-outline}
-[Forces](modules/forces.md){: .btn .btn-outline}
-[Refine](modules/refine.md){: .btn .btn-outline}
+[Forces](modules/forces/index.md){: .btn .btn-outline}
+[Refine](modules/refine/index.md){: .btn .btn-outline}
 
 ### Input & Output
 Import and export various data, including configuration coordinates and trajectories.
 
-[Export](modules/export.md){: .btn .btn-outline}
-[Import](modules/import.md){: .btn .btn-outline}
+[Export](modules/export/index.md){: .btn .btn-outline}
+[Import](modules/import/index.md){: .btn .btn-outline}
 
 ### Optimisation
 Minimisation and fitting modules.
 
-[Calibrate](modules/calibrate.md){: .btn .btn-outline}
-[GeometryOptimisation](modules/geometryoptimisation.md){: .btn .btn-outline}
+[Calibrate](modules/calibrate/index.md){: .btn .btn-outline}
+[GeometryOptimisation](modules/geometryoptimisation/index.md){: .btn .btn-outline}
 
 * * *
 ## Developer Documentation

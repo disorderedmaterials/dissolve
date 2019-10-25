@@ -314,8 +314,10 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(spInfo->species())) 
 		{
-			Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", spInfo->species()->name(), cfg->name());
-			return false;
+			Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing - natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
+
+			Species* sp = spInfo->species();
+			weights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
 		}
 
 		// Create, print, and store weights

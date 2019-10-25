@@ -47,6 +47,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Automaticallly add entries for missing species based on the targetted configurations</string>
+       </property>
        <property name="text">
         <string>Auto</string>
        </property>
@@ -80,11 +83,17 @@
      </item>
      <item>
       <widget class="QToolButton" name="RemoveButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Remove the currently-selected isotopologue reference</string>
        </property>
        <property name="text">
         <string>Remove</string>
@@ -115,6 +124,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Add a new isotopologue reference</string>
+       </property>
        <property name="text">
         <string>Add</string>
        </property>
@@ -137,6 +149,9 @@
    </item>
    <item>
     <widget class="QTableWidget" name="IsotopologueTable">
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
      <attribute name="horizontalHeaderVisible">
       <bool>true</bool>
      </attribute>

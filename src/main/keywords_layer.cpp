@@ -29,7 +29,7 @@
 EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 {
 	static EnumOptionsList LayerKeywords = EnumOptionsList() <<
-		EnumOption(LayerBlock::EnabledKeyword, 		"Enabled",	1) <<
+		EnumOption(LayerBlock::DisabledKeyword, 	"Disabled") <<
 		EnumOption(LayerBlock::EndLayerKeyword, 	"EndLayer") <<
 		EnumOption(LayerBlock::FrequencyKeyword,	"Frequency",	1) <<
 		EnumOption(LayerBlock::ModuleKeyword, 		"Module",	EnumOption::OptionalSecondArgument);
@@ -61,8 +61,8 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-			case (LayerBlock::EnabledKeyword):
-				layer->setEnabled(parser.argb(1));
+			case (LayerBlock::DisabledKeyword):
+				layer->setEnabled(false);
 				break;
 			case (LayerBlock::EndLayerKeyword):
 				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));

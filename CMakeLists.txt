@@ -177,7 +177,7 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module export import procedure procedurenodes keywords expression genericitems base math data ff
+  main classes module io export import procedure procedurenodes keywords expression genericitems base math data ff
 
   # Modules
   analysemodule

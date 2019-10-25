@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.0 at 12:57:11 on 08-05-2019.
+# Input file written by Dissolve v0.4.3 at 21:45:57 on 24-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -6,10 +6,7 @@
 
 Species 'Ar'
   # Atoms
-  Atom    1   Ar     0.000     0.000     0.000  'Ar'
-
-  # Isotopologues
-  Isotopologue  'Argon36'    Ar=36
+  Atom    1   Ar     0.000     0.000     0.000  'Ar'     0.000
 EndSpecies
 
 #------------------------------------------------------------------------------#
@@ -18,15 +15,12 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  # Note: These are for reference only (unless GenerateAll is used).
-  # If you wish to modify the potential, change the relevant Generate lines below.
-  Parameters  Ar  0.000000e+00  9.790000e-01  3.401000e+00  0.000000e+00  0.000000e+00
-  GenerateAll  LJ
-  Range  15.000000
+  Parameters  Ar  0.000000e+00  LJGeometric  9.786380e-01  3.401000e+00  0.000000e+00  0.000000e+00
+  Range  10.000000
   Delta  0.005000
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
-  Generate  LJ  Ar  Ar  0.000000e+00  0.000000e+00  9.790000e-01  3.401000e+00  0.000000e+00  0.000000e+00
+#  ENUMERATION_NOT_VALID  LJGeometric  Ar  Ar  0.000000e+00  0.000000e+00  9.786380e-01  3.401000e+00  0.000000e+00  0.000000e+00
 EndPairPotentials
 
 #------------------------------------------------------------------------------#
@@ -34,18 +28,24 @@ EndPairPotentials
 #------------------------------------------------------------------------------#
 
 Configuration  'Bulk'
+
+  # Modules
   Generator
     Parameters
-      Integer  multiplier  1000
+      Real  rho  2.130000e-02
     EndParameters
     Box
-      Angles  90.0  90.0  90.0
-      Lengths  1.0  1.0  1.0
+      Lengths  1.000000e+00  1.000000e+00  1.000000e+00
+      Angles  9.000000e+01  9.000000e+01  9.000000e+01
+      NonPeriodic  False
     EndBox
     AddSpecies
       Species  'Ar'
-      Population  multiplier
-      Density  0.0213  atoms/A3
+      Population  '1000'
+      ScaleBox  True
+      Density  'rho'  atoms/A3
+      Rotate  True
+      Positioning  Random
     EndAddSpecies
   EndGenerator
 
@@ -59,10 +59,18 @@ EndConfiguration
 #                              Processing Layers                               #
 #------------------------------------------------------------------------------#
 
-Layer  'Main Processing'
+Layer  'Evolve (Atomic)'
+  Frequency  1
 
   Module  AtomShake  'AtomShake01'
     Frequency  1
+
+    Configuration  'Bulk'
+    StepSize   4.35823e-01
+  EndModule
+
+  Module  MD  'MD01'
+    Frequency  5
 
     Configuration  'Bulk'
   EndModule
@@ -72,27 +80,33 @@ Layer  'Main Processing'
 
     Configuration  'Bulk'
   EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  5
 
   Module  RDF  'RDF01'
-    Frequency  5
+    Frequency  1
 
     Configuration  'Bulk'
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
-    Frequency  5
+    Frequency  1
 
     Configuration  'Bulk'
-
-    Isotopologue  'Bulk'  'Ar'  'Argon36'  1.000000
-
-    Reference  xy  'data/yarnell.sq'  removeaverage=10.0
+    Reference  xy  'data/yarnell.sq'
+      RemoveAverage   9.00000e+00
+    EndReference
     ReferenceNormalisation  AverageSquared
   EndModule
+EndLayer
+
+Layer  'Refine (EPSR)'
+  Frequency  5
 
   Module  EPSR  'EPSR01'
-    Frequency  5
-
+    Frequency  1
     Target  'NeutronSQ01'  'Default'
   EndModule
 EndLayer

@@ -43,7 +43,7 @@ class Species;
 class SpeciesTab;
 class ModuleTab;
 class ModuleLayer;
-class ModuleLayerTab;
+class LayerTab;
 class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
@@ -179,13 +179,26 @@ class DissolveWindow : public QMainWindow
 	void on_SpeciesImportDissolveAction_triggered(bool checked);
 	void on_SpeciesRenameAction_triggered(bool checked);
 	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
+	void on_SpeciesDeleteAction_triggered(bool checked);
 	// Configuration
 	void on_ConfigurationCreateEmptyAction_triggered(bool checked);
 	void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
 	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
 	void on_ConfigurationRenameAction_triggered(bool checked);
+	void on_ConfigurationDeleteAction_triggered(bool checked);
+	void on_ConfigurationExportToXYZAction_triggered(bool checked);
 	// Layer
-	void on_LayerAddAction_triggered(bool checked);
+	void on_LayerCreateEmptyAction_triggered(bool checked);
+	void on_LayerCreateEvolutionMolecularAction_triggered(bool checked);
+	void on_LayerCreateEvolutionAtomicAction_triggered(bool checked);
+	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
+	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
+	void on_LayerRenameAction_triggered(bool checked);
+	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	// Help
@@ -278,7 +291,7 @@ class DissolveWindow : public QMainWindow
 	// List of Configuration tabs
 	List<ConfigurationTab> configurationTabs_;
 	// List of processing layer tabs
-	List<ModuleLayerTab> processingLayerTabs_;
+	List<LayerTab> processingLayerTabs_;
 	// List of Module tabs
 	List<ModuleTab> moduleTabs_;
 	// List of Workspace tabs
@@ -304,8 +317,8 @@ class DissolveWindow : public QMainWindow
 	SpeciesTab* speciesTab(QWidget* page);
 	// Find ConfigurationTab containing specified page widget
 	ConfigurationTab* configurationTab(QWidget* page);
-	// Find ModuleLayerTab containing specified page widget
-	ModuleLayerTab* processingLayerTab(QWidget* page);
+	// Find LayerTab containing specified page widget
+	LayerTab* processingLayerTab(QWidget* page);
 	// Find ModuleTab containing specified page widget
 	ModuleTab* moduleTab(QWidget* page);
 	// Find ModuleTab containing specified Module
@@ -332,11 +345,14 @@ class DissolveWindow : public QMainWindow
 	Species* currentSpecies() const;
 	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
 	Configuration* currentConfiguration() const;
-
+	// Return currently-selected ModuleLayer (if a LayerTab is the current one)
+	ModuleLayer* currentLayer() const;
 
 	public:
 	// Add tab for specified Module target
 	MainTab* addModuleTab(Module* module);
+	// Remove the ModuleTab for the specifeid Module, if it exists
+	void removeModuleTab(Module* module);
 
 	public slots:
 	// Remove tab containing the specified page widget

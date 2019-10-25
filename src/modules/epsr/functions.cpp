@@ -38,6 +38,16 @@ const ModuleGroups& EPSRModule::groupedTargets() const
 	return groupedTargets_;
 }
 
+// Add target Modules
+void EPSRModule::addTargets(RefList<Module> targets, const char* groupName)
+{
+	RefListIterator<Module> targetIterator(targets);
+	while (Module* module = targetIterator.iterate()) groupedTargets_.addModule(module, groupName);
+
+	// Must flag that the associated keyword has been set by other means
+	if (targets.nItems() > 0) keywords_.hasBeenSet("Target");
+}
+
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D< Array<double> >& EPSRModule::potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp)
 {

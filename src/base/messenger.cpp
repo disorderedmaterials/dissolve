@@ -192,9 +192,11 @@ bool Messenger::error(const char* fmt, ...)
 	va_start(arguments,fmt);
 
 	outputText("\n");
+	if (outputHandler_) outputHandler_->styleForError();
 	createAndPrintText("***  ERROR");
 	createAndPrintText("***  ERROR    ", fmt, arguments);
 	createAndPrintText("***  ERROR");
+	if (outputHandler_) outputHandler_->resetStyling();
 	outputText("\n");
 
 	va_end(arguments);
@@ -210,9 +212,11 @@ void Messenger::warn(const char* fmt, ...)
 	va_list arguments;
 	va_start(arguments, fmt);
 
+	if (outputHandler_) outputHandler_->styleForWarning();
 	outputText("\n!!! WARNING\n");
 	createAndPrintText("!!! WARNING   ", fmt, arguments);
 	outputText("!!! WARNING\n\n");
+	if (outputHandler_) outputHandler_->resetStyling();
 
 	va_end(arguments);
 }

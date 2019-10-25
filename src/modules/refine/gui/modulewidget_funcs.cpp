@@ -134,7 +134,7 @@ RefineModuleWidget::~RefineModuleWidget()
 }
 
 // Update controls within widget
-void RefineModuleWidget::updateControls()
+void RefineModuleWidget::updateControls(int flags)
 {
 	refreshing_ = true;
 

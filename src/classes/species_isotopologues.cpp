@@ -24,18 +24,31 @@
 #include <string.h>
 
 // Update current Isotopologues
-void Species::updateIsotopologues(const List<AtomType>& atomTypes)
+void Species::updateIsotopologues()
 {
-	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update(atomTypes);
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update();
+}
+
+// Update and return natural isotopologue
+Isotopologue* Species::naturalIsotopologue()
+{
+	if (naturalIsotopologuePoint_ != atomTypesVersion_)
+	{
+		naturalIsotopologue_.update();
+
+		naturalIsotopologuePoint_ = atomTypesVersion_;
+	}
+
+	return &naturalIsotopologue_;
 }
 
 // Add a new Isotopologue to this species
-Isotopologue* Species::addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes)
+Isotopologue* Species::addIsotopologue(const char* baseName)
 {
 	Isotopologue* iso = isotopologues_.add();
 	iso->setParent(this);
 	iso->setName(uniqueIsotopologueName(baseName));
-	iso->update(masterAtomTypes);
+	iso->update();
 
 	return iso;
 }
@@ -70,20 +83,14 @@ const List<Isotopologue>& Species::isotopologues() const
 	return isotopologues_;
 }
 
-// Return nth Isotopologue defined
-Isotopologue* Species::isotopologue(int n)
-{
-	return isotopologues_[n];
-}
-
 // Return whether the specified Isotopologue exists
-bool Species::hasIsotopologue(Isotopologue* iso) const
+bool Species::hasIsotopologue(const Isotopologue* iso) const
 {
 	return isotopologues_.contains(iso);
 }
 
 // Generate unique Isotopologue name with base name provided
-const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* exclude) const
+const char* Species::uniqueIsotopologueName(const char* base, const Isotopologue* exclude) const
 {
 	static CharString uniqueName;
 	CharString baseName = base;
@@ -93,6 +100,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
 	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
+	if (DissolveSys::sameString(baseName, "Natural")) highest = 0;
 	for (iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
 		if (iso == exclude) continue;
@@ -106,9 +114,13 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 }
 
 // Search for Isotopologue by name
-Isotopologue* Species::findIsotopologue(const char* name) const
+Isotopologue* Species::findIsotopologue(const char* name)
 {
+	// Check for the natural Isotopologue
+	if (DissolveSys::sameString("Natural", name)) return naturalIsotopologue();
+
 	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next()) if (DissolveSys::sameString(name, iso->name())) return iso;
+
 	return NULL;
 }
 

@@ -26,8 +26,8 @@
 void ExportModule::initialise()
 {
 	// Export
-	keywords_.add("Export", new FileAndFormatKeyword(coordinatesFormat_), "WriteCoordinates", "Write coordinates for the Configuration targets");
-	keywords_.add("Export", new FileAndFormatKeyword(pairPotentialFormat_), "WritePairPotentials", "Write all pair potentials to supplied basename");
-	keywords_.add("Export", new FileAndFormatKeyword(trajectoryFormat_), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
+	keywords_.add("Export", new FileAndFormatKeyword(coordinatesFormat_, "EndWriteCoordinates"), "WriteCoordinates", "Write coordinates for the Configuration targets");
+	keywords_.add("Export", new FileAndFormatKeyword(pairPotentialFormat_, "EndWritePairPotentials"), "WritePairPotentials", "Write all pair potentials to supplied basename");
+	keywords_.add("Export", new FileAndFormatKeyword(trajectoryFormat_, "EndWriteTrajectory"), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
 }
 

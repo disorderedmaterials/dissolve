@@ -71,6 +71,14 @@ class NodeValueEnumOptionsBaseKeyword
 	virtual bool setValue(const char* expressionText) = 0;
 	// Set new option index, informing KeywordBase
 	virtual bool setEnumerationByIndex(int optionIndex) = 0;
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	virtual int optionMask() const = 0;
 };
 
 // Keyword with NodeValue and EnumOptions
@@ -125,7 +133,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 			// Now the enum option
 			if (!KeywordData< Venum<NodeValue,E> >::data_.setEnumeration(parser.argc(startArg+1))) return false;
 
-			KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+			KeywordData< Venum<NodeValue,E> >::hasBeenSet();
 
 			return true;
 		}
@@ -150,7 +158,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 
 		bool result = KeywordData< Venum<NodeValue,E> >::data_.value().set(expressionText, parentNode_->parametersInScope());
 
-		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+		KeywordData< Venum<NodeValue,E> >::hasBeenSet();
 
 		return result;
 	}
@@ -159,9 +167,20 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	{
 		bool result = KeywordData< Venum<NodeValue,E> >::data_.setEnumerationByIndex(optionIndex);
 
-		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+		KeywordData< Venum<NodeValue,E> >::hasBeenSet();
 
 		return result;
+	}
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	int optionMask() const
+	{
+		return KeywordBase::optionMask();
 	}
 
 

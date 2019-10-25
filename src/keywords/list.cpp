@@ -220,6 +220,20 @@ bool KeywordList::isSet(const char* name) const
 	return keyword->isSet();
 }
 
+// Flag that the specified keyword has been set by some external means
+void KeywordList::hasBeenSet(const char* name)
+{
+	// Find the named keyword
+	KeywordBase* keyword = find(name);
+	if (!keyword)
+	{
+		Messenger::warn("No Module keyword named '%s' exists to check whether it is set. Returning 'false'...\n", name);
+		return;
+	}
+
+	keyword->hasBeenSet();
+}
+
 /*
  * Read / Write
  */

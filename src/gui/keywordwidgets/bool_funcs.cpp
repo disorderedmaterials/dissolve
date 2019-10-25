@@ -49,7 +49,7 @@ void BoolKeywordWidget::myClicked(bool checked)
 
 	keyword_->setData(checked);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

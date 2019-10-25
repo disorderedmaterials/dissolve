@@ -78,7 +78,7 @@ void SpeciesRefListKeywordWidget::itemChanged(QListWidgetItem* item)
 
 	updateSummaryText();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

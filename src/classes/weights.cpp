@@ -110,8 +110,8 @@ void Weights::print() const
 	Messenger::print("  ------------------------------------------------------\n");
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
 	{
-		RefDataListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
-		while (Isotopologue* tope = topeIterator.iterate())
+		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->name(), mix->speciesPopulation(), topeIterator.currentData());
 			else Messenger::print("                   %-15s              %f\n", tope->name(), topeIterator.currentData());
@@ -205,8 +205,8 @@ void Weights::calculateWeightingMatrices()
 		}
 
 		// Loop over Isotopologues defined for this mixture
-		RefDataListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
-		while (Isotopologue* tope = topeIterator.iterate())
+		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
 			double weight = speciesWeight * topeIterator.currentData();
@@ -286,8 +286,8 @@ void Weights::createFromIsotopologues(const AtomTypeList& exchangeableTypes)
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
 	{
 		// We must now loop over the Isotopologues in the mixture
-		RefDataListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
-		while (Isotopologue* tope = topeIterator.iterate())
+		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
 			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next())

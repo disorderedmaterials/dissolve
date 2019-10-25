@@ -74,7 +74,7 @@ void BroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int inde
 
 	updateWidgetValues(coreData_);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 // Parameter value changed
@@ -84,7 +84,7 @@ void BroadeningFunctionKeywordWidget::parameterSpin_valueChanged(double value)
 
 	updateKeywordData();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

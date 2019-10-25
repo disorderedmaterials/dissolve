@@ -201,6 +201,19 @@ template <class T, class D> class RefDataList
 		return nItems_;
 	}
 	// Append reference to the list
+	RefDataItem<T,D>* append(T* item)
+	{
+		RefDataItem<T,D>* newitem = new RefDataItem<T,D>;
+		// Add the pointer to the list
+		listHead_ == NULL ? listHead_ = newitem : listTail_->next_ = newitem;
+		newitem->prev_ = listTail_;
+		listTail_ = newitem;
+		newitem->item_ = item;
+		++nItems_;
+		regenerate_ = true;
+		return newitem;
+	}
+	// Append reference to the list with data
 	RefDataItem<T,D>* append(T* item, D data)
 	{
 		RefDataItem<T,D>* newitem = new RefDataItem<T,D>;

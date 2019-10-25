@@ -65,7 +65,7 @@ int IsotopologueMix::speciesPopulation() const
 void IsotopologueMix::update()
 {
 	// Go through list of Isotopologues present in this mix, removing any that no longer exist
-	RefDataItem<Isotopologue,double>* ri = mix_.first(), *next;
+	RefDataItem<const Isotopologue,double>* ri = mix_.first(), *next;
 	while (ri)
 	{
 		next = ri->next();
@@ -112,7 +112,7 @@ bool IsotopologueMix::addNextIsotopologue()
 }
 
 // Add specific Isotopologue to list
-bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
+bool IsotopologueMix::addIsotopologue(const Isotopologue* iso, double relPop)
 {
 	// Search current list to see if the specified Isotopologue already exists
 	if (hasIsotopologue(iso))
@@ -127,7 +127,7 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 }
 
 // Set Isotopologue component in list
-bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
+bool IsotopologueMix::setIsotopologue(const Isotopologue* iso, double relPop)
 {
 	// NULL Pointer?
 	if (iso == NULL)
@@ -137,7 +137,7 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	}
 	
 	// Find this Isotopologue in the list
-	RefDataItem<Isotopologue,double>* tope = mix_.contains(iso);
+	RefDataItem<const Isotopologue,double>* tope = mix_.contains(iso);
 	if (tope == NULL)
 	{
 		Messenger::warn("Warning: IsotopologueMix does not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
@@ -149,13 +149,13 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 }
 
 // Return Isotopologue components
-const RefDataList<Isotopologue,double>& IsotopologueMix::isotopologues() const
+const RefDataList<const Isotopologue,double>& IsotopologueMix::isotopologues() const
 {
 	return mix_;
 }
 
 // Return nth Isotopologue component
-RefDataItem<Isotopologue,double>* IsotopologueMix::isotopologue(int n)
+RefDataItem<const Isotopologue,double>* IsotopologueMix::isotopologue(int n)
 {
 	return mix_[n];
 }
@@ -167,7 +167,7 @@ int IsotopologueMix::nIsotopologues() const
 }
 
 // Return whether the mix contains the specified Isotopologue
-RefDataItem<Isotopologue,double>* IsotopologueMix::hasIsotopologue(Isotopologue* iso) const
+RefDataItem<const Isotopologue,double>* IsotopologueMix::hasIsotopologue(const Isotopologue* iso) const
 {
 	return mix_.contains(iso);
 }
@@ -177,8 +177,8 @@ double IsotopologueMix::totalRelative() const
 {
 	double total = 0.0;
 
-	RefDataListIterator<Isotopologue,double> topeIterator(mix_);
-	while (Isotopologue* tope = topeIterator.iterate()) total += topeIterator.currentData();
+	RefDataListIterator<const Isotopologue,double> topeIterator(mix_);
+	while (const Isotopologue* tope = topeIterator.iterate()) total += topeIterator.currentData();
 
 	return total;
 }
@@ -188,8 +188,8 @@ void IsotopologueMix::normalise()
 {
 	double total = totalRelative();
 
-	RefDataListIterator<Isotopologue,double> topeIterator(mix_);
-	while (Isotopologue* tope = topeIterator.iterate()) topeIterator.setCurrentData(topeIterator.currentData() / total);
+	RefDataListIterator<const Isotopologue,double> topeIterator(mix_);
+	while (const Isotopologue* tope = topeIterator.iterate()) topeIterator.setCurrentData(topeIterator.currentData() / total);
 }
 
 /*
@@ -239,8 +239,8 @@ bool IsotopologueMix::write(LineParser& parser)
 	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
 
 	// Write Isotopologues
-	RefDataListIterator<Isotopologue,double> mixIterator(mix_);
-	while (Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
+	RefDataListIterator<const Isotopologue,double> mixIterator(mix_);
+	while (const Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
 
 	return true;
 }

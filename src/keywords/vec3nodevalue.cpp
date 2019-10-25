@@ -72,7 +72,7 @@ bool Vec3NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData
 		if (!data_.y.set(parser.argc(startArg+1), parentNode_->parametersInScope())) return false;
 		if (!data_.z.set(parser.argc(startArg+2), parentNode_->parametersInScope())) return false;
 
-		dataHasBeenSet();
+		hasBeenSet();
 
 		return true;
 	}

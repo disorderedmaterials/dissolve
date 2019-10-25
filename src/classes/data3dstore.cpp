@@ -33,32 +33,25 @@ Data3DStore::~Data3DStore()
 {
 }
 
-// Load data into store
-bool Data3DStore::addData(Data3DImportFileFormat fileAndFormat, const char* name)
+/*
+ * Data
+ */
+
+// Add named data reference to store, reading file and format from specified parser / starting argument
+bool Data3DStore::addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData)
 {
 	// Create new data
 	Data3D* data = data_.add();
-	data->setName(name);
+	data->setName(dataName);
 
-	// Add reference
-	dataReferences_.append(data, fileAndFormat);
+	// Add reference to data
+	RefDataItem<Data3D,Data3DImportFileFormat>* ref = dataReferences_.append(data);
 
-	// Load the data
-	return fileAndFormat.importData(*data);
-}
-
-// Load data into store using specified pool
-bool Data3DStore::addData(ProcessPool* pool, Data3DImportFileFormat fileAndFormat, const char* name)
-{
-	// Create new data
-	Data3D* data = data_.add();
-	data->setName(name);
-
-	// Add reference
-	dataReferences_.append(data, fileAndFormat);
+	// Read the file / format
+	if (!ref->data().read(parser, startArg, endKeyword, coreData)) return false;
 
 	// Load the data
-	return fileAndFormat.importData(*data, pool);
+	return ref->data().importData(*data, parser.processPool());
 }
 
 // Check to see if the named data is present in the store

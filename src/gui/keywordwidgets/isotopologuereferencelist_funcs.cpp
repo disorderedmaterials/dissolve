@@ -50,6 +50,7 @@ IsotopologueReferenceListKeywordWidget::IsotopologueReferenceListKeywordWidget(Q
 	connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
 	connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
 	connect(ui_.IsotopologueTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(isotopologueTable_itemChanged(QTableWidgetItem*)));
+	connect(ui_.IsotopologueTable, SIGNAL(itemSelectionChanged()), this, SLOT(isotopologueTable_itemSelectionChanged()));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IsotopologueReferenceListKeyword*>(keyword);
@@ -97,15 +98,15 @@ void IsotopologueReferenceListKeywordWidget::autoButton_clicked(bool checked)
 		while (Species* sp = missingIterator.iterate())
 		{
 			IsotopologueReference* topeRef = topeReferences.add();
-			topeRef->set(missingIterator.currentData(), sp, sp->isotopologues().first());
+			topeRef->set(missingIterator.currentData(), sp, sp->naturalIsotopologue());
 		}
 
 		// Manually flag that the keyword data has changed
-		keyword_->dataHasBeenSet();
+		keyword_->hasBeenSet();
 
 		updateWidgetValues(coreData_);
 
-		emit(keywordValueChanged());
+		emit(keywordValueChanged(keyword_->optionMask()));
 	}
 }
 
@@ -121,34 +122,43 @@ void IsotopologueReferenceListKeywordWidget::addButton_clicked(bool checked)
 		if (spInfo)
 		{
 			isoRef->setSpecies(spInfo->species());
-			isoRef->setIsotopologue(spInfo->species()->isotopologues().first());
+			isoRef->setIsotopologue(spInfo->species()->naturalIsotopologue());
 		}
 	}
 
 	// Manually flag that the keyword data has changed
-	keyword_->dataHasBeenSet();
+	keyword_->hasBeenSet();
 
 	updateWidgetValues(coreData_);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void IsotopologueReferenceListKeywordWidget::removeButton_clicked(bool checked)
 {
 	if (!ui_.IsotopologueTable->currentItem()) return;
 
-	// Get target IsotopologueReference from the first column
-	IsotopologueReference* isoRef = VariantPointer<IsotopologueReference>(ui_.IsotopologueTable->currentItem()->data(Qt::UserRole));
-	if (!isoRef) return;
+	// Loop over rows in the table, checking the first column for its selection state
+	for (int n=0; n<ui_.IsotopologueTable->rowCount(); ++n)
+	{
+		// Get the item - if it isn't selected, continue
+		QTableWidgetItem* item = ui_.IsotopologueTable->item(n, 0);
+		if (!item->isSelected()) continue;
 
-	keyword_->data().remove(isoRef);
+		// Get target IsotopologueReference from the item
+		IsotopologueReference* isoRef = VariantPointer<IsotopologueReference>(item->data(Qt::UserRole));
+		if (!isoRef) return;
+
+		// Remove it from the data
+		keyword_->data().remove(isoRef);
+	}
 
 	// Manually flag that the keyword data has changed
-	keyword_->dataHasBeenSet();
+	keyword_->hasBeenSet();
 
 	updateWidgetValues(coreData_);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetItem* w)
@@ -186,9 +196,9 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 				if (speciesItem) speciesItem->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
 
 				// Manually flag that the keyword data has changed
-				keyword_->dataHasBeenSet();
+				keyword_->hasBeenSet();
 
-				emit(keywordValueChanged());
+				emit(keywordValueChanged(keyword_->optionMask()));
 			}
 			else Messenger::error("Couldn't find Configuration '%s'.\n", qPrintable(w->text()));
 			break;
@@ -213,9 +223,9 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 					if (topeItem) topeItem->setData(Qt::UserRole, VariantPointer<Species>(sp));
 
 					// Manually flag that the keyword data has changed
-					keyword_->dataHasBeenSet();
+					keyword_->hasBeenSet();
 
-					emit(keywordValueChanged());
+					emit(keywordValueChanged(keyword_->optionMask()));
 				}
 				else Messenger::error("Configuration '%s' doesn't contain Species '%s'.\n", cfg->name(), sp->name());
 			}
@@ -237,23 +247,28 @@ void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTabl
 			isoRef->setIsotopologue(iso);
 
 			// Manually flag that the keyword data has changed
-			keyword_->dataHasBeenSet();
+			keyword_->hasBeenSet();
 
-			emit(keywordValueChanged());
+			emit(keywordValueChanged(keyword_->optionMask()));
 			break;
 		// Weight
 		case (3):
 			isoRef->setWeight(w->text().toDouble());
 
 			// Manually flag that the keyword data has changed
-			keyword_->dataHasBeenSet();
+			keyword_->hasBeenSet();
 
-			emit(keywordValueChanged());
+			emit(keywordValueChanged(keyword_->optionMask()));
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", w->column());
 			break;
 	}
+}
+
+void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemSelectionChanged()
+{
+	ui_.RemoveButton->setEnabled(ui_.IsotopologueTable->selectedItems().count() > 0);
 }
 
 /*

@@ -20,6 +20,8 @@
 */
 
 #include "keywords/data1dstore.h"
+#include "io/import/data1d.h"
+#include "classes/data1dstore.h"
 #include "base/lineparser.h"
 
 // Constructor
@@ -55,11 +57,7 @@ bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
-	// Target data is named as the first argument - a FileAndFormat specifies the rest...
-	Data1DImportFileFormat ff;
-	if (!ff.read(parser, startArg+1)) return false;
-
-	if (!data_.addData(parser.processPool(), ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
+	if (!data_.addData(parser.argc(startArg), parser, startArg+1, CharString("End%s", name()), coreData)) return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 
@@ -73,8 +71,10 @@ bool Data1DStoreKeyword::write(LineParser& parser, const char* keywordName, cons
 	RefDataListIterator<Data1D,Data1DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data1D* data = dataIterator.iterate())
 	{
-		Data1DImportFileFormat ff = dataIterator.currentData();
-		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keywordName, data->name(), ff.asString())) return false;
+		Data1DImportFileFormat& ff = dataIterator.currentData();
+		if (!ff.writeFilenameAndFormat(parser, CharString("%s%s  '%s'  ", prefix, keywordName, data->name()))) return false;
+		if (!ff.writeBlock(parser, CharString("%s  ", prefix))) return false;
+		if (!parser.writeLineF("%sEnd%s\n", prefix, name())) return false;
 	}
 
 	return true;

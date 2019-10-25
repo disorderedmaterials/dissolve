@@ -36,7 +36,7 @@ AtomShakeModuleWidget::~AtomShakeModuleWidget()
 }
 
 // Update controls within widget
-void AtomShakeModuleWidget::updateControls()
+void AtomShakeModuleWidget::updateControls(int flags)
 {
 }
 

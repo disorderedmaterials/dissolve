@@ -27,6 +27,7 @@ Configuration  'Bulk'
   EndGenerator
 
   InputCoordinates  dlpoly  'dlpoly_intra/CONFIG'
+  EndInputCoordinates
 
   # Test analytical energy against production and reference energy
   Module Energy
@@ -39,6 +40,7 @@ Configuration  'Bulk'
   Module Forces
     Test on
     TestReference  dlpoly  'dlpoly_intra/REVCON'
+    EndTestReference
   EndModule
 EndConfiguration
 
@@ -53,11 +55,8 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'OW'  0.0        0.0      0.0
-  Parameters  'HW'  0.0        0.0      0.0
-  Generate  'LJ'  'OW'  'OW'
-  Generate  'LJ'  'OW'  'HW'
-  Generate  'LJ'  'HW'  'HW'
+  Parameters  'OW'  0.0    LJGeometric    0.0      0.0
+  Parameters  'HW'  0.0    LJGeometric    0.0      0.0
 EndPairPotentials
 
 Simulation

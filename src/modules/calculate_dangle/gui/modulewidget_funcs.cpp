@@ -73,7 +73,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 }
 
 // Update controls within widget
-void CalculateDAngleModuleWidget::updateControls()
+void CalculateDAngleModuleWidget::updateControls(int flags)
 {
 	ui.RDFPlotWidget->updateToolbar();
 	ui.AnglePlotWidget->updateToolbar();

@@ -36,8 +36,13 @@ Species* Dissolve::addSpecies()
 // Remove the specified Species from the list
 void Dissolve::removeSpecies(Species* sp)
 {
-	// Remove Species
-	coreData_.species().remove(sp);
+	if (!sp) return;
+
+	// Remove references to the Species itself
+	removeReferencesTo(sp);
+
+	// Now safe to remove the Species
+	coreData_.removeSpecies(sp);
 }
 
 // Return number of defined Species
@@ -62,32 +67,6 @@ Species* Dissolve::species(int n)
 Species* Dissolve::findSpecies(const char* name) const
 {
 	return coreData_.findSpecies(name);
-}
-
-// Update Species (or all) Isotopologues (or specified)
-void Dissolve::updateIsotopologues(Species* species, Isotopologue* iso)
-{
-	if (iso) iso->update(coreData_.atomTypes());
-	else if (species) species->updateIsotopologues(coreData_.atomTypes());
-	else for (species = coreData_.species().first(); species != NULL; species = species->next()) species->updateIsotopologues(coreData_.atomTypes());
-}
-
-// Remove Isotopologue from Species
-void Dissolve::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
-{
-	// NULL pointer check
-	if (species == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Species passed to Dissolve::removeSpeciesIsotopologue.\n");
-		return;
-	}
-	if (iso == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Isotopologue passed to Dissolve::removeSpeciesIsotopologue.\n");
-		return;
-	}
-	
-	species->removeIsotopologue(iso);
 }
 
 // Copy AtomType, creating a new one if necessary
@@ -217,7 +196,6 @@ Species* Dissolve::copySpecies(const Species* species)
 	}
 
 	// Finalise the new Species
-	newSpecies->updateUsedAtomTypes();
 	newSpecies->updateGrains();
 	newSpecies->centreAtOrigin();
 	newSpecies->orderAtomsWithinGrains();

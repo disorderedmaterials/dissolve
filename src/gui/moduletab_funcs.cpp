@@ -93,6 +93,7 @@ void ModuleTab::initialiseControls(Module* module)
 	controlsWidget_->setSettingsExpanded(true, true);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	controlsWidget_->hideRemoveButton();
+	controlsWidget_->hideSettingsButton();
 	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module
@@ -103,10 +104,10 @@ void ModuleTab::initialiseControls(Module* module)
 		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		splitter_->addWidget(moduleWidget_);
 		splitter_->setStretchFactor(1, 5);
-
-		// Connect signals/slots between the controlsWidget_ and the moduleWidget_
-		connect(controlsWidget_, SIGNAL(run()), this, SLOT(updateModuleWidget()));
 	}
+
+	// Connect signals/slots
+	connect(controlsWidget_, SIGNAL(updateModuleWidget(int)), this, SLOT(updateModuleWidget(int)));
 }
 
 /*
@@ -143,9 +144,9 @@ void ModuleTab::enableSensitiveControls()
 }
 
 // Update controls in module widget only
-void ModuleTab::updateModuleWidget()
+void ModuleTab::updateModuleWidget(int flags)
 {
-	if (moduleWidget_) moduleWidget_->updateControls();
+	if (moduleWidget_) moduleWidget_->updateControls(flags);
 }
 
 /*

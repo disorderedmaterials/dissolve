@@ -67,6 +67,9 @@ bool Dissolve::loadInput(LineParser& parser)
 				cfg->setName(parser.argc(1));
 				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
+
+				// Prepare the Configuration
+				if (!cfg->initialiseContent(worldPool(), pairPotentialRange_)) Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
 				break;
 			case (BlockKeywords::LayerBlockKeyword):
 				// Check to see if a processing layer with this name already exists...
@@ -244,11 +247,19 @@ bool Dissolve::saveInput(const char* filename)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
 
+		// Generator
+		if (!parser.writeLineF("\n  # Modules\n")) return false;
 		if (!parser.writeLineF("  %s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
-		if (!cfg->generator().write(parser, "   ")) return false;
+		if (!cfg->generator().write(parser, "    ")) return false;
 		if (!parser.writeLineF("  End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
  
-		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
+		// Input Coordinates
+		if (cfg->inputCoordinates().hasValidFileAndFormat())
+		{
+			if (!cfg->inputCoordinates().writeFilenameAndFormat(parser, CharString("    %s  ", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)))) return false;
+			if (!cfg->inputCoordinates().writeBlock(parser, "      ")) return false;
+			if (!parser.writeLineF("    End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))) return false;
+		}
 
 		if (!parser.writeLineF("\n")) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
@@ -280,6 +291,10 @@ bool Dissolve::saveInput(const char* filename)
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), layer->name())) return false;
+
+		// Write frequency and disabled lines
+		if (!parser.writeLineF("  Frequency  %i\n", layer->frequency())) return false;
+		if (!layer->enabled() && (!parser.writeLineF("  Disabled\n"))) return false;
 
 		ListIterator<Module> processingIterator(layer->modules());
 		while (Module* module= processingIterator.iterate())
@@ -486,7 +501,7 @@ bool Dissolve::saveRestart(const char* filename)
 			// If the keyword is not flagged to be saved in the restart file, skip it
 			if (!keyword->isOptionSet(KeywordBase::InRestartFileOption)) continue;
 
-			if (!keyword->write(parser, CharString("Keyword  %s  ", module->uniqueName()).get())) return false;
+			if (!keyword->write(parser, CharString("Keyword  %s  %s  ", module->uniqueName(), keyword->name()).get())) return false;
 		}
 	}
 

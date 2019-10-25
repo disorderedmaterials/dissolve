@@ -15,8 +15,6 @@ SET(gui_MOC_HDRS
   modulechartmetrics.h
   modulechartmoduleblock.h
   modulecontrolwidget.h
-  modulelayertab.h
-  moduletab.h
   modulewidget.h
   procedureeditor.h
 
@@ -25,10 +23,9 @@ SET(gui_MOC_HDRS
   # Widgets
   addconfigurationwizard.h
   addforcefieldtermswizard.h
-  addprocessinglayerwizard.h
   importspecieswizard.h
-  keywordswidget.hui
   pairpotentialwidget.h
+  selectconfigurationwidget.h
   selectforcefieldwidget.h
   selectspecieswidget.h
   wizardwidget.hui
@@ -40,10 +37,11 @@ SET(gui_MOC_HDRS
   # Dialogs
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
-  addprocessinglayerdialog.h
   getconfigurationnamedialog.h
+  getmodulelayernamedialog.h
   getspeciesnamedialog.h
   importspeciesdialog.h
+  selectconfigurationdialog.h
   selectelementdialog.h
   selectforcefielddialog.h
   selectspeciesdialog.h
@@ -52,7 +50,9 @@ SET(gui_MOC_HDRS
   # Main Tabs
   configurationtab.h
   forcefieldtab.h
+  layertab.h
   maintab.h
+  moduletab.h
   speciestab.h
   workspacetab.h
 
@@ -74,16 +74,14 @@ SET(gui_UIS
   modulechartinsertionblock.ui
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
-  modulelayertab.ui
-  moduletab.ui
   procedureeditor.ui
 
   # Widgets
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
-  addprocessinglayerwizard.ui
   importspecieswizard.ui
   pairpotentialwidget.ui
+  selectconfigurationwidget.ui
   selectforcefieldwidget.ui
   selectspecieswidget.ui
   wizardwidgetfooter.ui
@@ -92,10 +90,11 @@ SET(gui_UIS
   # Dialogs
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
-  addprocessinglayerdialog.ui
   getconfigurationnamedialog.ui
+  getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
   importspeciesdialog.ui
+  selectconfigurationdialog.ui
   selectelementdialog.ui
   selectforcefielddialog.ui
   selectspeciesdialog.ui
@@ -104,6 +103,8 @@ SET(gui_UIS
   # Main Tabs
   configurationtab.ui
   forcefieldtab.ui
+  layertab.ui
+  moduletab.ui
   speciestab.ui
   workspacetab.ui
 
@@ -122,18 +123,15 @@ SET(gui_SRCS
   modulechartinsertionblock_funcs.cpp
   modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
-  modulelayertab_funcs.cpp
-  moduletab_funcs.cpp
   modulewidget.cpp
   procedureeditor_funcs.cpp
 
   # Widgets
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
-  addprocessinglayerwizard_funcs.cpp
   importspecieswizard_funcs.cpp
-  keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
+  selectconfigurationwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp
   selectspecieswidget_funcs.cpp
   wizardwidget_funcs.cpp
@@ -143,10 +141,11 @@ SET(gui_SRCS
   # Dialogs
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
-  addprocessinglayerdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
+  getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
   importspeciesdialog_funcs.cpp
+  selectconfigurationdialog_funcs.cpp
   selectelementdialog_funcs.cpp
   selectforcefielddialog_funcs.cpp
   selectspeciesdialog_funcs.cpp
@@ -155,17 +154,25 @@ SET(gui_SRCS
   # Main Tabs
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
+  layertab_funcs.cpp
   maintab.cpp
+  moduletab_funcs.cpp
   speciestab_funcs.cpp
   workspacetab_funcs.cpp
 
   # Main UI
   gui_control.cpp
   gui_funcs.cpp
-  gui_menu.cpp
   gui_io.cpp
   gui_start.cpp
   gui_tabs.cpp
+  menu_configuration.cpp
+  menu_file.cpp
+  menu_help.cpp
+  menu_layer.cpp
+  menu_simulation.cpp
+  menu_species.cpp
+  menu_workspace.cpp
   outputhandler_funcs.cpp
   stockcolours.cpp
   systemtemplate.cpp

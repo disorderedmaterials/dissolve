@@ -55,9 +55,16 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 
+	private slots:
+	// Run the set-up stage of the associated Module
+	void setUpModule();
+
 	public:
 	// Return associated Module
 	Module* module();
+
+	signals:
+	void updateModuleWidget(int flags);
 
 
 	/*
@@ -86,6 +93,8 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	void setSettingsExpanded(bool expanded, bool permanent = false);
 	// Hide the remove button (e.g. when shown in a ModuleTab)
 	void hideRemoveButton();
+	// Hide the settings button (e.g. when shown in a ModuleTab)
+	void hideSettingsButton();
 	// Update controls within widget
 	void updateControls();
 	// Return suitable QPixmap for supplied Module

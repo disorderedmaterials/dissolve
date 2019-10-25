@@ -37,6 +37,12 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
 	forcefield_ = NULL;
 	attachedAtomListsGenerated_ = false;
+	usedAtomTypesPoint_ = -1;
+
+	// Set up natural Isotopologue
+	naturalIsotopologue_.setName("Natural");
+	naturalIsotopologue_.setParent(this);
+	naturalIsotopologuePoint_ = -1;
 }
 
 // Destructor
@@ -157,12 +163,7 @@ bool Species::checkSetUp()
 	/*
 	 * Check Isotopologues
 	 */
-	if (isotopologues_.nItems() == 0)
-	{
-		Messenger::error("No Isotopologues defined in Species.\n");
-		++nErrors;
-	}
-	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
 		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())

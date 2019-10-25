@@ -64,7 +64,7 @@ EnergyModuleWidget::~EnergyModuleWidget()
 }
 
 // Update controls within widget
-void EnergyModuleWidget::updateControls()
+void EnergyModuleWidget::updateControls(int flags)
 {
 	// Set gradient and stability labels
 	int stabilityWindow = module_->keywords().asInt("StabilityWindow");

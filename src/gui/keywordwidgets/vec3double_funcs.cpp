@@ -74,7 +74,7 @@ void Vec3DoubleKeywordWidget::on_Spin1_valueChanged(double value)
 	newVec.x = value;
 	keyword_->setData(newVec);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 // Spin box value changed
@@ -86,7 +86,7 @@ void Vec3DoubleKeywordWidget::on_Spin2_valueChanged(double value)
 	newVec.y = value;
 	keyword_->setData(newVec);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 // Spin box value changed
@@ -98,7 +98,7 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
 	newVec.z = value;
 	keyword_->setData(newVec);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 /*
  * Update

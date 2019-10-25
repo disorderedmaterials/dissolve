@@ -47,6 +47,8 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
 	const RefList<Configuration>& sourceConfigurations_;
 
 	public:
+	// Determine whether current data is 'empty', and should be considered as 'not set'
+	bool isDataEmpty() const;
 	// Check selection and make sure it is consistent based on the source Configurations
 	void checkSelection();
 	// Return selection after checking it for validity

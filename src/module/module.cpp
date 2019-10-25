@@ -174,10 +174,19 @@ bool Module::addTargetConfiguration(Configuration* cfg)
 	else
 	{
 		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
-		else Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
+		else Messenger::warn("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
 	}
 
 	return false;
+}
+
+// Add Configuration targets
+bool Module::addTargetConfigurations(List<Configuration>& configs)
+{
+	ListIterator<Configuration> configIterator(configs);
+	while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return false;
+
+	return true;
 }
 
 // Remove Configuration target

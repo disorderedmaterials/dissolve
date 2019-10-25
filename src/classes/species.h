@@ -77,12 +77,16 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
+	// Version of the atom types
+	VersionCounter atomTypesVersion_;
 	// List of selected Atoms
 	RefList<SpeciesAtom> selectedAtoms_;
-	// List of AtomTypes, and their populations, used in the Species
-	AtomTypeList usedAtomTypes_;
 	// Version of the atom selection
 	VersionCounter atomSelectionVersion_;
+	// List of AtomTypes, and their populations, used in the Species
+	AtomTypeList usedAtomTypes_;
+	// Point at which the used atom types list was last update
+	int usedAtomTypesPoint_;
 	
 	public:
 	// Add a new atom to the Species
@@ -121,9 +125,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
-	// Update used AtomTypeList
-	void updateUsedAtomTypes();
-	// Return used AtomTypesList
+	// Bump AtomTypes version
+	void bumpAtomTypesVersion();
+	// Update and return used AtomTypesList
 	const AtomTypeList& usedAtomTypes();
 	// Clear AtomType assignments for all atoms
 	void clearAtomTypes();
@@ -263,28 +267,32 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	 * Isotopologues
 	 */
 	private:
+	// Natural Isotopologue
+	Isotopologue naturalIsotopologue_;
+	// Point at which natural Isotopologue was last updated
+	int naturalIsotopologuePoint_;
 	// List of isotopic variants defined for this species
 	List<Isotopologue> isotopologues_;
 
 	public:
 	// Update current Isotopologues
-	void updateIsotopologues(const List<AtomType>& atomTypes);
+	void updateIsotopologues();
+	// Update and return natural isotopologue
+	Isotopologue* naturalIsotopologue();
 	// Add a new Isotopologue to this Species
-	Isotopologue* addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes);
+	Isotopologue* addIsotopologue(const char* baseName);
 	// Remove specified Isotopologue from this Species
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues
 	int nIsotopologues() const;
 	// Return Isotopologue List
 	const List<Isotopologue>& isotopologues() const;
-	// Return nth Isotopologue defined
-	Isotopologue* isotopologue(int n);
 	// Return whether the specified Isotopologue exists
-	bool hasIsotopologue(Isotopologue* iso) const;
+	bool hasIsotopologue(const Isotopologue* iso) const;
 	// Generate unique Isotopologue name with base name provided
-	const char* uniqueIsotopologueName(const char* baseName, Isotopologue* exclude = NULL) const;
+	const char* uniqueIsotopologueName(const char* baseName, const Isotopologue* exclude = NULL) const;
 	// Search for Isotopologue by name
-	Isotopologue* findIsotopologue(const char* name) const;
+	Isotopologue* findIsotopologue(const char* name);
 	// Return index of specified Isotopologue
 	int indexOfIsotopologue(Isotopologue* iso) const;
 

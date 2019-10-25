@@ -35,7 +35,7 @@ AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module, const 
 }
 
 // Update controls within widget
-void AnalyseModuleWidget::updateControls()
+void AnalyseModuleWidget::updateControls(int flags)
 {
 }
 

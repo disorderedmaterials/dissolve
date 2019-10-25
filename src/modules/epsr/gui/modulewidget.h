@@ -38,22 +38,30 @@ class EPSRModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Associated Module
-	EPSRModule* module_;
-	// DataViewers contained within this widget
-	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
-	// Main form declaration
-	Ui::EPSRModuleWidget ui_;
-
 	public:
 	// Constructor / Destructor
 	EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~EPSRModuleWidget();
+
+	private:
+	// Reference to Dissolve
+	Dissolve& dissolve_;
+	// Associated Module
+	EPSRModule* module_;
+
+
+	/*
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::EPSRModuleWidget ui_;
+	// DataViewers contained within this widget
+	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
+
+	public:
 	// Update controls within widget
-	void updateControls();
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget

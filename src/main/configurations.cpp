@@ -45,6 +45,22 @@ bool Dissolve::ownConfiguration(Configuration* cfg)
 	return true;
 }
 
+// Remove specified Configuration
+void Dissolve::removeConfiguration(Configuration* cfg)
+{
+	if (!cfg) return;
+
+	// Remove any references to the Modules in the Configuration's local processing layer before we delete it
+	ListIterator<Module> moduleIterator(cfg->modules());
+	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+
+	// Remove references to the Configuration itself
+	removeReferencesTo(cfg);
+
+	// Now safe to remove the Configuration
+	coreData_.removeConfiguration(cfg);
+}
+
 // Return number of defined Configurations
 int Dissolve::nConfigurations() const
 {
