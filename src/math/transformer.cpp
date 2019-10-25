@@ -70,7 +70,8 @@ bool Transformer::enabled() const
 bool Transformer::setEquation(const char* equation)
 {
 	text_ = equation;
-	valid_ = ExpressionGenerator::generate(equation_);
+	valid_ = equation_.set(text_);
+
 	return valid_;
 }
 
