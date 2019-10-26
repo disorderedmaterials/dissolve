@@ -10,7 +10,7 @@ nav_order: 3
 
 A configuration represents the target system using one or more of the available species. Our next step is to create a configuration that is consistent with the experimentally-measured system investigated in the original paper.
 
-Configurations in Dissolve are created from as sequence of instructions that define box shape and size, the populations of species to add to the box etc. This permits Dissolve to automatically regenerate configurations when it needs to, and is particularly useful when screening structures with variable parameters (pore size, density etc.).
+Configurations in Dissolve are created from a sequence of instructions that define box shape and size, the populations of species to add etc. This permits Dissolve to automatically regenerate configurations when it needs to, and is particularly useful when screening structures with variable parameters (density, composition, pore size etc.).
 
 Dissolve provides several standard generators for common-use cases, one of which we will use now.
 

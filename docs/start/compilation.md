@@ -1,9 +1,9 @@
 ---
-title: Building Dissolve
+title: Compilation
 parent: Getting Started
 nav_order: 30
 ---
-# Building Dissolve
+# Compiling Dissolve
 
 Dissolve can be build with either `autotools` or `CMake` - the latter is definitely easier on OSX and Windows systems. For Linux-based systems, choose whichever you feel most comfortable with.
 

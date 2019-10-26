@@ -23,10 +23,9 @@ Check out [Dissolve on GitHub](https://www.github.com/trisyoungs/dissolve) and [
 Basic overview and referencing, and obtaining, installing, and building Dissolve.
 
 [What is / isn't Dissolve?](start/overview.md){: .btn}
-[Where to get Dissolve](start/get.md){: .btn}
-[Building Dissolve](start/build.md){: .btn}
-[Learning Dissolve](start/learn.md){: .btn}
-[Referencing Dissolve](start/referencing.md){: .btn}
+[Obtaining the Code](start/get.md){: .btn}
+[Compilation](start/compilation.md){: .btn}
+[Referencing](start/referencing.md){: .btn}
 
 * * *
 ## Setting Up Dissolve

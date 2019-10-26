@@ -42,12 +42,14 @@ Now you can return to the tab for your [`NeutronSQ`](/modules/neutronsq) module 
 
 ### Import Reference Data
 
-The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related experimental reference data. Go to the _Reference Data_{: .text-green-100} group and set up our reference argon data:
+The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related experimental reference data corresponding to the same isotopic mix as calculated in the module. Go to the _Reference Data_{: .text-green-100} group and set up the reference argon data as follows:
 
 - Click the "Set..." button for the **Reference** keyword to show the file selection dropdown.
 - Open the file `yarnell.sq` from the `examples/argon` data directory (the format of the file is simple `xy` data).
 - We need to subtract the average level from the experimental data as it oscillates around 1.0, so go to _Manipulations_{: .text-green-100} in the options and set the **RemoveAverage** value to 9.0.
 
 The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so choose `AverageSquared` for the **ReferenceNormalisation** to instruct Dissolve to remove this normalisation.
+
+Finally, we need to change the default **WindowFunction** (found in the _Calculation_{: .text-green-100} section) used in the Fourier transform from `Lorch` to `None` in order to better match the processing performed on the original data.
 
 [Previous Step](step4a.md){: .btn }   [Next Step](step5.md){: .btn .right}

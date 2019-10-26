@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.3 at 21:45:57 on 24-10-2019.
+# Input file written by Dissolve v0.4.4 at 00:09:50 on 27-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -7,6 +7,9 @@
 Species 'Ar'
   # Atoms
   Atom    1   Ar     0.000     0.000     0.000  'Ar'     0.000
+
+  # Isotopologues
+  Isotopologue  'Ar36'  Ar=36
 EndSpecies
 
 #------------------------------------------------------------------------------#
@@ -66,7 +69,7 @@ Layer  'Evolve (Atomic)'
     Frequency  1
 
     Configuration  'Bulk'
-    StepSize   4.35823e-01
+    StepSize   4.61493e-01
   EndModule
 
   Module  MD  'MD01'
@@ -95,6 +98,8 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
+    WindowFunction  'None'
+    Isotopologue  'Bulk'  'Ar'  'Ar36'  1.000000
     Reference  xy  'data/yarnell.sq'
       RemoveAverage   9.00000e+00
     EndReference
@@ -104,9 +109,11 @@ EndLayer
 
 Layer  'Refine (EPSR)'
   Frequency  5
+  Disabled
 
   Module  EPSR  'EPSR01'
     Frequency  1
+    EReq   1.00000e+01
     Target  'NeutronSQ01'  'Default'
   EndModule
 EndLayer
