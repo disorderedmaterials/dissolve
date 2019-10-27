@@ -231,7 +231,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Follow abscissa, showing only data over the range specified</string>
+         <string>Follow all axes, showing all data at all times</string>
         </property>
         <property name="text">
          <string>FA</string>
@@ -290,6 +290,12 @@
       </item>
       <item>
        <widget class="ExponentialSpin" name="GraphFollowXLengthSpin">
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -300,6 +306,9 @@
         </property>
         <property name="buttonSymbols">
          <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+        <property name="maximum">
+         <double>99999999.000000000000000</double>
         </property>
        </widget>
       </item>
