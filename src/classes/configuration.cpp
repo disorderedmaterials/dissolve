@@ -207,6 +207,8 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 	// Make sure Cell contents / Atom locations are up-to-date
 	updateCellContents();
 
+	++contentsVersion_;
+
 	return true;
 }
 
