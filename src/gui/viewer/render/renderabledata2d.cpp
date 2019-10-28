@@ -22,6 +22,7 @@
 #include "gui/viewer/render/renderabledata2d.h"
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
+#include "math/data2d.h"
 
 // Constructor
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
@@ -64,24 +65,27 @@ int RenderableData2D::dataVersion() const
 // Transform data according to current settings
 void RenderableData2D::transformData()
 {
+	Data2D* data2d; 
 	// If the transformed data are already up-to-date, no need to do anything
 	if (transformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	////////////Transformer::transform(transformedData_, some 2Darray );
+	Transformer::transform(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
 
-	transformMin_ = min(false);
-	transformMax_ = max(false);
-	transformMinPositive_ = min(true);
-	transformMaxPositive_ = max(true);
-
+	transformMin_ = min(data2d->xAxis());
+	transformMax_ = max(data2d->xAxis());
+	transformMinPositive_ = minValue();
+	transformMaxPositive_ = maxValue();
+	
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
 	{
-		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.minValue(), 0.0);
-		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.maxValue(), 0.0);
+		
+		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), transformedData_.minValue());
+		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constXAxis().lastValue(), transformedData_.maxValue());
+		
 	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
@@ -99,6 +103,9 @@ void RenderableData2D::transformData()
 			if (transformedData_.constValue(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constValue(n);
 			if (transformedData_.constValue(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constValue(n);
 		}
+		
+		//transformedMin and Max positive values only positive
+		
 	}
 	
 	transformMinPositive_.z = 1.0;
@@ -112,6 +119,32 @@ void RenderableData2D::transformData()
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();
 }
+
+Vec3<double> min(Array<double> A)
+{	
+	double min = A[0];
+	for(int i=0; i<A.nItems(); ++i)
+	{
+		if (A[i]<min)
+			min = A[i];
+	}
+	return min;
+}
+
+Vec3<double> max(Array<double> A)
+{
+	double max = A[0];
+	for(int i=0; i<A.nItems(); ++i)
+	{
+		if (A[i]>max)
+			max = A[i];
+	}
+	return max;
+}
+
+Vec3<double> minValue()
+{
+	
 
 // Return reference to transformed data
 const Data2D& RenderableData2D::transformedData()

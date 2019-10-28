@@ -189,8 +189,10 @@ void Transformer::transform(Data1D& data, Transformer& xTransformer, Transformer
 	if (yTransformer.enabled()) data.values() = yTransformer.transformArray(data.xAxis(), data.values(), 0.0, 1);
 }
 
-void Transformer::transform(Data2D& data,Transformer& transformerXY)
+void Transformer::transform(Data2D& data,Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
-	if (transformerXY.enabled()) data.values() = transformerXY.transformArray(data.values(), 0.0, 0);
+	/*if (transformerXY.enabled()) data.values() = transformerXY.transformArray(data.values(), 0.0, 0);
+	*/
+	
 }
 

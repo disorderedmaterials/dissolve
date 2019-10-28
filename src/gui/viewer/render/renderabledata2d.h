@@ -49,11 +49,12 @@ class RenderableData2D : public Renderable
 	bool validateDataSource();
 	// Return version of data
 	int dataVersion() const;
-	double min(bool flag);
-	double max(bool flag);
+	Vec3<double> min(Array<double> A);
+	Vec3<double> max(Array<double> A);
+	Vec3<double> minValue();
+	Vec3<double> maxValue();
 	
-
-
+	
 	/*
 	 * Transform / Limits
 	 */

@@ -89,7 +89,7 @@ class Transformer
 	public:
 	// Transform Data1D with supplied transformers
 	static void transform(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
-	static void transform(Data2D& data, Transformer& transformerXY);
+	static void transform(Data2D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
 };
 
 #endif

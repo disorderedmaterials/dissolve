@@ -92,6 +92,7 @@ class Renderable : public ListItem<Renderable>
 	Transformer transforms_[3];
 	// Extreme values of transformed data 
 	Vec3<double> transformMin_, transformMax_;
+	Vec3<double> transformMinX_, transformMaxX_, transformMinY_, transformMaxY_;
 	// Extreme positive values of transformed data
 	Vec3<double> transformMinPositive_, transformMaxPositive_;
 	// Data version at which transformed data was last calculated
