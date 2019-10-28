@@ -919,8 +919,20 @@ Remote Simulation</string>
      <addaction name="SpeciesCreateEmptyAction"/>
      <addaction name="SpeciesCreateAtomicAction"/>
     </widget>
+    <widget class="QMenu" name="SpeciesImportMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Import...</string>
+     </property>
+     <addaction name="SpeciesImportFomDissolveAction"/>
+     <addaction name="SpeciesImportFomXYZAction"/>
+    </widget>
     <addaction name="SpeciesCreateMenu"/>
-    <addaction name="SpeciesImportDissolveAction"/>
+    <addaction name="SpeciesImportMenu"/>
     <addaction name="SpeciesRenameAction"/>
     <addaction name="SpeciesDeleteAction"/>
     <addaction name="separator"/>
@@ -1314,11 +1326,6 @@ Remote Simulation</string>
     <string>&amp;Atomic...</string>
    </property>
   </action>
-  <action name="SpeciesImportDissolveAction">
-   <property name="text">
-    <string>&amp;Import...</string>
-   </property>
-  </action>
   <action name="ConfigurationCreateEmptyAction">
    <property name="text">
     <string>&amp;Empty</string>
@@ -1426,6 +1433,16 @@ Remote Simulation</string>
   <action name="ConfigurationExportToXYZAction">
    <property name="text">
     <string>XYZ Coordinates</string>
+   </property>
+  </action>
+  <action name="SpeciesImportFomDissolveAction">
+   <property name="text">
+    <string>From Existing &amp;Simulation...</string>
+   </property>
+  </action>
+  <action name="SpeciesImportFomXYZAction">
+   <property name="text">
+    <string>From &amp;XYZ...</string>
    </property>
   </action>
  </widget>

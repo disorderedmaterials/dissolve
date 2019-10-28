@@ -25,6 +25,7 @@
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "classes/species.h"
+#include <QFileDialog>
 #include <QMessageBox>
 
 void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
@@ -53,7 +54,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 	setCurrentTab(newSpecies);
 }
 
-void DissolveWindow::on_SpeciesImportDissolveAction_triggered(bool checked)
+void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
 	static ImportSpeciesDialog addSpeciesDialog(this, dissolve_);
 
@@ -69,6 +70,23 @@ void DissolveWindow::on_SpeciesImportDissolveAction_triggered(bool checked)
 
 		setCurrentTab(sp);
 	}
+}
+
+void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
+{
+	// Request a new file to open
+	QString xyzFile = QFileDialog::getOpenFileName(this, "Choose XYZ file to open", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
+	if (xyzFile.isEmpty()) return;
+
+	Species* sp = dissolve_.addSpecies();
+
+	sp->loadFromXYZ(qPrintable(xyzFile));
+
+	// Fully update GUI
+	setModified();
+	fullUpdate();
+
+	setCurrentTab(sp);
 }
 
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
