@@ -317,6 +317,7 @@ void DissolveWindow::updateMenus()
 	// Configuration Menu
 	ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
 	ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+	ui_.ConfigurationExportToMenu->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
 
 	// Layer Menu
 	ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::LayerTabType);

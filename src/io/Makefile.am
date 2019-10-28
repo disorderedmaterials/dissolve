@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libimportexport.la
 libimportexport_la_SOURCES = fileandformat.cpp
 libimportexport_la_LIBADD = 
 libimportexport_la_LDFLAGS = -static
+libimportexport_la_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 
 libimportexport_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 
