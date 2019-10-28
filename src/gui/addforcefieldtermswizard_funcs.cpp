@@ -237,6 +237,80 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			// Assign intramolecular terms
 			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
 
+			// Reduce to master terms?
+			if (ui_.BondTermsMasterCheck->isChecked())
+			{
+				CharString bondName;
+
+				// Loop over bonds in the modified species
+				ListIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
+				while (SpeciesBond* bond = bondIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(bond->i()->atomType()->name()) < QString(bond->j()->atomType()->name())) bondName.sprintf("%s-%s", bond->i()->atomType()->name(), bond->j()->atomType()->name());
+					else bondName.sprintf("%s-%s", bond->j()->atomType()->name(), bond->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterBond(bondName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterBond(bondName);
+						master->setForm(bond->form());
+						master->setParameters(bond->parameters());
+					}
+					bond->setMasterParameters(master);
+				}
+			}
+			if (ui_.AngleTermsMasterCheck->isChecked())
+			{
+				CharString angleName;
+
+				// Loop over angles in the modified species
+				ListIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
+				while (SpeciesAngle* angle = angleIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(angle->i()->atomType()->name()) < QString(angle->k()->atomType()->name())) angleName.sprintf("%s-%s-%s", angle->i()->atomType()->name(), angle->j()->atomType()->name(), angle->k()->atomType()->name());
+					else angleName.sprintf("%s-%s-%s", angle->k()->atomType()->name(), angle->j()->atomType()->name(), angle->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterAngle(angleName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterAngle(angleName);
+						master->setForm(angle->form());
+						master->setParameters(angle->parameters());
+					}
+					angle->setMasterParameters(master);
+				}
+			}
+			if (ui_.TorsionTermsMasterCheck->isChecked())
+			{
+				CharString torsionName;
+
+				// Loop over torsions in the modified species
+				ListIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
+				while (SpeciesTorsion* torsion = torsionIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) torsionName.sprintf("%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
+					else torsionName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterTorsion(torsionName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterTorsion(torsionName);
+						master->setForm(torsion->form());
+						master->setParameters(torsion->parameters());
+					}
+					torsion->setMasterParameters(master);
+				}
+			}
+
 			updateAtomTypesPage();
 			updateMasterTermsPage();
 		default:
