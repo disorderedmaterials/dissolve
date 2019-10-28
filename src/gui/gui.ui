@@ -928,8 +928,8 @@ Remote Simulation</string>
      <property name="title">
       <string>&amp;Import...</string>
      </property>
-     <addaction name="SpeciesImportFomDissolveAction"/>
-     <addaction name="SpeciesImportFomXYZAction"/>
+     <addaction name="SpeciesImportFromDissolveAction"/>
+     <addaction name="SpeciesImportFromXYZAction"/>
     </widget>
     <addaction name="SpeciesCreateMenu"/>
     <addaction name="SpeciesImportMenu"/>
@@ -1435,12 +1435,12 @@ Remote Simulation</string>
     <string>XYZ Coordinates</string>
    </property>
   </action>
-  <action name="SpeciesImportFomDissolveAction">
+  <action name="SpeciesImportFromDissolveAction">
    <property name="text">
     <string>From Existing &amp;Simulation...</string>
    </property>
   </action>
-  <action name="SpeciesImportFomXYZAction">
+  <action name="SpeciesImportFromXYZAction">
    <property name="text">
     <string>From &amp;XYZ...</string>
    </property>
