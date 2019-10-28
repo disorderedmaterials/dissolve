@@ -267,6 +267,7 @@ void BaseViewer::setupGL()
 
 	// Set specular reflection colour
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularColour);
+	glMateriali(GL_FRONT, GL_SHININESS, 127);
 
 	// Configure antialiasing
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
