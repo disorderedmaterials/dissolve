@@ -143,7 +143,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		// -- Render axis text
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
-		glEnable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
 		LineStyle().sendToGL(pixelScaling_);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (fontInstance_.fontOK())
