@@ -38,6 +38,7 @@ ConfigurationViewer::ConfigurationViewer(QWidget* parent) : BaseViewer(parent)
 	view_.axes().setTitle(0, "X");
 	view_.axes().setTitle(1, "Y");
 	view_.axes().setTitle(2, "Z");
+	view_.setAutoFollowType(View::AllAutoFollow);
 
 	// Tweak the options of the underlying BaseViewer
 	setClipToAxesVolume(false);
