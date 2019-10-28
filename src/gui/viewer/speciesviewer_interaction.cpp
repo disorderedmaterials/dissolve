@@ -185,7 +185,7 @@ void SpeciesViewer::endInteraction()
 			if (!j) j = species_->addAtom(drawElement_, drawCoordinateCurrent_);
 
 			// Create a bond between the two atoms, if one doesn't currently exist
-			if ((i != j) && (!species_->hasBond(i, j))) species_->addBond(i, j);
+			if ((i != j) && (!species_->hasBond(i, j))) species_->addBond(i, j, true);
 
 			// Clear the interaction Primitive
 			speciesRenderable_->clearInteractionPrimitive();

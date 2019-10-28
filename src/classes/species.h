@@ -148,7 +148,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
-	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
+	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms = false);
 	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
 	// Reconnect existing SpeciesBond

@@ -24,7 +24,7 @@
 #include "base/sysfunc.h"
 
 // Add new SpeciesBond definition (from SpeciesAtoms*)
-SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
+SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
@@ -51,6 +51,9 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	b->setAtoms(i, j);
 	i->addBond(b);
 	j->addBond(b);
+
+	// Update higher-order connectivity?
+	if (addMissingHigherOrderTerms) completeIntramolecularTerms();
 
 	++version_;
 

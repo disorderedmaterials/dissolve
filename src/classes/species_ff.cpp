@@ -95,9 +95,6 @@ bool Species::applyForcefieldTerms(CoreData& coreData)
 {
 	if (!forcefield_) return Messenger::error("No forcefield set in Species '%s', so can't apply terms.\n", name());
 
-	// First, create (missing) higher-order intramolecular definitions
-	completeIntramolecularTerms();
-
 	// Apply the specified Forcefield
 	if (!forcefield_->assignAtomTypes(this, coreData, false)) return false;
 	if (!forcefield_->assignIntramolecular(this, true, true, true, true)) return false;
