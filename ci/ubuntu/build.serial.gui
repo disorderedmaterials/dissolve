@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Configuration
+NINJA=true
+SERIALBINARY="NOTSET"
+GUIBINARY="NOTSET"
+
 # Enforce verbosity for commands and exit on first failure
 set -ev
 
@@ -17,15 +22,40 @@ fi
 
 export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 
-# Execute autogen.sh
-./autogen.sh
+# Use Ninja over Autotools?
+if $NINJA
+then
+  # Set binary targets
+  SERIALBINARY=build/dissolve-serial
+  GUIBINARY=build/dissolve-gui
 
-# Configure the build
-# - On Ubuntu, need to specify executable names for Qt tools
-./configure --with-gui --with-qtmoc=moc --with-qtrcc=rcc --with-qtuic=uic
+  # Create build dir and descend into it
+  mkdir build
+  cd build
 
-# Make
-make
+  # Generate build files
+  cmake ../ -G "Ninja" -DGUI:bool=true
+
+  # Build
+  ninja
+
+  # Ascend back to root dir
+  cd ../
+else
+  # Set binary targets
+  SERIALBINARY=build/dissolve-serial
+  GUIBINARY=build/dissolve-gui
+
+  # Execute autogen.sh
+ ./autogen.sh
+
+  # Configure the build
+  # - On Ubuntu, need to specify executable names for Qt tools
+  ./configure --with-gui --with-qtmoc=moc --with-qtrcc=rcc --with-qtuic=uic
+
+  # Make
+  make
+fi
 
 # Retrieve appimage build script
 wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
@@ -35,10 +65,16 @@ chmod u+x build-appimage.sh
 VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
 
 # Build AppImage for serial version
-./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b src/dissolve-serial
+./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b ${SERIALBINARY}
 
 # Build AppImage for GUI
-./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b src/dissolve-gui
+./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b ${GUIBINARY}
 
-# Store artifacts (the dir will have been created already by Travis)
-cp Dissolve*.AppImage artifacts/
+# Clear old artifacts (the dir will have been created already by Travis)
+rm -vf artifacts/Dissolve-Serial*.AppImage
+rm -vf artifacts/Dissolve-GUI*.AppImage
+
+# Store artifacts
+cp Dissolve-Serial*.AppImage artifacts/
+cp Dissolve-GUI*.AppImage artifacts/
+

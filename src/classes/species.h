@@ -148,7 +148,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
-	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
+	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms = false);
 	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
 	// Reconnect existing SpeciesBond
@@ -285,6 +285,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues
 	int nIsotopologues() const;
+	// Return nth Isotopologue in the list
+	Isotopologue* isotopologue(int n);
 	// Return Isotopologue List
 	const List<Isotopologue>& isotopologues() const;
 	// Return whether the specified Isotopologue exists
@@ -294,7 +296,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Search for Isotopologue by name
 	Isotopologue* findIsotopologue(const char* name);
 	// Return index of specified Isotopologue
-	int indexOfIsotopologue(Isotopologue* iso) const;
+	int indexOfIsotopologue(const Isotopologue* iso) const;
 
 
 	/*

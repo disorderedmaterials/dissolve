@@ -38,6 +38,7 @@ ConfigurationViewer::ConfigurationViewer(QWidget* parent) : BaseViewer(parent)
 	view_.axes().setTitle(0, "X");
 	view_.axes().setTitle(1, "Y");
 	view_.axes().setTitle(2, "Z");
+	view_.setAutoFollowType(View::AllAutoFollow);
 
 	// Tweak the options of the underlying BaseViewer
 	setClipToAxesVolume(false);
@@ -74,4 +75,22 @@ void ConfigurationViewer::setConfiguration(Configuration *sp)
 Configuration* ConfigurationViewer::configuration() const
 {
 	return configuration_;
+}
+
+/*
+ * Renderable
+ */
+
+// Set renderable draw style
+void ConfigurationViewer::setRenderableDrawStyle(RenderableConfiguration::DisplayStyle ds)
+{
+	if (configurationRenderable_) configurationRenderable_->setDisplayStyle(ds);
+}
+
+// Return current renderable draw style
+RenderableConfiguration::DisplayStyle ConfigurationViewer::renderableDrawStyle() const
+{
+	if (configurationRenderable_) return (RenderableConfiguration::DisplayStyle) configurationRenderable_->displayStyleIndex();
+
+	return RenderableConfiguration::LinesStyle;
 }

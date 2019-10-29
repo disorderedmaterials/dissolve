@@ -1,7 +1,7 @@
 ---
 title: Examples
 has_children: true
-nav_order: 50
+nav_order: 70
 has_toc: false
 ---
 # Examples
@@ -12,10 +12,10 @@ Relevant data as well as fully-constructed input files (for reference) can be fo
 
 ## Basics
 
-Setting up a simple simulation to illustrate the basic workflows of Dissolve. Recommended exercise for all first-time users of the code.
+Setting up a simple simulation to illustrate the basic workflows of Dissolve. Recommended reading for all first-time users of the code.
 
-[**Liquid Argon** - Step-by-step manual set up of a simple simulation](argon/)
+[Liquid Argon - Step-by-step manual set up of a full simulation and refinement workflow](argon/)
 
 ## Small Molecules
 
-TODO!
+[Liquid Water - Structure of liquid water at 298 K](water/)

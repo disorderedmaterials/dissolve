@@ -1,8 +1,7 @@
 ---
 title: Liquid Argon
-parent: Learn Dissolve
+parent: Examples
 has_children: true
-nav_order: 3
 ---
 # Liquid Argon
 

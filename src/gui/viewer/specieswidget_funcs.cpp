@@ -41,6 +41,8 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 	group->addButton(ui_.InteractionDrawButton);
 
 	// Connect signals / slots
+	connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
+	connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 	connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
 	connect(ui_.SpeciesView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
@@ -60,10 +62,81 @@ void SpeciesWidget::setCoreData(CoreData* coreData)
 	coreData_ = coreData;
 }
 
+/*
+ * UI
+ */
+
+// Notify that the style of displayed data in the underlying viewer has changed
+void SpeciesWidget::notifyStyleModified()
+{
+	emit(styleModified());
+}
+
+// Notify that the displayed data in the underlying viewer has changed
+void SpeciesWidget::notifyDataModified()
+{
+	emit(dataModified());
+}
+
+// Post redisplay in the underlying view
+void SpeciesWidget::postRedisplay()
+{
+	ui_.SpeciesView->postRedisplay();
+}
+
+// Update toolbar to reflect current viewer state
+void SpeciesWidget::updateToolbar()
+{
+	// Set current interaction mode
+	switch (speciesViewer()->interactionMode())
+	{
+		case (SpeciesViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			ui_.InteractionDrawButton->setChecked(true);
+			break;
+	}
+
+	// Set drawing element symbol
+	ui_.InteractionDrawElementButton->setText(speciesViewer()->drawElement()->symbol());
+
+	// Set checkable buttons
+	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
+	ui_.ViewSpheresButton->setChecked(speciesViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
+}
+
+// Update status bar
+void SpeciesWidget::updateStatusBar()
+{
+	// Get displayed Species
+	const Species* sp = speciesViewer()->species();
+
+	// Set interaction mode text
+	ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
+
+	// Set / update empirical formula for the Species and its current atom selection
+	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
+	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
+}
+
+/*
+ * Species Viewer
+ */
+
 // Return contained SpeciesViewer
 SpeciesViewer* SpeciesWidget::speciesViewer()
 {
 	return ui_.SpeciesView;
+}
+
+// Set target Species, updating widget as necessary
+void SpeciesWidget::setSpecies(Species* sp)
+{
+	ui_.SpeciesView->setSpecies(sp);
+
+	updateToolbar();
+	updateStatusBar();
 }
 
 /*
@@ -105,7 +178,6 @@ void SpeciesWidget::on_ViewSpheresButton_clicked(bool checked)
 	speciesViewer()->setRenderableDrawStyle(checked ? RenderableSpecies::SpheresStyle : RenderableSpecies::LinesStyle);
 
 	speciesViewer()->notifyDataModified();
-	speciesViewer()->notifyDataChanged();
 
 	speciesViewer()->postRedisplay();
 }
@@ -146,14 +218,13 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	// Copy our target species to the temporary structure, and create a simple Configuration from it
 	Species* temporarySpecies = temporaryDissolve.copySpecies(sp);
 	Configuration* temporaryCfg = temporaryDissolve.addConfiguration();
-	temporaryCfg->addMolecule(temporarySpecies);
 	Procedure& generator = temporaryCfg->generator();
 	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0,1.0,1.0), Vec3<double>(90,90,90), true));
 	AddSpeciesProcedureNode* addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
 	addSpeciesNode->setKeyword<bool>("Rotate", false);
 	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
-	if (!temporaryCfg->generate(temporaryDissolve.worldPool())) return;
+	if (!temporaryCfg->initialiseContent(temporaryDissolve.worldPool(), 15.0)) return;
 
 	// Create a Geometry Optimisation Module in a new processing layer, and set everything up
 	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
@@ -175,45 +246,4 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	speciesViewer()->view().showAllData();
 	speciesViewer()->postRedisplay();
 	speciesViewer()->notifyDataModified();
-	speciesViewer()->notifyDataChanged();
-}
-
-/*
- * Signals / Slots
- */
-
-// Update toolbar to reflect current viewer state
-void SpeciesWidget::updateToolbar()
-{
-	// Set current interaction mode
-	switch (speciesViewer()->interactionMode())
-	{
-		case (SpeciesViewer::DefaultInteraction):
-			ui_.InteractionViewButton->setChecked(true);
-			break;
-		case (SpeciesViewer::DrawInteraction):
-			ui_.InteractionDrawButton->setChecked(true);
-			break;
-	}
-
-	// Set drawing element symbol
-	ui_.InteractionDrawElementButton->setText(speciesViewer()->drawElement()->symbol());
-
-	// Set checkable buttons
-	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
-	ui_.ViewSpheresButton->setChecked(speciesViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
-}
-
-// Update status bar
-void SpeciesWidget::updateStatusBar()
-{
-	// Get displayed Species
-	const Species* sp = speciesViewer()->species();
-
-	// Set interaction mode text
-	ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
-
-	// Set / update empirical formula for the Species and its current atom selection
-	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
-	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
 }
