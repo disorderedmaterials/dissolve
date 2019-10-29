@@ -125,7 +125,7 @@ Isotopologue* Species::findIsotopologue(const char* name)
 }
 
 // Return index of specified Isotopologue
-int Species::indexOfIsotopologue(Isotopologue* iso) const
+int Species::indexOfIsotopologue(const Isotopologue* iso) const
 {
 	return isotopologues_.indexOf(iso);
 }

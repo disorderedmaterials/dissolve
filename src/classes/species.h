@@ -294,7 +294,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Search for Isotopologue by name
 	Isotopologue* findIsotopologue(const char* name);
 	// Return index of specified Isotopologue
-	int indexOfIsotopologue(Isotopologue* iso) const;
+	int indexOfIsotopologue(const Isotopologue* iso) const;
 
 
 	/*

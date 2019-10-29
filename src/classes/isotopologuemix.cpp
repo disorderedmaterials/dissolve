@@ -304,9 +304,9 @@ bool IsotopologueMix::equality(ProcessPool& procPool)
 	if (!procPool.equality(speciesPopulation_)) return Messenger::error("IsotopologueMix species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
 	if (!procPool.equality(mix_.nItems())) return Messenger::error("IsotopologueMix mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
-	RefDataListIterator<Isotopologue,double> mixIterator(mix_);
+	RefDataListIterator<const Isotopologue,double> mixIterator(mix_);
 	int count = 0;
-	while (Isotopologue* top = mixIterator.iterate())
+	while (const Isotopologue* top = mixIterator.iterate())
 	{
 		// Just check the name and the relative population
 		if (!procPool.equality(top->name())) return Messenger::error("IsotopologueMix isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), top->name());
