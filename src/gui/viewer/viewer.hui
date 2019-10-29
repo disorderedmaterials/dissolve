@@ -85,10 +85,10 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	View& view();
 	// Return the View definition (const)
 	const View& constView() const;
-	// Emit the signal to notify that the data represented in the Viewer has been changed
-	void notifyDataModified(bool invalidateSetUp = false);
-	// Emit the signal to notify that the data has changed and dependent widgets should be updated
-	void notifyDataChanged();
+	// Emit the signal to notify that the viewing style of data represented in the Viewer has changed
+	void notifyStyleModified();
+	// Emit the signal to notify that the data has changed
+	void notifyDataModified();
 
 	signals:
 	// A Renderable has been added for display
@@ -97,10 +97,10 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void renderableRemoved();
 	// A Renderable has been changed (re-grouped etc.)
 	void renderableChanged();
-	// Notify that the represented data has been modified
-	void dataModified(bool invalidatesSetUp = false);
-	// Notify that any other GUI controls displaying the underlying data should be refreshed
-	void dataChanged();
+	// Viewing style of data represented in the Viewer has changed
+	void styleModified();
+	// Data has changed
+	void dataModified();
 
 
 	/*

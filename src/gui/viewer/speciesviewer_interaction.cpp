@@ -166,8 +166,7 @@ void SpeciesViewer::endInteraction()
 					species_->transmuteAtom(clickedAtom_, drawElement_);
 
 					// Notify that the data has changed
-					emit(dataModified(true));
-					emit(dataChanged());
+					emit(dataModified());
 
 					// Update display
 					postRedisplay();
@@ -191,8 +190,7 @@ void SpeciesViewer::endInteraction()
 			speciesRenderable_->clearInteractionPrimitive();
 
 			// Notify that the data has changed
-			emit(dataModified(true));
-			emit(dataChanged());
+			emit(dataModified());
 
 			// Update display
 			postRedisplay();

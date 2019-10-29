@@ -48,7 +48,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
 	// Set target for ConfigurationViewer
-	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
+	ui_.ViewerWidget->setConfiguration(configuration_);
 
 	// Set target for ProcedureEditor, and connect signals
 	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
@@ -139,7 +139,7 @@ void ConfigurationTab::updateControls()
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
 	// Viewer
-	ui_.ViewerWidget->configurationViewer()->postRedisplay();
+	ui_.ViewerWidget->postRedisplay();
 
 	refreshing_ = false;
 }

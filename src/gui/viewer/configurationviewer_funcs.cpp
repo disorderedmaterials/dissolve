@@ -76,3 +76,21 @@ Configuration* ConfigurationViewer::configuration() const
 {
 	return configuration_;
 }
+
+/*
+ * Renderable
+ */
+
+// Set renderable draw style
+void ConfigurationViewer::setRenderableDrawStyle(RenderableConfiguration::DisplayStyle ds)
+{
+	if (configurationRenderable_) configurationRenderable_->setDisplayStyle(ds);
+}
+
+// Return current renderable draw style
+RenderableConfiguration::DisplayStyle ConfigurationViewer::renderableDrawStyle() const
+{
+	if (configurationRenderable_) return (RenderableConfiguration::DisplayStyle) configurationRenderable_->displayStyleIndex();
+
+	return RenderableConfiguration::LinesStyle;
+}
