@@ -285,6 +285,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues
 	int nIsotopologues() const;
+	// Return nth Isotopologue in the list
+	Isotopologue* isotopologue(int n);
 	// Return Isotopologue List
 	const List<Isotopologue>& isotopologues() const;
 	// Return whether the specified Isotopologue exists

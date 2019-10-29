@@ -77,6 +77,12 @@ int Species::nIsotopologues() const
 	return isotopologues_.nItems();
 }
 
+// Return nth Isotopologue in the list
+Isotopologue* Species::isotopologue(int n)
+{
+	return isotopologues_[n];
+}
+
 // Return Isotopologue List
 const List<Isotopologue>& Species::isotopologues() const
 {
