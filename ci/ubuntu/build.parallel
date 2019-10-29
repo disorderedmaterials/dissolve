@@ -44,7 +44,7 @@ chmod u+x build-appimage.sh
 VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
 
 # Build AppImage
-./build-appimage.sh -a Dissolve -v ${VERSION} -b $PARALLELBINARY
+./build-appimage.sh -a Dissolve -v ${VERSION} -b ${PARALLELBINARY}
 
 # Store artifacts (the dir will have been created already by Travis)
 cp Dissolve*.AppImage artifacts/
