@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.5 at 16:27:28 on 28-10-2019.
+# Input file written by Dissolve v0.4.5 at 16:45:16 on 29-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -79,6 +79,44 @@ EndConfiguration
 #------------------------------------------------------------------------------#
 #                              Processing Layers                               #
 #------------------------------------------------------------------------------#
+
+Layer  'Evolve (Standard)'
+  Frequency  1
+
+  Module  MolShake  'MolShake01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  MD  'MD01'
+    Frequency  5
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  Energy  'Energy01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  5
+
+  Module  RDF  'RDF01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  NeutronSQ  'NeutronSQ01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+EndLayer
 
 #------------------------------------------------------------------------------#
 #                                  Simulation                                  #
