@@ -49,6 +49,9 @@ VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
 # Build AppImage
 ./build-appimage.sh -a Dissolve -v ${VERSION} -b ${PARALLELBINARY}
 
-# Store artifacts (the dir will have been created already by Travis)
-cp Dissolve*.AppImage artifacts/
+# Clear old artifacts (the dir will have been created already by Travis)
+rm -vf artifacts/Dissolve-[0-9]*.AppImage
+
+# Store artifacts
+cp Dissolve-[0-9]*.AppImage artifacts/
 
