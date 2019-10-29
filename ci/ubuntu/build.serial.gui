@@ -2,6 +2,8 @@
 
 # Configuration
 NINJA=true
+SERIALBINARY="NOTSET"
+GUIBINARY="NOTSET"
 
 # Enforce verbosity for commands and exit on first failure
 set -ev
@@ -23,11 +25,24 @@ export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 # Use Ninja over Autotools?
 if $NINJA
 then
+  # Set binary targets
+  SERIALBINARY=build/dissolve-serial
+  GUIBINARY=build/dissolve-gui
+
+  # Create build dir and descend into it
   mkdir build
   cd build
+
+  # Generate build files
   cmake ../ -G "Ninja" -DGUI:bool=true
+
+  # Build
   ninja
 else
+  # Set binary targets
+  SERIALBINARY=build/dissolve-serial
+  GUIBINARY=build/dissolve-gui
+
   # Execute autogen.sh
  ./autogen.sh
 
@@ -47,10 +62,10 @@ chmod u+x build-appimage.sh
 VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
 
 # Build AppImage for serial version
-./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b src/dissolve-serial
+./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b $SERIALBINARY
 
 # Build AppImage for GUI
-./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b src/dissolve-gui
+./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b $GUIBINARY
 
 # Store artifacts (the dir will have been created already by Travis)
 cp Dissolve*.AppImage artifacts/

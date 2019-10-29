@@ -1,16 +1,40 @@
 #!/bin/bash
 
+# Configuration
+NINJA=true
+PARALLELBINARY="NOTSET"
+
 # Enforce verbosity for commands and exit on first failure
 set -ev
 
-# Execute autogen.sh
-./autogen.sh
+# Use Ninja over Autotools?
+if $NINJA
+then
+  # Set binary targets
+  PARALLELBINARY=build/dissolve
 
-# Configure the build
-./configure --with-parallel
+  # Create build dir and descend into it
+  mkdir build
+  cd build
 
-# Make
-make
+  # Generate build files
+  cmake ../ -G "Ninja" -DPARALLEL:bool=true
+
+  # Build
+  ninja
+else
+  # Set binary targets
+  PARALLELBINARY=src/dissolve
+
+  # Execute autogen.sh
+  ./autogen.sh
+
+  # Configure the build
+  ./configure --with-parallel
+
+  # Make
+  make
+fi
 
 # Retrieve appimage build script
 wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
@@ -20,7 +44,7 @@ chmod u+x build-appimage.sh
 VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
 
 # Build AppImage
-./build-appimage.sh -a Dissolve -v ${VERSION} -b src/dissolve
+./build-appimage.sh -a Dissolve -v ${VERSION} -b $PARALLELBINARY
 
 # Store artifacts (the dir will have been created already by Travis)
 cp Dissolve*.AppImage artifacts/
