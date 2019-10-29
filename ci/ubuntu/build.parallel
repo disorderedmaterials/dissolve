@@ -22,6 +22,9 @@ then
 
   # Build
   ninja
+
+  # Ascend back to root dir
+  cd ../
 else
   # Set binary targets
   PARALLELBINARY=src/dissolve

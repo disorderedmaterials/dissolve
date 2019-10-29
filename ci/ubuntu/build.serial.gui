@@ -38,6 +38,9 @@ then
 
   # Build
   ninja
+
+  # Ascend back to root dir
+  cd ../
 else
   # Set binary targets
   SERIALBINARY=build/dissolve-serial
