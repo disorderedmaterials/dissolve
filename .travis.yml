@@ -13,6 +13,8 @@ addons:
       - automake
       - libopenmpi-dev
       - openmpi-bin
+      - ninja-build
+      - cmake
   homebrew:
     packages:
       - bison

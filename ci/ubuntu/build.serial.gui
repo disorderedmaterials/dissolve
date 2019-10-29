@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Configuration
+NINJA=true
+
 # Enforce verbosity for commands and exit on first failure
 set -ev
 
@@ -17,15 +20,24 @@ fi
 
 export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 
-# Execute autogen.sh
-./autogen.sh
+# Use Ninja over Autotools?
+if $NINJA
+then
+  mkdir build
+  cd build
+  cmake ../ -G "Ninja" -DGUI:bool=true
+  ninja
+else
+  # Execute autogen.sh
+ ./autogen.sh
 
-# Configure the build
-# - On Ubuntu, need to specify executable names for Qt tools
-./configure --with-gui --with-qtmoc=moc --with-qtrcc=rcc --with-qtuic=uic
+  # Configure the build
+  # - On Ubuntu, need to specify executable names for Qt tools
+  ./configure --with-gui --with-qtmoc=moc --with-qtrcc=rcc --with-qtuic=uic
 
-# Make
-make
+  # Make
+  make
+fi
 
 # Retrieve appimage build script
 wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
