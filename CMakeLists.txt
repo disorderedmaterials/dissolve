@@ -83,7 +83,7 @@ if(WIN32)
  
   # Add global NOMINMAX define for Windows systems, and inhibit console creation
   ADD_DEFINITIONS("-DNOMINMAX")
-  SET(GUI_TYPE WIN32)
+  #SET(GUI_TYPE WIN32)
   if(MINGW)
     SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
   endif(MINGW)
