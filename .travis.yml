@@ -78,7 +78,7 @@ jobs:
         skip_cleanup: true
         on:
           all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*dmg
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
     - stage: OSX Build / Deploy
       name: Serial, GUI
       env: PARALLEL=false
