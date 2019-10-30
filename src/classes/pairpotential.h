@@ -222,14 +222,6 @@ class PairPotential : public ListItem<PairPotential>
 	void setUAdditional(Data1D& newUAdditional);
 	// Adjust additional potential, and recalculate UFull and dUFull
 	void adjustUAdditional(Data1D deltaU, double factor = 1.0);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif

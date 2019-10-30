@@ -131,6 +131,7 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 			}
 		}
 
+		// Copy the form of the parameters
 		master->setForm(sourceIntra->masterParameters()->form());
 
 		// Set the master pointer in the interaction

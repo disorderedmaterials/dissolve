@@ -176,7 +176,8 @@ class DissolveWindow : public QMainWindow
 	// Species
 	void on_SpeciesCreateEmptyAction_triggered(bool checked);
 	void on_SpeciesCreateAtomicAction_triggered(bool checked);
-	void on_SpeciesImportDissolveAction_triggered(bool checked);
+	void on_SpeciesImportFromDissolveAction_triggered(bool checked);
+	void on_SpeciesImportFromXYZAction_triggered(bool checked);
 	void on_SpeciesRenameAction_triggered(bool checked);
 	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
 	void on_SpeciesDeleteAction_triggered(bool checked);

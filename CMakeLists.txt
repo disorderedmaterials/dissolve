@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "5")
+set(VERSION_PATCH "6")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -83,7 +83,7 @@ if(WIN32)
  
   # Add global NOMINMAX define for Windows systems, and inhibit console creation
   ADD_DEFINITIONS("-DNOMINMAX")
-  SET(GUI_TYPE WIN32)
+  #SET(GUI_TYPE WIN32)
   if(MINGW)
     SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
   endif(MINGW)

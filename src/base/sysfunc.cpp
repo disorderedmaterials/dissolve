@@ -117,7 +117,7 @@ bool DissolveSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 	return true;
 }
 
-// Get characters before first occurrence of designated character, or NULL if the character does not exist
+// Get characters before first occurrence of designated character, or an empty string if the character does not exist
 const char* DissolveSys::beforeChar(const char* s, char delim)
 {
 	static CharString result(1024);
@@ -127,10 +127,10 @@ const char* DissolveSys::beforeChar(const char* s, char delim)
 		if (s[i] == delim) return result;
 		result += s[i];
 	}
-	return NULL;
+	return "";
 }
 
-// Get characters after first occurrence of designated character, or NULL if the character does not exist
+// Get characters after first occurrence of designated character, or an empty string if the character does not exist
 const char* DissolveSys::afterChar(const char* s, char delim)
 {
 	static CharString result(1024);
@@ -141,7 +141,7 @@ const char* DissolveSys::afterChar(const char* s, char delim)
 		if (found) result += s[i];
 		if (s[i] == delim) found = true;
 	}
-	return (found ? result.get() : NULL);
+	return (found ? result.get() : "");
 }
 
 // Get characters after last occurrence of designated character

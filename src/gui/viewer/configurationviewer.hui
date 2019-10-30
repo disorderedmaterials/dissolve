@@ -23,9 +23,9 @@
 #define DISSOLVE_CONFIGURATIONVIEWER_H
 
 #include "gui/viewer/viewer.hui"
+#include "gui/viewer/render/renderableconfiguration.h"
 
 // Forward Declarations
-class RenderableConfiguration;
 class Configuration;
 class Atom;
 
@@ -104,14 +104,26 @@ class ConfigurationViewer : public BaseViewer
 	private:
 	// Source Configuration to display
 	Configuration* configuration_;
-	// Renderable for source Configuration
-	RenderableConfiguration* configurationRenderable_;
 
 	public:
 	// Set target Configuration
 	void setConfiguration(Configuration* sp);
 	// Return target Configuration
 	Configuration* configuration() const;
+
+
+	/*
+	 * Renderable
+	 */
+	private:
+	// Renderable for source Configuration
+	RenderableConfiguration* configurationRenderable_;
+
+	public:
+	// Set renderable draw style
+	void setRenderableDrawStyle(RenderableConfiguration::DisplayStyle ds);
+	// Return current renderable draw style
+	RenderableConfiguration::DisplayStyle renderableDrawStyle() const;
 };
 
 #endif

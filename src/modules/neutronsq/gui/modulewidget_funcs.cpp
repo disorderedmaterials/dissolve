@@ -34,6 +34,8 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	// Set up user interface
 	ui_.setupUi(this);
 
+	refreshing_ = true;
+
 	// Set up partial g(r) graph
 	partialGRGraph_ = ui_.PartialGRPlotWidget->dataViewer();
 	// -- Set view

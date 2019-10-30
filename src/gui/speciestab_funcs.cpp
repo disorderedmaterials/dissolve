@@ -77,11 +77,11 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 
 	// Set up SpeciesViewer
 	ui_.ViewerWidget->setCoreData(&dissolve.coreData());
-	ui_.ViewerWidget->speciesViewer()->setSpecies(species_);
+	ui_.ViewerWidget->setSpecies(species_);
 
 	// Connect signals / slots
-	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
-	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
+	connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
 	refreshing_ = false;
 }
@@ -362,7 +362,7 @@ void SpeciesTab::updateControls()
 
 	// View / Generate Tab
 	ui_.ForcefieldButton->setText(species_ && species_->forcefield() ? species_->forcefield()->name() : "<None>");
-	ui_.ViewerWidget->speciesViewer()->postRedisplay();
+	ui_.ViewerWidget->postRedisplay();
 
 	// Geometry Tab
 	// -- SpeciesAtom Table

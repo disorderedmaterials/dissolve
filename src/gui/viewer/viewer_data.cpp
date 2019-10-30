@@ -178,15 +178,18 @@ const View& BaseViewer::constView() const
 	return view_;
 }
 
-// Emit the signal to notify that the data represented in the Viewer has been changed
-void BaseViewer::notifyDataModified(bool invalidateSetUp)
+/*
+ * Signals
+ */
+
+// Emit the signal to notify that the viewing style of data represented in the Viewer has changed
+void BaseViewer::notifyStyleModified()
 {
-	if (invalidateSetUp) emit(dataModified(true));
-	else emit(dataModified(false));
+	emit(styleModified());
 }
 
-// Emit the signal to notify that the data has changed and dependent widgets should be updated
-void BaseViewer::notifyDataChanged()
+// Emit the signal to notify that the data has changed
+void BaseViewer::notifyDataModified()
 {
-	emit(dataChanged());
+	emit(dataModified());
 }
