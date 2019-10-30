@@ -12,7 +12,7 @@ permalink: /
 ### Contributors
 - Simona (2019-)
 
-_Current Version: 0.4.5, Monday 28th October 2019_
+_Current Version: 0.4.6, Wednesday 30th October 2019_
 
 ## Introduction
 
