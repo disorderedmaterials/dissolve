@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.5 at 16:45:16 on 29-10-2019.
+# Input file written by Dissolve v0.4.5 at 14:35:29 on 30-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -25,6 +25,9 @@ Species 'Water'
 
   # Angles
   Angle    2    1    3  @HW-OW-HW
+
+  # Isotopologues
+  Isotopologue  'NewIsotopologue'  HW=2
 EndSpecies
 
 #------------------------------------------------------------------------------#
