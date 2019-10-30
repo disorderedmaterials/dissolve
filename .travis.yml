@@ -45,7 +45,7 @@ jobs:
         directories:
           - artifacts
       script: ./ci/ubuntu/build.parallel
-    - stage: Test / Deploy
+    - stage: Linux Test / Deploy
       name: Serial (also deploys GUI)
       env: PARALLEL=false
       os: linux
@@ -62,7 +62,7 @@ jobs:
         on:
           all_branches: true
         script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
-    - stage: Test / Deploy
+    - stage: Linux Test / Deploy
       name: Parallel
       env: PARALLEL=true
       os: linux
@@ -108,5 +108,5 @@ branches:
 # Build Stage Order
 stages:
   - Linux Build
-  - Test / Deploy
+  - Linux Test / Deploy
   - OSX Build / Deploy
