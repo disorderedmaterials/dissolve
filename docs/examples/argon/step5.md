@@ -8,11 +8,14 @@ nav_order: 7
 
 ## 5) Equilibrate the System
 
-With two of our processing layers set up we can start to run the simulation and monitor how the system is evolving. There are several ways to run the simulation within the Dissolve GUI:
+With two of our processing layers set up we can start to run the simulation and monitor how the system is evolving. There are several ways to run the simulation within the Dissolve GUI.
 
-- Click the _Run_{: .text-green-100} button on the left-hand side of the main window.
-- Use _Simulation→Run_{: .text-green-100} from the main menu.
-- Press `Ctrl-R`.
+> Click the _Run_{: .text-green-100} button on the left-hand side of the main window
+{: .action .action_mouse}
+> Simulation &#8680; Run
+{: .action .action_menu}
+> Ctrl-R
+{: .action .action_key}
 
 Do one of those to set the simulation running. Note the counter in the top-left of the main window which tracks the current iteration.
 
@@ -23,10 +26,13 @@ If you have the [`NeutronSQ`](/modules/neutronsq) module tab still open (if you 
 ![Equilibrated total G(r) for liquid argon](equilibrated-gr.png){: .img-centre}
 ![Equilibrated total F(Q) for liquid argon](equilibrated-fq.png){: .img-centre}
 
-We'll now stop the simulation by doing one of:
+We'll now stop the simulation.
 
-- Click the _Pause_{: .text-green-100} button on the left-hand side of the main window.
-- Use _Simulation→Pause_{: .text-green-100} from the main menu.
-- Press `Esc`.
+> Click the _Pause_{: .text-green-100} button on the left-hand side of the main window
+{: .action .action_mouse}
+> Simulation &#8680; Pause
+{: .action .action_menu}
+> Esc
+{: .action .action_key}
 
 [Previous Step](step4b.md){: .btn }   [Next Step](step6.md){: .btn .right}
