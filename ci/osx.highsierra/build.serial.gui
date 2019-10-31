@@ -11,13 +11,14 @@ Qt5Core_DIR=/usr/local/opt/qt/lib/cmake/Qt5Core
 Qt5_DIR=/usr/local/opt/qt/lib/cmake
 Qt5Concurrent_DIR=/usr/local/opt/qt/lib/cmake/Qt5Concurrent
 Qt5Gui_DIR=/usr/local/opt/qt/lib/cmake/Qt5Gui
+ls /usr/local/Cellar/qt/5.13.1
 
 # Create build dir and descend into it
 mkdir build
 cd build
 
 # Generate build files
-cmake ../ -G "Ninja" -DGUI:bool=true
+cmake ../ -G "Ninja" -DGUI:bool=true -DCMAKE_MODULE_PATH=/usr/local/Cellar/qt/5.13.1
 
 # Build
 ninja
