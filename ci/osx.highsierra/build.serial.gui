@@ -4,8 +4,8 @@
 set -ev
 
 # Source the new Qt installation
-# - Copied from /opt/qt512/bin/qt512-env.sh
-#export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
+export LDFLAGS="-L/usr/local/opt/qt/lib"
+export CPPFLAGS="-I/usr/local/opt/qt/include"
 
 # Create build dir and descend into it
 mkdir build
