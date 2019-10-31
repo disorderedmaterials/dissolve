@@ -16,6 +16,7 @@ addons:
       - ninja-build
       - cmake
   homebrew:
+    update: true
     packages:
       - bison
       - ftgl
