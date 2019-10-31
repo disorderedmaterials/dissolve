@@ -4,8 +4,12 @@
 set -ev
 
 # Source the new Qt installation
-export LDFLAGS="-L/usr/local/opt/qt/lib"
-export CPPFLAGS="-I/usr/local/opt/qt/include"
+Qt5Widgets_DIR=/usr/local/opt/qt/lib/cmake/Qt5Widgets
+Qt5Test_DIR=/usr/local/opt/qt/lib/cmake/Qt5Test
+Qt5Core_DIR=/usr/local/opt/qt/lib/cmake/Qt5Core
+Qt5_DIR=/usr/local/opt/qt/lib/cmake
+Qt5Concurrent_DIR=/usr/local/opt/qt/lib/cmake/Qt5Concurrent
+Qt5Gui_DIR=/usr/local/opt/qt/lib/cmake/Qt5Gui
 
 # Create build dir and descend into it
 mkdir build
