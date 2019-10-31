@@ -29,7 +29,7 @@ RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) 
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
-	dataPrimitive_ = createPrimitive();
+	dataPrimitive_ = recreatePrimitives();
 }
 
 // Destructor
@@ -98,11 +98,22 @@ void RenderableData2D::transformData()
 			if (transformedData_.constXAxis(n) > transformMaxPositive_.x) transformMaxPositive_.x = transformedData_.constXAxis(n);
 		}
 		// Y
-		if (transformedData_.constValue(n) > 0.0)
+		
+		if (transformedData_.constYAxis(n) > 0.0)
 		{
-			if (transformedData_.constValue(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constValue(n);
-			if (transformedData_.constValue(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constValue(n);
+			if (transformedData_.constYAxis(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constYAxis(n);
+			if (transformedData_.constYAxis(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constYAxis(n);
 		}
+		
+		//values
+// 		for(int c= 0; c < transformedData_.nRows(); ++c)
+// 		{
+// 			for(int 
+// 		if (transformedData_.constValue(n) > 0.0)
+// 		{
+// 			if (transformedData_.constValue(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constValue(n);
+// 			if (transformedData_.constValue(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constValue(n);
+// 		}
 		
 		//transformedMin and Max positive values only positive
 		
@@ -173,7 +184,7 @@ bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	dataPrimitive_->initialise(GL_LINE_STRIP, true);
+	dataPrimitive_->reinitialise(source_->nValues(),true, GL_LINE_STRIP, true);
 
 	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
@@ -194,7 +205,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
+void RenderableData2D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, PrimitiveList* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> x = displayAbscissa;
