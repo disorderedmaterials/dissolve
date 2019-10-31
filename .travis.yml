@@ -18,6 +18,8 @@ addons:
   homebrew:
     packages:
       - bison
+      - ftgl
+      - ninja
 
 # Add updated Qt libs (serial build only)
 before_install:
