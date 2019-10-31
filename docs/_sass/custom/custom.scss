@@ -101,6 +101,13 @@ blockquote.action_dissolve::before {
   background-image: url(action-dissolve.png);
 }
 
+// Action (Tabs)
+blockquote.action_tabs::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(action-tabs.svg);
+}
+
 // Action (Menu)
 blockquote.action_menu {
   font-weight: bold;
