@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.5 at 15:25:48 on 30-10-2019.
+# Input file written by Dissolve v0.4.6 at 11:02:53 on 31-10-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -27,7 +27,7 @@ Species 'Water'
   Angle    2    1    3  @HW-OW-HW
 
   # Isotopologues
-  Isotopologue  'D2O'  HW=2
+  Isotopologue  'Deuterated'  HW=2
 EndSpecies
 
 #------------------------------------------------------------------------------#
@@ -118,6 +118,7 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
+    QBroadening  'OmegaDependentGaussian'  0.020000
     Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
     Reference  mint  'data/SLS18498-H2O.mdcs01'
     EndReference
@@ -127,7 +128,8 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
-    Isotopologue  'Bulk'  'Water'  'D2O'  1.000000
+    QBroadening  'OmegaDependentGaussian'  0.020000
+    Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
     Reference  mint  'data/SLS18502-D2O.mdcs01'
     EndReference
   EndModule
@@ -136,6 +138,11 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+    Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
+    Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
+    Reference  mint  'data/SLS18500-HDO5050.mdcs01'
+    EndReference
   EndModule
 EndLayer
 

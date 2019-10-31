@@ -42,7 +42,7 @@ The [`NeutronSQ`](/modules/neutronsq) module will use isotopic natural abundance
 Before we can select the isotopologue for our argon species, we first need to create it. The experimental measurement was made on Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring 'mix' (1.91 fm).
 
 > **Species (Argon)** tab, **Isotopologues** section
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Click _Add_{: .text-green-100}
 {: .step}
 > Expand the entries for the 'NewIsotopologue' by clicking the [+] next to its name, or by clicking _Expand All_{: .text-green-100}
@@ -58,7 +58,7 @@ Before we can select the isotopologue for our argon species, we first need to cr
 Now we can return to the [`NeutronSQ`](/modules/neutronsq) module tab and set up the isotopologues.
 
 > **NeutronSQ** tab
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
 > Click the _Edit..._{: .text-green-100} button for the **Isotopologues** option
@@ -73,7 +73,7 @@ Now we can return to the [`NeutronSQ`](/modules/neutronsq) module tab and set up
 The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related experimental reference data corresponding to the same isotopic mix as calculated in the module, which we'll now set up.
 
 > **NeutronSQ** tab
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Open the **Reference Data** settings group
 {: .action .action_settings}
 > Click the _Set..._{: .text-green-100} button for the **Reference** option
@@ -88,7 +88,7 @@ The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related expe
 The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so we will instruct Dissolve to remove this normalisation. Finally, we will change the default window function used in the Fourier transform in order to better match the processing performed on the original data.
 
 > **NeutronSQ** tab
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Open the **Reference Data** settings group
 {: .action .action_settings}
 > Select `AverageSquared` for the **ReferenceNormalisation**
