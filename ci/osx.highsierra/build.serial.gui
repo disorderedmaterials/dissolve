@@ -1,15 +1,33 @@
-#!/bin/bash
+#!/bin/bas
 
 # Enforce verbosity for commands and exit on first failure
 set -ev
 
-# Create build dir and descend
+# Source the new Qt installation
+# - Copied from /opt/qt512/bin/qt512-env.sh
+#export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
+
+# Create build dir and descend into it
 mkdir build
 cd build
 
-# Prep CMake
-cmake ../ -DGUI:bool=true
+# Generate build files
+cmake ../ -G "Ninja" -DGUI:bool=true
 
-# Make
-make
+# Build
+ninja
+
+# Ascend back to root dir
+cd ../
+
+# Build dmg files
+# TODO
+
+# Clear old artifacts (the dir will have been created already by Travis)
+rm -vf artifacts/Dissolve-Serial*.dmg
+rm -vf artifacts/Dissolve-GUI*.dmg
+
+# Store artifacts
+cp Dissolve-Serial*.dmg artifacts/
+cp Dissolve-GUI*.dmg artifacts/
 
