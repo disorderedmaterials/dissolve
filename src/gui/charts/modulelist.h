@@ -1,6 +1,6 @@
 /*
-	*** Procedure Chart
-	*** src/gui/charts/procedure.h
+	*** ModuleList Chart
+	*** src/gui/charts/modulelist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,43 +19,42 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_PROCEDURE_H
-#define DISSOLVE_CHARTS_PROCEDURE_H
+#ifndef DISSOLVE_CHARTS_MODULELIST_H
+#define DISSOLVE_CHARTS_MODULELIST_H
 
 #include "gui/charts/chart.hui"
-#include "gui/charts/proceduremetrics.h"
+#include "gui/charts/modulelistmetrics.h"
 #include <QWidget>
 
 // Forward Declarations
-class CoreData;
-class Procedure;
-class ProcedureChartNodeBlock;
-class ProcedureNode;
-class SequenceProcedureNode;
+class Dissolve;
+class Module;
+class ModuleBlock;
+class ModuleList;
 
-// Procedure Chart - Manages display of a sequence of nodes in a Procedure
-class ProcedureChart : public ChartBase
+// ModuleList Chart - Manages display of a sequence of modules from a ModuleList
+class ModuleListChart : public ChartBase
 {
 	public:
 	// Constructor / Destructor
-	ProcedureChart(Procedure* procedure, const CoreData& coreData);
-	~ProcedureChart();
+	ModuleListChart(ModuleList* moduleList, Dissolve& dissolve);
+	~ModuleListChart();
 
 
 	/*
-	 * CoreData Reference
+	 * Dissolve Reference
 	 */
 	private:
-	// CoreData reference
-	const CoreData& coreData_;
+	// Dissolve reference
+	Dissolve& dissolve_;
 
 
 	/*
-	 * Target Procedure
+	 * Target ModuleList
 	 */
 	private:
-	// Target Procedure for display
-	Procedure* procedure_;
+	// Target ModuleList for display
+	ModuleList* moduleList_;
 
 
 	/*
@@ -70,16 +69,12 @@ class ProcedureChart : public ChartBase
 	 * Chart Blocks
 	 */
 	private:
-	// Widgets for our root sequence Procedure nodes
-	RefList<ProcedureChartNodeBlock> rootSequenceNodeWidgets_;
+	// Widgets for our Module blocks
+	RefList<ModuleBlock> moduleBlockWidgets_;
 
 	private:
-	// Create / own chart block widgets for the specified sequence
-	void updateContentBlocks(const SequenceProcedureNode* sequenceNode, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets, int& indentLevel);
-	// Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
-	ProcedureChartNodeBlock* nodeBlock(ProcedureNode* node);
-	// Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-	ProcedureChartNodeBlock* nodeBlock(ProcedureNode* node, const RefList<ProcedureChartNodeBlock>& list);
+	// Find ModuleBlock displaying specified Module
+	ModuleBlock* moduleBlock(Module* module);
 
 	protected:
 	// Update the content block widgets against the current target data
@@ -98,11 +93,9 @@ class ProcedureChart : public ChartBase
 	 */
 	private:
 	// Chart metrics
-	ProcedureChartMetrics metrics_;
+	ModuleListChartMetrics metrics_;
 
 	private:
-	// Calculate geometries for the widgets in the supplied sequence list
-	void calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel);
 	// Calculate new widget geometry according to the layout requirements, returning the entire area required
 	QSize calculateNewWidgetGeometry(QSize currentSize);
 

@@ -15,6 +15,7 @@ SET(gui_MOC_HDRS
   modulechartmetrics.h
   modulechartmoduleblock.h
   modulecontrolwidget.h
+  modulelisteditor.h
   modulewidget.h
   procedureeditor.h
 
@@ -74,6 +75,7 @@ SET(gui_UIS
   modulechartinsertionblock.ui
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
+  modulelisteditor.ui
   procedureeditor.ui
 
   # Widgets
@@ -123,6 +125,7 @@ SET(gui_SRCS
   modulechartinsertionblock_funcs.cpp
   modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
+  modulelisteditor_funcs.cpp
   modulewidget.cpp
   procedureeditor_funcs.cpp
 
