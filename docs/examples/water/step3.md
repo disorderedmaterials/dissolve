@@ -81,6 +81,4 @@ We'll now give the modules sensible names, and set the isotopologues and referen
 > Select the file `SLS18502-D2O.mdcs01` - the format is `mint`
 {: .step}
 
-
-
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn .right}
