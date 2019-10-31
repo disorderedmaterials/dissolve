@@ -34,7 +34,7 @@ PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionT
 {
 	function_ = function;
 
-	gaussianFWHM_ = 0.12;
+	gaussianFWHM_ = 0.18;
 
 	// Create element broadening array
 	elementPairGaussianFWHM_.initialise(Elements::nElements(), Elements::nElements(), true);
