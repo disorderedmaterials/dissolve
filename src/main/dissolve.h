@@ -237,6 +237,8 @@ class Dissolve
 	Module* findModuleInstance(const char* uniqueName);
 	// Search for any instance of any Module with the specified Module type
 	RefList<Module> findModuleInstances(const char* moduleType);
+	// Generate unique Module name with base name provided
+	const char* uniqueModuleName(const char* name, Module* excludeThis = NULL);
 	// Delete specified Module instance
 	bool deleteModuleInstance(Module* instance);
 

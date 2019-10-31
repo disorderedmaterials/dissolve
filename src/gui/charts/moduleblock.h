@@ -80,23 +80,19 @@ class ModuleBlock : public QWidget, public ChartBlock
 	QColor displayColour_;
 
 	public:
-	// Set whether the keywords widget is expanded or not, and whether this is permanent
-	void setKeywordsExpanded(bool expanded, bool permanent = false);
 	// Hide the remove button
 	void hideRemoveButton();
-	// Hide the toggle keywords button (e.g. when shown in a ModuleTab)
-	void hideKeywordsButton();
 	// Return suitable QPixmap for supplied Module
 	static QPixmap modulePixmap(const Module* module);
 	// Return suitable QPixmap for supplied Module type
 	static QPixmap modulePixmap(QString moduleType);
 
 	public slots:
-	void on_ToggleKeywordsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
+	void on_NameEdit_editingFinished();
+	void on_NameEdit_returnPressed();
 
 	signals:
-	void keywordsToggled();
 	void remove(void* nodePointer);
 
 

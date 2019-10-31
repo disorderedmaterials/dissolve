@@ -44,15 +44,13 @@ ModuleBlock::ModuleBlock(QWidget* parent, Module* module, Dissolve& dissolve) : 
 	// Set the Module pointer
 	module_ = module;
 
-	// Hide the keywords control frame to start with
-	ui_.KeywordsControlWidget->setVisible(false);
-
 	// Set up our keywords widget
 	ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.constCoreData());
 	connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
 	connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 
-	// Set the icon label
+	// Set the icon and module type label
+	ui_.TopLabel->setText(module_->type());
 	ui_.IconLabel->setPixmap(modulePixmap(module_));
 
 	// Update our controls
@@ -90,24 +88,10 @@ Module* ModuleBlock::module() const
  * Controls
  */
 
-// Set whether the keywords widget is expanded or not, and whether this is permanent
-void ModuleBlock::setKeywordsExpanded(bool expanded, bool permanent)
-{
-	on_ToggleKeywordsButton_clicked(expanded);
-
-	ui_.ToggleKeywordsButton->setDisabled(permanent);
-}
-
 // Hide the remove button (e.g. when shown in a ModuleTab)
 void ModuleBlock::hideRemoveButton()
 {
 	ui_.RemoveButton->setVisible(false);
-}
-
-// Hide the toggle keywords button (e.g. when shown in a ModuleTab)
-void ModuleBlock::hideKeywordsButton()
-{
-	ui_.ToggleKeywordsButton->setVisible(false);
 }
 
 // Return suitable QPixmap for supplied Module
@@ -128,20 +112,34 @@ QPixmap ModuleBlock::modulePixmap(QString moduleType)
 	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
-void ModuleBlock::on_ToggleKeywordsButton_clicked(bool checked)
-{
-	ui_.KeywordsControlWidget->setVisible(checked);
-
-	adjustSize();
-	updateGeometry();
-
-	emit(keywordsToggled());
-}
-
 void ModuleBlock::on_RemoveButton_clicked(bool checked)
 {
 	emit (remove(module_));
 }
+
+void ModuleBlock::on_NameEdit_editingFinished()
+{
+	if (refreshing_) return;
+
+	// If the name is the same, return now
+	if (ui_.NameEdit->text() == module_->uniqueName()) return;
+
+	// Check that the new name is unique
+	CharString uniqueName = dissolve_.uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
+
+	module_->setUniqueName(uniqueName);
+
+	ui_.NameEdit->setText(uniqueName.get());
+
+	emit(dataModified());
+}
+
+void ModuleBlock::on_NameEdit_returnPressed()
+{
+	// Call the editingFinished() function
+	on_NameEdit_editingFinished();
+}
+
 
 /*
  * QWidget Reimplementations
@@ -226,10 +224,8 @@ void ModuleBlock::updateControls()
 
 	refreshing_ = true;
 
-	// Set information panel contents
-	CharString topText("%s (%s)", module_->type(), module_->uniqueName());
-	ui_.TopLabel->setText(topText.get());
-	ui_.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
+	// Set unique name
+	ui_.NameEdit->setText(module_->uniqueName());
 
 	// Set 'enabled' button status
 	ui_.EnabledButton->setChecked(module_->enabled());

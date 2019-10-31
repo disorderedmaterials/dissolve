@@ -59,6 +59,7 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.ChartScrollArea->setWidget(chartWidget_);
 	ui_.ChartScrollArea->setWidgetResizable(true);
 	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 	moduleCategories_.clear();

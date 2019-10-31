@@ -128,8 +128,6 @@ void ModuleListChart::updateContentBlocks()
 			// No current widget, so must create one
 			block = new ModuleBlock(this, module, dissolve_);
 			connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
-			connect(block, SIGNAL(keywordsToggled()), this, SLOT(recalculateLayout()));
-// 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newWidgets.append(block);
 			chartBlocks_.append(block);
 			Messenger::printVerbose("Creating new ModuleBlock %p for Module %p (%s).\n", block, module, module->uniqueName());
