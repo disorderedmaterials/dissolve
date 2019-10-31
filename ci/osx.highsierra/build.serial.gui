@@ -4,6 +4,7 @@
 set -ev
 
 # Source the new Qt installation
+brew info qt5
 Qt5Widgets_DIR=/usr/local/opt/qt/lib/cmake/Qt5Widgets
 Qt5Test_DIR=/usr/local/opt/qt/lib/cmake/Qt5Test
 Qt5Core_DIR=/usr/local/opt/qt/lib/cmake/Qt5Core
