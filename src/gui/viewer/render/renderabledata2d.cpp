@@ -184,9 +184,9 @@ bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	dataPrimitive_->reinitialise(source_->nValues(),true, GL_LINE_STRIP, true);
+	dataPrimitive_->reinitialise(transformedData().nValues(),true, GL_LINE_STRIP, true);
 
-	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
+	constructLineXY(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().values(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -205,13 +205,19 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, PrimitiveList* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
+void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, PrimitiveList* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
-	Array<double> x = displayAbscissa;
+	Array<double> x = displayXAbscissa;
 	axes.transformX(x);
 	int nX = x.nItems();
 	if (nX < 2) return;
+	
+	// Copy and transform abscissa values (still in data space) into axes coordinates
+	Array<double> y = displayYAbscissa;
+	axes.transformX(y);
+	int nY = y.nItems();
+	if (nY < 2) return;
 
 	// Get some values from axes so we can calculate colours properly
 	bool yLogarithmic = axes.logarithmic(1);
