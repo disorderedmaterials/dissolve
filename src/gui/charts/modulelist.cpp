@@ -147,10 +147,19 @@ void ModuleListChart::updateContentBlocks()
 }
 
 /*
- * Drag / Drop
+ * Block Interaction
  */
 
-// TODO
+// Specified block has been double clicked
+void ModuleListChart::blockDoubleClicked(ChartBlock* block)
+{
+	// Cast block to a ModuleBlock
+	ModuleBlock* moduleBlock = dynamic_cast<ModuleBlock*>(block);
+	if (!moduleBlock) return;
+
+	// Emit the relevant signal
+	emit(ChartBase::blockDoubleClicked(moduleBlock->module()->uniqueName()));
+}
 
 /*
  * Widget Layout

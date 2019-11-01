@@ -105,7 +105,7 @@ class ChartBase : public QWidget
 
 
 	/*
-	 * Drag / Drop
+	 * Block Interaction
 	 */
 	protected:
 	// Position of last mouse click
@@ -126,6 +126,13 @@ class ChartBase : public QWidget
 	ChartHotSpot* hotSpotAt(QPoint point);
 	// Reset after drop
 	void resetAfterDrop(bool animateWidgets = true);
+
+	protected:
+	// Specified block has been double clicked
+	virtual void blockDoubleClicked(ChartBlock* block);
+
+	signals:
+	void blockDoubleClicked(const QString& blockName);
 
 
 	/*

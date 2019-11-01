@@ -175,8 +175,8 @@ void ChartBase::mouseDoubleClickEvent(QMouseEvent* event)
 	ChartBlock* chartBlock = dragBlockAt(event->pos());
 	if (!chartBlock) return;
 
-	// Attempt to open the Module in a ModuleTab
-// 	dissolveWindow_->addModuleTab(moduleBlock->module());
+	// Perform the double-click action (if relevant)
+	blockDoubleClicked(chartBlock);
 }
 
 // Drag enter event
@@ -342,7 +342,7 @@ void ChartBase::dropEvent(QDropEvent* event)
 }
 
 /*
- * Drag / Drop
+ * Block interaction
  */
 
 // Return drop hotspot, if any, under specified point
@@ -364,6 +364,11 @@ void ChartBase::resetAfterDrop(bool animate)
 	layOutWidgets(animate);
 
 	repaint();
+}
+
+// Specified block has been double clicked
+void ChartBase::blockDoubleClicked(ChartBlock* block)
+{
 }
 
 /*

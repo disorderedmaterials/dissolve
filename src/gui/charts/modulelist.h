@@ -82,10 +82,11 @@ class ModuleListChart : public ChartBase
 
 
 	/*
-	 * Drag / Drop
+	 * Block Interaction
 	 */
 	protected:
-	// TODO
+	// Specified block has been double clicked
+	void blockDoubleClicked(ChartBlock* block);
 
 
 	/*
