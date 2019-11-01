@@ -31,7 +31,7 @@ template<class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2D
 template<class Data2D> const char* ObjectStore<Data2D>::objectTypeName_ = "Data2D";
 
 // Constructor
-Data2D::Data2D() : ListItem<Data2D>(), ObjectStore<Data2D>(this), PlottableData(PlottableData::TwoAxisPlottable)
+Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data2D>(), ObjectStore<Data2D>(this)
 {
 	hasError_ = false;
 
@@ -44,7 +44,7 @@ Data2D::~Data2D()
 }
 
 // Copy Constructor
-Data2D::Data2D(const Data2D& source) : ObjectStore<Data2D>(this), PlottableData(PlottableData::TwoAxisPlottable)
+Data2D::Data2D(const Data2D& source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this)
 {
 	(*this) = source;
 }
