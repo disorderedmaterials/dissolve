@@ -1,12 +1,12 @@
-# Input file written by Dissolve v0.4.6 at 11:02:53 on 31-10-2019.
+# Input file written by Dissolve v0.4.6 at 11:37:27 on 01-11-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'HW-OW'  Harmonic  4431.530     1.000
-  Angle  'HW-OW-HW'  Harmonic   317.566   113.240
+  Bond  'HW-OW'  Harmonic  4431.530     0.976
+  Angle  'HW-OW-HW'  Harmonic   317.566   107.134
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -90,6 +90,8 @@ Layer  'Evolve (Standard)'
     Frequency  1
 
     Configuration  'Bulk'
+    RotationStepSize   1.57922e+01
+    TranslationStepSize   1.65621e-01
   EndModule
 
   Module  MD  'MD01'
@@ -112,6 +114,7 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
+    IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
@@ -143,6 +146,17 @@ Layer  'RDF / Neutron S(Q)'
     Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
     Reference  mint  'data/SLS18500-HDO5050.mdcs01'
     EndReference
+  EndModule
+EndLayer
+
+Layer  'Refine (EPSR)'
+  Frequency  5
+
+  Module  EPSR  'EPSR01'
+    Frequency  1
+    Target  'NeutronSQ01'  'Default'
+    Target  'NeutronSQ03'  'Default'
+    Target  'NeutronSQ02'  'Default'
   EndModule
 EndLayer
 

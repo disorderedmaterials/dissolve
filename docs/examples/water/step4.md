@@ -23,8 +23,8 @@ Since we have our experimental reference data loaded, a further instructive quan
 
 Now we can see the comparison between the total neutron-weighted structure factor and radial distribution functions for the H<sub>2</sub>O sample. After a short while running you should see something looking like this:
 
-![Equilibrated water simulation G(r)](equilibrated-gr.png){: .img-centre}
-![Equilibrated water simulation F(Q)](equilibrated-fq.png){: .img-centre}
+![Equilibrated water (H2O) G(r)](equilibrated-h2o-gr.png){: .img-centre}
+![Equilibrated water (H2O) F(Q)](equilibrated-h2o-fq.png){: .img-centre}
 
 At first glance the calculated and experimental F(Q) agree reasonably well, but the G(r) clearly show that we have a problem, with the feature for the O-H bond far too sharp and intense in the calculated data. This is less to do with inaccuracy of the intramolecular parameters present in the forcefield, and more to do with the apparent broadening of bound features caused by the relative speed of the probe particle to that of chemically-bound, vibrating atoms. To account for this difference we will apply an effective broadening function to the intramolecular g(r).
 
@@ -39,7 +39,7 @@ At first glance the calculated and experimental F(Q) agree reasonably well, but 
 
 Run the simulation for a few more steps until structure factor and radial distribution function settle, and you should get much better agreement.
 
-![Equilibrated water simulation G(r) with effective broadening applied to intramolecular g(r)](equilibrated-broadened-gr.png){: .img-centre}
-![Equilibrated water simulation F(Q) with effective broadening applied to intramolecular g(r)](equilibrated-broadened-fq.png){: .img-centre}
+![Equilibrated water (H2O) G(r) with effective broadening applied to intramolecular g(r)](equilibrated-h2o-broadened-gr.png){: .img-centre}
+![Equilibrated water (H2O) F(Q) with effective broadening applied to intramolecular g(r)](equilibrated-h2o-broadened-fq.png){: .img-centre}
 
 [Previous Step](step3.md){: .btn }   [Next Step](step5.md){: .btn .right}
