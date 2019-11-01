@@ -49,6 +49,8 @@ ElementColour& ElementColour::operator=(const ElementColour& source)
 	colour_[1] = source.colour_[1];
 	colour_[2] = source.colour_[2];
 	colour_[3] = source.colour_[3];
+
+	return (*this);
 }
 
 // Return colour
