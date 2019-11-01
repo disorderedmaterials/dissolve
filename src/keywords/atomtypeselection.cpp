@@ -110,7 +110,7 @@ bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const Core
 		// Do we recognise the AtomType?
 		AtomType* atomType = NULL;
 		ListIterator<AtomType> typeIterator(coreData.constAtomTypes());
-		while (atomType = typeIterator.iterate()) if (DissolveSys::sameString(atomType->name(), parser.argc(n))) break;
+		while ((atomType = typeIterator.iterate())) if (DissolveSys::sameString(atomType->name(), parser.argc(n))) break;
 		if (!atomType) return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
 		// If the AtomType is in the list already, complain
