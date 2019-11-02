@@ -74,16 +74,17 @@ class ModuleListChartMetrics
 	{
 		return 32;
 	}
-	// Minimum spacing between columns
-	static int chartMinimumColumnSpacing()
+	// Horizontal spacing between modules in list
+	static int horizontalModuleSpacing()
 	{
-		return 32;
+		return 40;
 	}
-	// Spacing between rows
-	static int chartRowSpacing()
+	// Additional horizontal spacing for insertion widget
+	static int horizontalInsertionSpacing()
 	{
-		return 32;
+		return 64;
 	}
+
 };
 
 #endif

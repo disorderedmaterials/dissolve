@@ -30,6 +30,7 @@
 class Dissolve;
 class Module;
 class ModuleBlock;
+class ModuleInsertionBlock;
 class ModuleList;
 
 // ModuleList Chart - Manages display of a sequence of modules from a ModuleList
@@ -71,6 +72,8 @@ class ModuleListChart : public ChartBase
 	private:
 	// Widgets for our Module blocks
 	RefList<ModuleBlock> moduleBlockWidgets_;
+	// Insertion block
+	ModuleInsertionBlock* insertionBlock_;
 
 	private:
 	// Find ModuleBlock displaying specified Module
@@ -85,6 +88,14 @@ class ModuleListChart : public ChartBase
 	 * Block Interaction
 	 */
 	protected:
+	// Return whether to accept the dragged object (described by its mime info)
+	bool acceptDraggedObject(const MimeStrings* strings);
+	// Handle hover over specified hotspot
+	bool handleHotSpotHover(const ChartHotSpot* hotSpot);
+	// Handle the drop of an object (described by its mime info)
+	void handleDroppedObject(const MimeStrings* strings);
+	// Return mime info for specified block (owned by this chart)
+	MimeStrings mimeInfo(ChartBlock* block);
 	// Specified block has been double clicked
 	void blockDoubleClicked(ChartBlock* block);
 

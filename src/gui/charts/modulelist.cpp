@@ -22,7 +22,9 @@
 #include "gui/charts/modulelist.h"
 #include "gui/charts/modulelistmetrics.h"
 #include "gui/charts/moduleblock.h"
+#include "gui/charts/moduleinsertionblock.h"
 #include "gui/widgets/mimestrings.h"
+#include "main/dissolve.h"
 #include "module/list.h"
 #include "module/module.h"
 #include <QApplication>
@@ -44,13 +46,13 @@ ModuleListChart::ModuleListChart(ModuleList* moduleList, Dissolve& dissolve) : C
 	// Target ModuleLayer
 	moduleList_ = moduleList;
 
+	// Create the insertion widget if we don't already have one
+	insertionBlock_ = new ModuleInsertionBlock(this);
+	insertionBlock_->setVisible(false);
+
 	updateContentBlocks();
 
 	recalculateLayout();
-
-	// Create the insertion widget if we don't already have one
-// 	insertionWidget_ = new ModuleLayerChartInsertionBlock(this, dissolveWindow_);
-// 	insertionWidget_->setVisible(false);
 
 	updateControls();
 }
@@ -81,8 +83,39 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 	dottedPen.setStyle(Qt::DotLine);
 	dottedPen.setCapStyle(Qt::RoundCap);
 
+	// Create a metrics object
+	ModuleListChartMetrics metrics;
+
+	// Draw lines between module widgets
+	painter.setPen(solidPen);
+	QPoint p1, p2;
+	int top = metrics.blockBorderWidth()/2 + metrics.chartMargin() + metrics.blockDentOffset() + metrics.blockDentRadius();
+	ModuleBlock* lastBlock = NULL;
+	RefListIterator<ModuleBlock> blockIterator(moduleBlockWidgets_);
+	while (ModuleBlock* block = blockIterator.iterate())
+	{
+		// If this block is not visible, continue
+		if (!block->isVisible()) continue;
+
+		/*
+		 * Draw a connecting line from the right-hand side of the last block (or the edge of the chart) to the left-hand side of the next one.
+		 * We will always draw the line at a y-coordinate 16 pixels below the tops of the widgets, for consistency.
+		 */
+
+		p1 = QPoint(lastBlock ? lastBlock->geometry().right() : 0, top);
+		p2 = QPoint(block->geometry().left(), top);
+// 		p1 = QPoint(lefts_[col]+widths_[col], tops_[row]+metrics.blockBorderWidth()/2 + metrics.blockDentOffset() + metrics.blockDentRadius());
+// 		p2 = QPoint(lefts_[col+1]+metrics.blockBorderWidth()/2, p1.y());
+		painter.drawLine(p1, p2);
+		painter.setBrush(Qt::black);
+		painter.drawEllipse(p2, metrics.blockDentRadius()-metrics.blockBorderWidth()-1, metrics.blockDentRadius()-metrics.blockBorderWidth()-1);
+
+		// Set the next block pointer
+		lastBlock = block;
+	}
+
 	// TEST - Highlight all hotspots
-	if (false)
+	if (true)
 	{
 		ListIterator<ChartHotSpot> hotSpotIterator(hotSpots_);
 		while (ChartHotSpot* hotSpot = hotSpotIterator.iterate()) painter.fillRect(hotSpot->geometry(), QBrush(QColor(200,200,0,50)));
@@ -144,11 +177,118 @@ void ModuleListChart::updateContentBlocks()
 
 	// Copy the new list
 	moduleBlockWidgets_ = newWidgets;
+
+	// Set the correct number of hotspots (number of block widgets + 1)
+	int nHotSpots = moduleBlockWidgets_.nItems() + 1;
+	while (nHotSpots < hotSpots_.nItems()) hotSpots_.removeLast();
+	while (nHotSpots > hotSpots_.nItems()) hotSpots_.add();
 }
 
 /*
  * Block Interaction
  */
+
+// Return whether to accept the dragged object (described by its mime info)
+bool ModuleListChart::acceptDraggedObject(const MimeStrings* strings)
+{
+	// Check the content of the strings
+	if (strings->hasData(MimeString::ModuleType))
+	{
+		// We accept the drop of an object specifying a Module type - we'll create a new instance of this type in the list
+		return true;
+	}
+	else if (strings->hasData(MimeString::LocalType))
+	{
+		// We accept the drop of a local block (a Module, referenced by its unique name) - we'll move it into the list
+		return true;
+	}
+
+	return false;
+}
+
+// Handle hover over specified hotspot, returning whether layout update is required
+bool ModuleListChart::handleHotSpotHover(const ChartHotSpot* hotSpot)
+{
+	// Need to recalculate widgets in order to display hotspot drop area
+	return true;
+}
+
+// Handle the drop of an object (described by its mime info)
+void ModuleListChart::handleDroppedObject(const MimeStrings* strings)
+{
+	// Check - if there is no current hotspot, then we have nothing to do
+	if (!currentHotSpot_) return;
+
+	if (strings->hasData(MimeString::LocalType))
+	{
+		// Local data - i.e. the dragged block which originated from this chart
+		if (!draggedBlock_)
+		{
+			Messenger::error("Local data dropped, but no dragged block is set.\n");
+			return;
+		}
+
+		// Cast the dragged block up to a ModuleBlock
+		ModuleBlock* draggedModuleBlock = dynamic_cast<ModuleBlock*>(draggedBlock_);
+		if (!draggedModuleBlock) return;
+
+		// Get the Module associated to the dragged block
+		Module* draggedModule = draggedModuleBlock->module();
+
+		// Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
+		ModuleBlock* moduleBlockBefore = dynamic_cast<ModuleBlock*>(currentHotSpot_->blockBefore());
+		Module* moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : NULL);
+		ModuleBlock* moduleBlockAfter = dynamic_cast<ModuleBlock*>(currentHotSpot_->blockAfter());
+		Module* moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : NULL);
+
+		// Check the blocks either side of the hotspot to see where our Module needs to be (or has been returned to)
+		if ((draggedModule->prev() == moduleBeforeHotSpot) && (draggedModule->next() == moduleAfterHotSpot))
+		{
+			// Dragged block has not moved. Nothing to do.
+			return;
+		}
+		else
+		{
+			// Block has been dragged to a new location...
+			if (moduleBeforeHotSpot) moduleList_->modules().moveAfter(draggedModule, moduleBeforeHotSpot);
+			else moduleList_->modules().moveBefore(draggedModule, moduleAfterHotSpot);
+
+			// Flag that the current data has changed
+			emit(dataModified());
+		}
+	}
+	else if (strings->hasData(MimeString::ModuleType))
+	{
+		// Create a new instance of the specified module type
+		Module* newModule = dissolve_.createModuleInstance(qPrintable(strings->data(MimeString::ModuleType)));
+
+		// Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
+		ModuleBlock* moduleBlockBefore = dynamic_cast<ModuleBlock*>(currentHotSpot_->blockBefore());
+		Module* moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : NULL);
+		ModuleBlock* moduleBlockAfter = dynamic_cast<ModuleBlock*>(currentHotSpot_->blockAfter());
+		Module* moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : NULL);
+
+		// Add the new modele 
+		if (moduleAfterHotSpot) moduleList_->modules().ownBefore(newModule, moduleAfterHotSpot);
+		else moduleList_->modules().own(newModule);
+
+		// Flag that the current data has changed
+		emit(dataModified());
+	}
+}
+
+// Return mime info for specified block (owned by this chart)
+MimeStrings ModuleListChart::mimeInfo(ChartBlock* block)
+{
+	// Try to cast the block into a ModuleBlock
+	ModuleBlock* moduleBlock = dynamic_cast<ModuleBlock*>(block);
+	if (!moduleBlock) return MimeStrings();
+
+	MimeStrings mimeStrings;
+	mimeStrings.add(MimeString::LocalType, moduleBlock->module()->uniqueName());
+
+	return mimeStrings;
+}
 
 // Specified block has been double clicked
 void ModuleListChart::blockDoubleClicked(ChartBlock* block)
@@ -177,12 +317,30 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 
 	// Left edge of next widget, and maximum height
 	int left = metrics.chartMargin();
+	int hotSpotLeft = 0;
 	int maxHeight = 0;
 
+	// Get the first hot spot in the list (the list should have been made the correct size in updateContentBlocks()).
+	ChartHotSpot* hotSpot = hotSpots_.first();
+
 	// Loop over widgets
+	ModuleBlock* lastVisibleBlock = NULL;
 	RefListIterator<ModuleBlock> blockIterator(moduleBlockWidgets_);
 	while (ModuleBlock* block = blockIterator.iterate())
 	{
+		// Set default visibility of the block
+		block->setVisible(true);
+
+		// If this block is currently being dragged, hide it and continue with the next one
+		if (draggedBlock_ == block)
+		{
+			block->setVisible(false);
+			continue;
+		}
+
+		// If our hotspot is the current one, increase the size.
+		if (hotSpot == currentHotSpot_) left += metrics.horizontalInsertionSpacing();
+
 		// Set left edge of this widget
 		block->setNewPosition(left, metrics.chartMargin());
 
@@ -190,18 +348,52 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 		QSize minSize = block->widget()->minimumSizeHint();
 		block->setNewSize(minSize.width(), minSize.height());
 
-		// Add on width of widget to left edge
+		// Set the hotspot to end at the left edge of the current block
+		hotSpot->setGeometry(QRect(hotSpotLeft, metrics.chartMargin(), left - hotSpotLeft, 1));
+
+		// Set surrounding blocks for the hotspot
+		hotSpot->setSurroundingBlocks(lastVisibleBlock, block);
+
+		// Set new hotspot left edge and surrounding blocks
+		hotSpotLeft = left + minSize.width();
+
+		// Add on width of widget and spacing to left edge
 		left += minSize.width();
+		if (!blockIterator.isLast()) left += metrics.horizontalModuleSpacing();
 
 		// Check maximal height
 		if (minSize.height() > maxHeight) maxHeight = minSize.height();
 
-		// If there is a block following this one, add on space for the connecting line
-		if (!blockIterator.isLast()) left += 40;
+		// Set the last visible block
+		lastVisibleBlock = block;
+
+		// Move to the next hotspot
+		hotSpot = hotSpot->next();
 	}
 
-	// Finalise and return required size
-	return QSize(left + metrics.chartMargin(), maxHeight + 2*metrics.chartMargin());
+	// Finalise required size
+	QSize requiredSize = QSize(left + metrics.chartMargin(), maxHeight + 2*metrics.chartMargin());
+
+	// Set final hotspot geometry
+	hotSpot->setGeometry(QRect(hotSpotLeft, metrics.chartMargin(), geometry().right() - left, 1));
+	hotSpot->setSurroundingBlocks(lastVisibleBlock, NULL);
+	hotSpot = hotSpot->next();
+
+	// Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero height
+	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next()) spot->setHeight(maxHeight);
+	for (ChartHotSpot* spot = hotSpot; spot != NULL; spot = spot->next()) spot->setHeight(0);
+
+	// If there is a current hotspot, set the insertion widget to be visible and set its geometry
+	if (currentHotSpot_)
+	{
+		insertionBlock_->setVisible(true);
+
+		insertionBlock_->setGeometry(currentHotSpot_->geometry());
+	}
+	else insertionBlock_->setVisible(false);
+
+	// Return required size
+	return requiredSize;
 }
 
 /*

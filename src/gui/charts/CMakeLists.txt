@@ -4,6 +4,7 @@
 # Meta-Objects
 SET(charts_MOC_HDRS
   moduleblock.h
+  moduleinsertionblock.h
   procedurenode.h
 
   chart.hui
@@ -14,6 +15,7 @@ QT5_WRAP_CPP(charts_MOC_SRCS ${charts_MOC_HDRS})
 # User Interface Files
 SET(charts_UIS
   moduleblock.ui
+  moduleinsertionblock.ui
   procedurenode.ui
 )
 QT5_WRAP_UI(charts_UIS_H ${charts_UIS})
@@ -25,6 +27,7 @@ SET(charts_SRCS
   charthotspot.cpp
   chartscrollarea_funcs.cpp
   moduleblock_funcs.cpp
+  moduleinsertionblock_funcs.cpp
   modulelist.cpp
   procedure.cpp
   procedurenode_funcs.cpp

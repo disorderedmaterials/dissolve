@@ -36,11 +36,13 @@ class MimeString : public ListItem<MimeString>
 	// Mime Strings Data Type
 	enum MimeStringType
 	{
-		ModuleType,				/* Module type */
+		NoMimeType,
+		LocalType,			/* Local block identifier */
+		ModuleType,			/* Module type */
 		nMimeStringTypes
 	};
 	// Constructor
-	MimeString(MimeString::MimeStringType type, QString data);
+	MimeString(MimeString::MimeStringType type = NoMimeType, QString data = QString());
 
 	private:
 	// Type of data contained in string
@@ -61,6 +63,12 @@ class MimeStrings : public QMimeData
 	public:
 	// Constructor
 	MimeStrings();
+	// Destructor
+	~MimeStrings();
+	// Copy Constructor
+	MimeStrings(const MimeStrings& source);
+	// Assignment Operator
+	void operator=(const MimeStrings& source);
 
 
 	/*
@@ -77,7 +85,7 @@ class MimeStrings : public QMimeData
 	 */
 	private:
 	// List of mime strings
-	List<MimeString> mimeStrings_;
+	List<MimeString> strings_;
 
 	public:
 	// Add mime string
@@ -89,7 +97,7 @@ class MimeStrings : public QMimeData
 	// Return the data for the specified type
 	QString data(MimeString::MimeStringType type) const;
 	// Return mime strings
-	List<MimeString>& mimeStrings();
+	List<MimeString>& strings();
 };
 
 #endif
