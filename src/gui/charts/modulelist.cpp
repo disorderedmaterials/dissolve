@@ -78,10 +78,6 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 	// Set up some QPens
 	QPen solidPen(Qt::black);
 	solidPen.setWidth(metrics_.blockBorderWidth());
-	QPen dottedPen(Qt::gray);
-	dottedPen.setWidth(metrics_.blockBorderWidth());
-	dottedPen.setStyle(Qt::DotLine);
-	dottedPen.setCapStyle(Qt::RoundCap);
 
 	// Create a metrics object
 	ModuleListChartMetrics metrics;
@@ -97,15 +93,9 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 		// If this block is not visible, continue
 		if (!block->isVisible()) continue;
 
-		/*
-		 * Draw a connecting line from the right-hand side of the last block (or the edge of the chart) to the left-hand side of the next one.
-		 * We will always draw the line at a y-coordinate 16 pixels below the tops of the widgets, for consistency.
-		 */
-
+		// Draw connecting line between blocks
 		p1 = QPoint(lastBlock ? lastBlock->geometry().right() : 0, top);
 		p2 = QPoint(block->geometry().left(), top);
-// 		p1 = QPoint(lefts_[col]+widths_[col], tops_[row]+metrics.blockBorderWidth()/2 + metrics.blockDentOffset() + metrics.blockDentRadius());
-// 		p2 = QPoint(lefts_[col+1]+metrics.blockBorderWidth()/2, p1.y());
 		painter.drawLine(p1, p2);
 		painter.setBrush(Qt::black);
 		painter.drawEllipse(p2, metrics.blockDentRadius()-metrics.blockBorderWidth()-1, metrics.blockDentRadius()-metrics.blockBorderWidth()-1);
@@ -114,8 +104,8 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 		lastBlock = block;
 	}
 
-	// TEST - Highlight all hotspots
-	if (true)
+	// Highlight all hotspots
+	if (false)
 	{
 		ListIterator<ChartHotSpot> hotSpotIterator(hotSpots_);
 		while (ChartHotSpot* hotSpot = hotSpotIterator.iterate()) painter.fillRect(hotSpot->geometry(), QBrush(QColor(200,200,0,50)));
