@@ -20,7 +20,6 @@
 */
 
 #include "gui/layertab.h"
-#include "gui/modulechart.hui"
 #include "gui/gui.h"
 #include "gui/getmodulelayernamedialog.h"
 #include "main/dissolve.h"

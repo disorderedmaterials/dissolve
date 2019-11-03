@@ -8,18 +8,10 @@
 # Meta-Objects
 SET(gui_MOC_HDRS
   # Editors
-  layereditor.h
-  modulechartblock.h
-  modulecharthotspot.h
-  modulechartinsertionblock.h
-  modulechartmetrics.h
-  modulechartmoduleblock.h
   modulecontrolwidget.h
   modulelisteditor.h
   modulewidget.h
   procedureeditor.h
-
-  modulechart.hui
 
   # Widgets
   addconfigurationwizard.h
@@ -71,9 +63,6 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 # User Interface Files
 SET(gui_UIS
   # Editors
-  layereditor.ui
-  modulechartinsertionblock.ui
-  modulechartmoduleblock.ui
   modulecontrolwidget.ui
   modulelisteditor.ui
   procedureeditor.ui
@@ -118,12 +107,6 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
   # Editors
-  layereditor_funcs.cpp
-  modulechart_funcs.cpp
-  modulechartblock.cpp
-  modulecharthotspot.cpp
-  modulechartinsertionblock_funcs.cpp
-  modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
   modulelisteditor_funcs.cpp
   modulewidget.cpp

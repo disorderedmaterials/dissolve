@@ -23,7 +23,6 @@
 #define DISSOLVE_CHARTS_MODULEINSERTIONBLOCK_H
 
 #include "gui/charts/ui_moduleinsertionblock.h"
-#include "gui/modulechartblock.h"
 #include "templates/reflist.h"
 
 // Forward Declarations

@@ -21,7 +21,7 @@
 
 #include "gui/modulecontrolwidget.h"
 #include "gui/gui.h"
-#include "gui/modulechartmoduleblock.h"
+#include "gui/charts/moduleblock.h"
 #include "gui/modulewidget.h"
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
@@ -62,14 +62,13 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	}
 
 	// Set a nice icon for the window
-	setWindowIcon(ModuleChartModuleBlock::modulePixmap(module));
+	setWindowIcon(ModuleBlock::modulePixmap(module));
 
 	// Create a splitter into which we'll add our widgets
 	QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
 
-	// Create the controls widget (a ModuleChartModuleBlock)
-	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
-	controlsWidget_->setSettingsExpanded(true, true);
+	// Create the controls widget (a ModuleBlock)
+	controlsWidget_ = new ModuleBlock(this, module_, dissolve_);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	splitter->addWidget(controlsWidget_);
 

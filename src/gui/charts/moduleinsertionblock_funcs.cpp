@@ -20,7 +20,7 @@
 */
 
 #include "gui/charts/moduleinsertionblock.h"
-#include "gui/modulechartmetrics.h"
+#include "gui/charts/modulelistmetrics.h"
 #include <QPainter>
 
 // Constructor
@@ -43,7 +43,7 @@ ModuleInsertionBlock::~ModuleInsertionBlock()
 // Paint event
 void ModuleInsertionBlock::paintEvent(QPaintEvent* event)
 {
-	ModuleChartMetrics metrics;
+	ModuleListChartMetrics metrics;
 
 	QPainter painter(this);
 	
