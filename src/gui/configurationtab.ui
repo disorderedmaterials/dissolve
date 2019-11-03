@@ -626,9 +626,9 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="LayerEditor" name="ModulePanel" native="true">
+        <widget class="ModuleListEditor" name="LayerPanel" native="true">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -648,12 +648,6 @@
    <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
   <customwidget>
-   <class>LayerEditor</class>
-   <extends>QWidget</extends>
-   <header>gui/layereditor.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ConfigurationWidget</class>
    <extends>QWidget</extends>
    <header>gui/viewer/configurationwidget.h</header>
@@ -663,6 +657,12 @@
    <class>ProcedureEditor</class>
    <extends>QWidget</extends>
    <header>gui/procedureeditor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ModuleListEditor</class>
+   <extends>QWidget</extends>
+   <header>gui/modulelisteditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -20,7 +20,6 @@
 */
 
 #include "gui/layertab.h"
-#include "gui/modulechart.hui"
 #include "gui/gui.h"
 #include "gui/getmodulelayernamedialog.h"
 #include "main/dissolve.h"
@@ -34,7 +33,7 @@ LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidge
 	moduleLayer_ = layer;
 
 	// Set up ModuleEditor
-	ui_.ModulePanel->setUp(dissolveWindow, moduleLayer_);
+	ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
 
 	refreshing_ = false;
 }
@@ -123,7 +122,7 @@ void LayerTab::updateControls()
 	ui_.EnabledButton->setChecked(moduleLayer_->enabled());
 	ui_.FrequencySpin->setValue(moduleLayer_->frequency());
 
-	ui_.ModulePanel->updateControls();
+	ui_.ModuleListPanel->updateControls();
 
 	refreshing_ = false;
 }
@@ -133,7 +132,7 @@ void LayerTab::disableSensitiveControls()
 {
 	ui_.EnabledButton->setEnabled(false);
 	ui_.FrequencySpin->setEnabled(false);
-	ui_.ModulePanel->disableSensitiveControls();
+	ui_.ModuleListPanel->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
@@ -141,7 +140,7 @@ void LayerTab::enableSensitiveControls()
 {
 	ui_.EnabledButton->setEnabled(true);
 	ui_.FrequencySpin->setEnabled(true);
-	ui_.ModulePanel->enableSensitiveControls();
+	ui_.ModuleListPanel->enableSensitiveControls();
 }
 
 /*
@@ -151,7 +150,7 @@ void LayerTab::enableSensitiveControls()
 // Read widget state through specified LineParser
 bool LayerTab::readState(LineParser& parser, const CoreData& coreData)
 {
-	if (!ui_.ModulePanel->readState(parser)) return false;
+	if (!ui_.ModuleListPanel->readState(parser)) return false;
 
 	return true;
 }
@@ -159,7 +158,7 @@ bool LayerTab::readState(LineParser& parser, const CoreData& coreData)
 // Write widget state through specified LineParser
 bool LayerTab::writeState(LineParser& parser)
 {
-	if (!ui_.ModulePanel->writeState(parser)) return false;
+	if (!ui_.ModuleListPanel->writeState(parser)) return false;
 
 	return true;
 }

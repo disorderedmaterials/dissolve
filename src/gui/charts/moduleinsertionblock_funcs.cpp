@@ -1,6 +1,6 @@
 /*
-	*** ModuleChart Insertion Block Widget - Functions
-	*** src/gui/modulechartinsertionblock_funcs.cpp
+	*** Module Insertion Block Widget - Functions
+	*** src/gui/charts/moduleinsertionblock_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,24 +19,20 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/modulechartinsertionblock.h"
-#include "gui/modulechartmoduleblock.h"
-#include "gui/modulechartmetrics.h"
-#include "gui/gui.h"
-#include "gui/keywordwidgets/widgets.h"
-#include "main/dissolve.h"
+#include "gui/charts/moduleinsertionblock.h"
+#include "gui/charts/modulelistmetrics.h"
 #include <QPainter>
 
 // Constructor
-ModuleChartInsertionBlock::ModuleChartInsertionBlock(QWidget* parent, DissolveWindow* dissolveWindow) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
+ModuleInsertionBlock::ModuleInsertionBlock(QWidget* parent) : QWidget(parent)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	updateControls();
 }
 
-ModuleChartInsertionBlock::~ModuleChartInsertionBlock()
+ModuleInsertionBlock::~ModuleInsertionBlock()
 {
 }
 
@@ -45,9 +41,9 @@ ModuleChartInsertionBlock::~ModuleChartInsertionBlock()
  */
 
 // Paint event
-void ModuleChartInsertionBlock::paintEvent(QPaintEvent* event)
+void ModuleInsertionBlock::paintEvent(QPaintEvent* event)
 {
-	ModuleChartMetrics metrics;
+	ModuleListChartMetrics metrics;
 
 	QPainter painter(this);
 	
@@ -72,37 +68,27 @@ void ModuleChartInsertionBlock::paintEvent(QPaintEvent* event)
 }
 
 /*
- * Block Type
- */
-
-// Return type of this block
-ModuleChartBlock::ModuleChartBlockType ModuleChartInsertionBlock::blockType()
-{
-	return ModuleChartBlock::InsertionBlockType;
-}
-
-/*
  * Widget Functions
  */
 
 // Return underlying widget
-QWidget* ModuleChartInsertionBlock::widget()
+QWidget* ModuleInsertionBlock::widget()
 {
 	return this;
 }
 
 // Update controls within widget
-void ModuleChartInsertionBlock::updateControls()
+void ModuleInsertionBlock::updateControls()
 {
 }
 
 // Disable sensitive controls
-void ModuleChartInsertionBlock::disableSensitiveControls()
+void ModuleInsertionBlock::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls
-void ModuleChartInsertionBlock::enableSensitiveControls()
+void ModuleInsertionBlock::enableSensitiveControls()
 {
 }
 
@@ -111,19 +97,19 @@ void ModuleChartInsertionBlock::enableSensitiveControls()
  */
 
 // Return width of underlying widget
-int ModuleChartInsertionBlock::widgetWidth() const
+int ModuleInsertionBlock::widgetWidth() const
 {
 	return minimumSize().width();
 }
 
 // Return height of underlying widget
-int ModuleChartInsertionBlock::widgetHeight() const
+int ModuleInsertionBlock::widgetHeight() const
 {
 	return minimumSize().height();
 }
 
 // Set underlying widget geometry
-void ModuleChartInsertionBlock::setWidgetGeometry(int left, int top, int width, int height)
+void ModuleInsertionBlock::setWidgetGeometry(int left, int top, int width, int height)
 {
 	setGeometry(left, top, width, height);
 }
@@ -133,16 +119,16 @@ void ModuleChartInsertionBlock::setWidgetGeometry(int left, int top, int width, 
  */
 
 // Set icons to reflect insertion of specified Module
-void ModuleChartInsertionBlock::setDisplayModuleInsertion(QString moduleType)
+void ModuleInsertionBlock::setDisplayModuleInsertion(QString moduleType)
 {
-	ui.ActionLabel->setPixmap(QPixmap(":/general/icons/general_add.svg"));
-	ui.ModuleIconLabel->setPixmap(ModuleChartModuleBlock::modulePixmap(qPrintable(moduleType)));
-	ui.ModuleIconLabel->setVisible(true);
+	printf("THIS IS TODO!\n");
+// 	ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(qPrintable(moduleType)));
+// 	ui_.ModuleIconLabel->setVisible(true);
 }
 
 // Set icons to reflect moving existing Module to new position
-void ModuleChartInsertionBlock::setDisplayModuleMove()
+void ModuleInsertionBlock::setDisplayModuleMove()
 {
-	ui.ActionLabel->setPixmap(QPixmap(":/general/icons/general_movemodule.svg"));
-	ui.ModuleIconLabel->setVisible(true);
+	ui_.ActionLabel->setPixmap(QPixmap(":/general/icons/general_movemodule.svg"));
+	ui_.ModuleIconLabel->setVisible(true);
 }

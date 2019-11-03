@@ -75,6 +75,8 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
 	QRect geometry() const;
 	// Return if the supplied point exists within the hotspot
 	bool contains(QPoint p) const;
+	// Set blocks urrounding the hotspot
+	void setSurroundingBlocks(ChartBlock* blockBefore, ChartBlock* blockAfter);
 	// Return pointer to ChartBlock immediately before the hotspot
 	ChartBlock* blockBefore() const;
 	// Return pointer to ChartBlock immediately after the hotspot
