@@ -59,7 +59,7 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("Bragg: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 	Messenger::print("Bragg: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
 	if (averaging <= 1) Messenger::print("Bragg: No averaging of reflections will be performed.\n");
-	else Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().option(averagingScheme));
+	else Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().keyword(averagingScheme));
 	Messenger::print("\n");
 
 	/*

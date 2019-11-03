@@ -8,7 +8,12 @@ nav_order: 6
 
 ## 4b) Calculate g(r) and S(Q)
 
-The experimental data we'll be fitting to is neutron scattering data, so we will need neutron-weighted structure factors. From the _Layer_{: .text-green-100} menu choose _Create...→Calculate...→RDF and Neutron S(Q)_{: .text-green-100}. The new layer contains the following modules:
+The experimental data we'll be fitting to is neutron scattering data, so we will need to calculate neutron-weighted structure factors.
+
+> Layer &#8680; Create... &#8680; Calculate... &#8680; RDF and Neutron S(Q)
+{: .action .action_menu}
+
+The new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
@@ -22,34 +27,75 @@ This time we will need to set a few parameters in the [`NeutronSQ`](/modules/neu
 
 ### Set up Isotopes
 
-Double-click the [`NeutronSQ`](/modules/neutronsq) module to open it up in a new tab. Now we have access to the options for the module, as well as any graphing or other facilities the module might provide. On the left you'll see a categorised list of all available options - find and click the _Neutron Isotopes_{: .text-green-100} group, and you'll see an **Isotopologue** option. This is where the isotopologues for all species in the configurations targetted by the [`NeutronSQ`](/modules/neutronsq) module must be set, so that the proper weighting of the calculated structure factors can be performed. Click the _Edit..._{: .text-green-100} button to show a drop-down list of all assigned isotopologues, which will currently be empty. Clicking the _Auto_{: .text-green-100} button will populate the list with any missing species (based on the current contents of the configuration) and assign them the natural isotopologue.
+First, we'll open up our [`NeutronSQ`](/modules/neutronsq) module in a tab of its own.
+
+> Double-click the [`NeutronSQ`](/modules/neutronsq) module on its icon or name
+{: .action .action_mouse}
+
+Now we have access to the options for the module, as well as any graphing or other visualisation facilities the module might provide. On the left you'll see a categorised list of all available options.
+
+The [`NeutronSQ`](/modules/neutronsq) module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise.
 
 > The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available.
 {: .tip }
 
-The experimental measurement was made on Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring 'mix' (1.91 fm). So, we'll need to create a new isotopologue definition in the species to reference in the [`NeutronSQ`](/modules/neutronsq) module:
+Before we can select the isotopologue for our argon species, we first need to create it. The experimental measurement was made on Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring 'mix' (1.91 fm).
 
-- Return to the _Isotopologues_{: .text-green-100} section of your argon species.
-- Click _Add_{: .text-green-100}.
-- Expand the entries for the 'NewIsotopologue' by clicking the [+] next to its name, or by clicking _Expand All_{: .text-green-100}.
-- Change the entry for the Ar atom type from `Natural (bc = 1.909 fm)` to `36 (bc = 24.9)`.
-- For sanity's sake, you may also want to change the name of the isotopologue to something like 'Ar36' (double-click on the name to do so).
+> **Species (Argon)** tab, **Isotopologues** section
+{: .action .action_tabs}
+> Click _Add_{: .text-green-100}
+{: .step}
+> Expand the entries for the 'NewIsotopologue' by clicking the [+] next to its name, or by clicking _Expand All_{: .text-green-100}
+{: .step}
+> Change the entry for the Ar atom type from `Natural (bc = 1.909 fm)` to `36 (bc = 24.9)`
+{: .step}
+>For sanity's sake, you may also want to change the name of the isotopologue to something like 'Ar36' (double-click on the name to do so)
+{: .step}
 
 > Isotopic mixtures for the same atom type are created by mixing isotopologue definitions rather than specifying the isotope ratio within the isotopologue itself.
 {: .warn }
 
-Now you can return to the tab for your [`NeutronSQ`](/modules/neutronsq) module and _Edit..._{: .text-green-100} the **Isotopologue** keyword. You'll now find that the options for the isotopologues for your Ar species include the one you just created, so select it.
+Now we can return to the [`NeutronSQ`](/modules/neutronsq) module tab and set up the isotopologues.
+
+> **NeutronSQ** tab
+{: .action .action_tabs}
+> Open the **Neutron Isotopes** settings group
+{: .action .action_settings}
+> Click the _Edit..._{: .text-green-100} button for the **Isotopologues** option
+{: .step}
+> Press the _Auto_{: .text-green-100} button to populate the list with the default isotopic selection for each species
+{: .step}
+> Change the isotopologue for the argon species from `Natural` to `Ar36`
+{: .step}
 
 ### Import Reference Data
 
-The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related experimental reference data corresponding to the same isotopic mix as calculated in the module. Go to the _Reference Data_{: .text-green-100} group and set up the reference argon data as follows:
+The [`NeutronSQ`](/modules/neutronsq) module itself looks after any related experimental reference data corresponding to the same isotopic mix as calculated in the module, which we'll now set up.
 
-- Click the "Set..." button for the **Reference** keyword to show the file selection dropdown.
-- Open the file `yarnell.sq` from the `examples/argon` data directory (the format of the file is simple `xy` data).
-- We need to subtract the average level from the experimental data as it oscillates around 1.0, so go to _Manipulations_{: .text-green-100} in the options and set the **RemoveAverage** value to 9.0.
+> **NeutronSQ** tab
+{: .action .action_tabs}
+> Open the **Reference Data** settings group
+{: .action .action_settings}
+> Click the _Set..._{: .text-green-100} button for the **Reference** option
+{: .step}
+> Open the file `yarnell.sq` - the format is `xy` data
+{: .step}
+> Open the **Manipulations** options
+{: .action .action_settings}
+> We need to subtract the average level from the experimental data as it oscillates around 1.0, so set the **RemoveAverage** value to 9.0.
+{: .step}
 
-The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so choose `AverageSquared` for the **ReferenceNormalisation** to instruct Dissolve to remove this normalisation.
+The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so we will instruct Dissolve to remove this normalisation. Finally, we will change the default window function used in the Fourier transform in order to better match the processing performed on the original data.
 
-Finally, we need to change the default **WindowFunction** (found in the _Calculation_{: .text-green-100} section) used in the Fourier transform from `Lorch` to `None` in order to better match the processing performed on the original data.
+> **NeutronSQ** tab
+{: .action .action_tabs}
+> Open the **Reference Data** settings group
+{: .action .action_settings}
+> Select `AverageSquared` for the **ReferenceNormalisation**
+{: .step}
+> Open the **Calculation** settings group
+{: .action .action_settings}
+> Change the **WindowFunction** from `Lorch` to `None`
+{: .step}
 
 [Previous Step](step4a.md){: .btn }   [Next Step](step5.md){: .btn .right}

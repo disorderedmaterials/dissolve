@@ -81,12 +81,12 @@ grep 'APP_VERSION=' ./extra/OSX/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-
 # Windows build files
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-[0-9\.]*/OutputBaseFilename=Dissolve-$MAJOR.$MINOR.$PATCH/g" extra/Win32/dissolve.iss
+  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-[0-9\.]*/OutputBaseFilename=Dissolve-$MAJOR.$MINOR.$PATCH/g" ci/windows/dissolve.iss
 fi
 echo -n "    dissolve.iss (Program Version) : "
-grep 'define MyAppVersion' extra/Win32/dissolve.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
+grep 'define MyAppVersion' ci/windows/dissolve.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
 echo -n "    dissolve.iss (Output Filename) : "
-grep 'OutputBaseFilename' extra/Win32/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
+grep 'OutputBaseFilename' ci/windows/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
 
 # Documentation
 if [ "$TEST" = "false" ]

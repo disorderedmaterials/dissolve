@@ -68,7 +68,7 @@ bool LayerEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer
 		// Find category for this Module (if it exists) or create a new one
 		MimeTreeWidgetItem* categoryItem = NULL;
 		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
+		while ((categoryItem = categoryIterator.iterate())) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
 		if (categoryItem == NULL)
 		{
 			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);

@@ -59,6 +59,8 @@ Isotope& Isotope::operator=(const Isotope& source)
 	boundIncoherentXS_ = source.boundIncoherentXS_;
 	totalXS_ = source.totalXS_;
 	absorptionXS_ = source.absorptionXS_;
+
+	return (*this);
 }
 
 // Return index of isotope in it's Element parent's list

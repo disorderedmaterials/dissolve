@@ -88,9 +88,18 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser& parser, Configuration*
 	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
 
 	// Export keytrj and imcon
-	if (cfg->box()->type() == Box::NonPeriodicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
-	else if (cfg->box()->type() == Box::CubicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
-	else if (cfg->box()->type() == Box::OrthorhombicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
+	if (cfg->box()->type() == Box::NonPeriodicBoxType)
+	{
+		if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
+	}
+	else if (cfg->box()->type() == Box::CubicBoxType)
+	{
+		if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
+	}
+	else if (cfg->box()->type() == Box::OrthorhombicBoxType)
+	{
+		if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
+	}
 	else parser.writeLineF("%10i%10i\n", 0, 3);
 	
 	// Export Cell

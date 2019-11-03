@@ -7,9 +7,34 @@ grand_parent: Examples
 
 ## 2. Set up a Configuration
 
-From the _Configuration_{: .text-green-100} menu select _Create...→Simple random mix_{: .text-green-100} and choose your water species as the only component. The default density parameter (`rho`) defined in the generator for the configuration is 0.1 atoms/Angstrom**3, which just so happens to be the density for water at 298 K. All we need to adjust is the number of molecules in the system in the `AddSpecies` node for the water molecule. Change this to 1000, and then _Regenerate_{: .text-green-100} the configuration to get a box size of just over 31 Angstroms side length.
+Time to create a suitable bulk water configuration for our simulation.
 
-Finally - don't forget to change the _Temperature_{: .text-green-100} to 298 K.
+> Configuration &#8680; Create... &#8680; Simple random mix
+{: .action .action_menu}
+> Choose the water species and continue
+{: .step}
+
+We now need to set a few parameters in the generator in order to get the correct setup.
+
+> Open the settings for the `Parameters` node
+{: .action .action_settings}
+> Check that the value of the "rho" variable is 0.1
+{: .step}
+> Open the settings for the `AddSpecies` node
+{: .action .action_settings}
+> Check that the units for the **Density** are set to `atoms/A3`
+{: .step}
+> Increase the **Population** to 1000
+{: .step}
+> Click _Regenerate_{: .text-green-100}
+{: .action .action_mouse}
+
+Our new configuration should have a box size of just over 31 Angstroms side length.
+
+Finally, we'll tweak the temperature of the configuration.
+
+> Set the **Temperature** to 298 K
+{: .action .action_edit}
 
 ![Water box](waterbox.png){: .img-centre}
 

@@ -78,18 +78,3 @@ void ConfigurationViewer::mouseWheeled(int delta)
 
 	postRedisplay();
 }
-
-// Mouse double clicked
-void ConfigurationViewer::mouseDoubleClicked()
-{
-}
-
-// Key pressed
-bool ConfigurationViewer::keyPressed(int key)
-{
-}
-
-// Key released
-bool ConfigurationViewer::keyReleased(int key)
-{
-}
