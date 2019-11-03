@@ -161,6 +161,7 @@ void ModuleListChart::updateContentBlocks()
 			// No current widget, so must create one
 			block = new ModuleBlock(this, module, dissolve_);
 			connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
+			connect(block, SIGNAL(remove(const QString&)), this, SLOT(blockRemovalRequested(const QString&)));
 			newWidgets.append(block);
 			chartBlocks_.append(block);
 			Messenger::printVerbose("Creating new ModuleBlock %p for Module %p (%s).\n", block, module, module->uniqueName());
@@ -299,6 +300,44 @@ void ModuleListChart::blockDoubleClicked(ChartBlock* block)
 
 	// Emit the relevant signal
 	emit(ChartBase::blockDoubleClicked(moduleBlock->module()->uniqueName()));
+}
+
+// The chart has requested removal of one of its blocks
+void ModuleListChart::blockRemovalRequested(const QString& blockIdentifier)
+{
+	// Get the reference to the Module list
+	List<Module>& modules = moduleList_->modules();
+
+	// Find the named Module in our list
+	Module* module = moduleList_->find(qPrintable(blockIdentifier));
+	if (!module)
+	{
+		Messenger::error("Can't find module to remove (%s) in our target list!\n", qPrintable(blockIdentifier));
+		return;
+	}
+
+	// Are we sure that we want to delete the Module?
+	QMessageBox queryBox;
+	queryBox.setText(QString("This will delete the Module '%1'.").arg(blockIdentifier));
+	queryBox.setInformativeText("This cannot be undone. Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		modules.cut(module);
+
+		// If the Module is currently displayed in its own ModuleTab, remove that first
+		emit(blockRemoved(blockIdentifier));
+
+		// Remove the Module instance
+		dissolve_.deleteModuleInstance(module);
+
+		emit(dataModified());
+
+		updateControls();
+	}
 }
 
 /*

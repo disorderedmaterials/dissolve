@@ -93,7 +93,7 @@ class ModuleBlock : public QWidget, public ChartBlock
 	void on_NameEdit_returnPressed();
 
 	signals:
-	void remove(void* nodePointer);
+	void remove(const QString& blockIdentifier);
 
 
 	/*

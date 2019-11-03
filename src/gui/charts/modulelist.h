@@ -98,6 +98,8 @@ class ModuleListChart : public ChartBase
 	MimeStrings mimeInfo(ChartBlock* block);
 	// Specified block has been double clicked
 	void blockDoubleClicked(ChartBlock* block);
+	// The chart has requested removal of one of its blocks
+	void blockRemovalRequested(const QString& blockIdentifier);
 
 
 	/*

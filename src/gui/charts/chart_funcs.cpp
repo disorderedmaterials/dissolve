@@ -307,6 +307,12 @@ void ChartBase::blockDoubleClicked(ChartBlock* block)
 	// No default action
 }
 
+// The chart has requested removal of one of its blocks
+void ChartBase::blockRemovalRequested(const QString& blockIdentifier)
+{
+	// No default action
+}
+
 /*
  * Widget Layout
  */

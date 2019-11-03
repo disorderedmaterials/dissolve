@@ -114,7 +114,7 @@ QPixmap ModuleBlock::modulePixmap(QString moduleType)
 
 void ModuleBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (remove(module_));
+	emit (remove(module_->uniqueName()));
 }
 
 void ModuleBlock::on_NameEdit_editingFinished()

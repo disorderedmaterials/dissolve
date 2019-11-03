@@ -136,8 +136,13 @@ class ChartBase : public QWidget
 	// Specified block has been double clicked
 	virtual void blockDoubleClicked(ChartBlock* block);
 
+	protected slots:
+	// The chart has requested removal of one of its blocks
+	virtual void blockRemovalRequested(const QString& blockIdentifier);
+
 	signals:
-	void blockDoubleClicked(const QString& blockName);
+	void blockDoubleClicked(const QString& blockIdentifeir);
+	void blockRemoved(const QString& blockIdentifier);
 
 
 	/*
@@ -177,7 +182,7 @@ class ChartBase : public QWidget
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
+	protected slots:
 	// Displayed chart data has been modified in some way
 	void chartDataModified();
 

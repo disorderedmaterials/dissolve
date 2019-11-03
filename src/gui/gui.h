@@ -358,6 +358,8 @@ class DissolveWindow : public QMainWindow
 	public slots:
 	// Add or go to Module tab for the Module with the unique name provided
 	void showModuleTab(const QString& uniqueName);
+	// Remove the Module tab (if it exists) for the Module with the unique name provided
+	void removeModuleTab(const QString& uniqueName);
 	// Remove tab containing the specified page widget
 	void removeTab(QWidget* page);
 
