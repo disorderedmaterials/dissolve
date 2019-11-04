@@ -1,11 +1,11 @@
-# Input file written by Dissolve v0.4.6 at 11:37:27 on 01-11-2019.
+# Input file written by Dissolve v0.4.6 at 16:41:45 on 01-11-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'HW-OW'  Harmonic  4431.530     0.976
+  Bond  'HW-OW'  Harmonic  4431.530     0.974
   Angle  'HW-OW-HW'  Harmonic   317.566   107.134
 EndMaster
 
@@ -73,7 +73,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
 
-  Temperature  300.000000
+  Temperature  298.000000
 
   # Modules
   # -- None
@@ -142,6 +142,7 @@ Layer  'RDF / Neutron S(Q)'
 
     Configuration  'Bulk'
     QBroadening  'OmegaDependentGaussian'  0.020000
+    Exchangeable  HW
     Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
     Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
     Reference  mint  'data/SLS18500-HDO5050.mdcs01'
@@ -154,6 +155,8 @@ Layer  'Refine (EPSR)'
 
   Module  EPSR  'EPSR01'
     Frequency  1
+    EReq   1.00000e+01
+    Feedback   9.00000e-01
     Target  'NeutronSQ01'  'Default'
     Target  'NeutronSQ03'  'Default'
     Target  'NeutronSQ02'  'Default'
