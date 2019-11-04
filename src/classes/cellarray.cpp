@@ -48,7 +48,7 @@ void CellArray::clear()
 }
 
 // Generate Cells for Box
-bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRange, double atomicDensity)
+bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRange)
 {
 	// There are some conditions to the partitioning:
 	// 1) We require a minimum number of cells (minCellsPerSide) per box side
