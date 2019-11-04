@@ -67,6 +67,7 @@ void DissolveWindow::setWidgetsAfterRun()
 {
 	// Disable / enable controls
 	ui_.ControlRunButton->setEnabled(true);
+	ui_.ControlRunButton->setIcon(QIcon(":/control/icons/control_play.svg"));
 	ui_.ControlStepButton->setEnabled(true);
 	ui_.ControlPauseButton->setEnabled(false);
 

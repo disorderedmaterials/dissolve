@@ -118,6 +118,7 @@
   <qresource prefix="control">
     <file>icons/control_pause.svg</file>
     <file>icons/control_locked.svg</file>
+    <file>icons/control_waiting.svg</file>
     <file>icons/control_unlocked.svg</file>
     <file>icons/control_step.svg</file>
     <file>icons/control_play.svg</file>
