@@ -113,6 +113,7 @@ blockquote.action_menu {
   font-weight: bold;
 }
 blockquote.action_menu::before {
+  left: 8px;
   background-image: url(action-menu.svg);
 }
 
