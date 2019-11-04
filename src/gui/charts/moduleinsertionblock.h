@@ -1,6 +1,6 @@
 /*
-	*** ModuleChart Insertion Block Widget
-	*** src/gui/modulechartinsertionblock.h
+	*** Module Insertion Block Widget
+	*** src/gui/charts/moduleinsertionblock.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,29 +19,34 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULECHARTINSERTIONBLOCKWIDGET_H
-#define DISSOLVE_MODULECHARTINSERTIONBLOCKWIDGET_H
+#ifndef DISSOLVE_CHARTS_MODULEINSERTIONBLOCK_H
+#define DISSOLVE_CHARTS_MODULEINSERTIONBLOCK_H
 
-#include "gui/ui_modulechartinsertionblock.h"
-#include "gui/modulechartblock.h"
+#include "gui/charts/ui_moduleinsertionblock.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Dissolve;
 class DissolveWindow;
 
-// ModuleChart Insertion Block Widget
-class ModuleChartInsertionBlock : public QWidget, public ModuleChartBlock
+// Module Insertion Block Widget
+class ModuleInsertionBlock : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	ModuleChartInsertionBlock(QWidget* parent, DissolveWindow* dissolveWindow);
-	~ModuleChartInsertionBlock();
+	ModuleInsertionBlock(QWidget* parent);
+	~ModuleInsertionBlock();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::ModuleChartInsertionWidget ui;
+	Ui::ModuleInsertionWidget ui_;
 
 
 	/*
@@ -50,14 +55,6 @@ class ModuleChartInsertionBlock : public QWidget, public ModuleChartBlock
 	protected:
 	// Paint event
 	void paintEvent(QPaintEvent* event);
-
-
-	/*
-	 * Block Type
-	 */
-	public:
-	// Return type of this block
-	ModuleChartBlock::ModuleChartBlockType blockType();
 
 
 	/*

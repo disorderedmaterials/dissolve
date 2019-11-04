@@ -187,6 +187,30 @@ RefList<Module> Dissolve::findModuleInstances(const char* moduleType)
 	return instances;
 }
 
+// Generate unique Module name with base name provided
+const char* Dissolve::uniqueModuleName(const char* name, Module* excludeThis)
+{
+	static CharString uniqueName;
+	CharString baseName = name;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "Unnamed";
+
+	// Find an unused name starting with the baseName provided
+	while (Module* existingModule = findModuleInstance(uniqueName))
+	{
+		if (existingModule == excludeThis) break;
+
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%02i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
+}
+
 // Delete specified Module instance
 bool Dissolve::deleteModuleInstance(Module* instance)
 {

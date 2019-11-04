@@ -25,12 +25,8 @@ clean-local:
 
 libgui_la_SOURCES = main.qrc
 
-# UI - Module Chart
-libgui_la_SOURCES += layereditor.ui
-libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui
-libgui_la_SOURCES += modulechart.hui
 # UI - Editors
-libgui_la_SOURCES += procedureeditor.ui
+libgui_la_SOURCES += modulelisteditor.ui procedureeditor.ui
 # UI - Widgets
 libgui_la_SOURCES += selectconfigurationwidget.ui selectforcefieldwidget.ui selectspecieswidget.ui
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
@@ -61,11 +57,11 @@ libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getmodulelayernamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp
 libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_io.cpp gui_start.cpp gui_tabs.cpp
 libgui_la_SOURCES += importspeciesdialog_funcs.cpp importspecieswizard_funcs.cpp
-libgui_la_SOURCES += layereditor_funcs.cpp layertab_funcs.cpp
+libgui_la_SOURCES += layertab_funcs.cpp
 libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += menu_configuration.cpp menu_file.cpp menu_help.cpp menu_layer.cpp menu_simulation.cpp menu_species.cpp menu_workspace.cpp
-libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotspot.cpp modulechartinsertionblock_funcs.cpp modulechartmoduleblock_funcs.cpp
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
+libgui_la_SOURCES += modulelisteditor_funcs.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp procedureeditor_funcs.cpp
 libgui_la_SOURCES += selectconfigurationdialog_funcs.cpp selectconfigurationwidget_funcs.cpp selectelementdialog_funcs.cpp selectforcefielddialog_funcs.cpp selectforcefieldwidget_funcs.cpp selectspeciesdialog_funcs.cpp selectspecieswidget_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
@@ -78,8 +74,8 @@ noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += getconfigurationnamedialog.h getmodulelayernamedialog.h getspeciesnamedialog.h gui.h
 noinst_HEADERS += importspeciesdialog.h importspecieswizard.h
-noinst_HEADERS += layereditor.h layertab.h
-noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduletab.h modulewidget.h
+noinst_HEADERS += layertab.h
+noinst_HEADERS += maintab.h modulecontrolwidget.h modulelisteditor.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h procedureeditor.h
 noinst_HEADERS += selectconfigurationdialog.h selectconfigurationwidget.h selectelementdialog.h selectforcefielddialog.h selectforcefieldwidget.h selectspeciesdialog.h selectspecieswidget.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
 noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h

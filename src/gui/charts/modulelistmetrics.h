@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULECHARTMETRICS_H
-#define DISSOLVE_MODULECHARTMETRICS_H
+#ifndef DISSOLVE_CHARTS_MODULELIST_METRICS_H
+#define DISSOLVE_CHARTS_MODULELIST_METRICS_H
 
 // Forward Declarations
 /* none */
 
-// Module Chart Metrics - Style / Layout Information
-class ModuleChartMetrics
+// ModuleList Chart Metrics - Style / Layout Information
+class ModuleListChartMetrics
 {
 	/*
 	 * Module Chart Block
@@ -74,16 +74,17 @@ class ModuleChartMetrics
 	{
 		return 32;
 	}
-	// Minimum spacing between columns
-	static int chartMinimumColumnSpacing()
+	// Horizontal spacing between modules in list
+	static int horizontalModuleSpacing()
 	{
-		return 32;
+		return 40;
 	}
-	// Spacing between rows
-	static int chartRowSpacing()
+	// Additional horizontal spacing for insertion widget
+	static int horizontalInsertionSpacing()
 	{
-		return 32;
+		return 64;
 	}
+
 };
 
 #endif
