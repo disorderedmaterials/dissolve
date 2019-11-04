@@ -13,7 +13,7 @@ We need a suitable species to represent the argon atom in our simulation.
 > Species &#8680; Create...→Atomic
 {: .action .action_menu}
 > Select argon (Ar) from the periodic table
-{: .action}
+{: .step}
 
 You will now see that a new tab called 'Ar' has appeared containing the new species, showing a single argon atom located at (0,0,0). If you go to the _Contents & Forcefield_{: .text-green-100} section you can the details of the species contents (which is not a lot!). Our argon atom currently has no atom type assigned to it, but we will remedy this in the next step. All atoms **must** be assigned an atom type before the simulation can proceed.
 

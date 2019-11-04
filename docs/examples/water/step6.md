@@ -20,6 +20,18 @@ Here we'll employ the [`EPSR`](/modules/epsr) module in order to adjust the inte
 > Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR
 {: .action .action_menu}
 
-Our new layer contains only the [`EPSR`](/modules/epsr) module.
+Our new layer contains only the [`EPSR`](/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module.
+
+> **Refine (EPSR)** tab
+{: .action .action_tabs}
+> Open the **Calculation** settings group
+{: .action .action_settings}
+> An initial value for **EReq** has been set - thi
+{: .step}
+
+
+
+
+There's a lot to explain here, so set the simulation running again to begin the refeand then 
 
 [Previous Step](step5.md){: .btn }   [Next Step](step7.md){: .btn .right}

@@ -42,4 +42,7 @@ Run the simulation for a few more steps until structure factor and radial distri
 ![Equilibrated water (H2O) G(r) with effective broadening applied to intramolecular g(r)](equilibrated-h2o-broadened-gr.png){: .img-centre}
 ![Equilibrated water (H2O) F(Q) with effective broadening applied to intramolecular g(r)](equilibrated-h2o-broadened-fq.png){: .img-centre}
 
+> You may notice a small 'upturn' in the calculated F(Q) for the D<sub>2</sub>O sample that does not match experiment. This is caused by subtle density fluctuations in the configuration that are accentuated by the deuteration of the water, and will disappear slowly over time. You can safely proceed with the example.
+> {: .warn}
+
 [Previous Step](step3.md){: .btn }   [Next Step](step5.md){: .btn .right}

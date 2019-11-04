@@ -23,16 +23,16 @@ Since a [`NeutronSQ`](/modules/neutronsq) module calculates the partial and tota
 
 > Drag a [`NeutronSQ`](/modules/neutronsq) module from the _Palette_{: .text-green-100} on the left, placing it after the existing [`NeutronSQ`](/modules/neutronsq) module
 {: .action .action_mouse}
-> Drag a second [`NeutronSQ`](/modules/neutronsq) over, again placing it at the bottom of the layer
+> Drag a second [`NeutronSQ`](/modules/neutronsq) over, placing it with the others
 {: .step}
 
-We'll now give the modules sensible names, and set the isotopologues, reference data files, and instrumental broadening as necessary. The latter, for SANDALS, is described by a Q-dependent Gaussian with a FWHM of 0.02 Angstroms.
+We'll now give the modules sensible names, and set the isotopologues, reference data files, and instrumental broadening as necessary. The latter, for SANDALS, is described by a _Q_-dependent Gaussian with a FWHM of 0.02 &#8491;.
 
 ### H<sub>2</sub>O
 
 > Change the name of the first [`NeutronSQ`](/modules/neutronsq) module to "H2O"
 {: .action .action_edit}
-> Expand the settings for the module with the ![Toggle settings button](../icons/general_settings.png) and open the **Neutron Isotopes** settings group
+> Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
 > Click the _Edit..._{: .text-green-100} button for the **Isotopologues** option
 {: .step}
@@ -55,7 +55,7 @@ We'll now give the modules sensible names, and set the isotopologues, reference 
 ### D<sub>2</sub>O
 > Change the name of the first [`NeutronSQ`](/modules/neutronsq) module to "D2O"
 {: .action .action_edit}
-> Expand the settings for the module with the ![Toggle settings button](../icons/general_settings.png) and open the **Neutron Isotopes** settings group
+> Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
 > Click the _Edit..._{: .text-green-100} button for the **Isotopologues** option
 {: .step}
@@ -83,7 +83,7 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 
 > Change the name of the first [`NeutronSQ`](/modules/neutronsq) module to "HDO"
 {: .action .action_edit}
-> Expand the settings for the module with the ![Toggle settings button](../icons/general_settings.png) and open the **Neutron Isotopes** settings group
+> Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
 > Click the _Edit..._{: .text-green-100} button for the **Isotopologues** option
 {: .step}

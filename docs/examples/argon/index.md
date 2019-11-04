@@ -37,11 +37,11 @@ Create a new directory in a suitable location and download or copy the data file
 > Open the Dissolve GUI
 {: .action .action_dissolve}
 > Choose **Create a New Simulation from Scratch**
-{: .action}
+{: .step}
 > Save As...
 {: .action .action_menu}
 > Save your input file under a sensible name in the directory containing the example data file
-{: .action}
+{: .step}
 
 [Let's begin!](step1.md){: .btn .right}
 

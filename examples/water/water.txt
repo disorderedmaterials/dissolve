@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.6 at 16:41:45 on 01-11-2019.
+# Input file written by Dissolve v0.4.6 at 12:39:01 on 04-11-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -90,8 +90,8 @@ Layer  'Evolve (Standard)'
     Frequency  1
 
     Configuration  'Bulk'
-    RotationStepSize   1.57922e+01
-    TranslationStepSize   1.65621e-01
+    RotationStepSize   1.51763e+01
+    TranslationStepSize   1.62039e-01
   EndModule
 
   Module  MD  'MD01'
@@ -114,10 +114,11 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
 
     Configuration  'Bulk'
+    UseHalfCellRange  False
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
-  Module  NeutronSQ  'NeutronSQ01'
+  Module  NeutronSQ  'H2O'
     Frequency  1
 
     Configuration  'Bulk'
@@ -127,7 +128,7 @@ Layer  'RDF / Neutron S(Q)'
     EndReference
   EndModule
 
-  Module  NeutronSQ  'NeutronSQ03'
+  Module  NeutronSQ  'D2O'
     Frequency  1
 
     Configuration  'Bulk'
@@ -137,7 +138,7 @@ Layer  'RDF / Neutron S(Q)'
     EndReference
   EndModule
 
-  Module  NeutronSQ  'NeutronSQ02'
+  Module  NeutronSQ  'HDO'
     Frequency  1
 
     Configuration  'Bulk'
@@ -157,9 +158,9 @@ Layer  'Refine (EPSR)'
     Frequency  1
     EReq   1.00000e+01
     Feedback   9.00000e-01
-    Target  'NeutronSQ01'  'Default'
-    Target  'NeutronSQ03'  'Default'
-    Target  'NeutronSQ02'  'Default'
+    Target  'H2O'  'Default'
+    Target  'D2O'  'Default'
+    Target  'HDO'  'Default'
   EndModule
 EndLayer
 

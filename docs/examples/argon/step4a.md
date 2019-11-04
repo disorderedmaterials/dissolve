@@ -23,6 +23,6 @@ Our new layer contains the following modules:
 
 Most modules need configuration targets to work on, and all available configurations (one in our case) will have been automatically set as a target in each of the new modules in the layer. Each module has its own defined frequency at which it will run, and can be temporarily disabled if necessary. There are usually a bunch of settings (accessed via the cog button) that control its action and, most importantly, the module may have entire control panels of other functionality (e.g. graphing output for various properties etc.). The latter cannot be viewed in layer tabs - instead, double-click on the module block to open an additional tab containing these controls, in addition to all of its settings.
 
-All of the default settings for the modules within the evolution layer are sensible enough for our needs, so take a look around at what's there if you want to , but there's no need to change anything.
+All of the default settings for the modules within the evolution layer are sensible enough for our needs, so take a look around at what's there if you want to, but there's no need to change anything.
 
 [Previous Step](step4.md){: .btn }   [Next Step](step4b.md){: .btn .right}

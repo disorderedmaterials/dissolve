@@ -35,4 +35,6 @@ We'll now stop the simulation.
 > Esc
 {: .action .action_key}
 
+Keep in mind that the simulation will not actually stop until the current iteration is completed - most parts of the GUI will remain grayed out until then.
+
 [Previous Step](step4b.md){: .btn }   [Next Step](step6.md){: .btn .right}

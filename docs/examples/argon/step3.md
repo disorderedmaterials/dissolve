@@ -23,9 +23,9 @@ You will now see that the _Generator_{: .text-green-100} section has been popula
 
 | Node | Purpose |
 |------|---------|
-|Parameters | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. |
-|Box   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
-|AddSpecies | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 cubic Angstrom) but the full population of molecules will still be added. |
+| [`Parameters`](/userguide/nodes/parameters) | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. |
+| [`Box`](/userguide/nodes/box)   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
+| [`AddSpecies`](/userguide/nodes/addspecies) | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 &#8491;<sup>3</sup>) but the full population of molecules will still be added. |
 
 In the `AddSpecies` node note how we have used the `rho` parameter for the density.
 
