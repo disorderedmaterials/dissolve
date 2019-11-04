@@ -194,13 +194,6 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 	 * Cell Generation
 	 */
 
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
-	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
-	}
-
 	// OK, so set-up Cells for the Box if they don't already exist
 	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
 
@@ -215,13 +208,6 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 // Finalise Configuration after loading contents from restart file
 bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
 {
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
-	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
-	}
-
 	// Set-up Cells for the Box
 	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
 
