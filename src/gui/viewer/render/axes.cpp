@@ -597,6 +597,24 @@ double Axes::transformZ(double z) const
 	else return z * stretch_.z;
 }
 
+// Transform entire array of values into local axes coordinates
+void Axes::transformZ(Array<double>& zArray) const
+{
+	if (inverted_.z && logarithmic_.z) for (int n=0; n< zArray.nItems(); ++n)
+	{
+// 		if (max_.z / zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		zArray[n] = log10(max_.z/ zArray[n]) * stretch_.z;
+	}
+	else if (inverted_.z) for (int n=0; n< zArray.nItems(); ++n) zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
+	else if (logarithmic_.z) for (int n=0; n<zArray.nItems(); ++n)
+	{
+// 		if (zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		zArray[n] = log10(zArray[n]) * stretch_.z;
+	}
+	else zArray *= stretch_.z;
+}
 /*
  * Ticks / Labels / Gridlines
  */

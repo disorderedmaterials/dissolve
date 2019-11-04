@@ -33,6 +33,7 @@
 #include "templates/vector4.h"
 #include "templates/array.h"
 
+
 // Forward Declarations
 class View;
 
@@ -185,6 +186,8 @@ class Axes
 	void transformY(Array<double>& yArray) const;
 	// Return supplied data z value in local axes coordinates
 	double transformZ(double z) const;
+	// Transform entire array of values into local axes coordinates
+	void transformZ(Array<double>& zArray) const;
 
 
 	/*

@@ -284,6 +284,17 @@ template <class A> class Array2D
 	{
 		return linearSize_;
 	}
+	//return linear array in 1d
+	const Array<double> linearArray1D() const
+	{
+		Array<double> array[linearSize_];
+		for (int i=0; i<linearSize_; i++)
+		{
+			array[i] = array_[i];
+		}
+	return array;
+	}
+	
 	// Return linear array
 	A* linearArray()
 	{

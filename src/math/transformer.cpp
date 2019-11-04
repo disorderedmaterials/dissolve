@@ -191,8 +191,7 @@ void Transformer::transform(Data1D& data, Transformer& xTransformer, Transformer
 
 void Transformer::transform(Data2D& data,Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
-	/*if (transformerXY.enabled()) data.values() = transformerXY.transformArray(data.values(), 0.0, 0);
-	*/
 	
+// 	??????????????????????????
 }
 

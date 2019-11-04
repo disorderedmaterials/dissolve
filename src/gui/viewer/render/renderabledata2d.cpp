@@ -23,6 +23,7 @@
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 #include "math/data2d.h"
+#include "templates/array2d.h"
 
 // Constructor
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
@@ -76,8 +77,8 @@ void RenderableData2D::transformData()
 
 	transformMin_ = min(data2d->xAxis());
 	transformMax_ = max(data2d->xAxis());
-	transformMinPositive_ = minValue();
-	transformMaxPositive_ = maxValue();
+	transformMinPositive_ = 0.1;
+	transformMaxPositive_ = -1.0;
 	
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
@@ -106,25 +107,15 @@ void RenderableData2D::transformData()
 		}
 		
 		//values
-// 		for(int c= 0; c < transformedData_.nRows(); ++c)
-// 		{
-// 			for(int 
-// 		if (transformedData_.constValue(n) > 0.0)
-// 		{
-// 			if (transformedData_.constValue(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constValue(n);
-// 			if (transformedData_.constValue(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constValue(n);
-// 		}
-		
-		//transformedMin and Max positive values only positive
-		
-	}
+		for(int i= 0; i < transformedData_.nValues(); ++i)
+		{
+			if (transformedData_.constValue(i) > 0.0)
+				{
+					//////???????????/////
+				}
+			}
+		}
 	
-
-	// Check maximum positive values (since all datapoints might have been negative
-	if (transformMaxPositive_.x < 0.0) transformMaxPositive_.x = 1.0;
-	if (transformMaxPositive_.y < 0.0) transformMaxPositive_.y = 1.0;
-	if (transformMaxPositive_.z < 0.0) transformMaxPositive_.z = 1.0;
-
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();
 }
@@ -150,10 +141,6 @@ Vec3<double> max(Array<double> A)
 	}
 	return max;
 }
-
-Vec3<double> minValue()
-{}
-	
 
 // Return reference to transformed data
 const Data2D& RenderableData2D::transformedData()
@@ -186,7 +173,7 @@ void RenderableData2D::recreatePrimitives(const View& view, const ColourDefiniti
 {	
 	dataPrimitive_->reinitialise(transformedData().nValues(),true, GL_LINE_STRIP, true);
 
-	constructLineXY(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().values(), dataPrimitive_, view.constAxes(), colourDefinition);
+	constructLineXY(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().values2DLinear(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -205,7 +192,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, PrimitiveList* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
+void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array<double>& displayValues, PrimitiveList* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> x = displayXAbscissa;
@@ -215,7 +202,7 @@ void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, co
 	
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> y = displayYAbscissa;
-	axes.transformX(y);
+	axes.transformY(y);
 	int nY = y.nItems();
 	if (nY < 2) return;
 
@@ -230,46 +217,46 @@ void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, co
 	// Create lines for slices
 	int vertexA, vertexB;
 	// Grab y and z values
-	Array<double> y = displayValues;
-	axes.transformY(y);
+	Array<double> v = displayValues;
+	axes.transformZ(v);
 	double z = axes.transformZ(zCoordinate);
 
 	// Set vertexA to -1 so we don't draw a line at n=0
 	vertexA = -1;
+	Primitive* p;
 
 	// Check for a single colour style in the colourDefinition - use optimised case in that eventuality
 	if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 	{
 		// Get the single colour
 		colourDefinition.colour(0.0, colour);
-
-		// Loop over x values
-		for (int n=0; n<nX; ++n)
+		
+		// Loop over y values
+		for (int n=0; n<primitive->nDefinedVertices(); ++n)
 		{
-			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+			vertexB = p->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 
 			// If both vertices are valid, plot a line
-			if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
+			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
 
 			vertexA = vertexB;
 		}
 	}
 	else
 	{
-		// Loop over x values
-		for (int n=0; n<nX; ++n)
+		// Loop over y values
+		for (int n=0; n<primitive->nDefinedVertices(); ++n)
 		{
 			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+			vertexB = p->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 
 			// If both vertices are valid, plot a line
-			if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
+			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
 
 			vertexA = vertexB;
 		}
 	}
 }
-
 /*
  * Style
  */

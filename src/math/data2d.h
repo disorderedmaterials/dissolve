@@ -26,6 +26,8 @@
 #include "base/version.h"
 #include "templates/array2d.h"
 #include "templates/objectstore.h"
+#include "math/data1d.h"
+
 
 // Forward Declarations
 class Histogram2D;
@@ -98,6 +100,10 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	Array2D<double>& values();
 	// Return values Array
 	const Array2D<double>& constValues2D() const;
+	// Return values Array in linear format
+	const Array<double>& values2DLinear() const;
+	
+	double constValue(int index);
 	// Return number of values present in whole dataset
 	int nValues() const;
 	// Return minimum value over all data points
