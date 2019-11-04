@@ -75,6 +75,9 @@ void DissolveWindow::setWidgetsAfterRun()
 	RefList<MainTab> tabs = allTabs();
 	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+
+	// Reset the state
+	dissolveState_ = EditingState;
 }
 
 // All iterations requested are complete

@@ -112,6 +112,16 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 	// Save the state before we go...
 	saveWindowLayout();
 
+	// If Dissolve is running, stop the thread now
+	if (dissolveState_ == RunningState)
+	{
+		// Send the signal to stop
+		emit(stopIterating());
+
+		// Wait for the thread to stop
+		while (dissolveState_ == RunningState) QApplication::processEvents();
+	}
+
 	event->accept();
 }
 
