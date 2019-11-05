@@ -35,7 +35,7 @@
  * 
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
- * All energy values are in kcal.
+ * All energy values are in kJ/mol.
  */
 
 // Constructor / Destructor
