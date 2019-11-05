@@ -144,29 +144,8 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	for (int n=0; n<cfg->nBonds(); ++n)
 	{
 		Bond* b = cfg->bond(n);
-		molId = b->molecule() ? b->molecule()->arrayIndex() : -1;
 		spb = b->speciesBond();
 		if (!parser.writeLineF("%i %i %i %i %i\n", b->i()->arrayIndex(), b->j()->arrayIndex(), molId, species().indexOf(spb->parent()), spb->parent()->bondIndex(spb))) return false;
-	}
-
-	// Write all Angles - for each write Atom IDs (in global array), molecule ID, and parameter source
-	if (!parser.writeLineF("%i  # nAngles\n", cfg->nAngles())) return false;
-	for (int n=0; n<cfg->nAngles(); ++n)
-	{
-		Angle* a = cfg->angle(n);
-		molId = a->molecule() ? a->molecule()->arrayIndex() : -1;
-		spa = a->speciesAngle();
-		if (!parser.writeLineF("%i %i %i %i %i %i\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex(), molId, species().indexOf(spa->parent()), spa->parent()->angleIndex(spa))) return false;
-	}
-
-	// Write all Torsions - for each write Atom IDs (in global array), molecule ID, and parameter source
-	if (!parser.writeLineF("%i  # nTorsions\n", cfg->nTorsions())) return false;
-	for (int n=0; n<cfg->nTorsions(); ++n)
-	{
-		Torsion* t = cfg->torsion(n);
-		molId = t->molecule() ? t->molecule()->arrayIndex() : -1;
-		spt = t->speciesTorsion();
-		if (!parser.writeLineF("%i %i %i %i %i %i %i\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex(), molId, species().indexOf(spt->parent()), spt->parent()->torsionIndex(spt))) return false;
 	}
 
 	return true;

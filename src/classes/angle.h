@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_ANGLE_H
 #define DISSOLVE_ANGLE_H
 
-#include "classes/intra.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 
@@ -32,7 +31,7 @@ class Molecule;
 class SpeciesAngle;
 
 // Angle Definition
-class Angle : public Intra, public DynamicArrayObject<Angle>
+class Angle : public DynamicArrayObject<Angle>
 {
 	public:
 	// Constructor

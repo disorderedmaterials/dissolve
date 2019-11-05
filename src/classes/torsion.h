@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_TORSION_H
 #define DISSOLVE_TORSION_H
 
-#include "classes/intra.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 
@@ -32,7 +31,7 @@ class Molecule;
 class SpeciesTorsion;
 
 // Torsion Definition
-class Torsion : public Intra, public DynamicArrayObject<Torsion>
+class Torsion : public DynamicArrayObject<Torsion>
 {
 	public:
 	// Constructor

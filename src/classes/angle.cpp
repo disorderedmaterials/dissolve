@@ -25,7 +25,7 @@
 #include "base/processpool.h"
 
 // Constructor
-Angle::Angle() : Intra(), DynamicArrayObject<Angle>()
+Angle::Angle() : DynamicArrayObject<Angle>()
 {
 	clear();
 }
@@ -46,9 +46,6 @@ void Angle::clear()
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
-
-	// Intra
-	molecule_ = NULL;
 }
 
 /*

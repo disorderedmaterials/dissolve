@@ -25,7 +25,7 @@
 #include "base/processpool.h"
 
 // Constructor
-Torsion::Torsion() : Intra(), DynamicArrayObject<Torsion>()
+Torsion::Torsion() : DynamicArrayObject<Torsion>()
 {
 	clear();
 }
@@ -47,9 +47,6 @@ void Torsion::clear()
 	j_ = NULL;
 	k_ = NULL;
 	l_ = NULL;
-
-	// Intra
-	molecule_ = NULL;
 }
 
 /*

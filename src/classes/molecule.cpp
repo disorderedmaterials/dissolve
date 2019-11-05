@@ -148,9 +148,6 @@ Grain* Molecule::grain(int n)
 void Molecule::addBond(Bond* bond)
 {
 	bonds_.add(bond);
-
-	if (bond->molecule() != NULL) Messenger::warn("Molecule parent is already set in Bond id %i, and we are about to overwrite it...\n", bond->arrayIndex());
-	bond->setMolecule(this);
 }
 
 // Return size of Bond array
@@ -175,9 +172,6 @@ Bond* Molecule::bond(int n) const
 void Molecule::addAngle(Angle* angle)
 {
 	angles_.add(angle);
-
-	if (angle->molecule() != NULL) Messenger::warn("Molecule parent is already set in Angle id %i, and we are about to overwrite it...\n", angle->arrayIndex());
-	angle->setMolecule(this);
 }
 
 // Return size of Angle array
@@ -202,9 +196,6 @@ Angle* Molecule::angle(int n) const
 void Molecule::addTorsion(Torsion* torsion)
 {
 	torsions_.add(torsion);
-
-	if (torsion->molecule() != NULL) Messenger::warn("Molecule parent is already set in Torsion id %i, and we are about to overwrite it...\n", torsion->arrayIndex());
-	torsion->setMolecule(this);
 }
 
 // Return size of Torsion array

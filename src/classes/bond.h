@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_BOND_H
 #define DISSOLVE_BOND_H
 
-#include "classes/intra.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 
@@ -32,7 +31,7 @@ class Molecule;
 class SpeciesBond;
 
 // Bond Definition
-class Bond : public Intra, public DynamicArrayObject<Bond>
+class Bond : public DynamicArrayObject<Bond>
 {
 	public:
 	// Constructor

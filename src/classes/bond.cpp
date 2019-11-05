@@ -25,7 +25,7 @@
 #include "base/processpool.h"
 
 // Constructor
-Bond::Bond() : Intra(), DynamicArrayObject<Bond>()
+Bond::Bond() : DynamicArrayObject<Bond>()
 {
 	clear();
 }
@@ -45,9 +45,6 @@ void Bond::clear()
 	speciesBond_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
-
-	// Intra
-	molecule_ = NULL;
 }
 
 /*
