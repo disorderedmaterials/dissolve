@@ -45,9 +45,9 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 	{
 		// 	Z	El	FFID	Name		Description
 		//						q	Epsilon	Sigma
-		{ this, 1,	"H",	1,	"HW",		"Water hydrogen",
+		{ this, ELEMENT_H,	1,	"HW",		"Water hydrogen",
 								0.41,	0.0,	0.0 },
-		{ this, 8,	"O",	2,	"OW",		"Water oxygen",
+		{ this, ELEMENT_O,	2,	"OW",		"Water oxygen",
 								-0.82,	0.6503,	3.165492 }
 	};
 

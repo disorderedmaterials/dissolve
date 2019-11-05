@@ -1,5 +1,5 @@
 /*
-	*** Forcefield Atom Typw
+	*** Forcefield Atom Type
 	*** src/data/ffatomtype.h
 	Copyright T. Youngs 2019
 
@@ -34,7 +34,7 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 {
 	public:
 	// Constructors
-	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, const char* symbol = NULL, int index = -1, const char* name = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType);
 	// Destructor
 	virtual ~ForcefieldAtomType();

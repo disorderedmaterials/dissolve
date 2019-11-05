@@ -31,9 +31,10 @@ class ElementColour : public ElementReference, public ListItem<ElementColour>
 {
 	public:
 	// Constructor
-	ElementColour(int z = 0, const char* symbol = NULL, float r = 0.0, float g = 0.0, float b = 0.0, float a = 1.0);
+	ElementColour(int z = 0, float r = 0.0, float g = 0.0, float b = 0.0, float a = 1.0);
 	// Assignment Operator
 	ElementColour& operator=(const ElementColour& source);
+
 
 	/*
 	 * Element Colour Data

@@ -31,7 +31,7 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 {
 	public:
 	// Constructor
-	Isotope(int z = 0, const char* symbol = NULL, int A = 0, const char* spin = NULL, double mass = 0.0, double bc = 0.0, double bi = 0.0, double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
+	Isotope(int z = 0, int A = 0, const char* spin = NULL, double mass = 0.0, double bc = 0.0, double bi = 0.0, double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
 	// Assignment Operator
 	Isotope& operator=(const Isotope& source);
 

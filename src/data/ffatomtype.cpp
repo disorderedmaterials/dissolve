@@ -23,7 +23,7 @@
 #include "data/ff.h"
 
 // Constructors
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z, symbol), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>()
 {
 	index_ = index;
 	typeName_ = name;
@@ -37,7 +37,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* sy
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType) : ElementReference(sourceType.Z(), sourceType.symbol()), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
 {
 	// Copy data from the supplied source
 	index_ = sourceType.index_;

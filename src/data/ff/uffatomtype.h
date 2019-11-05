@@ -33,7 +33,7 @@ class UFFAtomType : public ForcefieldAtomType
 {
 	public:
 	// Constructor
-	UFFAtomType(Forcefield* parent, int z = 0, const char* symbol = NULL, int index = -1, const char* name = NULL, const char* description = NULL, double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0, double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
+	UFFAtomType(Forcefield* parent, int z = 0, int index = -1, const char* name = NULL, const char* description = NULL, double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0, double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
 	// Assignment Operator
 	UFFAtomType& operator=(const UFFAtomType& source);
 
