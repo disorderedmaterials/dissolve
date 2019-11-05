@@ -444,9 +444,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Realise storage for generated S(Q), and initialise a scattering matrix
-		Array2D<Data1D>& generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>& estimatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		ScatteringMatrix scatteringMatrix;
-		scatteringMatrix.initialise(dissolve.atomTypes(), generatedSQ, uniqueName_, group->name());
+		scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ, uniqueName_, group->name());
 
 		// Add a row in the scattering matrix for each target in the group
 		targetIterator.restart();
@@ -549,15 +549,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Generate S(Q) from completed scattering matrix
 		 */
 
-		scatteringMatrix.generatePartials(generatedSQ);
+		scatteringMatrix.generatePartials(estimatedSQ);
 
 		// Save data?
 		if (saveEstimatedPartials)
 		{
 			if (procPool.isMaster())
 			{
-				Data1D* generatedArray = generatedSQ.linearArray();
-				for (int n=0; n<generatedSQ.linearArraySize(); ++n)
+				Data1D* generatedArray = estimatedSQ.linearArray();
+				for (int n=0; n<estimatedSQ.linearArraySize(); ++n)
 				{
 					//generatedArray[n].save(generatedArray[n].name());
 					Data1DExportFileFormat exportFormat(generatedArray[n].name());
@@ -577,10 +577,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 				{
-					testDataName = CharString("GeneratedSQ-%s-%s", at1->name(), at2->name());
+					testDataName = CharString("EstimatedSQ-%s-%s", at1->name(), at2->name());
 					if (testData_.containsData(testDataName))
 					{
-						double error = Error::percent(generatedSQ.at(i,j), testData_.data(testDataName));
+						double error = Error::percent(estimatedSQ.at(i,j), testData_.data(testDataName));
 						Messenger::print("Generated S(Q) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 						if (error > testThreshold) return false;
 					}
@@ -589,11 +589,11 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		/*
-		 * Calculate g(r) from generatedSQ
+		 * Calculate g(r) from estimatedSQ
 		 */
 
-		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
-		generatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+		Array2D<Data1D>& estimatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
+		estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
@@ -601,11 +601,11 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 			{
 				// Grab experimental g(r) container and make sure its object name is set
-				Data1D& expGR = generatedGR.at(i,j);
-				expGR.setObjectTag(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+				Data1D& expGR = estimatedGR.at(i,j);
+				expGR.setObjectTag(CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
-				expGR = generatedSQ.at(i,j);
+				expGR = estimatedSQ.at(i,j);
 				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 				expGR.values() += 1.0;
 			}

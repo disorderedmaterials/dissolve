@@ -71,7 +71,7 @@ class ScatteringMatrix
 	// Print the inverse matrix
 	void printInverse() const;
 	// Generate partials from reference data using inverse matrix
-	void generatePartials(Array2D<Data1D>& generatedSQ);
+	void generatePartials(Array2D<Data1D>& estimatedSQ);
 	// Return if the scattering matrix is underdetermined
 	bool underDetermined() const;
 	// Return the product of inverseA_ and A_ (which should be the identity matrix)
@@ -82,7 +82,7 @@ class ScatteringMatrix
 	 */
 	public:
 	// Initialise from supplied list of AtomTypes
-	void initialise(const List<AtomType>& types, Array2D<Data1D>& generatedSQ, const char* objectNamePrefix, const char* groupName);
+	void initialise(const List<AtomType>& types, Array2D<Data1D>& estimatedSQ, const char* objectNamePrefix, const char* groupName);
 	// Finalise
 	bool finalise();
 	// Add reference data with its associated Weights, applying optional factor to those weights and the data itself
