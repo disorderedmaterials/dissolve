@@ -27,7 +27,7 @@ Since we set up our simulation to use intramolecular master terms (via the _Add 
 
 Now run the simulation for a little longer and let the species adjust to their new geometry, and you should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
 
-> The change in the G(r) will not be instant as the majority of the evolution of the system is from the [`MolShake`](/modules/molshake) which does not change the intramolecular geometry. Only the [`MD`](/modules/md) module will affect the intramolecular geometry. Also, the g(r) calculated by the [`RDF`](/modules/rdf) are averaged over five calculations by default.
+> The change in the G(r) will not be instant as the majority of the evolution of the system is from the [`MolShake`](/userguide/modules/molshake) which does not change the intramolecular geometry. Only the [`MD`](/userguide/modules/md) module will affect the intramolecular geometry. Also, the g(r) calculated by the [`RDF`](/userguide/modules/rdf) are averaged over five calculations by default.
 {: .tip}
 
 It's also worth checking the other two samples, where the same kind of improvement should be noticeable (if a little less prominent).

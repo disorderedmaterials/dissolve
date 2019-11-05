@@ -19,18 +19,18 @@ Now we can add a calculation layer for the g(r) and structure factors.
 > Layer &#8680; Create... &#8680; Evolution... &#8680; Standard Molecular (MC/MD)
 {: .action .action_menu}
 
-Since a [`NeutronSQ`](/modules/neutronsq) module calculates the partial and total structure factors for a specific isotopic composition, we will need to add two more since we have three reference datasets.
+Since a [`NeutronSQ`](/userguide/modules/neutronsq) module calculates the partial and total structure factors for a specific isotopic composition, we will need to add two more since we have three reference datasets.
 
-> Drag a [`NeutronSQ`](/modules/neutronsq) module from the _Palette_{: .text-green-100} on the left, placing it after the existing [`NeutronSQ`](/modules/neutronsq) module
+> Drag a [`NeutronSQ`](/userguide/modules/neutronsq) module from the _Palette_{: .text-green-100} on the left, placing it after the existing [`NeutronSQ`](/userguide/modules/neutronsq) module
 {: .action .action_mouse}
-> Drag a second [`NeutronSQ`](/modules/neutronsq) over, placing it with the others
+> Drag a second [`NeutronSQ`](/userguide/modules/neutronsq) over, placing it with the others
 {: .step}
 
 We'll now give the modules sensible names, and set the isotopologues, reference data files, and instrumental broadening as necessary. The latter, for SANDALS, is described by a _Q_-dependent Gaussian with a FWHM of 0.02 &#8491;.
 
 ### H<sub>2</sub>O
 
-> Change the name of the first [`NeutronSQ`](/modules/neutronsq) module to "H2O"
+> Change the name of the first [`NeutronSQ`](/userguide/modules/neutronsq) module to "H2O"
 {: .action .action_edit}
 > Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
@@ -53,7 +53,7 @@ We'll now give the modules sensible names, and set the isotopologues, reference 
 {: .tip}
 
 ### D<sub>2</sub>O
-> Change the name of the first [`NeutronSQ`](/modules/neutronsq) module to "D2O"
+> Change the name of the first [`NeutronSQ`](/userguide/modules/neutronsq) module to "D2O"
 {: .action .action_edit}
 > Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
@@ -81,7 +81,7 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 > As a general rule, any alcoholic or amine hydrogen is exchangeable.
 {: .tip}
 
-> Change the name of the first [`NeutronSQ`](/modules/neutronsq) module to "HDO"
+> Change the name of the first [`NeutronSQ`](/userguide/modules/neutronsq) module to "HDO"
 {: .action .action_edit}
 > Open the **Neutron Isotopes** settings group
 {: .action .action_settings}
