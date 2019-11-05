@@ -230,13 +230,13 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 	if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
-		 * U(phi) = forcek * (1 + s*cos(period*phi - eq))
+		 * U(phi) = k * (1 + s*cos(n*phi - eq))
 		 *
 		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : Period N
+		 * 0 : force constant k
+		 * 1 : Period 'n'
 		 * 2 : equilibrium angle (degrees)
-		 * 3 : Sign S
+		 * 3 : Sign 's'
 		 */
 		return params[0] * (1.0 + params[3] * cos(params[1]*phi - (params[2] / DEGRAD)));
 	}
@@ -308,13 +308,13 @@ double SpeciesTorsion::force(double angleInDegrees) const
 	if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
-		 * dU/dphi = forcek * period * s * -sin(period*phi - eq)
+		 * dU/dphi = k * n * s * -sin(n*phi - eq)
 		 *
 		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : Period N
-		 * 2 : equilibrium angle (degrees)
-		 * 3 : Sign S
+		 * 0 : Force constant 'k'
+		 * 1 : Period 'n'
+		 * 2 : Equilibrium angle (degrees)
+		 * 3 : Sign 's'
 		 */
 		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1]*phi - (params[2] / DEGRAD));
 	}
