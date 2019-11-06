@@ -86,7 +86,7 @@ class SpeciesIntra
 	// Detach from MasterIntra, if we are currently referencing one
 	void detachFromMasterIntra();
 	// Return parameter source
-	SpeciesIntra* parameterSource();
+	const SpeciesIntra* parameterSource() const;
 	// Set functional form index of interaction
 	void setForm(int form);
 	// Return functional form index of interaction

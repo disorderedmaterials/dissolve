@@ -90,7 +90,7 @@ void SpeciesIntra::detachFromMasterIntra()
 }
 
 // Return parameter source
-SpeciesIntra* SpeciesIntra::parameterSource()
+const SpeciesIntra* SpeciesIntra::parameterSource() const
 {
 	return (masterParameters_ ? masterParameters_ : this);
 }
