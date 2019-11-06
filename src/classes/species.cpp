@@ -145,13 +145,12 @@ bool Species::checkSetUp()
 			Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
-		
-		/* Check each Bond for two-way consistency */
+
+		// Check each Bond for two-way consistency
 		const PointerArray<SpeciesBond>& bonds = i->bonds();
-		const SpeciesBond* b;
-		for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n))
+		for (int n=0; n<bonds.nItems(); ++n)
 		{
-			SpeciesAtom* j = b->partner(i);
+			SpeciesAtom* j = bonds.at(n)->partner(i);
 			if (!j->hasBond(i))
 			{
 				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());

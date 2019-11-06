@@ -178,7 +178,6 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	Matrix4 A;
 	const GLfloat* colour;
 	const GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
-	const SpeciesBond* b;
 	const Atom* i, *j;
 	Vec3<double> ri, rj;
 
@@ -197,6 +196,7 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		// Set basic styling and content for assemblies
 		configurationAssembly_.add(false, GL_LINE);
 		configurationAssembly_.add(lineConfigurationPrimitive_, A);
+		const SpeciesBond* b;
 
 		// Draw Atoms
 		const DynamicArray<Atom>& atoms = source_->constAtoms();
@@ -219,8 +219,10 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			{
 				// Draw all bonds from this atom
 				const PointerArray<SpeciesBond>& bonds = i->speciesAtom()->bonds();
-				for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n))
+				for (int n=0; n<bonds.nItems(); ++n)
 				{
+					b = bonds.at(n);
+
 					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
 					j = i->molecule()->atom(b->indexJ());
 					if (i == j) continue;
@@ -248,7 +250,6 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		for (int n=0; n<atoms.nItems(); ++n)
 		{
 			const Atom* i = atoms.constValue(n);
-			
 
 			A.setIdentity();
 			A.setTranslation(i->r());
@@ -260,10 +261,10 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 
 			// Bonds from this atom
 			const PointerArray<SpeciesBond>& bonds = i->speciesAtom()->bonds();
-			for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n))
+			for (int n=0; n<bonds.nItems(); ++n)
 			{
 				// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-				j = i->molecule()->atom(b->indexJ());
+				j = i->molecule()->atom(bonds.at(n)->indexJ());
 				if (i == j) continue;
 
 				if (cellArray.useMim(i->cell(), j->cell())) createCylinderBond(configurationAssembly_, i, j, box->minimumVector(i->r(), j->r()), true, spheresBondRadius_);
