@@ -251,7 +251,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
  */
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool allIntra, bool& alreadyUpToDate)
+bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool& alreadyUpToDate)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -308,64 +308,27 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 
 	timer.start();
 
-	// If we're considering the intrmolecular part to be between all pairs, as opposed to just those that explicitly bound,
-	// perform a loop over molecules. Otherwise, use the Configuration's master lists of intramolecular terms.
+	// Loop over molecules...
 	Atom* i, *j, *k;
-	if (allIntra)
+	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
-		// Loop over molecules...
-		for (int m=start; m<cfg->nMolecules(); m += stride)
+		Molecule* mol = cfg->molecule(m);
+		Atom** atoms = mol->atoms();
+
+		for (int ii=0; ii<mol->nAtoms()-1; ++ii)
 		{
-			Molecule* mol = cfg->molecule(m);
-			Atom** atoms = mol->atoms();
-
-			for (int ii=0; ii<mol->nAtoms()-1; ++ii)
+			i = atoms[ii];
+			for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
 			{
-				i = atoms[ii];
-				for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
-				{
-					j = atoms[jj];
+				j = atoms[jj];
 
-					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-					else distance = (i->r() - j->r()).magnitude();
-					originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-				}
+				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				else distance = (i->r() - j->r()).magnitude();
+				originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 			}
 		}
 	}
-	else
-	{
-		// Bonds
-		Bond** bonds = cfg->bonds().array();
-		Bond* b;
-		for (int n=start; n<cfg->nBonds(); n+=stride)
-		{
-			b = bonds[n];
 
-			i = b->i();
-			j = b->j();
-			if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-			else distance = (i->r() - j->r()).magnitude();
-			originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-		}
-
-		// Angles
-		Angle** angles = cfg->angles().array();
-		Angle* a;
-		for (int n=start; n<cfg->nAngles(); n+=stride)
-		{
-			a = angles[n];
-
-			i = a->i();
-			j = a->j();
-			k = a->k();
-			
-			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
-			else distance = (i->r() - k->r()).magnitude();
-			originalgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
-		}
-	}
 	timer.stop();
 	Messenger::print("Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 

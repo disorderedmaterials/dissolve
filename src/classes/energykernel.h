@@ -35,9 +35,9 @@ class Box;
 class Configuration;
 class PotentialMap;
 class Molecule;
-class Bond;
-class Angle;
-class Torsion;
+class SpeciesBond;
+class SpeciesAngle;
+class SpeciesTorsion;
 
 // Energy Kernel
 class EnergyKernel
@@ -115,16 +115,16 @@ class EnergyKernel
 	 * Intramolecular Terms
 	 */
 	public:
-	// Return Bond energy
-	double energy(const Bond* b);
-	// Return Angle energy
-	double energy(const Angle* a);
-	// Return Torsion energy
-	double energy(const Torsion* t);
+	// Return SpeciesBond energy
+	double energy(const SpeciesBond* b, const Atom* i, const Atom* j);
+	// Return SpeciesAngle energy
+	double energy(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k);
+	// Return SpeciesTorsion energy
+	double energy(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l);
 	// Return intramolecular energy for the supplied Atom
-	double intraEnergy(const Atom* i);
+	double intramolecularEnergy(const Molecule* mol, const Atom* i);
 	// Return intramolecular energy for the supplied Molecule
-	double intraEnergy(const Molecule* mol);
+	double intramolecularEnergy(const Molecule* mol);
 
 
 	/*

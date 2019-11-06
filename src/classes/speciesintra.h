@@ -48,7 +48,8 @@ class SpeciesIntra
 	{
 		IntramolecularBond,		/* Interaction is a bond between two atoms in the same molecule */
 		IntramolecularAngle,		/* Interaction is an angle between three atoms in the same molecule */
-		IntramolecularTorsion		/* Interaction is a torsion between four atoms in the same molecule */
+		IntramolecularTorsion,		/* Interaction is a torsion between four atoms in the same molecule */
+		IntramolecularImproper		/* Interaction is an improper torsion between four atoms in the same molecule */
 	};
 
 

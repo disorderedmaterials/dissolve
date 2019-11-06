@@ -53,27 +53,25 @@ class Torsion : public DynamicArrayObject<Torsion>
 	 */
 	private:
 	// First Atom in Torsion
-	Atom* i_;
+	int i_;
 	// Second Atom in Torsion
-	Atom* j_;
+	int j_;
 	// Third Atom in Torsion
-	Atom* k_;
+	int k_;
 	// Fourth Atom in Torsion
-	Atom* l_;
+	int l_;
 
 	public:
 	// Set Atoms involved in Torsion
-	void setAtoms(Atom* i, Atom* j, Atom* k, Atom* l);
+	void setAtoms(int i, int j, int k, int l);
 	// Return first Atom involved in Torsion
-	Atom* i() const;
+	int i() const;
 	// Return second Atom involved in Torsion
-	Atom* j() const;
+	int j() const;
 	// Return third Atom involved in Torsion
-	Atom* k() const;
+	int k() const;
 	// Return fourth Atom involved in Torsion
-	Atom* l() const;
-	// Return whether Atoms in Torsion match those specified
-	bool matches(Atom* i, Atom* j, Atom* k, Atom* l) const;
+	int l() const;
 
 
 	/*

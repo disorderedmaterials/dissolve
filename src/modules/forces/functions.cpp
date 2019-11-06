@@ -22,6 +22,7 @@
 #include "modules/forces/forces.h"
 #include "classes/configuration.h"
 #include "classes/forcekernel.h"
+#include "classes/species.h"
 
 /*
  * Total Forces on All Atoms
@@ -47,17 +48,21 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 	int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
 	int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
-	// Loop over Bonds
-	Bond** bonds = cfg->bonds().array();
-	for (int m=start; m<cfg->nBonds(); m += stride) kernel.forces(bonds[m]);
+	// Loop over Molecules
+	// TODO This is slow because of the pointer dereferencing needed to traverse the Lists. Change Lists to DynamicArrays in Species?
+	Molecule** molecules = cfg->molecules().array();
+	const Molecule* mol;
+	for (int m=start; m<cfg->nMolecules(); m += stride, mol = molecules[m])
+	{
+		// Loop over Bonds
+		for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next()) kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-	// Loop over Angles
-	Angle** angles = cfg->angles().array();
-	for (int m=start; m<cfg->nAngles(); m += stride) kernel.forces(angles[m]);
+		// Loop over Angles
+		for (const SpeciesAngle* a = mol->species()->angles().first(); a != NULL; a = a->next()) kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
-	// Loop over Torsions
-	Torsion** torsions = cfg->torsions().array();
-	for (int m=start; m<cfg->nTorsions(); m += stride) kernel.forces(torsions[m]);
+		// Loop over Torsions
+		for (const SpeciesTorsion* t = mol->species()->torsions().first(); t != NULL; t = t->next()) kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+	}
 }
 
 // Calculate interatomic forces within the supplied Configuration
@@ -143,8 +148,8 @@ void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const 
 void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cfg, const Array<int>& targetIndices, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
-	 * Calculate the total intramolecular forces within the supplied Configuration, arising from Bond, Angle, and Torsion
-	 * terms in all molecules.
+	 * Calculate the total intramolecular forces for the specific atoms provided, arising from Bond, Angle, and Torsion
+	 * terms.
 	 * 
 	 * Calculated forces are added in to the provided arrays. Assembly of the arrays over processes must be performed by the
 	 * calling function.
@@ -164,15 +169,23 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 	for (int n=start; n<targetIndices.nItems(); n += stride)
 	{
 		const Atom* i = atoms.constValue(targetIndices.constAt(n));
+		const SpeciesAtom* spAtom = i->speciesAtom();
+		const Molecule* mol = i->molecule();
 
-		// Calculate contributions from all bonds that this atom takes part in
-		for (int m=0; m<i->bonds().nItems(); ++m) kernel.forces(i->bonds().at(m), i);
+		// Calcualte forces from SpeciesBond terms
+		const PointerArray<SpeciesBond>& bonds = spAtom->bonds();
+		const SpeciesBond* b;
+		for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n)) kernel.forces(i, b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-		// Calculate contributions from all angles that this atom takes part in
-		for (int m=0; m<i->angles().nItems(); ++m) kernel.forces(i->angles().at(m), i);
+		// Add energy from SpeciesAngle terms
+		const PointerArray<SpeciesAngle>& angles = spAtom->angles();
+		const SpeciesAngle* a;
+		for (int n=0; n<angles.nItems(); ++n, a = angles.at(n)) kernel.forces(i, a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
-		// Calculate contributions from all torsions that this atom takes part in
-		for (int m=0; m<i->torsions().nItems(); ++m) kernel.forces(i->torsions().at(m), i);
+		// Add energy from SpeciesTorsion terms
+		const PointerArray<SpeciesTorsion>& torsions = spAtom->torsions();
+		const SpeciesTorsion* t;
+		for (int n=0; n<torsions.nItems(); ++n, t= torsions.at(n)) kernel.forces(i, t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
 	}
 }
 

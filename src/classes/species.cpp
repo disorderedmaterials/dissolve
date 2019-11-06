@@ -147,10 +147,11 @@ bool Species::checkSetUp()
 		}
 		
 		/* Check each Bond for two-way consistency */
-		RefListIterator<SpeciesBond> bondIterator(i->bonds());
-		while (SpeciesBond* bond = bondIterator.iterate())
+		const PointerArray<SpeciesBond>& bonds = i->bonds();
+		const SpeciesBond* b;
+		for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n))
 		{
-			SpeciesAtom* j = bond->partner(i);
+			SpeciesAtom* j = b->partner(i);
 			if (!j->hasBond(i))
 			{
 				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());

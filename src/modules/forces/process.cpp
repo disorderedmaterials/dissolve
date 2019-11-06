@@ -207,14 +207,11 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (testIntra)
 				{
 					// Bond forces
-					Bond** bonds = molN->bonds();
-					for (int m=0; m<molN->nBonds(); ++m)
+					for (const SpeciesBond* b = molN->species()->bonds().first(); b != NULL; b = b->next())
 					{
-						Bond* b = bonds[m];
-
 						// Grab pointers to atoms involved in bond
-						i = b->i();
-						j = b->j();
+						i = molN->atom(b->indexI());
+						j = molN->atom(b->indexJ());
 	
 						// Determine final forces
 						vecji = box->minimumVector(i, j);
@@ -229,15 +226,12 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Angle forces
-					Angle** angles = molN->angles();
-					for (int m=0; m<molN->nAngles(); ++m)
+					for (const SpeciesAngle* a = molN->species()->angles().first(); a != NULL; a = a->next())
 					{
-						Angle* a = angles[m];
-
 						// Grab pointers to atoms involved in angle
-						i = a->i();
-						j = a->j();
-						k = a->k();
+						i = molN->atom(a->indexI());
+						j = molN->atom(a->indexJ());
+						k = molN->atom(a->indexK());
 	
 						// Get vectors 'j-i' and 'j-k'
 						vecji = box->minimumVector(j, i);
@@ -268,16 +262,13 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Torsion forces
-					Torsion** torsions = molN->torsions();
-					for (int m=0; m<molN->nTorsions(); ++m)
+					for (const SpeciesTorsion* t = molN->species()->torsions().first(); t != NULL; t = t->next())
 					{
-						Torsion* t = torsions[m];
-
 						// Grab pointers to atoms involved in angle
-						i = t->i();
-						j = t->j();
-						k = t->k();
-						l = t->l();
+						i = molN->atom(t->indexI());
+						j = molN->atom(t->indexJ());
+						k = molN->atom(t->indexK());
+						l = molN->atom(t->indexL());
 
 						// Calculate vectors, ensuring we account for minimum image
 						vecji = box->minimumVector(j, i);

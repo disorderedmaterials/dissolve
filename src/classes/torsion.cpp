@@ -43,10 +43,10 @@ Torsion::~Torsion()
 void Torsion::clear()
 {
 	speciesTorsion_ = NULL;
-	i_ = NULL;
-	j_ = NULL;
-	k_ = NULL;
-	l_ = NULL;
+	i_ = -1;
+	j_ = -1;
+	k_ = -1;
+	l_ = -1;
 }
 
 /*
@@ -54,61 +54,36 @@ void Torsion::clear()
  */
 
 // Set Atoms involved in Torsion
-void Torsion::setAtoms(Atom* i, Atom* j, Atom* k, Atom* l)
+void Torsion::setAtoms(int i, int j, int k, int l)
 {
 	i_ = i;
 	j_ = j;
 	k_ = k;
 	l_ = l;
-#ifdef CHECKS
-	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* i in Torsion::set().\n");
-	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* j in Torsion::set().\n");
-	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* k in Torsion::set().\n");
-	if (l_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* l in Torsion::set().\n");
-#endif
 }
 
 // Return first Atom involved in Torsion
-Atom* Torsion::i() const
+int Torsion::i() const
 {
 	return i_;
 }
 
 // Return second (central) Atom involved in Torsion
-Atom* Torsion::j() const
+int Torsion::j() const
 {
 	return j_;
 }
 
 // Return third Atom involved in Torsion
-Atom* Torsion::k() const
+int Torsion::k() const
 {
 	return k_;
 }
 
 // Return fourth Atom involved in Torsion
-Atom* Torsion::l() const
+int Torsion::l() const
 {
 	return l_;
-}
-
-// Return whether Atoms in Torsion match those specified
-bool Torsion::matches(Atom* i, Atom* j, Atom* k, Atom* l) const
-{
-	if (i_ == i)
-	{
-		if (j_ != j) return false;
-		if (k_ != k) return false;
-		if (l_ == l) return true;
-	}
-	else if (i_ == l)
-	{
-		if (j_ != k) return false;
-		if (k_ != j) return false;
-		if (l_ == i) return true;
-	}
-
-	return false;
 }
 
 /*

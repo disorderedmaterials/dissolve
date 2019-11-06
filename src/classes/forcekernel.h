@@ -28,12 +28,15 @@
 
 // Forward Declarations
 class Atom;
-class Grain;
-class Cell;
 class Box;
-class Configuration;
-class PotentialMap;
+class Cell;
 class ChangeStore;
+class Configuration;
+class Grain;
+class PotentialMap;
+class SpeciesAngle;
+class SpeciesBond;
+class SpeciesTorsion;
 
 // ForceKernel
 class ForceKernel
@@ -107,18 +110,18 @@ class ForceKernel
 	 * Intramolecular Terms
 	 */
 	public:
-	// Calculate Bond forces
-	void forces(const Bond* b);
-	// Calculate Bond forces for specified Atom only
-	void forces(const Bond* b, const Atom* onlyThis);
-	// Calculate Angle forces
-	void forces(const Angle* a);
-	// Calculate Angle forces for specified Atom only
-	void forces(const Angle* a, const Atom* onlyThis);
-	// Calculate Torsion forces
-	void forces(const Torsion* t);
-	// Calculate Torsion forces for specified Atom only
-	void forces(const Torsion* t, const Atom* onlyThis);
+	// Calculate SpeciesBond forces
+	void forces(const SpeciesBond* b, const Atom* i, const Atom* j);
+	// Calculate SpeciesBond forces for specified Atom only
+	void forces(const Atom* onlyThis, const SpeciesBond* b, const Atom* i, const Atom* j);
+	// Calculate SpeciesAngle forces
+	void forces(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k);
+	// Calculate SpeciesAngle forces for specified Atom only
+	void forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k);
+	// Calculate SpeciesTorsion forces
+	void forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l);
+	// Calculate SpeciesTorsion forces for specified Atom only
+	void forces(const Atom* onlyThis, const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l);
 
 
 	/*

@@ -161,46 +161,43 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						}
 					}
 				}
-			}
 
-			// Loop over defined Bonds
-			DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
-			while (Bond* b = bondIterator.iterate())
-			{
-				r = cfg->box()->minimumDistance(b->i(), b->j());
-				correctIntraEnergy += b->energy(r);
-			}
+				// Bond energy
+				for (const SpeciesBond* b = molN->species()->bonds().first(); b != NULL; b = b->next())
+				{
+					r = cfg->box()->minimumDistance(molN->atom(b->indexI()), molN->atom(b->indexJ()));
+					correctIntraEnergy += b->energy(r);
+				}
 
-			// Loop over defined Angles
-			DynamicArrayIterator<Angle> angleIterator(cfg->angles());
-			while (Angle* a = angleIterator.iterate())
-			{
-				// Get vectors 'j-i' and 'j-k'
-				vecji = cfg->box()->minimumVector(a->j(), a->i());
-				vecjk = cfg->box()->minimumVector(a->j(), a->k());
-				
-				// Calculate angle
-				vecji.normalise();
-				vecjk.normalise();
-				angle = Box::angleInDegrees(vecji, vecjk);
+				// Angle energy
+				for (const SpeciesAngle* a = molN->species()->angles().first(); a != NULL; a = a->next())
+				{
+					// Get vectors 'j-i' and 'j-k'
+					vecji = cfg->box()->minimumVector(molN->atom(a->indexJ()), molN->atom(a->indexI()));
+					vecjk = cfg->box()->minimumVector(molN->atom(a->indexJ()), molN->atom(a->indexK()));
+					
+					// Calculate angle
+					vecji.normalise();
+					vecjk.normalise();
+					angle = Box::angleInDegrees(vecji, vecjk);
 
-				// Determine Angle energy
-				correctIntraEnergy += a->energy(angle);
-			}
+					// Determine Angle energy
+					correctIntraEnergy += a->energy(angle);
+				}
 
-			// Loop over defined Torsions
-			DynamicArrayIterator<Torsion> torsionIterator(cfg->torsions());
-			while (Torsion* t = torsionIterator.iterate())
-			{
-				// Get vectors 'j-i', 'j-k' and 'k-l'
-				vecji = cfg->box()->minimumVector(t->j(), t->i());
-				vecjk = cfg->box()->minimumVector(t->j(), t->k());
-				veckl = cfg->box()->minimumVector(t->k(), t->l());
+				// Torsion energy
+				for (const SpeciesTorsion* t = molN->species()->torsions().first(); t != NULL; t = t->next())
+				{
+					// Get vectors 'j-i', 'j-k' and 'k-l'
+					vecji = cfg->box()->minimumVector(molN->atom(t->indexJ()), molN->atom(t->indexI()));
+					vecjk = cfg->box()->minimumVector(molN->atom(t->indexJ()), molN->atom(t->indexK()));
+					veckl = cfg->box()->minimumVector(molN->atom(t->indexK()), molN->atom(t->indexL()));
 
-				angle = Box::torsionInDegrees(vecji, vecjk, veckl);
+					angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 
-				// Determine Torsion energy
-				correctIntraEnergy += t->energy(angle);
+					// Determine Torsion energy
+					correctIntraEnergy += t->energy(angle);
+				}
 			}
 			testTimer.stop();
 

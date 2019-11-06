@@ -123,6 +123,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Vec3<double> vji, vjk, v;
 		Matrix3 transform;
 		const Box* box = cfg->box();
+		const Atom* i, *j, *k, *l;
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
@@ -142,7 +143,6 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecule
-			int termId;
 			for (int n = 0; n<targetMolecules.nItems(); ++n)
 			{
 				/*
@@ -161,14 +161,14 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 
 				// Loop over defined Bonds
-				if (adjustBonds) for (termId=0; termId<mol->nBonds(); ++termId)
+				if (adjustBonds) for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next())
 				{
-					// Grab Bond and SpeciesBond pointers
-					Bond* b = mol->bond(termId);
-					SpeciesBond* spb = b->speciesBond();
-
+					// Get Atom pointers
+					i = mol->atom(b->indexI());
+					j = mol->atom(b->indexJ());
+					
 					// Store current energy of this intramolecular term, or the whole Molecule if it is present in a cycle
-					intraEnergy = spb->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(b);
+					intraEnergy = b->inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(b, i, j);
 
 					// Select random terminus
 					terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -177,19 +177,19 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					for (shake=0; shake<nShakesPerTerm; ++shake)
 					{
 						// Get translation vector, normalise, and apply random delta
-						vji = box->minimumVector(b->i(), b->j());
+						vji = box->minimumVector(i, j);
 						vji.normalise();
 						vji *= procPool.randomPlusMinusOne() * bondStepSize;
 
 						// Adjust the Atoms attached to the selected terminus
-						mol->translate(vji, spb->nAttached(terminus), spb->attached(terminus));
+						mol->translate(vji, b->nAttached(terminus), b->attached(terminus));
 
 						// Update Cell positions of the adjusted Atoms
-						cfg->updateCellLocation(spb->nAttached(terminus), spb->attached(terminus), indexOffset);
+						cfg->updateCellLocation(b->nAttached(terminus), b->attached(terminus), indexOffset);
 
 						// Calculate new energy
 						newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-						newIntraEnergy = spb->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(b);
+						newIntraEnergy = b->inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(b, i, j);
 						
 						// Trial the transformed Molecule
 						delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
@@ -211,14 +211,15 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 
 				// Loop over defined Angles
-				if (adjustAngles) for (termId=0; termId<mol->nAngles(); ++termId)
+				if (adjustAngles) for (const SpeciesAngle* a = mol->species()->angles().first(); a != NULL; a = a->next())
 				{
-					// Grab Angle and SpeciesAngle pointers
-					Angle* a = mol->angle(termId);
-					SpeciesAngle* spa = a->speciesAngle();
+					// Get Atom pointers
+					i = mol->atom(a->indexI());
+					j = mol->atom(a->indexJ());
+					k = mol->atom(a->indexK());
 
 					// Store current energy of this intramolecular term
-					intraEnergy = spa->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(a);
+					intraEnergy = a->inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(a, i, j, k);
 
 					// Select random terminus
 					terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -227,22 +228,22 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					for (shake=0; shake<nShakesPerTerm; ++shake)
 					{
 						// Get bond vectors and calculate cross product to get rotation axis
-						vji = box->minimumVector(a->j(), a->i());
-						vjk = box->minimumVector(a->j(), a->k());
+						vji = box->minimumVector(j, i);
+						vjk = box->minimumVector(j, k);
 						v = vji * vjk;
 
 						// Create suitable transformation matrix
 						transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
 
 						// Adjust the Atoms attached to the selected terminus
-						mol->transform(box, transform, a->j()->r(), spa->nAttached(terminus), spa->attached(terminus));
+						mol->transform(box, transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
 
 						// Update Cell positions of the adjusted Atoms
-						cfg->updateCellLocation(spa->nAttached(terminus), spa->attached(terminus), indexOffset);
+						cfg->updateCellLocation(a->nAttached(terminus), a->attached(terminus), indexOffset);
 
 						// Calculate new energy
 						newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-						newIntraEnergy = spa->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(a);
+						newIntraEnergy = a->inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(a, i, j, k);
 						
 						// Trial the transformed Molecule
 						delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
@@ -264,14 +265,16 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 
 				// Loop over defined Torsions
-				if (adjustTorsions) for (int termId=0; termId<mol->nTorsions(); ++termId)
+				if (adjustTorsions) for (const SpeciesTorsion* t = mol->species()->torsions().first(); t != NULL; t = t->next())
 				{
-					// Grab Torsion and SpeciesTorsion pointers
-					Torsion* t = mol->torsion(termId);
-					const SpeciesTorsion* spt = t->speciesTorsion();
+					// Get Atom pointers
+					i = mol->atom(t->indexI());
+					j = mol->atom(t->indexJ());
+					k = mol->atom(t->indexK());
+					l = mol->atom(t->indexL());
 
 					// Store current energy of this intramolecular term
-					intraEnergy = spt->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(t);
+					intraEnergy = t->inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(t, i, j, k, l);
 
 					// Select random terminus
 					terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -280,20 +283,20 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					for (shake=0; shake<nShakesPerTerm; ++shake)
 					{
 						// Get bond vectors j-k to get rotation axis
-						vjk = box->minimumVector(t->j(), t->k());
+						vjk = box->minimumVector(j, k);
 
 						// Create suitable transformation matrix
 						transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne()*torsionStepSize, true);
 
 						// Adjust the Atoms attached to the selected terminus
-						mol->transform(box, transform, terminus == 0 ? t->j()->r() : t->k()->r(), spt->nAttached(terminus), spt->attached(terminus));
+						mol->transform(box, transform, terminus == 0 ? j->r() : k->r(), t->nAttached(terminus), t->attached(terminus));
 
 						// Update Cell positions of the adjusted Atoms
-						cfg->updateCellLocation(spt->nAttached(terminus), spt->attached(terminus), indexOffset);
+						cfg->updateCellLocation(t->nAttached(terminus), t->attached(terminus), indexOffset);
 
 						// Calculate new energy
 						newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-						newIntraEnergy = spt->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(t);
+						newIntraEnergy = t->inCycle() ? kernel.intramolecularEnergy(mol) : kernel.energy(t, i, j, k, l);
 						
 						// Trial the transformed Molecule
 						delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);

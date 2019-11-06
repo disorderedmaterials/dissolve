@@ -749,29 +749,25 @@ double EnergyKernel::energy(const CellArray& cellArray, bool interMolecular, Pro
  * Intramolecular Terms
  */
 
-// Return Bond energy
-double EnergyKernel::energy(const Bond* b)
+// Return SpeciesBond energy
+double EnergyKernel::energy(const SpeciesBond* b, const Atom* i, const Atom* j)
 {
-	// Determine whether we need to apply minimum image to the distance calculation
-	Atom* i = b->i(), *j = b->j();
-
 #ifdef CHECKS
 	// Check for spurious bond distances
 	double distance = cells_.useMim(i->cell(), j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
 	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
-
+	// Determine whether we need to apply minimum image to the distance calculation
 	if (cells_.useMim(i->cell(), j->cell())) return b->energy(box_->minimumDistance(i, j));
 	else return b->energy((i->r() - j->r()).magnitude());
 }
 
-// Return Angle energy
-double EnergyKernel::energy(const Angle* a)
+// Return SpeciesAngle energy
+double EnergyKernel::energy(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
 {
 	Vec3<double> vecji, vecjk;
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	Atom* i = a->i(), *j = a->j(), *k = a->k();
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
 	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
@@ -785,15 +781,12 @@ double EnergyKernel::energy(const Angle* a)
 	return a->energy(Box::angleInDegrees(vecji, vecjk));
 }
 
-// Return Torsion energy
-double EnergyKernel::energy(const Torsion* t)
+// Return SpeciesTorsion energy
+double EnergyKernel::energy(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
 {
 	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
 	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 	
-	// Grab pointers to atoms involved in angle
-	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
-
 	// Calculate vectors, ensuring we account for minimum image
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
@@ -806,47 +799,69 @@ double EnergyKernel::energy(const Torsion* t)
 }
 
 // Return intramolecular energy for the supplied Atom
-double EnergyKernel::intraEnergy(const Atom* i)
+double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
 {
-	// If no Atom is given, return zero
-	if (i == NULL) return 0.0;
+#ifdef CHECKS
+	if (i == NULL)
+	{
+		Messenger::error("NULL Atom given to EnergyKernel::intraEnergy().\n");
+		return 0.0;
+	}
+	if (i->speciesAtom() == NULL)
+	{
+		Messenger::error("NULL SpeciesAtom in Atom given to EnergyKernel::intraEnergy().\n");
+		return 0.0;
+	}
+#endif
+	// Get the SpeciesAtom
+	const SpeciesAtom* spAtom = i->speciesAtom();
 
 	// If no terms are present, return zero
-	if ((i->nBonds() == 0) && (i->nAngles() == 0) && (i->nTorsions() == 0)) return 0.0;
+	if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0)) return 0.0;
 
 	double intraEnergy = 0.0;
 
-	// Add energy from Bond terms
-	const PointerArray<Bond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n) intraEnergy += energy(bonds.value(n));
+	// Add energy from SpeciesBond terms
+	const PointerArray<SpeciesBond>& bonds = spAtom->bonds();
+	const SpeciesBond* b;
+	for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n)) intraEnergy += energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-	// Add energy from Angle terms
-	const PointerArray<Angle>& angles = i->angles();
-	for (int n=0; n<angles.nItems(); ++n) intraEnergy += energy(angles.value(n));
+	// Add energy from SpeciesAngle terms
+	const PointerArray<SpeciesAngle>& angles = spAtom->angles();
+	const SpeciesAngle* a;
+	for (int n=0; n<angles.nItems(); ++n, a = angles.at(n)) intraEnergy += energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
-	// Add energy from Torsion terms
-	const PointerArray<Torsion>& torsions = i->torsions();
-	for (int n=0; n<torsions.nItems(); ++n) intraEnergy += energy(torsions.value(n));
-
+	// Add energy from SpeciesTorsion terms
+	const PointerArray<SpeciesTorsion>& torsions = spAtom->torsions();
+	const SpeciesTorsion* t;
+	for (int n=0; n<torsions.nItems(); ++n, t= torsions.at(n)) intraEnergy += energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
 	return intraEnergy;
 }
 
 // Return intramolecular energy for the supplied Molecule
-double EnergyKernel::intraEnergy(const Molecule* mol)
+double EnergyKernel::intramolecularEnergy(const Molecule* mol)
 {
-	// If no Molecule is given, return zero
-	if (mol == NULL) return 0.0;
+#ifdef CHECKS
+	if (mol == NULL)
+	{
+		Messenger::error("NULL Molecule pointer given to EnergyKernel::intramolecularEnergy.\n");
+		return 0.0;
+	}
+#endif
 
 	double intraEnergy = 0.0;
 
-	// Add energy from Bond terms
-	for (int n=0; n<mol->nBonds(); ++n) intraEnergy += energy(mol->bond(n));
+	const Species* sp = mol->species();
 
-	// Add energy from Angle terms
-	for (int n=0; n<mol->nAngles(); ++n) intraEnergy += energy(mol->angle(n));
+	// TODO This is slow because of the pointer dereferencing needed to traverse the Lists. Change Lists to DynamicArrays in Species?
+	// Loop over Bonds
+	for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next()) energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-	// Add energy from Torsion terms
-	for (int n=0; n<mol->nTorsions(); ++n) intraEnergy += energy(mol->torsion(n));
+	// Loop over Angles
+	for (const SpeciesAngle* a = mol->species()->angles().first(); a != NULL; a = a->next()) energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+
+	// Loop over Torsions
+	for (const SpeciesTorsion* t = mol->species()->torsions().first(); t != NULL; t = t->next()) energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
 
 	return intraEnergy;
 }

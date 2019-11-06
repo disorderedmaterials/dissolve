@@ -23,9 +23,6 @@
 #define DISSOLVE_CONFIGURATION_H
 
 #include "classes/atom.h"
-#include "classes/angle.h"
-#include "classes/bond.h"
-#include "classes/torsion.h"
 #include "classes/atomtypelist.h"
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
@@ -123,12 +120,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Grain> grains_;
 	// Array of Atoms
 	DynamicArray<Atom> atoms_;
-	// Array of Bonds between Atoms
-	DynamicArray<Bond> bonds_;
-	// Array of Angles between Atoms
-	DynamicArray<Angle> angles_;
-	// Array of Torsions between Atoms
-	DynamicArray<Torsion> torsions_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
@@ -175,10 +166,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Grain>& grains();
 	// Return nth Grain
 	Grain* grain(int n);
-	// Add new Atom to Configuration, with Molecule and Grain parents specified
-	Atom* addAtom(Molecule* molecule, Grain* grain = NULL);
-	// Add new Atom with full data
-	Atom* addAtom(Molecule* molecule, Grain* grain, AtomType* atomType, Vec3<double> r, double charge);
+	// Add new Atom to Configuration
+	Atom* addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r = Vec3<double>());
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
@@ -187,38 +176,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
-	// Add new Bond to Configuration, with Molecule parent specified
-	Bond* addBond(Molecule* molecule, Atom* i, Atom* j);
-	// Add new Bond to Configuration, with Molecule parent specified, from Atom indices
-	Bond* addBond(Molecule* molecule, int i, int j);
-	// Return number of Bonds in Configuration
-	int nBonds() const;
-	// Return Bond array
-	DynamicArray<Bond>& bonds();
-	// Return Bond array (const)
-	const DynamicArray<Bond>& constBonds() const;
-	// Return nth Bond
-	Bond* bond(int n);
-	// Add new Angle to Configuration, with Molecule parent specified
-	Angle* addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k);
-	// Add new Angle to Configuration, with Molecule parent specified, from Atom indices
-	Angle* addAngle(Molecule* molecule, int i, int j, int k);
-	// Return number of Angles in Configuration
-	int nAngles() const;
-	// Return Angle array
-	DynamicArray<Angle>& angles();
-	// Return nth Angle
-	Angle* angle(int n);
-	// Add new Torsion to Configuration, with Molecule parent specified
-	Torsion* addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k, Atom* l);
-	// Add new Torsion to Configuration, with Molecule parent specified, from Atom indices
-	Torsion* addTorsion(Molecule* molecule, int i, int j, int k, int l);
-	// Return number of Torsions in Configuration
-	int nTorsions() const;
-	// Return Torsion array
-	DynamicArray<Torsion>& torsions();
-	// Return nth Torsion
-	Torsion* torsion(int n);
 
 
 	/*

@@ -35,9 +35,6 @@ Molecule::Molecule() : DynamicArrayObject<Molecule>()
 	// Set sensible defaults for Arrays
 	atoms_.setChunkSize(2);
 	grains_.setChunkSize(2);
-	bonds_.setChunkSize(2);
-	angles_.setChunkSize(2);
-	torsions_.setChunkSize(2);
 }
 
 // Destructor
@@ -56,23 +53,20 @@ void Molecule::clear()
 
 	atoms_.clear();
 	grains_.clear();
-	bonds_.clear();
-	angles_.clear();
-	torsions_.clear();
 }
 
 /*
  * Atoms / Grains
  */
 
-// Set Species which the Molecule represents
-void Molecule::setSpecies(Species* sp)
+// Set Species that this Molecule represents
+void Molecule::setSpecies(const Species* sp)
 {
 	species_ = sp;
 }
 
-// Return Species which the Molecule represents
-Species* Molecule::species() const
+// Return Species that this Molecule represents
+const Species* Molecule::species() const
 {
 	return species_;
 }
@@ -142,105 +136,6 @@ Grain* Molecule::grain(int n)
 	}
 #endif
 	return grains_[n];
-}
-
-// Add Bond to Molecule
-void Molecule::addBond(Bond* bond)
-{
-	bonds_.add(bond);
-}
-
-// Return size of Bond array
-int Molecule::nBonds() const
-{
-	return bonds_.nItems();
-}
-
-// Return Bond array
-Bond** Molecule::bonds()
-{
-	return bonds_;
-}
-
-// Return nth Bond pointer
-Bond* Molecule::bond(int n) const
-{
-	return bonds_.constAt(n);
-}
-
-// Add Angle to Molecule
-void Molecule::addAngle(Angle* angle)
-{
-	angles_.add(angle);
-}
-
-// Return size of Angle array
-int Molecule::nAngles() const
-{
-	return angles_.nItems();
-}
-
-// Return Angle array
-Angle** Molecule::angles()
-{
-	return angles_;
-}
-
-// Return nth Angle pointer
-Angle* Molecule::angle(int n) const
-{
-	return angles_.constAt(n);
-}
-
-// Add Torsion to Molecule
-void Molecule::addTorsion(Torsion* torsion)
-{
-	torsions_.add(torsion);
-}
-
-// Return size of Torsion array
-int Molecule::nTorsions() const
-{
-	return torsions_.nItems();
-}
-
-// Return Torsion array
-Torsion** Molecule::torsions()
-{
-	return torsions_;
-}
-
-// Return nth Torsion pointer
-Torsion* Molecule::torsion(int n) const
-{
-	return torsions_.constAt(n);
-}
-
-/*
- * Upkeep
- */
-
-// Select Atoms along any path from the specified one
-void Molecule::selectFromAtom(Atom* i, RefList<Atom>& selectedAtoms, Bond* excludedBond1, Bond* excludedBond2)
-{
-	// Add this Atom to our list
-	selectedAtoms.addUnique(i);
-
-	// Loop over Bonds on this Atom
-	Atom* j;
-	for (int n=0; n<i->bonds().nItems(); ++n)
-	{
-		Bond* bond = i->bonds().value(n);
-
-		// Is this an excluded Bond?
-		if (excludedBond1 == bond) continue;
-		if (excludedBond2 == bond) continue;
-
-		// Get Bond partner Atom and begin selection from it unless it's already in the list
-		j = bond->partner(i);
-		if (selectedAtoms.contains(j)) continue;
-		selectFromAtom(j, selectedAtoms, excludedBond1, excludedBond2);
-	}
 }
 
 /*

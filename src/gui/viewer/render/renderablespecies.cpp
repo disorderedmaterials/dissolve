@@ -266,6 +266,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
 	const GLfloat* colour;
 	Matrix4 A;
+	const Atom* i;
+	const SpeciesBond* b;
 
 	if (displayStyle_ == LinesStyle)
 	{
@@ -295,12 +297,14 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			}
 			else
 			{
-				RefListIterator<SpeciesBond> bondIterator(i->bonds());
-				while (SpeciesBond* b = bondIterator.iterate())
+				// Draw all bonds from this atom
+				const PointerArray<SpeciesBond>& bonds = i->bonds();
+				for (int n=0; n<bonds.nItems(); ++n, b = bonds.at(n))
 				{
-					// Determine half delta i-j for bond
 					const Vec3<double> ri = i->r();
 					const Vec3<double> dij = (b->partner(i)->r() - ri) * 0.5;
+
+					// Draw bond halves
 					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
 				}
 			}

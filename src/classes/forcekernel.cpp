@@ -560,11 +560,8 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Divi
  */
 
 // Calculate Bond forces
-void ForceKernel::forces(const Bond* b)
+void ForceKernel::forces(const SpeciesBond* b, const Atom* i, const Atom* j)
 {
-	// Grab pointers to atoms involved in bond
-	Atom* i = b->i(), *j = b->j();
-
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
 	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
@@ -592,11 +589,8 @@ void ForceKernel::forces(const Bond* b)
 }
 
 // Calculate Bond forces for specified Atom only
-void ForceKernel::forces(const Bond* b, const Atom* onlyThis)
+void ForceKernel::forces(const Atom* onlyThis, const SpeciesBond* b, const Atom* i, const Atom* j)
 {
-	// Grab pointers to atoms involved in bond
-	Atom* i = b->i(), *j = b->j();
-
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis))
 	{
@@ -637,12 +631,9 @@ void ForceKernel::forces(const Bond* b, const Atom* onlyThis)
 }
 
 // Calculate Angle forces
-void ForceKernel::forces(const Angle* a)
+void ForceKernel::forces(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
 {
 	Vec3<double> vecji, vecjk;
-
-	// Grab pointers to atoms involved in angle
-	Atom* i = a->i(), *j = a->j(), *k = a->k();
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
@@ -677,12 +668,9 @@ void ForceKernel::forces(const Angle* a)
 }
 
 // Calculate Angle forces for specified Atom only
-void ForceKernel::forces(const Angle* a, const Atom* onlyThis)
+void ForceKernel::forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
 {
 	Vec3<double> vecji, vecjk;
-
-	// Grab pointers to atoms involved in angle
-	Atom* i = a->i(), *j = a->j(), *k = a->k();
 
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis) && (k != onlyThis))
@@ -732,11 +720,8 @@ void ForceKernel::forces(const Angle* a, const Atom* onlyThis)
 }
 
 // Return Torsion force
-void ForceKernel::forces(const Torsion* t)
+void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
 {
-	// Grab pointers to atoms involved in angle
-	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
-
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
@@ -812,11 +797,8 @@ void ForceKernel::forces(const Torsion* t)
 }
 
 // Calculate Torsion forces for specified Atom only
-void ForceKernel::forces(const Torsion* t, const Atom* onlyThis)
+void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
 {
-	// Grab pointers to atoms involved in angle
-	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
-
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
