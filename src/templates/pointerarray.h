@@ -226,6 +226,13 @@ template <class T> class PointerArray
 
 		return -1;
 	}
+	// Return whether the array contains the specified pointer
+	bool contains(const T* ptr) const
+	{
+		for (int n=0; n<nItems_; ++n) if (items_[n] == ptr) return true;
+
+		return false;
+	}
 };
 
 #endif
