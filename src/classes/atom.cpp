@@ -93,6 +93,18 @@ double Atom::z() const
 	return r_.z;
 }
 
+// Set local AtomType index
+void Atom::setLocalTypeIndex(int id)
+{
+	localTypeIndex_ = id;
+}
+
+// Return local AtomType index
+int Atom::localTypeIndex() const
+{
+	return localTypeIndex_;
+}
+
 // Set master AtomType index 
 void Atom::setMasterTypeIndex(int id)
 {
