@@ -219,7 +219,7 @@ template <class T> class PointerArray
 		}
 		--nItems_;
 	}
-	// Return array index of pointer within the list
+	// Return array index of specified pointer
 	int indexOf(const T* ptr) const
 	{
 		for (int n=0; n<nItems_; ++n) if (items_[n] == ptr) return n;
