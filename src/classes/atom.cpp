@@ -43,6 +43,11 @@ Atom::~Atom()
 // Clear object, ready for re-use
 void Atom::clear()
 {
+	molecule_ = NULL;
+	speciesAtom_ = NULL;
+	grain_ = NULL;
+	cell_ = NULL;
+
 	// Properties
 	localTypeIndex_ = -1;
 	masterTypeIndex_ = -1;
