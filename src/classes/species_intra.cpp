@@ -97,8 +97,6 @@ bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 
 	// Add the new Bond
 	bond->setAtoms(i, j);
-	i->addBond(bond);
-	j->addBond(bond);
 
 	++version_;
 

@@ -58,6 +58,10 @@ void SpeciesTorsion::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
 	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesTorsion::set().\n");
 	if (l_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesTorsion::set().\n");
 #endif
+	if (i_) i_->addTorsion(this, 0.5);
+	if (j_) j_->addTorsion(this, 0.5);
+	if (k_) k_->addTorsion(this, 0.5);
+	if (l_) l_->addTorsion(this, 0.5);
 }
 
 // Return first SpeciesAtom

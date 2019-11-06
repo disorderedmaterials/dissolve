@@ -55,6 +55,9 @@ void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
 	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
 #endif
+	if (i_) i_->addAngle(this);
+	if (j_) j_->addAngle(this);
+	if (k_) k_->addAngle(this);
 }
 
 // Return first SpeciesAtom
