@@ -121,7 +121,6 @@ int Atom::masterTypeIndex() const
 	return masterTypeIndex_;
 }
 
-
 /*
  * Location
  */
