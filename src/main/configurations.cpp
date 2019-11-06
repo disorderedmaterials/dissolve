@@ -109,6 +109,9 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("%12e %12e %12e  %f  %s\n", lengths.x, lengths.y, lengths.z, cfg->requestedSizeFactor(), DissolveSys::btoa(cfg->box()->type() == Box::NonPeriodicBoxType))) return false;
 	if (!parser.writeLineF("%12e %12e %12e\n", angles.x, angles.y, angles.z)) return false;
 
+	// Write total number of Molecules
+	if (!parser.writeLineF("%i\n", cfg->nMolecules())) return false;
+
 	// Write Molecule types - write sequential Molecules with same type as single line
 	int moleculeCount = 1;
 	const Species* lastType = cfg->nMolecules() > 0 ? cfg->molecule(0)->species() : NULL;
@@ -126,7 +129,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 		moleculeCount = 1;
 		lastType = cfg->molecule(n)->species();
 	}
-	// Write final 
+	// Write final molecule count
 	if (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name())) return false;
 
 	// Write all Atoms - for each write type, coordinates, charge, mol ID, and grain ID
@@ -162,9 +165,13 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	Vec3<double> angles = parser.arg3d(0);
 	if (!cfg->createBox(lengths, angles)) return false;
 
+	// Read total number of Molecules to expect
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	const int expectedNMols = parser.argi(0);
+
 	// Read Species types for Molecules
 	int nMolsRead = 0;
-	while (nMolsRead < cfg->nMolecules())
+	while (nMolsRead < expectedNMols)
 	{
 		// Read line containing number of molecules and Species name
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -174,9 +181,6 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		// Set Species pointers for this range of Molecules
 		int nMols = parser.argi(0);
 		for (int n=0; n<nMols; ++n) cfg->addMolecule(sp);
-
-		// Update the used species population
-		cfg->addUsedSpecies(sp, nMols);
 
 		// Increase our counter
 		nMolsRead += parser.argi(0);
