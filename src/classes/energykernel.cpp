@@ -20,8 +20,6 @@
 */
 
 #include "classes/energykernel.h"
-#include "classes/angle.h"
-#include "classes/bond.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"

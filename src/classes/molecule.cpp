@@ -20,11 +20,8 @@
 */
 
 #include "classes/molecule.h"
-#include "classes/angle.h"
 #include "classes/atom.h"
-#include "classes/bond.h"
 #include "classes/grain.h"
-#include "classes/torsion.h"
 #include "classes/box.h"
 
 // Constructor

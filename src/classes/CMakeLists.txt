@@ -1,10 +1,8 @@
 add_library(classes
-  angle.cpp
   atom.cpp
   atomtype.cpp
   atomtypedata.cpp
   atomtypelist.cpp
-  bond.cpp
   box.cpp
   box_cubic.cpp
   box_monoclinic.cpp
@@ -66,15 +64,12 @@ add_library(classes
   speciesintra.cpp
   speciessite.cpp
   speciestorsion.cpp
-  torsion.cpp
   weights.cpp
   
-  angle.h
   atom.h
   atomtypedata.h
   atomtype.h
   atomtypelist.h
-  bond.h
   box.h
   braggreflection.h
   cell.h
@@ -120,9 +115,8 @@ add_library(classes
   speciesintra.h
   speciessite.h
   speciestorsion.h
-  torsion.h
   weights.h
-  )
+)
 
 include_directories(
 ../
