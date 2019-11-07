@@ -82,7 +82,7 @@ class SpeciesIntra
 	// Set linked master from which parameters should be taken
 	void setMasterParameters(MasterIntra* master);
 	// Return linked master from which parameters should be taken
-	MasterIntra* masterParameters();
+	const MasterIntra* masterParameters() const;
 	// Detach from MasterIntra, if we are currently referencing one
 	void detachFromMasterIntra();
 	// Return parameter source

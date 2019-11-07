@@ -286,7 +286,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				break;
 			case (Species::BondTypeKeyword):
 				// Find the specified bond
-				b = hasBond(parser.argi(1)-1, parser.argi(2)-1);
+				b = bond(parser.argi(1)-1, parser.argi(2)-1);
 				if (!b)
 				{
 					Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond does not exist.\n", parser.argi(1), parser.argi(2));
@@ -484,11 +484,12 @@ bool Species::write(LineParser& parser, const char* prefix)
 	}
 
 	// Bonds
-	RefList<SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
+	RefList<const SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
 	if (nBonds() > 0)
 	{
 		if (!parser.writeLineF("\n%s# Bonds\n", newPrefix.get())) return false;
-		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
+		while (const SpeciesBond* b = bondIterator.iterate())
 		{
 			if (b->form() == SpeciesBond::nBondFunctions)
 			{
@@ -519,8 +520,8 @@ bool Species::write(LineParser& parser, const char* prefix)
 				if (!parser.writeLineF("\n%s# Bond Types\n", newPrefix.get())) return false;
 				bondTypeHeaderWritten = true;
 			}
-			RefListIterator<SpeciesBond> bondIterator(bondTypes[bt]);
-			while (SpeciesBond* bond = bondIterator.iterate()) if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(), keywords().keyword(Species::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
+			RefListIterator<const SpeciesBond> bondIterator(bondTypes[bt]);
+			while (const SpeciesBond* bond = bondIterator.iterate()) if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(), keywords().keyword(Species::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
 		}
 	}
 
@@ -528,7 +529,8 @@ bool Species::write(LineParser& parser, const char* prefix)
 	if (nAngles() > 0)
 	{
 		if (!parser.writeLineF("\n%s# Angles\n", newPrefix.get())) return false;
-		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next())
+		DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
+		while (const SpeciesAngle* a = angleIterator.iterate())
 		{
 			if (a->masterParameters())
 			{
@@ -547,7 +549,8 @@ bool Species::write(LineParser& parser, const char* prefix)
 	if (nTorsions() > 0)
 	{
 		if (!parser.writeLineF("\n%s# Torsions\n", newPrefix.get())) return false;
-		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next())
+		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
+		while (const SpeciesTorsion* t = torsionIterator.iterate())
 		{
 			if (t->masterParameters())
 			{

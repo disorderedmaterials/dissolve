@@ -23,25 +23,29 @@
 #define DISSOLVE_SPECIESTORSION_H
 
 #include "classes/speciesintra.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
 class ProcessPool;
 
-/*
- * SpeciesImproper Definition
- */
-class SpeciesImproper : public SpeciesIntra, public ListItem<SpeciesImproper>
+// SpeciesImproper Definition
+class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesImproper>
 {
 	public:
 	// Constructor
 	SpeciesImproper();
 	// Destructor
 	~SpeciesImproper();
+
+
+	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
 
 
 	/*

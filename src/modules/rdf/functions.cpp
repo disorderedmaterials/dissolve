@@ -451,18 +451,18 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next()) broadgr.boundPartial(i,j).values() = 0.0;
 		}
 
-		// Assemble lists of unique intramolecular terms (in respect of their parameters)
-		RefDataList<const SpeciesIntra, const SpeciesBond*> bondIntra;
-		RefDataList<const SpeciesIntra, const SpeciesAngle*> angleIntra;
-		RefDataList<const SpeciesIntra, const SpeciesTorsion*> torsionIntra;
-		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
-		{
-			Species* sp = spInfo->species();
-			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next()) bondIntra.addUnique(b->parameterSource(), b);
-			for (const SpeciesAngle* a = sp->angles().first(); a != NULL; a = a->next()) angleIntra.addUnique(a->parameterSource(), a);
-			for (const SpeciesTorsion* t = sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
-		}
+// 		// Assemble lists of unique intramolecular terms (in respect of their parameters)
+// 		RefDataList<const SpeciesIntra, const SpeciesBond*> bondIntra;
+// 		RefDataList<const SpeciesIntra, const SpeciesAngle*> angleIntra;
+// 		RefDataList<const SpeciesIntra, const SpeciesTorsion*> torsionIntra;
+// 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
+// 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
+// 		{
+// 			Species* sp = spInfo->species();
+// 			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next()) bondIntra.addUnique(b->parameterSource(), b);
+// 			for (const SpeciesAngle* a = sp->angles().first(); a != NULL; a = a->next()) angleIntra.addUnique(a->parameterSource(), a);
+// 			for (const SpeciesTorsion* t = sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
+// 		}
 
 		return Messenger::error("Frequency broadening not reimplemented yet.\n");
 

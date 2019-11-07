@@ -23,9 +23,7 @@
 #define DISSOLVE_SPECIESANGLE_H
 
 #include "classes/speciesintra.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -33,13 +31,21 @@ class Species;
 class ProcessPool;
 
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
+class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle>
 {
 	public:
 	// Constructor
 	SpeciesAngle();
 	// Destructor
 	~SpeciesAngle();
+
+
+	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
 
 
 	/*

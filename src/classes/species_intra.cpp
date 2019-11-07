@@ -126,27 +126,38 @@ int Species::nBonds() const
 	return bonds_.nItems();
 }
 
-// Return list of SpeciesBond
-const List<SpeciesBond>& Species::bonds() const
+// Return array of SpeciesBond
+DynamicArray<SpeciesBond>& Species::bonds()
 {
 	return bonds_;
 }
 
-// Return nth SpeciesBond
-SpeciesBond* Species::bond(int n)
+// Return array of SpeciesBond (const)
+const DynamicArray<SpeciesBond>& Species::constBonds() const
 {
-	return bonds_[n];
+	return bonds_;
 }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
-SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
+bool Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next()) if (b->matches(i, j)) return b;
+	DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds_);
+	while (const SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return true;
+
+	return false;
+}
+
+// Return the SpeciesBond between the specified SpeciesAtoms
+SpeciesBond* Species::bond(SpeciesAtom* i, SpeciesAtom* j)
+{
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return b;
+
 	return NULL;
 }
 
-// Return whether SpeciesBond between specified atom indices exists
-SpeciesBond* Species::hasBond(int i, int j)
+// Return the SpeciesBond between the specified SpeciesAtom indices
+SpeciesBond* Species::bond(int i, int j)
 {
 	if ((i < 0) || (i >= nAtoms()))
 	{
@@ -159,13 +170,16 @@ SpeciesBond* Species::hasBond(int i, int j)
 		return NULL;
 	}
 
-	return hasBond(atoms_[i], atoms_[j]);
+	return bond(atoms_[i], atoms_[j]);
 }
 
-// Return index of specified SpeciesBond
-int Species::bondIndex(SpeciesBond* spb)
+// Return the SpeciesBond between the specified SpeciesAtoms (const)
+const SpeciesBond* Species::constBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
-	return bonds_.indexOf(spb);
+	DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds_);
+	while (const SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return b;
+
+	return NULL;
 }
 
 // Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
@@ -277,29 +291,25 @@ int Species::nAngles() const
 	return angles_.nItems();
 }
 
-// Return list of SpeciesAngle
-const List<SpeciesAngle>& Species::angles() const
+// Return array of SpeciesAngle
+DynamicArray<SpeciesAngle>& Species::angles()
 {
 	return angles_;
 }
 
-// Return nth SpeciesAngle
-SpeciesAngle* Species::angle(int n)
+// Return array of SpeciesAngle (const)
+const DynamicArray<SpeciesAngle>& Species::constAngles() const
 {
-	return angles_[n];
+	return angles_;
 }
 
 // Return whether SpeciesAngle between SpeciesAtoms exists
-SpeciesAngle* Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
+bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) if (a->matches(i, j, k)) return a;
-	return NULL;
-}
+	DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles_);
+	while (const SpeciesAngle* a = angleIterator.iterate()) if (a->matches(i, j, k)) return true;
 
-// Return index of specified SpeciesAngle
-int Species::angleIndex(SpeciesAngle* spa)
-{
-	return angles_.indexOf(spa);
+	return false;
 }
 
 // Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
@@ -427,29 +437,25 @@ int Species::nTorsions() const
 	return torsions_.nItems();
 }
 
-// Return list of SpeciesTorsions
-const List<SpeciesTorsion>& Species::torsions() const
+// Return array of SpeciesTorsions
+DynamicArray<SpeciesTorsion>& Species::torsions()
 {
 	return torsions_;
 }
 
-// Return nth SpeciesTorsion
-SpeciesTorsion* Species::torsion(int n)
+// Return array of SpeciesTorsions (const)
+const DynamicArray<SpeciesTorsion>& Species::constTorsions() const
 {
-	return torsions_[n];
+	return torsions_;
 }
 
 // Return whether SpeciesTorsion between SpeciesAtoms exists
-SpeciesTorsion* Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
 {
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) if (t->matches(i, j, k, l)) return t;
-	return NULL;
-}
+	DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions_);
+	while (const SpeciesTorsion* t = torsionIterator.iterate()) if (t->matches(i, j, k, l)) return true;
 
-// Return index of specified SpeciesTorsion
-int Species::torsionIndex(SpeciesTorsion* spt)
-{
-	return torsions_.indexOf(spt);
+	return false;
 }
 
 // Return whether the attached atoms lists have been created
@@ -462,11 +468,9 @@ bool Species::attachedAtomListsGenerated() const
 void Species::generateAttachedAtomLists()
 {
 	// Bonds
-	for (int n=0; n<bonds_.nItems(); ++n)
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) 
 	{
-		// Grab Bond pointer
-		SpeciesBond* b = bonds_[n];
-
 		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
 		clearAtomSelection();
 		selectFromAtom(b->i(), b);
@@ -490,11 +494,9 @@ void Species::generateAttachedAtomLists()
 	}
 
 	// Angles - termini are 'i' and 'k'
-	for (int n=0; n<angles_.nItems(); ++n)
+	DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
+	while (SpeciesAngle* a = angleIterator.iterate()) 
 	{
-		// Grab Angle pointer
-		SpeciesAngle* a = angles_[n];
-
 		// Grab relevant Bonds (if they exist)
 		SpeciesBond* ji = a->j()->hasBond(a->i());
 		SpeciesBond* jk = a->j()->hasBond(a->k());
@@ -529,11 +531,9 @@ void Species::generateAttachedAtomLists()
 	}
 
 	// Torsions - termini are 'j' and 'k'
-	for (int n=0; n<torsions_.nItems(); ++n)
+	DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
+	while (SpeciesTorsion* t = torsionIterator.iterate()) 
 	{
-		// Grab Torsion pointer
-		SpeciesTorsion* t = torsions_[n];
-
 		// Grab relevant Bond (if it exists)
 		SpeciesBond* jk = t->j()->hasBond(t->k());
 
@@ -571,7 +571,12 @@ void Species::generateAttachedAtomLists()
 // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 void Species::detachFromMasterTerms()
 {
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next()) b->detachFromMasterIntra();
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) a->detachFromMasterIntra();
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) t->detachFromMasterIntra();
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) b->detachFromMasterIntra();
+
+	DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
+	while (SpeciesAngle* a = angleIterator.iterate()) a->detachFromMasterIntra();
+
+	DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
+	while (SpeciesTorsion* t = torsionIterator.iterate()) t->detachFromMasterIntra();
 }

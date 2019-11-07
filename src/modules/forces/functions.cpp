@@ -49,7 +49,6 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 	int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
 	// Loop over Molecules
-	// TODO This is slow because of the pointer dereferencing needed to traverse the Lists. Change Lists to DynamicArrays in Species?
 	Molecule** molecules = cfg->molecules().array();
 	const Molecule* mol;
 	for (int m=start; m<cfg->nMolecules(); m += stride)
@@ -58,13 +57,16 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 		mol = molecules[m];
 
 		// Loop over Bonds
-		for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next()) kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
+		while (const SpeciesBond* b = bondIterator.iterate()) kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
 		// Loop over Angles
-		for (const SpeciesAngle* a = mol->species()->angles().first(); a != NULL; a = a->next()) kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+		DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
+		while (const SpeciesAngle* a = angleIterator.iterate()) kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
 		// Loop over Torsions
-		for (const SpeciesTorsion* t = mol->species()->torsions().first(); t != NULL; t = t->next()) kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
+		while (const SpeciesTorsion* t = torsionIterator.iterate()) kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
 	}
 }
 

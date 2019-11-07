@@ -26,7 +26,22 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesImproper::SpeciesImproper() : SpeciesIntra(), ListItem<SpeciesImproper>()
+SpeciesImproper::SpeciesImproper() : SpeciesIntra(), DynamicArrayObject<SpeciesImproper>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesImproper::~SpeciesImproper()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesTorsion::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -34,11 +49,6 @@ SpeciesImproper::SpeciesImproper() : SpeciesIntra(), ListItem<SpeciesImproper>()
 	k_ = NULL;
 	l_ = NULL;
 	form_ = SpeciesImproper::nImproperFunctions;
-}
-
-// Destructor
-SpeciesImproper::~SpeciesImproper()
-{
 }
 
 /*

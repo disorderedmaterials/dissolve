@@ -207,7 +207,8 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (testIntra)
 				{
 					// Bond forces
-					for (const SpeciesBond* b = molN->species()->bonds().first(); b != NULL; b = b->next())
+					DynamicArrayConstIterator<SpeciesBond> bondIterator(molN->species()->constBonds());
+					while (const SpeciesBond* b = bondIterator.iterate())
 					{
 						// Grab pointers to atoms involved in bond
 						i = molN->atom(b->indexI());
@@ -226,7 +227,8 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Angle forces
-					for (const SpeciesAngle* a = molN->species()->angles().first(); a != NULL; a = a->next())
+					DynamicArrayConstIterator<SpeciesAngle> angleIterator(molN->species()->constAngles());
+					while (const SpeciesAngle* a = angleIterator.iterate())
 					{
 						// Grab pointers to atoms involved in angle
 						i = molN->atom(a->indexI());
@@ -262,7 +264,8 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Torsion forces
-					for (const SpeciesTorsion* t = molN->species()->torsions().first(); t != NULL; t = t->next())
+					DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(molN->species()->constTorsions());
+					while (const SpeciesTorsion* t = torsionIterator.iterate())
 					{
 						// Grab pointers to atoms involved in angle
 						i = molN->atom(t->indexI());

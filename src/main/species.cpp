@@ -70,7 +70,7 @@ Species* Dissolve::findSpecies(const char* name) const
 }
 
 // Copy AtomType, creating a new one if necessary
-void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
+void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 {
 	// Check for no AtomType being set
 	if (!sourceAtom->atomType())
@@ -93,7 +93,7 @@ void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 }
 
 // Copy intramolecular interaction parameters, adding MasterIntra if necessary
-void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra)
+void Dissolve::copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra)
 {
 	// Remove any existing master parameters link from the destination object
 	if (destIntra->masterParameters()) destIntra->detachFromMasterIntra();
@@ -164,8 +164,8 @@ Species* Dissolve::copySpecies(const Species* species)
 	}
 
 	// Duplicate bonds
-	ListIterator<SpeciesBond> bondIterator(species->bonds());
-	while (SpeciesBond* b = bondIterator.iterate())
+	DynamicArrayConstIterator<SpeciesBond> bondIterator(species->constBonds());
+	while (const SpeciesBond* b = bondIterator.iterate())
 	{
 		// Create the bond in the new Species
 		SpeciesBond* newBond = newSpecies->addBond(b->indexI(), b->indexJ());
@@ -175,8 +175,8 @@ Species* Dissolve::copySpecies(const Species* species)
 	}
 
 	// Duplicate angles
-	ListIterator<SpeciesAngle> angleIterator(species->angles());
-	while (SpeciesAngle* a = angleIterator.iterate())
+	DynamicArrayConstIterator<SpeciesAngle> angleIterator(species->constAngles());
+	while (const SpeciesAngle* a = angleIterator.iterate())
 	{
 		// Create the angle in the new Species
 		SpeciesAngle* newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
@@ -186,8 +186,8 @@ Species* Dissolve::copySpecies(const Species* species)
 	}
 
 	// Duplicate torsions
-	ListIterator<SpeciesTorsion> torsionIterator(species->torsions());
-	while (SpeciesTorsion* t = torsionIterator.iterate())
+	DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(species->constTorsions());
+	while (const SpeciesTorsion* t = torsionIterator.iterate())
 	{
 		// Create the torsion in the new Species
 		SpeciesTorsion* newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());

@@ -80,11 +80,11 @@ void Species::autoAddGrains()
 // 	
 	// Make a list of bonds for each atom
 	Array< RefDataList<SpeciesBond,int> > bondList(atoms_.nItems());
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
-	{
-		bondList[b->indexI()].append(b,1);
-		bondList[b->indexJ()].append(b,1);
-	}
+// 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
+// 	{
+// 		bondList[b->indexI()].append(b,1);
+// 		bondList[b->indexJ()].append(b,1);
+// 	}
 	
 	// Now loop over Atoms
 	SpeciesGrain* sg;

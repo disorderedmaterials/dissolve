@@ -26,7 +26,22 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), ListItem<SpeciesTorsion>()
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), DynamicArrayObject<SpeciesTorsion>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesTorsion::~SpeciesTorsion()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesTorsion::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -34,11 +49,6 @@ SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), ListItem<SpeciesTorsion>()
 	k_ = NULL;
 	l_ = NULL;
 	form_ = SpeciesTorsion::nTorsionFunctions;
-}
-
-// Destructor
-SpeciesTorsion::~SpeciesTorsion()
-{
 }
 
 /*

@@ -44,10 +44,9 @@ void Species::completeIntramolecularTerms()
 			for (int jkIndex = ijIndex; jkIndex < j->nBonds(); ++jkIndex, jk = j->bonds().value(jkIndex))
 			{
 				// If this angle doesn't already exist, add it now.
-				SpeciesAngle* ijk = hasAngle(ij->partner(j), j, jk->partner(j));
-				if (!ijk)
+				if (!hasAngle(ij->partner(j), j, jk->partner(j)))
 				{
-					ijk = addAngle(ij->partner(j), j, jk->partner(j));
+					SpeciesAngle* ijk = addAngle(ij->partner(j), j, jk->partner(j));
 					ijk->setForm(SpeciesAngle::nAngleFunctions);
 				}
 
@@ -59,10 +58,9 @@ void Species::completeIntramolecularTerms()
 					if (jk == kl) continue;
 
 					// If this torsion doesn't already exist, add it now.
-					SpeciesTorsion* ijkl = hasTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
-					if (!ijkl)
+					if (!hasTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j))))
 					{
-						ijkl = addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
+						SpeciesTorsion* ijkl = addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
 						ijkl->setForm(SpeciesTorsion::nTorsionFunctions);
 					}
 				}

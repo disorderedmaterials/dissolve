@@ -27,18 +27,28 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesBond::SpeciesBond() : SpeciesIntra(), ListItem<SpeciesBond>()
+SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesBond::~SpeciesBond()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesBond::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
 	bondType_ = SpeciesBond::SingleBond;
 	form_ = SpeciesBond::nBondFunctions;
-}
-
-// Destructor
-SpeciesBond::~SpeciesBond()
-{
 }
 
 /*

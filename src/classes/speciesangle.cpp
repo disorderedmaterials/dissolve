@@ -26,18 +26,28 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesAngle::SpeciesAngle() : SpeciesIntra(), ListItem<SpeciesAngle>()
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(), DynamicArrayObject<SpeciesAngle>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesAngle::~SpeciesAngle()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesAngle::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
 	form_ = SpeciesAngle::nAngleFunctions;
-}
-
-// Destructor
-SpeciesAngle::~SpeciesAngle()
-{
 }
 
 /*

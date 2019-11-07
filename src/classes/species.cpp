@@ -201,7 +201,8 @@ void Species::print()
 		Messenger::print("\n  Bonds:\n");
 		Messenger::print("      I     J    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------\n");
-		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
+		while (const SpeciesBond* b = bondIterator.iterate())
 		{
 			CharString s("   %4i  %4i    %c%-12s", b->indexI()+1, b->indexJ()+1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
@@ -214,7 +215,8 @@ void Species::print()
 		Messenger::print("\n  Angles:\n");
 		Messenger::print("      I     J     K    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------\n");
-		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next())
+		DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
+		while (const SpeciesAngle* a = angleIterator.iterate())
 		{
 			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
@@ -227,7 +229,9 @@ void Species::print()
 		Messenger::print("\n  Torsions:\n");
 		Messenger::print("      I     J     K     L    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
-		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next())
+		// Loop over Torsions
+		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
+		while (const SpeciesTorsion* t = torsionIterator.iterate())
 		{
 			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));

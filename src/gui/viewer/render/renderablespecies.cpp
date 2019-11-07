@@ -199,7 +199,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next())
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
+		while (const SpeciesBond* b = bondIterator.iterate())
 		{
 			// Determine half delta i-j for bond
 			const Vec3<double> ri = b->i()->r();
@@ -237,7 +238,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next()) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
+		while (const SpeciesBond* b = bondIterator.iterate()) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
 	}
 }
 

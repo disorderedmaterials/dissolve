@@ -160,8 +160,9 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Calculate reference pairpotential energy for Molecule
 				ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 
-				// Loop over defined Bonds
-				if (adjustBonds) for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next())
+				// Loop over defined bonds
+				DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
+				if (adjustBonds) while (const SpeciesBond* b = bondIterator.iterate())
 				{
 					// Get Atom pointers
 					i = mol->atom(b->indexI());
@@ -210,8 +211,9 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 				}
 
-				// Loop over defined Angles
-				if (adjustAngles) for (const SpeciesAngle* a = mol->species()->angles().first(); a != NULL; a = a->next())
+				// Loop over defined angles
+				DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
+				if (adjustAngles) while (const SpeciesAngle* a = angleIterator.iterate())
 				{
 					// Get Atom pointers
 					i = mol->atom(a->indexI());
@@ -264,8 +266,9 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 				}
 
-				// Loop over defined Torsions
-				if (adjustTorsions) for (const SpeciesTorsion* t = mol->species()->torsions().first(); t != NULL; t = t->next())
+				// Loop over defined torsions
+				DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
+				if (adjustTorsions) while (const SpeciesTorsion* t = torsionIterator.iterate())
 				{
 					// Get Atom pointers
 					i = mol->atom(t->indexI());

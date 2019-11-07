@@ -460,9 +460,9 @@ bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTer
 
 	// rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
 	// We need the bond orders of the involved bonds...
-	SpeciesBond* ij = sp->hasBond(angleTerm->i(), angleTerm->j());
+	const SpeciesBond* ij = sp->constBond(angleTerm->i(), angleTerm->j());
 	if (!ij) return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
-	SpeciesBond* jk = sp->hasBond(angleTerm->j(), angleTerm->k());
+	const SpeciesBond* jk = sp->constBond(angleTerm->j(), angleTerm->k());
 	if (!jk) return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
 
 	const double sumrij = i->r() + j->r();
@@ -582,7 +582,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species* sp, SpeciesTorsion* tors
 	{
 		// Case e) j and k are both sp2 centres
 		// Force constant is adjusted based on current bond order
-		SpeciesBond* jk = sp->hasBond(torsionTerm->j(), torsionTerm->k());
+		const SpeciesBond* jk = sp->constBond(torsionTerm->j(), torsionTerm->k());
 		if (jk) V = 5.0 * sqrt(j->U()*k->U()) * (1.0 + 4.18*log(jk->bondOrder()));
 		else
 		{
@@ -697,7 +697,7 @@ bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bo
 	if (assignBonds)
 	{
 		// Generate bond parameters
-		ListIterator<SpeciesBond> bondIterator(sp->bonds());
+		DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
 		while (SpeciesBond* bond = bondIterator.iterate())
 		{
 			UFFAtomType* i = atomTypes[bond->indexI()];
@@ -707,10 +707,10 @@ bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bo
 	}
 
 	// Generate angle terms
-	if (assignTorsions)
+	if (assignAngles)
 	{
 		// Generate angle parameters
-		ListIterator<SpeciesAngle> angleIterator(sp->angles());
+		DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
 		while (SpeciesAngle* angle = angleIterator.iterate())
 		{
 			UFFAtomType* i = atomTypes[angle->indexI()];
@@ -724,7 +724,7 @@ bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bo
 	if (assignTorsions)
 	{
 		// Generate torsion parameters
-		ListIterator<SpeciesTorsion> torsionIterator(sp->torsions());
+		DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
 		while (SpeciesTorsion* torsion = torsionIterator.iterate())
 		{
 			UFFAtomType* i = atomTypes[torsion->indexI()];

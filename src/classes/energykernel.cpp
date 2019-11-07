@@ -866,15 +866,17 @@ double EnergyKernel::intramolecularEnergy(const Molecule* mol)
 
 	const Species* sp = mol->species();
 
-	// TODO This is slow because of the pointer dereferencing needed to traverse the Lists. Change Lists to DynamicArrays in Species?
 	// Loop over Bonds
-	for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next()) energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+	DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
+	while (const SpeciesBond* b = bondIterator.iterate()) energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
 	// Loop over Angles
-	for (const SpeciesAngle* a = mol->species()->angles().first(); a != NULL; a = a->next()) energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+	DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
+	while (const SpeciesAngle* a = angleIterator.iterate()) energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
 	// Loop over Torsions
-	for (const SpeciesTorsion* t = mol->species()->torsions().first(); t != NULL; t = t->next()) energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+	DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
+	while (const SpeciesTorsion* t = torsionIterator.iterate()) energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
 
 	return intraEnergy;
 }

@@ -55,7 +55,7 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 	// Set name for interaction (if relevant)
 	void setName(const char* name);
 	// Return name for interaction
-	const char* name();
+	const char* name() const;
 	// Set type of interaction
 	void setType(SpeciesIntra::IntramolecularType type);
 

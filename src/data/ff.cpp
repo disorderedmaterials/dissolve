@@ -207,7 +207,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 	// Assign bond terms
 	if (assignBonds)
 	{
-		ListIterator<SpeciesBond> bondIterator(sp->bonds());
+		DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
 		while (SpeciesBond* bond = bondIterator.iterate())
 		{
 			ForcefieldAtomType* i = atomTypes[bond->indexI()];
@@ -226,7 +226,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 	if (assignAngles)
 	{
 		// Generate angle parameters
-		ListIterator<SpeciesAngle> angleIterator(sp->angles());
+		DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
 		while (SpeciesAngle* angle = angleIterator.iterate())
 		{
 			ForcefieldAtomType* i = atomTypes[angle->indexI()];
@@ -245,7 +245,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 	if (assignTorsions)
 	{
 		// Generate torsion parameters
-		ListIterator<SpeciesTorsion> torsionIterator(sp->torsions());
+		DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
 		while (SpeciesTorsion* torsion = torsionIterator.iterate())
 		{
 			ForcefieldAtomType* i = atomTypes[torsion->indexI()];
