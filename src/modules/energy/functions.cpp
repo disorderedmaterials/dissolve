@@ -59,8 +59,11 @@ double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* 
 	// TODO This is slow because of the pointer dereferencing needed to traverse the Lists. Change Lists to DynamicArrays in Species?
 	Molecule** molecules = cfg->molecules().array();
 	const Molecule* mol;
-	for (int m=start; m<cfg->nMolecules(); m += stride, mol = molecules[m])
+	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
+		// Get Molecule pointer
+		mol = molecules[m];
+
 		// Loop over Bonds
 		for (const SpeciesBond* b = mol->species()->bonds().first(); b != NULL; b = b->next()) bondEnergy += kernel.energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
