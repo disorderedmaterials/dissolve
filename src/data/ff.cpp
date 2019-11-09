@@ -207,7 +207,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 	// Assign bond terms
 	if (assignBonds)
 	{
-		ListIterator<SpeciesBond> bondIterator(sp->bonds());
+		DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
 		while (SpeciesBond* bond = bondIterator.iterate())
 		{
 			ForcefieldAtomType* i = atomTypes[bond->indexI()];
@@ -226,7 +226,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 	if (assignAngles)
 	{
 		// Generate angle parameters
-		ListIterator<SpeciesAngle> angleIterator(sp->angles());
+		DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
 		while (SpeciesAngle* angle = angleIterator.iterate())
 		{
 			ForcefieldAtomType* i = atomTypes[angle->indexI()];
@@ -245,7 +245,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 	if (assignTorsions)
 	{
 		// Generate torsion parameters
-		ListIterator<SpeciesTorsion> torsionIterator(sp->torsions());
+		DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
 		while (SpeciesTorsion* torsion = torsionIterator.iterate())
 		{
 			ForcefieldAtomType* i = atomTypes[torsion->indexI()];
@@ -367,10 +367,10 @@ bool Forcefield::isAtomGeometry(SpeciesAtom* i, AtomGeometry geom) const
 bool Forcefield::isBondPattern(const SpeciesAtom* i, const int nSingle, const int nDouble, const int nTriple, const int nQuadruple, const int nAromatic) const
 {
 	int actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
-	RefListIterator<SpeciesBond> bondIterator(i->bonds());
-	while (SpeciesBond* bond = bondIterator.iterate())
+	const PointerArray<SpeciesBond>& bonds = i->bonds();
+	for (int n=0; n<bonds.nItems(); ++n)
 	{
-		switch (bond->bondType())
+		switch (bonds.at(n)->bondType())
 		{
 			case (SpeciesBond::SingleBond):
 				if (nSingle == actualNSingle) return false;
@@ -413,8 +413,8 @@ bool Forcefield::isBoundTo(const SpeciesAtom* i, Element* element, const int cou
 {
 	int found = 0;
 
-	RefListIterator<SpeciesBond> bondIterator(i->bonds());
-	while (SpeciesBond* bond = bondIterator.iterate()) if (bond->partner(i)->element() == element) ++found;
+	const PointerArray<SpeciesBond>& bonds = i->bonds();
+	for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(i)->element() == element) ++found;
 
 	return (found < count ? false : (found == count ? true : allowMoreThanCount));
 }
@@ -433,9 +433,10 @@ int Forcefield::guessOxidationState(const SpeciesAtom* i) const
 	// Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments (OS == 0)
 	int nSameElement = 0;
 
-	RefListIterator<SpeciesBond> bondIterator(i->bonds());
-	while (SpeciesBond* bond = bondIterator.iterate())
+	const PointerArray<SpeciesBond>& bonds = i->bonds();
+	for (int n=0; n<bonds.nItems(); ++n)
 	{
+		const SpeciesBond* bond = bonds.at(n);
 		Element* element = bond->partner(i)->element();
 		switch (element->Z())
 		{

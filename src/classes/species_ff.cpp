@@ -36,36 +36,31 @@ void Species::completeIntramolecularTerms()
 	while (SpeciesAtom* j = jIterator.iterate())
 	{
 		// Loop over bonds 'ij'
-		for (RefListItem<SpeciesBond>* rij = j->bonds().first(); rij != NULL; rij = rij->next())
+		const SpeciesBond* ij;
+		for (int ijIndex = 0; ijIndex < j->nBonds(); ++ijIndex, ij = j->bonds().value(ijIndex))
 		{
-			SpeciesBond* ij = rij->item();
-
 			// Loop over bonds 'jk'
-			for (RefListItem<SpeciesBond>* rjk = rij->next(); rjk != NULL; rjk = rjk->next())
+			const SpeciesBond* jk;
+			for (int jkIndex = ijIndex; jkIndex < j->nBonds(); ++jkIndex, jk = j->bonds().value(jkIndex))
 			{
-				SpeciesBond* jk = rjk->item();
-
 				// If this angle doesn't already exist, add it now.
-				SpeciesAngle* ijk = hasAngle(ij->partner(j), j, jk->partner(j));
-				if (!ijk)
+				if (!hasAngle(ij->partner(j), j, jk->partner(j)))
 				{
-					ijk = addAngle(ij->partner(j), j, jk->partner(j));
+					SpeciesAngle* ijk = addAngle(ij->partner(j), j, jk->partner(j));
 					ijk->setForm(SpeciesAngle::nAngleFunctions);
 				}
 
 				// Add torsions - loop over bonds 'kl'
-				for (RefListItem<SpeciesBond>* rkl = jk->partner(j)->bonds().first(); rkl != NULL; rkl = rkl->next())
+				const SpeciesBond* kl;
+				for (int klIndex = 0; klIndex < jk->partner(j)->nBonds(); ++klIndex, kl = jk->partner(j)->bonds().value(klIndex))
 				{
-					SpeciesBond* kl = rkl->item();
-
 					// Exclude jk == kl
 					if (jk == kl) continue;
 
 					// If this torsion doesn't already exist, add it now.
-					SpeciesTorsion* ijkl = hasTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
-					if (!ijkl)
+					if (!hasTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j))))
 					{
-						ijkl = addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
+						SpeciesTorsion* ijkl = addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
 						ijkl->setForm(SpeciesTorsion::nTorsionFunctions);
 					}
 				}

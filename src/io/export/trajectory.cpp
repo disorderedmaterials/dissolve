@@ -21,6 +21,7 @@
 
 #include "io/export/trajectory.h"
 #include "classes/configuration.h"
+#include "classes/speciesatom.h"
 #include "data/elements.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -73,7 +74,7 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser& parser, Configuration* cf
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->element()->symbol(), i->r().x, i->r().y, i->r().z)) return false;
+		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z)) return false;
 	}
 
 	return true;

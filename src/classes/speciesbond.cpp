@@ -27,18 +27,28 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesBond::SpeciesBond() : SpeciesIntra(), ListItem<SpeciesBond>()
+SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesBond::~SpeciesBond()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesBond::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
 	bondType_ = SpeciesBond::SingleBond;
 	form_ = SpeciesBond::nBondFunctions;
-}
-
-// Destructor
-SpeciesBond::~SpeciesBond()
-{
 }
 
 /*
@@ -50,10 +60,13 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 {
 	i_ = i;
 	j_ = j;
+	printf("SPBOND %p %p\n", i_, j_);
 #ifdef CHECKS
 	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
 	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
 #endif
+	if (i_) i_->addBond(this);
+	if (j_) j_->addBond(this);
 }
 
 // Return first SpeciesAtom involved in interaction

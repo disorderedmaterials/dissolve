@@ -27,11 +27,11 @@
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
-#include "classes/speciesgrain.h"
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
 #include "base/version.h"
+#include "templates/dynamicarray.h"
 #include "templates/objectstore.h"
 
 // Forward Declarations
@@ -137,12 +137,12 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	 * Intramolecular Data
 	 */
 	private:
-	// List of bonds between atoms in the Species
-	List<SpeciesBond> bonds_;
-	// List of angles between atoms in the Species
-	List<SpeciesAngle> angles_;
-	// List of torsions between atoms in the Species
-	List<SpeciesTorsion> torsions_;
+	// Array of bonds between atoms in the Species
+	DynamicArray<SpeciesBond> bonds_;
+	// Array of angles between atoms in the Species
+	DynamicArray<SpeciesAngle> angles_;
+	// Array of torsions between atoms in the Species
+	DynamicArray<SpeciesTorsion> torsions_;
 	// Whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated_;
 
@@ -157,16 +157,18 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	bool reconnectBond(SpeciesBond* bond, int i, int j);
 	// Return number of SpeciesBonds defined
 	int nBonds() const;
-	// Return list of SpeciesBond
-	const List<SpeciesBond>& bonds() const;
-	// Return nth SpeciesBond
-	SpeciesBond* bond(int n);
+	// Return array of SpeciesBond
+	DynamicArray<SpeciesBond>& bonds();
+	// Return array of SpeciesBonds (const)
+	const DynamicArray<SpeciesBond>& constBonds() const;
 	// Return whether SpeciesBond between SpeciesAtoms exists
-	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
-	// Return whether SpeciesBond between specified atom indices exists
-	SpeciesBond* hasBond(int i, int j);
-	// Return index of specified SpeciesBond
-	int bondIndex(SpeciesBond* spb);
+	bool hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Return the SpeciesBond between the specified SpeciesAtoms
+	SpeciesBond* bond(SpeciesAtom* i, SpeciesAtom* j);
+	// Return the SpeciesBond between the specified SpeciesAtom indices
+	SpeciesBond* bond(int i, int j);
+	// Return the SpeciesBond between the specified SpeciesAtoms (const)
+	const SpeciesBond* constBond(SpeciesAtom* i, SpeciesAtom* j) const;
 	// Add new SpeciesAngle definition
 	SpeciesAngle* addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
 	// Add new SpeciesAngle definition
@@ -177,14 +179,12 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	bool reconnectAngle(SpeciesAngle* angle, int i, int j, int k);
 	// Return number of SpeciesAngle defined
 	int nAngles() const;
-	// Return list of SpeciesAngle
-	const List<SpeciesAngle>& angles() const;
-	// Return nth SpeciesAngle
-	SpeciesAngle* angle(int n);
+	// Return array of SpeciesAngle
+	DynamicArray<SpeciesAngle>& angles();
+	// Return array of SpeciesAngle (const)
+	const DynamicArray<SpeciesAngle>& constAngles() const;
 	// Return whether SpeciesAngle between SpeciesAtoms exists
-	SpeciesAngle* hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
-	// Return index of specified SpeciesAngle
-	int angleIndex(SpeciesAngle* spa);
+	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
 	// Add new SpeciesTorsion definition (from SpeciesAtom*)
 	SpeciesTorsion* addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
 	// Add new SpeciesTorsion definition
@@ -195,14 +195,12 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	bool reconnectTorsion(SpeciesTorsion* torsion, int i, int j, int k, int l);
 	// Return number of SpeciesTorsion defined
 	int nTorsions() const;
-	// Return list of SpeciesTorsion
-	const List<SpeciesTorsion>& torsions() const;
-	// Return nth SpeciesTorsion
-	SpeciesTorsion* torsion(int n);
+	// Return array of SpeciesTorsion
+	DynamicArray<SpeciesTorsion>& torsions();
+	// Return array of SpeciesTorsion (const)
+	const DynamicArray<SpeciesTorsion>& constTorsions() const;
 	// Return whether SpeciesTorsion between SpeciesAtoms exists
-	SpeciesTorsion* hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
-	// Return index of specified SpeciesTorsion
-	int torsionIndex(SpeciesTorsion* spt);
+	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated() const;
 	// Generate attached Atom lists for all intramolecular terms
@@ -229,38 +227,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	Forcefield* forcefield() const;
 	// Apply terms from source Forcefield
 	bool applyForcefieldTerms(CoreData& coreData);
-
-
-	/*
-	 * Grains
-	 */
-	private:
-	// List of Grains, dividing the Atoms of this Species into individual groups
-	List<SpeciesGrain> grains_;
-	
-	public:
-	// Update SpeciesGrains after change
-	void updateGrains();
-	// Add default grain definition (i.e. one which contains all atoms) for this Species 
-	void addDefaultGrain();
-	// Automatically determine Grains based on chemical connectivity
-	void autoAddGrains();
-	// Add new grain for this Species
-	SpeciesGrain* addGrain();
-	// Remove grain with ID specified
-	void removeGrain(SpeciesGrain* sg);
-	// Return number of grain present for this Species
-	int nGrains() const;
-	// Return first grain in list
-	SpeciesGrain* grains() const;
-	// Return nth grain in list
-	SpeciesGrain* grain(int n);
-	// Add Atom to grain
-	void addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd);
-	// Generate unique grain name with base name provided
-	const char* uniqueGrainName(const char* baseName, SpeciesGrain* exclude = NULL) const;
-	// Order atoms within grains
-	void orderAtomsWithinGrains();
 
 
 	/*
@@ -354,13 +320,11 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	{
 		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
-		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
 		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
-		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */

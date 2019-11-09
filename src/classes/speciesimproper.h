@@ -1,6 +1,6 @@
 /*
-	*** SpeciesBond Definition
-	*** src/classes/speciesbond.h
+	*** SpeciesImproper Definition
+	*** src/classes/speciestorsion.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESBOND_H
-#define DISSOLVE_SPECIESBOND_H
+#ifndef DISSOLVE_SPECIESTORSION_H
+#define DISSOLVE_SPECIESTORSION_H
 
 #include "classes/speciesintra.h"
 #include "templates/dynamicarrayobject.h"
@@ -30,14 +30,14 @@ class SpeciesAtom;
 class Species;
 class ProcessPool;
 
-// SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
+// SpeciesImproper Definition
+class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesImproper>
 {
 	public:
 	// Constructor
-	SpeciesBond();
+	SpeciesImproper();
 	// Destructor
-	~SpeciesBond();
+	~SpeciesImproper();
 
 
 	/*
@@ -49,78 +49,65 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 
 
 	/*
-	 * SpeciesAtom Information
+	 * Atom Information
 	 */
 	private:
 	// First SpeciesAtom in interaction
 	SpeciesAtom* i_;
 	// Second SpeciesAtom in interaction
 	SpeciesAtom* j_;
+	// Third SpeciesAtom in interaction
+	SpeciesAtom* k_;
+	// Fourth SpeciesAtom in interaction
+	SpeciesAtom* l_;
 
 	public:
-	// Set SpeciesAtoms involved in interaction
-	void setAtoms(SpeciesAtom* i, SpeciesAtom* j);
+	// Set Atoms involved in Improper
+	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
 	// Return first SpeciesAtom
 	SpeciesAtom* i() const;
 	// Return second SpeciesAtom
 	SpeciesAtom* j() const;
-	// Return the 'other' SpeciesAtom
-	SpeciesAtom* partner(const SpeciesAtom* i) const;
+	// Return third SpeciesAtom
+	SpeciesAtom* k() const;
+	// Return fourth SpeciesAtom
+	SpeciesAtom* l() const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom
 	int indexJ() const;
-	// Return index (in parent Species) of nth SpeciesAtom
+	// Return index (in parent Species) of third SpeciesAtom
+	int indexK() const;
+	// Return index (in parent Species) of fourth SpeciesAtom
+	int indexL() const;
+	// Return index (in parent Species) of nth SpeciesAtom in interaction
 	int index(int n) const;
 	// Return whether SpeciesAtoms match those specified
-	bool matches(SpeciesAtom* i, SpeciesAtom* j) const;
-
-
-	/*
-	 * Bond Type
-	 */
-	public:
-	// Bond Type enum
-	enum BondType { SingleBond, DoubleBond, TripleBond, QuadrupleBond, AromaticBond, nBondTypes };
-	// Convert bond type string to functional form
-	static BondType bondType(const char* s);
-	// Return bond type functional form text
-	static const char* bondType(BondType bt);
-	// Return bond order for specified bond type
-	static double bondOrder(BondType bt);
-
-	private:
-	// Bond type
-	BondType bondType_;
-
-	public:
-	// Set bond type
-	void setBondType(BondType type);
-	// Return bond type
-	BondType bondType() const;
-	// Return bond order for current bond type
-	double bondOrder() const;
+	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 
 
 	/*
 	 * Interaction Parameters
 	 */
 	public:
-	// Bond functional forms
-	enum BondFunction
+	// Improper functional forms
+	enum ImproperFunction
 	{
-		HarmonicForm,
-		EPSRForm,
-		nBondFunctions
+		CosineForm,
+		Cos3Form,
+		Cos4Form,
+		Cos3CForm,
+		UFFCosineForm,
+		nImproperFunctions
 	};
 	// Convert string to functional form
-	static BondFunction bondFunction(const char* s);
+	static ImproperFunction torsionFunction(const char* s);
 	// Return functional form text
-	static const char* bondFunction(BondFunction func);
+	static const char* torsionFunction(ImproperFunction func);
 	// Return functional form array
-	static const char** bondFunctions();
+	static const char** torsionFunctions();
 	// Return number of parameters required for functional form
-	static int nFunctionParameters(BondFunction func);
+	static int nFunctionParameters(ImproperFunction func);
 
 	public:
 	// Set up any necessary parameters
@@ -129,10 +116,10 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
 	SpeciesIntra::IntramolecularType type() const;
-	// Return energy for specified distance
-	double energy(double distance) const;
-	// Return force multiplier for specified distance
-	double force(double distance) const;
+	// Return energy for specified angle
+	double energy(double angleInDegrees) const;
+	// Return force multiplier for specified angle
+	double force(double angleInDegrees) const;
 
 
 	/*

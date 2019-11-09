@@ -47,7 +47,7 @@ void MasterIntra::setName(const char* name)
 }
 
 // Return name for interaction
-const char* MasterIntra::name()
+const char* MasterIntra::name() const
 {
 	return name_.get();
 }

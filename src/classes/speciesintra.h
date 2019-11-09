@@ -48,7 +48,8 @@ class SpeciesIntra
 	{
 		IntramolecularBond,		/* Interaction is a bond between two atoms in the same molecule */
 		IntramolecularAngle,		/* Interaction is an angle between three atoms in the same molecule */
-		IntramolecularTorsion		/* Interaction is a torsion between four atoms in the same molecule */
+		IntramolecularTorsion,		/* Interaction is a torsion between four atoms in the same molecule */
+		IntramolecularImproper		/* Interaction is an improper torsion between four atoms in the same molecule */
 	};
 
 
@@ -81,11 +82,11 @@ class SpeciesIntra
 	// Set linked master from which parameters should be taken
 	void setMasterParameters(MasterIntra* master);
 	// Return linked master from which parameters should be taken
-	MasterIntra* masterParameters();
+	const MasterIntra* masterParameters() const;
 	// Detach from MasterIntra, if we are currently referencing one
 	void detachFromMasterIntra();
 	// Return parameter source
-	SpeciesIntra* parameterSource();
+	const SpeciesIntra* parameterSource() const;
 	// Set functional form index of interaction
 	void setForm(int form);
 	// Return functional form index of interaction

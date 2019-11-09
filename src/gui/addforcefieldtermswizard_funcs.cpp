@@ -127,11 +127,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy bond terms
 	if (ui_.BondTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
-		ListIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->bonds());
+		DynamicArrayIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
+		DynamicArrayConstIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->constBonds());
 		while (SpeciesBond* originalBond = originalBondIterator.iterate())
 		{
-			SpeciesBond* modifiedBond = modifiedBondIterator.iterate();
+			const SpeciesBond* modifiedBond = modifiedBondIterator.iterate();
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedBond, originalBond);
@@ -141,11 +141,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy angle terms
 	if (ui_.AngleTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
-		ListIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->angles());
+		DynamicArrayIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
+		DynamicArrayConstIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->constAngles());
 		while (SpeciesAngle* originalAngle = originalAngleIterator.iterate())
 		{
-			SpeciesAngle* modifiedAngle = modifiedAngleIterator.iterate();
+			const SpeciesAngle* modifiedAngle = modifiedAngleIterator.iterate();
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedAngle, originalAngle);
@@ -155,11 +155,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy torsion terms
 	if (ui_.TorsionTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesTorsion> originalTorsionIterator(targetSpecies_->torsions());
-		ListIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->torsions());
+		DynamicArrayIterator<SpeciesTorsion> originalTorsionIterator(targetSpecies_->torsions());
+		DynamicArrayConstIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->constTorsions());
 		while (SpeciesTorsion* originalTorsion = originalTorsionIterator.iterate())
 		{
-			SpeciesTorsion* modifiedTorsion = modifiedTorsionIterator.iterate();
+			const SpeciesTorsion* modifiedTorsion = modifiedTorsionIterator.iterate();
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedTorsion, originalTorsion);
@@ -243,7 +243,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				CharString bondName;
 
 				// Loop over bonds in the modified species
-				ListIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
+				DynamicArrayIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
 				while (SpeciesBond* bond = bondIterator.iterate())
 				{
 					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
@@ -267,7 +267,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				CharString angleName;
 
 				// Loop over angles in the modified species
-				ListIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
+				DynamicArrayIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
 				while (SpeciesAngle* angle = angleIterator.iterate())
 				{
 					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
@@ -291,7 +291,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				CharString torsionName;
 
 				// Loop over torsions in the modified species
-				ListIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
+				DynamicArrayIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
 				while (SpeciesTorsion* torsion = torsionIterator.iterate())
 				{
 					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency

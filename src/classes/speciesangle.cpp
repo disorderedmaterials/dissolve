@@ -26,18 +26,28 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesAngle::SpeciesAngle() : SpeciesIntra(), ListItem<SpeciesAngle>()
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(), DynamicArrayObject<SpeciesAngle>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesAngle::~SpeciesAngle()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesAngle::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
 	form_ = SpeciesAngle::nAngleFunctions;
-}
-
-// Destructor
-SpeciesAngle::~SpeciesAngle()
-{
 }
 
 /*
@@ -55,6 +65,9 @@ void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
 	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
 #endif
+	if (i_) i_->addAngle(this);
+	if (j_) j_->addAngle(this);
+	if (k_) k_->addAngle(this);
 }
 
 // Return first SpeciesAtom
