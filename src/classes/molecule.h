@@ -30,7 +30,6 @@
 // Forward Declarations
 class Atom;
 class Box;
-class Grain;
 class Matrix3;
 class Species;
 
@@ -60,8 +59,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	const Species* species_;
 	// Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
 	Array<Atom*> atoms_;
-	// Array of Grain pointers
-	Array<Grain*> grains_;
 	// Array of restraints involving atoms in this Molecule
 // 	Array<Bond*> restraints_;
 
@@ -78,12 +75,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	Atom** atoms();
 	// Return nth Atom pointer
 	Atom* atom(int n) const;
-	// Add Grain to Molecule
-	void addGrain(Grain* grain);
-	// Return size of Grain array
-	int nGrains() const;
-	// Return nth Grain pointer
-	Grain* grain(int n);
 
 
 	/*

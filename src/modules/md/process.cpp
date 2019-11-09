@@ -23,7 +23,6 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
-#include "classes/grain.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/forcekernel.h"

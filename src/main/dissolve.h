@@ -34,7 +34,6 @@
 class Atom;
 class Box;
 class Cell;
-class Grain;
 class Isotopologue;
 class Molecule;
 class ChangeStore;

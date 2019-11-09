@@ -21,7 +21,6 @@
 
 #include "main/dissolve.h"
 #include "classes/box.h"
-#include "classes/grain.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include <string.h>
@@ -101,7 +100,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	SpeciesBond* spb;
 	SpeciesTorsion* spt;
 
-	if (!parser.writeLineF("'%s'  %i  %i  # nMolecules  nGrains\n", cfg->name(), cfg->nMolecules(), cfg->nGrains())) return false;
+	if (!parser.writeLineF("'%s'  %i  # nMolecules\n", cfg->name(), cfg->nMolecules())) return false;
 
 	// Write unit cell (box) lengths and angles
 	Vec3<double> lengths = cfg->box()->axisLengths();
@@ -132,7 +131,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	// Write final molecule count
 	if (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name())) return false;
 
-	// Write all Atoms - for each write type, coordinates, charge, mol ID, and grain ID
+	// Write all Atoms - for each write index and coordinates
 	if (!parser.writeLineF("%i  # nAtoms\n", cfg->nAtoms())) return false;
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
@@ -146,13 +145,10 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 // Read Configuration through specified LineParser
 bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 {
-	Molecule* mol;
-	Grain* grain;
-
 	// Clear current contents of Configuration
 	cfg->empty();
 
-	// Read configuration name, nMolecules, and nGrains, and initialise those arrays
+	// Read configuration name and nMolecules
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setName(parser.argc(0));
 	cfg->empty();

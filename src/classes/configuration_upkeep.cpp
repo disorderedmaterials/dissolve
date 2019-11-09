@@ -23,7 +23,6 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
 #include "classes/changestore.h"
 
 // Update Cell contents

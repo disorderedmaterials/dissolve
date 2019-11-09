@@ -30,7 +30,6 @@
 // Forward Declarations
 class Atom;
 class Cell;
-class Grain;
 class Molecule;
 class Configuration;
 class ProcessPool;
@@ -55,8 +54,6 @@ class ChangeStore
 	public:
 	// Add atom to watch
 	void add(Atom* i);
-	// Add grain to watch
-	void add(Grain* grain);
 	// Add molecule to watch
 	void add(Molecule* mol);
 	// Add cell to watch

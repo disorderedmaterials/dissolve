@@ -197,9 +197,7 @@ Species* Dissolve::copySpecies(const Species* species)
 	}
 
 	// Finalise the new Species
-	newSpecies->updateGrains();
 	newSpecies->centreAtOrigin();
-	newSpecies->orderAtomsWithinGrains();
 
 	return newSpecies;
 }

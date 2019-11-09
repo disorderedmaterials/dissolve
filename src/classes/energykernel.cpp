@@ -56,108 +56,11 @@ double EnergyKernel::energyWithoutMim(const Atom* i, const Atom* j)
 	return pairPotentialEnergy(i, j, (i->r() - j->r()).magnitude());
 }
 
-// Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
-double EnergyKernel::energyWithoutMim(const Atom* i, const Grain* grain, bool excludeIgeJ)
-{
-	double totalEnergy = 0.0;
-	int m, nAtomsJ = grain->nAtoms();
-	if (excludeIgeJ)
-	{
-		for (m=0; m<nAtomsJ; ++m) if (i->arrayIndex() < grain->atom(m)->arrayIndex()) totalEnergy += energyWithoutMim(i, grain->atom(m));
-	}
-	else
-	{
-		for (m=0; m<nAtomsJ; ++m) totalEnergy += energyWithoutMim(i, grain->atom(m));
-	}
-	return totalEnergy;
-}
-
-// Return PairPotential energy between Grains provided (no minimum image calculation)
-double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
-{
-	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
-	Atom* i, *j;
-	double totalEnergy = 0.0;
-	if (grainI->molecule() != grainJ->molecule())
-	{
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m) totalEnergy += energyWithoutMim(i, grainJ->atom(m));
-		}
-	}
-	else
-	{
-		double scale;
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m)
-			{
-				j = grainJ->atom(m);
-				scale = i->scaling(j);
-				if (scale < 1.0e-3) continue;
-				totalEnergy += energyWithoutMim(i, j) * scale;
-			}
-		}
-	}
-	return totalEnergy;
-}
-
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 {
 // 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(), j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
 	return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
-}
-
-// Return PairPotential energy between atom (pointer) and grain provided (minimum image calculation)
-double EnergyKernel::energyWithMim(const Atom* i, const Grain* grain, bool excludeIgeJ)
-{
-	double totalEnergy = 0.0;
-	int m, nAtomsJ = grain->nAtoms();
-
-	if (excludeIgeJ)
-	{
-		for (m=0; m<nAtomsJ; ++m) if (i->arrayIndex() < grain->atom(m)->arrayIndex()) totalEnergy += energyWithMim(i, grain->atom(m));
-	}
-	else
-	{
-		for (m=0; m<nAtomsJ; ++m) totalEnergy += energyWithMim(i, grain->atom(m));
-	}
-	return totalEnergy;
-}
-
-// Return PairPotential energy between Grains provided (minimum image calculation)
-double EnergyKernel::energyWithMim(const Grain* grainI, const Grain* grainJ)
-{
-	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
-	Atom* i, *j;
-	double totalEnergy = 0.0;
-	if (grainI->molecule() != grainJ->molecule())
-	{
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m) totalEnergy += energyWithMim(i, grainJ->atom(m));
-		}
-	}
-	else
-	{
-		double scale;
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m)
-			{
-				j = grainJ->atom(m);
-				scale = i->scaling(j);
-				if (scale < 1.0e-3) continue;
-				totalEnergy += energyWithMim(i, j) * scale;
-			}
-		}
-	}
-	return totalEnergy;
 }
 
 /*
@@ -604,58 +507,6 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::DivisionStrategy strateg
 	// Cell neighbours requiring minimum image
 	Cell** mimNeighbours = cellI->mimCellNeighbours();
 	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy, false);
-
-	// Perform relevant sum if requested
-	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
-
-	return totalEnergy;
-}
-
-// Return PairPotential energy of Grain with world
-double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy, bool performSum)
-{
-	// If no Grain is given, return zero
-	if (grain == NULL) return 0.0;
-
-	double totalEnergy = 0.0;
-	int i;
-	Vec3<double> rI;
-	Atom* ii;
-	Cell* cellI;
-
-	// Loop over grain atoms
-	if (excludeIgtJ) for (i = 0; i<grain->nAtoms(); ++i)
-	{
-		ii = grain->atom(i);
-		cellI = ii->cell();
-
-		// This Atom with its own Cell
-		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, strategy, false);
-
-		// Cell neighbours not requiring minimum image
-		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, strategy, false);
-
-		// Cell neighbours requiring minimum image
-		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, strategy, false);
-	}
-	else for (i = 0; i<grain->nAtoms(); ++i)
-	{
-		ii = grain->atom(i);
-		cellI = ii->cell();
-
-		// This Atom with its own Cell
-		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
-
-		// Cell neighbours not requiring minimum image
-		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::NoFlags, strategy, false);
-
-		// Cell neighbours requiring minimum image
-		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy, false);
-	}
 
 	// Perform relevant sum if requested
 	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);

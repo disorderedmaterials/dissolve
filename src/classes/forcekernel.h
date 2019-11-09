@@ -32,7 +32,6 @@ class Box;
 class Cell;
 class ChangeStore;
 class Configuration;
-class Grain;
 class PotentialMap;
 class SpeciesAngle;
 class SpeciesBond;
@@ -76,16 +75,8 @@ class ForceKernel
 	private:
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
 	void forcesWithoutMim(const Atom* i, const Atom* j, double scale = 1.0);
-	// Calculate inter-particle forces between Atom and Grain provided (no minimum image calculation)
-	void forcesWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ);
-	// Calculate inter-particle forces between Grains provided (no minimum image calculation)
-	void forcesWithoutMim(const Grain* grainI, const Grain* grainJ);
 	// Calculate inter-particle forces between Atoms provided (minimum image calculation)
 	void forcesWithMim(const Atom* i, const Atom* j, double scale = 1.0);
-	// Calculate inter-particle forces between Atom and Grain provided (minimum image calculation)
-	void forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ);
-	// Calculate inter-particle forces between Grains provided (minimum image calculation)
-	void forcesWithMim(const Grain* grainI, const Grain* grainJ);
 
 
 	/*
@@ -102,8 +93,6 @@ class ForceKernel
 	void forces(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy);
 	// Calculate forces between atom and world
 	void forces(const Atom* i, ProcessPool::DivisionStrategy strategy);
-	// Calculate forces between grain and world
-	void forces(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy);
 
 
 	/*

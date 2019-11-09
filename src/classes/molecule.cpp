@@ -21,7 +21,6 @@
 
 #include "classes/molecule.h"
 #include "classes/atom.h"
-#include "classes/grain.h"
 #include "classes/box.h"
 
 // Constructor
@@ -31,7 +30,6 @@ Molecule::Molecule() : DynamicArrayObject<Molecule>()
 
 	// Set sensible defaults for Arrays
 	atoms_.setChunkSize(2);
-	grains_.setChunkSize(2);
 }
 
 // Destructor
@@ -49,11 +47,10 @@ void Molecule::clear()
 	species_ = NULL;
 
 	atoms_.clear();
-	grains_.clear();
 }
 
 /*
- * Atoms / Grains
+ * Contents
  */
 
 // Set Species that this Molecule represents
@@ -105,34 +102,6 @@ Atom* Molecule::atom(int n) const
 	}
 #endif
 	return atoms_.constAt(n);
-}
-
-// Add Grain to Molecule
-void Molecule::addGrain(Grain* grain)
-{
-	grains_.add(grain);
-
-	if (grain->molecule() != NULL) Messenger::warn("Molecule parent is already set in Grain id %i, and we are about to overwrite it...\n", grain->arrayIndex());
-	grain->setMolecule(this);
-}
-
-// Return size of Grain array
-int Molecule::nGrains() const
-{
-	return grains_.nItems();
-}
-
-// Return nth Grain pointer
-Grain* Molecule::grain(int n)
-{
-#ifdef CHECKS
-	if ((n < 0) || (n >= grains_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::grain() (nGrains = %i).\n", n, grains_.nItems());
-		return NULL;
-	}
-#endif
-	return grains_[n];
 }
 
 /*

@@ -36,7 +36,6 @@ class Species;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesTorsion;
-class SpeciesGrain;
 class ProcessPool;
 
 // SpeciesAtom Definition
@@ -105,20 +104,6 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	void copyProperties(const SpeciesAtom* source);
 
 
-	/*
-	 * Containing Grain
-	 */
-	private:
-	// Grain to which this atom belongs
-	SpeciesGrain* grain_;
-
-	public:
-	// Set grain to which this atom belongs
-	void setGrain(SpeciesGrain* grain);
-	// Return grain to which this atom belongs
-	SpeciesGrain* grain();
-	
-	
 	/*
 	 * Intramolecular Information
 	 */

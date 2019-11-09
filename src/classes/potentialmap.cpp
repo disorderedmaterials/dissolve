@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/atom.h"
 #include "classes/potentialmap.h"
 #include "classes/pairpotential.h"
 #include "classes/species.h"

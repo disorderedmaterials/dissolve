@@ -46,7 +46,6 @@
 // Forward Declarations
 class Box;
 class Cell;
-class Grain;
 class PotentialMap;
 class Species;
 
@@ -116,16 +115,14 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	VersionCounter contentsVersion_;
 	// Array of Molecules
 	DynamicArray<Molecule> molecules_;
-	// Array of Grains
-	DynamicArray<Grain> grains_;
 	// Array of Atoms
 	DynamicArray<Atom> atoms_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
-	// Initialise content arrays
-	void initialiseArrays(int nMolecules, int nGrains);
+	// Initialise content array
+	void initialiseArrays(int nMolecules);
 	// Return specified used type
 	AtomType* usedAtomType(int index);
 	// Return specified used type data
@@ -158,14 +155,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Molecule>& molecules();
 	// Return nth Molecule
 	Molecule* molecule(int n);
-	// Add new Grain to Configuration, with Molecule parent specified
-	Grain* addGrain(Molecule* molecule);
-	// Return number of Grains in Configuration
-	int nGrains() const;
-	// Return Grain array
-	DynamicArray<Grain>& grains();
-	// Return nth Grain
-	Grain* grain(int n);
 	// Add new Atom to Configuration
 	Atom* addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r = Vec3<double>());
 	// Return number of Atoms in Configuration

@@ -23,7 +23,6 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
 #include "classes/masterintra.h"
 #include "classes/species.h"
 #include "base/lineparser.h"

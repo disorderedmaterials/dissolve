@@ -27,7 +27,6 @@
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
-#include "classes/speciesgrain.h"
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
@@ -231,38 +230,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 
 	/*
-	 * Grains
-	 */
-	private:
-	// List of Grains, dividing the Atoms of this Species into individual groups
-	List<SpeciesGrain> grains_;
-	
-	public:
-	// Update SpeciesGrains after change
-	void updateGrains();
-	// Add default grain definition (i.e. one which contains all atoms) for this Species 
-	void addDefaultGrain();
-	// Automatically determine Grains based on chemical connectivity
-	void autoAddGrains();
-	// Add new grain for this Species
-	SpeciesGrain* addGrain();
-	// Remove grain with ID specified
-	void removeGrain(SpeciesGrain* sg);
-	// Return number of grain present for this Species
-	int nGrains() const;
-	// Return first grain in list
-	SpeciesGrain* grains() const;
-	// Return nth grain in list
-	SpeciesGrain* grain(int n);
-	// Add Atom to grain
-	void addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd);
-	// Generate unique grain name with base name provided
-	const char* uniqueGrainName(const char* baseName, SpeciesGrain* exclude = NULL) const;
-	// Order atoms within grains
-	void orderAtomsWithinGrains();
-
-
-	/*
 	 * Isotopologues
 	 */
 	private:
@@ -353,13 +320,11 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	{
 		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
-		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
 		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
-		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */

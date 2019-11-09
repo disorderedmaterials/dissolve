@@ -22,6 +22,7 @@
 #include "gui/viewer/render/renderablespecies.h"
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
+#include "classes/atom.h"
 #include "data/elementcolours.h"
 
 // Constructor

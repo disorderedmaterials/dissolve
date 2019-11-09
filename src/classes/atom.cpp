@@ -21,7 +21,6 @@
 
 #include "classes/atom.h"
 #include "classes/atomtype.h"
-#include "classes/grain.h"
 #include "classes/speciesatom.h"
 #include "base/processpool.h"
 
@@ -45,7 +44,6 @@ void Atom::clear()
 {
 	molecule_ = NULL;
 	speciesAtom_ = NULL;
-	grain_ = NULL;
 	cell_ = NULL;
 
 	// Properties
@@ -147,24 +145,6 @@ void Atom::setMolecule(Molecule* mol)
 Molecule* Atom::molecule() const
 {
 	return molecule_;
-}
-
-// Set associated Grain
-void Atom::setGrain(Grain* grain)
-{
-	// Check for double-set of Grain
-	if (grain_ != NULL)
-	{
-		Messenger::print("BAD_USAGE - Tried to set Atom %p's grain for a second time.\n", this);
-		return;
-	}
-	grain_ = grain;
-}
-
-// Return associated Grain
-Grain* Atom::grain() const
-{
-	return grain_;
 }
 
 // Set cell in which the atom exists

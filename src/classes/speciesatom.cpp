@@ -32,7 +32,6 @@ SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 	element_ = NULL;
 	charge_ = 0.0;
 	atomType_ = NULL;
-	grain_ = NULL;
 	r_.zero();
 	index_= -1;
 	selected_ = false;
@@ -147,22 +146,6 @@ void SpeciesAtom::setSelected(bool selected)
 bool SpeciesAtom::isSelected() const
 {
 	return selected_;
-}
-
-/*
- * Containing Grain
- */
-
-// Set grain to which this atom belongs
-void SpeciesAtom::setGrain(SpeciesGrain* grain)
-{
-	grain_ = grain;
-}
-
-// Return grain to which this atom belongs
-SpeciesGrain* SpeciesAtom::grain()
-{
-	return grain_;
 }
 
 /*

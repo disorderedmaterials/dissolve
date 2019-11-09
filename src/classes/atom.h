@@ -30,7 +30,6 @@
 
 // Forward Declarations
 class Cell;
-class Grain;
 class Molecule;
 class ProcessPool;
 class SpeciesAtom;
@@ -95,8 +94,6 @@ class Atom : public DynamicArrayObject<Atom>
 	const SpeciesAtom* speciesAtom_;
 	// Molecule in which this Atom exists
 	Molecule* molecule_;
-	// Grain to which this Atom belongs (if any)
-	Grain* grain_;
 	// Cell in which the atom exists
 	Cell* cell_;
 
@@ -109,10 +106,6 @@ class Atom : public DynamicArrayObject<Atom>
 	void setMolecule(Molecule* mol);
 	// Return Molecule in which this Atom exists
 	Molecule* molecule() const;
-	// Set associated Grain
-	void setGrain(Grain* grain);
-	// Return associated Grain
-	Grain* grain() const;
 	// Set cell in which the atom exists
 	void setCell(Cell* cell);
 	// Return cell in which the atom exists

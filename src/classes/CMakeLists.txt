@@ -29,7 +29,6 @@ add_library(classes
   empiricalformula.cpp
   energykernel.cpp
   forcekernel.cpp
-  grain.cpp
   isotopedata.cpp
   isotopologue.cpp
   isotopologuemix.cpp
@@ -53,13 +52,11 @@ add_library(classes
   species.cpp
   species_atomic.cpp
   species_ff.cpp
-  species_grains.cpp
   species_intra.cpp
   species_io.cpp
   species_isotopologues.cpp
   species_site.cpp
   species_transform.cpp
-  speciesgrain.cpp
   speciesinfo.cpp
   speciesintra.cpp
   speciessite.cpp
@@ -87,7 +84,6 @@ add_library(classes
   empiricalformula.h
   energykernel.h
   forcekernel.h
-  grain.h
   isotopedata.h
   isotopologue.h
   isotopologuemix.h
@@ -110,7 +106,6 @@ add_library(classes
   speciesangle.h
   speciesatom.h
   speciesbond.h
-  speciesgrain.h
   speciesinfo.h
   speciesintra.h
   speciessite.h

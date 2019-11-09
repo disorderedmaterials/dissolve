@@ -28,7 +28,6 @@
 
 // Forward Declarations
 class Atom;
-class Grain;
 class Cell;
 class CellArray;
 class Box;
@@ -75,16 +74,8 @@ class EnergyKernel
 	virtual double pairPotentialEnergy(const Atom* i, const Atom* j, double r);
 	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Atom* j);
-	// Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
-	double energyWithoutMim(const Atom* i, const Grain* grain, bool excludeIgeJ = false);
-	// Return PairPotential energy between grains provided (no minimum image calculation)
-	double energyWithoutMim(const Grain* grainI, const Grain* grainJ);
 	// Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 	double energyWithMim(const Atom* i, const Atom* j);
-	// Return PairPotential energy between atom (pointer) and Grain provided (minimum image calculation)
-	double energyWithMim(const Atom* i, const Grain* grain, bool excludeIgeJ = false);
-	// Return PairPotential energy between Grains provided (minimum image calculation)
-	double energyWithMim(const Grain* grainI, const Grain* grainJ);
 
 
 	/*
@@ -101,8 +92,6 @@ class EnergyKernel
 	double energy(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, ProcessPool::DivisionStrategy strategy, bool performSum);
-	// Return PairPotential energy of grain with world
-	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of Molecule with world
 	double energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom

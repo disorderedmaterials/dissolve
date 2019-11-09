@@ -23,7 +23,6 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "modules/import/import.h"
@@ -32,7 +31,6 @@
 void Configuration::empty()
 {
 	molecules_.clear();
-	grains_.clear();
 	atoms_.clear();
 	usedAtomTypes_.clear();
 	if (box_ != NULL) delete box_;
@@ -46,13 +44,12 @@ void Configuration::empty()
 }
 
 // Initialise content arrays
-void Configuration::initialiseArrays(int nMolecules, int nGrains)
+void Configuration::initialiseArrays(int nMolecules)
 {
 	// Clear current contents
 	empty();
 
 	molecules_.initialise(nMolecules);
-	grains_.initialise(nGrains);
 }
 
 // Return specified used type
@@ -156,20 +153,6 @@ Molecule* Configuration::addMolecule(Species* sp)
 	SpeciesAtom* spi = sp->firstAtom();
 	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, spi->r());
 
-	// Add Grains from Species into the Molecule
-	SpeciesGrain* spg = sp->grains();
-	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next())
-	{
-		// Create new Grain
-		Grain* g = addGrain(newMolecule);
-
-		// Add Atoms to the Grain
-		for (int m=0; m<spg->nAtoms(); ++m)
-		{
-			g->addAtom(newMolecule->atom(spg->atom(m)->item()->index()));
-		}
-	}
-
 	return newMolecule;
 }
 
@@ -191,44 +174,7 @@ Molecule* Configuration::molecule(int n)
 	return molecules_[n];
 }
 
-// Add new Grain to Configuration, with Molecule parent specified
-Grain* Configuration::addGrain(Molecule* molecule)
-{
-	// Create the new Grain object
-	Grain* newGrain = grains_.add();
-
-	// Add it to the specified Molecule, which also sets the Molecule parent of the Grain
-	molecule->addGrain(newGrain);
-
-	return newGrain;
-}
-
-// Return number of grains
-int Configuration::nGrains() const
-{
-	return grains_.nItems();
-}
-
-// Return grain array
-DynamicArray<Grain>& Configuration::grains()
-{
-	return grains_;
-}
-
-// Return nth grain
-Grain* Configuration::grain(int n)
-{
-#ifdef CHECKS
-	if ((n < 0) || (n >= grains_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i passed to Configuration::grain() is out of range (nGrains = %i).\n", n, grains_.nItems());
-		return NULL;
-	}
-#endif
-	return grains_[n];
-}
-
-// Add new Atom to Configuration, with Molecule and Grain parents specified
+// Add new Atom to Configuration, with Molecule parent specified
 Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r)
 {
 	// Create new Atom object and set its source pointer

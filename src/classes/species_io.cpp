@@ -93,13 +93,11 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 	static EnumOptionsList SpeciesKeywords = EnumOptionsList() <<
 		EnumOption(Species::AngleKeyword,	 	"Angle",		4,6) <<
 		EnumOption(Species::AtomKeyword, 		"Atom",			6,7) <<
-		EnumOption(Species::AutoAddGrainsKeyword,	"AutoAddGrains") <<
 		EnumOption(Species::BondKeyword,		"Bond",			2,5) <<
 		EnumOption(Species::BondTypeKeyword,		"BondType",		3) <<
 		EnumOption(Species::ChargeKeyword,		"Charge",		2) <<
 		EnumOption(Species::EndSpeciesKeyword,		"EndSpecies") <<
 		EnumOption(Species::ForcefieldKeyword,		"Forcefield",		1) <<
-		EnumOption(Species::GrainKeyword,		"Grain",		1) <<
 		EnumOption(Species::IsotopologueKeyword,	"Isotopologue",		EnumOption::OneOrMoreArguments) <<
 		EnumOption(Species::SiteKeyword,		"Site",			1) <<
 		EnumOption(Species::TorsionKeyword, 		"Torsion",		5,9);
@@ -122,7 +120,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 	SpeciesAtom* i;
 	SpeciesBond* b;
 	SpeciesTorsion* t;
-	SpeciesGrain* sg;
 	SpeciesSite* site;
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
@@ -227,9 +224,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
 				break;
-			case (Species::AutoAddGrainsKeyword):
-				autoAddGrains();
-				break;
 			case (Species::BondKeyword):
 				// Create a new bond definition between the specified atoms
 				b = addBond(parser.argi(1)-1, parser.argi(2)-1);
@@ -314,30 +308,13 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				}
 				break;
 			case (Species::EndSpeciesKeyword):
-				updateGrains();
 				centreAtOrigin();
-				orderAtomsWithinGrains();
 				if (forcefield_ && (!applyForcefieldTerms(coreData))) error = true;
 				Messenger::print("Found end of Species '%s'.\n", name());
 				blockDone = true;
 				break;
 			case (Species::ForcefieldKeyword):
 				forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
-				break;
-			case (Species::GrainKeyword):
-				sg = addGrain();
-				sg->setName(uniqueGrainName(parser.argc(1)));
-				Messenger::printVerbose("Added grain definition '%s' to Species '%s'\n", sg->name(), name());
-				for (int n=2; n<parser.nArgs(); ++n)
-				{
-					i = atom(parser.argi(n)-1);
-					if (i == NULL)
-					{
-						Messenger::error("Failed to find Atom with index %i in Species '%s'\n", parser.argi(n), name());
-						error = true;
-					}
-					else addAtomToGrain(i, sg);
-				}
 				break;
 			case (Species::IsotopologueKeyword):
 				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
@@ -562,21 +539,6 @@ bool Species::write(LineParser& parser, const char* prefix)
 				for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get())) return false;
 			}
-		}
-	}
-
-	// Grains
-	if (nGrains() > 0)
-	{
-		if (!parser.writeLineF("\n%s# Grain Definitions\n", newPrefix.get())) return false;
-		for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next())
-		{
-			if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::GrainKeyword), sg->name())) return false;
-			for (RefListItem<SpeciesAtom>* ri = sg->atoms(); ri != NULL; ri = ri->next())
-			{
-				if (!parser.writeLineF("  %i", ri->item()->userIndex())) return false;
-			}
-			if (!parser.writeLineF("\n")) return false;
 		}
 	}
 

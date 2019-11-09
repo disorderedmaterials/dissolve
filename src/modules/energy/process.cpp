@@ -280,12 +280,12 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			procPool.resetAccumulatedTime();
 
-			// Calculate Grain energy
+			// Calculate intermolecular energy
 			Timer interTimer;
 			double interEnergy = interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
 			interTimer.stop();
 
-			// Calculate intramolecular and interGrain correction energy
+			// Calculate intramolecular and intermolecular correction energy
 			Timer intraTimer;
 			double bondEnergy, angleEnergy, torsionEnergy;
 			double intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
