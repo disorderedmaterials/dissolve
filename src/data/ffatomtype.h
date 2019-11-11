@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDATOMTYPE_H
-#define DISSOLVE_FORCEFIELDATOMTYPE_H
+#ifndef DISSOLVE_FORCEFIELD_ATOMTYPE_H
+#define DISSOLVE_FORCEFIELD_ATOMTYPE_H
 
 #include "data/elements.h"
 #include "base/charstring.h"
