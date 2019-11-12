@@ -26,8 +26,8 @@
 ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>()
 {
 	index_ = index;
-	typeName_ = name;
-	typeDescription_ = description;
+	name_ = name;
+	description_ = description;
 	parameters_.setCharge(q);
 	parameters_.setParameter(0, data0);
 	parameters_.setParameter(1, data1);
@@ -41,9 +41,9 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityNam
 {
 	// Copy data from the supplied source
 	index_ = sourceType.index_;
-	typeName_ = sourceType.typeName_;
-	if (!DissolveSys::sameString(typeName_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.typeName());
-	typeDescription_ = sourceType.typeDescription_;
+	name_ = sourceType.name_;
+	if (!DissolveSys::sameString(name_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.name());
+	description_ = sourceType.description_;
 	parameters_ = sourceType.parameters_;
 
 	// Register this atom type with the parent forcefield
@@ -66,15 +66,15 @@ int ForcefieldAtomType::index() const
 }
 
 // Return name of type
-const char* ForcefieldAtomType::typeName() const
+const char* ForcefieldAtomType::name() const
 {
-	return typeName_.get();
+	return name_.get();
 }
 
 // Return description for type
-const char* ForcefieldAtomType::typeDescription() const
+const char* ForcefieldAtomType::description() const
 {
-	return typeDescription_.get();
+	return description_.get();
 }
 
 /*

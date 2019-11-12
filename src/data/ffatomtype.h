@@ -47,17 +47,17 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	// Index of atom type
 	int index_;
 	// Name of atom type
-	CharString typeName_;
+	CharString name_;
 	// Brief description of tyoe
-	CharString typeDescription_;
+	CharString description_;
 
 	public:
 	// Return index of type
 	int index() const;
 	// Return name of type
-	const char* typeName() const;
+	const char* name() const;
 	// Return description for type
-	const char* typeDescription() const;
+	const char* description() const;
 
 
 	/*
