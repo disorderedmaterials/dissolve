@@ -112,9 +112,8 @@ NETAConnectionNode* NETADefinition::createConnectionNode(PointerArray<Element> t
 // Check supplied atom to see if it matches this NETA description
 int NETADefinition::score(const SpeciesAtom* i) const
 {
-	printf("rootNode_ = %p\n", rootNode_);
 	// If there is no definition, return zero (== match anything)
-	if (!rootNode_) return 0;
+	if (!rootNode_) return NETANode::NoMatch;
 
 	RefList<const SpeciesAtom> matchPath;
 	int totalScore = rootNode_->score(i, matchPath);
