@@ -31,6 +31,7 @@ class CoreData;
 class ForcefieldAngleTerm;
 class ForcefieldAtomType;
 class ForcefieldBondTerm;
+class ForcefieldParameters;
 class ForcefieldTorsionTerm;
 class Species;
 class SpeciesAtom;
@@ -71,6 +72,8 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 * Atom Type Data
 	 */
 	protected:
+	// Short-range parameter sets
+	RefList<ForcefieldParameters> shortRangeParameters_;
 	// Atom type data, grouped by element
 	Array< RefList<ForcefieldAtomType> > atomTypesByElementPrivate_;
 
@@ -79,8 +82,12 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 
 	public:
+	// Register the specified short-range parameters
+	void registerParameters(ForcefieldParameters* params);
 	// Register specified atom type to given Element
 	void registerAtomType(ForcefieldAtomType* atomType, int Z);
+	// Return named short-range parameters (if they exist)
+	ForcefieldParameters* shortRangeParameters(const char* name) const;
 	// Return the named ForcefieldAtomType (if it exists)
 	ForcefieldAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
 

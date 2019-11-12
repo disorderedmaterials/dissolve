@@ -53,7 +53,7 @@ const ForcefieldAtomType& OPLSAA2005_AtomTypes::atomTypeByIndex(int id)
 	for (int n=0; n<nAtomTypes(); ++n) if (types[n].index() == id) return types[n];
 
 	// No match found
-	static ForcefieldAtomType dummyType(NULL, ELEMENT_XX, 0, "<undefined>");
+	static ForcefieldAtomType dummyType(NULL, ELEMENT_XX, 0, "??", "", "<undefined>", 0.0, 0.0, 0.0);
 	return dummyType;
 }
 

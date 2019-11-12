@@ -51,9 +51,9 @@ ForcefieldAngleTerm::~ForcefieldAngleTerm()
 // Return if this term matches the atom types supplied
 bool ForcefieldAngleTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k)
 {
-	if (typeJ_ != j->name()) return false;
-	if ((typeI_ == i->name()) && (typeK_ == k->name())) return true;
-	if ((typeK_ == i->name()) && (typeI_ == k->name())) return true;
+	if (typeJ_ != j->equivalentName()) return false;
+	if ((typeI_ == i->equivalentName()) && (typeK_ == k->equivalentName())) return true;
+	if ((typeK_ == i->equivalentName()) && (typeI_ == k->equivalentName())) return true;
 
 	return false;
 }

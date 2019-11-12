@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class Forcefield;
+class ForcefieldParameters;
 
 // Forcefield AtomType Base Class
 class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAtomType>
@@ -36,6 +37,7 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	public:
 	// Constructors
 	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, const char* parameterReference = NULL);
 	ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType);
 	// Destructor
 	virtual ~ForcefieldAtomType();
@@ -63,6 +65,8 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	int index() const;
 	// Return name of type
 	const char* name() const;
+	// Return equivalent name of type
+	const char* equivalentName() const;
 	// Return description for type
 	const char* description() const;
 	// Return NETA definition for the atom type
@@ -73,7 +77,9 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	 * Parameters
 	 */
 	private:
-	// Short-range parameters
+	// Parameters that this atom type references (if any)
+	const ForcefieldParameters* parameterReference_;
+	// Short-range parameters for this atom type
 	Parameters parameters_;
 
 	public:

@@ -20,6 +20,7 @@
 */
 
 #include "data/ffatomtype.h"
+#include "data/ffparameters.h"
 #include "data/ff.h"
 #include "neta/generator.h"
 
@@ -32,10 +33,25 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 	name_ = name;
 	description_ = description;
 	parameters_.setCharge(q);
+	parameterReference_ = NULL;
 	parameters_.setParameter(0, data0);
 	parameters_.setParameter(1, data1);
 	parameters_.setParameter(2, data2);
 	parameters_.setParameter(3, data3);
+
+	// Register this atom type with the parent forcefield
+	if (parent) parent->registerAtomType(this, z);
+}
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(z), ListItem<ForcefieldAtomType>(), neta_(netaDefinition, parent)
+{
+	forcefield_ = parent;
+
+	index_ = index;
+	name_ = name;
+	description_ = description;
+	parameters_.setCharge(q);
+	parameterReference_ = forcefield_->shortRangeParameters(parameterReference);
+	if (!parameterReference_) Messenger::error("Parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, forcefield_->name());
 
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
@@ -83,6 +99,13 @@ const char* ForcefieldAtomType::name() const
 	return name_.get();
 }
 
+// Return equivalent name of type
+const char* ForcefieldAtomType::equivalentName() const
+{
+	// If parameters are referenced, return their name. Otherwise, return ours.
+	return (parameterReference_ ? parameterReference_->name() : name_.get());
+}
+
 // Return description for type
 const char* ForcefieldAtomType::description() const
 {
@@ -102,5 +125,8 @@ const NETADefinition& ForcefieldAtomType::neta() const
 // Return short-range parameters
 const Parameters& ForcefieldAtomType::parameters() const
 {
+	// If reference parameters are defined, return those
+	if (parameterReference_) return parameterReference_->parameters();
+
 	return parameters_;
 }

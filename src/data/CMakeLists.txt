@@ -7,6 +7,7 @@ add_library(data
   ffatomtype.cpp
   ffbondterm.cpp
   fflibrary.cpp
+  ffparameters.cpp
   fftorsionterm.cpp
   isotopes.cpp
   spacegroups.cpp
@@ -19,6 +20,7 @@ add_library(data
   ffatomtype.h
   ffbondterm.h
   fflibrary.h
+  ffparameters.h
   fftorsionterm.h
   isotopes.h
   spacegroups.h

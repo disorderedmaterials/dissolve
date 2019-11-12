@@ -23,6 +23,7 @@
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
+#include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
@@ -86,10 +87,25 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
 	return bestType;
 }
 
+// Register the specified short-range parameters
+void Forcefield::registerParameters(ForcefieldParameters* params)
+{
+	shortRangeParameters_.append(params);
+}
+
 // Register specified atom type to given Element
 void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
 {
 	atomTypesByElementPrivate_[Z].append(atomType);
+}
+
+// Return named short-range parameters (if they exist)
+ForcefieldParameters* Forcefield::shortRangeParameters(const char* name) const
+{
+	RefListIterator<ForcefieldParameters> paramsIterator(shortRangeParameters_);
+	while (ForcefieldParameters* params = paramsIterator.iterate()) if (DissolveSys::sameString(name, params->name())) return params;
+
+	return NULL;
 }
 
 // Return the named ForcefieldAtomType (if it exists)
@@ -242,7 +258,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 			ForcefieldAtomType* j = atomTypes[bond->indexJ()];
 
 			ForcefieldBondTerm* term = bondTerm(i, j);
-			if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", bond->indexI()+1, bond->indexJ()+1, i->name(), j->name());
+			if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", bond->indexI()+1, bond->indexJ()+1, i->equivalentName(), j->equivalentName());
 
 			// Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
 			bond->setForm(term->form());
@@ -262,7 +278,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 			ForcefieldAtomType* k = atomTypes[angle->indexK()];
 
 			ForcefieldAngleTerm* term = angleTerm(i, j, k);
-			if (!term) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1, i->name(), j->name(), k->name());
+			if (!term) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1, i->equivalentName(), j->equivalentName(), k->equivalentName());
 
 			angle->setForm(term->form());
 			angle->setParameters(term->parameters());
@@ -282,7 +298,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 			ForcefieldAtomType* l = atomTypes[torsion->indexL()];
 
 			ForcefieldAngleTerm* term = angleTerm(i, j, k);
-			if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1, i->name(), j->name(), k->name(), l->name());
+			if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1, i->equivalentName(), j->equivalentName(), k->equivalentName(), l->equivalentName());
 
 			torsion->setForm(term->form());
 			torsion->setParameters(term->parameters());
