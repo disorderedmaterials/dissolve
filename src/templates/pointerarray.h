@@ -65,7 +65,7 @@ template <class T> class PointerArray
 
 		initialise(source.nItems());
 
-		for (int n=0; n<source.nItems(); ++n) add(source.value(n));
+		for (int n=0; n<source.nItems(); ++n) append(source.value(n));
 
 		return *this;
 	}
