@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_FORCEFIELD_ATOMTYPE_H
 #define DISSOLVE_FORCEFIELD_ATOMTYPE_H
 
+#include "neta/neta.h"
 #include "data/elements.h"
 #include "base/charstring.h"
 #include "base/parameters.h"
@@ -34,7 +35,7 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 {
 	public:
 	// Constructors
-	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType);
 	// Destructor
 	virtual ~ForcefieldAtomType();
@@ -52,6 +53,8 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	CharString name_;
 	// Brief description of tyoe
 	CharString description_;
+	// NETA definition for the atom type
+	NETADefinition neta_;
 
 	public:
 	// Return parent Forcefield
@@ -62,6 +65,8 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	const char* name() const;
 	// Return description for type
 	const char* description() const;
+	// Return NETA definition for the atom type
+	const NETADefinition& neta() const;
 
 
 	/*

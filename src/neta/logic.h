@@ -1,6 +1,6 @@
 /*
-	*** SPC/Fw Forcefield
-	*** src/data/ff/spcfw.h
+	*** NETA Logic Node
+	*** src/neta/logic.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,34 +19,37 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_SPCFW_H
-#define DISSOLVE_FORCEFIELD_SPCFW_H
+#ifndef DISSOLVE_NETA_LOGIC_H
+#define DISSOLVE_NETA_LOGIC_H
 
-#include "data/ff.h"
+#include "neta/node.h"
 
 // Forward Declarations
-class CoreData;
-class SpeciesAtom;
+class NETADefinition;
 
-// SPC/Fw Forcefield
-class Forcefield_SPCFw : public Forcefield
+// NETA Logic Node
+class NETALogicNode : public NETANode
 {
 	public:
+	// Node logic types
+	enum LogicType { AndLogic, OrLogic, AndNotLogic };
 	// Constructor / Destructor
-	Forcefield_SPCFw();
-	~Forcefield_SPCFw();
+	NETALogicNode(NETADefinition* parent, LogicType logic, NETANode* arg1, NETANode* arg2);
+	~NETALogicNode();
+	
+	private:
+	// Logic type
+	LogicType logic_;
+	// Node targets
+	NETANode* argument1_, *argument2_;
 
 
 	/*
-	 * Definition
+	 * Scoring
 	 */
 	public:
-	// Return name of Forcefield
-	const char* name() const;
-	// Return description for Forcefield
-	const char* description() const;
-	// Return short-range interaction style for AtomTypes
-	Forcefield::ShortRangeType shortRangeType() const;
+	// Evaluate the node and return its score
+	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
 };
 
 #endif

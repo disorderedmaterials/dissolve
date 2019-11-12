@@ -65,6 +65,28 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
  * Atom Type Data
  */
 
+// Determine and return atom type for specified SpeciesAtom
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
+{
+	// Go through AtomTypes defined for the target's element, and check NETA scores
+	int bestScore = -1;
+	ForcefieldAtomType* bestType = NULL;
+	RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(i->element()->Z()));
+	while (ForcefieldAtomType* type = typeIterator.iterate())
+	{
+		// Get the scoring for this type
+		int score = type->neta().score(i);
+		printf("SCORE for [%s] on [%i] = %i\n", type->name(), i->userIndex(), score);
+		if (score > bestScore)
+		{
+			bestScore = score;
+			bestType = type;
+		}
+	}
+
+	return bestType;
+}
+
 // Register specified atom type to given Element
 void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
 {

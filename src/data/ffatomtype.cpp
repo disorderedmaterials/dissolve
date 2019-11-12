@@ -21,9 +21,10 @@
 
 #include "data/ffatomtype.h"
 #include "data/ff.h"
+#include "neta/generator.h"
 
 // Constructors
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>(), neta_(netaDefinition, parent)
 {
 	forcefield_ = parent;
 
@@ -49,6 +50,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityNam
 	if (!DissolveSys::sameString(name_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.name());
 	description_ = sourceType.description_;
 	parameters_ = sourceType.parameters_;
+	neta_.set(sourceType.neta().definitionString(), parent);
 
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, sourceType.Z());
@@ -85,6 +87,12 @@ const char* ForcefieldAtomType::name() const
 const char* ForcefieldAtomType::description() const
 {
 	return description_.get();
+}
+
+// Return NETA definition for the atom type
+const NETADefinition& ForcefieldAtomType::neta() const
+{
+	return neta_;
 }
 
 /*

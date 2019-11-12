@@ -76,7 +76,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 
 	protected:
 	// Determine and return atom type for specified SpeciesAtom
-	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const = 0;
+	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 
 	public:
 	// Register specified atom type to given Element
