@@ -26,12 +26,11 @@
 #include "templates/refdatalist.h"
 
 // Constructor
-NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt, NETANode* innerDefinition) : NETANode(parent, NETANode::ConnectionNode)
+NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt) : NETANode(parent, NETANode::ConnectionNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;
 	bondType_ = bt;
-	innerDefinition_ = innerDefinition;
 }
 
 // Destructor
@@ -46,7 +45,11 @@ NETAConnectionNode::~NETAConnectionNode()
 // Evaluate the node and return its score
 int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
 {
-			printf("I AM THE CONNECTION\n");
+// 	printf("I AM THE CONNECTION - matchPath size = %i:\n", matchPath.nItems());
+// 	RefListIterator<const SpeciesAtom> matchIterator(matchPath);
+// 	while (const SpeciesAtom* iii = matchIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
+
 	// Get directly connected atoms about 'i', excluding any that have already been matched
 	RefDataList<const SpeciesAtom, int> neighbours;
 	const PointerArray<SpeciesBond>& bonds = i->bonds();
@@ -69,17 +72,13 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 		{
 			if (j->element() != allowedElements_.at(n)) continue;
 
-			// Score the element matchadd
-			atomScore = 1;
+			// Process branch definition via the base class, using a copy of the current match path
+			RefList<const SpeciesAtom> branchMatchPath = matchPath;
+			int branchScore = NETANode::score(j, branchMatchPath);
+			if (branchScore == NETANode::NoMatch) continue;
 
-			// Process inner definition if present
-			if (innerDefinition_)
-			{
-				int innerScore = innerDefinition_->score(j, matchPath);
-				if (innerScore == NETANode::NoMatch) continue;
-
-				atomScore += innerScore;
-			}
+			// Create total score (element match plus branch score)
+			atomScore = 1 + branchScore;
 
 			// Now have a match, so break out of the loop
 			break;
@@ -87,17 +86,16 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 		if (atomScore == NETANode::NoMatch) for (int n=0; n<allowedAtomTypes_.nItems(); ++n)
 		{
 			// Evaluate the neighbour against the atom type
-			atomScore = allowedAtomTypes_.at(n)->neta().score(j);
-			if (atomScore == NETANode::NoMatch) continue;
+			int typeScore = allowedAtomTypes_.at(n)->neta().score(j);
+			if (typeScore == NETANode::NoMatch) continue;
 
-			// Atom was a match - process inner definition if present
-			if (innerDefinition_)
-			{
-				int innerScore = innerDefinition_->score(j, matchPath);
-				if (innerScore == NETANode::NoMatch) continue;
+			// Process branch definition via the base class, using a copy of the current match path
+			RefList<const SpeciesAtom> branchMatchPath = matchPath;
+			int branchScore = NETANode::score(j, branchMatchPath);
+			if (branchScore == NETANode::NoMatch) continue;
 
-				atomScore += innerScore;
-			}
+			// Create total score
+			atomScore = typeScore + branchScore;
 
 			// Now have a match, so break out of the loop
 			break;
@@ -117,7 +115,7 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 	// Did we find the required number of matches in the neighbour list?
 	if (nMatches != nRequiredXXX) return NETANode::NoMatch;
 
-	// Flag each of the matched atoms as being part of the matched path, and generate total score
+	// Generate total score and add matched atoms to path
 	int totalScore = 0;
 	neighbourIterator.restart();
 	while (const SpeciesAtom* j = neighbourIterator.iterate())
@@ -129,84 +127,4 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 	}
 
 	return totalScore;
-
-// 	// Check for reverse logic
-// 	if (reverseLogic_) totalscore = (totalscore == -1 ? 1 : -1);
-// 	RefListItem<Atom,int>* ri;
-// 	RefList< RefListItem<Atom,int>, int > scores;
-// 	RefListItem< RefListItem<Atom,int>, int > *si;
-// 	// Pointer check
-// 	if (nbrs == NULL)
-// 	{
-// 		Messenger::print("NETA Internal Error: Called NETAConnectionNode::score() without a valid neighbour list.");
-// 		Messenger::exit("NETAConnectionNode::score");
-// 		return -1;
-// 	}
-// 	// Exactly how we proceed here depends on the current context (i.e. whether in Ring, Chain, etc.)
-// 	if (nbrs->nItems() == 0) totalscore = -1;
-// 	else
-// 	{
-// 		for (ri = nbrs->first(); ri != NULL; ri = ri->next)
-// 		{
-// 			// Does this bound neighbour match the element/type of the BoundNode?
-// 			si = scores.add(ri, atomScore(ri->item));
-// 			if (si->data == -1) continue;
-// 			// Connection type?
-// 			if ((context->nodeType() != NETANode::RingNode) && (bondType_ != Bond::Any))
-// 			{
-// 				Bond* b = target->findBond(ri->item);
-// 				if (b == NULL)
-// 				{
-// 					Messenger::print("NETA Internal Error: Couldn't find bond between atom ids %i and %i to check type.", target->id(), ri->item->id());
-// 					Messenger::exit("NETAConnectionNode::score");
-// 					return -1;
-// 				}
-// 				if (b->type() == bondType_) si->data ++;
-// 				else si->data = -1;
-// 			}
-// 			if (si->data == -1) continue;
-// 			// Is there an inner NETA description to test?
-// 			if (innerNETA_ == NULL) continue;
-// 			else
-// 			{
-// 				// For each bound neighbour here, construct its own list of bound atoms and rings and check the inner NETA score
-// 				RefList<SpeciesAtom> boundList;
-// 				ri->item->addBoundToRefList(&boundList);
-// 				// Construct new ringlist
-// 				RefList<Ring> ringList;
-// 				for (Ring* r = parent()->targetRingList()->first(); r != NULL; r = r->next) if (r->containsAtom(ri->item)) ringList.add(r);
-// 				path.add(target);
-// 				boundscore = innerNETA_->score(ri->item, &boundList, &ringList, this, path, level+1);
-// 				path.removeLast();
-// 				if (boundscore != -1) si->data += boundscore;
-// 				else si->data = -1;
-// 			}
-// 		}
-// 		n = 0;
-// 		for (si = scores.first(); si != NULL; si = si->next) if (si->data > 0) ++n;
-// 		if (n == 0) totalscore = -1;
-// 		else if ((repeat_ == -1) || (NETA::netaValueCompare(n, repeatComparison_, repeat_)))
-// 		{
-// 			n = repeat_ == -1 ? 1 : repeat_;
-// 			ri = nbrs->first();
-// 			totalscore = 0;
-// 			for (si = scores.first(); si != NULL; si = si->next)
-// 			{
-// 				if (si->data > 0)
-// 				{
-// 					totalscore += si->data;
-// 					nbrs->remove(si->item);
-// 					--n;
-// 				}
-// 				if (n == 0) break;
-// 			}
-// 		}
-// 		else totalscore = -1;
-// 		if (totalscore == 0) totalscore = -1;
-// 	}
-// 	// Check for reverse logic
-// 	if (reverseLogic_) totalscore = (totalscore == -1 ? 1 : -1);
-// 	NETANode::printScore(level, "Bound Check (%i of %s) = %i", repeat_ == -1 ? 1 : repeat_, qPrintable(elementsAndTypesString()), totalscore);
-// 
-// 	return totalscore;
 }

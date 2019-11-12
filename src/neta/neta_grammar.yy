@@ -11,6 +11,7 @@
 #include "neta/connection.h"
 #include "neta/neta.h"
 #include "base/messenger.h"
+#include "templates/reflist.h"
 
 /* Prototypes */
 int NETADefinitionGenerator_lex(void);
@@ -34,7 +35,7 @@ void NETADefinitionGenerator_error(char *s);
 %token <integerConst> DISSOLVE_NETA_INTEGERCONSTANT
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
-%token DISSOLVE_NETA_UNKNOWNTOKEN
+%token DISSOLVE_NETA_UNKNOWNTOKEN DISSOLVE_NETA_REPEATMODIFIER
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
 %left '='
@@ -45,10 +46,7 @@ void NETADefinitionGenerator_error(char *s);
 %right '!'
 %right '^'
 
-// %type <node> constant expression expressionlist variable statement flowstatement statementlist block blockment
-// %type <node> function
-
-%type <node> node nodesequence
+%type <node> node nodesequence createconnectionnode
 %type <atomTargetDummy> target targets targetlist
 
 %%
@@ -60,22 +58,22 @@ void NETADefinitionGenerator_error(char *s);
 /* Main Structure */
 neta:
 	/* empty */					{ YYACCEPT; }
-	| nodesequence					{ NETADefinitionGenerator::definition()->setRootNode($1); YYACCEPT; }
+	| nodesequence					{ YYACCEPT; }
 	;
 
 /* Sequence of Nodes */
 nodesequence:
-	node						{ $$ = $1; }
+	node						{ $$ = $1; if ($$ == NULL) YYABORT; }
 	| '!' node					{ $2->setReverseLogic(); $$ = $2; }
-	| nodesequence ',' node				{ $$ = NETADefinitionGenerator::definition()->joinWithLogic($1, NETALogicNode::AndLogic, $3); }
-	| nodesequence '|' nodesequence			{ $$ = NETADefinitionGenerator::definition()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
-	| '(' nodesequence ')'				{ $$ = $2; }
+	| nodesequence ',' node				{ $$ = $3; }
+// 	| nodesequence '|' nodesequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
 	;
 
 /* Nodes */
 node:
-	'-' targetlist					{ $$ = NETADefinitionGenerator::definition()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); }
-	| DISSOLVE_NETA_UNKNOWNTOKEN			{ YYABORT; }
+	'-' targetlist createconnectionnode							{ $$ = $3; }
+	| '-' targetlist createconnectionnode pushcontext '(' nodesequence ')' popcontext	{ $$ = $3; }
+	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
 /* Target Element / Type Generic */
@@ -95,6 +93,29 @@ targets:
 target:
 	DISSOLVE_NETA_ELEMENT				{ NETADefinitionGenerator::addTarget($1); $$ = NULL; }
 	| '&' DISSOLVE_NETA_INTEGERCONSTANT		{ NETADefinitionGenerator::addTarget(-$2); $$ = NULL; }
+	;
+
+
+/* Context Modifiers */
+contextmodifier:
+	DISSOLVE_NETA_REPEATMODIFIER valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!nodeContexts.last()) { Messenger::print("Modifier must be used in a context.\n"); YYERROR; } nodeContexts.last()->setRepeat($3); }
+	;
+
+/* Operators */
+valueoperator:
+	;
+
+/* Node Creation */
+createconnectionnode:
+	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
+	;
+
+/* Context Management */
+pushcontext:
+	/* empty */					{ NETADefinitionGenerator::pushContext(); }
+	;
+popcontext:
+	/* empty */					{ NETADefinitionGenerator::popContext(); }
 	;
 
 %%

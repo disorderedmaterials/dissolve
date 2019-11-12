@@ -50,9 +50,9 @@ class NETADefinition
 // 	enum NETAExpander { BoundExpanded, ChainExpander, DoublyBoundExpander, GeometryExpander, PathExpander, RingExpander, nNETAExpanders };
 // 	// Return enum options for NETAExpander
 // 	static EnumOptions<NETADefinition::NETAExpander> netaExpanders();
-// 	// NETA values
+	// NETA values
 // 	enum NETAValue { BondValue, NBondsValue, NHydrogensValue, OxidationStateValue, RepeatValue, SizeValue, nNETAValues };
-// 	// Return enum options for NETAValue
+	// Return enum options for NETAValue
 // 	static EnumOptions<NETADefinition::NETAValue> netaValues();
 // 	// Friend Class
 // 	friend class NETAParser;
@@ -62,36 +62,22 @@ class NETADefinition
 	 * Data
 	 */
 	private:
+	// Root node of the definition
+	NETANode rootNode_;
 	// Original definition string
 	CharString definitionString_;
 
 	public:
-	// Clear all expression data
+	// Clear all definition data
 	void clear();
+	// Return root node pointer
+	NETANode* rootNode();
 	// Set NETADefinition from supplied string
 	bool set(const char* netaDefinition, const Forcefield* associatedFF = NULL);
 	// Set generating string
 	void setDefinitionString(const char* definition);
 	// Return original generating string
 	const char* definitionString() const;
-
-
-	/*
-	 * Nodes
-	 */
-	private:
-	// Node list - a disordered list of all nodes owned by the definition
-	List<NETANode> nodes_;
-	// Root node of the definition
-	NETANode* rootNode_;
-
-	public:
-	// Set the root node representing the definition
-	void setRootNode(NETANode* node);
-	// Join two nodes together with the specified logic to form a sequence
-	NETALogicNode* joinWithLogic(NETANode* node1, NETALogicNode::LogicType logic, NETANode* node2);
-	// Create connectivity node from current targets
-	NETAConnectionNode* createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes, NETANode* innerDefinition = NULL);
 
 
 	/*

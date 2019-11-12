@@ -36,6 +36,7 @@ class Forcefield;
 class ForcefieldAtomType;
 class NETAConnectionNode;
 class NETADefinition;
+class NETANode;
 
 // NETADefinition Generator
 class NETADefinitionGenerator
@@ -105,6 +106,8 @@ class NETADefinitionGenerator
 	static PointerArray<Element> targetElements_;
 	// Temporary atomtype array used in definition creation
 	static PointerArray<ForcefieldAtomType> targetAtomTypes_;
+	// Context (branch) stack
+	static RefList<NETANode> contextStack_;
 
 	public:
 	// Add element target to array (by Z)
@@ -117,6 +120,12 @@ class NETADefinitionGenerator
 	static PointerArray<ForcefieldAtomType> targetAtomTypes();
 	// Clear element / atomtype targets
 	static void clearTargets();
+	// Return topmost context
+	static NETANode* context();
+	// Push branch in last node of topmost context onto the context stack
+	static bool pushContext();
+	// Pop topmost context
+	static void popContext();
 	// Static generation function
 	static bool generate(NETADefinition& neta, const char* netaDefinition, const Forcefield* associatedFF);
 };

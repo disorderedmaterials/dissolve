@@ -22,11 +22,17 @@
 #ifndef DISSOLVE_NETA_NODE_H
 #define DISSOLVE_NETA_NODE_H
 
+#include "base/enumoptions.h"
 #include "templates/listitem.h"
+#include "templates/list.h"
+#include "templates/pointerarray.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
+class Element;
+class ForcefieldAtomType;
 class NETADefinition;
+class NETAConnectionNode;
 class SpeciesAtom;
 
 // NETA Node
@@ -34,7 +40,13 @@ class NETANode : public ListItem<NETANode>
 {
 	public:
 	// Node types
-	enum NodeType { ConnectionNode, LogicNode, nNETANodeTypes };
+	enum NodeType { BasicNode, ConnectionNode, LogicNode, nNETANodeTypes };
+	// Value Comparison Operators
+	enum ComparisonOperator { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo };
+	// Special Scoring Results
+	enum NETAResult { NoMatch = -1 };
+	// Return enum options for Comparison Operators
+	static EnumOptions<NETANode::ComparisonOperator> comparisonOperators();
 	// Constructor / Destructor
 	NETANode(NETADefinition* parent, NodeType type);
 	virtual ~NETANode();
@@ -57,19 +69,41 @@ class NETANode : public ListItem<NETANode>
 
 
 	/*
+	 * Branching and Node Generation
+	 */
+	private:
+	// Branch of nodes
+	List<NETANode> branch_;
+
+	public:
+	// Clear all nodes
+	void clear();
+	// Return last node of branch
+	NETANode* lastBranchNode();
+	// Return number of nodes defined in branch
+	int nBranchNodes() const;
+	// Create connectivity node in the branch
+	NETAConnectionNode* createConnectionNode(PointerArray<Element> allowedElements, PointerArray<ForcefieldAtomType> allowedAtomTypes);
+
+
+	/*
 	 * Scoring
 	 */
 	protected:
+	// Repeat count value
+	int repeatCount_;
+	// Repeat count comparison operator
+	NETANode::ComparisonOperator repeatCountOperator_;
 	// Whether to use reverse logic when returning the final value
 	bool reverseLogic_;
 
 	public:
-	// Special Results
-	enum NETAResult { NoMatch = -1 };
+	// Set repeat count value and comparison operator
+	void setRepeatCount(int value, NETANode::ComparisonOperator op);
 	// Set node to use reverse logic
 	void setReverseLogic();
 	// Evaluate the node and return its score
-	virtual int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const = 0;
+	virtual int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
 
 
 // 
@@ -94,9 +128,7 @@ class NETANode : public ListItem<NETANode>
 // 	 * Value Comparison
 // 	 */
 // 	public:
-// 	// Value Comparison Operators
-// 	enum ValueComparison { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo, nNETAValueComparisons };
-// 	static const char* netaValueComparison(ValueComparison op);
+
 // 
 // 	public:
 // 	// Return result of comparison between values provided

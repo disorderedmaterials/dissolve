@@ -22,17 +22,17 @@
 #include "neta/node.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include "neta/connection.h"
 #include "templates/reflist.h"
 #include <stdarg.h>
 #include <string.h>
 #include <cctype>
 
-// Local constant
-const int MAXNODEARGS = 10;
-
 // Constructors
 NETANode::NETANode(NETADefinition* parent, NETANode::NodeType type) : ListItem<NETANode>()
 {
+	repeatCount_ = 1;
+	repeatCountOperator_ = NETANode::EqualTo;
 	reverseLogic_ = false;
 	parent_ = parent;
 	nodeType_ = type;
@@ -41,6 +41,7 @@ NETANode::NETANode(NETADefinition* parent, NETANode::NodeType type) : ListItem<N
 // Destructor
 NETANode::~NETANode()
 {
+	clear();
 }
 
 /*
@@ -60,11 +61,70 @@ NETADefinition* NETANode::parent() const
 }
 
 /*
+ * Branching and Node Generation
+ */
+
+// Clear all nodes
+void NETANode::clear()
+{
+	branch_.clear();
+}
+
+// Return last node of branch
+NETANode* NETANode::lastBranchNode()
+{
+	return branch_.last();
+}
+
+// Return number of nodes defined in branch
+int NETANode::nBranchNodes() const
+{
+	return branch_.nItems();
+}
+
+
+// Create connectivity node from current targets
+NETAConnectionNode* NETANode::createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes)
+{
+	// Create the new node and own it
+	NETAConnectionNode* node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
+	branch_.own(node);
+
+	return node;
+}
+
+/*
  * Scoring
  */
+
+// Set repeat count value and comparison operator
+void NETANode::setRepeatCount(int value, NETANode::ComparisonOperator op)
+{
+	repeatCount_ = value;
+	repeatCountOperator_ = op;
+}
 
 // Set node to use reverse logic
 void NETANode::setReverseLogic()
 {
 	reverseLogic_ = true;
+}
+
+// Evaluate the node and return its score
+int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
+{
+	int totalScore = 0;
+
+	// Loop over nodes in branch in sequence
+	ListIterator<NETANode> branchIterator(branch_);
+	while (NETANode* node = branchIterator.iterate())
+	{
+		// Get the score from the node, returning early if NoMatch is encountered
+		int nodeScore = node->score(i, matchPath);
+		if (nodeScore == NETANode::NoMatch) return NETANode::NoMatch;
+
+		totalScore += nodeScore;
+	}
+
+	return totalScore;
 }

@@ -29,7 +29,7 @@
 #include <string.h>
 
 // Constructor
-NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF)
+NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF) : rootNode_(this, NETANode::BasicNode)
 {
 	set(netaDefinition, associatedFF);
 }
@@ -44,11 +44,17 @@ NETADefinition::~NETADefinition()
  * Data
  */
 
-// Clear contents of expression
+// Clear contents of definition
 void NETADefinition::clear()
 {
-	nodes_.clear();
-	rootNode_ = NULL;
+	definitionString_.clear();
+	rootNode_.clear();
+}
+
+// Return root node pointer
+NETANode* NETADefinition::rootNode()
+{
+	return &rootNode_;
 }
 
 // Set NETADefinition from supplied string
@@ -58,7 +64,10 @@ bool NETADefinition::set(const char* netaDefinition, const Forcefield* associate
 
 	definitionString_ = netaDefinition;
 
-	return (definitionString_.isEmpty() ? false : NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF));
+	bool result = NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF);
+	if (!result) Messenger::error("Failed to generate NETA definition from input string '%s'.\n", netaDefinition);
+
+	return result;
 }
 
 // Set generating string
@@ -74,49 +83,17 @@ const char* NETADefinition::definitionString() const
 }
 
 /*
- * Nodes
- */
-
-// Set the root node representing the definition
-void NETADefinition::setRootNode(NETANode* node)
-{
-	if (rootNode_) Messenger::error("A root node already exists for this NETA definition - it is about to be replaced...\n");
-
-	rootNode_ = node;
-}
-
-// Join two nodes together with the specified logic to form a sequence
-NETALogicNode* NETADefinition::joinWithLogic(NETANode* node1, NETALogicNode::LogicType logic, NETANode* node2)
-{
-	NETALogicNode* newNode = new NETALogicNode(this, logic, node1, node2);
-
-	nodes_.own(newNode);
-
-	return newNode;
-}
-
-// Create connectivity node from current targets
-NETAConnectionNode* NETADefinition::createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt, NETANode* innerDefinition)
-{
-	// Create the new node and own it
-	NETAConnectionNode* node = new NETAConnectionNode(this, targetElements, targetAtomTypes, bt, innerDefinition);
-	nodes_.own(node);
-
-	return node;
-}
-
-/*
  * Matching
  */
 
 // Check supplied atom to see if it matches this NETA description
 int NETADefinition::score(const SpeciesAtom* i) const
 {
-	// If there is no definition, return zero (== match anything)
-	if (!rootNode_) return NETANode::NoMatch;
+	// Our entry point is the branch of our BasicNode - if there are no branch nodes, return zero (== match anything)
+	if (rootNode_.nBranchNodes() == 0) return 0;
 
 	RefList<const SpeciesAtom> matchPath;
-	int totalScore = rootNode_->score(i, matchPath);
+	int totalScore = rootNode_.score(i, matchPath);
 
 	return totalScore;
 }

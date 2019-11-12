@@ -36,7 +36,7 @@ class NETAConnectionNode : public NETANode
 {
 	public:
 	// Constructor / Destructor
-	NETAConnectionNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt, NETANode* innerDefinition);
+	NETAConnectionNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAConnectionNode();
 
 	private:
@@ -46,8 +46,6 @@ class NETAConnectionNode : public NETANode
 	PointerArray<ForcefieldAtomType> allowedAtomTypes_;
 	// Type of required connection
 	SpeciesBond::BondType bondType_;
-	// Inner NETA definition to check (if any)
-	NETANode* innerDefinition_;
 
 	public:
 	// Set node data
