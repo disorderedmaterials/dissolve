@@ -69,12 +69,6 @@ class NETADefinitionGenerator
 	/*
 	 * Lexer
 	 */
-	public:
-	// Symbol Tokens
-	enum SymbolToken { AssignSymbol, GEQSymbol, LEQSymbol, CNEQSymbol, FNEQSymbol, AndSymbol, OrSymbol, nSymbolTokens };
-	// Return enum options for SymbolToken
-	static EnumOptions<int> symbolTokens();
-
 	private:
 	// Source definition string
 	CharString definitionString_;

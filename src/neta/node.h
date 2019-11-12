@@ -43,10 +43,10 @@ class NETANode : public ListItem<NETANode>
 	enum NodeType { BasicNode, ConnectionNode, LogicNode, nNETANodeTypes };
 	// Value Comparison Operators
 	enum ComparisonOperator { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo };
-	// Special Scoring Results
-	enum NETAResult { NoMatch = -1 };
 	// Return enum options for Comparison Operators
 	static EnumOptions<NETANode::ComparisonOperator> comparisonOperators();
+	// Special Scoring Results
+	enum NETAResult { NoMatch = -1 };
 	// Constructor / Destructor
 	NETANode(NETADefinition* parent, NodeType type);
 	virtual ~NETANode();
@@ -87,6 +87,14 @@ class NETANode : public ListItem<NETANode>
 
 
 	/*
+	 * Value Comparison
+	 */
+	public:
+	// Return result of comparison between values provided
+	static bool compareValues(int lhsValue, ComparisonOperator op, int rhsValue);
+
+
+	/*
 	 * Scoring
 	 */
 	protected:
@@ -104,35 +112,6 @@ class NETANode : public ListItem<NETANode>
 	void setReverseLogic();
 	// Evaluate the node and return its score
 	virtual int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
-
-
-// 
-// 	public:
-// 	// Return node type
-// 	NETANodeType nodeType() const;
-// 	// Return parent NETA structure
-// 	NETADefinition* parent() const;
-// 	// Set parent NETA definition
-// 	void setParent(NETADefinition* neta);
-// 	// Validation function
-// 	virtual int score(SpeciesAtom* target, RefList<SpeciesAtom>* nbrs, RefList<Ring>* rings, NETAContextNode* context, RefList<SpeciesAtom>& path, int level) = 0;
-// 	// Print node contents
-// 	virtual void nodePrint(int offset, const char* prefix) = 0;
-// 	// Print (append) NETA representation of node contents
-// 	virtual void netaPrint(CharString& neta) = 0;
-// 	// Print contextual score
-// 	static void printScore(int level, const char* fmt, ...);
-// 
-// 
-// 	/*
-// 	 * Value Comparison
-// 	 */
-// 	public:
-
-// 
-// 	public:
-// 	// Return result of comparison between values provided
-// 	static bool valueComparison(int lhsValue, ValueComparison op, int rhsValue);
 };
 
 #endif

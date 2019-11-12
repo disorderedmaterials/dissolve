@@ -28,6 +28,23 @@
 #include <string.h>
 #include <cctype>
 
+// Return enum options for SymbolToken
+EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
+{
+	static EnumOptionsList ComparisonOperatorOptions = EnumOptionsList() <<
+		EnumOption(EqualTo,		"=") <<
+		EnumOption(NotEqualTo,		"!=") <<
+		EnumOption(GreaterThan,		">") <<
+		EnumOption(LessThan,		"<") <<
+		EnumOption(GreaterThanEqualTo,	">=") <<
+		EnumOption(LessThanEqualTo,	"<=");
+	
+	static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", ComparisonOperatorOptions);
+
+	return options;
+}
+
+
 // Constructors
 NETANode::NETANode(NETADefinition* parent, NETANode::NodeType type) : ListItem<NETANode>()
 {
@@ -91,6 +108,43 @@ NETAConnectionNode* NETANode::createConnectionNode(PointerArray<Element> targetE
 	branch_.own(node);
 
 	return node;
+}
+
+/*
+ * Value Comparison
+ */
+
+// Return result of comparison between values provided
+bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
+{
+	bool result = false;
+
+	switch (op)
+	{
+		case (EqualTo):
+			result = (lhsValue == rhsValue);
+			break;
+		case (NotEqualTo):
+			result = (lhsValue != rhsValue);
+			break;
+		case (GreaterThan):
+			result = (lhsValue > rhsValue);
+			break;
+		case (LessThan):
+			result = (lhsValue < rhsValue);
+			break;
+		case (GreaterThanEqualTo):
+			result = (lhsValue >= rhsValue);
+			break;
+		case (LessThanEqualTo):
+			result = (lhsValue <= rhsValue);
+			break;
+		default:
+			printf("Internal Error: Unrecognised operator (%i) in NETANode::valueComparison.\n", op);
+			break;
+	}
+
+	return result;
 }
 
 /*

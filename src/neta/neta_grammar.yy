@@ -24,17 +24,19 @@ void NETADefinitionGenerator_error(char *s);
 
 /* Type Definition */
 %union {
-	void* atomTargetDummy;			/* Dummy Type for Atom Targets*/
-	int elementZ;				/* Element Z */
-	CharString* name;			/* Character pointer for names */
-	NETANode* node;				/* NETADefinition node pointer */
-	int integerConst;			/* Constant integer value */
-	double doubleConst;			/* Constant double value */
+	void* atomTargetDummy;				/* Dummy Type for Atom Targets*/
+	int elementZ;					/* Element Z */
+	CharString* name;				/* Character pointer for names */
+	NETANode* node;					/* NETADefinition node pointer */
+	NETANode::ComparisonOperator valueOperator;	/* Comparison Operator */
+	int integerConst;				/* Constant integer value */
+	double doubleConst;				/* Constant double value */
 };
 
 %token <integerConst> DISSOLVE_NETA_INTEGERCONSTANT
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
+%token <valueOperator> DISSOLVE_NETA_OPERATOR
 %token DISSOLVE_NETA_UNKNOWNTOKEN DISSOLVE_NETA_REPEATMODIFIER
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
@@ -47,6 +49,7 @@ void NETADefinitionGenerator_error(char *s);
 %right '^'
 
 %type <node> node nodesequence createconnectionnode
+%type <valueOperator> valueoperator
 %type <atomTargetDummy> target targets targetlist
 
 %%
@@ -64,8 +67,10 @@ neta:
 /* Sequence of Nodes */
 nodesequence:
 	node						{ $$ = $1; if ($$ == NULL) YYABORT; }
+	| contextmodifier				{ $$ = NULL; }
 	| '!' node					{ $2->setReverseLogic(); $$ = $2; }
 	| nodesequence ',' node				{ $$ = $3; }
+	| contextmodifier ',' nodesequence		{ $$ = $3; }
 // 	| nodesequence '|' nodesequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
 	;
 
@@ -98,11 +103,12 @@ target:
 
 /* Context Modifiers */
 contextmodifier:
-	DISSOLVE_NETA_REPEATMODIFIER valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!nodeContexts.last()) { Messenger::print("Modifier must be used in a context.\n"); YYERROR; } nodeContexts.last()->setRepeat($3); }
+	DISSOLVE_NETA_REPEATMODIFIER valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()) { Messenger::print("Modifier must be used in a context.\n"); YYERROR; } NETADefinitionGenerator::context()->setRepeatCount($3, $2); }
 	;
 
 /* Operators */
 valueoperator:
+	DISSOLVE_NETA_OPERATOR				{ $$ = yylval.valueOperator; }
 	;
 
 /* Node Creation */

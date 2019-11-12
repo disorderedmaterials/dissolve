@@ -81,22 +81,6 @@ NETADefinitionGenerator* NETADefinitionGenerator::generator()
  * Lexer
  */
 
-// Return enum options for SymbolToken
-EnumOptions<int> NETADefinitionGenerator::symbolTokens()
-{
-	static EnumOptionsList SymbolTokenOptions = EnumOptionsList() <<
-		EnumOption(DISSOLVE_NETA_EQ,		"==") <<
-		EnumOption(DISSOLVE_NETA_GEQ,		">=") <<
-		EnumOption(DISSOLVE_NETA_LEQ,		"<=") <<
-		EnumOption(DISSOLVE_NETA_NEQ,		"!=") <<
-		EnumOption(DISSOLVE_NETA_AND,		"&&") <<
-		EnumOption(DISSOLVE_NETA_OR,		"||");
-	
-	static EnumOptions<int> options("SymbolToken", SymbolTokenOptions);
-
-	return options;
-}
-
 // Set string source for lexer
 void NETADefinitionGenerator::setSource(const char* definitionText)
 {
@@ -239,8 +223,17 @@ int NETADefinitionGenerator::lex()
 		unGetChar();
 		Messenger::printVerbose("NETA (%p): found an alpha token [%s]...\n", definition_, token.get());
 
-		// Keyword?
-// 		if (DissolveSys::sameString(token, "n")) return DISSOLVE_NETA_REPEATMODIFIER;
+		// Modifier?
+		if (DissolveSys::sameString(token, "n"))
+		{
+			// Check next character - if it looks like it's part of an operator, we'll assume its the repeat modifier
+			char c2 = peekChar();
+			if ((c2 == '=') || (c2 == '>') || (c2 == '<') || (c2 == '!'))
+			{
+				Messenger::printVerbose("NETA : ...which is the repeat modifier 'n'\n");
+				return DISSOLVE_NETA_REPEATMODIFIER;
+			}
+		}
 
 		// Chemical Element?
 		const Element& el = Elements::element(token);
@@ -262,7 +255,7 @@ int NETADefinitionGenerator::lex()
 
 	// We have found a symbolic character (or a pair) that corresponds to an operator
 	// Return immediately in the case of brackets, comma, and semicolon
-	if ((c == '(') || (c == ')') || (c == ';') || (c == ',') || (c == '{') || (c == '}') || (c == '[') || (c == ']') || (c == '%') || (c == ':'))
+	if ((c == '(') || (c == ')') || (c == '-') || (c == ','))
 	{
 		Messenger::printVerbose("NETA (%p): found symbol [%c]\n", definition_, c);
 		return c;
@@ -281,18 +274,13 @@ int NETADefinitionGenerator::lex()
 	{
 		c = getChar();
 		token += c;
-		Messenger::printVerbose("NETA (%p): found symbol [%s]\n", definition_, token.get());
-		if (symbolTokens().isValid(token.get())) return symbolTokens().enumeration(token.get());
-		else Messenger::error("Unrecognised symbol '%s' found in input.\n", token.get());
- 	}
-	else
+	}
+	
+	Messenger::printVerbose("NETA (%p): found symbol [%s]\n", definition_, token.get());
+	if (NETANode::comparisonOperators().isValid(token.get()))
 	{
-		// Make sure that this is a known symbol
-		if ((c == '$') || (c == '%') || (c == '&') || (c == '@') || (c == '?') || (c == ':'))
-		{
-			printf("Error: Unrecognised symbol found in input (%c).\n", c);
-		}
-		else return c;
+		NETADefinitionGenerator_lval.valueOperator = NETANode::comparisonOperators().enumeration(token.get());
+		return DISSOLVE_NETA_OPERATOR;
 	}
 
 	return 0;
