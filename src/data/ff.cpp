@@ -76,7 +76,6 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
 	{
 		// Get the scoring for this type
 		int score = type->neta().score(i);
-		printf("SCORE for [%s] on [%i] = %i\n", type->name(), i->userIndex(), score);
 		if (score > bestScore)
 		{
 			bestScore = score;
