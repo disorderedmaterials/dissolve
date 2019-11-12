@@ -49,10 +49,6 @@ class NETAConnectionNode : public NETANode
 	// Inner NETA definition to check (if any)
 	NETANode* innerDefinition_;
 
-	private:
-	// Validation function to check supplied atom against allowed elements and types
-	int atomScore(SpeciesAtom* target);
-
 	public:
 	// Set node data
 	void set(Array<int> elementsAndTypes, NETANode* innerneta, SpeciesBond::BondType bondtype);

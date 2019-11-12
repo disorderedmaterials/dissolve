@@ -39,38 +39,11 @@ NETAConnectionNode::~NETAConnectionNode()
 {
 }
 
-// Validation function to check supplied atom against allowed elements and types
-int NETAConnectionNode::atomScore(SpeciesAtom* target)
-{
-
-// 	int totalscore = -1;
-// 	for (RefListItem<ForcefieldAtom,int>* ri = allowedElementsAndTypes_.first(); ri != NULL; ri = ri->next)
-// 	{
-// 		// Simple element, or type reference?
-// 		if (ri->item == NULL)
-// 		{
-// 			if ((ri->data == 0) || (ri->data == target->element()))
-// 			{
-// 				totalscore = 1;
-// 				break;
-// 			}
-// 		}
-// 		else
-// 		{
-// 			totalscore = ri->item->neta()->matchAtom(target, parent()->targetRingList(), parent()->targetParent());
-// 			if (totalscore >= 0) break;
-// 		}
-// 	}
-// 
-// 	return totalscore;
-}
-
 /*
  * Scoring
  */
 
 // Evaluate the node and return its score
-// int NETAConnectionNode::score(SpeciesAtom* target, RefList<SpeciesAtom>* nbrs, RefList<Ring>* rings, NETAContextNode* context, RefList<SpeciesAtom>& path, int level)
 int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
 {
 			printf("I AM THE CONNECTION\n");
