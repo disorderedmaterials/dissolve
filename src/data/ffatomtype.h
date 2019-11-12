@@ -44,6 +44,8 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	 * Identity
 	 */
 	private:
+	// Parent Forcefield
+	const Forcefield* forcefield_;
 	// Index of atom type
 	int index_;
 	// Name of atom type
@@ -52,6 +54,8 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	CharString description_;
 
 	public:
+	// Return parent Forcefield
+	const Forcefield* forcefield() const;
 	// Return index of type
 	int index() const;
 	// Return name of type

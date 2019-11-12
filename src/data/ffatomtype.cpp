@@ -25,6 +25,8 @@
 // Constructors
 ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>()
 {
+	forcefield_ = parent;
+
 	index_ = index;
 	name_ = name;
 	description_ = description;
@@ -39,6 +41,8 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 }
 ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
 {
+	forcefield_ = parent;
+
 	// Copy data from the supplied source
 	index_ = sourceType.index_;
 	name_ = sourceType.name_;
@@ -58,6 +62,12 @@ ForcefieldAtomType::~ForcefieldAtomType()
 /*
  * Identity
  */
+
+// Return parent Forcefield
+const Forcefield* ForcefieldAtomType::forcefield() const
+{
+	return forcefield_;
+}
 
 // Return index of type
 int ForcefieldAtomType::index() const
