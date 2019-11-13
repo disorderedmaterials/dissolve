@@ -665,7 +665,7 @@ bool Forcefield_UFF::assignAtomTypes(Species* sp, CoreData& coreData, bool keepE
 }
 
 // Assign intramolecular parameters to the supplied Species
-bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const
+bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions, bool generateImpropers) const
 {
 	// Create an array of the UFFAtomTypes for the atoms in the Species for speed
 	Array<UFFAtomType*> atomTypes;
