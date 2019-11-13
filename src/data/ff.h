@@ -31,6 +31,7 @@ class CoreData;
 class ForcefieldAngleTerm;
 class ForcefieldAtomType;
 class ForcefieldBondTerm;
+class ForcefieldImproperTerm;
 class ForcefieldParameters;
 class ForcefieldTorsionTerm;
 class Species;
@@ -102,6 +103,8 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	RefList<ForcefieldAngleTerm> angleTerms_;
 	// Torsion terms of the Forcefield
 	RefList<ForcefieldTorsionTerm> torsionTerms_;
+	// Improper terms of the Forcefield
+	RefList<ForcefieldImproperTerm> improperTerms_;
 
 	public:
 	// Register specified bond term
@@ -116,6 +119,10 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	void registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm);
 	// Return torsion term for the supplied atom type quartet (if it exists)
 	ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	// Register specified improper term
+	void registerImproperTerm(ForcefieldImproperTerm* improperTerm);
+	// Return improper term for the supplied atom type quartet (if it exists)
+	ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 
 
 	/*
@@ -125,7 +132,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Assign suitable AtomTypes to the supplied Species
 	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species
-	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const;
+	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions, bool generateImpropers) const;
 
 
 	/*

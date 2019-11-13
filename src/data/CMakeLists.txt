@@ -6,6 +6,7 @@ add_library(data
   ffangleterm.cpp
   ffatomtype.cpp
   ffbondterm.cpp
+  ffimproperterm.cpp
   fflibrary.cpp
   ffparameters.cpp
   fftorsionterm.cpp
@@ -19,6 +20,7 @@ add_library(data
   ffangleterm.h
   ffatomtype.h
   ffbondterm.h
+  ffimproperterm.h
   fflibrary.h
   ffparameters.h
   fftorsionterm.h

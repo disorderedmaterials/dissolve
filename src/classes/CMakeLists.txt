@@ -57,6 +57,7 @@ add_library(classes
   species_isotopologues.cpp
   species_site.cpp
   species_transform.cpp
+  speciesimproper.cpp
   speciesinfo.cpp
   speciesintra.cpp
   speciessite.cpp
@@ -106,6 +107,7 @@ add_library(classes
   speciesangle.h
   speciesatom.h
   speciesbond.h
+  speciesimproper.h
   speciesinfo.h
   speciesintra.h
   speciessite.h

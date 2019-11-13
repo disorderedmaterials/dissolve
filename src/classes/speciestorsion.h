@@ -115,7 +115,7 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	// Return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

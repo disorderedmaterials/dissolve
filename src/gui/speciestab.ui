@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>659</width>
-    <height>420</height>
+    <width>1097</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="font">
@@ -152,62 +152,49 @@
         <number>4</number>
        </property>
        <item>
+        <widget class="QGroupBox" name="ForcefieldGroup">
+         <property name="title">
+          <string>Forcefield</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="ForcefieldButton">
+            <property name="text">
+             <string>&lt;None&gt;</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="ForcefieldAutoApplyCheck">
+            <property name="text">
+             <string>Apply automatically</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QGroupBox" name="ForcefieldGroup">
-           <property name="title">
-            <string>Forcefield</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="ForcefieldButton">
-              <property name="text">
-               <string>&lt;None&gt;</string>
-              </property>
-              <property name="icon">
-               <iconset resource="main.qrc">
-                <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="ForcefieldAutoApplyCheck">
-              <property name="text">
-               <string>Apply automatically</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <property name="spacing">
@@ -334,7 +321,7 @@
               <number>6</number>
              </property>
              <attribute name="horizontalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
@@ -379,12 +366,182 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="BondLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Bonds</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QToolButton" name="BondRemoveButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Remove</string>
+               </property>
+               <property name="icon">
+                <iconset resource="main.qrc">
+                 <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="shortcut">
+                <string>Return</string>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="BondAddButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Add</string>
+               </property>
+               <property name="icon">
+                <iconset resource="main.qrc">
+                 <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="BondTable">
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="showGrid">
+              <bool>true</bool>
+             </property>
+             <property name="columnCount">
+              <number>7</number>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>I</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>J</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Form</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Parameter 1</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Parameter 2</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Parameter 3</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Parameter 4</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </item>
        <item>
         <widget class="QGroupBox" name="ConnectivityIntraGroup">
          <property name="title">
-          <string>Connectivity / Intramolecular Terms</string>
+          <string>Other Intramolecular Terms</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <property name="spacing">
@@ -402,176 +559,6 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <property name="spacing">
-               <number>4</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="BondLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Bonds</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QToolButton" name="BondRemoveButton">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Remove</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>16</width>
-                  <height>16</height>
-                 </size>
-                </property>
-                <property name="shortcut">
-                 <string>Return</string>
-                </property>
-                <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonTextBesideIcon</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QToolButton" name="BondAddButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Add</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>16</width>
-                  <height>16</height>
-                 </size>
-                </property>
-                <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonTextBesideIcon</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QTableWidget" name="BondTable">
-              <property name="showDropIndicator" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="dragDropOverwriteMode">
-               <bool>false</bool>
-              </property>
-              <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectRows</enum>
-              </property>
-              <property name="showGrid">
-               <bool>true</bool>
-              </property>
-              <property name="columnCount">
-               <number>7</number>
-              </property>
-              <attribute name="horizontalHeaderVisible">
-               <bool>true</bool>
-              </attribute>
-              <attribute name="horizontalHeaderStretchLastSection">
-               <bool>true</bool>
-              </attribute>
-              <attribute name="verticalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="verticalHeaderStretchLastSection">
-               <bool>false</bool>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>I</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>J</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Form</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 1</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 2</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 3</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Parameter 4</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
@@ -692,7 +679,7 @@
                <number>8</number>
               </property>
               <attribute name="horizontalHeaderVisible">
-               <bool>true</bool>
+               <bool>false</bool>
               </attribute>
               <attribute name="horizontalHeaderStretchLastSection">
                <bool>true</bool>
@@ -867,7 +854,187 @@
                <number>9</number>
               </property>
               <attribute name="horizontalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
                <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>I</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>J</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>K</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>L</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Form</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Parameter 1</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Parameter 2</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Parameter 3</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Parameter 4</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_11">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="ImproperLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Impropers</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QToolButton" name="ImproperRemoveButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Remove</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="shortcut">
+                 <string>Return</string>
+                </property>
+                <property name="toolButtonStyle">
+                 <enum>Qt::ToolButtonTextBesideIcon</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="ImproperAddButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Add</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="toolButtonStyle">
+                 <enum>Qt::ToolButtonTextBesideIcon</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTableWidget" name="ImproperTable">
+              <property name="showDropIndicator" stdset="0">
+               <bool>false</bool>
+              </property>
+              <property name="dragDropOverwriteMode">
+               <bool>false</bool>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="showGrid">
+               <bool>true</bool>
+              </property>
+              <property name="columnCount">
+               <number>9</number>
+              </property>
+              <attribute name="horizontalHeaderVisible">
+               <bool>false</bool>
               </attribute>
               <attribute name="horizontalHeaderStretchLastSection">
                <bool>true</bool>

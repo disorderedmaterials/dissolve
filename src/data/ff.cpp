@@ -23,6 +23,7 @@
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
+#include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
 #include "classes/atomtype.h"
@@ -172,6 +173,21 @@ ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, cons
 	return NULL;
 }
 
+// Register specified improper term
+void Forcefield::registerImproperTerm(ForcefieldImproperTerm* improperTerm)
+{
+	improperTerms_.append(improperTerm);
+}
+
+// Return improper term for the supplied atom type quartet (if it exists)
+ForcefieldImproperTerm* Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+{
+	RefListIterator<ForcefieldImproperTerm> termIterator(improperTerms_);
+	while (ForcefieldImproperTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
+
+	return NULL;
+}
+
 /*
  * Term Assignment
  */
@@ -214,7 +230,7 @@ bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExist
 }
 
 // Assign intramolecular parameters to the supplied Species
-bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const
+bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions, bool generateImpropers) const
 {
 	/*
 	 * Default implementation - search through term lists for suitable ones to apply, based on ForcefieldAtomType names.
@@ -302,6 +318,54 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 
 			torsion->setForm(term->form());
 			torsion->setParameters(term->parameters());
+		}
+	}
+
+	// Generate improper terms
+	if (generateImpropers && (improperTerms_.nItems() > 0))
+	{
+		// Loop over potential improper sites in the Species and see if any match terms in the forcefield
+		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
+		while (SpeciesAtom* ii = atomIterator.iterate())
+		{
+			// If we have less than three bonds to the central atom 'i', can continue now
+			if (ii->nBonds() < 3) continue;
+
+			// Loop over combinations of bonds to the central atom
+			for (int indexJ = 0; indexJ < ii->nBonds()-2; ++indexJ)
+			{
+				// Get SpeciesAtom 'jj'
+				SpeciesAtom* jj = ii->bond(indexJ)->partner(ii);
+				for (int indexK = indexJ+1; indexK < ii->nBonds()-1; ++indexK)
+				{
+					// Get SpeciesAtom 'kk'
+					SpeciesAtom* kk = ii->bond(indexK)->partner(ii);
+					for (int indexL = indexK+1; indexL < ii->nBonds(); ++indexL)
+					{
+						// Get SpeciesAtom 'll'
+						SpeciesAtom* ll = ii->bond(indexL)->partner(ii);
+
+						// Get forcefield atom types and search for this improper
+						ForcefieldAtomType* i = atomTypes[ii->index()];
+						ForcefieldAtomType* j = atomTypes[jj->index()];
+						ForcefieldAtomType* k = atomTypes[kk->index()];
+						ForcefieldAtomType* l = atomTypes[ll->index()];
+
+						ForcefieldImproperTerm* term = improperTerm(i, j, k, l);
+						if (term)
+						{
+							// Check to see if the Species already has an improper definition - if not create one
+							SpeciesImproper* improper = sp->improper(ii, jj, kk, ll);
+							if (!improper) improper = sp->addImproper(ii, jj, kk, ll);
+
+							Messenger::print("Added improper between atoms %i-%i-%i-%i (%s-%s-%s-%s).\n", improper->indexI()+1, improper->indexJ()+1, improper->indexK()+1, improper->indexL()+1, i->equivalentName(), j->equivalentName(), k->equivalentName(), l->equivalentName());
+
+							improper->setForm(term->form());
+							improper->setParameters(term->parameters());
+						}
+					}
+				}
+			}
 		}
 	}
 

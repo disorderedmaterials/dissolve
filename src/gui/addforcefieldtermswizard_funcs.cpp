@@ -235,7 +235,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
 
 			// Assign intramolecular terms
-			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
+			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked(), ui_.ImproperTermsCheck->isChecked())) return false;
 
 			// Reduce to master terms?
 			if (ui_.BondTermsMasterCheck->isChecked())
@@ -308,6 +308,30 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 						master->setParameters(torsion->parameters());
 					}
 					torsion->setMasterParameters(master);
+				}
+			}
+			if (ui_.ImproperTermsMasterCheck->isChecked())
+			{
+				CharString improperName;
+
+				// Loop over impropers in the modified species
+				DynamicArrayIterator<SpeciesImproper> improperIterator(modifiedSpecies_->impropers());
+				while (SpeciesImproper* improper = improperIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) improperName.sprintf("%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
+					else improperName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterImproper(improperName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterImproper(improperName);
+						master->setForm(improper->form());
+						master->setParameters(improper->parameters());
+					}
+					improper->setMasterParameters(master);
 				}
 			}
 

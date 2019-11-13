@@ -44,12 +44,12 @@ class SpeciesIntra
 	// Destructor
 	virtual ~SpeciesIntra();
 	// Interaction Type
-	enum IntramolecularType
+	enum InteractionType
 	{
-		IntramolecularBond,		/* Interaction is a bond between two atoms in the same molecule */
-		IntramolecularAngle,		/* Interaction is an angle between three atoms in the same molecule */
-		IntramolecularTorsion,		/* Interaction is a torsion between four atoms in the same molecule */
-		IntramolecularImproper		/* Interaction is an improper torsion between four atoms in the same molecule */
+		BondInteraction,		/* Interaction is a bond between two atoms in the same molecule */
+		AngleInteraction,		/* Interaction is an angle between three atoms in the same molecule */
+		TorsionInteraction,		/* Interaction is a torsion between four atoms in the same molecule */
+		ImproperInteraction		/* Interaction is an improper torsion between four atoms in the same molecule */
 	};
 
 
@@ -110,7 +110,7 @@ class SpeciesIntra
 	// Calculate and return fundamental frequency for the interaction
 	virtual double fundamentalFrequency(double reducedMass) const = 0;
 	// Return type of this interaction
-	virtual IntramolecularType type() const = 0;
+	virtual InteractionType type() const = 0;
 
 
 	/*

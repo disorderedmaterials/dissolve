@@ -1,6 +1,6 @@
 /*
 	*** SpeciesImproper Definition
-	*** src/classes/speciestorsion.h
+	*** src/classes/speciesimproper.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESTORSION_H
-#define DISSOLVE_SPECIESTORSION_H
+#ifndef DISSOLVE_SPECIESIMPROPER_H
+#define DISSOLVE_SPECIESIMPROPER_H
 
 #include "classes/speciesintra.h"
 #include "templates/dynamicarrayobject.h"
@@ -94,18 +94,14 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	enum ImproperFunction
 	{
 		CosineForm,
-		Cos3Form,
-		Cos4Form,
-		Cos3CForm,
-		UFFCosineForm,
 		nImproperFunctions
 	};
 	// Convert string to functional form
-	static ImproperFunction torsionFunction(const char* s);
+	static ImproperFunction improperFunction(const char* s);
 	// Return functional form text
-	static const char* torsionFunction(ImproperFunction func);
+	static const char* improperFunction(ImproperFunction func);
 	// Return functional form array
-	static const char** torsionFunctions();
+	static const char** improperFunctions();
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(ImproperFunction func);
 
@@ -115,7 +111,7 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	// Return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

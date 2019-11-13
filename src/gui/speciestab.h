@@ -91,6 +91,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool createItems);
 	// SpeciesTorsionTable row update function
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
+	// SpeciesImproperTable row update function
+	void updateImproperTableRow(int row, SpeciesImproper* speciesImproper, bool createItems);
 	// IsotopologuesTree top-level update function
 	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
 	// IsotopologuesTree item update function
@@ -136,6 +138,9 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_TorsionAddButton_clicked(bool checked);
 	void on_TorsionRemoveButton_clicked(bool checked);
 	void on_TorsionTable_itemChanged(QTableWidgetItem* w);
+	void on_ImproperAddButton_clicked(bool checked);
+	void on_ImproperRemoveButton_clicked(bool checked);
+	void on_ImproperTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

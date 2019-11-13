@@ -458,6 +458,162 @@ bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Species
 	return false;
 }
 
+// Add new SpeciesImproper definition (from SpeciesAtom*)
+SpeciesImproper* Species::addImproper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(j))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(k))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(l))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+
+	// Check for existence of Improper already
+	if (hasImproper(i, j, k, l))
+	{
+		Messenger::warn("Refused to add a new Improper between atoms %i, %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+		return NULL;
+	}
+
+	// OK to add new improper
+	SpeciesImproper* imp = impropers_.add();
+	imp->setParent(this);
+	imp->setAtoms(i, j, k, l);
+
+	++version_;
+
+	return imp;
+}
+
+// Add new SpeciesImproper definition
+SpeciesImproper* Species::addImproper(int i, int j, int k, int l)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return NULL;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return NULL;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return NULL;
+	}
+	if ((l < 0) || (l >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", l, name_.get());
+		return NULL;
+	}
+
+	return addImproper(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
+
+// Reconnect existing SpeciesImproper
+bool Species::reconnectImproper(SpeciesImproper* improper, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	// Check ownership of the SpeciesImproper
+	if (!impropers_.contains(improper)) return Messenger::error("BAD_OWNERSHIP - SpeciesImproper is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+	if (!atoms_.contains(j)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+	if (!atoms_.contains(k)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+	if (!atoms_.contains(l)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+
+	// If a improper already exists between these Atoms, refuse to add it
+	if (hasImproper(i, j, k, l)) return Messenger::error("A improper between atoms %i-%i-%i-%i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+
+	// Set the new angle atoms
+	improper->setAtoms(i, j, k, l);
+
+	++version_;
+
+	return true;
+}
+
+// Reconnect existing SpeciesImproper
+bool Species::reconnectImproper(SpeciesImproper* improper, int i, int j, int k, int l)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return false;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return false;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return false;
+	}
+	if ((l < 0) || (l >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", l, name_.get());
+		return false;
+	}
+
+	return reconnectImproper(improper, atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
+// Return number of SpeciesImproper defined
+int Species::nImpropers() const
+{
+	return impropers_.nItems();
+}
+
+// Return array of SpeciesImproper
+DynamicArray<SpeciesImproper>& Species::impropers()
+{
+	return impropers_;
+}
+
+// Return array of SpeciesImproper (const)
+const DynamicArray<SpeciesImproper>& Species::constImpropers() const
+{
+	return impropers_;
+}
+
+// Return whether SpeciesImproper between SpeciesAtoms exists
+bool Species::hasImproper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+{
+	DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers_);
+	while (const SpeciesImproper* imp = improperIterator.iterate()) if (imp->matches(i, j, k, l)) return true;
+
+	return false;
+}
+
+// Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
+SpeciesImproper* Species::improper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	DynamicArrayIterator<SpeciesImproper> improperIterator(impropers_);
+	while (SpeciesImproper* imp = improperIterator.iterate()) if (imp->matches(i, j, k, l)) return imp;
+
+	return NULL;
+}
+
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const
 {
