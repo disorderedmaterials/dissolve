@@ -53,7 +53,7 @@ const char* MasterIntra::name() const
 }
 
 // Set type of interaction
-void MasterIntra::setType(SpeciesIntra::IntramolecularType type)
+void MasterIntra::setType(SpeciesIntra::InteractionType type)
 {
 	type_ = type;
 }
@@ -75,7 +75,7 @@ double MasterIntra::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::IntramolecularType MasterIntra::type() const
+SpeciesIntra::InteractionType MasterIntra::type() const
 {
 	return type_;
 }

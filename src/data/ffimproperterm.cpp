@@ -1,6 +1,6 @@
 /*
-	*** Forcefield Torsion Term
-	*** src/data/fftorsionterm.cpp
+	*** Forcefield Improper Term
+	*** src/data/ffimproperterm.cpp
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/fftorsionterm.h"
+#include "data/ffimproperterm.h"
 #include "data/ffatomtype.h"
 #include "data/ff.h"
 
 // Constructor
-ForcefieldTorsionTerm::ForcefieldTorsionTerm(Forcefield* parent, const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2, double data3)
+ForcefieldImproperTerm::ForcefieldImproperTerm(Forcefield* parent, const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0, double data1, double data2, double data3)
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -37,11 +37,11 @@ ForcefieldTorsionTerm::ForcefieldTorsionTerm(Forcefield* parent, const char* typ
 	parameters_[3] = data3;
 
 	// Register this atom type with the parent forcefield
-	if (parent) parent->registerTorsionTerm(this);
+	if (parent) parent->registerImproperTerm(this);
 }
 
 // Destructor
-ForcefieldTorsionTerm::~ForcefieldTorsionTerm()
+ForcefieldImproperTerm::~ForcefieldImproperTerm()
 {
 }
 
@@ -50,7 +50,7 @@ ForcefieldTorsionTerm::~ForcefieldTorsionTerm()
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldTorsionTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l)
+bool ForcefieldImproperTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l)
 {
 	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName()) && DissolveSys::sameWildString(typeL_, l->equivalentName())) return true;
 	if (DissolveSys::sameWildString(typeL_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, j->equivalentName()) && DissolveSys::sameWildString(typeJ_, k->equivalentName()) && DissolveSys::sameWildString(typeI_, l->equivalentName())) return true;
@@ -59,13 +59,13 @@ bool ForcefieldTorsionTerm::matches(const ForcefieldAtomType* i, const Forcefiel
 }
 
 // Return functional form index of interaction
-SpeciesTorsion::TorsionFunction ForcefieldTorsionTerm::form() const
+SpeciesImproper::ImproperFunction ForcefieldImproperTerm::form() const
 {
 	return form_;
 }
 
 // Return array of parameters
-const double* ForcefieldTorsionTerm::parameters() const
+const double* ForcefieldImproperTerm::parameters() const
 {
 	return parameters_;
 }

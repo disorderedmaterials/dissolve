@@ -314,9 +314,9 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 			else
 			{
 				// If this interaction is a torsion, treat it as a special case
-				if (intra->type() == SpeciesIntra::IntramolecularTorsion)
+				if ((intra->type() == SpeciesIntra::TorsionInteraction) || (intra->type() == SpeciesIntra::ImproperInteraction))
 				{
-					// TODO This will kill all torsions interactions!
+					// TODO This will kill all torsion and improper interactions!
 					result.set(BroadeningFunction::NoFunction);
 				}
 				else
@@ -329,8 +329,8 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 					double wno = v / (SPEEDOFLIGHT * 100.0);
 					printf("Wavenumbers = %f\n", wno);
 
-					if (intra->type() == SpeciesIntra::IntramolecularBond) result.set(BroadeningFunction::GaussianFunction, frequencyBondConstant_*wno);
-					else if (intra->type() == SpeciesIntra::IntramolecularAngle) result.set(BroadeningFunction::GaussianFunction, frequencyAngleConstant_*wno);
+					if (intra->type() == SpeciesIntra::BondInteraction) result.set(BroadeningFunction::GaussianFunction, frequencyBondConstant_*wno);
+					else if (intra->type() == SpeciesIntra::AngleInteraction) result.set(BroadeningFunction::GaussianFunction, frequencyAngleConstant_*wno);
 				}
 			}
 			break;

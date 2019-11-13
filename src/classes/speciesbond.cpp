@@ -60,7 +60,6 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 {
 	i_ = i;
 	j_ = j;
-	printf("SPBOND %p %p\n", i_, j_);
 #ifdef CHECKS
 	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
 	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
@@ -257,9 +256,9 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::IntramolecularType SpeciesBond::type() const
+SpeciesIntra::InteractionType SpeciesBond::type() const
 {
-	return SpeciesIntra::IntramolecularBond;
+	return SpeciesIntra::BondInteraction;
 }
 
 // Return energy for specified distance

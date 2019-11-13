@@ -92,7 +92,7 @@ bool Species::applyForcefieldTerms(CoreData& coreData)
 
 	// Apply the specified Forcefield
 	if (!forcefield_->assignAtomTypes(this, coreData, false)) return false;
-	if (!forcefield_->assignIntramolecular(this, true, true, true, true)) return false;
+	if (!forcefield_->assignIntramolecular(this, true, true, true, true, true)) return false;
 
 	return true;
 }

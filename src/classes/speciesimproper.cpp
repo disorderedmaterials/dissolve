@@ -41,7 +41,7 @@ SpeciesImproper::~SpeciesImproper()
  */
 
 // Clear object, ready for re-use
-void SpeciesTorsion::clear()
+void SpeciesImproper::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -182,24 +182,24 @@ bool SpeciesImproper::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
  */
 
 // Improper function keywords
-const char* ImproperFunctionKeywords[] = { "Cos", "Cos3", "Cos4", "Cos3C", "UFFCosine" };
-int ImproperFunctionNParameters[] = { 4, 3, 4, 4, 3 };
+const char* ImproperFunctionKeywords[] = { "Cos" };
+int ImproperFunctionNParameters[] = { 4 };
 
 // Convert string to functional form
-SpeciesImproper::ImproperFunction SpeciesImproper::torsionFunction(const char* s)
+SpeciesImproper::ImproperFunction SpeciesImproper::improperFunction(const char* s)
 {
 	for (int n=0; n<SpeciesImproper::nImproperFunctions; ++n) if (DissolveSys::sameString(s, ImproperFunctionKeywords[n])) return (SpeciesImproper::ImproperFunction) n;
 	return SpeciesImproper::nImproperFunctions;
 }
 
 // Return functional form text
-const char* SpeciesImproper::torsionFunction(SpeciesImproper::ImproperFunction func)
+const char* SpeciesImproper::improperFunction(SpeciesImproper::ImproperFunction func)
 {
 	return ImproperFunctionKeywords[func];
 }
 
 // Return functional form array
-const char** SpeciesImproper::torsionFunctions()
+const char** SpeciesImproper::improperFunctions()
 {
 	return ImproperFunctionKeywords;
 }
@@ -218,14 +218,14 @@ void SpeciesImproper::setUp()
 // Calculate and return fundamental frequency for the interaction
 double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 {
-	Messenger::warn("No fundamental frequency can be calculated for this torsion interaction.\n");
+	Messenger::warn("No fundamental frequency can be calculated for this improper interaction.\n");
 	return 0.0;
 }
 
 // Return type of this interaction
-SpeciesIntra::IntramolecularType SpeciesImproper::type() const
+SpeciesIntra::InteractionType SpeciesImproper::type() const
 {
-	return SpeciesIntra::IntramolecularImproper;
+	return SpeciesIntra::ImproperInteraction;
 }
 
 // Return energy for specified angle
@@ -249,56 +249,6 @@ double SpeciesImproper::energy(double angleInDegrees) const
 		 * 3 : Sign 's'
 		 */
 		return params[0] * (1.0 + params[3] * cos(params[1]*phi - (params[2] / DEGRAD)));
-	}
-	else if (form() == SpeciesImproper::Cos3Form)
-	{
-		/*
-		 * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
-		 *
-		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : force constant k2
-		 * 2 : force constant k3
-		 */
-		return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0*phi)) + params[2] * (1.0 + cos(3.0*phi)));
-	}
-	else if (form() == SpeciesImproper::Cos4Form)
-	{
-		/*
-		 * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) )
-		 *
-		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : force constant k2
-		 * 2 : force constant k3
-		 * 3 : force constant k4
-		 */
-		return 0.5 * (params[0]*(1.0+cos(phi)) + params[1]*(1.0-cos(2.0*phi)) + params[2]*(1.0+cos(3.0*phi)) + params[3]*(1.0-cos(4.0*phi)) );
-	}
-	else if (form() == SpeciesImproper::Cos3CForm)
-	{
-		/*
-		 * U(phi) = k0 + 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
-		 *
-		 * Parameters:
-		 * 0 : force constant k0
-		 * 1 : force constant k1
-		 * 2 : force constant k2
-		 * 3 : force constant k3
-		 */
-		return params[0] + 0.5 * (params[1]*(1.0+cos(phi)) + params[2]*(1.0-cos(2.0*phi)) + params[3]*(1.0+cos(3.0*phi)) );
-	}
-	else if (form() == SpeciesImproper::UFFCosineForm)
-	{
-		/*
-		 * U(phi) = 0.5 * V * (1 - cos(n*eq) * cos(n*phi))
-		 *
-		 * Parameters:
-		 * 0 : Force constant, V
-		 * 1 : Periodicity, n
-		 * 2 : Equilibrium angle, eq (degrees)
-		 */
-		return 0.5 * params[0] * (1.0 - cos(params[1]*params[2]/DEGRAD) * cos(params[1]*phi));
 	}
 
 	Messenger::error("Functional form of SpeciesImproper term not set, so can't calculate energy.\n");
@@ -327,56 +277,6 @@ double SpeciesImproper::force(double angleInDegrees) const
 		 * 3 : Sign 's'
 		 */
 		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1]*phi - (params[2] / DEGRAD));
-	}
-	else if (form() == SpeciesImproper::Cos3Form)
-	{
-		/*
-		 * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
-		 *
-		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : force constant k2
-		 * 2 : force constant k3
-		 */
-		return dphi_dcosphi * 0.5 * ( -params[0]*sin(phi) + 2.0*params[1]*sin(2.0*phi) - 3.0*params[2]*sin(3.0*phi));
-	}
-	else if (form() == SpeciesImproper::Cos4Form)
-	{
-		/*
-		 * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
-		 *
-		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : force constant k2
-		 * 2 : force constant k3
-		 * 3 : force constant k4
-		 */
-		return dphi_dcosphi * 0.5 * ( params[0]*sin(phi) + params[1]*sin(2.0*phi) + params[2]*sin(3.0*phi) + params[3]*sin(4.0*phi));
-	}
-	else if (form() == SpeciesImproper::Cos3CForm)
-	{
-		/*
-		 * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*(sin(4*phi)))
-		 *
-		 * Parameters:
-		 * 0 : force constant k0
-		 * 1 : force constant k1
-		 * 2 : force constant k2
-		 * 3 : force constant k3
-		 */
-		return dphi_dcosphi * 0.5 * ( -params[1]*sin(phi) + 2.0*params[2]*sin(2.0*phi) - 3.0*params[3]*sin(3.0*phi));
-	}
-	else if (form() == SpeciesImproper::UFFCosineForm)
-	{
-		/*
-		 * dU/d(phi) = 0.5 * V * cos(n*eq) * n * sin(n*phi)
-		 *
-		 * Parameters:
-		 * 0 : Force constant, V
-		 * 1 : Periodicity, n
-		 * 2 : Equilibrium angle, eq (degrees)
-		 */
-		return 0.5 * params[0] * params[0] * cos(params[1]*params[2]/DEGRAD) * params[1] * sin(params[1]*phi);
 	}
 
 	Messenger::error("Functional form of SpeciesImproper term not set, so can't calculate force.\n");

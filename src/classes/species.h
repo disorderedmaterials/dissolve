@@ -26,6 +26,7 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
+#include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
@@ -143,6 +144,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	DynamicArray<SpeciesAngle> angles_;
 	// Array of torsions between atoms in the Species
 	DynamicArray<SpeciesTorsion> torsions_;
+	// Array of impropers between atoms in the Species
+	DynamicArray<SpeciesImproper> impropers_;
 	// Whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated_;
 
@@ -201,6 +204,24 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const DynamicArray<SpeciesTorsion>& constTorsions() const;
 	// Return whether SpeciesTorsion between SpeciesAtoms exists
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	// Add new SpeciesImproper definition (from SpeciesAtom*)
+	SpeciesImproper* addImproper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
+	// Add new SpeciesImproper definition
+	SpeciesImproper* addImproper(int i, int j, int k, int l);
+	// Reconnect existing SpeciesImproper
+	bool reconnectImproper(SpeciesImproper* improper, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
+	// Reconnect existing SpeciesImproper
+	bool reconnectImproper(SpeciesImproper* improper, int i, int j, int k, int l);
+	// Return number of SpeciesImproper defined
+	int nImpropers() const;
+	// Return array of SpeciesImproper
+	DynamicArray<SpeciesImproper>& impropers();
+	// Return array of SpeciesImproper (const)
+	const DynamicArray<SpeciesImproper>& constImpropers() const;
+	// Return whether SpeciesImproper between SpeciesAtoms exists
+	bool hasImproper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	// Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
+	SpeciesImproper* improper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
 	// Return whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated() const;
 	// Generate attached Atom lists for all intramolecular terms
