@@ -13,7 +13,7 @@ To simulate any system we need to supply suitable parameters to describe the int
 We'll now describe the interactions for your argon species by taking the terms from one of Dissolve's [built-in forcefields](../../setup/forcefields.md).
 
 > **Species (Argon)** tab
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Species &#8680; Add Forcefield Terms
 {: .action .action_menu}
 > From the available forcefields choose `OPLSAA2005/NobleGases`
@@ -32,7 +32,7 @@ If you now return to the _Forcefield_{: .text-green-100} tab you will see in the
 By default, Dissolve will generate all the necessary pair potentials for the current set of atom types automatically - these are listed in the _Pair Potentials_{: .text-green-100} section where you can select individual potentials and visualise them in the associated plot. Before we move on, we'll reduce the pair potential range for the simulation.
 
 > **Forcefield** tab, **Pair Potentials** section
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Reduce the pair potential **Range** from 15 to 10
 {: .step}
 

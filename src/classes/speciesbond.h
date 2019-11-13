@@ -23,9 +23,7 @@
 #define DISSOLVE_SPECIESBOND_H
 
 #include "classes/speciesintra.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -33,13 +31,21 @@ class Species;
 class ProcessPool;
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
+class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 {
 	public:
 	// Constructor
 	SpeciesBond();
 	// Destructor
 	~SpeciesBond();
+
+
+	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
 
 
 	/*
@@ -122,7 +128,7 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	// Return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

@@ -20,11 +20,7 @@
 */
 
 #include "classes/molecule.h"
-#include "classes/angle.h"
 #include "classes/atom.h"
-#include "classes/bond.h"
-#include "classes/grain.h"
-#include "classes/torsion.h"
 #include "classes/box.h"
 
 // Constructor
@@ -34,10 +30,6 @@ Molecule::Molecule() : DynamicArrayObject<Molecule>()
 
 	// Set sensible defaults for Arrays
 	atoms_.setChunkSize(2);
-	grains_.setChunkSize(2);
-	bonds_.setChunkSize(2);
-	angles_.setChunkSize(2);
-	torsions_.setChunkSize(2);
 }
 
 // Destructor
@@ -55,24 +47,20 @@ void Molecule::clear()
 	species_ = NULL;
 
 	atoms_.clear();
-	grains_.clear();
-	bonds_.clear();
-	angles_.clear();
-	torsions_.clear();
 }
 
 /*
- * Atoms / Grains
+ * Contents
  */
 
-// Set Species which the Molecule represents
-void Molecule::setSpecies(Species* sp)
+// Set Species that this Molecule represents
+void Molecule::setSpecies(const Species* sp)
 {
 	species_ = sp;
 }
 
-// Return Species which the Molecule represents
-Species* Molecule::species() const
+// Return Species that this Molecule represents
+const Species* Molecule::species() const
 {
 	return species_;
 }
@@ -114,142 +102,6 @@ Atom* Molecule::atom(int n) const
 	}
 #endif
 	return atoms_.constAt(n);
-}
-
-// Add Grain to Molecule
-void Molecule::addGrain(Grain* grain)
-{
-	grains_.add(grain);
-
-	if (grain->molecule() != NULL) Messenger::warn("Molecule parent is already set in Grain id %i, and we are about to overwrite it...\n", grain->arrayIndex());
-	grain->setMolecule(this);
-}
-
-// Return size of Grain array
-int Molecule::nGrains() const
-{
-	return grains_.nItems();
-}
-
-// Return nth Grain pointer
-Grain* Molecule::grain(int n)
-{
-#ifdef CHECKS
-	if ((n < 0) || (n >= grains_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::grain() (nGrains = %i).\n", n, grains_.nItems());
-		return NULL;
-	}
-#endif
-	return grains_[n];
-}
-
-// Add Bond to Molecule
-void Molecule::addBond(Bond* bond)
-{
-	bonds_.add(bond);
-
-	if (bond->molecule() != NULL) Messenger::warn("Molecule parent is already set in Bond id %i, and we are about to overwrite it...\n", bond->arrayIndex());
-	bond->setMolecule(this);
-}
-
-// Return size of Bond array
-int Molecule::nBonds() const
-{
-	return bonds_.nItems();
-}
-
-// Return Bond array
-Bond** Molecule::bonds()
-{
-	return bonds_;
-}
-
-// Return nth Bond pointer
-Bond* Molecule::bond(int n) const
-{
-	return bonds_.constAt(n);
-}
-
-// Add Angle to Molecule
-void Molecule::addAngle(Angle* angle)
-{
-	angles_.add(angle);
-
-	if (angle->molecule() != NULL) Messenger::warn("Molecule parent is already set in Angle id %i, and we are about to overwrite it...\n", angle->arrayIndex());
-	angle->setMolecule(this);
-}
-
-// Return size of Angle array
-int Molecule::nAngles() const
-{
-	return angles_.nItems();
-}
-
-// Return Angle array
-Angle** Molecule::angles()
-{
-	return angles_;
-}
-
-// Return nth Angle pointer
-Angle* Molecule::angle(int n) const
-{
-	return angles_.constAt(n);
-}
-
-// Add Torsion to Molecule
-void Molecule::addTorsion(Torsion* torsion)
-{
-	torsions_.add(torsion);
-
-	if (torsion->molecule() != NULL) Messenger::warn("Molecule parent is already set in Torsion id %i, and we are about to overwrite it...\n", torsion->arrayIndex());
-	torsion->setMolecule(this);
-}
-
-// Return size of Torsion array
-int Molecule::nTorsions() const
-{
-	return torsions_.nItems();
-}
-
-// Return Torsion array
-Torsion** Molecule::torsions()
-{
-	return torsions_;
-}
-
-// Return nth Torsion pointer
-Torsion* Molecule::torsion(int n) const
-{
-	return torsions_.constAt(n);
-}
-
-/*
- * Upkeep
- */
-
-// Select Atoms along any path from the specified one
-void Molecule::selectFromAtom(Atom* i, RefList<Atom>& selectedAtoms, Bond* excludedBond1, Bond* excludedBond2)
-{
-	// Add this Atom to our list
-	selectedAtoms.addUnique(i);
-
-	// Loop over Bonds on this Atom
-	Atom* j;
-	for (int n=0; n<i->bonds().nItems(); ++n)
-	{
-		Bond* bond = i->bonds().value(n);
-
-		// Is this an excluded Bond?
-		if (excludedBond1 == bond) continue;
-		if (excludedBond2 == bond) continue;
-
-		// Get Bond partner Atom and begin selection from it unless it's already in the list
-		j = bond->partner(i);
-		if (selectedAtoms.contains(j)) continue;
-		selectFromAtom(j, selectedAtoms, excludedBond1, excludedBond2);
-	}
 }
 
 /*

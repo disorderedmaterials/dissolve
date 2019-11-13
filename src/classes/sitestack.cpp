@@ -22,6 +22,7 @@
 #include "classes/sitestack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/speciesatom.h"
 #include "classes/speciessite.h"
 #include "data/atomicmass.h"
 #include "base/processpool.h"
@@ -91,12 +92,12 @@ bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 #endif
 		if (speciesSite->originMassWeighted())
 		{
-			double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->element());
+			double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->element());
 			origin = molecule->atom(originAtomIndices.firstValue())->r() * mass;
 			double massNorm = mass;
 			for (int m=1; m<originAtomIndices.nItems(); ++m)
 			{
-				mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->element());
+				mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->element());
 				origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(), molecule->atom(originAtomIndices.firstValue())->r()) * mass;
 				massNorm += mass;
 			}

@@ -426,6 +426,27 @@ void DissolveWindow::removeModuleTab(Module* module)
  * Public Slots
  */
 
+
+// Add or go to Module tab for the Module with the unique name provided
+void DissolveWindow::showModuleTab(const QString& uniqueName)
+{
+	// Find the Module
+	Module* module = dissolve_.findModuleInstance(qPrintable(uniqueName));
+	if (!module) return;
+
+	addModuleTab(module);
+}
+
+// Remove the Module tab (if it exists) for the Module with the unique name provided
+void DissolveWindow::removeModuleTab(const QString& uniqueName)
+{
+	// Find the Module
+	Module* module = dissolve_.findModuleInstance(qPrintable(uniqueName));
+	if (!module) return;
+
+	removeModuleTab(module);
+}
+
 // Remove tab containing the specified page widget
 void DissolveWindow::removeTab(QWidget* page)
 {

@@ -22,6 +22,7 @@
 #include "modules/energy/energy.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
+#include "classes/species.h"
 #include "genericitems/listhelper.h"
 
 // Return total intramolecular energy
@@ -55,17 +56,25 @@ double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* 
 	int start = procPool.interleavedLoopStart(strategy);
 	int stride = procPool.interleavedLoopStride(strategy);
 
-	// Loop over defined Bonds
-	Bond** bonds = cfg->bonds().array();
-	for (int m=start; m<cfg->nBonds(); m += stride) bondEnergy += kernel.energy(bonds[m]);
+	Molecule** molecules = cfg->molecules().array();
+	const Molecule* mol;
+	for (int m=start; m<cfg->nMolecules(); m += stride)
+	{
+		// Get Molecule pointer
+		mol = molecules[m];
 
-	// Loop over defined Angles
-	Angle** angles = cfg->angles().array();
-	for (int m=start; m<cfg->nAngles(); m += stride) angleEnergy += kernel.energy(angles[m]);
+		// Loop over Bonds
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
+		while (const SpeciesBond* b = bondIterator.iterate()) bondEnergy += kernel.energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-	// Loop over defined Torsions
-	Torsion** torsions = cfg->torsions().array();
-	for (int m=start; m<cfg->nTorsions(); m += stride) torsionEnergy += kernel.energy(torsions[m]);
+		// Loop over Angles
+		DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
+		while (const SpeciesAngle* a = angleIterator.iterate()) angleEnergy += kernel.energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+
+		// Loop over Torsions
+		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
+		while (const SpeciesTorsion* t = torsionIterator.iterate()) torsionEnergy += kernel.energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+	}
 
 	double totalIntra = bondEnergy + angleEnergy + torsionEnergy;
 

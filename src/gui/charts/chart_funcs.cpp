@@ -21,6 +21,7 @@
 
 #include "gui/charts/chart.hui"
 #include "gui/widgets/mimestrings.h"
+#include "base/charstring.h"
 #include <QApplication>
 #include <QDrag>
 #include <QMimeData>
@@ -37,8 +38,7 @@ ChartBase::ChartBase(QWidget* parent) : QWidget(parent)
 	// Drag / Drop
 	setAcceptDrops(true);
 	draggedBlock_ = NULL;
-	externalObjectDragged_ = false;
-	currentHotSpotIndex_ = -1;
+	currentHotSpot_ = NULL;
 }
 
 ChartBase::~ChartBase()
@@ -131,16 +131,11 @@ void ChartBase::mouseMoveEvent(QMouseEvent* event)
 	if (!draggedBlock_) return;
 
 	// Generate mime data for the event
-	QByteArray itemData;
-	QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-	dataStream << draggedBlock_;
-	QMimeData* mimeData = new QMimeData;
-	mimeData->setData("image/x-dissolve-moduleblock", itemData);
+	MimeStrings* mimeData = new MimeStrings(mimeInfo(draggedBlock_));
 
 	// Construct the drag object
 	QDrag* drag = new QDrag(this);
 	drag->setMimeData(mimeData);
-// 	drag->setHotSpot(dragStartPosition_ -
 	drag->setPixmap(draggedBlock_->widget()->grab());
 
 	// Recalculate the layout
@@ -175,177 +170,119 @@ void ChartBase::mouseDoubleClickEvent(QMouseEvent* event)
 	ChartBlock* chartBlock = dragBlockAt(event->pos());
 	if (!chartBlock) return;
 
-	// Attempt to open the Module in a ModuleTab
-// 	dissolveWindow_->addModuleTab(moduleBlock->module());
+	// Perform the double-click action (if relevant)
+	blockDoubleClicked(chartBlock);
 }
 
 // Drag enter event
 void ChartBase::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Is the correct data type being dragged over us?
-	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock")) event->accept();
-	else if (event->mimeData()->hasFormat("image/x-dissolve-paletteblock")) event->accept();
-	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
+	if (!event->mimeData()->hasFormat("dissolve/mimestrings"))
 	{
-		// Cast into a MimeStrings object
-		const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
-		if (!mimeStrings) return;
-
-		// Check if the relevant datum is present
-		if (mimeStrings->hasData(MimeString::ModuleType))
-		{
-			externalObjectDragged_ = true;
-			externalDragObjectData_ = mimeStrings->data(MimeString::ModuleType);
-			event->accept();
-		}
-		else event->ignore();
+		event->ignore();
+		return;
 	}
+
+	// Get the MimeStrings data
+	const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
+	if (!mimeStrings)
+	{
+		event->ignore();
+		return;
+	}
+
+	// Do we accept the dragged object?
+	if (!acceptDraggedObject(mimeStrings))
+	{
+		event->ignore();
+		return;
+	}
+	else event->accept();
 }
 
 // Drag leave event
 void ChartBase::dragLeaveEvent(QDragLeaveEvent* event)
 {
-	// Object has been dragged outside the widget
-	resetAfterDrop();
-
-	update();
-
-	event->accept();
+	// Always ignore the drag leave event
+	// This event triggers when moving the dragged item over another widget displayed in the same chart.
+	event->ignore();
 }
 
 // Draw move event
 void ChartBase::dragMoveEvent(QDragMoveEvent* event)
 {
-	// Check to see if the mouse is currently over any defined hot spot
-	ChartHotSpot* spotUnderMouse = hotSpotAt(event->pos());
-	if (!spotUnderMouse)
-	{
-		// If there was a previous hot-spot, recreate the display widgets and lay out again
-		bool previousHotSpot = currentHotSpotIndex_ != -1;
+	// Check the current drag position - if the hotspot has changed, lay out the widgets again
+	ChartHotSpot* newHotSpot = hotSpotAt(event->pos());
+	if (currentHotSpot_ == newHotSpot) return;
 
-		currentHotSpotIndex_ = -1;
+	currentHotSpot_ = newHotSpot;
 
-		if (previousHotSpot)
-		{
-			layOutWidgets(true);
-		}
-
-		repaint();
-
-		return;
-	}
-
-	/*
-	 * Store the index of the hot spot, rather than the pointer to it, since the pointer will become invalid as soon as we
-	 * recalculate the layout of the widgets (when the dragged widget is made invisible). The index of the hot spot should always be valid.
-	 */
-	currentHotSpotIndex_ = hotSpots_.indexOf(spotUnderMouse);
-
-	// There is a hotspot here - do we need to recalculate the layout?
-	if (spotUnderMouse->type() == ChartHotSpot::InsertionHotSpot)
-	{
-		layOutWidgets(true);
-	}
-
-	repaint();
+	// Handle any actions arising from hovering over the hotspot
+	if (handleHotSpotHover(currentHotSpot_)) layOutWidgets(true);
 }
 
 // Drop event
 void ChartBase::dropEvent(QDropEvent* event)
 {
-	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock"))
-	{
-		// Check for a current hot spot and ensure we have a current draggedBlock_
-		ChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
-		if ((!hotSpot) || (!draggedBlock_))
-		{
-			event->ignore();
-			resetAfterDrop();
-			return;
-		}
-
-// 		// Cast the dragged block up to a ProcedureChartNodeBlock
-// 		ProcedureChartNodeBlock* block = dynamic_cast<ProcedureChartNodeBlock*>(draggedBlock_);
-// 		if (!block) return;
-
-		// TODO
-// 		Module* targetModule = draggedBlock_->module();
-// 
-// 		// Get the Module before which we are going to move the targetModule
-// 		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
-// 
-// 		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
-// 		if (targetModule->next != beforeModule)
-// 		{
-// 			modules_.modules().moveBefore(targetModule, beforeModule);
-// 
-// 			// Flag that the current data has changed
-// // 			dissolveWindow_->setModified();
-// 		}
-
-		updateControls();
-
-		// Widgets are almost in the right place, so don't animate anything
-		resetAfterDrop(false);
-	}
-	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
-	{
-		// Cast into a MimeStrings object
-		const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
-		if (!mimeStrings) return;
-		if (!mimeStrings->hasData(MimeString::ModuleType))
-		{
-			event->ignore();
-			resetAfterDrop();
-			return;
-		}
-
-		// Check for a current hot spot and ensure we have a current palette Module
-		ChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
-		if ((!hotSpot) || (!externalObjectDragged_))
-		{
-			event->ignore();
-			resetAfterDrop();
-			return;
-		}
-
-		// Create the new node
-		// TODO
-// 		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(externalDragObjectData_));
-
-// 		// Get the ModuleReference before which we are going to move the targetReference
-// 		if (hotSpot->moduleBlockAfter() == NULL)
-// 		{
-// 			// No next block, so add the new Module to the end of the current list
-// 			modules_.own(newModule);
-// 		}
-// 		else
-// 		{
-// 			// Insert the new Module before the next block
-// 			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
-// 		}
-
-		updateControls();
-
-		// Widgets are almost in the right place, so don't animate anything
-		resetAfterDrop(false);
-
-		// Flag that the current data has changed
-// 		dissolveWindow_->setModified();
-	}
-	else
+	// Is the correct data type being dragged over us?
+	if (!event->mimeData()->hasFormat("dissolve/mimestrings"))
 	{
 		event->ignore();
-
-		resetAfterDrop();
+		return;
 	}
+
+	// Get the MimeStrings data
+	const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
+	if (!mimeStrings)
+	{
+		event->ignore();
+		return;
+	}
+
+	// Handle the dropped object
+	handleDroppedObject(mimeStrings);
+
+	// Update controls
+	updateControls();
+
+	// Widgets are almost in the right place, so don't animate anything
+	currentHotSpot_ = NULL;
+	draggedBlock_ = NULL;
+
+// 	layOutWidgets(animate);
+
+// 	repaint();
 }
 
 /*
- * Drag / Drop
+ * Block interaction
  */
 
-// Return drop hotspot, if any, under specified point
+// Return whether to accept the dragged object (described by its mime info)
+bool ChartBase::acceptDraggedObject(const MimeStrings* strings)
+{
+	return false;
+}
+
+// Handle hover over specified hotspot
+bool ChartBase::handleHotSpotHover(const ChartHotSpot* hotSpot)
+{
+	return false;
+}
+
+// Handle the drop of an object (described by its mime info)
+void ChartBase::handleDroppedObject(const MimeStrings* strings)
+{
+}
+
+// Return mime info for specified block (owned by this chart)
+MimeStrings ChartBase::mimeInfo(ChartBlock* block)
+{
+	return MimeStrings();
+}
+
+// Return hotspot, if any, under specified point
 ChartHotSpot* ChartBase::hotSpotAt(QPoint point)
 {
 	for (ChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) if (hotSpot->contains(point)) return hotSpot;
@@ -356,14 +293,24 @@ ChartHotSpot* ChartBase::hotSpotAt(QPoint point)
 // Reset after drop
 void ChartBase::resetAfterDrop(bool animate)
 {
-	currentHotSpotIndex_ = -1;
+	currentHotSpot_ = NULL;
 	draggedBlock_ = NULL;
-	externalObjectDragged_ = false;
-	externalDragObjectData_.clear();
 
 	layOutWidgets(animate);
 
 	repaint();
+}
+
+// Specified block has been double clicked
+void ChartBase::blockDoubleClicked(ChartBlock* block)
+{
+	// No default action
+}
+
+// The chart has requested removal of one of its blocks
+void ChartBase::blockRemovalRequested(const QString& blockIdentifier)
+{
+	// No default action
 }
 
 /*
@@ -378,10 +325,7 @@ void ChartBase::layOutWidgets(bool animate)
 
 	// Commit new block geometries
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate())
-	{
-		block->setNewGeometry(animate);
-	}
+	while (ChartBlock* block = chartBlockIterator.iterate()) block->setNewGeometry(animate);
 
 	// Alter our minimum size hint if requested
 	if (resizeToWidgets_)

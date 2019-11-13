@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDLIBRARY_H
-#define DISSOLVE_FORCEFIELDLIBRARY_H
+#ifndef DISSOLVE_FORCEFIELD_LIBRARY_H
+#define DISSOLVE_FORCEFIELD_LIBRARY_H
 
 #include "data/ff.h"
 

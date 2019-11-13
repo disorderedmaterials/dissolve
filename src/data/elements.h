@@ -112,7 +112,7 @@ class ElementReference
 {
 	public:
 	// Constructor
-	ElementReference(int Z, const char* symbol);
+	ElementReference(int Z);
 	// Destructor
 	virtual ~ElementReference();
 

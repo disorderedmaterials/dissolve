@@ -29,4 +29,5 @@ void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 
 void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
 {
+	QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve/examples"));
 }

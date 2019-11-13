@@ -1,7 +1,7 @@
 ---
 title: Project Governance
 has_children: true
-nav_order: 90
+nav_order: 110
 ---
 # Project Governance
 

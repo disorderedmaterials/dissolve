@@ -103,7 +103,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
 		bool alreadyUpToDate;
-		calculateGR(procPool, cfg, method, rdfRange, binWidth, allIntra, alreadyUpToDate);
+		calculateGR(procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
 		PartialSet& originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
 
 		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
@@ -134,7 +134,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Copy the already-calculated g(r), then calculate a new set using the Test method
 			PartialSet referencePartials = originalgr;
-			calculateGR(procPool, cfg, RDFModule::TestMethod, rdfRange, binWidth, allIntra, alreadyUpToDate);
+			calculateGR(procPool, cfg, RDFModule::TestMethod, rdfRange, binWidth, alreadyUpToDate);
 			if (!testReferencePartials(referencePartials, originalgr, 1.0e-6)) return false;
 		}
 

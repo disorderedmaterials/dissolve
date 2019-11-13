@@ -190,7 +190,7 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 		{
 			Array<double>& potCoeff = coefficients.at(i, j);
 
-			double cMin = potCoeff.constAt(0);
+			double cMin = potCoeff.nItems() == 0 ? 0.0 : potCoeff.constAt(0);
 			double cMax = cMin;
 			for (int n=1; n<potCoeff.nItems(); ++n)
 			{

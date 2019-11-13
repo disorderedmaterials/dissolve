@@ -73,13 +73,13 @@ void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 {
-	dissolveState_ = DissolveWindow::EditingState;
+	// Set run icon button to the 'pausing' icon (it will be set back to normal by setWidgetsAfterRun())
+	ui_.ControlRunButton->setIcon(QIcon(":/control/icons/control_waiting.svg"));
 
-	emit stopIterating();
+	// Send the signal to stop
+	emit(stopIterating());
 
-	// Update the controls
-	updateControlsFrame();
-
+	// Disable the pause button
 	ui_.ControlPauseButton->setEnabled(false);
 }
 

@@ -26,7 +26,7 @@
 SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
 {
 	SpeciesAtom* i = atoms_.add();
-	i->setParent(this);
+	i->setSpecies(this);
 	i->set(element, r.x, r.y, r.z);
 	i->setIndex(atoms_.nItems()-1);
 
@@ -133,15 +133,15 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	RefListIterator<SpeciesBond> bondIterator(i->bonds());
-	while (SpeciesBond* bond = bondIterator.iterate())
+	const SpeciesBond* ij;
+	for (int ijIndex = 0; ijIndex < i->nBonds(); ++ijIndex, ij = i->bonds().value(ijIndex))
 	{
 		// Is this either of the excluded bonds?
-		if (exclude == bond) continue;
-		if (excludeToo == bond) continue;
+		if (exclude == ij) continue;
+		if (excludeToo == ij) continue;
 
 		// Get the partner atom in the bond and select it (if it is not selected already)
-		j = bond->partner(i);
+		j = ij->partner(i);
 
 		if (selectedAtoms_.contains(j)) continue;
 		selectFromAtom(j, exclude);

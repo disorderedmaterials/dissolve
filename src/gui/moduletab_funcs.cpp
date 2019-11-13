@@ -21,7 +21,7 @@
 
 #include "gui/moduletab.h"
 #include "gui/gui.h"
-#include "gui/modulechartmoduleblock.h"
+#include "gui/charts/moduleblock.h"
 #include "gui/modulewidget.h"
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
@@ -86,14 +86,12 @@ void ModuleTab::initialiseControls(Module* module)
 	}
 
 	// Set a nice icon for the window
-	setWindowIcon(ModuleChartModuleBlock::modulePixmap(module));
+	setWindowIcon(ModuleBlock::modulePixmap(module));
 
-	// Create the controls widget (a ModuleChartModuleBlock)
-	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
-	controlsWidget_->setSettingsExpanded(true, true);
+	// Create the controls widget (a ModuleBlock)
+	controlsWidget_ = new ModuleBlock(this, module, dissolve_);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	controlsWidget_->hideRemoveButton();
-	controlsWidget_->hideSettingsButton();
 	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module

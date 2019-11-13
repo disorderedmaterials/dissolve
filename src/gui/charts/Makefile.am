@@ -22,12 +22,13 @@ clean-local:
 	-rm -f ui_* *.o moc_*.cpp chart.cpp
 
 # UI Files
-libcharts_la_SOURCES = procedurenode.ui
+libcharts_la_SOURCES = moduleblock.ui moduleinsertionblock.ui procedurenode.ui
 
 # Implementations
 libcharts_la_SOURCES += chart.hui chart_funcs.cpp chartblock.cpp charthotspot.cpp chartscrollarea.hui chartscrollarea_funcs.cpp
+libcharts_la_SOURCES += moduleblock_funcs.cpp moduleinsertionblock_funcs.cpp modulelist.cpp
 libcharts_la_SOURCES += procedure.cpp procedurenode_funcs.cpp
 
-noinst_HEADERS = chartblock.h charthotspot.h procedure.h proceduremetrics.h procedurenode.h
+noinst_HEADERS = chartblock.h charthotspot.h moduleblock.h moduleinsertionblock.h modulelist.h modulelistmetrics.h procedure.h proceduremetrics.h procedurenode.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

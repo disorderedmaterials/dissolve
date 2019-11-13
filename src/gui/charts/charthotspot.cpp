@@ -95,6 +95,13 @@ bool ChartHotSpot::contains(QPoint p) const
 	return geometry_.contains(p);
 }
 
+// Set blocks urrounding the hotspot
+void ChartHotSpot::setSurroundingBlocks(ChartBlock* blockBefore, ChartBlock* blockAfter)
+{
+	blockBefore_ = blockBefore;
+	blockAfter_ = blockAfter;
+}
+
 // Return pointer to ChartBlock immediately before the hotspot
 ChartBlock* ChartHotSpot::blockBefore() const
 {

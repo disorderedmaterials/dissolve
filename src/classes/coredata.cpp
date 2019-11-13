@@ -164,7 +164,7 @@ MasterIntra* CoreData::addMasterBond(const char* name)
 	// OK to add new master Bond
 	MasterIntra* b = masterBonds_.add();
 	b->setName(name);
-	b->setType(SpeciesIntra::IntramolecularBond);
+	b->setType(SpeciesIntra::BondInteraction);
 
 	return b;
 }
@@ -210,7 +210,7 @@ MasterIntra* CoreData::addMasterAngle(const char* name)
 	// OK to add new master Angle
 	MasterIntra* a = masterAngles_.add();
 	a->setName(name);
-	a->setType(SpeciesIntra::IntramolecularAngle);
+	a->setType(SpeciesIntra::AngleInteraction);
 
 	return a;
 }
@@ -256,7 +256,7 @@ MasterIntra* CoreData::addMasterTorsion(const char* name)
 	// OK to add new master Torsion
 	MasterIntra* t = masterTorsions_.add();
 	t->setName(name);
-	t->setType(SpeciesIntra::IntramolecularTorsion);
+	t->setType(SpeciesIntra::TorsionInteraction);
 
 	return t;
 }
@@ -289,6 +289,52 @@ MasterIntra* CoreData::hasMasterTorsion(const char* name) const
 	return NULL;
 }
 
+// Add new master Improper parameters
+MasterIntra* CoreData::addMasterImproper(const char* name)
+{
+	// Check for existence of master Improper already
+	if (hasMasterImproper(name))
+	{
+		Messenger::error("Refused to add a new master Improper named '%s' since one with the same name already exists.\n", name);
+		return NULL;
+	}
+
+	// OK to add new master Improper
+	MasterIntra* i = masterImpropers_.add();
+	i->setName(name);
+	i->setType(SpeciesIntra::ImproperInteraction);
+
+	return i;
+}
+
+// Return number of master Improper parameters in list
+int CoreData::nMasterImpropers() const
+{
+	return masterImpropers_.nItems();
+}
+
+// Return list of master Improper parameters
+const List<MasterIntra>& CoreData::masterImpropers() const
+{
+	return masterImpropers_;
+}
+
+// Return nth master Improper parameters
+MasterIntra* CoreData::masterImproper(int n)
+{
+	return masterImpropers_[n];
+}
+
+// Return whether named master Improper parameters exist
+MasterIntra* CoreData::hasMasterImproper(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* t = masterImpropers_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	return NULL;
+}
+
 // Return the named master term (of any form) if it exists
 MasterIntra* CoreData::findMasterTerm(const char* name) const
 {
@@ -298,6 +344,7 @@ MasterIntra* CoreData::findMasterTerm(const char* name) const
 	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
 	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
 	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	for (MasterIntra* i = masterImpropers_.first(); i != NULL; i = i->next()) if (DissolveSys::sameString(trimmedName, i->name())) return i;
 
 	return NULL;
 }

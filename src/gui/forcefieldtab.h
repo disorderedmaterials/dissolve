@@ -68,6 +68,8 @@ class ForcefieldTab : public QWidget, public MainTab
 	void updateAnglesTableRow(int row, MasterIntra* masterAngle, bool createItems);
 	// Row update function for TorsionsTable
 	void updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool createItems);
+	// Row update function for ImpropersTable
+	void updateImpropersTableRow(int row, MasterIntra* masterImproper, bool createItems);
 	// Row update function for AtomTypesTable
 	void updateAtomTypesTableRow(int row, AtomType* atomType, bool createItems);
 	// Row update function for PairPotentialsTable
@@ -115,6 +117,9 @@ class ForcefieldTab : public QWidget, public MainTab
 	void on_MasterTermAddTorsionButton_clicked(bool checked);
 	void on_MasterTermRemoveTorsionButton_clicked(bool checked);
 	void on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddImproperButton_clicked(bool checked);
+	void on_MasterTermRemoveImproperButton_clicked(bool checked);
+	void on_MasterImpropersTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

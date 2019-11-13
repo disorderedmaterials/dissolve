@@ -237,6 +237,7 @@ int IsSuppressed_hkl(const T_SgInfo *SgInfo, int Minh, int Mink, int Minl,
   if (   (Minh <= hm && hm <=    h)
       && (Mink <= km && km <= Maxk)
       && (Minl <= lm && lm <= Maxl))
+  {			/* TGAY Added explicit braces to avoid dangling else 11/2019 */
     if (hm < h) return -1;
     else /* if (h == 0) */   /* TGAY Added explicit braces to avoid dangling else 08/2016 */
     {
@@ -246,6 +247,7 @@ int IsSuppressed_hkl(const T_SgInfo *SgInfo, int Minh, int Mink, int Minl,
         if (lm < l) return -1;
       }
     }
+  }
 
   lsmx = &SgInfo->ListSeitzMx[1]; /* skip first = identity matrix */
 

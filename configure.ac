@@ -187,6 +187,7 @@ AC_CONFIG_FILES(src/modules/sq/Makefile)
 AC_CONFIG_FILES(src/modules/test/Makefile)
 AC_CONFIG_FILES(src/procedure/Makefile)
 AC_CONFIG_FILES(src/procedure/nodes/Makefile)
+AC_CONFIG_FILES(src/neta/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)

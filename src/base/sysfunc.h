@@ -53,6 +53,8 @@ class DissolveSys
 	static const char* lowerCase(const char*);
 	// Perform case-(in)sensitive string comparison
 	static bool sameString(const char* s1, const char* s2, bool caseSensitive = false);
+	// Perform case-(in)sensitive, wildcard-enabled string comparison
+	static bool sameWildString(const char* wild, const char* s2, bool caseSensitive = false);
 	// Get characters before first occurrence of designated character
 	static const char* beforeChar(const char*, char);
 	// Get characters after first occurrence of designated character
