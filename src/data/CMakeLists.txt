@@ -1,5 +1,6 @@
 add_library(data
   atomicmass.cpp
+  atomicradius.cpp
   elementcolours.cpp
   elements.cpp
   ff.cpp
@@ -14,6 +15,7 @@ add_library(data
   spacegroups.cpp
 
   atomicmass.h
+  atomicradius.h
   elementcolours.h
   elements.h
   ff.h
