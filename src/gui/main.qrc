@@ -42,6 +42,7 @@
     <file>icons/viewer_axes_on.svg</file>
     <file>icons/viewer_delete.svg</file>
     <file>icons/viewer_snapshot.svg</file>
+    <file>icons/viewer_calculatebonds.svg</file>
     <file>icons/viewer_data.svg</file>
   </qresource>
   <qresource prefix="fonts">
