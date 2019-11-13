@@ -22,7 +22,7 @@ has_toc: false
 
 [Units](startingout/units.md) - Units used throughout Dissolve.
 
-[First Simulation](../examples/argon/) - Liquid Argon.
+[First Simulation](../examples/argon/) - Step-by-step set-up of a simple liquid argon simulation.
 
 * * *
 
