@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ELEMENTCOLOURS_H
-#define DISSOLVE_ELEMENTCOLOURS_H
+#ifndef DISSOLVE_DATA_ELEMENTCOLOURS_H
+#define DISSOLVE_DATA_ELEMENTCOLOURS_H
 
 #include "data/elements.h"
 #include "templates/array.h"
