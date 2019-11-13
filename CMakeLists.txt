@@ -179,6 +179,9 @@ set(BASIC_LINK_LIBS
   # Main libs
   main classes module io export import procedure procedurenodes keywords expression genericitems base math data ff
 
+  # Forcefields
+  ff_ludwig
+
   # Modules
   analysemodule
   atomshakemodule

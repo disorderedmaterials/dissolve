@@ -23,6 +23,9 @@
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
+#include "data/ffparameters.h"
+#include "data/fftorsionterm.h"
+#include "data/ffimproperterm.h"
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
 #include "base/sysfunc.h"
@@ -40,8 +43,6 @@
 
 // Constructor / Destructor
 Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
-
-Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig()
 {
 	static ForcefieldParameters parameters[]=
 	{
@@ -52,7 +53,7 @@ Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig()
                 { this, "ct",                      0.276040   3.50},
                 { this, "hc",                      0.125548   2.50},
                 { this, "cm",                      0.276040   3.50},
-                { this, "hm",                      0.125548   2.50},
+                { this, "hm",                      0.125548   2.50}
 	};
         static ForcefieldAtomType atomTypes[] =
         {
@@ -153,10 +154,14 @@ Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig()
         static ForcefieldImproperTerm angleTerms[] =
         {
                 //      i       j       k      l        Type (CosineForm)              Vn           n          phi
-                { this, "ca",   "ca",   "ca",   "ha",   SpeciesImproper::Form,       4.606,       2.0,       180.0 },
-                { this, "ca",   "nc",   "ca",   "ha",   SpeciesImproper::Form,       4.606,       2.0,       180.0 },
-                { this, "ca",   "ca",   "nc",   "ct",   SpeciesImproper::Form,       4.606,       2.0,       180.0 }
+                { this, "ca",   "ca",   "ca",   "ha",   SpeciesImproper::CosineForm,       4.606,       2.0,       180.0 },
+                { this, "ca",   "nc",   "ca",   "ha",   SpeciesImproper::CosineForm,       4.606,       2.0,       180.0 },
+                { this, "ca",   "ca",   "nc",   "ct",   SpeciesImproper::CosineForm,       4.606,       2.0,       180.0 }
         }
+}
+
+Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig()
+{
 }
 
 /*

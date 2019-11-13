@@ -16,6 +16,8 @@ add_library(ff
   uffatomtype.h
 )
 
+add_subdirectory(ludwig)
+
 include_directories(
 ../
 ${CMAKE_SOURCE_DIR}
