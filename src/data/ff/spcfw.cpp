@@ -38,7 +38,7 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
+// Constructor
 Forcefield_SPCFw::Forcefield_SPCFw()
 {
 	static ForcefieldAtomType atomTypes[] =
@@ -64,6 +64,7 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 	};
 }
 
+// Destructor
 Forcefield_SPCFw::~Forcefield_SPCFw()
 {
 }
