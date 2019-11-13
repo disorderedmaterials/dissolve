@@ -297,7 +297,7 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool a
 			ForcefieldAtomType* k = atomTypes[torsion->indexK()];
 			ForcefieldAtomType* l = atomTypes[torsion->indexL()];
 
-			ForcefieldAngleTerm* term = angleTerm(i, j, k);
+			ForcefieldTorsionTerm* term = torsionTerm(i, j, k, l);
 			if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1, i->equivalentName(), j->equivalentName(), k->equivalentName(), l->equivalentName());
 
 			torsion->setForm(term->form());
