@@ -50,8 +50,8 @@ ForcefieldBondTerm::~ForcefieldBondTerm()
 // Return if this term matches the atom types supplied
 bool ForcefieldBondTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j)
 {
-	if ((typeI_ == i->equivalentName()) && (typeJ_ == j->equivalentName())) return true;
-	if ((typeJ_ == i->equivalentName()) && (typeI_ == j->equivalentName())) return true;
+	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName())) return true;
+	if (DissolveSys::sameWildString(typeJ_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, j->equivalentName())) return true;
 
 	return false;
 }

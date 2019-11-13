@@ -52,8 +52,8 @@ ForcefieldTorsionTerm::~ForcefieldTorsionTerm()
 // Return if this term matches the atom types supplied
 bool ForcefieldTorsionTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l)
 {
-	if ((typeI_ == i->equivalentName()) && (typeJ_ == j->equivalentName()) && (typeK_ == k->equivalentName()) && (typeL_ == l->equivalentName())) return true;
-	if ((typeL_ == i->equivalentName()) && (typeK_ == j->equivalentName()) && (typeJ_ == k->equivalentName()) && (typeI_ == l->equivalentName())) return true;
+	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName()) && DissolveSys::sameWildString(typeL_, l->equivalentName())) return true;
+	if (DissolveSys::sameWildString(typeL_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, j->equivalentName()) && DissolveSys::sameWildString(typeJ_, k->equivalentName()) && DissolveSys::sameWildString(typeI_, l->equivalentName())) return true;
 
 	return false;
 }
