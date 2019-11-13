@@ -30,7 +30,6 @@ RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) 
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
-	dataPrimitive_ = recreatePrimitives();
 }
 
 // Destructor
@@ -66,19 +65,18 @@ int RenderableData2D::dataVersion() const
 // Transform data according to current settings
 void RenderableData2D::transformData()
 {
-	Data2D* data2d; 
 	// If the transformed data are already up-to-date, no need to do anything
 	if (transformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
+	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
 
-	transformMin_ = min(data2d->xAxis());
-	transformMax_ = max(data2d->xAxis());
+	transformMin_ = transformedData_.min(transformedData_.constXAxis());
+	transformMax_ = transformedData_.max(transformedData_.constXAxis());
 	transformMinPositive_ = 0.1;
-	transformMaxPositive_ = -1.0;
+	transformMaxPositive_ = 0.0;
 	
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
@@ -106,41 +104,17 @@ void RenderableData2D::transformData()
 			if (transformedData_.constYAxis(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constYAxis(n);
 		}
 		
-		//values
-		for(int i= 0; i < transformedData_.nValues(); ++i)
+		if (transformedData_.constValue(n) > 0.0)
 		{
-			if (transformedData_.constValue(i) > 0.0)
-				{
-					//////???????????/////
-				}
-			}
+			if (transformedData_.constValue(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.constValue(n);
+			if (transformedData_.constValue(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.constValue(n);
 		}
+	}
 	
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();
 }
 
-Vec3<double> min(Array<double> A)
-{	
-	double min = A[0];
-	for(int i=0; i<A.nItems(); ++i)
-	{
-		if (A[i]<min)
-			min = A[i];
-	}
-	return min;
-}
-
-Vec3<double> max(Array<double> A)
-{
-	double max = A[0];
-	for(int i=0; i<A.nItems(); ++i)
-	{
-		if (A[i]>max)
-			max = A[i];
-	}
-	return max;
-}
 
 // Return reference to transformed data
 const Data2D& RenderableData2D::transformedData()
@@ -171,9 +145,9 @@ bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	dataPrimitive_->reinitialise(transformedData().nValues(),true, GL_LINE_STRIP, true);
+	dataPrimitives_.reinitialise(transformedData().nValues(), GL_LINE_STRIP, true);
 
-	constructLineXY(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().values2DLinear(), dataPrimitive_, view.constAxes(), colourDefinition);
+	constructLineXZ(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), dataPrimitives_, view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -185,14 +159,14 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 	// Disable lighting
 	glDisable(GL_LIGHTING);
 
-	dataPrimitive_->sendToGL();
+	dataPrimitives_.sendToGL();
 
 	// Reset LineStyle back to defaults
 	LineStyle().sendToGL();
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array<double>& displayValues, PrimitiveList* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
+void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, PrimitiveList primitive, const Axes& axes, const ColourDefinition& colourDefinition, double yCoordinate)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> x = displayXAbscissa;
@@ -216,10 +190,9 @@ void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, co
 
 	// Create lines for slices
 	int vertexA, vertexB;
-	// Grab y and z values
-	Array<double> v = displayValues;
+	Array2D<double> v = displayValues;
 	axes.transformZ(v);
-	double z = axes.transformZ(zCoordinate);
+	double z = axes.transformY(yCoordinate);
 
 	// Set vertexA to -1 so we don't draw a line at n=0
 	vertexA = -1;
@@ -231,8 +204,8 @@ void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, co
 		// Get the single colour
 		colourDefinition.colour(0.0, colour);
 		
-		// Loop over y values
-		for (int n=0; n<primitive->nDefinedVertices(); ++n)
+		// Loop over  values
+		for (int n=0; n<primitive.nDefinedVertices(); ++n)
 		{
 			vertexB = p->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 
@@ -245,7 +218,7 @@ void RenderableData2D::constructLineXY(const Array<double>& displayXAbscissa, co
 	else
 	{
 		// Loop over y values
-		for (int n=0; n<primitive->nDefinedVertices(); ++n)
+		for (int n=0; n<primitive.nDefinedVertices(); ++n)
 		{
 			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
 			vertexB = p->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);

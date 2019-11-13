@@ -79,8 +79,8 @@ class Transformer
 	// Transform single value
 	double transform(double x, double y, double z);
 	// Transform whole array, including application of pre/post transform shift
-	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, double z, int target);
-	Array2D<double> transformArray(Array2D<double> sourceXY, double z, int target);
+	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, int target);
+	Array2D<double> transformArray(Array2D<double> sourceValues, Array<double> sourceX, Array<double> sourceY);
 
 
 	/*
@@ -88,8 +88,8 @@ class Transformer
 	 */
 	public:
 	// Transform Data1D with supplied transformers
-	static void transform(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
-	static void transform(Data2D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
+	static void transform1D(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
+	static void transform2D(Data2D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
 };
 
 #endif

@@ -188,6 +188,11 @@ class Axes
 	double transformZ(double z) const;
 	// Transform entire array of values into local axes coordinates
 	void transformZ(Array<double>& zArray) const;
+	
+	void transformX(Array2D<double>& xArray) const;
+	void transformY(Array2D<double>& yArray) const;
+	void transformZ(Array2D<double>& zArray) const;
+	
 
 
 	/*

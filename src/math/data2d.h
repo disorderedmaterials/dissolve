@@ -101,11 +101,15 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	// Return values Array
 	const Array2D<double>& constValues2D() const;
 	// Return values Array in linear format
-	const Array<double>& values2DLinear() const;
+	double* values2DLinear();
 	
 	double constValue(int index);
 	// Return number of values present in whole dataset
 	int nValues() const;
+	//return mininum value over all axis coordinates
+	Vec3<double> min(Array<double> A);
+	// return max value over all axis coordinates
+	Vec3<double> max(Array<double> A);	
 	// Return minimum value over all data points
 	double minValue() const;
 	// Return maximum value over all data points

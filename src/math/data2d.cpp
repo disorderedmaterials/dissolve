@@ -292,14 +292,14 @@ const Array2D<double>& Data2D::constValues2D() const
 	return values_;
 }
 //return values array in linear 1D 
-const Array< double >& Data2D::values2DLinear() const
+double* Data2D::values2DLinear()
 {
-	return values_.linearArray1D();
+	return values_.linearArray();
 }
 
 double Data2D::constValue(int index)
 {
-	Array<double> array = values2DLinear();
+	double* array = values2DLinear();
 	return array[index];
 }
 
@@ -307,6 +307,28 @@ double Data2D::constValue(int index)
 int Data2D::nValues() const
 {
 	return values_.linearArraySize();
+}
+
+Vec3<double> Data2D::min(Array<double> A)
+{	
+	double min = A[0];
+	for(int i=0; i<A.nItems(); ++i)
+	{
+		if (A[i]<min)
+			min = A[i];
+	}
+	return min;
+}
+
+Vec3<double> Data2D::max(Array<double> A)
+{
+	double max = A[0];
+	for(int i=0; i<A.nItems(); ++i)
+	{
+		if (A[i]>max)
+			max = A[i];
+	}
+	return max;
 }
 
 // Return minimum value over all data points

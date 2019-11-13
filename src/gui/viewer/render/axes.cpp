@@ -615,6 +615,37 @@ void Axes::transformZ(Array<double>& zArray) const
 	}
 	else zArray *= stretch_.z;
 }
+
+void Axes::transformX(Array2D<double>& xArray) const
+{
+	int n = 0;
+	while(n < xArray.linearArraySize())
+	{
+		xArray.linearValue(n) = transformX(xArray.linearValue(n));
+		n++;		
+	}
+}
+
+void Axes::transformY(Array2D<double>& yArray) const
+{
+	int n = 0;
+	while(n < yArray.linearArraySize())
+	{
+		yArray.linearValue(n) = transformY(yArray.linearValue(n));
+		n++;		
+	}
+}
+
+void Axes::transformZ(Array2D<double>& zArray) const
+{
+	int n = 0;
+	while(n < zArray.linearArraySize())
+	{
+		zArray.linearValue(n) = transformZ(zArray.linearValue(n));
+		n++;		
+	}
+}
+
 /*
  * Ticks / Labels / Gridlines
  */
