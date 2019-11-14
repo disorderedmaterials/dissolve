@@ -183,7 +183,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 
 		Messenger::print("Optimised values:\n");
 		targetIterator.restart();
-		while (ExpressionVariable* var = targetIterator.iterate()) Messenger::print("  %10s = %e\n", var->name(), var->value());
+		while (ExpressionVariable* var = targetIterator.iterate()) Messenger::print("  %10s = %e\n", var->name(), var->value().asDouble());
 	}
 
 	// Generate final fit data

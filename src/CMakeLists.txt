@@ -9,6 +9,7 @@ add_subdirectory(main)
 add_subdirectory(math)
 add_subdirectory(module)
 add_subdirectory(procedure)
+add_subdirectory(neta)
 
 if(GUI)
   add_subdirectory(gui)

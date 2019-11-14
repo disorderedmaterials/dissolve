@@ -1,24 +1,30 @@
 add_library(data
   atomicmass.cpp
+  atomicradius.cpp
   elementcolours.cpp
   elements.cpp
   ff.cpp
   ffangleterm.cpp
   ffatomtype.cpp
   ffbondterm.cpp
+  ffimproperterm.cpp
   fflibrary.cpp
+  ffparameters.cpp
   fftorsionterm.cpp
   isotopes.cpp
   spacegroups.cpp
 
   atomicmass.h
+  atomicradius.h
   elementcolours.h
   elements.h
   ff.h
   ffangleterm.h
   ffatomtype.h
   ffbondterm.h
+  ffimproperterm.h
   fflibrary.h
+  ffparameters.h
   fftorsionterm.h
   isotopes.h
   spacegroups.h

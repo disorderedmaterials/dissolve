@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "5")
+set(VERSION_PATCH "6")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -177,7 +177,7 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module io export import procedure procedurenodes keywords expression genericitems base math data ff
+  main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
 
   # Modules
   analysemodule

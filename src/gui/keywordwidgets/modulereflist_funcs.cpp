@@ -70,7 +70,7 @@ void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module* module, boo
 	item->setCheckState(selection.contains(module) ? Qt::Checked : Qt::Unchecked);
 }
 
-// Function type combo changed
+// List item changed
 void ModuleRefListKeywordWidget::itemChanged(QListWidgetItem* item)
 {
 	if (refreshing_) return;

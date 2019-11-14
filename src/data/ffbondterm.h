@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDBONDTERM_H
-#define DISSOLVE_FORCEFIELDBONDTERM_H
+#ifndef DISSOLVE_FORCEFIELD_BONDTERM_H
+#define DISSOLVE_FORCEFIELD_BONDTERM_H
 
 #include "classes/speciesbond.h"
 #include "base/charstring.h"

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDANGLETERM_H
-#define DISSOLVE_FORCEFIELDANGLETERM_H
+#ifndef DISSOLVE_FORCEFIELD_ANGLETERM_H
+#define DISSOLVE_FORCEFIELD_ANGLETERM_H
 
 #include "classes/speciesangle.h"
 #include "base/charstring.h"

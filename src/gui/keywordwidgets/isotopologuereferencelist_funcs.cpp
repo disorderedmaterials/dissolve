@@ -123,6 +123,7 @@ void IsotopologueReferenceListKeywordWidget::addButton_clicked(bool checked)
 		{
 			isoRef->setSpecies(spInfo->species());
 			isoRef->setIsotopologue(spInfo->species()->naturalIsotopologue());
+			isoRef->setWeight(1.0);
 		}
 	}
 

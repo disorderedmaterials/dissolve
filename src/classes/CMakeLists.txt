@@ -1,10 +1,8 @@
 add_library(classes
-  angle.cpp
   atom.cpp
   atomtype.cpp
   atomtypedata.cpp
   atomtypelist.cpp
-  bond.cpp
   box.cpp
   box_cubic.cpp
   box_monoclinic.cpp
@@ -31,8 +29,6 @@ add_library(classes
   empiricalformula.cpp
   energykernel.cpp
   forcekernel.cpp
-  grain.cpp
-  intra.cpp
   isotopedata.cpp
   isotopologue.cpp
   isotopologuemix.cpp
@@ -56,26 +52,22 @@ add_library(classes
   species.cpp
   species_atomic.cpp
   species_ff.cpp
-  species_grains.cpp
   species_intra.cpp
   species_io.cpp
   species_isotopologues.cpp
   species_site.cpp
   species_transform.cpp
-  speciesgrain.cpp
+  speciesimproper.cpp
   speciesinfo.cpp
   speciesintra.cpp
   speciessite.cpp
   speciestorsion.cpp
-  torsion.cpp
   weights.cpp
   
-  angle.h
   atom.h
   atomtypedata.h
   atomtype.h
   atomtypelist.h
-  bond.h
   box.h
   braggreflection.h
   cell.h
@@ -93,8 +85,6 @@ add_library(classes
   empiricalformula.h
   energykernel.h
   forcekernel.h
-  grain.h
-  intra.h
   isotopedata.h
   isotopologue.h
   isotopologuemix.h
@@ -117,14 +107,13 @@ add_library(classes
   speciesangle.h
   speciesatom.h
   speciesbond.h
-  speciesgrain.h
+  speciesimproper.h
   speciesinfo.h
   speciesintra.h
   speciessite.h
   speciestorsion.h
-  torsion.h
   weights.h
-  )
+)
 
 include_directories(
 ../

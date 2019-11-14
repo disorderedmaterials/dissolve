@@ -23,7 +23,6 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
 #include "classes/masterintra.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
@@ -194,15 +193,8 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 	 * Cell Generation
 	 */
 
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
-	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
-	}
-
 	// OK, so set-up Cells for the Box if they don't already exist
-	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
 
 	// Make sure Cell contents / Atom locations are up-to-date
 	updateCellContents();
@@ -215,15 +207,8 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 // Finalise Configuration after loading contents from restart file
 bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
 {
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
-	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
-	}
-
 	// Set-up Cells for the Box
-	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
 
 	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
 	scaleBox(requestedSizeFactor_);

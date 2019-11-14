@@ -22,7 +22,6 @@
 #include "classes/configuration.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
 #include "modules/energy/energy.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"

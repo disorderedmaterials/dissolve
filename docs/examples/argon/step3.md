@@ -14,31 +14,45 @@ Configurations in Dissolve are created from a sequence of instructions that defi
 
 Dissolve provides several standard generators for common-use cases, one of which we will use now.
 
-- From the _Configuration_{: .text-green-100} menu choose _Create...→Simple random mix_{: .text-green-100}).
-- A random mix can contain any number of species. We only have one, so select the argon species from the dialog that appears.
+> Configuration &#8680; Create... &#8680; Simple random mix
+{: .action .action_menu}
+> A random mix can contain any number of species - we only have one, so select the argon species
+{: .step}
 
 You will now see that the _Generator_{: .text-green-100} section has been populated with several steps, and a new configuration of atomic coordinates has been created based on these steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click the cog icon in its bottom-right corner.
 
 | Node | Purpose |
 |------|---------|
-|Parameters | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. |
-|Box   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
-|AddSpecies | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 cubic Angstrom) but the full population of molecules will still be added. |
+| [`Parameters`](/userguide/nodes/parameters) | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. |
+| [`Box`](/userguide/nodes/box)   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
+| [`AddSpecies`](/userguide/nodes/addspecies) | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 &#8491;<sup>3</sup>) but the full population of molecules will still be added. |
 
 In the `AddSpecies` node note how we have used the `rho` parameter for the density.
 
 > Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.
 {: .tip}
 
-Let's change the settings of our configuration and its generator to give us a suitable system.
+Let's change the settings of our configuration's generator to give us a suitable system.
 
-- Change the value of `rho` in the `Parameters` node to 0.0213, and ensure that the units in the `AddSpecies` node are set to `atoms A-3`.
-- Increase the _Population_{: .text-green-100} of the argon atom in the `AddSpecies` node to 1000.
-- Set the _Temperature_{: .text-green-100} of the configuration 85 K to match that of the experimental measurement.
+> Open the settings for the `Parameters` node
+{: .action .action_settings}
+> Change the value of the "rho" variable to 0.0213
+{: .step}
+> Open the settings for the `AddSpecies` node
+{: .action .action_settings}
+> Check that the units for the **Density** are set to `atoms/A3`
+{: .step}
+> Increase the **Population** to 1000
+{: .step}
+
+Finally, we need to set the correct temperature for the configuration.
+
+> Set the **Temperature** to 85 K to match that of the experimental measurement
+{: .action .action_edit}
 
 Because we've changed some settings, we need to hit the _Regenerate_{: .text-green-100} button to recreate our initial configuration.
 
-> You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run from the _Simulation_{: .text-green-100} menu (_Simulation→Clear Module Data_{: .text-green-100}).
+> You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the _Clear Module Data_{: .text-green-100} option in the  _Simulation_{: .text-green-100} menu.
 {: .tip}
 
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn .right}

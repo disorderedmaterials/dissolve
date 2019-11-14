@@ -3,3 +3,4 @@ search_enabled: true
 aux_links:
     "Dissolve on GitHub":
       - "//github.com/trisyoungs/dissolve"
+logo: "/assets/images/logo.png"

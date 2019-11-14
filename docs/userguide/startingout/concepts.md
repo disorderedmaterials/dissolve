@@ -13,7 +13,7 @@ nav_order: 1
 
 Dissolve's primary goal is to generate an ensemble of atomic configurations which is consistent (as far as is possible) with reference experimental data, and to use this ensemble to extract a structural picture of the system that cannot directly be determined from the raw experimental data.
 
-Dissolve was designed from the outset to be able to handle large systems with millions of atoms, multiple configuration within the same simulation, and distributed parallel execution. It is also intended to offer a balance between flexibility (it can be tailored to suit specific problems) and usability (it will help you do things wherever possible).
+Dissolve was designed from the outset to be able to handle large systems with millions of atoms, multiple configurations within the same simulation, and distributed parallel execution. It is also intended to offer a balance between flexibility (it can be tailored to suit specific problems) and usability (it will help you do things wherever possible).
 
 ## Dissolve's Default Simulation
 

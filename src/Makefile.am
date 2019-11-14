@@ -4,7 +4,7 @@
 
 EXTRA_DIST = version.h
 
-SUBDIRS = base classes data expression genericitems io keywords main math module procedure templates
+SUBDIRS = base classes data expression genericitems io keywords main math module neta procedure templates
 
 noinst_LTLIBRARIES = libdissolve.la
 libdissolve_la_SOURCES = 

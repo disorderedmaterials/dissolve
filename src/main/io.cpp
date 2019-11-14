@@ -407,6 +407,9 @@ bool Dissolve::loadRestart(const char* filename)
 				error = true;
 				break;
 			}
+
+			// Set the InRestartFileFlag for the item
+			item->setFlags(GenericItem::InRestartFileFlag);
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
 		{
@@ -423,6 +426,9 @@ bool Dissolve::loadRestart(const char* filename)
 				error = true;
 				break;
 			}
+
+			// Set the InRestartFileFlag for the item
+			item->setFlags(GenericItem::InRestartFileFlag);
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
 		{

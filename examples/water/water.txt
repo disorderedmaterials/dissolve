@@ -1,12 +1,12 @@
-# Input file written by Dissolve v0.4.5 at 16:27:28 on 28-10-2019.
+# Input file written by Dissolve v0.4.6 at 12:39:01 on 04-11-2019.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'HW-OW'  Harmonic  4431.530     1.000
-  Angle  'HW-OW-HW'  Harmonic   317.566   113.240
+  Bond  'HW-OW'  Harmonic  4431.530     0.974
+  Angle  'HW-OW-HW'  Harmonic   317.566   107.134
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -25,6 +25,9 @@ Species 'Water'
 
   # Angles
   Angle    2    1    3  @HW-OW-HW
+
+  # Isotopologues
+  Isotopologue  'Deuterated'  HW=2
 EndSpecies
 
 #------------------------------------------------------------------------------#
@@ -70,7 +73,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
 
-  Temperature  300.000000
+  Temperature  298.000000
 
   # Modules
   # -- None
@@ -79,6 +82,87 @@ EndConfiguration
 #------------------------------------------------------------------------------#
 #                              Processing Layers                               #
 #------------------------------------------------------------------------------#
+
+Layer  'Evolve (Standard)'
+  Frequency  1
+
+  Module  MolShake  'MolShake01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    RotationStepSize   1.51763e+01
+    TranslationStepSize   1.62039e-01
+  EndModule
+
+  Module  MD  'MD01'
+    Frequency  5
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  Energy  'Energy01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  5
+
+  Module  RDF  'RDF01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    UseHalfCellRange  False
+    IntraBroadening    Gaussian  1.800000e-01
+  EndModule
+
+  Module  NeutronSQ  'H2O'
+    Frequency  1
+
+    Configuration  'Bulk'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+    Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
+    Reference  mint  'data/SLS18498-H2O.mdcs01'
+    EndReference
+  EndModule
+
+  Module  NeutronSQ  'D2O'
+    Frequency  1
+
+    Configuration  'Bulk'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+    Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
+    Reference  mint  'data/SLS18502-D2O.mdcs01'
+    EndReference
+  EndModule
+
+  Module  NeutronSQ  'HDO'
+    Frequency  1
+
+    Configuration  'Bulk'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+    Exchangeable  HW
+    Isotopologue  'Bulk'  'Water'  'Natural'  1.000000
+    Isotopologue  'Bulk'  'Water'  'Deuterated'  1.000000
+    Reference  mint  'data/SLS18500-HDO5050.mdcs01'
+    EndReference
+  EndModule
+EndLayer
+
+Layer  'Refine (EPSR)'
+  Frequency  5
+
+  Module  EPSR  'EPSR01'
+    Frequency  1
+    EReq   1.00000e+01
+    Feedback   9.00000e-01
+    Target  'H2O'  'Default'
+    Target  'D2O'  'Default'
+    Target  'HDO'  'Default'
+  EndModule
+EndLayer
 
 #------------------------------------------------------------------------------#
 #                                  Simulation                                  #

@@ -207,14 +207,12 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (testIntra)
 				{
 					// Bond forces
-					Bond** bonds = molN->bonds();
-					for (int m=0; m<molN->nBonds(); ++m)
+					DynamicArrayConstIterator<SpeciesBond> bondIterator(molN->species()->constBonds());
+					while (const SpeciesBond* b = bondIterator.iterate())
 					{
-						Bond* b = bonds[m];
-
 						// Grab pointers to atoms involved in bond
-						i = b->i();
-						j = b->j();
+						i = molN->atom(b->indexI());
+						j = molN->atom(b->indexJ());
 	
 						// Determine final forces
 						vecji = box->minimumVector(i, j);
@@ -229,15 +227,13 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Angle forces
-					Angle** angles = molN->angles();
-					for (int m=0; m<molN->nAngles(); ++m)
+					DynamicArrayConstIterator<SpeciesAngle> angleIterator(molN->species()->constAngles());
+					while (const SpeciesAngle* a = angleIterator.iterate())
 					{
-						Angle* a = angles[m];
-
 						// Grab pointers to atoms involved in angle
-						i = a->i();
-						j = a->j();
-						k = a->k();
+						i = molN->atom(a->indexI());
+						j = molN->atom(a->indexJ());
+						k = molN->atom(a->indexK());
 	
 						// Get vectors 'j-i' and 'j-k'
 						vecji = box->minimumVector(j, i);
@@ -268,16 +264,14 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Torsion forces
-					Torsion** torsions = molN->torsions();
-					for (int m=0; m<molN->nTorsions(); ++m)
+					DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(molN->species()->constTorsions());
+					while (const SpeciesTorsion* t = torsionIterator.iterate())
 					{
-						Torsion* t = torsions[m];
-
 						// Grab pointers to atoms involved in angle
-						i = t->i();
-						j = t->j();
-						k = t->k();
-						l = t->l();
+						i = molN->atom(t->indexI());
+						j = molN->atom(t->indexJ());
+						k = molN->atom(t->indexK());
+						l = molN->atom(t->indexL());
 
 						// Calculate vectors, ensuring we account for minimum image
 						vecji = box->minimumVector(j, i);

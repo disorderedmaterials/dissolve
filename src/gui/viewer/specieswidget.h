@@ -101,6 +101,7 @@ class SpeciesWidget : public QWidget
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
 	// Tools
+	void on_ToolsCalculateBondingButton_clicked(bool checked);
 	void on_ToolsMinimiseButton_clicked(bool checked);
 };
 

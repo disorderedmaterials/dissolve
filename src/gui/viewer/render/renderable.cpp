@@ -285,10 +285,22 @@ int Renderable::styleVersion() const
  * Rendering Primitives
  */
 
-// Create new Primitive, whose instances will be managed by the Renderable
+// Create single Primitive, whose instances will be managed by the Renderable
 Primitive* Renderable::createPrimitive(GLenum type, bool colourData)
 {
 	return primitives_.add(type, colourData);
+}
+
+// Reinitialise managed Primitive list to the size specified
+void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData)
+{
+	primitives_.reinitialise(newSize, false, type, colourData);
+}
+
+// Return nth Primitive managed by the Renderable
+Primitive* Renderable::primitive(int n)
+{
+	return primitives_[n];
 }
 
 // Remove specified Primitive

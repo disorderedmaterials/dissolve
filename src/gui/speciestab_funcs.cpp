@@ -61,6 +61,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	for (int n=0; n<3; ++n) ui_.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Torsion Table
 	for (int n=0; n<4; ++n) ui_.TorsionTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
+	// -- Improper Table
+	for (int n=0; n<4; ++n) ui_.ImproperTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Isotopologues Tree
 	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
 	ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
@@ -74,6 +76,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.AngleTable->horizontalHeader()->setVisible(true);
 	ui_.TorsionTable->horizontalHeader()->setFont(font());
 	ui_.TorsionTable->horizontalHeader()->setVisible(true);
+	ui_.ImproperTable->horizontalHeader()->setFont(font());
+	ui_.ImproperTable->horizontalHeader()->setVisible(true);
 
 	// Set up SpeciesViewer
 	ui_.ViewerWidget->setCoreData(&dissolve.coreData());
@@ -316,6 +320,49 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 	}
 }
 
+// ImproperTable row update function
+void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper* speciesImproper, bool createItems)
+{
+	QTableWidgetItem* item;
+
+	// Atom Indices
+	for (int n=0; n<4; ++n)
+	{
+		if (createItems)
+		{
+			item = new QTableWidgetItem;
+			item->setData(Qt::UserRole, VariantPointer<SpeciesImproper>(speciesImproper));
+			ui_.ImproperTable->setItem(row, n, item);
+		}
+		else item = ui_.ImproperTable->item(row, n);
+		item->setText(QString::number(speciesImproper->index(n)+1));
+	}
+
+	// Interaction Form
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<SpeciesImproper>(speciesImproper));
+		ui_.ImproperTable->setItem(row, 4, item);
+	}
+	else item = ui_.ImproperTable->item(row, 4);
+	item->setText(speciesImproper->masterParameters() ? QString("@%1").arg(speciesImproper->masterParameters()->name()) : SpeciesImproper::improperFunction( (SpeciesImproper::ImproperFunction) speciesImproper->form()));
+
+	// Interaction Parameters
+	for (int n=0; n<4; ++n)
+	{
+		if (createItems)
+		{
+			item = new QTableWidgetItem;
+			item->setData(Qt::UserRole, VariantPointer<SpeciesImproper>(speciesImproper));
+			ui_.ImproperTable->setItem(row, n+5, item);
+		}
+		else item = ui_.ImproperTable->item(row, n+5);
+		item->setText(QString::number(speciesImproper->parameter(n)));
+		item->setFlags(speciesImproper->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
+	}
+}
+
 // IsotopologuesTree top-level update function
 void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem)
 {
@@ -375,16 +422,19 @@ void SpeciesTab::updateControls()
 		ui_.BondTable->clearContents();
 		ui_.AngleTable->clearContents();
 		ui_.TorsionTable->clearContents();
+		ui_.ImproperTable->clearContents();
 	}
 	else
 	{
 		TableWidgetUpdater<SpeciesTab,SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this, &SpeciesTab::updateBondTableRow);
 		TableWidgetUpdater<SpeciesTab,SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this, &SpeciesTab::updateAngleTableRow);
 		TableWidgetUpdater<SpeciesTab,SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this, &SpeciesTab::updateTorsionTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesImproper> improperUpdater(ui_.ImproperTable, species_->impropers(), this, &SpeciesTab::updateImproperTableRow);
 	}
 	ui_.BondTable->resizeColumnsToContents();
 	ui_.AngleTable->resizeColumnsToContents();
 	ui_.TorsionTable->resizeColumnsToContents();
+	ui_.ImproperTable->resizeColumnsToContents();
 
 	// Isotopologues Tab
 	// -- Isotopologues Tree
@@ -827,6 +877,84 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 	{
 		refreshing_ = true;
 		updateTorsionTableRow(w->row(), speciesTorsion, false);
+		refreshing_ = false;
+	}
+}
+
+void SpeciesTab::on_ImproperAddButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET!\n");
+}
+
+void SpeciesTab::on_ImproperRemoveButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET!\n");
+}
+
+void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_ || (!species_)) return;
+
+	// Get target SpeciesImproper from the passed widget
+	SpeciesImproper* speciesImproper = w ? VariantPointer<SpeciesImproper>(w->data(Qt::UserRole)) : NULL;
+	if (!speciesImproper) return;
+
+	// Column of passed item tells us the type of data we need to change
+	int i, j, k, l;
+	bool updateRow = false;
+	switch (w->column())
+	{
+		// Atom Indices
+		case (0):
+		case (1):
+		case (2):
+		case (3):
+			// Get all atom indices and set the atoms in the interaction
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
+			l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
+			if (species_->reconnectImproper(speciesImproper, i, j, k, l))
+			{
+				updateRow = true;
+				dissolveWindow_->setModified();
+			}
+			break;
+		// Functional Form
+		case (4):
+			// If the text starts with an '@' then its a reference to a master term
+			if (w->text().at(0) == '@')
+			{
+				MasterIntra* master = dissolve_.coreData().hasMasterImproper(qPrintable(w->text()));
+				speciesImproper->setMasterParameters(master);
+			}
+			else
+			{
+				SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunction(qPrintable(w->text()));
+				speciesImproper->setMasterParameters(NULL);
+				speciesImproper->setForm(tf);
+			}
+			updateRow = true;
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			if (speciesImproper->masterParameters()) Messenger::error("Refusing to set improper parameter since it belongs to a master term.\n");
+			else   speciesImproper->setParameter(w->column()-5, w->text().toDouble());
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Improper table.\n", w->column());
+			break;
+	}
+
+	// Update the row if necessary
+	if (updateRow)
+	{
+		refreshing_ = true;
+		updateImproperTableRow(w->row(), speciesImproper, false);
 		refreshing_ = false;
 	}
 }

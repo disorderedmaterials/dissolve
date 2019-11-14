@@ -289,13 +289,13 @@ EndModule
 Module DataTest
   ErrorType  RMSE
   Threshold  0.75
-  Data1D  'EPSR01//GeneratedSQ//Default//CA-CA'  xy  'epsr25/benzene.EPSR.q01'
+  Data1D  'EPSR01//EstimatedSQ//Default//CA-CA'  xy  'epsr25/benzene.EPSR.q01'
     Y  2
   EndData1D
-  Data1D  'EPSR01//GeneratedSQ//Default//CA-HA'  xy  'epsr25/benzene.EPSR.q01'
+  Data1D  'EPSR01//EstimatedSQ//Default//CA-HA'  xy  'epsr25/benzene.EPSR.q01'
     Y  4
   EndData1D
-  Data1D  'EPSR01//GeneratedSQ//Default//HA-HA'  xy  'epsr25/benzene.EPSR.q01'
+  Data1D  'EPSR01//EstimatedSQ//Default//HA-HA'  xy  'epsr25/benzene.EPSR.q01'
     Y  6
   EndData1D
 EndModule

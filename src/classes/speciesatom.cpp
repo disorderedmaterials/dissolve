@@ -32,7 +32,6 @@ SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 	element_ = NULL;
 	charge_ = 0.0;
 	atomType_ = NULL;
-	grain_ = NULL;
 	r_.zero();
 	index_= -1;
 	selected_ = false;
@@ -44,13 +43,13 @@ SpeciesAtom::~SpeciesAtom()
 }
 
 // Set Species parent
-void SpeciesAtom::setParent(Species* sp)
+void SpeciesAtom::setSpecies(Species* sp)
 {
 	parent_ = sp;
 }
 
-// Return species parent
-Species* SpeciesAtom::parent()
+// Return Species parent
+const Species* SpeciesAtom::species() const
 {
 	return parent_;
 }
@@ -150,29 +149,13 @@ bool SpeciesAtom::isSelected() const
 }
 
 /*
- * Containing Grain
- */
-
-// Set grain to which this atom belongs
-void SpeciesAtom::setGrain(SpeciesGrain* grain)
-{
-	grain_ = grain;
-}
-
-// Return grain to which this atom belongs
-SpeciesGrain* SpeciesAtom::grain()
-{
-	return grain_;
-}
-
-/*
  * Bond Information
  */
 
 // Add Bond reference
 void SpeciesAtom::addBond(SpeciesBond* b)
 {
-	bonds_.addUnique(b);
+	if (!bonds_.contains(b)) bonds_.append(b);
 }
 
 // Remove Bond reference
@@ -196,11 +179,11 @@ int SpeciesAtom::nBonds() const
 // Return specified bond
 SpeciesBond* SpeciesAtom::bond(int index)
 {
-	return bonds_.item(index);
+	return bonds_.at(index);
 }
 
 // Return bonds list
-const RefList<SpeciesBond>& SpeciesAtom::bonds() const
+const PointerArray<SpeciesBond>& SpeciesAtom::bonds() const
 {
 	return bonds_;
 }
@@ -208,8 +191,87 @@ const RefList<SpeciesBond>& SpeciesAtom::bonds() const
 // Return whether Bond to specified Atom exists
 SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
 {
-	for (RefListItem<SpeciesBond>* ri = bonds_.first(); ri != NULL; ri = ri->next()) if (ri->item()->partner(this) == j) return ri->item();
+	for (int n=0; n<bonds_.nItems(); ++n) if (bonds_.value(n)->partner(this) == j) return bonds_.value(n);
 	return NULL;
+}
+
+
+// Add specified SpeciesAngle to Atom
+void SpeciesAtom::addAngle(SpeciesAngle* angle)
+{
+	angles_.append(angle);
+
+	// Insert the pointers to the other Atoms into the exclusions_ list
+	if (angle->i() != this) exclusions_.add(angle->i());
+	if (angle->j() != this) exclusions_.add(angle->j());
+	if (angle->k() != this) exclusions_.add(angle->k());
+}
+
+// Return the number of Angles in which the Atom is involved
+int SpeciesAtom::nAngles() const
+{
+	return angles_.nItems();
+}
+
+// Return array of Angles in which the Atom is involved
+const PointerArray<SpeciesAngle>& SpeciesAtom::angles() const
+{
+	return angles_;
+}
+
+// Add specified SpeciesTorsion to Atom
+void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
+{
+	torsions_.append(torsion);
+
+	// Insert the pointers to the other Atoms into the exclusions_ list
+	if (torsion->i() == this)
+	{
+		exclusions_.add(torsion->j());
+		exclusions_.add(torsion->k());
+		exclusions_.add(torsion->l(), scaling14);
+	}
+	else if (torsion->l() == this)
+	{
+		exclusions_.add(torsion->i(), scaling14);
+		exclusions_.add(torsion->j());
+		exclusions_.add(torsion->k());
+	}
+	else
+	{
+		exclusions_.add(torsion->i());
+		exclusions_.add(torsion->l());
+		if (torsion->j() != this) exclusions_.add(torsion->j());
+		if (torsion->k() != this) exclusions_.add(torsion->k());
+	}
+}
+
+// Return the number of Torsions in which the Atom is involved
+int SpeciesAtom::nTorsions() const
+{
+	return torsions_.nItems();
+}
+
+// Return array of Torsions in which the Atom is involved
+const PointerArray<SpeciesTorsion>& SpeciesAtom::torsions() const
+{
+	return torsions_;
+}
+
+// Return scaling factor to employ with specified Atom
+double SpeciesAtom::scaling(const SpeciesAtom* j) const
+{
+	// Look through our ordered list of excluded Atom interactions
+	for (int n=0; n<exclusions_.nItems(); ++n)
+	{
+		// If the current item matches our Atom 'j', we have found a match
+		if (exclusions_.pointer(n) == j) return exclusions_.data(n);
+
+		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the list
+		if (exclusions_.pointer(n) > j) return 1.0;
+	}
+
+	return 1.0;
 }
 
 /*
