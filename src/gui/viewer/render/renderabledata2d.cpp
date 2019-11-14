@@ -30,6 +30,8 @@ RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) 
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
+	Renderable::reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
+	
 }
 
 // Destructor
@@ -145,9 +147,9 @@ bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	dataPrimitives_.reinitialise(transformedData().nValues(), GL_LINE_STRIP, true);
+	
 
-	constructLineXZ(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), dataPrimitives_, view.constAxes(), colourDefinition);
+	constructLineXZ(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -158,15 +160,19 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 
 	// Disable lighting
 	glDisable(GL_LIGHTING);
-
-	dataPrimitives_.sendToGL();
+	
+	int n = 0;
+	while(n < transformedData_.constYAxis().nItems())
+	{
+		Renderable::primitive(n)->sendToGL();
+	}
 
 	// Reset LineStyle back to defaults
 	LineStyle().sendToGL();
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, PrimitiveList primitive, const Axes& axes, const ColourDefinition& colourDefinition, double yCoordinate)
+void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, const Axes& axes, const ColourDefinition& colourDefinition)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> x = displayXAbscissa;
@@ -192,8 +198,7 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 	int vertexA, vertexB;
 	Array2D<double> v = displayValues;
 	axes.transformZ(v);
-	double z = axes.transformY(yCoordinate);
-
+	
 	// Set vertexA to -1 so we don't draw a line at n=0
 	vertexA = -1;
 	Primitive* p;
@@ -209,8 +214,8 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 		{
 			for (int m = 0; m < nX; ++m)
 			{
-				p = primitive[n];
-				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), nrm, colour);
+				p = Renderable::primitive(n);
+				vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), y.constAt(n), nrm, colour);
 			}
 			// If both vertices are valid, plot a line
 			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
@@ -220,16 +225,20 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 	}
 	else
 	{
-		// Loop over y values
-		for (int n=0; n<primitive.nDefinedVertices(); ++n)
+		// Loop over  values
+		for (int n=0; n < nY ; ++n)
 		{
+			for (int m = 0; m < nX; ++m)
+			{
 			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-			vertexB = p->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+			p = Renderable::primitive(n);
+			vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), y.constAt(n), nrm, colour);
 
 			// If both vertices are valid, plot a line
 			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
 
 			vertexA = vertexB;
+			}
 		}
 	}
 }

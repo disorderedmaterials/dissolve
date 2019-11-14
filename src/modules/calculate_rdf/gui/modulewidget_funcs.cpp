@@ -33,7 +33,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
 
 	View& view = rdfGraph_->view();
-	view.setViewType(View::FlatXYView);
+	view.setViewType(View::AutoStretchedView);
 	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	view.axes().setMax(0, 10.0);
 	view.axes().setTitle(1, "g(r)");

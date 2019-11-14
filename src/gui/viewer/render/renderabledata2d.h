@@ -76,13 +76,11 @@ class RenderableData2D : public Renderable
 	/*
 	 * Rendering Primitives
 	 */
-	private:
-	// List of primitive to represent data
-	PrimitiveList dataPrimitives_;
+
 	
 	private:
 	// Create line strip primitive
-	void constructLineXZ ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, PrimitiveList primitive, const Axes& axes, const ColourDefinition& colourDefinition, double yCoordinate = 0.0 );
+	void constructLineXZ ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
 
 	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
