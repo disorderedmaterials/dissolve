@@ -47,10 +47,6 @@ class NETAConnectionNode : public NETANode
 	// Type of required connection
 	SpeciesBond::BondType bondType_;
 
-	public:
-	// Set node data
-	void set(Array<int> elementsAndTypes, NETANode* innerneta, SpeciesBond::BondType bondtype);
-
 
 	/*
 	 * Modifiers
