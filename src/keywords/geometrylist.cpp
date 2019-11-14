@@ -62,16 +62,17 @@ bool GeometryListKeyword::read(LineParser& parser, int startArg, const CoreData&
 	Geometry* g = data_.add();
 	for(int i=startArg; i<=(startArg+maxArguments()-1); i++)
 	{
-		if (parser.argi(i) <0)
-			return Messenger::error("Index value, %i, not appropriate", parser.argi(i));
+		if (parser.argi(i) < 1) return Messenger::error("Index value, %i, not appropriate", parser.argi(i));
 	}
 
 	if (maxArguments() == 3)
-		g->set(parser.argd(2+startArg), parser.argi(0+startArg), parser.argi(1+startArg) );
+		g->set(parser.argd(2+startArg), parser.argi(startArg) - 1, parser.argi(1+startArg) - 1);
 	else if (maxArguments() == 4)
-		g->set(parser.argd(3+startArg), parser.argi(startArg), parser.argi(1+startArg), parser.argi(2+startArg));
+		g->set(parser.argd(3+startArg), parser.argi(startArg) - 1, parser.argi(1+startArg) - 1, parser.argi(2+startArg) - 1);
 	else
-		g->set(parser.argd(4+startArg), parser.argi(startArg), parser.argi(1+startArg), parser.argi(2+startArg), parser.argi(3+startArg));
+		g->set(parser.argd(4+startArg), parser.argi(startArg) - 1, parser.argi(1+startArg) - 1, parser.argi(2+startArg) - 1, parser.argi(3+startArg) - 1);
+
+	hasBeenSet();
 
 	return true;
 }
@@ -85,7 +86,7 @@ bool GeometryListKeyword::write(LineParser& parser, const char* keywordName, con
 	while (Geometry* ref = GeoIterator.iterate())
 	{
 		index.clear();
-		for (int n=0; n<maxArguments()-1; ++n) index.strcatf("  %i", ref->indices(n));
+		for (int n=0; n<maxArguments()-1; ++n) index.strcatf("  %i", ref->indices(n) + 1);
 		if (!parser.writeLineF("%s%s%s  %12.4e\n", prefix, keywordName, index.get(), ref->value())) return false;
 	}
 

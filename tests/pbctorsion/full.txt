@@ -139,9 +139,11 @@ Configuration  'Liquid'
     AddSpecies
       Population  200
       Species  'Hexane'
+      ScaleBox  False
     EndAddSpecies
   EndGenerator
   InputCoordinates  dlpoly  'dlpoly/CONFIG'
+  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
@@ -157,6 +159,7 @@ Module Forces
   Test  On
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly/REVCON'
+  EndTestReference
   TestThreshold  0.1
 EndModule
 
@@ -171,13 +174,7 @@ PairPotentials
   Delta  0.01000
   ShortRangeTruncation  None
   IncludeCoulomb  False
-  Parameters  'CT'   0.0       0.276144      3.500000  
-  Parameters  'HC'   0.0       0.125520      2.500000 
-  GenerateAll  'LJGeometric'
+  Parameters  'CT'   0.0       LJGeometric  0.276144      3.500000  
+  Parameters  'HC'   0.0       LJGeometric  0.125520      2.500000 
   CoulombTruncation  None
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
-

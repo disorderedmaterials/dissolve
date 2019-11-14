@@ -32,7 +32,7 @@ bool DissolveWindow::saveWindowLayout()
 	if (!stateParser.isFileGoodForWriting()) return false;
 
 	// Write current tab index
-	if (!stateParser.writeLineF("%i\n", ui.MainTabs->currentIndex())) return false;
+	if (!stateParser.writeLineF("%i\n", ui_.MainTabs->currentIndex())) return false;
 
 	// Write tab state
 	RefList<MainTab> tabs = allTabs();
@@ -99,7 +99,7 @@ bool DissolveWindow::loadWindowLayout()
 	}
 
 	// Set current tab (we stored the index earlier)
-	ui.MainTabs->setCurrentIndex(currentTab);
+	ui_.MainTabs->setCurrentIndex(currentTab);
 
 	return true;
 }

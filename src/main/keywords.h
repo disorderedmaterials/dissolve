@@ -93,7 +93,7 @@ namespace LayerBlock
 	// Layer Block Keyword Enum
 	enum LayerKeyword
 	{
-		EnabledKeyword,			/* 'Enabled' - Specify whether the layer is enabled or not */
+		DisabledKeyword,		/* 'Disabled' - Specify that the layer is currently disabled */
 		EndLayerKeyword,		/* 'EndLayer' - Signals the end of the Layer block */
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
 		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */

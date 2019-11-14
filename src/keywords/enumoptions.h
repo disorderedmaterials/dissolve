@@ -60,6 +60,14 @@ class EnumOptionsBaseKeyword
 	public:
 	// Set new option index, informing KeywordBase
 	virtual void setEnumerationByIndex(int optionIndex) = 0;
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	virtual int optionMask() const = 0;
 };
 
 // Keyword based on EnumOptions
@@ -133,18 +141,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
-	}
-
-
-	/*
-	 * Conversion
-	 */
-	public:
-	// Return value (as string)
-	const char* asString()
-	{
-		return KeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
+		return parser.writeLineF("%s%s  %s\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
 	}
 
 
@@ -156,7 +153,29 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	void setEnumerationByIndex(int optionIndex)
 	{
 		KeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
-		KeywordData< EnumOptions<E> >::dataHasBeenSet();
+		KeywordData< EnumOptions<E> >::hasBeenSet();
+	}
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	int optionMask() const
+	{
+		return KeywordBase::optionMask();
+	}
+
+
+	/*
+	 * Conversion
+	 */
+	public:
+	// Return value (as string)
+	const char* asString()
+	{
+		return KeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
 	}
 };
 

@@ -48,7 +48,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
 	// Set target for ConfigurationViewer
-	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
+	ui_.ViewerWidget->setConfiguration(configuration_);
 
 	// Set target for ProcedureEditor, and connect signals
 	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
@@ -57,7 +57,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
-	ui_.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
+	ui_.LayerPanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -139,7 +139,7 @@ void ConfigurationTab::updateControls()
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
 	// Viewer
-	ui_.ViewerWidget->configurationViewer()->postRedisplay();
+	ui_.ViewerWidget->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -164,6 +164,23 @@ void ConfigurationTab::enableSensitiveControls()
  * Signals / Slots
  */
 
+void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
+{
+	// Are we sure that's what we want to do?
+	QMessageBox queryBox;
+	queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		configuration_->initialiseContent(dissolve_.worldPool(), dissolve_.pairPotentialRange(), true);
+		updateControls();
+	}
+}
+
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 {
 	if (refreshing_) return;
@@ -184,21 +201,14 @@ void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 	if (refreshing_) return;
 }
 
-void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
+// Size Factor Scaling
+void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 {
-	// Are we sure that's what we want to do?
-	QMessageBox queryBox;
-	queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+	if (refreshing_) return;
 
-	if (ret == QMessageBox::Yes)
-	{
-		configuration_->generate(dissolve_.worldPool());
-		updateControls();
-	}
+	configuration_->setRequestedSizeFactor(value);
+
+	dissolveWindow_->setModified();
 }
 
 /*

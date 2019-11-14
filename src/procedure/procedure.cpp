@@ -49,6 +49,7 @@ void Procedure::clear()
 void Procedure::addRootSequenceNode(ProcedureNode* node)
 {
 	rootSequence_.addNode(node);
+	node->setScope(&rootSequence_);
 }
 
 // Return root sequence

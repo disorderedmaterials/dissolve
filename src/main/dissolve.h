@@ -34,7 +34,6 @@
 class Atom;
 class Box;
 class Cell;
-class Grain;
 class Isotopologue;
 class Molecule;
 class ChangeStore;
@@ -118,14 +117,10 @@ class Dissolve
 	Species* species(int n);
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
-	// Update Species (or all) Isotopologues (or specified)
-	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
-	// Remove Isotopologue from Species
-	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
 	// Copy AtomType, creating a new one if necessary
-	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	void copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
-	void copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	void copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
 	// Copy Species
 	Species* copySpecies(const Species* species);
 
@@ -195,6 +190,8 @@ class Dissolve
 	Configuration* addConfiguration();
 	// Own the specified Configuration
 	bool ownConfiguration(Configuration* cfg);
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list
@@ -233,8 +230,14 @@ class Dissolve
 	Module* findMasterModule(const char* moduleType) const;
 	// Create a Module instance for the named Module type
 	Module* createModuleInstance(const char* moduleType);
-	// Search for any instance of any module with the specified unique name
+	// Create a Module instance for the named Module type, and add it to the specified layer
+	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer);
+	// Search for any instance of any Module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
+	// Search for any instance of any Module with the specified Module type
+	RefList<Module> findModuleInstances(const char* moduleType);
+	// Generate unique Module name with base name provided
+	const char* uniqueModuleName(const char* name, Module* excludeThis = NULL);
 	// Delete specified Module instance
 	bool deleteModuleInstance(Module* instance);
 
@@ -251,6 +254,8 @@ class Dissolve
 	public:
 	// Add new processing layer
 	ModuleLayer* addProcessingLayer();
+	// Remove specified processing layer
+	void removeProcessingLayer(ModuleLayer* layer);
 	// Find named processing layer
 	ModuleLayer* findProcessingLayer(const char* name) const;
 	// Own the specified processing layer
@@ -353,6 +358,18 @@ class Dissolve
 	const char* restartFilename() const;
 	// Return whether a restart filename has been set
 	bool hasRestartFilename() const;
+
+
+	/*
+	 * Object Management
+	 */
+	public:
+	// Remove all references to the specified Configuration
+	void removeReferencesTo(Configuration* cfg);
+	// Remove all references to the specified Module
+	void removeReferencesTo(Module* module);
+	// Remove all references to the specified Species
+	void removeReferencesTo(Species* sp);
 
 
 	/*

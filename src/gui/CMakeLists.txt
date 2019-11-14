@@ -8,28 +8,19 @@
 # Meta-Objects
 SET(gui_MOC_HDRS
   # Editors
-  layereditor.h
-  modulechartblock.h
-  modulecharthotspot.h
-  modulechartinsertionblock.h
-  modulechartmetrics.h
-  modulechartmoduleblock.h
   modulecontrolwidget.h
-  modulelayertab.h
-  moduletab.h
+  modulelisteditor.h
   modulewidget.h
   procedureeditor.h
-
-  modulechart.hui
 
   # Widgets
   addconfigurationwizard.h
   addforcefieldtermswizard.h
-  addprocessinglayerwizard.h
-  addspecieswizard.h
-  keywordswidget.hui
+  importspecieswizard.h
   pairpotentialwidget.h
+  selectconfigurationwidget.h
   selectforcefieldwidget.h
+  selectspecieswidget.h
   wizardwidget.hui
   wizardwidgetfooter.h
   wizardwidgetheader.h
@@ -39,17 +30,22 @@ SET(gui_MOC_HDRS
   # Dialogs
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
-  addprocessinglayerdialog.h
-  addspeciesdialog.h
   getconfigurationnamedialog.h
+  getmodulelayernamedialog.h
   getspeciesnamedialog.h
-  selectsystemtemplatedialog.h
+  importspeciesdialog.h
+  selectconfigurationdialog.h
+  selectelementdialog.h
   selectforcefielddialog.h
+  selectspeciesdialog.h
+  selectsystemtemplatedialog.h
 
   # Main Tabs
   configurationtab.h
   forcefieldtab.h
+  layertab.h
   maintab.h
+  moduletab.h
   speciestab.h
   workspacetab.h
 
@@ -67,37 +63,39 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 # User Interface Files
 SET(gui_UIS
   # Editors
-  layereditor.ui
-  modulechartinsertionblock.ui
-  modulechartmoduleblock.ui
   modulecontrolwidget.ui
-  modulelayertab.ui
-  moduletab.ui
+  modulelisteditor.ui
   procedureeditor.ui
 
   # Widgets
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
-  addprocessinglayerwizard.ui
-  addspecieswizard.ui
+  importspecieswizard.ui
   pairpotentialwidget.ui
+  selectconfigurationwidget.ui
   selectforcefieldwidget.ui
+  selectspecieswidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
 
   # Dialogs
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
-  addprocessinglayerdialog.ui
-  addspeciesdialog.ui
   getconfigurationnamedialog.ui
+  getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
-  selectsystemtemplatedialog.ui
+  importspeciesdialog.ui
+  selectconfigurationdialog.ui
+  selectelementdialog.ui
   selectforcefielddialog.ui
+  selectspeciesdialog.ui
+  selectsystemtemplatedialog.ui
 
   # Main Tabs
   configurationtab.ui
   forcefieldtab.ui
+  layertab.ui
+  moduletab.ui
   speciestab.ui
   workspacetab.ui
 
@@ -109,26 +107,19 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
   # Editors
-  layereditor_funcs.cpp
-  modulechart_funcs.cpp
-  modulechartblock.cpp
-  modulecharthotspot.cpp
-  modulechartinsertionblock_funcs.cpp
-  modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
-  modulelayertab_funcs.cpp
-  moduletab_funcs.cpp
+  modulelisteditor_funcs.cpp
   modulewidget.cpp
   procedureeditor_funcs.cpp
 
   # Widgets
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
-  addprocessinglayerwizard_funcs.cpp
-  addspecieswizard_funcs.cpp
-  keywordswidget_funcs.cpp
+  importspecieswizard_funcs.cpp
   pairpotentialwidget_funcs.cpp
+  selectconfigurationwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp
+  selectspecieswidget_funcs.cpp
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
   wizardwidgetpageinfo.cpp
@@ -136,27 +127,38 @@ SET(gui_SRCS
   # Dialogs
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
-  addprocessinglayerdialog_funcs.cpp
-  addspeciesdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
+  getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
-  selectsystemtemplatedialog_funcs.cpp
+  importspeciesdialog_funcs.cpp
+  selectconfigurationdialog_funcs.cpp
+  selectelementdialog_funcs.cpp
   selectforcefielddialog_funcs.cpp
+  selectspeciesdialog_funcs.cpp
+  selectsystemtemplatedialog_funcs.cpp
 
   # Main Tabs
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
+  layertab_funcs.cpp
   maintab.cpp
+  moduletab_funcs.cpp
   speciestab_funcs.cpp
   workspacetab_funcs.cpp
 
   # Main UI
   gui_control.cpp
   gui_funcs.cpp
-  gui_menu.cpp
   gui_io.cpp
   gui_start.cpp
   gui_tabs.cpp
+  menu_configuration.cpp
+  menu_file.cpp
+  menu_help.cpp
+  menu_layer.cpp
+  menu_simulation.cpp
+  menu_species.cpp
+  menu_workspace.cpp
   outputhandler_funcs.cpp
   stockcolours.cpp
   systemtemplate.cpp

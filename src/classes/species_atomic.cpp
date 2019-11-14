@@ -26,7 +26,7 @@
 SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
 {
 	SpeciesAtom* i = atoms_.add();
-	i->setParent(this);
+	i->setSpecies(this);
 	i->set(element, r.x, r.y, r.z);
 	i->setIndex(atoms_.nItems()-1);
 
@@ -133,15 +133,15 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	RefListIterator<SpeciesBond> bondIterator(i->bonds());
-	while (SpeciesBond* bond = bondIterator.iterate())
+	const SpeciesBond* ij;
+	for (int ijIndex = 0; ijIndex < i->nBonds(); ++ijIndex, ij = i->bonds().value(ijIndex))
 	{
 		// Is this either of the excluded bonds?
-		if (exclude == bond) continue;
-		if (excludeToo == bond) continue;
+		if (exclude == ij) continue;
+		if (excludeToo == ij) continue;
 
 		// Get the partner atom in the bond and select it (if it is not selected already)
-		j = bond->partner(i);
+		j = ij->partner(i);
 
 		if (selectedAtoms_.contains(j)) continue;
 		selectFromAtom(j, exclude);
@@ -188,16 +188,23 @@ double Species::mass() const
 	return m;
 }
 
-// Update used AtomTypeList
-void Species::updateUsedAtomTypes()
+// Bump AtomTypes version
+void Species::bumpAtomTypesVersion()
 {
-	usedAtomTypes_.clear();
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) usedAtomTypes_.add(i->atomType(), 1);
+	++atomTypesVersion_;
 }
 
 // Return used AtomTypesList
 const AtomTypeList& Species::usedAtomTypes()
 {
+	if (usedAtomTypesPoint_ != atomTypesVersion_)
+	{
+		usedAtomTypes_.clear();
+		for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) if (i->atomType()) usedAtomTypes_.add(i->atomType(), 1);
+	
+		usedAtomTypesPoint_ = atomTypesVersion_;
+	}
+
 	return usedAtomTypes_;
 }
 
@@ -205,5 +212,6 @@ const AtomTypeList& Species::usedAtomTypes()
 void Species::clearAtomTypes()
 {
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setAtomType(NULL);
-	usedAtomTypes_.clear();
+
+	++atomTypesVersion_;
 }

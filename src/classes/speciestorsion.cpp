@@ -26,7 +26,22 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), ListItem<SpeciesTorsion>()
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), DynamicArrayObject<SpeciesTorsion>()
+{
+	clear();
+}
+
+// Destructor
+SpeciesTorsion::~SpeciesTorsion()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesTorsion::clear()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -34,11 +49,6 @@ SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), ListItem<SpeciesTorsion>()
 	k_ = NULL;
 	l_ = NULL;
 	form_ = SpeciesTorsion::nTorsionFunctions;
-}
-
-// Destructor
-SpeciesTorsion::~SpeciesTorsion()
-{
 }
 
 /*
@@ -58,6 +68,10 @@ void SpeciesTorsion::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
 	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesTorsion::set().\n");
 	if (l_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesTorsion::set().\n");
 #endif
+	if (i_) i_->addTorsion(this, 0.5);
+	if (j_) j_->addTorsion(this, 0.5);
+	if (k_) k_->addTorsion(this, 0.5);
+	if (l_) l_->addTorsion(this, 0.5);
 }
 
 // Return first SpeciesAtom
@@ -213,9 +227,9 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::IntramolecularType SpeciesTorsion::type() const
+SpeciesIntra::InteractionType SpeciesTorsion::type() const
 {
-	return SpeciesIntra::IntramolecularTorsion;
+	return SpeciesIntra::TorsionInteraction;
 }
 
 // Return energy for specified angle
@@ -230,13 +244,13 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 	if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
-		 * U(phi) = forcek * (1 + s*cos(period*phi - eq))
+		 * U(phi) = k * (1 + s*cos(n*phi - eq))
 		 *
 		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : Period N
+		 * 0 : force constant k
+		 * 1 : Period 'n'
 		 * 2 : equilibrium angle (degrees)
-		 * 3 : Sign S
+		 * 3 : Sign 's'
 		 */
 		return params[0] * (1.0 + params[3] * cos(params[1]*phi - (params[2] / DEGRAD)));
 	}
@@ -308,13 +322,13 @@ double SpeciesTorsion::force(double angleInDegrees) const
 	if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
-		 * dU/dphi = forcek * period * s * -sin(period*phi - eq)
+		 * dU/dphi = k * n * s * -sin(n*phi - eq)
 		 *
 		 * Parameters:
-		 * 0 : force constant k1
-		 * 1 : Period N
-		 * 2 : equilibrium angle (degrees)
-		 * 3 : Sign S
+		 * 0 : Force constant 'k'
+		 * 1 : Period 'n'
+		 * 2 : Equilibrium angle (degrees)
+		 * 3 : Sign 's'
 		 */
 		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1]*phi - (params[2] / DEGRAD));
 	}

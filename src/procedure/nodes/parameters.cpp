@@ -57,6 +57,34 @@ bool ParametersProcedureNode::mustBeNamed() const
  * Parameters
  */
 
+// Add new integer parameter
+bool ParametersProcedureNode::addParameter(const char* name, int initialValue)
+{
+	// Create a new one
+	ExpressionVariable* parameter = new ExpressionVariable;
+	integerParameters_.own(parameter);
+	parameter->setName(name);
+
+	// Set the initial value
+	if (!parameter->set(initialValue)) return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+
+	return true;
+}
+
+// Add new double parameter
+bool ParametersProcedureNode::addParameter(const char* name, double initialValue)
+{
+	// Create a new one
+	ExpressionVariable* parameter = new ExpressionVariable;
+	doubleParameters_.own(parameter);
+	parameter->setName(name);
+
+	// Set the initial value
+	if (!parameter->set(initialValue)) return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+
+	return true;
+}
+
 // Return whether this node has the named parameter specified
 ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name, ExpressionVariable* excludeParameter)
 {

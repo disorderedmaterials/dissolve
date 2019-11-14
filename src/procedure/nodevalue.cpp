@@ -42,6 +42,12 @@ NodeValue::NodeValue(const double d)
 	valueD_ = d;
 	type_ = DoubleNodeValue;
 }
+NodeValue::NodeValue(const char* expressionText, RefList<ExpressionVariable> parameters)
+{
+	valueI_ = 0;
+	valueD_ = 0.0;
+	set(expressionText, parameters);
+}
 
 // Destructor
 NodeValue::~NodeValue()

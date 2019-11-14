@@ -40,13 +40,10 @@ AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword()
  * Data
  */
 
-// Return list of AtomTpe/bool references
-AtomTypeList& AtomTypeSelectionKeyword::selection()
+// Determine whether current data is 'empty', and should be considered as 'not set'
+bool AtomTypeSelectionKeyword::isDataEmpty() const
 {
-	// Update the list first, in case a Configuration has changed
-	checkSelection();
-
-	return data_;
+	return data_.nItems() == 0;
 }
 
 // Check AtomType selection and make sure it is consistent based on the source Configurations
@@ -74,6 +71,15 @@ void AtomTypeSelectionKeyword::checkSelection()
 
 	// Copy the new list over the old one
 	data_ = newSelection;
+}
+
+// Return list of AtomTpe/bool references
+AtomTypeList& AtomTypeSelectionKeyword::selection()
+{
+	// Update the list first, in case a Configuration has changed
+	checkSelection();
+
+	return data_;
 }
 
 /*
@@ -104,7 +110,7 @@ bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const Core
 		// Do we recognise the AtomType?
 		AtomType* atomType = NULL;
 		ListIterator<AtomType> typeIterator(coreData.constAtomTypes());
-		while (atomType = typeIterator.iterate()) if (DissolveSys::sameString(atomType->name(), parser.argc(n))) break;
+		while ((atomType = typeIterator.iterate())) if (DissolveSys::sameString(atomType->name(), parser.argc(n))) break;
 		if (!atomType) return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
 		// If the AtomType is in the list already, complain

@@ -674,7 +674,7 @@
   <customwidget>
    <class>KeywordsWidget</class>
    <extends>QWidget</extends>
-   <header>gui/keywordswidget.hui</header>
+   <header>gui/keywordwidgets/widget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -67,7 +67,7 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

@@ -23,7 +23,7 @@
 #include "data/ff/uff.h"
 
 // Constructor
-UFFAtomType::UFFAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ForcefieldAtomType(parent, z, symbol, index, name, description)
+UFFAtomType::UFFAtomType(Forcefield* parent, int z, int index, const char* name, const char* neta, const char* description, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ForcefieldAtomType(parent, z, index, name, neta, description, 0.0, 0.0, 0.0)
 {
 	// Set the atomtype's data
 	r_ = r;

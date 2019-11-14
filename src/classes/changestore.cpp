@@ -23,7 +23,6 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "classes/grain.h"
 #include "classes/molecule.h"
 #include "templates/orderedpointerlist.h"
 #include "base/processpool.h"
@@ -47,12 +46,6 @@ void ChangeStore::add(Atom* i)
 {
 	ChangeData* item = targetAtoms_.add();
 	item->setAtom(i);
-}
-
-// Add Grain to watch
-void ChangeStore::add(Grain* grain)
-{
-	for (int n=0; n<grain->nAtoms(); ++n) add(grain->atom(n));
 }
 
 // Add Molecule to watch

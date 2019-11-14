@@ -31,7 +31,7 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module) : ModuleWidg
 }
 
 // Update controls within widget
-void TestModuleWidget::updateControls()
+void TestModuleWidget::updateControls(int flags)
 {
 }
 

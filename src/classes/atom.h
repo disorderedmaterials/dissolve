@@ -29,14 +29,10 @@
 #include "templates/orderedpointerdataarray.h"
 
 // Forward Declarations
-class Angle;
-class Bond;
 class Cell;
-class Element;
-class Grain;
 class Molecule;
 class ProcessPool;
-class Torsion;
+class SpeciesAtom;
 
 // Atom Definition
 class Atom : public DynamicArrayObject<Atom>
@@ -66,20 +62,12 @@ class Atom : public DynamicArrayObject<Atom>
 	int localTypeIndex_;
 	// Assigned master AtomType index (for pair potential indexing)
 	int masterTypeIndex_;
-	// Charge on atom
-	double charge_;
-	// Atomic Element
-	Element* element_;
 
 	public:
-	// Set basic atom properties
-	void set(Element* element, double rx, double ry, double rz);
-	// Set basic atom properties
-	void set(Element* element, const Vec3<double> r);
-	// Set atomic element
-	void setElement(Element* el);
-	// Return atomic element
-	Element* element() const;
+	// Set coordinates
+	void set(const Vec3<double> r);
+	// Set coordinates
+	void set(double rx, double ry, double rz);
 	// Return coordinates
 	const Vec3<double>& r() const;
 	// Return x-coordinate
@@ -88,10 +76,6 @@ class Atom : public DynamicArrayObject<Atom>
 	double y() const;
 	// Return z-coordinate
 	double z() const;
-	// Set charge of atom
-	void setCharge(double charge);
-	// Return charge of atom
-	double charge() const;
 	// Set local AtomType index
 	void setLocalTypeIndex(int id);
 	// Return local AtomType index
@@ -100,72 +84,32 @@ class Atom : public DynamicArrayObject<Atom>
 	void setMasterTypeIndex(int id);
 	// Return master AtomType index 
 	int masterTypeIndex() const;
-	// Copy properties from supplied Atom
-	void copyProperties(const Atom* source);
 
 
 	/*
 	 * Location
 	 */
 	private:
-	// Molecule which this Atom is in
+	// SpeciesAtom that this Atom represents
+	const SpeciesAtom* speciesAtom_;
+	// Molecule in which this Atom exists
 	Molecule* molecule_;
-	// Grain to which this Atom belongs (if any)
-	Grain* grain_;
 	// Cell in which the atom exists
 	Cell* cell_;
 
 	public:
-	// Set molecule and local atom index (0->[N-1])
+	// Set SpeciesAtom that this Atom represents
+	void setSpeciesAtom(const SpeciesAtom* spAtom);
+	// Return SpeciesAtom that this Atom represents
+	const SpeciesAtom* speciesAtom() const;
+	// Set Molecule in which this Atom exists 
 	void setMolecule(Molecule* mol);
-	// Return molecule
+	// Return Molecule in which this Atom exists
 	Molecule* molecule() const;
-	// Set associated Grain
-	void setGrain(Grain* grain);
-	// Return associated Grain
-	Grain* grain() const;
 	// Set cell in which the atom exists
 	void setCell(Cell* cell);
 	// Return cell in which the atom exists
 	Cell* cell() const;
-
-
-	/*
-	 * Connectivity
-	 */
-	private:
-	// Reference list of Bonds in which this Atom exists
-	PointerArray<Bond> bonds_;
-	// Reference list of Angles in which this Atom exists
-	PointerArray<Angle> angles_;
-	// Reference list of Torsions in which this Atom exists
-	PointerArray<Torsion> torsions_;
-	// Ordered list of Atoms with scaled or excluded interactions
-	OrderedPointerDataArray<Atom,double> exclusions_;
-
-	public:
-	// Add specified Bond to Atom
-	void addBond(Bond* bond);
-	// Return the number of Bonds in which the Atom is involved
-	int nBonds() const;
-	// Return array of Bonds in which the Atom is involved
-	const PointerArray<Bond>& bonds() const;
-	// Return Bond (if it exists) between this Atom and the Atom specified
-	Bond* findBond(Atom* j);
-	// Add specified Angle to Atom
-	void addAngle(Angle* angle);
-	// Return the number of Angles in which the Atom is involved
-	int nAngles() const;
-	// Return array of Angles in which the Atom is involved
-	const PointerArray<Angle>& angles() const;
-	// Add specified Torsion to Atom
-	void addTorsion(Torsion* torsion, double scaling14);
-	// Return the number of Torsions in which the Atom is involved
-	int nTorsions() const;
-	// Return array of Torsions in which the Atom is involved
-	const PointerArray<Torsion>& torsions() const;
-	// Return scaling factor to employ with specified Atom
-	double scaling(Atom* j) const;
 
 
 	/*
@@ -180,6 +124,14 @@ class Atom : public DynamicArrayObject<Atom>
 	void translateCoordinates(const Vec3<double>& delta);
 	// Translate coordinates
 	void translateCoordinates(double dx, double dy, double dz);
+
+
+	/*
+	* Intramolecular Information
+	*/
+	public:
+	// Return scaling factor to employ with specified Atom
+	double scaling(Atom* j) const;
 };
 
 #endif

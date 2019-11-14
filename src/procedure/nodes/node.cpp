@@ -328,7 +328,7 @@ bool ProcedureNode::write(LineParser& parser, const char* prefix)
 	CharString newPrefix("  %s", prefix);
 
 	// Write keywords
-	if (!keywords_.write(parser, newPrefix)) return false;
+	if (!keywords_.write(parser, newPrefix, false)) return false;
 
 	// Block End
 	if (!parser.writeLineF("%sEnd%s\n", prefix, nodeTypes().keyword(type_))) return false;

@@ -24,6 +24,7 @@
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/charthotspot.h"
+#include "gui/widgets/mimestrings.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QWidget>
@@ -105,27 +106,43 @@ class ChartBase : public QWidget
 
 
 	/*
-	 * Drag / Drop
+	 * Block Interaction
 	 */
 	protected:
 	// Position of last mouse click
 	QPoint mouseDownPosition_;
-	// Data of object dragged from external source
-	QString externalDragObjectData_;
-	// Whether an external object is currently being dragged over the widget
-	bool externalObjectDragged_;
 	// ChartBlock being dragged (if a local drag)
 	ChartBlock* draggedBlock_;
 	// Drop hotspots available on the chart
 	List<ChartHotSpot> hotSpots_;
-	// Index of the current hotspot the dragged object is over (if any)
-	int currentHotSpotIndex_;
+	// Current hotspot the dragged object is over (if any)
+	ChartHotSpot* currentHotSpot_;
 
 	private:
 	// Return hotspot under specified point
 	ChartHotSpot* hotSpotAt(QPoint point);
 	// Reset after drop
 	void resetAfterDrop(bool animateWidgets = true);
+
+	protected:
+	// Return whether to accept the dragged object (described by its mime info)
+	virtual bool acceptDraggedObject(const MimeStrings* strings);
+	// Handle hover over specified hotspot
+	virtual bool handleHotSpotHover(const ChartHotSpot* hotSpot);
+	// Handle the drop of an object (described by its mime info)
+	virtual void handleDroppedObject(const MimeStrings* strings);
+	// Return mime info for specified block (owned by this chart)
+	virtual MimeStrings mimeInfo(ChartBlock* block);
+	// Specified block has been double clicked
+	virtual void blockDoubleClicked(ChartBlock* block);
+
+	protected slots:
+	// The chart has requested removal of one of its blocks
+	virtual void blockRemovalRequested(const QString& blockIdentifier);
+
+	signals:
+	void blockDoubleClicked(const QString& blockIdentifeir);
+	void blockRemoved(const QString& blockIdentifier);
 
 
 	/*
@@ -165,7 +182,7 @@ class ChartBase : public QWidget
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
+	protected slots:
 	// Displayed chart data has been modified in some way
 	void chartDataModified();
 

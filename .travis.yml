@@ -13,9 +13,14 @@ addons:
       - automake
       - libopenmpi-dev
       - openmpi-bin
+      - ninja-build
+      - cmake
   homebrew:
+    update: true
     packages:
       - bison
+      - ftgl
+      - ninja
 
 # Add updated Qt libs (serial build only)
 before_install:
@@ -43,7 +48,7 @@ jobs:
         directories:
           - artifacts
       script: ./ci/ubuntu/build.parallel
-    - stage: Test / Deploy
+    - stage: Linux Test / Deploy
       name: Serial (also deploys GUI)
       env: PARALLEL=false
       os: linux
@@ -60,7 +65,7 @@ jobs:
         on:
           all_branches: true
         script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
-    - stage: Test / Deploy
+    - stage: Linux Test / Deploy
       name: Parallel
       env: PARALLEL=true
       os: linux
@@ -76,7 +81,7 @@ jobs:
         skip_cleanup: true
         on:
           all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*dmg
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
     - stage: OSX Build / Deploy
       name: Serial, GUI
       env: PARALLEL=false
@@ -105,6 +110,6 @@ branches:
 
 # Build Stage Order
 stages:
-  - Linux Build
-  - Test / Deploy
   - OSX Build / Deploy
+  - Linux Build
+  - Linux Test / Deploy

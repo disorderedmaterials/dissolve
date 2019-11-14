@@ -623,7 +623,7 @@ Remote Simulation</string>
                  </font>
                 </property>
                 <property name="toolTip">
-                 <string>Start running the current simulation</string>
+                 <string>Run the current simulation</string>
                 </property>
                 <property name="text">
                  <string>Run</string>
@@ -810,6 +810,9 @@ Remote Simulation</string>
              <pointsize>8</pointsize>
             </font>
            </property>
+           <property name="acceptRichText">
+            <bool>true</bool>
+           </property>
           </widget>
          </widget>
         </item>
@@ -825,7 +828,7 @@ Remote Simulation</string>
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -900,9 +903,39 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Species</string>
     </property>
-    <addaction name="SpeciesAddAction"/>
-    <addaction name="separator"/>
+    <widget class="QMenu" name="SpeciesCreateMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
+     </property>
+     <addaction name="SpeciesCreateEmptyAction"/>
+     <addaction name="SpeciesCreateAtomicAction"/>
+    </widget>
+    <widget class="QMenu" name="SpeciesImportMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Import...</string>
+     </property>
+     <addaction name="SpeciesImportFromDissolveAction"/>
+     <addaction name="SpeciesImportFromXYZAction"/>
+    </widget>
+    <addaction name="SpeciesCreateMenu"/>
+    <addaction name="SpeciesImportMenu"/>
     <addaction name="SpeciesRenameAction"/>
+    <addaction name="SpeciesDeleteAction"/>
+    <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
@@ -914,9 +947,48 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Configuration</string>
     </property>
-    <addaction name="ConfigurationAddAction"/>
-    <addaction name="separator"/>
+    <widget class="QMenu" name="ConfigurationCreateMenu">
+     <property name="geometry">
+      <rect>
+       <x>642</x>
+       <y>140</y>
+       <width>184</width>
+       <height>158</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+     </property>
+     <addaction name="ConfigurationCreateEmptyAction"/>
+     <addaction name="separator"/>
+     <addaction name="ConfigurationCreateSimpleRandomMixAction"/>
+     <addaction name="ConfigurationCreateRelativeRandomMixAction"/>
+    </widget>
+    <widget class="QMenu" name="ConfigurationExportToMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Export to...</string>
+     </property>
+     <addaction name="ConfigurationExportToXYZAction"/>
+    </widget>
+    <addaction name="ConfigurationCreateMenu"/>
     <addaction name="ConfigurationRenameAction"/>
+    <addaction name="ConfigurationDeleteAction"/>
+    <addaction name="separator"/>
+    <addaction name="ConfigurationExportToMenu"/>
    </widget>
    <widget class="QMenu" name="LayerMenu">
     <property name="font">
@@ -927,7 +999,66 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Layer</string>
     </property>
-    <addaction name="LayerAddAction"/>
+    <widget class="QMenu" name="LayerCreateMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
+     </property>
+     <widget class="QMenu" name="LayerCreateEvolutionMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>E&amp;volution...</string>
+      </property>
+      <addaction name="LayerCreateEvolutionMolecularAction"/>
+      <addaction name="LayerCreateEvolutionAtomicAction"/>
+      <addaction name="LayerCreateEvolutionEPSRAction"/>
+     </widget>
+     <widget class="QMenu" name="LayerCreateRefinementMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>&amp;Refinement...</string>
+      </property>
+      <addaction name="LayerCreateRefinementEPSRAction"/>
+     </widget>
+     <widget class="QMenu" name="LayerCreateCalculateMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>&amp;Calculate...</string>
+      </property>
+      <addaction name="LayerCreateCalculateRDFAction"/>
+      <addaction name="LayerCreateCalculateRDFStructureFactorAction"/>
+      <addaction name="LayerCreateCalculateRDFNeutronAction"/>
+      <addaction name="LayerCreateCalculateRDFNeutronXRayAction"/>
+     </widget>
+     <addaction name="LayerCreateEmptyAction"/>
+     <addaction name="separator"/>
+     <addaction name="LayerCreateEvolutionMenu"/>
+     <addaction name="LayerCreateCalculateMenu"/>
+     <addaction name="LayerCreateRefinementMenu"/>
+    </widget>
+    <addaction name="LayerCreateMenu"/>
+    <addaction name="LayerRenameAction"/>
+    <addaction name="LayerDeleteAction"/>
    </widget>
    <addaction name="SessionMenu"/>
    <addaction name="SimulationMenu"/>
@@ -990,15 +1121,6 @@ Remote Simulation</string>
     <font>
      <italic>true</italic>
     </font>
-   </property>
-  </action>
-  <action name="ConfigurationAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Configuration...</string>
    </property>
   </action>
   <action name="WorkspaceAddWidgetGeneralAction">
@@ -1107,18 +1229,6 @@ Remote Simulation</string>
     <string>&amp;New</string>
    </property>
   </action>
-  <action name="SpeciesAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_species.svg</normaloff>:/menu/icons/menu_species.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Species...</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a new Species to the current simulation</string>
-   </property>
-  </action>
   <action name="FileCloseAction">
    <property name="icon">
     <iconset resource="main.qrc">
@@ -1189,12 +1299,150 @@ Remote Simulation</string>
   </action>
   <action name="ConfigurationRenameAction">
    <property name="text">
-    <string>Rename...</string>
+    <string>&amp;Rename...</string>
    </property>
   </action>
   <action name="SpeciesRenameAction">
    <property name="text">
-    <string>Rename...</string>
+    <string>&amp;Rename...</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateEmptyAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="actionldsjflksdf">
+   <property name="text">
+    <string>ldsjflksdf</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateAtomicAction">
+   <property name="text">
+    <string>&amp;Atomic...</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateEmptyAction">
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateSimpleRandomMixAction">
+   <property name="text">
+    <string>&amp;Simple random mix</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateRelativeRandomMixAction">
+   <property name="text">
+    <string>&amp;Relative random mix</string>
+   </property>
+  </action>
+  <action name="LayerCreateEmptyAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="LayerRenameAction">
+   <property name="text">
+    <string>&amp;Rename...</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolutionEPSRAction">
+   <property name="text">
+    <string>&amp;EPSR (MC Only)</string>
+   </property>
+  </action>
+  <action name="actionStandard_Dissolve">
+   <property name="text">
+    <string>Standard Dissolve</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolutionMolecularAction">
+   <property name="text">
+    <string>Standard &amp;Molecular (MC/MD)</string>
+   </property>
+  </action>
+  <action name="LayerCreateRefinementEPSRAction">
+   <property name="text">
+    <string>Standard &amp;EPSR</string>
+   </property>
+  </action>
+  <action name="LayerDeleteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolutionAtomicAction">
+   <property name="text">
+    <string>Standard &amp;Atomic (MC/MD)</string>
+   </property>
+  </action>
+  <action name="ConfigurationDeleteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="SpeciesDeleteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFNeutronAction">
+   <property name="text">
+    <string>RDF and &amp;Neutron S(Q)</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFNeutronXRayAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>RDF, Neutron S(Q), and &amp;X-ray S(Q)</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFStructureFactorAction">
+   <property name="text">
+    <string>RDF and &amp;Unweighted S(Q)</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFAction">
+   <property name="text">
+    <string>&amp;RDF Only</string>
+   </property>
+  </action>
+  <action name="ConfigurationExportToXYZAction">
+   <property name="text">
+    <string>XYZ Coordinates</string>
+   </property>
+  </action>
+  <action name="SpeciesImportFromDissolveAction">
+   <property name="text">
+    <string>From Existing &amp;Simulation...</string>
+   </property>
+  </action>
+  <action name="SpeciesImportFromXYZAction">
+   <property name="text">
+    <string>From &amp;XYZ...</string>
    </property>
   </action>
  </widget>

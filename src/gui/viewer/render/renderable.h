@@ -199,8 +199,12 @@ class Renderable : public ListItem<Renderable>
 	int lastStyleVersion_;
 
 	protected:
-	// Create new Primitive, whose instances will be managed by the Renderable
+	// Create single Primitive, whose instances will be managed by the Renderable
 	Primitive* createPrimitive(GLenum type = GL_LINES, bool colourData = false);
+	// Reinitialise managed Primitive list to the size specified
+	void reinitialisePrimitives(int newSize, GLenum type, bool colourData);
+	// Return nth Primitive managed by the Renderable
+	Primitive* primitive(int n);
 	// Remove specified Primitive
 	void removePrimitive(Primitive* primitive);
 	// Recreate necessary primitives / primitive assemblies for the data

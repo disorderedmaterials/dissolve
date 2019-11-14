@@ -199,6 +199,8 @@ WizardWidgetPageInfo* WizardWidget::findPage(int index)
 bool WizardWidget::updateProgressionControls()
 {
 	updateHeaderAndFooter(currentPage_);
+
+	return true;
 }
 
 // Go to previous page

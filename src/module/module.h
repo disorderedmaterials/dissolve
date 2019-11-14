@@ -138,6 +138,8 @@ class Module : public ListItem<Module>
 	public:
 	// Add Configuration target
 	bool addTargetConfiguration(Configuration* cfg);
+	// Add Configuration targets
+	bool addTargetConfigurations(List<Configuration>& configs);
 	// Remove Configuration target
 	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations

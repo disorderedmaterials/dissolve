@@ -21,12 +21,6 @@
 
 #include "main/dissolve.h"
 #include "gui/gui.h"
-#include "gui/configurationtab.h"
-#include "gui/forcefieldtab.h"
-#include "gui/moduletab.h"
-#include "gui/modulelayertab.h"
-#include "gui/speciestab.h"
-#include "gui/workspacetab.h"
 
 // Return current state of Dissolve
 DissolveWindow::DissolveState DissolveWindow::dissolveState() const
@@ -36,30 +30,31 @@ DissolveWindow::DissolveState DissolveWindow::dissolveState() const
 
 void DissolveWindow::on_ControlRunButton_clicked(bool checked)
 {
-	ui.SimulationRunAction->trigger();
+	ui_.SimulationRunAction->trigger();
 }
 
 void DissolveWindow::on_ControlStepButton_clicked(bool checked)
 {
-	ui.SimulationStepAction->trigger();
+	ui_.SimulationStepAction->trigger();
 }
 
 void DissolveWindow::on_ControlPauseButton_clicked(bool checked)
 {
-	ui.SimulationPauseAction->trigger();
+	ui_.SimulationPauseAction->trigger();
 }
 
 void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
 {
+	// TODO
 }
 
 // Set widgets ready for the main code to be run
 void DissolveWindow::setWidgetsForRun()
 {
 	// Disable / enable controls
-	ui.ControlRunButton->setEnabled(false);
-	ui.ControlStepButton->setEnabled(false);
-	ui.ControlPauseButton->setEnabled(true);
+	ui_.ControlRunButton->setEnabled(false);
+	ui_.ControlStepButton->setEnabled(false);
+	ui_.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
 	RefList<MainTab> tabs = allTabs();
@@ -71,14 +66,18 @@ void DissolveWindow::setWidgetsForRun()
 void DissolveWindow::setWidgetsAfterRun()
 {
 	// Disable / enable controls
-	ui.ControlRunButton->setEnabled(true);
-	ui.ControlStepButton->setEnabled(true);
-	ui.ControlPauseButton->setEnabled(false);
+	ui_.ControlRunButton->setEnabled(true);
+	ui_.ControlRunButton->setIcon(QIcon(":/control/icons/control_play.svg"));
+	ui_.ControlStepButton->setEnabled(true);
+	ui_.ControlPauseButton->setEnabled(false);
 
 	// Enable necessary controls in all tabs
 	RefList<MainTab> tabs = allTabs();
 	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+
+	// Reset the state
+	dissolveState_ = EditingState;
 }
 
 // All iterations requested are complete

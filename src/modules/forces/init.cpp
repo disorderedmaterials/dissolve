@@ -30,7 +30,7 @@ void ForcesModule::initialise()
 	keywords_.add("Test", new BoolKeyword(false), "TestAnalytic", "Compare parallel force routines against exact (analytic) force rather than tabulated values");
 	keywords_.add("Test", new BoolKeyword(true), "TestInter", "Include interatomic forces in test");
 	keywords_.add("Test", new BoolKeyword(true), "TestIntra", "Include intramolecular forces in test");
-	keywords_.add("Test", new FileAndFormatKeyword(referenceForces_), "TestReference", "Reference forces for test");
+	keywords_.add("Test", new FileAndFormatKeyword(referenceForces_, "EndTestReference"), "TestReference", "Reference forces for test");
 	keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold of force (%%) at which test comparison will fail");
 
 	// Export

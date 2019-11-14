@@ -23,6 +23,7 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/speciesatom.h"
 #include "data/atomicmass.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -75,7 +76,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser& parser, Configuration* cf
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->element()->symbol(), i->r().x, i->r().y, i->r().z)) return false;
+		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z)) return false;
 	}
 
 	return true;
@@ -88,9 +89,18 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser& parser, Configuration*
 	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
 
 	// Export keytrj and imcon
-	if (cfg->box()->type() == Box::NonPeriodicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
-	else if (cfg->box()->type() == Box::CubicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
-	else if (cfg->box()->type() == Box::OrthorhombicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
+	if (cfg->box()->type() == Box::NonPeriodicBoxType)
+	{
+		if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
+	}
+	else if (cfg->box()->type() == Box::CubicBoxType)
+	{
+		if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
+	}
+	else if (cfg->box()->type() == Box::OrthorhombicBoxType)
+	{
+		if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
+	}
 	else parser.writeLineF("%10i%10i\n", 0, 3);
 	
 	// Export Cell
@@ -106,7 +116,7 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser& parser, Configuration*
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		if (!parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->usedAtomType(i->localTypeIndex())->name(), n+1, AtomicMass::mass(i->element()), i->r().x, i->r().y, i->r().z)) return false;
+		if (!parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->usedAtomType(i->localTypeIndex())->name(), n+1, AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z)) return false;
 	}
 
 	return true;

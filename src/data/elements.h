@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ELEMENTS_H
-#define DISSOLVE_ELEMENTS_H
+#ifndef DISSOLVE_DATA_ELEMENTS_H
+#define DISSOLVE_DATA_ELEMENTS_H
 
 #include "templates/array.h"
 #include "templates/list.h"
@@ -112,7 +112,7 @@ class ElementReference
 {
 	public:
 	// Constructor
-	ElementReference(int Z, const char* symbol);
+	ElementReference(int Z);
 	// Destructor
 	virtual ~ElementReference();
 

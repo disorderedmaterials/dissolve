@@ -28,7 +28,7 @@
 
 // Forward Declarations
 class Module;
-class ModuleChartModuleBlock;
+class ModuleBlock;
 class QSplitter;
 
 // Module Tab
@@ -66,7 +66,7 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// Module displayed in this tab
 	Module* module_;
 	// Module control widget displayed
-	ModuleChartModuleBlock* controlsWidget_;
+	ModuleBlock* controlsWidget_;
 	// ModuleWidget displayed in this control widget (if any)
 	ModuleWidget* moduleWidget_;
 
@@ -98,7 +98,7 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 
 	public slots:
 	// Update controls in module widget only
-	void updateModuleWidget();
+	void updateModuleWidget(int flags);
 
 
 	/*

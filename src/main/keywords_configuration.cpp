@@ -82,7 +82,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				}
 				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
-				if (!cfg->inputCoordinates().read(parser, 1))
+				if (!cfg->inputCoordinates().read(parser, 1, CharString("End%s", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)), dissolve->coreData()))
 				{
 					Messenger::error("Failed to set input coordinates file / format.\n");
 					error = true;

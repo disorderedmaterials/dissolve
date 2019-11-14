@@ -95,6 +95,12 @@ bool KeywordBase::isSet() const
 	return set_;
 }
 
+// Flag that data has been set by some other means
+void KeywordBase::hasBeenSet()
+{
+	set_ = true;
+}
+
 // Return data type stored by keyword
 KeywordBase::KeywordDataType KeywordBase::type() const
 {

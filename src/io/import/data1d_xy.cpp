@@ -26,30 +26,35 @@
 // Read simple XY data using specified parser
 bool Data1DImportFileFormat::importXY(LineParser& parser, Data1D& data)
 {
+	// Grab column indices
+	const int xCol = keywords_.asInt("X") - 1;
+	const int yCol = keywords_.asInt("Y") - 1;
+	const int errorCol = keywords_.asInt("Error") - 1;
+
 	// Clear the structure, and initialise error arrays if necessary
 	data.clear();
-	if (errorColumn_ != -1) data.addErrors();
+	if (errorCol != -1) data.addErrors();
 
 	while (!parser.eofOrBlank())
 	{
 		if (parser.getArgsDelim() != LineParser::Success) return Messenger::error("Failed to read Data1D data from file.\n");
 
 		// Check columns provided
-		if ((xColumn_ >= parser.nArgs()) || (yColumn_ >= parser.nArgs()))
+		if ((xCol >= parser.nArgs()) || (yCol >= parser.nArgs()))
 		{
-			return Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xColumn_+1, yColumn_+1);
+			return Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xCol+1, yCol+1);
 		}
 
 		// Are we reading errors too?
-		if (errorColumn_ == -1) data.addPoint(parser.argd(xColumn_), parser.argd(yColumn_));
+		if (errorCol == -1) data.addPoint(parser.argd(xCol), parser.argd(yCol));
 		else
 		{
-			if (errorColumn_ >= parser.nArgs())
+			if (errorCol >= parser.nArgs())
 			{
-				return Messenger::error("Error reading from '%s', as the error column specified (%i) is not present.\n", parser.inputFilename(), errorColumn_+1);
+				return Messenger::error("Error reading from '%s', as the error column specified (%i) is not present.\n", parser.inputFilename(), errorCol+1);
 			}
 
-			data.addPoint(parser.argd(xColumn_), parser.argd(yColumn_), parser.argd(errorColumn_));
+			data.addPoint(parser.argd(xCol), parser.argd(yCol), parser.argd(errorCol));
 		}
 	}
 

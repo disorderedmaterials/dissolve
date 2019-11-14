@@ -47,14 +47,6 @@ class Forcefield_SPCFw : public Forcefield
 	const char* description() const;
 	// Return short-range interaction style for AtomTypes
 	Forcefield::ShortRangeType shortRangeType() const;
-
-
-	/*
-	 * Atom Type Data
-	 */
-	public:
-	// Determine and return atom type for specified SpeciesAtom
-	ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 };
 
 #endif

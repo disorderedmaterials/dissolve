@@ -69,7 +69,7 @@ void SpeciesRefListKeywordWidget::updateSelectionRow(int row, Species* sp, bool 
 	item->setCheckState(selection.contains(sp) ? Qt::Checked : Qt::Unchecked);
 }
 
-// Function type combo changed
+// List item changed
 void SpeciesRefListKeywordWidget::itemChanged(QListWidgetItem* item)
 {
 	if (refreshing_) return;
@@ -78,7 +78,7 @@ void SpeciesRefListKeywordWidget::itemChanged(QListWidgetItem* item)
 
 	updateSummaryText();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

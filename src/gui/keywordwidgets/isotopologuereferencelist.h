@@ -61,10 +61,11 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	void addButton_clicked(bool checked);
 	void removeButton_clicked(bool checked);
 	void isotopologueTable_itemChanged(QTableWidgetItem* w);
+	void isotopologueTable_itemSelectionChanged();
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

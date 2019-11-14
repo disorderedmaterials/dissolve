@@ -3,9 +3,141 @@
 $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe ui", arial, sans-serif;
 // $mono-font-family: "SFMono-Regular", Menlo, Consolas, Monospace;
 
-// Centered image
-.img-center {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+// Centred image
+.img-centre {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Right-aligned button
+.btn.right {
+  float: right;
+}
+
+/*
+ * Blockquote Basic Style
+ */
+
+blockquote {
+  width: 60%;
+  margin: 50px auto;
+  color: #555555;
+  padding-left: 50px;
+  padding-top: 15px;
+  padding-bottom: 1px;
+  padding-right: 10px;
+  border-left: 8px solid #ddd ;
+  line-height: 1.6;
+  position: relative;
+  background: #f9f9f9;
+}
+
+blockquote::before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  color: #ddd;
+  left: 15px;
+  top: 12px;
+  background-repeat: no-repeat;
+}
+
+blockquote::after {
+  content: '';
+}
+
+/*
+ * Blockquote-Specific Stylings
+ */
+
+// Tip
+blockquote.tip {
+  border-left: 8px solid #78C0A8;
+}
+blockquote.tip::before {
+  background-image: url(blocktip.svg);
+}
+
+// Warning
+blockquote.warn {
+  border-left: 8px solid #fb9a49;
+}
+blockquote.warn::before {
+  background-image: url(blockwarn.svg);
+}
+
+// Action (Quote-style)
+blockquote.actionquote {
+  border-left: 8px solid #478cc6;
+}
+
+// Action (General)
+blockquote.action {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 8px solid #478cc6;
+}
+blockquote.step {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 16px solid #aebfcd;
+}
+blockquote.step::before {
+  left: 5px;
+  top: 10px;
+  background-image: url(action-general.svg);
+}
+
+// Action (Dissolve)
+blockquote.action_menu {
+  font-weight: bold;
+  border-left: 8px solid #478cc6;
+}
+blockquote.action_dissolve::before {
+  background-image: url(action-dissolve.png);
+}
+
+// Action (Tabs)
+blockquote.action_tabs::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(action-tabs.svg);
+}
+
+// Action (Menu)
+blockquote.action_menu {
+  font-weight: bold;
+}
+blockquote.action_menu::before {
+  left: 8px;
+  background-image: url(action-menu.svg);
+}
+
+// Action (Mouse)
+blockquote.action_mouse::before {
+  background-image: url(action-mouse.svg);
+}
+
+// Action (Key)
+blockquote.action_key {
+  font-weight: bold;
+}
+blockquote.action_key::before {
+  background-image: url(action-key.svg);
+}
+
+// Action (Edit)
+blockquote.action_edit::before {
+  background-image: url(action-edit.svg);
+}
+
+// Action (Settings)
+blockquote.action_settings {
+}
+blockquote.action_settings::before {
+  background-image: url(action-settings.svg);
 }

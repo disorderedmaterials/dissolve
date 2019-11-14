@@ -98,7 +98,7 @@ SQModuleWidget::~SQModuleWidget()
 }
 
 // Update controls within widget
-void SQModuleWidget::updateControls()
+void SQModuleWidget::updateControls(int flags)
 {
 	ui.PartialGRPlotWidget->updateToolbar();
 	ui.PartialSQPlotWidget->updateToolbar();

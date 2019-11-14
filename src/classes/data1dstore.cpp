@@ -33,32 +33,25 @@ Data1DStore::~Data1DStore()
 {
 }
 
-// Load data into store
-bool Data1DStore::addData(Data1DImportFileFormat fileAndFormat, const char* name)
+/*
+ * Data
+ */
+
+// Add named data reference to store, reading file and format from specified parser / starting argument
+bool Data1DStore::addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData)
 {
 	// Create new data
 	Data1D* data = data_.add();
-	data->setName(name);
+	data->setName(dataName);
 
-	// Add reference
-	dataReferences_.append(data, fileAndFormat);
+	// Add reference to data
+	RefDataItem<Data1D,Data1DImportFileFormat>* ref = dataReferences_.append(data);
 
-	// Load the data
-	return fileAndFormat.importData(*data);
-}
-
-// Load data into store using specified pool
-bool Data1DStore::addData(ProcessPool* pool, Data1DImportFileFormat fileAndFormat, const char* name)
-{
-	// Create new data
-	Data1D* data = data_.add();
-	data->setName(name);
-
-	// Add reference
-	dataReferences_.append(data, fileAndFormat);
+	// Read the file / format
+	if (!ref->data().read(parser, startArg, endKeyword, coreData)) return false;
 
 	// Load the data
-	return fileAndFormat.importData(*data, pool);
+	return ref->data().importData(*data, parser.processPool());
 }
 
 // Check to see if the named data is present in the store

@@ -70,6 +70,14 @@ class NodeKeywordBase
 	virtual bool setNode(ProcedureNode* node) = 0;
 	// Return the current target node as the base class
 	virtual ProcedureNode* procedureNode() const = 0;
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	virtual int optionMask() const = 0;
 };
 
 // Keyword with ProcedureNode
@@ -149,6 +157,17 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	N* node() const
 	{
 		return KeywordData<N*>::data_;
+	}
+
+
+	/*
+	 * Access to KeywordBase
+	 */
+	public:
+	// Return option mask for keyword
+	int optionMask() const
+	{
+		return KeywordBase::optionMask();
 	}
 
 

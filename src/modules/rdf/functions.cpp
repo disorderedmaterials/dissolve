@@ -29,8 +29,10 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/species.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
+#include "classes/speciestorsion.h"
 #include "genericitems/listhelper.h"
 #include "templates/orderedpointerarray.h"
 
@@ -251,7 +253,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
  */
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool allIntra, bool& alreadyUpToDate)
+bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool& alreadyUpToDate)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -308,64 +310,27 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 
 	timer.start();
 
-	// If we're considering the intrmolecular part to be between all pairs, as opposed to just those that explicitly bound,
-	// perform a loop over molecules. Otherwise, use the Configuration's master lists of intramolecular terms.
+	// Loop over molecules...
 	Atom* i, *j, *k;
-	if (allIntra)
+	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
-		// Loop over molecules...
-		for (int m=start; m<cfg->nMolecules(); m += stride)
+		Molecule* mol = cfg->molecule(m);
+		Atom** atoms = mol->atoms();
+
+		for (int ii=0; ii<mol->nAtoms()-1; ++ii)
 		{
-			Molecule* mol = cfg->molecule(m);
-			Atom** atoms = mol->atoms();
-
-			for (int ii=0; ii<mol->nAtoms()-1; ++ii)
+			i = atoms[ii];
+			for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
 			{
-				i = atoms[ii];
-				for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
-				{
-					j = atoms[jj];
+				j = atoms[jj];
 
-					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-					else distance = (i->r() - j->r()).magnitude();
-					originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-				}
+				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				else distance = (i->r() - j->r()).magnitude();
+				originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 			}
 		}
 	}
-	else
-	{
-		// Bonds
-		Bond** bonds = cfg->bonds().array();
-		Bond* b;
-		for (int n=start; n<cfg->nBonds(); n+=stride)
-		{
-			b = bonds[n];
 
-			i = b->i();
-			j = b->j();
-			if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-			else distance = (i->r() - j->r()).magnitude();
-			originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-		}
-
-		// Angles
-		Angle** angles = cfg->angles().array();
-		Angle* a;
-		for (int n=start; n<cfg->nAngles(); n+=stride)
-		{
-			a = angles[n];
-
-			i = a->i();
-			j = a->j();
-			k = a->k();
-			
-			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
-			else distance = (i->r() - k->r()).magnitude();
-			originalgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
-		}
-	}
 	timer.stop();
 	Messenger::print("Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
@@ -486,145 +451,151 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next()) broadgr.boundPartial(i,j).values() = 0.0;
 		}
 
-		/*
-		 * Bonds
-		 */
+// 		// Assemble lists of unique intramolecular terms (in respect of their parameters)
+// 		RefDataList<const SpeciesIntra, const SpeciesBond*> bondIntra;
+// 		RefDataList<const SpeciesIntra, const SpeciesAngle*> angleIntra;
+// 		RefDataList<const SpeciesIntra, const SpeciesTorsion*> torsionIntra;
+// 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
+// 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
+// 		{
+// 			Species* sp = spInfo->species();
+// 			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next()) bondIntra.addUnique(b->parameterSource(), b);
+// 			for (const SpeciesAngle* a = sp->angles().first(); a != NULL; a = a->next()) angleIntra.addUnique(a->parameterSource(), a);
+// 			for (const SpeciesTorsion* t = sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
+// 		}
 
-		// Copy the dynamic Bond array from the Configuration
-		PointerArray<Bond> bondPointers;
-		bondPointers.initialise(cfg->nBonds());
-		Bond** bonds = cfg->bonds().array();
-		for (int n=0; n<cfg->nBonds(); ++n) bondPointers.append(bonds[n]);
+		return Messenger::error("Frequency broadening not reimplemented yet.\n");
 
-		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
-		RefDataList<SpeciesIntra,SpeciesBond*> bondIntra;
-		for (int n=0; n<cfg->nBonds(); ++n)
-		{
-			SpeciesBond* sb = bonds[n]->speciesBond();
-			bondIntra.addUnique(sb->parameterSource(), sb);
-		}
-
-		// TODO Parallelise this
-
-		RefDataListIterator<SpeciesIntra,SpeciesBond*> bondIterator(bondIntra);
-		while (SpeciesIntra* intra = bondIterator.iterate())
-		{
-			// Reset the dummy PartialSet
-			tempgr.reset();
-
-			// Add contributions from this SpeciesIntra only
-			for (int n=bondPointers.nItems()-1; n>=0; --n)
-			{
-				Bond* b = bondPointers[n];
-				if (b->speciesBond()->parameterSource() != intra) continue;
-
-				i = b->i();
-				j = b->j();
-				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-				else distance = (i->r() - j->r()).magnitude();
-				tempgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-
-				// Won't need this Bond pointer again, so remove it from our pointer array
-				bondPointers.remove(n);
-			}
-
-			// Normalise our bond's histogram data into the g(r)
-			tempgr.formPartials(box->volume());
-
-			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
-			typeI = tempgr.atomTypes().first();
-			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
-			{
-				typeJ = typeI;
-				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-				{
-					if (tempgr.isBoundPartialEmpty(i, j)) continue;
-
-					// Remove contribution from original full partial in unweightedgr
-					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
-
-					// Set up the broadening function for these AtomTypes
-					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
-
-					// Convolute the bound partial with the broadening function
-					Filters::convolve(tempgr.boundPartial(i, j), function);
-
-					// Sum into our broadened g(r) partial set
-					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
-				}
-			}
-		}
-
-		/*
-		 * Angles
-		 */
-
-		// Copy the dynamic Angle array from the Configuration
-		PointerArray<Angle> anglePointers;
-		anglePointers.initialise(cfg->nAngles());
-		Angle** angles = cfg->angles().array();
-		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
-
-		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
-		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
-		for (int n=0; n<cfg->nAngles(); ++n)
-		{
-			SpeciesAngle* sa = angles[n]->speciesAngle();
-			angleIntra.addUnique(sa->parameterSource(), sa);
-		}
-
-		// TODO Parallelise this
-
-		RefDataListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
-		while (SpeciesIntra* intra = angleIterator.iterate())
-		{
-			// Reset the dummy PartialSet
-			tempgr.reset();
-
-			// Add contributions from this SpeciesIntra only
-			for (int n=anglePointers.nItems()-1; n>=0; --n)
-			{
-				Angle* a = anglePointers[n];
-				if (a->speciesAngle()->parameterSource() != intra) continue;
-
-				i = a->i();
-				k = a->k();
-
-				// Determine whether we need to apply minimum image between atoms 'i' and 'k'
-				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
-				else distance = (i->r() - k->r()).magnitude();
-				tempgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
-
-				// Won't need this Angle pointer again, so remove it from our pointer array
-				anglePointers.remove(n);
-			}
-
-			// Normalise our bond's histogram data into the g(r)
-			tempgr.formPartials(box->volume());
-
-			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
-			typeI = tempgr.atomTypes().first();
-			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
-			{
-				typeJ = typeI;
-				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-				{
-					if (tempgr.isBoundPartialEmpty(i, j)) continue;
-
-					// Remove contribution from original full partial in unweightedgr
-					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
-
-					// Set up the broadening function for these AtomTypes
-					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
-
-					// Convolute the bound partial with the broadening function
-					Filters::convolve(tempgr.boundPartial(i, j), function);
-
-					// Sum into our broadened g(r) partial set
-					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
-				}
-			}
-		}
+// 		/*
+// 		 * Bonds
+// 		 */
+//
+// 		// TODO Parallelise this
+//
+// 		RefDataListIterator<const SpeciesIntra, const SpeciesBond*> bondIterator(bondIntra);
+// 		while (const SpeciesIntra* intra = bondIterator.iterate())
+// 		{
+// 			// Reset the dummy PartialSet
+// 			tempgr.reset();
+//
+// 			// Add contributions from this SpeciesIntra only
+// 			const Molecule** molecules = cfg->molecules().array();
+// 			const Molecule* mol;
+// 			for (int n=0; n<molecules.nItems(); ++n, mol = molecules.at(n))
+// 			{
+// 				for (int n=bondPointers.nItems()-1; n>=0; --n)
+// 				{
+// 					Bond* b = bondPointers[n];
+// 					if (b->speciesBond()->parameterSource() != intra) continue;
+//
+// 					i = b->i();
+// 					j = b->j();
+// 					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+// 					else distance = (i->r() - j->r()).magnitude();
+// 					tempgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+//
+// 					// Won't need this Bond pointer again, so remove it from our pointer array
+// 					bondPointers.remove(n);
+// 				}
+// 			}
+//
+// 			// Normalise our bond's histogram data into the g(r)
+// 			tempgr.formPartials(box->volume());
+//
+// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
+// 			typeI = tempgr.atomTypes().first();
+// 			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
+// 			{
+// 				typeJ = typeI;
+// 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
+// 				{
+// 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
+//
+// 					// Remove contribution from original full partial in unweightedgr
+// 					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
+//
+// 					// Set up the broadening function for these AtomTypes
+// 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
+//
+// 					// Convolute the bound partial with the broadening function
+// 					Filters::convolve(tempgr.boundPartial(i, j), function);
+//
+// 					// Sum into our broadened g(r) partial set
+// 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
+// 				}
+// 			}
+// 		}
+//
+// 		/*
+// 		 * Angles
+// 		 */
+//
+// 		// Copy the dynamic Angle array from the Configuration
+// 		PointerArray<Angle> anglePointers;
+// 		anglePointers.initialise(cfg->nAngles());
+// 		Angle** angles = cfg->angles().array();
+// 		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
+//
+// 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
+// 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
+// 		for (int n=0; n<cfg->nAngles(); ++n)
+// 		{
+// 			SpeciesAngle* sa = angles[n]->speciesAngle();
+// 			angleIntra.addUnique(sa->parameterSource(), sa);
+// 		}
+//
+// 		// TODO Parallelise this
+//
+// 		RefDataListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
+// 		while (SpeciesIntra* intra = angleIterator.iterate())
+// 		{
+// 			// Reset the dummy PartialSet
+// 			tempgr.reset();
+//
+// 			// Add contributions from this SpeciesIntra only
+// 			for (int n=anglePointers.nItems()-1; n>=0; --n)
+// 			{
+// 				Angle* a = anglePointers[n];
+// 				if (a->speciesAngle()->parameterSource() != intra) continue;
+//
+// 				i = a->i();
+// 				k = a->k();
+//
+// 				// Determine whether we need to apply minimum image between atoms 'i' and 'k'
+// 				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
+// 				else distance = (i->r() - k->r()).magnitude();
+// 				tempgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
+//
+// 				// Won't need this Angle pointer again, so remove it from our pointer array
+// 				anglePointers.remove(n);
+// 			}
+//
+// 			// Normalise our bond's histogram data into the g(r)
+// 			tempgr.formPartials(box->volume());
+//
+// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
+// 			typeI = tempgr.atomTypes().first();
+// 			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
+// 			{
+// 				typeJ = typeI;
+// 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
+// 				{
+// 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
+//
+// 					// Remove contribution from original full partial in unweightedgr
+// 					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
+//
+// 					// Set up the broadening function for these AtomTypes
+// 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
+//
+// 					// Convolute the bound partial with the broadening function
+// 					Filters::convolve(tempgr.boundPartial(i, j), function);
+//
+// 					// Sum into our broadened g(r) partial set
+// 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
+// 				}
+// 			}
+// 		}
 
 		/*
 		 * Copy Data

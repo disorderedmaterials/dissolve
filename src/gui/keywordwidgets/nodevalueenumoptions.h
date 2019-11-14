@@ -63,7 +63,7 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*

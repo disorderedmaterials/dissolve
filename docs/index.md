@@ -12,150 +12,40 @@ permalink: /
 ### Contributors
 - Simona (2019-)
 
-_Current Version: 0.4.3, Wednesday 12th June 2019_
+_Current Version: 0.4.6, Wednesday 30th October 2019_
 
-Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems.
+## Introduction
+
+Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems. See [What is Dissolve?](userguide/overview.md) for more information.
 
 Check out [Dissolve on GitHub](https://www.github.com/trisyoungs/dissolve) and [contribute](developers/contributing.md) if you want to!
 
+An initial publication describing Dissolve and proving consistency with existing methodology is available here:
+
+["Dissolve: next generation software for the interrogation of total scattering data by empirical potential generation"](https://www.tandfonline.com/doi/abs/10.1080/00268976.2019.1651918), _Mol. Phys._, Published online 7th August 2019.
+
+* * *
+
 ## Getting Started
 
-Basic overview and referencing, and obtaining, installing, and building Dissolve.
+Dissolve is available in pre-built form for most platforms. You can find installers and AppImages for major releases as well as the current development version on the [releases page](https://github.com/trisyoungs/dissolve/releases) at GitHub. Packages are built using the [Travis CI platform](https://travis-ci.com/trisyoungs/dissolve).
 
-[What is / isn't Dissolve?](start/overview.md){: .btn}
-[Where to get Dissolve](start/get.md){: .btn}
-[Building Dissolve](start/build.md){: .btn}
-[Learning Dissolve](start/learn.md){: .btn}
-[Referencing Dissolve](start/referencing.md){: .btn}
+The latest source code is available on GitHub as the [Dissolve project](https://github.com/trisyoungs/dissolve). See the [build instructions](developers/compilation.md) for more information.
 
 * * *
-## Setting Up Dissolve
 
-[Building a simulation from scratch](setup/scratch.md){: .btn}
-[Using a system template](setup/templates.md){: .btn}
+## Using Dissolve
 
-* * *
-## Running Dissolve
-
-How to run Dissolve, ths input it expects, and a full list of command-line options.
-
-[CLI Options](run/cli.md){: .btn}
+Recommended reading for first-time users can be found in the [Starting Out](userguide/startingout/) section of the [User Guide](userguide/).
 
 * * *
-## Input / Output
 
-Dissolve's file format and syntax, keyword descriptions, and output file roles.
-
-TODO
-{: .label .label-red }
-[Main Input File](io/input/index.md){: .btn .btn-blue}
-[Configuration Block](io/input/configuration.md){: .btn .btn-outline}
-[Layer Block](io/input/layer.md){: .btn .btn-outline}
-[Master Block](io/input/master.md){: .btn .btn-outline}
-[Module Block](io/input/module.md){: .btn .btn-outline}
-[PairPotential Block](io/input/pairpotential.md){: .btn .btn-outline}
-[Simulation Block](io/input/simulation.md){: .btn .btn-outline}
-[Site Block](io/input/site.md){: .btn .btn-outline}
-[Species Block](io/input/species.md){: .btn .btn-outline}
-
-[Heartbeat File](io/heartbeat.md){: .btn .btn-blue}
-[Restart File](io/restart.md){: .btn .btn-blue}
-
-* * *
-## Modules
-
-All of Dissolve's modules - their purpose, options, and inner workings.
-
-TODO
-{: .label .label-red }
-
-[Overview](modules/index.md){: .btn .btn-blue}
-
-### Analysis
-Calculation of properties of interest from configurations.
-
-#### General
-[Analyse](modules/analyse.md){: .btn .btn-outline}
-
-#### Two-Body Correlation Functions
-[CalculateRDF](modules/calculateRDF.md){: .btn .btn-outline}
-
-### Checks & Tests
-Modules for checking, testing, and ensuring consistency.
-
-[Checks](modules/checks.md){: .btn .btn-outline}
-[DataTest](modules/dataTest.md){: .btn .btn-outline}
-[SanityCheck](modules/sanityCheck.md){: .btn .btn-outline}
-
-### Correlation Functions
-Methods to calculate real- and reciprocal-space correlation functions.
-
-[NeutronSQ](modules/neutronSQ.md){: .btn .btn-outline}
-[RDF](modules/rDF.md){: .btn .btn-outline}
-[SQ](modules/sQ.md){: .btn .btn-outline}
-
-### Evolution
-Methods to evolve the coordinates of configurations.
-
-[AtomShake](modules/atomShake.md){: .btn .btn-outline}
-[IntraShake](modules/intraShake.md){: .btn .btn-outline}
-[MD](modules/mD.md){: .btn .btn-outline}
-[MolShake](modules/molShake.md){: .btn .btn-outline}
-
-### Forcefield
-Energy evaluation, force calculation, and forcefield modification.
-
-[Energy](modules/energy.md){: .btn .btn-outline}
-[EPSR](modules/EPSR.md){: .btn .btn-outline}
-[Forces](modules/forces.md){: .btn .btn-outline}
-[Refine](modules/refine.md){: .btn .btn-outline}
-
-### Input & Output
-Import and export various data, including configuration coordinates and trajectories.
-
-[Export](modules/export.md){: .btn .btn-outline}
-[Import](modules/import.md){: .btn .btn-outline}
-
-### Optimisation
-Minimisation and fitting modules.
-
-[Calibrate](modules/calibrate.md){: .btn .btn-outline}
-[GeometryOptimisation](modules/geometryoptimisation.md){: .btn .btn-outline}
-
-* * *
 ## Developer Documentation
 
-### Definition, Style, and Scope
-Architecture and style guidelines, specifications, and workflow descriptions.
-
-[Project Description](developers/description.md){: .btn}
-[Project Overview](developers/overview.md){: .btn}
-[Coding Standards](developers/standards.md){: .btn}
-[Technical Specification](developers/techspec.md){: .btn}
-[Architecture](developers/architecture.md){: .btn}
-[Contributing](developers/contributing.md){: .btn}
-[Releases](developers/releases.md){: .btn}
-
-
-### Developer Guides
-
-Overviews of classes and implementations relevant to core Dissolve methodology.
-
-[Generic Data Management and Storage](developers/overviews/datamanagement.md){: .btn}
-[Developing Modules](developers/overviews/modules.md){: .btn}
-[Keyword Options](developers/overviews/keywordoptions.md){: .btn}
-
-TODO
-{: .label .label-red }
-[Data Visualisers (GUI)](developers/overviews/dataviewers.md){: .btn}
-[Aspects of the GUI](developers/overviews/gui.md){: .btn}
-[Understanding Configurations](developers/overviews/configurations.md){: .btn}
-[Dissolve's Template Classes](developers/overviews/templates.md){: .btn}
+Architecture and style guidelines, specifications, and workflow descriptions are available in the [developer documentation](developers/), along with [overviews](developers/overviews/) of classes and implementations relevant to core Dissolve methodology.
 
 * * *
+
 ## Project Governance
 
-How the evolution of Dissolve is managed and governed.
-
-[Project Management Committee](governance/project.md){: .btn}
-[Technical Steering Committee](governance/technical.md){: .btn}
+Dissolve is governed by a [Project Management Committee](governance/project.md) as well as a [Technical Steering Committee](governance/technical.md).

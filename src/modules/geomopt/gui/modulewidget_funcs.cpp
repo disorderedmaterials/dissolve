@@ -31,7 +31,7 @@ GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* pare
 }
 
 // Update controls within widget
-void GeometryOptimisationModuleWidget::updateControls()
+void GeometryOptimisationModuleWidget::updateControls(int flags)
 {
 }
 

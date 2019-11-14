@@ -99,7 +99,7 @@ const char* DissolveSys::lowerCase(const char* s)
 	return result;
 }
 
-// Perform case-insensitive string comparison
+// Perform case-(in)sensitive string comparison
 bool DissolveSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 {
 	int len1 = strlen(s1), len2 = strlen(s2);
@@ -117,7 +117,41 @@ bool DissolveSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 	return true;
 }
 
-// Get characters before first occurrence of designated character, or NULL if the character does not exist
+// Perform case-(in)sensitive, wildcard-enabled string comparison
+bool DissolveSys::sameWildString(const char* wild, const char* s2, bool caseSensitive)
+{
+	// If we reach at the end of both strings, the match was a success
+	if ((*wild == '\0') && (*s2 == '\0')) return true;
+
+	// Handle wildcards '*' and '?'
+	if (*wild == '*')
+	{
+		/*
+		 * If this is not the last character in the string and there are no more characters in s2, return false.
+		 * Otherwise, we try to match the next character in 'wild' from the current character in s2, then the current character in wild with the next character in s2.
+		 * This allows the '*' to match as many characters as it can, but always checks for absolute character matching between the current characters.
+		 */
+		if ((*(wild+1) != '\0') && (*s2 == '\0')) return false;
+		else return sameWildString(wild+1, s2, caseSensitive) || sameWildString(wild, s2+1, caseSensitive);
+	}
+	else
+	{
+		// Wildcard '?' matches any single character, so increase both character positions and continue
+		if (*wild == '?') return sameWildString(wild+1, s2+1, caseSensitive);
+	}
+
+	// Not a wildcard, so do absolute character matching
+	if (caseSensitive)
+	{
+		if (tolower(*wild) == tolower(*s2)) return sameWildString(wild+1, s2+1, caseSensitive);
+	}
+	else if (*wild == *s2) return sameWildString(wild+1, s2+1, caseSensitive);
+
+	// Characters do not match, so return false
+	return false;
+}
+
+// Get characters before first occurrence of designated character, or an empty string if the character does not exist
 const char* DissolveSys::beforeChar(const char* s, char delim)
 {
 	static CharString result(1024);
@@ -127,10 +161,10 @@ const char* DissolveSys::beforeChar(const char* s, char delim)
 		if (s[i] == delim) return result;
 		result += s[i];
 	}
-	return NULL;
+	return "";
 }
 
-// Get characters after first occurrence of designated character, or NULL if the character does not exist
+// Get characters after first occurrence of designated character, or an empty string if the character does not exist
 const char* DissolveSys::afterChar(const char* s, char delim)
 {
 	static CharString result(1024);
@@ -141,7 +175,7 @@ const char* DissolveSys::afterChar(const char* s, char delim)
 		if (found) result += s[i];
 		if (s[i] == delim) found = true;
 	}
-	return (found ? result.get() : NULL);
+	return (found ? result.get() : "");
 }
 
 // Get characters after last occurrence of designated character

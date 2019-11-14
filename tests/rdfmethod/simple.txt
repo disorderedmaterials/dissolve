@@ -38,11 +38,5 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'Ar'  0.0  0.0  0.0
-  GenerateAll  'LJ'
+  Parameters  'Ar' 0.0  LJ  0.0  0.0
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
-

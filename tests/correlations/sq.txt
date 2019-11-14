@@ -27,6 +27,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
   InputCoordinates  epsr  'epsr/waterbox.ato'
+  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'
@@ -42,23 +43,35 @@ Layer  'Processing'
 Module  DataTest  'Partial g(r) (unbound)'
   Threshold  0.31
   ErrorType  RMSE
-  Data1D  'Bulk//OriginalGR//OW-OW//Unbound'  xy  'epsr/water.EPSR.g01'  y=2
-  Data1D  'Bulk//OriginalGR//OW-HW//Unbound'  xy  'epsr/water.EPSR.g01'  y=4
-  Data1D  'Bulk//OriginalGR//HW-HW//Unbound'  xy  'epsr/water.EPSR.g01'  y=6
+  Data1D  'Bulk//OriginalGR//OW-OW//Unbound'  xy  'epsr/water.EPSR.g01'
+    Y  2
+  EndData1D
+  Data1D  'Bulk//OriginalGR//OW-HW//Unbound'  xy  'epsr/water.EPSR.g01'
+    Y  4
+  EndData1D
+  Data1D  'Bulk//OriginalGR//HW-HW//Unbound'  xy  'epsr/water.EPSR.g01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
   ErrorType  RMSE
   Threshold  2.15
-  Data1D  'Bulk//OriginalGR//OW-HW//Bound'  xy  'epsr/water.EPSR.y01'  y=4
-  Data1D  'Bulk//OriginalGR//HW-HW//Bound'  xy  'epsr/water.EPSR.y01'  y=6
+  Data1D  'Bulk//OriginalGR//OW-HW//Bound'  xy  'epsr/water.EPSR.y01'
+    Y  4
+  EndData1D
+  Data1D  'Bulk//OriginalGR//HW-HW//Bound'  xy  'epsr/water.EPSR.y01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (zeroed bound)'
   Threshold  0.001
-  Data1D  'Bulk//OriginalGR//OW-OW//Bound'  xy  'epsr/water.EPSR.y01'  y=2
+  Data1D  'Bulk//OriginalGR//OW-OW//Bound'  xy  'epsr/water.EPSR.y01'
+    Y  2
+  EndData1D
 EndModule
 
 Module  NeutronSQ  'D2O'
@@ -75,31 +88,45 @@ EndModule
 Module  DataTest  'Partial S(Q) (unbound)'
   ErrorType  RMSE
   Threshold  0.25
-  Data1D  'D2O//UnweightedSQ//OW-OW//Unbound'  xy  'epsr/water.EPSR.f01'  y=2
-  Data1D  'D2O//UnweightedSQ//OW-HW//Unbound'  xy  'epsr/water.EPSR.f01'  y=4
-  Data1D  'D2O//UnweightedSQ//HW-HW//Unbound'  xy  'epsr/water.EPSR.f01'  y=6
+  Data1D  'D2O//UnweightedSQ//OW-OW//Unbound'  xy  'epsr/water.EPSR.f01'
+    Y  2
+  EndData1D
+  Data1D  'D2O//UnweightedSQ//OW-HW//Unbound'  xy  'epsr/water.EPSR.f01'
+    Y  4
+  EndData1D
+  Data1D  'D2O//UnweightedSQ//HW-HW//Unbound'  xy  'epsr/water.EPSR.f01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (bound terms)
 Module  DataTest  'Partial S(Q) (bound)'
   ErrorType  RMSE
   Threshold  0.7
-  Data1D  'D2O//UnweightedSQ//OW-HW//Bound'  xy  'epsr/water.EPSR.s01'  y=4
-  Data1D  'D2O//UnweightedSQ//HW-HW//Bound'  xy  'epsr/water.EPSR.s01'  y=6
+  Data1D  'D2O//UnweightedSQ//OW-HW//Bound'  xy  'epsr/water.EPSR.s01'
+    Y  4
+  EndData1D
+  Data1D  'D2O//UnweightedSQ//HW-HW//Bound'  xy  'epsr/water.EPSR.s01'
+    Y  6
+  EndData1D
 EndModule
 
 # -- Partial S(Q) (bound terms)
 Module  DataTest  'Partial S(Q) (zeroed bound)'
   ErrorType  RMSE
   Threshold  0.001
-  Data1D  'D2O//UnweightedSQ//OW-OW//Bound'  xy  'epsr/water.EPSR.s01'  y=2
+  Data1D  'D2O//UnweightedSQ//OW-OW//Bound'  xy  'epsr/water.EPSR.s01'
+    Y  2
+  EndData1D
 EndModule
 
 # -- Total neutron-weighted F(Q)
 Module  DataTest  'F(Q) D2O'
   ErrorType  RMSE
   Threshold  2.0e-3
-  Data1D  'D2O//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'  y=2
+  Data1D  'D2O//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'
+    Y  2
+  EndData1D
 EndModule
 
 Module  NeutronSQ  'H2O'
@@ -116,7 +143,9 @@ EndModule
 Module  DataTest  'F(Q) H2O'
   ErrorType  RMSE
   Threshold  0.09
-  Data1D  'H2O//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'  y=4
+  Data1D  'H2O//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'
+    Y  4
+  EndData1D
 EndModule
 
 Module  NeutronSQ  'HDO'
@@ -135,7 +164,9 @@ EndModule
 Module  DataTest  'F(Q) HDO'
   ErrorType  RMSE
   Threshold  0.06
-  Data1D  'HDO//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'  y=6
+  Data1D  'HDO//WeightedSQ//Total'  xy  'epsr/water.EPSR.u01'
+    Y  6
+  EndData1D
 EndModule
 
 Module SanityCheck
@@ -147,12 +178,6 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'OW'  -0.82      0.6503    3.165492
-  Parameters  'HW'  0.41       0.0       0.0
-  GenerateAll  LJ
+  Parameters  'OW'  -0.82  LJGeometric    0.6503    3.165492
+  Parameters  'HW'  0.41   LJGeometric    0.0       0.0
 EndPairPotentials
-
-Simulation
-   RestartFileFrequency  -1
-EndSimulation
-

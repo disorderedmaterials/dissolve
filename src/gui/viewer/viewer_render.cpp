@@ -143,7 +143,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		// -- Render axis text
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
-		glEnable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
 		LineStyle().sendToGL(pixelScaling_);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (fontInstance_.fontOK())
@@ -267,6 +267,7 @@ void BaseViewer::setupGL()
 
 	// Set specular reflection colour
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularColour);
+	glMateriali(GL_FRONT, GL_SHININESS, 127);
 
 	// Configure antialiasing
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -332,7 +333,7 @@ void BaseViewer::checkGlError()
 			case (GL_STACK_UNDERFLOW): Messenger::printVerbose("Command would cause a stack underflow\n"); break;
 			case (GL_OUT_OF_MEMORY): Messenger::printVerbose("Not enough memory left to execute command\n"); break;
 			case (GL_NO_ERROR): Messenger::printVerbose("No GL error\n"); return;
-			case (GL_CONTEXT_LOST): return;
+// 			case (GL_CONTEXT_LOST): return;		/* Not recognised on OSX? */
 			default:
 				Messenger::printVerbose("Unknown GL error?\n");
 				break;

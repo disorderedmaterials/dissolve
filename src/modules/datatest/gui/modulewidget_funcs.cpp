@@ -31,7 +31,7 @@ DataTestModuleWidget::DataTestModuleWidget(QWidget* parent, Module* module) : Mo
 }
 
 // Update controls within widget
-void DataTestModuleWidget::updateControls()
+void DataTestModuleWidget::updateControls(int flags)
 {
 }
 

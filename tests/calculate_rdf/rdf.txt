@@ -72,9 +72,8 @@ EndSpecies
 PairPotentials
   Range  9.000000
   Delta  0.050000
-  Parameters  'OW'  -0.82      0.65	3.165492
-  Parameters  'HW'  0.41       0.0      0.0
-  GenerateAll  'LJ'
+  Parameters  'OW'  -0.82  LJGeometric    0.65	3.165492
+  Parameters  'HW'  0.41   LJGeometric    0.0      0.0
 EndPairPotentials
 
 #------------------------#
@@ -103,6 +102,7 @@ Module  Import
   ReadTrajectory  True
   # Trajectory file contains 95 frames
   TrajectoryFile  xyz  '../_data/water267-dlpoly/water-267-298K.xyz'
+  EndTrajectoryFile
 EndModule
 
 # Oxygen-oxygen radial distribution function
@@ -158,6 +158,7 @@ Module DataTest
   Frequency  95
   Target  'RDF(OW-OW)'
   Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_02_02'
+  EndData1D
   Threshold  1.4
 EndModule
 
@@ -165,6 +166,7 @@ Module DataTest
   Frequency  95
   Target  'RDF(OW-OW)-Analyser'
   Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_02_02'
+  EndData1D
   Threshold  1.4
 EndModule
 
@@ -222,6 +224,7 @@ Module DataTest
   Frequency  95
   Target  'RDF(H1-H2)'
   Data1D  RDF_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_01_03'
+  EndData1D
   Threshold  1.1
 EndModule
 
@@ -229,6 +232,7 @@ Module DataTest
   Frequency  95
   Target  'RDF(H1-H2)-Analyser'
   Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_01_03'
+  EndData1D
   Threshold  1.1
 EndModule
 
@@ -286,6 +290,7 @@ Module DataTest
   Frequency  95
   Target  'RDF(COM-COM)'
   Data1D  RDF_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
+  EndData1D
   Threshold  0.5
 EndModule
 
@@ -293,6 +298,7 @@ Module DataTest
   Frequency  95
   Target  'RDF(COM-COM)-Analyser'
   Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
+  EndData1D
   Threshold  0.5
 EndModule
 

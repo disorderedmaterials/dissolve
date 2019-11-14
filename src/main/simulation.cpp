@@ -24,6 +24,7 @@
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 #include "classes/atomtype.h"
+#include "classes/box.h"
 #include "classes/species.h"
 #include <cstdio>
 
@@ -66,6 +67,18 @@ bool Dissolve::prepare()
 	// Reassign AtomType indices (in case one or more have been added / removed)
 	int count = 0;
 	for (AtomType* at = atomTypes().first(); at != NULL; at = at->next(), ++count) at->setIndex(count);
+
+	// Check pair potential range against Box defined for each Configuration
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+	{
+		// Check Box extent against pair potential range
+		double maxPPRange = cfg->box()->inscribedSphereRadius();
+		if (pairPotentialRange_ > maxPPRange)
+		{
+			Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange_, maxPPRange);
+			return false;
+		}
+	}
 
 	// Make sure pair potentials are up-to-date
 	if (!generatePairPotentials()) return false;
@@ -175,7 +188,8 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::heading("'%s'", cfg->name());
 
 			// Perform any necessary actions before we start processing this Configuration's Modules
-			if (!cfg->prepare(worldPool(), potentialMap_, pairPotentialRange_)) return false;
+			// -- Apply the current size factor
+			cfg->applySizeFactor(potentialMap_);
 
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe())

@@ -134,7 +134,7 @@ RefineModuleWidget::~RefineModuleWidget()
 }
 
 // Update controls within widget
-void RefineModuleWidget::updateControls()
+void RefineModuleWidget::updateControls(int flags)
 {
 	refreshing_ = true;
 
@@ -258,9 +258,9 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 				 * Partial Structure Factors
 				 */
 
-				// Experimentally-determined unweighted partial
-				Renderable* expSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Exp", id.get()));
-				partialSQGraph_->addRenderableToGroup(expSQ, id.get());
+				// Unweighted estimated partial
+				Renderable* estSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Estimated", id.get()));
+				partialSQGraph_->addRenderableToGroup(estSQ, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
@@ -277,8 +277,8 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 				 */
 
 				// Experimentally-determined unweighted partial
-				Renderable* expGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Exp", id.get()));
-				partialGRGraph_->addRenderableToGroup(expGR, id.get());
+				Renderable* estGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Estimated", id.get()));
+				partialGRGraph_->addRenderableToGroup(estGR, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));

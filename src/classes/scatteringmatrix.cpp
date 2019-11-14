@@ -109,7 +109,7 @@ void ScatteringMatrix::printInverse() const
 }
 
 // Generate partials from reference data using the inverse coefficients matrix
-void ScatteringMatrix::generatePartials(Array2D<Data1D>& generatedSQ)
+void ScatteringMatrix::generatePartials(Array2D<Data1D>& estimatedSQ)
 {
 	/*
 	 * Currently our scattering matrix / data look as follows:
@@ -124,11 +124,11 @@ void ScatteringMatrix::generatePartials(Array2D<Data1D>& generatedSQ)
 	 * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
 	 */
 
-	// Get linear array from generatedSQ
-	Data1D* partials = generatedSQ.linearArray();
+	// Get linear array from estimatedSQ
+	Data1D* partials = estimatedSQ.linearArray();
 
 	// Clear current partials
-	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].clear();
+	for (int n=0; n<estimatedSQ.linearArraySize(); ++n) partials[n].clear();
 
 	// Generate new partials (nPartials = nColumns)
 	for (int n=0; n<A_.nColumns(); ++n)
@@ -158,7 +158,7 @@ Array2D<double> ScatteringMatrix::matrixProduct() const
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<Data1D>& generatedSQ, const char* objectNamePrefix, const char* groupName)
+void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<Data1D>& estimatedSQ, const char* objectNamePrefix, const char* groupName)
 {
 	// Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
 	A_.clear();
@@ -177,13 +177,13 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<Data1D>& 
 	}
 
 	// Create partials array
-	generatedSQ.initialise(types.nItems(), types.nItems(), true);
-	Data1D* partials = generatedSQ.linearArray();
+	estimatedSQ.initialise(types.nItems(), types.nItems(), true);
+	Data1D* partials = estimatedSQ.linearArray();
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
-		partials[index].setName(CharString("GeneratedSQ-%s-%s-%s.sq", pair->a()->name(), pair->b()->name(), groupName));
-		partials[index].setObjectTag(CharString("%s//GeneratedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a()->name(), pair->b()->name()));
+		partials[index].setName(CharString("EstimatedSQ-%s-%s-%s.sq", pair->a()->name(), pair->b()->name(), groupName));
+		partials[index].setObjectTag(CharString("%s//EstimatedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a()->name(), pair->b()->name()));
 		++index;
 	}
 }

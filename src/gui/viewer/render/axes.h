@@ -249,6 +249,8 @@ class Axes
 	private:
 	// Number formats for labels
 	NumberFormat numberFormat_[3];
+	// Whether to determine number formats automatically
+	Vec3<bool> autoNumberFormat_;
 	// Orientation of axis labels (axial rot, in-plane rot, distance)
 	Vec3<double> labelOrientation_[3];
 	// Axis label text anchor positions
@@ -260,9 +262,17 @@ class Axes
 	// Axis title text anchor positions
 	TextPrimitive::TextAnchor titleAnchor_[3];
 
+	private:
+	// Determine suitable label format for the supplied axis
+	void determineLabelFormat(int axis);
+
 	public:
 	// Return number format for specified axis
 	NumberFormat& numberFormat(int axis);
+	// Return whether to determine number format automatically for the specified axis
+	bool autoNumberFormat(int axis) const;
+	// Set whether to determine number format automatically for the specified axis
+	void setAutoNumberFormat(int axis, bool b);
 	// Set orientation of labels for specified axis
 	void setLabelOrientation(int axis, int component, double value);
 	// Return orientation of labels for specified axis

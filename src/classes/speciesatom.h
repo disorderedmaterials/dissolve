@@ -24,6 +24,8 @@
 
 #include "templates/list.h"
 #include "templates/listitem.h"
+#include "templates/orderedpointerdataarray.h"
+#include "templates/pointerarray.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 
@@ -31,13 +33,12 @@
 class AtomType;
 class Element;
 class Species;
+class SpeciesAngle;
 class SpeciesBond;
-class SpeciesGrain;
+class SpeciesTorsion;
 class ProcessPool;
 
-/*
- * SpeciesAtom Definition
- */
+// SpeciesAtom Definition
 class SpeciesAtom : public ListItem<SpeciesAtom>
 {
 	public:
@@ -68,9 +69,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 
 	public:
 	// Set Species parent
-	void setParent(Species* sp);
+	void setSpecies(Species* sp);
 	// Return species parent
-	Species* parent();
+	const Species* species() const;
 	// Set basic atom properties
 	void set(Element* element, double rx, double ry, double rz);
 	// Set basic atom properties
@@ -104,26 +105,18 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 
 
 	/*
-	 * Containing Grain
-	 */
-	private:
-	// Grain to which this atom belongs
-	SpeciesGrain* grain_;
-
-	public:
-	// Set grain to which this atom belongs
-	void setGrain(SpeciesGrain* grain);
-	// Return grain to which this atom belongs
-	SpeciesGrain* grain();
-	
-	
-	/*
-	 * Bond Information
+	 * Intramolecular Information
 	 */
 	private:
 	// List of bonds which this atom participates in
-	RefList<SpeciesBond> bonds_;
-	
+	PointerArray<SpeciesBond> bonds_;
+	// List of bonds which this atom participates in
+	PointerArray<SpeciesAngle> angles_;
+	// List of bonds which this atom participates in
+	PointerArray<SpeciesTorsion> torsions_;
+	// Ordered list of Atoms with scaled or excluded interactions
+	OrderedPointerDataArray<SpeciesAtom,double> exclusions_;
+
 	public:
 	// Add bond reference
 	void addBond(SpeciesBond* b);
@@ -136,9 +129,23 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return specified bond
 	SpeciesBond* bond(int index);
 	// Return bonds list
-	const RefList<SpeciesBond>& bonds() const;
+	const PointerArray<SpeciesBond>& bonds() const;
 	// Return whether bond to specified atom exists
 	SpeciesBond* hasBond(SpeciesAtom* j);
+	// Add specified Angle to Atom
+	void addAngle(SpeciesAngle* angle);
+	// Return the number of SpeciesAngles in which the Atom is involved
+	int nAngles() const;
+	// Return array of Angles in which the Atom is involved
+	const PointerArray<SpeciesAngle>& angles() const;
+	// Add specified SpeciesTorsion to Atom
+	void addTorsion(SpeciesTorsion* torsion, double scaling14);
+	// Return the number of SpeciesTorsions in which the Atom is involved
+	int nTorsions() const;
+	// Return array of Torsions in which the Atom is involved
+	const PointerArray<SpeciesTorsion>& torsions() const;
+	// Return scaling factor to employ with specified Atom
+	double scaling(const SpeciesAtom* j) const;
 
 
 	/*

@@ -199,6 +199,16 @@ void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem* item, int column)
 	dataViewer()->postRedisplay();
 }
 
+// Clear renderable data
+void DataWidget::clearRenderableData()
+{
+	// Clear our data tree first
+	ui_.DataTree->clear();
+
+	// Now clear the renderables
+	dataViewer()->clearRenderables();
+}
+
 // Update toolbar
 void DataWidget::updateToolbar()
 {

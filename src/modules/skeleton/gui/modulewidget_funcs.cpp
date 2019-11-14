@@ -31,7 +31,7 @@ SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : Mo
 }
 
 // Update controls within widget
-void SkeletonModuleWidget::updateControls()
+void SkeletonModuleWidget::updateControls(int flags)
 {
 }
 

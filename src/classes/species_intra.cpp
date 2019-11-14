@@ -21,10 +21,11 @@
 
 #include "classes/species.h"
 #include "classes/box.h"
+#include "data/atomicradius.h"
 #include "base/sysfunc.h"
 
 // Add new SpeciesBond definition (from SpeciesAtoms*)
-SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
+SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
@@ -51,6 +52,9 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	b->setAtoms(i, j);
 	i->addBond(b);
 	j->addBond(b);
+
+	// Update higher-order connectivity?
+	if (addMissingHigherOrderTerms) completeIntramolecularTerms();
 
 	++version_;
 
@@ -94,8 +98,6 @@ bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 
 	// Add the new Bond
 	bond->setAtoms(i, j);
-	i->addBond(bond);
-	j->addBond(bond);
 
 	++version_;
 
@@ -125,27 +127,38 @@ int Species::nBonds() const
 	return bonds_.nItems();
 }
 
-// Return list of SpeciesBond
-const List<SpeciesBond>& Species::bonds() const
+// Return array of SpeciesBond
+DynamicArray<SpeciesBond>& Species::bonds()
 {
 	return bonds_;
 }
 
-// Return nth SpeciesBond
-SpeciesBond* Species::bond(int n)
+// Return array of SpeciesBond (const)
+const DynamicArray<SpeciesBond>& Species::constBonds() const
 {
-	return bonds_[n];
+	return bonds_;
 }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
-SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
+bool Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next()) if (b->matches(i, j)) return b;
+	DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds_);
+	while (const SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return true;
+
+	return false;
+}
+
+// Return the SpeciesBond between the specified SpeciesAtoms
+SpeciesBond* Species::bond(SpeciesAtom* i, SpeciesAtom* j)
+{
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return b;
+
 	return NULL;
 }
 
-// Return whether SpeciesBond between specified atom indices exists
-SpeciesBond* Species::hasBond(int i, int j)
+// Return the SpeciesBond between the specified SpeciesAtom indices
+SpeciesBond* Species::bond(int i, int j)
 {
 	if ((i < 0) || (i >= nAtoms()))
 	{
@@ -158,13 +171,44 @@ SpeciesBond* Species::hasBond(int i, int j)
 		return NULL;
 	}
 
-	return hasBond(atoms_[i], atoms_[j]);
+	return bond(atoms_[i], atoms_[j]);
 }
 
-// Return index of specified SpeciesBond
-int Species::bondIndex(SpeciesBond* spb)
+// Return the SpeciesBond between the specified SpeciesAtoms (const)
+const SpeciesBond* Species::constBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
-	return bonds_.indexOf(spb);
+	DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds_);
+	while (const SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return b;
+
+	return NULL;
+}
+
+// Add missing bonds
+void Species::addMissingBonds(double tolerance)
+{
+	Vec3<double> vij;
+	double radiusI;
+	SpeciesAtom** atoms = atoms_.array();
+	for (int indexI = 0; indexI < nAtoms()-1; ++indexI)
+	{
+		// Get SpeciesAtom 'i' and its radius
+		SpeciesAtom* i = atoms[indexI];
+		radiusI = AtomicRadius::radius(i->element());
+		for (int indexJ = indexI+1; indexJ < nAtoms(); ++indexJ)
+		{
+			// Get SpeciesAtom 'j'
+			SpeciesAtom* j = atoms[indexJ];
+
+			// If the two atoms are already bound, continue
+			if (i->hasBond(j)) continue;
+
+			// Calculate distance between atoms
+			vij = j->r() - i->r();
+
+			// Compare distance to sum of atomic radii (multiplied by tolerance factor)
+			if (vij.magnitude() <= (radiusI + AtomicRadius::radius(j->element()))*tolerance) addBond(i, j);
+		}
+	}
 }
 
 // Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
@@ -276,29 +320,25 @@ int Species::nAngles() const
 	return angles_.nItems();
 }
 
-// Return list of SpeciesAngle
-const List<SpeciesAngle>& Species::angles() const
+// Return array of SpeciesAngle
+DynamicArray<SpeciesAngle>& Species::angles()
 {
 	return angles_;
 }
 
-// Return nth SpeciesAngle
-SpeciesAngle* Species::angle(int n)
+// Return array of SpeciesAngle (const)
+const DynamicArray<SpeciesAngle>& Species::constAngles() const
 {
-	return angles_[n];
+	return angles_;
 }
 
 // Return whether SpeciesAngle between SpeciesAtoms exists
-SpeciesAngle* Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
+bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) if (a->matches(i, j, k)) return a;
-	return NULL;
-}
+	DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles_);
+	while (const SpeciesAngle* a = angleIterator.iterate()) if (a->matches(i, j, k)) return true;
 
-// Return index of specified SpeciesAngle
-int Species::angleIndex(SpeciesAngle* spa)
-{
-	return angles_.indexOf(spa);
+	return false;
 }
 
 // Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
@@ -426,29 +466,181 @@ int Species::nTorsions() const
 	return torsions_.nItems();
 }
 
-// Return list of SpeciesTorsions
-const List<SpeciesTorsion>& Species::torsions() const
+// Return array of SpeciesTorsions
+DynamicArray<SpeciesTorsion>& Species::torsions()
 {
 	return torsions_;
 }
 
-// Return nth SpeciesTorsion
-SpeciesTorsion* Species::torsion(int n)
+// Return array of SpeciesTorsions (const)
+const DynamicArray<SpeciesTorsion>& Species::constTorsions() const
 {
-	return torsions_[n];
+	return torsions_;
 }
 
 // Return whether SpeciesTorsion between SpeciesAtoms exists
-SpeciesTorsion* Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
 {
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) if (t->matches(i, j, k, l)) return t;
-	return NULL;
+	DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions_);
+	while (const SpeciesTorsion* t = torsionIterator.iterate()) if (t->matches(i, j, k, l)) return true;
+
+	return false;
 }
 
-// Return index of specified SpeciesTorsion
-int Species::torsionIndex(SpeciesTorsion* spt)
+// Add new SpeciesImproper definition (from SpeciesAtom*)
+SpeciesImproper* Species::addImproper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
 {
-	return torsions_.indexOf(spt);
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(j))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(k))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(l))
+	{
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::addImproper.\n", name_.get());
+		return NULL;
+	}
+
+	// Check for existence of Improper already
+	if (hasImproper(i, j, k, l))
+	{
+		Messenger::warn("Refused to add a new Improper between atoms %i, %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+		return NULL;
+	}
+
+	// OK to add new improper
+	SpeciesImproper* imp = impropers_.add();
+	imp->setParent(this);
+	imp->setAtoms(i, j, k, l);
+
+	++version_;
+
+	return imp;
+}
+
+// Add new SpeciesImproper definition
+SpeciesImproper* Species::addImproper(int i, int j, int k, int l)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return NULL;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return NULL;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return NULL;
+	}
+	if ((l < 0) || (l >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addImproper() is out of range (%i) for Species '%s'\n", l, name_.get());
+		return NULL;
+	}
+
+	return addImproper(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
+
+// Reconnect existing SpeciesImproper
+bool Species::reconnectImproper(SpeciesImproper* improper, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	// Check ownership of the SpeciesImproper
+	if (!impropers_.contains(improper)) return Messenger::error("BAD_OWNERSHIP - SpeciesImproper is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+	if (!atoms_.contains(j)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+	if (!atoms_.contains(k)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+	if (!atoms_.contains(l)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::reconnectImproper().\n", name_.get());
+
+	// If a improper already exists between these Atoms, refuse to add it
+	if (hasImproper(i, j, k, l)) return Messenger::error("A improper between atoms %i-%i-%i-%i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+
+	// Set the new angle atoms
+	improper->setAtoms(i, j, k, l);
+
+	++version_;
+
+	return true;
+}
+
+// Reconnect existing SpeciesImproper
+bool Species::reconnectImproper(SpeciesImproper* improper, int i, int j, int k, int l)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return false;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return false;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return false;
+	}
+	if ((l < 0) || (l >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::reconnectImproper() is out of range (%i) for Species '%s'\n", l, name_.get());
+		return false;
+	}
+
+	return reconnectImproper(improper, atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
+// Return number of SpeciesImproper defined
+int Species::nImpropers() const
+{
+	return impropers_.nItems();
+}
+
+// Return array of SpeciesImproper
+DynamicArray<SpeciesImproper>& Species::impropers()
+{
+	return impropers_;
+}
+
+// Return array of SpeciesImproper (const)
+const DynamicArray<SpeciesImproper>& Species::constImpropers() const
+{
+	return impropers_;
+}
+
+// Return whether SpeciesImproper between SpeciesAtoms exists
+bool Species::hasImproper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+{
+	DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers_);
+	while (const SpeciesImproper* imp = improperIterator.iterate()) if (imp->matches(i, j, k, l)) return true;
+
+	return false;
+}
+
+// Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
+SpeciesImproper* Species::improper(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	DynamicArrayIterator<SpeciesImproper> improperIterator(impropers_);
+	while (SpeciesImproper* imp = improperIterator.iterate()) if (imp->matches(i, j, k, l)) return imp;
+
+	return NULL;
 }
 
 // Return whether the attached atoms lists have been created
@@ -461,11 +653,9 @@ bool Species::attachedAtomListsGenerated() const
 void Species::generateAttachedAtomLists()
 {
 	// Bonds
-	for (int n=0; n<bonds_.nItems(); ++n)
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) 
 	{
-		// Grab Bond pointer
-		SpeciesBond* b = bonds_[n];
-
 		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
 		clearAtomSelection();
 		selectFromAtom(b->i(), b);
@@ -489,11 +679,9 @@ void Species::generateAttachedAtomLists()
 	}
 
 	// Angles - termini are 'i' and 'k'
-	for (int n=0; n<angles_.nItems(); ++n)
+	DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
+	while (SpeciesAngle* a = angleIterator.iterate()) 
 	{
-		// Grab Angle pointer
-		SpeciesAngle* a = angles_[n];
-
 		// Grab relevant Bonds (if they exist)
 		SpeciesBond* ji = a->j()->hasBond(a->i());
 		SpeciesBond* jk = a->j()->hasBond(a->k());
@@ -528,11 +716,9 @@ void Species::generateAttachedAtomLists()
 	}
 
 	// Torsions - termini are 'j' and 'k'
-	for (int n=0; n<torsions_.nItems(); ++n)
+	DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
+	while (SpeciesTorsion* t = torsionIterator.iterate()) 
 	{
-		// Grab Torsion pointer
-		SpeciesTorsion* t = torsions_[n];
-
 		// Grab relevant Bond (if it exists)
 		SpeciesBond* jk = t->j()->hasBond(t->k());
 
@@ -570,7 +756,12 @@ void Species::generateAttachedAtomLists()
 // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 void Species::detachFromMasterTerms()
 {
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next()) b->detachFromMasterIntra();
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) a->detachFromMasterIntra();
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) t->detachFromMasterIntra();
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) b->detachFromMasterIntra();
+
+	DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
+	while (SpeciesAngle* a = angleIterator.iterate()) a->detachFromMasterIntra();
+
+	DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
+	while (SpeciesTorsion* t = torsionIterator.iterate()) t->detachFromMasterIntra();
 }
