@@ -29,9 +29,7 @@
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
 {
 	// Set defaults
-	displayStyle_ = LinesStyle;
-	Renderable::reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
-	
+	displayStyle_ = LinesStyle;	
 }
 
 // Destructor
@@ -155,7 +153,7 @@ bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
 	
-
+	reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
 	constructLineXZ(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
 }
 
@@ -171,8 +169,8 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 	int n = 0;
 	while(n < transformedData_.constYAxis().nItems())
 	{
-		Renderable::primitive(n)->sendToGL();
-		++n;
+		primitive(n)->sendToGL();
+		n++;
 	}
 
 	// Reset LineStyle back to defaults
@@ -200,7 +198,7 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 
 	// Temporary variables
 	GLfloat colour[4];
-	Vec3<double> nrm(0.0, 1.0, 0.0);
+	Vec3<double> nrm(0.0, 0.0, 1.0);
 
 	// Create lines for slices
 	int vertexA, vertexB;
@@ -222,8 +220,8 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 		{
 			for (int m = 0; m < nX; ++m)
 			{
-				p = Renderable::primitive(n);
-				vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), y.constAt(n), nrm, colour);
+				p = primitive(n);
+				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), 10000*displayValues.constAt(m,n), nrm, colour);
 			
 				// If both vertices are valid, plot a line
 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
@@ -237,7 +235,7 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 		// Loop over  values
 		for (int n=0; n < nY ; ++n)
 		{
-			p = Renderable::primitive(n);
+			p = primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
 			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);			

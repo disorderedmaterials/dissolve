@@ -154,9 +154,6 @@ Array2D<double> Transformer::transformArray(Array2D<double> sourceValues, Array<
 		return (sourceValues);
 	}
 	
-	x_->set(0);
-	y_->set(0);
-	z_->set(0);
 
 	Array2D<double> newArray2D(sourceValues.nRows(), sourceValues.nColumns());
 	if (sourceValues.halved())
@@ -164,13 +161,23 @@ Array2D<double> Transformer::transformArray(Array2D<double> sourceValues, Array<
 		
 		for(int r=0; r<sourceValues.nRows(); ++r)
 			for(int c=r; c<sourceValues.nColumns(); ++c)
+			{
+				x_->set(sourceX.constAt(r));
+				y_->set(sourceY.constAt(c));
+				z_->set(sourceValues.constAt(r,c));
 				newArray2D.at(r,c) = equation_.asDouble();
+			}
 	}
 	else
 	{	
 		for(int i=0; i<sourceValues.nRows(); ++i)
 			for(int j=0; j<sourceValues.nColumns(); ++j)
+			{
+				x_->set(sourceX.constAt(i));
+				y_->set(sourceY.constAt(j));
+				z_->set(sourceValues.constAt(i,j));
 				newArray2D.at(i,j) = equation_.asDouble();
+			}
 	}
 	
 	return newArray2D;
