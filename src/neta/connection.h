@@ -53,6 +53,30 @@ class NETAConnectionNode : public NETANode
 
 
 	/*
+	 * Modifiers
+	 */
+	private:
+	// Repeat count value
+	int repeatCount_;
+	// Repeat count comparison operator
+	NETANode::ComparisonOperator repeatCountOperator_;
+
+	public:
+	// Available modifiers
+	enum NETAConnectionModifier
+	{
+		RepeatConnectionModifier,	/* 'n' - specifies the number of matches required (default = 1) */
+		nConnectionModifiers
+	};
+	// Return enum options for NETAConnectionModifiers
+	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
+	// Return whether the specified modifier is valid for this node
+	bool isValidModifier(const char* s);
+	// Set value and comparator for specified modifier
+	bool setModifier(const char* modifier, ComparisonOperator op, int value);
+
+
+	/*
 	 * Scoring
 	 */
 	public:

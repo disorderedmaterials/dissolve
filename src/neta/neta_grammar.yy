@@ -17,6 +17,9 @@
 int NETADefinitionGenerator_lex(void);
 void NETADefinitionGenerator_error(char *s);
 
+// Local Variables
+CharString localName;
+
 %}
 
 // Redeclare function names
@@ -26,7 +29,7 @@ void NETADefinitionGenerator_error(char *s);
 %union {
 	void* atomTargetDummy;				/* Dummy Type for Atom Targets*/
 	int elementZ;					/* Element Z */
-	CharString* name;				/* Character pointer for names */
+	const char* name;				/* Character pointer for names */
 	NETANode* node;					/* NETADefinition node pointer */
 	NETANode::ComparisonOperator valueOperator;	/* Comparison Operator */
 	int integerConst;				/* Constant integer value */
@@ -37,7 +40,8 @@ void NETADefinitionGenerator_error(char *s);
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
 %token <valueOperator> DISSOLVE_NETA_OPERATOR
-%token DISSOLVE_NETA_UNKNOWNTOKEN DISSOLVE_NETA_REPEATMODIFIER
+%token <name> DISSOLVE_NETA_MODIFIER
+%token DISSOLVE_NETA_UNKNOWNTOKEN
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
 %left '='
@@ -100,10 +104,9 @@ target:
 	| '&' DISSOLVE_NETA_INTEGERCONSTANT		{ NETADefinitionGenerator::addTarget(-$2); $$ = NULL; }
 	;
 
-
 /* Context Modifiers */
 contextmodifier:
-	DISSOLVE_NETA_REPEATMODIFIER valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()) { Messenger::print("Modifier must be used in a context.\n"); YYERROR; } NETADefinitionGenerator::context()->setRepeatCount($3, $2); }
+	DISSOLVE_NETA_MODIFIER storename valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
 	;
 
 /* Operators */
@@ -122,6 +125,9 @@ pushcontext:
 	;
 popcontext:
 	/* empty */					{ NETADefinitionGenerator::popContext(); }
+	;
+storename:
+	/* empty */					{ localName = yylval.name; }
 	;
 
 %%

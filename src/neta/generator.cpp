@@ -135,7 +135,7 @@ int NETADefinitionGenerator::lex()
 {
 	int n;
 	bool done, hasExp;
-	static CharString token, name;
+	static CharString token;
 	char c;
 	token.clear();
 
@@ -223,15 +223,16 @@ int NETADefinitionGenerator::lex()
 		unGetChar();
 		Messenger::printVerbose("NETA (%p): found an alpha token [%s]...\n", definition_, token.get());
 
-		// Modifier?
-		if (DissolveSys::sameString(token, "n"))
+		// Modifier for the current context?
+		if (context() && context()->isValidModifier(token))
 		{
-			// Check next character - if it looks like it's part of an operator, we'll assume its the repeat modifier
+			// Check next character - if it looks like it's part of an operator, we'll assume it is a modifier
 			char c2 = peekChar();
 			if ((c2 == '=') || (c2 == '>') || (c2 == '<') || (c2 == '!'))
 			{
-				Messenger::printVerbose("NETA : ...which is the repeat modifier 'n'\n");
-				return DISSOLVE_NETA_REPEATMODIFIER;
+				Messenger::printVerbose("NETA : ...which is a valid modifier for this context.\n");
+				NETADefinitionGenerator_lval.name = token.get();
+				return DISSOLVE_NETA_MODIFIER;
 			}
 		}
 
@@ -246,8 +247,7 @@ int NETADefinitionGenerator::lex()
 
 		// If we get to here then we have found an unrecognised alphanumeric token
 		Messenger::printVerbose("NETA (%p): ...which is unrecognised (->TOKEN)\n", definition_);
-		name = token;
-		NETADefinitionGenerator_lval.name = &name;
+		NETADefinitionGenerator_lval.name = token.get();
 
 		Messenger::error("Unknown token '%s' encountered in NETA definition.\n", token.get());
 		return 0;

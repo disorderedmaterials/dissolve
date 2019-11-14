@@ -87,6 +87,16 @@ class NETANode : public ListItem<NETANode>
 
 
 	/*
+	 * Modifiers
+	 */
+	public:
+	// Return whether the specified modifier is valid for this node
+	virtual bool isValidModifier(const char* s);
+	// Set value and comparator for specified modifier
+	virtual bool setModifier(const char* modifier, ComparisonOperator op, int value);
+
+
+	/*
 	 * Value Comparison
 	 */
 	public:
@@ -98,16 +108,10 @@ class NETANode : public ListItem<NETANode>
 	 * Scoring
 	 */
 	protected:
-	// Repeat count value
-	int repeatCount_;
-	// Repeat count comparison operator
-	NETANode::ComparisonOperator repeatCountOperator_;
 	// Whether to use reverse logic when returning the final value
 	bool reverseLogic_;
 
 	public:
-	// Set repeat count value and comparison operator
-	void setRepeatCount(int value, NETANode::ComparisonOperator op);
 	// Set node to use reverse logic
 	void setReverseLogic();
 	// Evaluate the node and return its score

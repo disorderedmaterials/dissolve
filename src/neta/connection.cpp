@@ -31,11 +31,54 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, PointerArray<Elem
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;
 	bondType_ = bt;
+
+	repeatCount_ = 1;
+	repeatCountOperator_ = NETANode::EqualTo;
 }
 
 // Destructor
 NETAConnectionNode::~NETAConnectionNode()
 {
+}
+
+/*
+ * Modifiers
+ */
+
+// Return enum options for NETAConnectionModifiers
+EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
+{
+	static EnumOptionsList ModifierOptions = EnumOptionsList() <<
+		EnumOption(RepeatConnectionModifier,		"n");
+	
+	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> options("ConnectionModifier", ModifierOptions);
+
+	return options;
+}
+
+// Return whether the specified modifier is valid for this node
+bool NETAConnectionNode::isValidModifier(const char* s)
+{
+	return (modifiers().isValid(s));
+}
+
+// Set value and comparator for specified modifier
+bool NETAConnectionNode::setModifier(const char* modifier, ComparisonOperator op, int value)
+{
+	// Check that the supplied index is valid
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETAConnectionNode.\n", modifier);
+
+	switch (modifiers().enumeration(modifier))
+	{
+		case (NETAConnectionNode::RepeatConnectionModifier):
+			repeatCount_ = value;
+			repeatCountOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in connection node.\n", modifier);
+	}
+
+	return true;
 }
 
 /*
