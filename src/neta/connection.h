@@ -1,6 +1,6 @@
 /*
 	*** NETA Connection Node
-	*** src/neta/connectivity.h
+	*** src/neta/connection.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
