@@ -56,7 +56,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	dAngleGraph_ = ui.DAnglePlotWidget->dataViewer();
 
 	View& dAngleView = dAngleGraph_->view();
-	dAngleView.setViewType(View::FlatXYView);
+	dAngleView.setViewType(View::AutoStretchedView);
 	dAngleView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleView.axes().setRange(0, 0.0, 5.0);
 	dAngleView.axes().setTitle(1, "Angle, \\sym{degrees}");

@@ -85,27 +85,34 @@ void RenderableData2D::transformData()
 	{
 		
 		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), transformedData_.minValue());
-		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constXAxis().lastValue(), transformedData_.maxValue());
+		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), transformedData_.maxValue());
 		
 	}
 
-	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
-	for (int n=0; n<transformedData_.nValues(); ++n)
+	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value	
+	// X
+	for (int n=0; n<transformedData_.constXAxis().nItems(); ++n)
 	{
-		// X
 		if (transformedData_.constXAxis(n) > 0.0)
 		{
 			if (transformedData_.constXAxis(n) < transformMinPositive_.x) transformMinPositive_.x = transformedData_.constXAxis(n);
 			if (transformedData_.constXAxis(n) > transformMaxPositive_.x) transformMaxPositive_.x = transformedData_.constXAxis(n);
 		}
-		// Y
-		
+	}
+	
+	// Y
+	for (int n=0; n<transformedData_.constYAxis().nItems(); ++n)
+	{	
 		if (transformedData_.constYAxis(n) > 0.0)
 		{
 			if (transformedData_.constYAxis(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constYAxis(n);
 			if (transformedData_.constYAxis(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constYAxis(n);
 		}
-		
+	}
+	
+	// Values
+	for (int n=0; n<transformedData_.nValues(); ++n)
+	{		
 		if (transformedData_.constValue(n) > 0.0)
 		{
 			if (transformedData_.constValue(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.constValue(n);
@@ -165,6 +172,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 	while(n < transformedData_.constYAxis().nItems())
 	{
 		Renderable::primitive(n)->sendToGL();
+		++n;
 	}
 
 	// Reset LineStyle back to defaults
@@ -216,11 +224,12 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 			{
 				p = Renderable::primitive(n);
 				vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), y.constAt(n), nrm, colour);
-			}
-			// If both vertices are valid, plot a line
-			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
+			
+				// If both vertices are valid, plot a line
+				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
 
-			vertexA = vertexB;
+				vertexA = vertexB;
+			}
 		}
 	}
 	else
@@ -228,10 +237,10 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 		// Loop over  values
 		for (int n=0; n < nY ; ++n)
 		{
+			p = Renderable::primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
-			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-			p = Renderable::primitive(n);
+			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);			
 			vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), y.constAt(n), nrm, colour);
 
 			// If both vertices are valid, plot a line
