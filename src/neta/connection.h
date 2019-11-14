@@ -60,12 +60,22 @@ class NETAConnectionNode : public NETANode
 	int repeatCount_;
 	// Repeat count comparison operator
 	NETANode::ComparisonOperator repeatCountOperator_;
+	// Number of bonds value
+	int nBondsValue_;
+	// Numbe of bonds value comparison operator
+	NETANode::ComparisonOperator nBondsValueOperator_;
+	// Number of hydrogens value
+	int nHydrogensValue_;
+	// Numbe of hydrogens value comparison operator
+	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
 	public:
 	// Available modifiers
 	enum NETAConnectionModifier
 	{
-		RepeatConnectionModifier,	/* 'n' - specifies the number of matches required (default = 1) */
+		NBondsModifier,			/* 'nbonds' - Specifies number of bonds (default = -1) */
+		NHydrogensModifier,		/* 'nh' - Specifies number of hydrogens (default = -1) */
+		RepeatConnectionModifier,	/* 'n' - Specifies the number of matches required (default = 1) */
 		nConnectionModifiers
 	};
 	// Return enum options for NETAConnectionModifiers
