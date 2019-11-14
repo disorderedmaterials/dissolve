@@ -205,10 +205,13 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 		colourDefinition.colour(0.0, colour);
 		
 		// Loop over  values
-		for (int n=0; n<primitive.nDefinedVertices(); ++n)
+		for (int n=0; n < nY ; ++n)
 		{
-			vertexB = p->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
-
+			for (int m = 0; m < nX; ++m)
+			{
+				p = primitive[n];
+				vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), nrm, colour);
+			}
 			// If both vertices are valid, plot a line
 			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
 
