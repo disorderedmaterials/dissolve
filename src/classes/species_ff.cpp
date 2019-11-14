@@ -31,39 +31,45 @@
 // Add missing higher order intramolecular terms from current bond connectivity
 void Species::completeIntramolecularTerms()
 {
-	// Loop over atoms 'j'
-	ListIterator<SpeciesAtom> jIterator(atoms_);
-	while (SpeciesAtom* j = jIterator.iterate())
+	SpeciesAtom* i, *j, *k, *l;
+	SpeciesBond* ij, *kl;
+
+	// Loop over bonds 'jk'
+	DynamicArrayIterator<SpeciesBond> jkIterator(bonds_);
+	while (SpeciesBond* jk = jkIterator.iterate())
 	{
+		// Get atoms 'j' and 'k'
+		j = jk->i();
+		k = jk->j();
+
 		// Loop over bonds 'ij'
-		const SpeciesBond* ij;
-		for (int ijIndex = 0; ijIndex < j->nBonds(); ++ijIndex, ij = j->bonds().value(ijIndex))
+		for (int ijIndex = 0; ijIndex < j->nBonds(); ++ijIndex)
 		{
-			// Loop over bonds 'jk'
-			const SpeciesBond* jk;
-			for (int jkIndex = ijIndex; jkIndex < j->nBonds(); ++jkIndex, jk = j->bonds().value(jkIndex))
+			// Get bond 'ij' and check for 'ij' == 'jk'
+			ij = j->bond(ijIndex);
+			if (ij == jk) continue;
+
+			// Get atom 'i'
+			i = ij->partner(j);
+
+			// Attempt to add angle term 'ijk' if 'i' > 'k'
+			if ((i > k) && (!hasAngle(i, j, k))) addAngle(i, j, k);
+
+			// Loop over bonds 'kl'
+			for (int klIndex = 0; klIndex < k->nBonds(); ++klIndex)
 			{
-				// If this angle doesn't already exist, add it now.
-				if (!hasAngle(ij->partner(j), j, jk->partner(j)))
-				{
-					SpeciesAngle* ijk = addAngle(ij->partner(j), j, jk->partner(j));
-					ijk->setForm(SpeciesAngle::nAngleFunctions);
-				}
+				// Get bond 'kl' and check for 'kl' == 'jk'
+				kl = k->bond(klIndex);
+				if (kl == jk) continue;
 
-				// Add torsions - loop over bonds 'kl'
-				const SpeciesBond* kl;
-				for (int klIndex = 0; klIndex < jk->partner(j)->nBonds(); ++klIndex, kl = jk->partner(j)->bonds().value(klIndex))
-				{
-					// Exclude jk == kl
-					if (jk == kl) continue;
+				// Get atom 'l'
+				l = kl->partner(k);
 
-					// If this torsion doesn't already exist, add it now.
-					if (!hasTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j))))
-					{
-						SpeciesTorsion* ijkl = addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
-						ijkl->setForm(SpeciesTorsion::nTorsionFunctions);
-					}
-				}
+				// Attempt to add angle term 'jkl' if 'j' > 'l'
+				if ((j > l) && (!hasAngle(j, k, l))) addAngle(j, k, l);
+
+				// If the torsion i-j-k-l doesn't already exist, add it now.
+				if (!hasTorsion(i,  j, k, l)) addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
 			}
 		}
 	}

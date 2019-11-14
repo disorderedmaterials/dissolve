@@ -53,6 +53,40 @@ class NETAConnectionNode : public NETANode
 
 
 	/*
+	 * Modifiers
+	 */
+	private:
+	// Repeat count value
+	int repeatCount_;
+	// Repeat count comparison operator
+	NETANode::ComparisonOperator repeatCountOperator_;
+	// Number of bonds value
+	int nBondsValue_;
+	// Numbe of bonds value comparison operator
+	NETANode::ComparisonOperator nBondsValueOperator_;
+	// Number of hydrogens value
+	int nHydrogensValue_;
+	// Numbe of hydrogens value comparison operator
+	NETANode::ComparisonOperator nHydrogensValueOperator_;
+
+	public:
+	// Available modifiers
+	enum NETAConnectionModifier
+	{
+		NBondsModifier,			/* 'nbonds' - Specifies number of bonds (default = -1) */
+		NHydrogensModifier,		/* 'nh' - Specifies number of hydrogens (default = -1) */
+		RepeatConnectionModifier,	/* 'n' - Specifies the number of matches required (default = 1) */
+		nConnectionModifiers
+	};
+	// Return enum options for NETAConnectionModifiers
+	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
+	// Return whether the specified modifier is valid for this node
+	bool isValidModifier(const char* s);
+	// Set value and comparator for specified modifier
+	bool setModifier(const char* modifier, ComparisonOperator op, int value);
+
+
+	/*
 	 * Scoring
 	 */
 	public:

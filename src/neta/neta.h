@@ -42,20 +42,6 @@ class NETADefinition
 	NETADefinition(const char* netaDefinition = NULL, const Forcefield* associatedFF = NULL);
 	// Destructor
 	~NETADefinition();
-// 	// NETA Keywords
-// 	enum NETAKeyword { AliphaticKeyword, AromaticKeyword, NoRingKeyword, NonAromaticKeyword, NotPrevKeyword, NotSelfKeyword, PlanarKeyword, nNETAKeywords };
-// 	// Return enum options for NETAKeyword
-// 	static EnumOptions<NETADefinition::NETAKeyword> netaKeywords();
-// 	// NETA Expanders
-// 	enum NETAExpander { BoundExpanded, ChainExpander, DoublyBoundExpander, GeometryExpander, PathExpander, RingExpander, nNETAExpanders };
-// 	// Return enum options for NETAExpander
-// 	static EnumOptions<NETADefinition::NETAExpander> netaExpanders();
-	// NETA values
-// 	enum NETAValue { BondValue, NBondsValue, NHydrogensValue, OxidationStateValue, RepeatValue, SizeValue, nNETAValues };
-	// Return enum options for NETAValue
-// 	static EnumOptions<NETADefinition::NETAValue> netaValues();
-// 	// Friend Class
-// 	friend class NETAParser;
 
 
 	/*
