@@ -190,7 +190,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Reset view, showing all data</string>
+         <string>Reset view orientation and show all data</string>
         </property>
         <property name="text">
          <string/>
@@ -290,6 +290,12 @@
       </item>
       <item>
        <widget class="ExponentialSpin" name="GraphFollowXLengthSpin">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>32</width>
