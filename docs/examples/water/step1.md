@@ -51,14 +51,14 @@ Do this a couple of times until there's no further appreciable change to the geo
 Our eventual refinement will depend on three isotopic water samples - H<sub>2</sub>O, D<sub>2</sub>O, and a 50:50 mix of the two. The "Natural" (H<sub>2</sub>O) isotopologue is defined internally by Dissolve, so we just need to add a new one for D<sub>2</sub>O.
 
 > **Species** tab, **Isotopologues** section
-{: .action .action_mouse}
+{: .action .action_tabs}
 > Click _Add_{: .text-green-100}
 {: .step}
 > Expand the entries for the 'NewIsotopologue' by clicking the [+] next to its name, or by clicking _Expand All_{: .text-green-100}
 {: .step}
 > Change the isotope for the HW atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671)`
 {: .step}
-> Change the name of the isotopologue to 'D2O' (double-click on the name to do so)
+> Change the name of the isotopologue to 'Deuterated' (double-click on the name to do so)
 {: .step}
 
 [Back to Overview](index.md){: .btn }   [Next Step](step2.md){: .btn .right}

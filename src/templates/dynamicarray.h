@@ -374,6 +374,13 @@ template <class T> class DynamicArray
 
 		return array_.constAt(index);
 	}
+	// Return whether the specified object pointer is in the array
+	bool contains(const T* object)
+	{
+		for (int n=0; n<array_.nItems(); ++n) if (array_.constAt(n) == object) return true;
+
+		return false;
+	}
 };
 
 // Iterator
@@ -414,6 +421,40 @@ template <class T> class DynamicArrayIterator
 		{
 			result_ = (*pointer_);
 			++pointer_;
+			++index_;
+		}
+		else return NULL;
+		
+		return result_;
+	}
+};
+
+// Const Iterator
+template <class T> class DynamicArrayConstIterator
+{
+	public:
+	// Constructor
+	DynamicArrayConstIterator<T>(const DynamicArray<T>& target) : arrayTarget_(target)
+	{
+		index_ = 0;
+		result_ = NULL;
+	}
+
+	private:
+	// Target DynamicArray
+	const DynamicArray<T>& arrayTarget_;
+	// Current index for iterator
+	int index_;
+	// Result to return
+	const T* result_;
+
+	public:
+	// Iterate
+	const T* iterate()
+	{
+		if (index_ < arrayTarget_.nItems())
+		{
+			result_ = arrayTarget_.constValue(index_);
 			++index_;
 		}
 		else return NULL;

@@ -29,7 +29,7 @@ RenderableGroup::RenderableGroup(const char* name, StockColours::StockColour col
 
 	visible_ = true;
 
-	colouringStyle_ = RenderableGroup::FixedGroupColouring;
+	colouringStyle_ = RenderableGroup::NoGroupColouring;
 	automaticStockColourUsageCount_.initialise(StockColours::nStockColours);
 	automaticStockColourUsageCount_= 0;
 	setFixedStockColour(StockColours::BlackStockColour);

@@ -286,10 +286,8 @@ int Elements::group(int Z)
  */
 
 // Constructor
-ElementReference::ElementReference(int z, const char* symbol) : element_(Elements::element(z))
+ElementReference::ElementReference(int z) : element_(Elements::element(z))
 {
-	// Check the basic element data and make sure that this is a valid Z/symbol combination
-	if (!DissolveSys::sameString(symbol, element_.symbol())) Messenger::error("ElementReference::ElementReference() - Data is corrupted: element with Z = %i should have symbol '%s' but we were given the symbol '%s').\n", z, element_.symbol(), symbol);
 }
 
 // Destructor

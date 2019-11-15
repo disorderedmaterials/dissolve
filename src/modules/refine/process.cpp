@@ -238,8 +238,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
-		Array2D<Data1D>&  generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-		scatteringMatrix_.initialise(dissolve.atomTypes(), generatedSQ, uniqueName_, group->name());
+		Array2D<Data1D>&  estimatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		scatteringMatrix_.initialise(dissolve.atomTypes(), estimatedSQ, uniqueName_, group->name());
 
 		// Get factor with which to add data, based on the requested AugmentationStyle
 		double dataFactor = 1.0;
@@ -342,14 +342,14 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Generate the scattering matrix 
-		scatteringMatrix_.generatePartials(generatedSQ);
+		scatteringMatrix_.generatePartials(estimatedSQ);
 
 		/*
-		 * Calculate g(r) from generatedSQ
+		 * Calculate g(r) from estimatedSQ
 		 */
 
-		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
-		generatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+		Array2D<Data1D>& estimatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
+		estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
@@ -357,11 +357,11 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 			{
 				// Grab experimental g(r) contained and make sure its object name is set
-				Data1D& expGR = generatedGR.at(i,j);
-				expGR.setObjectTag(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+				Data1D& expGR = estimatedGR.at(i,j);
+				expGR.setObjectTag(CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
-				expGR = generatedSQ.at(i,j);
+				expGR = estimatedSQ.at(i,j);
 				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 				expGR.values() += 1.0;
 			}
@@ -394,8 +394,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				dSQ.clear();
 
 				// Create the difference partial
-				const Array<double> x1 = generatedSQ.at(i, j).constXAxis();
-				const Array<double> y1 = generatedSQ.at(i, j).constValues();
+				const Array<double> x1 = estimatedSQ.at(i, j).constXAxis();
+				const Array<double> y1 = estimatedSQ.at(i, j).constValues();
 				Data1D& simulatedSQ = combinedUnweightedSQ.at(i,j);
 				Interpolator interpolatedSimSQ(simulatedSQ);
 

@@ -28,7 +28,7 @@ const SiteStack* Configuration::siteStack(SpeciesSite* site)
 	// Create or find existing stack in our list
 	SiteStack* stack = NULL;
 	ListIterator<SiteStack> stackIterator(siteStacks_);
-	while (stack = stackIterator.iterate()) if (stack->speciesSite() == site) break;
+	while ((stack = stackIterator.iterate())) if (stack->speciesSite() == site) break;
 	if (!stack) stack = siteStacks_.add();
 
 	// Recreate the stack list

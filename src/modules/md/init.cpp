@@ -27,7 +27,7 @@ void MDModule::initialise()
 {
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-	keywords_.add("Calculation", new IntegerKeyword(100), "NSteps", "Number of MD steps to perform");
+	keywords_.add("Calculation", new IntegerKeyword(50), "NSteps", "Number of MD steps to perform");
 	keywords_.add("Calculation", new BoolKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
 	keywords_.add("Calculation", new DoubleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
 	keywords_.add("Calculation", new DoubleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");

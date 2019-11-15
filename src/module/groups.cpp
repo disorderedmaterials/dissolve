@@ -84,10 +84,31 @@ ModuleGroup* ModuleGroups::addModule(Module* module, const char* groupName)
 		groups_.own(moduleGroup);
 	}
 
-	allModules_.append(module, moduleGroup);
+	// Is the Module already in the list and assigned to a group?
+	RefDataItem<Module,ModuleGroup*>* moduleItem = allModules_.contains(module);
+	if (moduleItem) moduleItem->data()->remove(module);
+	else allModules_.append(module, moduleGroup);
+
+	// Add the Module to its new group
 	moduleGroup->add(module);
 
 	return moduleGroup;
+}
+
+// Remove Module
+void ModuleGroups::removeModule(Module* module)
+{
+	// Find the Module in our list
+	RefDataItem<Module,ModuleGroup*>* moduleItem = allModules_.contains(module);
+	if (!moduleItem) return;
+
+	ModuleGroup* group = moduleItem->data();
+
+	group->remove(module);
+	allModules_.remove(module);
+
+	// Is the group now empty?
+	if (group->nModules() == 0) groups_.remove(group);
 }
 
 // Number of Modules present of all groups

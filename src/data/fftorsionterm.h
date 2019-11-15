@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDTORSIONTERM_H
-#define DISSOLVE_FORCEFIELDTORSIONTERM_H
+#ifndef DISSOLVE_FORCEFIELD_TORSIONTERM_H
+#define DISSOLVE_FORCEFIELD_TORSIONTERM_H
 
 #include "classes/speciestorsion.h"
 #include "base/charstring.h"

@@ -34,7 +34,6 @@
 class Atom;
 class Box;
 class Cell;
-class Grain;
 class Isotopologue;
 class Molecule;
 class ChangeStore;
@@ -119,9 +118,9 @@ class Dissolve
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
 	// Copy AtomType, creating a new one if necessary
-	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	void copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
-	void copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	void copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
 	// Copy Species
 	Species* copySpecies(const Species* species);
 
@@ -237,6 +236,8 @@ class Dissolve
 	Module* findModuleInstance(const char* uniqueName);
 	// Search for any instance of any Module with the specified Module type
 	RefList<Module> findModuleInstances(const char* moduleType);
+	// Generate unique Module name with base name provided
+	const char* uniqueModuleName(const char* name, Module* excludeThis = NULL);
 	// Delete specified Module instance
 	bool deleteModuleInstance(Module* instance);
 

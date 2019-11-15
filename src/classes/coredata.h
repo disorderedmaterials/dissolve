@@ -88,6 +88,8 @@ class CoreData
 	List<MasterIntra> masterAngles_;
 	// List of master Torsions parameters for Species
 	List<MasterIntra> masterTorsions_;
+	// List of master Improper parameters for Species
+	List<MasterIntra> masterImpropers_;
 
 	public:
 	// Add new master Bond parameters
@@ -120,6 +122,16 @@ class CoreData
 	MasterIntra* masterTorsion(int n);
 	// Return whether named master Torsion parameters exist
 	MasterIntra* hasMasterTorsion(const char* name) const;
+	// Add new master Improper parameters
+	MasterIntra* addMasterImproper(const char* name);
+	// Return number of master Impropers parameters in list
+	int nMasterImpropers() const;
+	// Return list of master Improper parameters
+	const List<MasterIntra>& masterImpropers() const;
+	// Return nth master Improper parameters
+	MasterIntra* masterImproper(int n);
+	// Return whether named master Improper parameters exist
+	MasterIntra* hasMasterImproper(const char* name) const;
 	// Return the named master term (of any form) if it exists
 	MasterIntra* findMasterTerm(const char* name) const;
 	// Clear all master terms

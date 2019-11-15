@@ -16,7 +16,7 @@ This overview provides essential information for those wishing to contribute to 
 
 Contributions to Dissolve are welcome, and can come in many forms - the ability to write code is not a prerequisite! For instance, you could:
 
-- Fix typos, grammer, or inconsistencies in the documentation, or add to sections that are missing content or could be improved.
+- Fix typos, grammar, or inconsistencies in the documentation, or add to sections that are missing content or could be improved.
 - Test it by attempting to reproduce results obtained previously with EPSR.
 - Break it somehow, and [submit an issue](https://www.github.com/trisyoungs/dissolve/issues) describing the problem and how you created it.
 - Document an example use-case (most likely a system you're interested in) and submit it for inclusion.

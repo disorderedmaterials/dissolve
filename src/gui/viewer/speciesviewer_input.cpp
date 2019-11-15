@@ -104,17 +104,3 @@ void SpeciesViewer::mouseWheeled(int delta)
 	postRedisplay();
 }
 
-// Mouse double clicked
-void SpeciesViewer::mouseDoubleClicked()
-{
-}
-
-// Key pressed
-bool SpeciesViewer::keyPressed(int key)
-{
-}
-
-// Key released
-bool SpeciesViewer::keyReleased(int key)
-{
-}

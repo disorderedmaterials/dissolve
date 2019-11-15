@@ -35,19 +35,19 @@
  * 
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
- * All energy values are in kcal.
+ * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
+// Constructor
 Forcefield_SPCFw::Forcefield_SPCFw()
 {
 	static ForcefieldAtomType atomTypes[] =
 	{
-		// 	Z	El	FFID	Name		Description
+		// 	Z	El	FFID	Name		Type		Description
 		//						q	Epsilon	Sigma
-		{ this, 1,	"H",	1,	"HW",		"Water hydrogen",
+		{ this, ELEMENT_H,	1,	"HW",		"-O(nh=2)",	"Water hydrogen",
 								0.41,	0.0,	0.0 },
-		{ this, 8,	"O",	2,	"OW",		"Water oxygen",
+		{ this, ELEMENT_O,	2,	"OW",		"-H(n=2)",	"Water oxygen",
 								-0.82,	0.6503,	3.165492 }
 	};
 
@@ -64,6 +64,7 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 	};
 }
 
+// Destructor
 Forcefield_SPCFw::~Forcefield_SPCFw()
 {
 }
@@ -88,29 +89,4 @@ const char* Forcefield_SPCFw::description() const
 Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const
 {
 	return Forcefield::LennardJonesType;
-}
-
-/*
- * Atom Type Data
- */
-
-// Determine and return atom type for specified SpeciesAtom
-ForcefieldAtomType* Forcefield_SPCFw::determineAtomType(SpeciesAtom* i) const
-{
-	switch (i->element()->Z())
-	{
-		// Hydrogen
-		case (ELEMENT_H): 
-				if (isBoundTo(i, &Elements::element(ELEMENT_O), 1, false)) return atomTypeByName("HW", i->element());
-			break;
-		// Oxygen
-		case (ELEMENT_O):
-				if (isBoundTo(i, &Elements::element(ELEMENT_H), 2, false)) return atomTypeByName("OW", i->element());
-			break;
-		// Default
-		default:
-			break;
-	}
-
-	return NULL;
 }

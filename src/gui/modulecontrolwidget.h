@@ -32,7 +32,7 @@ class Dissolve;
 class DissolveWindow;
 class Module;
 class ModuleWidget;
-class ModuleChartModuleBlock;
+class ModuleBlock;
 
 // Module Control Widget
 class ModuleControlWidget : public SubWidget
@@ -52,16 +52,16 @@ class ModuleControlWidget : public SubWidget
 	// Constructor / Destructor
 	ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title);
 	~ModuleControlWidget();
-	// Main form declaration
-	Ui::ModuleControlWidget ui;
 
 
 	/*
-	 * Widgets
+	 * UI
 	 */
-	private:
+	private:	
+	// Main form declaration
+	Ui::ModuleControlWidget ui;
 	// Module control widget displayed
-	ModuleChartModuleBlock* controlsWidget_;
+	ModuleBlock* controlsWidget_;
 	// ModuleWidget displayed in this control widget
 	ModuleWidget* moduleWidget_;
 

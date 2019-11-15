@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/atom.h"
 #include "classes/potentialmap.h"
 #include "classes/pairpotential.h"
 #include "classes/species.h"
@@ -127,11 +128,16 @@ double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
 		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::energy() is negative (%f).\n", r);
 		return 0.0;
 	}
+	if ((!i->speciesAtom()) || (!j->speciesAtom()))
+	{
+		Messenger::print("NULL_POINTER - One or both SpeciesAtoms in the Atoms passed to PotentialMap::energy() are NULL (%p %p).\n", i->speciesAtom(), j->speciesAtom());
+		return 0.0;
+	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
 	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb()) return pp->energy(r);
-	else return (pp->energy(r) + pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
+	else return (pp->energy(r) + pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
 // Return analytic energy between Atom types at squared distance specified
@@ -176,11 +182,16 @@ double PotentialMap::force(const Atom* i, const Atom* j, double r) const
 		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::force() is negative (%f).\n", r);
 		return 0.0;
 	}
+	if ((!i->speciesAtom()) || (!j->speciesAtom()))
+	{
+		Messenger::print("NULL_POINTER - One or both SpeciesAtoms in the Atoms passed to PotentialMap::force() are NULL (%p %p).\n", i->speciesAtom(), j->speciesAtom());
+		return 0.0;
+	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
 	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb()) return pp->force(r);
-	else return (pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r));
+	else return (pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
 // Return analytic force between Atom types at squared distance specified

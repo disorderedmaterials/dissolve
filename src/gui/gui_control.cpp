@@ -67,6 +67,7 @@ void DissolveWindow::setWidgetsAfterRun()
 {
 	// Disable / enable controls
 	ui_.ControlRunButton->setEnabled(true);
+	ui_.ControlRunButton->setIcon(QIcon(":/control/icons/control_play.svg"));
 	ui_.ControlStepButton->setEnabled(true);
 	ui_.ControlPauseButton->setEnabled(false);
 
@@ -74,6 +75,9 @@ void DissolveWindow::setWidgetsAfterRun()
 	RefList<MainTab> tabs = allTabs();
 	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+
+	// Reset the state
+	dissolveState_ = EditingState;
 }
 
 // All iterations requested are complete

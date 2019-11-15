@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DISSOLVE_VERSION],[0.4.6])
+m4_define([DISSOLVE_VERSION],[0.4.7])
 AC_INIT([dissolve], DISSOLVE_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
@@ -186,6 +186,7 @@ AC_CONFIG_FILES(src/modules/sq/Makefile)
 AC_CONFIG_FILES(src/modules/test/Makefile)
 AC_CONFIG_FILES(src/procedure/Makefile)
 AC_CONFIG_FILES(src/procedure/nodes/Makefile)
+AC_CONFIG_FILES(src/neta/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)

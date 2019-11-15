@@ -30,6 +30,7 @@
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesangle.h"
+#include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include <QListWidgetItem>
 
@@ -49,6 +50,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions())));
 	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesAngle::nAngleFunctions, SpeciesAngle::angleFunctions())));
 	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesTorsion::nTorsionFunctions, SpeciesTorsion::torsionFunctions())));
+	ui_.MasterImpropersTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesImproper::nImproperFunctions, SpeciesImproper::improperFunctions())));
 
 	// -- Parameters
 	for (int n=2; n<6; ++n)
@@ -56,6 +58,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 		ui_.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 		ui_.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 		ui_.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui_.MasterImpropersTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	}
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
@@ -65,6 +68,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	ui_.MasterAnglesTable->horizontalHeader()->setVisible(true);
 	ui_.MasterTorsionsTable->horizontalHeader()->setFont(font());
 	ui_.MasterTorsionsTable->horizontalHeader()->setVisible(true);
+	ui_.MasterImpropersTable->horizontalHeader()->setFont(font());
+	ui_.MasterImpropersTable->horizontalHeader()->setVisible(true);
 
 	/*
 	 * Atom Types
@@ -244,6 +249,45 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, 
 	}
 }
 
+// Row update function for ImpropersTable
+void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra* masterImproper, bool createItems)
+{
+	QTableWidgetItem* item;
+
+	// Name
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterImproper));
+		ui_.MasterImpropersTable->setItem(row, 0, item);
+	}
+	else item = ui_.MasterImpropersTable->item(row, 0);
+	item->setText(masterImproper->name());
+
+	// Functional Form
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterImproper));
+		ui_.MasterImpropersTable->setItem(row, 1, item);
+	}
+	else item = ui_.MasterImpropersTable->item(row, 1);
+	item->setText(SpeciesImproper::improperFunction( (SpeciesImproper::ImproperFunction) masterImproper->form()));
+
+	// Parameters
+	for (int n=0; n<MAXINTRAPARAMS; ++n)
+	{
+		if (createItems)
+		{
+			item = new QTableWidgetItem;
+			item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterImproper));
+			ui_.MasterImpropersTable->setItem(row, n+2, item);
+		}
+		else item = ui_.MasterImpropersTable->item(row, n+2);
+		item->setText(QString::number(masterImproper->parameter(n)));
+	}
+}
+
 // Row update function for AtomTypesTable
 void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool createItems)
 {
@@ -395,6 +439,10 @@ void ForcefieldTab::updateControls()
 	// Torsions Table
 	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
 	ui_.MasterTorsionsTable->resizeColumnsToContents();
+
+	// Impropers Table
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> impropersUpdater(ui_.MasterImpropersTable, dissolve_.coreData().masterImpropers(), this, &ForcefieldTab::updateImpropersTableRow);
+	ui_.MasterImpropersTable->resizeColumnsToContents();
 
 	// AtomTypes Table
 	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
@@ -801,6 +849,51 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
 		// Functional Form
 		case (1):
 			masterIntra->setForm(SpeciesTorsion::torsionFunction(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column()-2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
+	}
+}
+
+void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
+	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+	if (!masterIntra) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesImproper::improperFunction(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters

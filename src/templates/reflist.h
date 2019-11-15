@@ -444,7 +444,7 @@ template <class T> class RefList
 	 */
 	public:
 	// Search references for item
-	RefListItem<T>* contains(T* item) const
+	RefListItem<T>* contains(const T* item) const
 	{
 		// Search references for specified item
 		for (RefListItem<T>* r = listHead_; r != NULL; r = r->next_) if (r->item_ == item) return r;

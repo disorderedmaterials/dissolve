@@ -65,7 +65,7 @@ template <class T> class PointerArray
 
 		initialise(source.nItems());
 
-		for (int n=0; n<source.nItems(); ++n) add(source.value(n));
+		for (int n=0; n<source.nItems(); ++n) append(source.value(n));
 
 		return *this;
 	}
@@ -219,12 +219,50 @@ template <class T> class PointerArray
 		}
 		--nItems_;
 	}
-	// Return array index of pointer within the list
+	// Remove last item from the array
+	void removeLast()
+	{
+		if (nItems_ == 0) return;
+
+		--nItems_;
+
+		items_[nItems_] = NULL;
+	}
+	// Remove item from array and return it
+	T* take(int index)
+	{
+#ifdef CHECKS
+		if ((index < 0) || (index >= nItems_))
+		{
+			Messenger::error("PointerArray<T>::at(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			return NULL;
+		}
+#endif
+		T* item = items_[index];
+		remove(index);
+
+		return item;
+	}
+	// Return array index of specified pointer
 	int indexOf(const T* ptr) const
 	{
 		for (int n=0; n<nItems_; ++n) if (items_[n] == ptr) return n;
 
 		return -1;
+	}
+	// Return whether the array contains the specified pointer
+	bool contains(const T* ptr) const
+	{
+		for (int n=0; n<nItems_; ++n) if (items_[n] == ptr) return true;
+
+		return false;
+	}
+	// Return whether the array contains the specified pointer, searching from the last item backwards
+	bool sniatnoc(const T* ptr) const
+	{
+		for (int n=nItems_-1; n>=0; --n) if (items_[n] == ptr) return true;
+
+		return false;
 	}
 };
 

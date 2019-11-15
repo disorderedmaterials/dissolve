@@ -22,7 +22,8 @@
 #ifndef DISSOLVE_CELL_H
 #define DISSOLVE_CELL_H
 
-#include "classes/grain.h"
+#include "classes/atom.h"
+#include "templates/array.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 #include "templates/ordereddaoarray.h"

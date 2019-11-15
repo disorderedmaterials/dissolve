@@ -28,25 +28,14 @@
 #include "templates/vector3.h"
 
 // Forward Declarations
-class Angle;
 class Atom;
-class Bond;
 class Box;
-class Grain;
-class Species;
-class SpeciesAtom;
-class SpeciesGrain;
 class Matrix3;
-class Torsion;
+class Species;
 
 // Molecule Definition
 class Molecule : public DynamicArrayObject<Molecule>
 {
-	/*
-	 * A Molecule can be thought of as a collection of Atoms / Grains that belong together, and can be moved as such.
-	 * A Molecule does not itself own its Atoms or Grains. Instead, pointers to the relevant Atoms/Grains in the parent
-	 * Configuration are stored.
-	 */
 	public:
 	// Constructor
 	Molecule();
@@ -66,24 +55,18 @@ class Molecule : public DynamicArrayObject<Molecule>
 	 * Contents
 	 */
 	private:
-	// Species which the Molecule represents
-	Species* species_;
-	// Array of pointers to Atoms
+	// Species that this Molecule represents
+	const Species* species_;
+	// Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
 	Array<Atom*> atoms_;
-	// Array of Grain pointers
-	Array<Grain*> grains_;
-	// Array of Bonds this Molecule contains
-	Array<Bond*> bonds_;
-	// Array of Angles this Molecule contains
-	Array<Angle*> angles_;
-	// Array of Torsions this Molecule contains
-	Array<Torsion*> torsions_;
+	// Array of restraints involving atoms in this Molecule
+// 	Array<Bond*> restraints_;
 
 	public:
-	// Set Species which the Molecule represents
-	void setSpecies(Species* sp);
-	// Return Species which the Molecule represents
-	Species* species() const;
+	// Set Species that this Molecule represents
+	void setSpecies(const Species* sp);
+	// Return Species that this Molecule represents
+	const Species* species() const;
 	// Add Atom to Molecule
 	void addAtom(Atom* i);
 	// Return size of Atom array
@@ -92,44 +75,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	Atom** atoms();
 	// Return nth Atom pointer
 	Atom* atom(int n) const;
-	// Add Grain to Molecule
-	void addGrain(Grain* grain);
-	// Return size of Grain array
-	int nGrains() const;
-	// Return nth Grain pointer
-	Grain* grain(int n);
-	// Add Bond to Molecule
-	void addBond(Bond* bond);
-	// Return size of Bond array
-	int nBonds() const;
-	// Return Bonds array
-	Bond** bonds();
-	// Return nth Bond pointer
-	Bond* bond(int n) const;
-	// Add Angle to Molecule
-	void addAngle(Angle* angle);
-	// Return size of Angle array
-	int nAngles() const;
-	// Return Angles array
-	Angle** angles();
-	// Return nth Angle pointer
-	Angle* angle(int n) const;
-	// Add Torsion to Molecule
-	void addTorsion(Torsion* torsion);
-	// Return size of Torsion array
-	int nTorsions() const;
-	// Return Torsions array
-	Torsion** torsions();
-	// Return nth Torsion pointer
-	Torsion* torsion(int n) const;
-
-
-	/*
-	 * Upkeep
-	 */
-	public:
-	// Select Atoms along any path from the specified one
-	void selectFromAtom(Atom* i, RefList<Atom>& selectedAtoms, Bond* excludedBond1 = NULL, Bond* excludedBond2 = NULL);
 
 
 	/*

@@ -104,13 +104,15 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	 * Signals / Slots
 	 */
 	private slots:
+	// Content
+	void on_GeneratorRegenerateButton_clicked(bool checked);
 	// Definition
 	void on_TemperatureSpin_valueChanged(double value);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
-	// Content
-	void on_GeneratorRegenerateButton_clicked(bool checked);
+	// Size Factor Scaling
+	void on_RequestedSizeFactorSpin_valueChanged(double value);
 
 
 	/*
