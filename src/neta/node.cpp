@@ -20,13 +20,11 @@
 */
 
 #include "neta/node.h"
+#include "neta/connection.h"
+#include "neta/ring.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
-#include "neta/connection.h"
 #include "templates/reflist.h"
-#include <stdarg.h>
-#include <string.h>
-#include <cctype>
 
 // Return enum options for SymbolToken
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
@@ -102,6 +100,16 @@ NETAConnectionNode* NETANode::createConnectionNode(PointerArray<Element> targetE
 {
 	// Create the new node and own it
 	NETAConnectionNode* node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
+	branch_.own(node);
+
+	return node;
+}
+
+// Create ring node in the branch
+NETARingNode* NETANode::createRingNode()
+{
+	// Create the new node and own it
+	NETARingNode* node = new NETARingNode(parent_);
 	branch_.own(node);
 
 	return node;

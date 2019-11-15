@@ -223,6 +223,13 @@ int NETADefinitionGenerator::lex()
 		unGetChar();
 		Messenger::printVerbose("NETA (%p): found an alpha token [%s]...\n", definition_, token.get());
 
+		// Extended context?
+		if (DissolveSys::sameString(token, "ring"))
+		{
+			Messenger::printVerbose("NETA : ...which is the ring keyword.\n");
+			return DISSOLVE_NETA_RING;
+		}
+
 		// Modifier for the current context?
 		if (context() && context()->isValidModifier(token))
 		{
