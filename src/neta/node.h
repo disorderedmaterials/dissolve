@@ -33,6 +33,7 @@ class Element;
 class ForcefieldAtomType;
 class NETADefinition;
 class NETAConnectionNode;
+class NETARingNode;
 class SpeciesAtom;
 
 // NETA Node
@@ -40,7 +41,7 @@ class NETANode : public ListItem<NETANode>
 {
 	public:
 	// Node types
-	enum NodeType { BasicNode, ConnectionNode, LogicNode, nNETANodeTypes };
+	enum NodeType { BasicNode, ConnectionNode, LogicNode, RingNode, nNETANodeTypes };
 	// Value Comparison Operators
 	enum ComparisonOperator { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo };
 	// Return enum options for Comparison Operators
@@ -71,7 +72,7 @@ class NETANode : public ListItem<NETANode>
 	/*
 	 * Branching and Node Generation
 	 */
-	private:
+	protected:
 	// Branch of nodes
 	List<NETANode> branch_;
 
@@ -84,6 +85,8 @@ class NETANode : public ListItem<NETANode>
 	int nBranchNodes() const;
 	// Create connectivity node in the branch
 	NETAConnectionNode* createConnectionNode(PointerArray<Element> allowedElements, PointerArray<ForcefieldAtomType> allowedAtomTypes);
+	// Create ring node in the branch
+	NETARingNode* createRingNode();
 
 
 	/*

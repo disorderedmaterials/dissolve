@@ -10,6 +10,7 @@
 #include "neta/generator.h"
 #include "neta/connection.h"
 #include "neta/neta.h"
+#include "neta/ring.h"
 #include "base/messenger.h"
 #include "templates/reflist.h"
 
@@ -41,7 +42,7 @@ CharString localName;
 %token <elementZ> DISSOLVE_NETA_ELEMENT
 %token <valueOperator> DISSOLVE_NETA_OPERATOR
 %token <name> DISSOLVE_NETA_MODIFIER
-%token DISSOLVE_NETA_UNKNOWNTOKEN
+%token DISSOLVE_NETA_RING DISSOLVE_NETA_UNKNOWNTOKEN
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
 %left '='
@@ -52,7 +53,7 @@ CharString localName;
 %right '!'
 %right '^'
 
-%type <node> node nodesequence createconnectionnode
+%type <node> node nodesequence createconnectionnode createringnode
 %type <valueOperator> valueoperator
 %type <atomTargetDummy> target targets targetlist
 
@@ -82,6 +83,7 @@ nodesequence:
 node:
 	'-' targetlist createconnectionnode							{ $$ = $3; }
 	| '-' targetlist createconnectionnode pushcontext '(' nodesequence ')' popcontext	{ $$ = $3; }
+	| DISSOLVE_NETA_RING createringnode pushcontext '(' nodesequence ')' popcontext		{ $$ = $2; }
 	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
@@ -117,6 +119,9 @@ valueoperator:
 /* Node Creation */
 createconnectionnode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
+	;
+createringnode:
+	/* empty */					{ $$ = NETADefinitionGenerator::context()->createRingNode(); }
 	;
 
 /* Context Management */

@@ -60,6 +60,7 @@ add_library(classes
   speciesimproper.cpp
   speciesinfo.cpp
   speciesintra.cpp
+  speciesring.cpp
   speciessite.cpp
   speciestorsion.cpp
   weights.cpp
@@ -110,6 +111,7 @@ add_library(classes
   speciesimproper.h
   speciesinfo.h
   speciesintra.h
+  speciesring.h
   speciessite.h
   speciestorsion.h
   weights.h

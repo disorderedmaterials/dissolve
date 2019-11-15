@@ -11,7 +11,7 @@ libclasses_la_SOURCES += kvector.cpp
 libclasses_la_SOURCES += masterintra.cpp molecule.cpp moleculedistributor.cpp
 libclasses_la_SOURCES += pairpotential.cpp potentialmap.cpp partialset.cpp
 libclasses_la_SOURCES += regionaldistributor.cpp
-libclasses_la_SOURCES += scaledenergykernel.cpp scatteringmatrix.cpp site.cpp sitereference.cpp sitestack.cpp species.cpp species_atomic.cpp species_ff.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_site.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesimproper.cpp speciesinfo.cpp speciesintra.cpp speciessite.cpp speciestorsion.cpp species_io.cpp
+libclasses_la_SOURCES += scaledenergykernel.cpp scatteringmatrix.cpp site.cpp sitereference.cpp sitestack.cpp species.cpp species_atomic.cpp species_ff.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_site.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesimproper.cpp speciesinfo.cpp speciesintra.cpp speciesring.cpp speciessite.cpp speciestorsion.cpp species_io.cpp
 libclasses_la_SOURCES += weights.cpp
 
 noinst_HEADERS = atom.h atomtype.h atomtypedata.h atomtypelist.h
@@ -25,7 +25,7 @@ noinst_HEADERS += kernelflags.h kvector.h
 noinst_HEADERS += masterintra.h molecule.h moleculedistributor.h
 noinst_HEADERS += pairpotential.h potentialmap.h partialset.h
 noinst_HEADERS += regionaldistributor.h
-noinst_HEADERS += scaledenergykernel.h scatteringmatrix.h site.h sitereference.h sitestack.h species.h speciesangle.h speciesatom.h speciesbond.h speciesimproper.h speciesinfo.h speciesintra.h speciessite.h speciestorsion.h
+noinst_HEADERS += scaledenergykernel.h scatteringmatrix.h site.h sitereference.h sitestack.h species.h speciesangle.h speciesatom.h speciesbond.h speciesimproper.h speciesinfo.h speciesintra.h speciesring.h speciessite.h speciestorsion.h
 noinst_HEADERS += weights.h
 
 AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@

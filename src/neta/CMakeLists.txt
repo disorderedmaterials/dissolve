@@ -7,12 +7,14 @@ add_library(neta
   logic.cpp
   neta.cpp
   node.cpp
+  ring.cpp
 
   connection.h
   generator.h
   logic.h
   neta.h
   node.h
+  ring.h
 )
 
 target_include_directories(neta PRIVATE
