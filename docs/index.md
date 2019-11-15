@@ -10,7 +10,8 @@ permalink: /
 &copy; Dr Tristan Youngs 2012-2019
 
 ### Contributors
-- Simona (2019-)
+- Simona (September 2019-present)
+- J. Busch (October 2019-present)
 
 _Current Version: 0.4.6, Wednesday 30th October 2019_
 
