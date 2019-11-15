@@ -3,12 +3,15 @@
 # Enforce verbosity for commands and exit on first failure
 set -ev
 
+# Attempt to automatically detect Qt version installed by homebrew
+QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+
 # Set pointers to the Qt installationSource the new Qt installation
-export Qt5_DIR=/usr/local/Cellar/qt/5.13.1/lib/cmake/Qt5
-export Qt5Core_DIR=/usr/local/Cellar/qt/5.13.1/lib/cmake/Qt5Core
-export Qt5Widgets_DIR=/usr/local/Cellar/qt/5.13.1/lib/cmake/Qt5Widgets
-export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/5.13.1/lib/cmake/Qt5PrintSupport
-export Qt5Gui_DIR=/usr/local/Cellar/qt/5.13.1/lib/cmake/Qt5Gui
+export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
+export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
+export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
+export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
+export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
 
 # Create build dir and descend into it
 mkdir build
