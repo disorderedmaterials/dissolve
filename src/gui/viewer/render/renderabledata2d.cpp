@@ -154,7 +154,7 @@ void RenderableData2D::recreatePrimitives(const View& view, const ColourDefiniti
 {	
 	
 	reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
-	constructLineXZ(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
+	constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -178,7 +178,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, const Axes& axes, const ColourDefinition& colourDefinition)
+void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array2D<double>& displayValues, const Axes& axes, const ColourDefinition& colourDefinition)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> x = displayXAbscissa;
@@ -198,12 +198,13 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 
 	// Temporary variables
 	GLfloat colour[4];
-	Vec3<double> nrm(0.0, 0.0, 1.0);
+	Vec3<double> nrm(0.0, 1.0, 0.0);
 
 	// Create lines for slices
 	int vertexA, vertexB;
 	Array2D<double> v = displayValues;
 	axes.transformZ(v);
+	
 	
 	// Set vertexA to -1 so we don't draw a line at n=0
 	vertexA = -1;
@@ -213,26 +214,25 @@ void RenderableData2D::constructLineXZ(const Array<double>& displayXAbscissa, co
 	if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 	{
 		// Get the single colour
-		colourDefinition.colour(0.0, colour);
+		colourDefinition.colour(4.5, colour);
 		
-		// Loop over  values
-		for (int n=0; n < nY ; ++n)
+		// Loop over y
+		for (int n=0; n < 1 ; ++n)
 		{
+			p = primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
-				p = primitive(n);
-				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), 10000*displayValues.constAt(m,n), nrm, colour);
+				vertexB = p->defineVertex(x.constAt(m), 10000* displayValues.constAt(m,n), y.constAt(n), nrm, colour);
 			
 				// If both vertices are valid, plot a line
 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
-
 				vertexA = vertexB;
 			}
 		}
 	}
 	else
 	{
-		// Loop over  values
+		// Loop over y
 		for (int n=0; n < nY ; ++n)
 		{
 			p = primitive(n);
