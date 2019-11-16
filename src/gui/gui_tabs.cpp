@@ -184,6 +184,28 @@ MainTab* DissolveWindow::addWorkspaceTab(const char* title)
 	return tab;
 }
 
+// Generate unique Workspace name with base name provided
+const char* DissolveWindow::uniqueWorkspaceName(const char* base)
+{
+	static CharString uniqueName;
+	CharString baseName = base;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "Unnamed";
+
+	// Find an unused name starting with the baseName provided
+	while (findTab(uniqueName))
+	{
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
+}
+
 // Find tab with title specified
 MainTab* DissolveWindow::findTab(const char* title)
 {
@@ -420,6 +442,12 @@ void DissolveWindow::removeModuleTab(Module* module)
 	if (!tab) return;
 
 	removeTab(tab);
+}
+
+// Return list of current WorkspaceTabs
+const List<WorkspaceTab>& DissolveWindow::workspaceTabs() const
+{
+	return workspaceTabs_;
 }
 
 /*

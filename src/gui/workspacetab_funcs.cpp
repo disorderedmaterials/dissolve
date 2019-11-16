@@ -24,6 +24,7 @@
 #include "gui/tmdiarea.hui"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
+#include "gui/getworkspacenamedialog.h"
 #include "gui/widgets/subwidget.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
@@ -56,6 +57,24 @@ WorkspaceTab::~WorkspaceTab()
 MainTab::TabType WorkspaceTab::type() const
 {
 	return MainTab::WorkspaceTabType;
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString WorkspaceTab::getNewTitle(bool& ok)
+{
+	// Get a new, valid name for the Configuration
+	GetWorkspaceNameDialog nameDialog(this, dissolveWindow_->workspaceTabs());
+	ok = nameDialog.get(this, title());
+
+	if (ok)
+	{
+		// Rename our Workspace, and flag that our data has been modified
+		title_ = qPrintable(nameDialog.newName());
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed
