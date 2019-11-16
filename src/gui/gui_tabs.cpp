@@ -426,7 +426,6 @@ void DissolveWindow::removeModuleTab(Module* module)
  * Public Slots
  */
 
-
 // Add or go to Module tab for the Module with the unique name provided
 void DissolveWindow::showModuleTab(const QString& uniqueName)
 {
