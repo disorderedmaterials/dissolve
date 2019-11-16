@@ -1,0 +1,104 @@
+/*
+	*** Integrator1D Gizmo
+	*** src/gui/gizmos/integrator1d.h
+	Copyright T. Youngs 2012-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_GIZMOS_INTEGRATOR1D_H
+#define DISSOLVE_GIZMOS_INTEGRATOR1D_H
+
+#include "gui/gizmos/ui_integrator1d.h"
+#include "gui/widgets/subwidget.h"
+
+// Forward Declarations
+class Collection;
+class Dissolve;
+class PairPotential;
+class DataWidget;
+
+// Integrator1D Gizmo
+class Integrator1DGizmo : public SubWidget
+{
+	// All Qt declarations derived from QObject must include this macro
+	Q_OBJECT
+
+	private:
+	// Reference to Dissolve
+	Dissolve& dissolve_;
+	// Index of displayed PairPotential
+	int pairPotentialIndex_;
+	// Last displayed pair potential
+	PairPotential* lastPairPotential_;
+	// DataViewer contained within this widget
+	DataViewer* dataView_;
+
+	private:
+	// Set data targets for specified PairPotential
+	void setDataTargets(PairPotential* pp);
+
+	public:
+	// Constructor / Destructor
+	Integrator1DGizmo(DissolveWindow* dissolveWindow, const char* title);
+	~Integrator1DGizmo();
+	// Main form declaration
+	Ui::Integrator1DGizmo ui;
+	// Initialise window
+	void initialiseWindow(PairPotential* pp);
+	// Initialise controls
+	void initialiseControls(PairPotential* pp, bool addDefaults);
+
+
+	/*
+	 * SubWidget Reimplementations / Definitions
+	 */
+	protected:
+	void closeEvent(QCloseEvent* event);
+
+	public:
+	// Update controls within widget
+	void updateControls();
+	// Disable sensitive controls within widget
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget
+	void enableSensitiveControls();
+	// Return string specifying widget type
+	const char* widgetType();
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
+
+
+	/*
+	 * Widget Signals / Slots
+	 */
+	signals:
+	void windowClosed(QString windowTitle);
+
+	private slots:
+	void on_PreviousPotentialButton_clicked(bool checked);
+	void on_NextPotentialButton_clicked(bool checked);
+	void on_FullEnergyCheck_clicked(bool checked);
+	void on_OriginalEnergyCheck_clicked(bool checked);
+	void on_AdditionalEnergyCheck_clicked(bool checked);
+	void on_FullForceCheck_clicked(bool checked);
+	void on_ResetGraphButton_clicked(bool checked);
+	void on_ZeroUAdditionalButton_clicked(bool checked);
+};
+
+#endif

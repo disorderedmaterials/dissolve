@@ -189,8 +189,9 @@ target_include_directories(gui PRIVATE
 add_subdirectory(keywordwidgets)
 add_subdirectory(charts)
 add_subdirectory(delegates)
+add_subdirectory(gizmos)
 add_subdirectory(viewer)
 add_subdirectory(widgets)
 
-target_link_libraries(gui keywordwidgets charts delegates viewer widgets)
+target_link_libraries(gui keywordwidgets charts delegates viewer widgets gizmos)
 

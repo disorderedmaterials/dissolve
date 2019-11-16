@@ -275,6 +275,7 @@ if(GUI)
     viewer
     widgets
     keywordwidgets
+    gizmos
     delegates
     charts
     gui
