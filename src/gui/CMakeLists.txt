@@ -33,6 +33,7 @@ SET(gui_MOC_HDRS
   getconfigurationnamedialog.h
   getmodulelayernamedialog.h
   getspeciesnamedialog.h
+  getworkspacenamedialog.h
   importspeciesdialog.h
   selectconfigurationdialog.h
   selectelementdialog.h
@@ -84,6 +85,7 @@ SET(gui_UIS
   getconfigurationnamedialog.ui
   getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
+  getworkspacenamedialog.ui
   importspeciesdialog.ui
   selectconfigurationdialog.ui
   selectelementdialog.ui
@@ -130,6 +132,7 @@ SET(gui_SRCS
   getconfigurationnamedialog_funcs.cpp
   getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
+  getworkspacenamedialog_funcs.cpp
   importspeciesdialog_funcs.cpp
   selectconfigurationdialog_funcs.cpp
   selectelementdialog_funcs.cpp

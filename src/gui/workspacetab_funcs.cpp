@@ -24,6 +24,7 @@
 #include "gui/tmdiarea.hui"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
+#include "gui/getworkspacenamedialog.h"
 #include "gui/widgets/subwidget.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
@@ -56,6 +57,24 @@ WorkspaceTab::~WorkspaceTab()
 MainTab::TabType WorkspaceTab::type() const
 {
 	return MainTab::WorkspaceTabType;
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString WorkspaceTab::getNewTitle(bool& ok)
+{
+	// Get a new, valid name for the Configuration
+	GetWorkspaceNameDialog nameDialog(this, dissolveWindow_->workspaceTabs());
+	ok = nameDialog.get(this, title());
+
+	if (ok)
+	{
+		// Rename our Workspace, and flag that our data has been modified
+		title_ = qPrintable(nameDialog.newName());
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed
@@ -269,20 +288,6 @@ void WorkspaceTab::showContextMenu(const QPoint& pos)
 	menu.exec(mapToGlobal(pos));
 }
 
-// Module selected on context menu
-void WorkspaceTab::contextMenuModuleSelected(bool checked)
-{
-	// Get the sender QAction
-	QAction* action = dynamic_cast<QAction*>(sender());
-	if (!action) return;
-
-	// If the QAction's data is valid then it should contain a Module pointer
-	Module* module = VariantPointer<Module>(action->data());
-	if (!module) return;
-
-	addModuleControlWidget(module);
-}
-
 // General widget selected on context menu
 void WorkspaceTab::contextMenuWidgetSelected(bool checked)
 {
@@ -292,26 +297,6 @@ void WorkspaceTab::contextMenuWidgetSelected(bool checked)
 
 	// The text of the sender QAction is the name of the widget we need to create
 	addNamedWidget(qPrintable(action->text()), qPrintable(action->text()));
-}
-
-// Add ModuleControl widget to workspace
-SubWindow* WorkspaceTab::addModuleControlWidget(Module* module)
-{
-	// Is the Module already displayed?
-	SubWindow* window = findSubWindow(CharString("%s (%s)", module->type(), module->uniqueName()));
-	if (!window)
-	{
-		// Create a new ModuleWidget
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, module->uniqueName());
-		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
-		window = addSubWindow(moduleControlWidget, module);
-
-		// If we are currently running, we need to disable sensitive controls in the newly-created widget
-		if ((dissolveWindow_->dissolveState() != DissolveWindow::EditingState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
-	}
-	else window->raise();
-
-	return window;
 }
 
 // Add named widget to workspace
@@ -352,19 +337,10 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 	// Read in widgets
 	for (int n=0; n<nWidgets; ++n)
 	{
-		// Read line from the file, which should contain the window type, title, and any identifying info
+		// Read line from the file, which should contain the gizmo type
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		SubWindow* subWindow = NULL;
-		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
-		{
-			// Create a new ModuleControl widget - the target module's unique name is the title of the window
-			Module* module = coreData.findModule(parser.argc(0));
-			if (!module) return Messenger::error("Module '%s' could not be located and added to workspace '%s'.\n", parser.argc(0), title());
-			subWindow = addModuleControlWidget(module);
-		}
-		else subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
-		
-		if (subWindow == NULL) return Messenger::error("Unrecognised widget type '%s' in workspace '%s'.\n", parser.argc(1), title());
+		SubWindow* subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
+		if (subWindow == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(1), title());
 
 		// Read in the widget's geometry / state / flags
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;

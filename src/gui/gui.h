@@ -201,7 +201,7 @@ class DissolveWindow : public QMainWindow
 	void on_LayerRenameAction_triggered(bool checked);
 	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
-	void on_WorkspaceAddNewAction_triggered(bool checked);
+	void on_WorkspaceCreateEmptyAction_triggered(bool checked);
 	// Help
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
@@ -310,6 +310,8 @@ class DissolveWindow : public QMainWindow
 	void addCoreTabs();
 	// Add on an empty workspace tab
 	MainTab* addWorkspaceTab(const char* title);
+	// Generate unique Workspace name with base name provided
+	const char* uniqueWorkspaceName(const char* base);
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
 	// Find tab with specified page widget
@@ -354,6 +356,8 @@ class DissolveWindow : public QMainWindow
 	MainTab* addModuleTab(Module* module);
 	// Remove the ModuleTab for the specifeid Module, if it exists
 	void removeModuleTab(Module* module);
+	// Return list of current WorkspaceTabs
+	const List<WorkspaceTab>& workspaceTabs() const;
 
 	public slots:
 	// Add or go to Module tab for the Module with the unique name provided
