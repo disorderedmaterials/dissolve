@@ -87,11 +87,17 @@ jobs:
       name: Serial, GUI
       env: PARALLEL=false
       os: osx
+      cache:
+        directories:
+          - artifacts
       script: ./ci/osx.highsierra/build.serial.gui
     - stage: OSX Build / Deploy
       name: Parallel
       env: PARALLEL=true
       os: osx
+      cache:
+        directories:
+          - artifacts
       script: ./ci/osx.highsierra/build.parallel
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
