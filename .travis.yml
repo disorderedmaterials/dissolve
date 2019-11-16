@@ -28,6 +28,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get update -q; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get install qt512base -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "false" ]]; then brew install qt5; fi
+  - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "true" ]]; then brew install open-mpi; fi
 
 # Build Stages
 jobs:
