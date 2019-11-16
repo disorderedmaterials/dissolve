@@ -249,8 +249,12 @@ class Axes
 	TextPrimitive::TextAnchor labelAnchor_[3];
 	// Axis titles
 	CharString title_[3];
-	// Orientation of axis titles (axial rot, in-plane rot, distance, h-offset)
-	Vec4<double> titleOrientation_[3];
+	// Orientation of axis titles (rotations around x, y, and z axes)
+	Vec3<double> titleOrientation_[3];
+	// Title distances from axes
+	Vec3<double> titleDistances_;
+	// Title horizontal offsets
+	Vec3<double> titleHorizontalOffsets_;
 	// Axis title text anchor positions
 	TextPrimitive::TextAnchor titleAnchor_[3];
 
@@ -278,9 +282,17 @@ class Axes
 	// Return title for specified axis
 	const char* title(int axis) const;
 	// Set orientation of titles for specified axis
-	void setTitleOrientation(int axis, int component, double value);
+	void setTitleOrientationNEW(int axis, int component, double value);
 	// Return orientation of titles for specified axis
-	Vec4<double> titleOrientation(int axis) const;
+	Vec3<double> titleOrientation(int axis) const;
+	// Set title distance from axis
+	void setTitleDistance(int axis, double distance);
+	// Return title distance from axis
+	double titleDistance(int axis) const;
+	// Set title horizontal offset
+	void setTitleHorizontalOffset(int axis, double offset);
+	// Return title horizontal offset
+	double titleHorizontalOffset(int axis) const;
 	// Set axis title text anchor position for specified axis
 	void setTitleAnchor(int axis, TextPrimitive::TextAnchor anchor);
 	// Return axis title text anchor position for specified axis
