@@ -1,6 +1,6 @@
 /*
-	*** SubWindow Widget
-	*** src/gui/widgets/subwidget.cpp
+	*** Gizmo
+	*** src/gui/gizmos/gizmo.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,50 +19,45 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/widgets/subwidget.h"
-#include <stdio.h>
+#include "gui/gizmos/gizmo.h"
+#include "gui/gui.h"
 
 // Constructor
-SubWidget::SubWidget(DissolveWindow* dissolveWindow, const char* title) : QWidget(NULL), ListItem<SubWidget>()
+Gizmo::Gizmo(DissolveWindow* dissolveWindow) : ListItem<Gizmo>(), dissolve_(dissolveWindow->dissolve())
 {
 	dissolveWindow_ = dissolveWindow;
-	title_ = title;
-	subWindow_ = NULL;
+	window_ = NULL;
 	refreshing_ = false;
 }
 
-SubWidget::~SubWidget()
+Gizmo::~Gizmo()
 {
 }
 
 /*
- * SubWindow Parent
- */
-
-// Set SubWindow in which this widget is displayed
-void SubWidget::setSubWindow(SubWindow* subWindow)
-{
-	subWindow_ = subWindow;
-}
-
-// Return SubWindow in which this widget is displayed
-SubWindow* SubWidget::subWindow()
-{
-	return subWindow_;
-}
-
-/*
- * Identification
+ * Core
  */
 
 // Set title of widget
-void SubWidget::setTitle(const char* title)
+void Gizmo::setTitle(const char* title)
 {
 	title_ = title;
 }
 
 // Return title of widget (and associated window title, if in a window)
-const char* SubWidget::title()
+const char* Gizmo::title()
 {
 	return title_.get();
+}
+
+// Set QMdiSubWindow containing the Gizmo
+void Gizmo::setWindow(QMdiSubWindow* window)
+{
+	window_ = window;
+}
+
+// Return SubWindow in which this widget is displayed
+QMdiSubWindow* Gizmo::window()
+{
+	return window_;
 }

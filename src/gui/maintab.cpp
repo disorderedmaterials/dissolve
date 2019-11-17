@@ -22,8 +22,6 @@
 #include "gui/maintab.h"
 #include "gui/gui.h"
 #include "gui/modulecontrolwidget.h"
-#include "gui/widgets/subwindow.h"
-#include "gui/widgets/subwidget.h"
 #include "module/module.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"

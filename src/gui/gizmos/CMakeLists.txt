@@ -15,7 +15,10 @@ QT5_WRAP_UI(gizmos_UIS_H ${gizmos_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(gizmos_SRCS
+  gizmo.cpp
   integrator1d_funcs.cpp
+
+  gizmo.h
 )
 
 # Target 'gui'
@@ -28,5 +31,6 @@ target_include_directories(gizmos PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
 )
 

@@ -17,7 +17,6 @@ SET(gui_MOC_HDRS
   addconfigurationwizard.h
   addforcefieldtermswizard.h
   importspecieswizard.h
-  pairpotentialwidget.h
   selectconfigurationwidget.h
   selectforcefieldwidget.h
   selectspecieswidget.h
@@ -72,7 +71,6 @@ SET(gui_UIS
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
   importspecieswizard.ui
-  pairpotentialwidget.ui
   selectconfigurationwidget.ui
   selectforcefieldwidget.ui
   selectspecieswidget.ui
@@ -118,7 +116,6 @@ SET(gui_SRCS
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
   importspecieswizard_funcs.cpp
-  pairpotentialwidget_funcs.cpp
   selectconfigurationwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp
   selectspecieswidget_funcs.cpp
@@ -196,5 +193,5 @@ add_subdirectory(gizmos)
 add_subdirectory(viewer)
 add_subdirectory(widgets)
 
-target_link_libraries(gui keywordwidgets charts delegates viewer widgets gizmos)
+target_link_libraries(gui keywordwidgets charts delegates viewer widgets)
 

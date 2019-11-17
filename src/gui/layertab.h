@@ -24,7 +24,6 @@
 
 #include "gui/ui_layertab.h"
 #include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class ModuleChart;

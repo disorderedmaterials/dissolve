@@ -1,6 +1,6 @@
 /*
-	*** SubWindow Widget
-	*** src/gui/widgets/subwidget.h
+	*** Gizmo
+	*** src/gui/gizmos/gizmo.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,67 +19,72 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SUBWIDGET_H
-#define DISSOLVE_SUBWIDGET_H
+#ifndef DISSOLVE_GIZMO_H
+#define DISSOLVE_GIZMO_H
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
 #include <QWidget>
 
 // Forward Declarations
+class Dissolve;
 class DissolveWindow;
 class LineParser;
-class SubWindow;
+class QMdiSubWindow;
 
-// Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
-class SubWidget : public QWidget, public ListItem<SubWidget>
+// Gizmo - Base  class for any widget to be displayed in a QMdiSubWindow
+class Gizmo : public ListItem<Gizmo>
 {
-	protected:
-	// Pointer to DissolveWindow
-	DissolveWindow* dissolveWindow_;
-	// Whether widget is currently refreshing
-	bool refreshing_;
-
 	public:
 	// Constructor / Destructor
-	SubWidget(DissolveWindow* dissolveWindow, const char* title);
-	virtual ~SubWidget();
+	Gizmo(DissolveWindow* dissolveWindow);
+	virtual ~Gizmo();
+
+
+	/*
+	 * Core
+	 */
+	protected:
+	// Title of widget
+	CharString title_;
+	// Pointer to DissolveWindow
+	DissolveWindow* dissolveWindow_;
+	// Reference to Dissolve
+	Dissolve& dissolve_;
+	// QMdiSubWindow containing the Gizmo
+	QMdiSubWindow* window_;
+
+	public:
+	// Return string specifying Gizmo type
+	virtual const char* type() const = 0;
+	// Set title of widget
+	void setTitle(const char* title);
+	// Return title of widget
+	const char* title();
+	// Set QMdiSubWindow containing the Gizmo
+	void setWindow(QMdiSubWindow* window);
+	// Return QMdiSubWindow containing the Gizmo
+	QMdiSubWindow* window();
+
+
+	/*
+	 * UI
+	 */
+	protected:
+	// Whether the gizmo is currently refreshing
+	bool refreshing_;
+
+	protected:
+	// Window close event
+	virtual void closeEvent(QCloseEvent* event) = 0;
+
+	public:
 	// Update controls within widget
 	virtual void updateControls() = 0;
 	// Disable sensitive controls within widget
 	virtual void disableSensitiveControls() = 0;
 	// Enable sensitive controls within widget
 	virtual void enableSensitiveControls() = 0;
-
-
-	/*
-	 * SubWindow Parent
-	 */
-	protected:
-	// SubWindow in which this widget is displayed (if any)
-	SubWindow* subWindow_;
-
-	public:
-	// Set SubWindow in which this widget is displayed
-	void setSubWindow(SubWindow* subWindow);
-	// Return SubWindow in which this widget is displayed
-	SubWindow* subWindow();
-
-
-	/*
-	 * Identification
-	 */
-	private:
-	// Title of widget
-	CharString title_;
-
-	public:
-	// Set title of widget
-	void setTitle(const char* title);
-	// Return title of widget
-	const char* title();
-	// Return string specifying widget type
-	virtual const char* widgetType() = 0;
 
 
 	/*
@@ -90,13 +95,6 @@ class SubWidget : public QWidget, public ListItem<SubWidget>
 	virtual bool writeState(LineParser& parser) = 0;
 	// Read widget state through specified LineParser
 	virtual bool readState(LineParser& parser) = 0;
-
-
-	/*
-	 * Reimplementations
-	 */
-	protected:
-	virtual void closeEvent(QCloseEvent* event) = 0;
 };
 
 #endif

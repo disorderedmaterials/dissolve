@@ -23,7 +23,6 @@
 #define DISSOLVE_MAINWINDOW_H
 
 #include "gui/ui_gui.h"
-#include "gui/widgets/subwindow.h"
 #include "gui/outputhandler.hui"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"

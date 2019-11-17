@@ -23,7 +23,7 @@
 #define DISSOLVE_GIZMOS_INTEGRATOR1D_H
 
 #include "gui/gizmos/ui_integrator1d.h"
-#include "gui/widgets/subwidget.h"
+#include "gui/gizmos/gizmo.h"
 
 // Forward Declarations
 class Collection;
@@ -32,41 +32,36 @@ class PairPotential;
 class DataWidget;
 
 // Integrator1D Gizmo
-class Integrator1DGizmo : public SubWidget
+class Integrator1DGizmo : public QWidget, public Gizmo
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Reference to Dissolve
-	Dissolve& dissolve_;
-	// Index of displayed PairPotential
-	int pairPotentialIndex_;
-	// Last displayed pair potential
-	PairPotential* lastPairPotential_;
-	// DataViewer contained within this widget
-	DataViewer* dataView_;
-
-	private:
-	// Set data targets for specified PairPotential
-	void setDataTargets(PairPotential* pp);
-
 	public:
 	// Constructor / Destructor
-	Integrator1DGizmo(DissolveWindow* dissolveWindow, const char* title);
+	Integrator1DGizmo(DissolveWindow* dissolveWindow);
 	~Integrator1DGizmo();
-	// Main form declaration
-	Ui::Integrator1DGizmo ui;
-	// Initialise window
-	void initialiseWindow(PairPotential* pp);
-	// Initialise controls
-	void initialiseControls(PairPotential* pp, bool addDefaults);
 
 
 	/*
-	 * SubWidget Reimplementations / Definitions
+	 * Core
 	 */
+	public:
+	// Return string specifying Gizmo type
+	const char* type() const;
+
+
+	/*
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::Integrator1DGizmo ui_;
+	// DataViewer contained within this widget
+	DataViewer* dataView_;
+
 	protected:
+	// Window close event
 	void closeEvent(QCloseEvent* event);
 
 	public:
@@ -76,8 +71,12 @@ class Integrator1DGizmo : public SubWidget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
-	// Return string specifying widget type
-	const char* widgetType();
+
+
+	/*
+	 * State
+	 */
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
 	// Read widget state through specified LineParser
@@ -87,18 +86,10 @@ class Integrator1DGizmo : public SubWidget
 	/*
 	 * Widget Signals / Slots
 	 */
-	signals:
-	void windowClosed(QString windowTitle);
+// 	signals:
+// 	void windowClosed(QString windowTitle);
 
-	private slots:
-	void on_PreviousPotentialButton_clicked(bool checked);
-	void on_NextPotentialButton_clicked(bool checked);
-	void on_FullEnergyCheck_clicked(bool checked);
-	void on_OriginalEnergyCheck_clicked(bool checked);
-	void on_AdditionalEnergyCheck_clicked(bool checked);
-	void on_FullForceCheck_clicked(bool checked);
-	void on_ResetGraphButton_clicked(bool checked);
-	void on_ZeroUAdditionalButton_clicked(bool checked);
+// 	private slots:
 };
 
 #endif
