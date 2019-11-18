@@ -41,7 +41,7 @@ CharString localName;
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
 %token <valueOperator> DISSOLVE_NETA_OPERATOR
-%token <name> DISSOLVE_NETA_MODIFIER
+%token <name> DISSOLVE_NETA_MODIFIER DISSOLVE_NETA_NAME
 %token DISSOLVE_NETA_RING DISSOLVE_NETA_UNKNOWNTOKEN
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
@@ -102,8 +102,8 @@ targets:
 
 /* Target Element / Type */
 target:
-	DISSOLVE_NETA_ELEMENT				{ NETADefinitionGenerator::addTarget($1); $$ = NULL; }
-	| '&' DISSOLVE_NETA_INTEGERCONSTANT		{ NETADefinitionGenerator::addTarget(-$2); $$ = NULL; }
+	DISSOLVE_NETA_ELEMENT				{ if (!NETADefinitionGenerator::addElementTarget($1)) YYABORT; $$ = NULL; }
+	| '&' setExpectName DISSOLVE_NETA_NAME unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget(yylval.name)) YYABORT; $$ = NULL; }
 	;
 
 /* Context Modifiers */
@@ -133,6 +133,12 @@ popcontext:
 	;
 storename:
 	/* empty */					{ localName = yylval.name; }
+	;
+setExpectName:
+	/* empty */					{ NETADefinitionGenerator::setExpectName(true); }
+	;
+unsetExpectName:
+	/* empty */					{ NETADefinitionGenerator::setExpectName(false); }
 	;
 
 %%
