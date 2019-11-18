@@ -47,51 +47,51 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
 	static ForcefieldParameters parameters[]=
 	{
 		//    Name    Form (if not default)    Param1(Epsilon)    Param2(Sigma)
-		{ this, "nc",                      0.711302   3.250},
-                { this, "ca",                      0.292919   3.550},
-                { this, "ha",                      0.125548   2.420},
-                { this, "ct",                      0.276040   3.50},
-                { this, "hc",                      0.125548   2.50},
-                { this, "oh",                      0.711718   3.12},
-                { this, "ho",                      0.000000   0.0}
+		{ this, "nc",                      0.711302,   3.250},
+                { this, "ca",                      0.292919,   3.550},
+                { this, "ha",                      0.125548,   2.420},
+                { this, "ct",                      0.276040,   3.50},
+                { this, "hc",                      0.125548,   2.50},
+                { this, "oh",                      0.711718,   3.12},
+                { this, "ho",                      0.000000,   0.0}
 	};
         static ForcefieldAtomType atomTypes[] =
         {
-                //      Z     El          FFID    Name      Type	       				     Description
+                //            Z          FFID    Name      Type	       				     Description
                 //                                                q      Epsilon   Sigma
-                { this,      ELEMENT_N,   1,      "nc",       "nbonds=3,ring(size=6,-C(n=5))"                "Nitrogen in pyridine ring",
+                { this,      ELEMENT_N,   1,      "nc",       "nbonds=3,ring(size=6,-C(n=5),-N)",                "Nitrogen in pyridine ring",
                                                                 0.1014,   "nc" },
-                { this,      ELEMENT_C,   2,      "ca_o",       "nbonds=3,ring(size=6),~N,~C,-H"              "Carbon in aromatic ring, ortho",
+                { this,      ELEMENT_C,   2,      "ca_o",       "nbonds=3,ring(size=6,-C(n=5),-N),-N,-C,-H",              "Carbon in aromatic ring, ortho",
                                                                 0.0568,   "ca" },
-                { this,      ELEMENT_C,   3,      "ca_m",       "nbonds=3,ring(size=6),~C,-H,~C"              "Carbon in aromatic ring, meta",
+                { this,      ELEMENT_C,   3,      "ca_m",       "nbonds=3,ring(size=6,-C(n=5),-N),-C,-H,-C" ,             "Carbon in aromatic ring, meta",
                                                                 -0.2214,   "ca" },
-                { this,      ELEMENT_C,   4,      "ca_p",       "nbonds=3,ring(size=6),~C(n=2,~C(~N))"        "Carbon in aromatic ring, para",
+                { this,      ELEMENT_C,   4,      "ca_p",       "nbonds=3,ring(size=6,-C(n=5),-N),-C(n=2,-C(-N))",        "Carbon in aromatic ring, para",
                                                                 0.1747,   "ca" },
-                { this,      ELEMENT_H,   5,      "ha_o",       "nbonds=1,-&2"                                "Hydrogen bound to carbon in aromatic ring, ortho",
+                { this,      ELEMENT_H,   5,      "ha_o",       "nbonds=1,-&2"                        ,       "Hydrogen bound to carbon in aromatic ring, ortho",
                                                                 0.1802,   "ha" },
-                { this,      ELEMENT_H,   6,      "ha_m",       "nbonds=1,-&3"                                "Hydrogen bound to carbon in aromatic ring, meta",
+                { this,      ELEMENT_H,   6,      "ha_m",       "nbonds=1,-&3"                        ,      "Hydrogen bound to carbon in aromatic ring, meta",
                                                                 0.1759,   "ha" },
-                { this,      ELEMENT_H,   7,      "ha_p",       "nbonds=1,-&4"                                "Hydrogen bound to carbon in aromatic ring, para",
+                { this,      ELEMENT_H,   7,      "ha_p",       "nbonds=1,-&4"                        ,     "Hydrogen bound to carbon in aromatic ring, para",
                                                                 0.1275,   "ha" },
-                { this,      ELEMENT_C,   8,      "ct_1",       "nbonds=4,nh=2,-&1,-C"                        "Alkane Carbon of Tail, adjacent to N",
+                { this,      ELEMENT_C,   8,      "ct_1",       "nbonds=4,nh=2,-&1,-C"                ,        "Alkane Carbon of Tail, adjacent to N",
                                                                 -0.1509,   "ct" },
-                { this,      ELEMENT_C,   9,      "ct_2",       "nbonds=4,nh=2,-&9,-C"                        "Alkane Carbon of Tail,nextnext=N",
+                { this,      ELEMENT_C,   9,      "ct_2",       "nbonds=4,nh=2,-&9,-C"                ,       "Alkane Carbon of Tail,nextnext=N",
                                                                 0.0160,   "ct" },
-                { this,      ELEMENT_C,  10,      "ct_3",       "nbonds=4,nh=2,-C(-H(n=2),-O)"                "Alkane Carbon of Tail,nextnext=O",
+                { this,      ELEMENT_C,  10,      "ct_3",       "nbonds=4,nh=2,-C(-H(n=2),-O)"        ,      "Alkane Carbon of Tail,nextnext=O",
                                                                 0.0780,   "ct" },
-                { this,      ELEMENT_C,  11,      "ct_4",       "nbonds=4,nh=2,-C(-H(n=2),-C),-O"             "Alkane Carbon of Tail, adjacent to O",
+                { this,      ELEMENT_C,  11,      "ct_4",       "nbonds=4,nh=2,-C(-H(n=2),-C),-O"     ,     "Alkane Carbon of Tail, adjacent to O",
                                                                 0.2911,   "ct" },
-                { this,      ELEMENT_H,  12,      "hc_1",       "nbonds=1,-&8"                                "Hydrogen of Tail, adjacent to N",
+                { this,      ELEMENT_H,  12,      "hc_1",       "nbonds=1,-&8"                        ,        "Hydrogen of Tail, adjacent to N",
                                                                 0.1015,   "hc" },
-                { this,      ELEMENT_H,  13,      "hc_2",       "nbonds=1,-&9"                                "Hydrogen of Tail, nextnext=N",
+                { this,      ELEMENT_H,  13,      "hc_2",       "nbonds=1,-&9"                        ,        "Hydrogen of Tail, nextnext=N",
                                                                 0.0043,   "hc" },
-                { this,      ELEMENT_H,  14,      "hc_3",       "nbonds=1,-&10"                               "Hydrogen of Tail, nextnext=O",
+                { this,      ELEMENT_H,  14,      "hc_3",       "nbonds=1,-&10"                       ,        "Hydrogen of Tail, nextnext=O",
                                                                 0.0361,   "hc" },
-                { this,      ELEMENT_H,  15,      "hc_4",       "nbonds=1,-&11"                               "Hydrogen of Tail, adjacent to O",
+                { this,      ELEMENT_H,  15,      "hc_4",       "nbonds=1,-&11"                       ,        "Hydrogen of Tail, adjacent to O",
                                                                 -0.0205,   "hc" },
-                { this,      ELEMENT_O,  16,      "oh",       "-H,-&11"                                      "Oxygen of Hydroxyl Group",
+                { this,      ELEMENT_O,  16,      "oh",       "-H,-&11"                               ,      "Oxygen of Hydroxyl Group",
                                                                 -0.6916,   "oh" },
-                { this,      ELEMENT_H,  17,      "ho",       "nbonds=1,-&16"                                "Hydrogen of Hydroxyl Group",
+                { this,      ELEMENT_H,  17,      "ho",       "nbonds=1,-&16"                         ,       "Hydrogen of Hydroxyl Group",
                                                                 0.4370,   "ho" }
         };
 
@@ -155,13 +155,13 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
                 { this, "hc",   "ct",   "oh",   "ho",   SpeciesTorsion::CosineForm,      0.0000,       3.0,       0.0,       1 }
         };
 
-        static ForcefieldImproperTerm angleTerms[] =
+        static ForcefieldImproperTerm improperTerms[] =
         {
                 //      i       j       k      l        Type (CosineForm)              Vn           n          phi
                 { this, "ca",   "ca",   "ca",   "ha",   SpeciesImproper::CosineForm,       4.606,       2.0,       180.0 },
                 { this, "ca",   "nc",   "ca",   "ha",   SpeciesImproper::CosineForm,       4.606,       2.0,       180.0 },
                 { this, "ca",   "ca",   "nc",   "ct",   SpeciesImproper::CosineForm,       4.606,       2.0,       180.0 }
-        }
+        };
 
 }
 
@@ -186,7 +186,7 @@ const char* Forcefield_Py4OH_Ludwig::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_py4oh::shortRangeType() const
+Forcefield::ShortRangeType Forcefield_Py4OH_Ludwig::shortRangeType() const
 {
         return Forcefield::LennardJonesType;
 }

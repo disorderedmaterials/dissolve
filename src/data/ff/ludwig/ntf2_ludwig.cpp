@@ -47,26 +47,26 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
 	static ForcefieldParameters parameters[] =
 	{
 		 //    Name    Form (if not default)    Param1(Epsilon)    Param2(Sigma)
-		{ this, "F",               0.066516   2.655},
-		{ this, "C",               0.082812   3.150},
-		{ this, "S",               0.313705   4.0825},
-		{ this, "O",               0.263568   3.4632},
-		{ this, "N",               0.213349   3.2500}
+		{ this, "F",               0.066516,   2.655},
+		{ this, "C",               0.082812,   3.150},
+		{ this, "S",               0.313705,   4.0825},
+		{ this, "O",               0.263568,   3.4632},
+		{ this, "N",               0.213349,   3.2500}
 
 	};
         static ForcefieldAtomType atomTypes[] =
         {
                 //      Z     El          FFID    Name      Type	       Description
                 //                                                q      Epsilon   Sigma
-                { this,      ELEMENT_F,   1,      "F",       "-C(-F(n=2))"                "Fluorine",
+                { this,      ELEMENT_F,   1,      "F",       "-C(-F(n=2))",                "Fluorine",
                                                                 -0.189,		"F" },
-                { this,      ELEMENT_C,   2,      "C",       "-F(n=3),-S(-O(n=2))"                "Carbon",
+                { this,      ELEMENT_C,   2,      "C",       "-F(n=3),-S(-O(n=2))",                "Carbon",
                                                                 0.494,   	"C"},
-                { this,      ELEMENT_S,   3,      "S",       "-O(n=2),-C,-N"                "Sulfur",
+                { this,      ELEMENT_S,   3,      "S",       "-O(n=2),-C,-N",                "Sulfur",
                                                                 1.076,   	"S" },
-                { this,      ELEMENT_O,   4,      "O",       "-S(-O(n=2),-C,-N)(n=2)"                "Oxygen",
+                { this,      ELEMENT_O,   4,      "O",       "-S(-O(n=2),-C,-N)(n=2)",                "Oxygen",
                                                                 -0.579,   	"O" },
-                { this,      ELEMENT_N,   5,      "N",       "-S(-O(n=2),-C)(n=2)"                "Nitrogen",
+                { this,      ELEMENT_N,   5,      "N",       "-S(-O(n=2),-C)(n=2)",                "Nitrogen",
                                                                 -0.69,   	"N" }
         };
 
@@ -119,7 +119,7 @@ const char* Forcefield_NTf2_Ludwig::name() const
 }
 
 // Return description for Forcefield
-const char* Forcefield_NTf2::description() const
+const char* Forcefield_NTf2_Ludwig::description() const
 {
         return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek , bis(trifluoromethyl-sulfonyl)imide anion by Ludwig Group,<em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
 }
@@ -135,7 +135,7 @@ Forcefield::ShortRangeType Forcefield_NTf2_Ludwig::shortRangeType() const
  */
 
 // Determine and return atom type for specified SpeciesAtom
-ForcefieldAtomType* Forcefield_NTf2::determineAtomType(SpeciesAtom* i) const
+ForcefieldAtomType* Forcefield_NTf2_Ludwig::determineAtomType(SpeciesAtom* i) const
 {
         return NULL;
 }
