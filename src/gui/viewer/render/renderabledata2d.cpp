@@ -30,6 +30,8 @@ RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) 
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;	
+	colour().setStyle(ColourDefinition::HSVGradientStyle);
+	
 }
 
 // Destructor
@@ -170,7 +172,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 	while(n < transformedData_.constYAxis().nItems())
 	{
 		primitive(n)->sendToGL();
-		n++;
+		++n;
 	}
 
 	// Reset LineStyle back to defaults
@@ -193,8 +195,10 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	if (nY < 2) return;
 
 	// Get some values from axes so we can calculate colours properly
-	bool yLogarithmic = axes.logarithmic(1);
-	double yStretch = axes.stretch(1);
+	
+	bool vLogarithmic = axes.logarithmic(2);
+	printf("is axis logarithmic set? %i \n", vLogarithmic );
+	double vStretch = axes.stretch(2);
 
 	// Temporary variables
 	GLfloat colour[4];
@@ -206,23 +210,24 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	axes.transformZ(v);
 	
 	
-	// Set vertexA to -1 so we don't draw a line at n=0
-	vertexA = -1;
+	
 	Primitive* p;
 
 	// Check for a single colour style in the colourDefinition - use optimised case in that eventuality
 	if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 	{
 		// Get the single colour
-		colourDefinition.colour(4.5, colour);
+		colourDefinition.colour(0.0, colour);
 		
 		// Loop over y
-		for (int n=0; n < 1 ; ++n)
+		for (int n=0; n < nY ; ++n)
 		{
+			// Set vertexA to -1 so we don't draw a line at n=0
+			vertexA = -1;
 			p = primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
-				vertexB = p->defineVertex(x.constAt(m), 10000* displayValues.constAt(m,n), y.constAt(n), nrm, colour);
+				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
 			
 				// If both vertices are valid, plot a line
 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
@@ -232,19 +237,30 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	}
 	else
 	{
+		ColourDefinition ColorDefinition = colourDefinition;
+		double a = displayValues.constAt(0,0);
+		double b = displayValues.constLinearValue(displayValues.linearArraySize()-1);
 		// Loop over y
+		ColorDefinition.setHSVGradientStartValue(a);
+		ColorDefinition.setHSVGradientEndValue(b);
 		for (int n=0; n < nY ; ++n)
 		{
+			// Set vertexA to -1 so we don't draw a line at n=0
+			vertexA = -1;
 			p = primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
-			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);			
-			vertexB = p->defineVertex(x.constAt(m), displayValues.constAt(m,n), y.constAt(n), nrm, colour);
+				double c = (vLogarithmic ? pow(10.0, displayValues.constAt(m, n)) : displayValues.constAt(m, n));
+				//ColorDefinition.setHSVGradientStartColour((vLogarithmic ? pow(10.0, displayValues.constAt(m, n)) : displayValues.constAt(m, n)));
+				colourDefinition.colour(c, colour);
+				printf("print color %f %f %f %f \n", colour[0], colour[1], colour[2], colour[3] );
 
-			// If both vertices are valid, plot a line
-			if (vertexA != -1) p->defineIndices(vertexA, vertexB);
+				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
 
-			vertexA = vertexB;
+				// If both vertices are valid, plot a line
+				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
+
+				vertexA = vertexB;
 			}
 		}
 	}
