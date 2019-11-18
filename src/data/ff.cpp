@@ -124,6 +124,21 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	return NULL;
 }
 
+// Return the ForcefieldAtomType with specified id (if it exists)
+ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
+{
+	int startZ = (element ? element->Z() : 0);
+	int endZ = (element ? element->Z() : nElements()-1);
+	for (int Z=startZ; Z<=endZ; ++Z)
+	{
+		// Go through types associated to the Element
+		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
+		while (ForcefieldAtomType* type = typeIterator.iterate()) if (type->index() == id) return type;
+	}
+
+	return NULL;
+}
+
 /*
  * Term Data
  */
