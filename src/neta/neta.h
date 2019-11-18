@@ -22,16 +22,15 @@
 #ifndef DISSOLVE_NETA_H
 #define DISSOLVE_NETA_H
 
-#include "neta/node.h"
 #include "neta/connection.h"
 #include "neta/logic.h"
+#include "neta/root.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "templates/list.h"
 
 // Forward Declarations
 class Forcefield;
-class NETARootNode;
 class SpeciesAtom;
 
 // NETA Definition
@@ -49,7 +48,7 @@ class NETADefinition
 	 */
 	private:
 	// Root node of the definition
-	NETANode rootNode_;
+	NETARootNode rootNode_;
 	// Original definition string
 	CharString definitionString_;
 
@@ -57,7 +56,7 @@ class NETADefinition
 	// Clear all definition data
 	void clear();
 	// Return root node pointer
-	NETANode* rootNode();
+	NETARootNode* rootNode();
 	// Set NETADefinition from supplied string
 	bool set(const char* netaDefinition, const Forcefield* associatedFF = NULL);
 	// Set generating string

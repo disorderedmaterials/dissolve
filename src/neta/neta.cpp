@@ -29,7 +29,7 @@
 #include <string.h>
 
 // Constructor
-NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF) : rootNode_(this, NETANode::BasicNode)
+NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF) : rootNode_(this)
 {
 	set(netaDefinition, associatedFF);
 }
@@ -52,7 +52,7 @@ void NETADefinition::clear()
 }
 
 // Return root node pointer
-NETANode* NETADefinition::rootNode()
+NETARootNode* NETADefinition::rootNode()
 {
 	return &rootNode_;
 }
@@ -65,7 +65,6 @@ bool NETADefinition::set(const char* netaDefinition, const Forcefield* associate
 	definitionString_ = netaDefinition;
 
 	bool result = NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF);
-	if (!result) Messenger::error("Failed to generate NETA definition from input string '%s'.\n", netaDefinition);
 
 	return result;
 }

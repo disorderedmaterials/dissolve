@@ -41,7 +41,7 @@ class NETANode : public ListItem<NETANode>
 {
 	public:
 	// Node types
-	enum NodeType { BasicNode, ConnectionNode, LogicNode, RingNode, nNETANodeTypes };
+	enum NodeType { BasicNode, ConnectionNode, LogicNode, RingNode, RootNode, nNETANodeTypes };
 	// Value Comparison Operators
 	enum ComparisonOperator { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo };
 	// Return enum options for Comparison Operators

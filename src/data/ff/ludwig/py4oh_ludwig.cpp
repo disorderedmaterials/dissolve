@@ -89,7 +89,7 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
                                                                 0.0361,   "hc" },
                 { this,      ELEMENT_H,  15,      "hc_4",       "nbonds=1,-&11"                       ,        "Hydrogen of Tail, adjacent to O",
                                                                 -0.0205,   "hc" },
-                { this,      ELEMENT_O,  16,      "oh",       "-H,-&11"                               ,      "Oxygen of Hydroxyl Group",
+                { this,      ELEMENT_O,  16,      "oh",       "nbonds=2,-H,-&11"                               ,      "Oxygen of Hydroxyl Group",
                                                                 -0.6916,   "oh" },
                 { this,      ELEMENT_H,  17,      "ho",       "nbonds=1,-&16"                         ,       "Hydrogen of Hydroxyl Group",
                                                                 0.4370,   "ho" }

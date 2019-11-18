@@ -161,7 +161,12 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 		if (atomScore == NETANode::NoMatch) continue;
 
 		// Check any specified modifier values
-		if (nBondsValue_ >= 0 && (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))) return NETANode::NoMatch;
+		if (nBondsValue_ >= 0)
+		{
+			if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_)) return NETANode::NoMatch;
+
+			++atomScore;
+		}
 		if (nHydrogensValue_ >= 0)
 		{
 			// Count number of hydrogens attached to this atom
@@ -169,6 +174,8 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 			const PointerArray<SpeciesBond>& bonds = j->bonds();
 			for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(j)->element()->Z() == ELEMENT_H) ++nH;
 			if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
+
+			++atomScore;
 		}
 
 		// Found a match, so increase the match count and store the score

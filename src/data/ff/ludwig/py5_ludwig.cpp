@@ -81,17 +81,17 @@ Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
                                                                 0.0170,  "ct"},
                 { this,      ELEMENT_C,  11,      "ct_4",       "nbonds=4,nh=2,-&16,-&10",                "Alkane Carbon of Tail, 4th",
                                                                 0.1023,  "ct"},
-                { this,      ELEMENT_H,  12,      "hc_1",       "nbond=1,-&8"             ,   "Hydrogen of Tail, next to N",
+                { this,      ELEMENT_H,  12,      "hc_1",       "nbonds=1,-&8"             ,   "Hydrogen of Tail, next to N",
                                                                 0.1070, "hc"},
-                { this,      ELEMENT_H,  13,      "hc_2",       "nbond=1,-&9" ,               "Hydrogen of Tail, 2nd",
+                { this,      ELEMENT_H,  13,      "hc_2",       "nbonds=1,-&9" ,               "Hydrogen of Tail, 2nd",
                                                                 -0.0208, "hc"},
-                { this,      ELEMENT_H,  14,      "hc_3",       "nbond=1,-&10" ,               "Hydrogen of Tail, 3rd",
+                { this,      ELEMENT_H,  14,      "hc_3",       "nbonds=1,-&10" ,               "Hydrogen of Tail, 3rd",
                                                                 0.0097,  "hc"},
-                { this,      ELEMENT_H,  15,      "hc_4",       "nbond=1,-&11"  ,              "Hydrogen of Tail, 4th",
+                { this,      ELEMENT_H,  15,      "hc_4",       "nbonds=1,-&11"  ,              "Hydrogen of Tail, 4th",
                                                                 -0.0107, "hc"},
-                { this,      ELEMENT_C,  16,      "cm",       "nbond=4, nh=3,-&11",                "Carbon of Tail End",
+                { this,      ELEMENT_C,  16,      "cm",       "nbonds=4, nh=3,-&11",                "Carbon of Tail End",
                                                                 -0.1671, "cm"},
-                { this,      ELEMENT_H,  17,      "hm",       "nbond=1,-&16"       ,         "Hydrogen of Tail End",
+                { this,      ELEMENT_H,  17,      "hm",       "nbonds=1,-&16"       ,         "Hydrogen of Tail End",
                                                                 0.0480,  "hm"}
         };
 	        static ForcefieldBondTerm bondTerms[] =
