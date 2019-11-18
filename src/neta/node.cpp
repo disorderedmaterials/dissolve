@@ -20,13 +20,11 @@
 */
 
 #include "neta/node.h"
+#include "neta/connection.h"
+#include "neta/ring.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
-#include "neta/connection.h"
 #include "templates/reflist.h"
-#include <stdarg.h>
-#include <string.h>
-#include <cctype>
 
 // Return enum options for SymbolToken
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
@@ -44,12 +42,9 @@ EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 	return options;
 }
 
-
 // Constructors
 NETANode::NETANode(NETADefinition* parent, NETANode::NodeType type) : ListItem<NETANode>()
 {
-	repeatCount_ = 1;
-	repeatCountOperator_ = NETANode::EqualTo;
 	reverseLogic_ = false;
 	parent_ = parent;
 	nodeType_ = type;
@@ -110,6 +105,32 @@ NETAConnectionNode* NETANode::createConnectionNode(PointerArray<Element> targetE
 	return node;
 }
 
+// Create ring node in the branch
+NETARingNode* NETANode::createRingNode()
+{
+	// Create the new node and own it
+	NETARingNode* node = new NETARingNode(parent_);
+	branch_.own(node);
+
+	return node;
+}
+
+/*
+ * Modifiers
+ */
+
+// Return whether the specified modifier is valid for this node
+bool NETANode::isValidModifier(const char* s)
+{
+	return false;
+}
+
+// Set value and comparator for specified modifier
+bool NETANode::setModifier(const char* modifier, ComparisonOperator op, int value)
+{
+	return false;
+}
+
 /*
  * Value Comparison
  */
@@ -150,13 +171,6 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 /*
  * Scoring
  */
-
-// Set repeat count value and comparison operator
-void NETANode::setRepeatCount(int value, NETANode::ComparisonOperator op)
-{
-	repeatCount_ = value;
-	repeatCountOperator_ = op;
-}
 
 // Set node to use reverse logic
 void NETANode::setReverseLogic()

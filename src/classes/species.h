@@ -172,6 +172,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	SpeciesBond* bond(int i, int j);
 	// Return the SpeciesBond between the specified SpeciesAtoms (const)
 	const SpeciesBond* constBond(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Add missing bonds
+	void addMissingBonds(double tolerance = 1.1);
 	// Add new SpeciesAngle definition
 	SpeciesAngle* addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
 	// Add new SpeciesAngle definition

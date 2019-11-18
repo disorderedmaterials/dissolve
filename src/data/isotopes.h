@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPESDATA_H
-#define DISSOLVE_ISOTOPESDATA_H
+#ifndef DISSOLVE_DATA_ISOTOPES_H
+#define DISSOLVE_DATA_ISOTOPES_H
 
 #include "data/elements.h"
 #include "templates/array.h"

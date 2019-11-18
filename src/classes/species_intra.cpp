@@ -21,6 +21,7 @@
 
 #include "classes/species.h"
 #include "classes/box.h"
+#include "data/atomicradius.h"
 #include "base/sysfunc.h"
 
 // Add new SpeciesBond definition (from SpeciesAtoms*)
@@ -180,6 +181,34 @@ const SpeciesBond* Species::constBond(SpeciesAtom* i, SpeciesAtom* j) const
 	while (const SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j)) return b;
 
 	return NULL;
+}
+
+// Add missing bonds
+void Species::addMissingBonds(double tolerance)
+{
+	Vec3<double> vij;
+	double radiusI;
+	SpeciesAtom** atoms = atoms_.array();
+	for (int indexI = 0; indexI < nAtoms()-1; ++indexI)
+	{
+		// Get SpeciesAtom 'i' and its radius
+		SpeciesAtom* i = atoms[indexI];
+		radiusI = AtomicRadius::radius(i->element());
+		for (int indexJ = indexI+1; indexJ < nAtoms(); ++indexJ)
+		{
+			// Get SpeciesAtom 'j'
+			SpeciesAtom* j = atoms[indexJ];
+
+			// If the two atoms are already bound, continue
+			if (i->hasBond(j)) continue;
+
+			// Calculate distance between atoms
+			vij = j->r() - i->r();
+
+			// Compare distance to sum of atomic radii (multiplied by tolerance factor)
+			if (vij.magnitude() <= (radiusI + AtomicRadius::radius(j->element()))*tolerance) addBond(i, j);
+		}
+	}
 }
 
 // Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)

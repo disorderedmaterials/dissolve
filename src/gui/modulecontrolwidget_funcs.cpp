@@ -32,7 +32,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title) : SubWidget(dissolveWindow, title), module_(module), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
+ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title) : module_(module), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -41,8 +41,6 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module*
 	moduleWidget_ = NULL;
 
 	initialiseControls(module_);
-
-	refreshing_ = false;
 }
 
 ModuleControlWidget::~ModuleControlWidget()
@@ -57,7 +55,7 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	// Check if we have already created a widget...
 	if (controlsWidget_)
 	{
-		Messenger::error("Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n", title());
+		Messenger::error("Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n", module->uniqueName());
 		return;
 	}
 
@@ -87,70 +85,4 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	layout->setMargin(4);
 	layout->addWidget(splitter);
 	setLayout(layout);
-}
-
-/*
- * SubWidget Reimplementations / Definitions
- */
-
-void ModuleControlWidget::closeEvent(QCloseEvent* event)
-{
-	emit (windowClosed(title()));
-}
-
-// Update controls within widget
-void ModuleControlWidget::updateControls()
-{
-	if (!module_) return;
-
-	refreshing_ = true;
-
-	if (controlsWidget_) controlsWidget_->updateControls();
-	if (moduleWidget_) moduleWidget_->updateControls();
-
-	refreshing_ = false;
-}
-
-// Disable sensitive controls within widget
-void ModuleControlWidget::disableSensitiveControls()
-{
-	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
-
-	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
-}
-
-// Enable sensitive controls within widget
-void ModuleControlWidget::enableSensitiveControls()
-{
-	if (controlsWidget_) controlsWidget_->enableSensitiveControls();
-
-	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
-}
-
-// Return string specifying widget type
-const char* ModuleControlWidget::widgetType()
-{
-	return "ModuleControl";
-}
-
-// Write widget state through specified LineParser
-bool ModuleControlWidget::writeState(LineParser& parser)
-{
-	if (!module_) return false;
-
-	// Write state data from ModuleWidget (if one exists)
-	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
-
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool ModuleControlWidget::readState(LineParser& parser)
-{
-	if (!module_) return false;
-
-	// Read state data from ModuleWidget (if one exists)
-	if (moduleWidget_ && (!moduleWidget_->readState(parser))) return false;
-
-	return true;
 }

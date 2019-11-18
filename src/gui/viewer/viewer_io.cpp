@@ -136,7 +136,7 @@ EnumOptions<BaseViewer::AxisKeyword> BaseViewer::axisKeywords()
 		EnumOption(BaseViewer::TickDirectionKeyword, 		"TickDirection",		3) <<
 		EnumOption(BaseViewer::TitleKeyword, 			"Title",			1) <<
 		EnumOption(BaseViewer::TitleAnchorKeyword, 		"TitleAnchor",			1) <<
-		EnumOption(BaseViewer::TitleOrientationKeyword, 	"TitleOrientation",		4) <<
+		EnumOption(BaseViewer::TitleOrientationKeyword, 	"TitleOrientation",		5) <<
 		EnumOption(BaseViewer::VisibleAxisKeyword, 		"Visible",			1);
 
 	static EnumOptions<BaseViewer::AxisKeyword> options("AxisKeyword", BaseViewerAxisBlockOptions);
@@ -315,10 +315,11 @@ bool BaseViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 				break;
 			// Axis title orientation
 			case (BaseViewer::TitleOrientationKeyword):
-				axes.setTitleOrientation(axis, 0, parser.argd(1));
-				axes.setTitleOrientation(axis, 1, parser.argd(2));
-				axes.setTitleOrientation(axis, 2, parser.argd(3));
-				axes.setTitleOrientation(axis, 3, parser.argd(4));
+				axes.setTitleOrientationNEW(axis, 0, parser.argd(1));
+				axes.setTitleOrientationNEW(axis, 1, parser.argd(2));
+				axes.setTitleOrientationNEW(axis, 2, parser.argd(3));
+				axes.setTitleDistance(axis, parser.argd(4));
+				axes.setTitleHorizontalOffset(axis, parser.argd(5));
 				break;
 			// Axis visibility
 			case (BaseViewer::VisibleAxisKeyword):
@@ -369,7 +370,7 @@ bool BaseViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDirectionKeyword), axes.tickDirection(axis).x, axes.tickDirection(axis).y, axes.tickDirection(axis).z)) return false;
 	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis)))) return false;
 	if (!parser.writeLineF("    %s  '%s'\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleKeyword), axes.title(axis))) return false;
-	if (!parser.writeLineF("    %s  %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleOrientation(axis).w)) return false;
+	if (!parser.writeLineF("    %s  %f %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleDistance(axis), axes.titleHorizontalOffset(axis))) return false;
 	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis)))) return false;
 	if (!parser.writeLineF("  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::EndAxisKeyword))) return false;
 

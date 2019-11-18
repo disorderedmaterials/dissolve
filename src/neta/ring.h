@@ -1,6 +1,6 @@
 /*
-	*** NETA Connection Node
-	*** src/neta/connection.h
+	*** NETA Ring Node
+	*** src/neta/ring.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_CONNECTION_H
-#define DISSOLVE_NETA_CONNECTION_H
+#ifndef DISSOLVE_NETA_RING_H
+#define DISSOLVE_NETA_RING_H
 
 #include "neta/node.h"
 #include "classes/speciesbond.h"
+#include "classes/speciesring.h"
 #include "templates/pointerarray.h"
 
 // Forward Declarations
@@ -31,21 +32,13 @@ class Element;
 class ForcefieldAtomType;
 class NETADefinition;
 
-// NETA Connection Node
-class NETAConnectionNode : public NETANode
+// NETA Ring Node
+class NETARingNode : public NETANode
 {
 	public:
 	// Constructor / Destructor
-	NETAConnectionNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
-	~NETAConnectionNode();
-
-	private:
-	// Array of elements that the current context atom may be
-	PointerArray<Element> allowedElements_;
-	// Array of ForcefieldAtomTypes that the current context atom may be
-	PointerArray<ForcefieldAtomType> allowedAtomTypes_;
-	// Type of required connection
-	SpeciesBond::BondType bondType_;
+	NETARingNode(NETADefinition* parent);
+	~NETARingNode();
 
 
 	/*
@@ -56,26 +49,21 @@ class NETAConnectionNode : public NETANode
 	int repeatCount_;
 	// Repeat count comparison operator
 	NETANode::ComparisonOperator repeatCountOperator_;
-	// Number of bonds value
-	int nBondsValue_;
-	// Numbe of bonds value comparison operator
-	NETANode::ComparisonOperator nBondsValueOperator_;
-	// Number of hydrogens value
-	int nHydrogensValue_;
-	// Numbe of hydrogens value comparison operator
-	NETANode::ComparisonOperator nHydrogensValueOperator_;
+	// Ring size value
+	int sizeValue_;
+	// Ring size value comparison operator
+	NETANode::ComparisonOperator sizeValueOperator_;
 
 	public:
 	// Available modifiers
-	enum NETAConnectionModifier
+	enum NETARingModifier
 	{
-		NBondsModifier,			/* 'nbonds' - Specifies number of bonds (default = -1) */
-		NHydrogensModifier,		/* 'nh' - Specifies number of hydrogens (default = -1) */
-		RepeatConnectionModifier,	/* 'n' - Specifies the number of matches required (default = 1) */
-		nConnectionModifiers
+		SizeModifier,			/* 'size' - Specifies size of ring (default = -1) */
+		RepeatRingModifier,		/* 'n' - Specifies the number of matches required (default = 1) */
+		nRingModifiers
 	};
-	// Return enum options for NETAConnectionModifiers
-	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
+	// Return enum options for NETARingModifiers
+	static EnumOptions<NETARingNode::NETARingModifier> modifiers();
 	// Return whether the specified modifier is valid for this node
 	bool isValidModifier(const char* s);
 	// Set value and comparator for specified modifier
@@ -85,6 +73,10 @@ class NETAConnectionNode : public NETANode
 	/*
 	 * Scoring
 	 */
+	private:
+	// Locate rings in which the specified atom is involved
+	void findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, PointerArray<const SpeciesAtom>& path, const int minSize, const int maxSize) const;
+
 	public:
 	// Evaluate the node and return its score
 	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;

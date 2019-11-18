@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dissolve"
-#define MyAppVersion "0.4.6"
+#define MyAppVersion "0.4.7"
 #define MyAppPublisher "Tristan Youngs"
 #define MyAppURL "https://www.projectaten.com/"
-#define MyAppExeName "Dissolve-gui.exe"
+#define MyAppExeName "Dissolve-GUI.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
 #define DissolveDir "..\..\..\..\..\build\dissolve"
@@ -31,7 +31,7 @@ DefaultDirName={pf}\Dissolve
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\COPYING
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-0.4.6
+OutputBaseFilename=Dissolve-0.4.7
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes
@@ -43,8 +43,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#DissolveDir}\Dissolve-serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#DissolveDir}\Dissolve-gui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DissolveDir}\Dissolve-Serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\examples\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

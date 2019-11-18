@@ -10,12 +10,16 @@
 #include "neta/generator.h"
 #include "neta/connection.h"
 #include "neta/neta.h"
+#include "neta/ring.h"
 #include "base/messenger.h"
 #include "templates/reflist.h"
 
 /* Prototypes */
 int NETADefinitionGenerator_lex(void);
 void NETADefinitionGenerator_error(char *s);
+
+// Local Variables
+CharString localName;
 
 %}
 
@@ -26,7 +30,7 @@ void NETADefinitionGenerator_error(char *s);
 %union {
 	void* atomTargetDummy;				/* Dummy Type for Atom Targets*/
 	int elementZ;					/* Element Z */
-	CharString* name;				/* Character pointer for names */
+	const char* name;				/* Character pointer for names */
 	NETANode* node;					/* NETADefinition node pointer */
 	NETANode::ComparisonOperator valueOperator;	/* Comparison Operator */
 	int integerConst;				/* Constant integer value */
@@ -37,7 +41,8 @@ void NETADefinitionGenerator_error(char *s);
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
 %token <valueOperator> DISSOLVE_NETA_OPERATOR
-%token DISSOLVE_NETA_UNKNOWNTOKEN DISSOLVE_NETA_REPEATMODIFIER
+%token <name> DISSOLVE_NETA_MODIFIER
+%token DISSOLVE_NETA_RING DISSOLVE_NETA_UNKNOWNTOKEN
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
 %left '='
@@ -48,7 +53,7 @@ void NETADefinitionGenerator_error(char *s);
 %right '!'
 %right '^'
 
-%type <node> node nodesequence createconnectionnode
+%type <node> node nodesequence createconnectionnode createringnode
 %type <valueOperator> valueoperator
 %type <atomTargetDummy> target targets targetlist
 
@@ -78,6 +83,7 @@ nodesequence:
 node:
 	'-' targetlist createconnectionnode							{ $$ = $3; }
 	| '-' targetlist createconnectionnode pushcontext '(' nodesequence ')' popcontext	{ $$ = $3; }
+	| DISSOLVE_NETA_RING createringnode pushcontext '(' nodesequence ')' popcontext		{ $$ = $2; }
 	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
@@ -100,10 +106,9 @@ target:
 	| '&' DISSOLVE_NETA_INTEGERCONSTANT		{ NETADefinitionGenerator::addTarget(-$2); $$ = NULL; }
 	;
 
-
 /* Context Modifiers */
 contextmodifier:
-	DISSOLVE_NETA_REPEATMODIFIER valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()) { Messenger::print("Modifier must be used in a context.\n"); YYERROR; } NETADefinitionGenerator::context()->setRepeatCount($3, $2); }
+	DISSOLVE_NETA_MODIFIER storename valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
 	;
 
 /* Operators */
@@ -115,6 +120,9 @@ valueoperator:
 createconnectionnode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
 	;
+createringnode:
+	/* empty */					{ $$ = NETADefinitionGenerator::context()->createRingNode(); }
+	;
 
 /* Context Management */
 pushcontext:
@@ -122,6 +130,9 @@ pushcontext:
 	;
 popcontext:
 	/* empty */					{ NETADefinitionGenerator::popContext(); }
+	;
+storename:
+	/* empty */					{ localName = yylval.name; }
 	;
 
 %%
