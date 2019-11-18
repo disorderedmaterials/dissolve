@@ -37,6 +37,12 @@ class ColourScalePoint
 	public:
 	// Constructor
 	ColourScalePoint(double value = 0.0, QColor colour = QColor());
+	// Destructor
+	~ColourScalePoint();
+	// Copy Constructor
+	ColourScalePoint(const ColourScalePoint& source);
+	// Assignment operator
+	void operator=(const ColourScalePoint& source);	
 
 
 	/*

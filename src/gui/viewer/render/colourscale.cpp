@@ -216,6 +216,7 @@ void ColourScale::colour(double value, GLfloat* rgba) const
 		return;
 	}
 
+	
 	// Is supplied value less than the value at the first point?
 	if (value < points_.constAt(0).value())
 	{

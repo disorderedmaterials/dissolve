@@ -197,7 +197,6 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	// Get some values from axes so we can calculate colours properly
 	
 	bool vLogarithmic = axes.logarithmic(2);
-	printf("is axis logarithmic set? %i \n", vLogarithmic );
 	double vStretch = axes.stretch(2);
 
 	// Temporary variables
@@ -237,12 +236,12 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	}
 	else
 	{
-		ColourDefinition ColorDefinition = colourDefinition;
+		ColourDefinition colourDef = colourDefinition;
 		double a = displayValues.constAt(0,0);
 		double b = displayValues.constLinearValue(displayValues.linearArraySize()-1);
 		// Loop over y
-		ColorDefinition.setHSVGradientStartValue(a);
-		ColorDefinition.setHSVGradientEndValue(b);
+		colourDef.setHSVGradientStartValue(a);
+		colourDef.setHSVGradientEndValue(b);
 		for (int n=0; n < nY ; ++n)
 		{
 			// Set vertexA to -1 so we don't draw a line at n=0
@@ -250,11 +249,9 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 			p = primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
-				double c = (vLogarithmic ? pow(10.0, displayValues.constAt(m, n)) : displayValues.constAt(m, n));
-				//ColorDefinition.setHSVGradientStartColour((vLogarithmic ? pow(10.0, displayValues.constAt(m, n)) : displayValues.constAt(m, n)));
+				double c = (vLogarithmic ? pow(v.constAt(m, n), 10.0): v.constAt(m, n));
 				colourDefinition.colour(c, colour);
-				printf("print color %f %f %f %f \n", colour[0], colour[1], colour[2], colour[3] );
-
+				//printf("print color %f %f %f %f \n", colour[0], colour[1], colour[2], colour[3]);
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
 
 				// If both vertices are valid, plot a line
