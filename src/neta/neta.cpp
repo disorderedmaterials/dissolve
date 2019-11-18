@@ -29,7 +29,7 @@
 #include <string.h>
 
 // Constructor
-NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF) : rootNode_(this, NETANode::BasicNode)
+NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF) : rootNode_(this)
 {
 	set(netaDefinition, associatedFF);
 }
@@ -52,7 +52,7 @@ void NETADefinition::clear()
 }
 
 // Return root node pointer
-NETANode* NETADefinition::rootNode()
+NETARootNode* NETADefinition::rootNode()
 {
 	return &rootNode_;
 }

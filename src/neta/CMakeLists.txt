@@ -8,6 +8,7 @@ add_library(neta
   neta.cpp
   node.cpp
   ring.cpp
+  root.cpp
 
   connection.h
   generator.h
@@ -15,6 +16,7 @@ add_library(neta
   neta.h
   node.h
   ring.h
+  root.h
 )
 
 target_include_directories(neta PRIVATE
