@@ -33,8 +33,7 @@ Integrator1DGizmo::Integrator1DGizmo(DissolveWindow* dissolveWindow) : Gizmo(dis
 	ui_.setupUi(this);
 
 	// Grab the DataViewer pointer from the 
-	dataView_ = ui_.PlotWidget->dataViewer();
-	View& view = dataView_->view();
+	View& view = ui_.PlotWidget->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	view.axes().setRange(0, 0.0, 10.0);
@@ -75,7 +74,7 @@ void Integrator1DGizmo::updateControls()
 	refreshing_ = true;
 
 	// Refresh the graph
-	dataView_->postRedisplay();
+	ui_.PlotWidget->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -98,7 +97,7 @@ void Integrator1DGizmo::enableSensitiveControls()
 bool Integrator1DGizmo::writeState(LineParser& parser)
 {
 	// Write DataViewer state
-	if (!dataView_->writeSession(parser)) return false;
+	if (!ui_.PlotWidget->writeSession(parser)) return false;
 
 	return true;
 }
@@ -107,7 +106,7 @@ bool Integrator1DGizmo::writeState(LineParser& parser)
 bool Integrator1DGizmo::readState(LineParser& parser)
 {
 	// Read the DataViewer session info
-	if (!dataView_->readSession(parser)) return false;
+	if (!ui_.PlotWidget->readSession(parser)) return false;
 
 	return true;
 }

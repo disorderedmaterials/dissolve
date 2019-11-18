@@ -57,8 +57,6 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 	private:
 	// Main form declaration
 	Ui::Integrator1DGizmo ui_;
-	// DataViewer contained within this widget
-	DataViewer* dataView_;
 
 	protected:
 	// Window close event

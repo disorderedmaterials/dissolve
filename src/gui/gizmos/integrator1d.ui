@@ -89,7 +89,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="DataWidget" name="PlotWidget" native="true"/>
+          <widget class="DataViewer" name="PlotWidget" native="true"/>
          </item>
         </layout>
        </widget>
@@ -129,9 +129,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DataWidget</class>
+   <class>DataViewer</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/datawidget.h</header>
+   <header>gui/viewer/dataviewer.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
