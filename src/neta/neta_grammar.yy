@@ -53,9 +53,9 @@ CharString localName;
 %right '!'
 %right '^'
 
-%type <node> node nodesequence createconnectionnode createringnode
-%type <valueOperator> valueoperator
-%type <atomTargetDummy> target targets targetlist
+%type <node> node nodeSequence createConnectionNode createRingNode
+%type <valueOperator> valueOperator
+%type <atomTargetDummy> target targets targetList
 
 %%
 
@@ -66,29 +66,29 @@ CharString localName;
 /* Main Structure */
 neta:
 	/* empty */					{ YYACCEPT; }
-	| nodesequence					{ YYACCEPT; }
+	| nodeSequence					{ YYACCEPT; }
 	;
 
 /* Sequence of Nodes */
-nodesequence:
+nodeSequence:
 	node						{ $$ = $1; if ($$ == NULL) YYABORT; }
-	| contextmodifier				{ $$ = NULL; }
+	| contextModifier				{ $$ = NULL; }
 	| '!' node					{ $2->setReverseLogic(); $$ = $2; }
-	| nodesequence ',' node				{ $$ = $3; }
-	| contextmodifier ',' nodesequence		{ $$ = $3; }
-// 	| nodesequence '|' nodesequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
+	| nodeSequence ',' node				{ $$ = $3; }
+	| contextModifier ',' nodeSequence		{ $$ = $3; }
+// 	| nodeSequence '|' nodeSequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
 	;
 
 /* Nodes */
 node:
-	'-' targetlist createconnectionnode							{ $$ = $3; }
-	| '-' targetlist createconnectionnode pushcontext '(' nodesequence ')' popcontext	{ $$ = $3; }
-	| DISSOLVE_NETA_RING createringnode pushcontext '(' nodesequence ')' popcontext		{ $$ = $2; }
+	'-' targetList createConnectionNode							{ $$ = $3; }
+	| '-' targetList createConnectionNode pushContext '(' nodeSequence ')' popContext	{ $$ = $3; }
+	| DISSOLVE_NETA_RING createRingNode pushContext '(' nodeSequence ')' popContext		{ $$ = $2; }
 	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
 /* Target Element / Type Generic */
-targetlist:
+targetList:
 	target						{ $$ = NULL; }
 	| '[' target ']'				{ $$ = NULL; }
 	| '[' targets ']'				{ $$ = NULL; }
@@ -107,31 +107,31 @@ target:
 	;
 
 /* Context Modifiers */
-contextmodifier:
-	DISSOLVE_NETA_MODIFIER storename valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
+contextModifier:
+	DISSOLVE_NETA_MODIFIER storeName valueOperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
 	;
 
 /* Operators */
-valueoperator:
+valueOperator:
 	DISSOLVE_NETA_OPERATOR				{ $$ = yylval.valueOperator; }
 	;
 
 /* Node Creation */
-createconnectionnode:
+createConnectionNode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
 	;
-createringnode:
+createRingNode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createRingNode(); }
 	;
 
 /* Context Management */
-pushcontext:
+pushContext:
 	/* empty */					{ NETADefinitionGenerator::pushContext(); }
 	;
-popcontext:
+popContext:
 	/* empty */					{ NETADefinitionGenerator::popContext(); }
 	;
-storename:
+storeName:
 	/* empty */					{ localName = yylval.name; }
 	;
 setExpectName:
