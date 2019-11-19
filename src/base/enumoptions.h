@@ -72,6 +72,12 @@ template <class T> class EnumOptions : public EnumOptionsBase
 		for (int n=0; n<options_.nItems(); ++n) if (options_.constAt(n).enumeration() == enumeration) return options_.constAt(n).keyword();
 		return "ENUMERATION_NOT_VALID";
 	}
+	// Return enumerated keyword from uncast integer
+	const char* keywordFromInt(int uncastEnumeration) const
+	{
+		for (int n=0; n<options_.nItems(); ++n) if (options_.constAt(n).enumeration() == uncastEnumeration) return options_.constAt(n).keyword();
+		return "ENUMERATION_NOT_VALID";
+	}
 	// Return option with enumeration specified
 	const EnumOption& option(T enumeration) const
 	{
