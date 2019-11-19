@@ -98,6 +98,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 		EnumOption(Species::ChargeKeyword,		"Charge",		2) <<
 		EnumOption(Species::EndSpeciesKeyword,		"EndSpecies") <<
 		EnumOption(Species::ForcefieldKeyword,		"Forcefield",		1) <<
+		EnumOption(Species::ImproperKeyword, 		"Improper",		5,9) <<
 		EnumOption(Species::IsotopologueKeyword,	"Isotopologue",		EnumOption::OneOrMoreArguments) <<
 		EnumOption(Species::SiteKeyword,		"Site",			1) <<
 		EnumOption(Species::TorsionKeyword, 		"Torsion",		5,9);
@@ -119,10 +120,12 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 	SpeciesAngle* a;
 	SpeciesAtom* i;
 	SpeciesBond* b;
+	SpeciesImproper* imp;
 	SpeciesTorsion* t;
 	SpeciesSite* site;
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
+	SpeciesImproper::ImproperFunction impf;
 	SpeciesTorsion::TorsionFunction tf;
 	SpeciesBond::BondType bt;
 	Isotope* tope;
@@ -315,6 +318,62 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				break;
 			case (Species::ForcefieldKeyword):
 				forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
+				break;
+			case (Species::ImproperKeyword):
+				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
+				if (parser.argc(5)[0] == '@')
+				{
+					// Search through master Improper parameters to see if this name exists
+					MasterIntra* master = coreData.hasMasterImproper(parser.argc(5));
+					if (!master)
+					{
+						Messenger::error("No master Improper parameters named '%s' exist.\n", &parser.argc(5)[1]);
+						error = true;
+						break;
+					}
+
+					// Create a new improper definition
+					imp = addImproper(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
+					if (!imp)
+					{
+						error = true;
+						break;
+					}
+					t->setMasterParameters(master);
+				}
+				else
+				{
+					// Check the functional form specified
+					if (!SpeciesImproper::improperFunctions().isValid(parser.argc(5)))
+					{
+						Messenger::error("Functional form of Improper (%s) not recognised.\n", parser.argc(5));
+						error = true;
+						break;
+					}
+					impf = SpeciesImproper::improperFunctions().enumeration(parser.argc(5));
+
+					// Create a new improper definition
+					imp = addImproper(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
+					if (!imp)
+					{
+						error = true;
+						break;
+					}
+					t->setForm(tf);
+					for (int n=0; n<SpeciesImproper::improperFunctions().minArgs(impf); ++n)
+					{
+						if (!parser.hasArg(n+6))
+						{
+							Messenger::error("Improper function type '%s' requires %i parameters\n", SpeciesImproper::improperFunctions().keyword(impf), SpeciesImproper::improperFunctions().minArgs(impf));
+							error = true;
+							break;
+						}
+						t->setParameter(n, parser.argd(n+6));
+					}
+				}
+
+				// Perform any final setup on the Improper
+				t->setUp();
 				break;
 			case (Species::IsotopologueKeyword):
 				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
@@ -537,6 +596,26 @@ bool Species::write(LineParser& parser, const char* prefix)
 			{
 				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
 				for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+				if (!parser.writeLineF("%s\n", s.get())) return false;
+			}
+		}
+	}
+
+	// Impropers
+	if (nImpropers() > 0)
+	{
+		if (!parser.writeLineF("\n%s# Impropers\n", newPrefix.get())) return false;
+		DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
+		while (const SpeciesImproper* imp = improperIterator.iterate())
+		{
+			if (imp->masterParameters())
+			{
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::ImproperKeyword), imp->indexI()+1, imp->indexJ()+1, imp->indexK()+1, imp->indexL()+1, imp->masterParameters()->name())) return false;
+			}
+			else
+			{
+				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::ImproperKeyword), imp->indexI()+1, imp->indexJ()+1, imp->indexK()+1, imp->indexL()+1, SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+				for (int n=0; n<SpeciesImproper::improperFunctions().minArgs( (SpeciesImproper::ImproperFunction) imp->form()); ++n) s.strcatf("  %8.3f", imp->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get())) return false;
 			}
 		}

@@ -204,6 +204,13 @@ bool Dissolve::saveInput(const char* filename)
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
+		for (MasterIntra* imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+			for (int n=0; n<SpeciesImproper::improperFunctions().minArgs( (SpeciesImproper::ImproperFunction) imp->form()); ++n) s.strcatf("  %8.3f", imp->parameter(n));
+			if (!parser.writeLineF("%s\n", s.get())) return false;
+		}
+
 		// Done with the master terms
 		if (!parser.writeLineF("%s\n", MasterBlock::keywords().keyword(MasterBlock::EndMasterKeyword))) return false;
 	}

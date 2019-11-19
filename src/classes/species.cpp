@@ -203,6 +203,21 @@ void Species::print()
 			Messenger::print("%s\n", s.get());
 		}
 	}
+
+	if (nImpropers() > 0)
+	{
+		Messenger::print("\n  Impropers:\n");
+		Messenger::print("      I     J     K     L    Form             Parameters\n");
+		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
+		// Loop over Impropers
+		DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
+		while (const SpeciesImproper* imp = improperIterator.iterate())
+		{
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI()+1, imp->indexJ()+1, imp->indexK()+1, imp->indexL()+1, imp->masterParameters() ? '@' : ' ', SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", imp->parameter(n));
+			Messenger::print("%s\n", s.get());
+		}
+	}
 }
 
 // Return version
