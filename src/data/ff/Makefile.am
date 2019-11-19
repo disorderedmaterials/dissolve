@@ -1,5 +1,7 @@
 noinst_LTLIBRARIES = libff.la
 
+SUBDIRS = ludwig
+
 # OPLS-AA (2005)
 libff_la_SOURCES = oplsaa2005_atomtypes.cpp
 libff_la_SOURCES += oplsaa2005_noblegases.cpp
