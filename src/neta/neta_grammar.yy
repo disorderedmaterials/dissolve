@@ -103,6 +103,7 @@ targets:
 /* Target Element / Type */
 target:
 	DISSOLVE_NETA_ELEMENT				{ if (!NETADefinitionGenerator::addElementTarget($1)) YYABORT; $$ = NULL; }
+	| '&' setExpectName DISSOLVE_NETA_INTEGERCONSTANT unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget($3)) YYABORT; $$ = NULL; }
 	| '&' setExpectName DISSOLVE_NETA_NAME unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget(yylval.name)) YYABORT; $$ = NULL; }
 	;
 
