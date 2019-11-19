@@ -104,7 +104,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 		return opt.maxArgs();
 	}
 	// Check number of arguments provided to keyword
-	bool validNArgs(T enumeration, int nArgsProvided)
+	bool validNArgs(T enumeration, int nArgsProvided) const
 	{
 		// Retrieve the relevant EnumOption
 		const EnumOption& opt = option(enumeration);
