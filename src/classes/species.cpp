@@ -169,7 +169,7 @@ void Species::print()
 		DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
 		while (const SpeciesBond* b = bondIterator.iterate())
 		{
-			CharString s("   %4i  %4i    %c%-12s", b->indexI()+1, b->indexJ()+1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+			CharString s("   %4i  %4i    %c%-12s", b->indexI()+1, b->indexJ()+1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(b->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
@@ -183,7 +183,7 @@ void Species::print()
 		DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
 		while (const SpeciesAngle* a = angleIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
@@ -198,7 +198,7 @@ void Species::print()
 		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
 		while (const SpeciesTorsion* t = torsionIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}

@@ -48,7 +48,7 @@ void SpeciesTorsion::clear()
 	j_ = NULL;
 	k_ = NULL;
 	l_ = NULL;
-	form_ = SpeciesTorsion::nTorsionFunctions;
+	form_ = SpeciesTorsion::NoForm;
 }
 
 /*
@@ -185,33 +185,19 @@ bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Spe
  * Interaction Parameters
  */
 
-// Torsion function keywords
-const char* TorsionFunctionKeywords[] = { "Cos", "Cos3", "Cos4", "Cos3C", "UFFCosine" };
-int TorsionFunctionNParameters[] = { 4, 3, 4, 4, 3 };
-
-// Convert string to functional form
-SpeciesTorsion::TorsionFunction SpeciesTorsion::torsionFunction(const char* s)
+// Return enum options for TorsionFunction
+EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
-	for (int n=0; n<SpeciesTorsion::nTorsionFunctions; ++n) if (DissolveSys::sameString(s, TorsionFunctionKeywords[n])) return (SpeciesTorsion::TorsionFunction) n;
-	return SpeciesTorsion::nTorsionFunctions;
-}
+	static EnumOptionsList TorsionFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesTorsion::CosineForm, 		"Cos",		4,4) <<
+		EnumOption(SpeciesTorsion::Cos3Form, 		"Cos3",		3,3) <<
+		EnumOption(SpeciesTorsion::Cos4Form, 		"Cos4",		4,4) <<
+		EnumOption(SpeciesTorsion::Cos3CForm, 		"Cos3C",	4,4) <<
+		EnumOption(SpeciesTorsion::UFFCosineForm, 	"UFFCosine",	3,3);
 
-// Return functional form text
-const char* SpeciesTorsion::torsionFunction(SpeciesTorsion::TorsionFunction func)
-{
-	return TorsionFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
 
-// Return functional form array
-const char** SpeciesTorsion::torsionFunctions()
-{
-	return TorsionFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
-{
-	return TorsionFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters

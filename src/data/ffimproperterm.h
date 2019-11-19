@@ -35,7 +35,7 @@ class ForcefieldImproperTerm : public ListItem<ForcefieldImproperTerm>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldImproperTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, const char* typeL = NULL, SpeciesImproper::ImproperFunction form = SpeciesImproper::nImproperFunctions, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldImproperTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, const char* typeL = NULL, SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldImproperTerm();
 
 

@@ -35,7 +35,7 @@ class ForcefieldBondTerm : public ListItem<ForcefieldBondTerm>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldBondTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::nBondFunctions, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldBondTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldBondTerm();
 
 

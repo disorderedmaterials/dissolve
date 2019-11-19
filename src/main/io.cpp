@@ -185,22 +185,22 @@ bool Dissolve::saveInput(const char* filename)
 				  
 		for (MasterIntra* b = coreData_.masterBonds().first(); b != NULL; b = b->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-			for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+			for (int n=0; n<SpeciesBond::bondFunctions().minArgs( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* a = coreData_.masterAngles().first(); a != NULL; a = a->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-			for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+			for (int n=0; n<SpeciesAngle::angleFunctions().minArgs( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-			for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+			for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 

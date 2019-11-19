@@ -165,13 +165,13 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				}
 				else
 				{
-					af = SpeciesAngle::angleFunction(parser.argc(4));
-					if (af == SpeciesAngle::nAngleFunctions)
+					if (!SpeciesAngle::angleFunctions().isValid(parser.argc(4)))
 					{
 						Messenger::error("Functional form of Angle (%s) not recognised.\n", parser.argc(4));
 						error = true;
 						break;
 					}
+					af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
 
 					// Create a new angle definition
 					a = addAngle(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
@@ -181,11 +181,11 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 					a->setForm(af);
-					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
+					for (int n=0; n<SpeciesAngle::angleFunctions().minArgs(af); ++n)
 					{
 						if (!parser.hasArg(n+5))
 						{
-							Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunction(af), SpeciesAngle::nFunctionParameters(af));
+							Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunctions().keyword(af), SpeciesAngle::angleFunctions().minArgs(af));
 							error = true;
 							break;
 						}
@@ -237,7 +237,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				 * If only the bond indices were given, create a bond without a specified functional form (a Forcefield is presumably going to be specified).
 				 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
 				 */
-				if (parser.nArgs() == 3) b->setForm(SpeciesBond::nBondFunctions);
+				if (parser.nArgs() == 3) b->setForm(SpeciesBond::NoForm);
 				else if (parser.argc(3)[0] == '@')
 				{
 					// Search through master Bond parameters to see if this name exists
@@ -254,20 +254,20 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				else
 				{
 					// Check the functional form specified
-					bf = SpeciesBond::bondFunction(parser.argc(3));
-					if (bf == SpeciesBond::nBondFunctions)
+					if (!SpeciesBond::bondFunctions().isValid(parser.argc(3)))
 					{
 						Messenger::error("Functional form of Bond (%s) not recognised.\n", parser.argc(3));
 						error = true;
 						break;
 					}
+					bf = SpeciesBond::bondFunctions().enumeration(parser.argc(3));
 
 					b->setForm(bf);
-					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
+					for (int n=0; n<SpeciesBond::bondFunctions().minArgs(bf); ++n)
 					{
 						if (!parser.hasArg(4+n))
 						{
-							Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+							Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunctions().keyword(bf), SpeciesBond::bondFunctions().minArgs(bf));
 							error = true;
 							break;
 						}
@@ -390,13 +390,13 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				else
 				{
 					// Check the functional form specified
-					tf = SpeciesTorsion::torsionFunction(parser.argc(5));
-					if (tf == SpeciesTorsion::nTorsionFunctions)
+					if (!SpeciesTorsion::torsionFunctions().isValid(parser.argc(5)))
 					{
 						Messenger::error("Functional form of Torsion (%s) not recognised.\n", parser.argc(5));
 						error = true;
 						break;
 					}
+					tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
 
 					// Create a new torsion definition
 					t = addTorsion(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
@@ -406,11 +406,11 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 					t->setForm(tf);
-					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
+					for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
 					{
 						if (!parser.hasArg(n+6))
 						{
-							Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunction(tf), SpeciesTorsion::nFunctionParameters(tf));
+							Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunctions().keyword(tf), SpeciesTorsion::torsionFunctions().minArgs(tf));
 							error = true;
 							break;
 						}
@@ -468,7 +468,7 @@ bool Species::write(LineParser& parser, const char* prefix)
 		DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
 		while (const SpeciesBond* b = bondIterator.iterate())
 		{
-			if (b->form() == SpeciesBond::nBondFunctions)
+			if (b->form() == SpeciesBond::NoForm)
 			{
 				if (!parser.writeLineF("%s%s  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1)) return false;
 			}
@@ -478,8 +478,8 @@ bool Species::write(LineParser& parser, const char* prefix)
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-				for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+				CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+				for (int n=0; n<SpeciesBond::bondFunctions().minArgs( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get())) return false;
 			}
 
@@ -515,8 +515,8 @@ bool Species::write(LineParser& parser, const char* prefix)
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-				for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+				for (int n=0; n<SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get())) return false;
 			}
 		}
@@ -535,8 +535,8 @@ bool Species::write(LineParser& parser, const char* prefix)
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-				for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+				for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get())) return false;
 			}
 		}
