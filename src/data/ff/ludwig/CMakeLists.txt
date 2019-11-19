@@ -1,11 +1,11 @@
 add_library(ff_ludwig
-  ntf2_ludwig.cpp
-  py4oh_ludwig.cpp
-  py5_ludwig.cpp
+  ntf2.cpp
+  py4oh.cpp
+  py5.cpp
 
-  ntf2_ludwig.h
-  py4oh_ludwig.h
-  py5_ludwig.h
+  ntf2.h
+  py4oh.h
+  py5.h
 )
 
 include_directories(

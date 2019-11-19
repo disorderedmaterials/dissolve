@@ -21,9 +21,9 @@
 
 #include "data/fflibrary.h"
 #include "data/ff/oplsaa2005_noblegases.h"
-#include "data/ff/ludwig/ntf2_ludwig.h"
-#include "data/ff/ludwig/py5_ludwig.h"
-#include "data/ff/ludwig/py4oh_ludwig.h"
+#include "data/ff/ludwig/ntf2.h"
+#include "data/ff/ludwig/py5.h"
+#include "data/ff/ludwig/py4oh.h"
 #include "data/ff/spcfw.h"
 #include "data/ff/uff.h"
 #include "base/sysfunc.h"
