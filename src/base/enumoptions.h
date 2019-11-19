@@ -89,6 +89,20 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	{
 		return EnumOptionsBase::option(keyword);
 	}
+	// Return minimum number of arguments for the specified enumeration
+	int minArgs(T enumeration) const
+	{
+		// Retrieve the relevant EnumOption
+		const EnumOption& opt = option(enumeration);
+		return opt.minArgs();
+	}
+	// Return maximum number of arguments for the specified enumeration
+	int maxArgs(T enumeration) const
+	{
+		// Retrieve the relevant EnumOption
+		const EnumOption& opt = option(enumeration);
+		return opt.maxArgs();
+	}
 	// Check number of arguments provided to keyword
 	bool validNArgs(T enumeration, int nArgsProvided)
 	{
