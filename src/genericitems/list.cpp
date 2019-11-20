@@ -83,10 +83,10 @@ bool GenericList::isItemOfType(const char* type, const char* name, const char* p
 	return DissolveSys::sameString(type, item->itemClassName());
 }
 
-// Return head of the list
-GenericItem* GenericList::items()
+// Return item list
+List<GenericItem>& GenericList::items()
 {
-	return items_.first();
+	return items_;
 }
 
 // Return the named item from the list

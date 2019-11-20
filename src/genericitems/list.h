@@ -48,8 +48,8 @@ class GenericList
 	bool contains(const char* name, const char* prefix = NULL);
 	// Return if named item, if it exists, is of specified type
 	bool isItemOfType(const char* type, const char* name, const char* prefix = NULL);
-	// Return head of the list
-	GenericItem* items();
+	// Return item list
+	List<GenericItem>& items();
 	// Return the named item from the list
 	GenericItem* find(const char* name);
 	// Return the named item from the list (with prefix)

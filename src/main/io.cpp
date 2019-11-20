@@ -522,7 +522,8 @@ bool Dissolve::saveRestart(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Cycle over data store in the Configuration
-		for (GenericItem* item = cfg->moduleData().items(); item != NULL; item = item->next())
+		ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
+		while (GenericItem* item = itemIterator.iterate())
 		{
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
@@ -533,7 +534,8 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Processing Module Data
-	for (GenericItem* item = processingModuleData_.items(); item != NULL; item = item->next())
+	ListIterator<GenericItem> itemIterator(processingModuleData_.items());
+	while (GenericItem* item = itemIterator.iterate())
 	{
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
