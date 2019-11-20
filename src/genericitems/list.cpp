@@ -135,6 +135,15 @@ RefList<GenericItem> GenericList::itemsWithPrefix(const char* prefix)
 	return items;
 }
 
+// Return list of all items with specified class name
+RefList<GenericItem> GenericList::itemsWithClassName(const char* className)
+{
+	RefList<GenericItem> items;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->itemClassName(),className)) items.append(item);
+
+	return items;
+}
+
 // List all items
 void GenericList::listItems()
 {
