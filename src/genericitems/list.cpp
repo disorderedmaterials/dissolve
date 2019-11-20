@@ -122,7 +122,7 @@ int GenericList::version(const char* name, const char* prefix) const
 }
 
 // Return list of all items with specified prefix (before first '_')
-RefList<GenericItem> GenericList::listWithPrefix(const char* prefix)
+RefList<GenericItem> GenericList::itemsWithPrefix(const char* prefix)
 {
 	RefList<GenericItem> items;
 	CharString itemUniqueName;

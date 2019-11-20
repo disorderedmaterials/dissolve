@@ -57,7 +57,7 @@ class GenericList
 	// Return the version of the named item from the list
 	int version(const char* name, const char* prefix = NULL) const;
 	// Return list of all items with specified prefix (before first '_')
-	RefList<GenericItem> listWithPrefix(const char* prefix);
+	RefList<GenericItem> itemsWithPrefix(const char* prefix);
 	// List all items
 	void listItems();
 	// Remove named item
