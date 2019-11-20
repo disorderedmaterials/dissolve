@@ -26,7 +26,6 @@
 #include "gui/gizmos/gizmo.h"
 
 // Forward Declarations
-class Collection;
 class Dissolve;
 class PairPotential;
 class DataWidget;
