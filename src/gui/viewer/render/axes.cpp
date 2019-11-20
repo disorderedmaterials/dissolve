@@ -75,12 +75,14 @@ Axes::Axes(View& parent, FontInstance& fontInstance) : parentView_(parent), font
 	title_[0] = "X Axis";
 	title_[1] = "Y Axis";
 	title_[2] = "Z Axis";
-	titleOrientation_[0].set(0.0, 0.0, 1.2, 0.5);
-	titleOrientation_[1].set(0.0, 270.0, 1.2, 0.5);
-	titleOrientation_[2].set(90.0, 90.0, 1.2, 0.5);
+	titleOrientation_[0].set(0.0, 0.0, 0.0);
+	titleOrientation_[1].set(0.0, 0.0, 270.0);
+	titleOrientation_[2].set(90.0, 270.0, 0.0);
+	titleDistances_.set(1.2, 1.2, 1.2);
+	titleHorizontalOffsets_.set(0.5, 0.5, 0.5);
 	titleAnchor_[0] = TextPrimitive::TopMiddleAnchor;
 	titleAnchor_[1] = TextPrimitive::BottomMiddleAnchor;
-	titleAnchor_[2] = TextPrimitive::TopMiddleAnchor;
+	titleAnchor_[2] = TextPrimitive::BottomMiddleAnchor;
 
 	// GridLines
 	gridLinesMajor_.set(false, false, false);
@@ -959,7 +961,7 @@ const char* Axes::title(int axis) const
 }
 
 // Set orientation of titles for specified axis
-void Axes::setTitleOrientation(int axis, int component, double value)
+void Axes::setTitleOrientationNEW(int axis, int component, double value)
 {
 	titleOrientation_[axis].set(component, value);
 
@@ -967,22 +969,46 @@ void Axes::setTitleOrientation(int axis, int component, double value)
 }
 
 // Return orientation of titles for specified axis
-Vec4<double> Axes::titleOrientation(int axis) const
+Vec3<double> Axes::titleOrientation(int axis) const
 {
 	if (useBestFlatView_ && parentView_.isFlatView()) switch (parentView_.viewType())
 	{
 		case (View::FlatXYView):
-			return (axis == 0 ? Vec4<double>(0.0, 0.0, 0.2, 0.5) : Vec4<double>(0.0, 270.0, 0.2, 0.5));
+			return (axis == 0 ? Vec3<double>(0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
 		case (View::FlatXZView):
-			return (axis == 0 ? Vec4<double>(270.0, 0.0, 0.2, 0.5) : Vec4<double>(270.0, 90.0, 0.2, 0.5));
+			return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.0) : Vec3<double>(270.0, 0.0, 90.0));
 		case (View::FlatZYView):
-			return (axis == 1 ? Vec4<double>(90.0, 90.0, 0.2, 0.5) : Vec4<double>(90.0, 0.0, 0.2, 0.5));
+			return (axis == 1 ? Vec3<double>(0.0, 90.0, 90.0) : Vec3<double>(0.0, 90.0, 0.0));
 		default:
 			break;
 	}
 
 	// Safety catch
 	return titleOrientation_[axis];
+}
+
+// Set title distance from axis
+void Axes::setTitleDistance(int axis, double distance)
+{
+	titleDistances_.set(axis, distance);
+}
+
+// Return title distance from axis
+double Axes::titleDistance(int axis) const
+{
+	return titleDistances_.get(axis);
+}
+
+// Set title horizontal offset
+void Axes::setTitleHorizontalOffset(int axis, double offset)
+{
+	titleHorizontalOffsets_.set(axis, offset);
+}
+
+// Return title horizontal offset
+double Axes::titleHorizontalOffset(int axis) const
+{
+	return titleHorizontalOffsets_.get(axis);
 }
 
 // Set axis title text anchor position for specified axis
@@ -1163,19 +1189,22 @@ void Axes::updateAxisPrimitives()
 		if (parentView_.viewType() == View::FlatZYView) labelTransform.applyPreRotationY(labelOrientation(axis).x);
 		else labelTransform.applyPreRotationX(labelOrientation(axis).x);
 		// -- 2) Perform in-plane rotation
-		if (inPlaneAxis == 0) labelTransform.applyPreRotationX(labelOrientation(axis).y);
-		else if (inPlaneAxis == 1) labelTransform.applyPreRotationY(labelOrientation(axis).y);
+		if (parentView_.viewType() == View::FlatZYView) labelTransform.applyPreRotationX(labelOrientation(axis).y);
+		else if (parentView_.viewType() == View::FlatXZView) labelTransform.applyPreRotationY(labelOrientation(axis).y);
 		else labelTransform.applyPreRotationZ(labelOrientation(axis).y);
 
 		// Create axis title transformation matrix
 		titleTransform.setIdentity();
-		// -- 1) Apply axial rotation along label left-to-right direction
-		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationY(titleOrientation(axis).x);
-		else titleTransform.applyPreRotationX(titleOrientation(axis).x);
-		// -- 2) Perform in-plane rotation
-		if (inPlaneAxis == 0) titleTransform.applyPreRotationX(titleOrientation(axis).y);
-		else if (inPlaneAxis == 1) titleTransform.applyPreRotationY(titleOrientation(axis).y);
-		else titleTransform.applyPreRotationZ(titleOrientation(axis).y);
+// 		// -- 1) Apply axial rotation along label left-to-right direction
+// 		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationY(titleOrientation(axis).x);
+// 		else titleTransform.applyPreRotationX(titleOrientation(axis).x);
+// 		// -- 2) Perform in-plane rotation
+// 		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationX(titleOrientation(axis).y);
+// 		else if (inPlaneAxis == 1) titleTransform.applyPreRotationY(titleOrientation(axis).y);
+// 		else titleTransform.applyPreRotationZ(titleOrientation(axis).y);
+		titleTransform.applyPreRotationX(titleOrientation(axis).x);
+		titleTransform.applyPreRotationY(titleOrientation(axis).y);
+		titleTransform.applyPreRotationZ(titleOrientation(axis).z);
 
 		// Add axis labels
 		if (logarithmic_[axis])
@@ -1291,12 +1320,12 @@ void Axes::updateAxisPrimitives()
 		u = coordMin_[axis];
 		if (logarithmic_[axis])
 		{
-			value = log10(min_[axis]) + log10(max_[axis]/min_[axis]) * titleOrientation_[axis].w;
+			value = log10(min_[axis]) + log10(max_[axis]/min_[axis]) * titleHorizontalOffsets_[axis];
 			u.set(axis, (inverted_[axis] ? log10(max_[axis])-value : value) * stretch_[axis]);
 		}
 		else
 		{
-			value = min_[axis] + (max_[axis] - min_[axis]) * titleOrientation(axis).w;
+			value = min_[axis] + (max_[axis] - min_[axis]) * titleHorizontalOffsets_[axis];
 			u.set(axis, (inverted_[axis] ? (max_[axis] - value) + min_[axis]: value) * stretch_[axis]);
 		}
 		// -- Next step depends on whether we are automatically adjusting label positions
@@ -1316,7 +1345,7 @@ void Axes::updateAxisPrimitives()
 			// -- Scaling will be done by the title point size in TextPrimitive, but all our adjustments were done with label point size, so scale it...
 			adjustment *= parentView_.labelPointSize() / parentView_.titlePointSize();
 		}
-		else adjustment = tickDir * titleOrientation(axis).z;
+		else adjustment = tickDir * titleDistances_[axis];
 
 		// -- Add primitive
 		titlePrimitives_[axis].add(fontInstance_, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parentView_.titlePointSize(), parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());

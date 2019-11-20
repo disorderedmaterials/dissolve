@@ -37,6 +37,7 @@ NETADefinitionGenerator* NETADefinitionGenerator::generator_ = NULL;
 PointerArray<Element> NETADefinitionGenerator::targetElements_;
 PointerArray<ForcefieldAtomType> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
+bool NETADefinitionGenerator::expectName_ = false;
 
 // Constructor
 NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition& definition, const char* definitionText, const Forcefield* associatedFF)
@@ -44,6 +45,7 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition& definition, con
 	// Clear any possible old data
 	contextStack_.clear();
 	clearTargets();
+	expectName_ = false;
 
 	definition_ = &definition;
 	associatedForcefield_ = associatedFF;
@@ -244,25 +246,35 @@ int NETADefinitionGenerator::lex()
 		}
 
 		// Chemical Element?
-		const Element& el = Elements::element(token);
-		if (!el.isUnknown())
+		if (!expectName_)
 		{
-			NETADefinitionGenerator_lval.elementZ = el.Z();
-			Messenger::printVerbose("NETA : ...which is an element symbol (Z=%i)", el.Z());
-			return DISSOLVE_NETA_ELEMENT;
-		}
+			const Element& el = Elements::element(token);
+			if (!el.isUnknown())
+			{
+				NETADefinitionGenerator_lval.elementZ = el.Z();
+				Messenger::printVerbose("NETA (%p): ...which is an element symbol (Z=%i)", definition_, el.Z());
+				return DISSOLVE_NETA_ELEMENT;
+			}
 
-		// If we get to here then we have found an unrecognised alphanumeric token
-		Messenger::printVerbose("NETA (%p): ...which is unrecognised (->TOKEN)\n", definition_);
-		NETADefinitionGenerator_lval.name = token.get();
+			// If we get to here then we have found an unrecognised alphanumeric token
+			Messenger::printVerbose("NETA (%p): ...which is unrecognised.\n", definition_);
+			NETADefinitionGenerator_lval.name = token.get();
+		}
+		else
+		{
+			// Assumed generic name
+			Messenger::printVerbose("NETA (%p): ...which is a generic name.\n", definition_);
+			NETADefinitionGenerator_lval.name = token.get();
+			return DISSOLVE_NETA_NAME;
+		}
 
 		Messenger::error("Unknown token '%s' encountered in NETA definition.\n", token.get());
 		return 0;
 	}
 
 	// We have found a symbolic character (or a pair) that corresponds to an operator
-	// Return immediately in the case of brackets, comma, and semicolon
-	if ((c == '(') || (c == ')') || (c == '-') || (c == ','))
+	// Return immediately in the case of brackets, dash, comma, and ampersand
+	if ((c == '(') || (c == ')') || (c == '-') || (c == ',') || (c == '&'))
 	{
 		Messenger::printVerbose("NETA (%p): found symbol [%c]\n", definition_, c);
 		return c;
@@ -298,7 +310,7 @@ int NETADefinitionGenerator::lex()
  */
 
 // Add element target to array (by Z)
-bool NETADefinitionGenerator::addTarget(int elementZ)
+bool NETADefinitionGenerator::addElementTarget(int elementZ)
 {
 	Element& el = Elements::element(elementZ);
 	if (el.isUnknown()) return Messenger::error("Unknown element Z %i passed to NETADefinitionGenerator::addTarget().\n", elementZ);
@@ -308,8 +320,22 @@ bool NETADefinitionGenerator::addTarget(int elementZ)
 	return true;
 }
 
+// Add atomtype target to array (by index)
+bool NETADefinitionGenerator::addAtomTypeTarget(int id)
+{
+	// Is a forcefield available to search?
+	if (!associatedForcefield_) return false;
+
+	ForcefieldAtomType* at = associatedForcefield_->atomTypeById(id);
+	if (!at) return Messenger::error("No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id, associatedForcefield_->name());
+
+	targetAtomTypes_.append(at);
+
+	return true;
+}
+
 // Add atomtype target to array (by name)
-bool NETADefinitionGenerator::addTarget(const char* typeName)
+bool NETADefinitionGenerator::addAtomTypeTarget(const char* typeName)
 {
 	// Is a forcefield available to search?
 	if (!associatedForcefield_) return false;
@@ -363,6 +389,12 @@ bool NETADefinitionGenerator::pushContext()
 void NETADefinitionGenerator::popContext()
 {
 	contextStack_.removeLast();
+}
+
+// Set whether to recognise text elements as generic names
+void NETADefinitionGenerator::setExpectName(bool b)
+{
+	expectName_ = b;
 }
 
 // Static generation functions

@@ -190,7 +190,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Reset view, showing all data</string>
+         <string>Reset view orientation and show all data</string>
         </property>
         <property name="text">
          <string/>
@@ -290,6 +290,12 @@
       </item>
       <item>
        <widget class="ExponentialSpin" name="GraphFollowXLengthSpin">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>32</width>
@@ -627,6 +633,12 @@
       </property>
       <item>
        <widget class="QLabel" name="ModeLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -648,7 +660,7 @@
       <item>
        <widget class="QLabel" name="CoordinateLabel">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>

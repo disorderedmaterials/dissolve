@@ -863,7 +863,7 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Workspace</string>
     </property>
-    <addaction name="WorkspaceAddNewAction"/>
+    <addaction name="WorkspaceCreateEmptyAction"/>
    </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
@@ -1101,13 +1101,13 @@ Remote Simulation</string>
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="WorkspaceAddNewAction">
+  <action name="WorkspaceCreateEmptyAction">
    <property name="icon">
     <iconset resource="main.qrc">
      <normaloff>:/tabs/icons/tabs_workspace.svg</normaloff>:/tabs/icons/tabs_workspace.svg</iconset>
    </property>
    <property name="text">
-    <string>Add &amp;New...</string>
+    <string>&amp;Create New</string>
    </property>
   </action>
   <action name="WorkspaceCurrentAction">

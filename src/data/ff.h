@@ -91,6 +91,8 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	ForcefieldParameters* shortRangeParameters(const char* name) const;
 	// Return the named ForcefieldAtomType (if it exists)
 	ForcefieldAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
+	// Return the ForcefieldAtomType with specified id (if it exists)
+	ForcefieldAtomType* atomTypeById(int id, Element* element = NULL) const;
 
 
 	/*

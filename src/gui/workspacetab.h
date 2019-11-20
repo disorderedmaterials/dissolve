@@ -49,6 +49,8 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	public:
 	// Return tab type
 	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
 
@@ -107,14 +109,10 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	void createContextMenu(QMenu* parent);
 
 	private slots:
-	// Module selected on context menu
-	void contextMenuModuleSelected(bool checked);
 	// General widget selected on context menu
 	void contextMenuWidgetSelected(bool checked);
 
 	public:
-	// Add ModuleControl widget to workspace
-	SubWindow* addModuleControlWidget(Module* module);
 	// Add named widget to workspace
 	SubWindow* addNamedWidget(const char* widgetName, const char* title);
 

@@ -102,12 +102,16 @@ class NETADefinitionGenerator
 	static PointerArray<ForcefieldAtomType> targetAtomTypes_;
 	// Context (branch) stack
 	static RefList<NETANode> contextStack_;
+	// Whether to recognise text elements as generic names, rather than an element or unrecognised token
+	static bool expectName_;
 
 	public:
 	// Add element target to array (by Z)
-	static bool addTarget(int elementZ);
+	static bool addElementTarget(int elementZ);
+	// Add atomtype target to array (by id)
+	static bool addAtomTypeTarget(int id);
 	// Add atomtype target to array (by name)
-	static bool addTarget(const char* typeName);
+	static bool addAtomTypeTarget(const char* typeName);
 	// Return target Elements array
 	static PointerArray<Element> targetElements();
 	// Return target ForcefieldAtomTypes array
@@ -120,6 +124,8 @@ class NETADefinitionGenerator
 	static bool pushContext();
 	// Pop topmost context
 	static void popContext();
+	// Set whether to recognise text elements as generic names
+	static void setExpectName(bool b);
 	// Static generation function
 	static bool generate(NETADefinition& neta, const char* netaDefinition, const Forcefield* associatedFF);
 };

@@ -36,7 +36,7 @@ libgui_la_SOURCES += importspecieswizard.ui
 libgui_la_SOURCES += pairpotentialwidget.ui
 # UI - Dialogs
 libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui
-libgui_la_SOURCES += getconfigurationnamedialog.ui getmodulelayernamedialog.ui getspeciesnamedialog.ui
+libgui_la_SOURCES += getconfigurationnamedialog.ui getmodulelayernamedialog.ui getspeciesnamedialog.ui getworkspacenamedialog.ui
 libgui_la_SOURCES += importspeciesdialog.ui
 libgui_la_SOURCES += selectconfigurationdialog.ui selectelementdialog.ui selectforcefielddialog.ui selectspeciesdialog.ui selectsystemtemplatedialog.ui
 # UI - Main Tabs
@@ -54,7 +54,7 @@ libgui_la_SOURCES += outputhandler.hui thread.hui
 libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
-libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getmodulelayernamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp
+libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getmodulelayernamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp getworkspacenamedialog_funcs.cpp
 libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_io.cpp gui_start.cpp gui_tabs.cpp
 libgui_la_SOURCES += importspeciesdialog_funcs.cpp importspecieswizard_funcs.cpp
 libgui_la_SOURCES += layertab_funcs.cpp
@@ -72,7 +72,7 @@ libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidg
 noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
-noinst_HEADERS += getconfigurationnamedialog.h getmodulelayernamedialog.h getspeciesnamedialog.h gui.h
+noinst_HEADERS += getconfigurationnamedialog.h getmodulelayernamedialog.h getspeciesnamedialog.h getworkspacenamedialog.h gui.h
 noinst_HEADERS += importspeciesdialog.h importspecieswizard.h
 noinst_HEADERS += layertab.h
 noinst_HEADERS += maintab.h modulecontrolwidget.h modulelisteditor.h moduletab.h modulewidget.h
