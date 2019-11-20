@@ -48,7 +48,7 @@ void SpeciesImproper::clear()
 	j_ = NULL;
 	k_ = NULL;
 	l_ = NULL;
-	form_ = SpeciesImproper::nImproperFunctions;
+	form_ = SpeciesImproper::NoForm;
 }
 
 /*
@@ -181,33 +181,15 @@ bool SpeciesImproper::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
  * Interaction Parameters
  */
 
-// Improper function keywords
-const char* ImproperFunctionKeywords[] = { "Cos" };
-int ImproperFunctionNParameters[] = { 4 };
-
-// Convert string to functional form
-SpeciesImproper::ImproperFunction SpeciesImproper::improperFunction(const char* s)
+// Return enum options for ImproperFunction
+EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-	for (int n=0; n<SpeciesImproper::nImproperFunctions; ++n) if (DissolveSys::sameString(s, ImproperFunctionKeywords[n])) return (SpeciesImproper::ImproperFunction) n;
-	return SpeciesImproper::nImproperFunctions;
-}
+	static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesImproper::CosineForm, 	"Cos",		4,4);
 
-// Return functional form text
-const char* SpeciesImproper::improperFunction(SpeciesImproper::ImproperFunction func)
-{
-	return ImproperFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 
-// Return functional form array
-const char** SpeciesImproper::improperFunctions()
-{
-	return ImproperFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesImproper::nFunctionParameters(SpeciesImproper::ImproperFunction func)
-{
-	return ImproperFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters

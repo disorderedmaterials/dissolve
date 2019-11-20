@@ -24,7 +24,6 @@
 
 #include "gui/ui_configurationtab.h"
 #include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class Configuration;

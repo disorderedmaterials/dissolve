@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIESTORSION_H
 
 #include "classes/speciesintra.h"
+#include "base/enumoptions.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -93,21 +94,15 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	// Torsion functional forms
 	enum TorsionFunction
 	{
+		NoForm,
 		CosineForm,
 		Cos3Form,
 		Cos4Form,
 		Cos3CForm,
-		UFFCosineForm,
-		nTorsionFunctions
+		UFFCosineForm
 	};
-	// Convert string to functional form
-	static TorsionFunction torsionFunction(const char* s);
-	// Return functional form text
-	static const char* torsionFunction(TorsionFunction func);
-	// Return functional form array
-	static const char** torsionFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(TorsionFunction func);
+	// Return enum options for TorsionFunction
+	static EnumOptions<TorsionFunction> torsionFunctions(); 
 
 	public:
 	// Set up any necessary parameters

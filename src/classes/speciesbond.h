@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIESBOND_H
 
 #include "classes/speciesintra.h"
+#include "base/enumoptions.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -109,18 +110,12 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	// Bond functional forms
 	enum BondFunction
 	{
+		NoForm,
 		HarmonicForm,
-		EPSRForm,
-		nBondFunctions
+		EPSRForm
 	};
-	// Convert string to functional form
-	static BondFunction bondFunction(const char* s);
-	// Return functional form text
-	static const char* bondFunction(BondFunction func);
-	// Return functional form array
-	static const char** bondFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(BondFunction func);
+	// Return enum options for BondFunction
+	static EnumOptions<BondFunction> bondFunctions(); 
 
 	public:
 	// Set up any necessary parameters

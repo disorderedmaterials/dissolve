@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libgui.la
 
-SUBDIRS = delegates helpers keywordwidgets widgets viewer charts
+SUBDIRS = delegates helpers keywordwidgets widgets viewer charts gizmos
 
 SUFFIXES: .ui .hui .qrc
 
@@ -33,12 +33,11 @@ libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hu
 # UI - Wizards
 libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui
 libgui_la_SOURCES += importspecieswizard.ui
-libgui_la_SOURCES += pairpotentialwidget.ui
 # UI - Dialogs
 libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui
-libgui_la_SOURCES += getconfigurationnamedialog.ui getmodulelayernamedialog.ui getspeciesnamedialog.ui getworkspacenamedialog.ui
+libgui_la_SOURCES += getconfigurationnamedialog.ui getmodulelayernamedialog.ui getspeciesnamedialog.ui gettabnamedialog.ui
 libgui_la_SOURCES += importspeciesdialog.ui
-libgui_la_SOURCES += selectconfigurationdialog.ui selectelementdialog.ui selectforcefielddialog.ui selectspeciesdialog.ui selectsystemtemplatedialog.ui
+libgui_la_SOURCES += selectconfigurationdialog.ui selectelementdiaog.ui selectforcefielddialog.ui selectgenericitemdialog.ui selectspeciesdialog.ui selectsystemtemplatedialog.ui
 # UI - Main Tabs
 libgui_la_SOURCES += gui.ui
 libgui_la_SOURCES += configurationtab.ui
@@ -54,7 +53,7 @@ libgui_la_SOURCES += outputhandler.hui thread.hui
 libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
-libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getmodulelayernamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp getworkspacenamedialog_funcs.cpp
+libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getmodulelayernamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp gettabnamedialog_funcs.cpp
 libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_io.cpp gui_start.cpp gui_tabs.cpp
 libgui_la_SOURCES += importspeciesdialog_funcs.cpp importspecieswizard_funcs.cpp
 libgui_la_SOURCES += layertab_funcs.cpp
@@ -63,8 +62,8 @@ libgui_la_SOURCES += menu_configuration.cpp menu_file.cpp menu_help.cpp menu_lay
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += modulelisteditor_funcs.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
-libgui_la_SOURCES += pairpotentialwidget_funcs.cpp procedureeditor_funcs.cpp
-libgui_la_SOURCES += selectconfigurationdialog_funcs.cpp selectconfigurationwidget_funcs.cpp selectelementdialog_funcs.cpp selectforcefielddialog_funcs.cpp selectforcefieldwidget_funcs.cpp selectspeciesdialog_funcs.cpp selectspecieswidget_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
+libgui_la_SOURCES += procedureeditor_funcs.cpp
+libgui_la_SOURCES += selectconfigurationdialog_funcs.cpp selectconfigurationwidget_funcs.cpp selectelementdialog_funcs.cpp selectforcefielddialog_funcs.cpp selectforcefieldwidget_funcs.cpp selectgenericitemdialog_funcs.cpp selectspeciesdialog_funcs.cpp selectspecieswidget_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
@@ -72,12 +71,12 @@ libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidg
 noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
-noinst_HEADERS += getconfigurationnamedialog.h getmodulelayernamedialog.h getspeciesnamedialog.h getworkspacenamedialog.h gui.h
+noinst_HEADERS += getconfigurationnamedialog.h getmodulelayernamedialog.h getspeciesnamedialog.h gettabnamedialog.h gui.h
 noinst_HEADERS += importspeciesdialog.h importspecieswizard.h
 noinst_HEADERS += layertab.h
 noinst_HEADERS += maintab.h modulecontrolwidget.h modulelisteditor.h moduletab.h modulewidget.h
-noinst_HEADERS += pairpotentialwidget.h procedureeditor.h
-noinst_HEADERS += selectconfigurationdialog.h selectconfigurationwidget.h selectelementdialog.h selectforcefielddialog.h selectforcefieldwidget.h selectspeciesdialog.h selectspecieswidget.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
+noinst_HEADERS += procedureeditor.h
+noinst_HEADERS += selectconfigurationdialog.h selectconfigurationwidget.h selectelementdialog.h selectforcefielddialog.h selectforcefieldwidget.h selectgenericitemdialog.h selectspeciesdialog.h selectspecieswidget.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
 noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

@@ -185,22 +185,29 @@ bool Dissolve::saveInput(const char* filename)
 				  
 		for (MasterIntra* b = coreData_.masterBonds().first(); b != NULL; b = b->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-			for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+			for (int n=0; n<SpeciesBond::bondFunctions().minArgs( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* a = coreData_.masterAngles().first(); a != NULL; a = a->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-			for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+			for (int n=0; n<SpeciesAngle::angleFunctions().minArgs( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-			for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+			for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			if (!parser.writeLineF("%s\n", s.get())) return false;
+		}
+
+		for (MasterIntra* imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+			for (int n=0; n<SpeciesImproper::improperFunctions().minArgs( (SpeciesImproper::ImproperFunction) imp->form()); ++n) s.strcatf("  %8.3f", imp->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
@@ -515,7 +522,8 @@ bool Dissolve::saveRestart(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Cycle over data store in the Configuration
-		for (GenericItem* item = cfg->moduleData().items(); item != NULL; item = item->next())
+		ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
+		while (GenericItem* item = itemIterator.iterate())
 		{
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
@@ -526,7 +534,8 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Processing Module Data
-	for (GenericItem* item = processingModuleData_.items(); item != NULL; item = item->next())
+	ListIterator<GenericItem> itemIterator(processingModuleData_.items());
+	while (GenericItem* item = itemIterator.iterate())
 	{
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;

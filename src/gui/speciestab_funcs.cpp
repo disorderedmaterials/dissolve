@@ -56,7 +56,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.AtomTable->horizontalHeader()->setFont(font());
 	// -- Bond Table
 	for (int n=0; n<2; ++n) ui_.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), dissolve_.coreData().masterBonds()));
+	ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions()), dissolve_.coreData().masterBonds()));
 	// -- Angle Table
 	for (int n=0; n<3; ++n) ui_.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Torsion Table
@@ -217,7 +217,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool crea
 		ui_.BondTable->setItem(row, 2, item);
 	}
 	else item = ui_.BondTable->item(row, 2);
-	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name()) : SpeciesBond::bondFunction( (SpeciesBond::BondFunction) speciesBond->form()));
+	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name()) : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
 
 	// Interaction Parameters
 	for (int n=0; n<4; ++n)
@@ -260,7 +260,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool c
 		ui_.AngleTable->setItem(row, 3, item);
 	}
 	else item = ui_.AngleTable->item(row, 3);
-	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name()) : SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) speciesAngle->form()));
+	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name()) : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
 	// Interaction Parameters
 	for (int n=0; n<4; ++n)
@@ -303,7 +303,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 		ui_.TorsionTable->setItem(row, 4, item);
 	}
 	else item = ui_.TorsionTable->item(row, 4);
-	item->setText(speciesTorsion->masterParameters() ? QString("@%1").arg(speciesTorsion->masterParameters()->name()) : SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) speciesTorsion->form()));
+	item->setText(speciesTorsion->masterParameters() ? QString("@%1").arg(speciesTorsion->masterParameters()->name()) : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
 
 	// Interaction Parameters
 	for (int n=0; n<4; ++n)
@@ -346,7 +346,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper* speciesImprope
 		ui_.ImproperTable->setItem(row, 4, item);
 	}
 	else item = ui_.ImproperTable->item(row, 4);
-	item->setText(speciesImproper->masterParameters() ? QString("@%1").arg(speciesImproper->masterParameters()->name()) : SpeciesImproper::improperFunction( (SpeciesImproper::ImproperFunction) speciesImproper->form()));
+	item->setText(speciesImproper->masterParameters() ? QString("@%1").arg(speciesImproper->masterParameters()->name()) : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
 
 	// Interaction Parameters
 	for (int n=0; n<4; ++n)
@@ -698,7 +698,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 			}
 			else
 			{
-				SpeciesBond::BondFunction bf = SpeciesBond::bondFunction(qPrintable(w->text()));
+				SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(qPrintable(w->text()));
 				speciesBond->setMasterParameters(NULL);
 				speciesBond->setForm(bf);
 			}
@@ -774,7 +774,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 			}
 			else
 			{
-				SpeciesAngle::AngleFunction af = SpeciesAngle::angleFunction(qPrintable(w->text()));
+				SpeciesAngle::AngleFunction af = SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text()));
 				speciesAngle->setMasterParameters(NULL);
 				speciesAngle->setForm(af);
 			}
@@ -852,7 +852,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 			}
 			else
 			{
-				SpeciesTorsion::TorsionFunction tf = SpeciesTorsion::torsionFunction(qPrintable(w->text()));
+				SpeciesTorsion::TorsionFunction tf = SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
 				speciesTorsion->setMasterParameters(NULL);
 				speciesTorsion->setForm(tf);
 			}
@@ -930,7 +930,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem* w)
 			}
 			else
 			{
-				SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunction(qPrintable(w->text()));
+				SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
 				speciesImproper->setMasterParameters(NULL);
 				speciesImproper->setForm(tf);
 			}

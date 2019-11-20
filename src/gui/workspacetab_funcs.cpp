@@ -22,10 +22,8 @@
 #include "gui/workspacetab.h"
 #include "gui/gui.h"
 #include "gui/tmdiarea.hui"
-#include "gui/modulecontrolwidget.h"
-#include "gui/pairpotentialwidget.h"
-#include "gui/getworkspacenamedialog.h"
-#include "gui/widgets/subwidget.h"
+#include "gui/gettabnamedialog.h"
+#include "gui/gizmos/gizmos.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -63,7 +61,7 @@ MainTab::TabType WorkspaceTab::type() const
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
 	// Get a new, valid name for the Configuration
-	GetWorkspaceNameDialog nameDialog(this, dissolveWindow_->workspaceTabs());
+	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
 	ok = nameDialog.get(this, title());
 
 	if (ok)
@@ -91,236 +89,114 @@ bool WorkspaceTab::canChangeTitle() const
 void WorkspaceTab::updateControls()
 {
 	// Update our MDI subwindows
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
+	ListIterator<Gizmo> gizmoIterator(gizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) gizmo->updateControls();
 }
 
 // Disable sensitive controls within tab
 void WorkspaceTab::disableSensitiveControls()
 {
 	// Disable sensitive controls in subwindows
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->disableSensitiveControls();
+	ListIterator<Gizmo> gizmoIterator(gizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) gizmo->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
 void WorkspaceTab::enableSensitiveControls()
 {
 	// Enable sensitive controls in subwindows
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->enableSensitiveControls();
+	ListIterator<Gizmo> gizmoIterator(gizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) gizmo->enableSensitiveControls();
 }
 
 /*
- * MDI SubWindow Management
+ * Gizmo Management
  */
-
-// Remove subWindow with specified title
-void WorkspaceTab::removeSubWindow(QString title)
+// Create Gizmo with specified type
+Gizmo* WorkspaceTab::createGizmo(const char* type)
 {
-	// Find the named subwindow
-	SubWindow* window = findSubWindow(qPrintable(title));
-	if (window) removeSubWindow(window);
-}
+	Gizmo* gizmo = NULL;
+	QWidget* widget = NULL;
 
-// Find SubWindow from specified data pointer
-SubWindow* WorkspaceTab::subWindow(void* data)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == data) return subWindow;
-
-	return NULL;
-}
-
-// Return window for specified data (as pointer), if it exists
-QMdiSubWindow* WorkspaceTab::findMDIWindow(void* windowContents)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow->window();
-
-	return NULL;
-}
-
-// Remove window for specified data (as pointer), removing it from the list
-bool WorkspaceTab::removeWindowFromMDIArea(void* windowContents)
-{
-	// Find the windowContents the list
-	SubWindow* window = subWindow(windowContents);
-	if (!window)
+	// Check the type of the provided gizmo...
+	if (DissolveSys::sameString(type, "Integrator1D"))
+        {
+		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve());
+		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
+		gizmo = integrator1D;
+		widget = integrator1D;
+        }
+	else
 	{
-		Messenger::print("Couldn't remove window containing contents %p from list, since it is not present.\n", windowContents);
-		return false;
+		Messenger::error("Couldn't add gizmo to workspace '%s - unrecognised type '%s' encountered.\n", title(), type);
+		return NULL;
 	}
 
-	subWindows_.remove(window);
+	// Create a new window for the Gizmo's widget and show it
+	QMdiSubWindow* window = mdiArea_->addSubWindow(widget);
+	window->setWindowTitle(gizmo->type());
+	window->show();
+	gizmo->setWindow(window);
 
-	return true;
-}
+	// Update the Gizmo's controls, and add it to our list
+	gizmo->updateControls();
+	gizmos_.own(gizmo);
 
-// Find SubWindow by title
-SubWindow* WorkspaceTab::findSubWindow(const char* title)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (DissolveSys::sameString(subWindow->subWidget()->title(), title)) return subWindow;
-
-	return NULL;
-}
-
-// Find SubWindow by SubWidget
-SubWindow* WorkspaceTab::findSubWindow(SubWidget* subWidget)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == subWidget) return subWindow;
-
-	return NULL;
-}
-
-// Find SubWindow by data content
-SubWindow* WorkspaceTab::findSubWindow(void* windowData)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowData) return subWindow;
-
-	return NULL;
-}
-
-// Add SubWindow for widget containing specified data (as pointer)
-SubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContents)
-{
-	// Check that the windowContents aren't currently in the list
-	SubWindow* subWindow = windowContents ? findSubWindow(windowContents) : NULL;
-	if (subWindow)
-	{
-		Messenger::printVerbose("Refused to add window contents %p to our list, as it is already present elsewhere. It will be raised instead.\n");
-		subWindow->window()->raise();
-		return subWindow;
-	}
-
-	// Create a new QMdiSubWindow, show, and update controls
-	QMdiSubWindow* newMDIWindow = mdiArea_->addSubWindow(widget);
-	newMDIWindow->setWindowTitle(widget->title());
-	newMDIWindow->show();
-	widget->updateControls();
-
-	// Store window / widget data in our list
-	subWindow = new SubWindow(newMDIWindow, widget, windowContents);
-	subWindows_.own(subWindow);
-
-	return subWindow ;
-}
-
-// Remove SubWindow specified
-void WorkspaceTab::removeSubWindow(SubWindow* window)
-{
-	subWindows_.remove(window);
+	return gizmo;
 }
 
 /*
  * Context Menu
  */
 
-// Create Module menu with specified QMenu as parent
-void WorkspaceTab::createContextMenu(QMenu* parent)
-{
-	QFont italicFont = font();
-	italicFont.setItalic(true);
-
-	// General widgets, not associated to a module
-	QAction* menuItem = parent->addAction("General");
-	menuItem->setFont(italicFont);
-	menuItem->setEnabled(false);
-	menuItem = parent->addAction("PairPotential");
-	connect(menuItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuWidgetSelected(bool)));
-
-	// Modules within Configurations
-	menuItem = parent->addAction("Configurations");
-	menuItem->setFont(italicFont);
-	menuItem->setEnabled(false);
-	ListIterator<Configuration> configIterator(dissolve_.configurations());
-	while (Configuration* cfg = configIterator.iterate())
-	{
-		QMenu* cfgMenu = parent->addMenu(cfg->name());
-		if (cfg->nModules() == 0)
-		{
-			QAction* moduleItem = cfgMenu->addAction("No Local Modules");
-			moduleItem->setFont(italicFont);
-			moduleItem->setEnabled(false);
-		}
-		ListIterator<Module> moduleIterator(cfg->modules());
-		while (Module* module= moduleIterator.iterate())
-		{
-			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
-			moduleItem->setData(VariantPointer<Module>(module));
-			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
-		}
-	}
-
-	// Processing Layer Modules
-	ListIterator<ModuleLayer> layerIterator(dissolve_.processingLayers());
-	while (ModuleLayer* layer = layerIterator.iterate())
-	{
-		menuItem = parent->addAction(layer->name());
-		menuItem->setFont(italicFont);
-		menuItem->setEnabled(false);
-		if (layer->nModules() == 0)
-		{
-			QAction* moduleItem = parent->addAction("None");
-			moduleItem->setFont(italicFont);
-			moduleItem->setEnabled(false);
-		}
-		ListIterator<Module> moduleIterator(layer->modules());
-		while (Module* module = moduleIterator.iterate())
-		{
-			QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
-			moduleItem->setData(VariantPointer<Module>(module));
-			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
-		}
-	}
-}
-
 // Custom context menu requested
 void WorkspaceTab::showContextMenu(const QPoint& pos)
 {
 	QMenu menu;
 	menu.setFont(font());
-	QMenu* subMenu = menu.addMenu("Add &Widget");
-	createContextMenu(subMenu);
+	QFont italicFont = font();
+	italicFont.setItalic(true);
+
+	// Gizmos
+	QMenu* gizmoMenu = menu.addMenu("Add &Gizmo...");
+	gizmoMenu->setFont(font());
+	connect(gizmoMenu->addAction("Integrator1D"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
+
+	// Modules within Configurations
+// 	menuItem = parent->addAction("Configurations");
+// 	menuItem->setFont(italicFont);
+// 	menuItem->setEnabled(false);
+// 	ListIterator<Configuration> configIterator(dissolve_.configurations());
+// 	while (Configuration* cfg = configIterator.iterate())
+// 	{
+// 		QMenu* cfgMenu = parent->addMenu(cfg->name());
+// 		if (cfg->nModules() == 0)
+// 		{
+// 			QAction* moduleItem = cfgMenu->addAction("No Local Modules");
+// 			moduleItem->setFont(italicFont);
+// 			moduleItem->setEnabled(false);
+// 		}
+// 		ListIterator<Module> moduleIterator(cfg->modules());
+// 		while (Module* module= moduleIterator.iterate())
+// 		{
+// 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
+// 			moduleItem->setData(VariantPointer<Module>(module));
+// 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
+// 		}
+// 	}
+
 	menu.exec(mapToGlobal(pos));
 }
 
-// General widget selected on context menu
-void WorkspaceTab::contextMenuWidgetSelected(bool checked)
+// Create Gizmo from context menu item
+void WorkspaceTab::contextMenuAddGizmo(bool checked)
 {
 	// Get the sender QAction
 	QAction* action = dynamic_cast<QAction*>(sender());
 	if (!action) return;
 
-	// The text of the sender QAction is the name of the widget we need to create
-	addNamedWidget(qPrintable(action->text()), qPrintable(action->text()));
-}
-
-// Add named widget to workspace
-SubWindow* WorkspaceTab::addNamedWidget(const char* widgetName, const char* title)
-{
-	// Make sure we have a unique title for the widget
-	CharString uniqueTitle = title;
-	int index = 0;
-	while (findSubWindow(uniqueTitle)) uniqueTitle.sprintf("%s%02i", title, ++index);
-
-	SubWidget* subWidget = NULL;
-        if (DissolveSys::sameString(widgetName, "PairPotential"))
-        {
-		PairPotentialWidget* ppWidget = new PairPotentialWidget(dissolveWindow_, uniqueTitle);
-		connect(ppWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
-		subWidget = ppWidget;
-        }
-	else
-	{
-		Messenger::error("Couldn't add widget to current workspace - unrecognised widget type '%s' encountered.\n", widgetName);
-		return NULL;
-	}
-
-	return addSubWindow(subWidget, NULL);
+	// The text of the sender QAction is the type of the Gizmo we need to create
+	createGizmo(qPrintable(action->text()));
 }
 
 /*
@@ -330,7 +206,7 @@ SubWindow* WorkspaceTab::addNamedWidget(const char* widgetName, const char* titl
 // Read widget state through specified LineParser
 bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 {
-	// Read tab state information:   nSubWindows
+	// Read tab state information:   nGizmos
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	const int nWidgets = parser.argi(0);
 
@@ -339,19 +215,18 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 	{
 		// Read line from the file, which should contain the gizmo type
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		SubWindow* subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
-		if (subWindow == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(1), title());
+		Gizmo* gizmo = createGizmo(parser.argc(1));
+		if (gizmo == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(1), title());
 
 		// Read in the widget's geometry / state / flags
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		QMdiSubWindow* window = subWindow->window();
-		window->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
+		gizmo->window()->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
 		// -- Is the window maximised, or shaded?
-		if (parser.argb(4)) window->showMaximized();
-		else if (parser.argb(5)) window->showShaded();
+		if (parser.argb(4)) gizmo->window()->showMaximized();
+		else if (parser.argb(5)) gizmo->window()->showShaded();
 
 		// Now call the widget's local readState()
-		if (!subWindow->subWidget()->readState(parser)) return false;
+		if (!gizmo->readState(parser)) return false;
 	}
 
 	return true;
@@ -360,22 +235,22 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 // Write widget state through specified LineParser
 bool WorkspaceTab::writeState(LineParser& parser)
 {
-	// Write tab state information:   nSubWindows
-	if (!parser.writeLineF("%i\n", subWindows_.nItems())) return false;
+	// Write tab state information:   nGizmos
+	if (!parser.writeLineF("%i      # NGizmos\n", gizmos_.nItems())) return false;
 
 	// Loop over our subwindow list
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate())
+	ListIterator<Gizmo> gizmoIterator(gizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate())
 	{
-		// Write window title/contents and type
-		if (!parser.writeLineF("'%s'  %s\n", subWindow->subWidget()->title(), subWindow->subWidget()->widgetType())) return false;
+		// Write Gizmo type
+		if (!parser.writeLineF("%s\n", gizmo->type())) return false;
 
 		// Write window geometry / state
-		QRect geometry = subWindow->window()->geometry();
-		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DissolveSys::btoa(subWindow->window()->isMaximized()), DissolveSys::btoa(subWindow->window()->isShaded()))) return false;
+		QRect geometry = gizmo->window()->geometry();
+		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DissolveSys::btoa(gizmo->window()->isMaximized()), DissolveSys::btoa(gizmo->window()->isShaded()))) return false;
 
-		// Write widget-specific state information
-		if (!subWindow->subWidget()->writeState(parser)) return false;
+		// Write gizmo-specific state information
+		if (!gizmo->writeState(parser)) return false;
 	}
 
 	return true;
