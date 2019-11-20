@@ -28,7 +28,6 @@
 
 // Forward Declarations
 class Dissolve;
-class DissolveWindow;
 class LineParser;
 class QMdiSubWindow;
 
@@ -37,7 +36,7 @@ class Gizmo : public ListItem<Gizmo>
 {
 	public:
 	// Constructor / Destructor
-	Gizmo(DissolveWindow* dissolveWindow);
+	Gizmo(Dissolve& dissolve);
 	virtual ~Gizmo();
 
 
@@ -47,8 +46,6 @@ class Gizmo : public ListItem<Gizmo>
 	protected:
 	// Title of widget
 	CharString title_;
-	// Pointer to DissolveWindow
-	DissolveWindow* dissolveWindow_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 	// QMdiSubWindow containing the Gizmo

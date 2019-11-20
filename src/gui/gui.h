@@ -341,8 +341,6 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(Configuration* cfg);
 	// Make specified processing layer tab the current one
 	void setCurrentTab(ModuleLayer* layer);
-	// Return reference list of all current tabs
-	RefList<MainTab> allTabs() const;
 	// Return currently-selected Species (if a SpeciesTab is the current one)
 	Species* currentSpecies() const;
 	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
@@ -355,8 +353,8 @@ class DissolveWindow : public QMainWindow
 	MainTab* addModuleTab(Module* module);
 	// Remove the ModuleTab for the specifeid Module, if it exists
 	void removeModuleTab(Module* module);
-	// Return list of current WorkspaceTabs
-	const List<WorkspaceTab>& workspaceTabs() const;
+	// Return reference list of all current tabs
+	RefList<MainTab> allTabs() const;
 
 	public slots:
 	// Add or go to Module tab for the Module with the unique name provided

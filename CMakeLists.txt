@@ -278,6 +278,7 @@ if(GUI)
     gizmos
     delegates
     charts
+    subwindows
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

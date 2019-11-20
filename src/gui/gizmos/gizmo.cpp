@@ -20,12 +20,10 @@
 */
 
 #include "gui/gizmos/gizmo.h"
-#include "gui/gui.h"
 
 // Constructor
-Gizmo::Gizmo(DissolveWindow* dissolveWindow) : ListItem<Gizmo>(), dissolve_(dissolveWindow->dissolve())
+Gizmo::Gizmo(Dissolve& dissolve) : ListItem<Gizmo>(), dissolve_(dissolve)
 {
-	dissolveWindow_ = dissolveWindow;
 	window_ = NULL;
 	refreshing_ = false;
 }

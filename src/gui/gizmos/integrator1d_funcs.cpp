@@ -20,6 +20,7 @@
 */
 
 #include "gui/gizmos/integrator1d.h"
+#include "gui/selectgenericitemdialog.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
 #include <QGridLayout>
@@ -27,7 +28,7 @@
 #include <QMessageBox>
 
 // Constructor
-Integrator1DGizmo::Integrator1DGizmo(DissolveWindow* dissolveWindow) : Gizmo(dissolveWindow)
+Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve) : Gizmo(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -112,5 +113,11 @@ bool Integrator1DGizmo::readState(LineParser& parser)
 }
 
 /*
- * Widget Slots
+ * Widget Signals / Slots
  */
+
+void Integrator1DGizmo::on_TargetSelectButton_clicked(bool checked)
+{
+	SelectGenericItemDialog genericItemDialog(this, dissolve_);
+	Data1D* item = genericItemDialog.selectGenericItem<Data1D>();
+}

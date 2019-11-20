@@ -39,7 +39,7 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 
 	public:
 	// Constructor / Destructor
-	Integrator1DGizmo(DissolveWindow* dissolveWindow);
+	Integrator1DGizmo(Dissolve& dissolve);
 	~Integrator1DGizmo();
 
 
@@ -84,10 +84,11 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 	/*
 	 * Widget Signals / Slots
 	 */
-// 	signals:
-// 	void windowClosed(QString windowTitle);
+	private slots:
+	void on_TargetSelectButton_clicked(bool checked);
 
-// 	private slots:
+	signals:
+	void windowClosed(QString windowTitle);
 };
 
 #endif

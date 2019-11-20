@@ -22,7 +22,7 @@
 #include "gui/workspacetab.h"
 #include "gui/gui.h"
 #include "gui/tmdiarea.hui"
-#include "gui/getworkspacenamedialog.h"
+#include "gui/gettabnamedialog.h"
 #include "gui/gizmos/gizmos.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
@@ -61,7 +61,7 @@ MainTab::TabType WorkspaceTab::type() const
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
 	// Get a new, valid name for the Configuration
-	GetWorkspaceNameDialog nameDialog(this, dissolveWindow_->workspaceTabs());
+	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
 	ok = nameDialog.get(this, title());
 
 	if (ok)
@@ -121,7 +121,7 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	// Check the type of the provided gizmo...
 	if (DissolveSys::sameString(type, "Integrator1D"))
         {
-		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_);
+		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve());
 		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
 		gizmo = integrator1D;
 		widget = integrator1D;
