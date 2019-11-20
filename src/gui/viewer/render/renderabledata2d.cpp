@@ -113,10 +113,10 @@ void RenderableData2D::transformData()
 	// Values
 	for (int n=0; n<transformedData_.nValues(); ++n)
 	{		
-		if (transformedData_.constValue(n) > 0.0)
+		if (transformedData_.value(n) > 0.0)
 		{
-			if (transformedData_.constValue(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.constValue(n);
-			if (transformedData_.constValue(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.constValue(n);
+			if (transformedData_.value(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.value(n);
+			if (transformedData_.value(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.value(n);
 		}
 	}
 	
@@ -195,10 +195,9 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	int nY = y.nItems();
 	if (nY < 2) return;
 
-	// Get some values from axes so we can calculate colours properly
-	
+	// Get some values from axes so we can calculate colours properly	
 	bool vLogarithmic = axes.logarithmic(2);
-	double vStretch = axes.stretch(2);
+	//double vStretch = axes.stretch(2);
 
 	// Temporary variables
 	GLfloat colour[4];
@@ -225,6 +224,7 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 			// Set vertexA to -1 so we don't draw a line at n=0
 			vertexA = -1;
 			p = primitive(n);
+			// Loop over x
 			for (int m = 0; m < nX; ++m)
 			{
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
@@ -238,6 +238,7 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	else
 	{
 		ColourDefinition colourDef = colourDefinition;
+		// Setting gradient start and end value based on minimum and maximum data points
 		colourDef.setHSVGradientStartValue(transformMin_.z);
 		colourDef.setHSVGradientEndValue(transformMax_.z);
 		
@@ -247,9 +248,11 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 			// Set vertexA to -1 so we don't draw a line at n=0
 			vertexA = -1;
 			p = primitive(n);
+			// Loop over x
 			for (int m = 0; m < nX; ++m)
 			{
-				double c = (vLogarithmic ? pow(v.constAt(m, n), 10.0)/vStretch : v.constAt(m,n));
+				// Assigning colour based on value 
+				double c = (vLogarithmic ? pow(v.constAt(m, n), 10.0) : v.constAt(m,n));
 				colourDef.colour(c, colour);
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
 

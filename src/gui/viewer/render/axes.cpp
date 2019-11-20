@@ -619,6 +619,7 @@ void Axes::transformZ(Array<double>& zArray) const
 	else zArray *= stretch_.z;
 }
 
+// Transform a 2D array of values into local axes coordinates
 void Axes::transformX(Array2D<double>& xArray) const
 {
 	int n = 0;
@@ -629,6 +630,7 @@ void Axes::transformX(Array2D<double>& xArray) const
 	}
 }
 
+// Transform a 2D array of values into local axes coordinates
 void Axes::transformY(Array2D<double>& yArray) const
 {
 	int n = 0;
@@ -639,6 +641,7 @@ void Axes::transformY(Array2D<double>& yArray) const
 	}
 }
 
+// Transform a 2D array of values into local axes coordinates
 void Axes::transformZ(Array2D<double>& zArray) const
 {
 	int n = 0;

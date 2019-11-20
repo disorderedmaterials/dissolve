@@ -290,7 +290,8 @@ template <class A> class Array2D
 	{
 		return array_;
 	}
-		// Return linear array
+	
+	// Return linear array (const)
 	A* constLinearArray() const
 	{
 		return array_;

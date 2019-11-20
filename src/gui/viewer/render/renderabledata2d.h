@@ -80,7 +80,7 @@ class RenderableData2D : public Renderable
 	
 	private:
 	// Create line strip primitive
-	void constructLine ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
+	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
 
 	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
