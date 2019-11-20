@@ -120,6 +120,7 @@ void RenderableData2D::transformData()
 		}
 	}
 	
+	
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();
 }
@@ -237,11 +238,10 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	else
 	{
 		ColourDefinition colourDef = colourDefinition;
-		double a = displayValues.constAt(0,0);
-		double b = displayValues.constLinearValue(displayValues.linearArraySize()-1);
+		colourDef.setHSVGradientStartValue(transformMin_.z);
+		colourDef.setHSVGradientEndValue(transformMax_.z);
+		
 		// Loop over y
-		colourDef.setHSVGradientStartValue(a);
-		colourDef.setHSVGradientEndValue(b);
 		for (int n=0; n < nY ; ++n)
 		{
 			// Set vertexA to -1 so we don't draw a line at n=0
@@ -249,9 +249,8 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 			p = primitive(n);
 			for (int m = 0; m < nX; ++m)
 			{
-				double c = (vLogarithmic ? pow(v.constAt(m, n), 10.0): v.constAt(m, n));
-				colourDefinition.colour(c, colour);
-				//printf("print color %f %f %f %f \n", colour[0], colour[1], colour[2], colour[3]);
+				double c = (vLogarithmic ? pow(v.constAt(m, n), 10.0)/vStretch : v.constAt(m,n));
+				colourDef.colour(c, colour);
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
 
 				// If both vertices are valid, plot a line
