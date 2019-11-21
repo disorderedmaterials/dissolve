@@ -59,6 +59,7 @@
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/pairbroadeningfunction.h"
 #include "keywords/procedure.h"
+#include "keywords/range.h"
 #include "keywords/species.h"
 #include "keywords/speciesreflist.h"
 #include "keywords/speciessite.h"
