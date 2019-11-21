@@ -40,12 +40,8 @@ jobs:
       name: Serial, GUI
       env: PARALLEL=false
       os: windows
-      cache:
-        directories:
-          - artifacts
       script:
-        - cd ci/windows
-        - docker build --tag dissolve-gui:1803-latest .
+        - docker build --tag dissolve-gui:1803-latest --file ci/windows/Dockerfile .
     - stage: Linux Build
       name: Serial, GUI
       env: PARALLEL=false
