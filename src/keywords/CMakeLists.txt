@@ -19,6 +19,7 @@ add_library(keywords
   isotopologuereferencelist.cpp
   linkto.cpp
   list.cpp
+  module.cpp
   modulegroups.cpp
   modulereflist.cpp
   node.cpp
@@ -61,6 +62,7 @@ add_library(keywords
   isotopologuereferencelist.h
   linkto.h
   list.h
+  module.h
   modulegroups.h
   modulereflist.h
   node.h

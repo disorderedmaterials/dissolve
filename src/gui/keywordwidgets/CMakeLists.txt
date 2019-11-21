@@ -10,6 +10,7 @@ SET(keywordwidgets_MOC_HDRS
   expressionvariablelist.h
   fileandformat.h
   isotopologuereferencelist.h
+  module.h
   modulegroups.h
   modulereflist.h
   node.h
@@ -48,6 +49,7 @@ SET(keywordwidgets_UIS
   expressionvariablelist.ui
   fileandformat.ui
   isotopologuereferencelist.ui
+  module.ui
   modulegroups.ui
   modulereflist.ui
   node.ui
@@ -82,6 +84,7 @@ SET(keywordwidgets_SRCS
   fileandformat_funcs.cpp
   integer_funcs.cpp
   isotopologuereferencelist_funcs.cpp
+  module_funcs.cpp
   modulegroups_funcs.cpp
   modulereflist_funcs.cpp
   node_funcs.cpp

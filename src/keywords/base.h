@@ -54,7 +54,7 @@ class KeywordBase : public ListItem<KeywordBase>
 		GeometryListData,
 		IntegerData, IsotopologueListData,
 		LinkToKeywordData,
-		ModuleGroupsData, ModuleRefListData,
+		ModuleData, ModuleGroupsData, ModuleRefListData,
 		NodeData, NodeAndIntegerData, NodeArrayData, NodeBranchData, NodeRefListData, NodeValueData, NodeValueEnumOptionsData,
 		PairBroadeningFunctionData, ProcedureData,
 		RangeData,

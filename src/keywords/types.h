@@ -48,6 +48,7 @@
 #include "keywords/geometrylist.h"
 #include "keywords/isotopologuereferencelist.h"
 #include "keywords/linkto.h"
+#include "keywords/module.h"
 #include "keywords/modulegroups.h"
 #include "keywords/modulereflist.h"
 #include "keywords/node.h"
