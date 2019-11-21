@@ -45,7 +45,7 @@ jobs:
           - artifacts
       script:
         - cd ci/windows
-        - docker build ./
+        - docker build --tag dissolve-gui:1803-latest .
     - stage: Linux Build
       name: Serial, GUI
       env: PARALLEL=false

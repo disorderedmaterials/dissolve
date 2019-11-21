@@ -14,13 +14,13 @@ RUN @powershell -NoProfile -ExecutionPolicy Bypass -Command \
 RUN choco install -y unzip --version 6.0 && unzip -v
 RUN choco install -y zip --version 3.0 && zip -v
 RUN choco install -y cmake
-RUN choco install -y windows-sdk-10.1
 RUN choco install -y ninja
 RUN choco install -y winflexbison
 RUN choco install -y git
 RUN choco install -y innosetup
 RUN choco install -y 7zip
 RUN choco install -y innounp
+RUN choco install -y windows-sdk-10.1
 
 # Install Qt5 5.13.1
 COPY qtifwsilent.qs C:\\qtifwsilent.qs
