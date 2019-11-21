@@ -44,7 +44,7 @@ bool KeywordList::add(KeywordBase* object, const char* name, const char* descrip
 	return add(object, name, description, "", optionMask);
 }
 
-// Add keyword
+// Add keyword (including argument description)
 bool KeywordList::add(KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask)
 {
 	// Take ownership of the passed object, and set its basic information
@@ -61,7 +61,7 @@ bool KeywordList::add(const char* groupName, KeywordBase* object, const char* na
 	return group->add(object, name, description, optionMask);
 }
 
-// Add keyword to named group
+// Add keyword to named group (including argument description)
 bool KeywordList::add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask)
 {
 	KeywordGroup* group = addGroup(groupName);
