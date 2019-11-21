@@ -310,30 +310,6 @@ int Data2D::nValues() const
 	return values_.linearArraySize();
 }
 
-// Return minimum from array provided
-Vec3<double> Data2D::min(Array<double> A)
-{	
-	double min = A[0];
-	for(int i=0; i<A.nItems(); ++i)
-	{
-		if (A[i]<min)
-			min = A[i];
-	}
-	return min;
-}
-
-// Return maximum from array provided
-Vec3<double> Data2D::max(Array<double> A)
-{
-	double max = A[0];
-	for(int i=0; i<A.nItems(); ++i)
-	{
-		if (A[i]>max)
-			max = A[i];
-	}
-	return max;
-}
-
 // Return minimum value over all data points
 double Data2D::minValue() const
 {

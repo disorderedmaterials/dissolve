@@ -24,6 +24,7 @@
 #include "gui/viewer/render/view.h"
 #include "math/data2d.h"
 #include "templates/array2d.h"
+#include "math/limits.h"
 
 // Constructor
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
@@ -59,7 +60,6 @@ int RenderableData2D::dataVersion() const
 }
 
 
-
 /*
  * Transform / Limits
  */
@@ -74,19 +74,17 @@ void RenderableData2D::transformData()
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
 	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
-
-	transformMin_ = transformedData_.min(transformedData_.constXAxis());
-	transformMax_ = transformedData_.max(transformedData_.constXAxis());
+	
+	transformMin_ = Limits::min(transformedData_.constXAxis());
+	transformMax_ = Limits::max(transformedData_.constXAxis());
 	transformMinPositive_ = 0.1;
 	transformMaxPositive_ = 0.0;
 	
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
 	{
-		
 		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), transformedData_.minValue());
 		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), transformedData_.maxValue());
-		
 	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value	
@@ -119,7 +117,6 @@ void RenderableData2D::transformData()
 			if (transformedData_.value(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.value(n);
 		}
 	}
-	
 	
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();
@@ -155,7 +152,6 @@ bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	
 	reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
 	constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
 }
@@ -208,8 +204,6 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	Array2D<double> v = displayValues;
 	axes.transformZ(v);
 	
-	
-	
 	Primitive* p;
 
 	// Check for a single colour style in the colourDefinition - use optimised case in that eventuality
@@ -228,7 +222,7 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 			for (int m = 0; m < nX; ++m)
 			{
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
-			
+				
 				// If both vertices are valid, plot a line
 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
 				vertexA = vertexB;
@@ -248,22 +242,23 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 			// Set vertexA to -1 so we don't draw a line at n=0
 			vertexA = -1;
 			p = primitive(n);
+			
 			// Loop over x
 			for (int m = 0; m < nX; ++m)
 			{
 				// Assigning colour based on value 
-				double c = (vLogarithmic ? pow(v.constAt(m, n), 10.0) : v.constAt(m,n));
+				double c = (vLogarithmic ? pow(displayValues.constAt(m, n), 10.0) : displayValues.constAt(m,n));
 				colourDef.colour(c, colour);
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
 
 				// If both vertices are valid, plot a line
 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
-
 				vertexA = vertexB;
 			}
 		}
 	}
 }
+
 /*
  * Style
  */

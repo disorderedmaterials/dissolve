@@ -106,10 +106,6 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	double value(int index);
 	// Return number of values present in whole dataset
 	int nValues() const;
-	// Return minimum from array provided
-	Vec3<double> min(Array<double> A);
-	// // Return maximum from array provided
-	Vec3<double> max(Array<double> A);	
 	// Return minimum value over all data points
 	double minValue() const;
 	// Return maximum value over all data points

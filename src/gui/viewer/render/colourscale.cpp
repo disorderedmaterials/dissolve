@@ -134,8 +134,8 @@ void ColourScale::setPoint(int position, double value, QColor colour)
 // Set value for point
 void ColourScale::setValue(int position, double value)
 {
-	// Store wither the new value is higher or lower than the existing one...
-	bool newValueHigher = value = points_[position].value();
+	// Store whether the new value is higher or lower than the existing one...
+	bool newValueHigher = value >= points_[position].value();
 
 	// Set the new value of the point
 	points_[position].setValue(value);
@@ -147,7 +147,7 @@ void ColourScale::setValue(int position, double value)
 	}
 	else
 	{
-		while ((position != 0) && value > points_[position-1].value()) points_.shiftDown(position--);
+		while ((position != 0) && value < points_[position-1].value()) points_.shiftDown(position--);
 	}
 
 	// Recalculate colour deltas
