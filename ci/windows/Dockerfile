@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
+#FROM mcr.microsoft.com/windows/servercore:ltsc2019
+FROM mcr.microsoft.com/windows/servercore:1803
 LABEL Description="Windows Server Core / Qt 5.13.1 / Chocolatey"
 
 # Disable crash dialog for release-mode runtimes
