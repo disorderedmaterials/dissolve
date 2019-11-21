@@ -215,8 +215,8 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 	{
 		// Read line from the file, which should contain the gizmo type
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		Gizmo* gizmo = createGizmo(parser.argc(1));
-		if (gizmo == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(1), title());
+		Gizmo* gizmo = createGizmo(parser.argc(0));
+		if (gizmo == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(0), title());
 
 		// Read in the widget's geometry / state / flags
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
