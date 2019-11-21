@@ -47,7 +47,7 @@ void SpeciesAngle::clear()
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
-	form_ = SpeciesAngle::nAngleFunctions;
+	form_ = SpeciesAngle::NoForm;
 }
 
 /*
@@ -151,33 +151,17 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
  * Interaction Parameters
  */
 
-// Angle function keywords
-const char* AngleFunctionKeywords[] = { "Harmonic", "Cosine", "Cos2" };
-int AngleFunctionNParameters[] = { 2, 4, 4 };
-
-// Convert string to functional form
-SpeciesAngle::AngleFunction SpeciesAngle::angleFunction(const char* s)
+// Return enum options for AngleFunction
+EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 {
-	for (int n=0; n<SpeciesAngle::nAngleFunctions; ++n) if (DissolveSys::sameString(s, AngleFunctionKeywords[n])) return (SpeciesAngle::AngleFunction) n;
-	return SpeciesAngle::nAngleFunctions;
-}
+	static EnumOptionsList AngleFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesAngle::HarmonicForm, 		"Harmonic",	2,2) <<
+		EnumOption(SpeciesAngle::CosineForm, 		"Cos",		4,4) <<
+		EnumOption(SpeciesAngle::Cos2Form, 		"Cos2",		4,4);
 
-// Return functional form text
-const char* SpeciesAngle::angleFunction(SpeciesAngle::AngleFunction func)
-{
-	return AngleFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesAngle::AngleFunction> options("AngleFunction", AngleFunctionOptions);
 
-// Return functional form text
-const char** SpeciesAngle::angleFunctions()
-{
-	return AngleFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesAngle::nFunctionParameters(AngleFunction func)
-{
-	return AngleFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters

@@ -35,7 +35,7 @@ class ForcefieldAngleTerm : public ListItem<ForcefieldAngleTerm>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldAngleTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::nAngleFunctions, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAngleTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldAngleTerm();
 
 

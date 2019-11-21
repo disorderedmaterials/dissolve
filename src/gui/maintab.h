@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_MAINTAB_H
 #define DISSOLVE_MAINTAB_H
 
-#include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"

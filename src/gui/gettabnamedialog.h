@@ -1,6 +1,6 @@
 /*
-	*** Get Workspace Name Dialog
-	*** src/gui/getworkspacenamedialog.h
+	*** Get Tab Name Dialog
+	*** src/gui/gettabnamedialog.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,39 +19,39 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_GETWORKSPACENAME_H
-#define DISSOLVE_DIALOG_GETWORKSPACENAME_H
+#ifndef DISSOLVE_DIALOG_GETTABNAME_H
+#define DISSOLVE_DIALOG_GETTABNAME_H
 
-#include "gui/ui_getworkspacenamedialog.h"
-#include "templates/list.h"
+#include "gui/ui_gettabnamedialog.h"
+#include "templates/reflist.h"
 #include <QDialog>
 
 // Forward Declarations
 class CoreData;
-class WorkspaceTab;
+class MainTab;
 
-// Get Workspace Name Dialog
-class GetWorkspaceNameDialog : public QDialog
+// Get MainTab Name Dialog
+class GetTabNameDialog : public QDialog
 {
 	Q_OBJECT
 
 	public:
 	// Constructor
-	GetWorkspaceNameDialog(QWidget* parent, const List<WorkspaceTab>& currentWorkspaces);
+	GetTabNameDialog(QWidget* parent, RefList<MainTab> currentTabs);
 	// Destructor
-	~GetWorkspaceNameDialog();
+	~GetTabNameDialog();
 
 	private:
 	// Main form declaration
-	Ui::GetWorkspaceNameDialog ui_;
-	// List of current workspaces
-	const List<WorkspaceTab>& currentWorkspaces_;
-	// Current Workspace that we are renaming
-	const WorkspaceTab* workspace_;
+	Ui::GetTabNameDialog ui_;
+	// RefList of current tabs
+	RefList<MainTab> currentTabs_;
+	// Current tab that we are renaming
+	const MainTab* currentTab_;
 
 	public:
 	// Run the dialog
-	bool get(const WorkspaceTab* currentWorkspace, const char* currentName);
+	bool get(const MainTab* currentTab, const char* currentName);
 	// Return the name string
 	QString newName() const;
 

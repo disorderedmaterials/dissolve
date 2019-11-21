@@ -1,6 +1,6 @@
 /*
 	*** Get Workspace Name Dialog
-	*** src/gui/getworkspacenamedialog_funcs.cpp
+	*** src/gui/gettabnamedialog_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,25 +19,27 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/getworkspacenamedialog.h"
-#include "gui/workspacetab.h"
+#include "gui/gettabnamedialog.h"
+#include "gui/maintab.h"
 #include "base/sysfunc.h"
 
 // Constructor
-GetWorkspaceNameDialog::GetWorkspaceNameDialog(QWidget* parent, const List<WorkspaceTab>& currentWorkspaces) : currentWorkspaces_(currentWorkspaces)
+GetTabNameDialog::GetTabNameDialog(QWidget* parent, RefList<MainTab> currentTabs)
 {
 	ui_.setupUi(this);
+
+	currentTabs_ = currentTabs;
 }
 
 // Destructor
-GetWorkspaceNameDialog::~GetWorkspaceNameDialog()
+GetTabNameDialog::~GetTabNameDialog()
 {
 }
 
 // Run the dialog
-bool GetWorkspaceNameDialog::get(const WorkspaceTab* workspace, const char* currentName)
+bool GetTabNameDialog::get(const MainTab* currentTab, const char* currentName)
 {
-	workspace_ = workspace;
+	currentTab_ = currentTab;
 
 	// Set the current text
 	ui_.NameEdit->setText(currentName);
@@ -48,7 +50,7 @@ bool GetWorkspaceNameDialog::get(const WorkspaceTab* workspace, const char* curr
 }
 
 // Return the name string
-QString GetWorkspaceNameDialog::newName() const
+QString GetTabNameDialog::newName() const
 {
 	return ui_.NameEdit->text();
 }
@@ -58,17 +60,17 @@ QString GetWorkspaceNameDialog::newName() const
  */
 
 // Workspace name edited
-void GetWorkspaceNameDialog::on_NameEdit_textChanged(const QString text)
+void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
 {
 	// Make sure the name is valid
 	bool nameValid = true;
 	if (text.isEmpty()) nameValid = false;
 	else
 	{
-		ListIterator<WorkspaceTab> workspaceIterator(currentWorkspaces_);
-		while (WorkspaceTab* tab = workspaceIterator.iterate())
+		RefListIterator<MainTab> tabIterator(currentTabs_);
+		while (MainTab* tab = tabIterator.iterate())
 		{
-			if (workspace_ == tab) continue;
+			if (currentTab_ == tab) continue;
 
 			if (DissolveSys::sameString(tab->title(), qPrintable(text)))
 			{
@@ -85,12 +87,12 @@ void GetWorkspaceNameDialog::on_NameEdit_textChanged(const QString text)
 	ui_.OKButton->setEnabled(nameValid);
 }
 
-void GetWorkspaceNameDialog::on_CancelButton_clicked(bool checked)
+void GetTabNameDialog::on_CancelButton_clicked(bool checked)
 {
 	reject();
 }
 
-void GetWorkspaceNameDialog::on_OKButton_clicked(bool checked)
+void GetTabNameDialog::on_OKButton_clicked(bool checked)
 {
 	accept();
 }

@@ -359,21 +359,6 @@ void DissolveWindow::setCurrentTab(ModuleLayer* layer)
 	Messenger::error("Can't display LayerTab for processing layer '%s' as it doesn't exist.\n", layer->name());
 }
 
-// Return reference list of all current tabs
-RefList<MainTab> DissolveWindow::allTabs() const
-{
-	RefList<MainTab> tabs;
-
-	tabs.append(forcefieldTab_);
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
-	for (LayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
-
-	return tabs;
-}
-
 // Return currently-selected Species (if a SpeciesTab is the current one)
 Species* DissolveWindow::currentSpecies() const
 {
@@ -444,10 +429,19 @@ void DissolveWindow::removeModuleTab(Module* module)
 	removeTab(tab);
 }
 
-// Return list of current WorkspaceTabs
-const List<WorkspaceTab>& DissolveWindow::workspaceTabs() const
+// Return reference list of all current tabs
+RefList<MainTab> DissolveWindow::allTabs() const
 {
-	return workspaceTabs_;
+	RefList<MainTab> tabs;
+
+	tabs.append(forcefieldTab_);
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (LayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+
+	return tabs;
 }
 
 /*

@@ -105,6 +105,9 @@ if(APPLE)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
+  # Suppress warnings for undefined template vars
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
+
   if(PARALLEL)
     set (target_name dissolve)
   else(PARALLEL)
@@ -278,8 +281,10 @@ if(GUI)
     viewer
     widgets
     keywordwidgets
+    gizmos
     delegates
     charts
+    subwindows
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

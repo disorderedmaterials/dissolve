@@ -48,7 +48,7 @@ void SpeciesBond::clear()
 	i_ = NULL;
 	j_ = NULL;
 	bondType_ = SpeciesBond::SingleBond;
-	form_ = SpeciesBond::nBondFunctions;
+	form_ = SpeciesBond::NoForm;
 }
 
 /*
@@ -179,33 +179,16 @@ double SpeciesBond::bondOrder() const
  * Interaction Parameters
  */
 
-// Bond function keywords
-const char* BondFunctionKeywords[] = { "Harmonic", "EPSR" };
-int BondFunctionNParameters[] = { 2, 2 };
-
-// Convert string to functional form
-SpeciesBond::BondFunction SpeciesBond::bondFunction(const char* s)
+// Return enum options for BondFunction
+EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-	for (int n=0; n<SpeciesBond::nBondFunctions; ++n) if (DissolveSys::sameString(s, BondFunctionKeywords[n])) return (SpeciesBond::BondFunction) n;
-	return SpeciesBond::nBondFunctions;
-}
+	static EnumOptionsList BondFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesBond::HarmonicForm, 		"Harmonic",	2,2) <<
+		EnumOption(SpeciesBond::EPSRForm, 		"EPSR",		2,2);
 
-// Return functional form text
-const char* SpeciesBond::bondFunction(SpeciesBond::BondFunction func)
-{
-	return BondFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
-// Return functional form array
-const char** SpeciesBond::bondFunctions()
-{
-	return BondFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
-{
-	return BondFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters

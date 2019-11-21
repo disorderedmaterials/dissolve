@@ -6,8 +6,6 @@ SET(widgets_MOC_HDRS
   mimestrings.h
   mimetreewidgetitem.h
   nocontrols.h
-  subwidget.h
-  subwindow.h
   tmenubuttongroup.h
 
   checkindicator.hui
@@ -40,8 +38,6 @@ SET(widgets_SRCS
   mimetreewidget_funcs.cpp
   mimetreewidgetitem.cpp
   nocontrols_funcs.cpp
-  subwidget.cpp
-  subwindow.cpp
   supertabbar_funcs.cpp
   supertabwidget_funcs.cpp
   tmenubutton_funcs.cpp

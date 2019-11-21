@@ -23,7 +23,6 @@
 #include "gui/gui.h"
 #include "gui/charts/moduleblock.h"
 #include "gui/modulewidget.h"
-#include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
