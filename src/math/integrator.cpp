@@ -51,6 +51,39 @@ double Integrator::trapezoid(const Data1D& data)
 	return total;
 }
 
+// Compute integral of supplied data via trapezoid rule between the specified limits
+double Integrator::trapezoid(const Data1D& data, double xMin, double xMax)
+{
+	// Check for insufficient data
+	if (data.nValues() < 2) return 0.0;
+
+	// Grab data arrays
+	const Array<double>& x = data.constXAxis();
+	const Array<double>& y = data.constValues();
+
+	double total = 0.0, y0, y1, x0, x1;
+	int nPoints = 0;
+	for (int n=0; n<x.nItems(); ++n)
+	{
+		// Get current x and y values and check limit
+		x1 = x.constAt(n);
+		y1 = y.constAt(n);
+		if (x1 < xMin) continue;
+		if (x1 > xMax) break;
+
+		// If this is the first point, don't try to increase integral
+		if (nPoints > 0) total += (x1 - x0) * (y0 + y1) * 0.5;
+
+		// Store old values
+		x0 = x1;
+		y0 = y1;
+
+		++nPoints;
+	}
+
+	return total;
+}
+
 // Compute absolute integral of supplied data via trapezoid rule
 double Integrator::absTrapezoid(const Data1D& data)
 {

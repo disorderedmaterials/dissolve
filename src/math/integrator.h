@@ -36,6 +36,8 @@ class Integrator
 	public:
 	// Compute integral of supplied data via trapezoid rule
 	static double trapezoid(const Data1D& data);
+	// Compute integral of supplied data via trapezoid rule between the specified limits
+	static double trapezoid(const Data1D& data, double xMin, double xMax);
 	// Compute absolute integral of supplied data via trapezoid rule
 	static double absTrapezoid(const Data1D& data);
 	// Return sum of all values in supplied data
