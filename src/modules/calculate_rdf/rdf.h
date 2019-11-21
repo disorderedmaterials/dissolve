@@ -91,9 +91,9 @@ class CalculateRDFModule : public Module
 	SelectProcedureNode* selectA_;
 	// SelectNode for site B
 	SelectProcedureNode* selectB_;
-	// Collect1DNode for B-C RDF
+	// Collect1DNode for A-B RDF
 	Collect1DProcedureNode* collectDistance_;
-	// Process1DNode for B-C RDF
+	// Process1DNode for A-B RDF
 	Process1DProcedureNode* processDistance_;
 
 
