@@ -18,6 +18,7 @@ SET(keywordwidgets_MOC_HDRS
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
+  range.h
   speciesreflist.h
   speciessitereflist.h
   vec3double.h
@@ -55,6 +56,7 @@ SET(keywordwidgets_UIS
   nodevalue.ui
   nodevalueenumoptions.ui
   pairbroadeningfunction.ui
+  range.ui
   speciesreflist.ui
   speciessitereflist.ui
   vec3double.ui
@@ -88,6 +90,7 @@ SET(keywordwidgets_SRCS
   nodevalue_funcs.cpp
   nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp
+  range_funcs.cpp
   species_funcs.cpp
   speciesreflist_funcs.cpp
   speciessitereflist_funcs.cpp

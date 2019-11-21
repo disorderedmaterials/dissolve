@@ -57,6 +57,7 @@ class KeywordBase : public ListItem<KeywordBase>
 		ModuleGroupsData, ModuleRefListData,
 		NodeData, NodeAndIntegerData, NodeArrayData, NodeBranchData, NodeRefListData, NodeValueData, NodeValueEnumOptionsData,
 		PairBroadeningFunctionData, ProcedureData,
+		RangeData,
 		SpeciesData, SpeciesRefListData, SpeciesSiteData, SpeciesSiteRefListData,
 		Vec3DoubleData, Vec3IntegerData, Vec3NodeValueData,
 		WindowFunctionData

@@ -29,6 +29,7 @@ add_library(keywords
   nodevalue.cpp
   pairbroadeningfunction.cpp
   procedure.cpp
+  range.cpp
   species.cpp
   speciesreflist.cpp
   speciessite.cpp
@@ -71,6 +72,7 @@ add_library(keywords
   nodevalueenumoptions.h
   pairbroadeningfunction.h
   procedure.h
+  range.h
   species.h
   speciesreflist.h
   speciessite.h
