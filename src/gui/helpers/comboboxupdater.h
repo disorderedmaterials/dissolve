@@ -80,7 +80,7 @@ template <class I> class ComboBoxUpdater
 		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
 	}
 
-	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
+	// Update QComboBox from supplied RefList, assuming that class I implements a name() function for the item
 	ComboBoxUpdater(QComboBox* comboBox, const RefList<I>& data, const I* currentItem)
 	{
 		int currentIndex = 0;
