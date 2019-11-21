@@ -11,6 +11,7 @@ RUN @powershell -NoProfile -ExecutionPolicy Bypass -Command \
     $Env:chocolateyVersion = '0.10.14' ; \
     $Env:chocolateyUseWindowsCompression = 'false' ; \
     "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+RUN choco install -y windows-sdk-10-version-1803-all
 RUN choco install -y unzip --version 6.0 && unzip -v
 RUN choco install -y zip --version 3.0 && zip -v
 RUN choco install -y cmake
@@ -20,7 +21,6 @@ RUN choco install -y git
 RUN choco install -y innosetup
 RUN choco install -y 7zip
 RUN choco install -y innounp
-RUN choco install -y windows-sdk-10-version-1803-all
 
 # Install Qt5 5.13.1
 COPY qtifwsilent.qs C:\\qtifwsilent.qs
