@@ -69,6 +69,15 @@ bool KeywordList::add(const char* groupName, KeywordBase* object, const char* na
 }
 
 // Add link to specified keyword that exists elsewhere
+bool KeywordList::link(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask)
+{
+	if (!object) return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
+
+	// Create a new LinkToKeyword
+	return add(groupName, new LinkToKeyword(object), name, description, optionMask);
+}
+
+// Add link to specified keyword that exists elsewhere (including argument description)
 bool KeywordList::link(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask)
 {
 	if (!object) return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
