@@ -54,7 +54,7 @@ class ModuleKeywordBase
 	// Set the target module
 	virtual bool setModule(Module* module) = 0;
 	// Return the current target module as the base class
-	virtual Module* baseModule() const = 0;
+	virtual const Module* baseModule() const = 0;
 
 
 	/*
@@ -133,7 +133,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
 		return true;
 	}
 	// Return the current target module as the base class
-	Module* baseModule() const
+	const Module* baseModule() const
 	{
 		return KeywordData<M*>::data_;
 	}
