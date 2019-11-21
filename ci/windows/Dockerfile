@@ -1,6 +1,6 @@
 #FROM mcr.microsoft.com/windows/servercore:ltsc2019
 FROM mcr.microsoft.com/windows/servercore:1803
-LABEL Description="Windows Server Core / Qt 5.13.1 / Chocolatey"
+LABEL Description="Windows Server Core 1803 / Qt 5.13.1 / Chocolatey"
 
 # Disable crash dialog for release-mode runtimes
 RUN reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f
@@ -20,7 +20,7 @@ RUN choco install -y git
 RUN choco install -y innosetup
 RUN choco install -y 7zip
 RUN choco install -y innounp
-RUN choco install -y windows-sdk-10.1
+RUN choco install -y windows-sdk-10-version-1803-all
 
 # Install Qt5 5.13.1
 COPY qtifwsilent.qs C:\\qtifwsilent.qs
