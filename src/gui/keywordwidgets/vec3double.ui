@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>124</width>
-    <height>122</height>
+    <width>106</width>
+    <height>98</height>
    </rect>
   </property>
   <property name="font">
@@ -19,6 +19,21 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>4</number>
+   </property>
    <item row="5" column="1">
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
