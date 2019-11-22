@@ -4,8 +4,8 @@ $ErrorActionPreference = 'Stop'
 
 # Install prerequisites
 choco install -y windows-sdk-10-version-1803-all
-choco install -y unzip --version 6.0 && unzip -v
-choco install -y zip --version 3.0 && zip -v
+choco install -y unzip --version 6.0
+choco install -y zip --version 3.0
 choco install -y cmake
 choco install -y ninja
 choco install -y winflexbison
@@ -46,8 +46,8 @@ $env:INCLUDE += "$HOME\3rdparty\freetype-2.10.1\include;"
 $env:LIB += "$HOME\3rdparty\freetype-build;"
 
 # Retrieve / compile FTGL
-$env:INCLUDE += '$HOME\3rdparty\freetype-2.10.1\
-$env:LIB += '$HOME\3rdparty\freetype-build'
+$env:INCLUDE += "$HOME\3rdparty\freetype-2.10.1;"
+$env:LIB += "$HOME\3rdparty\freetype-build;"
 echo 'Compiling FTGL'
 git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
 mkdir ftgl-build
