@@ -84,6 +84,12 @@ double Integrator::trapezoid(const Data1D& data, double xMin, double xMax)
 	return total;
 }
 
+// Compute integral of supplied data via trapezoid rule within the specified range
+double Integrator::trapezoid(const Data1D& data, const Range range)
+{
+	return trapezoid(data, range.minimum(), range.maximum());
+}
+
 // Compute absolute integral of supplied data via trapezoid rule
 double Integrator::absTrapezoid(const Data1D& data)
 {

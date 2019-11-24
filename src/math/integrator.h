@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_INTEGRATOR_H
 #define DISSOLVE_INTEGRATOR_H
 
+#include "math/range.h"
+
 // Forward Declarations
 class Data1D;
 class Data2D;
@@ -38,6 +40,8 @@ class Integrator
 	static double trapezoid(const Data1D& data);
 	// Compute integral of supplied data via trapezoid rule between the specified limits
 	static double trapezoid(const Data1D& data, double xMin, double xMax);
+	// Compute integral of supplied data via trapezoid rule within the specified range
+	static double trapezoid(const Data1D& data, const Range range);
 	// Compute absolute integral of supplied data via trapezoid rule
 	static double absTrapezoid(const Data1D& data);
 	// Return sum of all values in supplied data
