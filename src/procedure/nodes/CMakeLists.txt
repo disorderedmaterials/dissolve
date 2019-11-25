@@ -11,6 +11,7 @@ add_library(procedurenodes
   dynamicsite.cpp
   exclude.cpp
   fit1d.cpp
+  integrate1d.cpp
   node.cpp
   nodereference.cpp
   operatebase.cpp
@@ -39,6 +40,7 @@ add_library(procedurenodes
   dynamicsite.h
   exclude.h
   fit1d.h
+  integrate1d.h
   node.h
   nodereference.h
   nodes.h
