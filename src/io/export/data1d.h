@@ -61,11 +61,11 @@ class Data1DExportFileFormat : public FileAndFormat
 	 */
 	private:
 	// Export Data1D as simple XY (or XYE) data
-	bool exportXY(LineParser& parser, Data1D& data);
+	bool exportXY(LineParser& parser, const Data1D& data);
 
 	public:
 	// Export Data1D using current filename and format
-	bool exportData(Data1D& data);
+	bool exportData(const Data1D& data);
 };
 
 #endif
