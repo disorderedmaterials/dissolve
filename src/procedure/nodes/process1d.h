@@ -61,6 +61,8 @@ class Process1DProcedureNode : public ProcedureNode
 	Data1D* processedData_;
 
 	public:
+	// Return whether processed data exists
+	bool hasProcessedData() const;
 	// Return processed data
 	const Data1D& processedData() const;
 	// Return value label

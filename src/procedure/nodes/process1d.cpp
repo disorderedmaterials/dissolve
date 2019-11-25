@@ -68,6 +68,12 @@ bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Data
  */
 
+// Return whether processed data exists
+bool Process1DProcedureNode::hasProcessedData() const
+{
+	return (processedData_ != NULL);
+}
+
 // Return processed data
 const Data1D& Process1DProcedureNode::processedData() const
 {
