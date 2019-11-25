@@ -232,7 +232,7 @@
        <number>4</number>
       </property>
       <item>
-       <widget class="QFrame" name="PlotWidgetFrame">
+       <widget class="QFrame" name="RDFPlotWidgetFrame">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -262,7 +262,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="DataViewer" name="PlotWidget" native="true"/>
+          <widget class="DataViewer" name="RDFPlotWidget" native="true"/>
          </item>
         </layout>
        </widget>

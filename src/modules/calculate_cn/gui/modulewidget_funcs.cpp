@@ -21,12 +21,30 @@
 
 #include "modules/calculate_cn/gui/modulewidget.h"
 #include "modules/calculate_cn/cn.h"
+#include "modules/calculate_rdf/rdf.h"
+#include "procedure/nodes/process1d.h"
 
 // Constructor
 CalculateCoordinationNumberModuleWidget::CalculateCoordinationNumberModuleWidget(QWidget* parent, CalculateCoordinationNumberModule* cnModule) : ModuleWidget(parent), module_(cnModule)
 {
 	// Set up user interface
 	ui_.setupUi(this);
+
+	// Set up RDF graph
+	rdfGraph_ = ui_.RDFPlotWidget;
+
+	View& view = rdfGraph_->view();
+	view.setViewType(View::FlatXYView);
+	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	view.axes().setMax(0, 10.0);
+	view.axes().setTitle(1, "g(r)");
+	view.axes().setMin(1, 0.0);
+	view.axes().setMax(1, 1.0);
+	view.setAutoFollowType(View::AllAutoFollow);
+
+	rdfDataLocated_ = false;
+
+	setGraphDataTargets();
 
 	refreshing_ = false;
 }
@@ -47,6 +65,11 @@ void CalculateCoordinationNumberModuleWidget::updateControls(int flags)
 		ui_.RegionBResultFrame->setText(SampledDouble());
 		ui_.RegionCResultFrame->setText(SampledDouble());
 	}
+
+	// Clear and recreate graph data targets?
+	if ((!rdfDataLocated_) || (flags&ModuleWidget::ResetGraphDataTargetsFlag)) setGraphDataTargets();
+
+	rdfGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget
@@ -79,3 +102,30 @@ bool CalculateCoordinationNumberModuleWidget::readState(LineParser& parser)
  * Widgets / Functions
  */
 
+// Set data targets in graphs
+void CalculateCoordinationNumberModuleWidget::setGraphDataTargets()
+{
+	rdfGraph_->clearRenderables();
+
+	// Get target RDF module
+	bool found = false;
+	const CalculateRDFModule* rdfModule = module_->keywords().retrieve<const CalculateRDFModule*>("SourceRDF", NULL, &found);
+
+	// If the RDF data for the graph has not yet been found, attempt to locate it now
+	if (!rdfDataLocated_)
+	{
+		if ((!found) || (!rdfModule))
+		{
+			Messenger::warn("No suitable CalculateRDF target set for CalculateCN, so can't plot RDF.\n");
+			return;
+		}
+
+		// Check that processed ata exists in the RDF module
+		if (!rdfModule->rdfResult()) return;
+	}
+
+	// Set RDF data target
+	Renderable* rdfRenderable = rdfGraph_->createRenderable(Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->rdfResult()->processedData().name());
+
+	rdfDataLocated_ = true;
+}

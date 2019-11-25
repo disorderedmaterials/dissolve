@@ -49,4 +49,3 @@ bool CalculateCoordinationNumberModule::process(Dissolve& dissolve, ProcessPool&
 
 	return true;
 }
-

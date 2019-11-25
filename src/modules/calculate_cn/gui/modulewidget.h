@@ -34,13 +34,17 @@ class CalculateCoordinationNumberModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Associated Module
-	CalculateCoordinationNumberModule* module_;
-
 	public:
 	// Constructor
 	CalculateCoordinationNumberModuleWidget(QWidget* parent, CalculateCoordinationNumberModule* cnModule);
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Associated Module
+	CalculateCoordinationNumberModule* module_;
 
 
 	/*
@@ -73,6 +77,14 @@ class CalculateCoordinationNumberModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// DataViewer for RDF plot
+	DataViewer* rdfGraph_;
+	// Whether the RDF data to plot has been succesfully located
+	bool rdfDataLocated_;
+
+	private:
+	// Set data targets in graphs
+	void setGraphDataTargets();
 
 	private slots:
 };
