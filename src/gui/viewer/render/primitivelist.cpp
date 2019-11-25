@@ -44,17 +44,13 @@ void PrimitiveList::forgetAll()
 }
 
 // Resize list so it is large enough to accommodate specified number of Primitives
-void PrimitiveList::reinitialise(int newSize, bool allowShrink, GLenum type, bool colourData)
+void PrimitiveList::reinitialise(int newSize, GLenum type, bool colourData)
 {
 	// Add enough primitives to match the new size
 	while (primitives_.nItems() < newSize) primitives_.add();
 
 	// Shrink list to new size (if allowed)
-	if (allowShrink)
-	{
-		// Manage primitive list, reusing where possible...
-		while (primitives_.nItems() > newSize) primitives_.removeLast();
-	}
+	while (primitives_.nItems() > newSize) primitives_.removeLast();
 
 	// Loop over all current primitives and set information
 	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next())
