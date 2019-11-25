@@ -1,5 +1,6 @@
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
-LABEL Description="Windows Server Core / Qt 5.13.1 / Chocolatey"
+#FROM mcr.microsoft.com/windows/servercore:ltsc2019
+FROM mcr.microsoft.com/windows/servercore:1803
+LABEL Description="Windows Server Core 1803 / Qt 5.13.1 / Chocolatey"
 
 # Disable crash dialog for release-mode runtimes
 RUN reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v Disabled /t REG_DWORD /d 1 /f
@@ -10,10 +11,10 @@ RUN @powershell -NoProfile -ExecutionPolicy Bypass -Command \
     $Env:chocolateyVersion = '0.10.14' ; \
     $Env:chocolateyUseWindowsCompression = 'false' ; \
     "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+RUN choco install -y windows-sdk-10-version-1803-all
 RUN choco install -y unzip --version 6.0 && unzip -v
 RUN choco install -y zip --version 3.0 && zip -v
 RUN choco install -y cmake
-RUN choco install -y windows-sdk-10.1
 RUN choco install -y ninja
 RUN choco install -y winflexbison
 RUN choco install -y git
