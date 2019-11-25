@@ -44,7 +44,7 @@ bool CalculateCNModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	RefListIterator<Configuration> configIterator(rdfModule->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateCN experienced problems with its analysis.\n");
+		if (!analyser_.execute(procPool, cfg, CharString("%s//Analyser", uniqueName()), dissolve.processingModuleData())) return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 	}
 
 	return true;
