@@ -84,10 +84,20 @@ bool Integrate1DProcedureNode::prepare(Configuration* cfg, const char* prefix, G
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	// Get ranges
+	Range rangeA = keywords_.retrieve<Range>("RangeA");
+	Range rangeB = keywords_.retrieve<Range>("RangeB");
+	Range rangeC = keywords_.retrieve<Range>("RangeC");
+
 	// Calculate integrals
 	integral_[0] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeA"));
 	integral_[1] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeB"));
 	integral_[2] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeC"));
+
+	// Print info
+	Messenger::print("Integrate1D - Range A: %e +/- %e over %e < x < %e.\n", integral_[0].mean(), integral_[0].stDev(), rangeA.minimum(), rangeA.maximum());
+	Messenger::print("Integrate1D - Range B: %e +/- %e over %e < x < %e.\n", integral_[1].mean(), integral_[1].stDev(), rangeB.minimum(), rangeB.maximum());
+	Messenger::print("Integrate1D - Range C: %e +/- %e over %e < x < %e.\n", integral_[2].mean(), integral_[2].stDev(), rangeC.minimum(), rangeC.maximum());
 
 	return ProcedureNode::Success;
 }
