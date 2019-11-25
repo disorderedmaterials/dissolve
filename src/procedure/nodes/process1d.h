@@ -38,7 +38,7 @@ class Process1DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Process1DProcedureNode(Collect1DProcedureNode* target = NULL);
+	Process1DProcedureNode(const Collect1DProcedureNode* target = NULL);
 	// Destructor
 	~Process1DProcedureNode();
 
@@ -56,7 +56,7 @@ class Process1DProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Collect1D node that we are processing (retrieved from keyword 'SourceData')
-	Collect1DProcedureNode* collectNode_;
+	const Collect1DProcedureNode* collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data1D* processedData_;
 

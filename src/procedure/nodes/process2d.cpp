@@ -33,9 +33,9 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode* target) : ProcedureNode(ProcedureNode::Process2DNode)
+Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode* target) : ProcedureNode(ProcedureNode::Process2DNode)
 {
-	keywords_.add("Target", new NodeKeyword<Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target), "SourceData", "Collect2D node containing the data to process");
+	keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target), "SourceData", "Collect2D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Counts"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
@@ -131,7 +131,7 @@ SequenceProcedureNode* Process2DProcedureNode::branch()
 bool Process2DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve the Collect2D node target
-	collectNode_ = keywords_.retrieve<Collect2DProcedureNode*>("SourceData");
+	collectNode_ = keywords_.retrieve<const Collect2DProcedureNode*>("SourceData");
 	if (!collectNode_) return Messenger::error("No source Collect2D node set in '%s'.\n", name());
 
 	if (normalisationBranch_) normalisationBranch_->prepare(cfg, prefix, targetList);

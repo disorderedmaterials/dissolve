@@ -34,9 +34,9 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode* target) : ProcedureNode(ProcedureNode::Process1DNode)
+Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode* target) : ProcedureNode(ProcedureNode::Process1DNode)
 {
-	keywords_.add("Target", new NodeKeyword<Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target), "SourceData", "Collect1D node containing the data to process");
+	keywords_.add("Target", new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target), "SourceData", "Collect1D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
@@ -125,7 +125,7 @@ SequenceProcedureNode* Process1DProcedureNode::branch()
 bool Process1DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve the Collect1D node target
-	collectNode_ = keywords_.retrieve<Collect1DProcedureNode*>("SourceData");
+	collectNode_ = keywords_.retrieve<const Collect1DProcedureNode*>("SourceData");
 	if (!collectNode_) return Messenger::error("No source Collect1D node set in '%s'.\n", name());
 
 	if (normalisationBranch_) normalisationBranch_->prepare(cfg, prefix, targetList);
