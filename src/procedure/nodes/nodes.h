@@ -50,5 +50,6 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
+#include "procedure/nodes/sum1d.h"
 
 #endif

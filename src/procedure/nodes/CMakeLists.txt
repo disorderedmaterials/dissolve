@@ -27,6 +27,7 @@ add_library(procedurenodes
   process3d.cpp
   select.cpp
   sequence.cpp
+  sum1d.cpp
 
   addspecies.h
   box.h
@@ -57,6 +58,7 @@ add_library(procedurenodes
   process3d.h
   select.h
   sequence.h
+  sum1d.h
 )
 
 include_directories(
