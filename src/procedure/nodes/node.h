@@ -51,9 +51,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
 		DynamicSiteNode,
 		ExcludeNode,
 		Fit1DNode,
+		Integrate1DNode,
 		BEGIN_OperateNodes, OperateBaseNode, OperateDivideNode, OperateMultiplyNode, OperateNormaliseNode, OperateNumberDensityNormaliseNode, OperateSitePopulationNormaliseNode, OperateSphericalShellNormaliseNode, END_OperateNodes,
 		ParametersNode, Process1DNode, Process2DNode, Process3DNode,
-		SelectNode, SequenceNode,
+		SelectNode, SequenceNode, Sum1DNode,
 		nNodeTypes };
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();

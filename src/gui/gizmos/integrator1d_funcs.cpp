@@ -36,10 +36,15 @@ Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve) : Gizmo(dissolve)
 	// Grab the DataViewer pointer from the 
 	View& view = ui_.PlotWidget->view();
 	view.setViewType(View::FlatXYView);
-	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	view.axes().setTitle(0, "X");
 	view.axes().setRange(0, 0.0, 10.0);
-	view.axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
+	view.axes().setTitle(1, "Y");
 	view.axes().setRange(1, 0.0, 10.0);
+
+	integrationTarget_ = NULL;
+	integrals_[0] = 0.0;
+	integrals_[1] = 0.0;
+	integrals_[2] = 0.0;
 
 	refreshing_ = false;
 }
@@ -77,6 +82,12 @@ void Integrator1DGizmo::updateControls()
 	// Refresh the graph
 	ui_.PlotWidget->postRedisplay();
 
+	// Get limits from data
+	double xMin = integrationTarget_ ? integrationTarget_->xAxis().first() : 0.0;
+	double xMax = integrationTarget_ ? integrationTarget_->xAxis().last() : 1.0;
+	ui_.Region1MinSpin->setRange(xMin, xMax);
+	ui_.Region1MaxSpin->setRange(xMin, xMax);
+
 	refreshing_ = false;
 }
 
@@ -91,12 +102,39 @@ void Integrator1DGizmo::enableSensitiveControls()
 }
 
 /*
+ * Data
+ */
+
+// Calculate integrals from current limits
+void Integrator1DGizmo::calculateIntegrals()
+{
+	// Check for a valid Data target
+	// Region 1
+// 	if (ui_.Region1Group->isChecked())
+// 	{
+// 		double integral = Integrator::trapezoid(
+// 	}
+}
+
+// Set data targets in graphs
+void Integrator1DGizmo::setGraphDataTargets()
+{
+	// Remove any current data
+	ui_.PlotWidget->clearRenderables();
+
+	if (!integrationTarget_) return;
+
+	Renderable* data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
+}
+
+/*
  * State
  */
 
 // Write widget state through specified LineParser
 bool Integrator1DGizmo::writeState(LineParser& parser)
 {
+
 	// Write DataViewer state
 	if (!ui_.PlotWidget->writeSession(parser)) return false;
 
@@ -120,4 +158,14 @@ void Integrator1DGizmo::on_TargetSelectButton_clicked(bool checked)
 {
 	SelectGenericItemDialog genericItemDialog(this, dissolve_);
 	Data1D* item = genericItemDialog.selectGenericItem<Data1D>();
+	if (!item) return;
+
+	// Set target
+	integrationTarget_ = item;
+
+	// Refresh graph data
+	setGraphDataTargets();
+
+	// Set limits in controls etc.
+	updateControls();
 }

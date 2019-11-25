@@ -22,6 +22,7 @@ add_library(math
   pairbroadeningfunction.cpp
   plottable.cpp
   poissonfit.cpp
+  range.cpp
   regression.cpp
   sampleddouble.cpp
   svd.cpp
@@ -56,6 +57,7 @@ add_library(math
   plottable.h
   poissonfit.h
   praxis.h
+  range.h
   regression.h
   sampleddouble.h
   sd.h

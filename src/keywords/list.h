@@ -49,13 +49,15 @@ class KeywordList
 	public:
 	// Add keyword
 	bool add(KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
-	// Add keyword
+	// Add keyword (including argument description)
 	bool add(KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group
 	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
-	// Add keyword to named group
+	// Add keyword to named group (including argument description)
 	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Add link to specified keyword that exists elsewhere
+	bool link(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
+	// Add link to specified keyword that exists elsewhere (including argument description)
 	bool link(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Find named keyword
 	KeywordBase* find(const char* name) const;

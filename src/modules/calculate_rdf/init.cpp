@@ -55,9 +55,16 @@ void CalculateRDFModule::initialise()
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
 	 * Process1D  RDF
-	 *   NSites  'A'
-	 *   SphericalShellVolume  On
-	 *   NumberDensity  'B'
+	 *   Normalisation
+	 *     OperateSitePopulationNormalise
+	 *       Site  'A'
+	 *     EndOperateSitePopulationNormalise
+	 *     OperateNumberDensityNormalise
+	 *       Site  'B'
+	 *     EndOperateNumberDensityNormalise
+	 *     OperateSphericalShellNormalise
+	 *     EndOperateSphericalShellNormalise
+	 *   EndNormalisation
 	 *   LabelValue  'g(r)'
 	 *   LabelX  'r, Angstroms'
 	 * EndProcess1D
