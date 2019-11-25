@@ -96,6 +96,12 @@ class CalculateRDFModule : public Module
 	// Process1DNode for A-B RDF
 	Process1DProcedureNode* processDistance_;
 
+	public:
+	// Return Collect1DNode for A-B RDF
+	const Collect1DProcedureNode* collectDistanceNode() const;
+	// Return SelectNode for site A
+	const SelectProcedureNode* selectANode() const;
+
 
 	/*
 	 * GUI Widget

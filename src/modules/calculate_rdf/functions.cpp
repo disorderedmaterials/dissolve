@@ -20,3 +20,15 @@
 */
 
 #include "modules/calculate_rdf/rdf.h"
+
+// Return Collect1DNode for A-B RDF
+const Collect1DProcedureNode* CalculateRDFModule::collectDistanceNode() const
+{
+	return collectDistance_;
+}
+
+// Return SelectNode for site A
+const SelectProcedureNode* CalculateRDFModule::selectANode() const
+{
+	return selectA_;
+}
