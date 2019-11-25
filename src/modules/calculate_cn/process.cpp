@@ -35,7 +35,7 @@ bool CalculateCoordinationNumberModule::process(Dissolve& dissolve, ProcessPool&
 	const CalculateRDFModule* rdfModule = keywords_.retrieve<const CalculateRDFModule*>("SourceRDF", NULL, &found);
 	if ((!found) || (!rdfModule)) return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
-	// Set the target Collect1D and normalistation nodes in the Process1D
+	// Set the target Collect1D and normalisation nodes in the Process1D
 	process1D_->setKeyword<const Collect1DProcedureNode*>("SourceData", rdfModule->collectDistanceNode());
 	RefList<const SelectProcedureNode> siteNodes(rdfModule->selectANode());
 	siteNormaliser_->setKeyword< RefList<const SelectProcedureNode>& >("Site", siteNodes);
