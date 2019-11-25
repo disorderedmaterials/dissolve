@@ -85,8 +85,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	bool isType(NodeType thisType) const;
 	// Return whether specified context is relevant for this node type
 	virtual bool isContextRelevant(NodeContext context) = 0;
-	// Return whether a name for the node is required
-	virtual bool nameRequired() const;
+	// Return whether a name for the node must be provided
+	virtual bool mustBeNamed() const;
 	// Set node name (and nice name)
 	void setName(const char* name);
 	// Return node name

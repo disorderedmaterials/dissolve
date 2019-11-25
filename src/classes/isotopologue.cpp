@@ -68,10 +68,8 @@ const char* Isotopologue::name() const
  * Isotope Definition
  */
 
-/*
- * Update AtomType/Isotope RefList
- */
-void Isotopologue::update(const List<AtomType>& atomTypes)
+// Update AtomType/Isotope RefList
+void Isotopologue::update()
 {
 	/*
 	 * This function reconstructs the current RefList of AtomType/Isotope pairs and ensures that
@@ -103,11 +101,6 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 		if (at == NULL)
 		{
 			Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n", i->userIndex());
-			continue;
-		}
-		if (!atomTypes.contains(at))
-		{
-			Messenger::print("BAD_POINTER - Atom %i references a non-existent AtomType.\n", i->userIndex());
 			continue;
 		}
 

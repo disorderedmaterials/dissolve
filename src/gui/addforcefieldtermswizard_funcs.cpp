@@ -20,6 +20,7 @@
 */
 
 #include "gui/addforcefieldtermswizard.h"
+#include "gui/selectforcefieldwidget.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
@@ -34,6 +35,7 @@
 AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;
+	targetSpecies_ = NULL;
 	modifiedSpecies_ = NULL;
 
 	// Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
@@ -55,7 +57,6 @@ AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryD
 	masterTorsionItemParent_->setExpanded(true);
 
 	// Register pages with the wizard
-	registerPage(AddForcefieldTermsWizard::SelectSpeciesPage, "Select Target Species", AddForcefieldTermsWizard::SelectForcefieldPage);
 	registerPage(AddForcefieldTermsWizard::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsWizard::SelectTermsPage);
 	registerPage(AddForcefieldTermsWizard::SelectTermsPage, "Select Terms", AddForcefieldTermsWizard::AtomTypesPage);
 	registerPage(AddForcefieldTermsWizard::AtomTypesPage, "Check AtomTypes", AddForcefieldTermsWizard::MasterTermsPage);
@@ -82,6 +83,12 @@ void AddForcefieldTermsWizard::setMainDissolveReference(const Dissolve* dissolve
 	dissolveReference_ = dissolveReference;
 }
 
+// Set target Species that we are acquiring forcefield terms for
+void AddForcefieldTermsWizard::setTargetSpecies(Species* sp)
+{
+	targetSpecies_ = sp;
+}
+
 // Apply our Forcefield terms to the targetted Species within the specified Dissolve object
 bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 {
@@ -97,16 +104,21 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	 * 4) Loop over torsions and create / assign parameters / MasterTerms (if TorsionTermsCheck is checked)
 	 */
 
-	Species* originalSpecies = currentSpecies();
-	if (!originalSpecies) return false;
-
 	// 1) Set AtomTypes
-	ListIterator<SpeciesAtom> atomIterator(originalSpecies->atoms());
+	ListIterator<SpeciesAtom> atomIterator(targetSpecies_->atoms());
 	SpeciesAtom* modifiedI = modifiedSpecies_->atoms().first();
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
 		// Copy AtomType
 		dissolve.copyAtomType(modifiedI, i);
+
+		// Overwrite existing parameters?
+		if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
+		{
+			i->atomType()->parameters() = modifiedI->atomType()->parameters();
+			i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
+			dissolve.coreData().bumpAtomTypesVersion();
+		}
 
 		// Move to next modified atom
 		modifiedI = modifiedI->next();
@@ -115,11 +127,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy bond terms
 	if (ui_.BondTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesBond> originalBondIterator(originalSpecies->bonds());
-		ListIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->bonds());
+		DynamicArrayIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
+		DynamicArrayConstIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->constBonds());
 		while (SpeciesBond* originalBond = originalBondIterator.iterate())
 		{
-			SpeciesBond* modifiedBond = modifiedBondIterator.iterate();
+			const SpeciesBond* modifiedBond = modifiedBondIterator.iterate();
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedBond, originalBond);
@@ -129,11 +141,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy angle terms
 	if (ui_.AngleTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesAngle> originalAngleIterator(originalSpecies->angles());
-		ListIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->angles());
+		DynamicArrayIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
+		DynamicArrayConstIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->constAngles());
 		while (SpeciesAngle* originalAngle = originalAngleIterator.iterate())
 		{
-			SpeciesAngle* modifiedAngle = modifiedAngleIterator.iterate();
+			const SpeciesAngle* modifiedAngle = modifiedAngleIterator.iterate();
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedAngle, originalAngle);
@@ -143,11 +155,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy torsion terms
 	if (ui_.TorsionTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesTorsion> originalTorsionIterator(originalSpecies->torsions());
-		ListIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->torsions());
+		DynamicArrayIterator<SpeciesTorsion> originalTorsionIterator(targetSpecies_->torsions());
+		DynamicArrayConstIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->constTorsions());
 		while (SpeciesTorsion* originalTorsion = originalTorsionIterator.iterate())
 		{
-			SpeciesTorsion* modifiedTorsion = modifiedTorsionIterator.iterate();
+			const SpeciesTorsion* modifiedTorsion = modifiedTorsionIterator.iterate();
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedTorsion, originalTorsion);
@@ -173,14 +185,6 @@ bool AddForcefieldTermsWizard::displayControlPage(int index)
 	// Update controls in the target page if necessary
 	switch (index)
 	{
-		case (AddForcefieldTermsWizard::SelectSpeciesPage):
-			updateSelectSpeciesPage();
-			if ((ui_.SpeciesList->currentRow() == -1) && (ui_.SpeciesList->count() > 0)) ui_.SpeciesList->setCurrentRow(0);
-			break;
-		case (AddForcefieldTermsWizard::SelectForcefieldPage):
-			updateSelectForcefieldPage();
-			if ((ui_.ForcefieldList->currentRow() == -1) && (ui_.ForcefieldList->count() > 0)) ui_.ForcefieldList->setCurrentRow(0);
-			break;
 		default:
 			break;
 	}
@@ -194,10 +198,8 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-		case (AddForcefieldTermsWizard::SelectSpeciesPage):
-			return (currentSpecies());
 		case (AddForcefieldTermsWizard::SelectForcefieldPage):
-			return (currentForcefield());
+			return (ui_.ForcefieldWidget->currentForcefield());
 		default:
 			break;
 	}
@@ -213,11 +215,11 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 	{
 		case (AddForcefieldTermsWizard::SelectTermsPage):
 			// Sanity check the current Forcefield
-			ff = currentForcefield();
+			ff = ui_.ForcefieldWidget->currentForcefield();
 			if (!ff) return false;
 
 			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
-			modifiedSpecies_ = temporaryDissolve_.copySpecies(currentSpecies());
+			modifiedSpecies_ = temporaryDissolve_.copySpecies(targetSpecies_);
 			modifiedSpecies_->detachFromMasterTerms();
 			temporaryCoreData_.clearMasterTerms();
 
@@ -233,7 +235,105 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
 
 			// Assign intramolecular terms
-			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
+			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked(), ui_.ImproperTermsCheck->isChecked())) return false;
+
+			// Reduce to master terms?
+			if (ui_.BondTermsMasterCheck->isChecked())
+			{
+				CharString bondName;
+
+				// Loop over bonds in the modified species
+				DynamicArrayIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
+				while (SpeciesBond* bond = bondIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(bond->i()->atomType()->name()) < QString(bond->j()->atomType()->name())) bondName.sprintf("%s-%s", bond->i()->atomType()->name(), bond->j()->atomType()->name());
+					else bondName.sprintf("%s-%s", bond->j()->atomType()->name(), bond->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterBond(bondName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterBond(bondName);
+						master->setForm(bond->form());
+						master->setParameters(bond->parameters());
+					}
+					bond->setMasterParameters(master);
+				}
+			}
+			if (ui_.AngleTermsMasterCheck->isChecked())
+			{
+				CharString angleName;
+
+				// Loop over angles in the modified species
+				DynamicArrayIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
+				while (SpeciesAngle* angle = angleIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(angle->i()->atomType()->name()) < QString(angle->k()->atomType()->name())) angleName.sprintf("%s-%s-%s", angle->i()->atomType()->name(), angle->j()->atomType()->name(), angle->k()->atomType()->name());
+					else angleName.sprintf("%s-%s-%s", angle->k()->atomType()->name(), angle->j()->atomType()->name(), angle->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterAngle(angleName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterAngle(angleName);
+						master->setForm(angle->form());
+						master->setParameters(angle->parameters());
+					}
+					angle->setMasterParameters(master);
+				}
+			}
+			if (ui_.TorsionTermsMasterCheck->isChecked())
+			{
+				CharString torsionName;
+
+				// Loop over torsions in the modified species
+				DynamicArrayIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
+				while (SpeciesTorsion* torsion = torsionIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) torsionName.sprintf("%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
+					else torsionName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterTorsion(torsionName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterTorsion(torsionName);
+						master->setForm(torsion->form());
+						master->setParameters(torsion->parameters());
+					}
+					torsion->setMasterParameters(master);
+				}
+			}
+			if (ui_.ImproperTermsMasterCheck->isChecked())
+			{
+				CharString improperName;
+
+				// Loop over impropers in the modified species
+				DynamicArrayIterator<SpeciesImproper> improperIterator(modifiedSpecies_->impropers());
+				while (SpeciesImproper* improper = improperIterator.iterate())
+				{
+					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+					if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) improperName.sprintf("%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
+					else improperName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
+
+					// Search for an existing master term by this name
+					MasterIntra* master = temporaryCoreData_.hasMasterImproper(improperName);
+					if (!master)
+					{
+						// Create it now
+						master = temporaryCoreData_.addMasterImproper(improperName);
+						master->setForm(improper->form());
+						master->setParameters(improper->parameters());
+					}
+					improper->setMasterParameters(master);
+				}
+			}
 
 			updateAtomTypesPage();
 			updateMasterTermsPage();
@@ -283,95 +383,22 @@ bool AddForcefieldTermsWizard::prepareForPreviousPage(int currentIndex)
 void AddForcefieldTermsWizard::reset()
 {
 	// Reset the underlying WizardWidget
-	resetToPage(AddForcefieldTermsWizard::SelectSpeciesPage);
-}
-
-/*
- * Select Species Page
- */
-
-// SpeciesList row update function
-void AddForcefieldTermsWizard::updateSpeciesListRow(int row, Species* sp, bool createItem)
-{
-	QListWidgetItem* item;
-	if (createItem)
-	{
-		item = new QListWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<Species>(sp));
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		ui_.SpeciesList->insertItem(row, item);
-	}
-	else item = ui_.SpeciesList->item(row);
-
-	// Set item data
-	item->setText(sp->name());
-}
-
-// Update Select Species page
-void AddForcefieldTermsWizard::updateSelectSpeciesPage()
-{
-	ListWidgetUpdater<AddForcefieldTermsWizard,Species> speciesUpdater(ui_.SpeciesList, dissolveReference_->coreData().constSpecies(), this, &AddForcefieldTermsWizard::updateSpeciesListRow);
-}
-
-// Return currently-selected Species
-Species* AddForcefieldTermsWizard::currentSpecies() const
-{
-	if (ui_.SpeciesList->currentRow() == -1) return NULL;
-
-	Species* sp = VariantPointer<Species>(ui_.SpeciesList->currentItem()->data(Qt::UserRole));
-
-	return sp;
-}
-
-void AddForcefieldTermsWizard::on_SpeciesList_currentRowChanged(int row)
-{
-	updateProgressionControls();
+	resetToPage(AddForcefieldTermsWizard::SelectForcefieldPage);
 }
 
 /*
  * Select Forcefield Page
  */
 
-// ForcefieldList row update function
-void AddForcefieldTermsWizard::updateForcefieldListRow(int row, Forcefield* ff, bool createItem)
+void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid)
 {
-	QListWidgetItem* item;
-	if (createItem)
-	{
-		item = new QListWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<Forcefield>(ff));
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		ui_.ForcefieldList->insertItem(row, item);
-	}
-	else item = ui_.ForcefieldList->item(row);
-
-	// Set item data
-	item->setText(ff->name());
-}
-
-// Update Select Forcefield page
-void AddForcefieldTermsWizard::updateSelectForcefieldPage()
-{
-	ListWidgetUpdater<AddForcefieldTermsWizard,Forcefield> speciesUpdater(ui_.ForcefieldList, ForcefieldLibrary::forcefields(), this, &AddForcefieldTermsWizard::updateForcefieldListRow);
-}
-
-// Return currently-selected Forcefield
-Forcefield* AddForcefieldTermsWizard::currentForcefield() const
-{
-	if (ui_.ForcefieldList->currentRow() == -1) return NULL;
-
-	Forcefield* sp = VariantPointer<Forcefield>(ui_.ForcefieldList->currentItem()->data(Qt::UserRole));
-
-	return sp;
-}
-
-void AddForcefieldTermsWizard::on_ForcefieldList_currentRowChanged(int row)
-{
-	// Set the name and details of the current forcefield
-	Forcefield* ff = currentForcefield();
-// 	ui_.ForcefieldDetailsBrowser->setText(ff->description());
-
 	updateProgressionControls();
+}
+
+void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldDoubleClicked()
+{
+	goToPage(AddForcefieldTermsWizard::SelectTermsPage);
+	if (!ui_.ForcefieldWidget->currentForcefield()) return;
 }
 
 /*
@@ -495,7 +522,7 @@ void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem* paren
 
 	// Set item data
 	item->setText(0, masterIntra->name());
-	item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
@@ -509,19 +536,19 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
 	ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
-	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
 	ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
-	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
 	ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
-	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;

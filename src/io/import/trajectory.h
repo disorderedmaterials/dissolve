@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_IMPORT_TRAJECTORY_H
 #define DISSOLVE_IMPORT_TRAJECTORY_H
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 
 // Forward Declarations
 /* none */

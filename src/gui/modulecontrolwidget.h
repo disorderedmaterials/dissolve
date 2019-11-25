@@ -23,7 +23,6 @@
 #define DISSOLVE_MODULECONTROLWIDGET_H
 
 #include "gui/ui_modulecontrolwidget.h"
-#include "gui/widgets/subwidget.h"
 #include "gui/keywordwidgets/base.h"
 #include "templates/reflist.h"
 
@@ -32,10 +31,10 @@ class Dissolve;
 class DissolveWindow;
 class Module;
 class ModuleWidget;
-class ModuleChartModuleBlock;
+class ModuleBlock;
 
 // Module Control Widget
-class ModuleControlWidget : public SubWidget
+class ModuleControlWidget : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -52,16 +51,16 @@ class ModuleControlWidget : public SubWidget
 	// Constructor / Destructor
 	ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title);
 	~ModuleControlWidget();
-	// Main form declaration
-	Ui::ModuleControlWidget ui;
 
 
 	/*
-	 * Widgets
+	 * UI
 	 */
-	private:
+	private:	
+	// Main form declaration
+	Ui::ModuleControlWidget ui;
 	// Module control widget displayed
-	ModuleChartModuleBlock* controlsWidget_;
+	ModuleBlock* controlsWidget_;
 	// ModuleWidget displayed in this control widget
 	ModuleWidget* moduleWidget_;
 
@@ -70,25 +69,7 @@ class ModuleControlWidget : public SubWidget
 	void initialiseControls(Module* module);
 
 
-	/*
-	 * SubWidget Reimplementations / Definitions
-	 */
-	protected:
-	void closeEvent(QCloseEvent* event);
 
-	public:
-	// Update controls within widget
-	void updateControls();
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
-	// Return string specifying widget type
-	const char* widgetType();
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 
 
 	/*

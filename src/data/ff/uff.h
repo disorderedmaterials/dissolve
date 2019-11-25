@@ -24,8 +24,6 @@
 
 #include "data/ff.h"
 #include "data/ff/uffatomtype.h"
-#include "templates/array.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class CoreData;
@@ -50,7 +48,11 @@ class Forcefield_UFF : public Forcefield
 	 */
 	public:
 	// Return name of Forcefield
-	const char* name();
+	const char* name() const;
+	// Return description for Forcefield
+	const char* description() const;
+	// Return short-range interaction style for AtomTypes
+	Forcefield::ShortRangeType shortRangeType() const;
 
 
 	/*
@@ -76,7 +78,7 @@ class Forcefield_UFF : public Forcefield
 	// Assign suitable AtomTypes to the supplied Species
 	bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species
-	bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const;
+	bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions, bool generateImpropers) const;
 	// Perform some test calculations
 	void test() const;
 };

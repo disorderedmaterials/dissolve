@@ -155,13 +155,60 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 	return instance;
 }
 
-// Search for any instance of any module with the specified unique name
+// Create a Module instance for the named Module type, and add it to the specified layer
+Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer)
+{
+	Module* module = createModuleInstance(moduleType);
+	if (!module) return NULL;
+
+	// Add the new module instance to the specified destination layer
+	destinationLayer->own(module);
+
+	return module;
+}
+
+// Search for any instance of any Module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
 	RefListIterator<Module> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
+}
+
+// Search for any instance of any Module with the specified Module type
+RefList<Module> Dissolve::findModuleInstances(const char* moduleType)
+{
+	RefList<Module> instances;
+
+	RefListIterator<Module> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) instances.append(module);
+
+	return instances;
+}
+
+// Generate unique Module name with base name provided
+const char* Dissolve::uniqueModuleName(const char* name, Module* excludeThis)
+{
+	static CharString uniqueName;
+	CharString baseName = name;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "Unnamed";
+
+	// Find an unused name starting with the baseName provided
+	while (Module* existingModule = findModuleInstance(uniqueName))
+	{
+		if (existingModule == excludeThis) break;
+
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%02i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
 }
 
 // Delete specified Module instance

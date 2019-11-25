@@ -40,16 +40,22 @@ class ForcefieldTab : public QWidget, public MainTab
 	// Constructor / Destructor
 	ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
 	~ForcefieldTab();
-	// Main form declaration
-	Ui::ForcefieldTab ui;
 
 
 	/*
-	 * Data
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::ForcefieldTab ui_;
+
+
+	/*
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 
 
 	/*
@@ -62,6 +68,8 @@ class ForcefieldTab : public QWidget, public MainTab
 	void updateAnglesTableRow(int row, MasterIntra* masterAngle, bool createItems);
 	// Row update function for TorsionsTable
 	void updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool createItems);
+	// Row update function for ImpropersTable
+	void updateImpropersTableRow(int row, MasterIntra* masterImproper, bool createItems);
 	// Row update function for AtomTypesTable
 	void updateAtomTypesTableRow(int row, AtomType* atomType, bool createItems);
 	// Row update function for PairPotentialsTable
@@ -80,8 +88,25 @@ class ForcefieldTab : public QWidget, public MainTab
 	 * Signals / Slots
 	 */
 	private:
+	// Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
+	void atomTypeDataModified();
 
 	private slots:
+	// Atom Types
+	void on_AtomTypeAddButton_clicked(bool checked);
+	void on_AtomTypeRemoveButton_clicked(bool checked);
+	void on_AtomTypesTable_itemChanged(QTableWidgetItem* w);
+	// Pair Potentials
+	void on_PairPotentialRangeSpin_valueChanged(double value);
+	void on_PairPotentialDeltaSpin_valueChanged(double value);
+	void on_CoulombIncludeCheck_clicked(bool checked);
+	void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
+	void on_CoulombTruncationCombo_currentIndexChanged(int index);
+	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
+	void on_UpdatePairPotentialsButton_clicked(bool checked);
+	void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
+	void on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem);
+	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
 	// Master Terms
 	void on_MasterTermAddBondButton_clicked(bool checked);
 	void on_MasterTermRemoveBondButton_clicked(bool checked);
@@ -92,21 +117,9 @@ class ForcefieldTab : public QWidget, public MainTab
 	void on_MasterTermAddTorsionButton_clicked(bool checked);
 	void on_MasterTermRemoveTorsionButton_clicked(bool checked);
 	void on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w);
-	// Atom Types
-	void on_AtomTypeAddButton_clicked(bool checked);
-	void on_AtomTypeRemoveButton_clicked(bool checked);
-	void on_AtomTypeLibraryButton_clicked(bool checked);
-	void on_AtomTypesTable_itemChanged(QTableWidgetItem* w);
-	// Pair Potentials
-	void on_PairPotentialRangeSpin_valueChanged(double value);
-	void on_PairPotentialDeltaSpin_valueChanged(double value);
-	void on_CoulombIncludeCheck_clicked(bool checked);
-	void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
-	void on_CoulombTruncationCombo_currentIndexChanged(int index);
-	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
-	void on_UpdatePairPotentialsButton_clicked(bool checked);
-	void on_GenerateMissingPairPotentialsButton_clicked(bool checked);
-	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddImproperButton_clicked(bool checked);
+	void on_MasterTermRemoveImproperButton_clicked(bool checked);
+	void on_MasterImpropersTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

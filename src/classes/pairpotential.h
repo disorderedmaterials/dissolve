@@ -24,6 +24,7 @@
 
 #include "math/interpolator.h"
 #include "math/data1d.h"
+#include "data/ff.h"
 #include "base/parameters.h"
 #include "templates/list.h"
 
@@ -36,20 +37,6 @@ class PairPotential : public ListItem<PairPotential>
 	public:
 	// Constructor
 	PairPotential();
-	// ShortRange Interaction Type enum
-	enum ShortRangeType
-	{
-		NoInteractionType,		/* No short-range dispersive forces */
-		LennardJonesType,		/* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
-		LennardJonesGeometricType,	/* Lennard-Jones 12-6 form with Geometric combination rules */
-		nShortRangeTypes		/* Number of short-range interaction types */
-	};
-	// Convert text string to ShortRangeType
-	static ShortRangeType shortRangeType(const char* s);
-	// Convert ShortRangeType to text string
-	static const char* shortRangeType(ShortRangeType id);
-	// Return ShortRangeTypes array
-	static const char** shortRangeTypes();
 	// Coulomb Truncation Scheme enum
 	enum CoulombTruncationScheme
 	{
@@ -83,8 +70,6 @@ class PairPotential : public ListItem<PairPotential>
 	 * Seed Interaction Type
 	 */
 	private:
-	// Short range type
-	ShortRangeType shortRangeType_;
 	// Truncation scheme to apply to short-range part of potential
 	static ShortRangeTruncationScheme shortRangeTruncationScheme_;
 	// Width of short-range potential over which to truncate (if scheme = Cosine)
@@ -103,10 +88,6 @@ class PairPotential : public ListItem<PairPotential>
 	double coulombForceAtCutoff_;
 
 	public:
-	// Set short-ranged type
-	void setShortRangeType(ShortRangeType type);
-	// Return short-ranged type
-	ShortRangeType shortRangeType() const;
 	// Set short-ranged truncation scheme
 	static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
 	// Return short-ranged truncation scheme
@@ -133,6 +114,8 @@ class PairPotential : public ListItem<PairPotential>
 	AtomType* atomTypeI_, *atomTypeJ_;
 	// Parameters for short-range potential
 	double parameters_[MAXSRPARAMETERS];
+	// Short range type (determined from AtomTypes)
+	Forcefield::ShortRangeType shortRangeType_;
 	// Charge on I (taken from AtomType)
 	double chargeI_;
 	// Charge on J (taken from AtomType)
@@ -143,10 +126,10 @@ class PairPotential : public ListItem<PairPotential>
 	void setData1DNames();
 	
 	public:
-	// Set source parameters from AtomTypes
-	bool setParameters(AtomType* typeI, AtomType* typeJ);
-	// Set source AtomType pointers only
-	void setAtomTypes(AtomType* typeI, AtomType* typeJ);
+	// Set up PairPotential parameters from specified AtomTypes
+	bool setUp(AtomType* typeI, AtomType* typeJ);
+	// Return short-ranged type
+	Forcefield::ShortRangeType shortRangeType() const;
 	// Return first AtomType name
 	const char* atomTypeNameI() const;
 	// Return second AtomType name
@@ -194,17 +177,17 @@ class PairPotential : public ListItem<PairPotential>
 	
 	private:
 	// Return analytic short range potential energy
-	double analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+	double analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
 	// Return analytic short range force
-	double analyticShortRangeForce(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+	double analyticShortRangeForce(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
 	// Calculate full potential
 	void calculateUFull();
 	// Calculate derivative of potential
 	void calculateDUFull();
 
 	public:
-	// Set up and perform initial generation of potential
-	bool setUp(double maxR, double delta, bool includeCoulomb);
+	// Generate energy and force tables
+	bool tabulate(double maxR, double delta, bool includeCoulomb);
 	// Return number of tabulated points in potential
 	int nPoints() const;
 	// Return range of potential
@@ -239,14 +222,6 @@ class PairPotential : public ListItem<PairPotential>
 	void setUAdditional(Data1D& newUAdditional);
 	// Adjust additional potential, and recalculate UFull and dUFull
 	void adjustUAdditional(Data1D deltaU, double factor = 1.0);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif

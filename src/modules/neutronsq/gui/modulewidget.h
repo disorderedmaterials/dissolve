@@ -38,22 +38,30 @@ class NeutronSQModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Associated Module
-	NeutronSQModule* module_;
-	// DataViewers contained within this widget
-	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
-
 	public:
 	// Constructor / Destructor
 	NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~NeutronSQModuleWidget();
+
+	private:
+	// Associated Module
+	NeutronSQModule* module_;
+	// Reference to Dissolve
+	Dissolve& dissolve_;
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::NeutronSQModuleWidget ui;
+	Ui::NeutronSQModuleWidget ui_;
+	// DataViewers contained within this widget
+	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
+
+	public:
 	// Update controls within widget
-	void updateControls();
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget

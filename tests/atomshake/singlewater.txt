@@ -11,9 +11,6 @@ Species 'Water'
   Bond    1    2   Harmonic   4431.53   1.012
   Bond    1    3   Harmonic   4431.53   1.012
   Angle   2    1    3  Harmonic  317.5656   113.24
-
-  # Isotopologues
-  Isotopologue  'Natural'  OW=0  HW=0
 EndSpecies
 
 # Define Configuration
@@ -52,12 +49,7 @@ PairPotentials
   Range  15.000000
   Delta  0.005
   ShortRangeTruncation  None
-  Parameters  'OW'  -0.82      0.6503    3.165492
-  Parameters  'HW'  0.41       0.0       0.0
+  Parameters  'OW'  -0.82   LJGeometric   0.6503    3.165492
+  Parameters  'HW'  0.41    LJGeometric   0.0       0.0
   IncludeCoulomb  False
-  GenerateAll  'LJ'
 EndPairPotentials
-
-Simulation
-  RestartFileFrequency  -1
-EndSimulation

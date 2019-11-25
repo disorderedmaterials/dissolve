@@ -21,8 +21,6 @@
 
 #include "classes/configuration.h"
 #include "classes/forcekernel.h"
-#include "classes/angle.h"
-#include "classes/bond.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/potentialmap.h"
@@ -66,55 +64,6 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 	fz_[index] -= force.z;
 }
 
-// Calculate PairPotential forces between Atom and Grain provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ)
-{
-	int m, nAtomsJ = grain->nAtoms();
-	if (excludeIgtJ)
-	{
-		for (m=0; m<nAtomsJ; ++m) if (i->arrayIndex() <= grain->atom(m)->arrayIndex()) forcesWithoutMim(i, grain->atom(m));
-	}
-	else
-	{
-		for (m=0; m<nAtomsJ; ++m) forcesWithoutMim(i, grain->atom(m));
-	}
-}
-
-// Calculate PairPotential forces between Grains provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ)
-{
-	/*
-	 * This calculates the forces between the individual Atoms of the two Grains provided, adding contributions into the three
-	 * force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so, then force contributions
-	 * are scaled such that intramolecular interactions are excluded.
-	 */
-	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
-	Atom* i, *j;
-	if (grainI->molecule() != grainJ->molecule())
-	{
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m) forcesWithoutMim(i, grainJ->atom(m));
-		}
-	}
-	else
-	{
-		double scale;
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m)
-			{
-				j = grainJ->atom(m);
-				scale = i->scaling(j);
-				if (scale < 1.0e-3) continue;
-				forcesWithoutMim(i, j, scale);
-			}
-		}
-	}
-}
-
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
 void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
 {
@@ -133,55 +82,6 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
 	fx_[index] -= force.x;
 	fy_[index] -= force.y;
 	fz_[index] -= force.z;
-}
-
-// Calculate PairPotential forces between Atom and Grain provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ)
-{
-	int m, nAtomsJ = grain->nAtoms();
-	if (excludeIgtJ)
-	{
-		for (m=0; m<nAtomsJ; ++m) if (i->arrayIndex() <= grain->atom(m)->arrayIndex()) forcesWithMim(i, grain->atom(m));
-	}
-	else
-	{
-		for (m=0; m<nAtomsJ; ++m) forcesWithMim(i, grain->atom(m));
-	}
-}
-
-// Calculate PairPotential forces between Grains provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ)
-{
-	/*
-	 * This calculates the forces between the individual Atoms of the two Grains provided, applying minimum image convention, adding
-	 * contributions into the three force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so,
-	 * then force contributions are scaled such that intramolecular interactions are excluded.
-	 */
-	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
-	Atom* i, *j;
-	if (grainI->molecule() != grainJ->molecule())
-	{
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m) forcesWithMim(i, grainJ->atom(m));
-		}
-	}
-	else
-	{
-		double scale;
-		for (n=0; n<nAtomsI; ++n)
-		{
-			i = grainI->atom(n);
-			for (m=0; m<nAtomsJ; ++m)
-			{
-				j = grainJ->atom(m);
-				scale = i->scaling(j);
-				if (scale < 1.0e-3) continue;
-				forcesWithMim(i, j, scale);
-			}
-		}
-	}
 }
 
 /*
@@ -504,67 +404,13 @@ void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
 	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy);
 }
 
-// Calculate forces between grain and world
-void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy)
-{
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::forces(Grain,DivisionStrategy).\n");
-		return;
-	}
-#endif
-
-	int i;
-	Vec3<double> rI;
-	Atom* ii;
-	Cell* cellI;
-
-	// Loop over grain atoms
-	if (excludeIgtJ) for (i = 0; i<grain->nAtoms(); ++i)
-	{
-		ii = grain->atom(i);
-		cellI = ii->cell();
-
-		// This Atom with its own Cell
-		forces(ii, cellI, KernelFlags::ExcludeIGEJFlag, strategy);
-
-		// Cell neighbours not requiring minimum image
-		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, strategy);
-
-		// Cell neighbours requiring minimum image
-		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, strategy);
-	}
-	else for (i = 0; i<grain->nAtoms(); ++i)
-	{
-		ii = grain->atom(i);
-		cellI = ii->cell();
-		
-		// This Atom with its own Cell
-		forces(ii, cellI, KernelFlags::ExcludeSelfFlag, strategy);
-
-		// Cell neighbours not requiring minimum image
-		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::NoFlags, strategy);
-
-		// Cell neighbours requiring minimum image
-		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy);
-	}
-}
-
 /*
  * Intramolecular Terms
  */
 
 // Calculate Bond forces
-void ForceKernel::forces(const Bond* b)
+void ForceKernel::forces(const SpeciesBond* b, const Atom* i, const Atom* j)
 {
-	// Grab pointers to atoms involved in bond
-	Atom* i = b->i(), *j = b->j();
-
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
 	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
@@ -592,11 +438,8 @@ void ForceKernel::forces(const Bond* b)
 }
 
 // Calculate Bond forces for specified Atom only
-void ForceKernel::forces(const Bond* b, const Atom* onlyThis)
+void ForceKernel::forces(const Atom* onlyThis, const SpeciesBond* b, const Atom* i, const Atom* j)
 {
-	// Grab pointers to atoms involved in bond
-	Atom* i = b->i(), *j = b->j();
-
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis))
 	{
@@ -637,12 +480,9 @@ void ForceKernel::forces(const Bond* b, const Atom* onlyThis)
 }
 
 // Calculate Angle forces
-void ForceKernel::forces(const Angle* a)
+void ForceKernel::forces(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
 {
 	Vec3<double> vecji, vecjk;
-
-	// Grab pointers to atoms involved in angle
-	Atom* i = a->i(), *j = a->j(), *k = a->k();
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
@@ -677,12 +517,9 @@ void ForceKernel::forces(const Angle* a)
 }
 
 // Calculate Angle forces for specified Atom only
-void ForceKernel::forces(const Angle* a, const Atom* onlyThis)
+void ForceKernel::forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
 {
 	Vec3<double> vecji, vecjk;
-
-	// Grab pointers to atoms involved in angle
-	Atom* i = a->i(), *j = a->j(), *k = a->k();
 
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis) && (k != onlyThis))
@@ -732,11 +569,8 @@ void ForceKernel::forces(const Angle* a, const Atom* onlyThis)
 }
 
 // Return Torsion force
-void ForceKernel::forces(const Torsion* t)
+void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
 {
-	// Grab pointers to atoms involved in angle
-	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
-
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
@@ -812,11 +646,8 @@ void ForceKernel::forces(const Torsion* t)
 }
 
 // Calculate Torsion forces for specified Atom only
-void ForceKernel::forces(const Torsion* t, const Atom* onlyThis)
+void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
 {
-	// Grab pointers to atoms involved in angle
-	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
-
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);

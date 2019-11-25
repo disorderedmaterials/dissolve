@@ -22,6 +22,7 @@
 #include "gui/keywordwidgets/vec3double.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "vec3labels.h"
 
 // Constructor
 Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
@@ -52,6 +53,11 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
 	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
 
+	// Set appropriate labels
+	Vec3WidgetLabels::set(ui_.Label1, keyword_->labelType(), 0);
+	Vec3WidgetLabels::set(ui_.Label2, keyword_->labelType(), 1);
+	Vec3WidgetLabels::set(ui_.Label3, keyword_->labelType(), 2);
+	
 	refreshing_ = false;
 }
 
@@ -68,7 +74,7 @@ void Vec3DoubleKeywordWidget::on_Spin1_valueChanged(double value)
 	newVec.x = value;
 	keyword_->setData(newVec);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 // Spin box value changed
@@ -80,7 +86,7 @@ void Vec3DoubleKeywordWidget::on_Spin2_valueChanged(double value)
 	newVec.y = value;
 	keyword_->setData(newVec);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 // Spin box value changed
@@ -92,7 +98,7 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
 	newVec.z = value;
 	keyword_->setData(newVec);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 /*
  * Update

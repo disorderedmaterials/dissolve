@@ -72,7 +72,7 @@ void SpeciesIntra::setMasterParameters(MasterIntra* master)
 }
 
 // Return linked master from which parameters should be taken
-MasterIntra* SpeciesIntra::masterParameters()
+const MasterIntra* SpeciesIntra::masterParameters() const
 {
 	return masterParameters_;
 }
@@ -90,7 +90,7 @@ void SpeciesIntra::detachFromMasterIntra()
 }
 
 // Return parameter source
-SpeciesIntra* SpeciesIntra::parameterSource()
+const SpeciesIntra* SpeciesIntra::parameterSource() const
 {
 	return (masterParameters_ ? masterParameters_ : this);
 }

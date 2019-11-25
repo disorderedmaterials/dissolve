@@ -21,7 +21,7 @@
 
 #include "gui/moduletab.h"
 #include "gui/gui.h"
-#include "gui/modulechartmoduleblock.h"
+#include "gui/charts/moduleblock.h"
 #include "gui/modulewidget.h"
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
@@ -30,7 +30,7 @@
 // Constructor / Destructor
 ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	controlsWidget_ = NULL;
 	moduleWidget_ = NULL;
@@ -54,13 +54,13 @@ ModuleTab::~ModuleTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ModuleTab::tabType() const
+MainTab::TabType ModuleTab::type() const
 {
-	return "ModuleTab";
+	return MainTab::ModuleTabType;
 }
 
 /*
@@ -86,11 +86,10 @@ void ModuleTab::initialiseControls(Module* module)
 	}
 
 	// Set a nice icon for the window
-	setWindowIcon(ModuleChartModuleBlock::modulePixmap(module));
+	setWindowIcon(ModuleBlock::modulePixmap(module));
 
-	// Create the controls widget (a ModuleChartModuleBlock)
-	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
-	controlsWidget_->setSettingsExpanded(true, true);
+	// Create the controls widget (a ModuleBlock)
+	controlsWidget_ = new ModuleBlock(this, module, dissolve_);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	controlsWidget_->hideRemoveButton();
 	splitter_->addWidget(controlsWidget_);
@@ -103,10 +102,10 @@ void ModuleTab::initialiseControls(Module* module)
 		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		splitter_->addWidget(moduleWidget_);
 		splitter_->setStretchFactor(1, 5);
-
-		// Connect signals/slots between the controlsWidget_ and the moduleWidget_
-		connect(controlsWidget_, SIGNAL(run()), this, SLOT(updateModuleWidget()));
 	}
+
+	// Connect signals/slots
+	connect(controlsWidget_, SIGNAL(updateModuleWidget(int)), this, SLOT(updateModuleWidget(int)));
 }
 
 /*
@@ -143,9 +142,9 @@ void ModuleTab::enableSensitiveControls()
 }
 
 // Update controls in module widget only
-void ModuleTab::updateModuleWidget()
+void ModuleTab::updateModuleWidget(int flags)
 {
-	if (moduleWidget_) moduleWidget_->updateControls();
+	if (moduleWidget_) moduleWidget_->updateControls(flags);
 }
 
 /*

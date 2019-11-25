@@ -78,6 +78,7 @@ void DataWidget::on_InteractionViewButton_clicked(bool checked)
 void DataWidget::on_GraphResetButton_clicked(bool checked)
 {
 	dataViewer()->view().showAllData();
+	dataViewer()->view().resetViewMatrix();
 
 	dataViewer()->postRedisplay();
 }
@@ -197,6 +198,16 @@ void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem* item, int column)
 
 	// Refresh the data display
 	dataViewer()->postRedisplay();
+}
+
+// Clear renderable data
+void DataWidget::clearRenderableData()
+{
+	// Clear our data tree first
+	ui_.DataTree->clear();
+
+	// Now clear the renderables
+	dataViewer()->clearRenderables();
 }
 
 // Update toolbar

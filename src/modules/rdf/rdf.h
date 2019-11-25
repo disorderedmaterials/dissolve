@@ -104,7 +104,7 @@ class RDFModule : public Module
 
 	public:
 	// (Re)calculate partial g(r) for the specified Configuration
-	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool allIntra, bool& alreadyUpToDate);
+	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool& alreadyUpToDate);
 	// Calculate smoothed/broadened partial g(r) from supplied partials
 	static bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, const PartialSet& originalgr, PartialSet& weightedgr, PairBroadeningFunction& intraBroadening, int smoothing);
 	// Return effective density for specified Module's target Configurations

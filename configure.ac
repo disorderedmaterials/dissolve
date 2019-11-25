@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DISSOLVE_VERSION],[0.4.3])
+m4_define([DISSOLVE_VERSION],[0.4.7])
 AC_INIT([dissolve], DISSOLVE_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
@@ -83,7 +83,7 @@ if test "$with_gui" = "yes"; then
 
   # Update CFLAGS, includes etc.
   GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS $QTPRINT_LIBS $FTGL_LIBS $FREETYPE_LIBS -lGL"
-  GUI_CFLAGS="-fPIC -std=c++11"
+  GUI_CFLAGS="-fPIC"
   GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTOPENGL_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
 
@@ -119,7 +119,7 @@ AC_SUBST(BUILDDIR)
 AC_SUBST(INSTALLDIR)
 VERSION=DISSOLVE_VERSION
 AC_SUBST(VERSION)
-DISSOLVE_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
+DISSOLVE_CFLAGS="-std=c++11 $PARALLEL_CFLAGS $CHECK_CFLAGS"
 AC_SUBST(DISSOLVE_CFLAGS)
 AC_SUBST(QTMOC)
 AC_SUBST(QTUIC)
@@ -149,6 +149,7 @@ AC_CONFIG_FILES(src/base/Makefile)
 AC_CONFIG_FILES(src/classes/Makefile)
 AC_CONFIG_FILES(src/data/Makefile)
 AC_CONFIG_FILES(src/data/ff/Makefile)
+AC_CONFIG_FILES(src/data/ff/ff_ludwig/Makefile)
 AC_CONFIG_FILES(src/data/sg/Makefile)
 AC_CONFIG_FILES(src/expression/Makefile)
 AC_CONFIG_FILES(src/genericitems/Makefile)
@@ -186,11 +187,13 @@ AC_CONFIG_FILES(src/modules/sq/Makefile)
 AC_CONFIG_FILES(src/modules/test/Makefile)
 AC_CONFIG_FILES(src/procedure/Makefile)
 AC_CONFIG_FILES(src/procedure/nodes/Makefile)
+AC_CONFIG_FILES(src/neta/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
   AC_CONFIG_FILES(src/gui/charts/Makefile)
   AC_CONFIG_FILES(src/gui/delegates/Makefile)
+  AC_CONFIG_FILES(src/gui/gizmos/Makefile)
   AC_CONFIG_FILES(src/gui/helpers/Makefile)
   AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
   AC_CONFIG_FILES(src/gui/viewer/Makefile)

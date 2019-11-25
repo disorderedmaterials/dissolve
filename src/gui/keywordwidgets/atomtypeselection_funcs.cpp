@@ -71,7 +71,7 @@ void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType* atomT
 	item->setCheckState(selection.contains(atomType) ? Qt::Checked : Qt::Unchecked);
 }
 
-// Function type combo changed
+// List item changed
 void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem* item)
 {
 	if (refreshing_) return;
@@ -80,7 +80,7 @@ void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem* item)
 
 	updateSummaryText();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

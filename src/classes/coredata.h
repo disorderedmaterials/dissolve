@@ -24,6 +24,7 @@
 
 #include "classes/masterintra.h"
 #include "base/charstringlist.h"
+#include "base/version.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -51,10 +52,14 @@ class CoreData
 	private:
 	// Core AtomTypes list
 	List<AtomType> atomTypes_;
+	// AtomTypes version
+	VersionCounter atomTypesVersion_;
 
 	public:
 	// Add new AtomType
 	AtomType* addAtomType(Element* el);
+	// Remove specified AtomType
+	void removeAtomType(AtomType* at);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return core AtomTypes list
@@ -67,6 +72,10 @@ class CoreData
 	const char* uniqueAtomTypeName(const char* baseName) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
+	// Bump AtomTypes version
+	void bumpAtomTypesVersion();
+	// Return AtomTypes version
+	int atomTypesVersion() const;
 
 
 	/*
@@ -79,6 +88,8 @@ class CoreData
 	List<MasterIntra> masterAngles_;
 	// List of master Torsions parameters for Species
 	List<MasterIntra> masterTorsions_;
+	// List of master Improper parameters for Species
+	List<MasterIntra> masterImpropers_;
 
 	public:
 	// Add new master Bond parameters
@@ -111,6 +122,16 @@ class CoreData
 	MasterIntra* masterTorsion(int n);
 	// Return whether named master Torsion parameters exist
 	MasterIntra* hasMasterTorsion(const char* name) const;
+	// Add new master Improper parameters
+	MasterIntra* addMasterImproper(const char* name);
+	// Return number of master Impropers parameters in list
+	int nMasterImpropers() const;
+	// Return list of master Improper parameters
+	const List<MasterIntra>& masterImpropers() const;
+	// Return nth master Improper parameters
+	MasterIntra* masterImproper(int n);
+	// Return whether named master Improper parameters exist
+	MasterIntra* hasMasterImproper(const char* name) const;
 	// Return the named master term (of any form) if it exists
 	MasterIntra* findMasterTerm(const char* name) const;
 	// Clear all master terms
@@ -127,6 +148,8 @@ class CoreData
 	public:
 	// Add new Species
 	Species* addSpecies();
+	// Remove specified Species
+	void removeSpecies(Species* sp);
 	// Return number of Species in list
 	int nSpecies() const;
 	// Return core Species list
@@ -151,6 +174,8 @@ class CoreData
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of Configuration in list
 	int nConfigurations() const;
 	// Return core Configuration list

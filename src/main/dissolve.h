@@ -34,7 +34,6 @@
 class Atom;
 class Box;
 class Cell;
-class Grain;
 class Isotopologue;
 class Molecule;
 class ChangeStore;
@@ -55,22 +54,16 @@ class Dissolve
 	private:
 	// Reference to CoreData 
 	CoreData& coreData_;
-	// Whether we are set up, ready for simulation
-	bool setUp_;
 
 	public:
 	// Return reference to CoreData
-	const CoreData& coreData() const;
+	CoreData& coreData();
+	// Return const reference to CoreData
+	const CoreData& constCoreData() const;
 	// Clear all data
 	void clear();
 	// Register GenericItems
 	void registerGenericItems();
-	// Set up everything needed to run the simulation
-	bool setUp();
-	// Flag that the set up is no longer valid and should be done again
-	void invalidateSetUp();
-	// Return whether the simulation has been set up
-	bool isSetUp() const;
 
 
 	/*
@@ -93,6 +86,21 @@ class Dissolve
 
 
 	/*
+	 * Master Terms
+	 * (Exposes lists in coreData_)
+	 */
+	public:
+	// Return list of master Bond parameters
+	const List<MasterIntra>& masterBonds() const;
+	// Return list of master Angle parameters
+	const List<MasterIntra>& masterAngles() const;
+	// Return list of master Torsion parameters
+	const List<MasterIntra>& masterTorsions() const;
+	// Check and print MasterTerm usage
+	void checkMasterTermUsage() const;
+
+
+	/*
 	 * Species Definitions
 	 * (Exposes List<Species> in coreData_)
 	 */
@@ -109,14 +117,10 @@ class Dissolve
 	Species* species(int n);
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
-	// Update Species (or all) Isotopologues (or specified)
-	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
-	// Remove Isotopologue from Species
-	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
 	// Copy AtomType, creating a new one if necessary
-	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	void copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
-	void copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	void copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
 	// Copy Species
 	Species* copySpecies(const Species* species);
 
@@ -135,6 +139,8 @@ class Dissolve
 	bool pairPotentialsIncludeCoulomb_;
 	// Simulation PairPotentials
 	List<PairPotential> pairPotentials_;
+	// Version of AtomTypes at which PairPotential were last generated
+	int pairPotentialAtomTypeVersion_;
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
 
@@ -169,12 +175,10 @@ class Dissolve
 	PairPotential* pairPotential(const char* at1, const char* at2) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
-	// Regenerate all PairPotentials, replacing those currently defined
-	void regeneratePairPotentials(PairPotential::ShortRangeType srType);
-	// Update all currently-defined PairPotentials
-	void updateCurrentPairPotentials();
-	// Generate any missing PairPotentials using the supplied short-range form
-	bool generateMissingPairPotentials(PairPotential::ShortRangeType srType);
+	// Clear and regenerate all PairPotentials, replacing those currently defined
+	void regeneratePairPotentials();
+	// Generate all necessary PairPotentials, adding missing terms where necessary
+	bool generatePairPotentials(AtomType* onlyInvolving = NULL);
 
 
 	/*
@@ -186,6 +190,8 @@ class Dissolve
 	Configuration* addConfiguration();
 	// Own the specified Configuration
 	bool ownConfiguration(Configuration* cfg);
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list
@@ -224,8 +230,14 @@ class Dissolve
 	Module* findMasterModule(const char* moduleType) const;
 	// Create a Module instance for the named Module type
 	Module* createModuleInstance(const char* moduleType);
-	// Search for any instance of any module with the specified unique name
+	// Create a Module instance for the named Module type, and add it to the specified layer
+	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer);
+	// Search for any instance of any Module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
+	// Search for any instance of any Module with the specified Module type
+	RefList<Module> findModuleInstances(const char* moduleType);
+	// Generate unique Module name with base name provided
+	const char* uniqueModuleName(const char* name, Module* excludeThis = NULL);
 	// Delete specified Module instance
 	bool deleteModuleInstance(Module* instance);
 
@@ -242,6 +254,8 @@ class Dissolve
 	public:
 	// Add new processing layer
 	ModuleLayer* addProcessingLayer();
+	// Remove specified processing layer
+	void removeProcessingLayer(ModuleLayer* layer);
 	// Find named processing layer
 	ModuleLayer* findProcessingLayer(const char* name) const;
 	// Own the specified processing layer
@@ -288,20 +302,14 @@ class Dissolve
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
+	// Prepare for main simulation
+	bool prepare();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
 	// Return current simulation step
 	int iteration() const;
 	// Print timing information
 	void printTiming();
-
-
-	/*
-	 * Setup
-	 */
-	public:
-	// Set up all simulation data, checking it as we go
-	bool setUpSimulation();
 
 
 	/*
@@ -350,6 +358,18 @@ class Dissolve
 	const char* restartFilename() const;
 	// Return whether a restart filename has been set
 	bool hasRestartFilename() const;
+
+
+	/*
+	 * Object Management
+	 */
+	public:
+	// Remove all references to the specified Configuration
+	void removeReferencesTo(Configuration* cfg);
+	// Remove all references to the specified Module
+	void removeReferencesTo(Module* module);
+	// Remove all references to the specified Species
+	void removeReferencesTo(Species* sp);
 
 
 	/*

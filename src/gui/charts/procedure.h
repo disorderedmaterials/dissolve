@@ -59,8 +59,8 @@ class ProcedureChart : public ChartBase
 
 
 	/*
-	* QWidget Reimplementations
-	*/
+	 * QWidget Reimplementations
+	 */
 	protected:
 	// Paint event
 	void paintEvent(QPaintEvent* event);

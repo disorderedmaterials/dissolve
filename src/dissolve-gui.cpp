@@ -158,11 +158,6 @@ int main(int argc, char **argv)
 	QCoreApplication::setOrganizationDomain("www.projectaten.com");
 	QCoreApplication::setApplicationName("Dissolve-GUI");
 
-	// Tweak the default QSurfaceFormat
-	QSurfaceFormat surfaceFormat;
-	surfaceFormat.setSamples(4);
-	QSurfaceFormat::setDefaultFormat(surfaceFormat);
-
 	// Set native siblings attribute to prevent odd rendering artefacts on some systems
 	app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
 
@@ -176,7 +171,7 @@ int main(int argc, char **argv)
 	DissolveWindow dissolveWindow(dissolve);
 
 	// If an input file was specified, load it here
-	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFileFromCLI(inputFile, restartFile, ignoreRestart, ignoreLayout)))
+	if ((!inputFile.isEmpty()) && (!dissolveWindow.openLocalFile(inputFile, restartFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;
@@ -186,10 +181,11 @@ int main(int argc, char **argv)
 	if (nIterations > 0)
 	{
 		// Prepare for run
-		if (!dissolve.setUp()) return 1;
+		if (!dissolve.prepare()) return 1;
 
 		// Run main simulation
 		bool result = dissolve.iterate(nIterations);
+		if (!result) return 1;
 	}
 
 	// Update and show the main window

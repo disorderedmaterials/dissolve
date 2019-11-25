@@ -115,6 +115,8 @@ class EPSRModule : public Module
 	const RefDataList<Module,ModuleGroup*>& allTargets() const;
 	// Return grouped target Modules
 	const ModuleGroups& groupedTargets() const;
+	// Add target Modules
+	void addTargets(RefList<Module> targets, const char* groupName = "Default");
 	// Create / retrieve arrays for storage of empirical potential coefficients
 	Array2D< Array<double> >& potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp = -1);
 	// Generate empirical potentials from current coefficients

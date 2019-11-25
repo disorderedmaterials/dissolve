@@ -254,7 +254,7 @@ int main(int argc, char **argv)
 	else Messenger::print("Restart file (if it exists) will be ignored.\n");
 
 	// Prepare for run
-	if (!dissolve.setUp())
+	if (!dissolve.prepare())
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();

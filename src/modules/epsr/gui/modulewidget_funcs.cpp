@@ -30,7 +30,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<EPSRModule*>(module)), dissolve_(dissolve)
+EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), dissolve_(dissolve), module_(dynamic_cast<EPSRModule*>(module))
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -85,8 +85,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	SQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	SQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
-	SQGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	SQGraph_->groupManager().setGroupColouring("Estimated", RenderableGroup::AutomaticIndividualColouring);
+	SQGraph_->groupManager().setGroupVerticalShifting("Estimated", RenderableGroup::IndividualVerticalShifting);
 	SQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
 	SQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
 	SQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
@@ -107,8 +107,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	GRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	GRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
-	GRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	GRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	GRGraph_->groupManager().setGroupColouring("Estimated", RenderableGroup::AutomaticIndividualColouring);
+	GRGraph_->groupManager().setGroupVerticalShifting("Estimated", RenderableGroup::IndividualVerticalShifting);
 	GRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
 	GRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
 	GRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
@@ -192,12 +192,6 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
 	FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
 	FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
-
-
-
-
-
-
 	
 	updateControls();
 
@@ -208,8 +202,12 @@ EPSRModuleWidget::~EPSRModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
-void EPSRModuleWidget::updateControls()
+void EPSRModuleWidget::updateControls(int flags)
 {
 	refreshing_ = true;
 
@@ -345,8 +343,8 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 				 * Partial Structure Factors
 				 */
 
-				// Experimentally-determined unweighted partial
-				SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Exp)", id.get()), "Exp");
+				// Unweighted estimated partial
+				SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Estimated)", id.get()), "Estimated");
 
 				// Calculated / summed partial
 				SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Calc)", id.get()), "Calc");
@@ -359,7 +357,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 				 */
 
 				// Experimentally-determined unweighted partial
-				GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Exp)", id.get()), "Exp");
+				GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Estimated)", id.get()), "Estimated");
 
 				// Calculated / summed partial
 				GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Calc)", id.get()), "Calc");

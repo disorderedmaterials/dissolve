@@ -72,7 +72,7 @@ void LineStipple::addStippleItem(QComboBox* combo, int lineHeight)
 	painter.setRenderHint(QPainter::Antialiasing, false);
 	painter.setRenderHint(QPainter::HighQualityAntialiasing, false);
 	painter.setBackground(QBrush(Qt::white));
-	painter.fillRect(0, 0, lineWidth, lineHeight, QBrush(palette.background()));
+	painter.fillRect(0, 0, lineWidth, lineHeight, QBrush(palette.window()));
 	pen.setDashPattern(dashPattern());
 	painter.setPen(pen);
 	painter.drawLine(line);

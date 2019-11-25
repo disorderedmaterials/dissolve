@@ -232,7 +232,7 @@ bool SpeciesSite::read(LineParser& parser)
 		switch (kwd)
 		{
 			case (SpeciesSite::EndSiteKeyword):
-				Messenger::printVerbose("Found end of Site '%s'.\n", name());
+				Messenger::print("Found end of Site '%s'.\n", name());
 				blockDone = true;
 				break;
 			case (SpeciesSite::OriginKeyword):

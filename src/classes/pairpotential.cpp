@@ -47,29 +47,7 @@ PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(
 	delta_ = -1.0;
 	range_ = 0.0;
 	includeCoulomb_ = true;
-	shortRangeType_ = PairPotential::LennardJonesType;
-}
-
-// Short-range typeKeywords
-const char* ShortRangeTypeKeywords[] = { "None", "LJ", "LJGeometric" };
-
-// Convert text string to ShortRangeType
-PairPotential::ShortRangeType PairPotential::shortRangeType(const char* s)
-{
-	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) if (DissolveSys::sameString(s,ShortRangeTypeKeywords[n])) return (PairPotential::ShortRangeType) n;
-	return PairPotential::nShortRangeTypes;
-}
-
-// Convert ShortRangeType to text string
-const char* PairPotential::shortRangeType(PairPotential::ShortRangeType id)
-{
-	return ShortRangeTypeKeywords[id];
-}
-
-// Return ShortRangeTypes array
-const char** PairPotential::shortRangeTypes()
-{
-	return ShortRangeTypeKeywords;
+	shortRangeType_ = Forcefield::UndefinedType;
 }
 
 // Coulomb Truncation Scheme Keywords
@@ -120,14 +98,8 @@ const char** PairPotential::shortRangeTruncationSchemes()
  * Seed Interaction Type
  */
 
-// Set short-ranged type
-void PairPotential::setShortRangeType(PairPotential::ShortRangeType type)
-{
-	shortRangeType_ = type;
-}
-
 // Return short-ranged type
-PairPotential::ShortRangeType PairPotential::shortRangeType() const
+Forcefield::ShortRangeType PairPotential::shortRangeType() const
 {
 	return shortRangeType_;
 }
@@ -212,18 +184,18 @@ void PairPotential::setData1DNames()
 	dUFull_.setObjectTag(CharString("PairPotential//%s-%s//Force", atomTypeI_->name(), atomTypeJ_->name()));
 }
 
-// Set source parameters from AtomTypes
-bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
+// Set up PairPotential parameters from specified AtomTypes
+bool PairPotential::setUp(AtomType* typeI, AtomType* typeJ)
 {
 	// Check for NULL pointers
 	if (typeI == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setParameters().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setUp().\n");
 		return false;
 	}
 	if (typeJ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setParameters().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setUp().\n");
 		return false;
 	}
 	
@@ -242,59 +214,51 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 		return false;
 	}
 
-	// Combine / set parameters as necessary, depending on the sr interaction type of this PairPotential
-	switch (shortRangeType_)
+	// Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
+	if (atomTypeI_->shortRangeType() == atomTypeJ_->shortRangeType())
 	{
-		case (PairPotential::NoInteractionType):
-			break;
-		case (PairPotential::LennardJonesType):
-			/*
-			 * Combine parameters (Lorentz-Berthelot):
-			 * Parameter 0 = Epsilon
-			 * Parameter 1 = Sigma
-			 */
-			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-			parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1))*0.5;
-			chargeI_ = paramsI.charge();
-			chargeJ_ = paramsJ.charge();
-			break;
-		case (PairPotential::LennardJonesGeometricType):
-			/*
-			 * Combine parameters (Geometric):
-			 * Parameter 0 = Epsilon
-			 * Parameter 1 = Sigma
-			 */
-			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-			parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
-			chargeI_ = paramsI.charge();
-			chargeJ_ = paramsJ.charge();
-			break;
-		default:
-			Messenger::error("Short-range type %i is not accounted for in PairPotential::setParameters().\n", shortRangeType_);
-			return false;
+		shortRangeType_ = atomTypeI_->shortRangeType();
+		switch (shortRangeType_)
+		{
+			case (Forcefield::UndefinedType):
+				return Messenger::error("PairPotential between atom types '%s' and '%s' is undefined.\n", atomTypeI_->name(), atomTypeJ_->name());
+			case (Forcefield::NoInteractionType):
+				break;
+			case (Forcefield::LennardJonesType):
+				/*
+				* Combine parameters (Lorentz-Berthelot):
+				* Parameter 0 = Epsilon
+				* Parameter 1 = Sigma
+				*/
+				parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+				parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1))*0.5;
+				chargeI_ = paramsI.charge();
+				chargeJ_ = paramsJ.charge();
+				break;
+			case (Forcefield::LennardJonesGeometricType):
+				/*
+				* Combine parameters (Geometric):
+				* Parameter 0 = Epsilon
+				* Parameter 1 = Sigma
+				*/
+				parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+				parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
+				chargeI_ = paramsI.charge();
+				chargeJ_ = paramsJ.charge();
+				break;
+			default:
+				Messenger::error("Short-range type %i is not accounted for in PairPotential::setUp().\n", shortRangeType_);
+				return false;
+		}
+	}
+	else
+	{
+		// Can't mix parameters of different functional forms in general, so complain...
+		shortRangeType_ = Forcefield::UndefinedType;
+		return Messenger::error("Can't generate potential parameters between atom types '%s' and '%s', which have short-range types %s and %s.\nAdd a suitable potential manually.\n", atomTypeI_->name(), atomTypeJ_->name(), Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()), Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
 	}
 
 	return true;
-}
-
-// Set source AtomType pointers only
-void PairPotential::setAtomTypes(AtomType* typeI, AtomType* typeJ)
-{
-	// Check for NULL pointers
-	if (typeI == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setAtomTypes().\n");
-		return;
-	}
-	if (typeJ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setAtomTypes().\n");
-		return;
-	}
-
-	atomTypeI_ = typeI;
-	atomTypeJ_ = typeJ;
-	setData1DNames();
 }
 
 // Return first AtomType name
@@ -388,10 +352,10 @@ double PairPotential::chargeJ() const
  */
 
 // Return analytic short range potential energy
-double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
 {
-	if (type == PairPotential::NoInteractionType) return 0.0;
-	else if ((type == PairPotential::LennardJonesType) || (type == PairPotential::LennardJonesGeometricType))
+	if (type == Forcefield::NoInteractionType) return 0.0;
+	else if ((type == Forcefield::LennardJonesType) || (type == Forcefield::LennardJonesGeometricType))
 	{
 		/*
 		 * Standard Lennard-Jones potential
@@ -428,10 +392,10 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 }
 
 // Return analytic short range force
-double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
 {
-	if (type == PairPotential::NoInteractionType) return 0.0;
-	else if ((type == PairPotential::LennardJonesType) || (type == PairPotential::LennardJonesGeometricType))
+	if (type == Forcefield::NoInteractionType) return 0.0;
+	else if ((type == Forcefield::LennardJonesType) || (type == Forcefield::LennardJonesGeometricType))
 	{
 		/*
 		 * Standard Lennard-Jones potential
@@ -523,8 +487,8 @@ void PairPotential::calculateDUFull()
 	dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 }
 
-// Set up and generate initial potential
-bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
+// Generate energy and force tables
+bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
 {
 	// Check that AtomType pointers were set at some pointer
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
@@ -737,43 +701,4 @@ void PairPotential::adjustUAdditional(Data1D u, double factor)
 
 	calculateUFull();
 	calculateDUFull();
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool PairPotential::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-{
-#ifdef PARALLEL
-	// PairPotential type
-	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_), root)) return false;
-	if (!procPool.broadcast(includeCoulomb_, root)) return false;
-
-	// Source Parameters
-	CharString typeName;
-	if (procPool.poolRank() == root) typeName = atomTypeI_->name();
-	if (!procPool.broadcast(typeName, root)) return false;
-	atomTypeI_ = coreData.findAtomType(typeName);
-	if (procPool.poolRank() == root) typeName = atomTypeJ_->name();
-	if (!procPool.broadcast(typeName, root)) return false;
-	atomTypeJ_ = coreData.findAtomType(typeName);
-	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
-	if (!procPool.broadcast(chargeI_, root)) return false;
-	if (!procPool.broadcast(chargeJ_, root)) return false;
-
-	// Tabulation Parameters
-	if (!procPool.broadcast(range_, root)) return false;
-	if (!procPool.broadcast(nPoints_, root)) return false;
-	if (!procPool.broadcast(delta_, root)) return false;
-	if (!procPool.broadcast(rDelta_, root)) return false;
-
-	// Tabulations
-	uOriginal_.broadcast(procPool, root, coreData);
-	uAdditional_.broadcast(procPool, root, coreData);
-	uFull_.broadcast(procPool, root, coreData);
-	dUFull_.broadcast(procPool, root, coreData);
-#endif
-	return true;
 }

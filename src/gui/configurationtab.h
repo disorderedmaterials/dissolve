@@ -24,7 +24,6 @@
 
 #include "gui/ui_configurationtab.h"
 #include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class Configuration;
@@ -51,11 +50,15 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle() const;
 
 
 	/*
@@ -67,17 +70,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 	public:
 	// Return displayed Configuration
-	const Configuration* configuration() const;
-
-
-	/*
-	 * SubWidget / SubWindow Handling
-	 */
-	public:
-	// Return the tab's SubWindow area, if it has one
-	QMdiArea* subWindowArea();
-	// Return the tab's SubWidget layout, if it has one
-	QLayout* subWidgetLayout();
+	Configuration* configuration() const;
 
 
 	/*
@@ -100,14 +93,15 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	 * Signals / Slots
 	 */
 	private slots:
+	// Content
+	void on_GeneratorRegenerateButton_clicked(bool checked);
 	// Definition
-	void on_NameEdit_textChanged(QString text);
 	void on_TemperatureSpin_valueChanged(double value);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
-	// Content
-	void on_GeneratorGenerateButton_clicked(bool checked);
+	// Size Factor Scaling
+	void on_RequestedSizeFactorSpin_valueChanged(double value);
 
 
 	/*

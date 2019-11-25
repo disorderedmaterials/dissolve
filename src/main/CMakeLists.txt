@@ -12,9 +12,10 @@ add_library(main
   keywords_pairpotentials.cpp
   keywords_simulation.cpp
   layers.cpp
+  masterterms.cpp
   modules.cpp
+  objects.cpp
   pairpotentials.cpp
-  setup.cpp
   simulation.cpp
   species.cpp
 

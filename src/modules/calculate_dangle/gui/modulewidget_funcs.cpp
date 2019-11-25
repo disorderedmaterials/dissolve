@@ -46,7 +46,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 
 	View& angleView = angleGraph_->view();
 	angleView.setViewType(View::FlatXYView);
-	angleView.axes().setTitle(0, "Angle, \\sym{degrees}");
+	angleView.axes().setTitle(0, "Angle, \\sym{degree}");
 	angleView.axes().setRange(0, 0.0, 180.0);
 	angleView.axes().setTitle(1, "Normalised Population");
 	angleView.axes().setRange(1, 0.0, 5.0);
@@ -56,10 +56,10 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	dAngleGraph_ = ui.DAnglePlotWidget->dataViewer();
 
 	View& dAngleView = dAngleGraph_->view();
-	dAngleView.setViewType(View::FlatXYView);
+	dAngleView.setViewType(View::AutoStretchedView);
 	dAngleView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleView.axes().setRange(0, 0.0, 5.0);
-	dAngleView.axes().setTitle(1, "Angle, \\sym{degrees}");
+	dAngleView.axes().setTitle(1, "Angle, \\sym{degree}");
 	dAngleView.axes().setRange(1, 0.0, 180.0);
 	dAngleView.axes().setTitle(2, "Normalised Population");
 	dAngleView.axes().setRange(2, 0.0, 0.01);
@@ -73,7 +73,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 }
 
 // Update controls within widget
-void CalculateDAngleModuleWidget::updateControls()
+void CalculateDAngleModuleWidget::updateControls(int flags)
 {
 	ui.RDFPlotWidget->updateToolbar();
 	ui.AnglePlotWidget->updateToolbar();

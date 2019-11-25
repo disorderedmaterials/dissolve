@@ -70,6 +70,8 @@ class ModuleGroups
 	public:
 	// Add Module to specified group, creating it if necessary
 	ModuleGroup* addModule(Module* module, const char* groupName);
+	// Remove Module
+	void removeModule(Module* module);
 	// Number of Modules present of all groups
 	int nModules() const;
 	// Return current list of groups

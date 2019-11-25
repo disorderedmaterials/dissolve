@@ -24,8 +24,7 @@
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
 #include "classes/atomtype.h"
-#include "classes/coredata.h"
-#include "classes/species.h"
+#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
 
 /*
@@ -36,19 +35,19 @@
  * 
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
- * All energy values are in kcal.
+ * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
+// Constructor
 Forcefield_SPCFw::Forcefield_SPCFw()
 {
 	static ForcefieldAtomType atomTypes[] =
 	{
-		// 	Z	El	FFID	Name		Description
+		// 	Z	El	FFID	Name		Type		Description
 		//						q	Epsilon	Sigma
-		{ this, 1,	"H",	1,	"HW",		"Water hydrogen",
+		{ this, ELEMENT_H,	1,	"HW",		"-O(nh=2)",	"Water hydrogen",
 								0.41,	0.0,	0.0 },
-		{ this, 8,	"O",	2,	"OW",		"Water oxygen",
+		{ this, ELEMENT_O,	2,	"OW",		"-H(n=2)",	"Water oxygen",
 								-0.82,	0.6503,	3.165492 }
 	};
 
@@ -65,6 +64,7 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 	};
 }
 
+// Destructor
 Forcefield_SPCFw::~Forcefield_SPCFw()
 {
 }
@@ -74,68 +74,19 @@ Forcefield_SPCFw::~Forcefield_SPCFw()
  */
 
 // Return name of Forcefield
-const char* Forcefield_SPCFw::name()
+const char* Forcefield_SPCFw::name() const
 {
 	return "SPC/Fw";
 }
 
-/*
- * Atom Type Data
- */
-
-// Determine and return atom type for specified SpeciesAtom
-ForcefieldAtomType* Forcefield_SPCFw::determineAtomType(SpeciesAtom* i) const
+// Return description for Forcefield
+const char* Forcefield_SPCFw::description() const
 {
-	switch (i->element()->Z())
-	{
-		// Hydrogen
-		case (ELEMENT_H): 
-				if (isBoundTo(i, &Elements::element(ELEMENT_O), 1, false)) return atomTypeByName("HW", i->element());
-			break;
-		// Oxygen
-		case (ELEMENT_O):
-				if (isBoundTo(i, &Elements::element(ELEMENT_H), 2, false)) return atomTypeByName("OW", i->element());
-			break;
-		// Default
-		default:
-			break;
-	}
-
-	return NULL;
+	return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with improved liquid-state properties', <i>Journal of Chemical Physics</i> <b>124</b> 024503 (2006), http://dx.doi.org/10.1063/1.2136877";
 }
 
-/*
- * Term Assignment
- */
-
-
-// Assign suitable atom types to the supplied Species
-bool Forcefield_SPCFw::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
+// Return short-range interaction style for AtomTypes
+Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const
 {
-	// Loop over Species atoms
-	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next())
-	{
-		// If keepExisting == true, don't reassign a type to this atom if one already exists
-		if (keepExisting && i->atomType()) continue;
-
-		ForcefieldAtomType* atomType = determineAtomType(i);
-		if (!atomType) Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
-		else
-		{
-			// Check if an AtomType of the same name already exists - if it does, just use that one
-			AtomType* at = coreData.findAtomType(atomType->typeName());
-			if (!at)
-			{
-				at = coreData.addAtomType(i->element());
-				at->setName(atomType->typeName());
-
-				// Copy parameters from the Forcefield's atom type
-				at->parameters() = atomType->parameters();
-			}
-
-			i->setAtomType(at);
-		}
-	}
-
-	return true;
+	return Forcefield::LennardJonesType;
 }

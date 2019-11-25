@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "3")
+set(VERSION_PATCH "7")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -23,7 +23,7 @@ set(CMAKE_AUTOMOC OFF)
 # Set policy for automatic linkage of Qt libs to project
 CMAKE_POLICY(SET CMP0020 NEW)
 
-# Request C++11 Standard Support (Required for Qt 5.7)
+# Request C++11 Standard Support (Required for Qt 5.7 and certain other parts of the code)
 set(CMAKE_CXX_STANDARD 11)
 
 # Catch defines
@@ -48,7 +48,7 @@ if(GUI)
   # Add extra functions
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
   include(FindFTGL)
-  include(FindGLEXT)
+
   find_package(Qt5Widgets 5.4 REQUIRED)
   find_package(Qt5Core 5.4 REQUIRED)
   find_package(Qt5Gui 5.4 REQUIRED)
@@ -56,7 +56,6 @@ if(GUI)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
-  find_package(GLEXT REQUIRED)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
   set(CMAKE_AUTOMOC OFF)
@@ -79,13 +78,12 @@ if(WIN32)
   if(GUI)
     include_directories(
       ${FTGL_INCLUDE_DIRS}
-      ${GLEXT_INCLUDE_DIRS}
     )
   endif(GUI)
  
   # Add global NOMINMAX define for Windows systems, and inhibit console creation
   ADD_DEFINITIONS("-DNOMINMAX")
-  SET(GUI_TYPE WIN32)
+  #SET(GUI_TYPE WIN32)
   if(MINGW)
     SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
   endif(MINGW)
@@ -106,6 +104,9 @@ endif(UNIX)
 if(APPLE)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+
+  # Suppress warnings for undefined template vars
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
 
   if(PARALLEL)
     set (target_name dissolve)
@@ -179,7 +180,10 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module export import procedure procedurenodes keywords expression genericitems base math data ff
+  main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
+
+  # Forcefields
+  ff_ludwig
 
   # Modules
   analysemodule
@@ -277,8 +281,10 @@ if(GUI)
     viewer
     widgets
     keywordwidgets
+    gizmos
     delegates
     charts
+    subwindows
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

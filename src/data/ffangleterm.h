@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDANGLETERM_H
-#define DISSOLVE_FORCEFIELDANGLETERM_H
+#ifndef DISSOLVE_FORCEFIELD_ANGLETERM_H
+#define DISSOLVE_FORCEFIELD_ANGLETERM_H
 
 #include "classes/speciesangle.h"
 #include "base/charstring.h"
@@ -35,7 +35,7 @@ class ForcefieldAngleTerm : public ListItem<ForcefieldAngleTerm>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldAngleTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::nAngleFunctions, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAngleTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldAngleTerm();
 
 

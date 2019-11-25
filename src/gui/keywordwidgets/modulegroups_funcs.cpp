@@ -85,16 +85,42 @@ void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module* module, bool
 	item->setText(groups.groupName(module));
 }
 
-// Function type combo changed
+// Table item changed
 void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem* item)
 {
 	if (refreshing_) return;
 
-	updateKeywordData();
+	// Get the Module pointer and check status from column 0 of the current row
+	Module* module = VariantPointer<Module>(ui_.SelectionTable->item(item->row(), 0)->data(Qt::UserRole));
+	if (!module) return;
+	bool isSelected = (ui_.SelectionTable->item(item->row(), 0)->checkState() == Qt::Checked);
+
+	// Get group text from column 1 of the current row
+	QString groupName = ui_.SelectionTable->item(item->row(), 1)->text();
+
+	// Check the column of the item
+	switch (item->column())
+	{
+		// Module (checked if a target)
+		case (0):
+			if (isSelected) keyword_->data().addModule(module, qPrintable(groupName));
+			else keyword_->data().removeModule(module);
+			keyword_->hasBeenSet();
+			break;
+		// Group name
+		case (1):
+			// Take the new name and try to re-add the current Module to the (new) group (only if the Module is selected...)
+			if (isSelected)
+			{
+				keyword_->data().addModule(module, qPrintable(groupName));
+				keyword_->hasBeenSet();
+			}
+			break;
+	}
 
 	updateSummaryText();
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
@@ -116,7 +142,7 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
 	// Update the list widget
-	TableWidgetRefListUpdater<ModuleGroupsKeywordWidget,Module> tableUpdater(ui_.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
+	TableWidgetUpdater<ModuleGroupsKeywordWidget,Module> tableUpdater(ui_.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
 
 	ui_.SelectionTable->resizeColumnToContents(0);
 
@@ -128,23 +154,7 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData& coreData)
 // Update keyword data based on widget values
 void ModuleGroupsKeywordWidget::updateKeywordData()
 {
-	// Loop over items in the QListWidget, adding the associated Modules/groups for any that are checked
-	ModuleGroups newGroups;
-	newGroups.setAllowedModuleTypes(keyword_->data().allowedModuleTypes());
-	for (int n=0; n<ui_.SelectionTable->rowCount(); ++n)
-	{
-		// Get selection status and Module pointer from first column
-		QTableWidgetItem* item = ui_.SelectionTable->item(n, 0);
-		Module* module = VariantPointer<Module>(item->data(Qt::UserRole));
-		if ((!module) || (item->checkState() != Qt::Checked)) continue;
-
-		// Second column contains group name
-		QString group = ui_.SelectionTable->item(n, 1)->text();
-		newGroups.addModule(module, qPrintable(group));
-	}
-
-	// Update the data
-	keyword_->setData(newGroups);
+	// Not used
 }
 
 // Update summary text

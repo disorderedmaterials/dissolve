@@ -16,6 +16,7 @@ add_library(math
   histogram3d.cpp
   integrator.cpp
   interpolator.cpp
+  limits.cpp
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
@@ -47,6 +48,7 @@ add_library(math
   histogram3d.h
   integrator.h
   interpolator.h
+  limits.h
   mathfunc.h
   matrix3.h
   matrix4.h

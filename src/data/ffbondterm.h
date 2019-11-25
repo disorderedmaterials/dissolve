@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDBONDTERM_H
-#define DISSOLVE_FORCEFIELDBONDTERM_H
+#ifndef DISSOLVE_FORCEFIELD_BONDTERM_H
+#define DISSOLVE_FORCEFIELD_BONDTERM_H
 
 #include "classes/speciesbond.h"
 #include "base/charstring.h"
@@ -35,7 +35,7 @@ class ForcefieldBondTerm : public ListItem<ForcefieldBondTerm>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldBondTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::nBondFunctions, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldBondTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldBondTerm();
 
 

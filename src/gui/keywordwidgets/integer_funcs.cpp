@@ -56,7 +56,7 @@ void IntegerKeywordWidget::myValueChanged(int newValue)
 
 	keyword_->setData(newValue);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

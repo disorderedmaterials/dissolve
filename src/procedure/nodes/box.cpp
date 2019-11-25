@@ -49,6 +49,12 @@ bool BoxProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 	return (context == ProcedureNode::GenerationContext);
 }
 
+// Return whether a name for the node must be provided
+bool BoxProcedureNode::mustBeNamed() const
+{
+	return false;
+}
+
 /* 
  * Execute
  */

@@ -22,13 +22,14 @@
 #include "gui/viewer/render/renderablespecies.h"
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
+#include "classes/atom.h"
 #include "data/elementcolours.h"
 
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
-	displayStyle_ = LinesStyle;
+	displayStyle_ = SpheresStyle;
 	linesAtomRadius_ = 0.05;
 	spheresAtomRadius_ = 0.3;
 	spheresBondRadius_ = 0.1;
@@ -199,7 +200,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next())
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
+		while (const SpeciesBond* b = bondIterator.iterate())
 		{
 			// Determine half delta i-j for bond
 			const Vec3<double> ri = b->i()->r();
@@ -237,7 +239,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next()) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
+		DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
+		while (const SpeciesBond* b = bondIterator.iterate()) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
 	}
 }
 
@@ -266,6 +269,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
 	const GLfloat* colour;
 	Matrix4 A;
+	const Atom* i;
+	const SpeciesBond* b;
 
 	if (displayStyle_ == LinesStyle)
 	{
@@ -295,12 +300,14 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			}
 			else
 			{
-				RefListIterator<SpeciesBond> bondIterator(i->bonds());
-				while (SpeciesBond* b = bondIterator.iterate())
+				// Draw all bonds from this atom
+				const PointerArray<SpeciesBond>& bonds = i->bonds();
+				for (int n=0; n<bonds.nItems(); ++n)
 				{
-					// Determine half delta i-j for bond
 					const Vec3<double> ri = i->r();
-					const Vec3<double> dij = (b->partner(i)->r() - ri) * 0.5;
+					const Vec3<double> dij = (bonds.at(n)->partner(i)->r() - ri) * 0.5;
+
+					// Draw bond halves
 					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
 				}
 			}

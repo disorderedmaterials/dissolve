@@ -183,7 +183,7 @@ void AddConfigurationWizard::reset()
 	importTarget_ = new Configuration;
 
 	// Set a new, unique name ready on the final page
-	ui_.FinishNameEdit->setText(dissolveReference_->coreData().uniqueConfigurationName("NewConfiguration"));
+	ui_.FinishNameEdit->setText(dissolveReference_->constCoreData().uniqueConfigurationName("NewConfiguration"));
 }
 
 /*

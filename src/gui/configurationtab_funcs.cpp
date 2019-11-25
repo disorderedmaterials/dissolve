@@ -23,6 +23,7 @@
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/getconfigurationnamedialog.h"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -47,7 +48,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
 	// Set target for ConfigurationViewer
-	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
+	ui_.ViewerWidget->setConfiguration(configuration_);
 
 	// Set target for ProcedureEditor, and connect signals
 	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
@@ -56,7 +57,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
-	ui_.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
+	ui_.LayerPanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -64,13 +65,37 @@ ConfigurationTab::~ConfigurationTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ConfigurationTab::tabType() const
+MainTab::TabType ConfigurationTab::type() const
 {
-	return "ConfigurationTab";
+	return MainTab::ConfigurationTabType;
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString ConfigurationTab::getNewTitle(bool& ok)
+{
+	// Get a new, valid name for the Configuration
+	GetConfigurationNameDialog nameDialog(this, dissolve_.coreData());
+	ok = nameDialog.get(configuration_, configuration_->name());
+
+	if (ok)
+	{
+		// Rename our Configuration, and flag that our data has been modified
+		configuration_->setName(qPrintable(nameDialog.newName()));
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
+}
+
+// Return whether the title of the tab can be changed
+bool ConfigurationTab::canChangeTitle() const
+{
+	return true;
 }
 
 /*
@@ -78,7 +103,7 @@ const char* ConfigurationTab::tabType() const
  */
 
 // Return displayed Configuration
-const Configuration* ConfigurationTab::configuration() const
+Configuration* ConfigurationTab::configuration() const
 {
 	return configuration_;
 }
@@ -92,8 +117,7 @@ void ConfigurationTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Definition
-	ui_.NameEdit->setText(configuration_->name());
+	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
 	// Size Factor
@@ -113,10 +137,9 @@ void ConfigurationTab::updateControls()
 	// Input Coordinates
 	ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
-// 	ui_.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	// Viewer
-	ui_.ViewerWidget->configurationViewer()->postRedisplay();
+	ui_.ViewerWidget->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -124,14 +147,16 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab
 void ConfigurationTab::disableSensitiveControls()
 {
-	ui_.DefinitionGroup->setEnabled(false);
+	ui_.GeneratorGroup->setEnabled(false);
+	ui_.TemperatureGroup->setEnabled(false);
 	ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Enable sensitive controls within tab
 void ConfigurationTab::enableSensitiveControls()
 {
-	ui_.DefinitionGroup->setEnabled(true);
+	ui_.GeneratorGroup->setEnabled(true);
+	ui_.TemperatureGroup->setEnabled(true);
 	ui_.SizeFactorGroup->setEnabled(true);
 }
 
@@ -139,13 +164,21 @@ void ConfigurationTab::enableSensitiveControls()
  * Signals / Slots
  */
 
-void ConfigurationTab::on_NameEdit_textChanged(QString text)
+void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 {
-	if (refreshing_) return;
+	// Are we sure that's what we want to do?
+	QMessageBox queryBox;
+	queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
 
-	configuration_->setName(qPrintable(text));
-
-	dissolveWindow_->setModified();
+	if (ret == QMessageBox::Yes)
+	{
+		configuration_->initialiseContent(dissolve_.worldPool(), dissolve_.pairPotentialRange(), true);
+		updateControls();
+	}
 }
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
@@ -168,21 +201,14 @@ void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 	if (refreshing_) return;
 }
 
-void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
+// Size Factor Scaling
+void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 {
-	// Are we sure that's what we want to do?
-	QMessageBox queryBox;
-	queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+	if (refreshing_) return;
 
-	if (ret == QMessageBox::Yes)
-	{
-		configuration_->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
-		updateControls();
-	}
+	configuration_->setRequestedSizeFactor(value);
+
+	dissolveWindow_->setModified();
 }
 
 /*

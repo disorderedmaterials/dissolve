@@ -23,25 +23,30 @@
 #define DISSOLVE_SPECIESTORSION_H
 
 #include "classes/speciesintra.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "base/enumoptions.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
 class ProcessPool;
 
-/*
- * SpeciesTorsion Definition
- */
-class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
+// SpeciesTorsion Definition
+class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTorsion>
 {
 	public:
 	// Constructor
 	SpeciesTorsion();
 	// Destructor
 	~SpeciesTorsion();
+
+
+	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
 
 
 	/*
@@ -89,21 +94,15 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 	// Torsion functional forms
 	enum TorsionFunction
 	{
+		NoForm,
 		CosineForm,
 		Cos3Form,
 		Cos4Form,
 		Cos3CForm,
-		UFFCosineForm,
-		nTorsionFunctions
+		UFFCosineForm
 	};
-	// Convert string to functional form
-	static TorsionFunction torsionFunction(const char* s);
-	// Return functional form text
-	static const char* torsionFunction(TorsionFunction func);
-	// Return functional form array
-	static const char** torsionFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(TorsionFunction func);
+	// Return enum options for TorsionFunction
+	static EnumOptions<TorsionFunction> torsionFunctions(); 
 
 	public:
 	// Set up any necessary parameters
@@ -111,7 +110,7 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 	// Return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

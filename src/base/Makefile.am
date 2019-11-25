@@ -2,7 +2,6 @@ noinst_LTLIBRARIES = libbase.la
 
 libbase_la_SOURCES = charstring.cpp charstringlist.cpp
 libbase_la_SOURCES += enumoption.cpp enumoptionsbase.cpp enumoptionslist.cpp
-libbase_la_SOURCES += fileandformat.cpp
 libbase_la_SOURCES += geometry.cpp
 libbase_la_SOURCES += lineparser.cpp
 libbase_la_SOURCES += messenger.cpp
@@ -16,7 +15,6 @@ libbase_la_SOURCES += version.cpp
 noinst_HEADERS = charstring.h charstringlist.h
 noinst_HEADERS += enumoption.h enumoptionsbase.h enumoptions.h enumoptionslist.h
 noinst_HEADERS += dummyclass.h
-noinst_HEADERS += fileandformat.h
 noinst_HEADERS += geometry.h
 noinst_HEADERS += lineparser.h
 noinst_HEADERS += messenger.h

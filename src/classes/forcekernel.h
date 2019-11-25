@@ -28,12 +28,14 @@
 
 // Forward Declarations
 class Atom;
-class Grain;
-class Cell;
 class Box;
+class Cell;
+class ChangeStore;
 class Configuration;
 class PotentialMap;
-class ChangeStore;
+class SpeciesAngle;
+class SpeciesBond;
+class SpeciesTorsion;
 
 // ForceKernel
 class ForceKernel
@@ -73,16 +75,8 @@ class ForceKernel
 	private:
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
 	void forcesWithoutMim(const Atom* i, const Atom* j, double scale = 1.0);
-	// Calculate inter-particle forces between Atom and Grain provided (no minimum image calculation)
-	void forcesWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ);
-	// Calculate inter-particle forces between Grains provided (no minimum image calculation)
-	void forcesWithoutMim(const Grain* grainI, const Grain* grainJ);
 	// Calculate inter-particle forces between Atoms provided (minimum image calculation)
 	void forcesWithMim(const Atom* i, const Atom* j, double scale = 1.0);
-	// Calculate inter-particle forces between Atom and Grain provided (minimum image calculation)
-	void forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ);
-	// Calculate inter-particle forces between Grains provided (minimum image calculation)
-	void forcesWithMim(const Grain* grainI, const Grain* grainJ);
 
 
 	/*
@@ -99,26 +93,24 @@ class ForceKernel
 	void forces(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy);
 	// Calculate forces between atom and world
 	void forces(const Atom* i, ProcessPool::DivisionStrategy strategy);
-	// Calculate forces between grain and world
-	void forces(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy);
 
 
 	/*
 	 * Intramolecular Terms
 	 */
 	public:
-	// Calculate Bond forces
-	void forces(const Bond* b);
-	// Calculate Bond forces for specified Atom only
-	void forces(const Bond* b, const Atom* onlyThis);
-	// Calculate Angle forces
-	void forces(const Angle* a);
-	// Calculate Angle forces for specified Atom only
-	void forces(const Angle* a, const Atom* onlyThis);
-	// Calculate Torsion forces
-	void forces(const Torsion* t);
-	// Calculate Torsion forces for specified Atom only
-	void forces(const Torsion* t, const Atom* onlyThis);
+	// Calculate SpeciesBond forces
+	void forces(const SpeciesBond* b, const Atom* i, const Atom* j);
+	// Calculate SpeciesBond forces for specified Atom only
+	void forces(const Atom* onlyThis, const SpeciesBond* b, const Atom* i, const Atom* j);
+	// Calculate SpeciesAngle forces
+	void forces(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k);
+	// Calculate SpeciesAngle forces for specified Atom only
+	void forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k);
+	// Calculate SpeciesTorsion forces
+	void forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l);
+	// Calculate SpeciesTorsion forces for specified Atom only
+	void forces(const Atom* onlyThis, const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l);
 
 
 	/*

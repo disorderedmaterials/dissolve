@@ -31,10 +31,10 @@ const char* NiceData1DImportFormatKeywords[] = { "Simple XY data (x = bin centre
 // Constructor
 Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format)
 {
-	xColumn_ = 0;
-	yColumn_ = 1;
-	errorColumn_ = -1;
-	removeAverageLevelXMin_ = -1.0;
+	keywords_.add("Columns", new IntegerKeyword(1, 1), "X", "Column index to use for x values");
+	keywords_.add("Columns", new IntegerKeyword(2, 1), "Y", "Column index to use for y values");
+	keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
+	keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage", "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
 }
 
 // Destructor
@@ -71,99 +71,6 @@ Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat(
 }
 
 /*
- * Additional Options
- */
-
-// Return enum option info for AdditionalOption
-EnumOptions<Data1DImportFileFormat::AdditionalOption> Data1DImportFileFormat::additionalOptions()
-{
-	static EnumOptionsList AdditionalOptionOptions = EnumOptionsList() <<
-		EnumOption(Data1DImportFileFormat::ErrorColumnOption, 	"e",			1) <<
-		EnumOption(Data1DImportFileFormat::RemoveAverageOption, 	"removeaverage",	1) <<
-		EnumOption(Data1DImportFileFormat::XColumnOption, 		"x",			1) <<
-		EnumOption(Data1DImportFileFormat::YColumnOption, 		"y",			1);
-
-	static EnumOptions<Data1DImportFileFormat::AdditionalOption> options("Data1DImportOption", AdditionalOptionOptions);
-
-	return options;
-}
-
-// Parse additional option
-bool Data1DImportFileFormat::parseOption(const char* arg)
-{
-	// Split arg into parts before and after the '=', and parse the value string into comma-delimited parts
-	CharString key = DissolveSys::beforeChar(arg, '=');
-	CharString value = DissolveSys::afterChar(arg, '=');
-	LineParser valueParser;
-	valueParser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
-
-	// Check if we have a valid key and, if so, have appropriately been provided a value
-	if (!additionalOptions().isValid(key)) return additionalOptions().errorAndPrintValid(key);
-	AdditionalOption aa = additionalOptions().enumeration(key);
-	if (!additionalOptions().validNArgs(aa, valueParser.nArgs())) return false;
-
-	// Act on the option
-	switch (aa)
-	{
-		case (Data1DImportFileFormat::ErrorColumnOption):
-			errorColumn_ = value.asInteger() - 1;
-			break;
-		case (Data1DImportFileFormat::RemoveAverageOption):
-			removeAverageLevelXMin_ = value.asDouble();
-			break;
-		case (Data1DImportFileFormat::XColumnOption):
-			xColumn_ = value.asInteger() - 1;
-			break;
-		case (Data1DImportFileFormat::YColumnOption):
-			yColumn_ = value.asInteger() - 1;
-			break;
-		default:
-			return Messenger::error("Epic Developer Fail - Don't know how to deal with the %s additional option.\n", key.get());
-			break;
-	}
-
-	return true;
-}
-
-// Return whether this file/format has any additional options to write
-bool Data1DImportFileFormat::hasAdditionalOptions() const
-{
-	return true;
-}
-
-// Return additional options as string
-const char* Data1DImportFileFormat::additionalOptionsAsString() const
-{
-	static CharString args;
-
-	args.clear();
-	if (xColumn_ != 0) args.strcatf(" x=%i", xColumn_+1);
-	if (yColumn_ != 1) args.strcatf(" y=%i", yColumn_+1);
-	if (errorColumn_ != -1) args.strcatf(" e=%i", errorColumn_+1);
-	if (removeAverageLevelXMin_ > 0.0) args.strcatf(" removeaverage=%f", removeAverageLevelXMin_);
-
-	return args.get();
-}
-
-// Return column used for x values
-int Data1DImportFileFormat::xColumn() const
-{
-	return xColumn_;
-}
-
-// Return column used for y values
-int Data1DImportFileFormat::yColumn() const
-{
-	return yColumn_;
-}
-
-// Return column used for errors
-int Data1DImportFileFormat::errorColumn() const
-{
-	return errorColumn_;
-}
-
-/*
  * Import Functions
  */
 
@@ -197,10 +104,11 @@ bool Data1DImportFileFormat::importData(LineParser& parser, Data1D& data)
 
 	// Handle any additional options
 	// --Subtract average level from data?
-	if (removeAverageLevelXMin_ > 0.0)
+	const double removeAverage = keywords_.asDouble("RemoveAverage");
+	if (removeAverage > 0.0)
 	{
-		double level = Filters::subtractAverage(data, removeAverageLevelXMin_);
-		Messenger::print("Removed average level of %f from data, forming average over x >= %f.\n", level, removeAverageLevelXMin_);
+		double level = Filters::subtractAverage(data, removeAverage);
+		Messenger::print("Removed average level of %f from data, forming average over x >= %f.\n", level, removeAverage);
 	}
 
 	return result;

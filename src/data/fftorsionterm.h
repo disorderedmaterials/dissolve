@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDTORSIONTERM_H
-#define DISSOLVE_FORCEFIELDTORSIONTERM_H
+#ifndef DISSOLVE_FORCEFIELD_TORSIONTERM_H
+#define DISSOLVE_FORCEFIELD_TORSIONTERM_H
 
 #include "classes/speciestorsion.h"
 #include "base/charstring.h"
@@ -35,7 +35,7 @@ class ForcefieldTorsionTerm : public ListItem<ForcefieldTorsionTerm>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldTorsionTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, const char* typeL = NULL, SpeciesTorsion::TorsionFunction form = SpeciesTorsion::nTorsionFunctions, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldTorsionTerm(Forcefield* parent = NULL, const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, const char* typeL = NULL, SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldTorsionTerm();
 
 

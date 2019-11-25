@@ -508,8 +508,8 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			return Messenger::error("A node named '%s' is already in scope.\n", parser.hasArg(1) ? parser.argc(1) : newNode->name());
 		}
 
-		// Set the name of the node if it is required, and was provided
-		if (newNode->nameRequired())
+		// Set the name of the node if it is required
+		if (newNode->mustBeNamed())
 		{
 			if (!parser.hasArg(1)) Messenger::error("A name must be given explicitly to a node of type %s.\n", ProcedureNode::nodeTypes().keyword(newNode->type()));
 			else newNode->setName(parser.argc(1));

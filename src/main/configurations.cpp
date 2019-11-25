@@ -21,7 +21,6 @@
 
 #include "main/dissolve.h"
 #include "classes/box.h"
-#include "classes/grain.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include <string.h>
@@ -30,8 +29,6 @@
 Configuration* Dissolve::addConfiguration()
 {
 	Configuration* cfg = coreData_.addConfiguration();
-
-	setUp_ = false;
 
 	return cfg;
 }
@@ -44,9 +41,23 @@ bool Dissolve::ownConfiguration(Configuration* cfg)
 
 	coreData_.configurations().own(cfg);
 
-	setUp_ = false;
-
 	return true;
+}
+
+// Remove specified Configuration
+void Dissolve::removeConfiguration(Configuration* cfg)
+{
+	if (!cfg) return;
+
+	// Remove any references to the Modules in the Configuration's local processing layer before we delete it
+	ListIterator<Module> moduleIterator(cfg->modules());
+	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+
+	// Remove references to the Configuration itself
+	removeReferencesTo(cfg);
+
+	// Now safe to remove the Configuration
+	coreData_.removeConfiguration(cfg);
 }
 
 // Return number of defined Configurations
@@ -89,7 +100,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	SpeciesBond* spb;
 	SpeciesTorsion* spt;
 
-	if (!parser.writeLineF("'%s'  %i  %i  # nMolecules  nGrains\n", cfg->name(), cfg->nMolecules(), cfg->nGrains())) return false;
+	if (!parser.writeLineF("'%s'  %i  # nMolecules\n", cfg->name(), cfg->nMolecules())) return false;
 
 	// Write unit cell (box) lengths and angles
 	Vec3<double> lengths = cfg->box()->axisLengths();
@@ -97,9 +108,12 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("%12e %12e %12e  %f  %s\n", lengths.x, lengths.y, lengths.z, cfg->requestedSizeFactor(), DissolveSys::btoa(cfg->box()->type() == Box::NonPeriodicBoxType))) return false;
 	if (!parser.writeLineF("%12e %12e %12e\n", angles.x, angles.y, angles.z)) return false;
 
+	// Write total number of Molecules
+	if (!parser.writeLineF("%i\n", cfg->nMolecules())) return false;
+
 	// Write Molecule types - write sequential Molecules with same type as single line
 	int moleculeCount = 1;
-	Species* lastType = cfg->nMolecules() > 0 ? cfg->molecule(0)->species() : NULL;
+	const Species* lastType = cfg->nMolecules() > 0 ? cfg->molecule(0)->species() : NULL;
 	for (int n=1; n<cfg->nMolecules(); ++n)
 	{
 		// If the last Molecule's Species is the same as this one, increment counter and move on
@@ -114,47 +128,15 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 		moleculeCount = 1;
 		lastType = cfg->molecule(n)->species();
 	}
-	// Write final 
+	// Write final molecule count
 	if (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name())) return false;
 
-	// Write all Atoms - for each write type, coordinates, charge, mol ID, and grain ID
-	AtomTypeList usedAtomTypes = cfg->usedAtomTypesList();
+	// Write all Atoms - for each write index and coordinates
 	if (!parser.writeLineF("%i  # nAtoms\n", cfg->nAtoms())) return false;
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		AtomTypeData* atd = usedAtomTypes[i->localTypeIndex()];
-		if (!parser.writeLineF("%s %e %e %e %e %i %i\n", atd ? atd->atomTypeName() : "??", i->x(), i->y(), i->z(), i->charge(), i->molecule()->arrayIndex(), i->grain() ? i->grain()->arrayIndex() : -1)) return false;
-	}
-
-	// Write all Bonds - for each write Atom IDs (in global array), molecule ID, and parameter source
-	if (!parser.writeLineF("%i  # nBonds\n", cfg->nBonds())) return false;
-	for (int n=0; n<cfg->nBonds(); ++n)
-	{
-		Bond* b = cfg->bond(n);
-		molId = b->molecule() ? b->molecule()->arrayIndex() : -1;
-		spb = b->speciesBond();
-		if (!parser.writeLineF("%i %i %i %i %i\n", b->i()->arrayIndex(), b->j()->arrayIndex(), molId, species().indexOf(spb->parent()), spb->parent()->bondIndex(spb))) return false;
-	}
-
-	// Write all Angles - for each write Atom IDs (in global array), molecule ID, and parameter source
-	if (!parser.writeLineF("%i  # nAngles\n", cfg->nAngles())) return false;
-	for (int n=0; n<cfg->nAngles(); ++n)
-	{
-		Angle* a = cfg->angle(n);
-		molId = a->molecule() ? a->molecule()->arrayIndex() : -1;
-		spa = a->speciesAngle();
-		if (!parser.writeLineF("%i %i %i %i %i %i\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex(), molId, species().indexOf(spa->parent()), spa->parent()->angleIndex(spa))) return false;
-	}
-
-	// Write all Torsions - for each write Atom IDs (in global array), molecule ID, and parameter source
-	if (!parser.writeLineF("%i  # nTorsions\n", cfg->nTorsions())) return false;
-	for (int n=0; n<cfg->nTorsions(); ++n)
-	{
-		Torsion* t = cfg->torsion(n);
-		molId = t->molecule() ? t->molecule()->arrayIndex() : -1;
-		spt = t->speciesTorsion();
-		if (!parser.writeLineF("%i %i %i %i %i %i %i\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex(), molId, species().indexOf(spt->parent()), spt->parent()->torsionIndex(spt))) return false;
+		if (!parser.writeLineF("%i %e %e %e\n", i->molecule()->arrayIndex(), i->x(), i->y(), i->z())) return false;
 	}
 
 	return true;
@@ -163,20 +145,13 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 // Read Configuration through specified LineParser
 bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 {
-	Molecule* mol;
-	Grain* grain;
-	AtomType* atomType;
-	Bond* bond;
-	Angle* angle;
-	Torsion* torsion;
-
 	// Clear current contents of Configuration
 	cfg->empty();
 
-	// Read configuration name, nMolecules, and nGrains, and initialise those arrays
+	// Read configuration name and nMolecules
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setName(parser.argc(0));
-	cfg->initialiseArrays(parser.argi(1), parser.argi(2)); 
+	cfg->empty();
 
 	// Read Box lengths and angles, and create the Box
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -186,9 +161,13 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	Vec3<double> angles = parser.arg3d(0);
 	if (!cfg->createBox(lengths, angles)) return false;
 
+	// Read total number of Molecules to expect
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	const int expectedNMols = parser.argi(0);
+
 	// Read Species types for Molecules
 	int nMolsRead = 0;
-	while (nMolsRead < cfg->nMolecules())
+	while (nMolsRead < expectedNMols)
 	{
 		// Read line containing number of molecules and Species name
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -197,10 +176,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 
 		// Set Species pointers for this range of Molecules
 		int nMols = parser.argi(0);
-		for (int n=0; n<nMols; ++n) cfg->molecule(nMolsRead+n)->setSpecies(sp);
-
-		// Update the used species population
-		cfg->addUsedSpecies(sp, nMols);
+		for (int n=0; n<nMols; ++n) cfg->addMolecule(sp);
 
 		// Increase our counter
 		nMolsRead += parser.argi(0);
@@ -211,63 +187,10 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	int nAtoms = parser.argi(0);
 	for (int n=0; n<nAtoms; ++n)
 	{
-		// Each line contains type, coordinates, charge, mol ID, and grain ID
+		// Each line contains molecule ID and coordinates only
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 
-		// Find the AtomType
-		atomType = findAtomType(parser.argc(0));
-		if (!atomType) return Messenger::error("Configuration '%s' references AtomType '%s', but it is not known to Dissolve.\n", cfg->name(), parser.argc(0));
-
-		mol = cfg->molecule(parser.argi(5));
-		grain = parser.argi(6) == -1 ? NULL : cfg->grain(parser.argi(6));
-
-		// Add Atom
-		cfg->addAtom(mol, grain, atomType, parser.arg3d(1), parser.argd(4));
-	}
-
-	// Read Bonds
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	int nBonds = parser.argi(0);
-	for (int n=0; n<nBonds; ++n)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-
-		// Add Bond
-		mol = cfg->molecule(parser.argi(2));
-		bond = cfg->addBond(mol, parser.argi(0), parser.argi(1));
-
-		// Set parameters
-		bond->setSpeciesBond(species(parser.argi(3))->bond(parser.argi(4)));
-	}
-
-	// Read Angles
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	int nAngles = parser.argi(0);
-	for (int n=0; n<nAngles; ++n)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-
-		// Add Angle
-		mol = cfg->molecule(parser.argi(3));
-		angle = cfg->addAngle(mol, parser.argi(0), parser.argi(1), parser.argi(2));
-
-		// Set parameters
-		angle->setSpeciesAngle(species(parser.argi(4))->angle(parser.argi(5)));
-	}
-
-	// Read Torsions
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	int nTorsions = parser.argi(0);
-	for (int n=0; n<nTorsions; ++n)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-
-		// Add Torsion
-		mol = cfg->molecule(parser.argi(4));
-		torsion = cfg->addTorsion(mol, parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
-
-		// Set parameters
-		torsion->setSpeciesTorsion(species(parser.argi(5))->torsion(parser.argi(6)));
+		cfg->atom(n)->setCoordinates(parser.arg3d(1));
 	}
 
 	cfg->finaliseAfterLoad(worldPool(), pairPotentialRange_);

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDCONFIGURATIONDIALOG_H
-#define DISSOLVE_ADDCONFIGURATIONDIALOG_H
+#ifndef DISSOLVE_DIALOG_ADDCONFIGURATION_H
+#define DISSOLVE_DIALOG_ADDCONFIGURATION_H
 
 #include "gui/ui_addconfigurationdialog.h"
 #include <QDialog>

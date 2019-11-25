@@ -56,7 +56,7 @@ void SpeciesKeywordWidget::myIndexChanged(int index)
 	Species* sp = (index == -1 ? NULL : VariantPointer<Species>(itemData(index, Qt::UserRole)));
 	keyword_->setData(sp);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

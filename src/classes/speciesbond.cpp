@@ -27,18 +27,28 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesBond::SpeciesBond() : SpeciesIntra(), ListItem<SpeciesBond>()
+SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>()
 {
-	parent_ = NULL;
-	i_ = NULL;
-	j_ = NULL;
-	bondType_ = SpeciesBond::SingleBond;
-	form_ = SpeciesBond::nBondFunctions;
+	clear();
 }
 
 // Destructor
 SpeciesBond::~SpeciesBond()
 {
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void SpeciesBond::clear()
+{
+	parent_ = NULL;
+	i_ = NULL;
+	j_ = NULL;
+	bondType_ = SpeciesBond::SingleBond;
+	form_ = SpeciesBond::NoForm;
 }
 
 /*
@@ -54,6 +64,8 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
 	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
 #endif
+	if (i_) i_->addBond(this);
+	if (j_) j_->addBond(this);
 }
 
 // Return first SpeciesAtom involved in interaction
@@ -167,33 +179,16 @@ double SpeciesBond::bondOrder() const
  * Interaction Parameters
  */
 
-// Bond function keywords
-const char* BondFunctionKeywords[] = { "Harmonic", "EPSR" };
-int BondFunctionNParameters[] = { 2, 2 };
-
-// Convert string to functional form
-SpeciesBond::BondFunction SpeciesBond::bondFunction(const char* s)
+// Return enum options for BondFunction
+EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-	for (int n=0; n<SpeciesBond::nBondFunctions; ++n) if (DissolveSys::sameString(s, BondFunctionKeywords[n])) return (SpeciesBond::BondFunction) n;
-	return SpeciesBond::nBondFunctions;
-}
+	static EnumOptionsList BondFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesBond::HarmonicForm, 		"Harmonic",	2,2) <<
+		EnumOption(SpeciesBond::EPSRForm, 		"EPSR",		2,2);
 
-// Return functional form text
-const char* SpeciesBond::bondFunction(SpeciesBond::BondFunction func)
-{
-	return BondFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
-// Return functional form array
-const char** SpeciesBond::bondFunctions()
-{
-	return BondFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
-{
-	return BondFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters
@@ -244,9 +239,9 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::IntramolecularType SpeciesBond::type() const
+SpeciesIntra::InteractionType SpeciesBond::type() const
 {
-	return SpeciesIntra::IntramolecularBond;
+	return SpeciesIntra::BondInteraction;
 }
 
 // Return energy for specified distance

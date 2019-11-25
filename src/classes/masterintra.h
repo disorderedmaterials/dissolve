@@ -49,33 +49,15 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 	// Name for interaction
 	CharString name_;
 	// Type of this interaction
-	SpeciesIntra::IntramolecularType type_;
+	SpeciesIntra::InteractionType type_;
 
 	public:
 	// Set name for interaction (if relevant)
 	void setName(const char* name);
 	// Return name for interaction
-	const char* name();
+	const char* name() const;
 	// Set type of interaction
-	void setType(SpeciesIntra::IntramolecularType type);
-
-
-	/*
-	 * Usage Counting
-	 */
-	private:
-	// Use counts by specific AtomType pairs
-	Array2D<int> usageCounts_;
-
-	public:
-	// Initialise usage count array
-	void initialiseUsageArray(int nAtomTypes);
-	// Return usage between specified pair of AtomType indices
-	int usageCount(int idI, int idJ);
-	// Register single usage of this term by the specified pair of AtomType indices
-	void registerUsage(int idI, int idJ);
-	// Unregister single usage of this term by the specified pair of AtomType indices
-	void unregisterUsage(int idI, int idJ);
+	void setType(SpeciesIntra::InteractionType type);
 
 
 	/*
@@ -87,7 +69,7 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 	// Calculate and return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 };
 
 #endif

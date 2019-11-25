@@ -62,7 +62,7 @@ void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
 
 	keyword_->setData(windowFunction);
 
-	emit(keywordValueChanged());
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*

@@ -23,9 +23,6 @@
 #define DISSOLVE_CONFIGURATION_H
 
 #include "classes/atom.h"
-#include "classes/angle.h"
-#include "classes/bond.h"
-#include "classes/torsion.h"
 #include "classes/atomtypelist.h"
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
@@ -49,7 +46,6 @@
 // Forward Declarations
 class Box;
 class Cell;
-class Grain;
 class PotentialMap;
 class Species;
 
@@ -91,12 +87,14 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* niceName() const;
 	// Return the current generator
 	Procedure& generator();
-	// Generate the Configuration ready for use, including Box and associated Cells
-	bool generate(ProcessPool& procPool, double pairPotentialRange);
+	// Create the Configuration according to its generator Procedure
+	bool generate(ProcessPool& procPool);
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
 	// Load coordinates from specified parser
 	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
+	// Initialise (generate or load) the basic contents of the Configuration
+	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent = false);
 	// Finalise Configuration after loading contents from restart file
 	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Set configuration temperature
@@ -117,22 +115,14 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	VersionCounter contentsVersion_;
 	// Array of Molecules
 	DynamicArray<Molecule> molecules_;
-	// Array of Grains
-	DynamicArray<Grain> grains_;
 	// Array of Atoms
 	DynamicArray<Atom> atoms_;
-	// Array of Bonds between Atoms
-	DynamicArray<Bond> bonds_;
-	// Array of Angles between Atoms
-	DynamicArray<Angle> angles_;
-	// Array of Torsions between Atoms
-	DynamicArray<Torsion> torsions_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
-	// Initialise content arrays
-	void initialiseArrays(int nMolecules, int nGrains);
+	// Initialise content array
+	void initialiseArrays(int nMolecules);
 	// Return specified used type
 	AtomType* usedAtomType(int index);
 	// Return specified used type data
@@ -165,18 +155,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Molecule>& molecules();
 	// Return nth Molecule
 	Molecule* molecule(int n);
-	// Add new Grain to Configuration, with Molecule parent specified
-	Grain* addGrain(Molecule* molecule);
-	// Return number of Grains in Configuration
-	int nGrains() const;
-	// Return Grain array
-	DynamicArray<Grain>& grains();
-	// Return nth Grain
-	Grain* grain(int n);
-	// Add new Atom to Configuration, with Molecule and Grain parents specified
-	Atom* addAtom(Molecule* molecule, Grain* grain = NULL);
-	// Add new Atom with full data
-	Atom* addAtom(Molecule* molecule, Grain* grain, AtomType* atomType, Vec3<double> r, double charge);
+	// Add new Atom to Configuration
+	Atom* addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r = Vec3<double>());
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
@@ -185,38 +165,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
-	// Add new Bond to Configuration, with Molecule parent specified
-	Bond* addBond(Molecule* molecule, Atom* i, Atom* j);
-	// Add new Bond to Configuration, with Molecule parent specified, from Atom indices
-	Bond* addBond(Molecule* molecule, int i, int j);
-	// Return number of Bonds in Configuration
-	int nBonds() const;
-	// Return Bond array
-	DynamicArray<Bond>& bonds();
-	// Return Bond array (const)
-	const DynamicArray<Bond>& constBonds() const;
-	// Return nth Bond
-	Bond* bond(int n);
-	// Add new Angle to Configuration, with Molecule parent specified
-	Angle* addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k);
-	// Add new Angle to Configuration, with Molecule parent specified, from Atom indices
-	Angle* addAngle(Molecule* molecule, int i, int j, int k);
-	// Return number of Angles in Configuration
-	int nAngles() const;
-	// Return Angle array
-	DynamicArray<Angle>& angles();
-	// Return nth Angle
-	Angle* angle(int n);
-	// Add new Torsion to Configuration, with Molecule parent specified
-	Torsion* addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k, Atom* l);
-	// Add new Torsion to Configuration, with Molecule parent specified, from Atom indices
-	Torsion* addTorsion(Molecule* molecule, int i, int j, int k, int l);
-	// Return number of Torsions in Configuration
-	int nTorsions() const;
-	// Return Torsion array
-	DynamicArray<Torsion>& torsions();
-	// Return nth Torsion
-	Torsion* torsion(int n);
 
 
 	/*
@@ -255,6 +203,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	CellArray& cells();
 	// Return cell array
 	const CellArray& constCells() const;
+	// Scale Box, Cells, and Molecule geometric centres according to current size factor
+	void applySizeFactor(const PotentialMap& potentialMap);
 
 
 	/*
@@ -291,14 +241,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	ModuleList& modules();
 	// Return list of variables set by Modules
 	GenericList& moduleData();
-
-
-	/*
-	 * Preparation
-	 */
-	public:
-	// Perform any preparative tasks for the Configuration, before Module processing begins
-	bool prepare(const PotentialMap& potentialMap);
 
 
 	/*

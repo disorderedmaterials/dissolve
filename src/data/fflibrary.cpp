@@ -20,6 +20,10 @@
 */
 
 #include "data/fflibrary.h"
+#include "data/ff/oplsaa2005_noblegases.h"
+#include "data/ff/ludwig/ntf2_ludwig.h"
+#include "data/ff/ludwig/py5_ludwig.h"
+#include "data/ff/ludwig/py4oh_ludwig.h"
 #include "data/ff/spcfw.h"
 #include "data/ff/uff.h"
 #include "base/sysfunc.h"
@@ -34,8 +38,12 @@ List<Forcefield> ForcefieldLibrary::forcefields_;
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+	forcefields_.own(new Forcefield_OPLSAA2005_NobleGases);
 	forcefields_.own(new Forcefield_SPCFw);
 	forcefields_.own(new Forcefield_UFF);
+	forcefields_.own(new Forcefield_NTf2_Ludwig);
+	forcefields_.own(new Forcefield_Py5_Ludwig);
+	forcefields_.own(new Forcefield_Py4OH_Ludwig);
 }
 
 /*

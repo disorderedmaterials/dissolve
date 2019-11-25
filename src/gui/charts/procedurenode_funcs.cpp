@@ -21,7 +21,7 @@
 
 #include "gui/charts/procedurenode.h"
 #include "gui/charts/proceduremetrics.h"
-#include "gui/keywordwidgets.h"
+// #include "gui/keywordwidgets/widget.h"
 #include "procedure/nodes/node.h"
 #include "templates/variantpointer.h"
 #include <QPainter>
@@ -44,6 +44,9 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 
 	// Hide the keywords control frame to start with
 	ui_.KeywordsControlWidget->setVisible(false);
+
+	// Hide the name label if it is not required
+	if (!node_->mustBeNamed()) ui_.BottomLabel->setVisible(false);
 
 	// Set up our keywords widget
 	ui_.NodeKeywordsWidget->setUp(node->keywords(), coreData);

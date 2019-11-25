@@ -22,13 +22,14 @@
 #ifndef DISSOLVE_IMPORT_DATA2D_H
 #define DISSOLVE_IMPORT_DATA2D_H
 
-#include "base/fileandformat.h"
+#include "io/fileandformat.h"
 #include "base/enumoptions.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
 class Data2D;
 class ProcessPool;
+class Vec3DoubleKeyword;
 
 // Data2D Import Formats
 class Data2DImportFileFormat : public FileAndFormat
@@ -54,30 +55,6 @@ class Data2DImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as Data2DImportFormat
 	Data2DImportFormat data2DFormat() const;
-
-
-	/*
-	 * Additional Options
-	 */
-	public:
-	// Additional Options
-	enum AdditionalOption { XAxisOption, YAxisOption };
-	// Return enum option info for AdditionalOptions
-	static EnumOptions<Data2DImportFileFormat::AdditionalOption> additionalOptions();
-
-	private:
-	// Minima, maxima, and bin deltas for axes (if not directly obtainable from data
-	Vec3<double> axisMinimum_, axisMaximum_, axisDelta_;
-	// Whether any axis information has been set
-	Vec3<bool> axisRangeSet_;
-
-	protected:
-	// Parse additional option
-	bool parseOption(const char* arg);
-	// Return whether this file/format has any additional options to write
-	bool hasAdditionalOptions() const;
-	// Return additional options as string
-	const char* additionalOptionsAsString() const;
 
 
 	/*

@@ -23,9 +23,8 @@
 #define DISSOLVE_SPECIESANGLE_H
 
 #include "classes/speciesintra.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "base/enumoptions.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -33,13 +32,21 @@ class Species;
 class ProcessPool;
 
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
+class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle>
 {
 	public:
 	// Constructor
 	SpeciesAngle();
 	// Destructor
 	~SpeciesAngle();
+
+
+	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
 
 
 	/*
@@ -81,19 +88,13 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	// Angle functional forms
 	enum AngleFunction
 	{
+		NoForm,
 		HarmonicForm,
 		CosineForm,
-		Cos2Form,
-		nAngleFunctions
+		Cos2Form
 	};
-	// Convert string to functional form
-	static AngleFunction angleFunction(const char* s);
-	// Return functional form text
-	static const char* angleFunction(AngleFunction func);
-	// Return functional form array
-	static const char** angleFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(AngleFunction func);
+	// Return enum options for AngleFunction
+	static EnumOptions<AngleFunction> angleFunctions(); 
 
 	public:
 	// Set up any necessary parameters
@@ -101,7 +102,7 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	// Return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

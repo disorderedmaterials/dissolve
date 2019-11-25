@@ -27,6 +27,6 @@ void ImportModule::initialise()
 {
 	// Trajectory Import
 	keywords_.add("Trajectory", new BoolKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");
-	keywords_.add("Trajectory", new FileAndFormatKeyword(trajectoryFile_), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
+	keywords_.add("Trajectory", new FileAndFormatKeyword(trajectoryFile_, "EndTrajectoryFile"), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
 }
 

@@ -29,7 +29,7 @@ class AtomicMassData : public ElementReference
 {
 	public:
 	// Constructor
-	AtomicMassData(int z, const char* symbol, double massMin, double massMax = -1.0);
+	AtomicMassData(int z, double massMin, double massMax = -1.0);
 
 	private:
 	// Mass of element

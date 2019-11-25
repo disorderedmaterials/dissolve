@@ -33,6 +33,7 @@
 #include "templates/vector4.h"
 #include "templates/array.h"
 
+
 // Forward Declarations
 class View;
 
@@ -185,6 +186,15 @@ class Axes
 	void transformY(Array<double>& yArray) const;
 	// Return supplied data z value in local axes coordinates
 	double transformZ(double z) const;
+	// Transform entire array of values into local axes coordinates
+	void transformZ(Array<double>& zArray) const;
+	// Transform a 2D array of values into local axes coordinates
+	void transformX(Array2D<double>& xArray) const;
+	// Transform a 2D array of values into local axes coordinates
+	void transformY(Array2D<double>& yArray) const;
+	// Transform a 2D array of values into local axes coordinates
+	void transformZ(Array2D<double>& zArray) const;
+	
 
 
 	/*
@@ -241,20 +251,34 @@ class Axes
 	private:
 	// Number formats for labels
 	NumberFormat numberFormat_[3];
+	// Whether to determine number formats automatically
+	Vec3<bool> autoNumberFormat_;
 	// Orientation of axis labels (axial rot, in-plane rot, distance)
 	Vec3<double> labelOrientation_[3];
 	// Axis label text anchor positions
 	TextPrimitive::TextAnchor labelAnchor_[3];
 	// Axis titles
 	CharString title_[3];
-	// Orientation of axis titles (axial rot, in-plane rot, distance, h-offset)
-	Vec4<double> titleOrientation_[3];
+	// Orientation of axis titles (rotations around x, y, and z axes)
+	Vec3<double> titleOrientation_[3];
+	// Title distances from axes
+	Vec3<double> titleDistances_;
+	// Title horizontal offsets
+	Vec3<double> titleHorizontalOffsets_;
 	// Axis title text anchor positions
 	TextPrimitive::TextAnchor titleAnchor_[3];
+
+	private:
+	// Determine suitable label format for the supplied axis
+	void determineLabelFormat(int axis);
 
 	public:
 	// Return number format for specified axis
 	NumberFormat& numberFormat(int axis);
+	// Return whether to determine number format automatically for the specified axis
+	bool autoNumberFormat(int axis) const;
+	// Set whether to determine number format automatically for the specified axis
+	void setAutoNumberFormat(int axis, bool b);
 	// Set orientation of labels for specified axis
 	void setLabelOrientation(int axis, int component, double value);
 	// Return orientation of labels for specified axis
@@ -268,9 +292,17 @@ class Axes
 	// Return title for specified axis
 	const char* title(int axis) const;
 	// Set orientation of titles for specified axis
-	void setTitleOrientation(int axis, int component, double value);
+	void setTitleOrientationNEW(int axis, int component, double value);
 	// Return orientation of titles for specified axis
-	Vec4<double> titleOrientation(int axis) const;
+	Vec3<double> titleOrientation(int axis) const;
+	// Set title distance from axis
+	void setTitleDistance(int axis, double distance);
+	// Return title distance from axis
+	double titleDistance(int axis) const;
+	// Set title horizontal offset
+	void setTitleHorizontalOffset(int axis, double offset);
+	// Return title horizontal offset
+	double titleHorizontalOffset(int axis) const;
 	// Set axis title text anchor position for specified axis
 	void setTitleAnchor(int axis, TextPrimitive::TextAnchor anchor);
 	// Return axis title text anchor position for specified axis

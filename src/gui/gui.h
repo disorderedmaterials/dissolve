@@ -23,7 +23,6 @@
 #define DISSOLVE_MAINWINDOW_H
 
 #include "gui/ui_gui.h"
-#include "gui/widgets/subwindow.h"
 #include "gui/outputhandler.hui"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"
@@ -43,7 +42,7 @@ class Species;
 class SpeciesTab;
 class ModuleTab;
 class ModuleLayer;
-class ModuleLayerTab;
+class LayerTab;
 class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
@@ -55,8 +54,14 @@ class DissolveWindow : public QMainWindow
 	// Constructor / Destructor
 	DissolveWindow(Dissolve& dissolve);
 	~DissolveWindow();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::DissolveWindow ui;
+	Ui::DissolveWindow ui_;
 
 	protected:
 	void closeEvent(QCloseEvent* event);
@@ -83,10 +88,6 @@ class DissolveWindow : public QMainWindow
 	public slots:
 	// Flag that data has been modified via the GUI
 	void setModified();
-	// Flag that data has been modified via the GUI, and whether this invalidates the current setup
-	void setModified(bool invalidatesSetUp);
-	// Flag that data has been modified via the GUI, and that the setup is now invalid
-	void setModifiedAndInvalidated();
 
 	public:
 	// Return reference to Dissolve
@@ -113,8 +114,20 @@ class DissolveWindow : public QMainWindow
 	 * File
 	 */
 	public:
-	// Open specified input file from the CLI
-	bool openFileFromCLI(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+	// Open specified input file
+	bool openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+
+
+	/*
+	 * System Templates
+	 */
+	private:
+	// List of available SystemTemplates
+	List<SystemTemplate> systemTemplates_;
+
+	private:
+	// Initialise system templates from the main resource
+	void initialiseSystemTemplates();
 
 
 	/*
@@ -127,6 +140,8 @@ class DissolveWindow : public QMainWindow
 	void updateWindowTitle();
 	// Update controls frame
 	void updateControlsFrame();
+	// Update menus
+	void updateMenus();
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
 
@@ -141,28 +156,51 @@ class DissolveWindow : public QMainWindow
 	void startNew();
 
 	private slots:
-	// Session
-	void on_SessionNewAction_triggered(bool checked);
-	void on_SessionOpenLocalAction_triggered(bool checked);
-	void on_SessionOpenRecentAction_triggered(bool checked);
-	void on_SessionConnectAction_triggered(bool checked);
-	void on_SessionCloseAction_triggered(bool checked);
-	void on_SessionSaveAction_triggered(bool checked);
-	void on_SessionSaveAsAction_triggered(bool checked);
-	void on_SessionQuitAction_triggered(bool checked);
+	// File
+	void on_FileNewAction_triggered(bool checked);
+	void on_FileNewFromTemplateAction_triggered(bool checked);
+	void on_FileOpenLocalAction_triggered(bool checked);
+	void on_FileOpenRecentAction_triggered(bool checked);
+	void on_FileConnectAction_triggered(bool checked);
+	void on_FileCloseAction_triggered(bool checked);
+	void on_FileSaveAction_triggered(bool checked);
+	void on_FileSaveAsAction_triggered(bool checked);
+	void on_FileQuitAction_triggered(bool checked);
 	// Simulation
-	void on_SimulationAddSpeciesAction_triggered(bool checked);
-	void on_SimulationAddConfigurationAction_triggered(bool checked);
-	void on_SimulationAddProcessingLayerAction_triggered(bool checked);
-	void on_SimulationAddForcefieldTermsAction_triggered(bool checked);
-	void on_SimulationSetRandomSeedAction_triggered(bool checked);
-	// Control
 	void on_SimulationRunAction_triggered(bool checked);
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
+	void on_SimulationSetRandomSeedAction_triggered(bool checked);
+	// Species
+	void on_SpeciesCreateEmptyAction_triggered(bool checked);
+	void on_SpeciesCreateAtomicAction_triggered(bool checked);
+	void on_SpeciesImportFromDissolveAction_triggered(bool checked);
+	void on_SpeciesImportFromXYZAction_triggered(bool checked);
+	void on_SpeciesRenameAction_triggered(bool checked);
+	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
+	void on_SpeciesDeleteAction_triggered(bool checked);
+	// Configuration
+	void on_ConfigurationCreateEmptyAction_triggered(bool checked);
+	void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
+	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
+	void on_ConfigurationRenameAction_triggered(bool checked);
+	void on_ConfigurationDeleteAction_triggered(bool checked);
+	void on_ConfigurationExportToXYZAction_triggered(bool checked);
+	// Layer
+	void on_LayerCreateEmptyAction_triggered(bool checked);
+	void on_LayerCreateEvolutionMolecularAction_triggered(bool checked);
+	void on_LayerCreateEvolutionAtomicAction_triggered(bool checked);
+	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
+	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
+	void on_LayerRenameAction_triggered(bool checked);
+	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
-	void on_WorkspaceAddNewAction_triggered(bool checked);
+	void on_WorkspaceCreateEmptyAction_triggered(bool checked);
 	// Help
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
@@ -188,18 +226,10 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
-	private:
-	// List of available SystemTemplates
-	List<SystemTemplate> systemTemplates_;
-
-	private:
-	// Add system templates to the Create group
-	void addSystemTemplates();
-
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
-	void systemTemplateClicked(bool checked);
+	void on_StartCreateFromTemplateButton_clicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
@@ -261,7 +291,7 @@ class DissolveWindow : public QMainWindow
 	// List of Configuration tabs
 	List<ConfigurationTab> configurationTabs_;
 	// List of processing layer tabs
-	List<ModuleLayerTab> processingLayerTabs_;
+	List<LayerTab> processingLayerTabs_;
 	// List of Module tabs
 	List<ModuleTab> moduleTabs_;
 	// List of Workspace tabs
@@ -269,7 +299,6 @@ class DissolveWindow : public QMainWindow
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
-	void mainTabsDoubleClicked(int index);
 
 	private:
 	// Remove tabs related to the current data
@@ -280,6 +309,8 @@ class DissolveWindow : public QMainWindow
 	void addCoreTabs();
 	// Add on an empty workspace tab
 	MainTab* addWorkspaceTab(const char* title);
+	// Generate unique Workspace name with base name provided
+	const char* uniqueWorkspaceName(const char* base);
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
 	// Find tab with specified page widget
@@ -288,8 +319,8 @@ class DissolveWindow : public QMainWindow
 	SpeciesTab* speciesTab(QWidget* page);
 	// Find ConfigurationTab containing specified page widget
 	ConfigurationTab* configurationTab(QWidget* page);
-	// Find ModuleLayerTab containing specified page widget
-	ModuleLayerTab* processingLayerTab(QWidget* page);
+	// Find LayerTab containing specified page widget
+	LayerTab* processingLayerTab(QWidget* page);
 	// Find ModuleTab containing specified page widget
 	ModuleTab* moduleTab(QWidget* page);
 	// Find ModuleTab containing specified Module
@@ -297,7 +328,7 @@ class DissolveWindow : public QMainWindow
 	// Find WorkspaceTab containing specified page widget
 	WorkspaceTab* workspaceTab(QWidget* page);
 	// Return current tab
-	MainTab* currentTab();
+	MainTab* currentTab() const;
 	// Make specified tab the current one
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
@@ -310,14 +341,26 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(Configuration* cfg);
 	// Make specified processing layer tab the current one
 	void setCurrentTab(ModuleLayer* layer);
-	// Return reference list of all current tabs
-	RefList<MainTab> allTabs() const;
+	// Return currently-selected Species (if a SpeciesTab is the current one)
+	Species* currentSpecies() const;
+	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
+	Configuration* currentConfiguration() const;
+	// Return currently-selected ModuleLayer (if a LayerTab is the current one)
+	ModuleLayer* currentLayer() const;
 
 	public:
 	// Add tab for specified Module target
 	MainTab* addModuleTab(Module* module);
+	// Remove the ModuleTab for the specifeid Module, if it exists
+	void removeModuleTab(Module* module);
+	// Return reference list of all current tabs
+	RefList<MainTab> allTabs() const;
 
 	public slots:
+	// Add or go to Module tab for the Module with the unique name provided
+	void showModuleTab(const QString& uniqueName);
+	// Remove the Module tab (if it exists) for the Module with the unique name provided
+	void removeModuleTab(const QString& uniqueName);
 	// Remove tab containing the specified page widget
 	void removeTab(QWidget* page);
 

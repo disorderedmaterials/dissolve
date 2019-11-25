@@ -1,6 +1,6 @@
 /*
-	*** BondFormCombo Delegate
-	*** src/gui/delegates/bondformcombo.hui
+	*** IntraFormCombo Delegate
+	*** src/gui/delegates/intraformcombo.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -30,7 +30,7 @@
 #include "templates/list.h"
 
 // Forward Declarations
-/* none */
+class ComboListItems;
 
 // Delegate class, providing list of functional forms / master terms for an intramolecular definition
 class IntraFormComboDelegate : public QItemDelegate
@@ -38,16 +38,14 @@ class IntraFormComboDelegate : public QItemDelegate
 	Q_OBJECT
 
 	private:
-	// Number of ordinary function texts
-	int nFunctions_;
-	// Function texts array
-	const char** functionTexts_;
+	// Associated item list
+	ComboListItems* items_;
 	// List of master terms
 	const List<MasterIntra>& masterTerms_;
 
 	public:
 	// Constructor
-	IntraFormComboDelegate(QObject* parent, int nFunctions, const char** functionTexts, const List<MasterIntra>& masterTerms);
+	IntraFormComboDelegate(QObject* parent, ComboListItems* items, const List<MasterIntra>& masterTerms);
 	// Destructor
 	virtual ~IntraFormComboDelegate();
 	// Reimplemented virtual function to create editing widget

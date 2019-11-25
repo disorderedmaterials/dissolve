@@ -22,13 +22,12 @@
 #include "gui/maintab.h"
 #include "gui/gui.h"
 #include "gui/modulecontrolwidget.h"
-#include "gui/widgets/subwindow.h"
-#include "gui/widgets/subwidget.h"
 #include "module/module.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include <QFrame>
+#include <QInputDialog>
 #include <QLayout>
 #include <QMdiArea>
 #include <QMdiSubWindow>
@@ -47,32 +46,36 @@ MainTab::~MainTab()
 {
 }
 
+// Return enum options for TabType
+EnumOptions<MainTab::TabType> MainTab::tabTypes()
+{
+	static EnumOptionsList TabTypeOptions = EnumOptionsList() <<
+		EnumOption(MainTab::ConfigurationTabType, 	"ConfigurationTab") <<
+		EnumOption(MainTab::ForcefieldTabType, 		"ForcefieldTab") <<
+		EnumOption(MainTab::LayerTabType, 		"LayerTab") <<
+		EnumOption(MainTab::ModuleTabType, 		"ModuleTab") <<
+		EnumOption(MainTab::SpeciesTabType, 		"SpeciesTab") <<
+		EnumOption(MainTab::WorkspaceTabType, 		"WorkspaceTab");
+
+	static EnumOptions<MainTab::TabType> options("TabType", TabTypeOptions);
+
+	return options;
+}
+
 /*
  * Data
  */
+
+// Raise suitable dialog for entering / checking new tab name
+QString MainTab::getNewTitle(bool& ok)
+{
+	return QInputDialog::getText(page_, "Rename Tab", "Enter the new name for the tab", QLineEdit::Normal, title_.get(), &ok);
+}
 
 // Return page widget
 QWidget* MainTab::page() const
 {
 	return page_;
-}
-
-// Set title of tab
-void MainTab::setTitle(const char* title)
-{
-	if (canChangeTitle())
-	{
-		// Find ourselves in the tab widget
-		int index = tabWidget_->indexOf(page_);
-		if (index == -1)
-		{
-			Messenger::print("Couldn't rename tab '%s' since its page widget could not be found.\n", title_.get());
-			return;
-		}
-		title_ = title;
-		tabWidget_->setTabText(index, title);
-	}
-	else Messenger::warn("Refusing to change title of tab currently named '%s', since it is fixed.\n", title_.get());
 }
 
 // Return title of tab
@@ -85,4 +88,28 @@ const char* MainTab::title() const
 bool MainTab::canChangeTitle() const
 {
 	return false;
+}
+
+// Rename tab through suitable dialog / widget
+bool MainTab::rename()
+{
+	if (!canChangeTitle()) return false;
+
+	// Find ourselves in the tab widget
+	int tabIndex = tabWidget_->indexOf(page_);
+	if (tabIndex == -1)
+	{
+		Messenger::print("Couldn't rename tab '%s' since its page widget could not be found.\n", title_.get());
+		return false;
+	}
+
+	// Get the new name
+	bool ok;
+	QString text = getNewTitle(ok);
+	if (!ok) return false;
+
+	title_ = qPrintable(text);
+	tabWidget_->setTabText(tabIndex, text);
+
+	return true;
 }

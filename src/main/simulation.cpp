@@ -20,10 +20,12 @@
 */
 
 #include "main/dissolve.h"
-// #include "modules/export/export.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
+#include "classes/atomtype.h"
+#include "classes/box.h"
+#include "classes/species.h"
 #include <cstdio>
 
 // Set random seed
@@ -38,7 +40,7 @@ int Dissolve::seed() const
 	return seed_;
 }
 
-// Set frequency with which to write various iteration dat
+// Set frequency with which to write various iteration data
 void Dissolve::setRestartFileFrequency(int n)
 {
 	restartFileFrequency_ = n;
@@ -48,6 +50,47 @@ void Dissolve::setRestartFileFrequency(int n)
 int Dissolve::restartFileFrequency() const
 {
 	return restartFileFrequency_;
+}
+
+// Prepare for main simulation
+bool Dissolve::prepare()
+{
+	Messenger::banner("Preparing Simulation");
+
+	// Initialise random seed
+	if (seed_ == -1) srand( (unsigned)time( NULL ) );
+	else srand(seed_);
+
+	// Check Species
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp()) return false;
+
+	// Reassign AtomType indices (in case one or more have been added / removed)
+	int count = 0;
+	for (AtomType* at = atomTypes().first(); at != NULL; at = at->next(), ++count) at->setIndex(count);
+
+	// Check pair potential range against Box defined for each Configuration
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+	{
+		// Check Box extent against pair potential range
+		double maxPPRange = cfg->box()->inscribedSphereRadius();
+		if (pairPotentialRange_ > maxPPRange)
+		{
+			Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange_, maxPPRange);
+			return false;
+		}
+	}
+
+	// Make sure pair potentials are up-to-date
+	if (!generatePairPotentials()) return false;
+
+	// Create PairPotential matrix
+	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
+	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
+
+	// Set up parallel comms / limits etc.
+	if (!setUpMPIPools()) return Messenger::error("Failed to set up parallel communications.\n");
+
+	return true;
 }
 
 // Iterate main simulation
@@ -62,8 +105,6 @@ bool Dissolve::iterate(int nIterations)
 	 *  4)	Run analysis processing Modules
 	 *  5)	Write restart file (master process only)
 	 */
-
-	if (!setUp_) return Messenger::error("Simulation has not been set up.\n");
 
 	mainLoopTimer_.zero();
 	mainLoopTimer_.start();
@@ -114,7 +155,6 @@ bool Dissolve::iterate(int nIterations)
 		}
 
 		// Write heartbeat file or display appropriate message
-		
 		if (worldPool().isMaster() && (writeHeartBeat()))
 		{
 			Messenger::print("Write heartbeat file...");
@@ -127,7 +167,6 @@ bool Dissolve::iterate(int nIterations)
 		{
 			Messenger::print("No Heartbeat file will be written.");
 		}
-		
 
 
 		/*
@@ -148,15 +187,16 @@ bool Dissolve::iterate(int nIterations)
 
 			Messenger::heading("'%s'", cfg->name());
 
+			// Perform any necessary actions before we start processing this Configuration's Modules
+			// -- Apply the current size factor
+			cfg->applySizeFactor(potentialMap_);
+
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe())
 			{
 				Messenger::print("Process rank %i not involved with this Configuration, so moving on...\n", ProcessPool::worldRank());
 				continue;
 			}
-
-			// Perform any necessary actions before we start processing this Configuration's Modules
-			if (!cfg->prepare(potentialMap_)) return false;
 
 			// Loop over Modules defined in the Configuration
 			ListIterator<Module> moduleIterator(cfg->modules());

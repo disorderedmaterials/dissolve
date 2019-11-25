@@ -67,7 +67,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 				currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
 
 				// Set the current drawing coordinates in data-space
-				drawCoordinateCurrent_ = currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, drawCoordinateCurrent_.z);
+				drawCoordinateCurrent_ = currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
 
 				// Update the interaction Primitive
 				if (clickedAtom_)
@@ -104,17 +104,3 @@ void SpeciesViewer::mouseWheeled(int delta)
 	postRedisplay();
 }
 
-// Mouse double clicked
-void SpeciesViewer::mouseDoubleClicked()
-{
-}
-
-// Key pressed
-bool SpeciesViewer::keyPressed(int key)
-{
-}
-
-// Key released
-bool SpeciesViewer::keyReleased(int key)
-{
-}

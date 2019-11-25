@@ -58,8 +58,8 @@ bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext cont
 	return (context == ProcedureNode::AnalysisContext);
 }
 
-// Return whether a name for the node is required
-bool DynamicSiteProcedureNode::nameRequired() const
+// Return whether a name for the node must be provided
+bool DynamicSiteProcedureNode::mustBeNamed() const
 {
 	return false;
 }
@@ -75,14 +75,14 @@ void DynamicSiteProcedureNode::generateSites(const Molecule* molecule)
 	for (int n=0; n<molecule->nAtoms(); ++n)
 	{
 		// If the element is listed in our target elements list, add this atom as a site
-		if (elements_.contains(molecule->atom(n)->element()))
+		if (elements_.contains(molecule->atom(n)->speciesAtom()->element()))
 		{
 			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
 			continue;
 		}
 
 		// If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
-		if (atomTypes_.contains(molecule->species()->atom(n)->atomType()))
+		if (atomTypes_.contains(molecule->atom(n)->speciesAtom()->atomType()))
 		{
 			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
 			continue;

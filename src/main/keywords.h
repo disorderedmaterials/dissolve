@@ -93,7 +93,7 @@ namespace LayerBlock
 	// Layer Block Keyword Enum
 	enum LayerKeyword
 	{
-		EnabledKeyword,			/* 'Enabled' - Specify whether the layer is enabled or not */
+		DisabledKeyword,		/* 'Disabled' - Specify that the layer is currently disabled */
 		EndLayerKeyword,		/* 'EndLayer' - Signals the end of the Layer block */
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
 		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */
@@ -117,6 +117,7 @@ namespace MasterBlock
 		AngleKeyword,			/* 'Angle' - Define master Angle parameters that can be referred to */
 		BondKeyword,			/* 'Bond' - Define master Bond parameters that can be referred to */
 		EndMasterKeyword,		/* 'EndMaster' - Signals the end of the Master block */
+		ImproperKeyword,		/* 'Improper' - Define master Improper parameters that can be referred to */
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};
@@ -156,17 +157,16 @@ namespace PairPotentialsBlock
 	// PairPotential Block Keyword Enum
 	enum PairPotentialsKeyword
 	{
-		CoulombTruncationKeyword,	/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
-		DeltaKeyword,			/* 'Delta' - Gives the spacing between points in the tabulated potentials */
-		EndPairPotentialsKeyword,	/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
-		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
-		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
-		IncludeCoulombKeyword,		/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
-		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
-		RangeKeyword,			/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
-		ShortRangeTruncationKeyword,	/* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
-		ShortRangeTruncationWidthKeyword,/* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
-		nPairPotentialsKeywords		/* Number of keywords defined for this block */
+		CoulombTruncationKeyword,		/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
+		DeltaKeyword,				/* 'Delta' - Gives the spacing between points in the tabulated potentials */
+		EndPairPotentialsKeyword,		/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
+		GenerateKeyword,			/* 'Generate' - Generates a single PairPotential with the specified contributions */
+		IncludeCoulombKeyword,			/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
+		ParametersKeyword,			/* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
+		RangeKeyword,				/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
+		ShortRangeTruncationKeyword,		/* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
+		ShortRangeTruncationWidthKeyword,	/* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
+		nPairPotentialsKeywords			/* Number of keywords defined for this block */
 	};
 	// Return enum option info for PairPotentialsKeyword
 	EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> keywords();

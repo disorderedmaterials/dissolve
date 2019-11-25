@@ -25,7 +25,7 @@
 #include "gui/viewer/ui_specieswidget.h"
 
 // Forward Declarations
-/* none */
+class CoreData;
 
 // Species Widget
 class SpeciesWidget : public QWidget
@@ -39,12 +39,52 @@ class SpeciesWidget : public QWidget
 	~SpeciesWidget();
 
 	private:
+	// Main CoreData
+	CoreData* coreData_;
+
+	public:
+	// Set main CoreData pointer
+	void setCoreData(CoreData* coreData);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
 	Ui::SpeciesWidget ui_;
 
-	public:
+	private slots:
+	// Notify that the style of displayed data in the underlying viewer has changed
+	void notifyStyleModified();
+	// Notify that the displayed data in the underlying viewer has changed
+	void notifyDataModified();
+
+	public slots:
+	// Post redisplay in the underlying view
+	void postRedisplay();
+	// Update toolbar to reflect current viewer state
+	void updateToolbar();
+	// Update status bar
+	void updateStatusBar();
+
+	signals:
+	// Style of displayed data has been modified
+	void styleModified();
+	// Displayed data has been modified
+	void dataModified();
+
+
+	/*
+	 * Species Viewer
+	 */
+	private:
 	// Return contained SpeciesViewer
 	SpeciesViewer* speciesViewer();
+
+	public:
+	// Set target Species, updating widget as necessary
+	void setSpecies(Species* sp);
 
 
 	/*
@@ -57,20 +97,12 @@ class SpeciesWidget : public QWidget
 	void on_InteractionDrawElementButton_clicked(bool checked);
 	// View
 	void on_ViewResetButton_clicked(bool checked);
+	void on_ViewSpheresButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
 	// Tools
+	void on_ToolsCalculateBondingButton_clicked(bool checked);
 	void on_ToolsMinimiseButton_clicked(bool checked);
-
-	
-	/*
-	 * Signals / Slots
-	 */
-	public slots:
-	// Update toolbar to reflect current viewer state
-	void updateToolbar();
-	// Update status bar
-	void updateStatusBar();
 };
 
 #endif

@@ -46,8 +46,8 @@ bool OperateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext cont
 	return (context == ProcedureNode::OperateContext);
 }
 
-// Return whether a name for the node is required
-bool OperateProcedureNodeBase::nameRequired() const
+// Return whether a name for the node must be provided
+bool OperateProcedureNodeBase::mustBeNamed() const
 {
 	return false;
 }

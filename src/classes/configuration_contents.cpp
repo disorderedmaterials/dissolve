@@ -23,40 +23,33 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
-// Clear contents of Configuration, leaving core definitions intact
+// Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
 {
-	bonds_.clear();
-	angles_.clear();
-	torsions_.clear();
 	molecules_.clear();
-	grains_.clear();
 	atoms_.clear();
 	usedAtomTypes_.clear();
 	if (box_ != NULL) delete box_;
 	box_ = new CubicBox(1.0);
 	cells_.clear();
 
-	// Set the populations of SpeciesInfo to zero, but leave the list intact
-	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
-	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) spInfo->zeroPopulation();
+	// Clear used species
+	usedSpecies_.clear();
 
 	++contentsVersion_;
 }
 
 // Initialise content arrays
-void Configuration::initialiseArrays(int nMolecules, int nGrains)
+void Configuration::initialiseArrays(int nMolecules)
 {
 	// Clear current contents
 	empty();
 
 	molecules_.initialise(nMolecules);
-	grains_.initialise(nGrains);
 }
 
 // Return specified used type
@@ -158,77 +151,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Atoms from Species to the Molecule
 	SpeciesAtom* spi = sp->firstAtom();
-	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next())
-	{
-		// Create new Atom
-		Atom* i = addAtom(newMolecule);
-
-		// Copy information from SpeciesAtom
-		i->setElement(spi->element());
-		i->setCharge(spi->charge());
-		i->setCoordinates(spi->r());
-
-		// Update our typeIndex (non-isotopic) and set local and master type indices
-		AtomTypeData* atd = usedAtomTypes_.add(spi->atomType(), 1);
-		i->setLocalTypeIndex(atd->listIndex());
-		i->setMasterTypeIndex(spi->atomType()->index());
-	}
-
-	// Add Grains from Species into the Molecule
-	SpeciesGrain* spg = sp->grains();
-	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next())
-	{
-		// Create new Grain
-		Grain* g = addGrain(newMolecule);
-
-		// Add Atoms to the Grain
-		for (int m=0; m<spg->nAtoms(); ++m)
-		{
-			g->addAtom(newMolecule->atom(spg->atom(m)->item()->index()));
-		}
-	}
-
-	// Add Bonds
-	SpeciesBond* spb = sp->bonds().first();
-	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next())
-	{
-		// Get Atom pointers involved in Bond
-		Atom* i = newMolecule->atom(spb->indexI());
-		Atom* j = newMolecule->atom(spb->indexJ());
-
-		// Create new Bond
-		Bond* b = addBond(newMolecule, i, j);
-		b->setSpeciesBond(spb);
-	}
-
-	// Add Angles
-	SpeciesAngle* spa = sp->angles().first();
-	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next())
-	{
-		// Get Atom pointers involved in Angle
-		Atom* i = newMolecule->atom(spa->indexI());
-		Atom* j = newMolecule->atom(spa->indexJ());
-		Atom* k = newMolecule->atom(spa->indexK());
-
-		// Create new Angle
-		Angle* a = addAngle(newMolecule, i, j, k);
-		a->setSpeciesAngle(spa);
-	}
-
-	// Add Torsions
-	SpeciesTorsion* spt = sp->torsions().first();
-	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next())
-	{
-		// Get Atom pointers involved in Torsion
-		Atom* i = newMolecule->atom(spt->indexI());
-		Atom* j = newMolecule->atom(spt->indexJ());
-		Atom* k = newMolecule->atom(spt->indexK());
-		Atom* l = newMolecule->atom(spt->indexL());
-
-		// Create new Torsion
-		Torsion* t = addTorsion(newMolecule, i, j, k, l);
-		t->setSpeciesTorsion(spt);
-	}
+	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, spi->r());
 
 	return newMolecule;
 }
@@ -251,71 +174,23 @@ Molecule* Configuration::molecule(int n)
 	return molecules_[n];
 }
 
-// Add new Grain to Configuration, with Molecule parent specified
-Grain* Configuration::addGrain(Molecule* molecule)
+// Add new Atom to Configuration, with Molecule parent specified
+Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r)
 {
-	// Create the new Grain object
-	Grain* newGrain = grains_.add();
-
-	// Add it to the specified Molecule, which also sets the Molecule parent of the Grain
-	molecule->addGrain(newGrain);
-
-	return newGrain;
-}
-
-// Return number of grains
-int Configuration::nGrains() const
-{
-	return grains_.nItems();
-}
-
-// Return grain array
-DynamicArray<Grain>& Configuration::grains()
-{
-	return grains_;
-}
-
-// Return nth grain
-Grain* Configuration::grain(int n)
-{
-#ifdef CHECKS
-	if ((n < 0) || (n >= grains_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i passed to Configuration::grain() is out of range (nGrains = %i).\n", n, grains_.nItems());
-		return NULL;
-	}
-#endif
-	return grains_[n];
-}
-
-// Add new Atom to Configuration, with Molecule and Grain parents specified
-Atom* Configuration::addAtom(Molecule* molecule, Grain* grain)
-{
-	// Create new Atom object
+	// Create new Atom object and set its source pointer
 	Atom* newAtom = atoms_.add();
+	newAtom->setSpeciesAtom(sourceAtom);
+
+	// Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
 	molecule->addAtom(newAtom);
-	newAtom->setGrain(grain);
 
-	return newAtom;
-}
-
-// Add new Atom with full data
-Atom* Configuration::addAtom(Molecule* molecule, Grain* grain, AtomType* atomType, Vec3<double> r, double charge)
-{
-	// Create new Atom object
-	Atom* newAtom = atoms_.add();
-	molecule->addAtom(newAtom);
-	newAtom->setGrain(grain);
-
-	// Set element (from AtomType), coordinates and charge
-	newAtom->setElement(atomType->element());
+	// Set the position
 	newAtom->setCoordinates(r);
-	newAtom->setCharge(charge);
 
 	// Update our typeIndex (non-isotopic) and set local and master type indices
-	AtomTypeData* atd = usedAtomTypes_.add(atomType, 1);
+	AtomTypeData* atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
 	newAtom->setLocalTypeIndex(atd->listIndex());
-	newAtom->setMasterTypeIndex(atomType->index());
+	newAtom->setMasterTypeIndex(sourceAtom->atomType()->index());
 
 	return newAtom;
 }
@@ -349,130 +224,4 @@ Atom* Configuration::atom(int n)
 	}
 #endif
 	return atoms_[n];
-}
-
-// Add new Bond to Configuration, with Molecule parent specified
-Bond* Configuration::addBond(Molecule* molecule, Atom* i, Atom* j)
-{
-	// Create new Bond object
-	Bond* newBond = bonds_.add();
-	molecule->addBond(newBond);
-	newBond->setAtoms(i, j);
-
-	// Update local bound lists in Atoms
-	i->addBond(newBond);
-	j->addBond(newBond);
-
-	return newBond;
-}
-
-// Add new Bond to Configuration, with Molecule parent specified, from Atom indices
-Bond* Configuration::addBond(Molecule* molecule, int i, int j)
-{
-	return addBond(molecule, atoms_[i], atoms_[j]);
-}
-
-// Return number of Bonds in Configuration
-int Configuration::nBonds() const
-{
-	return bonds_.nItems();
-}
-
-// Return Bond array
-DynamicArray<Bond>& Configuration::bonds()
-{
-	return bonds_;
-}
-
-// Return Bond array (const)
-const DynamicArray<Bond>& Configuration::constBonds() const
-{
-	return bonds_;
-}
-
-// Return nth Bond
-Bond* Configuration::bond(int n)
-{
-	return bonds_[n];
-}
-
-// Add new Angle to Configuration, with Molecule parent specified
-Angle* Configuration::addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k)
-{
-	// Create new Angle object
-	Angle* newAngle = angles_.add();
-	molecule->addAngle(newAngle);
-	newAngle->setAtoms(i, j, k);
-
-	// Update local bound lists in Atoms
-	i->addAngle(newAngle);
-	j->addAngle(newAngle);
-	k->addAngle(newAngle);
-
-	return newAngle;
-}
-
-// Add new Angle to Configuration, with Molecule parent specified, from Atom indices
-Angle* Configuration::addAngle(Molecule* molecule, int i, int j, int k)
-{
-	return addAngle(molecule, atoms_[i], atoms_[j], atoms_[k]);
-}
-
-// Return number of Angles in Configuration
-int Configuration::nAngles() const
-{
-	return angles_.nItems();
-}
-
-// Return Angle array
-DynamicArray<Angle>& Configuration::angles()
-{
-	return angles_;
-}
-
-// Return nth Angle
-Angle* Configuration::angle(int n)
-{
-	return angles_[n];
-}
-
-// Add new Torsion to Configuration, with Molecule parent specified
-Torsion* Configuration::addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k, Atom* l)
-{
-	// Create new Torsion object
-	Torsion* newTorsion = torsions_.add();
-	molecule->addTorsion(newTorsion);
-	newTorsion->setAtoms(i, j, k, l);
-
-	// Update local bound lists in Atoms
-	i->addTorsion(newTorsion, 0.5);
-	j->addTorsion(newTorsion, 0.5);
-	k->addTorsion(newTorsion, 0.5);
-	l->addTorsion(newTorsion, 0.5);
-
-	return newTorsion;
-}
-
-// Add new Torsion to Configuration, with Molecule parent specified, from Atom indices
-Torsion* Configuration::addTorsion(Molecule* molecule, int i, int j, int k, int l)
-{
-	return addTorsion(molecule, atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
-}
-
-// Return number of Torsions in Configuration
-int Configuration::nTorsions() const
-{
-	return torsions_.nItems();
-}
-
-// Return Torsion array
-DynamicArray<Torsion>& Configuration::torsions()
-{
-	return torsions_;
-}
-
-// Return nth Torsion
-Torsion* Configuration::torsion(int n)
-{
-	return torsions_[n];
 }

@@ -1,5 +1,5 @@
 /*
-	*** UsedSpeciesComboDelegate Functions
+	*** UsedSpecies Combo Delegate Functions
 	*** src/gui/delegates/usedspeciescombo_funcs.cpp
 	Copyright T. Youngs 2012-2019
 

@@ -23,9 +23,8 @@
 #define DISSOLVE_SPECIESBOND_H
 
 #include "classes/speciesintra.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include "base/enumoptions.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -33,13 +32,21 @@ class Species;
 class ProcessPool;
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
+class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 {
 	public:
 	// Constructor
 	SpeciesBond();
 	// Destructor
 	~SpeciesBond();
+
+
+	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
 
 
 	/*
@@ -103,18 +110,12 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	// Bond functional forms
 	enum BondFunction
 	{
+		NoForm,
 		HarmonicForm,
-		EPSRForm,
-		nBondFunctions
+		EPSRForm
 	};
-	// Convert string to functional form
-	static BondFunction bondFunction(const char* s);
-	// Return functional form text
-	static const char* bondFunction(BondFunction func);
-	// Return functional form array
-	static const char** bondFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(BondFunction func);
+	// Return enum options for BondFunction
+	static EnumOptions<BondFunction> bondFunctions(); 
 
 	public:
 	// Set up any necessary parameters
@@ -122,7 +123,7 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	// Return fundamental frequency for the interaction
 	double fundamentalFrequency(double reducedMass) const;
 	// Return type of this interaction
-	SpeciesIntra::IntramolecularType type() const;
+	SpeciesIntra::InteractionType type() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

@@ -65,8 +65,11 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				cfg = addConfiguration();
 				cfg->setName(parser.argc(1));
-				Messenger::print("Created Configuration '%s'...\n", cfg->name());
+				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
+
+				// Prepare the Configuration
+				if (!cfg->initialiseContent(worldPool(), pairPotentialRange_)) Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
 				break;
 			case (BlockKeywords::LayerBlockKeyword):
 				// Check to see if a processing layer with this name already exists...
@@ -78,7 +81,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				layer = addProcessingLayer();
 				layer->setName(parser.argc(1));
-				Messenger::print("Created processing layer '%s'...\n", layer->name());
+				Messenger::print("\n--> Created processing layer '%s'\n", layer->name());
 				if (!LayerBlock::parse(parser, this, layer)) error = true;
 				break;
 			case (BlockKeywords::MasterBlockKeyword):
@@ -100,7 +103,13 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				sp = addSpecies();
 				sp->setName(parser.argc(1));
+				Messenger::print("\n--> Created Species '%s'\n", sp->name());
 				if (!sp->read(parser, coreData_)) error = true;
+				else if (Messenger::isVerbose())
+				{
+					Messenger::print("\n--- Species '%s'...\n", sp->name());
+					sp->print();
+				}
 				break;
 			default:
 				Messenger::error("Block keyword '%s' is not relevant in this context.\n", BlockKeywords::keywords().keyword(kwd));
@@ -113,11 +122,7 @@ bool Dissolve::loadInput(LineParser& parser)
 	}
 
 	// Error encountered?
-	if (error)
-	{
-		Messenger::print("\nErrors encountered while parsing input.\nLoad aborted.\n");
-		clear();
-	}
+	if (error) Messenger::error("Errors encountered while parsing input.");
 	
 	// Done
 	parser.closeFiles();
@@ -180,22 +185,29 @@ bool Dissolve::saveInput(const char* filename)
 				  
 		for (MasterIntra* b = coreData_.masterBonds().first(); b != NULL; b = b->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-			for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+			for (int n=0; n<SpeciesBond::bondFunctions().minArgs( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* a = coreData_.masterAngles().first(); a != NULL; a = a->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-			for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+			for (int n=0; n<SpeciesAngle::angleFunctions().minArgs( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-			for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+			for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			if (!parser.writeLineF("%s\n", s.get())) return false;
+		}
+
+		for (MasterIntra* imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+			for (int n=0; n<SpeciesImproper::improperFunctions().minArgs( (SpeciesImproper::ImproperFunction) imp->form()); ++n) s.strcatf("  %8.3f", imp->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
@@ -217,16 +229,12 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Atom Type Parameters
 	if (!parser.writeLineF("  # Atom Type Parameters\n")) return false;
-	if (!parser.writeLineF("  # Note: These are for reference only (unless GenerateAll is used).\n")) return false;
-	if (!parser.writeLineF("  # If you wish to modify the potential, change the relevant Generate lines below.\n")) return false;
 	for (AtomType* atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
 	{
-		CharString s("  %s  %s  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge());
+		CharString s("  %s  %s  %12.6e  %s", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge(), Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", atomType->parameters().parameter(n));
 		if (!parser.writeLineF("%s\n", s.get())) return false;
 	}
-	// TODO Default case is 'GenerateAll LJ', so we'll write that for now
-	if (!parser.writeLineF("  GenerateAll  LJ\n")) return false;
 
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword), pairPotentialRange_)) return false;
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_)) return false;
@@ -234,7 +242,7 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("  %s  %s\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ShortRangeTruncationKeyword), PairPotential::shortRangeTruncationScheme(PairPotential::shortRangeTruncationScheme()))) return false;
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 	{
-		CharString s("  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
+		CharString s("#  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::GenerateKeyword), Forcefield::shortRangeTypes().keyword(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", pot->parameter(n));
 		if (!parser.writeLineF("%s\n", s.get())) return false;
 	}
@@ -246,11 +254,19 @@ bool Dissolve::saveInput(const char* filename)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
 
+		// Generator
+		if (!parser.writeLineF("\n  # Modules\n")) return false;
 		if (!parser.writeLineF("  %s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
-		if (!cfg->generator().write(parser, "   ")) return false;
+		if (!cfg->generator().write(parser, "    ")) return false;
 		if (!parser.writeLineF("  End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
  
-		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
+		// Input Coordinates
+		if (cfg->inputCoordinates().hasValidFileAndFormat())
+		{
+			if (!cfg->inputCoordinates().writeFilenameAndFormat(parser, CharString("    %s  ", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)))) return false;
+			if (!cfg->inputCoordinates().writeBlock(parser, "      ")) return false;
+			if (!parser.writeLineF("    End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))) return false;
+		}
 
 		if (!parser.writeLineF("\n")) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
@@ -268,7 +284,7 @@ bool Dissolve::saveInput(const char* filename)
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write keyword options
-			if (!module->keywords().write(parser, "    ")) return false;
+			if (!module->keywords().write(parser, "    ", true)) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -282,6 +298,10 @@ bool Dissolve::saveInput(const char* filename)
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), layer->name())) return false;
+
+		// Write frequency and disabled lines
+		if (!parser.writeLineF("  Frequency  %i\n", layer->frequency())) return false;
+		if (!layer->enabled() && (!parser.writeLineF("  Disabled\n"))) return false;
 
 		ListIterator<Module> processingIterator(layer->modules());
 		while (Module* module= processingIterator.iterate())
@@ -301,7 +321,7 @@ bool Dissolve::saveInput(const char* filename)
 			}
 
 			// Write keyword options
-			if (!module->keywords().write(parser, "    ")) return false;
+			if (!module->keywords().write(parser, "    ", true)) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -394,6 +414,9 @@ bool Dissolve::loadRestart(const char* filename)
 				error = true;
 				break;
 			}
+
+			// Set the InRestartFileFlag for the item
+			item->setFlags(GenericItem::InRestartFileFlag);
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
 		{
@@ -410,6 +433,9 @@ bool Dissolve::loadRestart(const char* filename)
 				error = true;
 				break;
 			}
+
+			// Set the InRestartFileFlag for the item
+			item->setFlags(GenericItem::InRestartFileFlag);
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
 		{
@@ -455,12 +481,8 @@ bool Dissolve::loadRestart(const char* filename)
 	iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
 
 	// Error encountered?
-	if (error)
-	{
-		Messenger::print("\nErrors encountered while loading restart file.\nLoad aborted.\n");
-		clear();
-	}
-	
+	if (error) Messenger::error("Errors encountered while loading restart file.\n");
+
 	// Done
 	if (worldPool().isWorldMaster()) parser.closeFiles();
 
@@ -492,7 +514,7 @@ bool Dissolve::saveRestart(const char* filename)
 			// If the keyword is not flagged to be saved in the restart file, skip it
 			if (!keyword->isOptionSet(KeywordBase::InRestartFileOption)) continue;
 
-			if (!keyword->write(parser, CharString("Keyword  %s  ", module->uniqueName()).get())) return false;
+			if (!keyword->write(parser, CharString("Keyword  %s  %s  ", module->uniqueName(), keyword->name()).get())) return false;
 		}
 	}
 
@@ -500,7 +522,8 @@ bool Dissolve::saveRestart(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Cycle over data store in the Configuration
-		for (GenericItem* item = cfg->moduleData().items(); item != NULL; item = item->next())
+		ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
+		while (GenericItem* item = itemIterator.iterate())
 		{
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
@@ -511,7 +534,8 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Processing Module Data
-	for (GenericItem* item = processingModuleData_.items(); item != NULL; item = item->next())
+	ListIterator<GenericItem> itemIterator(processingModuleData_.items());
+	while (GenericItem* item = itemIterator.iterate())
 	{
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;

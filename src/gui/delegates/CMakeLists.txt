@@ -26,7 +26,10 @@ SET(delegates_SRCS
   intraformcombo_funcs.cpp
   isotopecombo_funcs.cpp
   isotopologuecombo_funcs.cpp
+  null.cpp
   usedspeciescombo_funcs.cpp
+
+  null.h
 )
 
 # Target 'delegates'

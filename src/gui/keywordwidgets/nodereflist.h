@@ -61,7 +61,7 @@ class NodeRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
 
 	signals:
 	// Keyword value changed
-	void keywordValueChanged();
+	void keywordValueChanged(int flags);
 
 
 	/*
