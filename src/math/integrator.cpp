@@ -125,7 +125,33 @@ double Integrator::sum(const Data1D& data)
 	return total;
 }
 
-// Return sum of all absolute values in supplied data
+// Return sum of supplied data between the specified limits
+double Integrator::sum(const Data1D& data, double xMin, double xMax)
+{
+	// Grab data arrays
+	const Array<double>& x = data.constXAxis();
+	const Array<double>& values = data.constValues();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.nItems(); ++n)
+	{
+		if (x.constAt(n) < xMin) continue;
+		if (x.constAt(n) > xMax) break;
+
+		total += values.constAt(n);
+	}
+
+	return total;
+}
+
+// Return sum of supplied data within the specified range
+double Integrator::sum(const Data1D& data, const Range range)
+{
+	return sum(data, range.minimum(), range.maximum());
+}
+
+// Return sum of all absolute values of supplied data
 double Integrator::absSum(const Data1D& data)
 {
 	// Grab data array
@@ -136,6 +162,32 @@ double Integrator::absSum(const Data1D& data)
 	for (int n=0; n<values.nItems(); ++n) total += fabs(values.constAt(n));
 
 	return total;
+}
+
+// Return sum of all absolute values between the specified limits
+double Integrator::absSum(const Data1D& data, double xMin, double xMax)
+{
+	// Grab data arrays
+	const Array<double>& x = data.constXAxis();
+	const Array<double>& values = data.constValues();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.nItems(); ++n)
+	{
+		if (x.constAt(n) < xMin) continue;
+		if (x.constAt(n) > xMax) break;
+
+		total += fabs(values.constAt(n));
+	}
+
+	return total;
+}
+
+// Return sum of all absolute values within the specified range
+double Integrator::absSum(const Data1D& data, const Range range)
+{
+	return absSum(data, range.minimum(), range.maximum());
 }
 
 // Return sum of squares of all values in supplied data
@@ -149,6 +201,32 @@ double Integrator::sumOfSquares(const Data1D& data)
 	for (int n=0; n<values.nItems(); ++n) total += values.constAt(n)*values.constAt(n);
 
 	return total;
+}
+
+// Return sum of squares of values between the specified limits
+double Integrator::sumOfSquares(const Data1D& data, double xMin, double xMax)
+{
+	// Grab data arrays
+	const Array<double>& x = data.constXAxis();
+	const Array<double>& values = data.constValues();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.nItems(); ++n)
+	{
+		if (x.constAt(n) < xMin) continue;
+		if (x.constAt(n) > xMax) break;
+
+		total += values.constAt(n)*values.constAt(n);
+	}
+
+	return total;
+}
+
+// Return sum of squares of values within the specified range
+double Integrator::sumOfSquares(const Data1D& data, const Range range)
+{
+	return sumOfSquares(data, range.minimum(), range.maximum());
 }
 
 // Return sum of all values in supplied data
