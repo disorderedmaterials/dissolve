@@ -136,12 +136,6 @@ bool Process1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data1D& data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
@@ -178,10 +172,20 @@ bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 		{
 			Data1DExportFileFormat exportFormat(CharString("%s_%s.txt", name(), cfg->name()));
 			if (exportFormat.exportData(data)) procPool.decideTrue();
-			else return procPool.decideFalse();
+			else
+			{
+				procPool.decideFalse();
+				return ProcedureNode::Failure;
+			}
 		}
-		else if (!procPool.decision()) return false;
+		else if (!procPool.decision()) return ProcedureNode::Failure;
 	}
 
+	return ProcedureNode::Success;
+}
+
+// Finalise any necessary data after execution
+bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+{
 	return true;
 }

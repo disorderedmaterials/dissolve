@@ -147,12 +147,6 @@ bool Process3DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data3D& data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
@@ -161,7 +155,7 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
-	// Copy the averaged data from the associated Collect3D node
+	// Copy the averaged data from the associated Process1D node
 	data = collectNode_->accumulatedData();
 
 	// Run normalisation on the data
@@ -188,10 +182,17 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 		if (procPool.isMaster())
 		{
 			Messenger::error("Saving of 3D data is not yet implemented.\n");
-			return procPool.decideFalse();
+			procPool.decideFalse();
+			return ProcedureNode::Failure;
 		}
-		else if (!procPool.decision()) return false;
+		else if (!procPool.decision()) return ProcedureNode::Failure;
 	}
 
+	return ProcedureNode::Success;
+}
+
+// Finalise any necessary data after execution
+bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+{
 	return true;
 }
