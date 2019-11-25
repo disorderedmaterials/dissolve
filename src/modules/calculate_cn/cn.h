@@ -23,9 +23,12 @@
 #define DISSOLVE_MODULE_CALCULATECOORDINATIONNUMBER_H
 
 #include "module/module.h"
+#include "procedure/procedure.h"
 
 // Forward Declarations
-/* none */
+class Process1DProcedureNode;
+class Sum1DProcedureNode;
+class OperateSitePopulationNormaliseProcedureNode;
 
 // CalculateCoordinationNumber Module
 class CalculateCoordinationNumberModule : public Module
@@ -65,13 +68,32 @@ class CalculateCoordinationNumberModule : public Module
 	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-	
+
+
 	/*
 	 * Processing
 	 */
 	private:
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
+
+
+	/*
+	 * Functions / Data
+	 */
+	private:
+	// Analysis procedure to be run
+	Procedure analyser_;
+	// Sum1D node
+	Sum1DProcedureNode* sum1D_;
+	// Process1D node
+	Process1DProcedureNode* process1D_;
+	// Site normalisation node
+	OperateSitePopulationNormaliseProcedureNode* siteNormaliser_;
+
+	public:
+	// Return specified coordination number (from Sum1D node)
+	const SampledDouble& coordinationNumber(int index);
 
 
 	/*

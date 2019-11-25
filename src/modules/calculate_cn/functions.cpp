@@ -20,4 +20,16 @@
 */
 
 #include "modules/calculate_cn/cn.h"
+#include "procedure/nodes/sum1d.h"
 
+// Return specified coordination number (from Sum1D node)
+const SampledDouble& CalculateCoordinationNumberModule::coordinationNumber(int index)
+{
+	if (!sum1D_)
+	{
+		static const SampledDouble dummy;
+		return dummy;
+	}
+
+	return sum1D_->sum(index);
+}

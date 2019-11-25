@@ -26,7 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class CalculateCoordinationNumberModule;
 
 // Module Widget
 class CalculateCoordinationNumberModuleWidget : public ModuleWidget
@@ -36,13 +36,21 @@ class CalculateCoordinationNumberModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	CalculateCoordinationNumberModule* module_;
 
 	public:
 	// Constructor
-	CalculateCoordinationNumberModuleWidget(QWidget* parent, Module* module);
+	CalculateCoordinationNumberModuleWidget(QWidget* parent, CalculateCoordinationNumberModule* cnModule);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::CalculateCoordinationNumberModuleWidget ui;
+	Ui::CalculateCoordinationNumberModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

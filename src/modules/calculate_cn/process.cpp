@@ -20,36 +20,33 @@
 */
 
 #include "modules/calculate_cn/cn.h"
+#include "modules/calculate_rdf/rdf.h"
+#include "procedure/nodes/integrate1d.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "main/dissolve.h"
 #include "base/sysfunc.h"
 
 // Run main processing
 bool CalculateCoordinationNumberModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
-	/*
-	 * This is a XXX routine.
-	 * XXX
-	 */
+	// Check for valid CalculateRDF pointer
+	bool found = false;
+	const CalculateRDFModule* rdfModule = keywords_.retrieve<const CalculateRDFModule*>("SourceRDF", NULL, &found);
+	if ((!found) || (!rdfModule)) return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
-	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
+	// Set the target Collect1D and normalistation nodes in the Process1D
+	process1D_->setKeyword<const Collect1DProcedureNode*>("SourceData", rdfModule->collectDistanceNode());
+	RefList<const SelectProcedureNode> siteNodes(rdfModule->selectANode());
+	siteNormaliser_->setKeyword< RefList<const SelectProcedureNode>& >("Site", siteNodes);
+
+	// Execute the analysis on the Configurations targeted by the RDF module
+	RefListIterator<Configuration> configIterator(rdfModule->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
 	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
+		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 	}
 
-	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
-	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
-
-		// Set up process pool - must do this to ensure we are using all available processes
-		procPool.assignProcessesToGroups(cfg->processPool());
-
-		// MODULE CODE
-	}
-
-	return false;
+	return true;
 }
 

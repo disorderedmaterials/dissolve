@@ -30,13 +30,13 @@ const char* CalculateCoordinationNumberModule::type() const
 // Return category for module
 const char* CalculateCoordinationNumberModule::category() const
 {
-	return "NO CATEGORY ASSIGNED";
+	return "Analysis";
 }
 
 // Return brief description of module
 const char* CalculateCoordinationNumberModule::brief() const
 {
-	return "Empty Module providing skeletal structure for new Module development";
+	return "Calculate coordination numbers from an existing radial distribution function";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

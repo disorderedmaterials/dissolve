@@ -20,12 +20,13 @@
 */
 
 #include "modules/calculate_cn/gui/modulewidget.h"
+#include "modules/calculate_cn/cn.h"
 
 // Constructor
-CalculateCoordinationNumberModuleWidget::CalculateCoordinationNumberModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+CalculateCoordinationNumberModuleWidget::CalculateCoordinationNumberModuleWidget(QWidget* parent, CalculateCoordinationNumberModule* cnModule) : ModuleWidget(parent), module_(cnModule)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
@@ -33,6 +34,19 @@ CalculateCoordinationNumberModuleWidget::CalculateCoordinationNumberModuleWidget
 // Update controls within widget
 void CalculateCoordinationNumberModuleWidget::updateControls(int flags)
 {
+	// Update CN labels
+	if (module_)
+	{
+		ui_.RegionAResultFrame->setText(module_->coordinationNumber(0));
+		ui_.RegionBResultFrame->setText(module_->coordinationNumber(1));
+		ui_.RegionCResultFrame->setText(module_->coordinationNumber(2));
+	}
+	else
+	{
+		ui_.RegionAResultFrame->setText(SampledDouble());
+		ui_.RegionBResultFrame->setText(SampledDouble());
+		ui_.RegionCResultFrame->setText(SampledDouble());
+	}
 }
 
 // Disable sensitive controls within widget
