@@ -68,8 +68,8 @@ class NodeRefListKeywordBase
 	bool onlyInScope() const;
 	// Add the specified node to the list
 	virtual bool addNode(ProcedureNode* node) = 0;
-	// Return the current list (as ProcedureNodes)
-	virtual RefList<ProcedureNode> nodes() const = 0;
+	// Return the current list (as const ProcedureNodes)
+	virtual RefList<const ProcedureNode> nodes() const = 0;
 	// Return if the specified node is in the current list
 	virtual bool hasNode(ProcedureNode* node) = 0;
 	// Remove the specified node from the list
@@ -162,9 +162,9 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 		return true;
 	}
 	// Return the current list (as ProcedureNodes)
-	RefList<ProcedureNode> nodes() const
+	RefList<const ProcedureNode> nodes() const
 	{
-		RefList<ProcedureNode> nodes;
+		RefList<const ProcedureNode> nodes;
 		
 		RefListIterator<N> nodeIterator(KeywordData< RefList<N>& >::data_);
 		while (N* node = nodeIterator.iterate()) nodes.append(node);
