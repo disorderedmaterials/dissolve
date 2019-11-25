@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - GUI
+	*** CalculateCN Module - GUI
 	*** src/modules/calculate_cn/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -22,7 +22,7 @@
 #include "modules/calculate_cn/cn.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateCoordinationNumberModule::createWidget(QWidget* parent, Dissolve& dissolve)
+ModuleWidget* CalculateCNModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
 	return NULL;
 }

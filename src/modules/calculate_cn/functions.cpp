@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - Functions
+	*** CalculateCN Module - Functions
 	*** src/modules/calculate_cn/functions.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -23,7 +23,7 @@
 #include "procedure/nodes/sum1d.h"
 
 // Return specified coordination number (from Sum1D node)
-const SampledDouble& CalculateCoordinationNumberModule::coordinationNumber(int index)
+const SampledDouble& CalculateCNModule::coordinationNumber(int index)
 {
 	if (!sum1D_)
 	{

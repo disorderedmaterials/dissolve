@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - Core
+	*** CalculateCN Module - Core
 	*** src/modules/calculate_cn/core.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -26,7 +26,7 @@
  */
 
 // Constructor
-CalculateCoordinationNumberModule::CalculateCoordinationNumberModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
 	// Set unique name for this instance of the Module
 	static int instanceId = 0;
@@ -37,7 +37,7 @@ CalculateCoordinationNumberModule::CalculateCoordinationNumberModule() : Module(
 }
 
 // Destructor
-CalculateCoordinationNumberModule::~CalculateCoordinationNumberModule()
+CalculateCNModule::~CalculateCNModule()
 {
 }
 
@@ -46,7 +46,7 @@ CalculateCoordinationNumberModule::~CalculateCoordinationNumberModule()
  */
 
 // Create instance of this module
-Module* CalculateCoordinationNumberModule::createInstance() const
+Module* CalculateCNModule::createInstance() const
 {
-	return new CalculateCoordinationNumberModule;
+	return new CalculateCNModule;
 }

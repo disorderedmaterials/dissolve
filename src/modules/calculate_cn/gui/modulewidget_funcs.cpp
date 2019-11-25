@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module Widget - Functions
+	*** CalculateCN Module Widget - Functions
 	*** src/modules/calculate_cn/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -25,7 +25,7 @@
 #include "procedure/nodes/process1d.h"
 
 // Constructor
-CalculateCoordinationNumberModuleWidget::CalculateCoordinationNumberModuleWidget(QWidget* parent, CalculateCoordinationNumberModule* cnModule) : ModuleWidget(parent), module_(cnModule)
+CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget* parent, CalculateCNModule* cnModule) : ModuleWidget(parent), module_(cnModule)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -50,7 +50,7 @@ CalculateCoordinationNumberModuleWidget::CalculateCoordinationNumberModuleWidget
 }
 
 // Update controls within widget
-void CalculateCoordinationNumberModuleWidget::updateControls(int flags)
+void CalculateCNModuleWidget::updateControls(int flags)
 {
 	// Update CN labels
 	if (module_)
@@ -73,12 +73,12 @@ void CalculateCoordinationNumberModuleWidget::updateControls(int flags)
 }
 
 // Disable sensitive controls within widget
-void CalculateCoordinationNumberModuleWidget::disableSensitiveControls()
+void CalculateCNModuleWidget::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls within widget
-void CalculateCoordinationNumberModuleWidget::enableSensitiveControls()
+void CalculateCNModuleWidget::enableSensitiveControls()
 {
 }
 
@@ -87,13 +87,13 @@ void CalculateCoordinationNumberModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalculateCoordinationNumberModuleWidget::writeState(LineParser& parser)
+bool CalculateCNModuleWidget::writeState(LineParser& parser)
 {
 	return false;
 }
 
 // Read widget state through specified LineParser
-bool CalculateCoordinationNumberModuleWidget::readState(LineParser& parser)
+bool CalculateCNModuleWidget::readState(LineParser& parser)
 {
 	return false;
 }
@@ -103,7 +103,7 @@ bool CalculateCoordinationNumberModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void CalculateCoordinationNumberModuleWidget::setGraphDataTargets()
+void CalculateCNModuleWidget::setGraphDataTargets()
 {
 	rdfGraph_->clearRenderables();
 

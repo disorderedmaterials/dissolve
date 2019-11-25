@@ -80,7 +80,7 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
 	if (!registerMasterModule(new BraggModule)) return false;
-	if (!registerMasterModule(new CalculateCoordinationNumberModule)) return false;
+	if (!registerMasterModule(new CalculateCNModule)) return false;
 	if (!registerMasterModule(new CalculateDAngleModule)) return false;
 	if (!registerMasterModule(new CalculateRDFModule)) return false;
 	if (!registerMasterModule(new CalibrationModule)) return false;

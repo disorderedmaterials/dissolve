@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - GUI
+	*** CalculateCN Module - GUI
 	*** src/modules/calculate_cn/gui/gui.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -23,8 +23,8 @@
 #include "modules/calculate_cn/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateCoordinationNumberModule::createWidget(QWidget* parent, Dissolve& dissolve)
+ModuleWidget* CalculateCNModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new CalculateCoordinationNumberModuleWidget(parent, this);
+	return new CalculateCNModuleWidget(parent, this);
 }
 

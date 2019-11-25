@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - Definition
+	*** CalculateCN Module - Definition
 	*** src/modules/calculate_cn/definition.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -22,25 +22,25 @@
 #include "modules/calculate_cn/cn.h"
 
 // Return type of module
-const char* CalculateCoordinationNumberModule::type() const
+const char* CalculateCNModule::type() const
 {
-	return "CalculateCoordinationNumber";
+	return "CalculateCN";
 }
 
 // Return category for module
-const char* CalculateCoordinationNumberModule::category() const
+const char* CalculateCNModule::category() const
 {
 	return "Analysis";
 }
 
 // Return brief description of module
-const char* CalculateCoordinationNumberModule::brief() const
+const char* CalculateCNModule::brief() const
 {
 	return "Calculate coordination numbers from an existing radial distribution function";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateCoordinationNumberModule::nTargetableConfigurations() const
+int CalculateCNModule::nTargetableConfigurations() const
 {
 	return 0;
 }

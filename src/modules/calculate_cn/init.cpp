@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - Initialisation
+	*** CalculateCN Module - Initialisation
 	*** src/modules/calculate_cn/init.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -27,7 +27,7 @@
 #include "keywords/types.h"
 
 // Perform any necessary initialisation for the Module
-void CalculateCoordinationNumberModule::initialise()
+void CalculateCNModule::initialise()
 {
 	/*
 	 * Assemble the following Procedure:

@@ -26,17 +26,17 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class CalculateCoordinationNumberModule;
+class CalculateCNModule;
 
 // Module Widget
-class CalculateCoordinationNumberModuleWidget : public ModuleWidget
+class CalculateCNModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	CalculateCoordinationNumberModuleWidget(QWidget* parent, CalculateCoordinationNumberModule* cnModule);
+	CalculateCNModuleWidget(QWidget* parent, CalculateCNModule* cnModule);
 
 
 	/*
@@ -44,7 +44,7 @@ class CalculateCoordinationNumberModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Associated Module
-	CalculateCoordinationNumberModule* module_;
+	CalculateCNModule* module_;
 
 
 	/*
@@ -52,7 +52,7 @@ class CalculateCoordinationNumberModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Main form declaration
-	Ui::CalculateCoordinationNumberModuleWidget ui_;
+	Ui::CalculateCNModuleWidget ui_;
 
 	public:
 	// Update controls within widget

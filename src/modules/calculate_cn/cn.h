@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module
+	*** CalculateCN Module
 	*** src/modules/calculate_cn/cn.h
 	Copyright T. Youngs 2012-2019
 
@@ -30,14 +30,14 @@ class Process1DProcedureNode;
 class Sum1DProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode;
 
-// CalculateCoordinationNumber Module
-class CalculateCoordinationNumberModule : public Module
+// CalculateCN Module
+class CalculateCNModule : public Module
 {
 	public:
 	// Constructor
-	CalculateCoordinationNumberModule();
+	CalculateCNModule();
 	// Destructor
-	~CalculateCoordinationNumberModule();
+	~CalculateCNModule();
 
 
 	/*

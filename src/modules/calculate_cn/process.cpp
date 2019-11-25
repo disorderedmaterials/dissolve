@@ -1,5 +1,5 @@
 /*
-	*** CalculateCoordinationNumber Module - Processing
+	*** CalculateCN Module - Processing
 	*** src/modules/calculate_cn/process.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -28,7 +28,7 @@
 #include "base/sysfunc.h"
 
 // Run main processing
-bool CalculateCoordinationNumberModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool CalculateCNModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Check for valid CalculateRDF pointer
 	bool found = false;
