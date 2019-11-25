@@ -101,6 +101,8 @@ class CalculateRDFModule : public Module
 	const Collect1DProcedureNode* collectDistanceNode() const;
 	// Return SelectNode for site A
 	const SelectProcedureNode* selectANode() const;
+	// Return Process1DNode result (i.e. RDF)
+	const Process1DProcedureNode* rdfResult() const;
 
 
 	/*
