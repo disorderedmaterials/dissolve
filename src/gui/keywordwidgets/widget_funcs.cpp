@@ -124,6 +124,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = isotopologueRefListWidget;
 		base = isotopologueRefListWidget;
 	}
+	else if (type == KeywordBase::ModuleData)
+	{
+		ModuleKeywordWidget* moduleWidget = new ModuleKeywordWidget(NULL, keywordBase, coreData);
+		connect(moduleWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+		widget = moduleWidget;
+		base = moduleWidget;
+	}
 	else if (type == KeywordBase::ModuleGroupsData)
 	{
 		ModuleGroupsKeywordWidget* moduleGroupsWidget = new ModuleGroupsKeywordWidget(NULL, keywordBase, coreData);
@@ -179,6 +186,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		connect(pairBroadeningFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
+	}
+	else if (type == KeywordBase::RangeData)
+	{
+		RangeKeywordWidget* rangeWidget = new RangeKeywordWidget(NULL, keywordBase, coreData);
+		connect(rangeWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+		widget = rangeWidget;
+		base = rangeWidget;
 	}
 	else if (type == KeywordBase::SpeciesData)
 	{

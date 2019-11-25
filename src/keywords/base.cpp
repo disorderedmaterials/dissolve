@@ -52,7 +52,7 @@ const char* KeywordDataTypeKeywords[] = {
 	"GeometryList",
 	"Integer", "IsotopologueList",
 	"LinkToKeyword",
-	"ModuleGroups", "ModuleRefList",
+	"Module", "ModuleGroups", "ModuleRefList",
 	"Node", "NodeAndInteger", "NodeArray", "NodeBranch", "NodeRefList", "NodeValue", "NodeValueEnumOptions",
 	"PairBroadeningFunction", "Procedure",
 	"Range",
