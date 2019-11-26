@@ -140,6 +140,39 @@ void ModuleBlock::on_NameEdit_returnPressed()
 	on_NameEdit_editingFinished();
 }
 
+void ModuleBlock::on_EnabledButton_clicked(bool checked)
+{
+	if (refreshing_) return;
+
+	module_->setEnabled(checked);
+
+	ui_.IconFrame->setEnabled(checked);
+
+	emit(dataModified());
+}
+
+void ModuleBlock::on_FrequencySpin_valueChanged(int value)
+{
+	if (refreshing_) return;
+
+	module_->setFrequency(value);
+
+	emit(dataModified());
+}
+
+void ModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)
+{
+	if (refreshing_ || (!item)) return;
+
+	// Get configuration from item
+	Configuration* cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
+	if (!cfg) return;
+
+	if (item->checkState() == Qt::Checked) module_->addTargetConfiguration(cfg);
+	else module_->removeTargetConfiguration(cfg);
+
+	emit(dataModified());
+}
 
 /*
  * QWidget Reimplementations
@@ -229,6 +262,7 @@ void ModuleBlock::updateControls()
 
 	// Set 'enabled' button status
 	ui_.EnabledButton->setChecked(module_->enabled());
+	ui_.IconFrame->setEnabled(module_->enabled());
 
 	// Set frequency spin
 	ui_.FrequencySpin->setValue(module_->frequency());
