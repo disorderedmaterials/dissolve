@@ -10,7 +10,8 @@ $Wc = New-Object System.Net.WebClient
 $Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
 echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
 $env:QT_INSTALL_DIR = 'C:\\Qt'
-Start-Process qt.exe -ArgumentList '--verbose --script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
+#Start-Process qt.exe -ArgumentList '--verbose --script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
+Start-Process qt.exe -ArgumentList '--script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
 Remove-Item qt.exe
 $env:QTDIR = "C:\\Qt\\5.13.1\\mingw73_64"
 
@@ -37,6 +38,8 @@ cd 3rdparty
 # Retrieve / compile Freetype 2.10.1
 $Wc = New-Object System.Net.WebClient
 $Wc.DownloadFile('https://download.savannah.gnu.org/releases/freetype/ft2101.zip', 'ft.zip')
+ls
+unzip -v
 unzip .\\ft.zip
 Echo 'Compiling FreeType...'
 mkdir freetype-build
