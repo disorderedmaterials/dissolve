@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIESANGLE_H
 
 #include "classes/speciesintra.h"
+#include "base/enumoptions.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -87,19 +88,13 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	// Angle functional forms
 	enum AngleFunction
 	{
+		NoForm,
 		HarmonicForm,
 		CosineForm,
-		Cos2Form,
-		nAngleFunctions
+		Cos2Form
 	};
-	// Convert string to functional form
-	static AngleFunction angleFunction(const char* s);
-	// Return functional form text
-	static const char* angleFunction(AngleFunction func);
-	// Return functional form array
-	static const char** angleFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(AngleFunction func);
+	// Return enum options for AngleFunction
+	static EnumOptions<AngleFunction> angleFunctions(); 
 
 	public:
 	// Set up any necessary parameters

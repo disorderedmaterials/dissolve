@@ -47,10 +47,10 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	
 	// Set item delegates for tables
 	// -- Functional Forms
-	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions())));
-	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesAngle::nAngleFunctions, SpeciesAngle::angleFunctions())));
-	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesTorsion::nTorsionFunctions, SpeciesTorsion::torsionFunctions())));
-	ui_.MasterImpropersTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesImproper::nImproperFunctions, SpeciesImproper::improperFunctions())));
+	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions())));
+	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions())));
+	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
+	ui_.MasterImpropersTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions())));
 
 	// -- Parameters
 	for (int n=2; n<6; ++n)
@@ -155,7 +155,7 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra* masterBond, bool c
 		ui_.MasterBondsTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterBondsTable->item(row, 1);
-	item->setText(SpeciesBond::bondFunction( (SpeciesBond::BondFunction) masterBond->form()));
+	item->setText(SpeciesBond::bondFunctions().keywordFromInt(masterBond->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -194,7 +194,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool
 		ui_.MasterAnglesTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterAnglesTable->item(row, 1);
-	item->setText(SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) masterAngle->form()));
+	item->setText(SpeciesAngle::angleFunctions().keywordFromInt(masterAngle->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -233,7 +233,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, 
 		ui_.MasterTorsionsTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterTorsionsTable->item(row, 1);
-	item->setText(SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) masterTorsion->form()));
+	item->setText(SpeciesTorsion::torsionFunctions().keywordFromInt(masterTorsion->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -272,7 +272,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra* masterImproper
 		ui_.MasterImpropersTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterImpropersTable->item(row, 1);
-	item->setText(SpeciesImproper::improperFunction( (SpeciesImproper::ImproperFunction) masterImproper->form()));
+	item->setText(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -758,7 +758,7 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
@@ -803,7 +803,7 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesAngle::angleFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
@@ -848,7 +848,7 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesTorsion::torsionFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
@@ -893,7 +893,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesImproper::improperFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters

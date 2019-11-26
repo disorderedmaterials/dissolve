@@ -83,10 +83,10 @@ bool GenericList::isItemOfType(const char* type, const char* name, const char* p
 	return DissolveSys::sameString(type, item->itemClassName());
 }
 
-// Return head of the list
-GenericItem* GenericList::items()
+// Return item list
+List<GenericItem>& GenericList::items()
 {
-	return items_.first();
+	return items_;
 }
 
 // Return the named item from the list
@@ -122,7 +122,7 @@ int GenericList::version(const char* name, const char* prefix) const
 }
 
 // Return list of all items with specified prefix (before first '_')
-RefList<GenericItem> GenericList::listWithPrefix(const char* prefix)
+RefList<GenericItem> GenericList::itemsWithPrefix(const char* prefix)
 {
 	RefList<GenericItem> items;
 	CharString itemUniqueName;
@@ -131,6 +131,15 @@ RefList<GenericItem> GenericList::listWithPrefix(const char* prefix)
 		itemUniqueName = DissolveSys::beforeChar(item->name(), '_');
 		if (itemUniqueName == prefix) items.append(item);
 	}
+
+	return items;
+}
+
+// Return list of all items with specified class name
+RefList<GenericItem> GenericList::itemsWithClassName(const char* className)
+{
+	RefList<GenericItem> items;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->itemClassName(),className)) items.append(item);
 
 	return items;
 }

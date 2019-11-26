@@ -30,12 +30,12 @@ libwidgets_la_SOURCES += elementselector_funcs.cpp exponentialspin_funcs.cpp
 libwidgets_la_SOURCES += gradientbar_funcs.cpp
 libwidgets_la_SOURCES += mimestrings.cpp mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
 libwidgets_la_SOURCES += nocontrols_funcs.cpp
-libwidgets_la_SOURCES += subwidget.cpp subwindow.cpp supertabbar_funcs.cpp supertabwidget_funcs.cpp
+libwidgets_la_SOURCES += sampleddoublelabel.ui sampleddoublelabel_funcs.cpp supertabbar_funcs.cpp supertabwidget_funcs.cpp
 libwidgets_la_SOURCES += tmenubutton_funcs.cpp tmenubuttongroup.cpp tpopupwidget_funcs.cpp
 
 noinst_HEADERS = mimestrings.h mimetreewidgetitem.h
 noinst_HEADERS += nocontrols.h
-noinst_HEADERS += subwidget.h subwindow.h
+noinst_HEADERS += sampleddoublelabel.h
 noinst_HEADERS += tmenubuttongroup.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

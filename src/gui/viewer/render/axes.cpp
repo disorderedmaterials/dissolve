@@ -600,6 +600,58 @@ double Axes::transformZ(double z) const
 	else return z * stretch_.z;
 }
 
+// Transform entire array of values into local axes coordinates
+void Axes::transformZ(Array<double>& zArray) const
+{
+	if (inverted_.z && logarithmic_.z) for (int n=0; n< zArray.nItems(); ++n)
+	{
+// 		if (max_.z / zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		zArray[n] = log10(max_.z/ zArray[n]) * stretch_.z;
+	}
+	else if (inverted_.z) for (int n=0; n< zArray.nItems(); ++n) zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
+	else if (logarithmic_.z) for (int n=0; n<zArray.nItems(); ++n)
+	{
+// 		if (zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		zArray[n] = log10(zArray[n]) * stretch_.z;
+	}
+	else zArray *= stretch_.z;
+}
+
+// Transform a 2D array of values into local axes coordinates
+void Axes::transformX(Array2D<double>& xArray) const
+{
+	int n = 0;
+	while(n < xArray.linearArraySize())
+	{
+		xArray.linearValue(n) = transformX(xArray.linearValue(n));
+		n++;		
+	}
+}
+
+// Transform a 2D array of values into local axes coordinates
+void Axes::transformY(Array2D<double>& yArray) const
+{
+	int n = 0;
+	while(n < yArray.linearArraySize())
+	{
+		yArray.linearValue(n) = transformY(yArray.linearValue(n));
+		n++;		
+	}
+}
+
+// Transform a 2D array of values into local axes coordinates
+void Axes::transformZ(Array2D<double>& zArray) const
+{
+	int n = 0;
+	while(n < zArray.linearArraySize())
+	{
+		zArray.linearValue(n) = transformZ(zArray.linearValue(n));
+		n++;		
+	}
+}
+
 /*
  * Ticks / Labels / Gridlines
  */

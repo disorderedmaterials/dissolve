@@ -33,7 +33,7 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
 	public:
 	// Constructors
 	OperateSitePopulationNormaliseProcedureNode();
-	OperateSitePopulationNormaliseProcedureNode(RefList<SelectProcedureNode> selectNodes);
+	OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
 	// Destructor
 	~OperateSitePopulationNormaliseProcedureNode();
 
@@ -43,7 +43,7 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
 	 */
 	private:
 	// List of sites (nodes) whose populations will be used to normalise the data
-	RefList<SelectProcedureNode> selectNodes_;
+	RefList<const SelectProcedureNode> selectNodes_;
 
 
 	/*

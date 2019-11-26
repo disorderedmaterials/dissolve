@@ -52,9 +52,10 @@ const char* KeywordDataTypeKeywords[] = {
 	"GeometryList",
 	"Integer", "IsotopologueList",
 	"LinkToKeyword",
-	"ModuleGroups", "ModuleRefList",
+	"Module", "ModuleGroups", "ModuleRefList",
 	"Node", "NodeAndInteger", "NodeArray", "NodeBranch", "NodeRefList", "NodeValue", "NodeValueEnumOptions",
 	"PairBroadeningFunction", "Procedure",
+	"Range",
 	"Species", "SpeciesRefList", "SpeciesSite", "SpeciesSiteRefList",
 	"Vec3<Double>", "Vec3<Integer>", "Vec3<NodeValue>",
 	"WindowFunction"

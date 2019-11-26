@@ -62,7 +62,7 @@ Data1DExportFileFormat::Data1DExportFileFormat(const char* filename, Data1DExpor
  */
 
 // Export Data1D as simple XY (or XYE) data
-bool Data1DExportFileFormat::exportXY(LineParser& parser, Data1D& data)
+bool Data1DExportFileFormat::exportXY(LineParser& parser, const Data1D& data)
 {
 	const Array<double>& x = data.constXAxis();
 	const Array<double>& values = data.constValues();
@@ -77,7 +77,7 @@ bool Data1DExportFileFormat::exportXY(LineParser& parser, Data1D& data)
 }
 
 // Export Data1D using current filename and format
-bool Data1DExportFileFormat::exportData(Data1D& data)
+bool Data1DExportFileFormat::exportData(const Data1D& data)
 {
 	// Open the file
 	LineParser parser;

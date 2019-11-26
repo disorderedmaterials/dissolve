@@ -75,7 +75,7 @@ double SampledDouble::variance() const
 // Return standard deviation of sampled data
 double SampledDouble::stDev() const
 {
-	return (count_ < 2 ? 0.0 : sqrt(m2_ / count_ - 1));
+	return (count_ < 2 ? 0.0 : sqrt(m2_ / (count_ - 1)));
 }
 
 /*

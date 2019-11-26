@@ -41,8 +41,16 @@ class SkeletonModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	SkeletonModuleWidget(QWidget* parent, Module* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::SkeletonModuleWidget ui;
+	Ui::SkeletonModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

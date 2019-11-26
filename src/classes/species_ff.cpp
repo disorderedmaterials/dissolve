@@ -69,7 +69,7 @@ void Species::completeIntramolecularTerms()
 				if ((j > l) && (!hasAngle(j, k, l))) addAngle(j, k, l);
 
 				// If the torsion i-j-k-l doesn't already exist, add it now.
-				if (!hasTorsion(i,  j, k, l)) addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
+				if (!hasTorsion(i, j, k, l)) addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
 			}
 		}
 	}

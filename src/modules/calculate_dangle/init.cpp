@@ -136,7 +136,7 @@ void CalculateDAngleModule::initialise()
 	processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 
 	SequenceProcedureNode* rdfNormalisation = processDistance_->addNormalisationBranch();
-	RefList<SelectProcedureNode> sitePopulationNormalisers;
+	RefList<const SelectProcedureNode> sitePopulationNormalisers;
 	sitePopulationNormalisers.append(selectA_);
 	sitePopulationNormalisers.append(selectB_);
 	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));

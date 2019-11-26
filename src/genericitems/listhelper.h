@@ -154,6 +154,26 @@ template <class T> class GenericListHelper
 		if (created != NULL) (*created) = false;
 		return castItem->data();
 	}
+	// Create or retrieve named item from specified list as template-guided type
+	static RefList<T> items(GenericList& sourceList)
+	{
+		RefList<T> items;
+		ListIterator<GenericItem> itemIterator(sourceList.items());
+		while (GenericItem* item = itemIterator.iterate()) if (DissolveSys::sameString(item->itemClassName(), T::itemClassName()))
+		{
+			// Cast to correct type
+			GenericItemContainer<T>* castItem = dynamic_cast< GenericItemContainer<T>* >(item);
+			if (!castItem)
+			{
+				printf("That didn't work, because its of the wrong type.\n");
+				continue;
+			}
+
+			items.append(&castItem->data());
+		}
+
+		return items;
+	}
 };
 
 #endif

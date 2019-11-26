@@ -348,6 +348,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
+		ImproperKeyword,		/* 'Improper' - Define an Improper interaction between four atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */

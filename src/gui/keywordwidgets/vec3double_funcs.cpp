@@ -100,6 +100,7 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
 
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
+
 /*
  * Update
  */

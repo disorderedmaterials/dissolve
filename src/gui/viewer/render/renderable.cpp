@@ -294,7 +294,7 @@ Primitive* Renderable::createPrimitive(GLenum type, bool colourData)
 // Reinitialise managed Primitive list to the size specified
 void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData)
 {
-	primitives_.reinitialise(newSize, false, type, colourData);
+	primitives_.reinitialise(newSize, type, colourData);
 }
 
 // Return nth Primitive managed by the Renderable

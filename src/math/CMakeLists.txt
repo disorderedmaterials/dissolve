@@ -16,12 +16,14 @@ add_library(math
   histogram3d.cpp
   integrator.cpp
   interpolator.cpp
+  limits.cpp
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
   pairbroadeningfunction.cpp
   plottable.cpp
   poissonfit.cpp
+  range.cpp
   regression.cpp
   sampleddouble.cpp
   svd.cpp
@@ -47,6 +49,7 @@ add_library(math
   histogram3d.h
   integrator.h
   interpolator.h
+  limits.h
   mathfunc.h
   matrix3.h
   matrix4.h
@@ -56,6 +59,7 @@ add_library(math
   plottable.h
   poissonfit.h
   praxis.h
+  range.h
   regression.h
   sampleddouble.h
   sd.h

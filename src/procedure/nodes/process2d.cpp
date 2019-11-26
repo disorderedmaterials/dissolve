@@ -33,9 +33,9 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Process2DProcedureNode::Process2DProcedureNode(Collect2DProcedureNode* target) : ProcedureNode(ProcedureNode::Process2DNode)
+Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode* target) : ProcedureNode(ProcedureNode::Process2DNode)
 {
-	keywords_.add("Target", new NodeKeyword<Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target), "SourceData", "Collect2D node containing the data to process");
+	keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target), "SourceData", "Collect2D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Counts"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
@@ -131,7 +131,7 @@ SequenceProcedureNode* Process2DProcedureNode::branch()
 bool Process2DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve the Collect2D node target
-	collectNode_ = keywords_.retrieve<Collect2DProcedureNode*>("SourceData");
+	collectNode_ = keywords_.retrieve<const Collect2DProcedureNode*>("SourceData");
 	if (!collectNode_) return Messenger::error("No source Collect2D node set in '%s'.\n", name());
 
 	if (normalisationBranch_) normalisationBranch_->prepare(cfg, prefix, targetList);
@@ -142,12 +142,6 @@ bool Process2DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data2D& data = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
@@ -156,7 +150,7 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process2D//%s//%s", prefix, cfg->name(), name()));
 
-	// Copy the averaged data from the associated Collect2D node
+	// Copy the averaged data from the associated Process1D node
 	data = collectNode_->accumulatedData();
 
 	// Run normalisation on the data
@@ -182,12 +176,22 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	{
 		if (procPool.isMaster())
 		{
-			Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
-			if (data2DFormat.exportData(data)) procPool.decideTrue();
-			else return procPool.decideFalse();
+			Data2DExportFileFormat exportFormat(CharString("%s_%s.txt", name(), cfg->name()));
+			if (exportFormat.exportData(data)) procPool.decideTrue();
+			else
+			{
+				procPool.decideFalse();
+				return ProcedureNode::Failure;
+			}
 		}
-		else if (!procPool.decision()) return false;
+		else if (!procPool.decision()) return ProcedureNode::Failure;
 	}
 
+	return ProcedureNode::Success;
+}
+
+// Finalise any necessary data after execution
+bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+{
 	return true;
 }
