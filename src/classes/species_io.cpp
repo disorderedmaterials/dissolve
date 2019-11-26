@@ -91,7 +91,7 @@ bool Species::loadFromXYZ(const char* filename)
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
 	static EnumOptionsList SpeciesKeywords = EnumOptionsList() <<
-		EnumOption(Species::AngleKeyword,	 	"Angle",		4,6) <<
+		EnumOption(Species::AngleKeyword,	 	"Angle",		3,6) <<
 		EnumOption(Species::AtomKeyword, 		"Atom",			6,7) <<
 		EnumOption(Species::BondKeyword,		"Bond",			2,5) <<
 		EnumOption(Species::BondTypeKeyword,		"BondType",		3) <<
@@ -101,7 +101,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 		EnumOption(Species::ImproperKeyword, 		"Improper",		5,9) <<
 		EnumOption(Species::IsotopologueKeyword,	"Isotopologue",		EnumOption::OneOrMoreArguments) <<
 		EnumOption(Species::SiteKeyword,		"Site",			1) <<
-		EnumOption(Species::TorsionKeyword, 		"Torsion",		5,9);
+		EnumOption(Species::TorsionKeyword, 		"Torsion",		4,9);
 
 	static EnumOptions<Species::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
 
@@ -145,8 +145,20 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 		switch (kwd)
 		{
 			case (Species::AngleKeyword):
-				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
-				if (parser.argc(4)[0] == '@')
+				// Create a new angle definition between the specified atoms
+				a = addAngle(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
+				if (!a)
+				{
+					error = true;
+					break;
+				}
+
+				/*
+				 * If only the indices were given, create an angle without a specified functional form (a Forcefield is presumably going to be specified).
+				 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 4) a->setForm(SpeciesAngle::NoForm);
+				else if (parser.argc(4)[0] == '@')
 				{
 					// Search through master Angle parameters to see if this name exists
 					MasterIntra* master = coreData.hasMasterAngle(parser.argc(4));
@@ -237,7 +249,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				}
 
 				/*
-				 * If only the bond indices were given, create a bond without a specified functional form (a Forcefield is presumably going to be specified).
+				 * If only the indices were given, create a bond without a specified functional form (a Forcefield is presumably going to be specified).
 				 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
 				 */
 				if (parser.nArgs() == 3) b->setForm(SpeciesBond::NoForm);
@@ -425,8 +437,20 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				if (!site->read(parser)) error = true;
 				break;
 			case (Species::TorsionKeyword):
-				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
-				if (parser.argc(5)[0] == '@')
+				// Create a new angle definition between the specified atoms
+				t = addTorsion(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
+				if (!t)
+				{
+					error = true;
+					break;
+				}
+
+				/*
+				 * If only the indices were given, create an angle without a specified functional form (a Forcefield is presumably going to be specified).
+				 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 5) t->setForm(SpeciesTorsion::NoForm);
+				else if (parser.argc(5)[0] == '@')
 				{
 					// Search through master Torsion parameters to see if this name exists
 					MasterIntra* master = coreData.hasMasterTorsion(parser.argc(5));
@@ -568,7 +592,11 @@ bool Species::write(LineParser& parser, const char* prefix)
 		DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
 		while (const SpeciesAngle* a = angleIterator.iterate())
 		{
-			if (a->masterParameters())
+			if (a->form() == SpeciesAngle::NoForm)
+			{
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1)) return false;
+			}
+			else if (a->masterParameters())
 			{
 				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name())) return false;
 			}
@@ -588,7 +616,11 @@ bool Species::write(LineParser& parser, const char* prefix)
 		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
 		while (const SpeciesTorsion* t = torsionIterator.iterate())
 		{
-			if (t->masterParameters())
+			if (t->form() == SpeciesTorsion::NoForm)
+			{
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1)) return false;
+			}
+			else if (t->masterParameters())
 			{
 				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name())) return false;
 			}

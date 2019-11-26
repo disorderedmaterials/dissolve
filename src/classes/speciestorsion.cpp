@@ -189,6 +189,7 @@ bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Spe
 EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
 	static EnumOptionsList TorsionFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesTorsion::NoForm, 		"None",		0,0) <<
 		EnumOption(SpeciesTorsion::CosineForm, 		"Cos",		4,4) <<
 		EnumOption(SpeciesTorsion::Cos3Form, 		"Cos3",		3,3) <<
 		EnumOption(SpeciesTorsion::Cos4Form, 		"Cos4",		4,4) <<
