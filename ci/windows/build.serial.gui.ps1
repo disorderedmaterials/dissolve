@@ -1,6 +1,15 @@
-# Dissolve Build Script
+g Dissolve Build Script
 
 $ErrorActionPreference = 'Stop'
+
+# Install Qt5 5.13.1
+$Wc = New-Object System.Net.WebClient
+$Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
+echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
+$env:QT_INSTALL_DIR = 'C:\\Qt'
+Start-Process qt.exe -ArgumentList '--verbose --script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
+Remove-Item qt.exe -Force
+$env:QTDIR = C:\\Qt\\5.13.1\\mingw73_64
 
 # Install prerequisites
 choco install -y windows-sdk-10-version-1803-all
@@ -12,16 +21,6 @@ choco install -y winflexbison
 choco install -y innosetup
 choco install -y 7zip
 choco install -y innounp
-
-
-# Install Qt5 5.13.1
-$Wc = New-Object System.Net.WebClient
-$Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
-echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
-$env:QT_INSTALL_DIR = 'C:\\Qt'
-Start-Process qt.exe -ArgumentList '--verbose --script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
-Remove-Item qt.exe -Force
-$env:QTDIR = C:\\Qt\\5.13.1\\mingw73_64
 
 # Add binary paths
 $env:PATH += "C:\Qt\Tools\mingw730_64\bin;"
