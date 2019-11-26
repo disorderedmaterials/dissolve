@@ -52,6 +52,8 @@ class SpeciesRing : public ListItem<SpeciesRing>
 	public:
 	// Set atoms in ring
 	void setAtoms(const PointerArray<const SpeciesAtom>& atoms);
+	// Return nth atom in ring
+	const SpeciesAtom* atom(int n) const;
 	// Return array of atoms in ring
 	const PointerArray<const SpeciesAtom>& atoms() const;
 	// Return size of ring (number of atoms in array)
