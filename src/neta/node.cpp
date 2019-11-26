@@ -179,7 +179,7 @@ void NETANode::setReverseLogic()
 }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
+int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& atomData) const
 {
 	int totalScore = 0;
 
@@ -188,7 +188,7 @@ int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath)
 	while (NETANode* node = branchIterator.iterate())
 	{
 		// Get the score from the node, returning early if NoMatch is encountered
-		int nodeScore = node->score(i, matchPath);
+		int nodeScore = node->score(i, atomData);
 		if (nodeScore == NETANode::NoMatch) return NETANode::NoMatch;
 
 		totalScore += nodeScore;
