@@ -89,8 +89,8 @@ ringNodeSequence:
 	;
 
 ringNode:
-	targetList createPresenceNode							{ $$ = $2; printf("PRESENCE NODE CREATED.\n"); }
-	| targetList createPresenceNode	pushContext '(' nodeSequence ')' popContext	{ $$ = $2; printf("PRESENCE NODE CREATED with SHIT.\n"); }
+	targetList createPresenceNode							{ $$ = $2; }
+	| targetList createPresenceNode	pushContext '(' nodeSequence ')' popContext	{ $$ = $2; }
 	;
 	
 

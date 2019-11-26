@@ -164,8 +164,8 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 			}
 		}
 	}
-	ringIterator.restart();
-	while (SpeciesRing* ring = ringIterator.iterate()) ring->print();
+// 	ringIterator.restart();
+// 	while (SpeciesRing* ring = ringIterator.iterate()) ring->print();
 
 	// Loop over rings
 	int nMatches = 0, totalScore = 0, nodeScore;
@@ -182,10 +182,7 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 		}
 		else
 		{
-			// Disordered search
-			printf("Doing disordered ring search.\n");
-
-			// Try to match the branch definition against this ring, in any order (provide all atoms in the ring at once)
+			// Disordered search - try to match the branch definition against this ring, in any order (provide all atoms in the ring at once)
 			RefList<const SpeciesAtom> ringAtoms;
 			for (int n=0; n<ring->size(); ++n) ringAtoms.append(ring->atom(n));
 
@@ -195,7 +192,6 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 			{
 				nodeScore = node->score(NULL, ringAtoms);
 				if (nodeScore == NETANode::NoMatch) break;
-				printf("nodeScore = %i\n", nodeScore);
 
 				// Match found
 				totalScore += nodeScore;
