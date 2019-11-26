@@ -54,7 +54,7 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	localConfiguration_ = localConfiguration;
 
 	// Create a ModuleListChart widget and set its source list
-	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve()); //, localConfiguration_);
+	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve(), localConfiguration_);
 	chartWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	ui_.ChartScrollArea->setWidget(chartWidget_);
 	ui_.ChartScrollArea->setWidgetResizable(true);

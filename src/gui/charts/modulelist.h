@@ -27,6 +27,7 @@
 #include <QWidget>
 
 // Forward Declarations
+class Configuration;
 class Dissolve;
 class Module;
 class ModuleBlock;
@@ -38,7 +39,7 @@ class ModuleListChart : public ChartBase
 {
 	public:
 	// Constructor / Destructor
-	ModuleListChart(ModuleList* moduleList, Dissolve& dissolve);
+	ModuleListChart(ModuleList* moduleList, Dissolve& dissolve, Configuration* localConfiguration = NULL);
 	~ModuleListChart();
 
 
@@ -56,6 +57,8 @@ class ModuleListChart : public ChartBase
 	private:
 	// Target ModuleList for display
 	ModuleList* moduleList_;
+	// Configuration in which the layer exists (if any)
+	Configuration* localConfiguration_;
 
 
 	/*
