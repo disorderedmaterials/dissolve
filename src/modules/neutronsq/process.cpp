@@ -99,7 +99,9 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		Data1D& storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
 		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
-		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
+		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		if (nTargetConfigurations() == 0) Messenger::warn("No configurations associated to module, so Fourier transform of reference data will use assumed atomic density of 0.1.\n");
 
 		// Save data?
 		if (keywords_.asBool("SaveReference"))
