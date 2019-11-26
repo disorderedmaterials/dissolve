@@ -181,10 +181,25 @@ bool Module::addTargetConfiguration(Configuration* cfg)
 }
 
 // Add Configuration targets
-bool Module::addTargetConfigurations(List<Configuration>& configs)
+bool Module::addTargetConfigurations(const List<Configuration>& configs)
 {
-	ListIterator<Configuration> configIterator(configs);
-	while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return false;
+	if (nTargetableConfigurations() == 0) return Messenger::error("Module targets no configurations, so none will be set from the %i provided.\n", configs.nItems());
+	else if (nTargetableConfigurations() == -1)
+	{
+		Messenger::print("Adding %i configurations as targets for module '%s'...\n", configs.nItems(), uniqueName());
+
+		ListIterator<Configuration> configIterator(configs);
+		while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return Messenger::error("Failed to add configuration '%s' to module '%s'.\n", cfg->name(), uniqueName());
+	}
+	else if (nTargetConfigurations() == nTargetableConfigurations()) return Messenger::error("Refusing to add any of the %i provided configurations as targets for the module '%s' as it already has it's specified number (%i).\n", configs.nItems(), uniqueName(), nTargetableConfigurations());
+	else
+	{
+		int spaces = nTargetableConfigurations() - nTargetConfigurations();
+		Messenger::print("Adding up to %i configurations from the %i provided as targets for module '%s'...\n", spaces, configs.nItems(), uniqueName());
+
+		ListIterator<Configuration> configIterator(configs);
+		while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return Messenger::error("Failed to add configuration '%s' to module '%s'.\n", cfg->name(), uniqueName());
+	}
 
 	return true;
 }
