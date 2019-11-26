@@ -78,9 +78,10 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 	QString xyzFile = QFileDialog::getOpenFileName(this, "Choose XYZ file to open", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
 	if (xyzFile.isEmpty()) return;
 
+	// Add new species, load from the xyz, and create intramolecular terms
 	Species* sp = dissolve_.addSpecies();
-
 	sp->loadFromXYZ(qPrintable(xyzFile));
+	sp->addMissingBonds();
 
 	// Fully update GUI
 	setModified();
