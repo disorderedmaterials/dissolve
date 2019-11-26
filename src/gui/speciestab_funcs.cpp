@@ -408,10 +408,13 @@ void SpeciesTab::updateControls()
 	refreshing_ = true;
 
 	// View / Generate Tab
-	ui_.ForcefieldButton->setText(species_ && species_->forcefield() ? species_->forcefield()->name() : "<None>");
 	ui_.ViewerWidget->postRedisplay();
 
 	// Geometry Tab
+	// -- Forcefield and Terms
+	ui_.ForcefieldButton->setText(species_ && species_->forcefield() ? species_->forcefield()->name() : "<None>");
+	ui_.ForcefieldAutoUpdateIntramolecularCheck->setChecked(species_->autoUpdateIntramolecularTerms());
+
 	// -- SpeciesAtom Table
 	if (!species_) ui_.AtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
@@ -509,6 +512,15 @@ void SpeciesTab::on_ForcefieldButton_clicked(bool checked)
 void SpeciesTab::on_ForcefieldAutoApplyCheck_clicked(bool checked)
 {
 	// TODO
+}
+
+void SpeciesTab::on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked)
+{
+	species_->setAutoUpdateIntramolecularTerms(checked);
+
+	dissolveWindow_->setModified();
+
+	updateControls();
 }
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)

@@ -116,8 +116,6 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 	private slots:
 	// View / Generate
-	void on_ForcefieldButton_clicked(bool checked);
-	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
 	// Isotopologues
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);
@@ -126,6 +124,9 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_IsotopologueCollapseAllButton_clicked(bool checked);
 	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
 	// Geometry Tab
+	void on_ForcefieldButton_clicked(bool checked);
+	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
+	void on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked);
 	void on_AtomAddButton_clicked(bool checked);
 	void on_AtomRemoveButton_clicked(bool checked);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);

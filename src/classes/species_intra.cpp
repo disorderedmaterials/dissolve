@@ -25,7 +25,7 @@
 #include "base/sysfunc.h"
 
 // Add new SpeciesBond definition (from SpeciesAtoms*)
-SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms)
+SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
@@ -54,7 +54,7 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHig
 	j->addBond(b);
 
 	// Update higher-order connectivity?
-	if (addMissingHigherOrderTerms) completeIntramolecularTerms();
+	if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
 
 	++version_;
 
@@ -209,6 +209,9 @@ void Species::addMissingBonds(double tolerance)
 			if (vij.magnitude() <= (radiusI + AtomicRadius::radius(j->element()))*tolerance) addBond(i, j);
 		}
 	}
+
+	// May now require new higher-order terms
+	if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
 }
 
 // Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)

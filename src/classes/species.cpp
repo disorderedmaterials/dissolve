@@ -36,6 +36,7 @@ template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Spe
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
 	forcefield_ = NULL;
+	autoUpdateIntramolecularTerms_ = true;
 	attachedAtomListsGenerated_ = false;
 	usedAtomTypesPoint_ = -1;
 

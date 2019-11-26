@@ -151,7 +151,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
-	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms = false);
+	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
 	// Reconnect existing SpeciesBond
@@ -238,16 +238,22 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	private:
 	// Forcefield to source terms from
 	Forcefield* forcefield_;
+	// Auto-generate missing intramolecular terms, and remove invalid ones
+	bool autoUpdateIntramolecularTerms_;
 
 	private:
-	// Add missing higher order intramolecular terms from current bond connectivity
-	void completeIntramolecularTerms();
+	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+	void updateIntramolecularTerms();
 
 	public:
 	// Set Forcefield to source terms from
 	void setForcefield(Forcefield* ff);
 	// Return Forcefield to source terms from
 	Forcefield* forcefield() const;
+	// Set whether to auto-generate missing intramolecular terms, and remove invalid ones
+	void setAutoUpdateIntramolecularTerms(bool b);
+	// Return whether to auto-generate missing intramolecular terms, and remove invalid ones
+	bool autoUpdateIntramolecularTerms() const;
 	// Apply terms from source Forcefield
 	bool applyForcefieldTerms(CoreData& coreData);
 

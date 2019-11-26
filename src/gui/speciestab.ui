@@ -190,6 +190,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="ForcefieldAutoUpdateIntramolecularCheck">
+            <property name="text">
+             <string>Autogenerate angle &amp;&amp; torsion terms</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

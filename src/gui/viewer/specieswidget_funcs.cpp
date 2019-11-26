@@ -201,6 +201,7 @@ void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 	Species* sp = speciesViewer()->species();
 	if (!sp) return;
 
+	// Calculate missing bonds
 	sp->addMissingBonds();
 
 	// Signal that the data shown has been modified
