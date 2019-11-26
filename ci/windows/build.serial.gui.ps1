@@ -35,8 +35,8 @@ mkdir 3rdparty
 cd 3rdparty
 
 # Retrieve / compile Freetype 2.10.1
-$Wc = New-Object System.Net.WebClient
-$Wc.DownloadFile('https://download.savannah.gnu.org/releases/freetype/ft2101.zip', 'ft.zip')
+$Wc2 = New-Object System.Net.WebClient
+$Wc2.DownloadFile('https://download.savannah.gnu.org/releases/freetype/ft2101.zip', 'ft.zip')
 unzip ft.zip
 Echo 'Compiling FreeType...'
 mkdir freetype-build
