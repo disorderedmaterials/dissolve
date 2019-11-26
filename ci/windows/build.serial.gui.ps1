@@ -39,7 +39,7 @@ $Wc = New-Object System.Net.WebClient
 $Wc.DownloadFile('https://download.savannah.gnu.org/releases/freetype/ft2101.zip', 'ft.zip')
 ls
 unzip -v
-unzip .\\ft.zip
+unzip ./ft.zip
 Echo 'Compiling FreeType...'
 mkdir freetype-build
 cd freetype-build
