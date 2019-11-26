@@ -139,16 +139,6 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 // 	while (const SpeciesAtom* iii = matchIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 // 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
-	// Get directly connected atoms about 'i', excluding any that have already been matched
-	RefDataList<const SpeciesAtom, int> neighbours;
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
-	{
-		const SpeciesAtom* j = bonds.at(n)->partner(i);
-		if (matchPath.contains(j)) continue;
-		neighbours.append(j, NETANode::NoMatch);
-	}
-
 	// Generate array of rings of specified size that the atom 'i' is present in
 	List<SpeciesRing> rings;
 	PointerArray<const SpeciesAtom> ringPath;
