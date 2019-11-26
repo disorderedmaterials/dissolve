@@ -41,7 +41,6 @@ jobs:
       env: PARALLEL=false
       os: windows
       script:
-        - df -h
         - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ps1
     - stage: Linux Build
       name: Serial, GUI

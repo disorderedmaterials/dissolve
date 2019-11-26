@@ -1,6 +1,9 @@
-g Dissolve Build Script
+# Dissolve Build Script
 
 $ErrorActionPreference = 'Stop'
+
+# Attempt to free up some disk space
+choco uninstall -y mingw llvm wsl visualstudio2017buildtools
 
 # Install Qt5 5.13.1
 $Wc = New-Object System.Net.WebClient
