@@ -326,8 +326,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				}
 				break;
 			case (Species::EndSpeciesKeyword):
-				centreAtOrigin();
-				if (forcefield_ && (!applyForcefieldTerms(coreData))) error = true;
+				if (forcefield_) applyForcefieldTerms(coreData);
 				Messenger::print("Found end of Species '%s'.\n", name());
 				blockDone = true;
 				break;
