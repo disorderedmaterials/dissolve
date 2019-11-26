@@ -152,15 +152,7 @@ void LayerEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* ite
 	if (newInstance->nTargetableConfigurations() != 0)
 	{
 		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
-		else
-		{
-			ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-			while (Configuration* cfg = configIterator.iterate())
-			{
-				newInstance->addTargetConfiguration(cfg);
-				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
-			}
-		}
+		else newInstance->addTargetConfigurations(dissolveWindow_->dissolve().configurations());
 	}
 
 	moduleLayer_->own(newInstance);

@@ -37,7 +37,7 @@
 #include <QWidget>
 
 // Constructor
-ModuleListChart::ModuleListChart(ModuleList* moduleList, Dissolve& dissolve) : ChartBase(), dissolve_(dissolve)
+ModuleListChart::ModuleListChart(ModuleList* moduleList, Dissolve& dissolve, Configuration* localConfiguration) : ChartBase(), dissolve_(dissolve)
 {
 	refreshing_ = false;
 
@@ -45,6 +45,7 @@ ModuleListChart::ModuleListChart(ModuleList* moduleList, Dissolve& dissolve) : C
 
 	// Target ModuleLayer
 	moduleList_ = moduleList;
+	localConfiguration_ = localConfiguration;
 
 	// Create the insertion widget if we don't already have one
 	insertionBlock_ = new ModuleInsertionBlock(this);
@@ -262,6 +263,15 @@ void ModuleListChart::handleDroppedObject(const MimeStrings* strings)
 		// Add the new modele 
 		if (moduleAfterHotSpot) moduleList_->modules().ownBefore(newModule, moduleAfterHotSpot);
 		else moduleList_->modules().own(newModule);
+
+		newModule->setConfigurationLocal(localConfiguration_ != NULL);
+
+		// Set Configuration targets as appropriate
+		if (newModule->nTargetableConfigurations() != 0)
+		{
+			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
+			else newModule->addTargetConfigurations(dissolve_.configurations());
+		}
 
 		// Flag that the current data has changed
 		emit(dataModified());
