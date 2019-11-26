@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 
 # Attempt to free up some disk space
-choco uninstall -y mingw llvm wsl microsoft-build-tools visualstudio2017-workload-netcorebuildtools visualstudio2017-workload-vctools visualstudio2017-workload-webbuildtools visualstudio2017buildtools
+choco uninstall -y mingw llvm wsl microsoft-build-tools
 
 # Install Qt5 5.13.1
 $Wc = New-Object System.Net.WebClient
