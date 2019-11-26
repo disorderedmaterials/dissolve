@@ -216,8 +216,5 @@ Species* Dissolve::copySpecies(const Species* species)
 		copySpeciesIntra(t, newImproper);
 	}
 
-	// Finalise the new Species
-	newSpecies->centreAtOrigin();
-
 	return newSpecies;
 }
