@@ -159,7 +159,7 @@ void Species::print()
 	for (int n=0; n<nAtoms(); ++n)
 	{
 		SpeciesAtom* i = atoms_[n];
-		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n+1, i->element()->symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z, i->charge());
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n+1, i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"), (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
 	}
 
 	if (nBonds() > 0)
