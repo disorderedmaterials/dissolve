@@ -11,7 +11,7 @@ $Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-win
 echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
 $env:QT_INSTALL_DIR = 'C:\\Qt'
 Start-Process qt.exe -ArgumentList '--verbose --script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
-Remove-Item qt.exe -Force
+Remove-Item qt.exe
 $env:QTDIR = "C:\\Qt\\5.13.1\\mingw73_64"
 
 # Install prerequisites
