@@ -193,36 +193,31 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 		else
 		{
 			// Disordered search
+			printf("Doing disordered ring search.\n");
+
+			// Try to match the branch definition against this ring, in any order (provide all atoms in the ring at once)
+			RefList<const SpeciesAtom> ringAtoms;
+			for (int n=0; n<ring->size(); ++n) ringAtoms.append(ring->atom(n));
+
 			const SpeciesAtom* matchedAtom;
 			ListIterator<NETANode> branchIterator(branch_);
 			while (NETANode* node = branchIterator.iterate())
 			{
-				// Search through ring atoms to find a match for the current branch node
-				matchedAtom = NULL;
-				for (int n=0; n<ringAtoms.nItems(); ++n)
-				{
-					RefList<const SpeciesAtom> emptyPath;
-					nodeScore = node->score(ringAtoms.at(n), emptyPath);
-					if (nodeScore == NETANode::NoMatch) continue;
+				nodeScore = node->score(NULL, ringAtoms);
+				if (nodeScore == NETANode::NoMatch) break;
+				printf("nodeScore = %i\n", nodeScore);
 
-					// Match found
-					matchedAtom = ringAtoms.take(n);
-					totalScore += nodeScore;
-					break;
-				}
-
-				// If we didn't find a match for the atom described by the branch node, exit the loop now
-				if (!matchedAtom) break;
+				// Match found
+				totalScore += nodeScore;
 			}
 
-			// If we end up with a non-NULL pointer for matchedAtom then the ring matched
-			if (matchedAtom)
-			{
-				++nMatches;
+			// If we didn't find a match for the ring, exit the loop now
+			if (nodeScore == NETANode::NoMatch) break;
 
-				// Don't match more than we need to - check the repeatCount
-				if (compareValues(nMatches, repeatCountOperator_, repeatCount_)) break;
-			}
+			++nMatches;
+
+			// Don't match more than we need to - check the repeatCount
+			if (compareValues(nMatches, repeatCountOperator_, repeatCount_)) break;
 		}
 	}
 

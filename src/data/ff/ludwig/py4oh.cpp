@@ -59,13 +59,13 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
         {
                 //            Z          FFID    Name      Type	       				     Description
                 //                                                q      Epsilon   Sigma
-                { this,      ELEMENT_N,   1,      "nc",       "nbonds=3,ring(size=6,-C(n=5),-N)",                "Nitrogen in pyridine ring",
+                { this,      ELEMENT_N,   1,      "nc",       "nbonds=3,ring(size=6,C(n=5),N)",                "Nitrogen in pyridine ring",
                                                                 0.1014,   "nc" },
-                { this,      ELEMENT_C,   2,      "ca_o",       "nbonds=3,ring(size=6,-C(n=5),-N),-N,-C,-H",              "Carbon in aromatic ring, ortho",
+                { this,      ELEMENT_C,   2,      "ca_o",       "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H",              "Carbon in aromatic ring, ortho",
                                                                 0.0568,   "ca" },
-                { this,      ELEMENT_C,   3,      "ca_m",       "nbonds=3,ring(size=6,-C(n=5),-N),-C,-H,-C" ,             "Carbon in aromatic ring, meta",
+                { this,      ELEMENT_C,   3,      "ca_m",       "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C" ,             "Carbon in aromatic ring, meta",
                                                                 -0.2214,   "ca" },
-                { this,      ELEMENT_C,   4,      "ca_p",       "nbonds=3,ring(size=6,-C(n=5),-N),-C(n=2,-C(-N))",        "Carbon in aromatic ring, para",
+                { this,      ELEMENT_C,   4,      "ca_p",       "nbonds=3,ring(size=6,C(n=5),N),-C(n=2,-C(-N))",        "Carbon in aromatic ring, para",
                                                                 0.1747,   "ca" },
                 { this,      ELEMENT_H,   5,      "ha_o",       "nbonds=1,-&2"                        ,       "Hydrogen bound to carbon in aromatic ring, ortho",
                                                                 0.1802,   "ha" },

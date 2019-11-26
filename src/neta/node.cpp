@@ -21,6 +21,7 @@
 
 #include "neta/node.h"
 #include "neta/connection.h"
+#include "neta/presence.h"
 #include "neta/ring.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
@@ -94,12 +95,21 @@ int NETANode::nBranchNodes() const
 	return branch_.nItems();
 }
 
-
 // Create connectivity node from current targets
 NETAConnectionNode* NETANode::createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes)
 {
 	// Create the new node and own it
 	NETAConnectionNode* node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
+	branch_.own(node);
+
+	return node;
+}
+
+// Create presence node in the branch
+NETAPresenceNode* NETANode::createPresenceNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes)
+{
+	// Create the new node and own it
+	NETAPresenceNode* node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
 	branch_.own(node);
 
 	return node;

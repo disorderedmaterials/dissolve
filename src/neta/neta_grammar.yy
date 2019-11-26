@@ -10,6 +10,7 @@
 #include "neta/generator.h"
 #include "neta/connection.h"
 #include "neta/neta.h"
+#include "neta/presence.h"
 #include "neta/ring.h"
 #include "base/messenger.h"
 #include "templates/reflist.h"
@@ -53,7 +54,7 @@ CharString localName;
 %right '!'
 %right '^'
 
-%type <node> node nodeSequence createConnectionNode createRingNode
+%type <node> node nodeSequence ringNode ringNodeSequence createPresenceNode createConnectionNode createRingNode
 %type <valueOperator> valueOperator
 %type <atomTargetDummy> target targets targetList
 
@@ -79,11 +80,25 @@ nodeSequence:
 // 	| nodeSequence '|' nodeSequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
 	;
 
+/* Sequence of Nodes allowable for a Ring */
+ringNodeSequence:
+	ringNode					{ $$ = $1; }
+	| contextModifier				{ $$ = NULL; }
+	| ringNodeSequence ',' ringNode			{ $$ = $3; }
+	| contextModifier ',' ringNodeSequence		{ $$ = $3; }
+	;
+
+ringNode:
+	targetList createPresenceNode							{ $$ = $2; printf("PRESENCE NODE CREATED.\n"); }
+	| targetList createPresenceNode	pushContext '(' nodeSequence ')' popContext	{ $$ = $2; printf("PRESENCE NODE CREATED with SHIT.\n"); }
+	;
+	
+
 /* Nodes */
 node:
 	'-' targetList createConnectionNode							{ $$ = $3; }
 	| '-' targetList createConnectionNode pushContext '(' nodeSequence ')' popContext	{ $$ = $3; }
-	| DISSOLVE_NETA_RING createRingNode pushContext '(' nodeSequence ')' popContext		{ $$ = $2; }
+	| DISSOLVE_NETA_RING createRingNode pushContext '(' ringNodeSequence ')' popContext	{ $$ = $2; }
 	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
@@ -118,6 +133,9 @@ valueOperator:
 	;
 
 /* Node Creation */
+createPresenceNode:
+	/* empty */					{ $$ = NETADefinitionGenerator::context()->createPresenceNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
+	;
 createConnectionNode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
 	;
