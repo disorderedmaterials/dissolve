@@ -26,9 +26,9 @@ choco install -y 7zip
 choco install -y innounp
 
 # Add binary paths
-$env:PATH += "C:\Qt\Tools\mingw730_64\bin;"
-$env:PATH += "C:\Qt\5.13.1\mingw73_64\bin;"
-$env:PATH += "C:\Program Files\CMake\bin;"
+$env:PATH += "C:\\Qt\\Tools\\mingw730_64\\bin;"
+$env:PATH += "C:\\Qt\\5.13.1\\mingw73_64\\bin;"
+$env:PATH += "C:\\Program Files\\CMake\\bin;"
 
 # Make a directory for 3rd party package builds and descend
 mkdir 3rdparty
@@ -46,12 +46,12 @@ cd freetype-build
 cmake -G "Ninja" ..\freetype-2.10.1
 ninja
 cd ../
-$env:INCLUDE += "$HOME\3rdparty\freetype-2.10.1\include;"
-$env:LIB += "$HOME\3rdparty\freetype-build;"
+$env:INCLUDE += "$HOME\\3rdparty\\freetype-2.10.1\\include;"
+$env:LIB += "$HOME\\3rdparty\\freetype-build;"
 
 # Retrieve / compile FTGL
-$env:INCLUDE += "$HOME\3rdparty\freetype-2.10.1;"
-$env:LIB += "$HOME\3rdparty\freetype-build;"
+$env:INCLUDE += "$HOME\\3rdparty\\freetype-2.10.1;"
+$env:LIB += "$HOME\\3rdparty\\freetype-build;"
 echo 'Compiling FTGL'
 git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
 mkdir ftgl-build
@@ -59,8 +59,8 @@ cd ftgl-build
 cmake -G "Ninja" ..\ftgl-latest
 ninja
 cd ../
-$env:INCLUDE += "$HOME\3rdparty\ftgl-latest\src;"
-$env:LIB += "$HOME\3rdparty\ftgl-build\src;"
+$env:INCLUDE += "$HOME\\3rdparty\\ftgl-latest\\src;"
+$env:LIB += "$HOME\\3rdparty\\ftgl-build\\src;"
 
 # Return to main dir and create build dir for dissolve
 cd ../
