@@ -39,8 +39,8 @@ GUIOutputHandler::~GUIOutputHandler()
 // Set styling for warning message
 void GUIOutputHandler::styleForWarning()
 {
-	static QColor orange(251,154,73);
-	emit(setColour(orange));
+	static QColor blue(0,0,255);
+	emit(setColour(blue));
 }
 
 // Set styling for error message
