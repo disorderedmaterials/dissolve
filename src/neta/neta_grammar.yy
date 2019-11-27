@@ -77,6 +77,7 @@ nodeSequence:
 	| '!' node					{ $2->setReverseLogic(); $$ = $2; }
 	| nodeSequence ',' node				{ $$ = $3; }
 	| contextModifier ',' nodeSequence		{ $$ = $3; }
+	| nodeSequence ',' contextModifier		{ $$ = $1; }
 // 	| nodeSequence '|' nodeSequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
 	;
 

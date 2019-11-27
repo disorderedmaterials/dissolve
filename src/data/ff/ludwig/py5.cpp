@@ -65,7 +65,7 @@ Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
 								0.0725,	"ca"},
 		{ this,	ELEMENT_C,	3,	"ca_m",	"nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C",		"Carbon in aromatic ring, meta",
 								-0.2245,	"ca"},
-		{ this,	ELEMENT_C,	4,	"ca_p",	"nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N))(n=2)",	"Carbon in aromatic ring, para",
+		{ this,	ELEMENT_C,	4,	"ca_p",	"nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)",	"Carbon in aromatic ring, para",
 								0.1706,	"ca"},
 		{ this,	ELEMENT_H,	5,	"ha_o",	"nbonds=1,-&2",						"Hydrogen bound to carbon in aromatic ring, ortho",
 								0.1751,	"ha"},
