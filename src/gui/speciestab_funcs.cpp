@@ -535,6 +535,8 @@ void SpeciesTab::on_ForcefieldButton_clicked(bool checked)
 	if (ret == QMessageBox::Yes) species_->applyForcefieldTerms(dissolve_.coreData());
 
 	updateControls();
+
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_ForcefieldAutoApplyCheck_clicked(bool checked)
