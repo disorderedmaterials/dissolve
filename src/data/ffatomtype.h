@@ -79,12 +79,12 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	private:
 	// Parameters that this atom type references (if any)
 	const ForcefieldParameters* parameterReference_;
-	// Short-range parameters for this atom type
-	Parameters parameters_;
+	// Interatomic interaction parameters for this atom type
+	InteractionParameters parameters_;
 
 	public:
-	// Return short-range parameters
-	const Parameters& parameters() const;
+	// Return interatomic interaction parameters (referenced or otherwise)
+	const InteractionParameters& parameters() const;
 };
 
 #endif

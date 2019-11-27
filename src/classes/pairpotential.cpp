@@ -202,8 +202,8 @@ bool PairPotential::setUp(AtomType* typeI, AtomType* typeJ)
 	atomTypeI_ = typeI;
 	atomTypeJ_ = typeJ;
 	setData1DNames();
-	Parameters& paramsI = atomTypeI_->parameters();
-	Parameters& paramsJ = atomTypeJ_->parameters();
+	InteractionParameters& paramsI = atomTypeI_->parameters();
+	InteractionParameters& paramsJ = atomTypeJ_->parameters();
 
 	// Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
 	if (paramsI.empty() || paramsJ.empty())

@@ -82,8 +82,8 @@ Forcefield::ShortRangeType AtomType::shortRangeType() const
 	return shortRangeType_;
 }
 
-// Return interaction Parameters
-Parameters& AtomType::parameters()
+// Return interatomic interaction interaction parameters
+InteractionParameters& AtomType::parameters()
 {
 	return parameters_;
 }

@@ -19,21 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PARAMETERS_H
-#define DISSOLVE_PARAMETERS_H
+#ifndef DISSOLVE_INTERACTIONPARAMETERS_H
+#define DISSOLVE_INTERACTIONPARAMETERS_H
 
 #define MAXSRPARAMETERS 4
 
 #include "base/charstring.h"
 
 // Interatomic Interaction Parameters
-class Parameters
+class InteractionParameters
 {
 	public:
 	// Constructor
-	Parameters();
+	InteractionParameters();
 	// Destructor
-	~Parameters();
+	~InteractionParameters();
 
 
 	/*

@@ -23,7 +23,7 @@
 #include "base/messenger.h"
 
 // Constructor
-Parameters::Parameters()
+InteractionParameters::InteractionParameters()
 {
 	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
 	charge_ = 0.0;
@@ -31,7 +31,7 @@ Parameters::Parameters()
 }
 
 // Destructor
-Parameters::~Parameters()
+InteractionParameters::~InteractionParameters()
 {
 }
 
@@ -40,13 +40,13 @@ Parameters::~Parameters()
  */
 
 // Return whether the parameters / charge are empty (i.e. none have ever been set)
-bool Parameters::empty() const
+bool InteractionParameters::empty() const
 {
 	return empty_;
 }
 
 // Set parameter with index specified
-void Parameters::setParameter(int index, double value)
+void InteractionParameters::setParameter(int index, double value)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
@@ -61,7 +61,7 @@ void Parameters::setParameter(int index, double value)
 }
 
 // Return parameter with index specified
-double Parameters::parameter(int index) const
+double InteractionParameters::parameter(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
@@ -74,7 +74,7 @@ double Parameters::parameter(int index) const
 }
 
 // Set atomic charge
-void Parameters::setCharge(double charge)
+void InteractionParameters::setCharge(double charge)
 {
 	charge_ = charge;
 
@@ -82,7 +82,7 @@ void Parameters::setCharge(double charge)
 }
 
 // Return atomic charge
-double Parameters::charge() const
+double InteractionParameters::charge() const
 {
 	return charge_;
 }

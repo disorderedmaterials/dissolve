@@ -66,8 +66,8 @@ class AtomType : public ListItem<AtomType>
 	private:
 	// Short-range interaction type
 	Forcefield::ShortRangeType shortRangeType_;
-	// Short-range interaction parameters
-	Parameters parameters_;
+	// Interatomic interaction parameters (including charge)
+	InteractionParameters parameters_;
 	// Whether this AtomType is exchangeable
 	bool exchangeable_;
 	// Index of this type in the master type index
@@ -78,8 +78,8 @@ class AtomType : public ListItem<AtomType>
 	void setShortRangeType(Forcefield::ShortRangeType srType);
 	// Return short-range interaction type
 	Forcefield::ShortRangeType shortRangeType() const;
-	// Return short-range interaction parameters
-	Parameters& parameters();
+	// Return interatomic interaction interaction parameters
+	InteractionParameters& parameters();
 	// Set index of this type in the master type index
 	void setIndex(int id);
 	// Return index of this type in the master type index

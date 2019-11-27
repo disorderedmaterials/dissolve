@@ -128,8 +128,8 @@ const NETADefinition& ForcefieldAtomType::neta() const
  * Parameters
  */
 
-// Return short-range parameters
-const Parameters& ForcefieldAtomType::parameters() const
+// Return interatomic interaction parameters
+const InteractionParameters& ForcefieldAtomType::parameters() const
 {
 	// If reference parameters are defined, return those
 	if (parameterReference_) return parameterReference_->parameters();
