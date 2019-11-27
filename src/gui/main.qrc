@@ -68,6 +68,8 @@
   </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
+    <file>images/big.png</file>
+    <file>images/hexagons1.jpg</file>
   </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>

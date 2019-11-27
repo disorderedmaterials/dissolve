@@ -40,7 +40,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QStackedWidget" name="MainStack">
+     <widget class="SuperStackedWidget" name="MainStack">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -1451,6 +1451,12 @@ Remote Simulation</string>
    <class>SuperTabWidget</class>
    <extends>QTabWidget</extends>
    <header>gui/widgets/supertabwidget.hui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SuperStackedWidget</class>
+   <extends>QStackedWidget</extends>
+   <header>gui/widgets/superstackedwidget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
