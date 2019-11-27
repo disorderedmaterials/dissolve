@@ -349,6 +349,17 @@ void DissolveWindow::fullUpdate()
 	refreshing_ = false;
 }
 
+// Update all Species tabs
+void DissolveWindow::updateSpeciesTabs()
+{
+	refreshing_ = true;
+
+	ListIterator<SpeciesTab> tabIterator(speciesTabs_);
+	while (SpeciesTab* tab = tabIterator.iterate()) tab->updateControls();
+
+	refreshing_ = false;
+}
+
 /*
  * Stack
  */

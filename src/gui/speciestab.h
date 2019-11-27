@@ -102,7 +102,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// Update atom table selection
 	void updateAtomSelection();
 
-	protected slots:
+	public slots:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
