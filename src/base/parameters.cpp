@@ -1,5 +1,5 @@
 /*
-	*** Parameters Definition
+	*** Interatomic Interaction Parameters Definition
 	*** src/base/parameters.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -20,10 +20,10 @@
 */
 
 #include "base/parameters.h"
-#include "base/processpool.h"
+#include "base/messenger.h"
 
 // Constructor
-Parameters::Parameters() : MPIListItem<Parameters>()
+Parameters::Parameters()
 {
 	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
 	charge_ = 0.0;
@@ -64,7 +64,7 @@ const char* Parameters::description() const
 }
 
 /*
- * Potential Parameters
+ * Parameter Access
  */
 
 // Return whether the parameters / charge are empty (i.e. none have ever been set)
@@ -113,21 +113,4 @@ void Parameters::setCharge(double charge)
 double Parameters::charge() const
 {
 	return charge_;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool Parameters::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-{
-#ifdef PARALLEL
-	if (!procPool.broadcast(name_, root)) return false;
-	if (!procPool.broadcast(description_, root)) return false;
-	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
-	if (!procPool.broadcast(charge_, root)) return false;
-	if (!procPool.broadcast(empty_, root)) return false;
-#endif
-	return true;
 }

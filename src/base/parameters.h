@@ -1,5 +1,5 @@
 /*
-	*** Parameters Definition
+	*** Interatomic Interaction Parameters Definition
 	*** src/base/parameters.h
 	Copyright T. Youngs 2012-2019
 
@@ -24,11 +24,10 @@
 
 #define MAXSRPARAMETERS 4
 
-#include "templates/mpilistitem.h"
 #include "base/charstring.h"
 
-// Short-Range Interaction Parameters Definition
-class Parameters : public MPIListItem<Parameters>
+// Interatomic Interaction Parameters
+class Parameters
 {
 	public:
 	// Constructor
@@ -58,7 +57,7 @@ class Parameters : public MPIListItem<Parameters>
 
 
 	/*
-	 * Potential Parameters
+	 * Parameter Access
 	 */
 	private:
 	// Whether the parameters / charge are empty (i.e. none have ever been set)
@@ -79,14 +78,6 @@ class Parameters : public MPIListItem<Parameters>
 	void setCharge(double charge);
 	// Return atomic charge
 	double charge() const;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif
