@@ -70,6 +70,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
 	ui_.AtomTable->horizontalHeader()->setFont(font());
 	ui_.AtomTable->horizontalHeader()->setVisible(true);
+	ui_.AtomTable->verticalHeader()->setFont(font());
+	ui_.AtomTable->verticalHeader()->setVisible(true);
 	ui_.BondTable->horizontalHeader()->setFont(font());
 	ui_.BondTable->horizontalHeader()->setVisible(true);
 	ui_.AngleTable->horizontalHeader()->setFont(font());
