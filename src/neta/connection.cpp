@@ -130,6 +130,10 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 
 			// Process branch definition via the base class, using a copy of the current match path
 			RefList<const SpeciesAtom> branchMatchPath = matchPath;
+
+			// Add ourselves to the match path so we can't backtrack
+			branchMatchPath.append(i);
+
 			int branchScore = NETANode::score(j, branchMatchPath);
 			if (branchScore == NETANode::NoMatch) continue;
 
