@@ -444,6 +444,8 @@ void SpeciesTab::updateControls()
 	ui_.ForcefieldAutoUpdateIntramolecularCheck->setChecked(species_->autoUpdateIntramolecularTerms());
 
 	// -- SpeciesAtom Table
+	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
+	else ui_.AtomTable->hideColumn(5);
 	if (!species_) ui_.AtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
 

@@ -449,7 +449,7 @@ void ForcefieldTab::updateControls()
 	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials
-	// Automatically regenerate pair potentials (quietly)
+	// -- Automatically regenerate pair potentials (quietly)
 	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
 	{
 		Messenger::mute();
@@ -458,7 +458,8 @@ void ForcefieldTab::updateControls()
 	}
 	ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
 	ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
-	ui_.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
+	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.PairPotentialsIncludeCoulombRadio->setChecked(true);
+	else ui_.PairPotentialsShortRangeOnlyRadio->setChecked(true);
 	ui_.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
 	ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
 	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
@@ -596,7 +597,7 @@ void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
 	dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
+void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
 {
 	if (refreshing_) return;
 
@@ -608,7 +609,15 @@ void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
 		updateControls();
 	}
 
+	// Need to update all SpeciesTabs to show/hide the charges column in atoms tables
+	dissolveWindow_->updateSpeciesTabs();
+	
 	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_PairPotentialsShortRangeOnlyRadio_clicked(bool checked)
+{
+	on_PairPotentialsIncludeCoulombRadio_clicked(false);
 }
 
 void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)

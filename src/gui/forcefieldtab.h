@@ -99,7 +99,8 @@ class ForcefieldTab : public QWidget, public MainTab
 	// Pair Potentials
 	void on_PairPotentialRangeSpin_valueChanged(double value);
 	void on_PairPotentialDeltaSpin_valueChanged(double value);
-	void on_CoulombIncludeCheck_clicked(bool checked);
+	void on_PairPotentialsIncludeCoulombRadio_clicked(bool checked);
+	void on_PairPotentialsShortRangeOnlyRadio_clicked(bool checked);
 	void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
 	void on_CoulombTruncationCombo_currentIndexChanged(int index);
 	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
