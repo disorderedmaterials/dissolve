@@ -124,12 +124,6 @@ void SpeciesWidget::updateStatusBar()
  * Species Viewer
  */
 
-// Return contained SpeciesViewer
-SpeciesViewer* SpeciesWidget::speciesViewer()
-{
-	return ui_.SpeciesView;
-}
-
 // Set target Species, updating widget as necessary
 void SpeciesWidget::setSpecies(Species* sp)
 {
@@ -137,6 +131,12 @@ void SpeciesWidget::setSpecies(Species* sp)
 
 	updateToolbar();
 	updateStatusBar();
+}
+
+// Return contained SpeciesViewer
+SpeciesViewer* SpeciesWidget::speciesViewer()
+{
+	return ui_.SpeciesView;
 }
 
 /*

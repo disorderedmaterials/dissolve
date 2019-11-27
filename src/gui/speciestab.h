@@ -98,6 +98,10 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// IsotopologuesTree item update function
 	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
 
+	private slots:
+	// Update atom table selection
+	void updateAtomSelection();
+
 	protected slots:
 	// Update controls in tab
 	void updateControls();
@@ -130,6 +134,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_AtomAddButton_clicked(bool checked);
 	void on_AtomRemoveButton_clicked(bool checked);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);
+	void on_AtomTable_itemSelectionChanged();
 	void on_BondAddButton_clicked(bool checked);
 	void on_BondRemoveButton_clicked(bool checked);
 	void on_BondTable_itemChanged(QTableWidgetItem* w);

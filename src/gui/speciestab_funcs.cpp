@@ -86,6 +86,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	// Connect signals / slots
 	connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
 	connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomSelectionChanged()), this, SLOT(updateAtomSelection()));
 
 	refreshing_ = false;
 }
@@ -156,6 +157,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	}
 	else item = ui_.AtomTable->item(row, 0);
 	item->setText(speciesAtom->element()->name());
+	item->setSelected(speciesAtom->isSelected());
 
 	// AtomType
 	if (createItems)
@@ -166,6 +168,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	}
 	else item = ui_.AtomTable->item(row, 1);
 	item->setText(speciesAtom->atomType() ? speciesAtom->atomType()->name() : "");
+	item->setSelected(speciesAtom->isSelected());
 
 	// Coordinates
 	for (int n=0; n<3; ++n)
@@ -178,6 +181,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 		}
 		else item = ui_.AtomTable->item(row, n+2);
 		item->setText(QString::number(speciesAtom->r().get(n)));
+		item->setSelected(speciesAtom->isSelected());
 	}
 
 	// Charge
@@ -189,6 +193,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	}
 	else item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
+	item->setSelected(speciesAtom->isSelected());
 }
 
 // BondTable row update function
@@ -400,6 +405,27 @@ void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, i
 	else item = parentItem->child(childIndex);
 	item->setText(1, atomType->name());
 	item->setText(2, IsotopeComboDelegate::textForIsotope(isotope));
+}
+
+// Update atom table selection
+void SpeciesTab::updateAtomSelection()
+{
+	refreshing_ = true;
+
+	QTableWidgetItem* item;
+	SpeciesAtom* i;
+
+	// Set atom selection in table to reflect the atom data
+	for (int n=0; n<ui_.AtomTable->rowCount(); ++n)
+	{
+		item = ui_.AtomTable->item(n, 0);
+		i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
+
+		if (i->isSelected()) for (int m=0; m<6; ++m) ui_.AtomTable->item(n,m)->setSelected(true);
+		else for (int m=0; m<6; ++m) ui_.AtomTable->item(n,m)->setSelected(false);
+	}
+
+	refreshing_ = false;
 }
 
 // Update controls in tab
@@ -663,6 +689,28 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 			Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
 			break;
 	}
+}
+
+void SpeciesTab::on_AtomTable_itemSelectionChanged()
+{
+	if (refreshing_) return;
+
+	QTableWidgetItem* item;
+	SpeciesAtom* i;
+
+	// Set atom selection in viewer to be same as the table
+	for (int n=0; n<ui_.AtomTable->rowCount(); ++n)
+	{
+		item = ui_.AtomTable->item(n, 0);
+		i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
+
+		if (item->isSelected()) species_->selectAtom(i);
+		else species_->deselectAtom(i);
+	}
+
+	// Recreate selection primitive and update viewer
+	ui_.ViewerWidget->speciesViewer()->recreateSelectionPrimitive();
+	ui_.ViewerWidget->updateStatusBar();
 }
 
 void SpeciesTab::on_BondAddButton_clicked(bool checked)

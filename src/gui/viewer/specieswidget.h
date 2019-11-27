@@ -78,13 +78,11 @@ class SpeciesWidget : public QWidget
 	/*
 	 * Species Viewer
 	 */
-	private:
-	// Return contained SpeciesViewer
-	SpeciesViewer* speciesViewer();
-
 	public:
 	// Set target Species, updating widget as necessary
 	void setSpecies(Species* sp);
+	// Return contained SpeciesViewer
+	SpeciesViewer* speciesViewer();
 
 
 	/*
