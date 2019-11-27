@@ -40,7 +40,7 @@ InteractionParameters::~InteractionParameters()
  */
 
 // Return whether the parameters / charge are empty (i.e. none have ever been set)
-bool InteractionParameters::empty() const
+bool InteractionParameters::isEmpty() const
 {
 	return empty_;
 }

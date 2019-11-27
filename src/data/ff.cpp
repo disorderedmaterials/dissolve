@@ -243,7 +243,7 @@ bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExist
 				Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
 
 				// If the current atomtype is empty, set its parameters
-				if (at->parameters().empty())
+				if (at->parameters().isEmpty())
 				{
 					// Copy parameters from the Forcefield's atom type
 					at->parameters() = atomType->parameters();

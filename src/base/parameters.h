@@ -49,7 +49,7 @@ class InteractionParameters
 
 	public:
 	// Return whether the parameters / charge are empty (i.e. none have ever been set)
-	bool empty() const;
+	bool isEmpty() const;
 	// Set parameter with index specified
 	void setParameter(int index, double value);
 	// Return parameter with index specified
