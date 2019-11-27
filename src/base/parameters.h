@@ -37,27 +37,7 @@ class Parameters
 
 
 	/*
-	 * Name / Description
-	 */
-	private:
-	// Short Name
-	CharString name_;
-	// Description
-	CharString description_;
-
-	public:
-	// Set name of Parameters
-	void setName(const char* name);
-	// Return name of Parameters
-	const char* name() const;
-	// Set description of Parameters
-	void setDescription(const char* desc);
-	// Return description of element
-	const char* description() const;
-
-
-	/*
-	 * Parameter Access
+	 * Parameters
 	 */
 	private:
 	// Whether the parameters / charge are empty (i.e. none have ever been set)

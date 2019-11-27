@@ -36,35 +36,7 @@ Parameters::~Parameters()
 }
 
 /*
- * Name / Description
- */
-
-// Set name of Parameters
-void Parameters::setName(const char* name)
-{
-	name_ = name;
-}
-
-// Return short name of Parameters
-const char* Parameters::name() const
-{
-	return name_.get();
-}
-
-// Set description of Parameters
-void Parameters::setDescription(const char* desc)
-{
-	description_ = desc;
-}
-
-// Return description of element
-const char* Parameters::description() const
-{
-	return description_.get();
-}
-
-/*
- * Parameter Access
+ * Parameters
  */
 
 // Return whether the parameters / charge are empty (i.e. none have ever been set)
