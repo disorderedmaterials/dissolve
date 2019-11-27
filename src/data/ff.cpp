@@ -233,9 +233,26 @@ bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExist
 				at->parameters() = atomType->parameters();
 				at->setShortRangeType(shortRangeType());
 
+				// The atomType may reference parameters, rather than owning them, so set charge explicitly
+				at->parameters().setCharge(atomType->charge());
+
 				Messenger::print("Adding AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
 			}
-			else Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
+			else
+			{
+				Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
+
+				// If the current atomtype is empty, set its parameters
+				if (at->parameters().empty())
+				{
+					// Copy parameters from the Forcefield's atom type
+					at->parameters() = atomType->parameters();
+					at->setShortRangeType(shortRangeType());
+
+					// The atomType may reference parameters, rather than owning them, so set charge explicitly
+					at->parameters().setCharge(atomType->charge());
+				}
+			}
 
 			i->setAtomType(at);
 		}
