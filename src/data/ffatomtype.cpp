@@ -136,3 +136,9 @@ const InteractionParameters& ForcefieldAtomType::parameters() const
 
 	return parameters_;
 }
+
+// Return charge (from local parameters)
+double ForcefieldAtomType::charge() const
+{
+	return parameters_.charge();
+}

@@ -85,6 +85,8 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	public:
 	// Return interatomic interaction parameters (referenced or otherwise)
 	const InteractionParameters& parameters() const;
+	// Return charge (from local parameters)
+	double charge() const;
 };
 
 #endif
