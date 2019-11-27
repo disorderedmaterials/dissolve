@@ -172,13 +172,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 
-					// Create a new angle definition
-					a = addAngle(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
-					if (!a)
-					{
-						error = true;
-						break;
-					}
 					a->setMasterParameters(master);
 				}
 				else
@@ -191,13 +184,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 					}
 					af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
 
-					// Create a new angle definition
-					a = addAngle(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
-					if (!a)
-					{
-						error = true;
-						break;
-					}
 					a->setForm(af);
 					for (int n=0; n<SpeciesAngle::angleFunctions().minArgs(af); ++n)
 					{
@@ -463,13 +449,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 
-					// Create a new torsion definition
-					t = addTorsion(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
-					if (!t)
-					{
-						error = true;
-						break;
-					}
 					t->setMasterParameters(master);
 				}
 				else
@@ -483,13 +462,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 					}
 					tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
 
-					// Create a new torsion definition
-					t = addTorsion(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
-					if (!t)
-					{
-						error = true;
-						break;
-					}
 					t->setForm(tf);
 					for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
 					{
