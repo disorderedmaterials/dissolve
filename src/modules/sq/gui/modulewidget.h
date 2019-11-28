@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SQMODULEWIDGET_H
-#define DISSOLVE_SQMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_SQ_H
+#define DISSOLVE_MODULEWIDGET_SQ_H
 
 #include "modules/sq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

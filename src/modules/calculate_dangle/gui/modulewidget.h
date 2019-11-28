@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATEDANGLEMODULEWIDGET_H
-#define DISSOLVE_CALCULATEDANGLEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
+#define DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
 
 #include "modules/calculate_dangle/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

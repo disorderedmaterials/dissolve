@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATERDFMODULEWIDGET_H
-#define DISSOLVE_CALCULATERDFMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATERDF_H
+#define DISSOLVE_MODULEWIDGET_CALCULATERDF_H
 
 #include "modules/calculate_rdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

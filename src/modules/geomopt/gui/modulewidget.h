@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_OPTIMISEMODULEWIDGET_H
-#define DISSOLVE_OPTIMISEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_OPTIMISE_H
+#define DISSOLVE_MODULEWIDGET_OPTIMISE_H
 
 #include "modules/geomopt/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

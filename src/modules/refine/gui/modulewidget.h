@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFINEMODULEWIDGET_H
-#define DISSOLVE_REFINEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_REFINE_H
+#define DISSOLVE_MODULEWIDGET_REFINE_H
 
 #include "modules/refine/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

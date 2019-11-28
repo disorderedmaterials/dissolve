@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYMODULEWIDGET_H
-#define DISSOLVE_ENERGYMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ENERGY_H
+#define DISSOLVE_MODULEWIDGET_ENERGY_H
 
 #include "modules/energy/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

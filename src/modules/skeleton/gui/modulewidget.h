@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SKELETONMODULEWIDGET_H
-#define DISSOLVE_SKELETONMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_SKELETON_H
+#define DISSOLVE_MODULEWIDGET_SKELETON_H
 
 #include "modules/skeleton/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

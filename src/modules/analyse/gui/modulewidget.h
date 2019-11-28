@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSEMODULEWIDGET_H
-#define DISSOLVE_ANALYSEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ANALYSE_H
+#define DISSOLVE_MODULEWIDGET_ANALYSE_H
 
 #include "modules/analyse/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

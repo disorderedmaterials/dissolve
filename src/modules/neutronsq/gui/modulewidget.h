@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NEUTRONSQMODULEWIDGET_H
-#define DISSOLVE_NEUTRONSQMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
+#define DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
 
 #include "modules/neutronsq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
