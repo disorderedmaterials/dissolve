@@ -73,7 +73,8 @@ void RenderableData3D::transformData()
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
+	// FIXMESIMONA!
+// 	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
 	
 	transformMin_ = Limits::min(transformedData_.constXAxis());
 	transformMax_ = Limits::max(transformedData_.constXAxis());
@@ -110,12 +111,13 @@ void RenderableData3D::transformData()
 	
 	// Values
 	for (int n=0; n<transformedData_.nValues(); ++n)
-	{		
-		if (transformedData_.value(n) > 0.0)
-		{
-			if (transformedData_.value(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.value(n);
-			if (transformedData_.value(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.value(n);
-		}
+	{
+		// FIXMESIMONA!
+// 		if (transformedData_.value(n) > 0.0)
+// 		{
+// 			if (transformedData_.value(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.value(n);
+// 			if (transformedData_.value(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.value(n);
+// 		}
 	}
 	
 	// Update the transformed data 'version'
