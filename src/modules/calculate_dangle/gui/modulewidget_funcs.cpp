@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module Widget - Functions
+	*** CalculateDAngle Module Widget - Functions
 	*** src/modules/calculate_dangle/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
