@@ -39,6 +39,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 {
 	ui_.setupUi(this);
 
+	Locker refreshLocker(refreshLock_);
+
 	/*
 	 * Master Terms
 	 */

@@ -30,6 +30,8 @@ LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidge
 {
 	ui_.setupUi(this);
 
+	Locker refreshLocker(refreshLock_);
+
 	moduleLayer_ = layer;
 
 	// Set up ModuleEditor

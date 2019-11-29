@@ -45,6 +45,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 {
 	ui_.setupUi(this);
 
+	Locker refreshLocker(refreshLock_);
+
 	species_ = species;
 
 	// Set item delegates in tables

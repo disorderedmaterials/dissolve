@@ -32,6 +32,8 @@ ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWid
 {
 	ui_.setupUi(this);
 
+	Locker refreshLocker(refreshLock_);
+
 	controlsWidget_ = NULL;
 	moduleWidget_ = NULL;
 	splitter_ = new QSplitter(Qt::Horizontal, this);

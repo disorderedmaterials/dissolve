@@ -37,6 +37,8 @@ WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, Q
 {
 	ui.setupUi(this);
 
+	Locker refreshLocker(refreshLock_);
+
 	// Add a TMdiArea to the main layout
 	mdiArea_ = new TMdiArea(dissolveWindow);
 	ui.verticalLayout->addWidget(mdiArea_);

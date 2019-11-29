@@ -40,6 +40,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 {
 	ui_.setupUi(this);
 
+	Locker refreshLocker(refreshLock_);
+
 	configuration_ = cfg;
 
 	// Populate coordinates file format combo
