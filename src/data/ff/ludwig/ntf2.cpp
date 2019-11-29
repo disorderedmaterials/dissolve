@@ -64,9 +64,9 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
 								0.494,	"C"},
 		{ this,	ELEMENT_S,	3,	"S",	"-O(n=2),-C,-N",		"Sulfur",
 								1.076,	"S" },
-		{ this,	ELEMENT_O,	4,	"O",	"-S(-O(n=2),-C,-N)(n=2)",	"Oxygen",
+		{ this,	ELEMENT_O,	4,	"O",	"-S(-O(n=2,root),-C,-N)",	"Oxygen",
 								-0.579,	"O" },
-		{ this,	ELEMENT_N,	5,	"N",	"-S(-O(n=2),-C)(n=2)",		"Nitrogen",
+		{ this,	ELEMENT_N,	5,	"N",	"-S(-O(n=2),-C)",		"Nitrogen",
 								-0.69,	"N" }
 	};
 
