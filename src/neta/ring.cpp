@@ -56,7 +56,7 @@ EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARingNode::isValidModifier(const char* s)
+bool NETARingNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }

@@ -65,7 +65,7 @@ class NETARingNode : public NETANode
 	// Return enum options for NETARingModifiers
 	static EnumOptions<NETARingNode::NETARingModifier> modifiers();
 	// Return whether the specified modifier is valid for this node
-	bool isValidModifier(const char* s);
+	bool isValidModifier(const char* s) const;
 	// Set value and comparator for specified modifier
 	bool setModifier(const char* modifier, ComparisonOperator op, int value);
 

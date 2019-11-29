@@ -60,7 +60,7 @@ EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAPresenceNode::isValidModifier(const char* s)
+bool NETAPresenceNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }

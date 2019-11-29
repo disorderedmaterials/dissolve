@@ -56,7 +56,7 @@ EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(const char* s)
+bool NETARootNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }
