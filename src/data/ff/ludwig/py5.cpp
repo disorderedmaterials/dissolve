@@ -1,5 +1,5 @@
 /*
-        *** Py5 Forcefield
+        *** Py5 cation Forcefield
         *** src/data/ff/ludwig/py5.cpp
         Copyright T. Youngs 2019
 
@@ -31,7 +31,7 @@
 #include "base/sysfunc.h"
 
 /*
- * Implements "1-pentylpyridinium based on OPLS All Atom Forcefield for benzene and pyridine"
+ * Implements "1-pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
  * W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives
  * J. Am. Chem. Soc. 118, 11225-11236 (1996). 
  * W. L. Jorgensen and N. A. McDonald, Theochem 424, 145-155 (1998).
@@ -171,13 +171,13 @@ Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig()
 // Return name of Forcefield
 const char* Forcefield_Py5_Ludwig::name() const
 {
-	return "1-pentylpyridinium (Py5)";
+	return "1-pentylpyridinium cation (Py5)";
 }
 
 // Return description for Forcefield
 const char* Forcefield_Py5_Ludwig::description() const
 {
-	return "Implements of 1‐pentylpyridinium based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen,	D. S. Maxwell,	and J. Tirado-Rives,	<i>Journal of the American Chemical Society</i> <b>118</b> 11225 (1996)";
+	return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American Chemical Society</i>, <b>118</b>, 11225 (1996).";
 }
 
 // Return short-range interaction style for AtomTypes
