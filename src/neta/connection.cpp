@@ -124,7 +124,7 @@ bool NETAConnectionNode::isValidFlag(const char* s) const
 bool NETAConnectionNode::setFlag(const char* flag, bool state)
 {
 	// Check that the supplied index is valid
-	if (!flags().isValid(flag)) return Messenger::error("Invalid modifier '%s' passed to NETAConnectionNode.\n", flag);
+	if (!flags().isValid(flag)) return Messenger::error("Invalid flag '%s' passed to NETAConnectionNode.\n", flag);
 
 	switch (flags().enumeration(flag))
 	{
