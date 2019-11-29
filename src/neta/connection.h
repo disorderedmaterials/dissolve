@@ -83,6 +83,28 @@ class NETAConnectionNode : public NETANode
 
 
 	/*
+	 * Flags
+	 */
+	private:
+	// Whether to allow the root atom of the path to be re-matched within this node
+	bool allowRootMatch_;
+
+	public:
+	// Available flags
+	enum NETAConnectionFlag
+	{
+		RootFlag,			/* 'root' - Specifies that the root atom of the current path may be re-matched */
+		nConnectionFlags
+	};
+	// Return enum options for NETAConnectionFlags
+	static EnumOptions<NETAConnectionNode::NETAConnectionFlag> flags();
+	// Return whether the specified flag is valid for this node
+	bool isValidFlag(const char* s) const;
+	// Set specified flag
+	bool setFlag(const char* flag, bool state);
+
+
+	/*
 	 * Scoring
 	 */
 	public:

@@ -32,12 +32,16 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, PointerArray<Elem
 	allowedAtomTypes_ = targetAtomTypes;
 	bondType_ = bt;
 
+	// Modifiers
 	repeatCount_ = 1;
 	repeatCountOperator_ = NETANode::EqualTo;
 	nBondsValue_ = -1;
 	nBondsValueOperator_ = NETANode::EqualTo;
 	nHydrogensValue_ = -1;
 	nHydrogensValueOperator_ = NETANode::EqualTo;
+
+	// Flags
+	allowRootMatch_ = false;
 }
 
 // Destructor
@@ -96,6 +100,45 @@ bool NETAConnectionNode::setModifier(const char* modifier, ComparisonOperator op
 }
 
 /*
+ * Flags
+ */
+
+// Return enum options for NETAConnectionFlags
+EnumOptions<NETAConnectionNode::NETAConnectionFlag> NETAConnectionNode::flags()
+{
+	static EnumOptionsList FlagOptions = EnumOptionsList() <<
+		EnumOption(RootFlag,			"root");
+
+	static EnumOptions<NETAConnectionNode::NETAConnectionFlag> options("ConnectionFlag", FlagOptions);
+
+	return options;
+}
+
+// Return whether the specified flag is valid for this node
+bool NETAConnectionNode::isValidFlag(const char* s) const
+{
+	return (flags().isValid(s));
+}
+
+// Set specified flag
+bool NETAConnectionNode::setFlag(const char* flag, bool state)
+{
+	// Check that the supplied index is valid
+	if (!flags().isValid(flag)) return Messenger::error("Invalid modifier '%s' passed to NETAConnectionNode.\n", flag);
+
+	switch (flags().enumeration(flag))
+	{
+		case (NETAConnectionNode::RootFlag):
+			allowRootMatch_ = state;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
+	}
+
+	return true;
+}
+
+/*
  * Scoring
  */
 
@@ -113,6 +156,7 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 	for (int n=0; n<bonds.nItems(); ++n)
 	{
 		const SpeciesAtom* j = bonds.at(n)->partner(i);
+		if ((j == matchPath.firstItem()) && (!allowRootMatch_)) continue;
 		if (matchPath.contains(j)) continue;
 		neighbours.append(j, NETANode::NoMatch);
 	}
