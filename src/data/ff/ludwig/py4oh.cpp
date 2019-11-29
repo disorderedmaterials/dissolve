@@ -1,5 +1,5 @@
 /*
-	*** Py4OH Forcefield
+	*** Py4OH cation Forcefield
 	*** src/data/ff/ludwig/py4oh.cpp
 	Copyright T. Youngs 2019
 
@@ -31,7 +31,7 @@
 #include "base/sysfunc.h"
 
 /*
- * Implements "1‐(4‐hydroxybutyl)pyridinium based on OPLS All Atom Forcefield for benzene and pyridine"
+ * Implements "1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
  * W. L. Jorgensen,	D. S. Maxwell,	and J. Tirado-Rives
  * J. Am. Chem. Soc. 118,	11225-11236 (1996).
  * W. L. Jorgensen and N. A. McDonald,	Theochem 424,	145-155 (1998).
@@ -176,13 +176,13 @@ Forcefield_Py4OH_Ludwig::~Forcefield_Py4OH_Ludwig()
 // Return name of Forcefield
 const char* Forcefield_Py4OH_Ludwig::name() const
 {
-	return "1‐(4‐hydroxybutyl)pyridinium (Py4OH)";
+	return "1‐(4‐hydroxybutyl)pyridinium cation (Py4OH)";
 }
 
 // Return description for Forcefield
 const char* Forcefield_Py4OH_Ludwig::description() const
 {
-	return "Implements of 1‐(4‐hydroxybutyl)pyridinium based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen,	D. S. Maxwell,	and J. Tirado-Rives,	<i>Journal of the American Chemical Society</i> <b>118</b> 11225 (1996)";
+	return "Implements of 1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen,	D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American Chemical Society</i>, <b>118</b>, 11225 (1996).";
 }
 
 // Return short-range interaction style for AtomTypes

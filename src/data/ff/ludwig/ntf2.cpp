@@ -94,6 +94,10 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
 	{
 		//	i	j	k	l	Type (CosineForm)		k		n	eq	s
 		{ this, "F",	"C",	"S",	"N",	SpeciesTorsion::CosineForm,	2.0401,		3.0,	0.0,	1 },
+		{ this, "F",	"C",	"S",	"O",	SpeciesTorsion::NoForm },
+		//{ this, "F",	"C",	"S",	"O",	SpeciesTorsion::CosineForm, 0,0,0,0 },
+		{ this, "O",	"S",	"N",	"S",	SpeciesTorsion::NoForm },
+		//{ this, "O",	"S",	"N",	"S",	SpeciesTorsion::CosineForm, 0,0,0,0 },
 		{ this, "S",	"N",	"S",	"C",	SpeciesTorsion::CosineForm,	23.7647,	1.0,	0.0,	1 },
 		{ this, "S",	"N",	"S",	"C",	SpeciesTorsion::CosineForm,	6.2081,		2.0,	0.0,	1 },
 		{ this, "S",	"N",	"S",	"C",	SpeciesTorsion::CosineForm,	-2.3684,	3.0,	0.0,	1 },
@@ -115,13 +119,13 @@ Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig()
 // Return name of Forcefield
 const char* Forcefield_NTf2_Ludwig::name() const
 {
-	return "bis(trifluoromethyl-sulfonyl)imide anion (NTf2) by Ludwig Group";
+	return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group";
 }
 
 // Return description for Forcefield
 const char* Forcefield_NTf2_Ludwig::description() const
 {
-	return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek , bis(trifluoromethyl-sulfonyl)imide anion by Ludwig Group,<em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
+	return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
 }
 
 // Return short-range interaction style for AtomTypes
