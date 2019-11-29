@@ -78,12 +78,6 @@ QWidget* MainTab::page() const
 	return page_;
 }
 
-// Return title of tab
-const char* MainTab::title() const
-{
-	return title_.get();
-}
-
 // Return whether the title of the tab can be changed
 bool MainTab::canChangeTitle() const
 {
@@ -112,4 +106,10 @@ bool MainTab::rename()
 	tabWidget_->setTabText(tabIndex, text);
 
 	return true;
+}
+
+// Return title of tab
+const char* MainTab::title() const
+{
+	return title_.get();
 }
