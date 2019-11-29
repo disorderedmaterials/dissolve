@@ -97,7 +97,7 @@ class NETANode : public ListItem<NETANode>
 	 */
 	public:
 	// Return whether the specified modifier is valid for this node
-	virtual bool isValidModifier(const char* s);
+	virtual bool isValidModifier(const char* s) const;
 	// Set value and comparator for specified modifier
 	virtual bool setModifier(const char* modifier, ComparisonOperator op, int value);
 

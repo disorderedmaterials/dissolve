@@ -130,7 +130,7 @@ NETARingNode* NETANode::createRingNode()
  */
 
 // Return whether the specified modifier is valid for this node
-bool NETANode::isValidModifier(const char* s)
+bool NETANode::isValidModifier(const char* s) const
 {
 	return false;
 }

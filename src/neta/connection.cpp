@@ -63,7 +63,7 @@ EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modi
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAConnectionNode::isValidModifier(const char* s)
+bool NETAConnectionNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }
