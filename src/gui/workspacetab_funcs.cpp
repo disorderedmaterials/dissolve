@@ -112,6 +112,7 @@ void WorkspaceTab::enableSensitiveControls()
 /*
  * Gizmo Management
  */
+
 // Create Gizmo with specified type
 Gizmo* WorkspaceTab::createGizmo(const char* type)
 {
