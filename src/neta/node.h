@@ -107,9 +107,9 @@ class NETANode : public ListItem<NETANode>
 	 */
 	public:
 	// Return whether the specified flag is valid for this node
-	bool isValidFlag(const char* s) const;
+	virtual bool isValidFlag(const char* s) const;
 	// Set specified flag
-	bool setFlag(const char* flag, bool state);
+	virtual bool setFlag(const char* flag, bool state);
 
 
 	/*
