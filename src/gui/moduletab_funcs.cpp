@@ -42,8 +42,6 @@ ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWid
 	layout->addWidget(splitter_);
 	setLayout(layout);
 
-	refreshing_ = false;
-
 	initialiseControls(module_);
 
 	updateControls();
@@ -117,12 +115,10 @@ void ModuleTab::updateControls()
 {
 	if (!module_) return;
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	if (controlsWidget_) controlsWidget_->updateControls();
 	if (moduleWidget_) moduleWidget_->updateControls();
-
-	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab

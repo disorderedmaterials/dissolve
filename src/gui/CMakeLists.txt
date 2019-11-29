@@ -180,6 +180,8 @@ SET(gui_SRCS
   maintab.cpp
   moduletab_funcs.cpp
   speciestab_funcs.cpp
+  speciestab_geometry.cpp
+  speciestab_isotopologues.cpp
   workspacetab_funcs.cpp
 
   # Main UI

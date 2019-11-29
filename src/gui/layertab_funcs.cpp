@@ -34,8 +34,6 @@ LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidge
 
 	// Set up ModuleEditor
 	ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
-
-	refreshing_ = false;
 }
 
 LayerTab::~LayerTab()
@@ -92,7 +90,7 @@ ModuleLayer* LayerTab::moduleLayer() const
 
 void LayerTab::on_EnabledButton_clicked(bool checked)
 {
-	if (refreshing_ || (!moduleLayer_)) return;
+	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
 
 	moduleLayer_->setEnabled(checked);
 
@@ -101,7 +99,7 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
 
 void LayerTab::on_FrequencySpin_valueChanged(int value)
 {
-	if (refreshing_ || (!moduleLayer_)) return;
+	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
 
 	moduleLayer_->setFrequency(value);
 
@@ -117,14 +115,12 @@ void LayerTab::updateControls()
 {
 	if (!moduleLayer_) return;
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	ui_.EnabledButton->setChecked(moduleLayer_->enabled());
 	ui_.FrequencySpin->setValue(moduleLayer_->frequency());
 
 	ui_.ModuleListPanel->updateControls();
-
-	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab

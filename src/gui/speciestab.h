@@ -54,6 +54,14 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// Main form declaration
 	Ui::SpeciesTab ui_;
 
+	public slots:
+	// Update controls in tab
+	void updateControls();
+	// Disable sensitive controls within tab
+	void disableSensitiveControls();
+	// Enable sensitive controls within tab
+	void enableSensitiveControls();
+
 
 	/*
 	 * MainTab Reimplementations
@@ -80,11 +88,13 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 
 	/*
-	 * Update
+	 * Widget Functions - Geometry
 	 */
 	private:
 	// SpeciesAtomTable row update function
 	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
+	// Update atom table selection
+	void updateAtomTableSelection();
 	// SpeciesBondTable row update function
 	void updateBondTableRow(int row, SpeciesBond* speciesBond, bool createItems);
 	// SpeciesAngleTable row update function
@@ -93,41 +103,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
 	// SpeciesImproperTable row update function
 	void updateImproperTableRow(int row, SpeciesImproper* speciesImproper, bool createItems);
-	// IsotopologuesTree top-level update function
-	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
-	// IsotopologuesTree item update function
-	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
 
 	private slots:
-	// Update atom table selection
-	void updateAtomSelection();
-
-	public slots:
-	// Update controls in tab
-	void updateControls();
-	// Disable sensitive controls within tab
-	void disableSensitiveControls();
-	// Enable sensitive controls within tab
-	void enableSensitiveControls();
-
-
-	/*
-	 * Signals / Slots
-	 */
-	private:
-	// Return currently-selected Isotopologue
-	Isotopologue* currentIsotopologue();
-
-	private slots:
-	// View / Generate
-	// Isotopologues
-	void on_IsotopologueAddButton_clicked(bool checked);
-	void on_IsotopologueRemoveButton_clicked(bool checked);
-	void on_IsotopologueGenerateButton_clicked(bool checked);
-	void on_IsotopologueExpandAllButton_clicked(bool checked);
-	void on_IsotopologueCollapseAllButton_clicked(bool checked);
-	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
-	// Geometry Tab
 	void on_ForcefieldButton_clicked(bool checked);
 	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
 	void on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked);
@@ -147,6 +124,34 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_ImproperAddButton_clicked(bool checked);
 	void on_ImproperRemoveButton_clicked(bool checked);
 	void on_ImproperTable_itemChanged(QTableWidgetItem* w);
+
+	public:
+	// Update Geometry tab
+	void updateGeometryTab();
+
+
+	/*
+	 * Widget Functions - Isotopologues
+	 */
+	private:
+	// IsotopologuesTree top-level update function
+	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
+	// IsotopologuesTree item update function
+	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
+	// Return currently-selected Isotopologue
+	Isotopologue* currentIsotopologue();
+
+	private slots:
+	void on_IsotopologueAddButton_clicked(bool checked);
+	void on_IsotopologueRemoveButton_clicked(bool checked);
+	void on_IsotopologueGenerateButton_clicked(bool checked);
+	void on_IsotopologueExpandAllButton_clicked(bool checked);
+	void on_IsotopologueCollapseAllButton_clicked(bool checked);
+	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
+
+	public:
+	// Update Isotopologues tab
+	void updateIsotopologuesTab();
 
 
 	/*
