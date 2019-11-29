@@ -69,7 +69,7 @@ bool NETAPresenceNode::isValidModifier(const char* s)
 bool NETAPresenceNode::setModifier(const char* modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETAPresenceNode.\n", modifier);
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETAPresenceNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{

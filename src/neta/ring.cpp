@@ -65,7 +65,7 @@ bool NETARingNode::isValidModifier(const char* s)
 bool NETARingNode::setModifier(const char* modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETARingNode.\n", modifier);
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETARingNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{

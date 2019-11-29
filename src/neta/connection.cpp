@@ -72,7 +72,7 @@ bool NETAConnectionNode::isValidModifier(const char* s) const
 bool NETAConnectionNode::setModifier(const char* modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETAConnectionNode.\n", modifier);
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETAConnectionNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{
