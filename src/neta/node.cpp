@@ -142,6 +142,22 @@ bool NETANode::setModifier(const char* modifier, ComparisonOperator op, int valu
 }
 
 /*
+ * Flags
+ */
+
+// Return whether the specified flag is valid for this node
+bool NETANode::isValidFlag(const char* s) const
+{
+	return false;
+}
+
+// Set specified flag
+bool NETANode::setFlag(const char* flag, bool state)
+{
+	return false;
+}
+
+/*
  * Value Comparison
  */
 

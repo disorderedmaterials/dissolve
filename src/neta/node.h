@@ -103,6 +103,16 @@ class NETANode : public ListItem<NETANode>
 
 
 	/*
+	 * Flags
+	 */
+	public:
+	// Return whether the specified flag is valid for this node
+	bool isValidFlag(const char* s) const;
+	// Set specified flag
+	bool setFlag(const char* flag, bool state);
+
+
+	/*
 	 * Value Comparison
 	 */
 	public:
