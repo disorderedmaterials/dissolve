@@ -704,7 +704,6 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem* w)
 	{
 		Locker refreshLocker(refreshLock_);
 		updateImproperTableRow(w->row(), speciesImproper, false);
-		refreshLocker.unlock();
 	}
 }
 
