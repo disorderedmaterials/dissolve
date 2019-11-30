@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NUMBERFORMAT_H
-#define DISSOLVE_NUMBERFORMAT_H
+#ifndef DISSOLVE_RENDER_NUMBERFORMAT_H
+#define DISSOLVE_RENDER_NUMBERFORMAT_H
 
 #include <QString>
 

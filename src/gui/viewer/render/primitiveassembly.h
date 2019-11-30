@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRIMITIVEASSEMBLY_H
-#define DISSOLVE_PRIMITIVEASSEMBLY_H
+#ifndef DISSOLVE_RENDER_PRIMITIVEASSEMBLY_H
+#define DISSOLVE_RENDER_PRIMITIVEASSEMBLY_H
 
 #include "gui/viewer/render/primitiveinfo.h"
 #include "templates/array.h"

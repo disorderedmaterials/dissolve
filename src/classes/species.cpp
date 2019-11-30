@@ -58,6 +58,8 @@ void Species::clear()
 	angles_.clear();
 	bonds_.clear();
 	atoms_.clear();
+
+	++version_;
 }
 
 /*

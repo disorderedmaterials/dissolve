@@ -40,7 +40,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 {
 	ui_.setupUi(this);
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	configuration_ = cfg;
 
@@ -53,8 +53,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Set target for ProcedureEditor, and connect signals
 	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
 	connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
-
-	refreshing_ = false;
 
 	// Set up the ModuleEditor
 	ui_.LayerPanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
@@ -115,7 +113,7 @@ Configuration* ConfigurationTab::configuration() const
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
@@ -140,8 +138,6 @@ void ConfigurationTab::updateControls()
 
 	// Viewer
 	ui_.ViewerWidget->postRedisplay();
-
-	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab
@@ -183,7 +179,7 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	configuration_->setTemperature(value);
 
@@ -193,18 +189,18 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 // Initial Coordinates
 void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 }
 
 void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 }
 
 // Size Factor Scaling
 void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	configuration_->setRequestedSizeFactor(value);
 

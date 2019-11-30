@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEW_H
-#define DISSOLVE_VIEW_H
+#ifndef DISSOLVE_RENDER_VIEW_H
+#define DISSOLVE_RENDER_VIEW_H
 
 #include "gui/viewer/render/axes.h"
 #include "gui/viewer/render/renderable.h"

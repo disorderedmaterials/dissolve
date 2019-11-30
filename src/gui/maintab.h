@@ -25,6 +25,7 @@
 #include "module/module.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"
+#include "base/lock.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QString>
@@ -87,8 +88,8 @@ class MainTab
 	 * Update
 	 */
 	protected:
-	// Whether the tab is currently refreshing
-	bool refreshing_;
+	// Lock for widget refresh
+	Lock refreshLock_;
 
 	public:
 	// Update controls in tab

@@ -54,6 +54,14 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// Main form declaration
 	Ui::SpeciesTab ui_;
 
+	public slots:
+	// Update controls in tab
+	void updateControls();
+	// Disable sensitive controls within tab
+	void disableSensitiveControls();
+	// Enable sensitive controls within tab
+	void enableSensitiveControls();
+
 
 	/*
 	 * MainTab Reimplementations
@@ -80,7 +88,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 
 	/*
-	 * Update
+	 * Widget Functions - Geometry
 	 */
 	private:
 	// SpeciesAtomTable row update function
@@ -93,41 +101,12 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
 	// SpeciesImproperTable row update function
 	void updateImproperTableRow(int row, SpeciesImproper* speciesImproper, bool createItems);
-	// IsotopologuesTree top-level update function
-	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
-	// IsotopologuesTree item update function
-	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
 
 	private slots:
 	// Update atom table selection
-	void updateAtomSelection();
-
-	public slots:
-	// Update controls in tab
-	void updateControls();
-	// Disable sensitive controls within tab
-	void disableSensitiveControls();
-	// Enable sensitive controls within tab
-	void enableSensitiveControls();
-
-
-	/*
-	 * Signals / Slots
-	 */
-	private:
-	// Return currently-selected Isotopologue
-	Isotopologue* currentIsotopologue();
+	void updateAtomTableSelection();
 
 	private slots:
-	// View / Generate
-	// Isotopologues
-	void on_IsotopologueAddButton_clicked(bool checked);
-	void on_IsotopologueRemoveButton_clicked(bool checked);
-	void on_IsotopologueGenerateButton_clicked(bool checked);
-	void on_IsotopologueExpandAllButton_clicked(bool checked);
-	void on_IsotopologueCollapseAllButton_clicked(bool checked);
-	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
-	// Geometry Tab
 	void on_ForcefieldButton_clicked(bool checked);
 	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
 	void on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked);
@@ -147,6 +126,53 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_ImproperAddButton_clicked(bool checked);
 	void on_ImproperRemoveButton_clicked(bool checked);
 	void on_ImproperTable_itemChanged(QTableWidgetItem* w);
+
+	public slots:
+	// Update Geometry tab
+	void updateGeometryTab();
+
+
+	/*
+	 * Widget Functions - Isotopologues
+	 */
+	private:
+	// IsotopologuesTree top-level update function
+	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
+	// IsotopologuesTree item update function
+	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
+	// Return currently-selected Isotopologue
+	Isotopologue* currentIsotopologue();
+
+	private slots:
+	void on_IsotopologueAddButton_clicked(bool checked);
+	void on_IsotopologueRemoveButton_clicked(bool checked);
+	void on_IsotopologueGenerateButton_clicked(bool checked);
+	void on_IsotopologueExpandAllButton_clicked(bool checked);
+	void on_IsotopologueCollapseAllButton_clicked(bool checked);
+	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
+
+	public slots:
+	// Update Isotopologues tab
+	void updateIsotopologuesTab();
+
+
+	/*
+	 * Widget Functions - Sites
+	 */
+	private:
+	// Return currently-selected SpeciesSite
+	SpeciesSite* currentSite();
+
+	private slots:
+	void on_SiteAddButton_clicked(bool checked);
+	void on_SiteRemoveButton_clicked(bool checked);
+	void on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QListWidgetItem* previousItem);
+	void on_SiteList_itemChanged(QListWidgetItem* item);
+	void on_SiteOriginMassWeightedCheck_clicked(bool checked);
+
+	public slots:
+	// Update sites tab
+	void updateSitesTab();
 
 
 	/*

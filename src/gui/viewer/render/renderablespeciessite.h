@@ -1,6 +1,6 @@
 /*
-	*** Renderable - Configuration
-	*** src/gui/viewer/render/renderableconfiguration.h
+	*** Renderable - SpeciesSite
+	*** src/gui/viewer/render/renderablespeciessite.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,30 +19,33 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_RENDERABLECONFIGURATION_H
-#define DISSOLVE_RENDER_RENDERABLECONFIGURATION_H
+#ifndef DISSOLVE_RENDER_RENDERABLESPECIESSITE_H
+#define DISSOLVE_RENDER_RENDERABLESPECIESSITE_H
 
 #include "gui/viewer/render/renderable.h"
-#include "classes/configuration.h"
+#include "classes/species.h"
+#include "classes/speciessite.h"
 
 // Forward Declarations
 class Axes;
 
-// Renderable for Configuration
-class RenderableConfiguration : public Renderable
+// Renderable for SpeciesSite
+class RenderableSpeciesSite : public Renderable
 {
 	public:
 	// Constructor / Destructor
-	RenderableConfiguration(const Configuration* source, const char* objectTag);
-	~RenderableConfiguration();
+	RenderableSpeciesSite(const Species* sp, const SpeciesSite* site);
+	~RenderableSpeciesSite();
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Source data
-	const Configuration* source_;
+	// Source Species
+	const Species* speciesSource_;
+	// Source site in Species
+	const SpeciesSite* siteSource_;
 
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
@@ -68,15 +71,9 @@ class RenderableConfiguration : public Renderable
 	 */
 	private:
 	// Basic primitives
-	Primitive* atomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
-	// Main primitives
-	Primitive* lineConfigurationPrimitive_, *lineInteractionPrimitive_;
+	Primitive* originPrimitive_, *crossPrimitive_, *axesPrimitive_;
 	// Main assemblies
-	PrimitiveAssembly configurationAssembly_, interactionAssembly_, unitCellAssembly_;
-
-	private:
-	// Create cylinder bond between supplied atoms in specified assembly
-	void createCylinderBond(PrimitiveAssembly& assembly, const Atom* i, const Atom* j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling);
+	PrimitiveAssembly siteAssembly_;
 
 	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
@@ -90,22 +87,13 @@ class RenderableConfiguration : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, SpheresStyle, nDisplayStyles };
-
-	private:
-	// Radius of free (unbound) atoms when drawing with lines
-	double linesAtomRadius_;
-	// Radius of atoms when drawing with spheres
-	double spheresAtomRadius_;
-	// Radius of bonds when drawing with spheres
-	double spheresBondRadius_;
+	enum DisplayStyle { LinesStyle, SolidStyle, nDisplayStyles };
 
 	public:
 	// Return keyword for display style index
 	const char* displayStyle(int id);
 	// Return display style index from string
 	int displayStyle(const char* s);
-
 };
 
 #endif

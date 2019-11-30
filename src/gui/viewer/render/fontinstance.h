@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FONTINSTANCE_H
-#define DISSOLVE_FONTINSTANCE_H
+#ifndef DISSOLVE_RENDER_FONTINSTANCE_H
+#define DISSOLVE_RENDER_FONTINSTANCE_H
 
 #include "templates/vector3.h"
 #include <FTGL/ftgl.h>

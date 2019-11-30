@@ -6,6 +6,7 @@ add_library(base
   enumoptionslist.cpp
   geometry.cpp
   lineparser.cpp
+  lock.cpp
   messenger.cpp
   outputhandler.cpp
   parameters.cpp
@@ -26,6 +27,7 @@ add_library(base
   enumoptionslist.h
   geometry.h
   lineparser.h
+  lock.h
   messenger.h
   outputhandler.h
   parameters.h

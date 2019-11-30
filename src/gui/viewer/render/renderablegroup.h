@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLEGROUP_H
-#define DISSOLVE_RENDERABLEGROUP_H
+#ifndef DISSOLVE_RENDER_RENDERABLEGROUP_H
+#define DISSOLVE_RENDER_RENDERABLEGROUP_H
 
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestipple.h"

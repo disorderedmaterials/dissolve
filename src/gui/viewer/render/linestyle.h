@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LINESTYLE_H
-#define DISSOLVE_LINESTYLE_H
+#ifndef DISSOLVE_RENDER_LINESTYLE_H
+#define DISSOLVE_RENDER_LINESTYLE_H
 
 #include "gui/viewer/render/linestipple.h"
 #include <QColor>

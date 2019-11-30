@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_AXES_H
-#define DISSOLVE_AXES_H
+#ifndef DISSOLVE_RENDER_AXES_H
+#define DISSOLVE_RENDER_AXES_H
 
 #include "gui/viewer/render/numberformat.h"
 #include "gui/viewer/render/primitive.h"
