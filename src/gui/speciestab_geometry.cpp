@@ -21,23 +21,10 @@
 
 #include "gui/speciestab.h"
 #include "gui/gui.h"
-// #include "gui/delegates/intraformcombo.hui"
-// #include "gui/delegates/combolist.hui"
-// #include "gui/delegates/integerspin.hui"
-// #include "gui/delegates/isotopecombo.hui"
-// #include "gui/delegates/exponentialspin.hui"
-// #include "gui/delegates/null.h"
-// #include "gui/getspeciesnamedialog.h"
 #include "gui/selectforcefielddialog.h"
-// #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
-// #include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
-// #include "classes/species.h"
-// #include "classes/speciesbond.h"
-// #include "data/fflibrary.h"
-// #include <QListWidgetItem>
 #include <QMessageBox>
 
 /*

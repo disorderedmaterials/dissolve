@@ -28,17 +28,8 @@
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/null.h"
 #include "gui/getspeciesnamedialog.h"
-#include "gui/selectforcefielddialog.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/helpers/tablewidgetupdater.h"
-#include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
-#include "classes/species.h"
-#include "classes/speciesbond.h"
-#include "data/fflibrary.h"
-#include <QListWidgetItem>
-#include <QMessageBox>
 
 // Constructor / Destructor
 SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
