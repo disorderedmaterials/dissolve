@@ -93,8 +93,6 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	private:
 	// SpeciesAtomTable row update function
 	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
-	// Update atom table selection
-	void updateAtomTableSelection();
 	// SpeciesBondTable row update function
 	void updateBondTableRow(int row, SpeciesBond* speciesBond, bool createItems);
 	// SpeciesAngleTable row update function
@@ -103,6 +101,10 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
 	// SpeciesImproperTable row update function
 	void updateImproperTableRow(int row, SpeciesImproper* speciesImproper, bool createItems);
+
+	private slots:
+	// Update atom table selection
+	void updateAtomTableSelection();
 
 	private slots:
 	void on_ForcefieldButton_clicked(bool checked);
