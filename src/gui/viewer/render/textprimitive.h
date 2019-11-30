@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TEXTPRIMITIVE_H
-#define DISSOLVE_TEXTPRIMITIVE_H
+#ifndef DISSOLVE_RENDER_TEXTPRIMITIVE_H
+#define DISSOLVE_RENDER_TEXTPRIMITIVE_H
 
 #include "gui/viewer/render/textfragment.h"
 #include "gui/viewer/render/textformat.h"

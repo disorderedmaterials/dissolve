@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLE_H
-#define DISSOLVE_RENDERABLE_H
+#ifndef DISSOLVE_RENDER_RENDERABLE_H
+#define DISSOLVE_RENDER_RENDERABLE_H
 
 #include "gui/viewer/render/primitiveassembly.h"
 #include "gui/viewer/render/primitivelist.h"

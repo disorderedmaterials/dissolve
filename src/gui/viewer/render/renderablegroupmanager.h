@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLEGROUPMANAGER_H
-#define DISSOLVE_RENDERABLEGROUPMANAGER_H
+#ifndef DISSOLVE_RENDER_RENDERABLEGROUPMANAGER_H
+#define DISSOLVE_RENDER_RENDERABLEGROUPMANAGER_H
 
 #include "gui/viewer/render/renderablegroup.h"
 

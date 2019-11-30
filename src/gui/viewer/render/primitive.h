@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRIMITIVE_H
-#define DISSOLVE_PRIMITIVE_H
+#ifndef DISSOLVE_RENDER_PRIMITIVE_H
+#define DISSOLVE_RENDER_PRIMITIVE_H
 
 #include "gui/viewer/render/primitiveinstance.h"
 #include "math/matrix4.h"

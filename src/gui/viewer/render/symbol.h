@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TEXTSYMBOL_H
-#define DISSOLVE_TEXTSYMBOL_H
+#ifndef DISSOLVE_RENDER_TEXTSYMBOL_H
+#define DISSOLVE_RENDER_TEXTSYMBOL_H
 
 #include <QString>
 
