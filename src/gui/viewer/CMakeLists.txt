@@ -6,10 +6,12 @@ SET(viewer_MOC_HDRS
   configurationwidget.h
   datawidget.h
   selectsymbol.h
+  sitewidget.h
   specieswidget.h
 
   configurationviewer.hui
   dataviewer.hui
+  siteviewer.hui
   speciesviewer.hui
   viewer.hui
 )
@@ -20,6 +22,7 @@ SET(viewer_UIS
   configurationwidget.ui
   datawidget.ui
   selectsymbol.ui
+  sitewidget.ui
   specieswidget.ui
 )
 QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
@@ -37,6 +40,11 @@ SET(viewer_SRCS
   dataviewer_render.cpp
   datawidget_funcs.cpp
   selectsymbol_funcs.cpp
+  siteviewer_funcs.cpp
+  siteviewer_input.cpp
+  siteviewer_interaction.cpp
+  siteviewer_render.cpp
+  sitewidget_funcs.cpp
   speciesviewer_funcs.cpp
   speciesviewer_input.cpp
   speciesviewer_interaction.cpp
