@@ -40,7 +40,7 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, nRenderableTypes };
+	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, SpeciesSiteRenderable, nRenderableTypes };
 	// Return enum options for RenderableType
 	static EnumOptions<RenderableType> renderableTypes();
 	// Constructor / Destructor

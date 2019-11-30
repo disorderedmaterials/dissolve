@@ -24,6 +24,7 @@ SET(render_SRCS
   renderablegroup.h
   renderablegroupmanager.h
   renderablespecies.h
+  renderablespeciessite.h
   symbol.h
   textformat.h
   textfragment.h
@@ -54,6 +55,7 @@ SET(render_SRCS
   renderablegroup.cpp
   renderablegroupmanager.cpp
   renderablespecies.cpp
+  renderablespeciessite.cpp
   symbol.cpp
   textformat.cpp
   textfragment.cpp
