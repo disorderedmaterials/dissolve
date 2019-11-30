@@ -68,6 +68,8 @@ class Matrix3
 	double determinant() const;
 	// Invert matrix
 	void invert();
+	// Return nth value of matrix
+	double value(int n) const;
 	// Return maximal element
 	double max() const;
 
