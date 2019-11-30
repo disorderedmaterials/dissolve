@@ -579,14 +579,17 @@ void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented
 }
 
 // Create vertices of cross with specified width
-void Primitive::cross(double halfWidth, Matrix4& transform, const GLfloat* rgba)
+void Primitive::cross(double width)
 {
-	Vec3<double> v, centre(transform[12], transform[13], transform[14]);
+	Vec3<double> v;
+	const double halfWidth = 0.5*width;
 	for (int i=0; i<3; ++i)
 	{
-		v = transform.columnAsVec3(i) * halfWidth;
-		defineVertex(centre.x+v.x, centre.y+v.y, centre.z+v.z, 1.0, 1.0, 1.0, rgba);
-		defineVertex(centre.x-v.x, centre.y-v.y, centre.z-v.z, 1.0, 1.0, 1.0, rgba);
+		v.zero();
+		v.set(i, halfWidth);
+		defineVertex(v.x, v.y, v.z, 1.0, 1.0, 1.0);
+		defineVertex(-v.x, -v.y, -v.z, 1.0, 1.0, 1.0);
+		defineIndices(i*2, i*2+1);
 	}
 }
 
@@ -735,6 +738,76 @@ void Primitive::axes(double axisLength)
 	defineVertex(0.0, arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0);
 	defineVertex(0.0, -arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0);
 	defineVertex(0.0, -arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0);
+	defineIndices(18, 19);
+	defineIndices(19, 20);
+	defineIndices(20, 21);
+}
+
+// Plot basic coloured axes object
+void Primitive::colouredAxes(double axisLength)
+{
+	const double arrowSize = axisLength*0.05;
+	GLfloat rgba[4], black[4];
+	black[0] = 0.0;
+	black[1] = 0.0;
+	black[2] = 0.0;
+	black[3] = 1.0;
+
+	// X (first vertex = 0)
+	rgba[0] = 1.0;
+	rgba[1] = 0.0;
+	rgba[2] = 0.0;
+	rgba[3] = 1.0;
+	defineVertex(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineVertex(axisLength, 0.0, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineVertex(axisLength-arrowSize, arrowSize, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineVertex(axisLength-arrowSize, -arrowSize, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineIndices(0, 1);
+	defineIndices(1, 2);
+	defineIndices(1, 3);
+
+	// X label (first vertex = 4)
+	defineVertex(axisLength+arrowSize, arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineVertex(axisLength+arrowSize, -arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineVertex(axisLength+2*arrowSize, arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineVertex(axisLength+2*arrowSize, -arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineIndices(4, 7);
+	defineIndices(5, 6);
+
+	// Y (first vertex = 8)
+	rgba[0] = 0.0;
+	rgba[1] = 1.0;
+	defineVertex(0.0, axisLength, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineVertex(arrowSize, axisLength-arrowSize, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineVertex(-arrowSize, axisLength-arrowSize, 0.0, 0.0, 0.0, 1.0, rgba);
+	defineIndices(0, 8);
+	defineIndices(8, 9);
+	defineIndices(8, 10);
+
+	// Y label (first vertex = 11)
+	defineVertex(-arrowSize, axisLength+arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineVertex(-arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineVertex(0.0, axisLength+1.5*arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineVertex(arrowSize, axisLength+1.5*arrowSize, 0.0, 0.0, 0.0, 1.0, black);
+	defineIndices(11, 13);
+	defineIndices(12, 13);
+	defineIndices(13, 14);
+
+	// Z (first vertex = 15)
+	rgba[1] = 0.0;
+	rgba[2] = 1.0;
+	defineVertex(0.0, 0.0, axisLength, 0.0, 0.0, 1.0, rgba);
+	defineVertex(0.0, arrowSize, axisLength-arrowSize, 0.0, 0.0, 1.0, rgba);
+	defineVertex(0.0, -arrowSize, axisLength-arrowSize, 0.0, 0.0, 1.0, rgba);
+	defineIndices(0, 15);
+	defineIndices(15, 16);
+	defineIndices(15, 17);
+
+	// Z label (first vertex = 18)
+	defineVertex(0.0, arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0, black);
+	defineVertex(0.0, arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0, black);
+	defineVertex(0.0, -arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0, black);
+	defineVertex(0.0, -arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0, black);
 	defineIndices(18, 19);
 	defineIndices(19, 20);
 	defineIndices(20, 21);
