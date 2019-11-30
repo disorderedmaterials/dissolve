@@ -730,7 +730,7 @@ void Primitive::axes(double axisLength)
 	defineIndices(15, 16);
 	defineIndices(15, 17);
 
-	// Y label (first vertex = 18)
+	// Z label (first vertex = 18)
 	defineVertex(0.0, arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0);
 	defineVertex(0.0, arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0);
 	defineVertex(0.0, -arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0);
