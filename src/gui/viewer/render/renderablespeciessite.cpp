@@ -40,8 +40,10 @@ RenderableSpeciesSite::RenderableSpeciesSite(const Species* sp, const SpeciesSit
 	// Create basic primitives
 	originPrimitive_ = createPrimitive(GL_LINES, false);
 	originPrimitive_->wireOrthorhomboid(0.7, 0.7, 0.7);
-	axesPrimitive_ = createPrimitive(GL_LINES, false);
-	axesPrimitive_->axes(1.2);
+	crossPrimitive_ = createPrimitive(GL_LINES, false);
+	crossPrimitive_->cross(0.9);
+	axesPrimitive_ = createPrimitive(GL_LINES, true);
+	axesPrimitive_->colouredAxes(1.2);
 }
 
 // Destructor
@@ -110,11 +112,9 @@ void RenderableSpeciesSite::recreatePrimitives(const View& view, const ColourDef
 	{
 		// Plot origin
 		A.setTranslation(site->origin());
-// 		Matrix4 B;
-// 		B.setRotation(site->axes());
-// 		A *= B;
 		if (site->hasAxes()) A.applyRotation(site->axes());
 		siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
+		siteAssembly_.add(crossPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
 
 		// Plot axes?
 		if (site->hasAxes())

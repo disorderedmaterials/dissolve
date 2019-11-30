@@ -71,7 +71,7 @@ class RenderableSpeciesSite : public Renderable
 	 */
 	private:
 	// Basic primitives
-	Primitive* originPrimitive_, *axesPrimitive_;
+	Primitive* originPrimitive_, *crossPrimitive_, *axesPrimitive_;
 	// Main assemblies
 	PrimitiveAssembly siteAssembly_;
 
