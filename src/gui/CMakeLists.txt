@@ -182,6 +182,7 @@ SET(gui_SRCS
   speciestab_funcs.cpp
   speciestab_geometry.cpp
   speciestab_isotopologues.cpp
+  speciestab_sites.cpp
   workspacetab_funcs.cpp
 
   # Main UI

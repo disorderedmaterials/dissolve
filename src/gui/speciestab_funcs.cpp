@@ -76,10 +76,16 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.ViewerWidget->setCoreData(&dissolve.coreData());
 	ui_.ViewerWidget->setSpecies(species_);
 
+	// Set up SiteViewer
+	ui_.SiteViewerWidget->setCoreData(&dissolve.coreData());
+	ui_.SiteViewerWidget->setSpecies(species_);
+
 	// Connect signals / slots
 	connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
 	connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomSelectionChanged()), this, SLOT(updateAtomTableSelection()));
+	connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
+	connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 }
 
 SpeciesTab::~SpeciesTab()
@@ -103,6 +109,9 @@ void SpeciesTab::updateControls()
 
 	// Isotopologues Tab
 	updateIsotopologuesTab();
+
+	// Sites Tab
+	updateSitesTab();
 }
 
 // Disable sensitive controls within tab

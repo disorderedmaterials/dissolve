@@ -127,7 +127,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_ImproperRemoveButton_clicked(bool checked);
 	void on_ImproperTable_itemChanged(QTableWidgetItem* w);
 
-	public:
+	public slots:
 	// Update Geometry tab
 	void updateGeometryTab();
 
@@ -151,9 +151,28 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_IsotopologueCollapseAllButton_clicked(bool checked);
 	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
 
-	public:
+	public slots:
 	// Update Isotopologues tab
 	void updateIsotopologuesTab();
+
+
+	/*
+	 * Widget Functions - Sites
+	 */
+	private:
+	// Return currently-selected SpeciesSite
+	SpeciesSite* currentSite();
+
+	private slots:
+	void on_SiteAddButton_clicked(bool checked);
+	void on_SiteRemoveButton_clicked(bool checked);
+	void on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QListWidgetItem* previousItem);
+	void on_SiteList_itemChanged(QListWidgetItem* item);
+	void on_SiteOriginMassWeightedCheck_clicked(bool checked);
+
+	public slots:
+	// Update sites tab
+	void updateSitesTab();
 
 
 	/*
