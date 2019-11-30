@@ -84,25 +84,6 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	item->setSelected(speciesAtom->isSelected());
 }
 
-// Update atom table selection
-void SpeciesTab::updateAtomTableSelection()
-{
-	Locker refreshLocker(refreshLock_);
-
-	QTableWidgetItem* item;
-	SpeciesAtom* i;
-
-	// Set atom selection in table to reflect the atom data
-	for (int n=0; n<ui_.AtomTable->rowCount(); ++n)
-	{
-		item = ui_.AtomTable->item(n, 0);
-		i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
-
-		if (i->isSelected()) for (int m=0; m<6; ++m) ui_.AtomTable->item(n,m)->setSelected(true);
-		else for (int m=0; m<6; ++m) ui_.AtomTable->item(n,m)->setSelected(false);
-	}
-}
-
 // BondTable row update function
 void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool createItems)
 {
@@ -278,6 +259,25 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper* speciesImprope
 /*
  * Private Slots
  */
+
+// Update atom table selection
+void SpeciesTab::updateAtomTableSelection()
+{
+	Locker refreshLocker(refreshLock_);
+
+	QTableWidgetItem* item;
+	SpeciesAtom* i;
+
+	// Set atom selection in table to reflect the atom data
+	for (int n=0; n<ui_.AtomTable->rowCount(); ++n)
+	{
+		item = ui_.AtomTable->item(n, 0);
+		i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
+
+		if (i->isSelected()) for (int m=0; m<6; ++m) ui_.AtomTable->item(n,m)->setSelected(true);
+		else for (int m=0; m<6; ++m) ui_.AtomTable->item(n,m)->setSelected(false);
+	}
+}
 
 void SpeciesTab::on_ForcefieldButton_clicked(bool checked)
 {
