@@ -21,6 +21,8 @@
 
 #include "classes/speciessite.h"
 #include "classes/species.h"
+#include "classes/site.h"
+#include "data/atomicmass.h"
 #include "base/lineparser.h"
 
 // Constructor
@@ -212,6 +214,81 @@ bool SpeciesSite::hasAxes() const
 {
 	if ((xAxisAtoms_.nItems() == 0) || (yAxisAtoms_.nItems() == 0)) return false;
 	return true;
+}
+
+/*
+ * Generation from Parent
+ */
+
+// Create and return Site description from parent Species
+Site* SpeciesSite::createFromParent() const
+{
+	// Get origin atom indices from site
+	Array<int> originIndices = originAtomIndices();
+	if (originIndices.nItems() == 0) return NULL;
+
+	Site* site = NULL;
+
+	// Calculate origin
+	Vec3<double> origin;
+	double mass;
+	if (originMassWeighted_)
+	{
+		double massNorm = 0.0;
+		for (int m=0; m<originIndices.nItems(); ++m)
+		{
+			mass = AtomicMass::mass(parent_->atom(originIndices[m])->element());
+			origin += parent_->atom(originIndices[m])->r() * mass;
+			massNorm += mass;
+		}
+		origin /= massNorm;
+	}
+	else
+	{
+		for (int m=0; m<originIndices.nItems(); ++m) origin += parent_->atom(originIndices[m])->r();
+		origin /= originIndices.nItems();
+	}
+
+	// Calculate axes and store data if required
+	if (hasAxes())
+	{
+		// If the site has axes, grab the atom indices involved
+		Array<int> xAxisIndices, yAxisIndices;
+		if (hasAxes())
+		{
+			xAxisIndices = xAxisAtomIndices();
+			yAxisIndices = yAxisAtomIndices();
+		}
+
+		Vec3<double> v;
+
+		// Get average position of supplied x-axis atoms
+		for (int m=0; m<xAxisIndices.nItems(); ++m) v += parent_->atom(xAxisIndices[m])->r();
+		v /= xAxisIndices.nItems();
+
+		// Get vector from site origin and normalise it
+		Vec3<double> x = v - origin;
+		x.normalise();
+
+		// Get average position of supplied y-axis atoms
+		v.zero();
+		for (int m=0; m<yAxisIndices.nItems(); ++m) v += parent_->atom(yAxisIndices[m])->r();
+		v /= yAxisIndices.nItems();
+
+		// Get vector from site origin, normalise it, and orthogonalise
+		Vec3<double> y = v - origin;
+		y.orthogonalise(x);
+		y.normalise();
+
+		// Calculate z vector from cross product of x and y
+		Vec3<double> z = x * y;
+
+		// Store data
+		site = new OrientedSite(NULL, origin, x, y, z);
+	}
+	else site = new Site(NULL, origin);
+
+	return site;
 }
 
 /*

@@ -32,6 +32,7 @@
 
 // Forward Declarations
 class LineParser;
+class Site;
 class Species;
 class SpeciesAtom;
 
@@ -113,6 +114,14 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	Array<int> yAxisAtomIndices() const;
 	// Return whether the site has defined axes sites
 	bool hasAxes() const;
+
+
+	/*
+	 * Generation from Parent
+	 */
+	public:
+	// Create and return Site description from parent Species
+	Site* createFromParent() const;
 
 
 	/*
