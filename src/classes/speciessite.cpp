@@ -35,6 +35,10 @@ SpeciesSite::~SpeciesSite()
 {
 }
 
+/*
+ * Basic Information
+ */
+
 // Set name of site
 void SpeciesSite::setName(const char* newName)
 {
@@ -59,6 +63,16 @@ Species* SpeciesSite::parent()
 	return parent_;
 }
 
+// Return version
+int SpeciesSite::version() const
+{
+	return version_;
+}
+
+/*
+ * Definition
+ */
+
 // Add origin atom
 bool SpeciesSite::addOriginAtom(SpeciesAtom* originAtom)
 {
@@ -68,6 +82,8 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom* originAtom)
 	if (originAtoms_.contains(originAtom)) return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(), name_.get());
 
 	originAtoms_.append(originAtom);
+
+	++version_;
 
 	return true;
 }
@@ -101,6 +117,8 @@ Array<int> SpeciesSite::originAtomIndices() const
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
 	originMassWeighted_ = b;
+
+	++version_;
 }
 
 // Return whether the origin should be calculated with mass-weighted positions
@@ -118,6 +136,8 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom* xAxisAtom)
 	if (xAxisAtoms_.contains(xAxisAtom)) return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(), name_.get());
 
 	xAxisAtoms_.append(xAxisAtom);
+
+	++version_;
 
 	return true;
 }
@@ -156,6 +176,8 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom* yAxisAtom)
 	if (yAxisAtoms_.contains(yAxisAtom)) return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(), name_.get());
 
 	yAxisAtoms_.append(yAxisAtom);
+
+	++version_;
 
 	return true;
 }

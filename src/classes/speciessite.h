@@ -24,6 +24,7 @@
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
+#include "base/version.h"
 #include "templates/array.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
@@ -45,21 +46,15 @@ class SpeciesSite : public ListItem<SpeciesSite>
 
 
 	/*
-	 * Definition
+	 * Basic Information
 	 */
 	private:
 	// Name of site
 	CharString name_;
 	// Parent Species
 	Species* parent_;
-	// List of SpeciesAtoms whose average position is the origin of the site
-	RefList<SpeciesAtom> originAtoms_;
-	// Whether the origin should be calculated with mass-weighted positions
-	bool originMassWeighted_;
-	// SpeciesAtom(s) that indicate the x axis with the origin
-	RefList<SpeciesAtom> xAxisAtoms_;
-	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
-	RefList<SpeciesAtom> yAxisAtoms_;
+	// Version of the SpeciesSite
+	VersionCounter version_;
 
 	public:
 	// Set name of site
@@ -70,6 +65,24 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	void setParent(Species* sp);
 	// Return species parent
 	Species* parent();
+	// Return version
+	int version() const;
+
+
+	/*
+	 * Definition
+	 */
+	private:
+	// List of SpeciesAtoms whose average position is the origin of the site
+	RefList<SpeciesAtom> originAtoms_;
+	// Whether the origin should be calculated with mass-weighted positions
+	bool originMassWeighted_;
+	// SpeciesAtom(s) that indicate the x axis with the origin
+	RefList<SpeciesAtom> xAxisAtoms_;
+	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
+	RefList<SpeciesAtom> yAxisAtoms_;
+
+	public:
 	// Add origin atom
 	bool addOriginAtom(SpeciesAtom* originAtom);
 	// Add origin atom from index
