@@ -132,6 +132,8 @@ class Primitive : public ListItem<Primitive>
 	void orthorhomboid(double sizex = 1.0, double sizey = 1.0, double sizez = 1.0, int nSubs = 4, double ox = 0.0, double oy = 0.0, double oz = 0.0);
 	// Plot wireframe orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
 	void wireOrthorhomboid(double sizex = 1.0, double sizey = 1.0, double sizez = 1.0, double ox = 0.0, double oy = 0.0, double oz = 0.0);
+	// Plot basic axes object
+	void axes(double axisLength);
 };
 
 #endif

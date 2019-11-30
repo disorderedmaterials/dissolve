@@ -682,3 +682,60 @@ void Primitive::wireOrthorhomboid(double sizex, double sizey, double sizez, doub
 	defineIndices(2, 6);
 	defineIndices(3, 7);
 }
+
+// Plot basic axes object
+void Primitive::axes(double axisLength)
+{
+	const double arrowSize = axisLength*0.05;
+
+	// X (first vertex = 0)
+	defineVertex(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(axisLength, 0.0, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(axisLength-arrowSize, arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(axisLength-arrowSize, -arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineIndices(0, 1);
+	defineIndices(1, 2);
+	defineIndices(1, 3);
+
+	// X label (first vertex = 4)
+	defineVertex(axisLength+arrowSize, arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(axisLength+arrowSize, -arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(axisLength+2*arrowSize, arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(axisLength+2*arrowSize, -arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineIndices(4, 7);
+	defineIndices(5, 6);
+
+	// Y (first vertex = 8)
+	defineVertex(0.0, axisLength, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(arrowSize, axisLength-arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(-arrowSize, axisLength-arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineIndices(0, 8);
+	defineIndices(8, 9);
+	defineIndices(8, 10);
+
+	// Y label (first vertex = 11)
+	defineVertex(-arrowSize, axisLength+arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(-arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(0.0, axisLength+1.5*arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineVertex(arrowSize, axisLength+1.5*arrowSize, 0.0, 0.0, 0.0, 1.0);
+	defineIndices(11, 13);
+	defineIndices(12, 13);
+	defineIndices(13, 14);
+
+	// Z (first vertex = 15)
+	defineVertex(0.0, 0.0, axisLength, 0.0, 0.0, 1.0);
+	defineVertex(0.0, arrowSize, axisLength-arrowSize, 0.0, 0.0, 1.0);
+	defineVertex(0.0, -arrowSize, axisLength-arrowSize, 0.0, 0.0, 1.0);
+	defineIndices(0, 15);
+	defineIndices(15, 16);
+	defineIndices(15, 17);
+
+	// Y label (first vertex = 18)
+	defineVertex(0.0, arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0);
+	defineVertex(0.0, arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0);
+	defineVertex(0.0, -arrowSize, axisLength+arrowSize, 0.0, 0.0, 1.0);
+	defineVertex(0.0, -arrowSize, axisLength+2*arrowSize, 0.0, 0.0, 1.0);
+	defineIndices(18, 19);
+	defineIndices(19, 20);
+	defineIndices(20, 21);
+}
