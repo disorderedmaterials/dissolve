@@ -99,6 +99,23 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 	return addOriginAtom(parent_->atom(atomIndex));
 }
 
+// Set origin atoms
+bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> atoms)
+{
+	originAtoms_.clear();
+
+	++version_;
+
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) if (!addOriginAtom(i))
+	{
+		originAtoms_.clear();
+		return false;
+	}
+
+	return true;
+}
+
 // Return list of origin atoms
 const RefList<SpeciesAtom>& SpeciesSite::originAtoms()
 {
@@ -153,6 +170,23 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 	return addXAxisAtom(parent_->atom(atomIndex));
 }
 
+// Set x-axis atoms
+bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
+{
+	xAxisAtoms_.clear();
+
+	++version_;
+
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) if (!addXAxisAtom(i))
+	{
+		xAxisAtoms_.clear();
+		return false;
+	}
+
+	return true;
+}
+
 // Return list of x-axis atoms
 const RefList<SpeciesAtom>& SpeciesSite::xAxisAtoms()
 {
@@ -191,6 +225,23 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 	if (!parent_) return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addYAxisAtom(parent_->atom(atomIndex));
+}
+
+// Set y-axis atoms
+bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> atoms)
+{
+	yAxisAtoms_.clear();
+
+	++version_;
+
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) if (!addYAxisAtom(i))
+	{
+		yAxisAtoms_.clear();
+		return false;
+	}
+
+	return true;
 }
 
 // Return list of y-axis atoms

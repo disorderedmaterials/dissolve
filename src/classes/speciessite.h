@@ -88,6 +88,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addOriginAtom(SpeciesAtom* originAtom);
 	// Add origin atom from index
 	bool addOriginAtom(int atomIndex);
+	// Set origin atoms
+	bool setOriginAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of origin atoms
 	const RefList<SpeciesAtom>& originAtoms();
 	// Return integer array of indices from which the origin should be formed
@@ -100,6 +102,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addXAxisAtom(SpeciesAtom* xAxisAtom);
 	// Add x-axis atom from index
 	bool addXAxisAtom(int atomIndex);
+	// Set x-axis atoms
+	bool setXAxisAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of x-axis atoms
 	const RefList<SpeciesAtom>& xAxisAtoms();
 	// Return integer array of indices from which x-axis should be formed
@@ -108,6 +112,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addYAxisAtom(SpeciesAtom* yAxisAtom);
 	// Add y-axis atom from indey
 	bool addYAxisAtom(int atomIndex);
+	// Set y-axis atoms
+	bool setYAxisAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of y-axis atoms
 	const RefList<SpeciesAtom>& yAxisAtoms();
 	// Return integer array of indices from which y-axis should be formed
