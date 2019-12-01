@@ -76,12 +76,18 @@ class MainTab
 	virtual TabType type() const = 0;
 	// Return page widget
 	QWidget* page() const;
+	// Return title of tab
+	const char* title() const;
+
+
+	/*
+	 * Management
+	 */
+	public:
 	// Return whether the title of the tab can be changed
 	virtual bool canChangeTitle() const;
 	// Rename tab through suitable dialog / widget
 	bool rename();
-	// Return title of tab
-	const char* title() const;
 
 
 	/*
