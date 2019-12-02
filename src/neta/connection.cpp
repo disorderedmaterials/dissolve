@@ -156,7 +156,6 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 	for (int n=0; n<bonds.nItems(); ++n)
 	{
 		const SpeciesAtom* j = bonds.at(n)->partner(i);
-		printf("Atom here is %i (%s)\n", j->userIndex(), j->element()->symbol());
 		if (j == matchPath.firstItem())
 		{
 			// We may allow the path's root atom to be matched again, if the allowRootMatch_ is set...
