@@ -295,7 +295,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				while (SpeciesTorsion* torsion = torsionIterator.iterate())
 				{
 					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-					if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) torsionName.sprintf("%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
+					if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) torsionName.sprintf("%s-%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
 					else torsionName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
 
 					// Search for an existing master term by this name
@@ -319,7 +319,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				while (SpeciesImproper* improper = improperIterator.iterate())
 				{
 					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-					if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) improperName.sprintf("%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
+					if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) improperName.sprintf("%s-%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
 					else improperName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
 
 					// Search for an existing master term by this name
