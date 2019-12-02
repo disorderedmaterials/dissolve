@@ -53,7 +53,7 @@ void Species::updateIntramolecularTerms()
 			i = ij->partner(j);
 
 			// Attempt to add angle term 'ijk' if 'i' > 'k'
-			if ((i > k) && (!hasAngle(i, j, k))) addAngle(i, j, k);
+			if (!hasAngle(i, j, k)) addAngle(i, j, k);
 
 			// Loop over bonds 'kl'
 			for (int klIndex = 0; klIndex < k->nBonds(); ++klIndex)
@@ -65,8 +65,8 @@ void Species::updateIntramolecularTerms()
 				// Get atom 'l'
 				l = kl->partner(k);
 
-				// Attempt to add angle term 'jkl' if 'j' > 'l'
-				if ((j > l) && (!hasAngle(j, k, l))) addAngle(j, k, l);
+				// Attempt to add angle term 'jkl'
+				if (!hasAngle(j, k, l)) addAngle(j, k, l);
 
 				// If the torsion i-j-k-l doesn't already exist, add it now.
 				if (!hasTorsion(i, j, k, l)) addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
