@@ -251,7 +251,8 @@ double SpeciesBond::energy(double distance) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
-	if (form() == SpeciesBond::HarmonicForm)
+	if (form() == SpeciesBond::NoForm) return 0.0;
+	else if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
 		 * Parameters:
@@ -275,7 +276,7 @@ double SpeciesBond::energy(double distance) const
 		return params[0] * (delta*delta) / parameters_[2];
 	}
 
-	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -285,7 +286,8 @@ double SpeciesBond::force(double distance) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
-	if (form() == SpeciesBond::HarmonicForm)
+	if (form() == SpeciesBond::NoForm) return 0.0;
+	else if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
 		 * Parameters:
@@ -307,7 +309,7 @@ double SpeciesBond::force(double distance) const
 		return -2.0 * params[0] * (distance - params[1]);
 	}
 
-	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 

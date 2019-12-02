@@ -211,7 +211,8 @@ double SpeciesAngle::energy(double angleInDegrees) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
-	if (form() == SpeciesAngle::HarmonicForm)
+	if (form() == SpeciesAngle::NoForm) return 0.0;
+	else if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
 		 * U(theta) = 0.5 * forcek * (theta - eq)**2
@@ -251,7 +252,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 		return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
 	}
 
-	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -267,7 +268,8 @@ double SpeciesAngle::force(double angleInDegrees) const
 	// Set initial derivative of angle w.r.t. cos(angle) for chain rule
 	const double dTheta_dCosTheta = -1.0 / sin(angleInDegrees/DEGRAD);
 
-	if (form() == SpeciesAngle::HarmonicForm)
+	if (form() == SpeciesAngle::NoForm) return 0.0;
+	else if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
 		 * dU/d(theta) = k * (theta - eq)
@@ -307,7 +309,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 		return dTheta_dCosTheta * -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians));
 	}
 
-	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 

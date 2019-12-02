@@ -228,7 +228,8 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 	// Convert torsion angle from degrees to radians
 	double phi = angleInDegrees / DEGRAD;
 
-	if (form() == SpeciesTorsion::CosineForm)
+	if (form() == SpeciesTorsion::NoForm) return 0.0;
+	else if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
 		 * U(phi) = k * (1 + s*cos(n*phi - eq))
@@ -292,7 +293,7 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		return 0.5 * params[0] * (1.0 - cos(params[1]*params[2]/DEGRAD) * cos(params[1]*phi));
 	}
 
-	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesTorsion term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -306,7 +307,8 @@ double SpeciesTorsion::force(double angleInDegrees) const
 	double phi = angleInDegrees / DEGRAD;
 	double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
 
-	if (form() == SpeciesTorsion::CosineForm)
+	if (form() == SpeciesTorsion::NoForm) return 0.0;
+	else if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
 		 * dU/dphi = k * n * s * -sin(n*phi - eq)
@@ -370,7 +372,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		return 0.5 * params[0] * params[0] * cos(params[1]*params[2]/DEGRAD) * params[1] * sin(params[1]*phi);
 	}
 
-	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesTorsion term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 
