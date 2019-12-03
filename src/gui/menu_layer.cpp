@@ -32,7 +32,7 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool checked)
@@ -57,7 +57,7 @@ void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool check
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
@@ -82,7 +82,7 @@ void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
@@ -106,7 +106,7 @@ void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
@@ -124,7 +124,7 @@ void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
@@ -141,7 +141,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked)
@@ -162,7 +162,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked)
@@ -183,7 +183,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked)
@@ -208,13 +208,13 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a LayerTab, then call its rename() function
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
 	tab->rename();
 }
@@ -222,7 +222,7 @@ void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a LayerTab
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
 
 	// Check that we really want to delete this tab
@@ -241,7 +241,7 @@ void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
 		ModuleLayer* layer = layerTab->moduleLayer();
 
 		// Remove the tab
-		removeTab(layerTab);
+		ui_.MainTabs->removeByPage(layerTab->page());
 
 		// Remove the layer
 		dissolve_.removeProcessingLayer(layer);

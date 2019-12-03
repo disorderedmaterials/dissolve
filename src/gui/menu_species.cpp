@@ -34,7 +34,7 @@ void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newSpecies);
+	ui_.MainTabs->setCurrentTab(newSpecies);
 }
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
@@ -51,7 +51,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newSpecies);
+	ui_.MainTabs->setCurrentTab(newSpecies);
 }
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
@@ -68,7 +68,7 @@ void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 		setModified();
 		fullUpdate();
 
-		setCurrentTab(sp);
+		ui_.MainTabs->setCurrentTab(sp);
 	}
 }
 
@@ -87,13 +87,13 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 	setModified();
 	fullUpdate();
 
-	setCurrentTab(sp);
+	ui_.MainTabs->setCurrentTab(sp);
 }
 
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a SpeciesTab, then call its rename() function
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::SpeciesTabType)) return;
 	tab->rename();
 }
@@ -101,7 +101,7 @@ void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 {
 	// Get the current Species (if a SpeciesTab is selected)
-	Species* species = currentSpecies();
+	Species* species = ui_.MainTabs->currentSpecies();
 	if (!species) return;
 
 	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
@@ -122,32 +122,19 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a SpeciesTab
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::SpeciesTabType)) return;
 
-	// Cast up the tab to a SpeciesTab so we can get the ModuleLayer pointer
+	// Cast up the tab to a SpeciesTab
 	SpeciesTab* spTab = dynamic_cast<SpeciesTab*>(tab);
 	if (!spTab) return;
 	Species* sp = spTab->species();
 
-	// Check that we really want to delete this tab
-	QMessageBox queryBox;
-	queryBox.setText(QString("Really delete the species '%1'?").arg(sp->name()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+	// Check that we really want to delete the Species
+	if (!spTab->close()) return;
 
-	if (ret == QMessageBox::Yes)
-	{
-		// Remove the tab
-		removeTab(spTab);
-
-		// Remove the layer
-		dissolve_.removeSpecies(sp);
-
-		// Update the GUI
-		setModified();
-		fullUpdate();
-	}
+	// Update the GUI
+	ui_.MainTabs->removeByPage(spTab->page());
+	setModified();
+	fullUpdate();
 }

@@ -110,9 +110,6 @@ target_include_directories(subwindows PRIVATE
 
 target_link_libraries(subwindows widgets)
 
-
-
-
 # -----------------
 # Main Dissolve GUI
 # -----------------
@@ -142,6 +139,8 @@ SET(gui_MOC_HDRS
   outputhandler.hui
   tmdiarea.hui
   thread.hui
+  maintabsbar.hui
+  maintabswidget.hui
 )
 QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
@@ -178,6 +177,8 @@ SET(gui_SRCS
   forcefieldtab_funcs.cpp
   layertab_funcs.cpp
   maintab.cpp
+  maintabsbar_funcs.cpp
+  maintabswidget_funcs.cpp
   moduletab_funcs.cpp
   speciestab_funcs.cpp
   speciestab_geometry.cpp

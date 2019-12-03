@@ -73,6 +73,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
+	// Close tab, deleting any necessary data
+	bool close();
 
 
 	/*

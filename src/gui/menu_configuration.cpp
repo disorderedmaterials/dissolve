@@ -36,7 +36,7 @@ void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newConfiguration);
+	ui_.MainTabs->setCurrentTab(newConfiguration);
 }
 
 void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked)
@@ -65,7 +65,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newConfiguration);
+	ui_.MainTabs->setCurrentTab(newConfiguration);
 }
 
 void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked)
@@ -106,13 +106,13 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newConfiguration);
+	ui_.MainTabs->setCurrentTab(newConfiguration);
 }
 
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a ConfigurationTab, then call its rename() function
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
 	tab->rename();
 }
@@ -120,7 +120,7 @@ void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a ConfigurationTab
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
 
 	// Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
@@ -139,7 +139,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 	if (ret == QMessageBox::Yes)
 	{
 		// Remove the tab
-		removeTab(cfgTab);
+		ui_.MainTabs->removeByPage(cfgTab->page());
 
 		// Remove the layer
 		dissolve_.removeConfiguration(cfg);
@@ -153,7 +153,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
 {
 	// Get the currently-displayed Configuration
-	Configuration* cfg = currentConfiguration();
+	Configuration* cfg = ui_.MainTabs->currentConfiguration();
 	if (!cfg) return;
 
 	// Get a suitable export file name

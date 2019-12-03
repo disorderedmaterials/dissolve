@@ -79,9 +79,10 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	statusBar()->addPermanentWidget(restartFileIndicator_);
 	statusBar()->addPermanentWidget(localSimulationIndicator_);
 
-	addCoreTabs();
+	// Set up main tabs
+	ui_.MainTabs->addCoreTabs(this);
+	ui_.MainTabs->updateAllTabs();
 
-	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
 
@@ -169,7 +170,7 @@ void DissolveWindow::addOutputHandler()
 bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
-	clearTabs();
+	ui_.MainTabs->clearTabs();
 
 	// Clear Dissolve itself
 	dissolve_.clear();
@@ -207,7 +208,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 
 	refreshing_ = true;
 
-	reconcileTabs();
+	ui_.MainTabs->reconcileTabs(this);
 
 	refreshing_ = false;
 
@@ -266,14 +267,6 @@ void DissolveWindow::initialiseSystemTemplates()
  * Update Functions
  */
 
-// Update all tabs
-void DissolveWindow::updateTabs()
-{
-	RefList<MainTab> tabs = allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
-}
-
 // Update window title
 void DissolveWindow::updateWindowTitle()
 {
@@ -316,7 +309,7 @@ void DissolveWindow::updateControlsFrame()
 // Update menus
 void DissolveWindow::updateMenus()
 {
-	MainTab* activeTab = currentTab();
+	MainTab* activeTab = ui_.MainTabs->currentTab();
 	if (!activeTab) return;
 
 	// Species Menu
@@ -339,23 +332,11 @@ void DissolveWindow::fullUpdate()
 {
 	refreshing_ = true;
 
-	reconcileTabs();
-
-	updateTabs();
+	ui_.MainTabs->reconcileTabs(this);
+	ui_.MainTabs->updateAllTabs();
 	updateWindowTitle();
 	updateControlsFrame();
 	updateMenus();
-
-	refreshing_ = false;
-}
-
-// Update all Species tabs
-void DissolveWindow::updateSpeciesTabs()
-{
-	refreshing_ = true;
-
-	ListIterator<SpeciesTab> tabIterator(speciesTabs_);
-	while (SpeciesTab* tab = tabIterator.iterate()) tab->updateControls();
 
 	refreshing_ = false;
 }

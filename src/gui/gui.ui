@@ -783,7 +783,7 @@ Remote Simulation</string>
              </layout>
             </item>
             <item>
-             <widget class="SuperTabWidget" name="MainTabs">
+             <widget class="MainTabsWidget" name="MainTabs">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1448,9 +1448,9 @@ Remote Simulation</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SuperTabWidget</class>
+   <class>MainTabsWidget</class>
    <extends>QTabWidget</extends>
-   <header>gui/widgets/supertabwidget.hui</header>
+   <header>gui/maintabswidget.hui</header>
    <container>1</container>
   </customwidget>
   <customwidget>

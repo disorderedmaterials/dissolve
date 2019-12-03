@@ -56,6 +56,8 @@ class ForcefieldTab : public QWidget, public MainTab
 	public:
 	// Return tab type
 	MainTab::TabType type() const;
+	// Return whether the tab can be closed
+	bool canClose() const;
 
 
 	/*

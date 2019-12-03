@@ -30,6 +30,7 @@
 #include "gui/getspeciesnamedialog.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
+#include <QMessageBox>
 
 // Constructor / Destructor
 SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
@@ -157,6 +158,27 @@ QString SpeciesTab::getNewTitle(bool& ok)
 // Return whether the title of the tab can be changed
 bool SpeciesTab::canChangeTitle() const
 {
+	return true;
+}
+
+// Close tab, deleting any necessary data
+bool SpeciesTab::close()
+{
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the species '%1'?\nThis cannot be undone!").arg(species_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret != QMessageBox::Yes) return false;
+
+	Locker refreshLocker(refreshLock_);
+
+	// Remove the Species represented in this tab
+	dissolve_.removeSpecies(species_);
+
 	return true;
 }
 

@@ -117,3 +117,15 @@ bool MainTab::rename()
 
 	return true;
 }
+
+// Return whether the tab can be closed
+bool MainTab::canClose() const
+{
+	return true;
+}
+
+// Close tab, deleting any necessary data
+bool MainTab::close()
+{
+	return canClose();
+}

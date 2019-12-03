@@ -83,11 +83,17 @@ class MainTab
 	/*
 	 * Management
 	 */
-	public:
+	protected:
 	// Return whether the title of the tab can be changed
 	virtual bool canChangeTitle() const;
+
+	public:
 	// Rename tab through suitable dialog / widget
 	bool rename();
+	// Return whether the tab can be closed
+	virtual bool canClose() const;
+	// Close tab, deleting any necessary data
+	virtual bool close();
 
 
 	/*

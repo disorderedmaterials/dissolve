@@ -126,6 +126,12 @@ MainTab::TabType ForcefieldTab::type() const
 	return MainTab::ForcefieldTabType;
 }
 
+// Return whether the tab can be closed
+bool ForcefieldTab::canClose() const
+{
+	return false;
+}
+
 /*
  * Update
  */
@@ -603,8 +609,8 @@ void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
 		updateControls();
 	}
 
-	// Need to update all SpeciesTabs to show/hide the charges column in atoms tables
-	dissolveWindow_->updateSpeciesTabs();
+	// Need to update to show/hide the charges column in atoms tables
+	dissolveWindow_->fullUpdate();
 	
 	dissolveWindow_->setModified();
 }
