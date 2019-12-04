@@ -133,6 +133,9 @@ void ConfigurationTab::updateControls()
 {
 	Locker refreshLocker(refreshLock_);
 
+	// Generator
+	ui_.ProcedureWidget->updateControls();
+
 	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
