@@ -231,27 +231,31 @@ void ModuleBlock::updateControls()
 	// Set frequency spin
 	ui_.FrequencySpin->setValue(module_->frequency());
 
-// 	// Update Configuration list and HeaderFrame tooltip
-// 	ui_.ConfigurationTargetList->clear();
-// 	CharString toolTip("Targets: ");
-// 	ListIterator<Configuration> configIterator(dissolve_.constConfigurations());
-// 	while (Configuration* cfg = configIterator.iterate())
-// 	{
-// 		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
-// 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-// 		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
-// 
-// 		if (module_->isTargetConfiguration(cfg))
-// 		{
-// 			item->setCheckState(Qt::Checked);
-// 
-// 			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-// 			else toolTip.strcatf(", %s", cfg->name());
-// 		}
-// 		else item->setCheckState(Qt::Unchecked);
-// 	}
-// 	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nTargetableConfigurations() != 0));
-// 	ui_.HeaderFrame->setToolTip(toolTip.get());
+	// Update Configuration label and icon tooltip
+	if (module_->nTargetableConfigurations() == 0)
+	{
+		ui_.ConfigurationsLabel->setText("-");
+		ui_.ConfigurationsIconLabel->setToolTip("This module does not accept configuration targets.");
+	}
+	else
+	{
+		// Construct the tooltip
+		QString toolTip;
+
+		if (module_->nTargetableConfigurations() == -1) toolTip = "This module may target any number of configurations.\n";
+		else toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nTargetableConfigurations()).arg(module_->nTargetableConfigurations() == 1 ? "configuration" : "configurations");
+
+		if (module_->nTargetConfigurations() == 0) toolTip += "No configuration targets set.";
+		else
+		{
+			toolTip += "Current configuration targets:\n";
+			RefListIterator<Configuration> configIterator(module_->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) toolTip += QString("- %1\n").arg(cfg->name());
+		}
+
+		ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
+		ui_.ConfigurationsIconLabel->setToolTip(toolTip);
+	}
 
 	refreshing_ = false;
 }
