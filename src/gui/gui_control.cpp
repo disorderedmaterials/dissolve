@@ -57,9 +57,7 @@ void DissolveWindow::setWidgetsForRun()
 	ui_.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
-	RefList<MainTab> tabs = ui_.MainTabs->allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
+	 ui_.MainTabs->disableSensitiveControls();
 }
 
 // Set widgets after the main code has been run
@@ -71,10 +69,8 @@ void DissolveWindow::setWidgetsAfterRun()
 	ui_.ControlStepButton->setEnabled(true);
 	ui_.ControlPauseButton->setEnabled(false);
 
-	// Enable necessary controls in all tabs
-	RefList<MainTab> tabs = ui_.MainTabs->allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+	// Enable sensitive controls in all tabs
+	ui_.MainTabs->enableSensitiveControls();
 
 	// Reset the state
 	dissolveState_ = EditingState;

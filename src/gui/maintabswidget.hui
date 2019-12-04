@@ -149,6 +149,10 @@ class MainTabsWidget : public QTabWidget
 	void updateAllTabs();
 	// Update all Species tabs
 	void updateSpeciesTabs();
+	// Disable sensitive controls in all tabs
+	void disableSensitiveControls();
+	// Enable sensitive controls in all tabs
+	void enableSensitiveControls();
 
 
 	/*

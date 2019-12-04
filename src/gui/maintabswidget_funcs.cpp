@@ -498,6 +498,20 @@ void MainTabsWidget::updateSpeciesTabs()
 	while (SpeciesTab* tab = tabIterator.iterate()) tab->updateControls();
 }
 
+// Disable sensitive controls in all tabs
+void MainTabsWidget::disableSensitiveControls()
+{
+	RefListIterator<MainTab> tabIterator(allTabs_);
+	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
+}
+
+// Enable sensitive controls in all tabs
+void MainTabsWidget::enableSensitiveControls()
+{
+	RefListIterator<MainTab> tabIterator(allTabs_);
+	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+}
+
 /*
  * Tab Styling
  */
