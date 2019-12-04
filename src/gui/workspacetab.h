@@ -38,7 +38,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
 	public:
 	// Constructor / Destructor
-	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
+	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title);
 	~WorkspaceTab();
 	// Main form declaration
 	Ui::WorkspaceTab ui;

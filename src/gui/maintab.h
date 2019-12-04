@@ -34,9 +34,9 @@
 class Dissolve;
 class DissolveWindow;
 class LineParser;
+class MainTabsWidget;
 class QLayout;
 class QMdiArea;
-class QTabWidget;
 class QWidget;
 
 // Base Tab
@@ -44,7 +44,7 @@ class MainTab
 {
 	public:
 	// Constructor / Destructor
-	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, QWidget* page);
+	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
 	// Tab Types
 	enum TabType { ConfigurationTabType, ForcefieldTabType, LayerTabType, ModuleTabType, SpeciesTabType, WorkspaceTabType };
@@ -60,8 +60,8 @@ class MainTab
 	Dissolve& dissolve_;
 	// Pointer to main window
 	DissolveWindow* dissolveWindow_;
-	// Tab widget in which this tab is contained
-	QTabWidget* tabWidget_;
+	// MainTabsWidget in which this tab is contained
+	MainTabsWidget* tabWidget_;
 	// Page widget
 	QWidget* page_;
 	// Unique title (name) of tab

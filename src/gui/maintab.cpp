@@ -31,13 +31,12 @@
 #include <QLayout>
 #include <QMdiArea>
 #include <QMdiSubWindow>
-#include <QTabWidget>
 
 // Constructor / Destructor
-MainTab::MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* tabWidget, const char* title, QWidget* page) : dissolve_(dissolve)
+MainTab::MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, QWidget* page) : dissolve_(dissolve)
 {
 	dissolveWindow_ = dissolveWindow;
-	tabWidget_ = tabWidget;
+	tabWidget_ = parent;
 	page_ = page;
 	title_ = title;
 }
