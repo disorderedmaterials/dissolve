@@ -123,6 +123,9 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 		while (dissolveState_ == RunningState) QApplication::processEvents();
 	}
 
+	// Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+	ui_.MainTabs->clearTabs();
+
 	event->accept();
 }
 
