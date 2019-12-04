@@ -223,7 +223,6 @@ void MainTabsWidget::reconcileTabs(DissolveWindow* dissolveWindow)
 		// If the current tab index is (now) out of range, add a new one
 		if (currentTabIndex == speciesTabs_.nItems())
 		{
-			printf("lkjsdlkjlskdfj %i\n");
 			SpeciesTab* newTab = new SpeciesTab(dissolveWindow, dissolve, this, sp->name(), sp);
 			speciesTabs_.own(newTab);
 			allTabs_.append(newTab);
