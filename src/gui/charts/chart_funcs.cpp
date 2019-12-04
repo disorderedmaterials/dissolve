@@ -69,6 +69,9 @@ void ChartBase::updateControls()
 	// Ensure that blocks for display are up-to-date
 	updateContentBlocks();
 
+	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
+	while (ChartBlock* block = chartBlockIterator.iterate()) block->updateControls();
+
 	// Update the layout
 	layOutWidgets();
 }
