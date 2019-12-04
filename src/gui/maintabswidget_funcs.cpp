@@ -361,6 +361,7 @@ MainTab* MainTabsWidget::addModuleTab(DissolveWindow* dissolveWindow, Module* mo
 		// Need to create a new ModuleTab
 		tab = new ModuleTab(dissolveWindow, dissolveWindow->dissolve(), this, module->uniqueName(), module);
 		moduleTabs_.own(tab);
+		allTabs_.append(tab);
 		addTab(tab, module->uniqueName());
 // 		setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
 
