@@ -54,7 +54,8 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
-	// Connect signals from our main tab widget / bar
+	// Connect signals from our main tab widget
+	connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(setModified()));
 	connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(fullUpdate()));
 
 	refreshing_ = false;
