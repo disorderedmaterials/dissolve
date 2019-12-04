@@ -55,12 +55,12 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
 	// Connect signals from our main tab widget / bar
-	connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
-	dissolveState_ = EditingState;
+	connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(fullUpdate()));
 
 	refreshing_ = false;
 	modified_ = false;
 	localSimulation_ = true;
+	dissolveState_ = EditingState;
 
 	// Create statusbar widgets
 	localSimulationIndicator_ = new QLabel;

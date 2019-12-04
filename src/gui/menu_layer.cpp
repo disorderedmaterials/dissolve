@@ -24,7 +24,6 @@
 #include "gui/layertab.h"
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
-#include <QMessageBox>
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 {
@@ -221,33 +220,19 @@ void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 
 void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
 {
-	// Get the current tab - make sure it is a LayerTab
+	// Get the current tab - make sure it is a ConfigurationTab
 	MainTab* tab = ui_.MainTabs->currentTab();
-	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
+	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
 
-	// Check that we really want to delete this tab
-	QMessageBox queryBox;
-	queryBox.setText(QString("Really delete the layer '%1'?").arg(tab->title()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+	// Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
+	LayerTab* layerTab = dynamic_cast<LayerTab*>(tab);
+	if (!layerTab) return;
 
-	if (ret == QMessageBox::Yes)
-	{
-		// Cast up the tab to a LayerTab so we can get the ModuleLayer pointer
-		LayerTab* layerTab = dynamic_cast<LayerTab*>(tab);
-		if (!layerTab) return;
-		ModuleLayer* layer = layerTab->moduleLayer();
+	// Check that we really want to delete the layer
+	if (!layerTab->close()) return;
 
-		// Remove the tab
-		ui_.MainTabs->removeByPage(layerTab->page());
-
-		// Remove the layer
-		dissolve_.removeProcessingLayer(layer);
-
-		// Update the GUI
-		setModified();
-		fullUpdate();
-	}
+	// Update the GUI
+	ui_.MainTabs->removeByPage(layerTab->page());
+	setModified();
+	fullUpdate();
 }

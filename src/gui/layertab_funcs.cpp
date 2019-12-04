@@ -41,6 +41,8 @@ LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsW
 
 LayerTab::~LayerTab()
 {
+	// Remove the Configuration represented in this tab
+	dissolve_.removeProcessingLayer(moduleLayer_);
 }
 
 /*
@@ -74,6 +76,22 @@ QString LayerTab::getNewTitle(bool& ok)
 // Return whether the title of the tab can be changed
 bool LayerTab::canChangeTitle() const
 {
+	return true;
+}
+
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool LayerTab::canClose() const
+{
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the layer '%1'?\nThis cannot be undone!").arg(moduleLayer_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret != QMessageBox::Yes) return false;
+
 	return true;
 }
 

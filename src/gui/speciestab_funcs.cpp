@@ -91,6 +91,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainT
 
 SpeciesTab::~SpeciesTab()
 {
+	// Remove the Species represented in this tab
+	dissolve_.removeSpecies(species_);
 }
 
 /*
@@ -161,8 +163,8 @@ bool SpeciesTab::canChangeTitle() const
 	return true;
 }
 
-// Close tab, deleting any necessary data
-bool SpeciesTab::close()
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool SpeciesTab::canClose() const
 {
 	// Check that we really want to delete this tab
 	QMessageBox queryBox;
@@ -173,11 +175,6 @@ bool SpeciesTab::close()
 	int ret = queryBox.exec();
 
 	if (ret != QMessageBox::Yes) return false;
-
-	Locker refreshLocker(refreshLock_);
-
-	// Remove the Species represented in this tab
-	dissolve_.removeSpecies(species_);
 
 	return true;
 }

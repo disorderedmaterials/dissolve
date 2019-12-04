@@ -227,7 +227,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow* dissolveWindow)
 			speciesTabs_.own(newTab);
 			allTabs_.append(newTab);
 			insertTab(baseIndex + currentTabIndex, newTab, sp->name());
-			if (newTab->canClose()) addTabCloseButton(newTab->page());
+			addTabCloseButton(newTab->page());
 			setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 		}
@@ -260,7 +260,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow* dissolveWindow)
 			configurationTabs_.own(newTab);
 			allTabs_.append(newTab);
 			insertTab(baseIndex + currentTabIndex, newTab, cfg->name());
-			if (newTab->canClose()) addTabCloseButton(newTab->page());
+			addTabCloseButton(newTab->page());
 			setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 		}
@@ -293,7 +293,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow* dissolveWindow)
 			processingLayerTabs_.own(newTab);
 			allTabs_.append(newTab);
 			insertTab(baseIndex + currentTabIndex, newTab, layer->name());
-			if (newTab->canClose()) addTabCloseButton(newTab->page());
+			addTabCloseButton(newTab->page());
 			setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
 		}
@@ -580,8 +580,8 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 		MainTab* tab = dynamic_cast<MainTab*>(widget(tabIndex));
 		if (!tab) return;
 
-		// Attempt to close the tab
-		if (!tab->close()) return;
+		// Check whether the tab can / should be closed
+		if (!tab->canClose()) return;
 
 		// Grab the pointer to the page widget before we delete the button item
 		QWidget* page = item->data();
@@ -589,8 +589,10 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 		// Remove the button item
 		closeButtons_.remove(item);
 
-		// Signal that the specified page widget no longer exists. The main GUI will handle deletion of the page in the TabBar
-		emit(tabClosed(page));
+		// Delete the tab (referenced by its page widget)
+		removeByPage(page);
+
+		emit(dataModified());
 	}
 	else printf("Tabs received a close event from an unknown button...\n");
 }

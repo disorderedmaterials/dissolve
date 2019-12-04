@@ -90,10 +90,8 @@ class MainTab
 	public:
 	// Rename tab through suitable dialog / widget
 	bool rename();
-	// Return whether the tab can be closed
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
 	virtual bool canClose() const;
-	// Close tab, deleting any necessary data
-	virtual bool close();
 
 
 	/*

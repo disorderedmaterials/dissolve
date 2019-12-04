@@ -126,28 +126,14 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 	// Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
 	ConfigurationTab* cfgTab = dynamic_cast<ConfigurationTab*>(tab);
 	if (!cfgTab) return;
-	Configuration* cfg = cfgTab->configuration();
 
-	// Check that we really want to delete this tab
-	QMessageBox queryBox;
-	queryBox.setText(QString("Really delete the configuration '%1'?").arg(cfg->name()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+	// Check that we really want to delete the Configuration
+	if (!cfgTab->close()) return;
 
-	if (ret == QMessageBox::Yes)
-	{
-		// Remove the tab
-		ui_.MainTabs->removeByPage(cfgTab->page());
-
-		// Remove the layer
-		dissolve_.removeConfiguration(cfg);
-
-		// Update the GUI
-		setModified();
-		fullUpdate();
-	}
+	// Update the GUI
+	ui_.MainTabs->removeByPage(cfgTab->page());
+	setModified();
+	fullUpdate();
 }
 
 void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)

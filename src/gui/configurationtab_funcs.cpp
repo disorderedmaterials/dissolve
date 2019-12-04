@@ -60,6 +60,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 
 ConfigurationTab::~ConfigurationTab()
 {
+	// Remove the Configuration represented in this tab
+	dissolve_.removeConfiguration(configuration_);
 }
 
 /*
@@ -93,6 +95,22 @@ QString ConfigurationTab::getNewTitle(bool& ok)
 // Return whether the title of the tab can be changed
 bool ConfigurationTab::canChangeTitle() const
 {
+	return true;
+}
+
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool ConfigurationTab::canClose() const
+{
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the configuration '%1'?\nThis cannot be undone!").arg(configuration_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret != QMessageBox::Yes) return false;
+
 	return true;
 }
 

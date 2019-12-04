@@ -26,7 +26,6 @@
 #include "gui/selectelementdialog.h"
 #include "classes/species.h"
 #include <QFileDialog>
-#include <QMessageBox>
 
 void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
 {
@@ -128,7 +127,6 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 	// Cast up the tab to a SpeciesTab
 	SpeciesTab* spTab = dynamic_cast<SpeciesTab*>(tab);
 	if (!spTab) return;
-	Species* sp = spTab->species();
 
 	// Check that we really want to delete the Species
 	if (!spTab->close()) return;
