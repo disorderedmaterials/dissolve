@@ -75,12 +75,12 @@ class ModuleListChartMetrics
 		return 32;
 	}
 	// Horizontal spacing between modules in list
-	static int horizontalModuleSpacing()
+	static int verticalModuleSpacing()
 	{
 		return 40;
 	}
 	// Additional horizontal spacing for insertion widget
-	static int horizontalInsertionSpacing()
+	static int verticalInsertionSpacing()
 	{
 		return 64;
 	}

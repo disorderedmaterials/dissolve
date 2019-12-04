@@ -77,6 +77,12 @@ void ChartHotSpot::setGeometry(QRect geometry)
 	geometry_ = geometry;
 }
 
+// Set the width of the hotspot
+void ChartHotSpot::setWidth(int width)
+{
+	geometry_.setWidth(width);
+}
+
 // Set the height of the hotspot
 void ChartHotSpot::setHeight(int height)
 {

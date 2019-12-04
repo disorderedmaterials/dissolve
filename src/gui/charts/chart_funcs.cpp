@@ -31,6 +31,7 @@
 ChartBase::ChartBase(QWidget* parent) : QWidget(parent)
 {
 	refreshing_ = false;
+	selectedBlock_ = NULL;
 
 	// Options
 	resizeToWidgets_ = true;
@@ -161,6 +162,14 @@ void ChartBase::mouseMoveEvent(QMouseEvent* event)
 // Mouse release event
 void ChartBase::mouseReleaseEvent(QMouseEvent* event)
 {
+	ChartBlock* newSelection = dragBlockAt(event->pos());
+
+	if (newSelection != selectedBlock_)
+	{
+		selectedBlock_ = newSelection;
+		blockSelectionChanged(selectedBlock_);
+		repaint();
+	}
 }
 
 // Mouse double-click event
@@ -306,6 +315,12 @@ void ChartBase::resetAfterDrop(bool animate)
 
 // Specified block has been double clicked
 void ChartBase::blockDoubleClicked(ChartBlock* block)
+{
+	// No default action
+}
+
+// Block selection has changed
+void ChartBase::blockSelectionChanged(ChartBlock* block)
 {
 	// No default action
 }

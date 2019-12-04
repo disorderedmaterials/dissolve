@@ -44,11 +44,6 @@ ModuleBlock::ModuleBlock(QWidget* parent, Module* module, Dissolve& dissolve) : 
 	// Set the Module pointer
 	module_ = module;
 
-	// Set up our keywords widget
-	ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.constCoreData());
-	connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
-	connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
-
 	// Set the icon and module type label
 	ui_.TopLabel->setText(module_->type());
 	ui_.IconLabel->setPixmap(modulePixmap(module_));
@@ -67,17 +62,6 @@ ModuleBlock::~ModuleBlock()
  * Module Target
  */
 
-// Run the set-up stage of the associated Module
-void ModuleBlock::setUpModule()
-{
-	if (!module_) return;
-
-	// Run the Module's set-up stage
-	module_->setUp(dissolve_, dissolve_.worldPool());
-
-	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
-}
-
 // Return displayed Module
 Module* ModuleBlock::module() const
 {
@@ -87,12 +71,6 @@ Module* ModuleBlock::module() const
 /*
  * Controls
  */
-
-// Hide the remove button (e.g. when shown in a ModuleTab)
-void ModuleBlock::hideRemoveButton()
-{
-	ui_.RemoveButton->setVisible(false);
-}
 
 // Return suitable QPixmap for supplied Module
 QPixmap ModuleBlock::modulePixmap(const Module* module)
@@ -156,20 +134,6 @@ void ModuleBlock::on_FrequencySpin_valueChanged(int value)
 	if (refreshing_) return;
 
 	module_->setFrequency(value);
-
-	emit(dataModified());
-}
-
-void ModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)
-{
-	if (refreshing_ || (!item)) return;
-
-	// Get configuration from item
-	Configuration* cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
-	if (!cfg) return;
-
-	if (item->checkState() == Qt::Checked) module_->addTargetConfiguration(cfg);
-	else module_->removeTargetConfiguration(cfg);
 
 	emit(dataModified());
 }
@@ -267,30 +231,27 @@ void ModuleBlock::updateControls()
 	// Set frequency spin
 	ui_.FrequencySpin->setValue(module_->frequency());
 
-	// Update Configuration list and HeaderFrame tooltip
-	ui_.ConfigurationTargetList->clear();
-	CharString toolTip("Targets: ");
-	ListIterator<Configuration> configIterator(dissolve_.constConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
-	{
-		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
-
-		if (module_->isTargetConfiguration(cfg))
-		{
-			item->setCheckState(Qt::Checked);
-
-			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-			else toolTip.strcatf(", %s", cfg->name());
-		}
-		else item->setCheckState(Qt::Unchecked);
-	}
-	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nTargetableConfigurations() != 0));
-	ui_.HeaderFrame->setToolTip(toolTip.get());
-
-	// Update keywords
-	ui_.ModuleKeywordsWidget->updateControls();
+// 	// Update Configuration list and HeaderFrame tooltip
+// 	ui_.ConfigurationTargetList->clear();
+// 	CharString toolTip("Targets: ");
+// 	ListIterator<Configuration> configIterator(dissolve_.constConfigurations());
+// 	while (Configuration* cfg = configIterator.iterate())
+// 	{
+// 		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
+// 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+// 		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
+// 
+// 		if (module_->isTargetConfiguration(cfg))
+// 		{
+// 			item->setCheckState(Qt::Checked);
+// 
+// 			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
+// 			else toolTip.strcatf(", %s", cfg->name());
+// 		}
+// 		else item->setCheckState(Qt::Unchecked);
+// 	}
+// 	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nTargetableConfigurations() != 0));
+// 	ui_.HeaderFrame->setToolTip(toolTip.get());
 
 	refreshing_ = false;
 }
@@ -298,23 +259,11 @@ void ModuleBlock::updateControls()
 // Disable sensitive controls
 void ModuleBlock::disableSensitiveControls()
 {
-	ui_.KeywordsControlWidget->setEnabled(false);
 	ui_.RemoveButton->setEnabled(false);
 }
 
 // Enable sensitive controls
 void ModuleBlock::enableSensitiveControls()
 {
-	ui_.KeywordsControlWidget->setEnabled(true);
 	ui_.RemoveButton->setEnabled(true);
-}
-
-/*
- * Signals / Slots
- */
-
-// Keyword data for node has been modified
-void ModuleBlock::keywordDataModified()
-{
-	emit(dataModified());
 }

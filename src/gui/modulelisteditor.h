@@ -93,6 +93,7 @@ class ModuleListEditor : public QWidget
 	ModuleListChart* chartWidget_;
 
 	private slots:
+	void blockSelectionChanged(const QString& blockIdentifier);
 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 
 

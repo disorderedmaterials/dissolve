@@ -105,6 +105,20 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 		lastBlock = block;
 	}
 
+	// Is there a current selected block?
+	if (selectedBlock_)
+	{
+		// Cast up the selectedBlock_ to a ModuleBlock
+		ModuleBlock* selectedModule = dynamic_cast<ModuleBlock*>(selectedBlock_);
+		if ((selectedModule) && (moduleBlockWidgets_.contains(selectedModule)))
+		{
+			QRect rect = selectedModule->geometry();
+			rect.adjust(-15, -15, 15, 15);
+			painter.fillRect(rect, Qt::black);
+		}
+		else selectedBlock_ = NULL;
+	}
+
 	// Highlight all hotspots
 	if (false)
 	{
@@ -340,6 +354,24 @@ void ModuleListChart::blockRemovalRequested(const QString& blockIdentifier)
 	}
 }
 
+// Block selection has changed
+void ModuleListChart::blockSelectionChanged(ChartBlock* block)
+{
+	// If a NULL block pointer was provided there is no current selection
+	if (!block)
+	{
+		emit(ChartBase::blockSelectionChanged(QString()));
+		return;
+	}
+
+	// Cast block to a ModuleBlock
+	ModuleBlock* moduleBlock = dynamic_cast<ModuleBlock*>(block);
+	if (!moduleBlock) return;
+
+	// Emit the relevant signal
+	emit(ChartBase::blockSelectionChanged(moduleBlock->module()->uniqueName()));
+}
+
 /*
  * Widget Layout
 */
@@ -348,16 +380,16 @@ void ModuleListChart::blockRemovalRequested(const QString& blockIdentifier)
 QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 {
 	/*
-	 * Lay out widgets horizontally
+	 * ModuleList layout is a single vertical column.
 	 */
 
 	// Create a metrics object
 	ModuleListChartMetrics metrics;
 
 	// Left edge of next widget, and maximum height
-	int left = metrics.chartMargin();
-	int hotSpotLeft = 0;
-	int maxHeight = 0;
+	int top = metrics.chartMargin();
+	int hotSpotTop = 0;
+	int maxWidth = 0;
 
 	// Get the first hot spot in the list (the list should have been made the correct size in updateContentBlocks()).
 	ChartHotSpot* hotSpot = hotSpots_.first();
@@ -378,30 +410,30 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 		}
 
 		// If our hotspot is the current one, increase the size.
-		if (hotSpot == currentHotSpot_) left += metrics.horizontalInsertionSpacing();
+		if (hotSpot == currentHotSpot_) top += metrics.verticalInsertionSpacing();
 
-		// Set left edge of this widget
-		block->setNewPosition(left, metrics.chartMargin());
+		// Set top edge of this widget
+		block->setNewPosition(metrics.chartMargin(), top);
 
 		// Try to give our block its preferred (minimum) size
 		QSize minSize = block->widget()->minimumSizeHint();
 		block->setNewSize(minSize.width(), minSize.height());
 
 		// Set the hotspot to end at the left edge of the current block
-		hotSpot->setGeometry(QRect(hotSpotLeft, metrics.chartMargin(), left - hotSpotLeft, 1));
+		hotSpot->setGeometry(QRect(metrics.chartMargin(), hotSpotTop, 1, top - hotSpotTop));
 
 		// Set surrounding blocks for the hotspot
 		hotSpot->setSurroundingBlocks(lastVisibleBlock, block);
 
-		// Set new hotspot left edge and surrounding blocks
-		hotSpotLeft = left + minSize.width();
+		// Set new hotspot top edge
+		hotSpotTop = top + minSize.height();
 
-		// Add on width of widget and spacing to left edge
-		left += minSize.width();
-		if (!blockIterator.isLast()) left += metrics.horizontalModuleSpacing();
+		// Add on height of widget and spacing to top edge
+		top += minSize.height();
+		if (!blockIterator.isLast()) top += metrics.verticalModuleSpacing();
 
-		// Check maximal height
-		if (minSize.height() > maxHeight) maxHeight = minSize.height();
+		// Check maximal width
+		if (minSize.width() > maxWidth) maxWidth = minSize.width();
 
 		// Set the last visible block
 		lastVisibleBlock = block;
@@ -411,15 +443,15 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 	}
 
 	// Finalise required size
-	QSize requiredSize = QSize(left + metrics.chartMargin(), maxHeight + 2*metrics.chartMargin());
+	QSize requiredSize = QSize(maxWidth + 2*metrics.chartMargin(), top + metrics.chartMargin());
 
 	// Set final hotspot geometry
-	hotSpot->setGeometry(QRect(hotSpotLeft, metrics.chartMargin(), geometry().right() - left, 1));
+	hotSpot->setGeometry(QRect(metrics.chartMargin(), hotSpotTop, maxWidth, metrics.chartMargin()));
 	hotSpot->setSurroundingBlocks(lastVisibleBlock, NULL);
 	hotSpot = hotSpot->next();
 
 	// Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero height
-	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next()) spot->setHeight(maxHeight);
+	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next()) spot->setWidth(maxWidth);
 	for (ChartHotSpot* spot = hotSpot; spot != NULL; spot = spot->next()) spot->setHeight(0);
 
 	// If there is a current hotspot, set the insertion widget to be visible and set its geometry

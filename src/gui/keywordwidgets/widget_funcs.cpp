@@ -257,6 +257,9 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 // Set up keyword controls for specified keyword list
 void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData)
 {
+	// Clear existing item groups....
+	while (count() > 0) removeItem(0);
+
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<KeywordBase> remainingKeywords;
 	ListIterator<KeywordBase> keywordIterator(keywords.keywords());
