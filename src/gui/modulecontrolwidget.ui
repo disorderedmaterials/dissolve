@@ -82,7 +82,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QLabel" name="TopLabel_2">
+         <widget class="QLabel" name="TopLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -363,7 +363,7 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="../main.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

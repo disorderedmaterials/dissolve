@@ -72,6 +72,10 @@ void ModuleControlWidget::setModule(Module* module, Dissolve* dissolve)
 		return;
 	}
 
+	// Set the icon and module type label
+	ui_.TopLabel->setText(module_->type());
+	ui_.IconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
+
 	// Set up our keywords widget
 	ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
 

@@ -126,6 +126,7 @@ void ModuleListEditor::updateControls()
 	refreshing_ = true;
 
 	chartWidget_->updateControls();
+	ui_.ControlsWidget->updateControls();
 
 	refreshing_ = false;
 }
@@ -135,6 +136,7 @@ void ModuleListEditor::disableSensitiveControls()
 {
 	ui_.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
+	ui_.ControlsWidget->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
@@ -142,6 +144,7 @@ void ModuleListEditor::enableSensitiveControls()
 {
 	ui_.AvailableModulesTree->setEnabled(true);
 	chartWidget_->enableSensitiveControls();
+	ui_.ControlsWidget->enableSensitiveControls();
 }
 
 /*
