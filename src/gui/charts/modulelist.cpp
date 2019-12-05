@@ -84,26 +84,26 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 	ModuleListChartMetrics metrics;
 
 	// Draw lines between module widgets
-	painter.setPen(solidPen);
-	QPoint p1, p2;
-	int top = metrics.blockBorderWidth()/2 + metrics.chartMargin() + metrics.blockDentOffset() + metrics.blockDentRadius();
-	ModuleBlock* lastBlock = NULL;
-	RefListIterator<ModuleBlock> blockIterator(moduleBlockWidgets_);
-	while (ModuleBlock* block = blockIterator.iterate())
-	{
-		// If this block is not visible, continue
-		if (!block->isVisible()) continue;
-
-		// Draw connecting line between blocks
-		p1 = QPoint(lastBlock ? lastBlock->geometry().right() : 0, top);
-		p2 = QPoint(block->geometry().left(), top);
-		painter.drawLine(p1, p2);
-		painter.setBrush(Qt::black);
-		painter.drawEllipse(p2, metrics.blockDentRadius()-metrics.blockBorderWidth()-1, metrics.blockDentRadius()-metrics.blockBorderWidth()-1);
-
-		// Set the next block pointer
-		lastBlock = block;
-	}
+// 	painter.setPen(solidPen);
+// 	QPoint p1, p2;
+// 	int top = metrics.blockBorderWidth()/2 + metrics.chartMargin() + metrics.blockDentOffset() + metrics.blockDentRadius();
+// 	ModuleBlock* lastBlock = NULL;
+// 	RefListIterator<ModuleBlock> blockIterator(moduleBlockWidgets_);
+// 	while (ModuleBlock* block = blockIterator.iterate())
+// 	{
+// 		// If this block is not visible, continue
+// 		if (!block->isVisible()) continue;
+//
+// 		// Draw connecting line between blocks
+// 		p1 = QPoint(lastBlock ? lastBlock->geometry().right() : 0, top);
+// 		p2 = QPoint(block->geometry().left(), top);
+// 		painter.drawLine(p1, p2);
+// 		painter.setBrush(Qt::black);
+// 		painter.drawEllipse(p2, metrics.blockDentRadius()-metrics.blockBorderWidth()-1, metrics.blockDentRadius()-metrics.blockBorderWidth()-1);
+//
+// 		// Set the next block pointer
+// 		lastBlock = block;
+// 	}
 
 	// Is there a current selected block?
 	if (selectedBlock_)
