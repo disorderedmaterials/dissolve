@@ -124,6 +124,8 @@ class View
 	int viewViewportUsedAt_;
 	// Auto-follow type in effect
 	AutoFollowType autoFollowType_;
+	// Transformed data versions at last auto-follow
+	RefDataList<Renderable,int> autoFollowTransformVersions_;
 	// Length of X region to follow, if autoFollowType_ == XFollow
 	double autoFollowXLength_;
 

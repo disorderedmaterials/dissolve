@@ -877,6 +877,8 @@ void View::centre2DAt(Vec3<double> centre, double fraction)
 void View::setAutoFollowType(AutoFollowType aft)
 {
 	autoFollowType_ = aft;
+
+	autoFollowTransformVersions_.clear();
 }
 
 // Cycle auto-follow type in effect
@@ -907,7 +909,24 @@ double View::autoFollowXLength() const
 void View::autoFollowData()
 {
 	if (autoFollowType_ == View::NoAutoFollow) return;
-	else if (autoFollowType_ == View::AllAutoFollow) showAllData();
+
+	// Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive regeneration further down the line
+	bool updateRequired = false;
+	ListIterator<Renderable> renderableIterator(renderables_);
+	while (Renderable* rend = renderableIterator.iterate())
+	{
+		// If the renderable isn't in the list, or our stored version is different, we need to update
+		RefDataItem<Renderable,int>* ri = autoFollowTransformVersions_.contains(rend);
+		if ((!ri) || (ri->data() != rend->dataVersion()))
+		{
+			updateRequired = true;
+			break;
+		}
+	}
+
+	if (!updateRequired) return;
+
+	if (autoFollowType_ == View::AllAutoFollow) showAllData();
 	else if (autoFollowType_ == View::XAutoFollow)
 	{
 		// Establish min / max limits on x axis
@@ -960,6 +979,10 @@ void View::autoFollowData()
 		axes_.setRange(0, xMin, xMax);
 		axes_.setRange(1, yMin, yMax);
 	}
+
+	// Update stored transformedData versions
+	renderableIterator.restart();
+	while (Renderable* rend = renderableIterator.iterate()) autoFollowTransformVersions_.addUnique(rend, rend->transformDataVersion());
 }
 
 /*
