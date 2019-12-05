@@ -146,6 +146,7 @@ void ModuleControlWidget::updateControls()
 void ModuleControlWidget::disableSensitiveControls()
 {
 	ui_.ModuleKeywordsWidget->setEnabled(false);
+	ui_.ConfigurationTargetGroup->setEnabled(false);
 	ui_.HeaderFrame->setEnabled(false);
 }
 
@@ -153,6 +154,7 @@ void ModuleControlWidget::disableSensitiveControls()
 void ModuleControlWidget::enableSensitiveControls()
 {
 	ui_.ModuleKeywordsWidget->setEnabled(true);
+	ui_.ConfigurationTargetGroup->setEnabled(true);
 	ui_.HeaderFrame->setEnabled(true);
 }
 
