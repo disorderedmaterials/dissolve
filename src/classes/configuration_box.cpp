@@ -181,4 +181,6 @@ void Configuration::applySizeFactor(const PotentialMap& potentialMap)
 			break;
 		}
 	}
+
+	++contentsVersion_;
 }
