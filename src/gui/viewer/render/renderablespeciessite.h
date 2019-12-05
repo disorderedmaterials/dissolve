@@ -50,6 +50,8 @@ class RenderableSpeciesSite : public Renderable
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
+
+	public:
 	// Return version of data
 	int dataVersion() const;
 
