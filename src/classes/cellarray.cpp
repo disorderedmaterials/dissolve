@@ -174,6 +174,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 
 	// Construct Cell neighbour lists
 	Messenger::print("Creating cell neighbour lists...\n");
+
 	// Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
 	Vec3<double> r;
 	Matrix3 cellAxes = box_->axes();
@@ -191,18 +192,18 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			r = cellAxes * r;
 		} while (r[n] < pairPotentialRange);
 	}
-	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
-	
-	// Check Cell extents, comparing with the actual number of Cells available in each direction.
-	for (n=0; n<3; ++n)
-	{
-		if ((extents_[n]*2+1) > divisions_[n])
-		{
-			Messenger::warn("Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, extents_[n]*2+1, extents_[n], divisions_[n]);
-			// We do not decrease the value of extents_, even though there are not enough cells along one or more sides of the box to satisfy that required for the pairPotentialRange.
-			// When constructing, the loops below check the negative extents_ indices for overlap which would cause the same cell to be added to the list twice.
-		}
-	}
+// 	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
+//
+// 	// Check Cell extents, comparing with the actual number of Cells available in each direction.
+// 	for (n=0; n<3; ++n)
+// 	{
+// 		if ((extents_[n]*2+1) > divisions_[n])
+// 		{
+// 			Messenger::warn("Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, extents_[n]*2+1, extents_[n], divisions_[n]);
+// 			// We do not decrease the value of extents_, even though there are not enough cells along one or more sides of the box to satisfy that required for the pairPotentialRange.
+// 			// When constructing, the loops below check the negative extents_ indices for overlap which would cause the same cell to be added to the list twice.
+// 		}
+// 	}
 
 	// Now, loop over cubic matrix of extents_ and construct list of gridReferences within range
 	// In case the number of cells required to cover the pairpotential range exceeds the number across the box, we need to check
