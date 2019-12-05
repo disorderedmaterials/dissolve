@@ -186,11 +186,11 @@ void MainTabsWidget::addCoreTabs(DissolveWindow* dissolveWindow)
 void MainTabsWidget::clearTabs()
 {
 	// Removal of the tab and widget will be handled by the class destructors
-	speciesTabs_.clear();
-	configurationTabs_.clear();
-	processingLayerTabs_.clear();
-	moduleTabs_.clear();
 	workspaceTabs_.clear();
+	moduleTabs_.clear();
+	processingLayerTabs_.clear();
+	configurationTabs_.clear();
+	speciesTabs_.clear();
 
 	// Only remaining tab is the ForcefieldTab...
 	allTabs_.clear();
