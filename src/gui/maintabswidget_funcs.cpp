@@ -596,6 +596,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 		// Get the relevant widget (as a MainTab)
 		MainTab* tab = dynamic_cast<MainTab*>(widget(tabIndex));
 		if (!tab) return;
+		MainTab::TabType tabType = tab->type();
 
 		// Check whether the tab can / should be closed
 		if (!tab->canClose()) return;
@@ -609,7 +610,8 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 		// Delete the tab (referenced by its page widget)
 		removeByPage(page);
 
-		emit(dataModified());
+		// Emit data modified signal dependent on tab type
+		if ((tabType != MainTab::ModuleTabType) && (tabType != MainTab::WorkspaceTabType)) emit(dataModified());
 	}
 	else printf("Tabs received a close event from an unknown button...\n");
 }
