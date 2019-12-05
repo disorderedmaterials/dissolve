@@ -103,6 +103,8 @@ class ModuleListChart : public ChartBase
 	void blockDoubleClicked(ChartBlock* block);
 	// The chart has requested removal of one of its blocks
 	void blockRemovalRequested(const QString& blockIdentifier);
+	// Block selection has changed
+	void blockSelectionChanged(ChartBlock* block);
 
 
 	/*

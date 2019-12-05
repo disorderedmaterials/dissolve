@@ -35,7 +35,7 @@
 #include <QListWidgetItem>
 
 // Constructor / Destructor
-ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui_.setupUi(this);
 
@@ -124,6 +124,12 @@ ForcefieldTab::~ForcefieldTab()
 MainTab::TabType ForcefieldTab::type() const
 {
 	return MainTab::ForcefieldTabType;
+}
+
+// Return whether the tab can be closed
+bool ForcefieldTab::canClose() const
+{
+	return false;
 }
 
 /*
@@ -603,8 +609,8 @@ void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
 		updateControls();
 	}
 
-	// Need to update all SpeciesTabs to show/hide the charges column in atoms tables
-	dissolveWindow_->updateSpeciesTabs();
+	// Need to update to show/hide the charges column in atoms tables
+	dissolveWindow_->fullUpdate();
 	
 	dissolveWindow_->setModified();
 }

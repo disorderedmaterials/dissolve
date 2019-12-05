@@ -65,7 +65,7 @@ bool DissolveWindow::checkSaveCurrentInput()
 void DissolveWindow::startNew()
 {
 	// Clear any data-related tabs from the UI
-	clearTabs();
+	ui_.MainTabs->clearTabs();
 
 	// Clear Dissolve itself
 	dissolve_.clear();
@@ -99,7 +99,7 @@ void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
 	if (!sysTemp) return;
 
 	// Clear any data-related tabs from the UI
-	clearTabs();
+	ui_.MainTabs->clearTabs();
 
 	// Load the input data
 	if (!dissolve_.loadInputFromString(qPrintable(sysTemp->inputFileData())))

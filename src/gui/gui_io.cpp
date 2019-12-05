@@ -35,7 +35,7 @@ bool DissolveWindow::saveWindowLayout()
 	if (!stateParser.writeLineF("%i\n", ui_.MainTabs->currentIndex())) return false;
 
 	// Write tab state
-	RefList<MainTab> tabs = allTabs();
+	RefList<MainTab> tabs = ui_.MainTabs->allTabs();
 	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate())
 	{
@@ -70,7 +70,7 @@ bool DissolveWindow::loadWindowLayout()
 		if (stateParser.getArgsDelim() != LineParser::Success) return false;
 
 		// If any of our current tabs match the title, call it's readState() function
-		MainTab* tab = findTab(stateParser.argc(0));
+		MainTab* tab = ui_.MainTabs->findTab(stateParser.argc(0));
 		if (tab)
 		{
 			if (!tab->readState(stateParser, dissolve_.coreData())) return false;
@@ -84,12 +84,12 @@ bool DissolveWindow::loadWindowLayout()
 				Module* module = dissolve_.findModuleInstance(stateParser.argc(0));
 				if (!module) return Messenger::error("Failed to find Module instance '%s' for display in a ModuleTab.\n", stateParser.argc(0)); 
 
-				tab = addModuleTab(module);
+				tab = ui_.MainTabs->addModuleTab(this, module);
 			}
 			else if (DissolveSys::sameString(stateParser.argc(1), "WorkspaceTab"))
 			{
 				// Create a new workspace with the desired name
-				tab = addWorkspaceTab(stateParser.argc(0));
+				tab = ui_.MainTabs->addWorkspaceTab(this, stateParser.argc(0));
 			}
 			else return Messenger::error("Unrecognised tab ('%s') or tab type ('%s') found in state file.\n", stateParser.argc(0), stateParser.argc(1));
 

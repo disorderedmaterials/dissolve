@@ -33,7 +33,7 @@
 #include <QMenu>
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
+WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -63,18 +63,19 @@ MainTab::TabType WorkspaceTab::type() const
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
 	// Get a new, valid name for the Configuration
-	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
-	ok = nameDialog.get(this, title());
+	// FIXME
+// 	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
+// 	ok = nameDialog.get(this, title());
 
-	if (ok)
-	{
-		// Rename our Workspace, and flag that our data has been modified
-		title_ = qPrintable(nameDialog.newName());
+// 	if (ok)
+// 	{
+// 		// Rename our Workspace, and flag that our data has been modified
+// 		title_ = qPrintable(nameDialog.newName());
 
-		dissolveWindow_->setModified();
-	}
+// 		dissolveWindow_->setModified();
+// 	}
 
-	return nameDialog.newName();
+// 	return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed

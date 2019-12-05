@@ -1,7 +1,7 @@
 /*
-	*** Super Tab Bar
-	*** src/gui/widgets/supertabbar.hui
-	Copyright T. Youngs 2019
+	*** Main Tabs Bar
+	*** src/gui/maintabsbar_funcs.cpp
+	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
 
@@ -19,22 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SUPERTABBAR_H
-#define DISSOLVE_SUPERTABBAR_H
+#include "gui/maintabsbar.hui"
 
-#include <QTabBar>
-
-// Forward declarations
-/* none */
-
-// Super Tab Bar
-class SuperTabBar : public QTabBar
+// Constructor
+MainTabsBar::MainTabsBar(QWidget* parent) : QTabBar(parent)
 {
-	Q_OBJECT
+}
 
-	public:
-	// Constructor
-	SuperTabBar(QWidget* parent);
-};
-
-#endif

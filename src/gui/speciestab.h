@@ -43,7 +43,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 	public:
 	// Constructor / Destructor
-	SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species);
+	SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Species* species);
 	~SpeciesTab();
 
 
@@ -73,6 +73,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
+	bool canClose() const;
 
 
 	/*

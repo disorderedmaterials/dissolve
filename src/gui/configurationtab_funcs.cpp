@@ -36,7 +36,7 @@
 #include <QMessageBox>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -60,6 +60,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 
 ConfigurationTab::~ConfigurationTab()
 {
+	// Remove the Configuration represented in this tab
+	dissolve_.removeConfiguration(configuration_);
 }
 
 /*
@@ -96,6 +98,22 @@ bool ConfigurationTab::canChangeTitle() const
 	return true;
 }
 
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool ConfigurationTab::canClose() const
+{
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the configuration '%1'?\nThis cannot be undone!").arg(configuration_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret != QMessageBox::Yes) return false;
+
+	return true;
+}
+
 /*
  * Configuration Target
  */
@@ -114,6 +132,9 @@ Configuration* ConfigurationTab::configuration() const
 void ConfigurationTab::updateControls()
 {
 	Locker refreshLocker(refreshLock_);
+
+	// Generator
+	ui_.ProcedureWidget->updateControls();
 
 	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());

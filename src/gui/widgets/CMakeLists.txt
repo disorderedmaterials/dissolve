@@ -16,8 +16,6 @@ SET(widgets_MOC_HDRS
   gradientbar.hui
   mimetreewidget.hui
   superstackedwidget.hui
-  supertabbar.hui
-  supertabwidget.hui
   tmenubutton.hui
   tpopupwidget.hui
 )
@@ -43,8 +41,6 @@ SET(widgets_SRCS
   nocontrols_funcs.cpp
   sampleddoublelabel_funcs.cpp
   superstackedwidget_funcs.cpp
-  supertabbar_funcs.cpp
-  supertabwidget_funcs.cpp
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp
   tpopupwidget_funcs.cpp

@@ -38,7 +38,7 @@ class ForcefieldTab : public QWidget, public MainTab
 
 	public:
 	// Constructor / Destructor
-	ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
+	ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title);
 	~ForcefieldTab();
 
 
@@ -56,6 +56,8 @@ class ForcefieldTab : public QWidget, public MainTab
 	public:
 	// Return tab type
 	MainTab::TabType type() const;
+	// Return whether the tab can be closed
+	bool canClose() const;
 
 
 	/*

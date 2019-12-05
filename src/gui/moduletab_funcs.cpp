@@ -21,14 +21,15 @@
 
 #include "gui/moduletab.h"
 #include "gui/gui.h"
-#include "gui/charts/moduleblock.h"
+#include "gui/modulecontrolwidget.h"
 #include "gui/modulewidget.h"
+#include "gui/charts/moduleblock.h"
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
+ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
 	ui_.setupUi(this);
 
@@ -89,9 +90,11 @@ void ModuleTab::initialiseControls(Module* module)
 	setWindowIcon(ModuleBlock::modulePixmap(module));
 
 	// Create the controls widget (a ModuleBlock)
-	controlsWidget_ = new ModuleBlock(this, module, dissolve_);
-	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	controlsWidget_->hideRemoveButton();
+	controlsWidget_ = new ModuleControlWidget(this);
+	controlsWidget_->setUp(dissolveWindow_);
+	connect(controlsWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	controlsWidget_->setModule(module, &dissolve_);
+	controlsWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module

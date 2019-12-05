@@ -54,16 +54,9 @@ class ModuleBlock : public QWidget, public ChartBlock
 	// Displayed Module
 	Module* module_;
 
-	private slots:
-	// Run the set-up stage of the associated Module
-	void setUpModule();
-
 	public:
 	// Return displayed Module
 	Module* module() const;
-
-	signals:
-	void updateModuleWidget(int flags);
 
 
 	/*
@@ -80,8 +73,6 @@ class ModuleBlock : public QWidget, public ChartBlock
 	QColor displayColour_;
 
 	public:
-	// Hide the remove button
-	void hideRemoveButton();
 	// Return suitable QPixmap for supplied Module
 	static QPixmap modulePixmap(const Module* module);
 	// Return suitable QPixmap for supplied Module type
@@ -93,7 +84,6 @@ class ModuleBlock : public QWidget, public ChartBlock
 	void on_NameEdit_returnPressed();
 	void on_EnabledButton_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
-	void on_ConfigurationTargetList_itemChanged(QListWidgetItem* item);
 
 	signals:
 	void remove(const QString& blockIdentifier);
@@ -144,12 +134,8 @@ class ModuleBlock : public QWidget, public ChartBlock
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
-	// Keyword data for node has been modified
-	void keywordDataModified();
-
 	signals:
-	// Notify that the node's keyword data has been modified
+	// Notify that the Module's data has been modified in some way
 	void dataModified();
 };
 

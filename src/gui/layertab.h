@@ -37,7 +37,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 
 	public:
 	// Constructor / Destructor
-	LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer);
+	LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, ModuleLayer* layer);
 	~LayerTab();
 
 
@@ -59,6 +59,8 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
+	bool canClose() const;
 
 
 	/*

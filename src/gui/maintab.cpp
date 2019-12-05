@@ -31,13 +31,12 @@
 #include <QLayout>
 #include <QMdiArea>
 #include <QMdiSubWindow>
-#include <QTabWidget>
 
 // Constructor / Destructor
-MainTab::MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* tabWidget, const char* title, QWidget* page) : dissolve_(dissolve)
+MainTab::MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, QWidget* page) : dissolve_(dissolve)
 {
 	dissolveWindow_ = dissolveWindow;
-	tabWidget_ = tabWidget;
+	tabWidget_ = parent;
 	page_ = page;
 	title_ = title;
 }
@@ -78,6 +77,16 @@ QWidget* MainTab::page() const
 	return page_;
 }
 
+// Return title of tab
+const char* MainTab::title() const
+{
+	return title_.get();
+}
+
+/*
+ * Management
+ */
+
 // Return whether the title of the tab can be changed
 bool MainTab::canChangeTitle() const
 {
@@ -108,8 +117,8 @@ bool MainTab::rename()
 	return true;
 }
 
-// Return title of tab
-const char* MainTab::title() const
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool MainTab::canClose() const
 {
-	return title_.get();
+	return true;
 }

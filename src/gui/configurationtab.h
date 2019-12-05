@@ -37,7 +37,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 	public:
 	// Constructor / Destructor
-	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg);
+	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Configuration* cfg);
 	~ConfigurationTab();
 
 
@@ -59,6 +59,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
+	bool canClose() const;
 
 
 	/*
