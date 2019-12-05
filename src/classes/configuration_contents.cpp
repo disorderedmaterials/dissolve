@@ -127,6 +127,22 @@ double Configuration::atomicDensity() const
 	return nAtoms() / box_->volume();
 }
 
+// Return the chemical density (g/cm3) of the Configuration
+double Configuration::chemicalDensity() const
+{
+	double density = 0.0;
+
+	// Get total molar mass in configuration
+	ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
+	while (SpeciesInfo* spInfo = speciesIterator.iterate()) density += spInfo->species()->mass() * spInfo->population();
+
+	// Convert to absolute mass, and divide by box volume
+	density /= AVOGADRO;
+	density /= (box_->volume() / 1.0E24);
+
+	return density;
+}
+
 // Return version of current contents
 int Configuration::contentsVersion() const
 {

@@ -143,6 +143,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	bool hasUsedSpecies(Species* sp);
 	// Return the atomic density of the Configuration
 	double atomicDensity() const;
+	// Return the chemical density (g/cm3) of the Configuration
+	double chemicalDensity() const;
 	// Return version of current contents
 	int contentsVersion() const;
 	// Increment version of current contents
