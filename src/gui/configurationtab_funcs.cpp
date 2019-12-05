@@ -32,6 +32,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
+#include "base/units.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
 
@@ -46,6 +47,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 
 	// Populate coordinates file format combo
 	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
+
+	// Populate density units combo
+	ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
 	// Set target for ConfigurationViewer
 	ui_.ViewerWidget->setConfiguration(configuration_);
@@ -128,22 +132,27 @@ Configuration* ConfigurationTab::configuration() const
  * Update
  */
 
+// Update density label
+void ConfigurationTab::updateDensityLabel()
+{
+	if (!configuration_)
+	{
+		ui_.DensityUnitsLabel->setText("N/A");
+		return;
+	}
+
+	if (ui_.DensityUnitsCombo->currentIndex() == 0) ui_.DensityUnitsLabel->setText(QString::number(configuration_->atomicDensity()));
+	else ui_.DensityUnitsLabel->setText(QString::number(configuration_->chemicalDensity()));
+}
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
 	Locker refreshLocker(refreshLock_);
 
-	// Generator
-	ui_.ProcedureWidget->updateControls();
-
 	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
-	// Size Factor
-	ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor()); 
-	ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
-
-	// Box
+	// Current Box
 	const Box* box = configuration_->box();
 	ui_.CurrentBoxTypeLabel->setText(Box::boxTypes().keyword(box->type()));
 	ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
@@ -152,10 +161,18 @@ void ConfigurationTab::updateControls()
 	ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
 	ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
 	ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
+	updateDensityLabel();
 
 	// Input Coordinates
 	ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
+
+	// Size Factor
+	ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
+	ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
+
+	// Generator
+	ui_.ProcedureWidget->updateControls();
 
 	// Viewer
 	ui_.ViewerWidget->postRedisplay();
@@ -205,6 +222,12 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 	configuration_->setTemperature(value);
 
 	dissolveWindow_->setModified();
+}
+
+// Current Box
+void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
+{
+	updateDensityLabel();
 }
 
 // Initial Coordinates

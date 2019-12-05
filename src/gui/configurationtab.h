@@ -24,6 +24,7 @@
 
 #include "gui/ui_configurationtab.h"
 #include "gui/maintab.h"
+#include "base/units.h"
 
 // Forward Declarations
 class Configuration;
@@ -81,6 +82,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	private:
 	// Row update function for BondsTable
 	void updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesInfo, bool createItems);
+	// Update density label
+	void updateDensityLabel();
 
 	protected:
 	// Update controls in tab
@@ -99,6 +102,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	void on_GeneratorRegenerateButton_clicked(bool checked);
 	// Definition
 	void on_TemperatureSpin_valueChanged(double value);
+	// Current Box
+	void on_DensityUnitsCombo_currentIndexChanged(int index);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
