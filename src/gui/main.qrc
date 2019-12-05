@@ -69,6 +69,7 @@
   </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
+    <file>images/hexagons1.png</file>
     <file>images/big.png</file>
     <file>images/hexagons1.jpg</file>
   </qresource>

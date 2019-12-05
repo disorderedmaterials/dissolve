@@ -34,6 +34,9 @@ void SuperStackedWidget::paintEvent(QPaintEvent* event)
 
 	QPainter painter(this);
 
+	// Draw top-left hexagons
+	painter.drawPixmap(0, 0, QPixmap(":/images/images/hexagons1.png"));
+
 	// Draw the background before we do anything else
 	painter.drawPixmap(width()-512, height()-527, QPixmap(":/images/images/big.png"));
 }
