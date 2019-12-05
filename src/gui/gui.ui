@@ -204,13 +204,6 @@ From a Template</string>
          </widget>
         </item>
         <item>
-         <widget class="Line" name="StartLine1">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QGroupBox" name="StartOpenConnectGroup">
           <property name="title">
            <string>Open / Connect</string>
@@ -380,13 +373,6 @@ Remote Simulation</string>
             </spacer>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="StartLine1_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
          </widget>
         </item>
         <item>
