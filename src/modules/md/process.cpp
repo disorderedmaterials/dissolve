@@ -93,12 +93,15 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		int stabilityResult = EnergyModule::checkStability(cfg);
-		if (stabilityResult == -1) return false;
-		else if (stabilityResult == 1)
+		if (onlyWhenEnergyStable)
 		{
-			Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
-			continue;
+			int stabilityResult = EnergyModule::checkStability(cfg);
+			if (stabilityResult == -1) return false;
+			else if (stabilityResult == 1)
+			{
+				Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
+				continue;
+			}
 		}
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)
