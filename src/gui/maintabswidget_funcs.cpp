@@ -23,6 +23,7 @@
 #include "gui/maintabswidget.hui"
 #include "gui/maintabsbar.hui"
 #include "gui/maintab.h"
+#include "gui/charts/moduleblock.h"
 #include "main/dissolve.h"
 #include "base/messenger.h"
 #include <QToolButton>
@@ -363,7 +364,8 @@ MainTab* MainTabsWidget::addModuleTab(DissolveWindow* dissolveWindow, Module* mo
 		moduleTabs_.own(tab);
 		allTabs_.append(tab);
 		addTab(tab, module->uniqueName());
-// 		setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+		addTabCloseButton(tab->page());
+		setTabIcon(tab->page(), QIcon(ModuleBlock::modulePixmap(module)));
 
 		// If we are currently running, disable the necessary controls in widget
 		if (dissolveWindow->dissolveState() == DissolveWindow::RunningState) tab->disableSensitiveControls();
