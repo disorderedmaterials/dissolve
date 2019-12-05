@@ -113,8 +113,8 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 		if ((selectedModule) && (moduleBlockWidgets_.contains(selectedModule)))
 		{
 			QRect rect = selectedModule->geometry();
-			rect.adjust(-15, -15, 15, 15);
-			painter.fillRect(rect, Qt::black);
+			rect.adjust(-metrics.chartMargin(), -15, metrics.chartMargin(), 15);
+			painter.fillRect(rect, QColor(49,0,73,80));
 		}
 		else selectedBlock_ = NULL;
 	}
