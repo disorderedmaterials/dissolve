@@ -120,6 +120,8 @@ class Renderable : public ListItem<Renderable>
 	void setTransformEnabled(int axis, bool enabled);
 	// Return whether specified transform is enabled
 	bool transformEnabled(int axis) const;
+	// Return version of transformed data
+	int transformDataVersion() const;
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
 	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax) = 0;
 

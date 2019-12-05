@@ -198,6 +198,12 @@ bool Renderable::transformEnabled(int axis) const
 	return transforms_[axis].enabled();
 }
 
+// Return version of transformed data
+int Renderable::transformDataVersion() const
+{
+	return transformDataVersion_;
+}
+
 /*
  * Group
  */
