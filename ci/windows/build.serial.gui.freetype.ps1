@@ -11,7 +11,7 @@ unzip ./ft.zip
 Echo 'Compiling FreeType...'
 mkdir freetype-build
 cd freetype-build
-cmake -G "Ninja" ..\freetype-2.10.1
+cmake -G "Ninja" ../freetype-2.10.1
 ninja
 
 # Set environment
