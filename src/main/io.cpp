@@ -345,7 +345,7 @@ bool Dissolve::loadRestart(const char* filename)
 {
 	restartFilename_ = filename;
 
-	// Open file and check that we're OK to proceed reading from it (master only...)
+	// Open file and check that we're OK to proceed reading from it
 	LineParser parser(&worldPool());
 	if (!parser.openInput(restartFilename_)) return false;
 
@@ -356,10 +356,10 @@ bool Dissolve::loadRestart(const char* filename)
 
 	while (!parser.eofOrBlank())
 	{
-		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
+		// Master will read the next line from the file
 		if (parser.getArgsDelim() != 0) break;
 
-		// First component of line indicates the destination for the module data
+		// First argument indicates the type of data
 		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
 		{
 			// Let the user know what we are doing
