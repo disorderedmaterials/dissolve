@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 
 # Retrieve / compile Freetype 2.10.1
 cd $HOME
-wget 'https://download.savannah.gnu.org/releases/freetype/ft2101.zip' -o 'ft.zip'
+wget 'https://download.savannah.gnu.org/releases/freetype/ft2101.zip' -O 'ft.zip'
 unzip ./ft.zip
 Echo 'Compiling FreeType...'
 mkdir freetype-build
