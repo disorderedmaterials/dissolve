@@ -40,8 +40,9 @@ class GenericItem : public ListItem<GenericItem>
 	// Item Flags
 	enum Flags
 	{
-		NoFlag				= -1,	/* Null flag */
-		InRestartFileFlag		= 1	/* The item should be written to the restart file */
+		NoFlag				= 0,	/* No flag */
+		InRestartFileFlag		= 1,	/* The item should be written to the restart file */
+		IsReferencePointDataFlag	= 2	/* The item was loaded as reference point data */
 	};
 
 
