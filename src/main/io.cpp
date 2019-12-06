@@ -363,7 +363,7 @@ bool Dissolve::loadRestart(const char* filename)
 		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
 		{
 			// Let the user know what we are doing
-			Messenger::print("Reading keyword '%s' into Module '%s'...\n", parser.argc(2), parser.argc(1), cfg->name());
+			Messenger::print("Reading keyword '%s' into Module '%s'...\n", parser.argc(2), parser.argc(1));
 
 			// Find the referenced Module
 			Module* module = findModuleInstance(parser.argc(1));
