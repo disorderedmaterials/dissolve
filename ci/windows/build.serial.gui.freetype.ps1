@@ -12,6 +12,8 @@ Echo 'Compiling FreeType...'
 mkdir freetype-build
 cd freetype-build
 cmake -G "Ninja" ../freetype-2.10.1
+ls
+type CMakeFiles/CMakeOutput.log
 ninja
 
 # Set environment
