@@ -2,7 +2,7 @@
 # # One of a sequence of scripts.
 # - Build Dissolve
 
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 # Build Dissolve
 mkdir build

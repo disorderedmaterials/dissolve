@@ -2,7 +2,7 @@
 # One of a sequence of scripts.
 # - Install build prerequisites
 
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 # Install prerequisites
 choco install -y windows-sdk-10-version-1803-all

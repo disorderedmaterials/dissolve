@@ -2,7 +2,7 @@
 # One of a sequence of scripts.
 # - Build Freetype
 
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 # Retrieve / compile FTGL
 echo 'Compiling FTGL'

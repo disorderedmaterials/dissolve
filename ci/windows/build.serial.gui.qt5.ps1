@@ -2,7 +2,7 @@
 # One of a sequence of scripts.
 # - Install Qt 5.13.1
 
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 # Attempt to free up some disk space before we install
 choco uninstall -y mingw llvm wsl microsoft-build-tools

@@ -2,7 +2,7 @@
 # One of a sequence of scripts.
 # - Build Freetype
 
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 # Retrieve / compile Freetype 2.10.1
 $Wc = New-Object System.Net.WebClient
