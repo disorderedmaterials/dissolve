@@ -8,8 +8,7 @@
 choco uninstall -y mingw
 
 # Install Qt 5.13.1
-$Wc = New-Object System.Net.WebClient
-$Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
+wget 'http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe' -o 'qt.exe'
 echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
 $env:QT_INSTALL_DIR = 'C:\\Qt'
 Start-Process qt.exe -ArgumentList '--verbose --script ci\windows\qtifwsilent.qs' -NoNewWindow -Wait
