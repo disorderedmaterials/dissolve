@@ -5,7 +5,7 @@
 #$ErrorActionPreference = 'Stop'
 
 # Attempt to free up some disk space before we install
-choco uninstall -y mingw llvm wsl microsoft-build-tools
+choco uninstall -y mingw
 
 # Install Qt 5.13.1
 $Wc = New-Object System.Net.WebClient
