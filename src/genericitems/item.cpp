@@ -29,7 +29,7 @@ GenericItem::GenericItem(const char* name, int flags) : ListItem<GenericItem>()
 {
 	name_ = name;
 	flags_ = flags;
-	version_ = 0;
+	version_ = 1;
 }
 
 GenericItem::~GenericItem()
