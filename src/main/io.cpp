@@ -405,7 +405,7 @@ bool Dissolve::loadRestart(const char* filename)
 			}
 
 			// Realise the item in the list
-			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3));
+			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3), parser.argi(4));
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
@@ -424,7 +424,7 @@ bool Dissolve::loadRestart(const char* filename)
 			Messenger::print("Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
 
 			// Realise the item in the list
-			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2));
+			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2), parser.argi(3));
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
