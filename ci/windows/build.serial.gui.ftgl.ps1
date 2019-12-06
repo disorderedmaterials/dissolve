@@ -5,9 +5,9 @@
 #$ErrorActionPreference = 'Stop'
 
 # Retrieve / compile FTGL
+cd $HOME
 echo 'Compiling FTGL'
 git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
-cd $HOME
 mkdir ftgl-build
 cd ftgl-build
 cmake -G "Ninja" ..\ftgl-latest
