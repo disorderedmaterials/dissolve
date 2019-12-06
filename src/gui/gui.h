@@ -169,6 +169,8 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
+	void on_SimulationCreateSnapshotAction_triggered(bool checked);
+	void on_SimulationDataManagerAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesCreateEmptyAction_triggered(bool checked);

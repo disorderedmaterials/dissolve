@@ -887,6 +887,9 @@ Remote Simulation</string>
     <addaction name="SimulationStepFiveAction"/>
     <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
+    <addaction name="SimulationCreateSnapshotAction"/>
+    <addaction name="SimulationDataManagerAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
@@ -1450,6 +1453,20 @@ Remote Simulation</string>
   <action name="SpeciesImportFromXYZAction">
    <property name="text">
     <string>From &amp;XYZ...</string>
+   </property>
+  </action>
+  <action name="SimulationDataManagerAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Data Manager...</string>
+   </property>
+  </action>
+  <action name="SimulationCreateSnapshotAction">
+   <property name="text">
+    <string>&amp;Create Snapshot...</string>
    </property>
   </action>
  </widget>

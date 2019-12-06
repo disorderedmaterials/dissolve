@@ -20,6 +20,7 @@
 */
 
 #include "gui/gui.h"
+#include "gui/datamanagerdialog.h"
 #include "main/dissolve.h"
 #include <QInputDialog>
 
@@ -81,6 +82,19 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 
 	// Disable the pause button
 	ui_.ControlPauseButton->setEnabled(false);
+}
+
+void DissolveWindow::on_SimulationCreateSnapshotAction_triggered(bool checked)
+{
+	// First, get prefix name for snapshot
+	bool ok;
+	QString prefix = QInputDialog::getText(this, "Snapshot Prefix", "Enter the prefix for the snapshot");
+}
+
+void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
+{
+	DataManagerDialog dataManagerDialog(this, dissolve_);
+	dataManagerDialog.exec();
 }
 
 void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
