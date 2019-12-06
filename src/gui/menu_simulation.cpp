@@ -22,7 +22,7 @@
 #include "gui/gui.h"
 #include "gui/datamanagerdialog.h"
 #include "main/dissolve.h"
-#include <QInputDialog>
+#include <QFileDialog>
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
@@ -84,16 +84,18 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 	ui_.ControlPauseButton->setEnabled(false);
 }
 
-void DissolveWindow::on_SimulationCreateSnapshotAction_triggered(bool checked)
+void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 {
-	// First, get prefix name for snapshot
-	bool ok;
-	QString prefix = QInputDialog::getText(this, "Snapshot Prefix", "Enter the prefix for the snapshot");
+	// Get filename for restart point
+	QString filename = QFileDialog::getSaveFileName(this, tr("Select Output File"), QDir::currentPath(), tr("Restart Files (*.restart)"));
+	if (filename.isEmpty()) return;
+
+	dissolve_.saveRestart()
 }
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
-	DataManagerDialog dataManagerDialog(this, dissolve_);
+	DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_);
 	dataManagerDialog.exec();
 }
 

@@ -26,7 +26,7 @@
 #include <QRegExp>
 
 // Constructor
-DataManagerDialog::DataManagerDialog(QWidget* parent, Dissolve& dissolve)
+DataManagerDialog::DataManagerDialog(QWidget* parent, Dissolve& dissolve, List<ReferencePoint>& referencePoints) : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints)
 {
 	ui_.setupUi(this);
 

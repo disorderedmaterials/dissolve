@@ -24,6 +24,7 @@
 
 #include "gui/ui_gui.h"
 #include "gui/outputhandler.hui"
+#include "gui/referencepoint.h"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -131,6 +132,14 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
+	 * Reference Points
+	 */
+	private:
+	// List of ReferencePoints currently loaded
+	List<ReferencePoint> referencePoints_;
+
+
+	/*
 	 * Update Functions
 	 */
 	public slots:
@@ -169,7 +178,7 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
-	void on_SimulationCreateSnapshotAction_triggered(bool checked);
+	void on_SimulationSaveRestartPointAction_triggered(bool checked);
 	void on_SimulationDataManagerAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species

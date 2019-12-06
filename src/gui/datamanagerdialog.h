@@ -23,6 +23,7 @@
 #define DISSOLVE_DIALOG_DATAMANAGER_H
 
 #include "gui/ui_datamanagerdialog.h"
+#include "gui/referencepoint.h"
 #include "templates/list.h"
 #include <QDialog>
 
@@ -37,9 +38,15 @@ class DataManagerDialog : public QDialog
 
 	public:
 	// Constructor
-	DataManagerDialog(QWidget* parent, Dissolve& dissolve);
+	DataManagerDialog(QWidget* parent, Dissolve& dissolve, List<ReferencePoint>& referencePoints);
 	// Destructor
 	~DataManagerDialog();
+
+	private:
+	// Reference to Dissolve
+	Dissolve& dissolve_;
+	// List of current ReferencePoints
+	List<ReferencePoint>& referencePoints_;
 
 
 	/*

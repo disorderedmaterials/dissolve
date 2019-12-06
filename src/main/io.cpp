@@ -489,6 +489,125 @@ bool Dissolve::loadRestart(const char* filename)
 	return (!error);
 }
 
+// Load restart file as reference point
+bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuffix)
+{
+	// Open file and check that we're OK to proceed reading from it (master only...)
+	LineParser parser(&worldPool());
+	if (!parser.openInput(restartFilename_)) return false;
+
+	// Variables
+	Configuration* cfg;
+	Module* module;
+	CharString newName;
+	bool error = false, skipCurrentItem = false;
+
+	while (!parser.eofOrBlank())
+	{
+		// Master will read the next line from the file
+		if (parser.getArgsDelim() != 0) break;
+
+		// First argument indicates the type of data
+		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Ignoring entry for keyword '%s' (module '%s')...\n", parser.argc(2), parser.argc(1));
+
+			skipCurrentItem = true;
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Local"))
+ 		{
+			// Create new suffixed name
+			newName.sprintf("%s@%s", parser.argc(2), dataSuffix);
+
+			// Let the user know what we are doing
+			Messenger::print("Reading item '%s' => '%s' (%s) into Configuration '%s'...\n", parser.argc(2), newName.get(), parser.argc(3), parser.argc(1));
+
+			// Local processing data - find the parent Configuration...
+			cfg = findConfiguration(parser.argc(1));
+			if (!cfg)
+			{
+				Messenger::error("No Configuration named '%s' exists, so skipping this data...\n", parser.argc(1));
+				skipCurrentItem = true;
+			}
+			else
+			{
+				// Realise the item in the listblackstar
+				GenericItem* item = cfg->moduleData().create(newName, parser.argc(3), parser.argi(4));
+
+				// Read in the data
+				if ((!item) || (!item->read(parser, coreData_)))
+				{
+					Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+					error = true;
+					break;
+				}
+
+				// Set the ReferencePointData flag for the item
+				item->setFlags(GenericItem::IsReferencePointDataFlag);
+
+				skipCurrentItem = false;
+			}
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
+		{
+			// Create new suffixed name
+			newName.sprintf("%s@%s", parser.argc(2), dataSuffix);
+
+			// Let the user know what we are doing
+			Messenger::print("Reading item '%s' => '%s' (%s) into processing module data...\n", parser.argc(1), newName.get(), parser.argc(2));
+
+			// Realise the item in the list
+			GenericItem* item = processingModuleData_.create(newName, parser.argc(2), parser.argi(3));
+
+			// Read in the data
+			if ((!item) || (!item->read(parser, coreData_)))
+			{
+				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+				error = true;
+				break;
+			}
+
+			// Set the InRestartFileFlag for the item
+			item->setFlags(GenericItem::InRestartFileFlag);
+
+			skipCurrentItem = false;
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Ignoring Configuration '%s'...\n", parser.argc(1));
+
+			skipCurrentItem = true;
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Timing"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Ignoring timing information for Module '%s'...\n", parser.argc(1));
+
+			skipCurrentItem = false;
+		}
+		else if (!skipCurrentItem)
+		{
+			Messenger::error("Unrecognised '%s' entry in restart file.\n", parser.argc(0));
+			error = true;
+		}
+
+		// Error encounterd?
+		if (error) break;
+	}
+	
+	if (!error) Messenger::print("Finished reading restart file.\n");
+
+	// Error encountered?
+	if (error) Messenger::error("Errors encountered while loading restart file.\n");
+
+	// Done
+	if (worldPool().isWorldMaster()) parser.closeFiles();
+
+	return (!error);
+}
+
 // Save restart file
 bool Dissolve::saveRestart(const char* filename)
 {
