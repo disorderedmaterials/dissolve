@@ -41,6 +41,10 @@ jobs:
       env: PARALLEL=false
       os: windows
       script:
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.qt5.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.prereq.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.freetype.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ftgl.ps1
         - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ps1
     - stage: Linux Build
       name: Serial, GUI
