@@ -71,8 +71,6 @@ class GenericItem : public ListItem<GenericItem>
 	private:
 	// Name associated to the item
 	CharString name_;
-	// Description, if any, for the item
-	CharString description_;
 	// Version of the item
 	int version_;
 	// Flags
@@ -83,10 +81,6 @@ class GenericItem : public ListItem<GenericItem>
 	void setName(const char* name);
 	// Return item name
 	const char* name();
-	// Set item description
-	void setDescription(const char* description);
-	// Return item description
-	const char* description();
 	// Return version of the item
 	int version() const;
 	// Set version of the item

@@ -76,18 +76,6 @@ const char* GenericItem::name()
 	return name_.get();
 }
 
-// Set item description
-void GenericItem::setDescription(const char* description)
-{
-	description_ = description;
-}
-
-// Return item description
-const char* GenericItem::description()
-{
-	return description_.get();
-}
-
 // Return version of the item
 int GenericItem::version() const
 {
