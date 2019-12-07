@@ -16,12 +16,17 @@ jobs:
     - name: Install Prerequisties
       run: |
         brew update
-        # Development Packages
         brew install bison ftgl ninja
-        # Qt 5.13.2
         brew install qt5
     - name: Build (CMake/Ninja)
       run: |
+        QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+        export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
+        export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
+        export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
+        export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
+        export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
+        Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         mkdir build
         cd build
         cmake -G "Ninja" -DGUI:bool=true ../
@@ -29,20 +34,9 @@ jobs:
         cd ../
     - name: Create DiskImage
       run: |
-        # Obtain dmg build script
         wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
         chmod u+x build-dmg.sh
-        # Attempt to automatically detect Qt version installed by homebrew
         QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
-        # Set paths so CMake can find Qt
-        export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
-        export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
-        export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
-        export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
-        export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
-        # Set path to root of Qt installation
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
-        # Determine current code version
         VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-        # Build images
         ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx.highsierra/dissolve-gui.dmginfo
