@@ -33,7 +33,6 @@ jobs:
     - name: Build Freetype
       run: |
         $env:PATH = ($env:PATH.Split(';') | Where-Object { $_ -NotMatch 'Strawberry' }) -join ';'
-        $env:INCLUDE = ($env:INCLUDE.Split(';') | Where-Object { $_ -NotMatch 'Strawberry' }) -join ';'
         $env:LIB = ($env:LIB.Split(';') | Where-Object { $_ -NotMatch 'Strawberry' }) -join ';'
         cd $HOME
         wget 'https://download.savannah.gnu.org/releases/freetype/ft2101.zip' -O 'ft.zip'
