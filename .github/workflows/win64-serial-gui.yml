@@ -17,6 +17,7 @@ jobs:
       run: |
         $Wc = New-Object System.Net.WebClient
         $Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
+        $Wc.Dispose()
         echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
         $env:QT_INSTALL_DIR = 'C:/Qt'
         Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
@@ -24,11 +25,16 @@ jobs:
         $env:QTDIR = "C:/Qt/5.13.1/mingw73_64"
         $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
         $env:PATH += "C:/Qt/5.13.1/mingw73_64/bin;"
+        choco install -y zip --version 3.0
+        choco install -y ninja
+        choco install -y winflexbison
+        choco install -y innounp
     - name: Build Freetype
       run: |
         cd $HOME
         $Wc = New-Object System.Net.WebClient
         $Wc.DownloadFile('https://download.savannah.gnu.org/releases/freetype/ft2101.zip', 'ft.zip')
+        $Wc.Dispose()
         unzip ./ft.zip
         Echo 'Compiling FreeType...'
         mkdir freetype-build
