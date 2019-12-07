@@ -40,12 +40,28 @@ jobs:
         cd freetype-build
         cmake -G "Ninja" ../freetype-2.10.1
         ninja
+    - name: Build FTGL
+      run: |
+        cd $HOME
+        echo 'Compiling FTGL'
+        git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
+        mkdir ftgl-build
+        cd ftgl-build
         $env:INCLUDE += "$HOME\\freetype-2.10.1;"
         $env:LIB += "$HOME\\freetype-build;"
+        cmake -G "Ninja" ..\ftgl-latest
+        ninja
     - name: Build (CMake/Ninja)
       run: |
         mkdir build
         cd build
+        $env:QTDIR = "C:/Qt/5.13.1/mingw73_64"
+        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
+        $env:PATH += "C:/Qt/5.13.1/mingw73_64/bin;"
+        $env:INCLUDE += "$HOME\\freetype-2.10.1;"
+        $env:LIB += "$HOME\\freetype-build;"
+        $env:INCLUDE += "$HOME\\ftgl-latest\\src;"
+        $env:LIB += "$HOME\\ftgl-build\\src;"
         cmake -G "Ninja" -DGUI:bool=true ../
         ninja
         cd ../
