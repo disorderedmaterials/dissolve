@@ -1,0 +1,35 @@
+name: AppImage (GUI/Serial) (Ubuntu 18.04)
+
+on:
+  push:
+    branches:
+    - develop
+    - release/*
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Qt 5.13.2
+      run: |
+        sudo add-apt-repository ppa:beineri/opt-qt-5.13.1-bionic -y
+        sudo apt-get update -q
+        sudo apt-get install qt513base -y
+    - name: Build (CMake/Ninja)
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Create AppImage
+      run: |
+        wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
+        chmod u+x build-appimage.sh
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        ./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b ${SERIALBINARY}
+        ./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b ${GUIBINARY}
+
