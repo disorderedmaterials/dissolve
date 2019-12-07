@@ -1,0 +1,51 @@
+name: Win64 (GUI/Serial) (Windows Server Latest)
+
+on:
+  push:
+    branches:
+    - develop
+    - release/*
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisties
+      run: |
+        # Install Qt 5.13.1
+        $Wc = New-Object System.Net.WebClient
+        $Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
+        echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
+        $env:QT_INSTALL_DIR = 'C:/Qt'
+        Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
+        Remove-Item qt.exe
+        # Set environment
+        $env:QTDIR = "C:/Qt/5.13.1/mingw73_64"
+        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
+        $env:PATH += "C:/Qt/5.13.1/mingw73_64/bin;"
+    - name: Build Freetype
+      run: |
+        # Retrieve / compile Freetype 2.10.1
+        cd $HOME
+        wget 'https://download.savannah.gnu.org/releases/freetype/ft2101.zip' -O 'ft.zip'
+        unzip ./ft.zip
+        Echo 'Compiling FreeType...'
+        mkdir freetype-build
+        cd freetype-build
+        cmake -G "Ninja" ../freetype-2.10.1
+        ninja
+        # Set environment
+        $env:INCLUDE += "$HOME\\freetype-2.10.1;"
+        $env:LIB += "$HOME\\freetype-build;"
+    - name: Build (CMake/Ninja)
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Create Installer
+      run: |
