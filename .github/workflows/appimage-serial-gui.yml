@@ -21,6 +21,10 @@ jobs:
         sudo apt-get install qt513base -y
     - name: Build (CMake/Ninja)
       run: |
+        QT_BASE_DIR=/opt/qt513
+        export QTDIR=$QT_BASE_DIR
+        export PATH=$QT_BASE_DIR/bin:$PATH
+        export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
         mkdir build
         cd build
         cmake -G "Ninja" -DGUI:bool=true ../
