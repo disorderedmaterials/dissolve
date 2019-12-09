@@ -67,6 +67,8 @@ class DissolveSys
 	static const char* beforeStr(const char*, const char*);
 	// Get characters after first occurrence of designated character
 	static const char* afterStr(const char*, const char*);
+	// Return if the target string ends with the specified characters
+	static bool endsWith(const char* target, const char* ending);
 	// Remove comments from line
 	static void removeComments(char* s);
 	// Strip trailing whitespace from string
