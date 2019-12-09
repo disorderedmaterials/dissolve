@@ -23,6 +23,7 @@
 #include "gui/datamanagerdialog.h"
 #include "main/dissolve.h"
 #include <QFileDialog>
+#include <QInputDialog>
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
@@ -87,10 +88,11 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 {
 	// Get filename for restart point
-	QString filename = QFileDialog::getSaveFileName(this, tr("Select Output File"), QDir::currentPath(), tr("Restart Files (*.restart)"));
+	QString filename = QFileDialog::getSaveFileName(this, "Select Output File", QDir::currentPath(), "Restart Files (*.restart)");
 	if (filename.isEmpty()) return;
 
-	dissolve_.saveRestart()
+	if (dissolve_.saveRestart(qPrintable(filename))) Messenger::print("Saved restart point to '%s'.\n", qPrintable(filename));
+	else Messenger::error("Failed to save restart point to '%s'.\n", qPrintable(filename));
 }
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
