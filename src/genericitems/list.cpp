@@ -183,6 +183,23 @@ bool GenericList::rename(const char* oldName, const char* oldPrefix, const char*
 	return true;
 }
 
+// Prune all items with '@suffix'
+void GenericList::pruneWithSuffix(const char* suffix)
+{
+	GenericItem* nextItem = NULL;
+	GenericItem* item = items_.first();
+	while (item != NULL)
+	{
+		if (DissolveSys::endsWith(item->name(), suffix))
+		{
+			nextItem = item->next();
+			items_.remove(item);
+			item = nextItem;
+		}
+		else item = item->next();
+	}
+}
+
 /*
  * Parallel Comms
  */
