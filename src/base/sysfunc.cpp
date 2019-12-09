@@ -226,6 +226,26 @@ const char* DissolveSys::afterStr(const char* s, const char* search)
 	return c;
 }
 
+// Return if the target string ends with the specified characters
+bool DissolveSys::endsWith(const char* target, const char* ending)
+{
+	// Check for enough characters to compare
+	const int targetLength = strlen(target);
+	const int endingLength = strlen(ending);
+	if (targetLength < endingLength) return false;
+
+	const char* c1 = &target[targetLength-1];
+	const char* c2 = &ending[endingLength-1];
+	for (int n=0; n<endingLength; ++n)
+	{
+		if ((*c1) != (*c2)) return false;
+		--c1;
+		--c2;
+	}
+
+	return true;
+}
+
 // Remove comments from line
 void DissolveSys::removeComments(char* s)
 {

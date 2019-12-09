@@ -24,6 +24,7 @@
 
 #include "gui/ui_gui.h"
 #include "gui/outputhandler.hui"
+#include "gui/referencepoint.h"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -131,6 +132,14 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
+	 * Reference Points
+	 */
+	private:
+	// List of ReferencePoints currently loaded
+	List<ReferencePoint> referencePoints_;
+
+
+	/*
 	 * Update Functions
 	 */
 	public slots:
@@ -169,6 +178,8 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
+	void on_SimulationSaveRestartPointAction_triggered(bool checked);
+	void on_SimulationDataManagerAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesCreateEmptyAction_triggered(bool checked);
@@ -266,10 +277,10 @@ class DissolveWindow : public QMainWindow
 	void on_ControlReloadButton_clicked(bool checked);
 
 	public slots:
-	// Set widgets ready for the main code to be run
-	void setWidgetsForRun();
-	// Set widgets after the main code has been run
-	void setWidgetsAfterRun();
+	// Disable sensitive controls
+	void disableSensitiveControls();
+	// Enable sensitive controls
+	void enableSensitiveControls();
 	// All iterations requested are complete
 	void iterationsComplete();
 
@@ -284,31 +295,25 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	void on_MainTabs_currentChanged(int index);
 
-	public:
-
-
-
 	public slots:
 	// Add or go to Module tab for the Module with the unique name provided
 	void showModuleTab(const QString& uniqueName);
 	// Remove the Module tab (if it exists) for the Module with the unique name provided
 	void removeModuleTab(const QString& uniqueName);
-// 	// Remove tab containing the specified page widget
-// 	void removeTab(QWidget* page);
 
 
 	/*
-	 * 'Simulation' Stack Page - State I/O
+	 * GUI State
 	 */
 	private:
-	// Filename containing current window layout
-	CharString windowLayoutFilename_;
+	// Filename containing current GUI state
+	CharString stateFilename_;
 
 	public:
-	// Save current window layout
-	bool saveWindowLayout();
-	// Load window state
-	bool loadWindowLayout();
+	// Save current GUI state
+	bool saveState();
+	// Load GUI state
+	bool loadState();
 };
 
 #endif

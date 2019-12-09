@@ -112,7 +112,7 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 	}
 
 	// Save the state before we go...
-	saveWindowLayout();
+	saveState();
 
 	// If Dissolve is running, stop the thread now
 	if (dissolveState_ == RunningState)
@@ -181,12 +181,12 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 
 	// Set the current dir to the location of the new file
 	QFileInfo inputFileInfo(inputFile);
-	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
 	// Load the input file
 	Messenger::banner("Parse Input File");
-	if (DissolveSys::fileExists(qPrintable(inputFileInfo.fileName())))
+	if (inputFileInfo.exists())
 	{
+		QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName()))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
 	else return Messenger::error("Input file does not exist.\n");
@@ -217,10 +217,10 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?
-	windowLayoutFilename_.sprintf("%s.state", dissolve_.inputFilename());
+	stateFilename_.sprintf("%s.state", dissolve_.inputFilename());
 
 	// Try to load in the window state file
-	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
+	if (DissolveSys::fileExists(stateFilename_) && (!ignoreLayoutFile)) loadState();
 
 	localSimulation_ = true;
 

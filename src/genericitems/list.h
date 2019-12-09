@@ -66,6 +66,8 @@ class GenericList
 	bool remove(const char* name, const char* prefix);
 	// Rename item
 	bool rename(const char* oldName, const char* oldPrefix, const char* newName, const char* newPrefix);
+	// Prune all items with '@suffix'
+	void pruneWithSuffix(const char* suffix);
 
 
 	/*

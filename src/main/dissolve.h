@@ -338,6 +338,8 @@ class Dissolve
 	bool saveInput(const char* filename);
 	// Load restart file
 	bool loadRestart(const char* filename);
+	// Load restart file as reference point
+	bool loadRestartAsReference(const char* filename, const char* dataSuffix);
 	// Save restart file
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
