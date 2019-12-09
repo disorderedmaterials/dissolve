@@ -552,7 +552,7 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
 		{
 			// Create new suffixed name
-			newName.sprintf("%s@%s", parser.argc(2), dataSuffix);
+			newName.sprintf("%s@%s", parser.argc(1), dataSuffix);
 
 			// Let the user know what we are doing
 			Messenger::print("Reading item '%s' => '%s' (%s) into processing module data...\n", parser.argc(1), newName.get(), parser.argc(2));
