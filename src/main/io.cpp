@@ -585,7 +585,7 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 			// Let the user know what we are doing
 			Messenger::print("Ignoring timing information for Module '%s'...\n", parser.argc(1));
 
-			skipCurrentItem = false;
+			skipCurrentItem = true;
 		}
 		else if (!skipCurrentItem)
 		{
