@@ -242,7 +242,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+              <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
