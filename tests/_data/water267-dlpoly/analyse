@@ -5,3 +5,6 @@
 rdfaainter water-267-298K.HISu water-267-298K.OUT -sp1 1 -sp2 1 -pair 2 1 -pair 2 3
 rdfsum water-267-298K.aardf1_02_1_01 water-267-298K.aardf1_02_1_03 > water-267-298K.aardf_21_23_inter_sum
 dahist water-267-298K.HISu water-267-298K.OUT 1 1 5.0 -triplet 2 1 2 -triplet 2 3 2
+
+# SDFs 
+pdens water-267-298K.HISu water-267-298K.OUT 1 1 -axis 1 2 3 1 1
