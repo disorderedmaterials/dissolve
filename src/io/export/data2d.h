@@ -61,13 +61,13 @@ class Data2DExportFileFormat : public FileAndFormat
 	 */
 	private:
 	// Export Data2D as simple block data
-	bool exportBlock(LineParser& parser, Data2D& data);
+	bool exportBlock(LineParser& parser, const Data2D& data);
 	// Export Data2D as cartesian data
-	bool exportCartesian(LineParser& parser, Data2D& data);
+	bool exportCartesian(LineParser& parser, const Data2D& data);
 
 	public:
 	// Export Data2D using current filename and format
-	bool exportData(Data2D& data);
+	bool exportData(const Data2D& data);
 };
 
 #endif

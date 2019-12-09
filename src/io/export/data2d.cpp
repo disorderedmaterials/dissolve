@@ -62,10 +62,10 @@ Data2DExportFileFormat::Data2DExportFileFormat(const char* filename, Data2DExpor
  */
 
 // Export Data2D as simple block data
-bool Data2DExportFileFormat::exportBlock(LineParser& parser, Data2D& data)
+bool Data2DExportFileFormat::exportBlock(LineParser& parser, const Data2D& data)
 {
 	// Export header comment
-	if (!parser.writeLineF("# %i blocks (nX) of %i points (nY).\n", data.xAxis().nItems(), data.yAxis().nItems())) return false;
+	if (!parser.writeLineF("# %i blocks (nX) of %i points (nY).\n", data.constXAxis().nItems(), data.constYAxis().nItems())) return false;
 
 	// Export datapoints, separating each block of a specific x value with a single blank line
 	const Array2D<double>& values = data.constValues2D();
@@ -79,7 +79,7 @@ bool Data2DExportFileFormat::exportBlock(LineParser& parser, Data2D& data)
 }
 
 // Export Data2D as cartesian data
-bool Data2DExportFileFormat::exportCartesian(LineParser& parser, Data2D& data)
+bool Data2DExportFileFormat::exportCartesian(LineParser& parser, const Data2D& data)
 {
 	// Three-column format (x  y  value) in blocks of similar y value, separated by blank lines
 	const Array2D<double>& values = data.constValues2D();
@@ -95,7 +95,7 @@ bool Data2DExportFileFormat::exportCartesian(LineParser& parser, Data2D& data)
 }
 
 // Export Data2D using current filename and format
-bool Data2DExportFileFormat::exportData(Data2D& data)
+bool Data2DExportFileFormat::exportData(const Data2D& data)
 {
 	// Open the file
 	LineParser parser;
