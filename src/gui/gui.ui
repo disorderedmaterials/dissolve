@@ -887,7 +887,7 @@ Remote Simulation</string>
     <addaction name="SimulationStepFiveAction"/>
     <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
-    <addaction name="SimulationCreateSnapshotAction"/>
+    <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
@@ -1464,9 +1464,9 @@ Remote Simulation</string>
     <string>&amp;Data Manager...</string>
    </property>
   </action>
-  <action name="SimulationCreateSnapshotAction">
+  <action name="SimulationSaveRestartPointAction">
    <property name="text">
-    <string>&amp;Create Snapshot...</string>
+    <string>Save Restart &amp;Point...</string>
    </property>
   </action>
  </widget>
