@@ -112,7 +112,7 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 	}
 
 	// Save the state before we go...
-	saveWindowLayout();
+	saveState();
 
 	// If Dissolve is running, stop the thread now
 	if (dissolveState_ == RunningState)
@@ -217,10 +217,10 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?
-	windowLayoutFilename_.sprintf("%s.state", dissolve_.inputFilename());
+	stateFilename_.sprintf("%s.state", dissolve_.inputFilename());
 
 	// Try to load in the window state file
-	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
+	if (DissolveSys::fileExists(stateFilename_) && (!ignoreLayoutFile)) loadState();
 
 	localSimulation_ = true;
 

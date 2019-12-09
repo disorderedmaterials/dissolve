@@ -23,12 +23,12 @@
 #include "gui/gui.h"
 #include "base/lineparser.h"
 
-// Save current window layout
-bool DissolveWindow::saveWindowLayout()
+// Save current GUI state
+bool DissolveWindow::saveState()
 {
 	// Open file for writing
 	LineParser stateParser;
-	stateParser.openOutput(windowLayoutFilename_);
+	stateParser.openOutput(stateFilename_);
 	if (!stateParser.isFileGoodForWriting()) return false;
 
 	// Write current tab index
@@ -51,12 +51,12 @@ bool DissolveWindow::saveWindowLayout()
 	return true;
 }
 
-// Load window layout
-bool DissolveWindow::loadWindowLayout()
+// Load GUI state
+bool DissolveWindow::loadState()
 {
 	// Open file for reading
 	LineParser stateParser;
-	stateParser.openInput(windowLayoutFilename_);
+	stateParser.openInput(stateFilename_);
 	if (!stateParser.isFileGoodForReading()) return false;
 
 	// Read current tab index - it may not yet exist, so store it now and set it later

@@ -303,17 +303,17 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * 'Simulation' Stack Page - State I/O
+	 * GUI State
 	 */
 	private:
-	// Filename containing current window layout
-	CharString windowLayoutFilename_;
+	// Filename containing current GUI state
+	CharString stateFilename_;
 
 	public:
-	// Save current window layout
-	bool saveWindowLayout();
-	// Load window state
-	bool loadWindowLayout();
+	// Save current GUI state
+	bool saveState();
+	// Load GUI state
+	bool loadState();
 };
 
 #endif
