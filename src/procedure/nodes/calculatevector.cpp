@@ -30,7 +30,11 @@
 // Constructor
 CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode* site0, SelectProcedureNode* site1, SelectProcedureNode* site2, SelectProcedureNode* site3) : CalculateProcedureNodeBase(ProcedureNode::CalculateVectorNode, site0, site1, site2, site3)
 {
-
+	// Create keywords - store the pointers to the superclasses for later use
+	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
+	keywords_.add("Sites", siteKeywords_[0], "I", "Site that represents 'i' in the vector i->j");
+	siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site1);
+	keywords_.add("Sites", siteKeywords_[1], "J", "Site that represents 'j' in the vector i->j");
 }
 
 // Destructor
