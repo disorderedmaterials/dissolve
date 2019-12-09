@@ -26,8 +26,9 @@
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references) : KeywordData< RefList<SpeciesSite>& >(KeywordData::SpeciesSiteRefListData, references)
+SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references, bool axesRequired) : KeywordData< RefList<SpeciesSite>& >(KeywordData::SpeciesSiteRefListData, references)
 {
+	axesRequired_ = axesRequired;
 }
 
 // Destructor
@@ -68,6 +69,7 @@ bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const Cor
 		// Find specified Site (second argument) in the Species
 		SpeciesSite* site = sp->findSite(parser.argc(n+1));
 		if (!site) return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(n+1), sp->name());
+		if (axesRequired_ && (!site->hasAxes())) return Messenger::error("Can't add site '%s' to keyword '%s', as the keyword requires axes specifications for all sites.\n", site->name(), name());
 
 		// Add site to the list
 		data_.append(site);

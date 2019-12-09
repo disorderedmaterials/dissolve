@@ -32,12 +32,13 @@
 #include "base/sysfunc.h"
 
 // Constructors
-SelectProcedureNode::SelectProcedureNode(SpeciesSite* site) : ProcedureNode(ProcedureNode::SelectNode)
+SelectProcedureNode::SelectProcedureNode(SpeciesSite* site, bool axesRequired) : ProcedureNode(ProcedureNode::SelectNode)
 {
 	if (site) speciesSites_.append(site);
+	axesRequired_ = axesRequired;
 
-	keywords_.add("Target", new SpeciesSiteRefListKeyword(speciesSites_), "Site", "Add target site(s) to the selection");
-	keywords_.add("Target", new DynamicSiteNodesKeyword(this, dynamicSites_), "DynamicSite", "Add a new dynamic site to the selection");
+	keywords_.add("Target", new SpeciesSiteRefListKeyword(speciesSites_, axesRequired_), "Site", "Add target site(s) to the selection");
+	keywords_.add("Target", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite", "Add a new dynamic site to the selection");
 	keywords_.add("Target", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "SameMoleculeAsSite", "Request that the selected site comes from the molecule containing the current site in the specified SelectNode");
 	keywords_.add("Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameMoleculeExclusions_), "ExcludeSameMolecule", "Exclude sites from selection if they are present in the same molecule as the current site in the specified SelectNode(s)");
 	keywords_.add("Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameSiteExclusions_), "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)");

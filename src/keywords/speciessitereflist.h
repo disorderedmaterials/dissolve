@@ -33,9 +33,17 @@ class SpeciesSiteRefListKeyword : public KeywordData< RefList<SpeciesSite>& >
 {
 	public:
 	// Constructor
-	SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references);
+	SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references, bool axesRequired = false);
 	// Destructor
 	~SpeciesSiteRefListKeyword();
+
+
+	/*
+	 * Specification
+	 */
+	private:
+	// Whether sites in the list must have a defined orientation
+	bool axesRequired_;
 
 
 	/*
