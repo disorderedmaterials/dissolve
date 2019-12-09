@@ -356,7 +356,6 @@ bool Dissolve::loadRestart(const char* filename)
 
 	while (!parser.eofOrBlank())
 	{
-		// Master will read the next line from the file
 		if (parser.getArgsDelim() != 0) break;
 
 		// First argument indicates the type of data
