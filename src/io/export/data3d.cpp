@@ -141,7 +141,7 @@ bool Data3DExportFileFormat::exportPDens(LineParser& parser, const Data3D& data)
 }
 
 // Export Data3D using current filename and format
-bool Data3DExportFileFormat::exportData(Data3D& data)
+bool Data3DExportFileFormat::exportData(const Data3D& data)
 {
 	// Open the file
 	LineParser parser;

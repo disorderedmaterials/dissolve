@@ -69,7 +69,7 @@ class Data3DExportFileFormat : public FileAndFormat
 
 	public:
 	// Export Data3D using current filename and format
-	bool exportData(Data3D& data);
+	bool exportData(const Data3D& data);
 };
 
 #endif
