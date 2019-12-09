@@ -23,9 +23,13 @@
 #define DISSOLVE_MODULE_CALCULATESDF_H
 
 #include "module/module.h"
+#include "procedure/procedure.h"
 
 // Forward Declarations
-/* none */
+class Collect3DProcedureNode;
+class Process3DProcedureNode;
+class SelectProcedureNode;
+class SpeciesSite;
 
 // CalculateSDF Module
 class CalculateSDFModule : public Module
@@ -73,6 +77,22 @@ class CalculateSDFModule : public Module
 	private:
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
+
+
+	/*
+	 * Functions / Data
+	 */
+	private:
+	// Analysis procedure to be run
+	Procedure analyser_;
+	// SelectNode for site A (origin)
+	SelectProcedureNode* selectA_;
+	// SelectNode for site B (surrounding)
+	SelectProcedureNode* selectB_;
+	// Collect3DNode for position of B around A SDF
+	Collect3DProcedureNode* collectVector_;
+	// Process3DNode for B around A SDF
+	Process3DProcedureNode* processPosition_;
 
 
 	/*

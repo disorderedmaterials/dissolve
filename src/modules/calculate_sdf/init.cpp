@@ -21,10 +21,98 @@
 
 #include "modules/calculate_sdf/sdf.h"
 #include "keywords/types.h"
+#include "procedure/nodes/calculatevector.h"
+#include "procedure/nodes/collect3d.h"
+#include "procedure/nodes/process3d.h"
+#include "procedure/nodes/select.h"
 
 // Perform any necessary initialisation for the Module
 void CalculateSDFModule::initialise()
 {
-// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+	/*
+	 * Assemble the following Procedure:
+	 *
+	 * Select  'A'
+	 *   Site  ...
+	 *   ForEach
+	 *     Select  'B'
+	 *       Site  ...
+	 *       ExcludeSameSite  'A'
+	 *       ExcludeSameMolecule  'A'
+	 *       ForEach
+	 *         Calculate  'rAB'
+	 *           Distance  'A'  'B'
+	 *         EndCalculate
+	 *         Collect1D  RDF
+	 *           QuantityX  'rAB'
+	 *           RangeX  0.0  10.0  0.05
+	 *         EndCollect1D
+	 *       EndForEach  'B'
+	 *     EndSelect  'B'
+	 *   EndForEach  'A'
+	 * EndSelect  'A'
+	 * Process1D  RDF
+	 *   Normalisation
+	 *     OperateSitePopulationNormalise
+	 *       Site  'A'
+	 *     EndOperateSitePopulationNormalise
+	 *     OperateNumberDensityNormalise
+	 *       Site  'B'
+	 *     EndOperateNumberDensityNormalise
+	 *     OperateSphericalShellNormalise
+	 *     EndOperateSphericalShellNormalise
+	 *   EndNormalisation
+	 *   LabelValue  'g(r)'
+	 *   LabelX  'r, Angstroms'
+	 * EndProcess1D
+	 */
+
+	// Select: Site 'A'
+	selectA_ = new SelectProcedureNode(NULL, true);
+	selectA_->setName("A");
+	SequenceProcedureNode* forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+	analyser_.addRootSequenceNode(selectA_);
+
+	// -- Select: Site 'B'
+	selectB_ = new SelectProcedureNode();
+	selectB_->setName("B");
+	RefList<SelectProcedureNode> exclusions(selectA_);
+	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameSite", exclusions);
+	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", exclusions);
+	SequenceProcedureNode* forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+	forEachA->addNode(selectB_);
+
+	// -- -- Calculate: 'v(B->A)'
+	CalculateVectorProcedureNode* calcVector = new CalculateVectorProcedureNode(selectA_, selectB_, true);
+	forEachB->addNode(calcVector);
+
+	// -- -- Collect3D: 'SDF'
+	collectVector_ = new Collect3DProcedureNode(calcVector, -10.0, 10.0, 0.5, -10.0, 10.0, 0.5, -10.0, 10.0, 0.5);
+	forEachB->addNode(collectVector_);
+
+	// Process3D: @dataName
+	processPosition_ = new Process3DProcedureNode(collectVector_);
+	processPosition_->setName("RDF");
+	processPosition_->setKeyword<CharString>("LabelValue", "g(r)");
+	processPosition_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+
+// 	SequenceProcedureNode* rdfNormalisation = processPosition_->addNormalisationBranch();
+// 	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
+// 	rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
+// 	rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
+// 	analyser_.addRootSequenceNode(processPosition_);
+
+	/*
+	 * Keywords (including those exposed from the ProcedureNodes)
+	 */
+
+	// Calculation
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(10.0, 10.0, 10.0), Vec3<double>(1.0, 1.0, 1.0), Vec3Labels::XYZLabels), "Range", "Range along each positive/negative axis", "<xrange> <yrange> <zrange> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.5, 0.5, 0.5), Vec3<double>(0.1, 0.1, 0.1), Vec3Labels::XYZLabels), "Delta", "Delta (binwidth) along each axis", "<xdelta> <ydelta> <zdelta> (Angstroms)");
+
+	// Sites
+	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", "<Species> <Site>");
+	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", "<Species> <Site>");
+	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 }
 

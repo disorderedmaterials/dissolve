@@ -30,17 +30,17 @@ const char* CalculateSDFModule::type() const
 // Return category for module
 const char* CalculateSDFModule::category() const
 {
-	return "NO CATEGORY ASSIGNED";
+	return "Analysis";
 }
 
 // Return brief description of module
 const char* CalculateSDFModule::brief() const
 {
-	return "Empty Module providing skeletal structure for new Module development";
+	return "Calculate spatial density functions around oriented sites";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int CalculateSDFModule::nTargetableConfigurations() const
 {
-	return 0;
+	return 1;
 }
