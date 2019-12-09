@@ -159,7 +159,7 @@ template <class T> class ObjectStore
 	{
 		return objectInfo_;
 	}
-	// Set tag for this object, appending type name prefix
+	// Set tag for this object, prepending type name prefix
 	void setObjectTag(const char* tag)
 	{
 		// Get actual tag of object - does the supplied tag already contain a type prefix?
