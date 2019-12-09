@@ -129,13 +129,12 @@ void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint* refPoin
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
-		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui_.ReferencePointsTable->setItem(row, 0, item);
 	}
 	else item = ui_.ReferencePointsTable->item(row, 0);
 	item->setText(refPoint->suffix());
 
-	// Module group
+	// Restart file name
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
@@ -163,9 +162,11 @@ void DataManagerDialog::updateControls()
 	addItemsToTable(ui_.SimulationDataTable, dissolve_.processingModuleData().items(), "Main Processing", ":/dissolve/icons/dissolve.png");
 	ListIterator<Configuration> configIterator(dissolve_.configurations());
 	while (Configuration* cfg = configIterator.iterate()) addItemsToTable(ui_.SimulationDataTable, cfg->moduleData().items(), cfg->name(), ":/tabs/icons/tabs_configuration.svg");
+	ui_.SimulationDataTable->resizeColumnsToContents();
 
 	// Populate reference points table
 	TableWidgetUpdater<DataManagerDialog,ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this, &DataManagerDialog::referencePointRowUpdate);
+	ui_.ReferencePointsTable->resizeColumnsToContents();
 }
 
 // Simulation Data
@@ -185,9 +186,10 @@ void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)
 	ListIterator<Configuration> configIterator(dissolve_.configurations());
 	while (Configuration* cfg = configIterator.iterate()) cfg->moduleData().pruneWithSuffix(qPrintable(refPoint->suffix()));
 
+	updateControls();
 }
 
-void DataManagerDialog::on_ReferencePointAddButton_clicked(bool checked)
+void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
 {
 	// Get file to open
 	QString restartFile = QFileDialog::getOpenFileName(this, "Choose restart file to open", QDir().absolutePath(), "Restart Files (*.restart)");
@@ -200,7 +202,7 @@ void DataManagerDialog::on_ReferencePointAddButton_clicked(bool checked)
 	if (!ok) return;
 
 	ReferencePoint* refPoint = referencePoints_.add();
-	refPoint->setRestartFile(restartFile);
+	refPoint->setRestartFile(QDir::current().relativeFilePath(restartFile));
 	refPoint->setSuffix(suffix);
 
 	// Load the data
@@ -209,13 +211,37 @@ void DataManagerDialog::on_ReferencePointAddButton_clicked(bool checked)
 	updateControls();
 }
 
+void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
+{
+	// Get filename for reference point
+	QString filename = QFileDialog::getSaveFileName(this, "Select Reference Point File", QDir::currentPath(), "Restart Files (*.restart)");
+	if (filename.isEmpty()) return;
+
+	// Get suffix for data - base this on the filename
+	QString suffix = QFileInfo(filename).baseName();
+	bool ok;
+	suffix = QInputDialog::getText(this, "Reference Point Suffix", "Enter suffix to apply to the reference point data", QLineEdit::Normal, suffix, &ok);
+	if (!ok) return;
+
+	if (dissolve_.saveRestart(qPrintable(filename))) Messenger::print("Saved reference point to '%s'.\n", qPrintable(filename));
+	else
+	{
+		Messenger::error("Failed to save reference point to '%s'.\n", qPrintable(filename));
+		return;
+	}
+
+	ReferencePoint* refPoint = referencePoints_.add();
+	refPoint->setRestartFile(QDir::current().relativeFilePath(filename));
+	refPoint->setSuffix(suffix);
+
+	if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix))) QMessageBox::warning(this, "Error loading reference point", "Couldn't load the reference point data.\nWhich is odd, annoying, and something you should let the developer know about.");
+
+	updateControls();
+}
+
 void DataManagerDialog::on_ReferencePointsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
 {
 	ui_.ReferencePointRemoveButton->setEnabled(currentItem);
-}
-
-void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
-{
 }
 
 // Dialog

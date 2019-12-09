@@ -73,9 +73,9 @@ class DataManagerDialog : public QDialog
 	void on_SimulationDataFilterEdit_textChanged(const QString& text);
 	// Reference Points
 	void on_ReferencePointRemoveButton_clicked(bool checked);
-	void on_ReferencePointAddButton_clicked(bool checked);
-	void on_ReferencePointsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem);
 	void on_ReferencePointCreateButton_clicked(bool checked);
+	void on_ReferencePointOpenButton_clicked(bool checked);
+	void on_ReferencePointsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem);
 
 	// Dialog
 	void on_CloseButton_clicked(bool checked);
