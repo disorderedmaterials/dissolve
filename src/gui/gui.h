@@ -277,10 +277,10 @@ class DissolveWindow : public QMainWindow
 	void on_ControlReloadButton_clicked(bool checked);
 
 	public slots:
-	// Set widgets ready for the main code to be run
-	void setWidgetsForRun();
-	// Set widgets after the main code has been run
-	void setWidgetsAfterRun();
+	// Disable sensitive controls
+	void disableSensitiveControls();
+	// Enable sensitive controls
+	void enableSensitiveControls();
 	// All iterations requested are complete
 	void iterationsComplete();
 

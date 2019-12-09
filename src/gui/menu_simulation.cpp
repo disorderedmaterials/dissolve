@@ -31,7 +31,7 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
-	setWidgetsForRun();
+	disableSensitiveControls();
 
 	dissolveState_ = DissolveWindow::RunningState;
 
@@ -47,7 +47,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
-	setWidgetsForRun();
+	disableSensitiveControls();
 
 	dissolveState_ = DissolveWindow::RunningState;
 
@@ -63,7 +63,7 @@ void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
-	setWidgetsForRun();
+	disableSensitiveControls();
 
 	dissolveState_ = DissolveWindow::RunningState;
 

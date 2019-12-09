@@ -48,8 +48,8 @@ void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
 	// TODO
 }
 
-// Set widgets ready for the main code to be run
-void DissolveWindow::setWidgetsForRun()
+// Disable sensitive controls
+void DissolveWindow::disableSensitiveControls()
 {
 	// Disable / enable controls
 	ui_.ControlRunButton->setEnabled(false);
@@ -57,11 +57,11 @@ void DissolveWindow::setWidgetsForRun()
 	ui_.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
-	 ui_.MainTabs->disableSensitiveControls();
+	ui_.MainTabs->disableSensitiveControls();
 }
 
-// Set widgets after the main code has been run
-void DissolveWindow::setWidgetsAfterRun()
+// Enable sensitive controls
+void DissolveWindow::enableSensitiveControls()
 {
 	// Disable / enable controls
 	ui_.ControlRunButton->setEnabled(true);
@@ -79,5 +79,5 @@ void DissolveWindow::setWidgetsAfterRun()
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
-	setWidgetsAfterRun();
+	enableSensitiveControls();
 }
