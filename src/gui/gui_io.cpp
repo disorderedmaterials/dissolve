@@ -22,6 +22,7 @@
 #include "main/dissolve.h"
 #include "gui/gui.h"
 #include "base/lineparser.h"
+#include <QMessageBox>
 
 // Save current GUI state
 bool DissolveWindow::saveState()
@@ -30,6 +31,13 @@ bool DissolveWindow::saveState()
 	LineParser stateParser;
 	stateParser.openOutput(stateFilename_);
 	if (!stateParser.isFileGoodForWriting()) return false;
+
+	// Write reference points
+	ListIterator<ReferencePoint> referencePointIterator(referencePoints_);
+	while (ReferencePoint* refPoint = referencePointIterator.iterate())
+	{
+		if (!stateParser.writeLineF("ReferencePoint  '%s'  '%s'\n", refPoint->suffix(), refPoint->restartFile())) return false;
+	}
 
 	// Write tab state
 	RefList<MainTab> tabs = ui_.MainTabs->allTabs();
@@ -98,6 +106,15 @@ bool DissolveWindow::loadState()
 				// Now read state information
 				if (!tab->readState(stateParser, dissolve_.coreData())) return false;
 			}
+		}
+		else if (DissolveSys::sameString(stateParser.argc(0), "ReferencePoint"))
+		{
+			ReferencePoint* refPoint = referencePoints_.add();
+			refPoint->setSuffix(stateParser.argc(1));
+			refPoint->setRestartFile(stateParser.argc(2));
+
+			if (!DissolveSys::fileExists(refPoint->restartFile())) QMessageBox::warning(this, "Error loading reference point", QString("Couldn't load reference point data from '%1' as the file does not exist.\n").arg(refPoint->restartFile()));
+			else if (!dissolve_.loadRestartAsReference(refPoint->restartFile(), refPoint->suffix())) QMessageBox::warning(this, "Error loading reference point", QString("Couldn't load reference point data from '%1'.\nThis may be because your simulation setup doesn't match that expected by the restart data.\n").arg(refPoint->restartFile()));
 		}
 		else
 		{
