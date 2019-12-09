@@ -89,6 +89,39 @@ class ObjectInfo
 	{
 		return tag_.get();
 	}
+
+
+	/*
+	 * Tag Control
+	 */
+	private:
+	// Whether automatic suffixing of tags is enabled
+	static bool autoSuffixing_;
+	// Suffix to append (if autoSuffixing_)
+	static CharString autoSuffix_;
+
+	public:
+	// Enable automatic suffixing of tags
+	static void enableAutoSuffixing(const char* suffix)
+	{
+		autoSuffixing_ = true;
+		autoSuffix_ = suffix;
+	}
+	// Disable automatic suffixing of tags
+	static void disableAutoSuffixing()
+	{
+		autoSuffixing_ = false;
+	}
+	// Return whether automatic suffixing of tags is enabled
+	static bool autoSuffixing()
+	{
+		return autoSuffixing_;
+	}
+	// Return suffix to append (if autoSuffixing_)
+	static const char* autoSuffix()
+	{
+		return autoSuffix_.get();
+	}
 };
 
 // Object Store
@@ -173,6 +206,10 @@ template <class T> class ObjectStore
 			if (!DissolveSys::sameString(typePrefix, objectTypeName_)) Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", tag, typePrefix.get(), objectTypeName_);
 		}
 		else objectTag = tag;
+
+		// Append auto-suffix
+		if (ObjectInfo::autoSuffixing()) objectTag = CharString("%s@%s", objectTag.get(), ObjectInfo::autoSuffix());
+
 #ifdef CHECKS
 		// Check for duplicate value already in list
 		if (!objectTag.isEmpty())
