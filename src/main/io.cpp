@@ -502,6 +502,9 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 	CharString newName;
 	bool error = false, skipCurrentItem = false;
 
+	// Enable suffixing of all ObjectStore types
+	ObjectInfo::enableAutoSuffixing(dataSuffix);
+
 	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file
@@ -601,6 +604,9 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 
 	// Error encountered?
 	if (error) Messenger::error("Errors encountered while loading restart file.\n");
+
+	// Disable suffixing of all ObjectStore types
+	ObjectInfo::disableAutoSuffixing();
 
 	// Done
 	if (worldPool().isWorldMaster()) parser.closeFiles();
