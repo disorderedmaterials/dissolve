@@ -96,9 +96,11 @@ void CalculateSDFModule::initialise()
 
 	// Process3D: @dataName
 	processPosition_ = new Process3DProcedureNode(collectVector_);
-	processPosition_->setName("RDF");
-	processPosition_->setKeyword<CharString>("LabelValue", "g(r)");
-	processPosition_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+	processPosition_->setName("SDF");
+	processPosition_->setKeyword<CharString>("LabelValue", "\\symbol{rho}(x,y,z)");
+	processPosition_->setKeyword<CharString>("LabelX", "x, \\symbol{Angstrom}");
+	processPosition_->setKeyword<CharString>("LabelY", "y, \\symbol{Angstrom}");
+	processPosition_->setKeyword<CharString>("LabelZ", "z, \\symbol{Angstrom}");
 	analyser_.addRootSequenceNode(processPosition_);
 
 // 	SequenceProcedureNode* rdfNormalisation = processPosition_->addNormalisationBranch();
