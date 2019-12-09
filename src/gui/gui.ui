@@ -1219,6 +1219,9 @@ Remote Simulation</string>
    </property>
   </action>
   <action name="SimulationPauseAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="main.qrc">
      <normaloff>:/control/icons/control_pause.svg</normaloff>:/control/icons/control_pause.svg</iconset>
