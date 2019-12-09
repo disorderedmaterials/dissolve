@@ -641,8 +641,8 @@ Remote Simulation</string>
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>32</width>
-                  <height>32</height>
+                  <width>40</width>
+                  <height>40</height>
                  </size>
                 </property>
                 <property name="toolButtonStyle">
