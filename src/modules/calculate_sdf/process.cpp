@@ -37,11 +37,12 @@ bool CalculateSDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 
 	// Ensure any parameters in our nodes are set correctly
-	const Vec3<double> range = keywords_.asVec3Double("Range");
-	const Vec3<double> delta = keywords_.asVec3Double("Delta");
-	collectVector_->setKeyword< Vec3<double> >("RangeX", Vec3<double>(-range.x, range.x, delta.x));
-	collectVector_->setKeyword< Vec3<double> >("RangeY", Vec3<double>(-range.y, range.y, delta.y));
-	collectVector_->setKeyword< Vec3<double> >("RangeZ", Vec3<double>(-range.z, range.z, delta.z));
+	const Vec3<double> rangeX = keywords_.asVec3Double("RangeX");
+	const Vec3<double> rangeY = keywords_.asVec3Double("RangeY");
+	const Vec3<double> rangeZ = keywords_.asVec3Double("RangeZ");
+	collectVector_->setKeyword< Vec3<double> >("RangeX", rangeX);
+	collectVector_->setKeyword< Vec3<double> >("RangeY", rangeY);
+	collectVector_->setKeyword< Vec3<double> >("RangeZ", rangeZ);
 	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
 	RefList<SelectProcedureNode> sameMoleculeExclusions;
 	if (excludeSameMolecule) sameMoleculeExclusions.append(selectA_);

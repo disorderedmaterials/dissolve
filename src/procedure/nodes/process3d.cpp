@@ -38,7 +38,7 @@ Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode* tar
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
 	keywords_.add("Target", new CharStringKeyword("Z"), "LabelZ", "Label for the z axis");
-	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
+	keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save", "Save processed data to disk");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation", "Branch providing normalisation operations for the data");
 
 	// Initialise branch
@@ -177,13 +177,16 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool& 
 	}
 
 	// Save data?
-	if (keywords_.asBool("Save"))
+	if (exportFileAndFormat_.hasValidFileAndFormat())
 	{
 		if (procPool.isMaster())
 		{
-			Messenger::error("Saving of 3D data is not yet implemented.\n");
-			procPool.decideFalse();
-			return ProcedureNode::Failure;
+			if (exportFileAndFormat_.exportData(data)) procPool.decideTrue();
+			else
+			{
+				procPool.decideFalse();
+				return ProcedureNode::Failure;
+			}
 		}
 		else if (!procPool.decision()) return ProcedureNode::Failure;
 	}

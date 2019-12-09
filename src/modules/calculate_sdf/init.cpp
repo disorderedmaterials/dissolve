@@ -40,18 +40,22 @@ void CalculateSDFModule::initialise()
 	 *       ExcludeSameSite  'A'
 	 *       ExcludeSameMolecule  'A'
 	 *       ForEach
-	 *         Calculate  'rAB'
-	 *           Distance  'A'  'B'
+	 *         Calculate  'vAB'
+	 *           Vector  'A'  'B'
+	 *           RotateIntoFrame  True
 	 *         EndCalculate
-	 *         Collect1D  RDF
-	 *           QuantityX  'rAB'
-	 *           RangeX  0.0  10.0  0.05
-	 *         EndCollect1D
+	 *         Collect3D  RDF
+	 *           QuantityX  'vAB'  1
+	 *           QuantityY  'vAB'  2
+	 *           QuantityZ  'vAB'  3
+	 *           Extents  10.0  10.0  10.0
+	 *           Deltas    0.5   0.5   0.5
+	 *         EndCollect3D
 	 *       EndForEach  'B'
 	 *     EndSelect  'B'
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
-	 * Process1D  RDF
+	 * Process3D  SDF
 	 *   Normalisation
 	 *     OperateSitePopulationNormalise
 	 *       Site  'A'
@@ -95,6 +99,7 @@ void CalculateSDFModule::initialise()
 	processPosition_->setName("RDF");
 	processPosition_->setKeyword<CharString>("LabelValue", "g(r)");
 	processPosition_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+	analyser_.addRootSequenceNode(processPosition_);
 
 // 	SequenceProcedureNode* rdfNormalisation = processPosition_->addNormalisationBranch();
 // 	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
@@ -107,12 +112,16 @@ void CalculateSDFModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(10.0, 10.0, 10.0), Vec3<double>(1.0, 1.0, 1.0), Vec3Labels::XYZLabels), "Range", "Range along each positive/negative axis", "<xrange> <yrange> <zrange> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.5, 0.5, 0.5), Vec3<double>(0.1, 0.1, 0.1), Vec3Labels::XYZLabels), "Delta", "Delta (binwidth) along each axis", "<xdelta> <ydelta> <zdelta> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05), Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels), "RangeX", "Range along X axis", "<min> <max> <delta> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05), Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels), "RangeY", "Range along Y axis", "<min> <max> <delta> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05), Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels), "RangeZ", "Range along Z axis", "<min> <max> <delta> (Angstroms)");
 
 	// Sites
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", "<Species> <Site>");
 	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", "<Species> <Site>");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+
+	// Export
+	keywords_.link("Export", processPosition_->keywords().find("Save"), "Save", "Save the SDF to the specified file / format");
 }
 
