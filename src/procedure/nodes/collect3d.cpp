@@ -180,7 +180,7 @@ bool Collect3DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	Histogram3D& target = GenericListHelper<Histogram3D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
 	if (created)
 	{
-		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
+		Messenger::printVerbose("Three-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
 		target.initialise(xMinimum(), xMaximum(), xBinWidth(), yMinimum(), yMaximum(), yBinWidth(), zMinimum(), zMaximum(), zBinWidth());
 	}
 
