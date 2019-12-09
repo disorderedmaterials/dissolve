@@ -181,12 +181,12 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 
 	// Set the current dir to the location of the new file
 	QFileInfo inputFileInfo(inputFile);
-	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
 	// Load the input file
 	Messenger::banner("Parse Input File");
-	if (DissolveSys::fileExists(qPrintable(inputFileInfo.fileName())))
+	if (inputFileInfo.exists())
 	{
+		QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName()))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
 	else return Messenger::error("Input file does not exist.\n");
