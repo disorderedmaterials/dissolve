@@ -356,7 +356,7 @@ bool Dissolve::loadRestart(const char* filename)
 
 	while (!parser.eofOrBlank())
 	{
-		if (parser.getArgsDelim() != 0) break;
+		if (parser.getArgsDelim() != LineParser::Success) break;
 
 		// First argument indicates the type of data
 		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
