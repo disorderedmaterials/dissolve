@@ -264,10 +264,17 @@ void ModuleBlock::updateControls()
 void ModuleBlock::disableSensitiveControls()
 {
 	ui_.RemoveButton->setEnabled(false);
+	ui_.NameEdit->setEnabled(false);
+	ui_.EnabledButton->setEnabled(false);
+	ui_.FrequencySpin->setEnabled(false);
 }
 
 // Enable sensitive controls
 void ModuleBlock::enableSensitiveControls()
 {
 	ui_.RemoveButton->setEnabled(true);
+	ui_.NameEdit->setEnabled(true);
+	ui_.EnabledButton->setEnabled(true);
+	ui_.FrequencySpin->setEnabled(true);
+
 }
