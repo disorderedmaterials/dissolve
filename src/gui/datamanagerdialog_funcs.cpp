@@ -202,8 +202,8 @@ void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
 	if (!ok) return;
 
 	ReferencePoint* refPoint = referencePoints_.add();
-	refPoint->setRestartFile(QDir::current().relativeFilePath(restartFile));
-	refPoint->setSuffix(suffix);
+	refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(restartFile)));
+	refPoint->setSuffix(qPrintable(suffix));
 
 	// Load the data
 	if (!dissolve_.loadRestartAsReference(qPrintable(refPoint->restartFile()), qPrintable(refPoint->suffix()))) QMessageBox::warning(this, "Error loading reference point", "Couldn't load the reference point data specified.\nThis may be because your simulation setup doesn't match that expected by the restart data.\n");
@@ -231,8 +231,8 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
 	}
 
 	ReferencePoint* refPoint = referencePoints_.add();
-	refPoint->setRestartFile(QDir::current().relativeFilePath(filename));
-	refPoint->setSuffix(suffix);
+	refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(filename)));
+	refPoint->setSuffix(qPrintable(suffix));
 
 	if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix))) QMessageBox::warning(this, "Error loading reference point", "Couldn't load the reference point data.\nWhich is odd, annoying, and something you should let the developer know about.");
 

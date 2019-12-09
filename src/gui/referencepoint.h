@@ -22,9 +22,8 @@
 #ifndef DISSOLVE_REFERENCEPOINT_H
 #define DISSOLVE_REFERENCEPOINT_H
 
+#include "base/charstring.h"
 #include "templates/listitem.h"
-#include <QDir>
-#include <QString>
 
 // Forward Declarations
 /* none */
@@ -43,19 +42,19 @@ class ReferencePoint : public ListItem<ReferencePoint>
 	 */
 	private:
 	// Suffix applied to data items from the referenced file
-	QString suffix_;
+	CharString suffix_;
 	// Restart file from which the reference point data was read
-	QString restartFile_;
+	CharString restartFile_;
 
 	public:
 	// Set suffix for data items
-	void setSuffix(QString suffix);
+	void setSuffix(const char* suffix);
 	// Return suffix for data items
-	QString suffix() const;
+	const char* suffix() const;
 	// Set restart file from which the reference point data was read
-	void setRestartFile(QString restartFile);
+	void setRestartFile(const char* restartFile);
 	// Return restart file from which the reference point data was read
-	QString restartFile() const;
+	const char* restartFile() const;
 };
 
 #endif

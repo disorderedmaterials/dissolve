@@ -31,25 +31,25 @@ ReferencePoint::~ReferencePoint()
 }
 
 // Set suffix for data items
-void ReferencePoint::setSuffix(QString suffix)
+void ReferencePoint::setSuffix(const char* suffix)
 {
 	suffix_ = suffix;
 }
 
 // Return suffix for data items
-QString ReferencePoint::suffix() const
+const char* ReferencePoint::suffix() const
 {
-	return suffix_;
+	return suffix_.get();
 }
 
 // Set restart file from which the reference point data was read
-void ReferencePoint::setRestartFile(QString restartFile)
+void ReferencePoint::setRestartFile(const char* restartFile)
 {
 	restartFile_ = restartFile;
 }
 
 // Return restart file from which the reference point data was read
-QString ReferencePoint::restartFile() const
+const char* ReferencePoint::restartFile() const
 {
-	return restartFile_;
+	return restartFile_.get();
 }
