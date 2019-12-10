@@ -155,7 +155,7 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool& 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
-	// Copy the averaged data from the associated Process1D node
+	// Copy the averaged data from the associated Process3D node
 	data = collectNode_->accumulatedData();
 
 	// Run normalisation on the data
