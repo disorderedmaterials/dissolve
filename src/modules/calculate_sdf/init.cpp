@@ -42,16 +42,18 @@ void CalculateSDFModule::initialise()
 	 *       ExcludeSameSite  'A'
 	 *       ExcludeSameMolecule  'A'
 	 *       ForEach
-	 *         Calculate  'vAB'
-	 *           Vector  'A'  'B'
+	 *         CalculateVector  'vAB'
+	 *           I  'A'
+	 *           J  'B'
 	 *           RotateIntoFrame  True
 	 *         EndCalculate
 	 *         Collect3D  RDF
 	 *           QuantityX  'vAB'  1
 	 *           QuantityY  'vAB'  2
 	 *           QuantityZ  'vAB'  3
-	 *           Extents  10.0  10.0  10.0
-	 *           Deltas    0.5   0.5   0.5
+	 *           RangeX  -10.0  10.0  0.5
+	 *           RangeY  -10.0  10.0  0.5
+	 *           RangeZ  -10.0  10.0  0.5
 	 *         EndCollect3D
 	 *       EndForEach  'B'
 	 *     EndSelect  'B'
@@ -62,15 +64,14 @@ void CalculateSDFModule::initialise()
 	 *     OperateSitePopulationNormalise
 	 *       Site  'A'
 	 *     EndOperateSitePopulationNormalise
-	 *     OperateNumberDensityNormalise
-	 *       Site  'B'
-	 *     EndOperateNumberDensityNormalise
-	 *     OperateSphericalShellNormalise
-	 *     EndOperateSphericalShellNormalise
+	 *     OperateGridNormalise
+	 *     EndOperateGridNormalise
 	 *   EndNormalisation
-	 *   LabelValue  'g(r)'
-	 *   LabelX  'r, Angstroms'
-	 * EndProcess1D
+	 *   LabelValue  'rho(x,y,z)'
+	 *   LabelX  'x, Angstroms'
+	 *   LabelY  'y, Angstroms'
+	 *   LabelZ  'z, Angstroms'
+	 * EndProcess3D
 	 */
 
 	// Select: Site 'A'
@@ -103,13 +104,10 @@ void CalculateSDFModule::initialise()
 	processPosition_->setKeyword<CharString>("LabelX", "x, \\symbol{Angstrom}");
 	processPosition_->setKeyword<CharString>("LabelY", "y, \\symbol{Angstrom}");
 	processPosition_->setKeyword<CharString>("LabelZ", "z, \\symbol{Angstrom}");
+	SequenceProcedureNode* sdfNormalisation = processPosition_->addNormalisationBranch();
+	sdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
+	sdfNormalisation->addNode(new OperateGridNormaliseProcedureNode());
 	analyser_.addRootSequenceNode(processPosition_);
-
-// 	SequenceProcedureNode* rdfNormalisation = processPosition_->addNormalisationBranch();
-// 	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
-// 	rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
-// 	rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
-// 	analyser_.addRootSequenceNode(processPosition_);
 
 	/*
 	 * Keywords (including those exposed from the ProcedureNodes)

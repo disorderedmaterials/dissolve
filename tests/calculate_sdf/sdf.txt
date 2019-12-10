@@ -104,11 +104,11 @@ Module  CalculateSDF  'SDF(O)'
   Configuration  'Bulk'
   SiteA  Water  'origin'
   SiteB  Water  'O'
-  RangeX  -10.0  10.0  0.5
-  RangeY  -10.0  10.0  0.5
-  RangeZ  -10.0  10.0  0.5
-  Save  pdens  'test.pdens'
-  EndSave
+  RangeX  -10.0  10.5  0.5
+  RangeY  -10.0  10.5  0.5
+  RangeZ  -10.0  10.5  0.5
+  ExportSDF  pdens  'test.pdens'
+  EndExportSDF
 EndModule
 
 EndLayer
