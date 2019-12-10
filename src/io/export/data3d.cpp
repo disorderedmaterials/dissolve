@@ -116,7 +116,7 @@ bool Data3DExportFileFormat::exportPDens(LineParser& parser, const Data3D& data)
 	const Array3D<double>& values = data.constValues3D();
 	if (!parser.writeLineF("%5i%5i%5i%5i%5i%5i%5i%5i%5i\n", values.nX(), values.nY(), values.nZ(), 0, 0, 0, values.nX(), values.nY(), values.nZ())) return false;
 
-	// Line 2 (Axis Definitions) - assume square
+	// Line 2 (Axis Definitions) - assume orthogonal
 	if (!parser.writeLineF("%9.3e %9.3e %9.3e %9.3e %9.3e %9.3e %9.3e %9.3e %9.3e\n", data.constXAxis().constAt(1) - data.constXAxis().constAt(0), 0.0, 0.0, 0.0, data.constYAxis().constAt(1) - data.constYAxis().constAt(0), 0.0, 0.0, 0.0, data.constZAxis().constAt(1) - data.constZAxis().constAt(0))) return false;
 
 	// Line 3 (Origin)
