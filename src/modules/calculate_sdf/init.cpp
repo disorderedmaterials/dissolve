@@ -124,6 +124,6 @@ void CalculateSDFModule::initialise()
 	keywords_.add("Sites", new BoolKeyword(true), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 
 	// Export
-	keywords_.link("Export", processPosition_->keywords().find("Save"), "Save", "Save the SDF to the specified file / format");
+	keywords_.add("Export", new FileAndFormatKeyword(sdfFileAndFormat_, "EndExportSDF"), "ExportSDF", "Save the SDF to the specified file / format");
 }
 

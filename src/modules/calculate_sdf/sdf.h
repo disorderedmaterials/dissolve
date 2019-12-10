@@ -24,6 +24,7 @@
 
 #include "module/module.h"
 #include "procedure/procedure.h"
+#include "io/export/data3d.h"
 
 // Forward Declarations
 class Collect3DProcedureNode;
@@ -93,6 +94,8 @@ class CalculateSDFModule : public Module
 	Collect3DProcedureNode* collectVector_;
 	// Process3DNode for B around A SDF
 	Process3DProcedureNode* processPosition_;
+	// Export file and format for SDF
+	Data3DExportFileFormat sdfFileAndFormat_;
 
 
 	/*

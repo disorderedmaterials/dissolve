@@ -22,6 +22,7 @@
 #include "modules/calculate_sdf/sdf.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/collect3d.h"
+#include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "base/sysfunc.h"
@@ -59,6 +60,21 @@ bool CalculateSDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Execute the analysis
 		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateSDF experienced problems with its analysis.\n");
+	}
+
+	// Save data?
+	if (sdfFileAndFormat_.hasValidFileAndFormat())
+	{
+		if (procPool.isMaster())
+		{
+			if (sdfFileAndFormat_.exportData(processPosition_->processedData())) procPool.decideTrue();
+			else
+			{
+				procPool.decideFalse();
+				return false;
+			}
+		}
+		else if (!procPool.decision()) return false;
 	}
 
 	return true;
