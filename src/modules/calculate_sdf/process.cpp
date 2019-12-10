@@ -63,4 +63,3 @@ bool CalculateSDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	return true;
 }
-
