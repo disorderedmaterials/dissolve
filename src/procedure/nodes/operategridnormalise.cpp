@@ -1,0 +1,93 @@
+/*
+	*** Procedure Node - Operate Grid Normalise
+	*** src/procedure/nodes/operategridnormalise.cpp
+	Copyright T. Youngs 2012-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "procedure/nodes/operategridnormalise.h"
+#include "procedure/nodes/select.h"
+#include "keywords/types.h"
+#include "classes/box.h"
+#include "classes/configuration.h"
+#include "classes/species.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
+
+// Constructor
+OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateGridNormaliseNode)
+{
+}
+
+// Destructor
+OperateGridNormaliseProcedureNode::~OperateGridNormaliseProcedureNode()
+{
+}
+
+/*
+ * Data Target (implements virtuals in OperateProcedureNodeBase)
+ */
+
+// Operate on Data1D target
+bool OperateGridNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
+{
+	if (targetData1D_->xAxis().nItems() < 2) return Messenger::error("Not enough data to determine 1D grid spacing for normalisation.\n");
+
+	// Determine bin width from first points of data
+	double xBinWidth = targetData1D_->xAxis().at(1) - targetData1D_->xAxis().at(0);
+	Messenger::print("OperateGridNormalise - Grid point spacing is %e.\n", xBinWidth);
+
+	(*targetData1D_) /= xBinWidth;
+
+	return true;
+}
+
+// Operate on Data2D target
+bool OperateGridNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
+{
+	if (targetData2D_->xAxis().nItems() < 2) return Messenger::error("Not enough data to determine 2D grid spacing for normalisation.\n");
+	if (targetData2D_->yAxis().nItems() < 2) return Messenger::error("Not enough data to determine 2D grid spacing for normalisation.\n");
+
+	// Determine bin area from first points of data
+	double xBinWidth = targetData2D_->xAxis().at(1) - targetData2D_->xAxis().at(0);
+	double yBinWidth = targetData2D_->yAxis().at(1) - targetData2D_->yAxis().at(0);
+	double binArea = xBinWidth * yBinWidth;
+	Messenger::print("OperateGridNormalise - Grid pixel area is %e.\n", binArea);
+
+	(*targetData2D_) /= binArea;
+
+	return true;
+}
+
+// Operate on Data3D target
+bool OperateGridNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
+{
+	if (targetData3D_->xAxis().nItems() < 2) return Messenger::error("Not enough data to determine 3D grid spacing for normalisation.\n");
+	if (targetData3D_->yAxis().nItems() < 2) return Messenger::error("Not enough data to determine 3D grid spacing for normalisation.\n");
+	if (targetData3D_->zAxis().nItems() < 2) return Messenger::error("Not enough data to determine 3D grid spacing for normalisation.\n");
+
+	// Determine bin area from first points of data
+	double xBinWidth = targetData3D_->xAxis().at(1) - targetData3D_->xAxis().at(0);
+	double yBinWidth = targetData3D_->yAxis().at(1) - targetData3D_->yAxis().at(0);
+	double zBinWidth = targetData3D_->zAxis().at(1) - targetData3D_->zAxis().at(0);
+	double binVolume = xBinWidth * yBinWidth * zBinWidth;
+	Messenger::print("OperateGridNormalise - Grid voxel volume is %e.\n", binVolume);
+
+	(*targetData3D_) /= binVolume;
+
+	return true;
+}

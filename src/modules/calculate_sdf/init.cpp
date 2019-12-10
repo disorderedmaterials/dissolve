@@ -23,6 +23,8 @@
 #include "keywords/types.h"
 #include "procedure/nodes/calculatevector.h"
 #include "procedure/nodes/collect3d.h"
+#include "procedure/nodes/operategridnormalise.h"
+#include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
