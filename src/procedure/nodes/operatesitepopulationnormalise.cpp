@@ -1,6 +1,6 @@
 /*
 	*** Procedure Node - Operate Site Population Normalise
-	*** src/procedure/nodes/operatesitepopulationnormaliser.cpp
+	*** src/procedure/nodes/operatesitepopulationnormalise.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
