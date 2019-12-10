@@ -46,9 +46,9 @@ Species 'Water'
 
   # Analysis Sites
   Site  'origin'
-    Origin  2
-    XAxis  2 3
-    YAxis  1
+    Origin  1 3
+    XAxis  1
+    YAxis  2
   EndSite
   Site  'O'
     Origin  2
