@@ -132,7 +132,7 @@ void Integrator1DGizmo::setGraphDataTargets()
  */
 
 // Write widget state through specified LineParser
-bool Integrator1DGizmo::writeState(LineParser& parser)
+bool Integrator1DGizmo::writeState(LineParser& parser) const
 {
 
 	// Write DataViewer state

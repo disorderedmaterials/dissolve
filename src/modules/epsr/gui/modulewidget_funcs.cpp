@@ -37,6 +37,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	refreshing_ = true;
 
+	NumberFormat numberFormat;
+
 	// F(Q) Graph
 	FQGraph_ = ui_.FQPlotWidget->dataViewer();
 
@@ -150,7 +152,9 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	// -- Set view
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
-	phiMagGraph_->view().axes().numberFormat(0).setType(NumberFormat::IntegerFormat);
+	numberFormat = phiMagGraph_->view().axes().numberFormat(0);
+	numberFormat.setType(NumberFormat::IntegerFormat);
+	phiMagGraph_->view().axes().setNumberFormat(0, numberFormat);
 	phiMagGraph_->view().axes().setMax(0, 10.0);
 	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
 	phiMagGraph_->view().axes().setMin(1, 0.0);
@@ -162,10 +166,14 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	// -- Set view
 	rFactorGraph_->view().setViewType(View::FlatXYView);
 	rFactorGraph_->view().axes().setTitle(0, "Iteration");
-	rFactorGraph_->view().axes().numberFormat(0).setType(NumberFormat::IntegerFormat);
+	numberFormat = rFactorGraph_->view().axes().numberFormat(0);
+	numberFormat.setType(NumberFormat::IntegerFormat);
+	rFactorGraph_->view().axes().setNumberFormat(0, numberFormat);
 	rFactorGraph_->view().axes().setMax(0, 10.0);
 	rFactorGraph_->view().axes().setTitle(1, "R-Factor");
-	rFactorGraph_->view().axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
+	numberFormat = rFactorGraph_->view().axes().numberFormat(1);
+	numberFormat.setType(NumberFormat::ScientificFormat);
+	rFactorGraph_->view().axes().setNumberFormat(1, numberFormat);
 	rFactorGraph_->view().axes().setMin(1, 0.0);
 	rFactorGraph_->view().axes().setMax(1, 0.5);
 	rFactorGraph_->view().setAutoFollowType(View::AllAutoFollow);
@@ -182,8 +190,6 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	epView->view().axes().setMin(1, -1.0);
 	epView->view().axes().setMax(1, 1.0);
 	epView->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-
-
 	// -- Set group styling
 	rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
 	// -- Set group styling
@@ -247,7 +253,7 @@ void EPSRModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool EPSRModuleWidget::writeState(LineParser& parser)
+bool EPSRModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!FQGraph_->writeSession(parser)) return false;

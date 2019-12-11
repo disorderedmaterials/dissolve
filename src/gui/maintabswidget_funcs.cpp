@@ -42,9 +42,13 @@ MainTabsWidget::MainTabsWidget(QWidget* parent) : QTabWidget(parent)
  */
 
 // Return reference list of all current tabs
-RefList<MainTab> MainTabsWidget::allTabs() const
+RefList<const MainTab> MainTabsWidget::allTabs() const
 {
-	return allTabs_;
+	RefList<const MainTab> constTabs;
+	RefListIterator<MainTab> tabIterator(allTabs_);
+	while (MainTab* tab = tabIterator.iterate()) constTabs.append(tab);
+
+	return constTabs;
 }
 
 // Return currently-selected Species (if a SpeciesTab is the current one)

@@ -930,7 +930,7 @@ bool ForcefieldTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool ForcefieldTab::writeState(LineParser& parser)
+bool ForcefieldTab::writeState(LineParser& parser) const
 {
 	return true;
 }

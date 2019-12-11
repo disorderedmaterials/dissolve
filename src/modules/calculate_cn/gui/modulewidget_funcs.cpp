@@ -87,7 +87,7 @@ void CalculateCNModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalculateCNModuleWidget::writeState(LineParser& parser)
+bool CalculateCNModuleWidget::writeState(LineParser& parser) const
 {
 	return false;
 }

@@ -1247,7 +1247,7 @@ void View::setLabelPointSize(double value)
 }
 
 // Return font point size for axis value labels
-double View::labelPointSize()
+double View::labelPointSize() const
 {
 	return labelPointSize_;
 }
@@ -1261,13 +1261,13 @@ void View::setTitlePointSize(double value)
 }
 
 // Return font point size for titles
-double View::titlePointSize()
+double View::titlePointSize() const
 {
 	return titlePointSize_;
 }
 
 // Return text z scaling factor
-double View::textZScale()
+double View::textZScale() const
 {
 	return textZScale_;
 }
@@ -1281,7 +1281,7 @@ void View::setFlatLabelsIn3D(bool flat)
 }
 
 // Whether axis text labels are drawn flat in 3D views
-bool View::flatLabelsIn3D()
+bool View::flatLabelsIn3D() const
 {
 	return flatLabelsIn3D_;
 }

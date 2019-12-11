@@ -274,7 +274,9 @@ class Axes
 
 	public:
 	// Return number format for specified axis
-	NumberFormat& numberFormat(int axis);
+	const NumberFormat& numberFormat(int axis) const;
+	// Set number format for specified axis
+	void setNumberFormat(int axis, const NumberFormat& numberFormat);
 	// Return whether to determine number format automatically for the specified axis
 	bool autoNumberFormat(int axis) const;
 	// Set whether to determine number format automatically for the specified axis
@@ -408,13 +410,13 @@ class Axes
 	// Return major gridline primitive for axis specified
 	Primitive& gridLineMinorPrimitive(int axis);
 	// Set major gridline style
-	void setGridLineMajorStyle(int axis, LineStyle style);
+	void setGridLineMajorStyle(int axis, const LineStyle& style);
 	// Return major gridline style
-	LineStyle& gridLineMajorStyle(int axis);
+	const LineStyle& gridLineMajorStyle(int axis) const;
 	// Set minor gridline style
-	void setGridLineMinorStyle(int axis, LineStyle style);
+	void setGridLineMinorStyle(int axis, const LineStyle& style);
 	// Return minor gridline style
-	LineStyle& gridLineMinorStyle(int axis);
+	const LineStyle& gridLineMinorStyle(int axis) const;
 };
 
 #endif

@@ -54,7 +54,7 @@ void AnalyseModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool AnalyseModuleWidget::writeState(LineParser& parser)
+bool AnalyseModuleWidget::writeState(LineParser& parser) const
 {
 	return false;
 }

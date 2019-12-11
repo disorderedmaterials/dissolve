@@ -24,7 +24,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-GetTabNameDialog::GetTabNameDialog(QWidget* parent, RefList<MainTab> currentTabs)
+GetTabNameDialog::GetTabNameDialog(QWidget* parent, RefList<const MainTab> currentTabs)
 {
 	ui_.setupUi(this);
 
@@ -67,8 +67,8 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
 	if (text.isEmpty()) nameValid = false;
 	else
 	{
-		RefListIterator<MainTab> tabIterator(currentTabs_);
-		while (MainTab* tab = tabIterator.iterate())
+		RefListIterator<const MainTab> tabIterator(currentTabs_);
+		while (const MainTab* tab = tabIterator.iterate())
 		{
 			if (currentTab_ == tab) continue;
 

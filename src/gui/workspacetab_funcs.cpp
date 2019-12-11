@@ -237,7 +237,7 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool WorkspaceTab::writeState(LineParser& parser)
+bool WorkspaceTab::writeState(LineParser& parser) const
 {
 	// Write tab state information:   nGizmos
 	if (!parser.writeLineF("%i      # NGizmos\n", gizmos_.nItems())) return false;

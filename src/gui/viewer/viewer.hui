@@ -355,7 +355,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		nInputBlocks
 	};
 	// Return enum option info for InputBlock
-	EnumOptions<BaseViewer::InputBlock> inputBlockKeywords();
+	static EnumOptions<BaseViewer::InputBlock> inputBlockKeywords();
 	// Parse main input blocks through specified parser
 	bool parseInputBlocks(LineParser& parser);
 
@@ -389,11 +389,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		nAxisKeywords
 	};
 	// Return enum option info for AxisKeyword
-	EnumOptions<BaseViewer::AxisKeyword> axisKeywords();
+	static EnumOptions<BaseViewer::AxisKeyword> axisKeywords();
 	// Read AxisBlock keywords
 	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
 	// Write AxisBlock keywords
-	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
+	bool writeAxisBlock(LineParser& parser, const Axes& axes, int axis) const;
 
 	// Renderable Block Keyword Enum
 	enum RenderableKeyword
@@ -418,11 +418,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		nRenderableKeywords
 	};
 	// Return enum option info for RenderableKeyword
-	EnumOptions<BaseViewer::RenderableKeyword> renderableKeywords();
+	static EnumOptions<BaseViewer::RenderableKeyword> renderableKeywords();
 	// Read RenderableBlock keywords
 	bool readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd = true);
 	// Write RenderableBlock keywords
-	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0);
+	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0) const;
 
 	// RenderableGroup Block Keyword Enum
 	enum RenderableGroupKeyword
@@ -441,7 +441,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Read RenderableGroup block keywords
 	bool readRenderableGroupBlock(LineParser& parser, RenderableGroup* group, bool strictBlockEnd = true);
 	// Write RenderableGroup block keywords
-	bool writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel = 0);
+	bool writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel = 0) const;
 
 	// View Block Keyword Enum
 	enum ViewKeyword
@@ -470,7 +470,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Read ViewBlock keywords
 	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
 	// Write ViewBlock keywords
-	bool writeViewBlock(LineParser& parser);
+	bool writeViewBlock(LineParser& parser) const;
 
 
 	/*
@@ -480,13 +480,13 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Read custom input block through specified LineParser
 	virtual bool readCustomInputBlock(LineParser& parser);
 	// Write custom input blocks through specified LineParser
-	virtual bool writeCustomInputBlocks(LineParser& parser);
+	virtual bool writeCustomInputBlocks(LineParser& parser) const;
 
 	public:
 	// Read session through parser specified
 	bool readSession(LineParser& parser);
 	// Write session through parser specified
-	bool writeSession(LineParser& parser);
+	bool writeSession(LineParser& parser) const;
 };
 
 #endif

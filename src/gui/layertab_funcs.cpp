@@ -173,7 +173,7 @@ bool LayerTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool LayerTab::writeState(LineParser& parser)
+bool LayerTab::writeState(LineParser& parser) const
 {
 	if (!ui_.ModuleListPanel->writeState(parser)) return false;
 

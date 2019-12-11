@@ -89,7 +89,7 @@ class Gizmo : public ListItem<Gizmo>
 	 */
 	public:
 	// Write widget state through specified LineParser
-	virtual bool writeState(LineParser& parser) = 0;
+	virtual bool writeState(LineParser& parser) const = 0;
 	// Read widget state through specified LineParser
 	virtual bool readState(LineParser& parser) = 0;
 };

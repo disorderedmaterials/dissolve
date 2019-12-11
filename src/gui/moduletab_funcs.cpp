@@ -174,7 +174,7 @@ bool ModuleTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool ModuleTab::writeState(LineParser& parser)
+bool ModuleTab::writeState(LineParser& parser) const
 {
 	// Write state information for the tab : CollapsedIndex(int)
 	int collapsedIndex = -1;

@@ -55,6 +55,16 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 }
 
 /*
+ * Public
+ */
+
+// Return list of all current tabs
+RefList<const MainTab> DissolveWindow::allTabs() const
+{
+	return ui_.MainTabs->allTabs();
+}
+
+/*
  * Public Slots
  */
 

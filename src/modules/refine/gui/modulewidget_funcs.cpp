@@ -38,6 +38,8 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	refreshing_ = true;
 
+	NumberFormat numberFormat;
+
 	// Data Graph
 
 	dataGraph_ = ui.DataPlotWidget->dataViewer();
@@ -101,7 +103,9 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	// Start a new, empty session
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
-	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	numberFormat = phiMagGraph_->view().axes().numberFormat(0);
+	numberFormat.setNDecimals(0);
+	phiMagGraph_->view().axes().setNumberFormat(0, numberFormat);
 	phiMagGraph_->view().axes().setMax(0, 10.0);
 	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
 	phiMagGraph_->view().axes().setMin(1, 0.0);
@@ -115,7 +119,9 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	// Start a new, empty session
 	errorsGraph_->view().setViewType(View::FlatXYView);
 	errorsGraph_->view().axes().setTitle(0, "Iteration");
-	errorsGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	numberFormat = errorsGraph_->view().axes().numberFormat(0);
+	numberFormat.setNDecimals(0);
+	errorsGraph_->view().axes().setNumberFormat(0, numberFormat);
 	errorsGraph_->view().axes().setMax(0, 10.0);
 	errorsGraph_->view().axes().setTitle(1, "%Error");
 	errorsGraph_->view().axes().setMin(1, 0.0);
@@ -176,7 +182,7 @@ void RefineModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool RefineModuleWidget::writeState(LineParser& parser)
+bool RefineModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!dataGraph_->writeSession(parser)) return false;

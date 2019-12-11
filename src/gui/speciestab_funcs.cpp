@@ -200,7 +200,7 @@ bool SpeciesTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool SpeciesTab::writeState(LineParser& parser)
+bool SpeciesTab::writeState(LineParser& parser) const
 {
 	return true;
 }

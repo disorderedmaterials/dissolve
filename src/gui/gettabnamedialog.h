@@ -37,7 +37,7 @@ class GetTabNameDialog : public QDialog
 
 	public:
 	// Constructor
-	GetTabNameDialog(QWidget* parent, RefList<MainTab> currentTabs);
+	GetTabNameDialog(QWidget* parent, RefList<const MainTab> currentTabs);
 	// Destructor
 	~GetTabNameDialog();
 
@@ -45,7 +45,7 @@ class GetTabNameDialog : public QDialog
 	// Main form declaration
 	Ui::GetTabNameDialog ui_;
 	// RefList of current tabs
-	RefList<MainTab> currentTabs_;
+	RefList<const MainTab> currentTabs_;
 	// Current tab that we are renaming
 	const MainTab* currentTab_;
 

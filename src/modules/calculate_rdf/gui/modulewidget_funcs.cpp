@@ -72,7 +72,7 @@ void CalculateRDFModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalculateRDFModuleWidget::writeState(LineParser& parser)
+bool CalculateRDFModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;

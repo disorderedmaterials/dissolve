@@ -101,7 +101,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 };
 
 #endif

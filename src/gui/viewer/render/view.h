@@ -257,17 +257,17 @@ class View
 	// Set font point size for axis value labels
 	void setLabelPointSize(double value);
 	// Return font point size for axis value labels
-	double labelPointSize();
+	double labelPointSize() const;
 	// Return font point size for titles
 	void setTitlePointSize(double value);
 	// Return font point size for titles
-	double titlePointSize();
+	double titlePointSize() const;
 	// Return text z scaling factor
-	double textZScale();
+	double textZScale() const;
 	// Set whether axis text labels are drawn flat in 3D views
 	void setFlatLabelsIn3D(bool flat);
 	// Whether axis text labels are drawn flat in 3D views
-	bool flatLabelsIn3D();
+	bool flatLabelsIn3D() const;
 };
 
 #endif
