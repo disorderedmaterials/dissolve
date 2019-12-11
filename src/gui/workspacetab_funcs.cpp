@@ -32,7 +32,10 @@
 #include <QMdiSubWindow>
 #include <QMenu>
 
-// Constructor / Destructor
+// Static Singletons
+RefList<Gizmo> WorkspaceTab::allGizmos_;
+
+// Constructor
 WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
@@ -45,6 +48,7 @@ WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, M
 	connect(mdiArea_, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
+// Destructor
 WorkspaceTab::~WorkspaceTab()
 {
 }
@@ -113,16 +117,37 @@ void WorkspaceTab::enableSensitiveControls()
  * Gizmo Management
  */
 
+// Return unique name for Gizmo based on basename provided
+const char* WorkspaceTab::uniqueGizmoName(const char* base)
+{
+	static CharString uniqueName;
+	CharString baseName = base;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "NewGizmo";
+
+	// Find an unused name starting with the baseName provided
+	while (findGizmo(uniqueName))
+	{
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
+}
+
 // Create Gizmo with specified type
 Gizmo* WorkspaceTab::createGizmo(const char* type)
 {
 	Gizmo* gizmo = NULL;
 	QWidget* widget = NULL;
 
-	// Check the type of the provided gizmo...
 	if (DissolveSys::sameString(type, "Integrator1D"))
         {
-		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve());
+		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Integrator1D"));
 		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
 		gizmo = integrator1D;
 		widget = integrator1D;
@@ -135,15 +160,25 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 
 	// Create a new window for the Gizmo's widget and show it
 	QMdiSubWindow* window = mdiArea_->addSubWindow(widget);
-	window->setWindowTitle(gizmo->type());
+	window->setWindowTitle(gizmo->uniqueName());
 	window->show();
 	gizmo->setWindow(window);
 
-	// Update the Gizmo's controls, and add it to our list
+	// Update the Gizmo's controls, and add it to our lists
 	gizmo->updateControls();
 	gizmos_.own(gizmo);
+	allGizmos_.append(gizmo);
 
 	return gizmo;
+}
+
+// Find Gizmo with unique name provided
+Gizmo* WorkspaceTab::findGizmo(const char* uniqueName)
+{
+	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName)) return gizmo;
+
+	return NULL;
 }
 
 /*

@@ -31,12 +31,12 @@ class Dissolve;
 class LineParser;
 class QMdiSubWindow;
 
-// Gizmo - Base  class for any widget to be displayed in a QMdiSubWindow
+// Gizmo - Base class for any widget to be displayed in a QMdiSubWindow
 class Gizmo : public ListItem<Gizmo>
 {
 	public:
 	// Constructor / Destructor
-	Gizmo(Dissolve& dissolve);
+	Gizmo(Dissolve& dissolve, const char* uniqueName);
 	virtual ~Gizmo();
 
 
@@ -44,8 +44,8 @@ class Gizmo : public ListItem<Gizmo>
 	 * Core
 	 */
 	protected:
-	// Title of widget
-	CharString title_;
+	// Unique name of gizmo
+	CharString uniqueName_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 	// QMdiSubWindow containing the Gizmo
@@ -54,10 +54,10 @@ class Gizmo : public ListItem<Gizmo>
 	public:
 	// Return string specifying Gizmo type
 	virtual const char* type() const = 0;
-	// Set title of widget
-	void setTitle(const char* title);
-	// Return title of widget
-	const char* title();
+	// Set unique name of gizmo
+	void setUniqueName(const char* uniqueName);
+	// Return unique name of gizmo
+	const char* uniqueName();
 	// Set QMdiSubWindow containing the Gizmo
 	void setWindow(QMdiSubWindow* window);
 	// Return QMdiSubWindow containing the Gizmo

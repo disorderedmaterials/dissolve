@@ -28,7 +28,7 @@
 #include <QMessageBox>
 
 // Constructor
-Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve) : Gizmo(dissolve)
+Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(dissolve, uniqueName)
 {
 	// Set up user interface
 	ui_.setupUi(this);
