@@ -79,6 +79,10 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	// List of all Gizmos across all workspaces
 	static RefList<Gizmo> allGizmos_;
 
+	private slots:
+	// Remove Gizmo with specified unique name
+	void removeGizmo(QString uniqueName);
+
 	public:
 	// Return unique name for Gizmo based on basename provided
 	static const char* uniqueGizmoName(const char* base);

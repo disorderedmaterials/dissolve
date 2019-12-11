@@ -71,7 +71,7 @@ const char* Integrator1DGizmo::type() const
 // Window close event
 void Integrator1DGizmo::closeEvent(QCloseEvent* event)
 {
-// 	emit(windowClosed());
+	emit(windowClosed(uniqueName_.get()));
 }
 
 // Update controls within widget

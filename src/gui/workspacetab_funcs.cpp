@@ -117,6 +117,21 @@ void WorkspaceTab::enableSensitiveControls()
  * Gizmo Management
  */
 
+// Remove Gizmo with specified unique name
+void WorkspaceTab::removeGizmo(QString uniqueName)
+{
+	// Find the Gizmo...
+	Gizmo* gizmo = findGizmo(qPrintable(uniqueName));
+	if (!gizmo)
+	{
+		Messenger::error("Received signal to remove gizmo '%s' but it cannot be found...\n", qPrintable(uniqueName));
+		return;
+	}
+
+	gizmos_.remove(gizmo);
+	allGizmos_.remove(gizmo);
+}
+
 // Return unique name for Gizmo based on basename provided
 const char* WorkspaceTab::uniqueGizmoName(const char* base)
 {
