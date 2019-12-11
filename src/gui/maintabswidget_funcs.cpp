@@ -398,6 +398,7 @@ MainTab* MainTabsWidget::addWorkspaceTab(DissolveWindow* dissolveWindow, const c
 	{
 		WorkspaceTab* newWorkspace = new WorkspaceTab(dissolveWindow, dissolveWindow->dissolve(), this, title);
 		workspaceTabs_.own(newWorkspace);
+		allTabs_.append(newWorkspace);
 
 		// Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
 		addTab(newWorkspace, title);
