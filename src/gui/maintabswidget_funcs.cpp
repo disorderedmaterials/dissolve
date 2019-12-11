@@ -368,7 +368,7 @@ MainTab* MainTabsWidget::addModuleTab(DissolveWindow* dissolveWindow, Module* mo
 		moduleTabs_.own(tab);
 		allTabs_.append(tab);
 		addTab(tab, module->uniqueName());
-		addTabCloseButton(tab->page());
+		addTabCloseButton(tab);
 		setTabIcon(tab->page(), QIcon(ModuleBlock::modulePixmap(module)));
 
 		// If we are currently running, disable the necessary controls in widget
