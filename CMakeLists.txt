@@ -121,6 +121,11 @@ if(APPLE)
   if(GUI)
     # Find GLUT
     find_package(GLUT REQUIRED)
+
+    # Adjust external include directories for GUI
+    include_directories(
+      ${FTGL_INCLUDE_DIRS}
+    )
   endif(GUI)
 endif(APPLE)
 
