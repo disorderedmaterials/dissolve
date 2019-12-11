@@ -23,8 +23,8 @@
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 #include "math/data2d.h"
+#include "math/extrema.h"
 #include "templates/array2d.h"
-#include "math/limits.h"
 
 // Constructor
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
@@ -75,8 +75,8 @@ void RenderableData2D::transformData()
 	else transformedData_ = *source_;
 	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
 	
-	transformMin_ = Limits::min(transformedData_.constXAxis());
-	transformMax_ = Limits::max(transformedData_.constXAxis());
+	transformMin_ = Extrema::min(transformedData_.constXAxis());
+	transformMax_ = Extrema::max(transformedData_.constXAxis());
 	transformMinPositive_ = 0.1;
 	transformMaxPositive_ = 0.0;
 	

@@ -1,6 +1,6 @@
 /*
-	*** Limits
-	*** src/math/limits.h
+	*** Extrema
+	*** src/math/extrema.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,17 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DISSOLVE_EXTREMA_H
+#define DISSOLVE_EXTREMA_H
 
-#ifndef DISSOLVE_LIMITS_H
-#define DISSOLVE_LIMITS_H
-
-#include "data1d.h"
 // Forward Declarations
-class Data1D;
-class Data2D;
+template <class T> class Array;
+template <class T> class Array2D;
+template <class T> class Array3D;
 
-// Limits
-class Limits
+// Extrema
+class Extrema
 {
 	public:
 	// Return minimum from array provided
@@ -48,9 +47,6 @@ class Limits
 	static double absMin(const Array2D<double>& A);
 	// Return absolute maximum from 2D array provided
 	static double absMax(const Array2D<double>& A);
-	
-	
-	
 };
 
 #endif
