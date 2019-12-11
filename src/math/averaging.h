@@ -23,9 +23,7 @@
 #define DISSOLVE_AVERAGING_H
 
 #include "base/enumoptions.h"
-#include "genericitems/list.h"
 #include "genericitems/listhelper.h"
-#include "templates/array.h"
 
 // Forward Declarations
 /* none */
