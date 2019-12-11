@@ -63,19 +63,16 @@ MainTab::TabType WorkspaceTab::type() const
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
 	// Get a new, valid name for the Configuration
-	// FIXME
-// 	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
-// 	ok = nameDialog.get(this, title());
+	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
+	ok = nameDialog.get(this, title());
 
-// 	if (ok)
-// 	{
-// 		// Rename our Workspace, and flag that our data has been modified
-// 		title_ = qPrintable(nameDialog.newName());
+	if (ok)
+	{
+		// Rename our Workspace, and flag that our data has been modified
+		title_ = qPrintable(nameDialog.newName());
+	}
 
-// 		dissolveWindow_->setModified();
-// 	}
-
-// 	return nameDialog.newName();
+	return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed
