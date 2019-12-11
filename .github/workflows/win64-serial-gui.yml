@@ -51,11 +51,11 @@ jobs:
       run: |
         mkdir build
         cd build
-        $env:Qt5_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5'
-        $env:Qt5Core_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core'
-        $env:Qt5Widgets_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets'
-        $env:Qt5PrintSupport_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport'
-        $env:Qt5Gui_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui'
+        $env:Qt5_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5'
+        $env:Qt5Core_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Core'
+        $env:Qt5Widgets_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Widgets'
+        $env:Qt5PrintSupport_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5PrintSupport'
+        $env:Qt5Gui_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Gui'
         $env:INCLUDE += "$HOME/freetype-2.10.1;"
         $env:LIB += "$HOME/freetype-build;"
         $env:INCLUDE += "$HOME/ftgl-latest/src;"
