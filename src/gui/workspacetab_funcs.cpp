@@ -188,6 +188,10 @@ Gizmo* WorkspaceTab::findGizmo(const char* uniqueName)
 // Custom context menu requested
 void WorkspaceTab::showContextMenu(const QPoint& pos)
 {
+	// Check that we are not over an existing gizmo
+	ListIterator<Gizmo> gizmoIterator(gizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) if (gizmo->window()->geometry().contains(pos)) return;
+
 	QMenu menu;
 	menu.setFont(font());
 	QFont italicFont = font();
