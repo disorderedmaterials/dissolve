@@ -381,7 +381,6 @@ MainTab* MainTabsWidget::addModuleTab(DissolveWindow* dissolveWindow, Module* mo
 }
 
 // Remove the ModuleTab for the specifeid Module, if it exists
-// TGAY - IS THIS STILL REQUIRED?
 void MainTabsWidget::removeModuleTab(Module* module)
 {
 	ModuleTab* tab = moduleTab(module);
