@@ -22,9 +22,6 @@ jobs:
         $env:QT_INSTALL_DIR = 'C:/Qt'
         Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
         Remove-Item qt.exe
-        $env:QTDIR = "C:/Qt/5.13.1/mingw73_64"
-        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
-        $env:PATH += "C:/Qt/5.13.1/mingw73_64/bin;"
         choco install -y zip --version 3.0
         choco install -y ninja
         choco install -y winflexbison
@@ -46,7 +43,6 @@ jobs:
         git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
         mkdir ftgl-build
         cd ftgl-build
-        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
         $env:INCLUDE += "$HOME\\freetype-2.10.1;"
         $env:LIB += "$HOME\\freetype-build;"
         cmake -G "Ninja" ..\ftgl-latest
@@ -55,7 +51,11 @@ jobs:
       run: |
         mkdir build
         cd build
-        $env:CMAKE_PREFIX_PATH = "C:/Qt/5.13.1/mingw73_64/lib/cmake"
+        $env:Qt5_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5'
+        $env:Qt5Core_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core'
+        $env:Qt5Widgets_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets'
+        $env:Qt5PrintSupport_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport'
+        $env:Qt5Gui_DIR = '/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui'
         $env:INCLUDE += "$HOME/freetype-2.10.1;"
         $env:LIB += "$HOME/freetype-build;"
         $env:INCLUDE += "$HOME/ftgl-latest/src;"
