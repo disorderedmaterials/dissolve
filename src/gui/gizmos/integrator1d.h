@@ -28,8 +28,6 @@
 
 // Forward Declarations
 class Dissolve;
-class PairPotential;
-class DataWidget;
 
 // Integrator1D Gizmo
 class Integrator1DGizmo : public QWidget, public Gizmo
