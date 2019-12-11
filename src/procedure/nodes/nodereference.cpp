@@ -131,9 +131,6 @@ bool ProcedureNodeReference::read(LineParser& parser, int startArg, const CoreDa
 // Write structure to specified LineParser
 bool ProcedureNodeReference::write(LineParser& parser, const char* prefix)
 {
-	if (analyseModuleParent_)
-	{
-		if (!parser.writeLineF("%s  '%s'  '%s'\n", prefix, node_->name(), analyseModuleParent_->uniqueName())) return false;
-	}
+	if (analyseModuleParent_) return parser.writeLineF("%s  '%s'  '%s'\n", prefix, node_->name(), analyseModuleParent_->uniqueName());
 	else return parser.writeLineF("%s  '%s'\n", prefix, node_->name());
 }
