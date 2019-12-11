@@ -32,7 +32,6 @@ jobs:
         choco install -y wget
     - name: Build Freetype
       run: |
-        choco uninstall -y strawberryperl
         cd $HOME
         wget 'https://download.savannah.gnu.org/releases/freetype/ft2101.zip' -O 'ft.zip'
         unzip ./ft.zip
