@@ -39,7 +39,8 @@ jobs:
         Echo 'Compiling FreeType...'
         mkdir freetype-build
         cd freetype-build
-        cmake -G "Ninja" ../freetype-latest -DCMAKE_DISABLE_FIND_PACKAGE_harfbuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
+        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
+        cmake -G "Ninja" ../freetype-latest -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
         ninja
     - name: Build FTGL
       run: |
@@ -48,6 +49,7 @@ jobs:
         git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
         mkdir ftgl-build
         cd ftgl-build
+        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
         $env:INCLUDE += "$HOME\\freetype-2.10.1;"
         $env:LIB += "$HOME\\freetype-build;"
         cmake -G "Ninja" ..\ftgl-latest
