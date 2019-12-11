@@ -160,7 +160,15 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	Gizmo* gizmo = NULL;
 	QWidget* widget = NULL;
 
-	if (DissolveSys::sameString(type, "Integrator1D"))
+	// Check the type of the provided gizmo...
+	if (DissolveSys::sameString(type, "Graph"))
+        {
+		GraphGizmo* graph = new GraphGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Graph"));
+		connect(graph, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
+		gizmo = graph;
+		widget = graph;
+        }
+	else if (DissolveSys::sameString(type, "Integrator1D"))
         {
 		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Integrator1D"));
 		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
@@ -215,6 +223,7 @@ void WorkspaceTab::showContextMenu(const QPoint& pos)
 	// Gizmos
 	QMenu* gizmoMenu = menu.addMenu("Add &Gizmo...");
 	gizmoMenu->setFont(font());
+	connect(gizmoMenu->addAction("Graph"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
 	connect(gizmoMenu->addAction("Integrator1D"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
 
 	// Modules within Configurations

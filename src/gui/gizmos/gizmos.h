@@ -23,6 +23,7 @@
 #define DISSOLVE_GIZMOS_H
 
 /* Include file for all Gizmo types */
+#include "gui/gizmos/graph.h"
 #include "gui/gizmos/integrator1d.h"
 
 #endif
