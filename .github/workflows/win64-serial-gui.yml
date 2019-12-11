@@ -39,7 +39,7 @@ jobs:
         Echo 'Compiling FreeType...'
         mkdir freetype-build
         cd freetype-build
-        cmake -G "Ninja" ../freetype-2.10.1
+        cmake -G "Ninja" ../freetype-2.10.1 -DFT_WITH_ZLIB=OFF -DFT_WITH_PNG=OFF -DFT_WITH_HARFBUZZ=OFF -DFT_WITH_BZip2=OFF
         ninja
     - name: Build FTGL
       run: |
