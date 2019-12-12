@@ -51,6 +51,7 @@ jobs:
         mkdir build
         cd build
         $env:CMAKE_PREFIX_PATH = 'C:/Qt/5.13.1/mingw73_64/'
+        $env:PATH += 'C:/Qt/5.13.1/mingw73_64/bin/;'
         $env:INCLUDE += "$HOME/freetype-2.10.1;"
         $env:LIB += "$HOME/freetype-build;"
         $env:INCLUDE += "$HOME/ftgl-latest/src;"
