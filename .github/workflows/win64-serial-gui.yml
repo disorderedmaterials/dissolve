@@ -26,7 +26,6 @@ jobs:
         choco install -y ninja
         choco install -y winflexbison
         choco install -y innounp
-        choco install -y wget
     - name: Build Freetype
       run: |
         cd $HOME
