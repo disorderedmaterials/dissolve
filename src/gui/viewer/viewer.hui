@@ -29,6 +29,7 @@
 #include "gui/viewer/render/fontinstance.h"
 #include "math/data1d.h"
 #include "base/enumoptions.h"
+#include "base/timer.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QOpenGLWidget>
@@ -213,6 +214,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	protected:
 	// Canvas coordinates of mouse down
 	Vec3<int> rMouseDown_;
+	// Time at start of mouse down
+	Timer mouseDownTimer_;
 	// Canvas coordinates of mouse cursor
 	Vec3<int> rMouseLast_;
 	// Current state of mouse buttons
@@ -245,6 +248,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	virtual void mouseWheeled(int delta);
 	// Mouse double clicked
 	virtual void mouseDoubleClicked();
+	// Context menu requested
+	virtual void contextMenuRequested(QPoint pos);
 	// Key pressed
 	virtual bool keyPressed(int key);
 	// Key released
