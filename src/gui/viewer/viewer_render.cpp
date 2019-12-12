@@ -152,9 +152,9 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 			for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 			{
 				view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-				updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
+				updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 				view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-				updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
+				updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 			}
 		}
 
@@ -166,13 +166,13 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		{
 			view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-			updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 		}
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-			updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 		}
 
 		// -- Reset line style, ensure polygons are now filled, and render the axis lines
@@ -180,7 +180,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().axisPrimitive(axis).sendToGL();
-			updateQuery(BaseViewer::AxisLineObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::AxisLineObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 		}
 		glEnable(GL_LIGHTING);
 		glDisable(GL_LINE_SMOOTH);
