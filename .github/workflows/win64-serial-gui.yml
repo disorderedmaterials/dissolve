@@ -51,7 +51,9 @@ jobs:
         mkdir build
         cd build
         $env:CMAKE_PREFIX_PATH = 'C:/Qt/5.13.1/mingw73_64/'
-        $env:Qt5_DIR = 'C:/Qt/5.13.1/mingw73_64/lib//cmake/Qt5'
+        ls 'C:/Qt/5.13.1/mingw73_64/'
+        ls 'C:/Qt/5.13.1/mingw73_64/lib'
+        $env:Qt5_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5'
         $env:Qt5Core_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Core'
         $env:Qt5Widgets_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Widgets'
         $env:Qt5PrintSupport_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5PrintSupport'
