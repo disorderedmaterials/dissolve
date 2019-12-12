@@ -334,7 +334,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void generateQueryImage();
 
 	protected:
-	// Update object query, setting supplied information if the depth is closer
+	// Update object query, setting supplied information if the sample area has changed significantly
 	void updateQuery(BaseViewer::ViewerObject objectType, const char* info, const char* subInfo = NULL);
 
 	public:

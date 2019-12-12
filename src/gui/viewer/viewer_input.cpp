@@ -50,7 +50,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 {
 	// Detect right-click intended to call a context menu
-	if (buttonState_.testFlag(Qt::RightButton) && (mouseDownTimer_.secondsElapsed() < 0.3))
+	if (buttonState_.testFlag(Qt::RightButton) && (mouseDownTimer_.secondsElapsed() < 0.4))
 	{
 		contextMenuRequested(event->pos());
 

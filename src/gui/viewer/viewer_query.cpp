@@ -93,7 +93,7 @@ void BaseViewer::generateQueryImage()
  * Protected Functions
  */
 
-// Update object query, setting supplied information if the depth is closere
+// Update object query, setting supplied information if the sample area has changed significantly
 void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char* info, const char* subInfo)
 {
 	// Return immediately if we are not querying
@@ -112,7 +112,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char* in
 		for (int dy=0; dy<queryRegionHeight_; ++dy)
 		{
 			// Accumulate difference between stored and current colour
-			QColor pixelColour = tile.pixelColor(queryRegionLeft_+dx, queryImageHeight_ - queryRegionBottom_+dy);
+			QColor pixelColour = tile.pixelColor(queryRegionLeft_+dx, queryImageHeight_ - queryRegionBottom_ - dy);
 			delta += fabs(pixelColour.redF() - queryRegionR_[index]);
 			delta += fabs(pixelColour.greenF() - queryRegionG_[index]);
 			delta += fabs(pixelColour.blueF() - queryRegionB_[index]);
@@ -127,7 +127,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char* in
 	}
 
 	// Set the object info if the colour change threshold was reached
-	const double threshold = (0.5 * queryRegionHeight_*queryRegionWidth_) * 0.5;
+	const double threshold = 1.0; //(0.5 * queryRegionHeight_*queryRegionWidth_) * 0.25;
 // 	printf("Delta = %f, threshold = %f\n", delta, threshold);
 	if (delta > threshold)
 	{
@@ -145,7 +145,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char* in
 BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
 {
 	// Sampling size around central pixel
-	const int sampleSize = 3;
+	const int sampleSize = 2;
 
 	queryObjectType_ = BaseViewer::NoObject;
 	queryObjectInfo_.clear();
