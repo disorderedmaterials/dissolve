@@ -15,17 +15,21 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install Prerequisties
       run: |
-        $Wc = New-Object System.Net.WebClient
-        $Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
-        $Wc.Dispose()
-        echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
-        $env:QT_INSTALL_DIR = 'C:/Qt'
-        Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
-        Remove-Item qt.exe
+        #$Wc = New-Object System.Net.WebClient
+        #$Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
+        #$Wc.Dispose()
+        #echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
+        #$env:QT_INSTALL_DIR = 'C:/Qt'
+        #Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
+        #Remove-Item qt.exe
         choco install -y zip --version 3.0
         choco install -y ninja
         choco install -y winflexbison
         choco install -y innounp
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2.2.1
+      version: 5.13.1
+      host: windows
     - name: Build Freetype
       run: |
         cd $HOME
