@@ -43,7 +43,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#DissolveDir}\Dissolve-Serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DissolveDir}\Dissolve.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
