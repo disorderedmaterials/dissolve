@@ -42,7 +42,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	view.setAutoFollowType(View::AllAutoFollow);
 
-	setGraphDataTargets(module_);
+	setGraphDataTargets();
 
 	updateControls();
 

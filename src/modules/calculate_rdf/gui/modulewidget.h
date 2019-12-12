@@ -77,7 +77,7 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Set data targets in graphs
-	void setGraphDataTargets(CalculateRDFModule* module);
+	void setGraphDataTargets();
 
 	private slots:
 };
