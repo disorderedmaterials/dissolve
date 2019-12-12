@@ -28,8 +28,9 @@ jobs:
         choco install -y innounp
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.2.1
-      version: 5.13.1
-      host: windows
+      with:
+        version: 5.13.1
+        host: windows
     - name: Build Freetype
       run: |
         cd $HOME
