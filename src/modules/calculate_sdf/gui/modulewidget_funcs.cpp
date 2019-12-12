@@ -20,12 +20,29 @@
 */
 
 #include "modules/calculate_sdf/gui/modulewidget.h"
+#include "modules/calculate_sdf/sdf.h"
+#include "classes/configuration.h"
 
 // Constructor
-CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
+
+	// Set up RDF graph
+	sdfGraph_ = ui_.SDFPlotWidget->dataViewer();
+
+	View& sdfView = sdfGraph_->view();
+	sdfView.setViewType(View::NormalView);
+	sdfView.axes().setTitle(0, "X, \\sym{angstrom}");
+	sdfView.axes().setRange(0, -10.0, 10.0);
+	sdfView.axes().setTitle(1, "Y, \\sym{angstrom}");
+	sdfView.axes().setRange(1, -10.0, 10.0);
+	sdfView.axes().setTitle(2, "Z, \\sym{angstrom}");
+	sdfView.axes().setRange(2, -10.0, 10.0);
+	sdfView.setAutoFollowType(View::AllAutoFollow);
+
+	setGraphDataTargets();
 
 	refreshing_ = false;
 }
@@ -37,6 +54,9 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, Module* modu
 // Update controls within widget
 void CalculateSDFModuleWidget::updateControls(int flags)
 {
+	ui_.SDFPlotWidget->updateToolbar();
+
+	sdfGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget
@@ -56,16 +76,39 @@ void CalculateSDFModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool CalculateSDFModuleWidget::writeState(LineParser& parser)
 {
-	return false;
+	// Write DataViewer sessions
+	if (!sdfGraph_->writeSession(parser)) return false;
+
+	return true;
 }
 
 // Read widget state through specified LineParser
 bool CalculateSDFModuleWidget::readState(LineParser& parser)
 {
-	return false;
+	// Read DataViewer sessions
+	if (!sdfGraph_->readSession(parser)) return false;
+
+	return true;
 }
 
 /*
  * Widgets / Functions
  */
 
+// Set data targets in graphs
+void CalculateSDFModuleWidget::setGraphDataTargets()
+{
+	// Remove any current data
+	sdfGraph_->clearRenderables();
+
+	if (!module_) return;
+
+	// Loop over Configuration targets in Module
+	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Calculated SDF
+		Renderable* sdf = sdfGraph_->createRenderable(Renderable::Data3DRenderable, CharString("%s//Process3D//%s//RDF", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		sdf->setColour(StockColours::BlackStockColour);
+	}
+}

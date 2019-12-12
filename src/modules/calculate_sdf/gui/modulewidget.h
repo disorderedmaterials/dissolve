@@ -26,7 +26,8 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class CalculateSDFModule;
+class DataViewer;
 
 // Module Widget
 class CalculateSDFModuleWidget : public ModuleWidget
@@ -36,11 +37,11 @@ class CalculateSDFModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	CalculateSDFModule* module_;
 
 	public:
 	// Constructor
-	CalculateSDFModuleWidget(QWidget* parent, Module* module);
+	CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module);
 
 
 	/*
@@ -49,6 +50,8 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	private:
 	// Main form declaration
 	Ui::CalculateSDFModuleWidget ui_;
+	// DataViewers contained within this widget
+	DataViewer* sdfGraph_;
 
 	public:
 	// Update controls within widget
@@ -73,6 +76,8 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Set data targets in graphs
+	void setGraphDataTargets();
 
 	private slots:
 };
