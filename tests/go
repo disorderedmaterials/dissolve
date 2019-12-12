@@ -4,8 +4,8 @@
 
 NFAILED=0
 EXITONFAIL="TRUE"
-SERIALBINARY=../src/dissolve-serial
-PARALLELBINARY=../src/dissolve
+SERIALBINARY=../src/dissolve
+PARALLELBINARY=../src/dissolve-mpi
 TESTS=""
 NTESTS="0"
 COMMONARGS="-x"
