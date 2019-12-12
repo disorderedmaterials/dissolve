@@ -16,7 +16,7 @@ jobs:
     - name: Install Prerequisties
       run: |
         brew update
-        brew install bison ftgl ninja
+        brew install bison ftgl ninja create-dmg
         brew install qt5
     - name: Build (CMake/Ninja)
       run: |
