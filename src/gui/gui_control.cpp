@@ -48,33 +48,57 @@ void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
 	// TODO
 }
 
-// Set widgets ready for the main code to be run
-void DissolveWindow::setWidgetsForRun()
+// Disable sensitive controls
+void DissolveWindow::disableSensitiveControls()
 {
-	// Disable / enable controls
+	// Disable / enable run controls
 	ui_.ControlRunButton->setEnabled(false);
 	ui_.ControlStepButton->setEnabled(false);
 	ui_.ControlPauseButton->setEnabled(true);
 
+	// Disable necessary simulation menu items
+	ui_.SimulationRunAction->setEnabled(false);
+	ui_.SimulationPauseAction->setEnabled(true);
+	ui_.SimulationStepAction->setEnabled(false);
+	ui_.SimulationStepFiveAction->setEnabled(false);
+	ui_.SimulationSaveRestartPointAction->setEnabled(false);
+	ui_.SimulationDataManagerAction->setEnabled(false);
+	ui_.SimulationSetRandomSeedAction->setEnabled(false);
+
+	// Disable necessary menus
+	ui_.SpeciesMenu->setEnabled(false);
+	ui_.ConfigurationMenu->setEnabled(false);
+	ui_.LayerMenu->setEnabled(false);
+
 	// Disable sensitive controls in all tabs
-	RefList<MainTab> tabs = allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
+	ui_.MainTabs->disableSensitiveControls();
 }
 
-// Set widgets after the main code has been run
-void DissolveWindow::setWidgetsAfterRun()
+// Enable sensitive controls
+void DissolveWindow::enableSensitiveControls()
 {
-	// Disable / enable controls
+	// Disable / enable run controls
 	ui_.ControlRunButton->setEnabled(true);
 	ui_.ControlRunButton->setIcon(QIcon(":/control/icons/control_play.svg"));
 	ui_.ControlStepButton->setEnabled(true);
 	ui_.ControlPauseButton->setEnabled(false);
 
-	// Enable necessary controls in all tabs
-	RefList<MainTab> tabs = allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+	// Enable necessary simulation menu items
+	ui_.SimulationRunAction->setEnabled(true);
+	ui_.SimulationPauseAction->setEnabled(false);
+	ui_.SimulationStepAction->setEnabled(true);
+	ui_.SimulationStepFiveAction->setEnabled(true);
+	ui_.SimulationSaveRestartPointAction->setEnabled(true);
+	ui_.SimulationDataManagerAction->setEnabled(true);
+	ui_.SimulationSetRandomSeedAction->setEnabled(true);
+
+	// Enable necessary menus
+	ui_.SpeciesMenu->setEnabled(true);
+	ui_.ConfigurationMenu->setEnabled(true);
+	ui_.LayerMenu->setEnabled(true);
+
+	// Enable sensitive controls in all tabs
+	ui_.MainTabs->enableSensitiveControls();
 
 	// Reset the state
 	dissolveState_ = EditingState;
@@ -83,5 +107,5 @@ void DissolveWindow::setWidgetsAfterRun()
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
-	setWidgetsAfterRun();
+	enableSensitiveControls();
 }

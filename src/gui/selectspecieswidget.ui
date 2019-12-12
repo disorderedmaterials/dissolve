@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Select Template</string>
+   <string>Select Species</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">

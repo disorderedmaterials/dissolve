@@ -135,6 +135,8 @@ class SpeciesViewer : public BaseViewer
 	void setRenderableDrawStyle(RenderableSpecies::DisplayStyle ds);
 	// Return current renderable draw style
 	RenderableSpecies::DisplayStyle renderableDrawStyle() const;
+	// Recreate selection primitive
+	void recreateSelectionPrimitive();
 
 
 	/*

@@ -117,6 +117,7 @@ namespace MasterBlock
 		AngleKeyword,			/* 'Angle' - Define master Angle parameters that can be referred to */
 		BondKeyword,			/* 'Bond' - Define master Bond parameters that can be referred to */
 		EndMasterKeyword,		/* 'EndMaster' - Signals the end of the Master block */
+		ImproperKeyword,		/* 'Improper' - Define master Improper parameters that can be referred to */
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};

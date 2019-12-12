@@ -58,12 +58,12 @@ class ForcefieldParameters
 	 * Parameters
 	 */
 	private:
-	// Short-range parameters
-	Parameters parameters_;
+	// Interatomic interaction parameters
+	InteractionParameters parameters_;
 
 	public:
-	// Return short-range parameters
-	const Parameters& parameters() const;
+	// Return interatomic interaction parameters
+	const InteractionParameters& parameters() const;
 };
 
 #endif

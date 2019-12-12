@@ -23,6 +23,7 @@
 #include "math/histogram2d.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
+#include "math/data1d.h"
 
 // Static Members (ObjectStore)
 template<class Data2D> RefDataList<Data2D,int> ObjectStore<Data2D>::objects_;
@@ -289,6 +290,18 @@ Array2D<double>& Data2D::values()
 const Array2D<double>& Data2D::constValues2D() const
 {
 	return values_;
+}
+// Return values array in linear format 
+double* Data2D::values2DLinear()
+{
+	return values_.linearArray();
+}
+
+// Return value specified from linear array 
+double Data2D::value(int index)
+{
+	double* array = values2DLinear();
+	return array[index];
 }
 
 // Return number of values present in whole dataset

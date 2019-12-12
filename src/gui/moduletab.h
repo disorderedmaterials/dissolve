@@ -24,11 +24,10 @@
 
 #include "gui/ui_moduletab.h"
 #include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class Module;
-class ModuleBlock;
+class ModuleControlWidget;
 class QSplitter;
 
 // Module Tab
@@ -39,7 +38,7 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 
 	public:
 	// Constructor / Destructor
-	ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module);
+	ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Module* module);
 	~ModuleTab();
 
 
@@ -66,7 +65,7 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// Module displayed in this tab
 	Module* module_;
 	// Module control widget displayed
-	ModuleBlock* controlsWidget_;
+	ModuleControlWidget* controlsWidget_;
 	// ModuleWidget displayed in this control widget (if any)
 	ModuleWidget* moduleWidget_;
 

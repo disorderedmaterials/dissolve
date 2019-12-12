@@ -7,6 +7,7 @@ add_library(neta
   logic.cpp
   neta.cpp
   node.cpp
+  presence.cpp
   ring.cpp
   root.cpp
 
@@ -15,6 +16,7 @@ add_library(neta
   logic.h
   neta.h
   node.h
+  presence.h
   ring.h
   root.h
 )

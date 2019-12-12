@@ -21,6 +21,7 @@
   </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
+    <file>icons/viewer_toolbar_site.svg</file>
     <file>icons/viewer_toolbar_view.svg</file>
     <file>icons/viewer_toolbar_graph.svg</file>
     <file>icons/viewer_toolbar_tools.svg</file>
@@ -68,6 +69,9 @@
   </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
+    <file>images/hexagons1.png</file>
+    <file>images/big.png</file>
+    <file>images/hexagons1.jpg</file>
   </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>

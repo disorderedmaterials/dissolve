@@ -1,0 +1,42 @@
+name: AppImage (GUI/Serial) (Ubuntu 16.04 - Xenial)
+
+on:
+  push:
+    branches:
+    - develop
+    - release/*
+
+jobs:
+  build:
+
+    runs-on: ubuntu-16.04
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisties
+      run: |
+        sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build
+        sudo add-apt-repository ppa:beineri/opt-qt-5.12.0-xenial -y
+        sudo apt-get update -q
+        sudo apt-get install qt512base -y
+    - name: Build (CMake/Ninja)
+      run: |
+        QT_BASE_DIR=/opt/qt512
+        export QTDIR=$QT_BASE_DIR
+        export PATH=$QT_BASE_DIR/bin:$PATH
+        export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Create AppImage
+      run: |
+        QT_BASE_DIR=/opt/qt512
+        export QTDIR=$QT_BASE_DIR
+        export PATH=$QT_BASE_DIR/bin:$PATH
+        wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
+        chmod u+x build-appimage.sh
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        ./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b build/dissolve-serial
+        ./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b build/dissolve-gui

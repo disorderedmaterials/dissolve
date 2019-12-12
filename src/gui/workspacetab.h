@@ -24,6 +24,7 @@
 
 #include "gui/ui_workspacetab.h"
 #include "gui/maintab.h"
+#include "gui/gizmos/gizmo.h"
 
 // Forward Declarations
 class TMdiArea;
@@ -37,7 +38,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
 	public:
 	// Constructor / Destructor
-	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
+	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title);
 	~WorkspaceTab();
 	// Main form declaration
 	Ui::WorkspaceTab ui;
@@ -68,53 +69,25 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
 
 	/*
-	 * MDI SubWindow Management
+	 * Gizmo Management
 	 */
 	private:
-	// MDI area widget
+	// MDI area containing our Gizmos
 	TMdiArea* mdiArea_;
-	// List of all current MDI sub-windows
-	List<SubWindow> subWindows_;
-
-	private:
-	// Find SubWindow from specified data pointer
-	SubWindow* subWindow(void* data);
-
-	private slots:
-	// Remove subWindow with specified title
-	void removeSubWindow(QString title);
+	// List of all current Gizmos in the MDI area
+	List<Gizmo> gizmos_;
 
 	public:
-	// Remove window for specified data (as pointer) from this widget's MDI area
-	bool removeWindowFromMDIArea(void* windowContents);
-	// Return window for specified data (as pointer) in this widget's MDI area, if it exists
-	QMdiSubWindow* findMDIWindow(void* windowContents);
-	// Find SubWindow by title
-	SubWindow* findSubWindow(const char* title);
-	// Find SubWindow by SubWidget
-	SubWindow* findSubWindow(SubWidget* subWidget);
-	// Find SubWindow by data content
-	SubWindow* findSubWindow(void* windowData);
-	// Add SubWindow for widget containing specified data (as pointer)
-	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
-	// Remove SubWindow specified
-	void removeSubWindow(SubWindow* window);
+	// Create Gizmo with specified type
+	Gizmo* createGizmo(const char* type);
 
 
 	/*
 	 * Context Menu
 	 */
-	private:
-	// Create Module menu with specified QMenu as parent
-	void createContextMenu(QMenu* parent);
-
 	private slots:
-	// General widget selected on context menu
-	void contextMenuWidgetSelected(bool checked);
-
-	public:
-	// Add named widget to workspace
-	SubWindow* addNamedWidget(const char* widgetName, const char* title);
+	// Create Gizmo from context menu item
+	void contextMenuAddGizmo(bool checked);
 
 	public slots:
 	// Custom context menu requested

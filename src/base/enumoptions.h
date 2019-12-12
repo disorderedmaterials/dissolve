@@ -72,6 +72,12 @@ template <class T> class EnumOptions : public EnumOptionsBase
 		for (int n=0; n<options_.nItems(); ++n) if (options_.constAt(n).enumeration() == enumeration) return options_.constAt(n).keyword();
 		return "ENUMERATION_NOT_VALID";
 	}
+	// Return enumerated keyword from uncast integer
+	const char* keywordFromInt(int uncastEnumeration) const
+	{
+		for (int n=0; n<options_.nItems(); ++n) if (options_.constAt(n).enumeration() == uncastEnumeration) return options_.constAt(n).keyword();
+		return "ENUMERATION_NOT_VALID";
+	}
 	// Return option with enumeration specified
 	const EnumOption& option(T enumeration) const
 	{
@@ -83,8 +89,22 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	{
 		return EnumOptionsBase::option(keyword);
 	}
+	// Return minimum number of arguments for the specified enumeration
+	int minArgs(T enumeration) const
+	{
+		// Retrieve the relevant EnumOption
+		const EnumOption& opt = option(enumeration);
+		return opt.minArgs();
+	}
+	// Return maximum number of arguments for the specified enumeration
+	int maxArgs(T enumeration) const
+	{
+		// Retrieve the relevant EnumOption
+		const EnumOption& opt = option(enumeration);
+		return opt.maxArgs();
+	}
 	// Check number of arguments provided to keyword
-	bool validNArgs(T enumeration, int nArgsProvided)
+	bool validNArgs(T enumeration, int nArgsProvided) const
 	{
 		// Retrieve the relevant EnumOption
 		const EnumOption& opt = option(enumeration);

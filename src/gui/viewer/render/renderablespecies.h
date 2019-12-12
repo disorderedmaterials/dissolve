@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLESPECIES_H
-#define DISSOLVE_RENDERABLESPECIES_H
+#ifndef DISSOLVE_RENDER_RENDERABLESPECIES_H
+#define DISSOLVE_RENDER_RENDERABLESPECIES_H
 
 #include "gui/viewer/render/renderable.h"
 #include "classes/species.h"
@@ -47,6 +47,8 @@ class RenderableSpecies : public Renderable
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
+
+	public:
 	// Return version of data
 	int dataVersion() const;
 

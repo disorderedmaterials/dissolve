@@ -6,8 +6,7 @@ SET(widgets_MOC_HDRS
   mimestrings.h
   mimetreewidgetitem.h
   nocontrols.h
-  subwidget.h
-  subwindow.h
+  sampleddoublelabel.h
   tmenubuttongroup.h
 
   checkindicator.hui
@@ -16,8 +15,7 @@ SET(widgets_MOC_HDRS
   exponentialspin.hui
   gradientbar.hui
   mimetreewidget.hui
-  supertabbar.hui
-  supertabwidget.hui
+  superstackedwidget.hui
   tmenubutton.hui
   tpopupwidget.hui
 )
@@ -26,6 +24,7 @@ QT5_WRAP_CPP(widgets_MOC_SRCS ${widgets_MOC_HDRS})
 # User Interface Files
 SET(widgets_UIS
   nocontrols.ui
+  sampleddoublelabel.ui
 )
 QT5_WRAP_UI(widgets_UIS_H ${widgets_UIS})
 
@@ -40,10 +39,8 @@ SET(widgets_SRCS
   mimetreewidget_funcs.cpp
   mimetreewidgetitem.cpp
   nocontrols_funcs.cpp
-  subwidget.cpp
-  subwindow.cpp
-  supertabbar_funcs.cpp
-  supertabwidget_funcs.cpp
+  sampleddoublelabel_funcs.cpp
+  superstackedwidget_funcs.cpp
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp
   tpopupwidget_funcs.cpp

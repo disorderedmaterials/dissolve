@@ -245,6 +245,14 @@ int NETADefinitionGenerator::lex()
 			}
 		}
 
+		// Flag for the current context?
+		if (context() && context()->isValidFlag(token))
+		{
+			Messenger::printVerbose("NETA : ...which is a valid flag for this context.\n");
+			NETADefinitionGenerator_lval.name = token.get();
+			return DISSOLVE_NETA_FLAG;
+		}
+
 		// Chemical Element?
 		if (!expectName_)
 		{

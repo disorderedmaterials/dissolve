@@ -278,6 +278,19 @@ void Matrix3::invert()
 	}
 }
 
+// Return nth value of matrix
+double Matrix3::value(int n) const
+{
+#ifdef CHECKS
+	if ((n < 0) || (n > 8))
+	{
+		printf("Value %i is out of range for a Matrix3.\n", n);
+		return 0.0;
+	}
+#endif
+	return matrix_[n];
+}
+
 // Return maximal element
 double Matrix3::max() const
 {

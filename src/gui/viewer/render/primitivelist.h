@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRIMITIVELIST_H
-#define DISSOLVE_PRIMITIVELIST_H
+#ifndef DISSOLVE_RENDER_PRIMITIVELIST_H
+#define DISSOLVE_RENDER_PRIMITIVELIST_H
 
 #include "gui/viewer/render/primitive.h"
 #include "templates/list.h"
@@ -50,7 +50,7 @@ class PrimitiveList
 	// Forget all data, leaving arrays intact
 	void forgetAll();
 	// Reinitialise list so it is large enough to accomodate specified number of Primitives
-	void reinitialise(int newSize, bool allowShrink, GLenum type, bool colourData);
+	void reinitialise(int newSize, GLenum type, bool colourData);
 	// Add a new Primitive to the end of the list
 	Primitive* add(GLenum type = GL_LINES, bool colourData = false);
 	// Register an existing Primitive with the list

@@ -113,6 +113,8 @@ class ChartBase : public QWidget
 	QPoint mouseDownPosition_;
 	// ChartBlock being dragged (if a local drag)
 	ChartBlock* draggedBlock_;
+	// Selected ChartBlock
+	ChartBlock* selectedBlock_;
 	// Drop hotspots available on the chart
 	List<ChartHotSpot> hotSpots_;
 	// Current hotspot the dragged object is over (if any)
@@ -135,14 +137,21 @@ class ChartBase : public QWidget
 	virtual MimeStrings mimeInfo(ChartBlock* block);
 	// Specified block has been double clicked
 	virtual void blockDoubleClicked(ChartBlock* block);
+	// Block selection has changed
+	virtual void blockSelectionChanged(ChartBlock* block);
 
 	protected slots:
 	// The chart has requested removal of one of its blocks
 	virtual void blockRemovalRequested(const QString& blockIdentifier);
 
+	public:
+	// Return selected ChartBlock
+	ChartBlock* selectedBlock() const;
+
 	signals:
 	void blockDoubleClicked(const QString& blockIdentifeir);
 	void blockRemoved(const QString& blockIdentifier);
+	void blockSelectionChanged(const QString& blockIdentifier);
 
 
 	/*

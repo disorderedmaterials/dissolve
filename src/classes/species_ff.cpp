@@ -28,8 +28,8 @@
  * Private
  */
 
-// Add missing higher order intramolecular terms from current bond connectivity
-void Species::completeIntramolecularTerms()
+// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+void Species::updateIntramolecularTerms()
 {
 	SpeciesAtom* i, *j, *k, *l;
 	SpeciesBond* ij, *kl;
@@ -53,7 +53,7 @@ void Species::completeIntramolecularTerms()
 			i = ij->partner(j);
 
 			// Attempt to add angle term 'ijk' if 'i' > 'k'
-			if ((i > k) && (!hasAngle(i, j, k))) addAngle(i, j, k);
+			if (!hasAngle(i, j, k)) addAngle(i, j, k);
 
 			// Loop over bonds 'kl'
 			for (int klIndex = 0; klIndex < k->nBonds(); ++klIndex)
@@ -65,13 +65,58 @@ void Species::completeIntramolecularTerms()
 				// Get atom 'l'
 				l = kl->partner(k);
 
-				// Attempt to add angle term 'jkl' if 'j' > 'l'
-				if ((j > l) && (!hasAngle(j, k, l))) addAngle(j, k, l);
+				// Attempt to add angle term 'jkl'
+				if (!hasAngle(j, k, l)) addAngle(j, k, l);
 
 				// If the torsion i-j-k-l doesn't already exist, add it now.
-				if (!hasTorsion(i,  j, k, l)) addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
+				if (!hasTorsion(i, j, k, l)) addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
 			}
 		}
+	}
+
+	// Check existing angle terms for any that are invalid
+	int anglePos = 0, origNAngles = angles_.nItems();
+	for (int n=0; n<origNAngles; ++n)
+	{
+		// Grab the angle
+		SpeciesAngle* angle = angles_[anglePos];
+
+		// Check if this angle is still valid (i.e. i-j and j-k are owned by the Species and still bound)
+		if ((!atoms_.contains(angle->i())) || (!atoms_.contains(angle->j())) || (!atoms_.contains(angle->k())))
+		{
+			angles_.removeWithReorder(anglePos);
+			continue;
+		}
+		if ((!hasBond(angle->i(), angle->j())) || (!hasBond(angle->j(), angle->k())))
+		{
+			angles_.removeWithReorder(anglePos);
+			continue;
+		}
+
+		// OK, so increase position and continue
+		++anglePos;
+	}
+
+	int torsionPos = 0, origNTorsions = torsions_.nItems();
+	for (int n=0; n<origNTorsions; ++n)
+	{
+		// Grab the angle
+		SpeciesTorsion* torsion = torsions_[torsionPos];
+
+		// Check if this torsion is still valid (i.e. i-j, j-k, and k-l are owned by the Species and still bound)
+		if ((!atoms_.contains(torsion->i())) || (!atoms_.contains(torsion->j())) || (!atoms_.contains(torsion->k())) || (!atoms_.contains(torsion->l())))
+		{
+			torsions_.removeWithReorder(torsionPos);
+			continue;
+		}
+		if ((!hasBond(torsion->i(), torsion->j())) || (!hasBond(torsion->j(), torsion->k())) || (!hasBond(torsion->k(), torsion->l())))
+		{
+			torsions_.removeWithReorder(torsionPos);
+			continue;
+		}
+
+		// OK, so increase position and continue
+		++torsionPos;
 	}
 }
 
@@ -89,6 +134,20 @@ void Species::setForcefield(Forcefield* ff)
 Forcefield* Species::forcefield() const
 {
 	return forcefield_;
+}
+
+// Set whether to auto-generate missing intramolecular terms, and remove invalid ones
+void Species::setAutoUpdateIntramolecularTerms(bool b)
+{
+	autoUpdateIntramolecularTerms_ = b;
+
+	if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
+}
+
+// Return whether to auto-generate missing intramolecular terms, and remove invalid ones
+bool Species::autoUpdateIntramolecularTerms() const
+{
+	return autoUpdateIntramolecularTerms_;
 }
 
 // Apply terms from source Forcefield

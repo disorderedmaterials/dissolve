@@ -48,7 +48,7 @@ void SpeciesImproper::clear()
 	j_ = NULL;
 	k_ = NULL;
 	l_ = NULL;
-	form_ = SpeciesImproper::nImproperFunctions;
+	form_ = SpeciesImproper::NoForm;
 }
 
 /*
@@ -181,33 +181,15 @@ bool SpeciesImproper::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
  * Interaction Parameters
  */
 
-// Improper function keywords
-const char* ImproperFunctionKeywords[] = { "Cos" };
-int ImproperFunctionNParameters[] = { 4 };
-
-// Convert string to functional form
-SpeciesImproper::ImproperFunction SpeciesImproper::improperFunction(const char* s)
+// Return enum options for ImproperFunction
+EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-	for (int n=0; n<SpeciesImproper::nImproperFunctions; ++n) if (DissolveSys::sameString(s, ImproperFunctionKeywords[n])) return (SpeciesImproper::ImproperFunction) n;
-	return SpeciesImproper::nImproperFunctions;
-}
+	static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesImproper::CosineForm, 	"Cos",		4,4);
 
-// Return functional form text
-const char* SpeciesImproper::improperFunction(SpeciesImproper::ImproperFunction func)
-{
-	return ImproperFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 
-// Return functional form array
-const char** SpeciesImproper::improperFunctions()
-{
-	return ImproperFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesImproper::nFunctionParameters(SpeciesImproper::ImproperFunction func)
-{
-	return ImproperFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters
@@ -237,7 +219,8 @@ double SpeciesImproper::energy(double angleInDegrees) const
 	// Convert torsion angle from degrees to radians
 	double phi = angleInDegrees / DEGRAD;
 
-	if (form() == SpeciesImproper::CosineForm)
+	if (form() == SpeciesImproper::NoForm) return 0.0;
+	else if (form() == SpeciesImproper::CosineForm)
 	{
 		/*
 		 * U(phi) = k * (1 + s*cos(n*phi - eq))
@@ -251,7 +234,7 @@ double SpeciesImproper::energy(double angleInDegrees) const
 		return params[0] * (1.0 + params[3] * cos(params[1]*phi - (params[2] / DEGRAD)));
 	}
 
-	Messenger::error("Functional form of SpeciesImproper term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -265,7 +248,8 @@ double SpeciesImproper::force(double angleInDegrees) const
 	double phi = angleInDegrees / DEGRAD;
 	double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
 
-	if (form() == SpeciesImproper::CosineForm)
+	if (form() == SpeciesImproper::NoForm) return 0.0;
+	else if (form() == SpeciesImproper::CosineForm)
 	{
 		/*
 		 * dU/dphi = k * n * s * -sin(n*phi - eq)
@@ -279,7 +263,7 @@ double SpeciesImproper::force(double angleInDegrees) const
 		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1]*phi - (params[2] / DEGRAD));
 	}
 
-	Messenger::error("Functional form of SpeciesImproper term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 

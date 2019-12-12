@@ -65,7 +65,8 @@ class SkeletonModule : public Module
 	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-	
+
+
 	/*
 	 * Processing
 	 */

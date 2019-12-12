@@ -101,3 +101,9 @@ RenderableSpecies::DisplayStyle SpeciesViewer::renderableDrawStyle() const
 
 	return RenderableSpecies::LinesStyle;
 }
+
+// Recreate selection primitive
+void SpeciesViewer::recreateSelectionPrimitive()
+{
+	if (speciesRenderable_) speciesRenderable_->recreateSelectionPrimitive();
+}

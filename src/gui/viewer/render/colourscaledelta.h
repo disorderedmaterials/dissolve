@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_COLOURSCALEDELTA_H
-#define DISSOLVE_COLOURSCALEDELTA_H
+#ifndef DISSOLVE_RENDER_COLOURSCALEDELTA_H
+#define DISSOLVE_RENDER_COLOURSCALEDELTA_H
 
 #include "templates/list.h"
 #include "templates/reflist.h"

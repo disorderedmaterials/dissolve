@@ -1,5 +1,5 @@
 /*
-	*** Parameters Definition
+	*** Interatomic Interaction Parameters Definition
 	*** src/base/parameters.h
 	Copyright T. Youngs 2012-2019
 
@@ -19,46 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PARAMETERS_H
-#define DISSOLVE_PARAMETERS_H
+#ifndef DISSOLVE_INTERACTIONPARAMETERS_H
+#define DISSOLVE_INTERACTIONPARAMETERS_H
 
 #define MAXSRPARAMETERS 4
 
-#include "templates/mpilistitem.h"
 #include "base/charstring.h"
 
-// Short-Range Interaction Parameters Definition
-class Parameters : public MPIListItem<Parameters>
+// Interatomic Interaction Parameters
+class InteractionParameters
 {
 	public:
 	// Constructor
-	Parameters();
+	InteractionParameters();
 	// Destructor
-	~Parameters();
+	~InteractionParameters();
 
 
 	/*
-	 * Name / Description
-	 */
-	private:
-	// Short Name
-	CharString name_;
-	// Description
-	CharString description_;
-
-	public:
-	// Set name of Parameters
-	void setName(const char* name);
-	// Return name of Parameters
-	const char* name() const;
-	// Set description of Parameters
-	void setDescription(const char* desc);
-	// Return description of element
-	const char* description() const;
-
-
-	/*
-	 * Potential Parameters
+	 * Parameters
 	 */
 	private:
 	// Whether the parameters / charge are empty (i.e. none have ever been set)
@@ -70,7 +49,7 @@ class Parameters : public MPIListItem<Parameters>
 
 	public:
 	// Return whether the parameters / charge are empty (i.e. none have ever been set)
-	bool empty() const;
+	bool isEmpty() const;
 	// Set parameter with index specified
 	void setParameter(int index, double value);
 	// Return parameter with index specified
@@ -79,14 +58,6 @@ class Parameters : public MPIListItem<Parameters>
 	void setCharge(double charge);
 	// Return atomic charge
 	double charge() const;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif

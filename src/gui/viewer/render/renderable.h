@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLE_H
-#define DISSOLVE_RENDERABLE_H
+#ifndef DISSOLVE_RENDER_RENDERABLE_H
+#define DISSOLVE_RENDER_RENDERABLE_H
 
 #include "gui/viewer/render/primitiveassembly.h"
 #include "gui/viewer/render/primitivelist.h"
@@ -40,7 +40,7 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, nRenderableTypes };
+	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, SpeciesSiteRenderable, nRenderableTypes };
 	// Return enum options for RenderableType
 	static EnumOptions<RenderableType> renderableTypes();
 	// Constructor / Destructor
@@ -76,10 +76,10 @@ class Renderable : public ListItem<Renderable>
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	virtual bool validateDataSource() = 0;
-	// Return version of data
-	virtual int dataVersion() const = 0;
 
 	public:
+	// Return version of data
+	virtual int dataVersion() const = 0;
 	// Return identifying tag for source data object
 	const char* objectTag() const;
 
@@ -120,6 +120,8 @@ class Renderable : public ListItem<Renderable>
 	void setTransformEnabled(int axis, bool enabled);
 	// Return whether specified transform is enabled
 	bool transformEnabled(int axis) const;
+	// Return version of transformed data
+	int transformDataVersion() const;
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
 	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax) = 0;
 

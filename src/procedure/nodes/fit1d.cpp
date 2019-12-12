@@ -142,12 +142,12 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	{
 		case (ProcedureNode::Collect1DNode):
 			collect1DNode = dynamic_cast<Collect1DProcedureNode*>(dataNode_.node());
-			if (collect1DNode) return Messenger::error("Failed to cast dataNode_ into an Collect1DProcedureNode.\n");
+			if (collect1DNode) return Messenger::error("Failed to cast dataNode_ into a Collect1DProcedureNode.\n");
 			referenceData_ = collect1DNode->accumulatedData();
 			break;
 		case (ProcedureNode::Process1DNode):
 			process1DNode = dynamic_cast<Process1DProcedureNode*>(dataNode_.node());
-			if (process1DNode) return Messenger::error("Failed to cast dataNode_ into an Collect1DProcedureNode.\n");
+			if (process1DNode) return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");
 			referenceData_ = process1DNode->processedData();
 			break;
 		case (ProcedureNode::nNodeTypes):

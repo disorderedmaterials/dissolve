@@ -23,8 +23,8 @@
 #define DISSOLVE_MAINWINDOW_H
 
 #include "gui/ui_gui.h"
-#include "gui/widgets/subwindow.h"
 #include "gui/outputhandler.hui"
+#include "gui/referencepoint.h"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -132,11 +132,17 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
+	 * Reference Points
+	 */
+	private:
+	// List of ReferencePoints currently loaded
+	List<ReferencePoint> referencePoints_;
+
+
+	/*
 	 * Update Functions
 	 */
 	public slots:
-	// Update all tabs
-	void updateTabs();
 	// Update window title
 	void updateWindowTitle();
 	// Update controls frame
@@ -172,6 +178,8 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
+	void on_SimulationSaveRestartPointAction_triggered(bool checked);
+	void on_SimulationDataManagerAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesCreateEmptyAction_triggered(bool checked);
@@ -269,10 +277,10 @@ class DissolveWindow : public QMainWindow
 	void on_ControlReloadButton_clicked(bool checked);
 
 	public slots:
-	// Set widgets ready for the main code to be run
-	void setWidgetsForRun();
-	// Set widgets after the main code has been run
-	void setWidgetsAfterRun();
+	// Disable sensitive controls
+	void disableSensitiveControls();
+	// Enable sensitive controls
+	void enableSensitiveControls();
 	// All iterations requested are complete
 	void iterationsComplete();
 
@@ -284,102 +292,28 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Simulation' Stack Page - Tabs
 	 */
-	private:
-	// Pointer to Forcefield tab
-	ForcefieldTab* forcefieldTab_;
-	// List of Species tabs
-	List<SpeciesTab> speciesTabs_;
-	// List of Configuration tabs
-	List<ConfigurationTab> configurationTabs_;
-	// List of processing layer tabs
-	List<LayerTab> processingLayerTabs_;
-	// List of Module tabs
-	List<ModuleTab> moduleTabs_;
-	// List of Workspace tabs
-	List<WorkspaceTab> workspaceTabs_;
-
 	private slots:
 	void on_MainTabs_currentChanged(int index);
-
-	private:
-	// Remove tabs related to the current data
-	void clearTabs();
-	// Reconcile tabs, making them consistent with the current data
-	void reconcileTabs();
-	// Add core (permanent) tabs
-	void addCoreTabs();
-	// Add on an empty workspace tab
-	MainTab* addWorkspaceTab(const char* title);
-	// Generate unique Workspace name with base name provided
-	const char* uniqueWorkspaceName(const char* base);
-	// Find tab with title specified
-	MainTab* findTab(const char* title);
-	// Find tab with specified page widget
-	MainTab* findTab(QWidget* page);
-	// Find SpeciesTab containing specified page widget
-	SpeciesTab* speciesTab(QWidget* page);
-	// Find ConfigurationTab containing specified page widget
-	ConfigurationTab* configurationTab(QWidget* page);
-	// Find LayerTab containing specified page widget
-	LayerTab* processingLayerTab(QWidget* page);
-	// Find ModuleTab containing specified page widget
-	ModuleTab* moduleTab(QWidget* page);
-	// Find ModuleTab containing specified Module
-	ModuleTab* moduleTab(Module* module);
-	// Find WorkspaceTab containing specified page widget
-	WorkspaceTab* workspaceTab(QWidget* page);
-	// Return current tab
-	MainTab* currentTab() const;
-	// Make specified tab the current one
-	void setCurrentTab(MainTab* tab);
-	// Make specified tab the current one (by index)
-	void setCurrentTab(int tabIndex);
-	// Show forcefield tab
-	void showForcefieldTab();
-	// Make specified Species tab the current one
-	void setCurrentTab(Species* species);
-	// Make specified Configuration tab the current one
-	void setCurrentTab(Configuration* cfg);
-	// Make specified processing layer tab the current one
-	void setCurrentTab(ModuleLayer* layer);
-	// Return reference list of all current tabs
-	RefList<MainTab> allTabs() const;
-	// Return currently-selected Species (if a SpeciesTab is the current one)
-	Species* currentSpecies() const;
-	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
-	Configuration* currentConfiguration() const;
-	// Return currently-selected ModuleLayer (if a LayerTab is the current one)
-	ModuleLayer* currentLayer() const;
-
-	public:
-	// Add tab for specified Module target
-	MainTab* addModuleTab(Module* module);
-	// Remove the ModuleTab for the specifeid Module, if it exists
-	void removeModuleTab(Module* module);
-	// Return list of current WorkspaceTabs
-	const List<WorkspaceTab>& workspaceTabs() const;
 
 	public slots:
 	// Add or go to Module tab for the Module with the unique name provided
 	void showModuleTab(const QString& uniqueName);
 	// Remove the Module tab (if it exists) for the Module with the unique name provided
 	void removeModuleTab(const QString& uniqueName);
-	// Remove tab containing the specified page widget
-	void removeTab(QWidget* page);
 
 
 	/*
-	 * 'Simulation' Stack Page - State I/O
+	 * GUI State
 	 */
 	private:
-	// Filename containing current window layout
-	CharString windowLayoutFilename_;
+	// Filename containing current GUI state
+	CharString stateFilename_;
 
 	public:
-	// Save current window layout
-	bool saveWindowLayout();
-	// Load window state
-	bool loadWindowLayout();
+	// Save current GUI state
+	bool saveState();
+	// Load GUI state
+	bool loadState();
 };
 
 #endif

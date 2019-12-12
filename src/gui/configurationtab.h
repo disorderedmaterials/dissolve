@@ -24,7 +24,7 @@
 
 #include "gui/ui_configurationtab.h"
 #include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
+#include "base/units.h"
 
 // Forward Declarations
 class Configuration;
@@ -38,7 +38,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 	public:
 	// Constructor / Destructor
-	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg);
+	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Configuration* cfg);
 	~ConfigurationTab();
 
 
@@ -60,6 +60,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
+	bool canClose() const;
 
 
 	/*
@@ -80,6 +82,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	private:
 	// Row update function for BondsTable
 	void updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesInfo, bool createItems);
+	// Update density label
+	void updateDensityLabel();
 
 	protected:
 	// Update controls in tab
@@ -98,6 +102,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	void on_GeneratorRegenerateButton_clicked(bool checked);
 	// Definition
 	void on_TemperatureSpin_valueChanged(double value);
+	// Current Box
+	void on_DensityUnitsCombo_currentIndexChanged(int index);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);

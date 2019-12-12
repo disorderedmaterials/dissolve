@@ -20,7 +20,9 @@
 */
 
 #include "gui/gui.h"
+#include "gui/datamanagerdialog.h"
 #include "main/dissolve.h"
+#include <QFileDialog>
 #include <QInputDialog>
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
@@ -29,7 +31,7 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
-	setWidgetsForRun();
+	disableSensitiveControls();
 
 	dissolveState_ = DissolveWindow::RunningState;
 
@@ -45,7 +47,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
-	setWidgetsForRun();
+	disableSensitiveControls();
 
 	dissolveState_ = DissolveWindow::RunningState;
 
@@ -61,7 +63,7 @@ void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
-	setWidgetsForRun();
+	disableSensitiveControls();
 
 	dissolveState_ = DissolveWindow::RunningState;
 
@@ -81,6 +83,22 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 
 	// Disable the pause button
 	ui_.ControlPauseButton->setEnabled(false);
+}
+
+void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
+{
+	// Get filename for restart point
+	QString filename = QFileDialog::getSaveFileName(this, "Select Output File", QDir::currentPath(), "Restart Files (*.restart)");
+	if (filename.isEmpty()) return;
+
+	if (dissolve_.saveRestart(qPrintable(filename))) Messenger::print("Saved restart point to '%s'.\n", qPrintable(filename));
+	else Messenger::error("Failed to save restart point to '%s'.\n", qPrintable(filename));
+}
+
+void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
+{
+	DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_);
+	dataManagerDialog.exec();
 }
 
 void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)

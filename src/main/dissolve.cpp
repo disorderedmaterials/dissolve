@@ -33,6 +33,10 @@
 #include "genericitems/item.h"
 #include "genericitems/items.h"
 
+// Static Members (ObjectInfo)
+bool ObjectInfo::autoSuffixing_ = false;
+CharString ObjectInfo::autoSuffix_;
+
 // Constructor
 Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {

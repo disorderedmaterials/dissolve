@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TEXTFORMAT_H
-#define DISSOLVE_TEXTFORMAT_H
+#ifndef DISSOLVE_RENDER_TEXTFORMAT_H
+#define DISSOLVE_RENDER_TEXTFORMAT_H
 
 #include "templates/listitem.h"
 

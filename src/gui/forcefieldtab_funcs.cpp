@@ -35,11 +35,11 @@
 #include <QListWidgetItem>
 
 // Constructor / Destructor
-ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui_.setupUi(this);
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	/*
 	 * Master Terms
@@ -47,10 +47,10 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	
 	// Set item delegates for tables
 	// -- Functional Forms
-	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions())));
-	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesAngle::nAngleFunctions, SpeciesAngle::angleFunctions())));
-	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesTorsion::nTorsionFunctions, SpeciesTorsion::torsionFunctions())));
-	ui_.MasterImpropersTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesImproper::nImproperFunctions, SpeciesImproper::improperFunctions())));
+	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions())));
+	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions())));
+	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
+	ui_.MasterImpropersTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions())));
 
 	// -- Parameters
 	for (int n=2; n<6; ++n)
@@ -110,8 +110,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewer->view().axes().setTitle(1, "U, kj/mol");
 	viewer->view().axes().setRange(1, -100.0, 100.0);
-
-	refreshing_ = false;
 }
 
 ForcefieldTab::~ForcefieldTab()
@@ -126,6 +124,12 @@ ForcefieldTab::~ForcefieldTab()
 MainTab::TabType ForcefieldTab::type() const
 {
 	return MainTab::ForcefieldTabType;
+}
+
+// Return whether the tab can be closed
+bool ForcefieldTab::canClose() const
+{
+	return false;
 }
 
 /*
@@ -155,7 +159,7 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra* masterBond, bool c
 		ui_.MasterBondsTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterBondsTable->item(row, 1);
-	item->setText(SpeciesBond::bondFunction( (SpeciesBond::BondFunction) masterBond->form()));
+	item->setText(SpeciesBond::bondFunctions().keywordFromInt(masterBond->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -194,7 +198,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool
 		ui_.MasterAnglesTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterAnglesTable->item(row, 1);
-	item->setText(SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) masterAngle->form()));
+	item->setText(SpeciesAngle::angleFunctions().keywordFromInt(masterAngle->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -233,7 +237,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, 
 		ui_.MasterTorsionsTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterTorsionsTable->item(row, 1);
-	item->setText(SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) masterTorsion->form()));
+	item->setText(SpeciesTorsion::torsionFunctions().keywordFromInt(masterTorsion->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -272,7 +276,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra* masterImproper
 		ui_.MasterImpropersTable->setItem(row, 1, item);
 	}
 	else item = ui_.MasterImpropersTable->item(row, 1);
-	item->setText(SpeciesImproper::improperFunction( (SpeciesImproper::ImproperFunction) masterImproper->form()));
+	item->setText(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()));
 
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
@@ -426,7 +430,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 // Update controls in tab
 void ForcefieldTab::updateControls()
 {
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	// Master Bonds Table
 	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
@@ -449,7 +453,7 @@ void ForcefieldTab::updateControls()
 	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials
-	// Automatically regenerate pair potentials (quietly)
+	// -- Automatically regenerate pair potentials (quietly)
 	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
 	{
 		Messenger::mute();
@@ -458,7 +462,8 @@ void ForcefieldTab::updateControls()
 	}
 	ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
 	ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
-	ui_.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
+	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.PairPotentialsIncludeCoulombRadio->setChecked(true);
+	else ui_.PairPotentialsShortRangeOnlyRadio->setChecked(true);
 	ui_.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
 	ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
 	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
@@ -466,8 +471,6 @@ void ForcefieldTab::updateControls()
 	// -- Table
 	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
 	ui_.PairPotentialsTable->resizeColumnsToContents();
-
-	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab
@@ -509,12 +512,10 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
 	AtomType* at = dissolve_.addAtomType(element);
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
 	ui_.AtomTypesTable->resizeColumnsToContents();
-
-	refreshing_ = false;
 
 	dissolveWindow_->setModified();
 }
@@ -526,7 +527,7 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 
 void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// Get target AtomType from the passed widget
 	AtomType* atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
@@ -568,7 +569,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 
 void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	dissolve_.setPairPotentialRange(value);
 
@@ -583,7 +584,7 @@ void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
 
 void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	dissolve_.setPairPotentialDelta(value);
 
@@ -596,9 +597,9 @@ void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
 	dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
+void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	dissolve_.setPairPotentialsIncludeCoulomb(checked);
 
@@ -608,12 +609,20 @@ void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
 		updateControls();
 	}
 
+	// Need to update to show/hide the charges column in atoms tables
+	dissolveWindow_->fullUpdate();
+	
 	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_PairPotentialsShortRangeOnlyRadio_clicked(bool checked)
+{
+	on_PairPotentialsIncludeCoulombRadio_clicked(false);
 }
 
 void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	PairPotential::setShortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) index );
 	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
@@ -629,7 +638,7 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 
 void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	PairPotential::setCoulombTruncationScheme( (PairPotential::CoulombTruncationScheme) index );
 
@@ -692,7 +701,7 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* 
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// Get target PairPotential from the passed widget
 	PairPotential* pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : NULL;
@@ -742,7 +751,7 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// Get target MasterIntra from the passed widget
 	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
@@ -758,7 +767,7 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
@@ -787,7 +796,7 @@ void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// Get target MasterIntra from the passed widget
 	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
@@ -803,7 +812,7 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesAngle::angleFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
@@ -832,7 +841,7 @@ void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
 	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
@@ -848,7 +857,7 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesTorsion::torsionFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
@@ -877,7 +886,7 @@ void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
 	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
@@ -893,7 +902,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Functional Form
 		case (1):
-			masterIntra->setForm(SpeciesImproper::improperFunction(qPrintable(w->text())));
+			masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Parameters

@@ -32,20 +32,24 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
+#include "base/units.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui_.setupUi(this);
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	configuration_ = cfg;
 
 	// Populate coordinates file format combo
 	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
+
+	// Populate density units combo
+	ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
 	// Set target for ConfigurationViewer
 	ui_.ViewerWidget->setConfiguration(configuration_);
@@ -54,14 +58,14 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
 	connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
 
-	refreshing_ = false;
-
 	// Set up the ModuleEditor
 	ui_.LayerPanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
 {
+	// Remove the Configuration represented in this tab
+	dissolve_.removeConfiguration(configuration_);
 }
 
 /*
@@ -98,6 +102,22 @@ bool ConfigurationTab::canChangeTitle() const
 	return true;
 }
 
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool ConfigurationTab::canClose() const
+{
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the configuration '%1'?\nThis cannot be undone!").arg(configuration_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret != QMessageBox::Yes) return false;
+
+	return true;
+}
+
 /*
  * Configuration Target
  */
@@ -112,19 +132,27 @@ Configuration* ConfigurationTab::configuration() const
  * Update
  */
 
+// Update density label
+void ConfigurationTab::updateDensityLabel()
+{
+	if (!configuration_)
+	{
+		ui_.DensityUnitsLabel->setText("N/A");
+		return;
+	}
+
+	if (ui_.DensityUnitsCombo->currentIndex() == 0) ui_.DensityUnitsLabel->setText(QString::number(configuration_->atomicDensity()));
+	else ui_.DensityUnitsLabel->setText(QString::number(configuration_->chemicalDensity()));
+}
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
-	// Size Factor
-	ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor()); 
-	ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
-
-	// Box
+	// Current Box
 	const Box* box = configuration_->box();
 	ui_.CurrentBoxTypeLabel->setText(Box::boxTypes().keyword(box->type()));
 	ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
@@ -133,15 +161,21 @@ void ConfigurationTab::updateControls()
 	ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
 	ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
 	ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
+	updateDensityLabel();
 
 	// Input Coordinates
 	ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
+	// Size Factor
+	ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
+	ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
+
+	// Generator
+	ui_.ProcedureWidget->updateControls();
+
 	// Viewer
 	ui_.ViewerWidget->postRedisplay();
-
-	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab
@@ -183,28 +217,34 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	configuration_->setTemperature(value);
 
 	dissolveWindow_->setModified();
 }
 
+// Current Box
+void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
+{
+	updateDensityLabel();
+}
+
 // Initial Coordinates
 void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 }
 
 void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 }
 
 // Size Factor Scaling
 void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	configuration_->setRequestedSizeFactor(value);
 

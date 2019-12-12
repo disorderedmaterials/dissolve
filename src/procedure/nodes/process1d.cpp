@@ -34,9 +34,9 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Process1DProcedureNode::Process1DProcedureNode(Collect1DProcedureNode* target) : ProcedureNode(ProcedureNode::Process1DNode)
+Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode* target) : ProcedureNode(ProcedureNode::Process1DNode)
 {
-	keywords_.add("Target", new NodeKeyword<Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target), "SourceData", "Collect1D node containing the data to process");
+	keywords_.add("Target", new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target), "SourceData", "Collect1D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
@@ -67,6 +67,12 @@ bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
 /*
  * Data
  */
+
+// Return whether processed data exists
+bool Process1DProcedureNode::hasProcessedData() const
+{
+	return (processedData_ != NULL);
+}
 
 // Return processed data
 const Data1D& Process1DProcedureNode::processedData() const
@@ -125,7 +131,7 @@ SequenceProcedureNode* Process1DProcedureNode::branch()
 bool Process1DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve the Collect1D node target
-	collectNode_ = keywords_.retrieve<Collect1DProcedureNode*>("SourceData");
+	collectNode_ = keywords_.retrieve<const Collect1DProcedureNode*>("SourceData");
 	if (!collectNode_) return Messenger::error("No source Collect1D node set in '%s'.\n", name());
 
 	if (normalisationBranch_) normalisationBranch_->prepare(cfg, prefix, targetList);
@@ -135,12 +141,6 @@ bool Process1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
-	return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
@@ -178,10 +178,20 @@ bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 		{
 			Data1DExportFileFormat exportFormat(CharString("%s_%s.txt", name(), cfg->name()));
 			if (exportFormat.exportData(data)) procPool.decideTrue();
-			else return procPool.decideFalse();
+			else
+			{
+				procPool.decideFalse();
+				return ProcedureNode::Failure;
+			}
 		}
-		else if (!procPool.decision()) return false;
+		else if (!procPool.decision()) return ProcedureNode::Failure;
 	}
 
+	return ProcedureNode::Success;
+}
+
+// Finalise any necessary data after execution
+bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+{
 	return true;
 }

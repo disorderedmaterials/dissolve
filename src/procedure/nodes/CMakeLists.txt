@@ -11,6 +11,7 @@ add_library(procedurenodes
   dynamicsite.cpp
   exclude.cpp
   fit1d.cpp
+  integrate1d.cpp
   node.cpp
   nodereference.cpp
   operatebase.cpp
@@ -26,6 +27,7 @@ add_library(procedurenodes
   process3d.cpp
   select.cpp
   sequence.cpp
+  sum1d.cpp
 
   addspecies.h
   box.h
@@ -39,6 +41,7 @@ add_library(procedurenodes
   dynamicsite.h
   exclude.h
   fit1d.h
+  integrate1d.h
   node.h
   nodereference.h
   nodes.h
@@ -55,6 +58,7 @@ add_library(procedurenodes
   process3d.h
   select.h
   sequence.h
+  sum1d.h
 )
 
 include_directories(

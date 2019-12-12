@@ -7,6 +7,7 @@ add_library(math
   data3d.cpp
   doubleexp.cpp
   error.cpp
+  extrema.cpp
   filters.cpp
   ft.cpp
   gaussfit.cpp
@@ -22,6 +23,7 @@ add_library(math
   pairbroadeningfunction.cpp
   plottable.cpp
   poissonfit.cpp
+  range.cpp
   regression.cpp
   sampleddouble.cpp
   svd.cpp
@@ -37,6 +39,7 @@ add_library(math
   data3d.h
   doubleexp.h
   error.h
+  extrema.h
   filters.h
   ft.h
   functionspace.h
@@ -56,6 +59,7 @@ add_library(math
   plottable.h
   poissonfit.h
   praxis.h
+  range.h
   regression.h
   sampleddouble.h
   sd.h

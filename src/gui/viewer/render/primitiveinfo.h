@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRIMITIVEINFO_H
-#define DISSOLVE_PRIMITIVEINFO_H
+#ifndef DISSOLVE_RENDER_PRIMITIVEINFO_H
+#define DISSOLVE_RENDER_PRIMITIVEINFO_H
 
 #include "gui/viewer/render/linestyle.h"
 #include "math/matrix4.h"

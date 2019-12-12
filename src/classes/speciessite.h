@@ -24,6 +24,7 @@
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
+#include "base/version.h"
 #include "templates/array.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
@@ -31,6 +32,7 @@
 
 // Forward Declarations
 class LineParser;
+class Site;
 class Species;
 class SpeciesAtom;
 
@@ -45,21 +47,15 @@ class SpeciesSite : public ListItem<SpeciesSite>
 
 
 	/*
-	 * Definition
+	 * Basic Information
 	 */
 	private:
 	// Name of site
 	CharString name_;
 	// Parent Species
 	Species* parent_;
-	// List of SpeciesAtoms whose average position is the origin of the site
-	RefList<SpeciesAtom> originAtoms_;
-	// Whether the origin should be calculated with mass-weighted positions
-	bool originMassWeighted_;
-	// SpeciesAtom(s) that indicate the x axis with the origin
-	RefList<SpeciesAtom> xAxisAtoms_;
-	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
-	RefList<SpeciesAtom> yAxisAtoms_;
+	// Version of the SpeciesSite
+	VersionCounter version_;
 
 	public:
 	// Set name of site
@@ -70,10 +66,30 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	void setParent(Species* sp);
 	// Return species parent
 	Species* parent();
+	// Return version
+	int version() const;
+
+
+	/*
+	 * Definition
+	 */
+	private:
+	// List of SpeciesAtoms whose average position is the origin of the site
+	RefList<SpeciesAtom> originAtoms_;
+	// Whether the origin should be calculated with mass-weighted positions
+	bool originMassWeighted_;
+	// SpeciesAtom(s) that indicate the x axis with the origin
+	RefList<SpeciesAtom> xAxisAtoms_;
+	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
+	RefList<SpeciesAtom> yAxisAtoms_;
+
+	public:
 	// Add origin atom
 	bool addOriginAtom(SpeciesAtom* originAtom);
 	// Add origin atom from index
 	bool addOriginAtom(int atomIndex);
+	// Set origin atoms
+	bool setOriginAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of origin atoms
 	const RefList<SpeciesAtom>& originAtoms();
 	// Return integer array of indices from which the origin should be formed
@@ -86,6 +102,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addXAxisAtom(SpeciesAtom* xAxisAtom);
 	// Add x-axis atom from index
 	bool addXAxisAtom(int atomIndex);
+	// Set x-axis atoms
+	bool setXAxisAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of x-axis atoms
 	const RefList<SpeciesAtom>& xAxisAtoms();
 	// Return integer array of indices from which x-axis should be formed
@@ -94,12 +112,22 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addYAxisAtom(SpeciesAtom* yAxisAtom);
 	// Add y-axis atom from indey
 	bool addYAxisAtom(int atomIndex);
+	// Set y-axis atoms
+	bool setYAxisAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of y-axis atoms
 	const RefList<SpeciesAtom>& yAxisAtoms();
 	// Return integer array of indices from which y-axis should be formed
 	Array<int> yAxisAtomIndices() const;
 	// Return whether the site has defined axes sites
 	bool hasAxes() const;
+
+
+	/*
+	 * Generation from Parent
+	 */
+	public:
+	// Create and return Site description from parent Species
+	Site* createFromParent() const;
 
 
 	/*

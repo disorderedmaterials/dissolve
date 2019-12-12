@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_COLOURSCALE_H
-#define DISSOLVE_COLOURSCALE_H
+#ifndef DISSOLVE_RENDER_COLOURSCALE_H
+#define DISSOLVE_RENDER_COLOURSCALE_H
 
 #include "gui/viewer/render/colourscaledelta.h"
 #include "gui/viewer/render/colourscalepoint.h"

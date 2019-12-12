@@ -56,7 +56,7 @@ EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(const char* s)
+bool NETARootNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }
@@ -65,7 +65,7 @@ bool NETARootNode::isValidModifier(const char* s)
 bool NETARootNode::setModifier(const char* modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETARootNode.\n", modifier);
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETARootNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{

@@ -185,22 +185,29 @@ bool Dissolve::saveInput(const char* filename)
 				  
 		for (MasterIntra* b = coreData_.masterBonds().first(); b != NULL; b = b->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-			for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+			for (int n=0; n<SpeciesBond::bondFunctions().minArgs( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* a = coreData_.masterAngles().first(); a != NULL; a = a->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-			for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+			for (int n=0; n<SpeciesAngle::angleFunctions().minArgs( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
 		for (MasterIntra* t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
 		{
-			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-			for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+			for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			if (!parser.writeLineF("%s\n", s.get())) return false;
+		}
+
+		for (MasterIntra* imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+			for (int n=0; n<SpeciesImproper::improperFunctions().minArgs( (SpeciesImproper::ImproperFunction) imp->form()); ++n) s.strcatf("  %8.3f", imp->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
@@ -233,12 +240,12 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_)) return false;
 	if (!parser.writeLineF("  %s  %s\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::CoulombTruncationKeyword), PairPotential::coulombTruncationScheme(PairPotential::coulombTruncationScheme()))) return false;
 	if (!parser.writeLineF("  %s  %s\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ShortRangeTruncationKeyword), PairPotential::shortRangeTruncationScheme(PairPotential::shortRangeTruncationScheme()))) return false;
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
-	{
-		CharString s("#  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::GenerateKeyword), Forcefield::shortRangeTypes().keyword(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
-		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", pot->parameter(n));
-		if (!parser.writeLineF("%s\n", s.get())) return false;
-	}
+// 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+// 	{
+// 		CharString s("#  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::GenerateKeyword), Forcefield::shortRangeTypes().keyword(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
+// 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", pot->parameter(n));
+// 		if (!parser.writeLineF("%s\n", s.get())) return false;
+// 	}
 	if (!parser.writeLineF("%s\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::EndPairPotentialsKeyword))) return false;
 
 	// Write Configurations
@@ -338,7 +345,7 @@ bool Dissolve::loadRestart(const char* filename)
 {
 	restartFilename_ = filename;
 
-	// Open file and check that we're OK to proceed reading from it (master only...)
+	// Open file and check that we're OK to proceed reading from it
 	LineParser parser(&worldPool());
 	if (!parser.openInput(restartFilename_)) return false;
 
@@ -349,14 +356,13 @@ bool Dissolve::loadRestart(const char* filename)
 
 	while (!parser.eofOrBlank())
 	{
-		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim() != 0) break;
+		if (parser.getArgsDelim() != LineParser::Success) break;
 
-		// First component of line indicates the destination for the module data
+		// First argument indicates the type of data
 		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
 		{
 			// Let the user know what we are doing
-			Messenger::print("Reading keyword '%s' into Module '%s'...\n", parser.argc(2), parser.argc(1), cfg->name());
+			Messenger::print("Reading keyword '%s' into Module '%s'...\n", parser.argc(2), parser.argc(1));
 
 			// Find the referenced Module
 			Module* module = findModuleInstance(parser.argc(1));
@@ -398,7 +404,7 @@ bool Dissolve::loadRestart(const char* filename)
 			}
 
 			// Realise the item in the list
-			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3));
+			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3), parser.argi(4));
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
@@ -417,7 +423,7 @@ bool Dissolve::loadRestart(const char* filename)
 			Messenger::print("Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
 
 			// Realise the item in the list
-			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2));
+			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2), parser.argi(3));
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
@@ -482,6 +488,131 @@ bool Dissolve::loadRestart(const char* filename)
 	return (!error);
 }
 
+// Load restart file as reference point
+bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuffix)
+{
+	// Open file and check that we're OK to proceed reading from it (master only...)
+	LineParser parser(&worldPool());
+	if (!parser.openInput(restartFilename_)) return false;
+
+	// Variables
+	Configuration* cfg;
+	Module* module;
+	CharString newName;
+	bool error = false, skipCurrentItem = false;
+
+	// Enable suffixing of all ObjectStore types
+	ObjectInfo::enableAutoSuffixing(dataSuffix);
+
+	while (!parser.eofOrBlank())
+	{
+		// Master will read the next line from the file
+		if (parser.getArgsDelim() != 0) break;
+
+		// First argument indicates the type of data
+		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Ignoring entry for keyword '%s' (module '%s')...\n", parser.argc(2), parser.argc(1));
+
+			skipCurrentItem = true;
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Local"))
+ 		{
+			// Create new suffixed name
+			newName.sprintf("%s@%s", parser.argc(2), dataSuffix);
+
+			// Let the user know what we are doing
+			Messenger::print("Reading item '%s' => '%s' (%s) into Configuration '%s'...\n", parser.argc(2), newName.get(), parser.argc(3), parser.argc(1));
+
+			// Local processing data - find the parent Configuration...
+			cfg = findConfiguration(parser.argc(1));
+			if (!cfg)
+			{
+				Messenger::error("No Configuration named '%s' exists, so skipping this data...\n", parser.argc(1));
+				skipCurrentItem = true;
+			}
+			else
+			{
+				// Realise the item in the listblackstar
+				GenericItem* item = cfg->moduleData().create(newName, parser.argc(3), parser.argi(4));
+
+				// Read in the data
+				if ((!item) || (!item->read(parser, coreData_)))
+				{
+					Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+					error = true;
+					break;
+				}
+
+				// Set the ReferencePointData flag for the item
+				item->setFlags(GenericItem::IsReferencePointDataFlag);
+
+				skipCurrentItem = false;
+			}
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
+		{
+			// Create new suffixed name
+			newName.sprintf("%s@%s", parser.argc(1), dataSuffix);
+
+			// Let the user know what we are doing
+			Messenger::print("Reading item '%s' => '%s' (%s) into processing module data...\n", parser.argc(1), newName.get(), parser.argc(2));
+
+			// Realise the item in the list
+			GenericItem* item = processingModuleData_.create(newName, parser.argc(2), parser.argi(3));
+
+			// Read in the data
+			if ((!item) || (!item->read(parser, coreData_)))
+			{
+				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+				error = true;
+				break;
+			}
+
+			// Set the InRestartFileFlag for the item
+			item->setFlags(GenericItem::InRestartFileFlag);
+
+			skipCurrentItem = false;
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Ignoring Configuration '%s'...\n", parser.argc(1));
+
+			skipCurrentItem = true;
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Timing"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Ignoring timing information for Module '%s'...\n", parser.argc(1));
+
+			skipCurrentItem = true;
+		}
+		else if (!skipCurrentItem)
+		{
+			Messenger::error("Unrecognised '%s' entry in restart file.\n", parser.argc(0));
+			error = true;
+		}
+
+		// Error encounterd?
+		if (error) break;
+	}
+	
+	if (!error) Messenger::print("Finished reading restart file.\n");
+
+	// Error encountered?
+	if (error) Messenger::error("Errors encountered while loading restart file.\n");
+
+	// Disable suffixing of all ObjectStore types
+	ObjectInfo::disableAutoSuffixing();
+
+	// Done
+	if (worldPool().isWorldMaster()) parser.closeFiles();
+
+	return (!error);
+}
+
 // Save restart file
 bool Dissolve::saveRestart(const char* filename)
 {
@@ -515,7 +646,8 @@ bool Dissolve::saveRestart(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Cycle over data store in the Configuration
-		for (GenericItem* item = cfg->moduleData().items(); item != NULL; item = item->next())
+		ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
+		while (GenericItem* item = itemIterator.iterate())
 		{
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
@@ -526,7 +658,8 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Processing Module Data
-	for (GenericItem* item = processingModuleData_.items(); item != NULL; item = item->next())
+	ListIterator<GenericItem> itemIterator(processingModuleData_.items());
+	while (GenericItem* item = itemIterator.iterate())
 	{
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;

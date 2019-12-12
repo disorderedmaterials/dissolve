@@ -20,15 +20,15 @@
 */
 
 #include "gui/delegates/intraformcombo.hui"
+#include "gui/delegates/combolist.hui"
 #include "gui/helpers/combopopulator.h"
 #include "classes/speciesbond.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IntraFormComboDelegate::IntraFormComboDelegate(QObject* parent, int nFunctions, const char** functionTexts, const List<MasterIntra>& masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms)
+IntraFormComboDelegate::IntraFormComboDelegate(QObject* parent, ComboListItems* items, const List<MasterIntra>& masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms)
 {
-	nFunctions_ = nFunctions;
-	functionTexts_ = functionTexts;
+	items_ = items;
 }
 
 // Destructor
@@ -43,7 +43,8 @@ QWidget* IntraFormComboDelegate::createEditor(QWidget* parent, const QStyleOptio
 	QComboBox* editor = new QComboBox(parent);
 
 	// Add on standard bond forms first
-	ComboPopulator(editor, nFunctions_, functionTexts_);
+	items_->restartIterator();
+	while (items_->nextItem()) editor->addItem(items_->currentItemText());
 
 	// Now append any MasterBonds we have
 	if (masterTerms_.nItems() > 0) ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);

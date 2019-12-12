@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TEXTFRAGMENT_H
-#define DISSOLVE_TEXTFRAGMENT_H
+#ifndef DISSOLVE_RENDER_TEXTFRAGMENT_H
+#define DISSOLVE_RENDER_TEXTFRAGMENT_H
 
 #include "templates/vector3.h"
 #include "templates/list.h"

@@ -22,9 +22,10 @@
 #ifndef DISSOLVE_COMBOPOPULATOR_H
 #define DISSOLVE_COMBOPOPULATOR_H
 
-#include <QComboBox>
+#include "base/enumoptionsbase.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
+#include <QComboBox>
 
 // ComboBox Populator
 class ComboPopulator
@@ -38,6 +39,21 @@ class ComboPopulator
 
 		// Add our text items to the list
 		for (int n=0; n<nItems; ++n) combo->addItem(itemArray[n]);
+	}
+};
+
+// ComboBox Populator from EnumOptions
+class ComboEnumOptionsPopulator
+{
+	public:
+	// Constructor
+	ComboEnumOptionsPopulator(QComboBox* combo, const EnumOptionsBase& options, bool append = false)
+	{
+		// Clear the combobox
+		if (!append) combo->clear();
+
+		// Add our text items to the list
+		for (int n=0; n<options.nOptions(); ++n) combo->addItem(options.keywordByIndex(n));
 	}
 };
 

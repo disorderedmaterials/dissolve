@@ -284,8 +284,15 @@ template <class A> class Array2D
 	{
 		return linearSize_;
 	}
+// 		
 	// Return linear array
 	A* linearArray()
+	{
+		return array_;
+	}
+	
+	// Return linear array (const)
+	A* constLinearArray() const
 	{
 		return array_;
 	}

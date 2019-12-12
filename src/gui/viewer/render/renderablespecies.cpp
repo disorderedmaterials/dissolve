@@ -38,7 +38,7 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	atomPrimitive_ = createPrimitive(GL_TRIANGLES, false);
 	atomPrimitive_->sphere(1.0, 8, 10);
 	selectedAtomPrimitive_ = createPrimitive(GL_LINES, false);
-	selectedAtomPrimitive_->sphere(1.1, 8, 10);
+	selectedAtomPrimitive_->sphere(1.25, 8, 10);
 	bondPrimitive_ = createPrimitive(GL_TRIANGLES, false);
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = createPrimitive(GL_LINES, false);

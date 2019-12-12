@@ -105,6 +105,9 @@ if(APPLE)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
+  # Suppress warnings for undefined template vars
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
+
   if(PARALLEL)
     set (target_name dissolve)
   else(PARALLEL)
@@ -118,6 +121,11 @@ if(APPLE)
   if(GUI)
     # Find GLUT
     find_package(GLUT REQUIRED)
+
+    # Adjust external include directories for GUI
+    include_directories(
+      ${FTGL_INCLUDE_DIRS}
+    )
   endif(GUI)
 endif(APPLE)
 
@@ -179,10 +187,14 @@ set(BASIC_LINK_LIBS
   # Main libs
   main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
 
+  # Forcefields
+  ff_ludwig
+
   # Modules
   analysemodule
   atomshakemodule
   braggmodule
+  calculatecnmodule
   calculatedanglemodule
   calculaterdfmodule
   calibrationmodule
@@ -225,6 +237,7 @@ target_link_libraries( ${target_name}
   analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
+  calculatecnmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
   calibrationmodulenogui
@@ -256,6 +269,7 @@ if(GUI)
     analysemodulegui
     atomshakemodulegui
     braggmodulegui
+    calculatecnmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
     calibrationmodulegui
@@ -275,8 +289,10 @@ if(GUI)
     viewer
     widgets
     keywordwidgets
+    gizmos
     delegates
     charts
+    subwindows
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

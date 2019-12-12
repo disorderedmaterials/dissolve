@@ -54,14 +54,15 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	localConfiguration_ = localConfiguration;
 
 	// Create a ModuleListChart widget and set its source list
-	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve()); //, localConfiguration_);
+	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve(), localConfiguration_);
 	chartWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	ui_.ChartScrollArea->setWidget(chartWidget_);
 	ui_.ChartScrollArea->setWidgetResizable(true);
-	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString&)), dissolveWindow_, SLOT(showModuleTab(const QString&)));
 	connect(chartWidget_, SIGNAL(blockRemoved(const QString&)), dissolveWindow_, SLOT(removeModuleTab(const QString&)));
+	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString&)), this, SLOT(blockSelectionChanged(const QString&)));
 
 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 	moduleCategories_.clear();
@@ -102,6 +103,11 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.AvailableModulesTree->setSortingEnabled(true);
 	ui_.AvailableModulesTree->expandAll();
 
+	// Set up the ControlsWidget, and hide it initially
+	ui_.ControlsWidget->setUp(dissolveWindow_);
+	ui_.ControlsWidget->setVisible(false);
+	connect(ui_.ControlsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+
 	// Hide palette group initially
 // 	ui_.PaletteGroup->setVisible(false);
 
@@ -120,6 +126,7 @@ void ModuleListEditor::updateControls()
 	refreshing_ = true;
 
 	chartWidget_->updateControls();
+	ui_.ControlsWidget->updateControls();
 
 	refreshing_ = false;
 }
@@ -129,6 +136,7 @@ void ModuleListEditor::disableSensitiveControls()
 {
 	ui_.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
+	ui_.ControlsWidget->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
@@ -136,11 +144,34 @@ void ModuleListEditor::enableSensitiveControls()
 {
 	ui_.AvailableModulesTree->setEnabled(true);
 	chartWidget_->enableSensitiveControls();
+	ui_.ControlsWidget->enableSensitiveControls();
 }
 
 /*
  * Widget Functions
  */
+
+void ModuleListEditor::blockSelectionChanged(const QString& blockIdentifier)
+{
+	if (blockIdentifier.isEmpty())
+	{
+		ui_.ControlsWidget->setModule(NULL, NULL);
+		ui_.ControlsWidget->setVisible(false);
+		return;
+	}
+
+	// Get Module by unique name
+	Module* module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
+	if (!module)
+	{
+		ui_.ControlsWidget->setModule(NULL, NULL);
+		ui_.ControlsWidget->setVisible(false);
+		return;
+	}
+
+	ui_.ControlsWidget->setModule(module, &dissolveWindow_->dissolve());
+	ui_.ControlsWidget->setVisible(true);
+}
 
 void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
 {

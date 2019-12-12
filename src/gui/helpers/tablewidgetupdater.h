@@ -20,8 +20,10 @@
 */
 
 #include "templates/variantpointer.h"
+#include "templates/array.h"
 #include "templates/dynamicarray.h"
 #include "templates/list.h"
+#include "templates/reflist.h"
 #include "templates/refdatalist.h"
 #include <QTableWidget>
 

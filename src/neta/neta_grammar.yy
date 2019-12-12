@@ -10,6 +10,7 @@
 #include "neta/generator.h"
 #include "neta/connection.h"
 #include "neta/neta.h"
+#include "neta/presence.h"
 #include "neta/ring.h"
 #include "base/messenger.h"
 #include "templates/reflist.h"
@@ -41,7 +42,7 @@ CharString localName;
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
 %token <valueOperator> DISSOLVE_NETA_OPERATOR
-%token <name> DISSOLVE_NETA_MODIFIER DISSOLVE_NETA_NAME
+%token <name> DISSOLVE_NETA_MODIFIER DISSOLVE_NETA_FLAG DISSOLVE_NETA_NAME
 %token DISSOLVE_NETA_RING DISSOLVE_NETA_UNKNOWNTOKEN
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
@@ -53,7 +54,7 @@ CharString localName;
 %right '!'
 %right '^'
 
-%type <node> node nodeSequence createConnectionNode createRingNode
+%type <node> node nodeSequence ringNode ringNodeSequence createPresenceNode createConnectionNode createRingNode
 %type <valueOperator> valueOperator
 %type <atomTargetDummy> target targets targetList
 
@@ -71,19 +72,31 @@ neta:
 
 /* Sequence of Nodes */
 nodeSequence:
-	node						{ $$ = $1; if ($$ == NULL) YYABORT; }
-	| contextModifier				{ $$ = NULL; }
+	node						{ $$ = $1; }
 	| '!' node					{ $2->setReverseLogic(); $$ = $2; }
 	| nodeSequence ',' node				{ $$ = $3; }
-	| contextModifier ',' nodeSequence		{ $$ = $3; }
 // 	| nodeSequence '|' nodeSequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
+	;
+
+/* Sequence of Nodes allowable for a Ring */
+ringNodeSequence:
+	ringNode					{ $$ = $1; }
+	| ringNodeSequence ',' ringNode			{ $$ = $3; }
+	;
+
+ringNode:
+	targetList createPresenceNode							{ $$ = $2; }
+	| targetList createPresenceNode	pushContext '(' nodeSequence ')' popContext	{ $$ = $2; }
+	| contextModifier								{ $$ = NULL; }
 	;
 
 /* Nodes */
 node:
 	'-' targetList createConnectionNode							{ $$ = $3; }
 	| '-' targetList createConnectionNode pushContext '(' nodeSequence ')' popContext	{ $$ = $3; }
-	| DISSOLVE_NETA_RING createRingNode pushContext '(' nodeSequence ')' popContext		{ $$ = $2; }
+	| DISSOLVE_NETA_RING createRingNode pushContext '(' ringNodeSequence ')' popContext	{ $$ = $2; }
+	| contextModifier									{ $$ = NULL; }
+	| contextFlag										{ $$ = NULL; }
 	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
@@ -112,12 +125,20 @@ contextModifier:
 	DISSOLVE_NETA_MODIFIER storeName valueOperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
 	;
 
+/* Context flags */
+contextFlag:
+	DISSOLVE_NETA_FLAG storeName			{ if (!NETADefinitionGenerator::context()->setFlag(localName, true)) YYABORT; }
+	;
+
 /* Operators */
 valueOperator:
 	DISSOLVE_NETA_OPERATOR				{ $$ = yylval.valueOperator; }
 	;
 
 /* Node Creation */
+createPresenceNode:
+	/* empty */					{ $$ = NETADefinitionGenerator::context()->createPresenceNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
+	;
 createConnectionNode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
 	;

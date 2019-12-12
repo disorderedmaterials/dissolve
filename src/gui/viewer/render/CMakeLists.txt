@@ -19,10 +19,12 @@ SET(render_SRCS
   renderable.h
   renderableconfiguration.h
   renderabledata1d.h
+  renderabledata2d.h
   renderablefactory.h
   renderablegroup.h
   renderablegroupmanager.h
   renderablespecies.h
+  renderablespeciessite.h
   symbol.h
   textformat.h
   textfragment.h
@@ -48,10 +50,12 @@ SET(render_SRCS
   renderable.cpp
   renderableconfiguration.cpp
   renderabledata1d.cpp
+  renderabledata2d.cpp
   renderablefactory.cpp
   renderablegroup.cpp
   renderablegroupmanager.cpp
   renderablespecies.cpp
+  renderablespeciessite.cpp
   symbol.cpp
   textformat.cpp
   textfragment.cpp

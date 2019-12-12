@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIESIMPROPER_H
 
 #include "classes/speciesintra.h"
+#include "base/enumoptions.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -93,17 +94,11 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	// Improper functional forms
 	enum ImproperFunction
 	{
-		CosineForm,
-		nImproperFunctions
+		NoForm,
+		CosineForm
 	};
-	// Convert string to functional form
-	static ImproperFunction improperFunction(const char* s);
-	// Return functional form text
-	static const char* improperFunction(ImproperFunction func);
-	// Return functional form array
-	static const char** improperFunctions();
-	// Return number of parameters required for functional form
-	static int nFunctionParameters(ImproperFunction func);
+	// Return enum options for ImproperFunction
+	static EnumOptions<ImproperFunction> improperFunctions(); 
 
 	public:
 	// Set up any necessary parameters
