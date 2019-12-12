@@ -50,8 +50,16 @@ class CalibrationModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~CalibrationModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::CalibrationModuleWidget ui;
+	Ui::CalibrationModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

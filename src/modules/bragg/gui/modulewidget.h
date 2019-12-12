@@ -51,8 +51,16 @@ class BraggModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~BraggModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::BraggModuleWidget ui;
+	Ui::BraggModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

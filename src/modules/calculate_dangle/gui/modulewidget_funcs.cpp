@@ -27,10 +27,10 @@
 CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up RDF graph
-	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
+	rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
 
 	View& rdfView = rdfGraph_->view();
 	rdfView.setViewType(View::FlatXYView);
@@ -42,7 +42,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	rdfView.setAutoFollowType(View::AllAutoFollow);
 
 	// Set up Angle graph
-	angleGraph_ = ui.AnglePlotWidget->dataViewer();
+	angleGraph_ = ui_.AnglePlotWidget->dataViewer();
 
 	View& angleView = angleGraph_->view();
 	angleView.setViewType(View::FlatXYView);
@@ -53,7 +53,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	angleView.setAutoFollowType(View::AllAutoFollow);
 
 	// Set up Distance-Angle graph
-	dAngleGraph_ = ui.DAnglePlotWidget->dataViewer();
+	dAngleGraph_ = ui_.DAnglePlotWidget->dataViewer();
 
 	View& dAngleView = dAngleGraph_->view();
 	dAngleView.setViewType(View::AutoStretchedView);
@@ -72,12 +72,16 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	refreshing_ = false;
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void CalculateDAngleModuleWidget::updateControls(int flags)
 {
-	ui.RDFPlotWidget->updateToolbar();
-	ui.AnglePlotWidget->updateToolbar();
-	ui.DAnglePlotWidget->updateToolbar();
+	ui_.RDFPlotWidget->updateToolbar();
+	ui_.AnglePlotWidget->updateToolbar();
+	ui_.DAnglePlotWidget->updateToolbar();
 
 	rdfGraph_->postRedisplay();
 	angleGraph_->postRedisplay();

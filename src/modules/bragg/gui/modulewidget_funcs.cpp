@@ -32,10 +32,10 @@
 BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<BraggModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up Bragg reflections graph
-	reflectionsGraph_ = ui.ReflectionsPlotWidget->dataViewer();
+	reflectionsGraph_ = ui_.ReflectionsPlotWidget->dataViewer();
 	// -- Set view
 	reflectionsGraph_->view().setViewType(View::FlatXYView);
 	reflectionsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -46,7 +46,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	reflectionsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
-	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
+	totalsGraph_ = ui_.TotalsPlotWidget->dataViewer();
 	// -- Set view
 	totalsGraph_->view().setViewType(View::FlatXYView);
 	totalsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -74,8 +74,8 @@ BraggModuleWidget::~BraggModuleWidget()
 // Update controls within widget
 void BraggModuleWidget::updateControls(int flags)
 {
-	ui.ReflectionsPlotWidget->updateToolbar();
-	ui.TotalsPlotWidget->updateToolbar();
+	ui_.ReflectionsPlotWidget->updateToolbar();
+	ui_.TotalsPlotWidget->updateToolbar();
 
 	reflectionsGraph_->postRedisplay();
 	totalsGraph_->postRedisplay();
@@ -125,9 +125,9 @@ void BraggModuleWidget::setGraphDataTargets()
 	if (!module_) return;
 
 	// Add Configuration targets to the combo box
-	ui.TargetCombo->clear();
+	ui_.TargetCombo->clear();
 	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total Bragg F(Q)
 	CharString blockData;
@@ -145,7 +145,7 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	reflectionsGraph_->clearRenderables();
 
 	// Get target Configuration
-	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
 	CharString blockData;

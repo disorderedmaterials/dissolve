@@ -32,10 +32,10 @@
 EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<EnergyModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Grab our DataViewer widget
-	energyGraph_ = ui.PlotWidget->dataViewer();
+	energyGraph_ = ui_.PlotWidget->dataViewer();
 
 	// Start a new, empty session
 	View& view = energyGraph_->view();
@@ -68,17 +68,17 @@ void EnergyModuleWidget::updateControls(int flags)
 {
 	// Set gradient and stability labels
 	int stabilityWindow = module_->keywords().asInt("StabilityWindow");
-	ui.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
+	ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
-	QPalette labelPalette = ui.StableLabel->palette();
+	QPalette labelPalette = ui_.StableLabel->palette();
 	if (currentConfiguration_)
 	{
 		const Data1D& totalEnergyArray = GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
-		if (totalEnergyArray.nValues() < stabilityWindow) ui.GradientValueLabel->setText("N/A");
+		if (totalEnergyArray.nValues() < stabilityWindow) ui_.GradientValueLabel->setText("N/A");
 		else
 		{
 			double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
-			ui.GradientValueLabel->setText(QString::number(grad));
+			ui_.GradientValueLabel->setText(QString::number(grad));
 		}
 
 		bool stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
@@ -86,23 +86,23 @@ void EnergyModuleWidget::updateControls(int flags)
 		if (stable)
 		{
 			labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
-			ui.StableLabel->setText("Yes");
+			ui_.StableLabel->setText("Yes");
 		}
 		else
 		{
 			labelPalette.setColor(QPalette::WindowText, Qt::red);
-			ui.StableLabel->setText("No");
+			ui_.StableLabel->setText("No");
 		}
 	}
 	else
 	{
-		ui.GradientValueLabel->setText("N/A");
+		ui_.GradientValueLabel->setText("N/A");
 		labelPalette.setColor(QPalette::WindowText, Qt::red);
-		ui.StableLabel->setText("No");
+		ui_.StableLabel->setText("No");
 	}
-	ui.StableLabel->setPalette(labelPalette);
+	ui_.StableLabel->setPalette(labelPalette);
 
-	ui.PlotWidget->updateToolbar();
+	ui_.PlotWidget->updateToolbar();
 
 	energyGraph_->postRedisplay();
 }
@@ -149,9 +149,9 @@ void EnergyModuleWidget::setGraphDataTargets(EnergyModule* module)
 	if (!module) return;
 
 	// Add Configuration targets to the combo box
-	ui.TargetCombo->clear();
+	ui_.TargetCombo->clear();
 	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 }
 
 void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -160,7 +160,7 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	energyGraph_->clearRenderables();
 
 	// Get target Configuration
-	currentConfiguration_ = VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	currentConfiguration_ = VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
 	// Add data targets

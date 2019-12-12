@@ -32,10 +32,10 @@
 CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<CalibrationModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Grab our DataViewer widget
-	dataView_ = ui.PlotWidget->dataViewer();
+	dataView_ = ui_.PlotWidget->dataViewer();
 
 	// Set up the view
 	View& view = dataView_->view();

@@ -41,8 +41,16 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	GeometryOptimisationModuleWidget(QWidget* parent, Module* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::GeometryOptimisationModuleWidget ui;
+	Ui::GeometryOptimisationModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

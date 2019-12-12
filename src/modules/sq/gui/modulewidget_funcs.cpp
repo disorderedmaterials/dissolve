@@ -32,11 +32,11 @@
 SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<SQModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up partial g(r) graph
 
-	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
+	partialGRGraph_ = ui_.PartialGRPlotWidget->dataViewer();
 
 	partialGRGraph_->view().setViewType(View::FlatXYView);
 	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -49,7 +49,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 
 	// Set up partial S(Q) graph
 
-	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
+	partialSQGraph_ = ui_.PartialSQPlotWidget->dataViewer();
 
 	partialSQGraph_->view().setViewType(View::FlatXYView);
 	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -62,7 +62,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 
 	// Set up total G(r) graph
 
-	totalGRGraph_ = ui.TotalGRPlotWidget->dataViewer();
+	totalGRGraph_ = ui_.TotalGRPlotWidget->dataViewer();
 
 	totalGRGraph_->view().setViewType(View::FlatXYView);
 	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -75,7 +75,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 
 	// Set up total S(Q) graph
 
-	totalSQGraph_ = ui.TotalSQPlotWidget->dataViewer();
+	totalSQGraph_ = ui_.TotalSQPlotWidget->dataViewer();
 
 	totalSQGraph_->view().setViewType(View::FlatXYView);
 	totalSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -100,10 +100,10 @@ SQModuleWidget::~SQModuleWidget()
 // Update controls within widget
 void SQModuleWidget::updateControls(int flags)
 {
-	ui.PartialGRPlotWidget->updateToolbar();
-	ui.PartialSQPlotWidget->updateToolbar();
-	ui.TotalGRPlotWidget->updateToolbar();
-	ui.TotalSQPlotWidget->updateToolbar();
+	ui_.PartialGRPlotWidget->updateToolbar();
+	ui_.PartialSQPlotWidget->updateToolbar();
+	ui_.TotalGRPlotWidget->updateToolbar();
+	ui_.TotalSQPlotWidget->updateToolbar();
 
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();

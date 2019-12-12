@@ -43,8 +43,16 @@ class AnalyseModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::AnalyseModuleWidget ui;
+	Ui::AnalyseModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

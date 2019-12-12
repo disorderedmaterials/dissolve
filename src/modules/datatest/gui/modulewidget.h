@@ -41,8 +41,16 @@ class DataTestModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	DataTestModuleWidget(QWidget* parent, Module* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::DataTestModuleWidget ui;
+	Ui::DataTestModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

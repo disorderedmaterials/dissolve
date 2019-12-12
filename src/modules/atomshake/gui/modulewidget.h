@@ -43,8 +43,16 @@ class AtomShakeModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	AtomShakeModuleWidget(QWidget* parent, Module* module);
 	~AtomShakeModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::AtomShakeModuleWidget ui;
+	Ui::AtomShakeModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

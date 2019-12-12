@@ -51,8 +51,16 @@ class RDFModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~RDFModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::RDFModuleWidget ui;
+	Ui::RDFModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
