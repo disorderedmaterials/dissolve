@@ -27,9 +27,9 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\Dissolve
+DefaultDirName={commonpf}\Dissolve
 DefaultGroupName={#MyAppName}
-LicenseFile=..\..\COPYING
+LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
 OutputBaseFilename=Dissolve-0.4.7
 SetupIconFile=Dissolve.ico
@@ -45,11 +45,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "{#DissolveDir}\Dissolve-Serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\examples\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\libfreetype.dll"; DestDir: "{app}\bin"
-; Source: "{#GnuWinDir}\bin\zlib1.dll"; DestDir: "{app}\bin"
 Source: "{#FTGLDir}\src\libftgl.dll"; DestDir: "{app}\bin"
 Source: "{#MinGWDir}\bin\libgcc_s_seh-1.dll"; DestDir: "{app}\bin"
 Source: "{#MinGWDir}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"
