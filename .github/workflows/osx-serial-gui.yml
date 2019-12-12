@@ -26,7 +26,6 @@ jobs:
         export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
         export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
         export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
-        export ICECC_CLANG_REMOTE_CPP=0
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         mkdir build
         cd build
