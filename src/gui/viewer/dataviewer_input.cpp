@@ -147,6 +147,33 @@ void DataViewer::mouseDoubleClicked()
 // 	clickedObjectInfo_.clear();
 }
 
+// Context menu requested
+void DataViewer::contextMenuRequested(QPoint pos)
+{
+	// Check for object under current coordinates...
+	ViewerObject objectType = queryAt(rMouseLast_.x, rMouseLast_.y);
+// 	printf("object type = %i [%s] [%s]\n", objectType, queryObjectInfo(), queryObjectSubInfo());
+
+	QMenu menu;
+	menu.setFont(font());
+	QFont italicFont = font();
+	italicFont.setItalic(true);
+
+	// Set up the menu according to the clicked object
+	switch (objectType)
+	{
+		case (BaseViewer::AxisLineObject):
+			menu.addSection(QString("%1 Axis").arg(queryObjectSubInfo()));
+			break;
+		case (BaseViewer::AxisTickLabelObject):
+			break;
+		case (BaseViewer::AxisTitleLabelObject):
+			break;
+	}
+
+// 	menu.exec(mapToGlobal(pos));
+}
+
 // Key pressed
 bool DataViewer::keyPressed(int key)
 {

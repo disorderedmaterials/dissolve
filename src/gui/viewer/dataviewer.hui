@@ -60,6 +60,8 @@ class DataViewer : public BaseViewer
 	void mouseWheeled(int delta);
 	// Mouse double clicked
 	void mouseDoubleClicked();
+	// Context menu requested
+	void contextMenuRequested(QPoint pos);
 	// Key pressed
 	bool keyPressed(int key);
 	// Key released
