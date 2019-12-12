@@ -50,11 +50,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        $env:Qt5_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5'
-        $env:Qt5Core_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Core'
-        $env:Qt5Widgets_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Widgets'
-        $env:Qt5PrintSupport_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5PrintSupport'
-        $env:Qt5Gui_DIR = 'C:/Qt/5.13.1/mingw73_64/lib/cmake/Qt5Gui'
+        $env:CMAKE_PREFIX_PATH = 'C:/Qt/5.13.1/mingw73_64/'
         $env:INCLUDE += "$HOME/freetype-2.10.1;"
         $env:LIB += "$HOME/freetype-build;"
         $env:INCLUDE += "$HOME/ftgl-latest/src;"
@@ -64,3 +60,16 @@ jobs:
         cd ../
     - name: Create Installer
       run: |
+        cd build
+        iscc.exe /0./ ../ci/windows/dissolve.iss
+        $exe = Get-ChildItem  ./*.exe
+        echo "Executable installer is ${exe}.Name"
+        innounp.exe $exe.Name -x
+        cd '{app}/bin'
+        mv * ../
+        cd ../
+        rm -Force bin
+        cd ../
+        mv '{app}' $exe.BaseName
+        $zip = $exe.BaseName + ".zip"
+        zip -r $zip $exe.BaseName
