@@ -175,7 +175,7 @@ bool Species::isAtomSelected(SpeciesAtom* i) const
 }
 
 // Return version of the atom selection
-const int Species::atomSelectionVersion() const
+int Species::atomSelectionVersion() const
 {
 	return atomSelectionVersion_;
 }

@@ -123,7 +123,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return whether specified atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
 	// Return version of the atom selection
-	const int atomSelectionVersion() const;
+	int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
 	// Bump AtomTypes version
