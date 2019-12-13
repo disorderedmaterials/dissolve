@@ -37,23 +37,17 @@ GeometryListKeyword::~GeometryListKeyword()
 // Return minimum number of arguments accepted
 int GeometryListKeyword::minArguments() const
 {	
-	if (type_ == Geometry::Distance)
-		return 3;
-	else if (type_ == Geometry::Angle)
-		return 4;
-	else
-		return 5;
+	if (type_ == Geometry::DistanceType) return 3;
+	else if (type_ == Geometry::AngleType) return 4;
+	else return 5;
 }
 
 // Return maximum number of arguments accepted
 int GeometryListKeyword::maxArguments() const
 {
-	if (type_ == Geometry::Distance)
-		return 3;
-	else if (type_ == Geometry::Angle)
-		return 4;
-	else
-		return 5;
+	if (type_ == Geometry::DistanceType) return 3;
+	else if (type_ == Geometry::AngleType) return 4;
+	else return 5;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset

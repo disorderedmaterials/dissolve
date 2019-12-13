@@ -34,20 +34,17 @@
 // Geometry Definition
 class Geometry : public ListItem<Geometry>
 {
-	// enum for type of geometry data passed
-	public:
-	enum GeometryType { 
-		Angle,
-		Distance,
-		Torsion 
-	};
-	
-	
 	public:
 	// Constructor
 	Geometry();
 	// Destructor
 	~Geometry();
+	// Type of geometry data passed
+	enum GeometryType { 
+		AngleType,
+		DistanceType,
+		TorsionType
+	};
 
 
 	/*
@@ -56,8 +53,8 @@ class Geometry : public ListItem<Geometry>
 	private:
 	// Reference value
 	double value_;
-	//array for indices
-	int indices_[4] = {-1};
+	// Array for indices
+	int indices_[4];
 	
 	public:
 	// Set reference value and indices
