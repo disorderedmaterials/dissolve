@@ -33,13 +33,17 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 	// Set up user interface
 	ui_.setupUi(this);
 
-	// Grab the DataViewer pointer from the 
+	// Set up the view
 	View& view = ui_.DataWidget->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "X");
 	view.axes().setRange(0, 0.0, 10.0);
 	view.axes().setTitle(1, "Y");
 	view.axes().setRange(1, 0.0, 10.0);
+
+	// Enable our DataViewer as a target
+	ui_.DataWidget->enableAsRenderableDestination();
+	ui_.DataWidget->setDestinationName(uniqueName);
 
 	refreshing_ = false;
 }

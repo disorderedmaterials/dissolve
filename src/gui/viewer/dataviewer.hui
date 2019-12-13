@@ -105,6 +105,26 @@ class DataViewer : public BaseViewer
 
 
 	/*
+	 * Destinations
+	 */
+	private:
+	// List of all available DataViewers that may have Renderables sent to them
+	static RefList<DataViewer> renderableDestinations_;
+	// Whether this DataViewer is a Renderable destination
+	bool renderableDestination_;
+	// Name of this renderable destination
+	CharString destinationName_;
+
+	public:
+	// Set that this DataViewer should be a Renderable destination
+	void enableAsRenderableDestination();
+	// Set name of this renderable destination
+	void setDestinationName(const char* name);
+	// Return name of this renderable destination
+	const char* destinationName() const;
+
+
+	/*
 	 * Tool Windows
 	 */
 // 	protected:
