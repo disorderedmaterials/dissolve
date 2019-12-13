@@ -33,17 +33,13 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 	// Set up user interface
 	ui_.setupUi(this);
 
-	// Set up the view
-	View& view = ui_.DataWidget->view();
-	view.setViewType(View::FlatXYView);
-	view.axes().setTitle(0, "X");
-	view.axes().setRange(0, 0.0, 10.0);
-	view.axes().setTitle(1, "Y");
-	view.axes().setRange(1, 0.0, 10.0);
+	// Grab the data viewer target and set our view
+	dataViewer_ = ui_.DataView->dataViewer();
+	dataViewer_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Enable our DataViewer as a target
-	ui_.DataWidget->enableAsRenderableDestination();
-	ui_.DataWidget->setDestinationName(uniqueName);
+	dataViewer_->enableAsRenderableDestination();
+	dataViewer_->setDestinationName(uniqueName);
 
 	refreshing_ = false;
 }
@@ -79,7 +75,7 @@ void GraphGizmo::updateControls()
 	refreshing_ = true;
 
 	// Refresh the graph
-	ui_.DataWidget->postRedisplay();
+	dataViewer_->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -103,7 +99,7 @@ bool GraphGizmo::writeState(LineParser& parser) const
 {
 
 	// Write DataViewer state
-	if (!ui_.DataWidget->writeSession(parser)) return false;
+	if (!dataViewer_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -112,7 +108,7 @@ bool GraphGizmo::writeState(LineParser& parser) const
 bool GraphGizmo::readState(LineParser& parser)
 {
 	// Read the DataViewer session info
-	if (!ui_.DataWidget->readSession(parser)) return false;
+	if (!dataViewer_->readSession(parser)) return false;
 
 	return true;
 }
@@ -120,68 +116,3 @@ bool GraphGizmo::readState(LineParser& parser)
 /*
  * Widget Signals / Slots
  */
-
-
-// Interaction
-void GraphGizmo::on_InteractionViewButton_clicked(bool checked)
-{
-	ui_.DataWidget->setInteractionMode(DataViewer::DefaultInteraction);
-}
-
-// Graph
-void GraphGizmo::on_GraphResetButton_clicked(bool checked)
-{
-	ui_.DataWidget->view().showAllData();
-	ui_.DataWidget->view().resetViewMatrix();
-
-	ui_.DataWidget->postRedisplay();
-}
-
-void GraphGizmo::on_GraphFollowAllButton_clicked(bool checked)
-{
-	if (checked)
-	{
-		ui_.DataWidget->view().setAutoFollowType(View::AllAutoFollow);
-		if (ui_.GraphFollowXButton->isChecked()) ui_.GraphFollowXButton->setChecked(false);
-	}
-	else ui_.DataWidget->view().setAutoFollowType(View::NoAutoFollow);
-
-	ui_.DataWidget->postRedisplay();
-}
-
-void GraphGizmo::on_GraphFollowXButton_clicked(bool checked)
-{
-	if (checked)
-	{
-		ui_.DataWidget->view().setAutoFollowType(View::XAutoFollow);
-		if (ui_.GraphFollowAllButton->isChecked()) ui_.GraphFollowAllButton->setChecked(false);
-	}
-	else ui_.DataWidget->view().setAutoFollowType(View::NoAutoFollow);
-
-	ui_.DataWidget->postRedisplay();
-}
-
-void GraphGizmo::on_GraphFollowXLengthSpin_valueChanged(double value)
-{
-	ui_.DataWidget->view().setAutoFollowXLength(value);
-
-	ui_.DataWidget->postRedisplay();
-}
-
-// View
-void GraphGizmo::on_ViewToggleDataButton_clicked(bool checked)
-{
-	ui_.DataGroup->setVisible(checked);
-}
-
-void GraphGizmo::on_ViewAxesVisibleButton_clicked(bool checked)
-{
-	ui_.DataWidget->setAxesVisible(checked);
-
-	ui_.DataWidget->postRedisplay();
-}
-
-void GraphGizmo::on_ViewCopyToClipboardButton_clicked(bool checked)
-{
-	ui_.DataWidget->copyViewToClipboard(checked);
-}

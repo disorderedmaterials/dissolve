@@ -73,6 +73,8 @@ class GraphGizmo : public QWidget, public Gizmo
 	 * Data
 	 */
 	private:
+	// Pointer to our DataViewer
+	DataViewer* dataViewer_;
 
 
 	/*
@@ -89,17 +91,6 @@ class GraphGizmo : public QWidget, public Gizmo
 	 * Widget Signals / Slots
 	 */
 	private slots:
-	// Interaction
-	void on_InteractionViewButton_clicked(bool checked);
-	// Graph
-	void on_GraphResetButton_clicked(bool checked);
-	void on_GraphFollowAllButton_clicked(bool checked);
-	void on_GraphFollowXButton_clicked(bool checked);
-	void on_GraphFollowXLengthSpin_valueChanged(double value);
-	// View
-	void on_ViewToggleDataButton_clicked(bool checked);
-	void on_ViewAxesVisibleButton_clicked(bool checked);
-	void on_ViewCopyToClipboardButton_clicked(bool checked);
 
 	signals:
 	void windowClosed(QString windowTitle);
