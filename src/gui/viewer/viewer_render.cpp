@@ -199,7 +199,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
-		updateQuery(BaseViewer::RenderableObject, rend->objectTag());
+		updateQuery(BaseViewer::RenderableObject, rend->objectTag(), Renderable::renderableTypes().keyword(rend->type()));
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
