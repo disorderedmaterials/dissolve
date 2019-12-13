@@ -116,6 +116,15 @@ Renderable* BaseViewer::renderable(const char* name) const
 	return NULL;
 }
 
+// Return Renderable with specified objectTag (if it exists)
+Renderable* BaseViewer::renderableWithTag(const char* objectTag) const
+{
+	ListIterator<Renderable> renderableIterator(renderables_);
+	while (Renderable* rend = renderableIterator.iterate()) if (DissolveSys::sameString(objectTag, rend->objectTag())) return rend;
+
+	return NULL;
+}
+
 // Set visibility of named Renderable
 void BaseViewer::setRenderableVisible(const char* name, bool visible)
 {

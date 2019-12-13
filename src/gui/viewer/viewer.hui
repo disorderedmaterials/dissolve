@@ -78,6 +78,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	const List<Renderable>& renderables() const;
 	// Return named Renderable
 	Renderable* renderable(const char* name) const;
+	// Return Renderable with specified objectTag (if it exists)
+	Renderable* renderableWithTag(const char* objectTag) const;
 	// Set visibility of named Renderable
 	void setRenderableVisible(const char* name, bool visible);
 	// Return visibility of named Renderable
