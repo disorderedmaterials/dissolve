@@ -38,5 +38,5 @@ jobs:
         wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
         chmod u+x build-appimage.sh
         VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-        ./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b build/dissolve-serial
+        ./build-appimage.sh -a Dissolve -v ${VERSION} -b build/dissolve
         ./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b build/dissolve-gui

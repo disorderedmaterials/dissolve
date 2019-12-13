@@ -156,12 +156,12 @@ void ModuleBlock::paintEvent(QPaintEvent* event)
 	painter.setPen(borderPen);
 
 	QPainterPath borderPath;
+	const int blockDentLeft = width()*0.5 - metrics.blockDentRadius();
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.lineTo(metrics.blockBorderMidPoint(), metrics.blockDentOffset());
-	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentOffset()+metrics.blockBorderMidPoint(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 90, -180);
-	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
-	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
-	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
+	borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint()-metrics.blockDentRadius(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 180, 180);
+	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
+	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
+	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
 	borderPath.closeSubpath();
 
 	painter.setBrush(Qt::white);

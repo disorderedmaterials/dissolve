@@ -15,31 +15,31 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install Prerequisties
       run: |
-        $Wc = New-Object System.Net.WebClient
-        $Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
-        $Wc.Dispose()
-        echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
-        $env:QT_INSTALL_DIR = 'C:/Qt'
-        Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
-        Remove-Item qt.exe
-        $env:QTDIR = "C:/Qt/5.13.1/mingw73_64"
-        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
-        $env:PATH += "C:/Qt/5.13.1/mingw73_64/bin;"
+        #$Wc = New-Object System.Net.WebClient
+        #$Wc.DownloadFile('http://download.qt.io/archive/qt/5.13/5.13.1/qt-opensource-windows-x86-5.13.1.exe', 'qt.exe')
+        #$Wc.Dispose()
+        #echo 'Downloaded qt-opensource-windows-x86-5.13.1.exe'
+        #$env:QT_INSTALL_DIR = 'C:/Qt'
+        #Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
+        #Remove-Item qt.exe
         choco install -y zip --version 3.0
         choco install -y ninja
         choco install -y winflexbison
         choco install -y innounp
-        choco install -y wget
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2.2.1
+      with:
+        version: 5.13.1
+        host: windows
+        arch: win64_mingw73
     - name: Build Freetype
       run: |
-        choco uninstall -y strawberryperl
         cd $HOME
-        wget 'https://download.savannah.gnu.org/releases/freetype/ft2101.zip' -O 'ft.zip'
-        unzip ./ft.zip
+        git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
         Echo 'Compiling FreeType...'
         mkdir freetype-build
         cd freetype-build
-        cmake -G "Ninja" ../freetype-2.10.1
+        cmake -G "Ninja" ../freetype-latest -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
         ninja
     - name: Build FTGL
       run: |
@@ -48,23 +48,38 @@ jobs:
         git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
         mkdir ftgl-build
         cd ftgl-build
-        $env:INCLUDE += "$HOME\\freetype-2.10.1;"
-        $env:LIB += "$HOME\\freetype-build;"
+        $env:INCLUDE += "$HOME\freetype-2.10.1;"
+        $env:LIB += "$HOME\freetype-build;"
         cmake -G "Ninja" ..\ftgl-latest
         ninja
     - name: Build (CMake/Ninja)
       run: |
         mkdir build
         cd build
-        $env:QTDIR = "C:/Qt/5.13.1/mingw73_64"
-        $env:PATH += "C:/Qt/Tools/mingw730_64/bin;"
-        $env:PATH += "C:/Qt/5.13.1/mingw73_64/bin;"
-        $env:INCLUDE += "$HOME\\freetype-2.10.1;"
-        $env:LIB += "$HOME\\freetype-build;"
-        $env:INCLUDE += "$HOME\\ftgl-latest\\src;"
-        $env:LIB += "$HOME\\ftgl-build\\src;"
+        $env:INCLUDE += "$HOME\freetype-2.10.1;"
+        $env:LIB += "$HOME\freetype-build;"
+        $env:INCLUDE += "$HOME\ftgl-latest\src;"
+        $env:LIB += "$HOME\ftgl-build\src;"
+        ls $env:Qt5Gui_DIR
         cmake -G "Ninja" -DGUI:bool=true ../
         ninja
         cd ../
     - name: Create Installer
       run: |
+        cd build
+        $env:DISSOLVE_DIR = $(Get-Location).path
+        $env:FREETYPE_DIR = "$($HOME)\freetype-build"
+        $env:FTGL_DIR = "$($HOME)\ftgl-build"
+        iscc.exe /O./ ../ci/windows/dissolve.iss
+        iscc.exe /0./ ../ci/windows/dissolve.iss
+        $exe = Get-ChildItem  ./*.exe
+        echo "Executable installer is ${exe}.Name"
+        innounp.exe $exe.Name -x
+        cd '{app}/bin'
+        mv * ../
+        cd ../
+        rm -Force bin
+        cd ../
+        mv '{app}' $exe.BaseName
+        $zip = $exe.BaseName + ".zip"
+        zip -r $zip $exe.BaseName

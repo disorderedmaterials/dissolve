@@ -68,9 +68,9 @@ endif(GUI)
 # -- Windows
 if(WIN32)
   if(PARALLEL)
-    set (target_name Dissolve)
+    set (target_name Dissolve-MPI)
   else(PARALLEL)
-    set (target_name Dissolve-Serial)
+    set (target_name Dissolve)
     set (gui_target_name Dissolve-GUI)
   endif(PARALLEL)
 
@@ -84,17 +84,17 @@ if(WIN32)
   # Add global NOMINMAX define for Windows systems, and inhibit console creation
   ADD_DEFINITIONS("-DNOMINMAX")
   #SET(GUI_TYPE WIN32)
-  if(MINGW)
-    SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
-  endif(MINGW)
+  #if(MINGW)
+  #  SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
+  #endif(MINGW)
 endif(WIN32)
 
 # -- Unix
 if(UNIX)
   if(PARALLEL)
-    set (target_name dissolve)
+    set (target_name dissolve-mpi)
   else(PARALLEL)
-    set (target_name dissolve-serial)
+    set (target_name dissolve)
     set (gui_target_name dissolve-gui)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -109,9 +109,9 @@ if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
 
   if(PARALLEL)
-    set (target_name dissolve)
+    set (target_name dissolve-mpi)
   else(PARALLEL)
-    set (target_name dissolve-serial)
+    set (target_name dissolve)
     set (gui_target_name dissolve-gui)
   endif(PARALLEL)
 
@@ -121,6 +121,11 @@ if(APPLE)
   if(GUI)
     # Find GLUT
     find_package(GLUT REQUIRED)
+
+    # Adjust external include directories for GUI
+    include_directories(
+      ${FTGL_INCLUDE_DIRS}
+    )
   endif(GUI)
 endif(APPLE)
 

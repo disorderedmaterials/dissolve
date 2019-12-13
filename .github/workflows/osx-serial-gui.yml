@@ -16,7 +16,7 @@ jobs:
     - name: Install Prerequisties
       run: |
         brew update
-        brew install bison ftgl ninja
+        brew install bison ftgl ninja create-dmg
         brew install qt5
     - name: Build (CMake/Ninja)
       run: |
@@ -26,7 +26,6 @@ jobs:
         export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
         export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
         export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
-        export ICECC_CLANG_REMOTE_CPP=0
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         mkdir build
         cd build
@@ -40,4 +39,4 @@ jobs:
         QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-        ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx.highsierra/dissolve-gui.dmginfo
+        ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve.dmginfo

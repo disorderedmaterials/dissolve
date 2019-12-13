@@ -1,6 +1,6 @@
 /*
-	*** Limits
-	*** src/math/limits.cpp
+	*** Extrema
+	*** src/math/extrema.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,13 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/limits.h"
+#include "math/extrema.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 
-
 // Return minimum from 1D array provided
-double Limits::min(const Array<double>& A)
+double Extrema::min(const Array<double>& A)
 {	
 	double min = A.constAt(0);
 	for(int i=0; i<A.nItems(); ++i)
@@ -37,7 +36,7 @@ double Limits::min(const Array<double>& A)
 }
 
 // Return maximum from 1D array provided
-double Limits::max(const Array<double>& A)
+double Extrema::max(const Array<double>& A)
 {
 	double max = A.constAt(0);
 	for(int i=0; i<A.nItems(); ++i)
@@ -49,7 +48,7 @@ double Limits::max(const Array<double>& A)
 }
 
 // Return minimum from 2D array provided
-double Limits::min(const Array2D<double>& A)
+double Extrema::min(const Array2D<double>& A)
 {
 	double min = A.constLinearValue(0);
 	for (int i=0; i<A.linearArraySize(); ++i)
@@ -61,7 +60,7 @@ double Limits::min(const Array2D<double>& A)
 }
 
 // Return maximum from 2D array provided
-double Limits::max(const Array2D<double>& A)
+double Extrema::max(const Array2D<double>& A)
 {
 	double max = A.constLinearValue(0);
 	for (int i=0; i<A.linearArraySize(); ++i)
@@ -73,7 +72,7 @@ double Limits::max(const Array2D<double>& A)
 }
 
 // Return absolute minimum from array provided
-double Limits::absMin(const Array<double>& A)
+double Extrema::absMin(const Array<double>& A)
 {	
 	double absMin = abs(A.constAt(0));
 	for(int i=0; i<A.nItems(); ++i)
@@ -85,7 +84,7 @@ double Limits::absMin(const Array<double>& A)
 }
 
 // Return absolute maximum from array provided
-double Limits::absMax(const Array<double>& A)
+double Extrema::absMax(const Array<double>& A)
 {
 	double absMax = abs(A.constAt(0));
 	for(int i=0; i<A.nItems(); ++i)
@@ -98,7 +97,7 @@ double Limits::absMax(const Array<double>& A)
 }
 
 // Return absolute minimum from 2D array provided
-double Limits::absMin(const Array2D<double>& A)
+double Extrema::absMin(const Array2D<double>& A)
 {
 	double absMin = abs(A.constLinearValue(0));
 	for (int i=0; i<A.linearArraySize(); ++i)
@@ -110,7 +109,7 @@ double Limits::absMin(const Array2D<double>& A)
 }
 
 // Return absolute maximum from 2D array provided
-double Limits::absMax(const Array2D<double>& A)
+double Extrema::absMax(const Array2D<double>& A)
 {
 	double absMax = abs(A.constLinearValue(0));
 	for (int i=0; i<A.linearArraySize(); ++i)

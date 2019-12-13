@@ -26,10 +26,10 @@
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
-#include <climits>   // To fix Xcode 11.1 complaints about missing CHAR_BIT
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
 using namespace std;
 
 #define MAXLINELENGTH 8092

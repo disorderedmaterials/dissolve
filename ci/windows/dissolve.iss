@@ -8,12 +8,11 @@
 #define MyAppExeName "Dissolve-GUI.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
-#define DissolveDir "..\..\..\..\..\build\dissolve"
-#define FreetypeDir "..\..\..\..\..\build\freetype"
-#define FTGLDir "..\..\..\..\..\build\ftgl"
-#define QtDir "C:\Qt\5.13.1\mingw73_64"
-#define GnuWinDir "C:\GnuWin32"
-#define MinGWDir "C:\Qt\Tools\mingw730_64"
+#define DissolveDir GetEnv('DISSOLVE_DIR')
+#define FreetypeDir GetEnv('FREETYPE_DIR')
+#define FTGLDir GetEnv('FTGL_DIR')
+#define QtDir GetEnv('Qt5_DIR')
+#define MinGWDir GetEnv('MINGW_DIR')
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -27,9 +26,9 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\Dissolve
+DefaultDirName={commonpf}\Dissolve
 DefaultGroupName={#MyAppName}
-LicenseFile=..\..\COPYING
+LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
 OutputBaseFilename=Dissolve-0.4.7
 SetupIconFile=Dissolve.ico
@@ -43,13 +42,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#DissolveDir}\Dissolve-Serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DissolveDir}\Dissolve.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\examples\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\libfreetype.dll"; DestDir: "{app}\bin"
-; Source: "{#GnuWinDir}\bin\zlib1.dll"; DestDir: "{app}\bin"
 Source: "{#FTGLDir}\src\libftgl.dll"; DestDir: "{app}\bin"
 Source: "{#MinGWDir}\bin\libgcc_s_seh-1.dll"; DestDir: "{app}\bin"
 Source: "{#MinGWDir}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"
