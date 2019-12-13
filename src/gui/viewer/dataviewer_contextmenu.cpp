@@ -56,17 +56,17 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	// -- Hide Renderable
 	QAction* hideAction = menu.addAction("&Hide");
 
-	// -- Send To...
-	QMenu* sendToMenu = menu.addMenu("&Send to...");
-	sendToMenu->setFont(menu.font());
-	if (renderableDestinations_.nItems() == 0) sendToMenu->setEnabled(false);
+	// -- Copy To...
+	QMenu* copyToMenu = menu.addMenu("&Copy to...");
+	copyToMenu->setFont(menu.font());
+	if (renderableDestinations_.nItems() == 0) copyToMenu->setEnabled(false);
 	else
 	{
 		int count = 1;
 		RefListIterator<DataViewer> destinationIterator(renderableDestinations_);
 		while (DataViewer* destination = destinationIterator.iterate())
 		{
-			action = sendToMenu->addAction(QString("%1. %2").arg(QString::number(count++)).arg(destination->destinationName()));
+			action = copyToMenu->addAction(QString("%1. %2").arg(QString::number(count++)).arg(destination->destinationName()));
 			destinationActions.append(action, destination);
 		}
 	}
