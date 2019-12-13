@@ -42,7 +42,7 @@
     <item>
      <widget class="SuperStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -813,7 +813,6 @@ Remote Simulation</string>
            </property>
            <property name="font">
             <font>
-             <family>Courier</family>
              <pointsize>8</pointsize>
             </font>
            </property>

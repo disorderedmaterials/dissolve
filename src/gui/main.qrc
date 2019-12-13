@@ -48,6 +48,10 @@
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
+    <file>fonts/Cousine-Bold.ttf</file>
+    <file>fonts/Cousine-BoldItalic.ttf</file>
+    <file>fonts/Cousine-Italic.ttf</file>
+    <file>fonts/Cousine-Regular.ttf</file>
     <file>fonts/FreeSerif.ttf</file>
     <file>fonts/SourceSansPro-Regular.ttf</file>
   </qresource>
