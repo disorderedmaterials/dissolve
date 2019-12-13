@@ -66,14 +66,13 @@ jobs:
         cd ../
     - name: Create Installer
       run: |
-        cd build
-        $env:DISSOLVE_DIR = $(Get-Location).path
+        $env:DISSOLVE_DIR = $(Get-Location).path + "\build"
         $env:FREETYPE_DIR = "$($HOME)\freetype-build"
         $env:FTGL_DIR = "$($HOME)\ftgl-build"
         echo $env:Qt5_DIR
         $env:MINGW_DIR = $env:Qt5_DIR
-        iscc.exe /O./ ../ci/windows/dissolve.iss
-        $exe = Get-ChildItem  ./*.exe
+        iscc.exe /O.\ .\ci\windows\dissolve.iss
+        $exe = Get-ChildItem  .\*.exe
         echo "Executable installer is ${exe}.Name"
         innounp.exe $exe.Name -x
         cd '{app}/bin'
