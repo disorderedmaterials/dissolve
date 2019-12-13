@@ -54,7 +54,7 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	ui_.setupUi(this);
 
 	// Set fonts
-	ui_.MessagesBrowser->setFont(QFont("Cousine", 10));
+	ui_.MessagesEdit->setFont(QFont("Cousine", 10));
 
 	// Connect signals to thread controller
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
@@ -168,8 +168,8 @@ const Dissolve& DissolveWindow::constDissolve() const
 void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesBrowser, SLOT(append(const QString&)));
-	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesBrowser, SLOT(setTextColor(const QColor&)));
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesEdit, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesEdit, SLOT(setTextColor(const QColor&)));
 }
 
 /*

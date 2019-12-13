@@ -156,3 +156,21 @@ void DissolveWindow::removeModuleTab(const QString& uniqueName)
 
 	ui_.MainTabs->removeModuleTab(module);
 }
+
+/*
+ * Messages
+ */
+
+void DissolveWindow::on_MessagesIncreaseFontSizeButton_clicked(bool checked)
+{
+	QFont font = ui_.MessagesEdit->font();
+	font.setPointSize(font.pointSize() + 1);
+	ui_.MessagesEdit->setFont(font);
+}
+
+void DissolveWindow::on_MessagesDecreaseFontSizeButton_clicked(bool checked)
+{
+	QFont font = ui_.MessagesEdit->font();
+	font.setPointSize(font.pointSize() - 1);
+	ui_.MessagesEdit->setFont(font);
+}
