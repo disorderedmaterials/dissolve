@@ -190,11 +190,10 @@ SET(gui_SRCS
   workspacetab_funcs.cpp
 
   # Main UI
-  gui_control.cpp
   gui_funcs.cpp
   gui_io.cpp
+  gui_simulation.cpp
   gui_start.cpp
-  gui_tabs.cpp
   menu_configuration.cpp
   menu_file.cpp
   menu_help.cpp
