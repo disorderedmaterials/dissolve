@@ -8,12 +8,11 @@
 #define MyAppExeName "Dissolve-GUI.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
-#define DissolveDir "..\..\..\..\..\build\dissolve"
-#define FreetypeDir "..\..\..\..\..\build\freetype"
-#define FTGLDir "..\..\..\..\..\build\ftgl"
-#define QtDir "C:\Qt\5.13.1\mingw73_64"
-#define GnuWinDir "C:\GnuWin32"
-#define MinGWDir "C:\Qt\Tools\mingw730_64"
+#define DissolveDir GetEnv('DISSOLVE_DIR')
+#define FreetypeDir GetEnv('FREETYPE_DIR')
+#define FTGLDir GetEnv('FTGL_DIR')
+#define QtDir GetEnv('Qt5_DIR')
+#define MinGWDir GetEnv('MINGW_DIR')
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.

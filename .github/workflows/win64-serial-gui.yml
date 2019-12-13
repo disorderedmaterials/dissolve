@@ -48,18 +48,18 @@ jobs:
         git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
         mkdir ftgl-build
         cd ftgl-build
-        $env:INCLUDE += "$HOME\\freetype-2.10.1;"
-        $env:LIB += "$HOME\\freetype-build;"
+        $env:INCLUDE += "$HOME\freetype-2.10.1;"
+        $env:LIB += "$HOME\freetype-build;"
         cmake -G "Ninja" ..\ftgl-latest
         ninja
     - name: Build (CMake/Ninja)
       run: |
         mkdir build
         cd build
-        $env:INCLUDE += "$HOME/freetype-2.10.1;"
-        $env:LIB += "$HOME/freetype-build;"
-        $env:INCLUDE += "$HOME/ftgl-latest/src;"
-        $env:LIB += "$HOME/ftgl-build/src;"
+        $env:INCLUDE += "$HOME\freetype-2.10.1;"
+        $env:LIB += "$HOME\freetype-build;"
+        $env:INCLUDE += "$HOME\ftgl-latest\src;"
+        $env:LIB += "$HOME\ftgl-build\src;"
         ls $env:Qt5Gui_DIR
         cmake -G "Ninja" -DGUI:bool=true ../
         ninja
@@ -67,6 +67,10 @@ jobs:
     - name: Create Installer
       run: |
         cd build
+        $env:DISSOLVE_DIR = "./"
+        $env:FREETYPE_DIR = "$($HOME)\freetype-build"
+        $env:FTGL_DIR = "$($HOME)\ftgl-build"
+        iscc.exe /O./ ../ci/windows/dissolve.iss
         iscc.exe /0./ ../ci/windows/dissolve.iss
         $exe = Get-ChildItem  ./*.exe
         echo "Executable installer is ${exe}.Name"
