@@ -37,6 +37,7 @@ SET(viewer_SRCS
   dataviewer_funcs.cpp
   dataviewer_input.cpp
   dataviewer_interaction.cpp
+  dataviewer_contextmenu.cpp
   dataviewer_render.cpp
   datawidget_funcs.cpp
   selectsymbol_funcs.cpp

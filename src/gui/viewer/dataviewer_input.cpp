@@ -154,24 +154,20 @@ void DataViewer::contextMenuRequested(QPoint pos)
 	ViewerObject objectType = queryAt(rMouseLast_.x, rMouseLast_.y);
 // 	printf("object type = %i [%s] [%s]\n", objectType, queryObjectInfo(), queryObjectSubInfo());
 
-	QMenu menu;
-	menu.setFont(font());
-	QFont italicFont = font();
-	italicFont.setItalic(true);
-
 	// Set up the menu according to the clicked object
-	switch (objectType)
+	if (objectType == BaseViewer::RenderableObject)
 	{
-		case (BaseViewer::AxisLineObject):
-			menu.addSection(QString("%1 Axis").arg(queryObjectSubInfo()));
-			break;
-		case (BaseViewer::AxisTickLabelObject):
-			break;
-		case (BaseViewer::AxisTitleLabelObject):
-			break;
-	}
+		// Get Renderable pointer....
+		Renderable* rend = renderableWithTag(queryObjectInfo());
+		if (!rend)
+		{
+			Messenger::error("Couldn't locate renderable with tag '%s' in the DataViewer...\n", queryObjectInfo());
+			return;
+		}
 
-// 	menu.exec(mapToGlobal(pos));
+		showRenderableContextMenu(pos, rend);
+	}
+	else showGeneralContextMenu(pos);
 }
 
 // Key pressed

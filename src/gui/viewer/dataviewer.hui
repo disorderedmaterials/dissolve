@@ -125,6 +125,16 @@ class DataViewer : public BaseViewer
 
 
 	/*
+	 * Menus
+	 */
+	private:
+	// Show general context menu
+	void showGeneralContextMenu(QPoint pos);
+	// Show renderable context menu
+	void showRenderableContextMenu(QPoint pos, Renderable* rend);
+
+
+	/*
 	 * Tool Windows
 	 */
 // 	protected:
