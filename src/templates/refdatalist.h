@@ -466,6 +466,15 @@ template <class T, class D> class RefDataList
 
 		return NULL;
 	}
+	// Return data for specified item
+	D& dataForItem(T* item) const
+	{
+		// Search references for specified item
+		for (RefDataItem<T,D>* r = listHead_; r != NULL; r = r->next_) if (r->item_ == item) return r->data_;
+
+		static D dummy;
+		return dummy;
+	}
 	// Return array of items
 	RefDataItem<T,D>** array()
 	{
