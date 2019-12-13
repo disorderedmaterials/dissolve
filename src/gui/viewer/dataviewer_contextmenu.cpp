@@ -84,7 +84,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	{
 		DataViewer* destination = destinationActions.dataForItem(selectedAction);
 		if (!destination) return;
-		destination->createRenderable(rend->type(), rend->objectTag(), rend->name());
+		destination->createRenderable(rend->type(), rend->objectTag(), rend->name(), "Default");
 	}
 
 	// Done
