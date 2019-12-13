@@ -53,7 +53,6 @@
     <file>fonts/Cousine-Italic.ttf</file>
     <file>fonts/Cousine-Regular.ttf</file>
     <file>fonts/FreeSerif.ttf</file>
-    <file>fonts/SourceSansPro-Regular.ttf</file>
   </qresource>
   <qresource prefix="modules">
     <file>icons/modules_export.svg</file>
@@ -106,6 +105,7 @@
     <file>icons/general_local.svg</file>
     <file>icons/general_movemodule.svg</file>
     <file>icons/general_restartfile.svg</file>
+    <file>icons/general_font.svg</file>
     <file>icons/slider-off.svg</file>
     <file>icons/general_trash.svg</file>
     <file>icons/general_frequency.svg</file>
