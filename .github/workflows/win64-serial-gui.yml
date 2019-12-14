@@ -74,13 +74,13 @@ jobs:
         iscc.exe /O.\ .\ci\windows\dissolve.iss
         $exe = Get-ChildItem  .\*.exe
         echo "Executable installer is ${exe}.Name"
-        innoextract.exe -h
-        innoextract.exe $exe.Name
-        cd '{app}/bin'
+        innoextract.exe $exe.Name -d $exe.BaseName
+        ls $exe.BaseName
+        cd $exe.BaseName/bin
         mv * ../
         cd ../
         rm -Force bin
         cd ../
-        mv '{app}' $exe.BaseName
+        #mv '{app}' $exe.BaseName
         $zip = $exe.BaseName + ".zip"
         zip -r $zip $exe.BaseName
