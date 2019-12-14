@@ -303,6 +303,16 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
+	 * 'Simulation' Stack Page - Messages
+	 */
+	private slots:
+	void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
+	void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
+	void clearMessages();
+	void appendMessage(const QString& msg);
+
+
+	/*
 	 * GUI State
 	 */
 	private:

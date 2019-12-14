@@ -1,6 +1,6 @@
 /*
-	*** Dissolve GUI - Control
-	*** src/gui/gui_control.cpp
+	*** Dissolve GUI - Simulation Stack Page
+	*** src/gui/gui_simulation	.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -21,6 +21,11 @@
 
 #include "main/dissolve.h"
 #include "gui/gui.h"
+#include <QScrollBar>
+
+/*
+ * Control
+ */
 
 // Return current state of Dissolve
 DissolveWindow::DissolveState DissolveWindow::dissolveState() const
@@ -108,4 +113,77 @@ void DissolveWindow::enableSensitiveControls()
 void DissolveWindow::iterationsComplete()
 {
 	enableSensitiveControls();
+}
+
+/*
+ * Tabs
+ */
+
+void DissolveWindow::on_MainTabs_currentChanged(int index)
+{
+	if (refreshing_) return;
+
+	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets are derived
+	MainTab* currentTab = dynamic_cast<MainTab*>(ui_.MainTabs->widget(index));
+	if (!currentTab)
+	{
+		Messenger::print("Can't cast this tab widget (index %i) into a MainTab.\n", index);
+		return;
+	}
+
+	// Update contents
+	currentTab->updateControls();
+
+	// Update menu items
+	updateMenus();
+}
+
+// Add or go to Module tab for the Module with the unique name provided
+void DissolveWindow::showModuleTab(const QString& uniqueName)
+{
+	// Find the Module
+	Module* module = dissolve_.findModuleInstance(qPrintable(uniqueName));
+	if (!module) return;
+
+	ui_.MainTabs->addModuleTab(this, module);
+}
+
+// Remove the Module tab (if it exists) for the Module with the unique name provided
+void DissolveWindow::removeModuleTab(const QString& uniqueName)
+{
+	// Find the Module
+	Module* module = dissolve_.findModuleInstance(qPrintable(uniqueName));
+	if (!module) return;
+
+	ui_.MainTabs->removeModuleTab(module);
+}
+
+/*
+ * Messages
+ */
+
+void DissolveWindow::on_MessagesIncreaseFontSizeButton_clicked(bool checked)
+{
+	QFont font = ui_.MessagesEdit->font();
+	font.setPointSize(font.pointSize() + 1);
+	ui_.MessagesEdit->setFont(font);
+}
+
+void DissolveWindow::on_MessagesDecreaseFontSizeButton_clicked(bool checked)
+{
+	QFont font = ui_.MessagesEdit->font();
+	font.setPointSize(font.pointSize() - 1);
+	ui_.MessagesEdit->setFont(font);
+}
+
+void DissolveWindow::clearMessages()
+{
+	ui_.MessagesEdit->clear();
+}
+
+void DissolveWindow::appendMessage(const QString& msg)
+{
+	ui_.MessagesEdit->verticalScrollBar()->setSliderPosition(ui_.MessagesEdit->verticalScrollBar()->maximum());
+
+	ui_.MessagesEdit->insertPlainText(msg);
 }
