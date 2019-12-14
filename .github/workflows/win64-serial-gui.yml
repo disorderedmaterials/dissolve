@@ -25,7 +25,7 @@ jobs:
         choco install -y zip --version 3.0
         choco install -y ninja
         choco install -y winflexbison
-        choco install -y innounp
+        choco install -y innoextract
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.2.1
       with:
@@ -74,7 +74,8 @@ jobs:
         iscc.exe /O.\ .\ci\windows\dissolve.iss
         $exe = Get-ChildItem  .\*.exe
         echo "Executable installer is ${exe}.Name"
-        innounp.exe $exe.Name -x
+        innoextract.exe -h
+        innoextract.exe $exe.Name
         cd '{app}/bin'
         mv * ../
         cd ../
