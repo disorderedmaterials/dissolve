@@ -151,6 +151,8 @@ class DissolveWindow : public QMainWindow
 	void updateMenus();
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
+	// Clear messages edit
+	void clearMessages();
 
 
 	/*

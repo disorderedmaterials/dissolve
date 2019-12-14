@@ -351,6 +351,12 @@ void DissolveWindow::fullUpdate()
 	refreshing_ = false;
 }
 
+// Clear messages edit
+void DissolveWindow::clearMessages()
+{
+	ui_.MessagesEdit->clear();
+}
+
 /*
  * Stack
  */
