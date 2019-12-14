@@ -21,6 +21,7 @@
 
 #include "main/dissolve.h"
 #include "gui/gui.h"
+#include <QScrollBar>
 
 /*
  * Control
@@ -173,4 +174,16 @@ void DissolveWindow::on_MessagesDecreaseFontSizeButton_clicked(bool checked)
 	QFont font = ui_.MessagesEdit->font();
 	font.setPointSize(font.pointSize() - 1);
 	ui_.MessagesEdit->setFont(font);
+}
+
+void DissolveWindow::clearMessages()
+{
+	ui_.MessagesEdit->clear();
+}
+
+void DissolveWindow::appendMessage(const QString& msg)
+{
+	ui_.MessagesEdit->verticalScrollBar()->setSliderPosition(ui_.MessagesEdit->verticalScrollBar()->maximum());
+
+	ui_.MessagesEdit->insertPlainText(msg);
 }

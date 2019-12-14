@@ -168,7 +168,7 @@ const Dissolve& DissolveWindow::constDissolve() const
 void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesEdit, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), this, SLOT(appendMessage(const QString&)));
 	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesEdit, SLOT(setTextColor(const QColor&)));
 }
 
@@ -349,12 +349,6 @@ void DissolveWindow::fullUpdate()
 	updateMenus();
 
 	refreshing_ = false;
-}
-
-// Clear messages edit
-void DissolveWindow::clearMessages()
-{
-	ui_.MessagesEdit->clear();
 }
 
 /*

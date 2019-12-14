@@ -151,8 +151,6 @@ class DissolveWindow : public QMainWindow
 	void updateMenus();
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
-	// Clear messages edit
-	void clearMessages();
 
 
 	/*
@@ -305,11 +303,13 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * 'Simulation' Stack Page - Run Control
+	 * 'Simulation' Stack Page - Messages
 	 */
 	private slots:
 	void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
 	void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
+	void clearMessages();
+	void appendMessage(const QString& msg);
 
 
 	/*

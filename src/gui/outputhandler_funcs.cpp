@@ -64,10 +64,5 @@ void GUIOutputHandler::resetStyling()
 // Print text
 void GUIOutputHandler::outputText(const char* text)
 {
-	static QString s;
-
-	s = QString(text).toHtmlEscaped();
-	if (s.endsWith('\n')) s.chop(1);
-
-	emit printText(s);
+	emit(printText(QString(text)));
 }
