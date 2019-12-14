@@ -42,7 +42,7 @@
     <item>
      <widget class="SuperStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -919,8 +919,17 @@ Remote Simulation</string>
                 <pointsize>8</pointsize>
                </font>
               </property>
-              <property name="acceptRichText">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="undoRedoEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="readOnly">
                <bool>true</bool>
+              </property>
+              <property name="acceptRichText">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
