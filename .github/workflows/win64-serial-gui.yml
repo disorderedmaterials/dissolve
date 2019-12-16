@@ -81,3 +81,12 @@ jobs:
         #cd ../
         $zip = $exe.BaseName + ".zip"
         zip -r $zip $exe.BaseName
+        mkdir installers
+        mv $zip installers
+        mv $exe.Name installers
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1
+      if: success()
+      with:
+        name: artifacts
+        path: installers/
