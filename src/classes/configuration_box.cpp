@@ -163,10 +163,12 @@ void Configuration::applySizeFactor(const PotentialMap& potentialMap)
 			break;
 		}
 
-		// Now check the current sizeFactor or energy
-		//  -- If the current sizeFactor is 1.0, break
-		//  -- Otherwise, check energy - if it is negative, reduce requested size factor and loop
-		//  -- If energy is positive, break
+		/*
+		 * Now check the current sizeFactor or energy
+		 *  -- If the current sizeFactor is 1.0, break
+		 *  -- Otherwise, check energy - if it is negative, reduce requested size factor
+		 *  -- If energy is positive, don't change anything
+		 */
 		if (fabs(requestedSizeFactor_ - 1.0) < 1.0e-5) break;
 		else if (EnergyModule::interMolecularEnergy(processPool_, this, potentialMap) <= 0.0)
 		{
