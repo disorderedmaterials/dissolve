@@ -350,14 +350,14 @@ void Matrix4::invert()
  */
 
 // Copy column contents to supplied Vec3
-Vec3<double> Matrix4::columnAsVec3(int col)
+Vec3<double> Matrix4::columnAsVec3(int col) const
 {
 	Vec3<double> vec(matrix_[col*4], matrix_[col*4+1], matrix_[col*4+2]);
 	return vec;
 }
 
 // Copy column contents to supplied Vec4
-Vec4<double> Matrix4::columnAsVec4(int col)
+Vec4<double> Matrix4::columnAsVec4(int col) const
 {
 	Vec4<double> vec(matrix_[col*4], matrix_[col*4+1], matrix_[col*4+2], matrix_[col*4+3]);
 	return vec;
@@ -443,7 +443,7 @@ void Matrix4::adjustColumn(int col, Vec4<double> vec)
 }
 
 // Calculate column magnitude
-double Matrix4::columnMagnitude(int column)
+double Matrix4::columnMagnitude(int column) const
 {
 	double mag = 0.0;
 	for (int n=column*4; n<column*4+4; ++n) mag += (matrix_[n] * matrix_[n]);

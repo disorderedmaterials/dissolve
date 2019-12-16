@@ -82,9 +82,9 @@ class Matrix4
 	 */
 	public:
 	// Copy column contents to supplied Vec3
-	Vec3<double> columnAsVec3(int col);
+	Vec3<double> columnAsVec3(int col) const;
 	// Copy column contents to supplied Vec4
-	Vec4<double> columnAsVec4(int col);
+	Vec4<double> columnAsVec4(int col) const;
 	// Set specified row from supplied triplet of values
 	void setRow(int row, double x, double y, double z);
 	// Set specified row from supplied values
@@ -104,7 +104,7 @@ class Matrix4
 	// Adjust specified column from supplied Vec4
 	void adjustColumn(int col, Vec4<double> vec);
 	// Calculate column magnitude
-	double columnMagnitude(int column);
+	double columnMagnitude(int column) const;
 	// Multiply single column by single value
 	void columnMultiply(int col, double d);
 	// Multiply first three columns by values in supplied vector
