@@ -105,9 +105,12 @@ jobs:
         asset_content_type: application/appimage
   createcontinuous:
     runs-on: ubuntu-latest
-    if: github.ref == 'develop'
     needs: build
     steps:
+    - name: Test
+      run: |
+        echo "Current branch = ${{ github.ref }}"
+        echo "Current sha = ${{ github.sha }}"
     - name: Create Continuous Release
       uses: actions/create-release@v1
       id: create_release
