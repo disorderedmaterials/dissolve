@@ -22,10 +22,7 @@ jobs:
         #$env:QT_INSTALL_DIR = 'C:/Qt'
         #Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
         #Remove-Item qt.exe
-        choco install -y zip --version 3.0
-        choco install -y ninja
-        choco install -y winflexbison
-        choco install -y innoextract
+        choco install -y ninja zip winflexbison innoextract
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.2.1
       with:
