@@ -128,8 +128,12 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		// If the current box has no atoms in it, absorb the current volume rather than adding to it
 		if (cfg->nAtoms() > 0) requiredVolume += currentVolume;
 
-		// Scale the current Box so there is enough space for our new species
 		double scaleFactor = pow(requiredVolume / currentVolume, 1.0/3.0);
+
+		// Scale centres of geometry of existing contents
+		cfg->scaleMoleculeCentres(scaleFactor);
+
+		// Scale the current Box so there is enough space for our new species
 		cfg->scaleBox(scaleFactor);
 
 		Messenger::print("[AddSpecies] Current Box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
