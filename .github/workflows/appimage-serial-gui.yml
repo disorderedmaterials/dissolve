@@ -41,8 +41,8 @@ jobs:
       uses: actions/upload-artifact@v1
       if: success()
       with:
-        name: Dissolve-continuous-x86_64.AppImage
-        path: Dissolve-continuous-x86_64.AppImage
+        name: artifacts
+        path: *.AppImage
     - name: Upload Artifacts (2/2)
       uses: actions/upload-artifact@v1
       if: success()
@@ -74,17 +74,15 @@ jobs:
     - name: Download Artifacts (1/2)
       uses: actions/download-artifact@v1
       with:
-        name: Dissolve-continuous-x86_64.AppImage
-        path: Dissolve-continuous-x86_64.AppImage
+        name: artifacts
     - name: Download Artifacts (2/2)
       uses: actions/download-artifact@v1
       with:
         name: Dissolve-GUI-continuous-x86_64.AppImage
-        path: Dissolve-GUI-continuous-x86_64.AppImage
     - name: Rename Artifacts
       run: |
-        mv -v Dissolve-continuous-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
-        mv -v Dissolve-GUI-continuous-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
+        mv -v artifacts/Dissolve-continuous-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
+        mv -v artifacts/Dissolve-GUI-continuous-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
     - name: Upload Release Assets (1/2)
       uses: actions/upload-release-asset@v1.0.1
       env:
@@ -114,7 +112,7 @@ jobs:
       uses: actions/create-release@v1
       id: create_release
       with:
-        tag_name: continuous
+        tag_name: continuous/${{ github.sha }}
         release_name: Continuous Build
         bodyFile: Continuous build of Dissolve from the develop branch.
         draft: false
@@ -122,8 +120,7 @@ jobs:
     - name: Download Artifacts (1/2)
       uses: actions/download-artifact@v1
       with:
-        name: Dissolve-continuous-x86_64.AppImage
-        path: Dissolve-continuous-x86_64.AppImage
+        name: artifacts
     - name: Download Artifacts (2/2)
       uses: actions/download-artifact@v1
       with:
@@ -133,14 +130,14 @@ jobs:
       uses: actions/upload-release-asset@v1.0.1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./
+        asset_path: ./artifacts
         asset_name: Dissolve-continuous-x86_64.AppImage
         asset_content_type: application/appimage
     - name: Upload Release Assets (2/2)
       uses: actions/upload-release-asset@v1.0.1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./
+        asset_path: ./artifacts
         asset_name: Dissolve-GUI-continuous-x86_64.AppImage
         asset_content_type: application/appimage
     - name: Prune Outdated
