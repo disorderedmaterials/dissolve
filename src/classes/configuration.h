@@ -167,6 +167,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
+	// Scale geometric centres of molecules within box
+	void scaleMoleculeCentres(double factor);
 
 
 	/*

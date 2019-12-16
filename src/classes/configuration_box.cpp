@@ -116,39 +116,8 @@ void Configuration::applySizeFactor(const PotentialMap& potentialMap)
 		{
 			Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling Box contents.\n", requestedSizeFactor_, appliedSizeFactor_);
 
-			/*
-			 * Recalculate all Atom positions, molecule-by-molecule
-			 * 
-			 * First, work out the centre of geometry of the Molecule, and fold it into the Box.
-			 * Calculate the scaled centre of geometry coordinate by dividing by the old scale factor, and multiplying by the new one.
-			 * Calculate the minimum image delta between each Atom and the original center of geometry.
-			 * Add this delta on to the new centre of geometry to get the new Atom coordinate.
-			 */
-
-			Vec3<double> oldCog, newCog, newPos;
-			for (int n=0; n<molecules_.nItems(); ++n)
-			{
-				// Get Molecule pointer
-				Molecule* mol = molecules_[n];
-
-				// Calculate current and new centre of geometry
-				oldCog = box()->fold(mol->centreOfGeometry(box()));
-				newCog = oldCog * sizeFactorRatio;
-
-				// Loop over Atoms in Molecule, setting new coordinates as we go. Remove Atom from its current Cell at the same time
-				for (int m=0; m<mol->nAtoms(); ++m)
-				{
-					// Get Atom pointer
-					Atom* i = mol->atom(m);
-
-					// Remove from its current Cell
-					if (i->cell()) i->cell()->removeAtom(i);
-
-					// Calculate and set new position
-					newPos = newCog + box()->minimumVector(i->r(), oldCog);
-					i->setCoordinates(newPos);
-				}
-			}
+			// Scale molecule centres of geometry
+			scaleMoleculeCentres(sizeFactorRatio);
 
 			// Now scale the Box and its Cells
 			scaleBox(sizeFactorRatio);
