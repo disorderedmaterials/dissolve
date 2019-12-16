@@ -66,20 +66,3 @@ void SiteViewer::mouseMoved(int dx, int dy)
 
 	if (refresh) postRedisplay();
 }
-
-// Mouse 'wheeled'
-void SiteViewer::mouseWheeled(int delta)
-{
-	bool scrollup = delta > 0;
-
-	// Perform camera zoom
-	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
-	if (zrange < 1.0) zrange = 1.0;
-	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
-
-// 	// Never let camera z go below -1.0...
-// 	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
-
-	postRedisplay();
-}
-

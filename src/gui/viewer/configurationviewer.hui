@@ -58,8 +58,6 @@ class ConfigurationViewer : public BaseViewer
 	protected:
 	// Mouse moved
 	void mouseMoved(int dx, int dy);
-	// Mouse 'wheeled'
-	void mouseWheeled(int delta);
 
 
 	/*
