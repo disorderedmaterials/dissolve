@@ -194,6 +194,7 @@ set(BASIC_LINK_LIBS
   analysemodule
   atomshakemodule
   braggmodule
+  calculateavgmolmodule
   calculatecnmodule
   calculatedanglemodule
   calculaterdfmodule
@@ -237,6 +238,7 @@ target_link_libraries( ${target_name}
   analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
+  calculateavgmolmodulenogui
   calculatecnmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
@@ -269,6 +271,7 @@ if(GUI)
     analysemodulegui
     atomshakemodulegui
     braggmodulegui
+    calculateavgmolmodulegui
     calculatecnmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
