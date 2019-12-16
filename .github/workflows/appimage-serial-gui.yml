@@ -37,7 +37,6 @@ jobs:
         chmod u+x build-appimage.sh
         ./build-appimage.sh -a Dissolve -v continuous -b build/dissolve
         ./build-appimage.sh -a Dissolve-GUI -v continuous -b build/dissolve-gui
-        ls 
      - name: Upload Artifacts (1/2)
        uses: actions/upload-artifact@v1
        if: success()
