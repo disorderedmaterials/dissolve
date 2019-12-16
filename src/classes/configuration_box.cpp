@@ -101,7 +101,6 @@ const CellArray& Configuration::constCells() const
 	return cells_;
 }
 
-
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
 void Configuration::applySizeFactor(const PotentialMap& potentialMap)
 {
