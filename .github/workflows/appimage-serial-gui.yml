@@ -37,18 +37,15 @@ jobs:
         chmod u+x build-appimage.sh
         ./build-appimage.sh -a Dissolve -v continuous -b build/dissolve
         ./build-appimage.sh -a Dissolve-GUI -v continuous -b build/dissolve-gui
-    - name: Upload Artifacts (1/2)
+        mkdir appimages
+        mv Dissolve-continuous-x86_64.AppImage appimages
+        mv Dissolve-GUI-continuous-x86_64.AppImage appimages
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       if: success()
       with:
         name: artifacts
-        path: *.AppImage
-    - name: Upload Artifacts (2/2)
-      uses: actions/upload-artifact@v1
-      if: success()
-      with:
-        name: Dissolve-GUI-continuous-x86_64.AppImage
-        path: Dissolve-GUI-continuous-x86_64.AppImage
+        path: appimages/
   createrelease:
     runs-on: ubuntu-latest
     if: contains(github.ref, 'release')
@@ -71,14 +68,10 @@ jobs:
         bodyFile: Recent.md
         draft: false
         prerelease: false
-    - name: Download Artifacts (1/2)
+    - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
         name: artifacts
-    - name: Download Artifacts (2/2)
-      uses: actions/download-artifact@v1
-      with:
-        name: Dissolve-GUI-continuous-x86_64.AppImage
     - name: Rename Artifacts
       run: |
         mv -v artifacts/Dissolve-continuous-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
@@ -117,15 +110,10 @@ jobs:
         bodyFile: Continuous build of Dissolve from the develop branch.
         draft: false
         prerelease: true
-    - name: Download Artifacts (1/2)
+    - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
         name: artifacts
-    - name: Download Artifacts (2/2)
-      uses: actions/download-artifact@v1
-      with:
-        name: Dissolve-GUI-continuous-x86_64.AppImage
-        path: Dissolve-GUI-continuous-x86_64.AppImage
     - name: Upload Release Assets (1/2)
       uses: actions/upload-release-asset@v1.0.1
       with:
