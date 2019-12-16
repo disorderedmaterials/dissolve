@@ -106,13 +106,13 @@ jobs:
   createcontinuous:
     runs-on: ubuntu-latest
     needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     if: contains(github.ref, 'develop')
     steps:
     - name: Create Continuous Release
       uses: actions/create-release@v1
       id: create_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: continuous
         release_name: Continuous Build
@@ -131,8 +131,6 @@ jobs:
         path: Dissolve-GUI-continuous-x86_64.AppImage
     - name: Upload Release Assets (1/2)
       uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./
@@ -140,10 +138,10 @@ jobs:
         asset_content_type: application/appimage
     - name: Upload Release Assets (2/2)
       uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./
         asset_name: Dissolve-GUI-continuous-x86_64.AppImage
         asset_content_type: application/appimage
+    - name: Prune Outdated
+      run: ./ci/scripts/prune_continuous.sh -r trisyoungs/dissolve
