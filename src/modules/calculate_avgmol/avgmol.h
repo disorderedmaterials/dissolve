@@ -19,10 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_CALCULATE_AVGMOL_H
-#define DISSOLVE_MODULE_CALCULATE_AVGMOL_H
+#ifndef DISSOLVE_MODULE_CALCULATEAVGMOL_H
+#define DISSOLVE_MODULE_CALCULATEAVGMOL_H
 
 #include "module/module.h"
+#include "classes/species.h"
 
 // Forward Declarations
 /* none */
@@ -73,6 +74,18 @@ class CalculateAvgMolModule : public Module
 	private:
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
+
+
+	/*
+	 * Functions / Data
+	 */
+	private:
+	// Local Species representing average of targeted Species
+	Species averageSpecies_;
+
+	public:
+	// Return average Species
+	Species& averageSpecies();
 
 
 	/*

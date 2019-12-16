@@ -21,3 +21,8 @@
 
 #include "modules/calculate_avgmol/avgmol.h"
 
+// Return average Species
+Species& CalculateAvgMolModule::averageSpecies()
+{
+	return averageSpecies_;
+}

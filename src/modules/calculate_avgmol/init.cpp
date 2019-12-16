@@ -25,6 +25,7 @@
 // Perform any necessary initialisation for the Module
 void CalculateAvgMolModule::initialise()
 {
-// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+	// Set up keywords
+// 	keywords_.add("Target", new SpeciesSiteKeyword(NULL, true), "Species", "Target Species to add"); // NEEDS UPDATES FROM PLOT3D BRANCH
 }
 

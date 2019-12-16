@@ -26,7 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class CalculateAvgMolModule;
 
 // Module Widget
 class CalculateAvgMolModuleWidget : public ModuleWidget
@@ -36,11 +36,11 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	CalculateAvgMolModule* module_;
 
 	public:
 	// Constructor
-	CalculateAvgMolModuleWidget(QWidget* parent, Module* module);
+	CalculateAvgMolModuleWidget(QWidget* parent, CalculateAvgMolModule* module);
 
 
 	/*
