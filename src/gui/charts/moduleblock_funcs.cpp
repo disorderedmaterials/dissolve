@@ -22,6 +22,7 @@
 #include "gui/charts/moduleblock.h"
 #include "gui/charts/modulelistmetrics.h"
 #include "gui/modulewidget.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include "templates/variantpointer.h"
@@ -47,6 +48,9 @@ ModuleBlock::ModuleBlock(QWidget* parent, Module* module, Dissolve& dissolve) : 
 	// Set the icon and module type label
 	ui_.TopLabel->setText(module_->type());
 	ui_.IconLabel->setPixmap(modulePixmap(module_));
+
+	// Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we will exist in a QScrollArea)
+	ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
 
 	// Update our controls
 	updateControls();
