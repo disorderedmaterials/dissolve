@@ -101,6 +101,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     if: contains(github.ref, 'develop')
     steps:
+    - uses: actions/checkout@v1
     - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
