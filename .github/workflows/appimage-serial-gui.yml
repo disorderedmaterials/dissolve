@@ -129,4 +129,4 @@ jobs:
         asset_name: Dissolve-GUI-continuous-x86_64.AppImage
         asset_content_type: application/appimage
     - name: Prune Outdated
-      run: ./ci/scripts/prune_continuous.sh -r trisyoungs/dissolve
+      run: ./ci/scripts/prune-continuous.sh -r trisyoungs/dissolve
