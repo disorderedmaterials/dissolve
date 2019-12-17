@@ -72,9 +72,9 @@ void RenderableData1D::transformData()
 
 	transformMin_ = 0.0;
 	transformMax_ = 0.0;
-	transformMinPositive_ = 0.1;
-	transformMaxPositive_ = 0.0;
-
+	axisTransformMinPositive_ = 0.1;
+	axisTransformMaxPositive_ = 0.0;
+	
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
 	{
@@ -88,24 +88,24 @@ void RenderableData1D::transformData()
 		// X
 		if (transformedData_.constXAxis(n) > 0.0)
 		{
-			if (transformedData_.constXAxis(n) < transformMinPositive_.x) transformMinPositive_.x = transformedData_.constXAxis(n);
-			if (transformedData_.constXAxis(n) > transformMaxPositive_.x) transformMaxPositive_.x = transformedData_.constXAxis(n);
+			if (transformedData_.constXAxis(n) < axisTransformMinPositive_.x) axisTransformMinPositive_.x = transformedData_.constXAxis(n);
+			if (transformedData_.constXAxis(n) > axisTransformMaxPositive_.x) axisTransformMaxPositive_.x = transformedData_.constXAxis(n);
 		}
 		// Y
 		if (transformedData_.constValue(n) > 0.0)
 		{
-			if (transformedData_.constValue(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constValue(n);
-			if (transformedData_.constValue(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constValue(n);
+			if (transformedData_.constValue(n) < axisTransformMinPositive_.y) axisTransformMinPositive_.y = transformedData_.constValue(n);
+			if (transformedData_.constValue(n) > axisTransformMaxPositive_.y) axisTransformMaxPositive_.y = transformedData_.constValue(n);
 		}
 	}
 	
-	transformMinPositive_.z = 1.0;
-	transformMaxPositive_.z = 1.0;
+	axisTransformMinPositive_.z = 1.0;
+	axisTransformMaxPositive_.z = 1.0;
 
 	// Check maximum positive values (since all datapoints might have been negative
-	if (transformMaxPositive_.x < 0.0) transformMaxPositive_.x = 1.0;
-	if (transformMaxPositive_.y < 0.0) transformMaxPositive_.y = 1.0;
-	if (transformMaxPositive_.z < 0.0) transformMaxPositive_.z = 1.0;
+	if (axisTransformMaxPositive_.x < 0.0) axisTransformMaxPositive_.x = 1.0;
+	if (axisTransformMaxPositive_.y < 0.0) axisTransformMaxPositive_.y = 1.0;
+	if (axisTransformMaxPositive_.z < 0.0) axisTransformMaxPositive_.z = 1.0;
 
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();

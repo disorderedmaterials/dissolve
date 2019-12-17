@@ -59,8 +59,8 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	transformDataVersion_ = -1;
 	transformMin_.zero();
 	transformMax_.set(10.0, 10.0, 10.0);
-	transformMinPositive_.set(0.1, 0.1, 0.1);
-	transformMaxPositive_.set(10.0, 10.0, 10.0);
+	axisTransformMinPositive_.set(0.1, 0.1, 0.1);
+	axisTransformMaxPositive_.set(10.0, 10.0, 10.0);
 	transforms_[0].setEnabled(false);
 	transforms_[1].setEnabled(false);
 	transforms_[2].setEnabled(false);
@@ -145,7 +145,7 @@ Vec3<double> Renderable::transformMinPositive()
 	// Make sure transformed data is up to date
 	transformData();
 
-	return transformMinPositive_;
+	return axisTransformMinPositive_;
 }
 
 // Return transformed positive data maxima, calculating if necessary
@@ -154,7 +154,7 @@ Vec3<double> Renderable::transformMaxPositive()
 	// Make sure transformed data is up to date
 	transformData();
 
-	return transformMaxPositive_;
+	return axisTransformMaxPositive_;
 }
 
 // Set transform equation for data

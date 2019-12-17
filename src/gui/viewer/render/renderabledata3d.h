@@ -76,13 +76,15 @@ class RenderableData3D : public Renderable
 	
 	private:
 	// Create line strip primitive
-	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
+	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double >& displayAbscissa, const Array3D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
+	void marchingCubesOriginal(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array<double>& displayZAbscissa, const Array3D<double>& displayValues, double lowerCutoff, double upperCutoff, const ColourDefinition& colourDefinition);
 
 	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
+	
 
 
 	/*
