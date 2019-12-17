@@ -101,32 +101,13 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     if: contains(github.ref, 'develop')
     steps:
-    - name: Create Continuous Release
-      uses: actions/create-release@v1
-      id: create_release
-      with:
-        tag_name: continuous/${{ github.sha }}
-        release_name: Continuous Build
-        bodyFile: Continuous build of Dissolve from the develop branch.
-        draft: false
-        prerelease: true
     - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
         name: artifacts
-    - name: Upload Release Assets (1/2)
-      uses: actions/upload-release-asset@v1.0.1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts
-        asset_name: Dissolve-continuous-x86_64.AppImage
-        asset_content_type: application/appimage
-    - name: Upload Release Assets (2/2)
-      uses: actions/upload-release-asset@v1.0.1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts
-        asset_name: Dissolve-GUI-continuous-x86_64.AppImage
-        asset_content_type: application/appimage
+    - name: Create / Update Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous development release from current `develop` branch.' -p artifacts/*AppImage
     - name: Prune Outdated
-      run: ./ci/scripts/prune-continuous.sh -r trisyoungs/dissolve
+      run: ./ci/scripts/prune-continuous -r trisyoungs/dissolve
