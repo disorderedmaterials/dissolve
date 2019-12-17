@@ -497,7 +497,6 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 
 	// Variables
 	Configuration* cfg;
-	Module* module;
 	CharString newName;
 	bool error = false, skipCurrentItem = false;
 
