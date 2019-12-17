@@ -1,4 +1,4 @@
-name: Win64 (GUI/Serial) (Windows Server Latest)
+name: Win64 (GUI/Serial)
 
 on:
   push:

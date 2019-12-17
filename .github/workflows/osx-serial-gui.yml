@@ -1,4 +1,4 @@
-name: OSX (GUI/Serial) (MacOS Latest)
+name: OSX (GUI/Serial)
 
 on:
   push:
