@@ -1,16 +1,39 @@
 #!/bin/bash
 
-# Prune Continuous Releases
+# Prune Continuous Releases, leaving that for the current short hash intact
 
+REPO=""
 
 usage()
 {
-	echo "Usage: $0 <owner/repo>"
+	echo "Usage: $0 [-r <owner/repo>]"
 	exit 1
 }
 
+# Parse options
+while getopts ":r:" opt
+do
+	case "${opt}" in
+		r)
+			REPO=${OPTARG}
+			echo "Repo set to '${REPO}'"
+			;;
+		\?)
+			usage
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+if [ "x$REPO" = "x" ]
+then
+	echo "Error: The owner and repo must be supplied."
+	exit 1
+fi
+
 # Set up our variables
-REPO=$1
 echo "Repository is $REPO"
 REPOURL="https://api.github.com/repos/${REPO}"
 echo "API URL is $REPOURL"
@@ -25,6 +48,12 @@ set +x
 
 # Get info on current releases
 RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
+if [[ $RELEASES =~ "documentation_url" ]]
+then
+	MESSAGE=$(echo $RELEASES | jq ". | .message")
+	echo "Error returned: "$MESSAGE
+	exit 1
+fi
 
 # Get the url of the current release
 echo "Searching for current release... ($CURRENTHASH)"
