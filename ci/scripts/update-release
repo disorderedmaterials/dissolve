@@ -59,7 +59,7 @@ do
 	esac
 done
 
-if [ "x$REPO" != "x" ]
+if [ "x$REPO" = "x" ]
 then
 	echo "Error: The owner and repo must be supplied."
 	exit 1
