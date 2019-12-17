@@ -93,9 +93,9 @@ done
 echo "  - Found tags: "$TAGS
 for tag in $TAGS
 do
-	if [ "$tag" = "$CURRENTHASH" ]
+	if [ "$tag" = "continuous/$CURRENTHASH" ]
 	then
-		echo " -- Existing continuous release reference $tag will not be deleted as it is the current release."
+		echo " -- Existing continuous reference tag $tag will not be deleted as it is associated to the current release."
 		continue
 	fi
 	echo "  ! Deleting reference $tag..."
