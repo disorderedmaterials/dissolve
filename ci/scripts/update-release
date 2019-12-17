@@ -69,7 +69,6 @@ fi
 echo "Repository is $REPO"
 REPOURL="https://api.github.com/repos/${REPO}"
 echo "API URL is $REPOURL"
-REPOURL="https://api.github.com/repos/${TRAVIS_REPO_SLUG}"
 
 # Enable erroring
 set -e
@@ -120,6 +119,12 @@ echo "Tag for release is: $RELEASE_TAG"
 
 # Get available releases information
 RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
+if [[ $RELEASES =~ "documentation_url" ]]
+then
+	MESSAGE=$(echo $RELEASES | jq ". | .message")
+	echo "Error returned: "$MESSAGE
+	exit 1
+fi
 
 # Does our tag already exist (i.e. the release already exists)?
 echo "Checking for presence of current release..."
