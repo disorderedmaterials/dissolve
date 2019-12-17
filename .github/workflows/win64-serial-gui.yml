@@ -90,3 +90,19 @@ jobs:
       with:
         name: artifacts
         path: installers/
+  createcontinuous:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: contains(github.ref, 'develop')
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download Artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts
+    - name: Create / Update Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch.' -p installers/*zip installers/*exe
