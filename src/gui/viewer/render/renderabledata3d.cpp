@@ -26,13 +26,15 @@
 #include "templates/array3d.h"
 #include "templates/array2d.h"
 #include "math/limits.h"
+#include "axes.h"
 
 // Constructor
 RenderableData3D::RenderableData3D(const Data3D* source, const char* objectTag) : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;	
-	colour().setStyle(ColourDefinition::HSVGradientStyle);
+	//colour().setStyle(ColourDefinition::HSVGradientStyle);
+	dataPrimitive_ = createPrimitive();
 	
 }
 
@@ -74,8 +76,8 @@ void RenderableData3D::transformData()
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	// FIXMESIMONA!
-// 	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
+	
+	Transformer::transform3D(transformedData_, transforms_[0], transforms_[1], transforms_[2]);
 	
 	transformMin_ = Limits::min(transformedData_.constXAxis());
 	transformMax_ = Limits::max(transformedData_.constXAxis());
@@ -170,7 +172,7 @@ bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
 	reinitialisePrimitives(source_->constValues3D().linearArraySize(), GL_TRIANGLES, true);
-	marchingCubesOriginal(source_->constXAxis(), source_->constYAxis(), source_->constZAxis(), source_->constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition);
+	marchingCubesOriginal(source_->constXAxis(), source_->constYAxis(), source_->constZAxis(), source_->constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
 	//constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constZAxis, transformedData().constValues3D(), view.constAxes(), colourDefinition);
 }
 
@@ -195,25 +197,9 @@ const void RenderableData3D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData3D::constructLine ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double >& displayAbscissa, const Array3D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition )
+void RenderableData3D::constructLine ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double>& displayZAbscissa, const Array3D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition)
 {
-	// Copy and transform abscissa values (still in data space) into axes coordinates
-	Array<double> x = displayXAbscissa;
-	axes.transformX(x);
-	int nX = x.nItems();
-	if (nX < 2) return;
 	
-	// Copy and transform abscissa values (still in data space) into axes coordinates
-	Array<double> y = displayYAbscissa;
-	axes.transformY(y);
-	int nY = y.nItems();
-	if (nY < 2) return;
-
-	// Copy and transform abscissa values (still in data space) into axes coordinates
-	Array<double> z = displayAbscissa;
-	axes.transformZ(z);
-	int nZ = z.nItems();
-	if (nZ < 2) return;
 
 	// Get some values from axes so we can calculate colours properly	
 	//bool vLogarithmic = axes.logarithmic(2);
@@ -557,48 +543,47 @@ int facetriples[256][15] = {
 
 // marching cubes 
 // Render volumetric isosurface with Marching Cubes ORIGINAL
-void RenderableData3D::marchingCubesOriginal(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array<double>& displayZAbscissa, const Array3D<double>& displayValues, double lowerCutoff, double upperCutoff, const ColourDefinition& colourDefinition)
+void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double >& displayZAbscissa, const Array3D< double >& displayValues, double lowerCutoff, double upperCutoff, const ColourDefinition& colourDefinition, const Axes& axes, Primitive* primitive )
 {
-	int ii, jj, kk, n, cubeType, *faces;
+	int i, j, k, n, cubeType, *faces;
 	Vec3<GLfloat> normal, gradient[8];
 	Vec3<double> r, v1, v2;
-	//Vec3<int> nPoints = source.XYZ(), shift = source->shift();
-	//WrapInt i, j, k;
-	int i, j, k;
+	double vertex[8], ipol, a, b, mult = 1.0;
+	GLfloat colour[4];
 	Array<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
-	double*** data, vertex[8], ipol, a, b, mult = 1.0;
-	Vec4<GLfloat> colour;
-	//data = source->data3d();
-	//bool periodic = source->periodic();
-	//bool fillVolume = source->fillEnclosedVolume();
 
 	// Get distances between grid points
-	//-------------------r = source->lengths();	
 	double dx, dy, dz;
 	dx = x.constAt(1) - x.constAt(0);
 	dy = y.constAt(1) - y.constAt(0);
 	dz = z.constAt(1) - z.constAt(0);
-
 	
-
+	// Transform abscissa values (still in data space) into axes coordinates
+	axes.transformX(x);
+	int nX = x.nItems();
+	if (nX < 2) return;
 	
+	// Transform abscissa values (still in data space) into axes coordinates
+	axes.transformY(y);
+	int nY = y.nItems();
+	if (nY < 2) return;
 
-// 	// Loops here will go over 0 to npoints-1, but actual array indices will be based on this plus shift amounts, folded into limits
-// 	// Set up the wrapped integers for this purpose
-// 	i.setLimits(0, nPoints.x-1);
-// 	j.setLimits(0, nPoints.y-1);
-// 	k.setLimits(0, nPoints.z-1);
+	// Transform abscissa values (still in data space) into axes coordinates
+	axes.transformZ(z);
+	int nZ = z.nItems();
+	if (nZ < 2) return;
+
 
 	// Generate isosurface
-	for (ii=0; ii< x.nItems()-1; ++ii)
+	for (i=0; i< x.nItems()-1; ++i)
 	{
-		if ((ii < 2) || (ii > (x.nItems()-3))) continue;
-		for (jj=0; jj< y.nItems()-3; ++jj)
+		if ((i < 2) || (i > (x.nItems()-3))) continue;
+		for (j=0; j< y.nItems()-3; ++j)
 		{
-			if ((jj < 2) || (jj > (y.nItems()-3))) continue;
-			for (kk=0; kk< z.nItems()-1; ++kk)
+			if ((j < 2) || (j > (y.nItems()-3))) continue;
+			for (k=0; k< z.nItems()-1; ++k)
 			{
-				if ((kk < 2) || (kk > (z.nItems()-3))) continue;
+				if ((k < 2) || (k > (z.nItems()-3))) continue;
 
 				// Grab values that form vertices of cube.
 				vertex[0] = displayValues.constAt(i, j, k);
@@ -610,31 +595,31 @@ void RenderableData3D::marchingCubesOriginal(const Array<double>& displayXAbscis
 				vertex[6] = displayValues.constAt(i+1, j+1, k+1);
 				vertex[7] = displayValues.constAt(i, j +1, k+1);
 
-				// Calculate gradients at the cube vertices
-				gradient[0].x = (vertex[1] - displayValues.constAt(i-1, j, k)) / dx;
-				gradient[0].y = (vertex[3] - displayValues.constAt(i, j-1, k)) / dy;
-				gradient[0].z = (vertex[4] - displayValues.constAt(i, j, k-1)) / dz;
-				gradient[1].x = (displayValues.constAt(i+2, j, k) - vertex[0]) / dx;
-				gradient[1].y = (vertex[2] - displayValues.constAt(i+1, j-1, k)) / dy;
-				gradient[1].z = (vertex[5] - displayValues.constAt(i+1, j, k-1)) / dz;
-				gradient[2].x = (displayValues.constAt(i+2, j+1, k) - vertex[3]) / dx;
-				gradient[2].y = (displayValues.constAt(i+1, j+2, k) - vertex[1]) / dy;
-				gradient[2].z = (vertex[6] - displayValues.constAt(i+1, j+1, k-1)) / dz;
-				gradient[3].x = (vertex[2] - displayValues.constAt(i-1, j+1, k)) / dx;
-				gradient[3].y = (displayValues.constAt(i , j+2, k) - vertex[0]) / dy;
-				gradient[3].z = (vertex[7] - displayValues.constAt(i, j+1, k-1)) / dz;
-				gradient[4].x = (vertex[5] - displayValues.constAt(i-1, j, k+1)) / dx;
-				gradient[4].y = (vertex[7] - displayValues.constAt(i, j-1, k+1)) / dy;
-				gradient[4].z = (displayValues.constAt(i, j, k+2) - vertex[0]) / dz;
-				gradient[5].x = (displayValues.constAt(i+2, j, k+1) - vertex[4]) / dx;
-				gradient[5].y = (vertex[6] - displayValues.constAt(i+1, j-1, k+1)) / dy;
-				gradient[5].z = (displayValues.constAt(i+1, j, k+2) - vertex[1]) / dz;
-				gradient[6].x = (displayValues.constAt(i+2, j+1, k+1) - vertex[7]) / dx;
-				gradient[6].y = (displayValues.constAt(i+1, j+2, k+1) - vertex[5]) / dy;
-				gradient[6].z = (displayValues.constAt(i+1, j+1, k+2) - vertex[2]) / dz;
-				gradient[7].x = (vertex[6] - displayValues.constAt(i-1, j+1, k+1)) / dx;
-				gradient[7].y = (displayValues.constAt(i, j+2, k+1) - vertex[4]) / dy;
-				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;
+// 				// Calculate gradients at the cube vertices
+// 				gradient[0].x = (vertex[1] - displayValues.constAt(i-1, j, k)) / dx;
+// 				gradient[0].y = (vertex[3] - displayValues.constAt(i, j-1, k)) / dy;
+// 				gradient[0].z = (vertex[4] - displayValues.constAt(i, j, k-1)) / dz;
+// 				gradient[1].x = (displayValues.constAt(i+2, j, k) - vertex[0]) / dx;
+// 				gradient[1].y = (vertex[2] - displayValues.constAt(i+1, j-1, k)) / dy;
+// 				gradient[1].z = (vertex[5] - displayValues.constAt(i+1, j, k-1)) / dz;
+// 				gradient[2].x = (displayValues.constAt(i+2, j+1, k) - vertex[3]) / dx;
+// 				gradient[2].y = (displayValues.constAt(i+1, j+2, k) - vertex[1]) / dy;
+// 				gradient[2].z = (vertex[6] - displayValues.constAt(i+1, j+1, k-1)) / dz;
+// 				gradient[3].x = (vertex[2] - displayValues.constAt(i-1, j+1, k)) / dx;
+// 				gradient[3].y = (displayValues.constAt(i , j+2, k) - vertex[0]) / dy;
+// 				gradient[3].z = (vertex[7] - displayValues.constAt(i, j+1, k-1)) / dz;
+// 				gradient[4].x = (vertex[5] - displayValues.constAt(i-1, j, k+1)) / dx;
+// 				gradient[4].y = (vertex[7] - displayValues.constAt(i, j-1, k+1)) / dy;
+// 				gradient[4].z = (displayValues.constAt(i, j, k+2) - vertex[0]) / dz;
+// 				gradient[5].x = (displayValues.constAt(i+2, j, k+1) - vertex[4]) / dx;
+// 				gradient[5].y = (vertex[6] - displayValues.constAt(i+1, j-1, k+1)) / dy;
+// 				gradient[5].z = (displayValues.constAt(i+1, j, k+2) - vertex[1]) / dz;
+// 				gradient[6].x = (displayValues.constAt(i+2, j+1, k+1) - vertex[7]) / dx;
+// 				gradient[6].y = (displayValues.constAt(i+1, j+2, k+1) - vertex[5]) / dy;
+// 				gradient[6].z = (displayValues.constAt(i+1, j+1, k+2) - vertex[2]) / dz;
+// 				gradient[7].x = (vertex[6] - displayValues.constAt(i-1, j+1, k+1)) / dx;
+// 				gradient[7].y = (displayValues.constAt(i, j+2, k+1) - vertex[4]) / dy;
+// 				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;
 
 				// Determine cube type
 				cubeType = 0;
@@ -647,12 +632,7 @@ void RenderableData3D::marchingCubesOriginal(const Array<double>& displayXAbscis
 				if ((vertex[6] >= lowerCutoff) && (vertex[6] <= upperCutoff)) cubeType += 64;
 				if ((vertex[7] >= lowerCutoff) && (vertex[7] <= upperCutoff)) cubeType += 128;
 				
-				printf("CubeType %i %i %i = %i\n", ii, jj, kk, cubeType);
-// 				if (cubeType == 255)
-// 				{
-// 					if (fillVolume) plotCube(1.0, 1, ii, jj, kk);
-// 				}
-// 				else 
+				printf("CubeType %i %i %i = %i\n", i, j, k, cubeType); 
 				if (cubeType != 0)
 				{
 					// Get edges from list and draw triangles or points
@@ -669,26 +649,32 @@ void RenderableData3D::marchingCubesOriginal(const Array<double>& displayXAbscis
 						if (ipol < 0.0) ipol = 0.0;
 						v1 = vertexPos[edgevertices[faces[n]][0]];
 						v2 = vertexPos[edgevertices[faces[n]][1]];
+						printf("\n--------------------SOMETHING HAPPENS HERE----------------\n");
 						r.set(v2[0]-v1[0], v2[1]-v1[1], v2[2]-v1[2]);
 						r *= ipol;
 						printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
 						printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
 						normal = (gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol) * -mult;
 						normal.normalise();
-						r.add(ii+v1[0], jj+v1[1], kk+v1[2]);
+						r.add(i+v1[0], j+v1[1], k+v1[2]);
 
 						// Set triangle coordinates and add cube position
 						//if (colourScale != -1)
-						{
-							//colourScale[colourScale].colour((a+b)/2.0, colour);
-							//defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
-						}
-						//else defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z);
+							if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
+							{
+								// Get the single colour
+								colourDefinition.colour(0.0, colour);
+								//colourScale[colourScale].colour((a+b)/2.0, colour);
+								primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z, colour);
+							}
+							else 
+								primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z);
 					}
 				}
 			}
 		}
 	}
+	
 }
 
 /*
