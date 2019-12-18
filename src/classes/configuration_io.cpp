@@ -84,13 +84,16 @@ bool Configuration::read(LineParser& parser, const List<Species>& availableSpeci
 
 	/*
 	 * Read box definition
-	 * Lengths, along with atomic coordinates, reflect the specified size factor (if present)
+	 * Lengths, along with atomic coordinates, reflect the specified size factor (if present).
+	 * Create box with unscaled lengths - they will be scaled according to the size factor at the end of the routine.
 	 */
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	Vec3<double> lengths = parser.arg3d(0);
+	Vec3<double> scaledLengths = parser.arg3d(0);
 	requestedSizeFactor_ = (parser.hasArg(3) ? parser.argd(3) : 1.0);
-	appliedSizeFactor_ = requestedSizeFactor_;
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+
+	appliedSizeFactor_ = requestedSizeFactor_;
+	Vec3<double> lengths  = scaledLengths / appliedSizeFactor_;
 	Vec3<double> angles = parser.arg3d(0);
 	if (!createBox(lengths, angles)) return false;
 
@@ -133,6 +136,9 @@ bool Configuration::read(LineParser& parser, const List<Species>& availableSpeci
 	// Set-up Cells for the Box
 	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
 
+	// Scale box and cells according to the applied size factor
+	scaleBox(appliedSizeFactor_);
+	
 	// Update Cell locations for Atoms
 	updateCellContents();
 
