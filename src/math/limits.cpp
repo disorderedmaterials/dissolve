@@ -27,96 +27,138 @@
 // Return minimum from 1D array provided
 double Limits::min(const Array<double>& A)
 {	
-	double min = A.constAt(0);
-	for(int i=0; i<A.nItems(); ++i)
+	if(A.nItems()>0)
 	{
-		if (A.constAt(i)<min)
-			min = A.constAt(i);
+		double min = A.constAt(0);
+		for(int i=0; i<A.nItems(); ++i)
+		{
+			if (A.constAt(i)<min)
+				min = A.constAt(i);
+		}
+		return min;
 	}
-	return min;
+	else
+		return 0;
+	
 }
 
 // Return maximum from 1D array provided
 double Limits::max(const Array<double>& A)
 {
-	double max = A.constAt(0);
-	for(int i=0; i<A.nItems(); ++i)
+	if(A.nItems()>0)
 	{
-		if (A.constAt(i)>max)
-			max = A.constAt(i);
+		double max = A.constAt(0);
+		for(int i=0; i<A.nItems(); ++i)
+		{
+			if (A.constAt(i)>max)
+				max = A.constAt(i);
+		}
+		return max;
 	}
-	return max;
+	else
+		return 0;
 }
 
 // Return minimum from 2D array provided
 double Limits::min(const Array2D<double>& A)
 {
-	double min = A.constLinearValue(0);
-	for (int i=0; i<A.linearArraySize(); ++i)
+	if(A.linearArraySize()>0)
 	{
-		if (A.constLinearValue(i) < min)
-			min = A.constLinearValue(i);
+			double min = A.constLinearValue(0);
+		for (int i=0; i<A.linearArraySize(); ++i)
+		{
+			if (A.constLinearValue(i) < min)
+				min = A.constLinearValue(i);
+		}
+		return min;
 	}
-	return min;
+	else 
+		return 0;
 }
 
 // Return maximum from 2D array provided
 double Limits::max(const Array2D<double>& A)
 {
-	double max = A.constLinearValue(0);
-	for (int i=0; i<A.linearArraySize(); ++i)
+	if(A.linearArraySize()>0)
 	{
-		if (A.constLinearValue(i) > max )
-			max = A.constLinearValue(i);
+		double max = A.constLinearValue(0);
+		for (int i=0; i<A.linearArraySize(); ++i)
+		{
+			if (A.constLinearValue(i) > max )
+				max = A.constLinearValue(i);
+		}
+		return max;
 	}
-	return max;
+	else
+		return 0;
 }
 
 // Return absolute minimum from array provided
 double Limits::absMin(const Array<double>& A)
 {	
-	double absMin = abs(A.constAt(0));
-	for(int i=0; i<A.nItems(); ++i)
+	if (A.nItems() > 0)
 	{
-		if (abs(A.constAt(i)) < absMin)
-			absMin = abs(A.constAt(i));
+		double absMin = abs(A.constAt(0));
+		for(int i=0; i<A.nItems(); ++i)
+		{
+			if (abs(A.constAt(i)) < absMin)
+				absMin = abs(A.constAt(i));
+		}
+		return absMin;
 	}
-	return absMin;
+	else
+		return 0;
+	
 }
 
 // Return absolute maximum from array provided
 double Limits::absMax(const Array<double>& A)
 {
-	double absMax = abs(A.constAt(0));
-	for(int i=0; i<A.nItems(); ++i)
+	if (A.nItems() >0)
 	{
-		if (abs(A.constAt(i)) > absMax)
-			absMax = abs(A.constAt(i));
+		double absMax = abs(A.constAt(0));
+		for(int i=0; i<A.nItems(); ++i)
+		{
+			if (abs(A.constAt(i)) > absMax)
+				absMax = abs(A.constAt(i));
+		}
+		return absMax;
 	}
-	return absMax;
-	
+	else 
+		return 0;
+		
 }
 
 // Return absolute minimum from 2D array provided
 double Limits::absMin(const Array2D<double>& A)
 {
-	double absMin = abs(A.constLinearValue(0));
-	for (int i=0; i<A.linearArraySize(); ++i)
+	if(A.linearArraySize()>0)
 	{
-		if (abs(A.constLinearValue(i)) < absMin)
-			absMin = abs(A.constLinearValue(i));
+		double absMin = abs(A.constLinearValue(0));
+		for (int i=0; i<A.linearArraySize(); ++i)
+		{
+			if (abs(A.constLinearValue(i)) < absMin)
+				absMin = abs(A.constLinearValue(i));
+		}
+		return absMin;
 	}
-	return absMin;
+	else return 0;
 }
 
 // Return absolute maximum from 2D array provided
 double Limits::absMax(const Array2D<double>& A)
 {
-	double absMax = abs(A.constLinearValue(0));
-	for (int i=0; i<A.linearArraySize(); ++i)
+	if(A.linearArraySize()>0)
 	{
-		if (abs(A.constLinearValue(i)) < absMax)
-			absMax = abs(A.constLinearValue(i));
+		double absMax = abs(A.constLinearValue(0));
+		for (int i=0; i<A.linearArraySize(); ++i)
+		{
+			if (abs(A.constLinearValue(i)) < absMax)
+				absMax = abs(A.constLinearValue(i));
+		}
+		return absMax;
 	}
-	return absMax;
+	else 
+		return 0;
+	
 }
