@@ -665,7 +665,7 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 								// Get the single colour
 								colourDefinition.colour(0.0, colour);
 								//colourScale[colourScale].colour((a+b)/2.0, colour);
-								primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z, colour);
+								primitive -> defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
 							}
 							else 
 								primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z);
