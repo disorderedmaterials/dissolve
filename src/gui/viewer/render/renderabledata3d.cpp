@@ -171,8 +171,8 @@ bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	reinitialisePrimitives(source_->constValues3D().linearArraySize(), GL_TRIANGLES, true);
-	marchingCubesOriginal(source_->constXAxis(), source_->constYAxis(), source_->constZAxis(), source_->constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
+	dataPrimitive_->initialise(GL_TRIANGLES, true);
+	marchingCubesOriginal(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constZAxis(), transformedData().constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
 	//constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constZAxis, transformedData().constValues3D(), view.constAxes(), colourDefinition);
 }
 
@@ -185,92 +185,9 @@ const void RenderableData3D::sendToGL(const double pixelScaling)
 	// Disable lighting
 	glDisable(GL_LIGHTING);
 	
-	int n = 0;
-	while(n < transformedData_.constYAxis().nItems())
-	{
-		primitive(n)->sendToGL();
-		++n;
-	}
-
+	dataPrimitive_->sendToGL();
 	// Reset LineStyle back to defaults
 	LineStyle().sendToGL();
-}
-
-// Create line strip primitive
-void RenderableData3D::constructLine ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double>& displayZAbscissa, const Array3D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition)
-{
-	
-
-	// Get some values from axes so we can calculate colours properly	
-	//bool vLogarithmic = axes.logarithmic(2);
-	//double vStretch = axes.stretch(2);
-
-	// Temporary variables
-	GLfloat colour[4];
-	Vec3<double> nrm(0.0, 1.0, 0.0);
-
-	// Create lines for slices
-	int vertexA, vertexB;
-	Array3D<double> v = displayValues;
-	//axes.transformZ(v);
-	
-	Primitive* p;
-
-	// Check for a single colour style in the colourDefinition - use optimised case in that eventuality
-	if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
-	{
-		// Get the single colour
-		colourDefinition.colour(0.0, colour);
-		
-		//CONNECT CONSTRUCTLINE WITH MARCHINGCUBES ORIGINAL
-		
-// 		// Loop over y
-// 		for (int j=0; j < nY ; ++j)
-// 		{
-// 			// Set vertexA to -1 so we don't draw a line at j=0
-// 			vertexA = -1;
-// 			p = primitive(j);
-// 			// Loop over x
-// 			for (int i = 0; i < nX; ++i)
-// 			{
-// 				for(int k = 0; k < nZ; ++k) 
-// 				{
-// 				vertexB = p->defineVertex(x.constAt(i), y.constAt(j), v.constAt(i,j,k), nrm, colour);
-// 				}
-// 				// If both vertices are valid, plot a line
-// 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
-// 				vertexA = vertexB;
-// 			}
-// 		}
-// 	}
-// 	else
-// 	{
-// 		ColourDefinition colourDef = colourDefinition;
-// 		// Setting gradient start and end value based on minimum and maximum data points
-// 		colourDef.setHSVGradientStartValue(transformMin_.z);
-// 		colourDef.setHSVGradientEndValue(transformMax_.z);
-// 		
-// 		// Loop over y
-// 		for (int i=0; i < nY ; ++i)
-// 		{
-// 			// Set vertexA to -1 so we don't draw a line at i=0
-// 			vertexA = -1;
-// 			p = primitive(i);
-// 			
-// 			// Loop over x
-// 			for (int m = 0; m < nX; ++m)
-// 			{
-// 				// Assigning colour based on value 
-// 				double c = (vLogarithmic ? pow(displayValues.constAt(m, i), 10.0) : displayValues.constAt(m,i));
-// 				colourDef.colour(c, colour);
-// 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m,n), nrm, colour);
-// 
-// 				// If both vertices are valid, plot a line
-// 				if (vertexA != -1) p->defineIndices(vertexA, vertexB);
-// 				vertexA = vertexB;
-// 			}
-// 		}
-	}
 }
 
 // Marching Cube Edge Vertex Lookup Table
