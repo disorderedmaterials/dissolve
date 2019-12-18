@@ -121,16 +121,21 @@ bool Dissolve::iterate(int nIterations)
 		 *  0)	Print schedule of tasks to run, and write heartbeat file
 		 */
 		double thisTime = 0.0;
+		int nEnabledModules = 0;
 
-		Messenger::print("Configuration Processing\n");
 		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
-			Messenger::print("   * '%s'\n", cfg->name());
-			if (cfg->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
+			if (cfg->nModules() == 0) continue;
+
+			Messenger::print("Configuration layer '%s'  (%s):\n\n", cfg->name(), cfg->moduleLayer().frequencyDetails(iteration_));
+
+			int layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
 			ListIterator<Module> modIterator(cfg->modules());
 			while (Module* module = modIterator.iterate())
 			{
-				Messenger::print("      --> %20s  (%s)\n", module->type(), module->enabled() ? module->frequencyDetails(iteration_) : "Disabled");
+				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
+
+				if (module->enabled()) ++nEnabledModules;
 
 				// TODO This will estimate wrongly for anything other than Sequential Processing
 				thisTime += module->processTimes().value();
@@ -142,17 +147,24 @@ bool Dissolve::iterate(int nIterations)
 		while (ModuleLayer* layer = processingLayerIterator.iterate())
 		{
 			Messenger::print("Processing layer '%s'  (%s):\n\n", layer->name(), layer->frequencyDetails(iteration_));
-			int layerExecutionCount = iteration_ / layer->frequency();
 
+			if (!layer->enabled()) continue;
+
+			int layerExecutionCount = iteration_ / layer->frequency();
 			ListIterator<Module> processingIterator(layer->modules());
 			while (Module* module= processingIterator.iterate())
 			{
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
+				if (module->enabled()) ++nEnabledModules;
+
 				thisTime += module->processTimes().value();
 			}
 			Messenger::print("\n");
 		}
+
+		// If no modules are enabled, complain that we have nothing to do!
+		if (nEnabledModules == 0) return Messenger::error("No modules or layers enabled - nothing to do!\n");
 
 		// Write heartbeat file or display appropriate message
 		if (worldPool().isMaster() && (writeHeartBeat()))
