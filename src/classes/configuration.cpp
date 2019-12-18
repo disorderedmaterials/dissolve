@@ -68,7 +68,7 @@ void Configuration::clear()
 	appliedSizeFactor_ = 1.0;
 
 	// Reset box / Cells
-	requestedCellDivisionLength_ = 10.0;
+	requestedCellDivisionLength_ = 7.0;
 	contentsVersion_.zero();
 
 	// Reset definition
