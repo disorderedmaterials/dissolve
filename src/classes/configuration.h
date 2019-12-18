@@ -95,8 +95,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 	// Initialise (generate or load) the basic contents of the Configuration
 	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent = false);
-	// Finalise Configuration after loading contents from restart file
-	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -257,6 +255,16 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	public:
 	// Calculate / retrieve stack of sites for specified SpeciesSite
 	const SiteStack* siteStack(SpeciesSite* site);
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Write through specified LineParser
+	bool write(LineParser& parser) const;
+	// Read through specified LineParser
+	bool read(LineParser& parser, const List<Species>& availableSpecies, double pairPotentialRange);
 
 
 	/*

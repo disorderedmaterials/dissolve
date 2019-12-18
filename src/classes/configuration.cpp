@@ -204,25 +204,6 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 	return true;
 }
 
-// Finalise Configuration after loading contents from restart file
-bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
-{
-	// Set-up Cells for the Box
-	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
-
-	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
-	scaleBox(requestedSizeFactor_);
-	appliedSizeFactor_ = requestedSizeFactor_;
-
-	// Update Cell locations for Atoms
-	updateCellContents();
-
-	// Finalise used AtomType list
-	usedAtomTypes_.finalise();
-
-	return true;
-}
-
 // Set configuration temperature
 void Configuration::setTemperature(double t)
 {

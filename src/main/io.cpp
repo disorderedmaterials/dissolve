@@ -449,7 +449,7 @@ bool Dissolve::loadRestart(const char* filename)
 				error = true;
 				break;
 			}
-			else if (!readConfiguration(cfg, parser)) error = true;
+			else if (!cfg->read(parser, species(), pairPotentialRange_)) error = true;
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Timing"))
 		{
@@ -671,7 +671,7 @@ bool Dissolve::saveRestart(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		if (!parser.writeLineF("Configuration  '%s'\n", cfg->name())) return false;
-		if (!writeConfiguration(cfg, parser)) return false;
+		if (!cfg->write(parser)) return false;
 	}
 
 	// Module timing information

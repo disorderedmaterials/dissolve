@@ -202,10 +202,6 @@ class Dissolve
 	Configuration* findConfiguration(const char* name) const;
 	// Find configuration by 'nice' name
 	Configuration* findConfigurationByNiceName(const char* name) const;
-	// Write Configuration through specified LineParser
-	bool writeConfiguration(Configuration* cfg, LineParser& parser);
-	// Read Configuration through specified LineParser
-	bool readConfiguration(Configuration* cfg, LineParser& parser);
 
 
 	/*
