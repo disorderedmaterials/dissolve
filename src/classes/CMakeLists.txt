@@ -32,8 +32,10 @@ add_library(classes
   forcekernel.cpp
   isotopedata.cpp
   isotopologue.cpp
+  isotopologuecollection.cpp
   isotopologuereference.cpp
   isotopologues.cpp
+  isotopologueset.cpp
   kvector.cpp
   masterintra.cpp
   molecule.cpp
@@ -89,8 +91,10 @@ add_library(classes
   forcekernel.h
   isotopedata.h
   isotopologue.h
+  isotopologuecollection.h
   isotopologuereference.h
   isotopologues.h
+  isotopologueset.h
   kernelflags.h
   kvector.h
   masterintra.h
