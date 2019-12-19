@@ -76,14 +76,14 @@ void RenderableData3D::transformData()
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	
+
 	Transformer::transform3D(transformedData_, transforms_[0], transforms_[1], transforms_[2]);
 	
 	transformMin_ = Limits::min(transformedData_.constXAxis());
 	transformMax_ = Limits::max(transformedData_.constXAxis());
 	axisTransformMinPositive_ = 0.1;
 	axisTransformMaxPositive_ = 0.0;
-	valuesTransformMinPositive_ = 0.1;
+	valuesTransformMinPositive_ = 0.01;
 	valuesTransformMaxPositive_ = 0.0;
 	
 	// Set initial limits if we can
@@ -131,9 +131,9 @@ void RenderableData3D::transformData()
 		if ( val > 0.0)
 		{
 			if (val < valuesTransformMinPositive_)
-				valuesTransformMinPositive_  = transformedData_.values().linearValue(n);
+				valuesTransformMinPositive_  = val;
 			if (val > valuesTransformMaxPositive_)
-				valuesTransformMaxPositive_  = transformedData_.values().linearValue(n);
+				valuesTransformMaxPositive_  = val;
 		}
 	}
 			
@@ -172,8 +172,11 @@ bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
 	dataPrimitive_->initialise(GL_TRIANGLES, true);
-	marchingCubesOriginal(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constZAxis(), transformedData().constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
-	//constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constZAxis, transformedData().constValues3D(), view.constAxes(), colourDefinition);
+	//marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
+	printf("SIZE OF X = %i\n", transformedData_.constXAxis().nItems());
+	printf("SIZE OF Y = %i\n", transformedData_.constYAxis().nItems());
+	printf("SIZE OF Z = %i\n", transformedData_.constZAxis().nItems());
+	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), 0.0, 0.0007, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
 // Send primitives for rendering
@@ -469,6 +472,9 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 	GLfloat colour[4];
 	Array<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
 
+// 	printf("SIZE OF X = %i\n", x.nItems());
+// 	printf("SIZE OF Y = %i\n", y.nItems());
+// 	printf("SIZE OF Z = %i\n", z.nItems());
 	// Get distances between grid points
 	double dx, dy, dz;
 	dx = x.constAt(1) - x.constAt(0);
@@ -490,17 +496,18 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 	int nZ = z.nItems();
 	if (nZ < 2) return;
 
-
+	
 	// Generate isosurface
 	for (i=0; i< x.nItems()-1; ++i)
 	{
-		if ((i < 2) || (i > (x.nItems()-3))) continue;
+		//if ((i < 2) || (i > (x.nItems()-3))) continue;
 		for (j=0; j< y.nItems()-3; ++j)
 		{
-			if ((j < 2) || (j > (y.nItems()-3))) continue;
+			
+			//if ((j < 2) || (j > (y.nItems()-3))) continue;
 			for (k=0; k< z.nItems()-1; ++k)
 			{
-				if ((k < 2) || (k > (z.nItems()-3))) continue;
+				//if ((k < 2) || (k > (z.nItems()-3))) continue;
 
 				// Grab values that form vertices of cube.
 				vertex[0] = displayValues.constAt(i, j, k);
@@ -511,32 +518,32 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 				vertex[5] = displayValues.constAt(i+1, j, k+1);
 				vertex[6] = displayValues.constAt(i+1, j+1, k+1);
 				vertex[7] = displayValues.constAt(i, j +1, k+1);
-
-// 				// Calculate gradients at the cube vertices
-// 				gradient[0].x = (vertex[1] - displayValues.constAt(i-1, j, k)) / dx;
-// 				gradient[0].y = (vertex[3] - displayValues.constAt(i, j-1, k)) / dy;
-// 				gradient[0].z = (vertex[4] - displayValues.constAt(i, j, k-1)) / dz;
-// 				gradient[1].x = (displayValues.constAt(i+2, j, k) - vertex[0]) / dx;
-// 				gradient[1].y = (vertex[2] - displayValues.constAt(i+1, j-1, k)) / dy;
-// 				gradient[1].z = (vertex[5] - displayValues.constAt(i+1, j, k-1)) / dz;
-// 				gradient[2].x = (displayValues.constAt(i+2, j+1, k) - vertex[3]) / dx;
-// 				gradient[2].y = (displayValues.constAt(i+1, j+2, k) - vertex[1]) / dy;
-// 				gradient[2].z = (vertex[6] - displayValues.constAt(i+1, j+1, k-1)) / dz;
-// 				gradient[3].x = (vertex[2] - displayValues.constAt(i-1, j+1, k)) / dx;
-// 				gradient[3].y = (displayValues.constAt(i , j+2, k) - vertex[0]) / dy;
-// 				gradient[3].z = (vertex[7] - displayValues.constAt(i, j+1, k-1)) / dz;
-// 				gradient[4].x = (vertex[5] - displayValues.constAt(i-1, j, k+1)) / dx;
-// 				gradient[4].y = (vertex[7] - displayValues.constAt(i, j-1, k+1)) / dy;
-// 				gradient[4].z = (displayValues.constAt(i, j, k+2) - vertex[0]) / dz;
-// 				gradient[5].x = (displayValues.constAt(i+2, j, k+1) - vertex[4]) / dx;
-// 				gradient[5].y = (vertex[6] - displayValues.constAt(i+1, j-1, k+1)) / dy;
-// 				gradient[5].z = (displayValues.constAt(i+1, j, k+2) - vertex[1]) / dz;
-// 				gradient[6].x = (displayValues.constAt(i+2, j+1, k+1) - vertex[7]) / dx;
-// 				gradient[6].y = (displayValues.constAt(i+1, j+2, k+1) - vertex[5]) / dy;
-// 				gradient[6].z = (displayValues.constAt(i+1, j+1, k+2) - vertex[2]) / dz;
-// 				gradient[7].x = (vertex[6] - displayValues.constAt(i-1, j+1, k+1)) / dx;
-// 				gradient[7].y = (displayValues.constAt(i, j+2, k+1) - vertex[4]) / dy;
-// 				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;
+/*
+				// Calculate gradients at the cube vertices
+				gradient[0].x = (vertex[1] - displayValues.constAt(i-1, j, k)) / dx;
+				gradient[0].y = (vertex[3] - displayValues.constAt(i, j-1, k)) / dy;
+				gradient[0].z = (vertex[4] - displayValues.constAt(i, j, k-1)) / dz;
+				gradient[1].x = (displayValues.constAt(i+2, j, k) - vertex[0]) / dx;
+				gradient[1].y = (vertex[2] - displayValues.constAt(i+1, j-1, k)) / dy;
+				gradient[1].z = (vertex[5] - displayValues.constAt(i+1, j, k-1)) / dz;
+				gradient[2].x = (displayValues.constAt(i+2, j+1, k) - vertex[3]) / dx;
+				gradient[2].y = (displayValues.constAt(i+1, j+2, k) - vertex[1]) / dy;
+				gradient[2].z = (vertex[6] - displayValues.constAt(i+1, j+1, k-1)) / dz;
+				gradient[3].x = (vertex[2] - displayValues.constAt(i-1, j+1, k)) / dx;
+				gradient[3].y = (displayValues.constAt(i , j+2, k) - vertex[0]) / dy;
+				gradient[3].z = (vertex[7] - displayValues.constAt(i, j+1, k-1)) / dz;
+				gradient[4].x = (vertex[5] - displayValues.constAt(i-1, j, k+1)) / dx;
+				gradient[4].y = (vertex[7] - displayValues.constAt(i, j-1, k+1)) / dy;
+				gradient[4].z = (displayValues.constAt(i, j, k+2) - vertex[0]) / dz;
+				gradient[5].x = (displayValues.constAt(i+2, j, k+1) - vertex[4]) / dx;
+				gradient[5].y = (vertex[6] - displayValues.constAt(i+1, j-1, k+1)) / dy;
+				gradient[5].z = (displayValues.constAt(i+1, j, k+2) - vertex[1]) / dz;
+				gradient[6].x = (displayValues.constAt(i+2, j+1, k+1) - vertex[7]) / dx;
+				gradient[6].y = (displayValues.constAt(i+1, j+2, k+1) - vertex[5]) / dy;
+				gradient[6].z = (displayValues.constAt(i+1, j+1, k+2) - vertex[2]) / dz;
+				gradient[7].x = (vertex[6] - displayValues.constAt(i-1, j+1, k+1)) / dx;
+				gradient[7].y = (displayValues.constAt(i, j+2, k+1) - vertex[4]) / dy;
+				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;*/
 
 				// Determine cube type
 				cubeType = 0;
@@ -549,7 +556,7 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 				if ((vertex[6] >= lowerCutoff) && (vertex[6] <= upperCutoff)) cubeType += 64;
 				if ((vertex[7] >= lowerCutoff) && (vertex[7] <= upperCutoff)) cubeType += 128;
 				
-				printf("CubeType %i %i %i = %i\n", i, j, k, cubeType); 
+				//if (cubeType != 0) printf("CubeType %i %i %i = %i\n", i, j, k, cubeType); 
 				if (cubeType != 0)
 				{
 					// Get edges from list and draw triangles or points
@@ -566,11 +573,11 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 						if (ipol < 0.0) ipol = 0.0;
 						v1 = vertexPos[edgevertices[faces[n]][0]];
 						v2 = vertexPos[edgevertices[faces[n]][1]];
-						printf("\n--------------------SOMETHING HAPPENS HERE----------------\n");
 						r.set(v2[0]-v1[0], v2[1]-v1[1], v2[2]-v1[2]);
+
 						r *= ipol;
-						printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
-						printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
+						//printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
+						//printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
 						normal = (gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol) * -mult;
 						normal.normalise();
 						r.add(i+v1[0], j+v1[1], k+v1[2]);

@@ -108,7 +108,7 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculated SDF
-		Renderable* sdf = sdfGraph_->createRenderable(Renderable::Data3DRenderable, CharString("%s//Process3D//%s//RDF", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		Renderable* sdf = sdfGraph_->createRenderable(Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName());
 		sdf->setColour(StockColours::BlackStockColour);
 	}
 }
