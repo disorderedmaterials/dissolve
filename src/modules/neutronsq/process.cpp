@@ -312,7 +312,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			weights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
 		}
 
-		// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+		// We will automatically use the natural isotopologue for a species if it is not explicitly covered by at least one Isotopologue definition
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasIsotopologues(spInfo->species()))
 		{
