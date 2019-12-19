@@ -43,16 +43,16 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 
 
 	/*
-	 * Isotopologue Mix
+	 * Isotopologue Mixture Data
 	 */
 	private:
 	// Associated Species
 	Species* species_;
 	// Integer population of associated Species
 	int speciesPopulation_;
-	// Isotopologue List
+	// Isotopologue Mixture
 	RefDataList<const Isotopologue,double> mix_;
-	
+
 	public:
 	// Set associated Species and population
 	void setSpecies(Species* sp, int population);
@@ -65,9 +65,9 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	// Add next available Isotopologue to list
 	bool addNextIsotopologue();
 	// Add specific Isotopologue to list
-	bool addIsotopologue(const Isotopologue* iso, double relPop);
+	bool addIsotopologue(const Isotopologue* iso, double relativeWeight);
 	// Set Isotopologue component in list
-	bool setIsotopologue(const Isotopologue* iso, double relPop);
+	bool setIsotopologue(const Isotopologue* iso, double relativeWeight);
 	// Remove Isotopologue component from list
 	bool removeIsotopologue(const Isotopologue* iso);
 	// Return Isotopologue components

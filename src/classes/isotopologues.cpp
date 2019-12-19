@@ -112,7 +112,7 @@ bool Isotopologues::addNextIsotopologue()
 }
 
 // Add specific Isotopologue to list
-bool Isotopologues::addIsotopologue(const Isotopologue* iso, double relPop)
+bool Isotopologues::addIsotopologue(const Isotopologue* iso, double relativeWeight)
 {
 	// Search current list to see if the specified Isotopologue already exists
 	if (hasIsotopologue(iso))
@@ -121,13 +121,13 @@ bool Isotopologues::addIsotopologue(const Isotopologue* iso, double relPop)
 		return false;
 	}
 
-	mix_.append(iso, relPop);
+	mix_.append(iso, relativeWeight);
 
 	return true;
 }
 
 // Set Isotopologue component in list
-bool Isotopologues::setIsotopologue(const Isotopologue* iso, double relPop)
+bool Isotopologues::setIsotopologue(const Isotopologue* iso, double relativeWeight)
 {
 	// NULL Pointer?
 	if (iso == NULL)
@@ -140,10 +140,10 @@ bool Isotopologues::setIsotopologue(const Isotopologue* iso, double relPop)
 	RefDataItem<const Isotopologue,double>* tope = mix_.contains(iso);
 	if (tope == NULL)
 	{
-		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
+		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n", iso->name());
 		return false;
 	}
-	tope->data() = relPop;
+	tope->data() = relativeWeight;
 
 	return true;
 }
