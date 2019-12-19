@@ -31,7 +31,6 @@
 #include "gui/keywordwidgets/expressionvariablelist.h"
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/integer.hui"
-#include "gui/keywordwidgets/isotopologuereferencelist.h"
 #include "gui/keywordwidgets/module.h"
 #include "gui/keywordwidgets/modulegroups.h"
 #include "gui/keywordwidgets/modulereflist.h"

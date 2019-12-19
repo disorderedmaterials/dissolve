@@ -25,7 +25,6 @@
 #include "module/module.h"
 #include "math/broadeningfunction.h"
 #include "classes/partialset.h"
-#include "classes/isotopologuereference.h"
 #include "classes/braggreflection.h"
 
 // Forward Declarations

@@ -33,7 +33,6 @@ add_library(classes
   isotopedata.cpp
   isotopologue.cpp
   isotopologuecollection.cpp
-  isotopologuereference.cpp
   isotopologues.cpp
   isotopologueset.cpp
   kvector.cpp
@@ -92,7 +91,6 @@ add_library(classes
   isotopedata.h
   isotopologue.h
   isotopologuecollection.h
-  isotopologuereference.h
   isotopologues.h
   isotopologueset.h
   kernelflags.h
