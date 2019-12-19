@@ -51,7 +51,8 @@ void IsotopologueCollection::clear()
 void IsotopologueCollection::add(Configuration* cfg, Isotopologue* iso, double relativeWeight)
 {
 	// Check if the set already exists
-	IsotopologueSet* set = isotopologueSet(cfg);
+	IsotopologueSet* set = NULL;
+	for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;
 	if (!set)
 	{
 		set = isotopologueSets_.add();
@@ -108,7 +109,7 @@ bool IsotopologueCollection::hasIsotopologueSet(const Configuration* cfg) const
 }
 
 // Return IsotopologueSet for the specified Configuration
-IsotopologueSet* IsotopologueCollection::isotopologueSet(const Configuration* cfg)
+const IsotopologueSet* IsotopologueCollection::isotopologueSet(const Configuration* cfg) const
 {
 	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) return set;
 
@@ -126,7 +127,7 @@ bool IsotopologueCollection::hasIsotopologues(const Configuration* cfg, const Sp
 }
 
 // Return Isotopologues for the Species in the specified Configuration
-Isotopologues* IsotopologueCollection::isotopologues(const Configuration* cfg, const Species* sp)
+const Isotopologues* IsotopologueCollection::isotopologues(const Configuration* cfg, const Species* sp) const
 {
 	IsotopologueSet* set = NULL;
 	for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;

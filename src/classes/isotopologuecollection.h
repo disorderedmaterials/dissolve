@@ -64,11 +64,11 @@ class IsotopologueCollection : public GenericItemBase
 	// Return whether a set exists for the supplied Configuration
 	bool hasIsotopologueSet(const Configuration* cfg) const;
 	// Return IsotopologueSet for the specified Configuration
-	IsotopologueSet* isotopologueSet(const Configuration* cfg);
+	const IsotopologueSet* isotopologueSet(const Configuration* cfg) const;
 	// Return whether the Species has a defined set of isotopologues in the specified Configuration
 	bool hasIsotopologues(const Configuration* cfg, const Species* sp) const;
 	// Return Isotopologues for the Species in the specified Configuration
-	Isotopologues* isotopologues(const Configuration* cfg, const Species* sp);
+	const Isotopologues* isotopologues(const Configuration* cfg, const Species* sp) const;
 
 
 	/*
