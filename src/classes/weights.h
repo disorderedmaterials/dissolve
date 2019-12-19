@@ -54,7 +54,7 @@ class Weights : public GenericItemBase
 	// Clear contents
 	void clear();
 	// Add Species Isotopologue to the relevant mixture
-	bool addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation);
+	bool addIsotopologue(Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation);
 	// Return whether we have a mixtures definition for the provided Species
 	Isotopologues* hasIsotopologues(Species* sp) const;
 	// Print atomtype / weights information

@@ -76,7 +76,7 @@ void Weights::clear()
 }
 
 // Add Isotopologue for Species
-bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation)
+bool Weights::addIsotopologue(Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
 	Isotopologues* mix = hasIsotopologues(sp);

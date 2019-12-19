@@ -47,7 +47,7 @@ void NeutronSQModule::initialise()
 
 	// Neutron Isotopes
 	keywords_.add("Neutron Isotopes", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
-	keywords_.add("Neutron Isotopes", new IsotopologueReferenceListKeyword(isotopologues_, targetConfigurations()), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
+	keywords_.add("Neutron Isotopes", new IsotopologueCollectionKeyword(isotopologues_, targetConfigurations()), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
 	keywords_.add("Neutron Isotopes", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 
 	// Bragg Scattering

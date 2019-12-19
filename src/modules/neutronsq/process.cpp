@@ -298,18 +298,23 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the Configuration
 		Weights weights;
-		ListIterator<IsotopologueReference> refIterator(isotopologues_);
-		while (IsotopologueReference* ref = refIterator.iterate())
+		if (isotopologues_.hasIsotopologueSet(cfg))
 		{
-			// If this reference does not target the current Configuration we are considering, continue the loop
-			if (ref->configuration() != cfg) continue;
+			// Get the set...
+			const IsotopologueSet* topeSet = isotopologues_.isotopologueSet(cfg);
 
-			// Find the referenced Species in our SpeciesInfo list
-			SpeciesInfo* spInfo = cfg->usedSpeciesInfo(ref->species());
-			if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", ref->species()->name(), cfg->niceName());
+			// Iterate over Species present in the set
+			ListIterator<Isotopologues> topeIterator(topeSet->isotopologues());
+			while (Isotopologues* topes = topeIterator.iterate())
+			{
+				// Find the referenced Species in our SpeciesInfo list
+				SpeciesInfo* spInfo = cfg->usedSpeciesInfo(topes->species());
+				if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", topes->species()->name(), cfg->niceName());
 
-			// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-			weights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
+				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
+				RefDataListIterator<const Isotopologue, double> refIterator(topes->mix());
+				while (const Isotopologue* iso = refIterator.iterate()) weights.addIsotopologue(spInfo->species(), spInfo->population(), iso, refIterator.currentData());
+			}
 		}
 
 		// We will automatically use the natural isotopologue for a species if it is not explicitly covered by at least one Isotopologue definition
