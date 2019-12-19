@@ -47,23 +47,50 @@ void IsotopologueCollection::clear()
 	isotopologueSets_.clear();
 }
 
-// Add IsotopologueSet for the specified Configuration
-IsotopologueSet* IsotopologueCollection::add(Configuration* cfg)
+// Add Isotopologue weight for the specified Configuration / Species
+void IsotopologueCollection::add(Configuration* cfg, Isotopologue* iso, double relativeWeight)
 {
 	// Check if the set already exists
-	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next())
+	IsotopologueSet* set = isotopologueSet(cfg);
+	if (!set)
 	{
-		if (set->configuration() == cfg)
-		{
-			Messenger::warn("Collection already exists for the configuration '%s', so returning that...\n", cfg->name());
-			return set;
-		}
+		set = isotopologueSets_.add();
+		set->setConfiguration(cfg);
 	}
 
-	IsotopologueSet* set = isotopologueSets_.add();
-	set->setConfiguration(cfg);
+	set->add(iso, relativeWeight);
+}
 
-	return set;
+// Remove any occurrences of the specified Species from the collection
+void IsotopologueCollection::remove(Species* sp)
+{
+	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) set->remove(sp);
+
+	// If any sets are now empty, remove them from the list
+	IsotopologueSet* set = isotopologueSets_.first();
+	while (set != NULL)
+	{
+		IsotopologueSet* nextSet = set->next();
+		if (set->nIsotopologues() == 0) isotopologueSets_.remove(set);
+
+		set = nextSet;
+	}
+}
+
+// Remove any occurrences of the specified Isotopologue from the collection
+void IsotopologueCollection::remove(Isotopologue* iso)
+{
+	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) set->remove(iso);
+
+	// If any sets are now empty, remove them from the list
+	IsotopologueSet* set = isotopologueSets_.first();
+	while (set != NULL)
+	{
+		IsotopologueSet* nextSet = set->next();
+		if (set->nIsotopologues() == 0) isotopologueSets_.remove(set);
+
+		set = nextSet;
+	}
 }
 
 // Return defined sets

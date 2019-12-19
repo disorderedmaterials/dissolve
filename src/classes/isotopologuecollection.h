@@ -53,8 +53,12 @@ class IsotopologueCollection : public GenericItemBase
 	public:
 	// Clear all existing data
 	void clear();
-	// Add IsotopologueSet for the specified Configuration
-	IsotopologueSet* add(Configuration* cfg);
+	// Add Isotopologue weight for the specified Configuration / Species
+	void add(Configuration* cfg, Isotopologue* iso, double relativeWeight);
+	// Remove any occurrences of the specified Species from the collection
+	void remove(Species* sp);
+	// Remove any occurrences of the specified Isotopologue from the collection
+	void remove(Isotopologue* iso);
 	// Return defined sets
 	List<IsotopologueSet>& isotopologueSets();
 	// Return whether a set exists for the supplied Configuration

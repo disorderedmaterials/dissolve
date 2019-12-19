@@ -74,7 +74,27 @@ void IsotopologueSet::add(Isotopologue* iso, double relativeWeight)
 		topes->setSpecies(iso->parent(), 0);
 	}
 
-	topes->addIsotopologue(iso, relativeWeight);
+	topes->add(iso, relativeWeight);
+}
+
+// Remove specified Species from the list (if it exists)
+void IsotopologueSet::remove(Species* sp)
+{
+	Isotopologues* topes = isotopologues(sp);
+	if (topes) isotopologues_.remove(topes);
+}
+
+// Remove any occurrences of the specified Isotopologue
+void IsotopologueSet::remove(Isotopologue* iso)
+{
+	Isotopologues* topes = isotopologues(iso->parent());
+	if (topes)
+	{
+		topes->remove(iso);
+
+		// Check for an empty list...
+		if (topes->nIsotopologues() == 0) isotopologues_.remove(topes);
+	}
 }
 
 // Return whether an IsotopologueSet for the specified Species exists
@@ -91,6 +111,18 @@ Isotopologues* IsotopologueSet::isotopologues(const Species* sp)
 	for (Isotopologues* topes = isotopologues_.first(); topes != NULL; topes = topes->next()) if (topes->species() == sp) return topes;
 
 	return  NULL;
+}
+
+// Return number of Isotopologues defined
+int IsotopologueSet::nIsotopologues() const
+{
+	return isotopologues_.nItems();
+}
+
+// Return list of all Isotopologues
+const List<Isotopologues>& IsotopologueSet::isotopologues() const
+{
+	return isotopologues_;
 }
 
 /*
