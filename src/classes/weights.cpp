@@ -87,7 +87,7 @@ bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* 
 	}
 
 	// Add/update Isotopologue provided?
-	if (!mix->addIsotopologue(iso, isotopologueRelativePopulation))
+	if (!mix->add(iso, isotopologueRelativePopulation))
 	{
 		Messenger::error("Failed to add Isotopologue to IsotopologueSet.\n");
 		return false;
@@ -99,7 +99,7 @@ bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* 
 // Return whether the IsotopologueSet contains a mixtures definition for the provided Species
 Isotopologues* Weights::hasIsotopologues(Species* sp) const
 {
-	for (Isotopologues* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next()) if (mix->species() == sp) return mix;
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next()) if (topes->species() == sp) return topes;
 	return NULL;
 }
 
@@ -108,12 +108,12 @@ void Weights::print() const
 {
 	Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
 	Messenger::print("  ------------------------------------------------------\n");
-	for (Isotopologues* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
-		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		RefDataListIterator<const Isotopologue,double> topeIterator(topes->mix());
 		while (const Isotopologue* tope = topeIterator.iterate())
 		{
-			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->name(), mix->speciesPopulation(), topeIterator.currentData());
+			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes->species()->name(), tope->name(), topes->speciesPopulation(), topeIterator.currentData());
 			else Messenger::print("                   %-15s              %f\n", tope->name(), topeIterator.currentData());
 		}
 	}
@@ -177,13 +177,13 @@ void Weights::calculateWeightingMatrices()
 	Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	intraNorm = 0.0;
 	globalFlag = false;
-	for (Isotopologues* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
 		// Get weighting for associated Species population
-		double speciesWeight = double(mix->speciesPopulation());
+		double speciesWeight = double(topes->speciesPopulation());
 
 		// Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-		Species* sp = mix->species();
+		Species* sp = topes->species();
 		const AtomTypeList& speciesAtomTypes = sp->usedAtomTypes();
 		const int nAtoms = sp->nAtoms();
 		intraFlag = false;
@@ -205,7 +205,7 @@ void Weights::calculateWeightingMatrices()
 		}
 
 		// Loop over Isotopologues defined for this mixture
-		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		RefDataListIterator<const Isotopologue,double> topeIterator(topes->mix());
 		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
@@ -279,21 +279,21 @@ void Weights::calculateWeightingMatrices()
 void Weights::createFromIsotopologues(const AtomTypeList& exchangeableTypes)
 {
 	// Loop over Isotopologues entries and ensure relative populations of Isotopologues sum to 1.0
-	for (Isotopologues* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next()) mix->normalise();
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next()) topes->normalise();
 
 	// Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species populations
 	atomTypes_.clear();
-	for (Isotopologues* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
-		// We must now loop over the Isotopologues in the mixture
-		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
+		// We must now loop over the Isotopologues in the topesture
+		RefDataListIterator<const Isotopologue,double> topeIterator(topes->mix());
 		while (const Isotopologue* tope = topeIterator.iterate())
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next())
+			for (SpeciesAtom* i = topes->species()->firstAtom(); i != NULL; i = i->next())
 			{
 				Isotope* iso = tope->atomTypeIsotope(i->atomType());
-				atomTypes_.addIsotope(i->atomType(), iso, topeIterator.currentData() * mix->speciesPopulation());
+				atomTypes_.addIsotope(i->atomType(), iso, topeIterator.currentData() * topes->speciesPopulation());
 			}
 		}
 	}

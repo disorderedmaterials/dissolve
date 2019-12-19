@@ -80,7 +80,7 @@ void Isotopologues::update()
 }
 
 // Add next available Isotopologue to list
-bool Isotopologues::addNextIsotopologue()
+bool Isotopologues::addNext()
 {
 	// NULL Pointer?
 	if (species_ == NULL)
@@ -112,10 +112,10 @@ bool Isotopologues::addNextIsotopologue()
 }
 
 // Add specific Isotopologue to list
-bool Isotopologues::addIsotopologue(const Isotopologue* iso, double relativeWeight)
+bool Isotopologues::add(const Isotopologue* iso, double relativeWeight)
 {
 	// Search current list to see if the specified Isotopologue already exists
-	if (hasIsotopologue(iso))
+	if (contains(iso))
 	{
 		Messenger::error("Can't add Isotopologue '%s' (of Species '%s') to Isotopologues since it is already there.\n", iso->name(), species_->name());
 		return false;
@@ -127,7 +127,7 @@ bool Isotopologues::addIsotopologue(const Isotopologue* iso, double relativeWeig
 }
 
 // Set Isotopologue component in list
-bool Isotopologues::setIsotopologue(const Isotopologue* iso, double relativeWeight)
+bool Isotopologues::set(const Isotopologue* iso, double relativeWeight)
 {
 	// NULL Pointer?
 	if (iso == NULL)
@@ -148,28 +148,36 @@ bool Isotopologues::setIsotopologue(const Isotopologue* iso, double relativeWeig
 	return true;
 }
 
-// Return Isotopologue components
-const RefDataList<const Isotopologue,double>& Isotopologues::isotopologues() const
+// Remove Isotopologue component from list
+bool Isotopologues::remove(const Isotopologue* iso)
 {
-	return mix_;
+	// Find this Isotopologue in the list
+	RefDataItem<const Isotopologue,double>* tope = mix_.contains(iso);
+	if (tope == NULL)
+	{
+		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n", iso->name());
+		return false;
+	}
+
+	mix_.remove(tope);
 }
 
-// Return nth Isotopologue component
-RefDataItem<const Isotopologue,double>* Isotopologues::isotopologue(int n)
+// Return whether the mix contains the specified Isotopologue
+RefDataItem<const Isotopologue,double>* Isotopologues::contains(const Isotopologue* iso) const
 {
-	return mix_[n];
+	return mix_.contains(iso);
+}
+
+// Return Isotopologue mix
+const RefDataList<const Isotopologue,double>& Isotopologues::mix() const
+{
+	return mix_;
 }
 
 // Return number of Isotopologues in list
 int Isotopologues::nIsotopologues() const
 {
 	return mix_.nItems();
-}
-
-// Return whether the mix contains the specified Isotopologue
-RefDataItem<const Isotopologue,double>* Isotopologues::hasIsotopologue(const Isotopologue* iso) const
-{
-	return mix_.contains(iso);
 }
 
 // Return total relative population

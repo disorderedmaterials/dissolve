@@ -63,21 +63,19 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	// Update Isotopologue RefList
 	void update();
 	// Add next available Isotopologue to list
-	bool addNextIsotopologue();
+	bool addNext();
 	// Add specific Isotopologue to list
-	bool addIsotopologue(const Isotopologue* iso, double relativeWeight);
+	bool add(const Isotopologue* iso, double relativeWeight);
 	// Set Isotopologue component in list
-	bool setIsotopologue(const Isotopologue* iso, double relativeWeight);
+	bool set(const Isotopologue* iso, double relativeWeight);
 	// Remove Isotopologue component from list
-	bool removeIsotopologue(const Isotopologue* iso);
-	// Return Isotopologue components
-	const RefDataList<const Isotopologue,double>& isotopologues() const;
-	// Return nth Isotopologue component
-	RefDataItem<const Isotopologue,double>* isotopologue(int n);
+	bool remove(const Isotopologue* iso);
+	// Return whether the mix contains the specified Isotopologue
+	RefDataItem<const Isotopologue,double>* contains(const Isotopologue* iso) const;
+	// Return Isotopologue mix
+	const RefDataList<const Isotopologue,double>& mix() const;
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
-	// Return whether the mix contains the specified Isotopologue
-	RefDataItem<const Isotopologue,double>* hasIsotopologue(const Isotopologue* iso) const;
 	// Return total relative population
 	double totalRelative() const;
 	// Normalise total relative population to 1.0
