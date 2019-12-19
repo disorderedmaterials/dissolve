@@ -314,7 +314,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(spInfo->species())) 
+		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasIsotopologues(spInfo->species()))
 		{
 			Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing - natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
 

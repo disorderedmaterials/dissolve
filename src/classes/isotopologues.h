@@ -1,6 +1,6 @@
 /*
-	*** IsotopologueMix Definition
-	*** src/classes/isotopologuemix.h
+	*** Isotopologues Definition
+	*** src/classes/isotopologues.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUEMIX_H
-#define DISSOLVE_ISOTOPOLOGUEMIX_H
+#ifndef DISSOLVE_ISOTOPOLOGUES_H
+#define DISSOLVE_ISOTOPOLOGUES_H
 
 #include "genericitems/base.h"
-#include "templates/mpilistitem.h"
+#include "templates/listitem.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations
@@ -32,16 +32,14 @@ class Isotopologue;
 class ProcessPool;
 class LineParser;
 
-/*
- * IsotopologueMix Definition
- */
-class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemBase
+// Isotopologues
+class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 {
 	public:
 	// Constructor
-	IsotopologueMix();
+	Isotopologues();
 	// Destructor
-	~IsotopologueMix();
+	~Isotopologues();
 
 
 	/*
