@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BASEVIEWER_H
-#define DISSOLVE_BASEVIEWER_H
+#ifndef DISSOLVE_VIEWER_BASE_H
+#define DISSOLVE_VIEWER_BASE_H
 
 #include "gui/viewer/render/renderable.h"
 #include "gui/viewer/render/renderablegroupmanager.h"

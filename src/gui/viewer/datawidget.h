@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATAWIDGET_H
-#define DISSOLVE_DATAWIDGET_H
+#ifndef DISSOLVE_VIEWER_DATAWIDGET_H
+#define DISSOLVE_VIEWER_DATAWIDGET_H
 
 #include "gui/viewer/ui_datawidget.h"
 #include "base/lock.h"

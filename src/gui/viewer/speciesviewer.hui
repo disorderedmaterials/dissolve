@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESVIEWER_H
-#define DISSOLVE_SPECIESVIEWER_H
+#ifndef DISSOLVE_VIEWER_SPECIES_H
+#define DISSOLVE_VIEWER_SPECIES_H
 
 #include "gui/viewer/viewer.hui"
 #include "gui/viewer/render/renderablespecies.h"
