@@ -115,6 +115,19 @@ void IsotopologueSet::remove(Isotopologue* iso)
 	}
 }
 
+// Remove the specified IsotopologueWeight
+void IsotopologueSet::remove(IsotopologueWeight* isoWeight)
+{
+	Isotopologues* topes = isotopologues(isoWeight->isotopologue()->parent());
+	if (topes)
+	{
+		topes->remove(isoWeight);
+
+		// Check for an empty list...
+		if (topes->nIsotopologues() == 0) isotopologues_.remove(topes);
+	}
+}
+
 // Return whether an IsotopologueSet for the specified Species exists
 bool IsotopologueSet::contains(const Species* sp) const
 {

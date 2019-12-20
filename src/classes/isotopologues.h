@@ -70,6 +70,8 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	bool set(const Isotopologue* iso, double relativeWeight);
 	// Remove references to the specified Isotopologue
 	void remove(const Isotopologue* iso);
+	// Remove the specified IsotopologueWeight
+	void remove(IsotopologueWeight* isoWeight);
 	// Return whether the mix contains the specified Isotopologue
 	const IsotopologueWeight* contains(const Isotopologue* iso) const;
 	// Return Isotopologue mix

@@ -165,6 +165,12 @@ void Isotopologues::remove(const Isotopologue* iso)
 	}
 }
 
+// Remove the specified IsotopologueWeight
+void Isotopologues::remove(IsotopologueWeight* isoWeight)
+{
+	mix_.remove(isoWeight);
+}
+
 // Return whether the mix contains the specified Isotopologue
 const IsotopologueWeight* Isotopologues::contains(const Isotopologue* iso) const
 {

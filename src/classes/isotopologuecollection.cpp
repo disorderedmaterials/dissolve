@@ -100,6 +100,14 @@ void IsotopologueCollection::remove(IsotopologueSet* set, Species* sp)
 	pruneEmptySets();
 }
 
+// Remove the IsotopologueWeight from the specified set
+void IsotopologueCollection::remove(IsotopologueSet* set, IsotopologueWeight* isoWeight)
+{
+	set->remove(isoWeight);
+
+	pruneEmptySets();
+}
+
 // Remove any occurrences of the specified Species from the collection
 void IsotopologueCollection::remove(Species* sp)
 {

@@ -66,6 +66,8 @@ class IsotopologueCollection : public GenericItemBase
 	void remove(Configuration* cfg);
 	// Remove the Species from the specified set
 	void remove(IsotopologueSet* set, Species* sp);
+	// Remove the IsotopologueWeight from the specified set
+	void remove(IsotopologueSet* set, IsotopologueWeight* isoWeight);
 	// Remove any occurrences of the specified Species from the collection
 	void remove(Species* sp);
 	// Remove any occurrences of the specified Isotopologue from the collection

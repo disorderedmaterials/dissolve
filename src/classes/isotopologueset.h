@@ -79,6 +79,8 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	void remove(Species* sp);
 	// Remove any occurrences of the specified Isotopologue
 	void remove(Isotopologue* iso);
+	// Remove the specified IsotopologueWeight
+	void remove(IsotopologueWeight* isoWeight);
 	// Return whether an IsotopologueSet for the specified Species exists
 	bool contains(const Species* sp) const;
 	// Return Isotopologues for the specified Species
