@@ -298,7 +298,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the Configuration
 		Weights weights;
-		if (isotopologues_.hasIsotopologueSet(cfg))
+		if (isotopologues_.contains(cfg))
 		{
 			// Get the set...
 			const IsotopologueSet* topeSet = isotopologues_.isotopologueSet(cfg);

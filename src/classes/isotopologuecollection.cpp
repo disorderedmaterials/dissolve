@@ -131,7 +131,7 @@ List<IsotopologueSet>& IsotopologueCollection::isotopologueSets()
 }
 
 // Return whether a set exists for the supplied Configuration
-bool IsotopologueCollection::hasIsotopologueSet(const Configuration* cfg) const
+bool IsotopologueCollection::contains(const Configuration* cfg) const
 {
 	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) return true;
 
@@ -147,7 +147,7 @@ const IsotopologueSet* IsotopologueCollection::isotopologueSet(const Configurati
 }
 
 // Return whether the Species has a defined set of isotopologues in the specified Configuration
-bool IsotopologueCollection::hasIsotopologues(const Configuration* cfg, const Species* sp) const
+bool IsotopologueCollection::contains(const Configuration* cfg, const Species* sp) const
 {
 	IsotopologueSet* set = NULL;
 	for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;
