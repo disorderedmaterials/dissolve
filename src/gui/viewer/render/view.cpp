@@ -50,6 +50,12 @@ void View::clear()
 	yScale_ = 1.0;
 	aspectRatio_ = 1.0;
 
+	// Role
+	viewType_ = View::AutoStretchedView;
+	linkedView_ = NULL;
+	autoFollowType_ = View::NoAutoFollow;
+	autoFollowXLength_= 20.0;
+
 	// Projection / view
 	hasPerspective_ = false;
 	perspectiveFieldOfView_ = 20.0;
@@ -65,11 +71,6 @@ void View::clear()
 	viewRotation_.setIdentity();
 	viewRotationInversePoint_ = -1;
 	updateViewMatrix();
-
-	// Role
-	viewType_ = View::AutoStretchedView;
-	autoFollowType_ = View::NoAutoFollow;
-	autoFollowXLength_= 20.0;
 
 	// Style
 	labelPointSize_ = 16.0;
@@ -134,7 +135,7 @@ const GLuint* View::viewportMatrix() const
  */
 
 // View types
-const char* ViewTypeKeywords[View::nViewTypes] = { "Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY", "Linked" };
+const char* ViewTypeKeywords[View::nViewTypes] = { "Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY" };
 
 // Convert text string to ViewType
 View::ViewType View::viewType(const char* s)
@@ -255,6 +256,18 @@ View::ViewType View::viewType() const
 	return viewType_;
 }
 
+// Set linked View, if any
+void View::setLinkedView(View* linkedView)
+{
+	linkedView_ = linkedView;
+}
+
+// Return linked View, if any
+View* View::linkedView() const
+{
+	return linkedView_;
+}
+
 // Return whether view type is flat
 bool View::isFlatView() const
 {
@@ -324,8 +337,8 @@ void View::rotateView(double dx, double dy)
 	++viewRotationPoint_;
 }
 
-// Return view rotation
-Matrix4 View::viewRotation() const
+// Return rotation matrix
+const Matrix4& View::viewRotation() const
 {
 	return viewRotation_;
 }
@@ -375,7 +388,7 @@ Vec3<double> View::viewTranslation() const
 	return viewTranslation_;
 }
 
-// Return full view matrix (rotation + translation)
+// Return view matrix
 const Matrix4& View::viewMatrix() const
 {
 	return viewMatrix_;

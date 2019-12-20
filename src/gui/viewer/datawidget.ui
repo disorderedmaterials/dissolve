@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>601</width>
+    <width>635</width>
     <height>352</height>
    </rect>
   </property>
@@ -475,11 +475,41 @@
              <string>ZY</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>Link...</string>
-            </property>
-           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="ViewLinkedViewButton">
+           <property name="minimumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Set / remove view link to another graph</string>
+           </property>
+           <property name="text">
+            <string>FA</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../main.qrc">
+             <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>

@@ -178,12 +178,14 @@ void BaseViewer::addRenderableToGroup(Renderable* rend, const char* group)
 // Return the View definition
 View& BaseViewer::view()
 {
+	if (view_.linkedView()) return (*view_.linkedView());
 	return view_;
 }
 
 // Return the View definition (const)
 const View& BaseViewer::constView() const
 {
+	if (view_.linkedView()) return (*view_.linkedView());
 	return view_;
 }
 

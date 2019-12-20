@@ -81,7 +81,7 @@ class View
 	 */
 	public:
 	// View type
-	enum ViewType { NormalView, AutoStretchedView, FlatXYView, FlatXZView, FlatZYView, LinkedView, nViewTypes };
+	enum ViewType { NormalView, AutoStretchedView, FlatXYView, FlatXZView, FlatZYView, nViewTypes };
 	// Convert text string to ViewType
 	static ViewType viewType(const char* s);
 	// Convert ViewType to text string
@@ -96,6 +96,8 @@ class View
 	private:
 	// Type of view to use
 	ViewType viewType_;
+	// Linked View, if any
+	View* linkedView_;
 	// Projection matrix for GL
 	Matrix4 projectionMatrix_;
 	// Whether projection has perspective
@@ -138,6 +140,10 @@ class View
 	void setViewType(View::ViewType vt);
 	// Return view type
 	View::ViewType viewType() const;
+	// Set linked View, if any
+	void setLinkedView(View* linkedView);
+	// Return linked View, if any
+	View* linkedView() const;
 	// Return whether view type is flat
 	bool isFlatView() const;
 	// Return projection matrix
@@ -152,8 +158,8 @@ class View
 	void setViewRotationColumn(int column, double x, double y, double z);
 	// Rotate view matrix about x and y by amounts specified
 	void rotateView(double dx, double dy);
-	// Return view rotation
-	Matrix4 viewRotation() const;
+	// Return rotation matrix
+	const Matrix4& viewRotation() const;
 	// Return view rotation inverse
 	Matrix4 viewRotationInverse();
 	// Set view translation
@@ -164,7 +170,7 @@ class View
 	Vec3<double> viewTranslation() const;
 	// Update view matrix
 	void updateViewMatrix();
-	// Return full view matrix (rotation + translation)
+	// Return view matrix
 	const Matrix4& viewMatrix() const;
 	// Project given data coordinates into world coordinates
 	Vec3<double> dataToWorld(Vec3<double> r) const;

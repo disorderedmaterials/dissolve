@@ -63,6 +63,7 @@ class DataWidget : public QWidget
 	void on_GraphFollowXLengthSpin_valueChanged(double value);
 	// View
 	void on_ViewTypeCombo_currentIndexChanged(int index);
+	void on_ViewLinkedViewButton_clicked(bool checked);
 	void on_ViewToggleDataButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);

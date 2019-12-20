@@ -23,6 +23,7 @@
 #include "gui/viewer/render/view.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include <QButtonGroup>
+#include <QInputDialog>
 
 // Constructor
 DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
@@ -119,18 +120,58 @@ void DataWidget::on_GraphFollowXLengthSpin_valueChanged(double value)
 }
 
 // View
-
 void DataWidget::on_ViewTypeCombo_currentIndexChanged(int index)
 {
 	if (refreshLock_.isLocked()) return;
 
-	// Check for the 'linked' option being selected - then we need to select a GraphGizmo to follow
-	if (index == View::LinkedView)
-	{
-	}
-	else dataViewer()->view().setViewType( (View::ViewType) index );
+	dataViewer()->view().setViewType( (View::ViewType) index );
 
 	dataViewer()->postRedisplay();
+}
+
+void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
+{
+	if (refreshLock_.isLocked()) return;
+
+	// If the button has just been checked, request the target view
+	if (checked)
+	{
+		// Get possible target DataViewers and remove ourselves from it
+		RefList<DataViewer> targets = DataViewer::renderableDestinations();
+		targets.remove(dataViewer());
+		if (targets.nItems() == 0)
+		{
+			ui_.ViewLinkedViewButton->setChecked(false);
+			return;
+		}
+
+		// Construct a list of targets as a QStringList
+		QStringList destinations;
+		int currentItem = -1, count = 0;
+		RefListIterator<DataViewer> targetIterator(targets);
+		while (DataViewer* viewer = targetIterator.iterate())
+		{
+			destinations << viewer->destinationName();
+			if (&viewer->view() == dataViewer()->view().linkedView()) currentItem = count;
+			++count;
+		}
+
+		bool ok;
+		QString viewName = QInputDialog::getItem(this, "Set View Link", "Select the view to link to...", destinations, currentItem, false, &ok);
+		if (!ok)
+		{
+			ui_.ViewLinkedViewButton->setChecked(false);
+			return;
+		}
+
+		// The destination view from the
+		int viewIndex = destinations.indexOf(viewName);
+		DataViewer* viewParent = targets.item(viewIndex);
+		if (!viewParent) return;
+		
+		dataViewer()->view().setLinkedView(&viewParent->view());
+	}
+	else dataViewer()->view().setLinkedView(NULL);
 }
 
 void DataWidget::on_ViewToggleDataButton_clicked(bool checked)
@@ -258,8 +299,9 @@ void DataWidget::updateToolbar()
 	ui_.GraphFollowXButton->setEnabled(vt == View::FlatXYView);
 	ui_.GraphFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
 	// View
-	ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 	ui_.ViewTypeCombo->setCurrentIndex(dataViewer()->view().viewType());
+	ui_.ViewLinkedViewButton->setChecked(dataViewer()->view().linkedView());
+	ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 }
 
 // Update status bar
