@@ -82,20 +82,94 @@ void IsotopologueCollectionKeywordWidget::autoButton_clicked(bool checked)
 
 void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
 {
-// 	IsotopologueReference* isoRef = keyword_->data().add();
-// 
-// 	// Try to set some sensible default values
-// 	isoRef->setConfiguration(keyword_->associatedConfigurations().firstItem());
-// 	if (isoRef->configuration())
-// 	{
-// 		SpeciesInfo* spInfo = isoRef->configuration()->usedSpecies().first();
-// 		if (spInfo)
-// 		{
-// 			isoRef->setSpecies(spInfo->species());
-// 			isoRef->setIsotopologue(spInfo->species()->naturalIsotopologue());
-// 			isoRef->setWeight(1.0);
-// 		}
-// 	}
+	QTreeWidgetItem* item = ui_.IsotopologueTree->currentItem();
+
+	// Determine what kind of data is selected
+	if (!item)
+	{
+		// No item selected - add next missing configuration
+		RefListIterator<Configuration> configIterator(keyword_->allowedConfigurations());
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			if (keyword_->data().contains(cfg)) continue;
+			if (cfg->usedSpecies().nItems() == 0) continue;
+
+			keyword_->data().add(cfg, cfg->usedSpecies().first()->species()->naturalIsotopologue(), 1.0);
+
+			break;
+		}
+	}
+	else if (!item->text(0).isEmpty())
+	{
+		// Configuration, so add next missing Species
+		IsotopologueSet* set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
+		if (!set) return;
+
+		ListIterator<SpeciesInfo> speciesIterator(set->configuration()->usedSpecies());
+		while (SpeciesInfo* spInfo = speciesIterator.iterate())
+		{
+			if (set->contains(spInfo->species())) continue;
+
+			set->add(spInfo->species()->naturalIsotopologue(), 1.0);
+
+			break;
+		}
+	}
+	else if (!item->text(1).isEmpty())
+	{
+		// Species, so add next missing Isotopologue
+		IsotopologueSet* set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
+		if (!set) return;
+
+		Isotopologues* topes = VariantPointer<Isotopologues>(item->data(1, Qt::UserRole));
+		if (!topes) return;
+
+		Species* sp = topes->species();
+
+		// Natural first
+		if (!topes->contains(sp->naturalIsotopologue())) set->add(sp->naturalIsotopologue(), 1.0);
+		else
+		{
+			ListIterator<Isotopologue> topeIterator(sp->isotopologues());
+			while (Isotopologue* tope = topeIterator.iterate())
+			{
+				if (topes->contains(tope)) continue;
+
+				set->add(tope, 1.0);
+
+				break;
+			}
+		}
+	}
+	else
+	{
+		// IsotopologueWeight, so add next missing Isotopologue
+		IsotopologueSet* set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
+		if (!set) return;
+
+
+		IsotopologueWeight* isoWeight = VariantPointer<IsotopologueWeight>(item->data(1, Qt::UserRole));
+		if (!isoWeight) return;
+
+		Species* sp = isoWeight->isotopologue()->parent();
+
+		Isotopologues* topes = set->isotopologues(sp);
+
+		// Natural first
+		if (!topes->contains(sp->naturalIsotopologue())) set->add(sp->naturalIsotopologue(), 1.0);
+		else
+		{
+			ListIterator<Isotopologue> topeIterator(sp->isotopologues());
+			while (Isotopologue* tope = topeIterator.iterate())
+			{
+				if (topes->contains(tope)) continue;
+
+				set->add(tope, 1.0);
+
+				break;
+			}
+		}
+	}
 
 	// Manually flag that the keyword data has changed
 	keyword_->hasBeenSet();
