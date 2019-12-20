@@ -239,6 +239,14 @@ void View::setViewType(View::ViewType vt)
 
 	// Forcibly turn off perspective if this is a flat view
 	if ((viewType_ >= View::FlatXYView) && (viewType_ <= View::FlatZYView)) setHasPerspective(false);
+
+	showAllData();
+
+	resetViewMatrix();
+
+	updateViewMatrix();
+
+	++viewRotationPoint_;
 }
 
 // Return view type
