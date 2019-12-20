@@ -29,12 +29,30 @@
 // Constructor
 IsotopologueSet::IsotopologueSet() : ListItem<IsotopologueSet>()
 {
+	parentCollection_ = NULL;
+
 	clear();
 }
 
 // Destructor
 IsotopologueSet::~IsotopologueSet()
 {
+}
+
+/*
+ * Parent Collection
+ */
+
+// Set parent IsotopologueCollection in which this set exists
+void IsotopologueSet::setParentCollection(IsotopologueCollection* parent)
+{
+	parentCollection_ = parent;
+}
+
+// Parent IsotopologueCollection in which this set exists
+IsotopologueCollection* IsotopologueSet::parentCollection() const
+{
+	return parentCollection_;
 }
 
 /*

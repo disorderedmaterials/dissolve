@@ -30,8 +30,8 @@
 class Configuration;
 class Species;
 class Isotopologue;
+class IsotopologueCollection;
 class LineParser;
-class ProcessPool;
 
 // IsotopologueSet - Isotopologues for one or more Species in a single Configuration
 class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
@@ -41,6 +41,20 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	IsotopologueSet();
 	// Destructor
 	~IsotopologueSet();
+
+
+	/*
+	 * Parent Collection
+	 */
+	private:
+	// Parent IsotopologueCollection in which this set exists
+	IsotopologueCollection* parentCollection_;
+
+	public:
+	// Set parent IsotopologueCollection in which this set exists
+	void setParentCollection(IsotopologueCollection* parent);
+	// Parent IsotopologueCollection in which this set exists
+	IsotopologueCollection* parentCollection() const;
 
 
 	/*

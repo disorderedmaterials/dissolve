@@ -69,6 +69,7 @@ void IsotopologueCollection::add(Configuration* cfg, Isotopologue* iso, double r
 	if (!set)
 	{
 		set = isotopologueSets_.add();
+		set->setParentCollection(this);
 		set->setConfiguration(cfg);
 	}
 
@@ -169,6 +170,7 @@ void IsotopologueCollection::complete(const RefList<Configuration>& configuratio
 		if (!set)
 		{
 			set = isotopologueSets_.add();
+			set->setParentCollection(this);
 			set->setConfiguration(cfg);
 		}
 
@@ -207,6 +209,7 @@ bool IsotopologueCollection::read(LineParser& parser, const CoreData& coreData)
 	{
 		// Add a new isotopologue set and read it
 		IsotopologueSet* set = isotopologueSets_.add();
+		set->setParentCollection(this);
 		if (!set->read(parser, coreData)) return false;
 	}
 
