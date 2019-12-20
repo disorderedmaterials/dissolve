@@ -61,7 +61,7 @@ class Primitive : public ListItem<Primitive>
 
 	public:
 	// Initialise primitive storage
-	void initialise(GLenum type, bool colourData);
+	void initialise(GLenum type, bool colourData, int arrayChunkSize = -1);
 	// Forget all data, leaving arrays intact
 	void forgetAll();
 	// Return number of vertices currently defined in primitive

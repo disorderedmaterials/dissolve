@@ -43,7 +43,7 @@ Primitive::~Primitive()
  */
 
 // Initialise primitive
-void Primitive::initialise(GLenum type, bool colourData)
+void Primitive::initialise(GLenum type, bool colourData, int arrayChunkSize)
 {
 	type_ = type;
 	colouredVertexData_ = colourData;
@@ -54,6 +54,12 @@ void Primitive::initialise(GLenum type, bool colourData)
 	else if ((type_ == GL_LINES) || (type_ == GL_LINE_LOOP) || (type_ == GL_LINE_STRIP)) verticesPerType_ = 2;
 	else if (type_ == GL_POINTS) verticesPerType_ = 1;
 	else printf("Warning - Invalid GLenum type given to VertexChunk::initialise (%i)\n", type_);
+
+	if (arrayChunkSize > 0)
+	{
+		vertexData_.setChunkSize(arrayChunkSize);
+		indexData_.setChunkSize(arrayChunkSize);
+	}
 
 	forgetAll();
 }
