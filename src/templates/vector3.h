@@ -312,11 +312,11 @@ template <class T> class Vec3
 		return 2;
 	}
 	// Multiply elements of this vector with those of supplied vector
-	void multiply(const Vec3<T>& v)
+	void multiply(double facx, double facy, double facz)
 	{
-		x *= v.x;
-		y *= v.y;
-		z *= v.z;
+		x *= facx;
+		y *= facy;
+		z *= facz;
 	}
 	// Normalise the vector to unity
 	void normalise()

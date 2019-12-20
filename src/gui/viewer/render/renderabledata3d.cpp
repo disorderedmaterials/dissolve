@@ -171,12 +171,12 @@ bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	dataPrimitive_->initialise(GL_TRIANGLES, true);
+	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
 	//marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
 	printf("SIZE OF X = %i\n", transformedData_.constXAxis().nItems());
 	printf("SIZE OF Y = %i\n", transformedData_.constYAxis().nItems());
 	printf("SIZE OF Z = %i\n", transformedData_.constZAxis().nItems());
-	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), 0.0, 0.0007, colourDefinition, view.constAxes(), dataPrimitive_);
+	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), 0.048, 100.0, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
 // Send primitives for rendering
@@ -185,10 +185,12 @@ const void RenderableData3D::sendToGL(const double pixelScaling)
 	// Apply the LineStyle of the Renderable
 	lineStyle_.sendToGL(pixelScaling);
 
-	// Disable lighting
-	glDisable(GL_LIGHTING);
-	
+	// Enable lighting and shininess
+	glEnable(GL_LIGHTING);
+	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 127);
+
 	dataPrimitive_->sendToGL();
+
 	// Reset LineStyle back to defaults
 	LineStyle().sendToGL();
 }
@@ -467,8 +469,8 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 {
 	int i, j, k, n, cubeType, *faces;
 	Vec3<GLfloat> normal, gradient[8];
-	Vec3<double> r, v1, v2;
-	double vertex[8], ipol, a, b, mult = 1.0;
+	Vec3<double> r, v1;
+	double vertex[8], ipol, a, b;
 	GLfloat colour[4];
 	Array<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
 
@@ -496,19 +498,13 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 	int nZ = z.nItems();
 	if (nZ < 2) return;
 
-	
 	// Generate isosurface
-	for (i=0; i< x.nItems()-1; ++i)
+	for (i=1; i< x.nItems()-2; ++i)
 	{
-		//if ((i < 2) || (i > (x.nItems()-3))) continue;
-		for (j=0; j< y.nItems()-3; ++j)
+		for (j=1; j< y.nItems()-2; ++j)
 		{
-			
-			//if ((j < 2) || (j > (y.nItems()-3))) continue;
-			for (k=0; k< z.nItems()-1; ++k)
+			for (k=1; k< z.nItems()-2; ++k)
 			{
-				//if ((k < 2) || (k > (z.nItems()-3))) continue;
-
 				// Grab values that form vertices of cube.
 				vertex[0] = displayValues.constAt(i, j, k);
 				vertex[1] = displayValues.constAt(i+1, j, k);
@@ -518,7 +514,7 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 				vertex[5] = displayValues.constAt(i+1, j, k+1);
 				vertex[6] = displayValues.constAt(i+1, j+1, k+1);
 				vertex[7] = displayValues.constAt(i, j +1, k+1);
-/*
+
 				// Calculate gradients at the cube vertices
 				gradient[0].x = (vertex[1] - displayValues.constAt(i-1, j, k)) / dx;
 				gradient[0].y = (vertex[3] - displayValues.constAt(i, j-1, k)) / dy;
@@ -543,7 +539,7 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 				gradient[6].z = (displayValues.constAt(i+1, j+1, k+2) - vertex[2]) / dz;
 				gradient[7].x = (vertex[6] - displayValues.constAt(i-1, j+1, k+1)) / dx;
 				gradient[7].y = (displayValues.constAt(i, j+2, k+1) - vertex[4]) / dy;
-				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;*/
+				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;
 
 				// Determine cube type
 				cubeType = 0;
@@ -556,8 +552,8 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 				if ((vertex[6] >= lowerCutoff) && (vertex[6] <= upperCutoff)) cubeType += 64;
 				if ((vertex[7] >= lowerCutoff) && (vertex[7] <= upperCutoff)) cubeType += 128;
 				
-				//if (cubeType != 0) printf("CubeType %i %i %i = %i\n", i, j, k, cubeType); 
-				if (cubeType != 0)
+// 				if (cubeType != 0) printf("CubeType %i %i %i = %i\n", i, j, k, cubeType); 
+				if ((cubeType != 0) && (cubeType != 255))
 				{
 					// Get edges from list and draw triangles or points
 					faces = facetriples[cubeType];
@@ -565,22 +561,26 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 					{
 						if (faces[n] == -1) break;
 
-						// Get edge vectors, interpolate, and set tri-points
+						// Interpolate between data values (a,b) along this edge
 						a = vertex[edgevertices[faces[n]][0]];
 						b = vertex[edgevertices[faces[n]][1]];
-						ipol = ((mult*lowerCutoff) - a) / (b-a);
+						ipol = ((lowerCutoff) - a) / (b-a);
 						if (ipol> 1.0) ipol = 1.0;
 						if (ipol < 0.0) ipol = 0.0;
-						v1 = vertexPos[edgevertices[faces[n]][0]];
-						v2 = vertexPos[edgevertices[faces[n]][1]];
-						r.set(v2[0]-v1[0], v2[1]-v1[1], v2[2]-v1[2]);
 
+						// Get vector for edge (in unit coordinates) and scale to data spacing (dx, dy, dz)
+						v1 = vertexPos[edgevertices[faces[n]][0]];
+						r = (vertexPos[edgevertices[faces[n]][1]] - v1);
+						r.multiply(dx, dy, dz);
 						r *= ipol;
+
 						//printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
 						//printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
-						normal = (gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol) * -mult;
+						normal = (gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol) * -1;
 						normal.normalise();
-						r.add(i+v1[0], j+v1[1], k+v1[2]);
+
+						// Add data lower-left-corner coordinate to r, and data-scaled edge origin v1
+						r.add(x.constAt(i)+dx*v1[0], y.constAt(j)+dy*v1[1], z.constAt(k)+dz*v1[2]);
 
 						// Set triangle coordinates and add cube position
 						//if (colourScale != -1)
