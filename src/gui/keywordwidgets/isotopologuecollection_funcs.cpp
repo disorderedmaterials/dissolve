@@ -119,15 +119,23 @@ void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
 	}
 	else if (!item->text(1).isEmpty())
 	{
-		if (!item->parent()) return;
-		IsotopologueSet* set = VariantPointer<IsotopologueSet>(item->parent()->data(0, Qt::UserRole));
+		IsotopologueSet* set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
 		if (!set) return;
 
 		Isotopologues* topes = VariantPointer<Isotopologues>(item->data(1, Qt::UserRole));
 		if (!topes) return;
 		keyword_->data().remove(set, topes->species());
 	}
-	else printf("Isotopologue/Weight.\n");
+	else
+	{
+		IsotopologueSet* set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
+		if (!set) return;
+
+		IsotopologueWeight* isoWeight = VariantPointer<IsotopologueWeight>(item->data(1, Qt::UserRole));
+		if (!isoWeight) return;
+
+		keyword_->data().remove(set, isoWeight);
+	}
 
 	// Manually flag that the keyword data has changed
 	keyword_->hasBeenSet();
@@ -147,7 +155,7 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
 	if (!topes) return;
 
 	// Get the IsotopologueWeight for the current item
-	IsotopologueWeight* topeWeight = VariantPointer<IsotopologueWeight>(w->data(0, Qt::UserRole));
+	IsotopologueWeight* topeWeight = VariantPointer<IsotopologueWeight>(w->data(1, Qt::UserRole));
 	if (!topeWeight) return;
 
 	// Column of passed item tells us the type of data we need to change
@@ -219,6 +227,7 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeW
 	if (createItem)
 	{
 		item = new QTreeWidgetItem;
+		item->setData(0, Qt::UserRole, parentItem->data(0, Qt::UserRole));
 		item->setData(1, Qt::UserRole, VariantPointer<Isotopologues>(topes));
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 		parentItem->insertChild(childIndex, item);
@@ -239,7 +248,8 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem(QTr
 	if (createItem)
 	{
 		item = new QTreeWidgetItem;
-		item->setData(0, Qt::UserRole, VariantPointer<IsotopologueWeight>(isoWeight));
+		item->setData(0, Qt::UserRole, parentItem->data(0, Qt::UserRole));
+		item->setData(1, Qt::UserRole, VariantPointer<IsotopologueWeight>(isoWeight));
 		item->setData(2, Qt::UserRole, VariantPointer<const Isotopologue>(isoWeight->isotopologue()));
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 		parentItem->insertChild(childIndex, item);
