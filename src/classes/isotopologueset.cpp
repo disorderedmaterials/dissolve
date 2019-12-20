@@ -65,7 +65,7 @@ void IsotopologueSet::add(Isotopologue* iso, double relativeWeight)
 {
 	// Find the parent Species of the isotopologue in our list
 	Isotopologues* topes = NULL;
-	for (Isotopologues* topes = isotopologues_.first(); topes != NULL; topes = topes->next()) if (topes->species() == iso->parent()) break;
+	for (topes = isotopologues_.first(); topes != NULL; topes = topes->next()) if (topes->species() == iso->parent()) break;
 
 	// Create a new Isotopologues if we need it
 	if (!topes)

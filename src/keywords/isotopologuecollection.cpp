@@ -101,10 +101,10 @@ bool IsotopologueCollectionKeyword::write(LineParser& parser, const char* keywor
 		ListIterator<Isotopologues> topesIterator(set->isotopologues());
 		while (Isotopologues* topes = topesIterator.iterate())
 		{
-			RefDataListIterator<const Isotopologue,double> mixIterator(topes->mix());
-			while (const Isotopologue* tope = mixIterator.iterate())
+			ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+			while (IsotopologueWeight* isoWeight = weightIterator.iterate())
 			{
-				if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, set->configuration()->name(), topes->species()->name(), tope->name(), mixIterator.currentData())) return false;
+				if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, set->configuration()->name(), topes->species()->name(), isoWeight->isotopologue()->name(), isoWeight->weight())) return false;
 			}
 		}
 	}

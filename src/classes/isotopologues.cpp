@@ -65,17 +65,19 @@ int Isotopologues::speciesPopulation() const
 void Isotopologues::update()
 {
 	// Go through list of Isotopologues present in this mix, removing any that no longer exist
-	RefDataItem<const Isotopologue,double>* ri = mix_.first(), *next;
-	while (ri)
+	IsotopologueWeight* isoWeight = mix_.first(), *next;
+	while (isoWeight)
 	{
-		next = ri->next();
+		next = isoWeight->next();
+
 		// Check parent Species for presence of this Isotopologue
-		if (!species_->hasIsotopologue(ri->item()))
+		if (!species_->hasIsotopologue(isoWeight->isotopologue()))
 		{
-			mix_.remove(ri);
+			mix_.remove(isoWeight);
 			Messenger::print("Removed Isotopologue from mixture for Species '%s' since it no longer existed.\n", species_->name());
 		}
-		ri = next;
+
+		isoWeight = next;
 	}
 }
 
@@ -98,7 +100,7 @@ bool Isotopologues::addNext()
 	
 	// Find unique (unused) Isotopologue
 	Isotopologue* iso;
-	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next()) if (!mix_.contains(iso)) break;
+	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next()) if (!contains(iso)) break;
 
 	if (iso == NULL)
 	{
@@ -106,7 +108,8 @@ bool Isotopologues::addNext()
 		return false;
 	}
 	
-	mix_.append(iso, 1.0);
+	IsotopologueWeight* newWeight = mix_.add();
+	newWeight->set(iso, 1.0);
 	
 	return true;
 }
@@ -115,13 +118,10 @@ bool Isotopologues::addNext()
 bool Isotopologues::add(const Isotopologue* iso, double relativeWeight)
 {
 	// Search current list to see if the specified Isotopologue already exists
-	if (contains(iso))
-	{
-		Messenger::error("Can't add Isotopologue '%s' (of Species '%s') to Isotopologues since it is already there.\n", iso->name(), species_->name());
-		return false;
-	}
+	if (contains(iso)) Messenger::warn("Isotopologue '%s' (of Species '%s') already exists in Isotopologues, and it is being added again...\n", iso->name(), species_->name());
 
-	mix_.append(iso, relativeWeight);
+	IsotopologueWeight* newWeight = mix_.add();
+	newWeight->set(iso, relativeWeight);
 
 	return true;
 }
@@ -137,39 +137,44 @@ bool Isotopologues::set(const Isotopologue* iso, double relativeWeight)
 	}
 	
 	// Find this Isotopologue in the list
-	RefDataItem<const Isotopologue,double>* tope = mix_.contains(iso);
-	if (tope == NULL)
+	IsotopologueWeight* isoWeight = NULL;
+	for (isoWeight = mix_.first(); isoWeight != NULL; isoWeight = isoWeight->next()) if (isoWeight->isotopologue() == iso) break;
+	if (isoWeight == NULL)
 	{
 		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n", iso->name());
 		return false;
 	}
-	tope->data() = relativeWeight;
+
+	isoWeight->setWeight(relativeWeight);
 
 	return true;
 }
 
-// Remove Isotopologue component from list
-bool Isotopologues::remove(const Isotopologue* iso)
+// Remove references to the specified Isotopologue
+void Isotopologues::remove(const Isotopologue* iso)
 {
-	// Find this Isotopologue in the list
-	RefDataItem<const Isotopologue,double>* tope = mix_.contains(iso);
-	if (tope == NULL)
+	// Search the mix for the specified Isotopologue - it may appear more than once...
+	IsotopologueWeight* isoWeight = mix_.first(), *nextWeight;
+	while (isoWeight)
 	{
-		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n", iso->name());
-		return false;
-	}
+		nextWeight = isoWeight->next();
 
-	mix_.remove(tope);
+		if (isoWeight->isotopologue() == iso) mix_.remove(isoWeight);
+
+		isoWeight = nextWeight;
+	}
 }
 
 // Return whether the mix contains the specified Isotopologue
-RefDataItem<const Isotopologue,double>* Isotopologues::contains(const Isotopologue* iso) const
+const IsotopologueWeight* Isotopologues::contains(const Isotopologue* iso) const
 {
-	return mix_.contains(iso);
+	for (IsotopologueWeight* isoWeight = mix_.first(); isoWeight != NULL; isoWeight = isoWeight->next()) if (isoWeight->isotopologue() == iso) return isoWeight;
+
+	return NULL;
 }
 
 // Return Isotopologue mix
-const RefDataList<const Isotopologue,double>& Isotopologues::mix() const
+const List<IsotopologueWeight>& Isotopologues::mix() const
 {
 	return mix_;
 }
@@ -185,8 +190,8 @@ double Isotopologues::totalRelative() const
 {
 	double total = 0.0;
 
-	RefDataListIterator<const Isotopologue,double> topeIterator(mix_);
-	while (const Isotopologue* tope = topeIterator.iterate()) total += topeIterator.currentData();
+	ListIterator<IsotopologueWeight> weightIterator(mix_);
+	while (IsotopologueWeight* isoWeight = weightIterator.iterate()) total += isoWeight->weight();
 
 	return total;
 }
@@ -196,8 +201,8 @@ void Isotopologues::normalise()
 {
 	double total = totalRelative();
 
-	RefDataListIterator<const Isotopologue,double> topeIterator(mix_);
-	while (const Isotopologue* tope = topeIterator.iterate()) topeIterator.setCurrentData(topeIterator.currentData() / total);
+	ListIterator<IsotopologueWeight> weightIterator(mix_);
+	while (IsotopologueWeight* isoWeight = weightIterator.iterate()) isoWeight->setWeight(isoWeight->weight() / total);
 }
 
 /*
@@ -227,14 +232,16 @@ bool Isotopologues::read(LineParser& parser, const CoreData& coreData)
 	for (int n=0; n<nIso; ++n)
 	{
 		if (parser.getArgsDelim() != LineParser::Success) return false;
+
 		// Search for the named Isotopologue in the Species
-		Isotopologue* top = species_->findIsotopologue(parser.argc(0));
-		if (!top)
+		Isotopologue* iso = species_->findIsotopologue(parser.argc(0));
+		if (!iso)
 		{
 			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading Isotopologues.\n", parser.argc(0), species_->name());
 			return false;
 		}
-		mix_.append(top, parser.argd(1));
+
+		if (!add(iso, parser.argd(1))) return false;
 	}
 
 	return true;
@@ -247,8 +254,8 @@ bool Isotopologues::write(LineParser& parser)
 	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
 
 	// Write Isotopologues
-	RefDataListIterator<const Isotopologue,double> mixIterator(mix_);
-	while (const Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
+	ListIterator<IsotopologueWeight> weightIterator(mix_);
+	while (IsotopologueWeight* isoWeight = weightIterator.iterate()) if (!parser.writeLineF("%s  %f\n", isoWeight->isotopologue()->name(), isoWeight->weight())) return false;
 
 	return true;
 }

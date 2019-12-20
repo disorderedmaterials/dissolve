@@ -120,8 +120,8 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 			else
 			{
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-				RefDataListIterator<const Isotopologue, double> refIterator(topes->mix());
-				while (const Isotopologue* iso = refIterator.iterate()) summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), iso, refIterator.currentData());
+				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+				while (IsotopologueWeight* isoWeight = weightIterator.iterate()) summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
 			}
 		}
 	}

@@ -312,8 +312,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", topes->species()->name(), cfg->niceName());
 
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-				RefDataListIterator<const Isotopologue, double> refIterator(topes->mix());
-				while (const Isotopologue* iso = refIterator.iterate()) weights.addIsotopologue(spInfo->species(), spInfo->population(), iso, refIterator.currentData());
+				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+				while (IsotopologueWeight* isoWeight = weightIterator.iterate()) weights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
 			}
 		}
 

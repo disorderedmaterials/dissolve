@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_ISOTOPOLOGUES_H
 #define DISSOLVE_ISOTOPOLOGUES_H
 
+#include "classes/isotopologueweight.h"
 #include "genericitems/base.h"
-#include "templates/listitem.h"
-#include "templates/refdatalist.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Species;
@@ -50,8 +50,8 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	Species* species_;
 	// Integer population of associated Species
 	int speciesPopulation_;
-	// Isotopologue Mixture
-	RefDataList<const Isotopologue,double> mix_;
+	// Weighted Isotopologue mixture
+	List<IsotopologueWeight> mix_;
 
 	public:
 	// Set associated Species and population
@@ -68,12 +68,12 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	bool add(const Isotopologue* iso, double relativeWeight);
 	// Set Isotopologue component in list
 	bool set(const Isotopologue* iso, double relativeWeight);
-	// Remove Isotopologue component from list
-	bool remove(const Isotopologue* iso);
+	// Remove references to the specified Isotopologue
+	void remove(const Isotopologue* iso);
 	// Return whether the mix contains the specified Isotopologue
-	RefDataItem<const Isotopologue,double>* contains(const Isotopologue* iso) const;
+	const IsotopologueWeight* contains(const Isotopologue* iso) const;
 	// Return Isotopologue mix
-	const RefDataList<const Isotopologue,double>& mix() const;
+	const List<IsotopologueWeight>& mix() const;
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
 	// Return total relative population

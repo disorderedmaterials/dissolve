@@ -35,6 +35,7 @@ add_library(classes
   isotopologuecollection.cpp
   isotopologues.cpp
   isotopologueset.cpp
+  isotopologueweight.cpp
   kvector.cpp
   masterintra.cpp
   molecule.cpp
@@ -93,6 +94,7 @@ add_library(classes
   isotopologuecollection.h
   isotopologues.h
   isotopologueset.h
+  isotopologueweight.h
   kernelflags.h
   kvector.h
   masterintra.h

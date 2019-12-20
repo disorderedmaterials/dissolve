@@ -25,6 +25,7 @@
 #include "classes/isotopologueset.h"
 #include "genericitems/base.h"
 #include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class Configuration;
@@ -50,11 +51,21 @@ class IsotopologueCollection : public GenericItemBase
 	// IsotopologueSets for individual Configurations
 	List<IsotopologueSet> isotopologueSets_;
 
+	private:
+	// Remove any sets from the collection that are empty
+	void pruneEmptySets();
+
 	public:
 	// Clear all existing data
 	void clear();
 	// Add Isotopologue weight for the specified Configuration / Species
 	void add(Configuration* cfg, Isotopologue* iso, double relativeWeight);
+	// Remove the specified set from the collection
+	void remove(IsotopologueSet* set);
+	// Remove the Configuration from the collection
+	void remove(Configuration* cfg);
+	// Remove the Species from the specified set
+	void remove(IsotopologueSet* set, Species* sp);
 	// Remove any occurrences of the specified Species from the collection
 	void remove(Species* sp);
 	// Remove any occurrences of the specified Isotopologue from the collection
@@ -69,6 +80,8 @@ class IsotopologueCollection : public GenericItemBase
 	bool hasIsotopologues(const Configuration* cfg, const Species* sp) const;
 	// Return Isotopologues for the Species in the specified Configuration
 	const Isotopologues* isotopologues(const Configuration* cfg, const Species* sp) const;
+	// Complete the collection by making sure it contains every Species in every Configuration in the supplied list
+	void complete(const RefList<Configuration>& configurations);
 
 
 	/*
