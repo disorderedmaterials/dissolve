@@ -23,6 +23,7 @@
 #define DISSOLVE_DATAWIDGET_H
 
 #include "gui/viewer/ui_datawidget.h"
+#include "base/lock.h"
 
 // Forward Declarations
 /* none */
@@ -41,6 +42,8 @@ class DataWidget : public QWidget
 	private:
 	// Main form declaration
 	Ui::DataWidget ui_;
+	// Lock for widget refresh
+	Lock refreshLock_;
 
 	public:
 	// Return contained DataViewer
@@ -59,6 +62,7 @@ class DataWidget : public QWidget
 	void on_GraphFollowXButton_clicked(bool checked);
 	void on_GraphFollowXLengthSpin_valueChanged(double value);
 	// View
+	void on_ViewTypeCombo_currentIndexChanged(int index);
 	void on_ViewToggleDataButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
@@ -67,10 +71,6 @@ class DataWidget : public QWidget
 	/*
 	 * Update Functions
 	 */
-	private:
-	// Whether the widget is currently refreshing
-	bool refreshing_;
-
 	private:
 	// Data tree top-level item update function
 	void dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int topLevelItemIndex, RenderableGroup* data, bool createItem);
