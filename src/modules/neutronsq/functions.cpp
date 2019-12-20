@@ -106,27 +106,22 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
 		{
-			// Find any relevant entries in the Isotopologues list
-			int nAdded = 0;
-			ListIterator<IsotopologueReference> refIterator(isotopologues_);
-			while (IsotopologueReference* ref = refIterator.iterate())
-			{
-				// If this reference does not target the Configuration / Species we are considering, continue the loop
-				if ((ref->configuration() != cfg) || (ref->species() != spInfo->species())) continue;
-
-				// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-				summedWeights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
-
-				++nAdded;
-			}
+			// Find the Isotopologues for the Configuration/Species, if they have been defined
+			const Isotopologues* topes = isotopologues_.isotopologues(cfg, spInfo->species());
 
 			// Use the natural isotopologue if a species in the Configuration is not covered by at least one explicit Isotopologue definition
-			if (nAdded == 0)
+			if (!topes)
 			{
 				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
 
 				Species* sp = spInfo->species();
 				summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
+			}
+			else
+			{
+				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
+				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+				while (IsotopologueWeight* isoWeight = weightIterator.iterate()) summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
 			}
 		}
 	}

@@ -52,7 +52,7 @@ class KeywordBase : public ListItem<KeywordBase>
 		ElementRefListData, EnumOptionsData, ExpressionVariableListData,
 		FileAndFormatData,
 		GeometryListData,
-		IntegerData, IsotopologueListData,
+		IntegerData, IsotopologueCollectionData, IsotopologueListData,
 		LinkToKeywordData,
 		ModuleData, ModuleGroupsData, ModuleRefListData,
 		NodeData, NodeAndIntegerData, NodeArrayData, NodeBranchData, NodeRefListData, NodeValueData, NodeValueEnumOptionsData,

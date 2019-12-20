@@ -108,9 +108,6 @@
          <height>16</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string>Return</string>
-       </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
        </property>
@@ -149,9 +146,6 @@
    </item>
    <item>
     <widget class="QTreeWidget" name="IsotopologueTree">
-     <property name="editTriggers">
-      <set>QAbstractItemView::AllEditTriggers</set>
-     </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
@@ -167,12 +161,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Isotopologues</string>
+       <string>Isotopologue</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Relative Weight</string>
+       <string>Weight</string>
       </property>
      </column>
     </widget>

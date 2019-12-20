@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Isotopologue Reference List
-	*** src/keywords/isotopologuereferencelist.h
+	*** Keyword - Isotopologue Collection
+	*** src/keywords/isotopologuecollection.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,37 +19,37 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_ISOTOPOLOGUEREFERENCELIST_H
-#define DISSOLVE_KEYWORD_ISOTOPOLOGUEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORD_ISOTOPOLOGUECOLLECTION_H
+#define DISSOLVE_KEYWORD_ISOTOPOLOGUECOLLECTION_H
 
 #include "keywords/data.h"
-#include "classes/isotopologuereference.h"
+#include "classes/isotopologuecollection.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 /* none */
 
-// Keyword with IsotopologueReference Data
-class IsotopologueReferenceListKeyword : public KeywordData< List<IsotopologueReference>& >
+// Keyword with IsotopologueCollection Data
+class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection&>
 {
 	public:
 	// Constructor
-	IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations);
+	IsotopologueCollectionKeyword(IsotopologueCollection& collection, const RefList<Configuration>& allowedConfigurations);
 	// Destructor
-	~IsotopologueReferenceListKeyword();
+	~IsotopologueCollectionKeyword();
 
 
 	/*
-	 * Associated Configurations
+	 * Allowed Configurations
 	 */
 	private:
-	// Associated Configurations, to which the IsotopologueList refers 
-	const RefList<Configuration>& associatedConfigurations_;
+	// Allowed Configurations, to which the IsotopologueCollection may refer
+	const RefList<Configuration>& allowedConfigurations_;
 
 	public:
-	// Return associated Configurations, to which the IsotopologueList refers 
-	const RefList<Configuration>& associatedConfigurations() const;
+	// Return allowed Configurations, to which the IsotopologueCollection may refer
+	const RefList<Configuration>& allowedConfigurations() const;
 
 
 	/*

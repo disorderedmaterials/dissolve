@@ -25,7 +25,6 @@
 #include "module/module.h"
 #include "io/import/data1d.h"
 #include "classes/partialset.h"
-#include "classes/isotopologuereference.h"
 #include "classes/data1dstore.h"
 
 // Forward Declarations
@@ -68,8 +67,8 @@ class NeutronSQModule : public Module
 	 * Initialisation
 	 */
 	private:
-	// Isotopologue references
-	List<IsotopologueReference> isotopologues_;
+	// Isotopologue information
+	IsotopologueCollection isotopologues_;
 	// Exchangeable AtomTypes
 	AtomTypeList exchangeableTypes_;
 	// Reference F(Q) file and format

@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Isotopologue Reference List
-	*** src/gui/keywordwidgets/isotopologuereferencelist.h
+	*** Keyword Widget - IsotopologueCollection
+	*** src/gui/keywordwidgets/isotopologuecollection.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUEREFERENCELIST_H
-#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUECOLLECTION_H
+#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUECOLLECTION_H
 
-#include "gui/keywordwidgets/ui_isotopologuereferencelist.h"
+#include "gui/keywordwidgets/ui_isotopologuecollection.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "keywords/isotopologuereferencelist.h"
 #include "gui/keywordwidgets/base.h"
+#include "keywords/isotopologuecollection.h"
 #include <QWidget>
 
 // Forward Declarations
 class QComboBox;
 
-class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
+	IsotopologueCollectionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -46,7 +46,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	 */
 	private:
 	// Associated keyword
-	IsotopologueReferenceListKeyword* keyword_;
+	IsotopologueCollectionKeyword* keyword_;
 
 
 	/*
@@ -60,8 +60,8 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	void autoButton_clicked(bool checked);
 	void addButton_clicked(bool checked);
 	void removeButton_clicked(bool checked);
-	void isotopologueTable_itemChanged(QTableWidgetItem* w);
-	void isotopologueTable_itemSelectionChanged();
+	void isotopologueTree_itemChanged(QTreeWidgetItem* w, int column);
+	void isotopologueTree_currentItemChanged(QTreeWidgetItem* currentItem, QTreeWidgetItem* previousItem);
 
 	signals:
 	// Keyword value changed
@@ -72,8 +72,12 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	 * Update
 	 */
 	private:
-	// Table row update function
-	void updateTableRow(int row, IsotopologueReference* isoRef, bool createItems);
+	// IsotopologueTree root (IsotopologueSet) item update function
+	void updateIsotopologueTreeRootItem(QTreeWidget* treeWidget, int topLevelItemIndex, IsotopologueSet* topeSet, bool createItem);
+	// IsotopologueTree child (Isotopologues) update function
+	void updateIsotopologueTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, Isotopologues* topes, bool createItem);
+	// IsotopologueTree sub-child (IsotopologueWeight) update function
+	void updateIsotopologueTreeSubChildItem(QTreeWidgetItem* parentItem, int childIndex, IsotopologueWeight* isoWeight, bool createItem);
 
 	public:
 	// Update value displayed in widget

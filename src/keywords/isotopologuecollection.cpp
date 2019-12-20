@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Isotopologue Reference List
-	*** src/keywords/isotopologuereferencelist.cpp
+	*** Keyword - Isotopologue Collection
+	*** src/keywords/isotopologuecollection.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,19 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/isotopologuereferencelist.h"
+#include "keywords/isotopologuecollection.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 
 // Constructor
-IsotopologueReferenceListKeyword::IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations) : KeywordData< List<IsotopologueReference>& >(KeywordBase::IsotopologueListData, references), associatedConfigurations_(associatedConfigurations)
+IsotopologueCollectionKeyword::IsotopologueCollectionKeyword(IsotopologueCollection& collection, const RefList<Configuration>& allowedConfigurations) : KeywordData< IsotopologueCollection&>(KeywordBase::IsotopologueCollectionData, collection), allowedConfigurations_(allowedConfigurations)
 {
 }
 
 // Destructor
-IsotopologueReferenceListKeyword::~IsotopologueReferenceListKeyword()
+IsotopologueCollectionKeyword::~IsotopologueCollectionKeyword()
 {
 }
 
@@ -39,10 +39,10 @@ IsotopologueReferenceListKeyword::~IsotopologueReferenceListKeyword()
  * Associated Configurations
  */
 
-// Return associated Configurations, to which the IsotopologueList refers 
-const RefList<Configuration>& IsotopologueReferenceListKeyword::associatedConfigurations() const
+// Return associated Configurations, to which the IsotopologueCollection may refer
+const RefList<Configuration>& IsotopologueCollectionKeyword::allowedConfigurations() const
 {
-	return associatedConfigurations_;
+	return allowedConfigurations_;
 }
 
 /*
@@ -50,19 +50,19 @@ const RefList<Configuration>& IsotopologueReferenceListKeyword::associatedConfig
  */
 
 // Return minimum number of arguments accepted
-int IsotopologueReferenceListKeyword::minArguments() const
+int IsotopologueCollectionKeyword::minArguments() const
 {
 	return 4;
 }
 
 // Return maximum number of arguments accepted
-int IsotopologueReferenceListKeyword::maxArguments() const
+int IsotopologueCollectionKeyword::maxArguments() const
 {
 	return 4;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool IsotopologueCollectionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = coreData.findConfiguration(parser.argc(startArg));
@@ -72,6 +72,9 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 		return false;
 	}
 
+	// Is this Configuration allowed?
+	if (!allowedConfigurations_.contains(cfg)) return Messenger::error("Configuration '%s' is not a valid target for this isotopologue collection.\n", cfg->name());
+
 	// Find specified Species (second argument)
 	Species* sp = coreData.findSpecies(parser.argc(startArg+1));
 	if (!sp) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(startArg+1));
@@ -80,9 +83,8 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 	Isotopologue* iso = sp->findIsotopologue(parser.argc(startArg+2));
 	if (!iso) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(startArg+2), sp->name());
 
-	// Add the data to the list
-	IsotopologueReference* isoRef = data_.add();
-	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
+	// Add the isotopologue to the collection
+	data_.add(cfg, iso, parser.argd(startArg+3));
 
 	set_ = true;
 
@@ -90,13 +92,21 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool IsotopologueCollectionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
-	ListIterator<IsotopologueReference> refIterator(data_);
-	while (IsotopologueReference* ref = refIterator.iterate())
+	ListIterator<IsotopologueSet> setIterator(data_.isotopologueSets());
+	while (IsotopologueSet* set = setIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
+		ListIterator<Isotopologues> topesIterator(set->isotopologues());
+		while (Isotopologues* topes = topesIterator.iterate())
+		{
+			ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+			while (IsotopologueWeight* isoWeight = weightIterator.iterate())
+			{
+				if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, set->configuration()->name(), topes->species()->name(), isoWeight->isotopologue()->name(), isoWeight->weight())) return false;
+			}
+		}
 	}
 
 	return true;
@@ -107,25 +117,13 @@ bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* key
  */
 
 // Prune any references to the supplied Species in the contained data
-void IsotopologueReferenceListKeyword::removeReferencesTo(Species* sp)
+void IsotopologueCollectionKeyword::removeReferencesTo(Species* sp)
 {
-	IsotopologueReference* isoRef = data_.first(), *isoNext;
-	while (isoRef)
-	{
-		isoNext = isoRef->next();
-		if (isoRef->species() == sp) data_.remove(isoRef);
-		isoRef = isoNext;
-	}
+	data_.remove(sp);
 }
 
 // Prune any references to the supplied Isotopologue in the contained data
-void IsotopologueReferenceListKeyword::removeReferencesTo(Isotopologue* iso)
+void IsotopologueCollectionKeyword::removeReferencesTo(Isotopologue* iso)
 {
-	IsotopologueReference* isoRef = data_.first(), *isoNext;
-	while (isoRef)
-	{
-		isoNext = isoRef->next();
-		if (isoRef->isotopologue() == iso) data_.remove(isoRef);
-		isoRef = isoNext;
-	}
+	data_.remove(iso);
 }

@@ -1,6 +1,6 @@
 /*
-	*** IsotopologueMix Definition
-	*** src/classes/isotopologuemix.h
+	*** Isotopologues Definition
+	*** src/classes/isotopologues.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUEMIX_H
-#define DISSOLVE_ISOTOPOLOGUEMIX_H
+#ifndef DISSOLVE_ISOTOPOLOGUES_H
+#define DISSOLVE_ISOTOPOLOGUES_H
 
+#include "classes/isotopologueweight.h"
 #include "genericitems/base.h"
-#include "templates/mpilistitem.h"
-#include "templates/refdatalist.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Species;
@@ -32,29 +32,27 @@ class Isotopologue;
 class ProcessPool;
 class LineParser;
 
-/*
- * IsotopologueMix Definition
- */
-class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemBase
+// Isotopologues
+class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 {
 	public:
 	// Constructor
-	IsotopologueMix();
+	Isotopologues();
 	// Destructor
-	~IsotopologueMix();
+	~Isotopologues();
 
 
 	/*
-	 * Isotopologue Mix
+	 * Isotopologue Mixture Data
 	 */
 	private:
 	// Associated Species
 	Species* species_;
 	// Integer population of associated Species
 	int speciesPopulation_;
-	// Isotopologue List
-	RefDataList<const Isotopologue,double> mix_;
-	
+	// Weighted Isotopologue mixture
+	List<IsotopologueWeight> mix_;
+
 	public:
 	// Set associated Species and population
 	void setSpecies(Species* sp, int population);
@@ -65,21 +63,21 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	// Update Isotopologue RefList
 	void update();
 	// Add next available Isotopologue to list
-	bool addNextIsotopologue();
+	bool addNext();
 	// Add specific Isotopologue to list
-	bool addIsotopologue(const Isotopologue* iso, double relPop);
+	bool add(const Isotopologue* iso, double relativeWeight);
 	// Set Isotopologue component in list
-	bool setIsotopologue(const Isotopologue* iso, double relPop);
-	// Remove Isotopologue component from list
-	bool removeIsotopologue(const Isotopologue* iso);
-	// Return Isotopologue components
-	const RefDataList<const Isotopologue,double>& isotopologues() const;
-	// Return nth Isotopologue component
-	RefDataItem<const Isotopologue,double>* isotopologue(int n);
+	bool set(const Isotopologue* iso, double relativeWeight);
+	// Remove references to the specified Isotopologue
+	void remove(const Isotopologue* iso);
+	// Remove the specified IsotopologueWeight
+	void remove(IsotopologueWeight* isoWeight);
+	// Return whether the mix contains the specified Isotopologue
+	const IsotopologueWeight* contains(const Isotopologue* iso) const;
+	// Return Isotopologue mix
+	const List<IsotopologueWeight>& mix() const;
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
-	// Return whether the mix contains the specified Isotopologue
-	RefDataItem<const Isotopologue,double>* hasIsotopologue(const Isotopologue* iso) const;
 	// Return total relative population
 	double totalRelative() const;
 	// Normalise total relative population to 1.0

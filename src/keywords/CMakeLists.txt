@@ -16,7 +16,7 @@ add_library(keywords
   geometrylist.cpp
   group.cpp
   integer.cpp
-  isotopologuereferencelist.cpp
+  isotopologuecollection.cpp
   linkto.cpp
   list.cpp
   module.cpp
@@ -59,7 +59,7 @@ add_library(keywords
   geometrylist.h
   group.h
   integer.h
-  isotopologuereferencelist.h
+  isotopologuecollection.h
   linkto.h
   list.h
   module.h

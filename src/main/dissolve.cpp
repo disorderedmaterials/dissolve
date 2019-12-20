@@ -149,7 +149,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram2D>(Histogram2D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram3D>(Histogram3D::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Isotopologues>(Isotopologues::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));

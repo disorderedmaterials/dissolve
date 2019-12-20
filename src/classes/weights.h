@@ -23,7 +23,7 @@
 #define DISSOLVE_WEIGHTS_H
 
 #include "classes/atomtypelist.h"
-#include "classes/isotopologuemix.h"
+#include "classes/isotopologues.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
 #include "genericitems/base.h"
@@ -47,16 +47,16 @@ class Weights : public GenericItemBase
 	 * Construction
 	 */
 	private:
-	// List of IsotopologueMix-tures for Species
-	List<IsotopologueMix> isotopologueMixtures_;
+	// List of Isotopologues for Species
+	List<Isotopologues> isotopologueMixtures_;
 
 	public:
 	// Clear contents
 	void clear();
 	// Add Species Isotopologue to the relevant mixture
-	bool addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation);
+	bool addIsotopologue(Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation);
 	// Return whether we have a mixtures definition for the provided Species
-	IsotopologueMix* hasSpeciesIsotopologueMixture(Species* sp) const;
+	Isotopologues* hasIsotopologues(Species* sp) const;
 	// Print atomtype / weights information
 	void print() const;
 
@@ -87,7 +87,7 @@ class Weights : public GenericItemBase
 	void calculateWeightingMatrices();
 
 	public:
-	// Create AtomType list and matrices based on stored IsotopologueMix information
+	// Create AtomType list and matrices based on stored Isotopologues information
 	void createFromIsotopologues(const AtomTypeList& exchangeableTypes);
 	// Reduce data to be naturally-weighted
 	void naturalise();

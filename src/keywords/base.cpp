@@ -50,7 +50,7 @@ const char* KeywordDataTypeKeywords[] = {
 	"ElementRefList", "EnumOptions", "ExpressionVariableList",
 	"FileAndFormat",
 	"GeometryList",
-	"Integer", "IsotopologueList",
+	"Integer", "IsotopologueCollection", "IsotopologueList",
 	"LinkToKeyword",
 	"Module", "ModuleGroups", "ModuleRefList",
 	"Node", "NodeAndInteger", "NodeArray", "NodeBranch", "NodeRefList", "NodeValue", "NodeValueEnumOptions",
