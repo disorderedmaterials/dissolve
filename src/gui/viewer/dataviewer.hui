@@ -122,6 +122,8 @@ class DataViewer : public BaseViewer
 	void setDestinationName(const char* name);
 	// Return name of this renderable destination
 	const char* destinationName() const;
+	// Return all destinations
+	static RefList<DataViewer> renderableDestinations();
 
 
 	/*

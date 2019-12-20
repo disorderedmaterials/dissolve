@@ -65,3 +65,9 @@ const char* DataViewer::destinationName() const
 {
 	return destinationName_.get();
 }
+
+// Return all destinations
+RefList<DataViewer> DataViewer::renderableDestinations()
+{
+	return renderableDestinations_;
+}
