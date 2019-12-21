@@ -1,5 +1,5 @@
 /*
-	*** Base Viewer Input Functions
+	*** Base Viewer - Input
 	*** src/gui/viewer/viewer_input.cpp
 	Copyright T. Youngs 2013-2019
 

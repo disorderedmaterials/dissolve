@@ -1,6 +1,6 @@
 /*
 	*** Base Viewer - Renderable Data
-	*** src/gui/viewer/viewer_data.cpp
+	*** src/gui/viewer/viewer_renderables.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
@@ -23,10 +23,6 @@
 #include "gui/viewer/render/renderablefactory.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-
-/*
- * Renderable Data
- */
 
 // Clear existing data
 void BaseViewer::clear()
@@ -169,24 +165,6 @@ void BaseViewer::addRenderableToGroup(Renderable* rend, const char* group)
 	groupManager_.addToGroup(rend, group);
 
 	emit(renderableChanged());
-}
-
-/*
- * Options
- */
-
-// Return the View definition
-View& BaseViewer::view()
-{
-	if (view_.linkedView()) return (*view_.linkedView());
-	return view_;
-}
-
-// Return the View definition (const)
-const View& BaseViewer::constView() const
-{
-	if (view_.linkedView()) return (*view_.linkedView());
-	return view_;
 }
 
 /*

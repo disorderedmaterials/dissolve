@@ -51,13 +51,15 @@ SET(viewer_SRCS
   speciesviewer_interaction.cpp
   speciesviewer_render.cpp
   specieswidget_funcs.cpp
-  viewer_data.cpp
   viewer_funcs.cpp
   viewer_input.cpp
   viewer_interaction.cpp
   viewer_io.cpp
+  viewer_options.cpp
   viewer_query.cpp
   viewer_render.cpp
+  viewer_renderables.cpp
+  viewer_view.cpp
 )
 
 # Target 'viewer'

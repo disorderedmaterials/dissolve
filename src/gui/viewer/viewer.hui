@@ -53,13 +53,25 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 
 	/*
+	 * View
+	 */
+	protected:
+	// View for renderable data
+	View view_;
+
+	public:
+	// Return the View definition
+	View& view();
+	// Return the View definition (const)
+	const View& constView() const;
+
+
+	/*
 	 * Renderable Data
 	 */
 	protected:
 	// List of renderables to display
 	List<Renderable> renderables_;
-	// View for renderable data
-	View view_;
 
 	public:
 	// Clear existing data
@@ -84,10 +96,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void setRenderableVisible(const char* name, bool visible);
 	// Return visibility of named Renderable
 	bool isRenderableVisible(const char* name) const;
-	// Return the View definition
-	View& view();
-	// Return the View definition (const)
-	const View& constView() const;
 	// Emit the signal to notify that the viewing style of data represented in the Viewer has changed
 	void notifyStyleModified();
 	// Emit the signal to notify that the data has changed
