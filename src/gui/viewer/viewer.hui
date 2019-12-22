@@ -58,12 +58,26 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	protected:
 	// View for renderable data
 	View view_;
+	// Viewer to which this view is linked (is dependent on for its view)
+	BaseViewer* linkedViewer_;
+	// List of other viewers that are dependent on (i.e. are linked to) this one
+	RefList<BaseViewer> dependentViewers_;
+
+	private:
+	// Register that the specified viewer depends on (links to) this one
+	void addDependentViewer(BaseViewer* viewer);
+	// Unregister the specified viewer
+	void removeDependentViewer(BaseViewer* viewer);
 
 	public:
 	// Return the View definition
 	View& view();
 	// Return the View definition (const)
 	const View& constView() const;
+	// Link this viewer to the one specified
+	void linkView(BaseViewer* viewToLinkTo);
+	// Unlink this viewer from the one specified
+	void unlinkView();
 
 
 	/*

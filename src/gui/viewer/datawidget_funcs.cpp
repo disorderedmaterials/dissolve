@@ -169,9 +169,9 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 		DataViewer* viewParent = targets.item(viewIndex);
 		if (!viewParent) return;
 		
-		dataViewer()->view().setLinkedView(&viewParent->view());
+		dataViewer()->linkView(viewParent);
 	}
-	else dataViewer()->view().setLinkedView(NULL);
+	else dataViewer()->unlinkView();
 }
 
 void DataWidget::on_ViewToggleDataButton_clicked(bool checked)

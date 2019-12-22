@@ -113,8 +113,8 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Update the View
-	if (view_.autoFollowType() != View::NoAutoFollow) view_.autoFollowData();
-	view_.recalculateView();
+	if (view().autoFollowType() != View::NoAutoFollow) view().autoFollowData();
+	view().recalculateView();
 
 	// Set-up the GL viewport
 	glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2], view_.viewportMatrix()[3]);
@@ -124,9 +124,9 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(view_.projectionMatrix().matrix());
 
-	// Grab the View's standard and inverse matrices
-	Matrix4 viewMatrix = view_.viewMatrix();
-	Matrix4 viewRotationInverse = view_.viewRotationInverse();
+	// Grab the View's standard and inverse matrices (from the linked view if available)
+	Matrix4 viewMatrix = view().viewMatrix();
+	Matrix4 viewRotationInverse = view().viewRotationInverse();
 
 	// Apply the view matrix, and render the Axes associated to the View
 	glMatrixMode(GL_MODELVIEW);
@@ -345,7 +345,12 @@ void BaseViewer::checkGlError()
 void BaseViewer::postRedisplay()
 {
 	if ((!valid_) || drawing_) return;
+
 	update();
+
+	// Update any linked views...
+	RefListIterator<BaseViewer> linkedViewIterator(dependentViewers_);
+	while (BaseViewer* viewer = linkedViewIterator.iterate()) viewer->postRedisplay();
 }
 
 // Set scaling to use for objects measured in pixel widths / point sizes

@@ -34,6 +34,9 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	offscreenBuffer_ = NULL;
 	pixelScaling_ = 1.0;
 
+	// View
+	linkedViewer_ = NULL;
+
 	// Options
 	axesVisible_ = true;
 	clipToAxesVolume_ = true;

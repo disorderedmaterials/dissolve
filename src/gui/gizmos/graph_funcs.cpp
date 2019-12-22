@@ -36,6 +36,7 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 	// Grab the data viewer target and set our view
 	dataViewer_ = ui_.DataView->dataViewer();
 	dataViewer_->view().setAutoFollowType(View::AllAutoFollow);
+	dataViewer_->view().setViewType(View::NormalView);
 	dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
 	// Enable our DataViewer as a target
