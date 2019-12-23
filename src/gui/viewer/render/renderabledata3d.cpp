@@ -171,7 +171,6 @@ bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
 	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
-	//marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
 	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), 0.048, 100.0, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
