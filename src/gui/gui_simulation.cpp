@@ -138,6 +138,12 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 	updateMenus();
 }
 
+// Return list of all current tabs
+RefList<const MainTab> DissolveWindow::allTabs() const
+{
+	return ui_.MainTabs->allTabs();
+}
+
 // Add or go to Module tab for the Module with the unique name provided
 void DissolveWindow::showModuleTab(const QString& uniqueName)
 {
