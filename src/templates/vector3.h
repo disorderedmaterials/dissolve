@@ -311,13 +311,6 @@ template <class T> class Vec3
 		if ((y <= x) && (y <= z)) return 1;
 		return 2;
 	}
-	// Multiply elements of this vector with those supplied
-	void multiply(double facx, double facy, double facz)
-	{
-		x *= facx;
-		y *= facy;
-		z *= facz;
-	}
 	// Multiply elements of this vector with those of supplied vector
 	void multiply(double facx, double facy, double facz)
 	{
