@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SITEWIDGET_H
-#define DISSOLVE_SITEWIDGET_H
+#ifndef DISSOLVE_VIEWER_SITEWIDGET_H
+#define DISSOLVE_VIEWER_SITEWIDGET_H
 
 #include "gui/viewer/ui_sitewidget.h"
 

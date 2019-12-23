@@ -99,7 +99,7 @@ void CalculateDAngleModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalculateDAngleModuleWidget::writeState(LineParser& parser)
+bool CalculateDAngleModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;

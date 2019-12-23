@@ -54,7 +54,7 @@ void SkeletonModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool SkeletonModuleWidget::writeState(LineParser& parser)
+bool SkeletonModuleWidget::writeState(LineParser& parser) const
 {
 	return false;
 }

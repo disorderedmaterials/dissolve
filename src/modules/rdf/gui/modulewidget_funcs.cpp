@@ -107,7 +107,7 @@ void RDFModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool RDFModuleWidget::writeState(LineParser& parser)
+bool RDFModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!partialsGraph_->writeSession(parser)) return false;

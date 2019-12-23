@@ -471,7 +471,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
  */
 
 // Write widget state through specified LineParser
-bool ModuleListChart::writeState(LineParser& parser)
+bool ModuleListChart::writeState(LineParser& parser) const
 {
 	return true;
 }

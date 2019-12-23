@@ -32,7 +32,10 @@
 #include <QMdiSubWindow>
 #include <QMenu>
 
-// Constructor / Destructor
+// Static Singletons
+RefList<Gizmo> WorkspaceTab::allGizmos_;
+
+// Constructor
 WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
@@ -45,6 +48,7 @@ WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, M
 	connect(mdiArea_, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
+// Destructor
 WorkspaceTab::~WorkspaceTab()
 {
 }
@@ -63,19 +67,16 @@ MainTab::TabType WorkspaceTab::type() const
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
 	// Get a new, valid name for the Configuration
-	// FIXME
-// 	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
-// 	ok = nameDialog.get(this, title());
+	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
+	ok = nameDialog.get(this, title());
 
-// 	if (ok)
-// 	{
-// 		// Rename our Workspace, and flag that our data has been modified
-// 		title_ = qPrintable(nameDialog.newName());
+	if (ok)
+	{
+		// Rename our Workspace, and flag that our data has been modified
+		title_ = qPrintable(nameDialog.newName());
+	}
 
-// 		dissolveWindow_->setModified();
-// 	}
-
-// 	return nameDialog.newName();
+	return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed
@@ -116,6 +117,43 @@ void WorkspaceTab::enableSensitiveControls()
  * Gizmo Management
  */
 
+// Remove Gizmo with specified unique name
+void WorkspaceTab::removeGizmo(QString uniqueName)
+{
+	// Find the Gizmo...
+	Gizmo* gizmo = findGizmo(qPrintable(uniqueName));
+	if (!gizmo)
+	{
+		Messenger::error("Received signal to remove gizmo '%s' but it cannot be found...\n", qPrintable(uniqueName));
+		return;
+	}
+
+	gizmos_.remove(gizmo);
+	allGizmos_.remove(gizmo);
+}
+
+// Return unique name for Gizmo based on basename provided
+const char* WorkspaceTab::uniqueGizmoName(const char* base)
+{
+	static CharString uniqueName;
+	CharString baseName = base;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "NewGizmo";
+
+	// Find an unused name starting with the baseName provided
+	while (findGizmo(uniqueName))
+	{
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
+}
+
 // Create Gizmo with specified type
 Gizmo* WorkspaceTab::createGizmo(const char* type)
 {
@@ -123,9 +161,16 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	QWidget* widget = NULL;
 
 	// Check the type of the provided gizmo...
-	if (DissolveSys::sameString(type, "Integrator1D"))
+	if (DissolveSys::sameString(type, "Graph"))
         {
-		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve());
+		GraphGizmo* graph = new GraphGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Graph"));
+		connect(graph, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
+		gizmo = graph;
+		widget = graph;
+        }
+	else if (DissolveSys::sameString(type, "Integrator1D"))
+        {
+		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Integrator1D"));
 		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
 		gizmo = integrator1D;
 		widget = integrator1D;
@@ -138,15 +183,25 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 
 	// Create a new window for the Gizmo's widget and show it
 	QMdiSubWindow* window = mdiArea_->addSubWindow(widget);
-	window->setWindowTitle(gizmo->type());
+	window->setWindowTitle(gizmo->uniqueName());
 	window->show();
 	gizmo->setWindow(window);
 
-	// Update the Gizmo's controls, and add it to our list
+	// Update the Gizmo's controls, and add it to our lists
 	gizmo->updateControls();
 	gizmos_.own(gizmo);
+	allGizmos_.append(gizmo);
 
 	return gizmo;
+}
+
+// Find Gizmo with unique name provided
+Gizmo* WorkspaceTab::findGizmo(const char* uniqueName)
+{
+	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName)) return gizmo;
+
+	return NULL;
 }
 
 /*
@@ -156,6 +211,10 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 // Custom context menu requested
 void WorkspaceTab::showContextMenu(const QPoint& pos)
 {
+	// Check that we are not over an existing gizmo
+	ListIterator<Gizmo> gizmoIterator(gizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) if (gizmo->window()->geometry().contains(pos)) return;
+
 	QMenu menu;
 	menu.setFont(font());
 	QFont italicFont = font();
@@ -164,6 +223,7 @@ void WorkspaceTab::showContextMenu(const QPoint& pos)
 	// Gizmos
 	QMenu* gizmoMenu = menu.addMenu("Add &Gizmo...");
 	gizmoMenu->setFont(font());
+	connect(gizmoMenu->addAction("Graph"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
 	connect(gizmoMenu->addAction("Integrator1D"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
 
 	// Modules within Configurations
@@ -237,7 +297,7 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool WorkspaceTab::writeState(LineParser& parser)
+bool WorkspaceTab::writeState(LineParser& parser) const
 {
 	// Write tab state information:   nGizmos
 	if (!parser.writeLineF("%i      # NGizmos\n", gizmos_.nItems())) return false;

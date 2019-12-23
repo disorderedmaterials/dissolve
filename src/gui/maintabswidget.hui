@@ -76,7 +76,7 @@ class MainTabsWidget : public QTabWidget
 
 	public:
 	// Return reference list of all current tabs
-	RefList<MainTab> allTabs() const;
+	RefList<const MainTab> allTabs() const;
 	// Return currently-selected Species (if a SpeciesTab is the current one)
 	Species* currentSpecies() const;
 	// Return currently-selected Configuration (if a ConfigurationTab is the current one)

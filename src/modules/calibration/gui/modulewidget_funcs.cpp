@@ -74,7 +74,7 @@ void CalibrationModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalibrationModuleWidget::writeState(LineParser& parser)
+bool CalibrationModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer session
 	if (!dataView_->writeSession(parser)) return false;

@@ -50,7 +50,7 @@ void DataTestModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool DataTestModuleWidget::writeState(LineParser& parser)
+bool DataTestModuleWidget::writeState(LineParser& parser) const
 {
 	return false;
 }

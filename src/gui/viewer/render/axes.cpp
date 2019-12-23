@@ -878,9 +878,15 @@ void Axes::determineLabelFormat(int axis)
 }
 
 // Return number format for specified axis
-NumberFormat& Axes::numberFormat(int axis)
+const NumberFormat& Axes::numberFormat(int axis) const
 {
 	return numberFormat_[axis];
+}
+
+// Set number format for specified axis
+void Axes::setNumberFormat(int axis, const NumberFormat& numberFormat)
+{
+	numberFormat_[axis] = numberFormat;
 }
 
 // Return whether to determine number format automatically for the specified axis
@@ -1485,25 +1491,25 @@ Primitive& Axes::gridLineMajorPrimitive(int axis)
 }
 
 // Set major gridline style
-void Axes::setGridLineMajorStyle(int axis, LineStyle style)
+void Axes::setGridLineMajorStyle(int axis, const LineStyle& style)
 {
 	gridLineMajorStyle_[axis] = style;
 }
 
 // Return major GridLine style
-LineStyle& Axes::gridLineMajorStyle(int axis)
+const LineStyle& Axes::gridLineMajorStyle(int axis) const
 {
 	return gridLineMajorStyle_[axis];
 }
 
 // Set minor gridline style
-void Axes::setGridLineMinorStyle(int axis, LineStyle style)
+void Axes::setGridLineMinorStyle(int axis, const LineStyle& style)
 {
 	gridLineMinorStyle_[axis] = style;
 }
 
 // Return minor GridLine style
-LineStyle& Axes::gridLineMinorStyle(int axis)
+const LineStyle& Axes::gridLineMinorStyle(int axis) const
 {
 	return gridLineMinorStyle_[axis];
 }

@@ -96,7 +96,7 @@ void BraggModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool BraggModuleWidget::writeState(LineParser& parser)
+bool BraggModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!reflectionsGraph_->writeSession(parser)) return false;

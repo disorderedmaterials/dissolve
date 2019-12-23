@@ -50,6 +50,12 @@ void View::clear()
 	yScale_ = 1.0;
 	aspectRatio_ = 1.0;
 
+	// Role
+	viewType_ = View::AutoStretchedView;
+	linkedView_ = NULL;
+	autoFollowType_ = View::NoAutoFollow;
+	autoFollowXLength_= 20.0;
+
 	// Projection / view
 	hasPerspective_ = false;
 	perspectiveFieldOfView_ = 20.0;
@@ -65,11 +71,6 @@ void View::clear()
 	viewRotation_.setIdentity();
 	viewRotationInversePoint_ = -1;
 	updateViewMatrix();
-
-	// Role
-	viewType_ = View::AutoStretchedView;
-	autoFollowType_ = View::NoAutoFollow;
-	autoFollowXLength_= 20.0;
 
 	// Style
 	labelPointSize_ = 16.0;
@@ -134,7 +135,7 @@ const GLuint* View::viewportMatrix() const
  */
 
 // View types
-const char* ViewTypeKeywords[View::nViewTypes] = { "Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY", "Linked" };
+const char* ViewTypeKeywords[View::nViewTypes] = { "Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY" };
 
 // Convert text string to ViewType
 View::ViewType View::viewType(const char* s)
@@ -239,12 +240,32 @@ void View::setViewType(View::ViewType vt)
 
 	// Forcibly turn off perspective if this is a flat view
 	if ((viewType_ >= View::FlatXYView) && (viewType_ <= View::FlatZYView)) setHasPerspective(false);
+
+	showAllData();
+
+	resetViewMatrix();
+
+	updateViewMatrix();
+
+	++viewRotationPoint_;
 }
 
 // Return view type
 View::ViewType View::viewType() const
 {
 	return viewType_;
+}
+
+// Set linked View, if any
+void View::setLinkedView(View* linkedView)
+{
+	linkedView_ = linkedView;
+}
+
+// Return linked View, if any
+View* View::linkedView() const
+{
+	return linkedView_;
 }
 
 // Return whether view type is flat
@@ -316,8 +337,8 @@ void View::rotateView(double dx, double dy)
 	++viewRotationPoint_;
 }
 
-// Return view rotation
-Matrix4 View::viewRotation() const
+// Return rotation matrix
+const Matrix4& View::viewRotation() const
 {
 	return viewRotation_;
 }
@@ -367,7 +388,7 @@ Vec3<double> View::viewTranslation() const
 	return viewTranslation_;
 }
 
-// Return full view matrix (rotation + translation)
+// Return view matrix
 const Matrix4& View::viewMatrix() const
 {
 	return viewMatrix_;
@@ -1247,7 +1268,7 @@ void View::setLabelPointSize(double value)
 }
 
 // Return font point size for axis value labels
-double View::labelPointSize()
+double View::labelPointSize() const
 {
 	return labelPointSize_;
 }
@@ -1261,13 +1282,13 @@ void View::setTitlePointSize(double value)
 }
 
 // Return font point size for titles
-double View::titlePointSize()
+double View::titlePointSize() const
 {
 	return titlePointSize_;
 }
 
 // Return text z scaling factor
-double View::textZScale()
+double View::textZScale() const
 {
 	return textZScale_;
 }
@@ -1281,7 +1302,7 @@ void View::setFlatLabelsIn3D(bool flat)
 }
 
 // Whether axis text labels are drawn flat in 3D views
-bool View::flatLabelsIn3D()
+bool View::flatLabelsIn3D() const
 {
 	return flatLabelsIn3D_;
 }

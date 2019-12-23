@@ -50,7 +50,7 @@ void GeometryOptimisationModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool GeometryOptimisationModuleWidget::writeState(LineParser& parser)
+bool GeometryOptimisationModuleWidget::writeState(LineParser& parser) const
 {
 	return false;
 }

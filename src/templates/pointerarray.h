@@ -163,6 +163,7 @@ template <class T> class PointerArray
 		if (nItems_ == arraySize_)
 		{
 			// Create a new array with some more item space
+			// TODO This is memory efficient, but v slow for multiple additions.  Add chunkSize?
 			T** newArray = new T*[arraySize_+2];
 
 			// Copy the existing pointers over

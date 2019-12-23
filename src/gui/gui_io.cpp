@@ -40,9 +40,9 @@ bool DissolveWindow::saveState()
 	}
 
 	// Write tab state
-	RefList<MainTab> tabs = ui_.MainTabs->allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate())
+	RefList<const MainTab> tabs = ui_.MainTabs->allTabs();
+	RefListIterator<const MainTab> tabIterator(tabs);
+	while (const MainTab* tab = tabIterator.iterate())
 	{
 		// Write tab type and title
 		if (!stateParser.writeLineF("Tab  '%s'  %s\n", tab->title(), MainTab::tabTypes().keyword(tab->type()))) return false;

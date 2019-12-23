@@ -1,6 +1,6 @@
 /*
-	*** Module Widget
-	*** src/modules/skeleton/gui/modulewidget.h
+	*** Graph Gizmo
+	*** src/gui/gizmos/graph.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,34 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SKELETONMODULEWIDGET_H
-#define DISSOLVE_SKELETONMODULEWIDGET_H
+#ifndef DISSOLVE_GIZMOS_GRAPH_H
+#define DISSOLVE_GIZMOS_GRAPH_H
 
-#include "modules/skeleton/gui/ui_modulewidget.h"
-#include "gui/modulewidget.h"
+#include "gui/gizmos/ui_graph.h"
+#include "gui/gizmos/gizmo.h"
+#include "math/sampleddouble.h"
 
 // Forward Declarations
-class Module;
+class Dissolve;
 
-// Module Widget
-class SkeletonModuleWidget : public ModuleWidget
+// Graph Gizmo
+class GraphGizmo : public QWidget, public Gizmo
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Associated Module
-	Module* module_;
-
 	public:
-	// Constructor
-	SkeletonModuleWidget(QWidget* parent, Module* module);
+	// Constructor / Destructor
+	GraphGizmo(Dissolve& dissolve, const char* uniqueName);
+	~GraphGizmo();
+
+
+	/*
+	 * Core
+	 */
+	public:
+	// Return string specifying Gizmo type
+	const char* type() const;
 
 
 	/*
@@ -48,11 +54,15 @@ class SkeletonModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Main form declaration
-	Ui::SkeletonModuleWidget ui_;
+	Ui::GraphGizmo ui_;
+
+	protected:
+	// Window close event
+	void closeEvent(QCloseEvent* event);
 
 	public:
 	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+	void updateControls();
 	// Disable sensitive controls within widget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget
@@ -60,7 +70,15 @@ class SkeletonModuleWidget : public ModuleWidget
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * Data
+	 */
+	private:
+	// Pointer to our DataViewer
+	DataViewer* dataViewer_;
+
+
+	/*
+	 * State
 	 */
 	public:
 	// Write widget state through specified LineParser
@@ -70,11 +88,12 @@ class SkeletonModuleWidget : public ModuleWidget
 
 
 	/*
-	 * Widgets / Functions
+	 * Widget Signals / Slots
 	 */
-	private:
-
 	private slots:
+
+	signals:
+	void windowClosed(QString windowTitle);
 };
 
 #endif

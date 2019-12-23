@@ -28,8 +28,6 @@
 
 // Forward Declarations
 class Dissolve;
-class PairPotential;
-class DataWidget;
 
 // Integrator1D Gizmo
 class Integrator1DGizmo : public QWidget, public Gizmo
@@ -39,7 +37,7 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 
 	public:
 	// Constructor / Destructor
-	Integrator1DGizmo(Dissolve& dissolve);
+	Integrator1DGizmo(Dissolve& dissolve, const char* uniqueName);
 	~Integrator1DGizmo();
 
 
@@ -92,7 +90,7 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

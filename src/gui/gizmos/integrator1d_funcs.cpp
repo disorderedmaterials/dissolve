@@ -28,7 +28,7 @@
 #include <QMessageBox>
 
 // Constructor
-Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve) : Gizmo(dissolve)
+Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(dissolve, uniqueName)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -71,7 +71,7 @@ const char* Integrator1DGizmo::type() const
 // Window close event
 void Integrator1DGizmo::closeEvent(QCloseEvent* event)
 {
-// 	emit(windowClosed());
+	emit(windowClosed(uniqueName_.get()));
 }
 
 // Update controls within widget
@@ -132,7 +132,7 @@ void Integrator1DGizmo::setGraphDataTargets()
  */
 
 // Write widget state through specified LineParser
-bool Integrator1DGizmo::writeState(LineParser& parser)
+bool Integrator1DGizmo::writeState(LineParser& parser) const
 {
 
 	// Write DataViewer state

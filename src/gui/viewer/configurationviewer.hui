@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CONFIGURATIONVIEWER_H
-#define DISSOLVE_CONFIGURATIONVIEWER_H
+#ifndef DISSOLVE_VIEWER_CONFIGURATION_H
+#define DISSOLVE_VIEWER_CONFIGURATION_H
 
 #include "gui/viewer/viewer.hui"
 #include "gui/viewer/render/renderableconfiguration.h"

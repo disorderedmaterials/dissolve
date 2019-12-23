@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SELECTSYMBOL_H
-#define DISSOLVE_SELECTSYMBOL_H
+#ifndef DISSOLVE_VIEWER_SELECTSYMBOL_H
+#define DISSOLVE_VIEWER_SELECTSYMBOL_H
 
 #include "gui/viewer/ui_selectsymbol.h"
 #include <QDialog>
@@ -29,9 +29,7 @@
 // Forward Declarations
 /* none */
 
-/*
- * Select Symbol Dialog
- */
+// Select Symbol Dialog
 class SelectSymbolDialog : public QDialog
 {
 	Q_OBJECT

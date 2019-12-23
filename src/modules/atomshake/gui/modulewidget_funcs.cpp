@@ -55,7 +55,7 @@ void AtomShakeModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool AtomShakeModuleWidget::writeState(LineParser& parser)
+bool AtomShakeModuleWidget::writeState(LineParser& parser) const
 {
 	return true;
 }

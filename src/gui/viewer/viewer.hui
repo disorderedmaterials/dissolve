@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BASEVIEWER_H
-#define DISSOLVE_BASEVIEWER_H
+#ifndef DISSOLVE_VIEWER_BASE_H
+#define DISSOLVE_VIEWER_BASE_H
 
 #include "gui/viewer/render/renderable.h"
 #include "gui/viewer/render/renderablegroupmanager.h"
@@ -29,7 +29,9 @@
 #include "gui/viewer/render/fontinstance.h"
 #include "math/data1d.h"
 #include "base/enumoptions.h"
+#include "base/timer.h"
 #include "templates/list.h"
+#include "templates/pointerarray.h"
 #include "templates/reflist.h"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -52,13 +54,39 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 
 	/*
+	 * View
+	 */
+	protected:
+	// View for renderable data
+	View view_;
+	// Viewer to which this view is linked (is dependent on for its view)
+	BaseViewer* linkedViewer_;
+	// List of other viewers that are dependent on (i.e. are linked to) this one
+	RefList<BaseViewer> dependentViewers_;
+
+	private:
+	// Register that the specified viewer depends on (links to) this one
+	void addDependentViewer(BaseViewer* viewer);
+	// Unregister the specified viewer
+	void removeDependentViewer(BaseViewer* viewer);
+
+	public:
+	// Return the View definition
+	View& view();
+	// Return the View definition (const)
+	const View& constView() const;
+	// Link this viewer to the one specified
+	void linkView(BaseViewer* viewToLinkTo);
+	// Unlink this viewer from the one specified
+	void unlinkView();
+
+
+	/*
 	 * Renderable Data
 	 */
 	protected:
 	// List of renderables to display
 	List<Renderable> renderables_;
-	// View for renderable data
-	View view_;
 
 	public:
 	// Clear existing data
@@ -77,14 +105,12 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	const List<Renderable>& renderables() const;
 	// Return named Renderable
 	Renderable* renderable(const char* name) const;
+	// Return Renderable with specified objectTag (if it exists)
+	Renderable* renderableWithTag(const char* objectTag) const;
 	// Set visibility of named Renderable
 	void setRenderableVisible(const char* name, bool visible);
 	// Return visibility of named Renderable
 	bool isRenderableVisible(const char* name) const;
-	// Return the View definition
-	View& view();
-	// Return the View definition (const)
-	const View& constView() const;
 	// Emit the signal to notify that the viewing style of data represented in the Viewer has changed
 	void notifyStyleModified();
 	// Emit the signal to notify that the data has changed
@@ -169,6 +195,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void resizeGL(int width, int height);
 	// Main rendering function
 	void renderGL(int xOffset = 0, int yOffset = 0);
+	// Create viewer update stack
+	void createUpdateStack(PointerArray<BaseViewer>& updateStack);
 	// Perform post-initialisation operations
 	virtual void postInitialiseGL();
 	// Perform post-resize operations
@@ -213,6 +241,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	protected:
 	// Canvas coordinates of mouse down
 	Vec3<int> rMouseDown_;
+	// Time at start of mouse down
+	Timer mouseDownTimer_;
 	// Canvas coordinates of mouse cursor
 	Vec3<int> rMouseLast_;
 	// Current state of mouse buttons
@@ -245,6 +275,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	virtual void mouseWheeled(int delta);
 	// Mouse double clicked
 	virtual void mouseDoubleClicked();
+	// Context menu requested
+	virtual void contextMenuRequested(QPoint pos);
 	// Key pressed
 	virtual bool keyPressed(int key);
 	// Key released
@@ -329,7 +361,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void generateQueryImage();
 
 	protected:
-	// Update object query, setting supplied information if the depth is closer
+	// Update object query, setting supplied information if the sample area has changed significantly
 	void updateQuery(BaseViewer::ViewerObject objectType, const char* info, const char* subInfo = NULL);
 
 	public:
@@ -355,7 +387,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		nInputBlocks
 	};
 	// Return enum option info for InputBlock
-	EnumOptions<BaseViewer::InputBlock> inputBlockKeywords();
+	static EnumOptions<BaseViewer::InputBlock> inputBlockKeywords();
 	// Parse main input blocks through specified parser
 	bool parseInputBlocks(LineParser& parser);
 
@@ -389,11 +421,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		nAxisKeywords
 	};
 	// Return enum option info for AxisKeyword
-	EnumOptions<BaseViewer::AxisKeyword> axisKeywords();
+	static EnumOptions<BaseViewer::AxisKeyword> axisKeywords();
 	// Read AxisBlock keywords
 	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
 	// Write AxisBlock keywords
-	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
+	bool writeAxisBlock(LineParser& parser, const Axes& axes, int axis) const;
 
 	// Renderable Block Keyword Enum
 	enum RenderableKeyword
@@ -418,11 +450,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		nRenderableKeywords
 	};
 	// Return enum option info for RenderableKeyword
-	EnumOptions<BaseViewer::RenderableKeyword> renderableKeywords();
+	static EnumOptions<BaseViewer::RenderableKeyword> renderableKeywords();
 	// Read RenderableBlock keywords
 	bool readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd = true);
 	// Write RenderableBlock keywords
-	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0);
+	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0) const;
 
 	// RenderableGroup Block Keyword Enum
 	enum RenderableGroupKeyword
@@ -441,7 +473,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Read RenderableGroup block keywords
 	bool readRenderableGroupBlock(LineParser& parser, RenderableGroup* group, bool strictBlockEnd = true);
 	// Write RenderableGroup block keywords
-	bool writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel = 0);
+	bool writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel = 0) const;
 
 	// View Block Keyword Enum
 	enum ViewKeyword
@@ -470,7 +502,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Read ViewBlock keywords
 	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
 	// Write ViewBlock keywords
-	bool writeViewBlock(LineParser& parser);
+	bool writeViewBlock(LineParser& parser) const;
 
 
 	/*
@@ -480,13 +512,13 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Read custom input block through specified LineParser
 	virtual bool readCustomInputBlock(LineParser& parser);
 	// Write custom input blocks through specified LineParser
-	virtual bool writeCustomInputBlocks(LineParser& parser);
+	virtual bool writeCustomInputBlocks(LineParser& parser) const;
 
 	public:
 	// Read session through parser specified
 	bool readSession(LineParser& parser);
 	// Write session through parser specified
-	bool writeSession(LineParser& parser);
+	bool writeSession(LineParser& parser) const;
 };
 
 #endif

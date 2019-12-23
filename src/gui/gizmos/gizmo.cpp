@@ -22,9 +22,10 @@
 #include "gui/gizmos/gizmo.h"
 
 // Constructor
-Gizmo::Gizmo(Dissolve& dissolve) : ListItem<Gizmo>(), dissolve_(dissolve)
+Gizmo::Gizmo(Dissolve& dissolve, const char* uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
 {
 	window_ = NULL;
+	uniqueName_ = uniqueName;
 	refreshing_ = false;
 }
 
@@ -36,16 +37,16 @@ Gizmo::~Gizmo()
  * Core
  */
 
-// Set title of widget
-void Gizmo::setTitle(const char* title)
+// Set unique name of widget
+void Gizmo::setUniqueName(const char* uniqueName)
 {
-	title_ = title;
+	uniqueName_ = uniqueName;
 }
 
-// Return title of widget (and associated window title, if in a window)
-const char* Gizmo::title()
+// Return unique name of widget
+const char* Gizmo::uniqueName()
 {
-	return title_.get();
+	return uniqueName_.get();
 }
 
 // Set QMdiSubWindow containing the Gizmo

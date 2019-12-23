@@ -111,10 +111,10 @@ class ProcedureChart : public ChartBase
 	 * State I/O (ChartBase Reimplementations)
 	 */
 	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser) const;
 };
 
 #endif

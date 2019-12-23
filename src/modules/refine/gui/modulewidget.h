@@ -64,10 +64,10 @@ class RefineModuleWidget : public ModuleWidget
 	 * ModuleWidget Implementations
 	 */
 	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser) const;
 
 
 	/*

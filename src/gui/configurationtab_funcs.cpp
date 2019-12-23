@@ -262,7 +262,7 @@ bool ConfigurationTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser& parser)
+bool ConfigurationTab::writeState(LineParser& parser) const
 {
 	return true;
 }

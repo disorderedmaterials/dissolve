@@ -126,7 +126,7 @@ void SQModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool SQModuleWidget::writeState(LineParser& parser)
+bool SQModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!partialGRGraph_->writeSession(parser)) return false;

@@ -102,7 +102,7 @@ class ModuleListEditor : public QWidget
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 };

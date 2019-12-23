@@ -1,5 +1,5 @@
 /*
-	*** Base Viewer Input Functions
+	*** Base Viewer - Input
 	*** src/gui/viewer/viewer_input.cpp
 	Copyright T. Youngs 2013-2019
 
@@ -35,9 +35,10 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	rMouseDown_.set(event->x(), contextHeight_ - event->y(), 0.0);
 	rMouseLast_ = rMouseDown_;
 	mouseDownModifiers_ = event->modifiers();
+	mouseDownTimer_.start();
 
 	// If a 2D view, store the clicked local coordinate
-	if (view_.isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
+	if (view().isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
 
 	interacting_ = true;
 
@@ -48,8 +49,18 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 // Mouse release event
 void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 {
-	// Handle the event
-	endInteraction();
+	// Detect right-click intended to call a context menu
+	if (buttonState_.testFlag(Qt::RightButton) && (mouseDownTimer_.secondsElapsed() < 0.4))
+	{
+		contextMenuRequested(event->pos());
+
+		setInteractionMode(0);
+	}
+	else
+	{
+		// Handle the event normally
+		endInteraction();
+	}
 
 	postRedisplay();
 
@@ -68,7 +79,7 @@ void BaseViewer::mouseMoveEvent(QMouseEvent* event)
 	rMouseLast_.set(event->x(), contextHeight_ - event->y(), 0.0);
 
 	// If a 2D view, store the current local Axes coordinate
-	if (view_.isFlatView()) current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
+	if (view().isFlatView()) current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
 
 	// Handle the event, passing the delta position
 	mouseMoved(dx, dy);
@@ -141,6 +152,11 @@ void BaseViewer::mouseWheeled(int delta)
 
 // Mouse double clicked
 void BaseViewer::mouseDoubleClicked()
+{
+}
+
+// Context menu requested
+void BaseViewer::contextMenuRequested(QPoint pos)
 {
 }
 

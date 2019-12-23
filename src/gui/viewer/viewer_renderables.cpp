@@ -1,6 +1,6 @@
 /*
 	*** Base Viewer - Renderable Data
-	*** src/gui/viewer/viewer_data.cpp
+	*** src/gui/viewer/viewer_renderables.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
@@ -23,10 +23,6 @@
 #include "gui/viewer/render/renderablefactory.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-
-/*
- * Renderable Data
- */
 
 // Clear existing data
 void BaseViewer::clear()
@@ -116,6 +112,15 @@ Renderable* BaseViewer::renderable(const char* name) const
 	return NULL;
 }
 
+// Return Renderable with specified objectTag (if it exists)
+Renderable* BaseViewer::renderableWithTag(const char* objectTag) const
+{
+	ListIterator<Renderable> renderableIterator(renderables_);
+	while (Renderable* rend = renderableIterator.iterate()) if (DissolveSys::sameString(objectTag, rend->objectTag())) return rend;
+
+	return NULL;
+}
+
 // Set visibility of named Renderable
 void BaseViewer::setRenderableVisible(const char* name, bool visible)
 {
@@ -160,22 +165,6 @@ void BaseViewer::addRenderableToGroup(Renderable* rend, const char* group)
 	groupManager_.addToGroup(rend, group);
 
 	emit(renderableChanged());
-}
-
-/*
- * Options
- */
-
-// Return the View definition
-View& BaseViewer::view()
-{
-	return view_;
-}
-
-// Return the View definition (const)
-const View& BaseViewer::constView() const
-{
-	return view_;
 }
 
 /*

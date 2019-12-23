@@ -213,7 +213,7 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
  */
 
 // Write widget state through specified LineParser
-bool ModuleListEditor::writeState(LineParser& parser)
+bool ModuleListEditor::writeState(LineParser& parser) const
 {
 	if ((!chartWidget_) || (!chartWidget_->writeState(parser))) return false;
 

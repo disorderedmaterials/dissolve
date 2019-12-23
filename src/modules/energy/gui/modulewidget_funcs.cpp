@@ -34,6 +34,8 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve
 	// Set up user interface
 	ui.setupUi(this);
 
+	NumberFormat numberFormat;
+
 	// Grab our DataViewer widget
 	energyGraph_ = ui.PlotWidget->dataViewer();
 
@@ -42,12 +44,16 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "Iteration");
 	view.axes().setMax(0, 10.0);
-	view.axes().numberFormat(0).setNDecimals(0);
+	numberFormat = view.axes().numberFormat(0);
+	numberFormat.setNDecimals(0);
+	view.axes().setNumberFormat(0, numberFormat);
 	view.axes().setTitle(1, "Energy, kJ mol\\sup{-1}");
 	view.axes().setMin(1, -1.0);
 	view.axes().setMax(1, 1.0);
-	view.axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
-	view.axes().numberFormat(1).setUseENotation(true);
+	numberFormat = view.axes().numberFormat(1);
+	numberFormat.setType(NumberFormat::ScientificFormat);
+	numberFormat.setUseENotation(true);
+	view.axes().setNumberFormat(1, numberFormat);
 	view.setAutoFollowType(View::XAutoFollow);
 
 	currentConfiguration_ = NULL;
@@ -122,7 +128,7 @@ void EnergyModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool EnergyModuleWidget::writeState(LineParser& parser)
+bool EnergyModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!energyGraph_->writeSession(parser)) return false;

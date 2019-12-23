@@ -42,9 +42,13 @@ MainTabsWidget::MainTabsWidget(QWidget* parent) : QTabWidget(parent)
  */
 
 // Return reference list of all current tabs
-RefList<MainTab> MainTabsWidget::allTabs() const
+RefList<const MainTab> MainTabsWidget::allTabs() const
 {
-	return allTabs_;
+	RefList<const MainTab> constTabs;
+	RefListIterator<MainTab> tabIterator(allTabs_);
+	while (MainTab* tab = tabIterator.iterate()) constTabs.append(tab);
+
+	return constTabs;
 }
 
 // Return currently-selected Species (if a SpeciesTab is the current one)
@@ -364,7 +368,7 @@ MainTab* MainTabsWidget::addModuleTab(DissolveWindow* dissolveWindow, Module* mo
 		moduleTabs_.own(tab);
 		allTabs_.append(tab);
 		addTab(tab, module->uniqueName());
-		addTabCloseButton(tab->page());
+		addTabCloseButton(tab);
 		setTabIcon(tab->page(), QIcon(ModuleBlock::modulePixmap(module)));
 
 		// If we are currently running, disable the necessary controls in widget
@@ -377,7 +381,6 @@ MainTab* MainTabsWidget::addModuleTab(DissolveWindow* dissolveWindow, Module* mo
 }
 
 // Remove the ModuleTab for the specifeid Module, if it exists
-// TGAY - IS THIS STILL REQUIRED?
 void MainTabsWidget::removeModuleTab(Module* module)
 {
 	ModuleTab* tab = moduleTab(module);
@@ -395,6 +398,7 @@ MainTab* MainTabsWidget::addWorkspaceTab(DissolveWindow* dissolveWindow, const c
 	{
 		WorkspaceTab* newWorkspace = new WorkspaceTab(dissolveWindow, dissolveWindow->dissolve(), this, title);
 		workspaceTabs_.own(newWorkspace);
+		allTabs_.append(newWorkspace);
 
 		// Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
 		addTab(newWorkspace, title);

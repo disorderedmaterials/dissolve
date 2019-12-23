@@ -151,7 +151,7 @@ void NeutronSQModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool NeutronSQModuleWidget::writeState(LineParser& parser)
+bool NeutronSQModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!partialGRGraph_->writeSession(parser)) return false;

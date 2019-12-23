@@ -23,6 +23,7 @@
 #include "gui/viewer/render/view.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include <QButtonGroup>
+#include <QInputDialog>
 
 // Constructor
 DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
@@ -44,8 +45,6 @@ DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 	connect(ui_.DataView, SIGNAL(renderableAdded()), this, SLOT(updateDataTree()));
 	connect(ui_.DataView, SIGNAL(renderableRemoved()), this, SLOT(updateDataTree()));
 	connect(ui_.DataView, SIGNAL(renderableChanged()), this, SLOT(updateDataTree()));
-
-	refreshing_ = false;
 
 	// Make sure that our controls reflect the state of the underlying DataViewer
 	updateToolbar();
@@ -85,6 +84,8 @@ void DataWidget::on_GraphResetButton_clicked(bool checked)
 
 void DataWidget::on_GraphFollowAllButton_clicked(bool checked)
 {
+	if (refreshLock_.isLocked()) return;
+
 	if (checked)
 	{
 		dataViewer()->view().setAutoFollowType(View::AllAutoFollow);
@@ -97,6 +98,8 @@ void DataWidget::on_GraphFollowAllButton_clicked(bool checked)
 
 void DataWidget::on_GraphFollowXButton_clicked(bool checked)
 {
+	if (refreshLock_.isLocked()) return;
+
 	if (checked)
 	{
 		dataViewer()->view().setAutoFollowType(View::XAutoFollow);
@@ -109,19 +112,79 @@ void DataWidget::on_GraphFollowXButton_clicked(bool checked)
 
 void DataWidget::on_GraphFollowXLengthSpin_valueChanged(double value)
 {
+	if (refreshLock_.isLocked()) return;
+
 	dataViewer()->view().setAutoFollowXLength(value);
 
 	dataViewer()->postRedisplay();
 }
 
 // View
+void DataWidget::on_ViewTypeCombo_currentIndexChanged(int index)
+{
+	if (refreshLock_.isLocked()) return;
+
+	dataViewer()->view().setViewType( (View::ViewType) index );
+
+	dataViewer()->postRedisplay();
+}
+
+void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
+{
+	if (refreshLock_.isLocked()) return;
+
+	// If the button has just been checked, request the target view
+	if (checked)
+	{
+		// Get possible target DataViewers and remove ourselves from it
+		RefList<DataViewer> targets = DataViewer::renderableDestinations();
+		targets.remove(dataViewer());
+		if (targets.nItems() == 0)
+		{
+			ui_.ViewLinkedViewButton->setChecked(false);
+			return;
+		}
+
+		// Construct a list of targets as a QStringList
+		QStringList destinations;
+		int currentItem = -1, count = 0;
+		RefListIterator<DataViewer> targetIterator(targets);
+		while (DataViewer* viewer = targetIterator.iterate())
+		{
+			destinations << viewer->destinationName();
+			if (&viewer->view() == dataViewer()->view().linkedView()) currentItem = count;
+			++count;
+		}
+
+		bool ok;
+		QString viewName = QInputDialog::getItem(this, "Set View Link", "Select the view to link to...", destinations, currentItem, false, &ok);
+		if (!ok)
+		{
+			ui_.ViewLinkedViewButton->setChecked(false);
+			return;
+		}
+
+		// The destination view from the
+		int viewIndex = destinations.indexOf(viewName);
+		DataViewer* viewParent = targets.item(viewIndex);
+		if (!viewParent) return;
+		
+		dataViewer()->linkView(viewParent);
+	}
+	else dataViewer()->unlinkView();
+}
+
 void DataWidget::on_ViewToggleDataButton_clicked(bool checked)
 {
+	if (refreshLock_.isLocked()) return;
+
 	ui_.DataGroup->setVisible(checked);
 }
 
 void DataWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
+	if (refreshLock_.isLocked()) return;
+
 	dataViewer()->setAxesVisible(checked);
 
 	dataViewer()->postRedisplay();
@@ -180,7 +243,7 @@ void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int chi
 // Data tree item changed
 void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem* item, int column)
 {
-	if (refreshing_) return;
+	if (refreshLock_.isLocked()) return;
 
 	// If this is a top-level item (parent() == NULL) then retrieve the Renderable Group. If not, get the associated Renderable.
 	if (item->parent())
@@ -213,6 +276,8 @@ void DataWidget::clearRenderableData()
 // Update toolbar
 void DataWidget::updateToolbar()
 {
+	Locker refreshLock(refreshLock_);
+
 	// Set current interaction mode
 	switch (dataViewer()->interactionMode())
 	{
@@ -234,12 +299,16 @@ void DataWidget::updateToolbar()
 	ui_.GraphFollowXButton->setEnabled(vt == View::FlatXYView);
 	ui_.GraphFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
 	// View
+	ui_.ViewTypeCombo->setCurrentIndex(dataViewer()->view().viewType());
+	ui_.ViewLinkedViewButton->setChecked(dataViewer()->view().linkedView());
 	ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 }
 
 // Update status bar
 void DataWidget::updateStatusBar()
 {
+	Locker refreshLock(refreshLock_);
+
 	// Update mode text
 	ui_.ModeLabel->setText(dataViewer()->interactionModeText());
 
@@ -269,9 +338,7 @@ void DataWidget::updateStatusBar()
 // Update data tree
 void DataWidget::updateDataTree()
 {
-	refreshing_ = true;
+	Locker refreshLock(refreshLock_);
 
 	TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this, &DataWidget::dataTreeTopLevelUpdateFunction);
-
-	refreshing_ = false;
 }

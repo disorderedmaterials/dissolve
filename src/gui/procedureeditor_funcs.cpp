@@ -179,7 +179,7 @@ void ProcedureEditor::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool ProcedureEditor::writeState(LineParser& parser)
+bool ProcedureEditor::writeState(LineParser& parser) const
 {
 	if (!chart_->writeState(parser)) return false;
 

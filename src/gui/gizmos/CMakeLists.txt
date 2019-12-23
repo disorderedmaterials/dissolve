@@ -3,12 +3,14 @@
 
 # Meta-Objects
 SET(gizmos_MOC_HDRS
+  graph.h
   integrator1d.h
 )
 QT5_WRAP_CPP(gizmos_MOC_SRCS ${gizmos_MOC_HDRS})
 
 # User Interface Files
 SET(gizmos_UIS
+  graph.ui
   integrator1d.ui
 )
 QT5_WRAP_UI(gizmos_UIS_H ${gizmos_UIS})
@@ -16,6 +18,8 @@ QT5_WRAP_UI(gizmos_UIS_H ${gizmos_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(gizmos_SRCS
   gizmo.cpp
+
+  graph_funcs.cpp
   integrator1d_funcs.cpp
 
   gizmo.h
