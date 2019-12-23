@@ -173,9 +173,6 @@ void RenderableData3D::recreatePrimitives(const View& view, const ColourDefiniti
 {	
 	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
 	//marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), (valuesTransformMinPositive_+valuesTransformMaxPositive_)/2, valuesTransformMaxPositive_, colourDefinition, view.constAxes(), dataPrimitive_);
-	printf("SIZE OF X = %i\n", transformedData_.constXAxis().nItems());
-	printf("SIZE OF Y = %i\n", transformedData_.constYAxis().nItems());
-	printf("SIZE OF Z = %i\n", transformedData_.constZAxis().nItems());
 	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), 0.048, 100.0, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
@@ -474,20 +471,17 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 	GLfloat colour[4];
 	Array<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
 
-// 	printf("SIZE OF X = %i\n", x.nItems());
-// 	printf("SIZE OF Y = %i\n", y.nItems());
-// 	printf("SIZE OF Z = %i\n", z.nItems());
 	// Get distances between grid points
 	double dx, dy, dz;
 	dx = x.constAt(1) - x.constAt(0);
 	dy = y.constAt(1) - y.constAt(0);
 	dz = z.constAt(1) - z.constAt(0);
-	
+
 	// Transform abscissa values (still in data space) into axes coordinates
 	axes.transformX(x);
 	int nX = x.nItems();
 	if (nX < 2) return;
-	
+
 	// Transform abscissa values (still in data space) into axes coordinates
 	axes.transformY(y);
 	int nY = y.nItems();
@@ -584,15 +578,15 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 
 						// Set triangle coordinates and add cube position
 						//if (colourScale != -1)
-							if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
-							{
-								// Get the single colour
-								colourDefinition.colour(0.0, colour);
-								//colourScale[colourScale].colour((a+b)/2.0, colour);
-								primitive -> defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
-							}
-							else 
-								primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z);
+						if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
+						{
+							// Get the single colour
+							colourDefinition.colour(0.0, colour);
+							//colourScale[colourScale].colour((a+b)/2.0, colour);
+							primitive -> defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
+						}
+						else
+							primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z);
 					}
 				}
 			}
