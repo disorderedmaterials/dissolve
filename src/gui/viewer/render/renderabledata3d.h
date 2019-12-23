@@ -68,21 +68,24 @@ class RenderableData3D : public Renderable
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
 	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
 
-
 	/*
 	 * Rendering Primitives
 	 */
-
+	private:
+	// Primitive to represent data
+	Primitive* dataPrimitive_;
 	
 	private:
 	// Create line strip primitive
-	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
+	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double >& displayAbscissa, const Array3D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
+	void marchingCubesOriginal(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array<double>& displayZAbscissa, const Array3D<double>& displayValues, double lowerCutoff, double upperCutoff, const ColourDefinition& colourDefinition, const Axes& axes, Primitive* primitive);
 
 	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
+	
 
 
 	/*

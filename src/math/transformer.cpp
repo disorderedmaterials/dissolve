@@ -25,6 +25,7 @@
 #include "math/data1d.h"
 #include "templates/array.h"
 #include "math/data2d.h"
+#include "data3d.h"
 
 
 // Constructor
@@ -107,18 +108,42 @@ double Transformer::transform(double x, double y, double z)
 }
 
 // Transform whole array, including application of pre/post transform shift
-Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> sourceY, int target)
+Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> sourceY, Array<double> sourceZ, int target)
 {
 	// If transform is not enabled, return original array
-	if (!enabled_) return (target == 0 ? sourceX : sourceY);
-
+	if (!enabled_)
+	{
+		switch (target)
+		{
+			case 0:
+				return sourceX;
+				break;
+			case 1:
+				return sourceY;
+				break;
+			case 2:
+				return sourceZ;
+		}
+	}
+	
 	// If equation is not valid, just return original array
 	if (!valid())
 	{
 		Messenger::printVerbose("Equation is not valid, so returning original array.\n");
-		return (target == 0 ? sourceX : sourceY);
+		switch (target)
+		{
+			case 0: 
+				return sourceX;
+				break;
+			case 1:
+				return sourceY;
+				break;
+			case 2:
+				return sourceZ;
+		}
 	}
 
+	//??????????????????ASK TRISTAN - are x,y,z equal lengths???????????????????????
 	if (sourceX.nItems() != sourceY.nItems())
 	{
 		Messenger::print("Error in Transformer::transformArray() - x and y array sizes do not match.\n");
@@ -128,13 +153,15 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	// Create new array
 	Array<double> newArray(sourceX.nItems());
 
-	z_->set(0.0);
+	//z_->set(0.0);
+	
 	// Loop over x points
 	for (int n=0; n<sourceX.nItems(); ++n)
 	{
 		// Set x and y values in equation
 		x_->set(sourceX[n]);
 		y_->set(sourceY[n]);
+		z_->set(sourceZ[n]);
 		newArray[n] = equation_.asDouble();
 	}
 
@@ -191,22 +218,36 @@ Array2D<double> Transformer::transformArray(Array2D<double> sourceValues, Array<
 void Transformer::transform1D(Data1D& data, Transformer& xTransformer, Transformer& yTransformer)
 {
 	// X
-	if (xTransformer.enabled()) data.xAxis() = xTransformer.transformArray(data.xAxis(), data.values(), 0);
+	if (xTransformer.enabled()) data.xAxis() = xTransformer.transformArray(data.xAxis(), data.values(),0.0, 0);
 
 	// Y
-	if (yTransformer.enabled()) data.values() = yTransformer.transformArray(data.xAxis(), data.values(), 1);
+	if (yTransformer.enabled()) data.values() = yTransformer.transformArray(data.xAxis(), data.values(),0.0, 1);
 }
 
 void Transformer::transform2D(Data2D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
 	// X
-	if (xTransformer.enabled()) data.xAxis() = xTransformer.transformArray(data.xAxis(), data.yAxis(), 0);
+	if (xTransformer.enabled()) data.xAxis() = xTransformer.transformArray(data.xAxis(), data.yAxis(),0.0, 0);
 
 	// Y
-	if (yTransformer.enabled()) data.yAxis() = yTransformer.transformArray(data.xAxis(), data.yAxis(), 1);
+	if (yTransformer.enabled()) data.yAxis() = yTransformer.transformArray(data.xAxis(), data.yAxis(),0.0, 1);
 	
 	// values
 	if (zTransformer.enabled()) data.values() = zTransformer.transformArray(data.values(), data.xAxis(), data.yAxis());
-	
 }
+
+void Transformer::transform3D(Data3D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
+{
+	//X
+	if (xTransformer.enabled()) data.xAxis() = xTransformer.transformArray(data.xAxis(), data.yAxis(), data.zAxis(), 0);
+
+	// Y
+	if (yTransformer.enabled()) data.yAxis() = yTransformer.transformArray(data.xAxis(), data.yAxis(), data.zAxis(), 1);
+	
+	//Z
+	if (yTransformer.enabled()) data.zAxis() = zTransformer.transformArray(data.xAxis(), data.yAxis(), data.zAxis(), 2);
+}
+
+
+
 
