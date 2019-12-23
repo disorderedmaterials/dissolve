@@ -490,6 +490,9 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 	int nZ = z.nItems();
 	if (nZ < 2) return;
 
+	// Get single colour for surface (if colourScale style == SingleColourStyle)
+	if (colourDefinition.style() == ColourDefinition::SingleColourStyle) colourDefinition.colour(0.0, colour);
+
 	// Generate isosurface
 	for (i=1; i< x.nItems()-2; ++i)
 	{
@@ -556,9 +559,9 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 						// Interpolate between data values (a,b) along this edge
 						a = vertex[edgevertices[faces[n]][0]];
 						b = vertex[edgevertices[faces[n]][1]];
-						ipol = ((lowerCutoff) - a) / (b-a);
-						if (ipol> 1.0) ipol = 1.0;
-						if (ipol < 0.0) ipol = 0.0;
+						ipol = (lowerCutoff - a) / (b-a);
+						if (ipol > 1.0) ipol = 1.0;
+						else if (ipol < 0.0) ipol = 0.0;
 
 						// Get vector for edge (in unit coordinates) and scale to data spacing (dx, dy, dz)
 						v1 = vertexPos[edgevertices[faces[n]][0]];
@@ -568,29 +571,26 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
 
 						//printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
 						//printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
-						normal = (gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol) * -1;
+						normal = -(gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol);
 						normal.normalise();
 
 						// Add data lower-left-corner coordinate to r, and data-scaled edge origin v1
 						r.add(x.constAt(i)+dx*v1[0], y.constAt(j)+dy*v1[1], z.constAt(k)+dz*v1[2]);
 
-						// Set triangle coordinates and add cube position
-						//if (colourScale != -1)
-						if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
-						{
-							// Get the single colour
-							colourDefinition.colour(0.0, colour);
-							//colourScale[colourScale].colour((a+b)/2.0, colour);
-							primitive -> defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
-						}
+						// Plot vertex
+						if (colourDefinition.style() == ColourDefinition::SingleColourStyle) primitive->defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
 						else
-							primitive -> defineVertex(x.constAt(i), y.constAt(j), z.constAt(k), normal.x, normal.y, normal.z);
+						{
+							// Get the colour from the colourscale
+							// TODO CHECK - Are we using the correct data value for the colour lookup here?
+							colourDefinition.colour((a+b)*0.5, colour);
+							primitive->defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
+						}
 					}
 				}
 			}
 		}
 	}
-	
 }
 
 /*
