@@ -77,8 +77,10 @@ void RenderableData2D::transformData()
 	
 	transformMin_ = Limits::min(transformedData_.constXAxis());
 	transformMax_ = Limits::max(transformedData_.constXAxis());
-	transformMinPositive_ = 0.1;
-	transformMaxPositive_ = 0.0;
+	axisTransformMinPositive_ = 0.1;
+	axisTransformMaxPositive_ = 0.0;
+	valuesTransformMinPositive_ = 0.1;
+	valuesTransformMaxPositive_ = 0.0;
 	
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
@@ -93,8 +95,8 @@ void RenderableData2D::transformData()
 	{
 		if (transformedData_.constXAxis(n) > 0.0)
 		{
-			if (transformedData_.constXAxis(n) < transformMinPositive_.x) transformMinPositive_.x = transformedData_.constXAxis(n);
-			if (transformedData_.constXAxis(n) > transformMaxPositive_.x) transformMaxPositive_.x = transformedData_.constXAxis(n);
+			if (transformedData_.constXAxis(n) < axisTransformMinPositive_.x) axisTransformMinPositive_.x = transformedData_.constXAxis(n);
+			if (transformedData_.constXAxis(n) > axisTransformMaxPositive_.x) axisTransformMaxPositive_.x = transformedData_.constXAxis(n);
 		}
 	}
 	
@@ -103,8 +105,8 @@ void RenderableData2D::transformData()
 	{	
 		if (transformedData_.constYAxis(n) > 0.0)
 		{
-			if (transformedData_.constYAxis(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constYAxis(n);
-			if (transformedData_.constYAxis(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constYAxis(n);
+			if (transformedData_.constYAxis(n) < axisTransformMinPositive_.y) axisTransformMinPositive_.y = transformedData_.constYAxis(n);
+			if (transformedData_.constYAxis(n) > axisTransformMaxPositive_.y) axisTransformMaxPositive_.y = transformedData_.constYAxis(n);
 		}
 	}
 	
@@ -113,8 +115,16 @@ void RenderableData2D::transformData()
 	{		
 		if (transformedData_.value(n) > 0.0)
 		{
-			if (transformedData_.value(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.value(n);
-			if (transformedData_.value(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.value(n);
+			if (transformedData_.value(n) < axisTransformMinPositive_.z) 
+			{
+				axisTransformMinPositive_.z = transformedData_.value(n);
+				valuesTransformMinPositive_ = transformedData_.value(n);
+			}
+			if (transformedData_.value(n) > axisTransformMaxPositive_.z) 
+			{
+				axisTransformMaxPositive_.z = transformedData_.value(n);
+				valuesTransformMaxPositive_ = transformedData_.value(n);
+			}
 		}
 	}
 	
@@ -233,8 +243,8 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	{
 		ColourDefinition colourDef = colourDefinition;
 		// Setting gradient start and end value based on minimum and maximum data points
-		colourDef.setHSVGradientStartValue(transformMin_.z);
-		colourDef.setHSVGradientEndValue(transformMax_.z);
+		colourDef.setHSVGradientStartValue(valuesTransformMinPositive_);
+		colourDef.setHSVGradientEndValue(valuesTransformMaxPositive_);
 		
 		// Loop over y
 		for (int n=0; n < nY ; ++n)

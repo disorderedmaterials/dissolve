@@ -90,6 +90,13 @@ bool Primitive::colouredVertexData() const
 	return colouredVertexData_;
 }
 
+// Update mesh (VBO / display list) of dynamic primitive
+void Primitive::updateMesh()
+{
+	// Check instances - if there is no current instance, create one
+	if (instances_.nItems() != 0) popInstance(QOpenGLContext::currentContext());
+	pushInstance(QOpenGLContext::currentContext());
+}
 /*
  * Instances
  */

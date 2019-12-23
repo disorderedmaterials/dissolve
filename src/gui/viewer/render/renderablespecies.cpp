@@ -113,12 +113,12 @@ void RenderableSpecies::transformData()
 	transformMin_ -= 1.0;
 	transformMax_ += 1.0;
 
-	transformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
-	transformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
-	transformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
-	transformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
-	transformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
-	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
+	axisTransformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
+	axisTransformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
+	axisTransformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
+	axisTransformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
+	axisTransformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
+	axisTransformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
 
 	// Update the transformed data 'version'
 	transformDataVersion_ = dataVersion();

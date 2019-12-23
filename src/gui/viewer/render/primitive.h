@@ -70,6 +70,8 @@ class Primitive : public ListItem<Primitive>
 	int nDefinedIndices() const;
 	// Return whether vertex data contains colour information
 	bool colouredVertexData() const;
+	// Update mesh (recreate instance / VBO / display list) of primitive
+	void updateMesh();
 
 
 	/*
