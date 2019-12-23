@@ -141,35 +141,23 @@ class Renderable : public ListItem<Renderable>
 
 
 	/*
-	 * Style
+	 * Basic Style
 	 */
 	protected:
-	// Whether data is visible
+	// Whether Renderable is visible
 	bool visible_;
-	// Display style for Renderable (set from derived class enum)
-	int displayStyle_;
-	// Colour definition for data
+	// Colour definition
 	ColourDefinition colour_;
 	// Line style
 	LineStyle lineStyle_;
-	// Surface shininess
-	double displaySurfaceShininess_;
 	// Style version (relative to data version)
 	int styleVersion_;
 
 	public:
-	// Set whether data is visible
+	// Set whether Renderable is visible
 	void setVisible(bool visible);
-	// Return whether data is visible
+	// Return whether Renderable is visible
 	bool isVisible() const;
-	// Return keyword for display style index
-	virtual const char* displayStyle(int id) = 0;
-	// Return display style index from string
-	virtual int displayStyle(const char* s) = 0;
-	// Set display style index
-	void setDisplayStyle(int id);
-	// Return display style index
-	int displayStyleIndex() const;
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
@@ -182,6 +170,17 @@ class Renderable : public ListItem<Renderable>
 	LineStyle& lineStyle();
 	// Return style version
 	int styleVersion() const;
+
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// Write style information
+	virtual bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const = 0;
+	// Read style information
+	virtual bool readStyleBlock(LineParser& parser) = 0;
+
 
 
 	/*

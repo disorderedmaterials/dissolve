@@ -115,9 +115,9 @@ class ConfigurationViewer : public BaseViewer
 
 	public:
 	// Set renderable draw style
-	void setRenderableDrawStyle(RenderableConfiguration::DisplayStyle ds);
+	void setRenderableDrawStyle(RenderableConfiguration::ConfigurationDisplayStyle ds);
 	// Return current renderable draw style
-	RenderableConfiguration::DisplayStyle renderableDrawStyle() const;
+	RenderableConfiguration::ConfigurationDisplayStyle renderableDrawStyle() const;
 };
 
 #endif

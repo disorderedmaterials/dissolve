@@ -93,12 +93,43 @@ class RenderableData3D : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, nDisplayStyles };
-	// Return keyword for display style index
-	const char* displayStyle(int id);
-	// Return display style index from string
-	int displayStyle(const char* s);
+	enum Data3DDisplayStyle
+	{
+		SolidStyle, nData3DDisplayStyles
+	};
+	// Return EnumOptions for Data3DDisplayStyle
+	static EnumOptions<Data3DDisplayStyle> data3DDisplayStyles();
 
+	private:
+	// Display style for the renderable
+	Data3DDisplayStyle displayStyle_;
+	// Surface shininess for SolidSurface style
+	double surfaceShininess_;
+
+	public:
+	// Set display style for renderable
+	void setDisplayStyle(Data3DDisplayStyle displayStyle);
+	// Return display style for the renderable
+	Data3DDisplayStyle displayStyle() const;
+
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// Data3DStyle Keywords Enum
+	enum Data3DStyleKeyword
+	{
+		DisplayKeyword,			/* 'Display' - General display style for renderable */
+		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		nData3DStyleKeywords
+	};
+	// Return enum option info for RenderableKeyword
+	static EnumOptions<RenderableData3D::Data3DStyleKeyword> data3DStyleKeywords();
+	// Write style information
+	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	// Read style information
+	bool readStyleBlock(LineParser& parser);
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include "gui/viewer/render/view.h"
 #include "classes/atom.h"
 #include "data/elementcolours.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
@@ -477,21 +478,89 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
  * Style
  */
 
-// Display Style Keywords
-const char* SpeciesDisplayStyleKeywords[] = { "Lines", "Spheres" };
-
-// Convert display style index to text string
-const char* RenderableSpecies::displayStyle(int id)
+// Return EnumOptions for SpeciesDisplayStyle
+EnumOptions<RenderableSpecies::SpeciesDisplayStyle> RenderableSpecies::speciesDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableSpecies::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList SpeciesStyleOptions = EnumOptionsList() <<
+		EnumOption(RenderableSpecies::LinesStyle,	"Lines") <<
+		EnumOption(RenderableSpecies::SpheresStyle,	"Spheres");
 
-	return SpeciesDisplayStyleKeywords[id];
+	static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options("SpeciesDisplayStyle", SpeciesStyleOptions);
+
+	return options;
 }
 
-// Convert text string to display style index
-int RenderableSpecies::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableSpecies::setDisplayStyle(SpeciesDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SpeciesDisplayStyleKeywords[n])) return (RenderableSpecies::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableSpecies::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableSpecies::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options("SpeciesStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableSpecies::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword), speciesDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableSpecies::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!speciesStyleKeywords().isValid(parser.argc(0))) return speciesStyleKeywords().errorAndPrintValid(parser.argc(0));
+		SpeciesStyleKeyword kwd = speciesStyleKeywords().enumeration(parser.argc(0));
+		if (!speciesStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableSpecies::DisplayKeyword):
+				if (!speciesDisplayStyles().isValid(parser.argc(1))) return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

@@ -22,12 +22,15 @@
 #include "gui/viewer/render/renderabledata1d.h"
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableData1D::RenderableData1D(const Data1D* source, const char* objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
-	// Set defaults
+	// Set style defaults
 	displayStyle_ = LinesStyle;
+
+	// Create primitive
 	dataPrimitive_ = createPrimitive();
 }
 
@@ -246,21 +249,88 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
  * Style
  */
 
-// Display Style Keywords
-const char* Data1DDisplayStyleKeywords[] = { "Lines" };
-
-// Return keyword for display style index
-const char* RenderableData1D::displayStyle(int id)
+// Return EnumOptions for Data1DDisplayStyle
+EnumOptions<RenderableData1D::Data1DDisplayStyle> RenderableData1D::data1DDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableData1D::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList Style1DOptions = EnumOptionsList() <<
+		EnumOption(RenderableData1D::LinesStyle,	"Lines");
 
-	return Data1DDisplayStyleKeywords[id];
+	static EnumOptions<RenderableData1D::Data1DDisplayStyle> options("Data1DDisplayStyle", Style1DOptions);
+
+	return options;
 }
 
-// Return display style index from string
-int RenderableData1D::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableData1D::setDisplayStyle(Data1DDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, Data1DDisplayStyleKeywords[n])) return (RenderableData1D::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableData1D::Data1DDisplayStyle RenderableData1D::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableData1D::Data1DStyleKeyword> RenderableData1D::data1DStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableData1D::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableData1D::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableData1D::Data1DStyleKeyword> options("Data1DStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableData1D::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, data1DStyleKeywords().keyword(RenderableData1D::DisplayKeyword), data1DDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableData1D::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!data1DStyleKeywords().isValid(parser.argc(0))) return data1DStyleKeywords().errorAndPrintValid(parser.argc(0));
+		Data1DStyleKeyword kwd = data1DStyleKeywords().enumeration(parser.argc(0));
+		if (!data1DStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableData1D::DisplayKeyword):
+				if (!data1DDisplayStyles().isValid(parser.argc(1))) return data1DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data1DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData1D: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

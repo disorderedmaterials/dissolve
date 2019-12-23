@@ -26,6 +26,7 @@
 #include "classes/box.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableConfiguration::RenderableConfiguration(const Configuration* source, const char* objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
@@ -297,21 +298,89 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
  * Style
  */
 
-// Display Style Keywords
-const char* ConfigurationDisplayStyleKeywords[] = { "Lines", "Spheres" };
-
-// Convert display style index to text string
-const char* RenderableConfiguration::displayStyle(int id)
+// Return EnumOptions for ConfigurationDisplayStyle
+EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableConfiguration::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList() <<
+		EnumOption(RenderableConfiguration::LinesStyle,	"Lines") <<
+		EnumOption(RenderableConfiguration::SpheresStyle,	"Spheres");
 
-	return ConfigurationDisplayStyleKeywords[id];
+	static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle", ConfigurationStyleOptions);
+
+	return options;
 }
 
-// Convert text string to display style index
-int RenderableConfiguration::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableConfiguration::setDisplayStyle(ConfigurationDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, ConfigurationDisplayStyleKeywords[n])) return (RenderableConfiguration::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableConfiguration::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableConfiguration::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableConfiguration::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword), configurationDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableConfiguration::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!configurationStyleKeywords().isValid(parser.argc(0))) return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
+		ConfigurationStyleKeyword kwd = configurationStyleKeywords().enumeration(parser.argc(0));
+		if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableConfiguration::DisplayKeyword):
+				if (!configurationDisplayStyles().isValid(parser.argc(1))) return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

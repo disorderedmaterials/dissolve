@@ -82,15 +82,15 @@ Configuration* ConfigurationViewer::configuration() const
  */
 
 // Set renderable draw style
-void ConfigurationViewer::setRenderableDrawStyle(RenderableConfiguration::DisplayStyle ds)
+void ConfigurationViewer::setRenderableDrawStyle(RenderableConfiguration::ConfigurationDisplayStyle ds)
 {
 	if (configurationRenderable_) configurationRenderable_->setDisplayStyle(ds);
 }
 
 // Return current renderable draw style
-RenderableConfiguration::DisplayStyle ConfigurationViewer::renderableDrawStyle() const
+RenderableConfiguration::ConfigurationDisplayStyle ConfigurationViewer::renderableDrawStyle() const
 {
-	if (configurationRenderable_) return (RenderableConfiguration::DisplayStyle) configurationRenderable_->displayStyleIndex();
+	if (configurationRenderable_) return configurationRenderable_->displayStyle();
 
 	return RenderableConfiguration::LinesStyle;
 }

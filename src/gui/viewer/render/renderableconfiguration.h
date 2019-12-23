@@ -90,9 +90,13 @@ class RenderableConfiguration : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, SpheresStyle, nDisplayStyles };
+	enum ConfigurationDisplayStyle { LinesStyle, SpheresStyle, nConfigurationDisplayStyles };
+	// Return EnumOptions for ConfigurationDisplayStyle
+	static EnumOptions<ConfigurationDisplayStyle> configurationDisplayStyles();
 
 	private:
+	// Display style for the renderable
+	ConfigurationDisplayStyle displayStyle_;
 	// Radius of free (unbound) atoms when drawing with lines
 	double linesAtomRadius_;
 	// Radius of atoms when drawing with spheres
@@ -101,11 +105,29 @@ class RenderableConfiguration : public Renderable
 	double spheresBondRadius_;
 
 	public:
-	// Return keyword for display style index
-	const char* displayStyle(int id);
-	// Return display style index from string
-	int displayStyle(const char* s);
+	// Set display style for renderable
+	void setDisplayStyle(ConfigurationDisplayStyle displayStyle);
+	// Return display style for the renderable
+	ConfigurationDisplayStyle displayStyle() const;
 
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// ConfigurationStyle Keywords Enum
+	enum ConfigurationStyleKeyword
+	{
+		DisplayKeyword,			/* 'Display' - General display style for renderable */
+		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		nConfigurationStyleKeywords
+	};
+	// Return enum option info for RenderableKeyword
+	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> configurationStyleKeywords();
+	// Write style information
+	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	// Read style information
+	bool readStyleBlock(LineParser& parser);
 };
 
 #endif

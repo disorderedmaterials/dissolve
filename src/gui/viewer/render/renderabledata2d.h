@@ -90,12 +90,38 @@ class RenderableData2D : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, nDisplayStyles };
-	// Return keyword for display style index
-	const char* displayStyle(int id);
-	// Return display style index from string
-	int displayStyle(const char* s);
+	enum Data2DDisplayStyle { LinesStyle, nData2DDisplayStyles };
+	// Return EnumOptions for Data2DDisplayStyle
+	static EnumOptions<Data2DDisplayStyle> data2DDisplayStyles();
 
+	private:
+	// Display style for the renderable
+	Data2DDisplayStyle displayStyle_;
+
+	public:
+	// Set display style for renderable
+	void setDisplayStyle(Data2DDisplayStyle displayStyle);
+	// Return display style for the renderable
+	Data2DDisplayStyle displayStyle() const;
+
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// Data2DStyle Keywords Enum
+	enum Data2DStyleKeyword
+	{
+		DisplayKeyword,			/* 'Display' - General display style for renderable */
+		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		nData2DStyleKeywords
+	};
+	// Return enum option info for RenderableKeyword
+	static EnumOptions<RenderableData2D::Data2DStyleKeyword> data2DStyleKeywords();
+	// Write style information
+	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	// Read style information
+	bool readStyleBlock(LineParser& parser);
 };
 
 #endif

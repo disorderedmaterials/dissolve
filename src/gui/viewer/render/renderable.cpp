@@ -75,8 +75,6 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 
 	// Display
 	visible_ = true;
-	displayStyle_ = -1;
-	displaySurfaceShininess_ = 128.0;
 	styleVersion_ = 0;
 }
 
@@ -218,31 +216,17 @@ RenderableGroup* Renderable::group() const
  * Style
  */
 
-// Set whether data is visible
+// Set whether Renderable is visible
 void Renderable::setVisible(bool visible)
 {
 	visible_ = visible;
 }
 
-// Return whether data is visible
+// Return whether Renderable is visible
 bool Renderable::isVisible() const
 {
 	// Group visibility overrides our own (*if* we are currently visible)...
 	return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
-}
-
-// Set display style index
-void Renderable::setDisplayStyle(int id)
-{
-	displayStyle_ = id;
-
-	++styleVersion_;
-}
-
-// Return display style index
-int Renderable::displayStyleIndex() const
-{
-	return displayStyle_;
 }
 
 // Set basic colour

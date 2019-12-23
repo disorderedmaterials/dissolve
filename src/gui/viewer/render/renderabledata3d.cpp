@@ -26,16 +26,17 @@
 #include "templates/array3d.h"
 #include "templates/array2d.h"
 #include "math/limits.h"
-#include "axes.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableData3D::RenderableData3D(const Data3D* source, const char* objectTag) : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
 {
-	// Set defaults
-	displayStyle_ = LinesStyle;	
-	//colour().setStyle(ColourDefinition::HSVGradientStyle);
+	// Set style defaults
+	displayStyle_ = SolidStyle;	
+	surfaceShininess_ = 128.0;
+
+	// Create primitive
 	dataPrimitive_ = createPrimitive();
-	
 }
 
 // Destructor
@@ -597,21 +598,88 @@ void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAb
  * Style
  */
 
-// Display Style Keywords
-const char* Data3DDisplayStyleKeywords[] = { "Lines" };
-
-// Return keyword for display style index
-const char* RenderableData3D::displayStyle(int id)
+// Return EnumOptions for Data3DDisplayStyle
+EnumOptions<RenderableData3D::Data3DDisplayStyle> RenderableData3D::data3DDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableData3D::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList Style3DOptions = EnumOptionsList() <<
+		EnumOption(RenderableData3D::SolidStyle,	"Solid");
 
-	return Data3DDisplayStyleKeywords[id];
+	static EnumOptions<RenderableData3D::Data3DDisplayStyle> options("Data3DDisplayStyle", Style3DOptions);
+
+	return options;
 }
 
-// Return display style index from string
-int RenderableData3D::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableData3D::setDisplayStyle(Data3DDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, Data3DDisplayStyleKeywords[n])) return (RenderableData3D::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableData3D::Data3DDisplayStyle RenderableData3D::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableData3D::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableData3D::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableData3D::Data3DStyleKeyword> options("Data3DStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableData3D::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, data3DStyleKeywords().keyword(RenderableData3D::DisplayKeyword), data3DDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableData3D::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!data3DStyleKeywords().isValid(parser.argc(0))) return data3DStyleKeywords().errorAndPrintValid(parser.argc(0));
+		Data3DStyleKeyword kwd = data3DStyleKeywords().enumeration(parser.argc(0));
+		if (!data3DStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableData3D::DisplayKeyword):
+				if (!data3DDisplayStyles().isValid(parser.argc(1))) return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData3D: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

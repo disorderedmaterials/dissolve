@@ -23,8 +23,9 @@
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 #include "math/data2d.h"
-#include "templates/array2d.h"
 #include "math/limits.h"
+#include "templates/array2d.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
@@ -32,7 +33,6 @@ RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) 
 	// Set defaults
 	displayStyle_ = LinesStyle;	
 	colour().setStyle(ColourDefinition::HSVGradientStyle);
-	
 }
 
 // Destructor
@@ -273,21 +273,88 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
  * Style
  */
 
-// Display Style Keywords
-const char* Data2DDisplayStyleKeywords[] = { "Lines" };
-
-// Return keyword for display style index
-const char* RenderableData2D::displayStyle(int id)
+// Return EnumOptions for Data2DDisplayStyle
+EnumOptions<RenderableData2D::Data2DDisplayStyle> RenderableData2D::data2DDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableData2D::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList Style2DOptions = EnumOptionsList() <<
+		EnumOption(RenderableData2D::LinesStyle,	"Lines");
 
-	return Data2DDisplayStyleKeywords[id];
+	static EnumOptions<RenderableData2D::Data2DDisplayStyle> options("Data2DDisplayStyle", Style2DOptions);
+
+	return options;
 }
 
-// Return display style index from string
-int RenderableData2D::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableData2D::setDisplayStyle(Data2DDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, Data2DDisplayStyleKeywords[n])) return (RenderableData2D::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableData2D::Data2DDisplayStyle RenderableData2D::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableData2D::Data2DStyleKeyword> RenderableData2D::data2DStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableData2D::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableData2D::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableData2D::Data2DStyleKeyword> options("Data2DStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableData2D::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, data2DStyleKeywords().keyword(RenderableData2D::DisplayKeyword), data2DDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableData2D::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!data2DStyleKeywords().isValid(parser.argc(0))) return data2DStyleKeywords().errorAndPrintValid(parser.argc(0));
+		Data2DStyleKeyword kwd = data2DStyleKeywords().enumeration(parser.argc(0));
+		if (!data2DStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableData2D::DisplayKeyword):
+				if (!data2DDisplayStyles().isValid(parser.argc(1))) return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

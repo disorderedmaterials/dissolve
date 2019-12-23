@@ -395,9 +395,10 @@ EnumOptions<BaseViewer::RenderableKeyword> BaseViewer::renderableKeywords()
 		EnumOption(BaseViewer::ColourSingleKeyword,		"ColourSingle",		4) <<
 		EnumOption(BaseViewer::ColourStyleKeyword,		"ColourStyle",		1) <<
 		EnumOption(BaseViewer::EndRenderableKeyword,		"EndRenderable") <<
+		EnumOption(BaseViewer::EndStyleKeyword,			"EndStyle") <<
 		EnumOption(BaseViewer::GroupKeyword,			"Group",		1) <<
 		EnumOption(BaseViewer::LineStyleKeyword,		"LineStyle",		2) <<
-		EnumOption(BaseViewer::StyleKeyword,			"Style",		1) <<
+		EnumOption(BaseViewer::StyleKeyword,			"Style") <<
 		EnumOption(BaseViewer::TransformXKeyword, 		"TransformX",		2) <<
 		EnumOption(BaseViewer::TransformYKeyword, 		"TransformY",		2) <<
 		EnumOption(BaseViewer::TransformZKeyword, 		"TransformZ",		2) <<
@@ -503,9 +504,7 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				break;
 			// Display style
 			case (BaseViewer::StyleKeyword):
-				ds = renderable->displayStyle(parser.argc(1));
-				if (ds == -1) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
-				else renderable->setDisplayStyle(ds);
+				if (!renderable->readStyleBlock(parser)) return false;
 				break;
 			// Transforms
 			case (BaseViewer::TransformXKeyword):
@@ -586,7 +585,9 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	// Display
 	if (!parser.writeLineF("%s  %s  %f '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name)) return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyleIndex()))) return false;
+	if (!parser.writeLineF("%s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword))) return false;
+	if (!renderable->writeStyleBlock(parser, indentLevel+2)) return false;
+	if (!parser.writeLineF("%s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::EndStyleKeyword))) return false;
 	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()))) return false;
 
 	// Write Group if set
