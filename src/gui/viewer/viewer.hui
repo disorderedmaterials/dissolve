@@ -31,6 +31,7 @@
 #include "base/enumoptions.h"
 #include "base/timer.h"
 #include "templates/list.h"
+#include "templates/pointerarray.h"
 #include "templates/reflist.h"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -194,6 +195,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void resizeGL(int width, int height);
 	// Main rendering function
 	void renderGL(int xOffset = 0, int yOffset = 0);
+	// Create viewer update stack
+	void createUpdateStack(PointerArray<BaseViewer>& updateStack);
 	// Perform post-initialisation operations
 	virtual void postInitialiseGL();
 	// Perform post-resize operations

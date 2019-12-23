@@ -55,7 +55,6 @@ void BaseViewer::removeDependentViewer(BaseViewer* viewer)
 // Link this viewer to the one specified
 void BaseViewer::linkView(BaseViewer* viewToLinkTo)
 {
-	printf("LINKINV VIEW.\n");
 	// Check if a link is already set...
 	if (linkedViewer_)
 	{

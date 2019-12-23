@@ -219,6 +219,27 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	render2DOverlay();
 }
 
+// Create viewer update stack
+void BaseViewer::createUpdateStack(PointerArray<BaseViewer>& updateStack)
+{
+	// If we are already in the list, return immediately...
+	if (updateStack.contains(this)) return;
+
+	// Add ourselves to the stack
+	updateStack.append(this);
+
+	// If we are a linked view, append viewer through the linked view
+	if (linkedViewer_)
+	{
+		linkedViewer_->createUpdateStack(updateStack);
+		return;
+	}
+
+	// Add any viewers that are dependent on us (i.e. link to us)
+	RefListIterator<BaseViewer> linkedViewIterator(dependentViewers_);
+	while (BaseViewer* viewer = linkedViewIterator.iterate()) viewer->createUpdateStack(updateStack);
+}
+
 // Perform post-initialisation operations
 void BaseViewer::postInitialiseGL()
 {
@@ -346,11 +367,16 @@ void BaseViewer::postRedisplay()
 {
 	if ((!valid_) || drawing_) return;
 
-	update();
+	// This is the entry-point for our assmebling of a unique list of viewer to update from this call, including any linked viewers
+	PointerArray<BaseViewer> updateStack;
+	createUpdateStack(updateStack);
 
-	// Update any linked views...
-	RefListIterator<BaseViewer> linkedViewIterator(dependentViewers_);
-	while (BaseViewer* viewer = linkedViewIterator.iterate()) viewer->postRedisplay();
+	for (int n=0; n<updateStack.nItems(); ++n)
+	{
+		BaseViewer* viewer = updateStack[n];
+		if ((!viewer->valid_) || (viewer->drawing_)) continue;
+		viewer->update();
+	}
 }
 
 // Set scaling to use for objects measured in pixel widths / point sizes
