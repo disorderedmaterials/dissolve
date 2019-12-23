@@ -32,7 +32,9 @@
 RenderableData3D::RenderableData3D(const Data3D* source, const char* objectTag) : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
 {
 	// Set style defaults
-	displayStyle_ = SolidStyle;	
+	displayStyle_ = SolidStyle;
+	lowerCutoff_ = 0.0;
+	upperCutoff_ = 1.0;
 	surfaceShininess_ = 128.0;
 
 	// Create primitive
@@ -172,7 +174,7 @@ bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
 	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
-	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), 0.048, 100.0, colourDefinition, view.constAxes(), dataPrimitive_);
+	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
 // Send primitives for rendering
@@ -623,6 +625,34 @@ RenderableData3D::Data3DDisplayStyle RenderableData3D::displayStyle() const
 	return displayStyle_;
 }
 
+// Set lower cutoff for surface generation
+void RenderableData3D::setLowerCutoff(double cutoff)
+{
+	lowerCutoff_ = cutoff;
+
+	++styleVersion_;
+}
+
+// Return lower cutoff for surface generation
+double RenderableData3D::lowerCutoff() const
+{
+	return lowerCutoff_;
+}
+
+// Set upper cutoff for surface generation
+void RenderableData3D::setUpperCutoff(double cutoff)
+{
+	upperCutoff_ = cutoff;
+
+	++styleVersion_;
+}
+
+// Return upper cutoff for surface generation
+double RenderableData3D::upperCutoff() const
+{
+	return upperCutoff_;
+}
+
 /*
  * Style I/O
  */
@@ -631,8 +661,10 @@ RenderableData3D::Data3DDisplayStyle RenderableData3D::displayStyle() const
 EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableData3D::DisplayKeyword,	"Display") <<
-		EnumOption(RenderableData3D::EndStyleKeyword,	"EndStyle");
+		EnumOption(RenderableData3D::DisplayKeyword,		"Display") <<
+		EnumOption(RenderableData3D::EndStyleKeyword,		"EndStyle") <<
+		EnumOption(RenderableData3D::LowerCutoffKeyword,	"LowerCutoff") <<
+		EnumOption(RenderableData3D::UpperCutoffKeyword,	"UpperCutoff");
 
 	static EnumOptions<RenderableData3D::Data3DStyleKeyword> options("Data3DStyleKeyword", StyleKeywords);
 
@@ -648,6 +680,8 @@ bool RenderableData3D::writeStyleBlock(LineParser& parser, int indentLevel) cons
 	indent[indentLevel*2] = '\0';
 
 	if (!parser.writeLineF("%s%s  %s\n", indent, data3DStyleKeywords().keyword(RenderableData3D::DisplayKeyword), data3DDisplayStyles().keyword(displayStyle_))) return false;
+	if (!parser.writeLineF("%s%s  %e\n", indent, data3DStyleKeywords().keyword(RenderableData3D::LowerCutoffKeyword), lowerCutoff_)) return false;
+	if (!parser.writeLineF("%s%s  %e\n", indent, data3DStyleKeywords().keyword(RenderableData3D::UpperCutoffKeyword), upperCutoff_)) return false;
 
 	return true;
 }
@@ -672,6 +706,14 @@ bool RenderableData3D::readStyleBlock(LineParser& parser)
 			case (RenderableData3D::DisplayKeyword):
 				if (!data3DDisplayStyles().isValid(parser.argc(1))) return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Lower cutoff
+			case (RenderableData3D::LowerCutoffKeyword):
+				lowerCutoff_ = parser.argd(1);
+				break;
+			// Upper cutoff
+			case (RenderableData3D::UpperCutoffKeyword):
+				upperCutoff_ = parser.argd(1);
 				break;
 			// Unrecognised Keyword
 			default:

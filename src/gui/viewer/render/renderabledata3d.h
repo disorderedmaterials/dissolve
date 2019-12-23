@@ -103,6 +103,10 @@ class RenderableData3D : public Renderable
 	private:
 	// Display style for the renderable
 	Data3DDisplayStyle displayStyle_;
+	// Lower cutoff for surface generation
+	double lowerCutoff_;
+	// Upper cutoff for surface generation
+	double upperCutoff_;
 	// Surface shininess for SolidSurface style
 	double surfaceShininess_;
 
@@ -111,6 +115,14 @@ class RenderableData3D : public Renderable
 	void setDisplayStyle(Data3DDisplayStyle displayStyle);
 	// Return display style for the renderable
 	Data3DDisplayStyle displayStyle() const;
+	// Set lower cutoff for surface generation
+	void setLowerCutoff(double cutoff);
+	// Return lower cutoff for surface generation
+	double lowerCutoff() const;
+	// Set upper cutoff for surface generation
+	void setUpperCutoff(double cutoff);
+	// Return upper cutoff for surface generation
+	double upperCutoff() const;
 
 
 	/*
@@ -122,6 +134,8 @@ class RenderableData3D : public Renderable
 	{
 		DisplayKeyword,			/* 'Display' - General display style for renderable */
 		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		LowerCutoffKeyword,		/* 'LowerCutoff' - Lower cutoff value for surface generation */
+		UpperCutoffKeyword,		/* 'UpperCutoff' - Upper cutoff value for surface generation */
 		nData3DStyleKeywords
 	};
 	// Return enum option info for RenderableKeyword
