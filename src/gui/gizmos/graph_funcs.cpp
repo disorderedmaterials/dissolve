@@ -99,7 +99,6 @@ void GraphGizmo::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool GraphGizmo::writeState(LineParser& parser) const
 {
-
 	// Write DataViewer state
 	if (!dataViewer_->writeSession(parser)) return false;
 
@@ -111,6 +110,11 @@ bool GraphGizmo::readState(LineParser& parser)
 {
 	// Read the DataViewer session info
 	if (!dataViewer_->readSession(parser)) return false;
+
+	// Make sure that our controls reflect the state of the underlying DataViewer
+	ui_.DataView->updateToolbar();
+	ui_.DataView->updateStatusBar();
+	ui_.DataView->updateDataTree();
 
 	return true;
 }
