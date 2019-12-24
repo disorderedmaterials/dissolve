@@ -412,9 +412,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		GroupKeyword,
 		LineStyleKeyword,
 		StyleKeyword,
-		TransformXKeyword,
-		TransformYKeyword,
-		TransformZKeyword,
+		TransformValuesKeyword,
 		VisibleKeyword,
 		nRenderableKeywords
 	};

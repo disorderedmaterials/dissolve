@@ -63,26 +63,32 @@ int RenderableData1D::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableData1D::transformData()
+void RenderableData1D::transformValues()
 {
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform1D(transformedData_, transforms_[0], transforms_[1]);
+	Transformer::transform(transformedData_, valuesTransform_);
 
-	transformMin_ = 0.0;
-	transformMax_ = 0.0;
-	axisTransformMinPositive_ = 0.1;
-	axisTransformMaxPositive_ = 0.0;
-	
+	limitsMin_ = 0.0;
+	limitsMax_ = 1.0;
+	positiveLimitsMin_.set(-1.0, -1.0, 0.1);
+	positiveLimitsMax_.set(-1.0, -1.0, 1.0);
+	valuesMin_ = 0.0;
+	valuesMax_ = 1.0;
+	positiveValuesMin_ = -1.0;
+	positiveValuesMax_ = -1.0;
+
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
 	{
-		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.minValue(), 0.0);
-		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.maxValue(), 0.0);
+		valuesMin_ = transformedData_.minValue();
+		valuesMax_ = transformedData_.maxValue();
+		limitsMin_.set(transformedData_.constXAxis().firstValue(), valuesMin_, 0.0);
+		limitsMax_.set(transformedData_.constXAxis().lastValue(), valuesMax_, 0.0);
 	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
@@ -91,27 +97,40 @@ void RenderableData1D::transformData()
 		// X
 		if (transformedData_.constXAxis(n) > 0.0)
 		{
-			if (transformedData_.constXAxis(n) < axisTransformMinPositive_.x) axisTransformMinPositive_.x = transformedData_.constXAxis(n);
-			if (transformedData_.constXAxis(n) > axisTransformMaxPositive_.x) axisTransformMaxPositive_.x = transformedData_.constXAxis(n);
+			if (positiveLimitsMin_.x < 0.0) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+			else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+
+			if (transformedData_.constXAxis(n) > positiveLimitsMax_.x) positiveLimitsMax_.x = transformedData_.constXAxis(n);
 		}
-		// Y
+
+		// Value
 		if (transformedData_.constValue(n) > 0.0)
 		{
-			if (transformedData_.constValue(n) < axisTransformMinPositive_.y) axisTransformMinPositive_.y = transformedData_.constValue(n);
-			if (transformedData_.constValue(n) > axisTransformMaxPositive_.y) axisTransformMaxPositive_.y = transformedData_.constValue(n);
+			if (positiveValuesMin_ < 0.0) positiveValuesMin_ = transformedData_.constValue(n);
+			else if (transformedData_.constValue(n) < positiveValuesMin_) positiveValuesMin_ = transformedData_.constValue(n);
+
+			if (transformedData_.constValue(n) > positiveValuesMax_) positiveValuesMax_ = transformedData_.constValue(n);
 		}
 	}
-	
-	axisTransformMinPositive_.z = 1.0;
-	axisTransformMaxPositive_.z = 1.0;
 
-	// Check maximum positive values (since all datapoints might have been negative
-	if (axisTransformMaxPositive_.x < 0.0) axisTransformMaxPositive_.x = 1.0;
-	if (axisTransformMaxPositive_.y < 0.0) axisTransformMaxPositive_.y = 1.0;
-	if (axisTransformMaxPositive_.z < 0.0) axisTransformMaxPositive_.z = 1.0;
+	// Check positive value limits (since all datapoints might have been negative)
+	if (positiveLimitsMin_.x < 0.0)
+	{
+		positiveLimitsMin_.x = 0.1;
+		positiveLimitsMax_.x = 1.0;
+	}
+	if (positiveValuesMin_ < 0.0)
+	{
+		positiveValuesMin_ = 0.1;
+		positiveValuesMax_ = 1.0;
+	}
+
+	// Copy positve value limits over to y axis
+	positiveLimitsMin_.y = positiveValuesMin_;
+	positiveLimitsMax_.y = positiveValuesMax_;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = dataVersion();
+	valuesTransformDataVersion_ = dataVersion();
 }
 
 // Return reference to transformed data
@@ -120,11 +139,11 @@ const Data1D& RenderableData1D::transformedData()
 	// Check that we have a valid source
 	if (!validateDataSource()) return transformedData_;
 
-	// If no transforms are enabled, just return the original data
-	if ((!transforms_[0].enabled()) && (!transforms_[1].enabled())) return *source_;
+	// If the value transform is not enabled, just return the original data
+	if (!valuesTransform_.enabled()) return *source_;
 
 	// Make sure the transformed data is up-to-date
-	transformData();
+	transformValues();
 
 	return transformedData_;
 }
@@ -133,7 +152,7 @@ const Data1D& RenderableData1D::transformedData()
 bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
 {
 	// Ensure transformed data is up-to-date
-	transformData();
+	transformValues();
 
 	// Grab reference to transformed data
 	const Data1D& data = transformedData();

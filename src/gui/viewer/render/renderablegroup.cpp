@@ -85,8 +85,8 @@ void RenderableGroup::removeRenderable(Renderable* renderable)
 	}
 
 	// Remove shift from the renderable first, if one is being applied
-	renderable->setTransformEnabled(1, false);
-	renderable->setTransformEquation(1, "y");
+	renderable->setValuesTransformEnabled(false);
+	renderable->setValuesTransformEquation("value");
 
 	renderables_.remove(renderable);
 	renderable->setGroup(NULL);
@@ -261,11 +261,11 @@ EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftS
 // Set vertical shift in specified Renderable
 void RenderableGroup::setRenderableVerticalShift(Renderable* renderable, int rendIndex)
 {
-	renderable->setTransformEnabled(1, verticalShiftStyle_ != PreventVerticalShifting);
+	renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
 
-	if (verticalShiftStyle_ == GroupVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * verticalShiftMultiplier_));
-	else if (verticalShiftStyle_ == IndividualVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * rendIndex));
-	else renderable->setTransformEquation(1, "y");
+	if (verticalShiftStyle_ == GroupVerticalShifting) renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * verticalShiftMultiplier_));
+	else if (verticalShiftStyle_ == IndividualVerticalShifting) renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * rendIndex));
+	else renderable->setValuesTransformEquation("value");
 }
 
 // Set vertical shift in all Renderables in the group via their transform equations

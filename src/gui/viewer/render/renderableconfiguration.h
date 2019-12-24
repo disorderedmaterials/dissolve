@@ -56,7 +56,7 @@ class RenderableConfiguration : public Renderable
 	 */
 	protected:
 	// Transform data according to current settings
-	void transformData();
+	void transformValues();
 
 	public:
 	// Calculate min/max y value over specified x range (if possible in the underlying data)

@@ -65,6 +65,8 @@ class Transformer
 	ExpressionVariable* y_;
 	// Z variable in equation
 	ExpressionVariable* z_;
+	// Value variable in equation
+	ExpressionVariable* value_;
 
 	public:
 	// Set whether transform is enabled
@@ -77,8 +79,6 @@ class Transformer
 	const char* text() const;
 	// Return whether current equation is valid
 	bool valid() const;
-	// Transform single value
-	double transform(double x, double y, double z);
 	// Transform whole array, including application of pre/post transform shift
 	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, Array<double> sourceZ, int target);
 	Array2D<double> transformArray(Array2D<double> sourceValues, Array<double> sourceX, Array<double> sourceY);
@@ -88,10 +88,12 @@ class Transformer
 	 * Static Functions
 	 */
 	public:
-	// Transform Data1D with supplied transformers
-	static void transform1D(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
-	static void transform2D(Data2D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
-	static void transform3D(Data3D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
+	// Transform Data1D values with supplied transformer
+	static void transform(Data1D& data, Transformer& valueTransformer);
+	// Transform Data2D values with supplied transformer
+	static void transform(Data2D& data, Transformer& valueTransformer);
+	// Transform Data3D values with supplied transformer
+	static void transform(Data3D& data, Transformer& valueTransformer);
 };
 
 #endif

@@ -911,8 +911,8 @@ void View::autoFollowData()
 	else if (autoFollowType_ == View::XAutoFollow)
 	{
 		// Establish min / max limits on x axis
-		double xMin = transformedDataMinima().x;
-		double xMax = transformedDataMaxima().x;
+		double xMin = dataMinima().x;
+		double xMax = dataMaxima().x;
 		if ((xMax - xMin) > autoFollowXLength_) xMin = xMax - autoFollowXLength_;
 
 		// Get y range over the horizontal range we've established
@@ -966,8 +966,8 @@ void View::autoFollowData()
  * Axes
  */
 
-// Return absolute minimum transformed values over all displayed data
-Vec3<double> View::transformedDataMinima()
+// Return data minima over all displayed renderables
+Vec3<double> View::dataMinima()
 {
 	// If there are no Renderables, just return the current limits
 	if (renderables_.nItems() == 0) return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
@@ -979,10 +979,10 @@ Vec3<double> View::transformedDataMinima()
 		// Skip this Renderable if it is not currently visible
 		if (!rend->isVisible()) continue;
 
-		if (nCounted == 0) minima = rend->transformMin();
+		if (nCounted == 0) minima = rend->limitsMin();
 		else
 		{
-			v = rend->transformMin();
+			v = rend->limitsMin();
 			if (v.x < minima.x) minima.x = v.x;
 			if (v.y < minima.y) minima.y = v.y;
 			if (v.z < minima.z) minima.z = v.z;
@@ -993,8 +993,8 @@ Vec3<double> View::transformedDataMinima()
 	return minima;
 }
 
-// Return absolute maximum transformed values over all associated collections
-Vec3<double> View::transformedDataMaxima()
+// Return data maxima over all displayed renderables
+Vec3<double> View::dataMaxima()
 {
 	// If there are no Renderables, just return the current limits
 	if (renderables_.nItems() == 0) return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
@@ -1006,10 +1006,10 @@ Vec3<double> View::transformedDataMaxima()
 		// Skip this Renderable if it is not currently visible
 		if (!rend->isVisible()) continue;
 
-		if (nCounted == 0) maxima = rend->transformMax();
+		if (nCounted == 0) maxima = rend->limitsMax();
 		else
 		{
-			v = rend->transformMax();
+			v = rend->limitsMax();
 			if (v.x > maxima.x) maxima.x = v.x;
 			if (v.y > maxima.y) maxima.y = v.y;
 			if (v.z > maxima.z) maxima.z = v.z;
@@ -1020,8 +1020,8 @@ Vec3<double> View::transformedDataMaxima()
 	return maxima;
 }
 
-// Return absolute minimum positive transformed values over all associated collections
-Vec3<double> View::transformedDataPositiveMinima()
+// Return positive data minima over all displayed renderables
+Vec3<double> View::positiveDataMinima()
 {
 	int nCounted = 0;
 	Vec3<double> v, minima;
@@ -1030,10 +1030,10 @@ Vec3<double> View::transformedDataPositiveMinima()
 		// Skip this Renderable if it is not currently visible
 		if (!rend->isVisible()) continue;
 
-		if (nCounted == 0) minima = rend->transformMinPositive();
+		if (nCounted == 0) minima = rend->positiveLimitsMin();
 		else
 		{
-			v = rend->transformMinPositive();
+			v = rend->positiveLimitsMin();
 			if (v.x < minima.x) minima.x = v.x;
 			if (v.y < minima.y) minima.y = v.y;
 			if (v.z < minima.z) minima.z = v.z;
@@ -1046,8 +1046,8 @@ Vec3<double> View::transformedDataPositiveMinima()
 	else return minima;
 }
 
-// Return absolute maximum positive transformed values over all associated collections
-Vec3<double> View::transformedDataPositiveMaxima()
+// Return positive data minima over all displayed renderables
+Vec3<double> View::positiveDataMaxima()
 {
 	int nCounted = 0;
 	Vec3<double> v, maxima;
@@ -1056,10 +1056,10 @@ Vec3<double> View::transformedDataPositiveMaxima()
 		// Skip this Renderable if it is not currently visible
 		if (!rend->isVisible()) continue;
 
-		if (nCounted == 0) maxima = rend->transformMaxPositive();
+		if (nCounted == 0) maxima = rend->positiveLimitsMax();
 		else
 		{
-			v = rend->transformMaxPositive();
+			v = rend->positiveLimitsMax();
 			if (v.x < maxima.x) maxima.x = v.x;
 			if (v.y < maxima.y) maxima.y = v.y;
 			if (v.z < maxima.z) maxima.z = v.z;
@@ -1076,10 +1076,10 @@ Vec3<double> View::transformedDataPositiveMaxima()
 void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 {
 	// Get transformed data extents
-	Vec3<double> dataMin = transformedDataMinima();
-	Vec3<double> dataMax = transformedDataMaxima();
-	Vec3<double> dataMinPositive = transformedDataPositiveMinima();
-	Vec3<double> dataMaxPositive = transformedDataPositiveMaxima();
+	Vec3<double> dataMin = dataMinima();
+	Vec3<double> dataMax = dataMaxima();
+	Vec3<double> dataMinPositive = positiveDataMinima();
+	Vec3<double> dataMaxPositive = positiveDataMaxima();
 
 	// The fractional values we've been passed tell us how much of the 'data' to include in the limits
 	// A positive value, 0.0 < f < 1.0, tells us to shrink the maximum limit.

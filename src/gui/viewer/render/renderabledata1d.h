@@ -60,7 +60,7 @@ class RenderableData1D : public Renderable
 
 	protected:
 	// Transform data according to current settings
-	void transformData();
+	void transformValues();
 	// Return reference to transformed data
 	const Data1D& transformedData();
 

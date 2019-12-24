@@ -83,12 +83,12 @@ int RenderableSpecies::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableSpecies::transformData()
+void RenderableSpecies::transformValues()
 {
 	if (!source_) return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Loop over Atoms, seeking extreme x, y, and z values
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
@@ -96,33 +96,33 @@ void RenderableSpecies::transformData()
 	{
 		if (atomIterator.isFirst())
 		{
-			transformMin_ = i->r();
-			transformMax_ = i->r();
+			limitsMin_ = i->r();
+			limitsMax_ = i->r();
 		}
 		else
 		{
-			if (i->r().x < transformMin_.x) transformMin_.x = i->r().x;
-			else if (i->r().x > transformMax_.x) transformMax_.x = i->r().x;
-			if (i->r().y < transformMin_.y) transformMin_.y = i->r().y;
-			else if (i->r().y > transformMax_.y) transformMax_.y = i->r().y;
-			if (i->r().z < transformMin_.z) transformMin_.z = i->r().z;
-			else if (i->r().z > transformMax_.z) transformMax_.z = i->r().z;
+			if (i->r().x < limitsMin_.x) limitsMin_.x = i->r().x;
+			else if (i->r().x > limitsMax_.x) limitsMax_.x = i->r().x;
+			if (i->r().y < limitsMin_.y) limitsMin_.y = i->r().y;
+			else if (i->r().y > limitsMax_.y) limitsMax_.y = i->r().y;
+			if (i->r().z < limitsMin_.z) limitsMin_.z = i->r().z;
+			else if (i->r().z > limitsMax_.z) limitsMax_.z = i->r().z;
 		}
 	}
 
 	// Need to add on a little extra to the limits since the atoms have a radius
-	transformMin_ -= 1.0;
-	transformMax_ += 1.0;
+	limitsMin_ -= 1.0;
+	limitsMax_ += 1.0;
 
-	axisTransformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
-	axisTransformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
-	axisTransformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
-	axisTransformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
-	axisTransformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
-	axisTransformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
+	positiveLimitsMin_.x = limitsMin_.x < 0.0 ? 0.01 : limitsMin_.x;
+	positiveLimitsMin_.y = limitsMin_.y < 0.0 ? 0.01 : limitsMin_.y;
+	positiveLimitsMin_.z = limitsMin_.z < 0.0 ? 0.01 : limitsMin_.z;
+	positiveLimitsMax_.x = limitsMax_.x < 0.0 ? 1.0 : limitsMax_.x;
+	positiveLimitsMax_.y = limitsMax_.y < 0.0 ? 1.0 : limitsMax_.y;
+	positiveLimitsMax_.z = limitsMax_.z < 0.0 ? 1.0 : limitsMax_.z;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = dataVersion();
+	valuesTransformDataVersion_ = dataVersion();
 }
 
 // Calculate min/max y value over specified x range (if possible in the underlying data)

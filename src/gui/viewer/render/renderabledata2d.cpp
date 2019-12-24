@@ -65,28 +65,32 @@ int RenderableData2D::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableData2D::transformData()
+void RenderableData2D::transformValues()
 {
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
-	
-	transformMin_ = Limits::min(transformedData_.constXAxis());
-	transformMax_ = Limits::max(transformedData_.constXAxis());
-	axisTransformMinPositive_ = 0.1;
-	axisTransformMaxPositive_ = 0.0;
-	valuesTransformMinPositive_ = 0.1;
-	valuesTransformMaxPositive_ = 0.0;
-	
+	Transformer::transform(transformedData_, valuesTransform_);
+
+	limitsMin_ = 0.0;
+	limitsMax_ = 1.0;
+	positiveLimitsMin_ = -1.0;
+	positiveLimitsMax_ = -1.0;
+	valuesMin_ = 0.0;
+	valuesMax_ = 1.0;
+	positiveValuesMin_ = -1.0;
+	positiveValuesMax_ = -1.0;
+
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
 	{
-		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), transformedData_.minValue());
-		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), transformedData_.maxValue());
+		valuesMin_ = transformedData_.minValue();
+		valuesMax_ = transformedData_.maxValue();
+		limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), valuesMin_);
+		limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), valuesMax_);
 	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value	
@@ -95,43 +99,44 @@ void RenderableData2D::transformData()
 	{
 		if (transformedData_.constXAxis(n) > 0.0)
 		{
-			if (transformedData_.constXAxis(n) < axisTransformMinPositive_.x) axisTransformMinPositive_.x = transformedData_.constXAxis(n);
-			if (transformedData_.constXAxis(n) > axisTransformMaxPositive_.x) axisTransformMaxPositive_.x = transformedData_.constXAxis(n);
+			if (positiveLimitsMin_.x < 0.0) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+			else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+
+			if (transformedData_.constXAxis(n) > positiveLimitsMax_.x) positiveLimitsMax_.x = transformedData_.constXAxis(n);
 		}
 	}
-	
+
 	// Y
 	for (int n=0; n<transformedData_.constYAxis().nItems(); ++n)
 	{	
 		if (transformedData_.constYAxis(n) > 0.0)
 		{
-			if (transformedData_.constYAxis(n) < axisTransformMinPositive_.y) axisTransformMinPositive_.y = transformedData_.constYAxis(n);
-			if (transformedData_.constYAxis(n) > axisTransformMaxPositive_.y) axisTransformMaxPositive_.y = transformedData_.constYAxis(n);
+			if (positiveLimitsMin_.y < 0.0) positiveLimitsMin_.y = transformedData_.constYAxis(n);
+			else if (transformedData_.constYAxis(n) < positiveLimitsMin_.y) positiveLimitsMin_.y = transformedData_.constYAxis(n);
+
+			if (transformedData_.constYAxis(n) > positiveLimitsMax_.y) positiveLimitsMax_.y = transformedData_.constYAxis(n);
 		}
 	}
-	
+
 	// Values
 	for (int n=0; n<transformedData_.nValues(); ++n)
 	{		
 		if (transformedData_.value(n) > 0.0)
 		{
-			if (transformedData_.value(n) < axisTransformMinPositive_.z) 
-			{
-				axisTransformMinPositive_.z = transformedData_.value(n);
-				valuesTransformMinPositive_ = transformedData_.value(n);
-			}
-			if (transformedData_.value(n) > axisTransformMaxPositive_.z) 
-			{
-				axisTransformMaxPositive_.z = transformedData_.value(n);
-				valuesTransformMaxPositive_ = transformedData_.value(n);
-			}
+			if (positiveValuesMin_ < 0.0) positiveValuesMin_ = transformedData_.value(n);
+			else if (transformedData_.value(n) < positiveValuesMin_) positiveValuesMin_ = transformedData_.value(n);
+
+			if (transformedData_.value(n) > positiveValuesMax_) positiveValuesMax_ = transformedData_.value(n);
 		}
 	}
-	
-	// Update the transformed data 'version'
-	transformDataVersion_ = dataVersion();
-}
 
+	// Copy positive value limits over to z axis
+	positiveLimitsMin_.z = positiveValuesMin_;
+	positiveLimitsMax_.z = positiveValuesMax_;
+
+	// Update the transformed data 'version'
+	valuesTransformDataVersion_ = dataVersion();
+}
 
 // Return reference to transformed data
 const Data2D& RenderableData2D::transformedData()
@@ -139,11 +144,11 @@ const Data2D& RenderableData2D::transformedData()
 	// Check that we have a valid source
 	if (!validateDataSource()) return transformedData_;
 
-	// If no transforms are enabled, just return the original data
-	if ((!transforms_[0].enabled()) && (!transforms_[1].enabled())) return *source_;
+	// If the value transform is not enabled, just return the original data
+	if (!valuesTransform_.enabled()) return *source_;
 
 	// Make sure the transformed data is up-to-date
-	transformData();
+	transformValues();
 
 	return transformedData_;
 }
@@ -151,7 +156,6 @@ const Data2D& RenderableData2D::transformedData()
 // Calculate min/max y value over specified x range (if possible in the underlying data)
 bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
 {
-
 	return true;
 }
 
@@ -243,8 +247,8 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	{
 		ColourDefinition colourDef = colourDefinition;
 		// Setting gradient start and end value based on minimum and maximum data points
-		colourDef.setHSVGradientStartValue(valuesTransformMinPositive_);
-		colourDef.setHSVGradientEndValue(valuesTransformMaxPositive_);
+		colourDef.setHSVGradientStartValue(positiveValuesMin_);
+		colourDef.setHSVGradientEndValue(positiveValuesMax_);
 		
 		// Loop over y
 		for (int n=0; n < nY ; ++n)

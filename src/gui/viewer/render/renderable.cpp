@@ -56,17 +56,17 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	group_ = NULL;
 
 	// Transform
-	transformDataVersion_ = -1;
-	transformMin_.zero();
-	transformMax_.set(10.0, 10.0, 10.0);
-	axisTransformMinPositive_.set(0.1, 0.1, 0.1);
-	axisTransformMaxPositive_.set(10.0, 10.0, 10.0);
-	transforms_[0].setEnabled(false);
-	transforms_[1].setEnabled(false);
-	transforms_[2].setEnabled(false);
-	transforms_[0].setEquation("x");
-	transforms_[1].setEquation("y");
-	transforms_[2].setEquation("z");
+	valuesTransformDataVersion_ = -1;
+	limitsMin_.zero();
+	limitsMax_.set(10.0, 10.0, 10.0);
+	positiveLimitsMin_.set(0.1, 0.1, 0.1);
+	positiveLimitsMax_.set(10.0, 10.0, 10.0);
+	valuesMin_ = 0.0;
+	valuesMax_ = 10.0;
+	positiveValuesMin_ = 0.0;
+	positiveValuesMax_ = 10.0;
+	valuesTransform_.setEnabled(false);
+	valuesTransform_.setEquation("value");
 
 	// Rendering Versions
 	lastDataVersion_ = -1;
@@ -115,85 +115,117 @@ const char* Renderable::objectTag() const
 	return objectTag_.get();
 }
 
-/*
- * Transforms
- */
-
-// Return transformed data minima, calculating if necessary
-Vec3<double> Renderable::transformMin()
+// Return coordinate minima of all data (after value transform if enabled)
+Vec3<double> Renderable::limitsMin()
 {
-	// Make sure transformed data is up to date
-	transformData();
+	// Make sure transformed values are up to date
+	transformValues();
 
-	return transformMin_;
+	return limitsMin_;
 }
 
-// Return transformed data maxima, calculating if necessary
-Vec3<double> Renderable::transformMax()
+// Return coordinate maxima of all data (after value transform if enabled)
+Vec3<double> Renderable::limitsMax()
 {
-	// Make sure transformed data is up to date
-	transformData();
+	// Make sure transformed values are up to date
+	transformValues();
 
-	return transformMax_;
+	return limitsMax_;
 }
 
-// Return transformed positive data minima, calculating if necessary
-Vec3<double> Renderable::transformMinPositive()
+// Return positive coordinate minima of all data (after value transform if enabled)
+Vec3<double> Renderable::positiveLimitsMin()
 {
-	// Make sure transformed data is up to date
-	transformData();
+	// Make sure transformed values are up to date
+	transformValues();
 
-	return axisTransformMinPositive_;
+	return positiveLimitsMin_;
 }
 
-// Return transformed positive data maxima, calculating if necessary
-Vec3<double> Renderable::transformMaxPositive()
+// Return positive coordinate maxima of all data (after value transform if enabled)
+Vec3<double> Renderable::positiveLimitsMax()
 {
-	// Make sure transformed data is up to date
-	transformData();
+	// Make sure transformed values are up to date
+	transformValues();
 
-	return axisTransformMaxPositive_;
+	return positiveLimitsMax_;
 }
 
-// Set transform equation for data
-void Renderable::setTransformEquation(int axis, const char* transformEquation)
+// Return minimum of transformed values
+double Renderable::valuesMin()
 {
-	transforms_[axis].setEquation(transformEquation);
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return valuesMin_;
+}
+
+// Return maximum of transformed values
+double Renderable::valuesMax()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return valuesMax_;
+}
+
+// Return minimum positive of transformed values
+double Renderable::positiveValuesMin()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return positiveValuesMin_;
+}
+
+// Return maximum positive of transformed values
+double Renderable::positiveValuesMax()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return positiveValuesMax_;
+}
+
+// Set values transform equation specified
+void Renderable::setValuesTransformEquation(const char* transformEquation)
+{
+	valuesTransform_.setEquation(transformEquation);
 
 	// Make sure transformed data is up to date
-	if (transforms_[axis].enabled())
+	if (valuesTransform_.enabled())
 	{
-		transformDataVersion_ = -1;
-		transformData();
+		valuesTransformDataVersion_ = -1;
+		transformValues();
 	}
 }
 
-// Return transform equation for data
-const char* Renderable::transformEquation(int axis) const
+// Return values transform equation
+const char* Renderable::valuesTransformEquation() const
 {
-	return transforms_[axis].text();
+	return valuesTransform_.text();
 }
 
-// Return whether specified transform equation is valid
-bool Renderable::transformEquationValid(int axis) const
+// Return whether values transform equation is valid
+bool Renderable::valuesTransformEquationValid() const
 {
-	return transforms_[axis].valid();
+	return valuesTransform_.valid();
 }
 
-// Set whether specified transform is enabled
-void Renderable::setTransformEnabled(int axis, bool enabled)
+// Set whether values transform is enabled
+void Renderable::setValuesTransformEnabled(bool enabled)
 {
-	transforms_[axis].setEnabled(enabled);
+	valuesTransform_.setEnabled(enabled);
 
 	// Make sure transformed data is up to date
-	transformDataVersion_ = -1;
-	transformData();
+	valuesTransformDataVersion_ = -1;
+	transformValues();
 }
 
-// Return whether specified transform is enabled
-bool Renderable::transformEnabled(int axis) const
+// Return whether values transform is enabled
+bool Renderable::valuesTransformEnabled() const
 {
-	return transforms_[axis].enabled();
+	return valuesTransform_.enabled();
 }
 
 /*
