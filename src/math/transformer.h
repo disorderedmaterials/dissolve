@@ -79,9 +79,6 @@ class Transformer
 	const char* text() const;
 	// Return whether current equation is valid
 	bool valid() const;
-	// Transform whole array, including application of pre/post transform shift
-	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, Array<double> sourceZ, int target);
-	Array2D<double> transformArray(Array2D<double> sourceValues, Array<double> sourceX, Array<double> sourceY);
 
 
 	/*
