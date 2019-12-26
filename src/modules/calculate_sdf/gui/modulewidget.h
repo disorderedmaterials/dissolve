@@ -28,6 +28,7 @@
 // Forward Declarations
 class CalculateSDFModule;
 class DataViewer;
+class RenderableData3D;
 
 // Module Widget
 class CalculateSDFModuleWidget : public ModuleWidget
@@ -52,6 +53,8 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	Ui::CalculateSDFModuleWidget ui_;
 	// DataViewers contained within this widget
 	DataViewer* sdfGraph_;
+	// Renderable for our SDF
+	RenderableData3D* sdfRenderable_;
 
 	public:
 	// Update controls within widget
@@ -80,6 +83,8 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	void setGraphDataTargets();
 
 	private slots:
+	void on_LowerCutoffSpin_valueChanged(double value);
+	void on_UpperCutoffSpin_valueChanged(double value);
 };
 
 #endif
