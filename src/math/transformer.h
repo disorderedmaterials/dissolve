@@ -82,15 +82,15 @@ class Transformer
 
 
 	/*
-	 * Static Functions
+	 * Transforms
 	 */
 	public:
-	// Transform Data1D values with supplied transformer
-	static void transform(Data1D& data, Transformer& valueTransformer);
-	// Transform Data2D values with supplied transformer
-	static void transform(Data2D& data, Transformer& valueTransformer);
-	// Transform Data3D values with supplied transformer
-	static void transform(Data3D& data, Transformer& valueTransformer);
+	// Transform supplied Data1D values
+	void transformValues(Data1D& data);
+	// Transform supplied Data2D values
+	void transformValues(Data2D& data);
+	// Transform supplied Data3D values
+	void transformValues(Data3D& data);
 };
 
 #endif

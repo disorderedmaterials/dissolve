@@ -96,14 +96,14 @@ bool Transformer::valid() const
 }
 
 /*
- * Static Functions
+ * Transform Values
  */
 
-// Transform Data1D values with supplied transformer
-void Transformer::transform(Data1D& data, Transformer& valueTransformer)
+// Transform supplied Data1D values
+void Transformer::transformValues(Data1D& data)
 {
 	// If Transformer isn't enabled, return now
-	if (!valueTransformer.enabled()) return;
+	if (!enabled_) return;
 
 	// Get references to x and value arrays, and take copies of each
 	const Array<double>& xAxis = data.constXAxis();
@@ -113,20 +113,20 @@ void Transformer::transform(Data1D& data, Transformer& valueTransformer)
 	for (int n=0; n<data.nValues(); ++n)
 	{
 		// Set values in equations
-		valueTransformer.x_->set(xAxis.constAt(n));
-		valueTransformer.y_->set(values.constAt(n));
-		valueTransformer.value_->set(values.constAt(n));
+		x_->set(xAxis.constAt(n));
+		y_->set(values.constAt(n));
+		value_->set(values.constAt(n));
 
 		// Perform transform
-		values[n] = valueTransformer.equation_.asDouble();
+		values[n] = equation_.asDouble();
 	}
 }
 
-// Transform Data2D values with supplied transformer
-void Transformer::transform(Data2D& data, Transformer& valueTransformer)
+// Transform supplied Data2D values
+void Transformer::transformValues(Data2D& data)
 {
 	// If Transformer isn't enabled, return now
-	if (!valueTransformer.enabled()) return;
+	if (!enabled_) return;
 
 	// Get references to x and value arrays, and take copies of each
 	const Array<double>& xAxis = data.constXAxis();
@@ -137,27 +137,27 @@ void Transformer::transform(Data2D& data, Transformer& valueTransformer)
 	for (int i=0; i<xAxis.nItems(); ++i)
 	{
 		// Set x value in equation
-		valueTransformer.x_->set(xAxis.constAt(i));
+		x_->set(xAxis.constAt(i));
 
 		// Loop over Y axis points
 		for (int j=0; j<yAxis.nItems(); ++j)
 		{
 			// Set y and value (z) values in equation
-			valueTransformer.y_->set(yAxis.constAt(j));
-			valueTransformer.z_->set(values.at(i, j));
-			valueTransformer.value_->set(values.at(i, j));
+			y_->set(yAxis.constAt(j));
+			z_->set(values.at(i, j));
+			value_->set(values.at(i, j));
 
-			// Perform transforms
-			values.at(i,j) = valueTransformer.equation_.asDouble();
+			// Perform transform
+			values.at(i,j) = equation_.asDouble();
 		}
 	}
 }
 
-// Transform Data3D values with supplied transformer
-void Transformer::transform(Data3D& data, Transformer& valueTransformer)
+// Transform supplied Data1D values
+void Transformer::transformValues(Data3D& data)
 {
 	// If Transformer isn't enabled, return now
-	if (!valueTransformer.enabled()) return;
+	if (!enabled_) return;
 
 	// Get references to x and value arrays, and take copies of each
 	const Array<double>& xAxis = data.constXAxis();
@@ -169,22 +169,22 @@ void Transformer::transform(Data3D& data, Transformer& valueTransformer)
 	for (int i=0; i<xAxis.nItems(); ++i)
 	{
 		// Set x value in equation
-		valueTransformer.x_->set(xAxis.constAt(i));
+		x_->set(xAxis.constAt(i));
 
 		// Loop over Y axis points
 		for (int j=0; j<yAxis.nItems(); ++j)
 		{
 			// Set y and value (z) values in equation
-			valueTransformer.y_->set(yAxis.constAt(j));
+			y_->set(yAxis.constAt(j));
 
 			// Loop over z values
 			for (int k=0; k<zAxis.nItems(); ++k)
 			{
-				valueTransformer.z_->set(values.at(i, j, k));
-				valueTransformer.value_->set(values.at(i, j, k));
+				z_->set(values.at(i, j, k));
+				value_->set(values.at(i, j, k));
 
-				// Perform transforms
-				values.at(i, j, k) = valueTransformer.equation_.asDouble();
+				// Perform transform
+				values.at(i, j, k) = equation_.asDouble();
 			}
 		}
 	}

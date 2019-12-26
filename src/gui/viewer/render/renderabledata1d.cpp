@@ -71,7 +71,7 @@ void RenderableData1D::transformValues()
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform(transformedData_, valuesTransform_);
+	valuesTransform_.transformValues(transformedData_);
 
 	limitsMin_ = 0.0;
 	limitsMax_ = 1.0;
