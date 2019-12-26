@@ -58,6 +58,10 @@ void Transformer::operator=(const Transformer& source)
 	enabled_ = source.enabled_;
 }
 
+/*
+ * Transform Equation
+ */
+
 // Set whether transform is enabled
 void Transformer::setEnabled(bool b)
 {
@@ -70,7 +74,7 @@ bool Transformer::enabled() const
 	return enabled_;
 }
 
-// Set equation, returning if construction was successful
+// Set equation, returning if it was successfully generated
 bool Transformer::setEquation(const char* equation)
 {
 	text_ = equation;

@@ -48,7 +48,7 @@ class Transformer
 
 
 	/*
-	 * Tree containing transform equation
+	 * Transform Equation
 	 */
 	private:
 	// Whether transform is enabled
@@ -73,7 +73,7 @@ class Transformer
 	void setEnabled(bool b);
 	// Return whether transform is enabled
 	bool enabled() const;
-	// Set equation, returning if Tree construction was successful
+	// Set equation, returning if it was successfully generated
 	bool setEquation(const char* equation);
 	// Return text used to generate last equation_
 	const char* text() const;
