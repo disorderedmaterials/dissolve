@@ -125,7 +125,7 @@ class Renderable : public ListItem<Renderable>
 	// Return whether values transform is enabled
 	bool valuesTransformEnabled() const;
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax) = 0;
+	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
 
 
 	/*

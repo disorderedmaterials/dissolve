@@ -228,6 +228,12 @@ bool Renderable::valuesTransformEnabled() const
 	return valuesTransform_.enabled();
 }
 
+// Calculate min/max y value over specified x range (if possible in the underlying data)
+bool Renderable::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
+{
+	return false;
+}
+
 /*
  * Group
  */

@@ -117,15 +117,6 @@ void RenderableConfiguration::transformValues()
 	valuesTransformDataVersion_ = dataVersion();
 }
 
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableConfiguration::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	yMin = 0.0;
-	yMax = 1.0;
-
-	return true;
-}
-
 /*
  * Rendering Primitives
  */

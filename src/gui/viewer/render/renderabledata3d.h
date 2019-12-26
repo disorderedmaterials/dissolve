@@ -64,9 +64,6 @@ class RenderableData3D : public Renderable
 	// Return reference to transformed data
 	const Data3D& transformedData();
 
-	public:
-	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
 
 	/*
 	 * Rendering Primitives

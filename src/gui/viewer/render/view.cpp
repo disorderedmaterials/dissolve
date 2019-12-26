@@ -924,7 +924,7 @@ void View::autoFollowData()
 			if (!rend->isVisible()) continue;
 
 			// Get y limits for the this data
-			rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest);
+			if (!rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest)) continue;
 			if (first)
 			{
 				yMin = yMinTest;

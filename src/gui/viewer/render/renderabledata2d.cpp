@@ -153,12 +153,6 @@ const Data2D& RenderableData2D::transformedData()
 	return transformedData_;
 }
 
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	return true;
-}
-
 /*
  * Rendering Primitives
  */

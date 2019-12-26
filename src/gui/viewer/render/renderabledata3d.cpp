@@ -169,12 +169,6 @@ const Data3D& RenderableData3D::transformedData()
 	return transformedData_;
 }
 
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableData3D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	return true;
-}
-
 /*
  * Rendering Primitives
  */

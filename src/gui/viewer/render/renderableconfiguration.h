@@ -58,10 +58,6 @@ class RenderableConfiguration : public Renderable
 	// Transform data according to current settings
 	void transformValues();
 
-	public:
-	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
-
 
 	/*
 	 * Rendering Primitives
