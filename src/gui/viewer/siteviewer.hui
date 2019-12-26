@@ -127,10 +127,10 @@ class SiteViewer : public BaseViewer
 	RenderableSpeciesSite* siteRenderable_;
 
 	public:
-	// Set renderable draw style
-	void setRenderableDrawStyle(RenderableSpecies::DisplayStyle ds);
-	// Return current renderable draw style
-	RenderableSpecies::DisplayStyle renderableDrawStyle() const;
+	// Set Species renderable draw style
+	void setSpeciesRenderableDrawStyle(RenderableSpecies::SpeciesDisplayStyle ds);
+	// Return current Species renderable draw style
+	RenderableSpecies::SpeciesDisplayStyle speciesRenderableDrawStyle() const;
 	// Recreate selection primitive
 	void recreateSelectionPrimitive();
 

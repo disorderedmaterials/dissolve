@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATECOORDINATIONNUMBERMODULEWIDGET_H
-#define DISSOLVE_CALCULATECOORDINATIONNUMBERMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATECN_H
+#define DISSOLVE_MODULEWIDGET_CALCULATECN_H
 
 #include "modules/calculate_cn/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

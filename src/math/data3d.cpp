@@ -212,7 +212,7 @@ const Array<double>& Data3D::constYAxis() const
 double& Data3D::zAxis(int index)
 {
 #ifdef CHECKS
-	if ((index < 0) || (index >= y_.nItems()))
+	if ((index < 0) || (index >= z_.nItems()))
 	{
 		static double dummy;
 		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z_ array in Data3D::zAxis().\n", index);
@@ -228,7 +228,7 @@ double& Data3D::zAxis(int index)
 double Data3D::constZAxis(int index) const
 {
 #ifdef CHECKS
-	if ((index < 0) || (index >= y_.nItems()))
+	if ((index < 0) || (index >= z_.nItems()))
 	{
 		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z_ array in Data3D::constZAxis().\n", index);
 		return 0.0;

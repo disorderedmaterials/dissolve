@@ -26,6 +26,7 @@
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "data/elementcolours.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableSpeciesSite::RenderableSpeciesSite(const Species* sp, const SpeciesSite* site) : Renderable(Renderable::SpeciesSiteRenderable, "SiteRenderable")
@@ -72,18 +73,9 @@ int RenderableSpeciesSite::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableSpeciesSite::transformData()
+void RenderableSpeciesSite::transformValues()
 {
 	return;
-}
-
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableSpeciesSite::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	yMin = 0.0;
-	yMax = 1.0;
-
-	return true;
 }
 
 /*
@@ -123,15 +115,15 @@ void RenderableSpeciesSite::recreatePrimitives(const View& view, const ColourDef
 			siteAssembly_.add(axesPrimitive_, A);
 		}
 	}
-	else if (displayStyle_ == SolidStyle)
-	{
-		// Set basic styling for assemblies
-		siteAssembly_.add(true, GL_FILL);
-
-		// Plot origin
-		A.setTranslation(site->origin());
-		siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 0.5);
-	}
+// 	else if (displayStyle_ == SolidStyle)
+// 	{
+// 		// Set basic styling for assemblies
+// 		siteAssembly_.add(true, GL_FILL);
+// 
+// 		// Plot origin
+// 		A.setTranslation(site->origin());
+// 		siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 0.5);
+// 	}
 }
 
 // Send primitives for rendering
@@ -147,21 +139,88 @@ const void RenderableSpeciesSite::sendToGL(const double pixelScaling)
  * Style
  */
 
-// Display Style Keywords
-const char* SpeciesSiteDisplayStyleKeywords[] = { "Lines", "Solid" };
-
-// Convert display style index to text string
-const char* RenderableSpeciesSite::displayStyle(int id)
+// Return EnumOptions for SpeciesSiteDisplayStyle
+EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> RenderableSpeciesSite::speciesSiteDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableSpeciesSite::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList SpeciesSiteStyleOptions = EnumOptionsList() <<
+		EnumOption(RenderableSpeciesSite::LinesStyle,	"Lines");
 
-	return SpeciesSiteDisplayStyleKeywords[id];
+	static EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> options("SpeciesSiteDisplayStyle", SpeciesSiteStyleOptions);
+
+	return options;
 }
 
-// Convert text string to display style index
-int RenderableSpeciesSite::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableSpeciesSite::setDisplayStyle(SpeciesSiteDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SpeciesSiteDisplayStyleKeywords[n])) return (RenderableSpeciesSite::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableSpeciesSite::SpeciesSiteDisplayStyle RenderableSpeciesSite::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> RenderableSpeciesSite::speciesSiteStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableSpeciesSite::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableSpeciesSite::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> options("SpeciesSiteStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableSpeciesSite::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, speciesSiteStyleKeywords().keyword(RenderableSpeciesSite::DisplayKeyword), speciesSiteDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableSpeciesSite::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!speciesSiteStyleKeywords().isValid(parser.argc(0))) return speciesSiteStyleKeywords().errorAndPrintValid(parser.argc(0));
+		SpeciesSiteStyleKeyword kwd = speciesSiteStyleKeywords().enumeration(parser.argc(0));
+		if (!speciesSiteStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableSpeciesSite::DisplayKeyword):
+				if (!speciesSiteDisplayStyles().isValid(parser.argc(1))) return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

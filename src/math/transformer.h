@@ -27,6 +27,7 @@
 #include "base/charstring.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
+#include "data3d.h"
 
 // Forward Declarations
 class Data1D;
@@ -47,7 +48,7 @@ class Transformer
 
 
 	/*
-	 * Tree containing transform equation
+	 * Transform Equation
 	 */
 	private:
 	// Whether transform is enabled
@@ -64,32 +65,32 @@ class Transformer
 	ExpressionVariable* y_;
 	// Z variable in equation
 	ExpressionVariable* z_;
+	// Value variable in equation
+	ExpressionVariable* value_;
 
 	public:
 	// Set whether transform is enabled
 	void setEnabled(bool b);
 	// Return whether transform is enabled
 	bool enabled() const;
-	// Set equation, returning if Tree construction was successful
+	// Set equation, returning if it was successfully generated
 	bool setEquation(const char* equation);
 	// Return text used to generate last equation_
 	const char* text() const;
 	// Return whether current equation is valid
 	bool valid() const;
-	// Transform single value
-	double transform(double x, double y, double z);
-	// Transform whole array, including application of pre/post transform shift
-	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, int target);
-	Array2D<double> transformArray(Array2D<double> sourceValues, Array<double> sourceX, Array<double> sourceY);
 
 
 	/*
-	 * Static Functions
+	 * Transforms
 	 */
 	public:
-	// Transform Data1D with supplied transformers
-	static void transform1D(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
-	static void transform2D(Data2D& data, Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
+	// Transform supplied Data1D values
+	void transformValues(Data1D& data);
+	// Transform supplied Data2D values
+	void transformValues(Data2D& data);
+	// Transform supplied Data3D values
+	void transformValues(Data3D& data);
 };
 
 #endif

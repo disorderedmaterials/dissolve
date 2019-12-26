@@ -41,7 +41,7 @@ class SelectProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructors
-	SelectProcedureNode(SpeciesSite* site = NULL);
+	SelectProcedureNode(SpeciesSite* site = NULL, bool axesRequired = false);
 	// Destructor
 	~SelectProcedureNode();
 
@@ -58,6 +58,8 @@ class SelectProcedureNode : public ProcedureNode
 	 * Selection Targets
 	 */
 	private:
+	// Whether sites must have a defined orientation
+	bool axesRequired_;
 	// List of sites within Species to select
 	RefList<SpeciesSite> speciesSites_;
 	// List of DynamicSites to select, if any

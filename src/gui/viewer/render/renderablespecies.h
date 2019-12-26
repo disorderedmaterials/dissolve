@@ -58,11 +58,7 @@ class RenderableSpecies : public Renderable
 	 */
 	protected:
 	// Transform data according to current settings
-	void transformData();
-
-	public:
-	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
+	void transformValues();
 
 
 	/*
@@ -106,9 +102,13 @@ class RenderableSpecies : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, SpheresStyle, nDisplayStyles };
+	enum SpeciesDisplayStyle { LinesStyle, SpheresStyle, nSpeciesDisplayStyles };
+	// Return EnumOptions for SpeciesDisplayStyle
+	static EnumOptions<SpeciesDisplayStyle> speciesDisplayStyles();
 
 	private:
+	// Display style for the renderable
+	SpeciesDisplayStyle displayStyle_;
 	// Radius of free (unbound) atoms when drawing with lines
 	double linesAtomRadius_;
 	// Radius of atoms when drawing with spheres
@@ -117,11 +117,29 @@ class RenderableSpecies : public Renderable
 	double spheresBondRadius_;
 
 	public:
-	// Return keyword for display style index
-	const char* displayStyle(int id);
-	// Return display style index from string
-	int displayStyle(const char* s);
+	// Set display style for renderable
+	void setDisplayStyle(SpeciesDisplayStyle displayStyle);
+	// Return display style for the renderable
+	SpeciesDisplayStyle displayStyle() const;
 
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// SpeciesStyle Keywords Enum
+	enum SpeciesStyleKeyword
+	{
+		DisplayKeyword,			/* 'Display' - General display style for renderable */
+		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		nSpeciesStyleKeywords
+	};
+	// Return enum option info for RenderableKeyword
+	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> speciesStyleKeywords();
+	// Write style information
+	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	// Read style information
+	bool readStyleBlock(LineParser& parser);
 };
 
 #endif

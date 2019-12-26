@@ -440,12 +440,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		ColourSingleKeyword,
 		ColourStyleKeyword,
 		EndRenderableKeyword,
+		EndStyleKeyword,
 		GroupKeyword,
 		LineStyleKeyword,
 		StyleKeyword,
-		TransformXKeyword,
-		TransformYKeyword,
-		TransformZKeyword,
+		TransformValuesKeyword,
 		VisibleKeyword,
 		nRenderableKeywords
 	};

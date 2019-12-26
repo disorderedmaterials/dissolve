@@ -26,10 +26,10 @@
 AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData) : ModuleWidget(parent), module_(dynamic_cast<AnalyseModule*>(module))
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set Procedure target
-	ui.EditorWidget->setUp(&module_->analyser(), coreData);
+	ui_.EditorWidget->setUp(&module_->analyser(), coreData);
 
 	refreshing_ = false;
 }

@@ -35,7 +35,7 @@ class DynamicSiteNodesKeyword : public KeywordData< RefList<DynamicSiteProcedure
 {
 	public:
 	// Constructor
-	DynamicSiteNodesKeyword(SelectProcedureNode* parentNode, RefList<DynamicSiteProcedureNode>& nodes);
+	DynamicSiteNodesKeyword(SelectProcedureNode* parentNode, RefList<DynamicSiteProcedureNode>& nodes, bool axesRequired = false);
 	// Destructor
 	~DynamicSiteNodesKeyword();
 
@@ -50,6 +50,14 @@ class DynamicSiteNodesKeyword : public KeywordData< RefList<DynamicSiteProcedure
 	public:
 	// Return parent SelectProcedureNode
 	const SelectProcedureNode* parentNode() const;
+
+
+	/*
+	 * Specification
+	 */
+	private:
+	// Whether sites in the list must have a defined orientation
+	bool axesRequired_;
 
 
 	/*

@@ -197,6 +197,7 @@ set(BASIC_LINK_LIBS
   calculatecnmodule
   calculatedanglemodule
   calculaterdfmodule
+  calculatesdfmodule
   calibrationmodule
   checksmodule
   datatestmodule
@@ -240,6 +241,7 @@ target_link_libraries( ${target_name}
   calculatecnmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
+  calculatesdfmodulenogui
   calibrationmodulenogui
   datatestmodulenogui
   energymodulenogui
@@ -272,6 +274,7 @@ if(GUI)
     calculatecnmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
+    calculatesdfmodulegui
     calibrationmodulegui
     datatestmodulegui
     energymodulegui

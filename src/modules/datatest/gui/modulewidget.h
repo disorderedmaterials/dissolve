@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATATESTMODULEWIDGET_H
-#define DISSOLVE_DATATESTMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_DATATEST_H
+#define DISSOLVE_MODULEWIDGET_DATATEST_H
 
 #include "modules/datatest/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -41,8 +41,16 @@ class DataTestModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	DataTestModuleWidget(QWidget* parent, Module* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::DataTestModuleWidget ui;
+	Ui::DataTestModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

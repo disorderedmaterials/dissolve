@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALIBRATIONMODULEWIDGET_H
-#define DISSOLVE_CALIBRATIONMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALIBRATION_H
+#define DISSOLVE_MODULEWIDGET_CALIBRATION_H
 
 #include "modules/calibration/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -50,8 +50,16 @@ class CalibrationModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~CalibrationModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::CalibrationModuleWidget ui;
+	Ui::CalibrationModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

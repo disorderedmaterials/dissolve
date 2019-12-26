@@ -25,7 +25,7 @@
 GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EPSRMODULEWIDGET_H
-#define DISSOLVE_EPSRMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_EPSR_H
+#define DISSOLVE_MODULEWIDGET_EPSR_H
 
 #include "modules/epsr/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"

@@ -60,12 +60,8 @@ class RenderableSpeciesSite : public Renderable
 	 * Transform / Limits
 	 */
 	protected:
-	// Transform data according to current settings
-	void transformData();
-
-	public:
-	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
+	// Transform data values according to current settings
+	void transformValues();
 
 
 	/*
@@ -89,13 +85,38 @@ class RenderableSpeciesSite : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, SolidStyle, nDisplayStyles };
+	enum SpeciesSiteDisplayStyle { LinesStyle, nSpeciesSiteDisplayStyles };
+	// Return EnumOptions for SpeciesSiteDisplayStyle
+	static EnumOptions<SpeciesSiteDisplayStyle> speciesSiteDisplayStyles();
+
+	private:
+	// Display style for the renderable
+	SpeciesSiteDisplayStyle displayStyle_;
 
 	public:
-	// Return keyword for display style index
-	const char* displayStyle(int id);
-	// Return display style index from string
-	int displayStyle(const char* s);
+	// Set display style for renderable
+	void setDisplayStyle(SpeciesSiteDisplayStyle displayStyle);
+	// Return display style for the renderable
+	SpeciesSiteDisplayStyle displayStyle() const;
+
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// SpeciesSiteStyle Keywords Enum
+	enum SpeciesSiteStyleKeyword
+	{
+		DisplayKeyword,			/* 'Display' - General display style for renderable */
+		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		nSpeciesSiteStyleKeywords
+	};
+	// Return enum option info for RenderableKeyword
+	static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> speciesSiteStyleKeywords();
+	// Write style information
+	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	// Read style information
+	bool readStyleBlock(LineParser& parser);
 };
 
 #endif

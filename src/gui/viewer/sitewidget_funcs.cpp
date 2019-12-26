@@ -97,7 +97,7 @@ void SiteWidget::updateToolbar()
 	}
 
 	// Set checkable buttons
-	ui_.ViewSpheresButton->setChecked(siteViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
+	ui_.ViewSpheresButton->setChecked(siteViewer()->speciesRenderableDrawStyle() != RenderableSpecies::LinesStyle);
 
 	// Enable site-definition buttons
 	bool currentSelection = (siteViewer()->species() ? siteViewer()->species()->nSelectedAtoms() != 0 : false);
@@ -166,7 +166,7 @@ void SiteWidget::on_ViewResetButton_clicked(bool checked)
 
 void SiteWidget::on_ViewSpheresButton_clicked(bool checked)
 {
-	siteViewer()->setRenderableDrawStyle(checked ? RenderableSpecies::SpheresStyle : RenderableSpecies::LinesStyle);
+	siteViewer()->setSpeciesRenderableDrawStyle(checked ? RenderableSpecies::SpheresStyle : RenderableSpecies::LinesStyle);
 
 	siteViewer()->notifyDataModified();
 

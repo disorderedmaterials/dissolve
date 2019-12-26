@@ -222,15 +222,15 @@ class View
 	Vec3<double> axisPixelLength_;
 
 	public:
-	// Return absolute minimum transformed values over all associated collections
-	Vec3<double> transformedDataMinima();
-	// Return absolute maximum transformed values over all associated collections
-	Vec3<double> transformedDataMaxima();
-	// Return absolute minimum positive transformed values over all associated collections
-	Vec3<double> transformedDataPositiveMinima();
-	// Return absolute maximum positive transformed values over all associated collections
-	Vec3<double> transformedDataPositiveMaxima();
-	// Update axis limits to represent data extent of associated collections
+	// Return data minima over all displayed renderables
+	Vec3<double> dataMinima();
+	// Return data maxima over all displayed renderables
+	Vec3<double> dataMaxima();
+	// Return positive data minima over all displayed renderables
+	Vec3<double> positiveDataMinima();
+	// Return positive data maxima over all displayed renderables
+	Vec3<double> positiveDataMaxima();
+	// Update axis limits to represent data extent of renderables
 	void updateAxisLimits(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Shift flat view axis limits by specified amounts
 	void shiftFlatAxisLimits(double deltaH, double deltaV);

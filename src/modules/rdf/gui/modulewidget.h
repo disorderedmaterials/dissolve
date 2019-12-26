@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RDFMODULEWIDGET_H
-#define DISSOLVE_RDFMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_RDF_H
+#define DISSOLVE_MODULEWIDGET_RDF_H
 
 #include "modules/rdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -51,8 +51,16 @@ class RDFModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~RDFModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::RDFModuleWidget ui;
+	Ui::RDFModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

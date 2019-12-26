@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMSHAKEMODULEWIDGET_H
-#define DISSOLVE_ATOMSHAKEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
+#define DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
 
 #include "modules/atomshake/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -43,8 +43,16 @@ class AtomShakeModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	AtomShakeModuleWidget(QWidget* parent, Module* module);
 	~AtomShakeModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::AtomShakeModuleWidget ui;
+	Ui::AtomShakeModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

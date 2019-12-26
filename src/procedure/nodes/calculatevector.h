@@ -33,9 +33,17 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 {
 	public:
 	// Constructor
-	CalculateVectorProcedureNode(SelectProcedureNode* site0 = NULL, SelectProcedureNode* site1 = NULL, SelectProcedureNode* site2 = NULL, SelectProcedureNode* site3 = NULL);
+	CalculateVectorProcedureNode(SelectProcedureNode* site0 = NULL, SelectProcedureNode* site1 = NULL, bool rotateIntoFrame = false);
 	// Destructor
 	~CalculateVectorProcedureNode();
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Whether to rotate into the frame of the first site (retrieved from keyword)
+	bool rotateIntoFrame_;
 
 
 	/*
@@ -52,6 +60,8 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 	 * Execute
 	 */
 	public:
+	// Prepare any necessary data, ready for execution
+	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 };

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGMODULEWIDGET_H
-#define DISSOLVE_BRAGGMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_BRAGG_H
+#define DISSOLVE_MODULEWIDGET_BRAGG_H
 
 #include "modules/bragg/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -51,8 +51,16 @@ class BraggModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~BraggModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::BraggModuleWidget ui;
+	Ui::BraggModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

@@ -66,6 +66,13 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	// Target AtomTypes for selection as sites
 	RefList<AtomType> atomTypes_;
 
+	public:
+	// Return whether axes are specified for the dynamic site
+	bool hasAxes() const
+	{
+		return false;
+	}
+
 
 	/*
 	 * Site Generation

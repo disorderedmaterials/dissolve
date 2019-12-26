@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_OPTIMISEMODULEWIDGET_H
-#define DISSOLVE_OPTIMISEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_OPTIMISE_H
+#define DISSOLVE_MODULEWIDGET_OPTIMISE_H
 
 #include "modules/geomopt/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -41,8 +41,16 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	GeometryOptimisationModuleWidget(QWidget* parent, Module* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::GeometryOptimisationModuleWidget ui;
+	Ui::GeometryOptimisationModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

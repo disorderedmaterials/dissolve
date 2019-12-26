@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATERDFMODULEWIDGET_H
-#define DISSOLVE_CALCULATERDFMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATERDF_H
+#define DISSOLVE_MODULEWIDGET_CALCULATERDF_H
 
 #include "modules/calculate_rdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -44,8 +44,16 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::CalculateRDFModuleWidget ui;
+	Ui::CalculateRDFModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
@@ -69,7 +77,7 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Set data targets in graphs
-	void setGraphDataTargets(CalculateRDFModule* module);
+	void setGraphDataTargets();
 
 	private slots:
 };

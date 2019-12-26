@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSEMODULEWIDGET_H
-#define DISSOLVE_ANALYSEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ANALYSE_H
+#define DISSOLVE_MODULEWIDGET_ANALYSE_H
 
 #include "modules/analyse/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -43,8 +43,16 @@ class AnalyseModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::AnalyseModuleWidget ui;
+	Ui::AnalyseModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

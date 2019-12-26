@@ -1344,7 +1344,7 @@ void Axes::updateAxisPrimitives()
 			// Project tick direction onto cuboid width/height
 			// TODO This does not account for the fact that the bounding cuboid may only partly extend over the end of ths axis tick mark (e.g. as with in-plane rotations/TopMiddle anchors)...
 			Vec3<double> extent = cuboid.maxima() - cuboid.minima();
-			extent.multiply(tickDir);
+			extent.multiply(tickDir.x, tickDir.y, tickDir.z);
 			// -- Add on extra distance from tick mark
 			u += tickDir * (tickSize_[axis]);
 			// -- Create adjustment vector. Start by adding space between tickmark, label text, and title text

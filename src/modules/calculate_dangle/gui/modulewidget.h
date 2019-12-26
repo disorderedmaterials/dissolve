@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATEDANGLEMODULEWIDGET_H
-#define DISSOLVE_CALCULATEDANGLEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
+#define DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
 
 #include "modules/calculate_dangle/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -38,14 +38,22 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	CalculateDAngleModule* module_;
-	// DataViewers contained within this widget
-	DataViewer* rdfGraph_, *angleGraph_, *dAngleGraph_;
 
 	public:
 	// Constructor
 	CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module);
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::CalculateDAngleModuleWidget ui;
+	Ui::CalculateDAngleModuleWidget ui_;
+	// DataViewers contained within this widget
+	DataViewer* rdfGraph_, *angleGraph_, *dAngleGraph_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

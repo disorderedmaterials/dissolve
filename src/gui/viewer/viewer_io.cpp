@@ -400,12 +400,11 @@ EnumOptions<BaseViewer::RenderableKeyword> BaseViewer::renderableKeywords()
 		EnumOption(BaseViewer::ColourSingleKeyword,		"ColourSingle",		4) <<
 		EnumOption(BaseViewer::ColourStyleKeyword,		"ColourStyle",		1) <<
 		EnumOption(BaseViewer::EndRenderableKeyword,		"EndRenderable") <<
+		EnumOption(BaseViewer::EndStyleKeyword,			"EndStyle") <<
 		EnumOption(BaseViewer::GroupKeyword,			"Group",		1) <<
 		EnumOption(BaseViewer::LineStyleKeyword,		"LineStyle",		2) <<
-		EnumOption(BaseViewer::StyleKeyword,			"Style",		1) <<
-		EnumOption(BaseViewer::TransformXKeyword, 		"TransformX",		2) <<
-		EnumOption(BaseViewer::TransformYKeyword, 		"TransformY",		2) <<
-		EnumOption(BaseViewer::TransformZKeyword, 		"TransformZ",		2) <<
+		EnumOption(BaseViewer::StyleKeyword,			"Style") <<
+		EnumOption(BaseViewer::TransformValuesKeyword, 		"TransformValues",	2) <<
 		EnumOption(BaseViewer::VisibleKeyword, 			"Visible",		1);
 
 	static EnumOptions<BaseViewer::RenderableKeyword> options("RenderableKeyword", BaseViewerRenderableBlockOptions);
@@ -416,7 +415,6 @@ EnumOptions<BaseViewer::RenderableKeyword> BaseViewer::renderableKeywords()
 // Read RenderableBlock keywords
 bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd)
 {
-	int xyz;
 	double alpha;
 	ColourDefinition::ColourStyle cs;
 	ColourDefinition& colourDefinition = renderable->colour();
@@ -508,17 +506,12 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				break;
 			// Display style
 			case (BaseViewer::StyleKeyword):
-				ds = renderable->displayStyle(parser.argc(1));
-				if (ds == -1) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
-				else renderable->setDisplayStyle(ds);
+				if (!renderable->readStyleBlock(parser)) return false;
 				break;
 			// Transforms
-			case (BaseViewer::TransformXKeyword):
-			case (BaseViewer::TransformYKeyword):
-			case (BaseViewer::TransformZKeyword):
-				xyz = kwd - BaseViewer::TransformXKeyword;
-				renderable->setTransformEnabled(xyz, parser.argb(1));
-				renderable->setTransformEquation(xyz,  parser.argc(2));
+			case (BaseViewer::TransformValuesKeyword):
+				renderable->setValuesTransformEnabled(parser.argb(1));
+				renderable->setValuesTransformEquation(parser.argc(2));
 				break;
 			// Visible flag
 			case (BaseViewer::VisibleKeyword):
@@ -551,10 +544,8 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	if (!parser.writeLineF("%s%s  %s  '%s'  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock), Renderable::renderableTypes().keyword(renderable->type()), renderable->objectTag(), renderable->name())) return false;
 
-	// -- Transforms
-	if (!parser.writeLineF("%s  %s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0))) return false;
-	if (!parser.writeLineF("%s  %s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformYKeyword), DissolveSys::btoa(renderable->transformEnabled(1)), renderable->transformEquation(1))) return false;
-	if (!parser.writeLineF("%s  %s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformZKeyword), DissolveSys::btoa(renderable->transformEnabled(2)), renderable->transformEquation(2))) return false;
+	// -- Valus Transform
+	if (!parser.writeLineF("%s  %s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformValuesKeyword), DissolveSys::btoa(renderable->valuesTransformEnabled()), renderable->valuesTransformEquation())) return false;
 
 	// Colour Setup
 	const ColourDefinition& colourDef = renderable->colour();
@@ -591,7 +582,9 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	// Display
 	if (!parser.writeLineF("%s  %s  %f '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name)) return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyleIndex()))) return false;
+	if (!parser.writeLineF("%s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword))) return false;
+	if (!renderable->writeStyleBlock(parser, indentLevel+2)) return false;
+	if (!parser.writeLineF("%s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::EndStyleKeyword))) return false;
 	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()))) return false;
 
 	// Write Group if set

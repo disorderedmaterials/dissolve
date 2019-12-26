@@ -24,6 +24,7 @@
 #include "gui/viewer/render/view.h"
 #include "classes/atom.h"
 #include "data/elementcolours.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
@@ -82,12 +83,12 @@ int RenderableSpecies::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableSpecies::transformData()
+void RenderableSpecies::transformValues()
 {
 	if (!source_) return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Loop over Atoms, seeking extreme x, y, and z values
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
@@ -95,42 +96,33 @@ void RenderableSpecies::transformData()
 	{
 		if (atomIterator.isFirst())
 		{
-			transformMin_ = i->r();
-			transformMax_ = i->r();
+			limitsMin_ = i->r();
+			limitsMax_ = i->r();
 		}
 		else
 		{
-			if (i->r().x < transformMin_.x) transformMin_.x = i->r().x;
-			else if (i->r().x > transformMax_.x) transformMax_.x = i->r().x;
-			if (i->r().y < transformMin_.y) transformMin_.y = i->r().y;
-			else if (i->r().y > transformMax_.y) transformMax_.y = i->r().y;
-			if (i->r().z < transformMin_.z) transformMin_.z = i->r().z;
-			else if (i->r().z > transformMax_.z) transformMax_.z = i->r().z;
+			if (i->r().x < limitsMin_.x) limitsMin_.x = i->r().x;
+			else if (i->r().x > limitsMax_.x) limitsMax_.x = i->r().x;
+			if (i->r().y < limitsMin_.y) limitsMin_.y = i->r().y;
+			else if (i->r().y > limitsMax_.y) limitsMax_.y = i->r().y;
+			if (i->r().z < limitsMin_.z) limitsMin_.z = i->r().z;
+			else if (i->r().z > limitsMax_.z) limitsMax_.z = i->r().z;
 		}
 	}
 
 	// Need to add on a little extra to the limits since the atoms have a radius
-	transformMin_ -= 1.0;
-	transformMax_ += 1.0;
+	limitsMin_ -= 1.0;
+	limitsMax_ += 1.0;
 
-	transformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
-	transformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
-	transformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
-	transformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
-	transformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
-	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
+	positiveLimitsMin_.x = limitsMin_.x < 0.0 ? 0.01 : limitsMin_.x;
+	positiveLimitsMin_.y = limitsMin_.y < 0.0 ? 0.01 : limitsMin_.y;
+	positiveLimitsMin_.z = limitsMin_.z < 0.0 ? 0.01 : limitsMin_.z;
+	positiveLimitsMax_.x = limitsMax_.x < 0.0 ? 1.0 : limitsMax_.x;
+	positiveLimitsMax_.y = limitsMax_.y < 0.0 ? 1.0 : limitsMax_.y;
+	positiveLimitsMax_.z = limitsMax_.z < 0.0 ? 1.0 : limitsMax_.z;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = dataVersion();
-}
-
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	yMin = 0.0;
-	yMax = 1.0;
-
-	return true;
+	valuesTransformDataVersion_ = dataVersion();
 }
 
 /*
@@ -477,21 +469,89 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
  * Style
  */
 
-// Display Style Keywords
-const char* SpeciesDisplayStyleKeywords[] = { "Lines", "Spheres" };
-
-// Convert display style index to text string
-const char* RenderableSpecies::displayStyle(int id)
+// Return EnumOptions for SpeciesDisplayStyle
+EnumOptions<RenderableSpecies::SpeciesDisplayStyle> RenderableSpecies::speciesDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableSpecies::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList SpeciesStyleOptions = EnumOptionsList() <<
+		EnumOption(RenderableSpecies::LinesStyle,	"Lines") <<
+		EnumOption(RenderableSpecies::SpheresStyle,	"Spheres");
 
-	return SpeciesDisplayStyleKeywords[id];
+	static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options("SpeciesDisplayStyle", SpeciesStyleOptions);
+
+	return options;
 }
 
-// Convert text string to display style index
-int RenderableSpecies::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableSpecies::setDisplayStyle(SpeciesDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SpeciesDisplayStyleKeywords[n])) return (RenderableSpecies::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableSpecies::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableSpecies::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options("SpeciesStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableSpecies::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword), speciesDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableSpecies::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!speciesStyleKeywords().isValid(parser.argc(0))) return speciesStyleKeywords().errorAndPrintValid(parser.argc(0));
+		SpeciesStyleKeyword kwd = speciesStyleKeywords().enumeration(parser.argc(0));
+		if (!speciesStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableSpecies::DisplayKeyword):
+				if (!speciesDisplayStyles().isValid(parser.argc(1))) return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

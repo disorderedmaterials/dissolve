@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYMODULEWIDGET_H
-#define DISSOLVE_ENERGYMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ENERGY_H
+#define DISSOLVE_MODULEWIDGET_ENERGY_H
 
 #include "modules/energy/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -51,8 +51,16 @@ class EnergyModuleWidget : public ModuleWidget
 	// Constructor / Destructor
 	EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~EnergyModuleWidget();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::EnergyModuleWidget ui;
+	Ui::EnergyModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget

@@ -1,6 +1,6 @@
 /*
 	*** Procedure Node - Operate Number Density Normalise
-	*** src/procedure/nodes/operatenumberdensitynormaliser.cpp
+	*** src/procedure/nodes/operatenumberdensitynormalise.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

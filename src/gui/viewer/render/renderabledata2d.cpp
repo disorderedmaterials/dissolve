@@ -25,6 +25,7 @@
 #include "math/data2d.h"
 #include "math/extrema.h"
 #include "templates/array2d.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
@@ -32,7 +33,6 @@ RenderableData2D::RenderableData2D(const Data2D* source, const char* objectTag) 
 	// Set defaults
 	displayStyle_ = LinesStyle;	
 	colour().setStyle(ColourDefinition::HSVGradientStyle);
-	
 }
 
 // Destructor
@@ -65,26 +65,32 @@ int RenderableData2D::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableData2D::transformData()
+void RenderableData2D::transformValues()
 {
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform2D(transformedData_, transforms_[0], transforms_[1], transforms_[2] );
-	
-	transformMin_ = Extrema::min(transformedData_.constXAxis());
-	transformMax_ = Extrema::max(transformedData_.constXAxis());
-	transformMinPositive_ = 0.1;
-	transformMaxPositive_ = 0.0;
-	
+	valuesTransform_.transformValues(transformedData_);
+
+	limitsMin_ = 0.0;
+	limitsMax_ = 1.0;
+	positiveLimitsMin_ = -1.0;
+	positiveLimitsMax_ = -1.0;
+	valuesMin_ = 0.0;
+	valuesMax_ = 1.0;
+	positiveValuesMin_ = -1.0;
+	positiveValuesMax_ = -1.0;
+
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)
 	{
-		transformMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), transformedData_.minValue());
-		transformMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), transformedData_.maxValue());
+		valuesMin_ = transformedData_.minValue();
+		valuesMax_ = transformedData_.maxValue();
+		limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), valuesMin_);
+		limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), valuesMax_);
 	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value	
@@ -93,35 +99,44 @@ void RenderableData2D::transformData()
 	{
 		if (transformedData_.constXAxis(n) > 0.0)
 		{
-			if (transformedData_.constXAxis(n) < transformMinPositive_.x) transformMinPositive_.x = transformedData_.constXAxis(n);
-			if (transformedData_.constXAxis(n) > transformMaxPositive_.x) transformMaxPositive_.x = transformedData_.constXAxis(n);
+			if (positiveLimitsMin_.x < 0.0) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+			else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+
+			if (transformedData_.constXAxis(n) > positiveLimitsMax_.x) positiveLimitsMax_.x = transformedData_.constXAxis(n);
 		}
 	}
-	
+
 	// Y
 	for (int n=0; n<transformedData_.constYAxis().nItems(); ++n)
 	{	
 		if (transformedData_.constYAxis(n) > 0.0)
 		{
-			if (transformedData_.constYAxis(n) < transformMinPositive_.y) transformMinPositive_.y = transformedData_.constYAxis(n);
-			if (transformedData_.constYAxis(n) > transformMaxPositive_.y) transformMaxPositive_.y = transformedData_.constYAxis(n);
+			if (positiveLimitsMin_.y < 0.0) positiveLimitsMin_.y = transformedData_.constYAxis(n);
+			else if (transformedData_.constYAxis(n) < positiveLimitsMin_.y) positiveLimitsMin_.y = transformedData_.constYAxis(n);
+
+			if (transformedData_.constYAxis(n) > positiveLimitsMax_.y) positiveLimitsMax_.y = transformedData_.constYAxis(n);
 		}
 	}
-	
+
 	// Values
 	for (int n=0; n<transformedData_.nValues(); ++n)
 	{		
 		if (transformedData_.value(n) > 0.0)
 		{
-			if (transformedData_.value(n) < transformMinPositive_.z) transformMinPositive_.z = transformedData_.value(n);
-			if (transformedData_.value(n) > transformMaxPositive_.z) transformMaxPositive_.z = transformedData_.value(n);
+			if (positiveValuesMin_ < 0.0) positiveValuesMin_ = transformedData_.value(n);
+			else if (transformedData_.value(n) < positiveValuesMin_) positiveValuesMin_ = transformedData_.value(n);
+
+			if (transformedData_.value(n) > positiveValuesMax_) positiveValuesMax_ = transformedData_.value(n);
 		}
 	}
-	
-	// Update the transformed data 'version'
-	transformDataVersion_ = dataVersion();
-}
 
+	// Copy positive value limits over to z axis
+	positiveLimitsMin_.z = positiveValuesMin_;
+	positiveLimitsMax_.z = positiveValuesMax_;
+
+	// Update the transformed data 'version'
+	valuesTransformDataVersion_ = dataVersion();
+}
 
 // Return reference to transformed data
 const Data2D& RenderableData2D::transformedData()
@@ -129,20 +144,13 @@ const Data2D& RenderableData2D::transformedData()
 	// Check that we have a valid source
 	if (!validateDataSource()) return transformedData_;
 
-	// If no transforms are enabled, just return the original data
-	if ((!transforms_[0].enabled()) && (!transforms_[1].enabled())) return *source_;
+	// If the value transform is not enabled, just return the original data
+	if (!valuesTransform_.enabled()) return *source_;
 
 	// Make sure the transformed data is up-to-date
-	transformData();
+	transformValues();
 
 	return transformedData_;
-}
-
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-
-	return true;
 }
 
 /*
@@ -233,8 +241,8 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
 	{
 		ColourDefinition colourDef = colourDefinition;
 		// Setting gradient start and end value based on minimum and maximum data points
-		colourDef.setHSVGradientStartValue(transformMin_.z);
-		colourDef.setHSVGradientEndValue(transformMax_.z);
+		colourDef.setHSVGradientStartValue(positiveValuesMin_);
+		colourDef.setHSVGradientEndValue(positiveValuesMax_);
 		
 		// Loop over y
 		for (int n=0; n < nY ; ++n)
@@ -263,21 +271,88 @@ void RenderableData2D::constructLine(const Array<double>& displayXAbscissa, cons
  * Style
  */
 
-// Display Style Keywords
-const char* Data2DDisplayStyleKeywords[] = { "Lines" };
-
-// Return keyword for display style index
-const char* RenderableData2D::displayStyle(int id)
+// Return EnumOptions for Data2DDisplayStyle
+EnumOptions<RenderableData2D::Data2DDisplayStyle> RenderableData2D::data2DDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableData2D::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList Style2DOptions = EnumOptionsList() <<
+		EnumOption(RenderableData2D::LinesStyle,	"Lines");
 
-	return Data2DDisplayStyleKeywords[id];
+	static EnumOptions<RenderableData2D::Data2DDisplayStyle> options("Data2DDisplayStyle", Style2DOptions);
+
+	return options;
 }
 
-// Return display style index from string
-int RenderableData2D::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableData2D::setDisplayStyle(Data2DDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, Data2DDisplayStyleKeywords[n])) return (RenderableData2D::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableData2D::Data2DDisplayStyle RenderableData2D::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableData2D::Data2DStyleKeyword> RenderableData2D::data2DStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableData2D::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableData2D::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableData2D::Data2DStyleKeyword> options("Data2DStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableData2D::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, data2DStyleKeywords().keyword(RenderableData2D::DisplayKeyword), data2DDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableData2D::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!data2DStyleKeywords().isValid(parser.argc(0))) return data2DStyleKeywords().errorAndPrintValid(parser.argc(0));
+		Data2DStyleKeyword kwd = data2DStyleKeywords().enumeration(parser.argc(0));
+		if (!data2DStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableData2D::DisplayKeyword):
+				if (!data2DDisplayStyles().isValid(parser.argc(1))) return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

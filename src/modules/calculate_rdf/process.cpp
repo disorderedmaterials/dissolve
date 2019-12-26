@@ -22,7 +22,6 @@
 #include "modules/calculate_rdf/rdf.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "base/sysfunc.h"

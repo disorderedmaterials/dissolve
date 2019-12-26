@@ -39,6 +39,7 @@
 #include "procedure/nodes/fit1d.h"
 #include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatedivide.h"
+#include "procedure/nodes/operategridnormalise.h"
 #include "procedure/nodes/operatemultiply.h"
 #include "procedure/nodes/operatenormalise.h"
 #include "procedure/nodes/operatenumberdensitynormalise.h"

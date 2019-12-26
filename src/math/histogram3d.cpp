@@ -81,9 +81,6 @@ void Histogram3D::clear()
 // Update accumulated data
 void Histogram3D::updateAccumulatedData()
 {
-	// Set up arrays
-	accumulatedData_.initialise(nXBins_, nYBins_, nZBins_);
-
 	// Store bin centres and accumulated averages in the object
 	for (int x=0; x<nXBins_; ++x)
 	{
@@ -129,6 +126,12 @@ void Histogram3D::initialise(double xMin, double xMax, double xBinWidth, double 
 	// Create the main bins array
 	bins_.initialise(nXBins_, nYBins_, nZBins_);
 	averages_.initialise(nXBins_, nYBins_, nZBins_);
+
+	// Set up the accumulated data array
+	accumulatedData_.initialise(nXBins_, nYBins_, nZBins_, true);
+	accumulatedData_.xAxis() = xBinCentres_;
+	accumulatedData_.yAxis() = yBinCentres_;
+	accumulatedData_.zAxis() = zBinCentres_;
 }
 
 // Zero histogram bins
