@@ -77,7 +77,7 @@ void Species::transmuteAtom(SpeciesAtom* i, Element* el)
 	// Nothing to do if current element matches that supplied
 	if (i->element() == el) return;
 
-	// Remove any AtomType assignment from the specified SpeciesAngle * Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
+	// Remove any existing AtomType assignment
 	i->setAtomType(NULL);
 	i->setElement(el);
 
