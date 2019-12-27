@@ -102,6 +102,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const List<SpeciesAtom>& atoms() const;
 	// Set coordinates of specified atom
 	void setAtomCoordinates(SpeciesAtom* i, Vec3<double> r);
+	// Set coordinates of specified atom (by index and individual coordinates)
+	void setAtomCoordinates(int id, double x, double y, double z);
 	// Transmute specified atom
 	void transmuteAtom(SpeciesAtom* i, Element* el);
 	// Clear current atom selection
