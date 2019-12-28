@@ -24,23 +24,23 @@
 // Return type of module
 const char* CalculateAvgMolModule::type() const
 {
-	return "Calculate_AvgMol";
+	return "CalculateAvgMol";
 }
 
 // Return category for module
 const char* CalculateAvgMolModule::category() const
 {
-	return "NO CATEGORY ASSIGNED";
+	return "Analysis / Geometry";
 }
 
 // Return brief description of module
 const char* CalculateAvgMolModule::brief() const
 {
-	return "Empty Module providing skeletal structure for new Module development";
+	return "Calculate average atomic positions of a species around an oriented site";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int CalculateAvgMolModule::nTargetableConfigurations() const
 {
-	return 0;
+	return 1;
 }

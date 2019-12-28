@@ -21,6 +21,21 @@
 
 #include "modules/calculate_avgmol/avgmol.h"
 
+/*
+ * Private Functions
+ */
+
+// Update the local species with the coordinates from the supplied arrays
+void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z)
+{
+	// Loop over atoms in our species
+	for (int n=0; n<averageSpecies_.nAtoms(); ++n) averageSpecies_.setAtomCoordinates(n, x.constAt(n).value(), y.constAt(n).value(), z.constAt(n).value());
+}
+
+/*
+ * Public Functions
+ */
+
 // Return average Species
 Species& CalculateAvgMolModule::averageSpecies()
 {

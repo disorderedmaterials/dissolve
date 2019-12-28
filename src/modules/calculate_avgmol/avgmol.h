@@ -72,6 +72,8 @@ class CalculateAvgMolModule : public Module
 	 * Processing
 	 */
 	private:
+	// Run set-up stage
+	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
@@ -80,8 +82,14 @@ class CalculateAvgMolModule : public Module
 	 * Functions / Data
 	 */
 	private:
+	// Species targeted by module (derived from selected site)
+	Species* targetSpecies_;
 	// Local Species representing average of targeted Species
 	Species averageSpecies_;
+
+	private:
+	// Update the local species with the coordinates from the supplied arrays
+	void updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z);
 
 	public:
 	// Return average Species
