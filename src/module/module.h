@@ -171,16 +171,6 @@ class Module : public ListItem<Module>
 
 
 	/*
-	 * LogPoints
-	 */
-	protected:
-	// Logpoint for instance-local data
-	int logPoint_;
-	// Logpoint reflecting time of last broadcast of instance-local data
-	int broadcastPoint_;
-
-
-	/*
 	 * Timing
 	 */
 	private:

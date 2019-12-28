@@ -31,10 +31,6 @@ Module::Module()
 	frequency_ = 1;
 	enabled_ = true;
 	configurationLocal_ = true;
-
-	// LogPoints
-	logPoint_ = 0;
-	broadcastPoint_ = 0;
 }
 
 // Destructor

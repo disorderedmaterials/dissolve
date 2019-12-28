@@ -2,6 +2,7 @@
 add_subdirectory(analyse)
 add_subdirectory(atomshake)
 add_subdirectory(bragg)
+add_subdirectory(calculate_avgmol)
 add_subdirectory(calculate_cn)
 add_subdirectory(calculate_dangle)
 add_subdirectory(calculate_rdf)

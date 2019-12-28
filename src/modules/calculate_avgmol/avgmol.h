@@ -1,6 +1,6 @@
 /*
-	*** CalculateCN Module
-	*** src/modules/calculate_cn/cn.h
+	*** Calculate Average Molecule Module
+	*** src/modules/calculate_avgmol/calculate_avgmol.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,25 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_CALCULATECN_H
-#define DISSOLVE_MODULE_CALCULATECN_H
+#ifndef DISSOLVE_MODULE_CALCULATEAVGMOL_H
+#define DISSOLVE_MODULE_CALCULATEAVGMOL_H
 
 #include "module/module.h"
-#include "procedure/procedure.h"
+#include "classes/species.h"
 
 // Forward Declarations
-class Process1DProcedureNode;
-class Sum1DProcedureNode;
-class OperateSitePopulationNormaliseProcedureNode;
+/* none */
 
-// CalculateCN Module
-class CalculateCNModule : public Module
+// Calculate Average Molecule Module
+class CalculateAvgMolModule : public Module
 {
 	public:
 	// Constructor
-	CalculateCNModule();
+	CalculateAvgMolModule();
 	// Destructor
-	~CalculateCNModule();
+	~CalculateAvgMolModule();
 
 
 	/*
@@ -74,6 +72,8 @@ class CalculateCNModule : public Module
 	 * Processing
 	 */
 	private:
+	// Run set-up stage
+	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
@@ -82,18 +82,18 @@ class CalculateCNModule : public Module
 	 * Functions / Data
 	 */
 	private:
-	// Analysis procedure to be run
-	Procedure analyser_;
-	// Sum1D node
-	Sum1DProcedureNode* sum1D_;
-	// Process1D node
-	Process1DProcedureNode* process1D_;
-	// Site normalisation node
-	OperateSitePopulationNormaliseProcedureNode* siteNormaliser_;
+	// Species targeted by module (derived from selected site)
+	Species* targetSpecies_;
+	// Local Species representing average of targeted Species
+	Species averageSpecies_;
+
+	private:
+	// Update the local species with the coordinates from the supplied arrays
+	void updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z);
 
 	public:
-	// Return specified coordination number (from Sum1D node)
-	const SampledDouble& coordinationNumber(int index);
+	// Return average Species
+	Species& averageSpecies();
 
 
 	/*

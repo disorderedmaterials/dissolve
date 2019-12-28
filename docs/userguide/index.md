@@ -81,6 +81,9 @@ has_toc: false
 #### General
 [Analyse](modules/analyse/index.md) - Perform custom analysis on configurations.
 
+#### Geometry
+[CalculateAvgMol](modules/calculateavgmol/index.md) - Calculate the average geometries of molecules
+
 #### Two-Centre Correlation Functions
 [CalculateCoordinationNumber](modules/calculatecn/index.md) - Calculate coordination numbers from a radial distribution function.
 [CalculateRDF](modules/calculaterdf/index.md) - Calculate site-site radial distribution functions.
