@@ -26,8 +26,7 @@
 void CalculateAvgMolModule::initialise()
 {
 	// Set up keywords
-	// TODO Must only accept oriented sites (updated in plot3d branch... fix later)
-	keywords_.add("Target", new SpeciesSiteKeyword(NULL), "Site", "Target site about which to calculate average species geometry");
+	keywords_.add("Target", new SpeciesSiteKeyword(NULL, true), "Site", "Target site about which to calculate average species geometry");
 
 	targetSpecies_ = NULL;
 }

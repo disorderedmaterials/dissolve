@@ -33,9 +33,17 @@ class SpeciesSiteKeyword : public KeywordData<SpeciesSite*>
 {
 	public:
 	// Constructor
-	SpeciesSiteKeyword(SpeciesSite* site = NULL);
+	SpeciesSiteKeyword(SpeciesSite* site = NULL, bool axesRequired = false);
 	// Destructor
 	~SpeciesSiteKeyword();
+
+
+	/*
+	 * Specification
+	 */
+	private:
+	// Whether sites in the list must have a defined orientation
+	bool axesRequired_;
 
 
 	/*
