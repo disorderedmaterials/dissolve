@@ -56,7 +56,7 @@ void CalculateAvgMolModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalculateAvgMolModuleWidget::writeState(LineParser& parser)
+bool CalculateAvgMolModuleWidget::writeState(LineParser& parser) const
 {
 	return false;
 }
