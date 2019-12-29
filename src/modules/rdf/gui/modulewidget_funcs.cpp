@@ -82,6 +82,10 @@ RDFModuleWidget::~RDFModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void RDFModuleWidget::updateControls(int flags)
 {
@@ -92,18 +96,8 @@ void RDFModuleWidget::updateControls(int flags)
 	totalsGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void RDFModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void RDFModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

@@ -71,18 +71,8 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 	}
 }
 
-// Disable sensitive controls within widget
-void CalculateSDFModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalculateSDFModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

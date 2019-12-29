@@ -97,6 +97,10 @@ SQModuleWidget::~SQModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void SQModuleWidget::updateControls(int flags)
 {
@@ -111,18 +115,8 @@ void SQModuleWidget::updateControls(int flags)
 	totalSQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void SQModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void SQModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

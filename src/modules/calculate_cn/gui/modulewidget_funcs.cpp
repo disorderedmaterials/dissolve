@@ -72,32 +72,6 @@ void CalculateCNModuleWidget::updateControls(int flags)
 	rdfGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalculateCNModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalculateCNModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool CalculateCNModuleWidget::writeState(LineParser& parser) const
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool CalculateCNModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
 /*
  * Widgets / Functions
  */

@@ -57,18 +57,8 @@ void CalculateRDFModuleWidget::updateControls(int flags)
 	rdfGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalculateRDFModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalculateRDFModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

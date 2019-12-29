@@ -53,24 +53,18 @@ CalibrationModuleWidget::~CalibrationModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void CalibrationModuleWidget::updateControls(int flags)
 {
 	dataView_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalibrationModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalibrationModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
@@ -91,6 +85,3 @@ bool CalibrationModuleWidget::readState(LineParser& parser)
 	return true;
 }
 
-/*
- * Widgets / Functions
- */

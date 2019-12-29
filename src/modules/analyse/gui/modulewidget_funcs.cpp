@@ -34,38 +34,3 @@ AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module, const 
 	refreshing_ = false;
 }
 
-// Update controls within widget
-void AnalyseModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void AnalyseModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void AnalyseModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool AnalyseModuleWidget::writeState(LineParser& parser) const
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool AnalyseModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
-

@@ -30,38 +30,3 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module) : ModuleWidg
 	refreshing_ = false;
 }
 
-// Update controls within widget
-void TestModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void TestModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void TestModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool TestModuleWidget::writeState(LineParser& parser) const
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool TestModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
-

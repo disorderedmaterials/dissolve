@@ -119,6 +119,10 @@ NeutronSQModuleWidget::~NeutronSQModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void NeutronSQModuleWidget::updateControls(int flags)
 {
@@ -136,18 +140,8 @@ void NeutronSQModuleWidget::updateControls(int flags)
 	totalFQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void NeutronSQModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void NeutronSQModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

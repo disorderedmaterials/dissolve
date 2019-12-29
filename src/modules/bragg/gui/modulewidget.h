@@ -70,7 +70,7 @@ class BraggModuleWidget : public ModuleWidget
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser

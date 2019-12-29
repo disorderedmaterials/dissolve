@@ -139,6 +139,10 @@ RefineModuleWidget::~RefineModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void RefineModuleWidget::updateControls(int flags)
 {
@@ -167,18 +171,8 @@ void RefineModuleWidget::updateControls(int flags)
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget
-void RefineModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void RefineModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

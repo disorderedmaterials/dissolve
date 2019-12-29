@@ -30,38 +30,3 @@ DataTestModuleWidget::DataTestModuleWidget(QWidget* parent, Module* module) : Mo
 	refreshing_ = false;
 }
 
-// Update controls within widget
-void DataTestModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void DataTestModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void DataTestModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool DataTestModuleWidget::writeState(LineParser& parser) const
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool DataTestModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
-

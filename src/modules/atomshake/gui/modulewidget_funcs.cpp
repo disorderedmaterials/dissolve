@@ -35,38 +35,3 @@ AtomShakeModuleWidget::~AtomShakeModuleWidget()
 {
 }
 
-// Update controls within widget
-void AtomShakeModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void AtomShakeModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void AtomShakeModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool AtomShakeModuleWidget::writeState(LineParser& parser) const
-{
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool AtomShakeModuleWidget::readState(LineParser& parser)
-{
-	return true;
-}
-
-/*
- * Widgets / Functions
- */
-

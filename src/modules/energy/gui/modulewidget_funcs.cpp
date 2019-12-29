@@ -69,6 +69,10 @@ EnergyModuleWidget::~EnergyModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void EnergyModuleWidget::updateControls(int flags)
 {
@@ -113,18 +117,8 @@ void EnergyModuleWidget::updateControls(int flags)
 	energyGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void EnergyModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void EnergyModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

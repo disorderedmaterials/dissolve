@@ -30,38 +30,3 @@ GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* pare
 	refreshing_ = false;
 }
 
-// Update controls within widget
-void GeometryOptimisationModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void GeometryOptimisationModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void GeometryOptimisationModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool GeometryOptimisationModuleWidget::writeState(LineParser& parser) const
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool GeometryOptimisationModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
-

@@ -92,7 +92,7 @@ void BraggModuleWidget::enableSensitiveControls()
 }
 
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

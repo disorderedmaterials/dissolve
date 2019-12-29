@@ -88,18 +88,8 @@ void CalculateDAngleModuleWidget::updateControls(int flags)
 	dAngleGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalculateDAngleModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalculateDAngleModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser

@@ -238,18 +238,8 @@ void EPSRModuleWidget::updateControls(int flags)
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget
-void EPSRModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void EPSRModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
