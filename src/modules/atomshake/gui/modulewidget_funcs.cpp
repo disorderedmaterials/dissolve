@@ -20,9 +20,10 @@
 */
 
 #include "modules/atomshake/gui/modulewidget.h"
+#include "modules/atomshake/atomshake.h"
 
 // Constructor
-AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);

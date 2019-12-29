@@ -39,6 +39,11 @@ class EnergyModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	EnergyModuleWidget(QWidget* parent, EnergyModule* module, Dissolve& dissolve);
+	~EnergyModuleWidget();
+
 	private:
 	// Associated Module
 	EnergyModule* module_;
@@ -46,11 +51,6 @@ class EnergyModuleWidget : public ModuleWidget
 	DataViewer* energyGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~EnergyModuleWidget();
 
 
 	/*

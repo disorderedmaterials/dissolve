@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<BraggModule*>(module)), dissolve_(dissolve)
+BraggModuleWidget::BraggModuleWidget(QWidget* parent, BraggModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);

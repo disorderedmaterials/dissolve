@@ -40,7 +40,7 @@ class EPSRModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
+	EPSRModuleWidget(QWidget* parent, EPSRModule* module, Dissolve& dissolve);
 	~EPSRModuleWidget();
 
 	private:

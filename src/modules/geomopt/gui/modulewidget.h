@@ -26,7 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class GeometryOptimisationModule;
 
 // Module Widget
 class GeometryOptimisationModuleWidget : public ModuleWidget
@@ -36,11 +36,11 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	GeometryOptimisationModule* module_;
 
 	public:
 	// Constructor
-	GeometryOptimisationModuleWidget(QWidget* parent, Module* module);
+	GeometryOptimisationModuleWidget(QWidget* parent, GeometryOptimisationModule* module);
 
 
 	/*

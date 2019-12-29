@@ -38,6 +38,11 @@ class CalibrationModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	CalibrationModuleWidget(QWidget* parent, CalibrationModule* module, Dissolve& dissolve);
+	~CalibrationModuleWidget();
+
 	private:
 	// Associated Module
 	CalibrationModule* module_;
@@ -45,11 +50,6 @@ class CalibrationModuleWidget : public ModuleWidget
 	DataViewer* dataView_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~CalibrationModuleWidget();
 
 
 	/*

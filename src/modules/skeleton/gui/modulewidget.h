@@ -26,7 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class SkeletonModule;
 
 // Module Widget
 class SkeletonModuleWidget : public ModuleWidget
@@ -36,11 +36,11 @@ class SkeletonModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	SkeletonModule* module_;
 
 	public:
 	// Constructor
-	SkeletonModuleWidget(QWidget* parent, Module* module);
+	SkeletonModuleWidget(QWidget* parent, SkeletonModule* module);
 
 
 	/*

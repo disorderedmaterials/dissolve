@@ -26,7 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class TestModule;
 
 // Module Widget
 class TestModuleWidget : public ModuleWidget
@@ -36,11 +36,11 @@ class TestModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	TestModule* module_;
 
 	public:
 	// Constructor
-	TestModuleWidget(QWidget* parent, Module* module);
+	TestModuleWidget(QWidget* parent, TestModule* module);
 
 
 	/*

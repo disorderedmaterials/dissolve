@@ -29,7 +29,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor
-NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<NeutronSQModule*>(module)), dissolve_(dissolve)
+NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);

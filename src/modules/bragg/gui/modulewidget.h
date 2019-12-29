@@ -39,6 +39,11 @@ class BraggModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	BraggModuleWidget(QWidget* parent, BraggModule* module, Dissolve& dissolve);
+	~BraggModuleWidget();
+
 	private:
 	// Associated Module
 	BraggModule* module_;
@@ -46,11 +51,6 @@ class BraggModuleWidget : public ModuleWidget
 	DataViewer* reflectionsGraph_, *totalsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~BraggModuleWidget();
 
 
 	/*

@@ -30,7 +30,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), dissolve_(dissolve), module_(dynamic_cast<EPSRModule*>(module))
+EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, EPSRModule* module, Dissolve& dissolve) : ModuleWidget(parent), dissolve_(dissolve), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);

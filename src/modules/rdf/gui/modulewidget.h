@@ -39,6 +39,11 @@ class RDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	RDFModuleWidget(QWidget* parent, RDFModule* module, Dissolve& dissolve);
+	~RDFModuleWidget();
+
 	private:
 	// Associated Module
 	RDFModule* module_;
@@ -46,11 +51,6 @@ class RDFModuleWidget : public ModuleWidget
 	DataViewer* partialsGraph_, *totalsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~RDFModuleWidget();
 
 
 	/*

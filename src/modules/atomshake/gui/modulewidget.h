@@ -26,8 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Dissolve;
-class Module;
+class AtomShakeModule;
 
 // Module Widget
 class AtomShakeModuleWidget : public ModuleWidget
@@ -37,11 +36,11 @@ class AtomShakeModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	AtomShakeModule* module_;
 
 	public:
 	// Constructor / Destructor
-	AtomShakeModuleWidget(QWidget* parent, Module* module);
+	AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* module);
 	~AtomShakeModuleWidget();
 
 

@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<RDFModule*>(module)), dissolve_(dissolve)
+RDFModuleWidget::RDFModuleWidget(QWidget* parent, RDFModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);

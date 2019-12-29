@@ -38,6 +38,11 @@ class SQModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	SQModuleWidget(QWidget* parent, SQModule* module, Dissolve& dissolve);
+	~SQModuleWidget();
+
 	private:
 	// Associated Module
 	SQModule* module_;
@@ -45,11 +50,6 @@ class SQModuleWidget : public ModuleWidget
 	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~SQModuleWidget();
 
 
 	/*

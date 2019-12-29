@@ -27,7 +27,6 @@
 
 // Forward Declarations
 class Dissolve;
-class Module;
 class NeutronSQModule;
 class PartialSet;
 class DataViewer;
@@ -40,7 +39,7 @@ class NeutronSQModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
+	NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* module, Dissolve& dissolve);
 	~NeutronSQModuleWidget();
 
 	private:

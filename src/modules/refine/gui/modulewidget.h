@@ -38,6 +38,11 @@ class RefineModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	RefineModuleWidget(QWidget* parent, RefineModule* module, Dissolve& dissolve);
+	~RefineModuleWidget();
+
 	private:
 	// Associated Module
 	RefineModule* module_;
@@ -45,11 +50,6 @@ class RefineModuleWidget : public ModuleWidget
 	DataViewer* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *phiMagGraph_, *errorsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~RefineModuleWidget();
 
 
 	/*
