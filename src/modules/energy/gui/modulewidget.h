@@ -41,7 +41,7 @@ class EnergyModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	EnergyModuleWidget(QWidget* parent, EnergyModule* module, Dissolve& dissolve);
+	EnergyModuleWidget(QWidget* parent, EnergyModule* module);
 	~EnergyModuleWidget();
 
 	private:
@@ -49,8 +49,6 @@ class EnergyModuleWidget : public ModuleWidget
 	EnergyModule* module_;
 	// DataViewer contained within this widget
 	DataViewer* energyGraph_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
 
 
 	/*

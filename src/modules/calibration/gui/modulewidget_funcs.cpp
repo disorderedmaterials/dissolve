@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, CalibrationModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, CalibrationModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);

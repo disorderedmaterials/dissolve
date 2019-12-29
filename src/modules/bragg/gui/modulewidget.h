@@ -41,7 +41,7 @@ class BraggModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	BraggModuleWidget(QWidget* parent, BraggModule* module, Dissolve& dissolve);
+	BraggModuleWidget(QWidget* parent, BraggModule* module);
 	~BraggModuleWidget();
 
 	private:
@@ -49,8 +49,6 @@ class BraggModuleWidget : public ModuleWidget
 	BraggModule* module_;
 	// DataViewers contained within this widget
 	DataViewer* reflectionsGraph_, *totalsGraph_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
 
 
 	/*

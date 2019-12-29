@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BraggModuleWidget::BraggModuleWidget(QWidget* parent, BraggModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+BraggModuleWidget::BraggModuleWidget(QWidget* parent, BraggModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -151,12 +151,12 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	CharString blockData;
 	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
+	for (AtomTypeData* atd1 = cfgTypes.first(); atd1 != NULL; atd1 = atd1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
+		for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++m)
 		{
-			CharString id("%s-%s", at1->name(), at2->name());
+			CharString id("%s-%s", atd1->atomTypeName(), atd2->atomTypeName());
 
 			// Original S(Q)
 			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()), CharString("Full//%s", id.get()), "Full");

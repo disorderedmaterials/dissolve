@@ -40,7 +40,7 @@ class CalibrationModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	CalibrationModuleWidget(QWidget* parent, CalibrationModule* module, Dissolve& dissolve);
+	CalibrationModuleWidget(QWidget* parent, CalibrationModule* module);
 	~CalibrationModuleWidget();
 
 	private:
@@ -48,8 +48,6 @@ class CalibrationModuleWidget : public ModuleWidget
 	CalibrationModule* module_;
 	// DataViewer contained within this widget
 	DataViewer* dataView_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
 
 
 	/*

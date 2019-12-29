@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, EnergyModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, EnergyModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
