@@ -21,10 +21,11 @@
 
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/calculate_sdf/gui/modulewidget.h"
+#include "main/dissolve.h"
 
 // Return a new widget controlling this Module
 ModuleWidget* CalculateSDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new CalculateSDFModuleWidget(parent, this);
+	return new CalculateSDFModuleWidget(parent, this, dissolve.coreData());
 }
 

@@ -21,11 +21,15 @@
 
 #include "modules/calculate_sdf/gui/modulewidget.h"
 #include "modules/calculate_sdf/sdf.h"
+#include "modules/calculate_avgmol/avgmol.h"
 #include "gui/viewer/render/renderabledata3d.h"
+#include "gui/viewer/render/renderablespecies.h"
+#include "gui/helpers/comboboxupdater.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 
 // Constructor
-CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module) : ModuleWidget(parent), module_(module)
+CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module, const CoreData& coreData) : ModuleWidget(parent), module_(module), coreData_(coreData)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -44,6 +48,11 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 	sdfView.setAutoFollowType(View::AllAutoFollow);
 
 	sdfRenderable_ = NULL;
+	referenceMolecule_ = NULL;
+	referenceMoleculeRenderable_ = NULL;
+
+	// Add on "<None>" option for refernece molecule
+	ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(NULL));
 
 	setGraphDataTargets();
 
@@ -69,6 +78,17 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 		ui_.DataMinValueLabel->setText(QString::number(sdfRenderable_->valuesMin(), 'e', 4));
 		ui_.DataMaxValueLabel->setText(QString::number(sdfRenderable_->valuesMax(), 'e', 4));
 	}
+
+	// Update available reference molecule combo
+	RefDataList<Species,CharString> refMolecules;
+	// -- Find available AvgMol results
+	RefList<CalculateAvgMolModule> avgMolModules = coreData_.findModulesByClass<CalculateAvgMolModule>();
+	RefListIterator<CalculateAvgMolModule> avgMolIterator(avgMolModules);
+	while (CalculateAvgMolModule* module = avgMolIterator.iterate()) refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
+	// -- Add on current species
+	ListIterator<Species> speciesIterator(coreData_.constSpecies());
+	while (Species* sp = speciesIterator.iterate()) refMolecules.append(sp, CharString("%s (Species)", sp->name()));
+	ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 }
 
 /*
@@ -103,6 +123,7 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 	// Remove any current data
 	sdfGraph_->clearRenderables();
 	sdfRenderable_ = NULL;
+	referenceMoleculeRenderable_ = NULL;
 
 	if (!module_) return;
 
@@ -126,7 +147,13 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 			ui_.UpperCutoffSpin->setRange(true, sdfRenderable_->valuesMin(), true, sdfRenderable_->valuesMax());
 			ui_.UpperCutoffSpin->setValue(maxValue);
 			ui_.UpperCutoffSpin->setSingleStep((maxValue-minValue)*0.05);
+
+			sdfRenderable_->setLowerCutoff((maxValue - minValue) * 0.5);
+			sdfRenderable_->setUpperCutoff(maxValue);
 		}
+
+		// Reference molecule
+		if (referenceMolecule_) referenceMoleculeRenderable_ = dynamic_cast<RenderableSpecies*>(sdfGraph_->createRenderable(Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
 	}
 }
 
@@ -146,4 +173,13 @@ void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
 	sdfRenderable_->setUpperCutoff(value);
 
 	sdfGraph_->postRedisplay();
+}
+
+void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int index)
+{
+	// Check index...
+	if (index == -1) referenceMolecule_ = NULL;
+	else referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
+
+	setGraphDataTargets();
 }

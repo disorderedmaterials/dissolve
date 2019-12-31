@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>293</height>
+    <width>782</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,7 +56,7 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="DataLimitsGroup">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -198,6 +198,33 @@
         </item>
         <item>
          <widget class="ExponentialSpin" name="UpperCutoffSpin"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="ReferenceMoleculeGroup">
+       <property name="title">
+        <string>Reference Molecule</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="ReferenceMoleculeCombo"/>
         </item>
        </layout>
       </widget>

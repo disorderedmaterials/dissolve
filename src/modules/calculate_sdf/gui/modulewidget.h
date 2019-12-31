@@ -27,8 +27,11 @@
 
 // Forward Declarations
 class CalculateSDFModule;
+class CoreData;
 class DataViewer;
 class RenderableData3D;
+class RenderableSpecies;
+class Species;
 
 // Module Widget
 class CalculateSDFModuleWidget : public ModuleWidget
@@ -36,14 +39,15 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor
+	CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module, const CoreData& coreData);
+
 	private:
 	// Associated Module
 	CalculateSDFModule* module_;
-
-	public:
-	// Constructor
-	CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module);
-
+	// CoreData reference
+	const CoreData& coreData_;
 
 	/*
 	 * UI
@@ -55,6 +59,10 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	DataViewer* sdfGraph_;
 	// Renderable for our SDF
 	RenderableData3D* sdfRenderable_;
+	// Reference molecule (Species) to display alongside density
+	Species* referenceMolecule_;
+	// Renderable for reference molecule
+	RenderableSpecies* referenceMoleculeRenderable_;
 
 	public:
 	// Update controls within widget
@@ -81,6 +89,7 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	private slots:
 	void on_LowerCutoffSpin_valueChanged(double value);
 	void on_UpperCutoffSpin_valueChanged(double value);
+	void on_ReferenceMoleculeCombo_currentIndexChanged(int index);
 };
 
 #endif
