@@ -32,6 +32,7 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 	SpeciesSite* site = keywords_.retrieve<SpeciesSite*>("Site");
 
+	// Clear species
 	averageSpecies_.clear();
 
 	// If the targetSpecies_ is different from the current target site, or the site is NULL, clear the arrays
@@ -57,6 +58,10 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			requiredSize = targetSpecies_->nAtoms();
 		}
 	}
+
+	// Set name and object tag for average species
+	averageSpecies_.setName(CharString("%s@%s", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
+	averageSpecies_.setObjectTag(CharString("CalculateAvgMol_%s", averageSpecies_.name()));
 
 	// Retrieve / create the three data arrays, and size accordingly
 	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "X", uniqueName(), GenericItem::InRestartFileFlag);
