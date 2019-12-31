@@ -38,6 +38,7 @@
 #include <QOffscreenSurface>
 #include <QObject>
 #include <QMenu>
+#include <QTimer>
 
 // Forward Declarations
 class QOpenGLFramebufferObject;
@@ -241,8 +242,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	protected:
 	// Canvas coordinates of mouse down
 	Vec3<int> rMouseDown_;
-	// Time at start of mouse down
-	Timer mouseDownTimer_;
+	// Mouse release timer for detection of context menu requests
+	QTimer mouseReleaseTimer_;
 	// Canvas coordinates of mouse cursor
 	Vec3<int> rMouseLast_;
 	// Current state of mouse buttons

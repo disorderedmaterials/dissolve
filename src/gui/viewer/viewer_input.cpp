@@ -35,7 +35,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	rMouseDown_.set(event->x(), contextHeight_ - event->y(), 0.0);
 	rMouseLast_ = rMouseDown_;
 	mouseDownModifiers_ = event->modifiers();
-	mouseDownTimer_.start();
+	mouseReleaseTimer_.start();
 
 	// If a 2D view, store the clicked local coordinate
 	if (view().isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
@@ -50,7 +50,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 {
 	// Detect right-click intended to call a context menu
-	if (buttonState_.testFlag(Qt::RightButton) && (mouseDownTimer_.secondsElapsed() < 0.4))
+	if (buttonState_.testFlag(Qt::RightButton) && (((rMouseLast_ - rMouseDown_).magnitude() <= 1) || mouseReleaseTimer_.isActive()))
 	{
 		contextMenuRequested(event->pos());
 
