@@ -28,6 +28,7 @@
   </qresource>
   <qresource prefix="viewer">
     <file>icons/viewer_edit.svg</file>
+    <file>icons/viewer_link.svg</file>
     <file>icons/viewer_edit_on.svg</file>
     <file>icons/viewer_interact.svg</file>
     <file>icons/viewer_interact_on.svg</file>

@@ -499,7 +499,7 @@
            </property>
            <property name="icon">
             <iconset resource="../main.qrc">
-             <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+             <normaloff>:/viewer/icons/viewer_link.svg</normaloff>:/viewer/icons/viewer_link.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
