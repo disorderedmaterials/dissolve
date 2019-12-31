@@ -118,8 +118,8 @@ class View
 	Matrix4 viewMatrix_;
 	// Inverse of view matrix
 	Matrix4 viewMatrixInverse_;
-	// Standard zOffset for translation matrix
-	static const double zOffset_;
+	// Default z offset for translation matrix
+	static const double defaultZTranslation_;
 	// Axes version at which view matrix was last calculated (mostly for keeping 2D view correct)
 	int viewAxesUsedAt_;
 	// Viewport version at which view matrix was last calculated

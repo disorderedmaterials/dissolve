@@ -27,7 +27,7 @@
 #include <cmath>
 
 // Static Members
-const double View::zOffset_ = -10.0;
+const double View::defaultZTranslation_ = -10.0;
 
 // Constructor
 View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
@@ -64,7 +64,7 @@ void View::clear()
 	viewportMatrix_[2] = 0;
 	viewportMatrix_[3] = 0;
 	viewportVersion_ = 0;
-	viewTranslation_.set(0.0, 0.0, zOffset_);
+	viewTranslation_.set(0.0, 0.0, defaultZTranslation_);
 	viewViewportUsedAt_ = -1;
 	viewAxesUsedAt_ = -1;
 	viewRotationPoint_ = 0;
@@ -105,9 +105,9 @@ void View::recalculateViewport(int width, int height)
 	// Recalculate projection matrix
 	if ((viewType_ == View::NormalView) || (viewType_ == View::AutoStretchedView))
 	{
-		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, zOffset_);
+		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
 	}
-	else projectionMatrix_ = calculateProjectionMatrix(false, zOffset_);
+	else projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
 
 	calculateFontScaling();
 
@@ -492,7 +492,7 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
 	// available range on-screen to use, allowing a margin to be added. A value of '1.0' would
 	// put the extent with the highest units on the very edge of the display.
 
-	Matrix4 viewMatrix, projectionMatrix = calculateProjectionMatrix(hasPerspective_, zOffset_);
+	Matrix4 viewMatrix, projectionMatrix = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
 	Vec4<double> rScreen, rWorld, rModel(xMax, yMax, 0.0, 1.0);
 	Vec3<double> translation(0.0, 0.0, -1.0);
 
@@ -628,10 +628,10 @@ void View::recalculateView(bool force)
 
 	// Calculate ourselves a 'standard' projection matrix
 	if (viewType_ == View::AutoStretchedView) projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
-	else projectionMatrix_ = calculateProjectionMatrix(false, zOffset_);
+	else projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
 
 	// Create a temporary, orthographic projection matrix
-	Matrix4 tempProjection = calculateProjectionMatrix(false, zOffset_);
+	Matrix4 tempProjection = calculateProjectionMatrix(false, viewTranslation_.z);
 
 	/*
 	 * To begin, set the stretch factors to our best first estimate, dividing our width by the range of the axes
@@ -803,7 +803,7 @@ void View::resetViewMatrix()
 	else
 	{
 		// Recalculate projection matrix
-		projectionMatrix_ = calculateProjectionMatrix(false, zOffset_);
+		projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
 	}
 
 	updateViewMatrix();
@@ -1252,7 +1252,7 @@ const Axes& View::constAxes() const
 void View::calculateFontScaling()
 {
 	// Calculate text scaling factor
-	Vec3<double> translate(0.0, 0.0, zOffset_);
+	Vec3<double> translate(0.0, 0.0, viewTranslation_.z);
 	if (hasPerspective_) translate.z = 0.5;
 	Vec3<double> unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]*0.5;
