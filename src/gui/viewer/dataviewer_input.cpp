@@ -107,9 +107,11 @@ void DataViewer::mouseWheeled(int delta)
 	}
 	else
 	{
-		double zrange = view().axes().stretch(2) * view().axes().realRange(2);
-		if (zrange < 1.0) zrange = 1.0;
-		view().translateView(0.0, 0.0, 0.5*zrange*(scrollUp ? -1.0 : 1.0));
+		// Call the base class function
+		BaseViewer::mouseWheeled(delta);
+
+		// Display will have already been updated, so return now
+		return;
 	}
 
 	postRedisplay();
