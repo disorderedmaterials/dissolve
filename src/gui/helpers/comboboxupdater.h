@@ -33,10 +33,10 @@ template <class I> class ComboBoxUpdater
 {
 	public:
 	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
-	ComboBoxUpdater(QComboBox* comboBox, const List<I>& data, const I* currentItem)
+	ComboBoxUpdater(QComboBox* comboBox, const List<I>& data, const I* currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
-		currentIndex_ = 0;
+		currentIndex_ = startIndex;
 
 		ListIterator<I> dataIterator(data);
 		while (I* dataItem = dataIterator.iterate()) updateItem(dataItem->name(), dataItem, dataItem == currentItem);
@@ -45,14 +45,14 @@ template <class I> class ComboBoxUpdater
 		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
+		if (currentItem == NULL) comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
 	// Update QComboBox from supplied RefList, assuming that class I implements a name() function for the item
-	ComboBoxUpdater(QComboBox* comboBox, const RefList<I>& data, const I* currentItem)
+	ComboBoxUpdater(QComboBox* comboBox, const RefList<I>& data, const I* currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
-		currentIndex_ = 0;
+		currentIndex_ = startIndex;
 
 		RefListIterator<I> dataIterator(data);
 		while (I* dataItem = dataIterator.iterate()) updateItem(dataItem->name(), dataItem, dataItem == currentItem);
@@ -61,14 +61,14 @@ template <class I> class ComboBoxUpdater
 		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
+		if (currentItem == NULL) comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
 	// Update QComboBox from supplied RefDataList, using the CharString data as the item's name
-	ComboBoxUpdater(QComboBox* comboBox, const RefDataList<I,CharString>& data, const I* currentItem)
+	ComboBoxUpdater(QComboBox* comboBox, const RefDataList<I,CharString>& data, const I* currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
-		currentIndex_ = 0;
+		currentIndex_ = startIndex;
 
 		RefDataListIterator<I,CharString> dataIterator(data);
 		while (I* dataItem = dataIterator.iterate()) updateItem(dataIterator.currentData(), dataItem, dataItem == currentItem);
@@ -77,7 +77,7 @@ template <class I> class ComboBoxUpdater
 		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
+		if (currentItem == NULL) comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
 	private:
