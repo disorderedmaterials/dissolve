@@ -80,6 +80,8 @@ void ConfigurationViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
+		case (ConfigurationViewer::DefaultInteraction):
+			break;
 		case (ConfigurationViewer::RotateViewInteraction):
 			// Rotation matrix has already been modified. Revert to default interaction mode
 			setInteractionMode(ConfigurationViewer::DefaultInteraction);

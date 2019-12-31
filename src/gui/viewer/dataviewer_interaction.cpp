@@ -50,6 +50,8 @@ void DataViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
+		case (DataViewer::DefaultInteraction):
+			break;
 		case (DataViewer::ZoomToAreaInteraction):
 			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)

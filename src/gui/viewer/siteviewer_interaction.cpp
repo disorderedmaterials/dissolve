@@ -82,6 +82,8 @@ void SiteViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
+		case (SiteViewer::DefaultInteraction):
+			break;
 		case (SiteViewer::SelectAreaInteraction):
 			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)

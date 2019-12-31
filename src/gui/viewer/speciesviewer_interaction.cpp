@@ -101,6 +101,8 @@ void SpeciesViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
+		case (SpeciesViewer::DefaultInteraction):
+			break;
 		case (SpeciesViewer::SelectAreaInteraction):
 			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
