@@ -19,8 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/charstring.h"
 #include "templates/variantpointer.h"
 #include "templates/list.h"
+#include "templates/refdatalist.h"
 #include <QComboBox>
 
 #ifndef DISSOLVE_COMBOBOXUPDATER_H
@@ -54,6 +56,22 @@ template <class I> class ComboBoxUpdater
 
 		RefListIterator<I> dataIterator(data);
 		while (I* dataItem = dataIterator.iterate()) updateItem(dataItem->name(), dataItem, dataItem == currentItem);
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
+
+		// If there is no valid current item, make sure this is reflected in the combobox
+		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
+	}
+
+	// Update QComboBox from supplied RefDataList, using the CharString data as the item's name
+	ComboBoxUpdater(QComboBox* comboBox, const RefDataList<I,CharString>& data, const I* currentItem)
+	{
+		comboBox_ = comboBox;
+		currentIndex_ = 0;
+
+		RefDataListIterator<I,CharString> dataIterator(data);
+		while (I* dataItem = dataIterator.iterate()) updateItem(dataIterator.currentData(), dataItem, dataItem == currentItem);
 
 		// If there are still rows remaining in the widget, delete them now
 		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
