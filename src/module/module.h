@@ -123,7 +123,9 @@ class Module : public ListItem<Module>
 	// Set whether the Module is enabled
 	void setEnabled(bool b);
 	// Return whether the Module is enabled
-	bool enabled() const;
+	bool isEnabled() const;
+	// Return whether the Module is disabled
+	bool isDisabled() const;
 
 
 	/*

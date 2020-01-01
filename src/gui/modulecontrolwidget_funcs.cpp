@@ -108,8 +108,8 @@ void ModuleControlWidget::updateControls()
 	ui_.NameEdit->setText(module_->uniqueName());
 
 	// Set 'enabled' button status
-	ui_.EnabledButton->setChecked(module_->enabled());
-	ui_.IconFrame->setEnabled(module_->enabled());
+	ui_.EnabledButton->setChecked(module_->isEnabled());
+	ui_.IconFrame->setEnabled(module_->isEnabled());
 
 	// Set frequency spin
 	ui_.FrequencySpin->setValue(module_->frequency());

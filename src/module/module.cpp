@@ -149,9 +149,15 @@ void Module::setEnabled(bool b)
 }
 
 // Return whether the Module is enabled
-bool Module::enabled() const
+bool Module::isEnabled() const
 {
 	return enabled_;
+}
+
+// Return whether the Module is disabled
+bool Module::isDisabled() const
+{
+	return !enabled_;
 }
 
 /*

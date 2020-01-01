@@ -135,7 +135,7 @@ bool Dissolve::iterate(int nIterations)
 			{
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
-				if (module->enabled()) ++nEnabledModules;
+				if (module->isEnabled()) ++nEnabledModules;
 
 				// TODO This will estimate wrongly for anything other than Sequential Processing
 				thisTime += module->processTimes().value();
@@ -156,7 +156,7 @@ bool Dissolve::iterate(int nIterations)
 			{
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
-				if (module->enabled()) ++nEnabledModules;
+				if (module->isEnabled()) ++nEnabledModules;
 
 				thisTime += module->processTimes().value();
 			}

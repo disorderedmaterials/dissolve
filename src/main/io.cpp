@@ -281,7 +281,7 @@ bool Dissolve::saveInput(const char* filename)
 
 			// Write frequency and disabled keywords
 			if (!parser.writeLineF("    Frequency  %i\n", module->frequency())) return false;
-			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
+			if (module->isDisabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write keyword options
 			if (!module->keywords().write(parser, "    ", true)) return false;
@@ -310,7 +310,7 @@ bool Dissolve::saveInput(const char* filename)
 
 			// Write frequency and disabled keywords
 			if (!parser.writeLineF("    Frequency  %i\n", module->frequency())) return false;
-			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
+			if (module->isDisabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write Configuration target(s)
 			RefListIterator<Configuration> configIterator(module->targetConfigurations());
