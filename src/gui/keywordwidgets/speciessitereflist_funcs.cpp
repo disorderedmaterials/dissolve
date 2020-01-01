@@ -114,6 +114,9 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData& coreDat
 				connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(siteCheckBox_clicked(bool)));
 				checkBox->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site));
 				layout->addWidget(checkBox);
+
+				// If this keyword demands oriented sites, disable the radio button if the site has no axes
+				if (keyword_->axesRequired() && (!site->hasAxes())) checkBox->setDisabled(true);
 			}
 
 			// Add on a vertical spacer to take up any extra space at the foot of the widget

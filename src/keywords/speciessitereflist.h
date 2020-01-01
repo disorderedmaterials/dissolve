@@ -45,6 +45,10 @@ class SpeciesSiteRefListKeyword : public KeywordData< RefList<SpeciesSite>& >
 	// Whether sites in the list must have a defined orientation
 	bool axesRequired_;
 
+	public:
+	// Return whether axes are required for the site
+	bool axesRequired() const;
+
 
 	/*
 	 * Arguments
