@@ -39,8 +39,8 @@ const char* DataTestModule::brief() const
 	return "Test named data in other modules against reference data";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int DataTestModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int DataTestModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

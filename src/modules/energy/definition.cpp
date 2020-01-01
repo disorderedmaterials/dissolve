@@ -39,9 +39,9 @@ const char* EnergyModule::brief() const
 	return "Calculate the total energy of a Configuration";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int EnergyModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int EnergyModule::nRequiredTargets() const
 {
-	return -1;
+	return Module::OneOrMoreTargets;
 }
 

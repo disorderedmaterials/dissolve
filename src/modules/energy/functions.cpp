@@ -189,7 +189,7 @@ int EnergyModule::checkStability(Configuration* cfg)
 		if (!stable)
 		{
 			Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
-			return 1;
+			return Module::ExactlyOneTarget;
 		}
 	}
 	else
@@ -198,7 +198,7 @@ int EnergyModule::checkStability(Configuration* cfg)
 		return -1;
 	}
 
-	return 0;
+	return Module::ZeroTargets;
 }
 
 // Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed

@@ -39,8 +39,8 @@ const char* CalculateAvgMolModule::brief() const
 	return "Calculate average atomic positions of a species around an oriented site";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateAvgMolModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int CalculateAvgMolModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

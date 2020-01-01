@@ -39,8 +39,8 @@ const char* CalculateCNModule::brief() const
 	return "Calculate coordination numbers from an existing radial distribution function";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateCNModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int CalculateCNModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }

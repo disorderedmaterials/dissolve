@@ -39,8 +39,8 @@ const char* CalibrationModule::brief() const
 	return "Calibrate various parameters";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalibrationModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int CalibrationModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }

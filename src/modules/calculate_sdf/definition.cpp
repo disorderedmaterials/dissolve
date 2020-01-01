@@ -39,8 +39,8 @@ const char* CalculateSDFModule::brief() const
 	return "Calculate spatial density functions around oriented sites";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateSDFModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int CalculateSDFModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

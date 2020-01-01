@@ -39,8 +39,8 @@ const char* SkeletonModule::brief() const
 	return "Empty Module providing skeletal structure for new Module development";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int SkeletonModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int SkeletonModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }

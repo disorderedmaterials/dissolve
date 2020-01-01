@@ -40,8 +40,8 @@ const char* RDFModule::brief() const
 	return "Calculate partial and total g(r)";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int RDFModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int RDFModule::nRequiredTargets() const
 {
-	return (configurationLocal_ ? 1 : -1);
+	return Module::OneOrMoreTargets;
 }

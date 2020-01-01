@@ -39,8 +39,8 @@ const char* CalculateRDFModule::brief() const
 	return "Calculate radial distribution functions between sites";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateRDFModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int CalculateRDFModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

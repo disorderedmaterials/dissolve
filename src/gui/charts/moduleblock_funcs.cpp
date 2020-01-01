@@ -236,7 +236,7 @@ void ModuleBlock::updateControls()
 	ui_.FrequencySpin->setValue(module_->frequency());
 
 	// Update Configuration label and icon tooltip
-	if (module_->nTargetableConfigurations() == 0)
+	if (module_->nRequiredTargets() == Module::ZeroTargets)
 	{
 		ui_.ConfigurationsLabel->setText("-");
 		ui_.ConfigurationsIconLabel->setToolTip("This module does not accept configuration targets.");
@@ -246,8 +246,8 @@ void ModuleBlock::updateControls()
 		// Construct the tooltip
 		QString toolTip;
 
-		if (module_->nTargetableConfigurations() == -1) toolTip = "This module may target any number of configurations.\n";
-		else toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nTargetableConfigurations()).arg(module_->nTargetableConfigurations() == 1 ? "configuration" : "configurations");
+		if (module_->nRequiredTargets() == Module::OneOrMoreTargets) toolTip = "This module may target any number of configurations.\n";
+		else toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nRequiredTargets()).arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
 
 		if (module_->nTargetConfigurations() == 0) toolTip += "No configuration targets set.";
 		else

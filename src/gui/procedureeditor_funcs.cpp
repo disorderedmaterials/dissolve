@@ -152,7 +152,7 @@ void ProcedureEditor::enableSensitiveControls()
 // 	newInstance->setConfigurationLocal(localConfiguration_);
 // 
 // 	// Set Configuration targets as appropriate
-// 	if (newInstance->nTargetableConfigurations() != 0)
+// 	if (newInstance->nRequiredTargets() != 0)
 // 	{
 // 		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
 // 		else
@@ -161,7 +161,7 @@ void ProcedureEditor::enableSensitiveControls()
 // 			while (Configuration* cfg = configIterator.iterate())
 // 			{
 // 				newInstance->addTargetConfiguration(cfg);
-// 				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
+// 				if ((newInstance->nRequiredTargets() != -1) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations())) break;
 // 			}
 // 		}
 // 	}

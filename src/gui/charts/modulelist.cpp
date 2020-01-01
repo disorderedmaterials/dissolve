@@ -280,7 +280,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings* strings)
 		newModule->setConfigurationLocal(localConfiguration_ != NULL);
 
 		// Set Configuration targets as appropriate
-		if (newModule->nTargetableConfigurations() != 0)
+		if (newModule->nRequiredTargets() != Module::ZeroTargets)
 		{
 			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
 			else newModule->addTargetConfigurations(dissolve_.configurations());

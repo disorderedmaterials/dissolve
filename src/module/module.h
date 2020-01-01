@@ -63,6 +63,13 @@ class Module : public ListItem<Module>
 	CharString uniqueName_;
 
 	public:
+	// Target Configurations Enum
+	enum TargetConfigurationNumber
+	{
+		OneOrMoreTargets = -1,
+		ZeroTargets = 0,
+		ExactlyOneTarget = 1
+	};
 	// Return type of Module
 	virtual const char* type() const = 0;
 	// Return category for Module
@@ -73,8 +80,8 @@ class Module : public ListItem<Module>
 	const char* uniqueName() const;
 	// Return brief description of Module
 	virtual const char* brief() const = 0;
-	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	virtual int nTargetableConfigurations() const = 0;
+	// Return the number of Configuration targets this Module requires
+	virtual int nRequiredTargets() const = 0;
 
 
 	/*

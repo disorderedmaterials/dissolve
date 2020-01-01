@@ -168,15 +168,15 @@ bool Module::isDisabled() const
 bool Module::addTargetConfiguration(Configuration* cfg)
 {
 	// Check how many Configurations we accept before we do anything else
-	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
+	if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.nItems() < nRequiredTargets()))
 	{
 		targetConfigurations_.append(cfg);
 		return true;
 	}
 	else
 	{
-		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
-		else Messenger::warn("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
+		if (nRequiredTargets() == Module::ZeroTargets) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
+		else Messenger::warn("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nRequiredTargets());
 	}
 
 	return false;
@@ -185,18 +185,18 @@ bool Module::addTargetConfiguration(Configuration* cfg)
 // Add Configuration targets
 bool Module::addTargetConfigurations(const List<Configuration>& configs)
 {
-	if (nTargetableConfigurations() == 0) return Messenger::error("Module targets no configurations, so none will be set from the %i provided.\n", configs.nItems());
-	else if (nTargetableConfigurations() == -1)
+	if (nRequiredTargets() == Module::ZeroTargets) return Messenger::error("Module targets no configurations, so none will be set from the %i provided.\n", configs.nItems());
+	else if (nRequiredTargets() == Module::OneOrMoreTargets)
 	{
 		Messenger::print("Adding %i configurations as targets for module '%s'...\n", configs.nItems(), uniqueName());
 
 		ListIterator<Configuration> configIterator(configs);
 		while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return Messenger::error("Failed to add configuration '%s' to module '%s'.\n", cfg->name(), uniqueName());
 	}
-	else if (nTargetConfigurations() == nTargetableConfigurations()) return Messenger::error("Refusing to add any of the %i provided configurations as targets for the module '%s' as it already has it's specified number (%i).\n", configs.nItems(), uniqueName(), nTargetableConfigurations());
+	else if (nTargetConfigurations() == nRequiredTargets()) return Messenger::error("Refusing to add any of the %i provided configurations as targets for the module '%s' as it already has it's specified number (%i).\n", configs.nItems(), uniqueName(), nRequiredTargets());
 	else
 	{
-		int spaces = nTargetableConfigurations() - nTargetConfigurations();
+		int spaces = nRequiredTargets() - nTargetConfigurations();
 		Messenger::print("Adding up to %i configurations from the %i provided as targets for module '%s'...\n", spaces, configs.nItems(), uniqueName());
 
 		ListIterator<Configuration> configIterator(configs);
@@ -238,7 +238,7 @@ bool Module::isTargetConfiguration(Configuration* cfg) const
 void Module::copyTargetConfigurations(Module* sourceModule)
 {
 	// First, check if this module actually accepts target Configurations
-	if ((nTargetableConfigurations() < sourceModule->nTargetConfigurations()) && (nTargetableConfigurations() != -1))
+	if ((nRequiredTargets() < sourceModule->nTargetConfigurations()) && (nRequiredTargets() != Module::OneOrMoreTargets))
 	{
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;

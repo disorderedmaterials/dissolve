@@ -39,8 +39,8 @@ const char* NeutronSQModule::brief() const
 	return "Calculate neutron-weighted S(Q)";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int NeutronSQModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int NeutronSQModule::nRequiredTargets() const
 {
-	return (configurationLocal_ ? 1 : -1);
+	return Module::OneOrMoreTargets;
 }

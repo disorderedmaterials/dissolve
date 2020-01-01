@@ -186,7 +186,7 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 	newInstance->setConfigurationLocal(localConfiguration_);
 
 	// Set Configuration targets as appropriate
-	if (newInstance->nTargetableConfigurations() != 0)
+	if (newInstance->nRequiredTargets() != Module::ZeroTargets)
 	{
 		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
 		else
@@ -195,7 +195,7 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				newInstance->addTargetConfiguration(cfg);
-				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
+				if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations())) break;
 			}
 		}
 	}

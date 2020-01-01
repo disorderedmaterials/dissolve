@@ -39,8 +39,8 @@ const char* EPSRModule::brief() const
 	return "Refine interatomic potentials in a manner consistent with EPSR";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int EPSRModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int EPSRModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }
