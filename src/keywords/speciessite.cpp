@@ -36,6 +36,16 @@ SpeciesSiteKeyword::~SpeciesSiteKeyword()
 }
 
 /*
+ * Specification
+ */
+
+// Return whether axes are required for the site
+bool SpeciesSiteKeyword::axesRequired() const
+{
+	return axesRequired_;
+}
+
+/*
  * Arguments
  */
 
