@@ -53,9 +53,6 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
-
 		// Retrieve control parameters from Configuration
 		bool adjustAngles = keywords_.asBool("AdjustAngles");
 		bool adjustBonds = keywords_.asBool("AdjustBonds");
