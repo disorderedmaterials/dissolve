@@ -87,6 +87,15 @@ bool Dissolve::prepare()
 	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
 	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
 
+	// Check Modules have suitable numbers of Configuration targets
+	RefListIterator<Module> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate())
+	{
+		if (module->isDisabled()) continue;
+
+		if (!module->hasValidNTargetConfigurations(true)) return false;
+	}
+
 	// Set up parallel comms / limits etc.
 	if (!setUpMPIPools()) return Messenger::error("Failed to set up parallel communications.\n");
 

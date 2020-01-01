@@ -222,6 +222,29 @@ int Module::nTargetConfigurations() const
 	return targetConfigurations_.nItems();
 }
 
+// Return whether the number of targeted Configurations is valid
+bool Module::hasValidNTargetConfigurations(bool reportError) const
+{
+	if (nRequiredTargets() == Module::OneOrMoreTargets)
+	{
+		bool valid = nTargetConfigurations() > 0;
+		if (reportError && (!valid)) Messenger::error("Module '%s' expects one or more configuration targets, but none have been provided.\n", uniqueName());
+		return valid;
+	}
+	else if (nRequiredTargets() == Module::ZeroTargets)
+	{
+		bool valid = (nTargetConfigurations() == 0);
+		if (reportError && (!valid)) Messenger::error("Module '%s' expects zero configuration targets, but %i ha%s been provided.\n", uniqueName(), nTargetConfigurations(), nRequiredTargets() == 1 ? "s" : "ve");
+		return valid;
+	}
+	else
+	{
+		bool valid = (nRequiredTargets() == nTargetConfigurations());
+		if (reportError && (!valid)) Messenger::error("Module '%s' expects exactly %i configuration %s, but %i ha%s been provided.\n", uniqueName(), nRequiredTargets(), nRequiredTargets() == 1 ? "target" : "targets", nTargetConfigurations(), nTargetConfigurations() == 1 ? "s" : "ve");
+		return valid;
+	}
+}
+
 // Return first targeted Configuration
 const RefList<Configuration>& Module::targetConfigurations() const
 {

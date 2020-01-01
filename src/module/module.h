@@ -153,6 +153,8 @@ class Module : public ListItem<Module>
 	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations
 	int nTargetConfigurations() const;
+	// Return whether the number of targeted Configurations is valid
+	bool hasValidNTargetConfigurations(bool reportError = false) const;
 	// Return targeted Configurations
 	const RefList<Configuration>& targetConfigurations() const;
 	// Return if the specified Configuration is in the targets list
