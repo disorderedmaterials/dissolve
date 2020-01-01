@@ -46,18 +46,14 @@ bool CalculateRDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (excludeSameMolecule) sameMoleculeExclusions.append(selectA_);
 	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
 
-	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
-	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+	// Grab Configuration pointer
+	Configuration* cfg = targetConfigurations_.firstItem();
 
-		// Set up process pool - must do this to ensure we are using all available processes
-		procPool.assignProcessesToGroups(cfg->processPool());
+	// Set up process pool - must do this to ensure we are using all available processes
+	procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Execute the analysis
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
-	}
+	// Execute the analysis
+	if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
 
 	return true;
 }
