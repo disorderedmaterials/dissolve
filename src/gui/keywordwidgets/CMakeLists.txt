@@ -21,6 +21,7 @@ SET(keywordwidgets_MOC_HDRS
   pairbroadeningfunction.h
   range.h
   speciesreflist.h
+  speciessite.h
   speciessitereflist.h
   vec3double.h
   vec3integer.h
@@ -60,6 +61,7 @@ SET(keywordwidgets_UIS
   pairbroadeningfunction.ui
   range.ui
   speciesreflist.ui
+  speciessite.ui
   speciessitereflist.ui
   vec3double.ui
   vec3integer.ui
@@ -96,6 +98,7 @@ SET(keywordwidgets_SRCS
   range_funcs.cpp
   species_funcs.cpp
   speciesreflist_funcs.cpp
+  speciessite_funcs.cpp
   speciessitereflist_funcs.cpp
   widget_funcs.cpp
   windowfunction_funcs.cpp
