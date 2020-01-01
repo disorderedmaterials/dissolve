@@ -92,11 +92,7 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 bool CalculateAvgMolModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Grab Configuration and Box pointers
 	Configuration* cfg = targetConfigurations_.firstItem();

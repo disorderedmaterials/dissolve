@@ -39,11 +39,7 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	const int averaging = keywords_.asInt("Averaging");
 	if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme"))) return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));

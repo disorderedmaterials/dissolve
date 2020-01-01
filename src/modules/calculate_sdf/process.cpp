@@ -31,11 +31,7 @@
 bool CalculateSDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Ensure any parameters in our nodes are set correctly
 	const Vec3<double> rangeX = keywords_.asVec3Double("RangeX");
