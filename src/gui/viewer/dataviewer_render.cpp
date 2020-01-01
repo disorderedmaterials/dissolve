@@ -39,6 +39,12 @@ void DataViewer::render2DOverlay()
 	const double overlayTextSize = 12.0 * pixelScaling_;
 	const double legendLineLength = 20.0 * pixelScaling_;
 
+	LineStyle(1.0).sendToGL(pixelScaling_);
+	glDisable(GL_LIGHTING);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDisable(GL_POINT_SMOOTH);
+	glDisable(GL_LINE_SMOOTH);
+
 	/*
 	 * Draw indicators in top-left corner
 	 */
