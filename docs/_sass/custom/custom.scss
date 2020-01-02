@@ -108,6 +108,13 @@ blockquote.action_tabs::before {
   background-image: url(action-tabs.svg);
 }
 
+// Action (Groups)
+blockquote.action_groups::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(action-groups.svg);
+}
+
 // Action (Menu)
 blockquote.action_menu {
   font-weight: bold;
@@ -119,6 +126,8 @@ blockquote.action_menu::before {
 
 // Action (Mouse)
 blockquote.action_mouse::before {
+  left: 10px;
+  top: 8px;
   background-image: url(action-mouse.svg);
 }
 
@@ -127,6 +136,8 @@ blockquote.action_key {
   font-weight: bold;
 }
 blockquote.action_key::before {
+  left: 10px;
+  top: 8px;
   background-image: url(action-key.svg);
 }
 
