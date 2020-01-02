@@ -61,7 +61,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 	}
 
 	// Run the generator
-	newConfiguration->generate(dissolve_.worldPool());
+	newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
 
 	setModified();
 	fullUpdate();
@@ -102,7 +102,7 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 	}
 
 	// Run the generator
-	newConfiguration->generate(dissolve_.worldPool());
+	newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
 
 	setModified();
 	fullUpdate();

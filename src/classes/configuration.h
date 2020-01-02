@@ -88,7 +88,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Return the current generator
 	Procedure& generator();
 	// Create the Configuration according to its generator Procedure
-	bool generate(ProcessPool& procPool);
+	bool generate(ProcessPool& procPool, double pairPotentialRange);
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
 	// Load coordinates from specified parser
