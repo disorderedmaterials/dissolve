@@ -85,33 +85,14 @@ void RenderableConfiguration::transformValues()
 	// If the transformed data are already up-to-date, no need to do anything
 	if (valuesTransformDataVersion_ == dataVersion()) return;
 
-	// Loop over Atoms, seeking extreme x, y, and z values
-	const DynamicArray<Atom>& atoms = source_->constAtoms();
-	for (int n=0; n<atoms.nItems(); ++n)
-	{
-		const Atom* i = atoms.constValue(n);
-		if (n == 0)
-		{
-			limitsMin_ = i->r();
-			limitsMax_ = i->r();
-		}
-		else
-		{
-			if (i->r().x < limitsMin_.x) limitsMin_.x = i->r().x;
-			else if (i->r().x > limitsMax_.x) limitsMax_.x = i->r().x;
-			if (i->r().y < limitsMin_.y) limitsMin_.y = i->r().y;
-			else if (i->r().y > limitsMax_.y) limitsMax_.y = i->r().y;
-			if (i->r().z < limitsMin_.z) limitsMin_.z = i->r().z;
-			else if (i->r().z > limitsMax_.z) limitsMax_.z = i->r().z;
-		}
-	}
+	// Minimum corresponds to lower left corner of the box at {0,0,0}
+	limitsMin_.zero();
 
-	positiveLimitsMin_.x = limitsMin_.x < 0.0 ? 0.01 : limitsMin_.x;
-	positiveLimitsMin_.y = limitsMin_.y < 0.0 ? 0.01 : limitsMin_.y;
-	positiveLimitsMin_.z = limitsMin_.z < 0.0 ? 0.01 : limitsMin_.z;
-	positiveLimitsMax_.x = limitsMax_.x < 0.0 ? 1.0 : limitsMax_.x;
-	positiveLimitsMax_.y = limitsMax_.y < 0.0 ? 1.0 : limitsMax_.y;
-	positiveLimitsMax_.z = limitsMax_.z < 0.0 ? 1.0 : limitsMax_.z;
+	// Transform extreme upper right corner from unit to real space to get maxima
+	limitsMax_ = source_->box()->fracToReal(Vec3<double>(1.0,1.0,1.0));
+
+	positiveLimitsMin_ = limitsMin_;
+	positiveLimitsMax_ = limitsMax_;
 
 	// Update the transformed data 'version'
 	valuesTransformDataVersion_ = dataVersion();
