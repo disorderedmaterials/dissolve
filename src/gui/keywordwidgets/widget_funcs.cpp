@@ -301,6 +301,9 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 
 			if (!widget)
 			{
+				// WORKAROUND - Don't raise errors for datastore types (issue #36)
+				if ((keyword->type() == KeywordBase::Data1DStoreData) || (keyword->type() == KeywordBase::Data2DStoreData) || (keyword->type() == KeywordBase::Data3DStoreData)) continue;
+
 				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(), KeywordBase::keywordDataType(keyword->type()));
 				continue;
 			}
