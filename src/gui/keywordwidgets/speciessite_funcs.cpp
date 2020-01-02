@@ -25,6 +25,7 @@
 #include "classes/species.h"
 #include "classes/speciessite.h"
 #include "templates/variantpointer.h"
+#include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QRadioButton>
 #include <QLabel>
