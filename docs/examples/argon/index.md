@@ -43,5 +43,6 @@ Create a new directory in a suitable location and download or copy the data file
 > Save your input file under a sensible name in the directory containing the example data file
 {: .step}
 
-[Let's begin!](step1.md){: .btn .right}
+
+[Let's begin!](step1.md){: .btn}
 
