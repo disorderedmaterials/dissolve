@@ -42,5 +42,5 @@ const char* DataTestModule::brief() const
 // Return the number of Configuration targets this Module requires
 int DataTestModule::nRequiredTargets() const
 {
-	return Module::ExactlyOneTarget;
+	return Module::ZeroTargets;
 }
