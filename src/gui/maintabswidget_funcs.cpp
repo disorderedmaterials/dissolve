@@ -509,6 +509,10 @@ void MainTabsWidget::disableSensitiveControls()
 {
 	RefListIterator<MainTab> tabIterator(allTabs_);
 	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
+
+	// Disable tab close buttons
+	RefDataListIterator<QToolButton,QWidget*> buttonIterator(closeButtons_);
+	while (QToolButton* button = buttonIterator.iterate()) button->setDisabled(true);
 }
 
 // Enable sensitive controls in all tabs
@@ -516,6 +520,10 @@ void MainTabsWidget::enableSensitiveControls()
 {
 	RefListIterator<MainTab> tabIterator(allTabs_);
 	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+
+	// Enable tab close buttons
+	RefDataListIterator<QToolButton,QWidget*> buttonIterator(closeButtons_);
+	while (QToolButton* button = buttonIterator.iterate()) button->setEnabled(true);
 }
 
 /*
