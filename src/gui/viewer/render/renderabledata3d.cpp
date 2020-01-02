@@ -82,11 +82,11 @@ void RenderableData3D::transformValues()
 	valuesTransform_.transformValues(transformedData_);
 
 	limitsMin_ = 0.0;
-	limitsMax_ = 1.0;
+	limitsMax_ = 0.0;
 	positiveLimitsMin_ = -1.0;
 	positiveLimitsMax_ = -1.0;
 	valuesMin_ = 0.0;
-	valuesMax_ = 1.0;
+	valuesMax_ = 0.0;
 	positiveValuesMin_ = -1.0;
 	positiveValuesMax_ = -1.0;
 
