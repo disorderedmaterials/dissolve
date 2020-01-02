@@ -202,7 +202,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	if (!ignoreRestartFile)
 	{
 		CharString actualRestartFile = restartFile;
-		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", qPrintable(inputFileInfo.fileName()));
+		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", dissolve_.inputFilename());
 		
 		if (DissolveSys::fileExists(actualRestartFile))
 		{
@@ -210,7 +210,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 			if (!dissolve_.loadRestart(actualRestartFile)) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 
 			// Reset the restart filename to be the standard one
-			dissolve_.setRestartFilename(CharString("%s.restart", inputFile));
+			dissolve_.setRestartFilename(CharString("%s.restart", dissolve_.inputFilename()));
 		}
 		else Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
 	}
@@ -231,7 +231,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	localSimulation_ = true;
 
 	// Check the beat file
-	CharString beatFile("%s.beat", qPrintable(inputFile));
+	CharString beatFile("%s.beat", dissolve_.inputFilename());
 	if (DissolveSys::fileExists(beatFile))
 	{
 		// TODO
