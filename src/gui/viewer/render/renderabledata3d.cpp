@@ -710,6 +710,9 @@ bool RenderableData3D::readStyleBlock(LineParser& parser)
 				if (!data3DDisplayStyles().isValid(parser.argc(1))) return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
 				break;
+			// End of block
+			case (RenderableData3D::EndStyleKeyword):
+				return true;
 			// Lower cutoff
 			case (RenderableData3D::LowerCutoffKeyword):
 				lowerCutoff_ = parser.argd(1);

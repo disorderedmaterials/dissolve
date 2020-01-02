@@ -323,7 +323,7 @@ RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::disp
 EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableConfiguration::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableConfiguration::DisplayKeyword,	"Display",	1) <<
 		EnumOption(RenderableConfiguration::EndStyleKeyword,	"EndStyle");
 
 	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
@@ -365,6 +365,9 @@ bool RenderableConfiguration::readStyleBlock(LineParser& parser)
 				if (!configurationDisplayStyles().isValid(parser.argc(1))) return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
 				break;
+			// End of block
+			case (RenderableConfiguration::EndStyleKeyword):
+				return true;
 			// Unrecognised Keyword
 			default:
 				Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));

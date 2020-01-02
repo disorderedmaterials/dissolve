@@ -172,7 +172,7 @@ RenderableSpeciesSite::SpeciesSiteDisplayStyle RenderableSpeciesSite::displaySty
 EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> RenderableSpeciesSite::speciesSiteStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableSpeciesSite::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableSpeciesSite::DisplayKeyword,	"Display",	1) <<
 		EnumOption(RenderableSpeciesSite::EndStyleKeyword,	"EndStyle");
 
 	static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> options("SpeciesSiteStyleKeyword", StyleKeywords);
@@ -214,6 +214,9 @@ bool RenderableSpeciesSite::readStyleBlock(LineParser& parser)
 				if (!speciesSiteDisplayStyles().isValid(parser.argc(1))) return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
 				break;
+			// End of block
+			case (RenderableSpeciesSite::EndStyleKeyword):
+				return true;
 			// Unrecognised Keyword
 			default:
 				Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n", parser.argc(0));

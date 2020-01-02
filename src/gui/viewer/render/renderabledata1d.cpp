@@ -301,7 +301,7 @@ RenderableData1D::Data1DDisplayStyle RenderableData1D::displayStyle() const
 EnumOptions<RenderableData1D::Data1DStyleKeyword> RenderableData1D::data1DStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableData1D::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableData1D::DisplayKeyword,	"Display",	1) <<
 		EnumOption(RenderableData1D::EndStyleKeyword,	"EndStyle");
 
 	static EnumOptions<RenderableData1D::Data1DStyleKeyword> options("Data1DStyleKeyword", StyleKeywords);
@@ -343,6 +343,9 @@ bool RenderableData1D::readStyleBlock(LineParser& parser)
 				if (!data1DDisplayStyles().isValid(parser.argc(1))) return data1DDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = data1DDisplayStyles().enumeration(parser.argc(1));
 				break;
+			// End of block
+			case (RenderableData1D::EndStyleKeyword):
+				return true;
 			// Unrecognised Keyword
 			default:
 				Messenger::warn("Unrecognised display style keyword for RenderableData1D: %s\n", parser.argc(0));

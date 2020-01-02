@@ -304,7 +304,7 @@ RenderableData2D::Data2DDisplayStyle RenderableData2D::displayStyle() const
 EnumOptions<RenderableData2D::Data2DStyleKeyword> RenderableData2D::data2DStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableData2D::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableData2D::DisplayKeyword,	"Display",	1) <<
 		EnumOption(RenderableData2D::EndStyleKeyword,	"EndStyle");
 
 	static EnumOptions<RenderableData2D::Data2DStyleKeyword> options("Data2DStyleKeyword", StyleKeywords);
@@ -346,6 +346,9 @@ bool RenderableData2D::readStyleBlock(LineParser& parser)
 				if (!data2DDisplayStyles().isValid(parser.argc(1))) return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
 				break;
+			// End of block
+			case (RenderableData2D::EndStyleKeyword):
+				return true;
 			// Unrecognised Keyword
 			default:
 				Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n", parser.argc(0));

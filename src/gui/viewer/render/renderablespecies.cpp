@@ -503,7 +503,7 @@ RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const
 EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableSpecies::DisplayKeyword,	"Display") <<
+		EnumOption(RenderableSpecies::DisplayKeyword,	"Display",	1) <<
 		EnumOption(RenderableSpecies::EndStyleKeyword,	"EndStyle");
 
 	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options("SpeciesStyleKeyword", StyleKeywords);
@@ -545,6 +545,9 @@ bool RenderableSpecies::readStyleBlock(LineParser& parser)
 				if (!speciesDisplayStyles().isValid(parser.argc(1))) return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
 				displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
 				break;
+			// End of block
+			case (RenderableSpecies::EndStyleKeyword):
+				return true;
 			// Unrecognised Keyword
 			default:
 				Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
