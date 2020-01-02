@@ -125,7 +125,7 @@ void RenderableData1D::transformValues()
 		positiveValuesMax_ = 1.0;
 	}
 
-	// Copy positve value limits over to y axis
+	// Copy positive value limits over to y axis
 	positiveLimitsMin_.y = positiveValuesMin_;
 	positiveLimitsMax_.y = positiveValuesMax_;
 
