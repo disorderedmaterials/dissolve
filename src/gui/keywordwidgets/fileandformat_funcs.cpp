@@ -81,7 +81,7 @@ void FileAndFormatKeywordWidget::fileEdit_editingFinished()
 	checkFileValidity();
 
 	// Set summary text on KeywordDropDown button
-	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "Set...");
+	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "<None>");
 
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -95,7 +95,7 @@ void FileAndFormatKeywordWidget::fileEdit_returnPressed()
 	checkFileValidity();
 
 	// Set summary text on KeywordDropDown button
-	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "Set...");
+	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "<None>");
 
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
@@ -191,7 +191,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	checkFileValidity();
 
 	// Set summary text on KeywordDropDown button
-	setSummaryText(fileAndFormat.hasFilename() ? fileAndFormat.filename() : "Set...");
+	setSummaryText(fileAndFormat.hasFilename() ? fileAndFormat.filename() : "<None>");
 	
 	refreshing_ = false;
 }
