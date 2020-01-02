@@ -892,7 +892,7 @@ bool BaseViewer::readSession(LineParser& parser)
 	bool success = parseInputBlocks(parser);
 
 	// Show a message if we encountered problems...
-	if (!success) Messenger::warn("Errors were encountered while reading the session data.\n");
+	if (!success) Messenger::error("Errors were encountered while reading the session data.\n");
 
 	return success;
 }
