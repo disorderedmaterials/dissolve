@@ -128,7 +128,7 @@ const char* Module::frequencyDetails(int iteration) const
 	static CharString result;
 
 	if (frequency_ < 0) return "NEGATIVE?";
-	else if (frequency_ == 0) return "disabled";
+	else if ((!enabled_) || (frequency_ == 0)) return "disabled";
 	else if (frequency_ == 1) return "every time";
 	else if ((iteration%frequency_) == 0) return "this iteration";
 	else
