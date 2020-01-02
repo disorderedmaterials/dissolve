@@ -147,25 +147,25 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	nCells_ = divisions_.x*divisions_.y*divisions_.z;
 	Messenger::print("Constructing array of %i cells...\n", nCells_);
 	cells_ = new Cell[nCells_];
-	Vec3<double> fracCentre_(fractionalCellSize_.x*0.5, 0.0, 0.0);
+	Vec3<double> fracCentre(fractionalCellSize_.x*0.5, 0.0, 0.0);
 	int count = 0;
 	for (x = 0; x<divisions_.x; ++x)
 	{
-		fracCentre_.y = fractionalCellSize_.y*0.5;
+		fracCentre.y = fractionalCellSize_.y*0.5;
 		for (y = 0; y<divisions_.y; ++y)
 		{
-			fracCentre_.z = fractionalCellSize_.z*0.5;
+			fracCentre.z = fractionalCellSize_.z*0.5;
 			for (z = 0; z<divisions_.z; ++z)
 			{
 				cells_[count].setIndex(count);
 				cells_[count].setGridReference(x,y,z);
-				cells_[count].setCentre(box_->fracToReal(fracCentre_));
-				fracCentre_.z += fractionalCellSize_.z;
+				cells_[count].setCentre(box_->fracToReal(fracCentre));
+				fracCentre.z += fractionalCellSize_.z;
 				++count;
 			}
-			fracCentre_.y += fractionalCellSize_.y;
+			fracCentre.y += fractionalCellSize_.y;
 		}
-		fracCentre_.x += fractionalCellSize_.x;
+		fracCentre.x += fractionalCellSize_.x;
 	}
 
 	// Calculate Cell axes matrix
@@ -191,55 +191,63 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			r[n] = extents_[n];
 			r = cellAxes * r;
 		} while (r[n] < pairPotentialRange);
-	}
-// 	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
-//
-// 	// Check Cell extents, comparing with the actual number of Cells available in each direction.
-// 	for (n=0; n<3; ++n)
-// 	{
-// 		if ((extents_[n]*2+1) > divisions_[n])
-// 		{
-// 			Messenger::warn("Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, extents_[n]*2+1, extents_[n], divisions_[n]);
-// 			// We do not decrease the value of extents_, even though there are not enough cells along one or more sides of the box to satisfy that required for the pairPotentialRange.
-// 			// When constructing, the loops below check the negative extents_ indices for overlap which would cause the same cell to be added to the list twice.
-// 		}
-// 	}
 
-	// Now, loop over cubic matrix of extents_ and construct list of gridReferences within range
-	// In case the number of cells required to cover the pairpotential range exceeds the number across the box, we need to check
-	// for and trim off negative indices which would in reality be equivalent to a folded, positive index.
+		// If we require a larger number of cells than the box physically has along this direction, reduce it accordingly
+		if ((extents_[n]*2+1) > divisions_[n]) extents_[n] = divisions_[n] / 2;
+	}
+	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
+
+	// Now, loop over extent integers and construct list of gridReferences within range
 	neighbourIndices_.clear();
 	RefList<Cell> cellNbrs;
+	Vec3<int> i, j;
 	Cell* nbr;
 	for (x=-extents_.x; x<=extents_.x; ++x)
 	{
-		// Check for extent exceeding available cells across box in x-direction
-// 		if ((x < 0) && (x+divisions_[0] <=extents_.x)) continue;
-
 		for (y=-extents_.y; y<=extents_.y; ++y)
 		{
-			// Check for extent exceeding available cells across box in y-direction
-// 			if ((y < 0) && (y+divisions_[1] <= extents_.y)) continue;
-
 			for (z=-extents_.z; z<=extents_.z; ++z)
 			{
-				// Check for extent exceeding available cells across box in z-direction
-// 				if ((z < 0) && (z+divisions_[2] <=extents_.z)) continue;
-
 				if ((x == 0) && (y == 0) && (z == 0)) continue;
-				// Set the grid reference of the cell to check, but reduce the extent by one
-				// unit towards the central box since we need to check the distance of the closest
-				// edge to this central Cell.
-				r.set(x - DissolveMath::sgn(x), y - DissolveMath::sgn(y), z - DissolveMath::sgn(z));
-				r = cellAxes * r;
-				if (r.magnitude() < pairPotentialRange)
+
+				// Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of corners are in range
+				bool close = false;
+				for (int iCorner = 0; iCorner < 8; ++iCorner)
 				{
-					// Check that the cell is not already in the list by querying the cellNbrs RefList
-					nbr = cell(x, y, z);
-					if (cellNbrs.contains(nbr)) continue;
-					neighbourIndices_.add()->set(x, y, z);
-					cellNbrs.append(nbr);
+					// Set integer vertex of corner on 'central' box
+					i.set(iCorner&1, iCorner&2, iCorner&4);
+
+					for (int jCorner = 0; jCorner < 8; ++jCorner)
+					{
+						// Set integer vertex of corner on 'other' box
+						j.set(x + jCorner&1, y + jCorner&2, z + jCorner&4);
+
+						// Get minimum image of vertex j w.r.t. i
+						j -= i;
+						j.x = j.x%divisions_.x;
+						if (j.x < 0) j.x += divisions_.x;
+						j.y = j.y%divisions_.y;
+						if (j.y < 0) j.y += divisions_.y;
+						j.z = j.z%divisions_.z;
+						if (j.z < 0) j.z += divisions_.z;
+
+						r.set(j.x, j.y, j.z);
+						r = cellAxes * r;
+						if (r.magnitude() < pairPotentialRange)
+						{
+							close = true;
+							break;
+						}
+					}
+					if (close) break;
 				}
+				if (!close) continue;
+
+				// Check that the cell is not already in the list by querying the cellNbrs RefList
+				nbr = cell(x, y, z);
+				if (cellNbrs.contains(nbr)) continue;
+				neighbourIndices_.add()->set(x, y, z);
+				cellNbrs.append(nbr);
 			}
 		}
 	}
@@ -248,7 +256,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
-	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours, adjacentNeighbours;
+	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours;
 	Vec3<int> gridRef, delta;
 	for (n=0; n<nCells_; ++n)
 	{
@@ -258,7 +266,6 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		// Clear neighbour lists
 		nearNeighbours.clear();
 		mimNeighbours.clear();
-		adjacentNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next())
@@ -268,14 +275,10 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			mimRequired = box_->type() == Box::NonPeriodicBoxType ? false : useMim(&cells_[n], nbr);
 			if (mimRequired) mimNeighbours.add(nbr);
 			else nearNeighbours.add(nbr);
-
-			// Add to adjacent Cells list, if it is adjacent
-			delta = mimGridDelta(&cells_[n], nbr);
-			if (delta.absMax() < 2) adjacentNeighbours.add(nbr);
 		}
 
 		// Set up lists in the cell
-		cells_[n].addCellNeighbours(nearNeighbours, mimNeighbours, adjacentNeighbours);
+		cells_[n].addCellNeighbours(nearNeighbours, mimNeighbours);
 	}
 
 	return true;

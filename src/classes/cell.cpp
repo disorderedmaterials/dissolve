@@ -157,7 +157,7 @@ bool Cell::removeAtom(Atom* i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours, OrderedPointerArray<Cell>& adjacentNeighbours)
+void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours)
 {
 	int n;
 
@@ -179,11 +179,6 @@ void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedP
 	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
 	allCellNeighbours_ = new CellNeighbour[allCells.nItems()];
 	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
-
-	// Create adjacent neighbours array
-	adjacentCellNeighbours_.createEmpty(26);
-	if (adjacentNeighbours.nItems() != 26) Messenger::error("Wrong number of adjacent Cell neighbours (%i) passed to Cell.\n", adjacentNeighbours.nItems());
-	for (n=0; n<adjacentNeighbours.nItems(); ++n) adjacentCellNeighbours_.add(adjacentNeighbours[n]);
 }
 
 // Return number of Cell near-neighbours, not requiring minimum image calculation
@@ -232,10 +227,4 @@ Cell* Cell::mimCellNeighbour(int id) const
 CellNeighbour* Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;
-}
-
-// Return array of adjacent Cell neighbours
-const Array<Cell*>& Cell::adjacentCellNeighbours()
-{
-	return adjacentCellNeighbours_;
 }
