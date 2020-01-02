@@ -105,9 +105,9 @@ void View::recalculateViewport(int width, int height)
 	// Recalculate projection matrix
 	if ((viewType_ == View::NormalView) || (viewType_ == View::AutoStretchedView))
 	{
-		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
+		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, defaultZTranslation_);
 	}
-	else projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+	else projectionMatrix_ = calculateProjectionMatrix(false, defaultZTranslation_);
 
 	calculateFontScaling();
 
@@ -361,6 +361,7 @@ Matrix4 View::viewRotationInverse()
 void View::setViewTranslation(double x, double y, double z)
 {
 	viewTranslation_.set(x, y, z);
+
 	if (!hasPerspective_) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
 
 	updateViewMatrix();
@@ -628,10 +629,10 @@ void View::recalculateView(bool force)
 
 	// Calculate ourselves a 'standard' projection matrix
 	if (viewType_ == View::AutoStretchedView) projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
-	else projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+	else projectionMatrix_ = calculateProjectionMatrix(false, defaultZTranslation_);
 
 	// Create a temporary, orthographic projection matrix
-	Matrix4 tempProjection = calculateProjectionMatrix(false, viewTranslation_.z);
+	Matrix4 tempProjection = calculateProjectionMatrix(false, defaultZTranslation_);
 
 	/*
 	 * To begin, set the stretch factors to our best first estimate, dividing our width by the range of the axes
