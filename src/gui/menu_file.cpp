@@ -183,6 +183,10 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
 
 	modified_ = false;
 
+	// Update the current working directory to be local to the new input file
+	QFileInfo inputFileInfo(newFile);
+	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+
 	updateControlsFrame();
 
 	updateWindowTitle();
