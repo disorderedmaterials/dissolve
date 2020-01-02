@@ -7,7 +7,6 @@ SET(widgets_MOC_HDRS
   mimetreewidgetitem.h
   nocontrols.h
   sampleddoublelabel.h
-  tmenubuttongroup.h
 
   checkindicator.hui
   colourbutton.hui
@@ -16,8 +15,6 @@ SET(widgets_MOC_HDRS
   gradientbar.hui
   mimetreewidget.hui
   superstackedwidget.hui
-  tmenubutton.hui
-  tpopupwidget.hui
 )
 QT5_WRAP_CPP(widgets_MOC_SRCS ${widgets_MOC_HDRS})
 
@@ -41,9 +38,6 @@ SET(widgets_SRCS
   nocontrols_funcs.cpp
   sampleddoublelabel_funcs.cpp
   superstackedwidget_funcs.cpp
-  tmenubutton_funcs.cpp
-  tmenubuttongroup.cpp
-  tpopupwidget_funcs.cpp
 )
 
 # Target 'gui'
