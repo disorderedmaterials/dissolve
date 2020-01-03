@@ -109,7 +109,7 @@ void Dissolve::clear()
 	seed_ = -1;
 	restartFileFrequency_ = 10;
 	processingLayers_.clear();
-	processingModuleData_.clear();
+	processingModuleData_.clearAll();
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
 

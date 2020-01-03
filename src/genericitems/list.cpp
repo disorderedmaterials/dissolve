@@ -21,8 +21,20 @@
 
 #include "genericitems/list.h"
 
-// Clear all items
+// Clear all items (except those that are marked protected)
 void GenericList::clear()
+{
+	GenericItem* item = items_.first(), *nextItem;
+	while (item)
+	{
+		nextItem = item->next();
+		if (!item->hasFlag(GenericItem::ProtectedFlag)) items_.remove(item);
+		item = nextItem;
+	}
+}
+
+// Clear all items, including protected items
+void GenericList::clearAll()
 {
 	items_.clear();
 }

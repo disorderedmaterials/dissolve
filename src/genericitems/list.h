@@ -38,8 +38,10 @@ class GenericList
 	List<GenericItem> items_;
 
 	public:
-	// Clear all items
+	// Clear all items (except those that are marked protected)
 	void clear();
+	// Clear all items, including protected items
+	void clearAll();
 	// Add specified item to list (from base class pointer)
 	void add(GenericItem* item);
 	// Create an item of the specified type
