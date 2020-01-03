@@ -65,6 +65,8 @@ class ModuleListEditor : public QWidget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
+	// Show / hide module palette
+	void setModulePaletteVisible(bool visible);
 
 
 	/*

@@ -108,8 +108,8 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.ControlsWidget->setVisible(false);
 	connect(ui_.ControlsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
-	// Hide palette group initially
-// 	ui_.PaletteGroup->setVisible(false);
+	// Hide available modules group initially
+	ui_.ModulePaletteGroup->setVisible(false);
 
 	updateControls();
 }
@@ -145,6 +145,12 @@ void ModuleListEditor::enableSensitiveControls()
 	ui_.AvailableModulesTree->setEnabled(true);
 	chartWidget_->enableSensitiveControls();
 	ui_.ControlsWidget->enableSensitiveControls();
+}
+
+// Show / hide module palette
+void ModuleListEditor::setModulePaletteVisible(bool visible)
+{
+	ui_.ModulePaletteGroup->setVisible(visible);
 }
 
 /*

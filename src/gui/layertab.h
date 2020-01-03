@@ -79,6 +79,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	 * Widgets
 	 */
 	public slots:
+	void on_ShowPaletteButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
 

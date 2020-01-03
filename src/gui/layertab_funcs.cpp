@@ -109,6 +109,15 @@ ModuleLayer* LayerTab::moduleLayer() const
  * Widgets
  */
 
+void LayerTab::on_ShowPaletteButton_clicked(bool checked)
+{
+	// Show / hide the module palette
+	ui_.ModuleListPanel->setModulePaletteVisible(checked);
+
+	// Set correct text on our button
+	ui_.ShowPaletteButton->setText(checked ? "Hide Palette" : "Show Palette");
+}
+
 void LayerTab::on_EnabledButton_clicked(bool checked)
 {
 	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
