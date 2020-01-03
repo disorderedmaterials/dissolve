@@ -101,8 +101,13 @@ void GenericItem::setFlags(int flags)
 }
 
 // Return flags
-int GenericItem::flags()
+int GenericItem::flags() const
 {
 	return flags_;
 }
 
+// Return whether specified flag is set
+bool GenericItem::hasFlag(GenericItem::ItemFlag flag) const
+{
+	return (flags_&flag);
+}
