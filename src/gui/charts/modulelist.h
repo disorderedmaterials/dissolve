@@ -86,6 +86,10 @@ class ModuleListChart : public ChartBase
 	// Update the content block widgets against the current target data
 	void updateContentBlocks();
 
+	public:
+	// Set the currently-selected Module
+	void setCurrentModule(Module* module);
+
 
 	/*
 	 * Block Interaction

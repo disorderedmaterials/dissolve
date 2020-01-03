@@ -189,6 +189,17 @@ void ModuleListChart::updateContentBlocks()
 	while (nHotSpots > hotSpots_.nItems()) hotSpots_.add();
 }
 
+// Set the currently-selected Module
+void ModuleListChart::setCurrentModule(Module* module)
+{
+	if (!module) selectedBlock_ = NULL;
+	else selectedBlock_ = moduleBlock(module);
+
+	repaint();
+
+	blockSelectionChanged(selectedBlock_);
+}
+
 /*
  * Block Interaction
  */
