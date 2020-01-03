@@ -47,10 +47,16 @@ class KeywordsDialog : public QDialog
 	const CoreData& coreData_;
 	// Whether any keywords have been modified in the current 'show'
 	bool keywordsModified_;
+	// Whether any set-up needs to be re-run following keyword modification
+	bool setUpRequired_;
 
 	public:
-	// Run the dialog, returning whether any modifications to keyword values were made
-	bool showOptions();
+	// Run the dialog
+	void showOptions();
+	// Return whether any keywords have been modified in the current 'show'
+	bool keywordsModified() const;
+	// Return whether any set-up needs to be re-run following keyword modification
+	bool isSetUpRequired() const;
 
 
 	/*
@@ -58,6 +64,7 @@ class KeywordsDialog : public QDialog
 	 */
 	private slots:
 	void keywordChanged();
+	void setUpRequired();
 	void on_OKButton_clicked(bool checked);
 };
 
