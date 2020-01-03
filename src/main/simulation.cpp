@@ -369,6 +369,12 @@ bool Dissolve::iterate(int nIterations)
 	return true;
 }
 
+// Reset current simulation step
+void Dissolve::resetIterationCounter()
+{
+	iteration_ = 0;
+}
+
 // Return current simulation step
 int Dissolve::iteration() const
 {

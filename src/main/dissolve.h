@@ -302,6 +302,8 @@ class Dissolve
 	bool prepare();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
+	// Reset current simulation step
+	void resetIterationCounter();
 	// Return current simulation step
 	int iteration() const;
 	// Print timing information
