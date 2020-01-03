@@ -996,6 +996,7 @@ Remote Simulation</string>
      <string>S&amp;imulation</string>
     </property>
     <addaction name="SimulationRunAction"/>
+    <addaction name="SimulationRunForAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationPauseAction"/>
     <addaction name="SimulationStepFiveAction"/>
@@ -1590,6 +1591,14 @@ Remote Simulation</string>
   <action name="SimulationClearModuleDataAction">
    <property name="text">
     <string>Clear Module Data</string>
+   </property>
+  </action>
+  <action name="SimulationRunForAction">
+   <property name="text">
+    <string>Run &amp;For...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

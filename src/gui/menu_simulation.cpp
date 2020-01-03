@@ -42,6 +42,27 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 	emit iterate(-1);
 }
 
+void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
+{
+	// Get the number of iterations to run
+	bool ok;
+	int nIterations = QInputDialog::getInt(this, "Iterate Simulation...", "Enter the number of iterations to run", 10, 1, 1000000, 10, &ok);
+	if (!ok) return;
+
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
+
+	// Prepare the GUI
+	disableSensitiveControls();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
+
+	emit iterate(nIterations);
+}
+
 void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 {
 	// Prepare the simulation
