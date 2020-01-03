@@ -1003,6 +1003,7 @@ Remote Simulation</string>
     <addaction name="separator"/>
     <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
+    <addaction name="SimulationClearModuleDataAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
@@ -1584,6 +1585,11 @@ Remote Simulation</string>
   <action name="SimulationSaveRestartPointAction">
    <property name="text">
     <string>Save Restart &amp;Point...</string>
+   </property>
+  </action>
+  <action name="SimulationClearModuleDataAction">
+   <property name="text">
+    <string>Clear Module Data</string>
    </property>
   </action>
  </widget>

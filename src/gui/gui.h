@@ -180,6 +180,7 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationPauseAction_triggered(bool checked);
 	void on_SimulationSaveRestartPointAction_triggered(bool checked);
 	void on_SimulationDataManagerAction_triggered(bool checked);
+	void on_SimulationClearModuleDataAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesCreateEmptyAction_triggered(bool checked);
