@@ -72,6 +72,12 @@ bool RenderableSpecies::validateDataSource()
 	return source_;
 }
 
+// Invalidate the current data source
+void RenderableSpecies::invalidateDataSource()
+{
+	source_ = NULL;
+}
+
 // Return version of data
 int RenderableSpecies::dataVersion() const
 {

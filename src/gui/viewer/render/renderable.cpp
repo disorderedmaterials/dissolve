@@ -27,6 +27,9 @@
 #include "base/sysfunc.h"
 #include <limits>
 
+// Static Singletons
+RefList<Renderable> Renderable::instances_;
+
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
@@ -35,7 +38,8 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 		EnumOption(Renderable::Data1DRenderable, 		"Data1D") <<
 		EnumOption(Renderable::Data2DRenderable, 		"Data2D") <<
 		EnumOption(Renderable::Data3DRenderable, 		"Data3D") <<
-		EnumOption(Renderable::SpeciesRenderable, 		"Species");
+		EnumOption(Renderable::SpeciesRenderable, 		"Species") <<
+		EnumOption(Renderable::SpeciesSiteRenderable, 		"SpeciesSite");
 
 	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
 
@@ -45,6 +49,9 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 // Constructor
 Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 {
+	// Instance
+	instances_.append(this);
+
 	// Identity
 	type_ = type;
 	name_ = "New Renderable";
@@ -81,6 +88,7 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 // Destructor
 Renderable::~Renderable()
 {
+	instances_.remove(this);
 }
 
 /*
@@ -113,6 +121,29 @@ Renderable::RenderableType Renderable::type() const
 const char* Renderable::objectTag() const
 {
 	return objectTag_.get();
+}
+
+// Invalidate renderable data for specified object tag
+int Renderable::invalidate(const char* objectTag)
+{
+	int count = 0;
+	RefListIterator<Renderable> renderableIterator(instances_);
+	while (Renderable* rend = renderableIterator.iterate())
+	{
+		if (!DissolveSys::sameString(objectTag, rend->objectTag_)) continue;
+
+		rend->invalidateDataSource();
+
+		++count;
+	}
+	return count;
+}
+
+// Invalidate all renderables
+void Renderable::invalidateAll()
+{
+	RefListIterator<Renderable> renderableIterator(instances_);
+	while (Renderable* rend = renderableIterator.iterate()) rend->invalidateDataSource();
 }
 
 // Return coordinate minima of all data (after value transform if enabled)

@@ -49,6 +49,14 @@ class Renderable : public ListItem<Renderable>
 
 
 	/*
+	 * Instances
+	 */
+	private:
+	// List of all current renderables
+	static RefList<Renderable> instances_;
+
+
+	/*
 	 * Identity
 	 */
 	protected:
@@ -88,6 +96,8 @@ class Renderable : public ListItem<Renderable>
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	virtual bool validateDataSource() = 0;
+	// Invalidate the current data source
+	virtual void invalidateDataSource() = 0;
 
 	protected:
 	// Transform data values
@@ -96,6 +106,10 @@ class Renderable : public ListItem<Renderable>
 	public:
 	// Return identifying tag for source data object
 	const char* objectTag() const;
+	// Invalidate renderable data for specified object tag
+	static int invalidate(const char* objectTag);
+	// Invalidate all renderables
+	static void invalidateAll();
 	// Return version of data
 	virtual int dataVersion() const = 0;
 	// Return coordinate minima of all data (after value transform if enabled)

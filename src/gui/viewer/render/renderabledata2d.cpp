@@ -53,6 +53,12 @@ bool RenderableData2D::validateDataSource()
 	return source_;
 }
 
+// Invalidate the current data source
+void RenderableData2D::invalidateDataSource()
+{
+	source_ = NULL;
+}
+
 // Return version of data
 int RenderableData2D::dataVersion() const
 {

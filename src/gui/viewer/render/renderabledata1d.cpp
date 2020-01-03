@@ -52,6 +52,12 @@ bool RenderableData1D::validateDataSource()
 	return source_;
 }
 
+// Invalidate the current data source
+void RenderableData1D::invalidateDataSource()
+{
+	source_ = NULL;
+}
+
 // Return version of data
 int RenderableData1D::dataVersion() const
 {

@@ -67,6 +67,12 @@ bool RenderableConfiguration::validateDataSource()
 	return source_;
 }
 
+// Invalidate the current data source
+void RenderableConfiguration::invalidateDataSource()
+{
+	source_ = NULL;
+}
+
 // Return version of data
 int RenderableConfiguration::dataVersion() const
 {

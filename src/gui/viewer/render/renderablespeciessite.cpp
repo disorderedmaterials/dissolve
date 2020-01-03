@@ -62,6 +62,13 @@ bool RenderableSpeciesSite::validateDataSource()
 	return ((speciesSource_ != NULL) && (siteSource_ != NULL));
 }
 
+// Invalidate the current data source
+void RenderableSpeciesSite::invalidateDataSource()
+{
+	speciesSource_ = NULL;
+	siteSource_ = NULL;
+}
+
 // Return version of data
 int RenderableSpeciesSite::dataVersion() const
 {
