@@ -175,6 +175,9 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 	speciesAssembly_.clear();
 	selectionAssembly_.clear();
 
+	// Check data source
+	if (!validateDataSource()) return;
+
 	// Render according to the current displayStyle
 	if (displayStyle_ == LinesStyle)
 	{

@@ -165,6 +165,9 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	configurationAssembly_.clear();
 	unitCellAssembly_.clear();
 
+	// Check data source
+	if (!validateDataSource()) return;
+
 	// Grab the Configuration's Box and CellArray
 	const Box* box = source_->box();
 	const CellArray& cellArray = source_->constCells();
