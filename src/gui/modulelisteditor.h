@@ -97,6 +97,8 @@ class ModuleListEditor : public QWidget
 	private slots:
 	void blockSelectionChanged(const QString& blockIdentifier);
 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
+	void chartWidgetDataModified();
+	void controlsWidgetDataModified();
 
 
 	/*

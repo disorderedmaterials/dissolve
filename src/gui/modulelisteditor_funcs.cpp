@@ -60,6 +60,7 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.ChartScrollArea->setWidgetResizable(true);
 	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
 	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString&)), dissolveWindow_, SLOT(showModuleTab(const QString&)));
 	connect(chartWidget_, SIGNAL(blockRemoved(const QString&)), dissolveWindow_, SLOT(removeModuleTab(const QString&)));
 	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString&)), this, SLOT(blockSelectionChanged(const QString&)));
@@ -107,6 +108,7 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.ControlsWidget->setUp(dissolveWindow_);
 	ui_.ControlsWidget->setVisible(false);
 	connect(ui_.ControlsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui_.ControlsWidget, SIGNAL(dataModified()), this, SLOT(controlsWidgetDataModified()));
 
 	// Hide available modules group initially
 	ui_.ModulePaletteGroup->setVisible(false);
@@ -215,6 +217,18 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 
 	// Flag that the current data has changed
 	dissolveWindow_->setModified();
+}
+
+void ModuleListEditor::chartWidgetDataModified()
+{
+	// We don't know which ModuleBlock sent the signal, so just update the controls widget
+	ui_.ControlsWidget->updateControls();
+}
+
+void ModuleListEditor::controlsWidgetDataModified()
+{
+	// The controls widget must correspond to the selected module in the chart, so update it
+	if (chartWidget_->selectedBlock()) chartWidget_->selectedBlock()->updateControls();
 }
 
 /*
