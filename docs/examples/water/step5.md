@@ -16,8 +16,10 @@ With our equilibrated (or equilibrating...) system we'll now make a basic compar
 
 Now we can see the comparison between the total radial distribution functions (top panel) and neutron-weighted structure factors (bottom panel) for the H<sub>2</sub>O sample. When the system is approaching equilibrium you should see something similar to this:
 
-![Equilibrated water (H2O) G(r)](equilibrated-h2o-gr.png){: .img-centre}
-![Equilibrated water (H2O) F(Q)](equilibrated-h2o-fq.png){: .img-centre}
+![](equilibrated-h2o-gr.png){: .img-centre}
+*Equilibrated water (H2O) G(r)*
+![](equilibrated-h2o-fq.png){: .img-centre}
+*Equilibrated water (H2O) F(Q)*
 
 At first glance the calculated and experimental F(Q) agree reasonably well, but the G(r) clearly show that we have a problem, with the peak for the O-H bond far too sharp and intense in the calculated data. This is less to do with inaccuracy of the intramolecular parameters present in the forcefield, and more to do with the apparent broadening of bound features caused by the relative speed of the probe particle to that of chemically-bound, vibrating atoms. To account for this difference we will apply an effective broadening function to the intramolecular g(r).
 
@@ -43,10 +45,11 @@ Now we can safely adjust the options in the [`RDF`](/userguide/modules/rdf) modu
 
 Start the simulation up again and you should see quite quickly that this broadening function brings the intensity of the first peak down to a level much more in line with the reference data:
 
-![Equilibrated water (H2O) G(r) with effective broadening applied to intramolecular g(r)](equilibrated-h2o-broadened-gr.png){: .img-centre}
-![Equilibrated water (H2O) F(Q) with effective broadening applied to intramolecular g(r)](equilibrated-h2o-broadened-fq.png){: .img-centre}
+![](equilibrated-h2o-broadened-gr.png){: .img-centre}
+*Equilibrated water (H2O) G(r) with effective broadening applied to intramolecular g(r)*
+![](equilibrated-h2o-broadened-fq.png){: .img-centre}
+*Equilibrated water (H2O) F(Q) with effective broadening applied to intramolecular g(r)*
 
-
-
+It's
 
 [Previous Step](step4.md){: .btn }   [Next Step](step6.md){: .btn .right}

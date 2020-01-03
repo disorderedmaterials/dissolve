@@ -36,6 +36,7 @@ Finally, we'll tweak the temperature of the configuration.
 > Set the **Temperature** to 298 K
 {: .action .action_edit}
 
-![Water box](waterbox.png){: .img-centre}
+![](waterbox.png){: .img-centre}
+*Initial, randomised water box containing 1000 molecules*
 
 [Previous Step](step1.md){: .btn }   [Next Step](step3.md){: .btn .right}

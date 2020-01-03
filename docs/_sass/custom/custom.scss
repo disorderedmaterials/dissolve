@@ -3,12 +3,30 @@
 $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe ui", arial, sans-serif;
 // $mono-font-family: "SFMono-Regular", Menlo, Consolas, Monospace;
 
+/*
+ * Images / Figures
+ */
+
 // Centred image
 .img-centre {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
+
+img + em {
+  font-size: 80%;
+  width: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/*
+ * Buttons
+ */
 
 // Right-aligned button
 .btn.right {

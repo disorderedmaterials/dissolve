@@ -29,7 +29,8 @@ Now we can draw and connect the atoms we need to create our water molecule.
 > Repeat for the other hydrogen
 {: .step}
 
-![Very bad water](badwater.png){: .img-centre}
+![](badwater.png){: .img-centre}
+*A very badly drawn water molecule*
 
 You'll now have a water molecule that might look like its gone ten rounds with Mike Tyson, so let's clean it up. First, we'll need to assign suitable forcefield terms.
 
