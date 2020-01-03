@@ -7,7 +7,7 @@ grand_parent: Examples
 
 ## 2. Set up a Configuration
 
-Time to create a suitable bulk water configuration for our simulation.
+Time to create a suitable bulk water configuration for our simulation. We'll use the predefined "simple random mix" generator to get us going.
 
 > Configuration &#8680; Create... &#8680; Simple random mix
 {: .action .action_menu}
@@ -18,18 +18,18 @@ We now need to set a few parameters in the generator in order to get the correct
 
 > Open the settings for the `Parameters` node
 {: .action .action_settings}
-> Check that the value of the "rho" variable is 0.1
+> Check that the value of the "rho" variable is 0.1. This is the default value for the generator, and just so happens to correspond to the density (in atoms &#8491;<sup>-3</sup>) of liquid water at room temperature. The variable will be referenced in the `AddSpecies` node when setting the density of the water species.
 {: .step}
 > Open the settings for the `AddSpecies` node
 {: .action .action_settings}
-> Check that the units for the **Density** are set to `atoms/A3`
+> Make sure that the units for the **Density** are set to `atoms/A3` and that the equation simple references our parameter `rho`.
 {: .step}
-> Increase the **Population** to 1000
+> Increase the **Population** to 1000.
 {: .step}
-> Click _Regenerate_{: .text-green-100}
+> Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters.
 {: .action .action_mouse}
 
-Our new configuration should have a box size of just over 31 Angstroms side length.
+One thousand water molecules should have a cubic box size of just over 31 Angstroms side length.
 
 Finally, we'll tweak the temperature of the configuration.
 

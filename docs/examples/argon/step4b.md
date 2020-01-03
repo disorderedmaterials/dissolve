@@ -69,12 +69,12 @@ The [`NeutronSQ`](/userguide/modules/neutronsq) module itself looks after any re
 {: .action .action_tabs}
 > Open the **Reference Data** settings group
 {: .action .action_groups}
-> Click the button (currently displaying `<None>`) for the **Reference** option
+> For the **Reference** keyword select the file `yarnell.sq`, and set the format of the data to `xy`
 {: .step}
-> Open the file `yarnell.sq` - the format is `xy` data
-{: .step}
-> Open the **Manipulations** options
+> Open the options for the file import 
 {: .action .action_settings}
+> Open the **Manipulations** group
+{: .action .action_groups}
 > We need to subtract the average level from the experimental data as it oscillates around 1.0, so set the **RemoveAverage** value to 9.0. This will instruct Dissolve to work out the average value of the data from x = 9.0, and remove it from the data.
 {: .step}
 

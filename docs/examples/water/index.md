@@ -9,20 +9,20 @@ nav_order: 3
 30 minute read
 {: .label .label-blue }
 
-## Summary
+## Overview
 
 - Run, refine, and analyse the structure of liquid water at 298 K
 - Three neutron datasets, measured on the SANDALS diffractometer at the ISIS Pulsed Neutron and Muon Source in 2001
 - Reference input file: [water.txt](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/water.txt)
 
 ### Data Files
-- H<sub>2</sub>O: [SLS18498-H2O.mdcs01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18498-H2O.mdcs01)
-- HDO: [SLS18500-HDO5050.mdcs01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18500-HDO5050.mdcs01)
-- D<sub>2</sub>O: [SLS18502-D2O.mdcs01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18502-D2O.mdcs01)
+- H<sub>2</sub>O: [SLS18498-H2O.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18498-H2O.mint01)
+- HDO: [SLS18500-HDO5050.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18500-HDO5050.mint01)
+- D<sub>2</sub>O: [SLS18502-D2O.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18502-D2O.mint01)
 
 ## Summary
 
-TODO
+This example ...
 
 Steps:
 - Set up a suitable species and configuration
