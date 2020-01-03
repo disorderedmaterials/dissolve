@@ -58,6 +58,7 @@ void NeutronSQModule::initialise()
 	keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data", "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
 	keywords_.add("Reference Data", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "ReferenceNormalisation", "Normalisation to remove from reference data before use", KeywordBase::ModificationRequiresSetUpOption);
 	keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst", "Ignore the first point in the supplied reference data", KeywordBase::ModificationRequiresSetUpOption);
+	keywords_.add("Reference Data", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)), "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", KeywordBase::ModificationRequiresSetUpOption);
 
 	// Export
 	keywords_.add("Export", new BoolKeyword(false), "SaveReference", "Whether to save the reference data and its Fourier transform", "<True|False>");

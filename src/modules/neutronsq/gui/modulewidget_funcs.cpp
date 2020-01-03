@@ -221,8 +221,13 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 	}
 
 	// Add calculated total G(r)
-	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated");
+	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated (Direct)");
 	totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
+
+	// Add calculated total representative G(r) (from FT of S(Q))
+	Renderable* repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RepresentativeTotalGR", module_->uniqueName()), "Calculated (via FT)");
+	repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
+	totalGRGraph_->addRenderableToGroup(repGR, "Calculated");
 
 	// Add calculate total F(Q)
 	Renderable* totalFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "Calculated");
