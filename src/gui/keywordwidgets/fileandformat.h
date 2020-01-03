@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORDWIDGET_FILEANDFORMAT_H
 
 #include "gui/keywordwidgets/ui_fileandformat.h"
-#include "gui/keywordwidgets/dropdown.h"
 #include "keywords/fileandformat.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
@@ -32,7 +31,7 @@
 class Dissolve;
 class QComboBox;
 
-class FileAndFormatKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
@@ -58,11 +57,11 @@ class FileAndFormatKeywordWidget : public KeywordDropDown, public KeywordWidgetB
 	Ui::FileAndFormatWidget ui_;
 
 	private slots:
-	void fileEdit_editingFinished();
-	void fileEdit_returnPressed();
-	void formatCombo_currentIndexChanged(int index);
-	void fileSelectButton_clicked(bool checked);
-	void optionChanged();
+	void on_FileEdit_editingFinished();
+	void on_FileEdit_returnPressed();
+	void on_FormatCombo_currentIndexChanged(int index);
+	void on_FileSelectButton_clicked(bool checked);
+	void on_OptionsButton_clicked(bool checked);
 
 	signals:
 	// Keyword value changed

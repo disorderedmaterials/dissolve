@@ -32,10 +32,10 @@
 #include <QFileInfo>
 
 // Constructor
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI
-	ui_.setupUi(dropWidget());
+	ui_.setupUi(this);
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<FileAndFormatKeyword*>(keyword);
@@ -51,16 +51,8 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 	ui_.FormatCombo->clear();
 	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FormatCombo->addItem(keyword_->data().format(n));
 
-	// If the FileAndFormat has keyword options, set them up in the OptionsWidget. Otherwise, hide it.
-	ui_.OptionsWidget->setVisible(keyword_->hasOptions());
-	if (keyword_->hasOptions()) ui_.OptionsWidget->setUp(keyword_->data().keywords(), coreData_);
-
-	// Connect signals / slots
-	connect(ui_.FileEdit, SIGNAL(editingFinished()), this, SLOT(fileEdit_editingFinished()));
-	connect(ui_.FileEdit, SIGNAL(returnPressed()), this, SLOT(fileEdit_returnPressed()));
-	connect(ui_.FileSelectButton, SIGNAL(clicked(bool)), this, SLOT(fileSelectButton_clicked(bool)));
-	connect(ui_.FormatCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(formatCombo_currentIndexChanged(int)));
-	connect(ui_.OptionsWidget, SIGNAL(dataModified()), this, SLOT(optionChanged()));
+	// If the FileAndFormat has keyword options, enable the options button.
+	ui_.OptionsButton->setEnabled(keyword_->hasOptions());
 
 	// Set current information
 	updateWidgetValues(coreData_);
@@ -72,7 +64,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
  * Widgets
  */
 
-void FileAndFormatKeywordWidget::fileEdit_editingFinished()
+void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
 {
 	if (refreshing_) return;
 
@@ -80,13 +72,10 @@ void FileAndFormatKeywordWidget::fileEdit_editingFinished()
 
 	checkFileValidity();
 
-	// Set summary text on KeywordDropDown button
-	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "<None>");
-
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
-void FileAndFormatKeywordWidget::fileEdit_returnPressed()
+void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 {
 	if (refreshing_) return;
 
@@ -94,22 +83,10 @@ void FileAndFormatKeywordWidget::fileEdit_returnPressed()
 
 	checkFileValidity();
 
-	// Set summary text on KeywordDropDown button
-	setSummaryText(keyword_->data().hasFilename() ? keyword_->data().filename() : "<None>");
-
 	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
-void FileAndFormatKeywordWidget::formatCombo_currentIndexChanged(int index)
-{
-	if (refreshing_) return;
-
-	updateKeywordData();
-
-	emit(keywordValueChanged(keyword_->optionMask()));
-}
-
-void FileAndFormatKeywordWidget::fileSelectButton_clicked(bool checked)
+void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 {
 	// Grab the target FileAndFormat
 	FileAndFormat& fileAndFormat = keyword_->data();
@@ -140,9 +117,22 @@ void FileAndFormatKeywordWidget::fileSelectButton_clicked(bool checked)
 	}
 }
 
-void FileAndFormatKeywordWidget::optionChanged()
+void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 {
+	if (refreshing_) return;
+
+	updateKeywordData();
+
 	emit(keywordValueChanged(keyword_->optionMask()));
+}
+
+void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
+{
+	KeywordsDialog optionsDialog(this, keyword_->data().keywords(), coreData_);
+
+	optionsDialog.showOptions();
+
+	if (optionsDialog.keywordsModified()) emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
@@ -161,14 +151,8 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 		ui_.FileExistsIndicator->setVisible(true);
 		bool ok = fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false;
 		ui_.FileExistsIndicator->setOK(ok);
-		if (ok) setSummaryIcon(QPixmap(":/general/icons/general_true.svg"));
-		else if (fileAndFormat.hasFilename()) setSummaryIcon(QPixmap(":/general/icons/general_false.svg"));
-		else setSummaryIcon(QIcon());
 	}
-	else
-	{
-		ui_.FileExistsIndicator->setVisible(false);
-	}
+	else ui_.FileExistsIndicator->setVisible(false);
 }
 
 // Update value displayed in widget
@@ -190,9 +174,6 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	ui_.FormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
 	checkFileValidity();
 
-	// Set summary text on KeywordDropDown button
-	setSummaryText(fileAndFormat.hasFilename() ? fileAndFormat.filename() : "<None>");
-	
 	refreshing_ = false;
 }
 
