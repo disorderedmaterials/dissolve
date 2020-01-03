@@ -162,13 +162,15 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 }
 
 // Create a Module instance for the named Module type, and add it to the specified layer
-Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer)
+Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer, bool configurationLocal)
 {
 	Module* module = createModuleInstance(moduleType);
 	if (!module) return NULL;
 
 	// Add the new module instance to the specified destination layer
 	destinationLayer->own(module);
+
+	module->setConfigurationLocal(configurationLocal);
 
 	return module;
 }

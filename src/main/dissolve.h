@@ -227,7 +227,7 @@ class Dissolve
 	// Create a Module instance for the named Module type
 	Module* createModuleInstance(const char* moduleType);
 	// Create a Module instance for the named Module type, and add it to the specified layer
-	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer);
+	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer, bool configurationLocal = false);
 	// Search for any instance of any Module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
 	// Search for any instance of any Module with the specified Module type
