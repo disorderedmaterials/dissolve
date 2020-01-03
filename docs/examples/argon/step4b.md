@@ -78,17 +78,13 @@ The [`NeutronSQ`](/userguide/modules/neutronsq) module itself looks after any re
 > We need to subtract the average level from the experimental data as it oscillates around 1.0, so set the **RemoveAverage** value to 9.0. This will instruct Dissolve to work out the average value of the data from x = 9.0, and remove it from the data.
 {: .step}
 
-The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so we will instruct Dissolve to remove this normalisation. Finally, we will change the default window function used in the Fourier transform in order to better match the processing performed on the original data.
+The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so we will instruct Dissolve to remove this normalisation.
 
 > **NeutronSQ** tab
 {: .action .action_tabs}
 > Open the **Reference Data** settings group
 {: .action .action_groups}
 > Select `AverageSquared` for the **ReferenceNormalisation**
-{: .step}
-> Open the **Calculation** settings group
-{: .action .action_groups}
-> Change the **WindowFunction** from `Lorch` to `None`
 {: .step}
 
 [Previous Step](step4a.md){: .btn }   [Next Step](step5.md){: .btn .right}

@@ -17,7 +17,7 @@ Our new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| [`AtomShake`](/userguide/modules/atomshake) | Performs standard Monte Carlo moves on individual atoms, one per atom |
+| [`AtomShake`](/userguide/modules/atomshake) | Performs standard Monte Carlo moves on individual atoms |
 | [`MD`](/userguide/modules/md) | Performs a number of molecular dynamics steps, evolving the system according to Newton's equations of motion |
 | [`Energy`](/userguide/modules/energy) | Calculates the total energy, including contributions from intramolecular terms if present |
 
