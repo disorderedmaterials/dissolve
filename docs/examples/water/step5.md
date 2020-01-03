@@ -50,6 +50,6 @@ Start the simulation up again and you should see quite quickly that this broaden
 ![](equilibrated-h2o-broadened-fq.png){: .img-centre}
 *Equilibrated water (H2O) F(Q) with effective broadening applied to intramolecular g(r)*
 
-It's
+It's important to understand the difference between the two flavours of "calculated" G(r). The first (`Calculated (Direct)`, solid black line) is the G(r) calculated directly from the configuration, and with broadening applied, and represents the raw "simulated" G(r). The second (`Calculated (via FT)`, dashed black line) is derived from Fourier transform of the calculate total F(Q) (i.e. it is the Fourier transform of the Fourier transform of the G(r)). The reason for displaying the latter is to enable a more true comparison between experimental and calculate G(r) - the reference data is Fourier transformed from _Q_- to _r_-space usually with a Window function such as the Lorch function, and so for consistency we also do the same transform on the calculate S(Q). Note that the effects are mostly isolated to the first peak in the G(r), which has a lower intensity in the Fourier transformed version.
 
 [Previous Step](step4.md){: .btn }   [Next Step](step6.md){: .btn .right}
