@@ -331,6 +331,12 @@ void ChartBase::blockRemovalRequested(const QString& blockIdentifier)
 	// No default action
 }
 
+// Return selected ChartBlock
+ChartBlock* ChartBase::selectedBlock() const
+{
+	return selectedBlock_;
+}
+
 /*
  * Widget Layout
  */
