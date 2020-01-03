@@ -89,6 +89,8 @@ class ModuleListChart : public ChartBase
 	public:
 	// Set the currently-selected Module
 	void setCurrentModule(Module* module);
+	// Return the currently-selected molecule
+	Module* currentModule() const;
 
 
 	/*

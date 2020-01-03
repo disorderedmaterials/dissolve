@@ -200,6 +200,18 @@ void ModuleListChart::setCurrentModule(Module* module)
 	blockSelectionChanged(selectedBlock_);
 }
 
+// Return the currently-selected molecule
+Module* ModuleListChart::currentModule() const
+{
+	if (!selectedBlock_) return NULL;
+
+	// Cast selectedBlock_ up to a ModuleBlock
+	ModuleBlock* moduleBlock = dynamic_cast<ModuleBlock*>(selectedBlock_);
+	if (!moduleBlock) return NULL;
+
+	return moduleBlock->module();
+}
+
 /*
  * Block Interaction
  */
