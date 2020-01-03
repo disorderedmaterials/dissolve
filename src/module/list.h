@@ -25,8 +25,10 @@
 #include "templates/list.h"
 
 // Forward Declarations
+class Dissolve;
 class Module;
 class GenericList;
+class ProcessPool;
 
 // ModuleList
 class ModuleList
@@ -62,6 +64,14 @@ class ModuleList
 	int nModules() const;
 	// Return list of Modules
 	List<Module>& modules();
+
+
+	/*
+	 * General Actions
+	 */
+	public:
+	// Run set-up stages for all modules
+	bool setUpAll(Dissolve& dissolve, ProcessPool& procPool);
 };
 
 #endif

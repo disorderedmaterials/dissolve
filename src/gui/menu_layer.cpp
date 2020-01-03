@@ -54,6 +54,9 @@ void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool check
 	module = dissolve_.createModuleInstance("Energy", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
 	ui_.MainTabs->setCurrentTab(newLayer);
@@ -79,6 +82,9 @@ void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
 	module = dissolve_.createModuleInstance("Energy", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
 	ui_.MainTabs->setCurrentTab(newLayer);
@@ -103,6 +109,9 @@ void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 	module = dissolve_.createModuleInstance("Energy", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
 	ui_.MainTabs->setCurrentTab(newLayer);
@@ -121,6 +130,9 @@ void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
 	RefList<Module> neutronSQ = dissolve_.findModuleInstances("NeutronSQ");
 	epsr->addTargets(neutronSQ);
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
 	ui_.MainTabs->setCurrentTab(newLayer);
@@ -137,6 +149,9 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
 	// Add the RDF module
 	module = dissolve_.createModuleInstance("RDF", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
 
 	setModified();
 	fullUpdate();
@@ -159,6 +174,9 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
 	module = dissolve_.createModuleInstance("SQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
 	ui_.MainTabs->setCurrentTab(newLayer);
@@ -179,6 +197,9 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
 	// Add a NeutronSQ module
 	module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
 
 	setModified();
 	fullUpdate();
@@ -204,6 +225,9 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
 	// Add an XRaySQ module
 	module = dissolve_.createModuleInstance("XRaySQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
 
 	setModified();
 	fullUpdate();
