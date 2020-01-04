@@ -658,7 +658,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		// Sum fluctuation coefficients in to the potential coefficients
 		Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
-
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
