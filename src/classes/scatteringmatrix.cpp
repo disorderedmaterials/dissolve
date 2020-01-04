@@ -24,6 +24,7 @@
 #include "classes/weights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
+#include <algorithm>
 
 // Constructor
 ScatteringMatrix::ScatteringMatrix()
@@ -105,7 +106,8 @@ void ScatteringMatrix::print() const
 		}
 		Messenger::print("%s  %s\n", line.get(), data_.constAt(row).name());
 
-		if (row >= nColsWritten)
+		// Limit to sensible number of rows
+		if (row >= std::max(nColsWritten, 10))
 		{
 			line.clear();
 			for (int n=0; n<nColsWritten; ++n) line.strcat("    ...    ");
@@ -154,7 +156,8 @@ void ScatteringMatrix::printInverse() const
 		}
 		Messenger::print("%s  %s\n", line.get(), data_.constAt(col).name());
 
-		if (col >= nColsWritten)
+		// Limit to sensible number of rows
+		if (col >= std::max(nColsWritten, 10))
 		{
 			line.clear();
 			for (int n=0; n<nColsWritten; ++n) line.strcat("    ...    ");
