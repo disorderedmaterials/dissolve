@@ -57,7 +57,7 @@ class EPSRModuleWidget : public ModuleWidget
 	// Main form declaration
 	Ui::EPSRModuleWidget ui_;
 	// DataViewers contained within this widget
-	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
+	DataViewer* FQGraph_, *FQFitGraph_, *estimatedSQGraph_, *estimatedGRGraph_, *totalGRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
 
 	public:
 	// Update controls within widget

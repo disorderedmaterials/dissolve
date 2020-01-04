@@ -75,63 +75,63 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, EPSRModule* module, Dissolve
 	FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
-	SQGraph_ = ui_.SQPlotWidget->dataViewer();
+	estimatedSQGraph_ = ui_.EstimatedSQPlotWidget->dataViewer();
 
 	// -- Set view
-	SQGraph_->view().setViewType(View::FlatXYView);
-	SQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	SQGraph_->view().axes().setMax(0, 10.0);
-	SQGraph_->view().axes().setTitle(1, "S(\\it{Q})");
-	SQGraph_->view().axes().setMin(1, -1.0);
-	SQGraph_->view().axes().setMax(1, 1.0);
-	SQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-	SQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	estimatedSQGraph_->view().setViewType(View::FlatXYView);
+	estimatedSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	estimatedSQGraph_->view().axes().setMax(0, 10.0);
+	estimatedSQGraph_->view().axes().setTitle(1, "S(\\it{Q})");
+	estimatedSQGraph_->view().axes().setMin(1, -1.0);
+	estimatedSQGraph_->view().axes().setMax(1, 1.0);
+	estimatedSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+	estimatedSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
-	SQGraph_->groupManager().setGroupColouring("Estimated", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Estimated", RenderableGroup::IndividualVerticalShifting);
-	SQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	SQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
-	SQGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
-	SQGraph_->groupManager().setGroupStipple("Delta", LineStipple::DotStipple);
+	estimatedSQGraph_->groupManager().setGroupColouring("Estimated", RenderableGroup::AutomaticIndividualColouring);
+	estimatedSQGraph_->groupManager().setGroupVerticalShifting("Estimated", RenderableGroup::IndividualVerticalShifting);
+	estimatedSQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	estimatedSQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	estimatedSQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
+	estimatedSQGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
+	estimatedSQGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
+	estimatedSQGraph_->groupManager().setGroupStipple("Delta", LineStipple::DotStipple);
 
 	// g(r) Graph
-	GRGraph_ = ui_.GRPlotWidget->dataViewer();
+	estimatedGRGraph_ = ui_.EstimatedGRPlotWidget->dataViewer();
 
 	// -- Set view
-	GRGraph_->view().setViewType(View::FlatXYView);
-	GRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	GRGraph_->view().axes().setMax(0, 10.0);
-	GRGraph_->view().axes().setTitle(1, "g(r)");
-	GRGraph_->view().axes().setMin(1, -1.0);
-	GRGraph_->view().axes().setMax(1, 1.0);
-	GRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-	GRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	estimatedGRGraph_->view().setViewType(View::FlatXYView);
+	estimatedGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	estimatedGRGraph_->view().axes().setMax(0, 10.0);
+	estimatedGRGraph_->view().axes().setTitle(1, "g(r)");
+	estimatedGRGraph_->view().axes().setMin(1, -1.0);
+	estimatedGRGraph_->view().axes().setMax(1, 1.0);
+	estimatedGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+	estimatedGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
-	GRGraph_->groupManager().setGroupColouring("Estimated", RenderableGroup::AutomaticIndividualColouring);
-	GRGraph_->groupManager().setGroupVerticalShifting("Estimated", RenderableGroup::IndividualVerticalShifting);
-	GRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	GRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	GRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
+	estimatedGRGraph_->groupManager().setGroupColouring("Estimated", RenderableGroup::AutomaticIndividualColouring);
+	estimatedGRGraph_->groupManager().setGroupVerticalShifting("Estimated", RenderableGroup::IndividualVerticalShifting);
+	estimatedGRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	estimatedGRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	estimatedGRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
 
 	// F(r) Graph
-	FRGraph_ = ui_.FRPlotWidget->dataViewer();
+	totalGRGraph_ = ui_.TotalGRPlotWidget->dataViewer();
 	// -- Set view
-	FRGraph_->view().setViewType(View::FlatXYView);
-	FRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	FRGraph_->view().axes().setMax(0, 10.0);
-	FRGraph_->view().axes().setTitle(1, "F(r)");
-	FRGraph_->view().axes().setMin(1, -1.0);
-	FRGraph_->view().axes().setMax(1, 1.0);
-	FRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-	FRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	totalGRGraph_->view().setViewType(View::FlatXYView);
+	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	totalGRGraph_->view().axes().setMax(0, 10.0);
+	totalGRGraph_->view().axes().setTitle(1, "F(r)");
+	totalGRGraph_->view().axes().setMin(1, -1.0);
+	totalGRGraph_->view().axes().setMax(1, 1.0);
+	totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
+	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
-	FRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	FRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
-	FRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	FRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	FRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
+	totalGRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
+	totalGRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	totalGRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	totalGRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	totalGRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
 
 	// Phi(r) (Empirical Potentials) Graph
 	phiRGraph_ = ui_.PhiRPlotWidget->dataViewer();
@@ -219,18 +219,18 @@ void EPSRModuleWidget::updateControls(int flags)
 
 	ui_.FQPlotWidget->updateToolbar();
 	ui_.FQFitPlotWidget->updateToolbar();
-	ui_.SQPlotWidget->updateToolbar();
-	ui_.GRPlotWidget->updateToolbar();
-	ui_.FRPlotWidget->updateToolbar();
+	ui_.EstimatedSQPlotWidget->updateToolbar();
+	ui_.EstimatedGRPlotWidget->updateToolbar();
+	ui_.TotalGRPlotWidget->updateToolbar();
 	ui_.PhiRPlotWidget->updateToolbar();
 	ui_.PhiMagPlotWidget->updateToolbar();
 	ui_.RFactorPlotWidget->updateToolbar();
 
 	FQGraph_->postRedisplay();
 	FQFitGraph_->postRedisplay();
-	SQGraph_->postRedisplay();
-	GRGraph_->postRedisplay();
-	FRGraph_->postRedisplay();
+	estimatedSQGraph_->postRedisplay();
+	estimatedGRGraph_->postRedisplay();
+	totalGRGraph_->postRedisplay();
 	phiRGraph_->postRedisplay();
 	phiMagGraph_->postRedisplay();
 	rFactorGraph_->postRedisplay();
@@ -248,9 +248,9 @@ bool EPSRModuleWidget::writeState(LineParser& parser) const
 	// Write DataViewer sessions
 	if (!FQGraph_->writeSession(parser)) return false;
 	if (!FQFitGraph_->writeSession(parser)) return false;
-	if (!SQGraph_->writeSession(parser)) return false;
-	if (!GRGraph_->writeSession(parser)) return false;
-	if (!FRGraph_->writeSession(parser)) return false;
+	if (!estimatedSQGraph_->writeSession(parser)) return false;
+	if (!estimatedGRGraph_->writeSession(parser)) return false;
+	if (!totalGRGraph_->writeSession(parser)) return false;
 	if (!phiRGraph_->writeSession(parser)) return false;
 	if (!phiMagGraph_->writeSession(parser)) return false;
 	if (!rFactorGraph_->writeSession(parser)) return false;
@@ -264,9 +264,9 @@ bool EPSRModuleWidget::readState(LineParser& parser)
 	// Read DataViewer sessions
 	if (!FQGraph_->readSession(parser)) return false;
 	if (!FQFitGraph_->readSession(parser)) return false;
-	if (!SQGraph_->readSession(parser)) return false;
-	if (!GRGraph_->readSession(parser)) return false;
-	if (!FRGraph_->readSession(parser)) return false;
+	if (!estimatedSQGraph_->readSession(parser)) return false;
+	if (!estimatedGRGraph_->readSession(parser)) return false;
+	if (!totalGRGraph_->readSession(parser)) return false;
 	if (!phiRGraph_->readSession(parser)) return false;
 	if (!phiMagGraph_->readSession(parser)) return false;
 	if (!rFactorGraph_->readSession(parser)) return false;
@@ -310,10 +310,10 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName(), "RFactor");
 
 			// Reference F(r) (from direct FT of input data)
-			FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", targetModule->uniqueName()), CharString("%s (Exp)", targetModule->uniqueName()), "Exp");
+			totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", targetModule->uniqueName()), CharString("%s (Exp)", targetModule->uniqueName()), "Exp");
 
 			// Simulated F(r) (from FT of the calculated F(Q))
-			FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s (Calc)", targetModule->uniqueName()), "Calc");
+			totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s (Calc)", targetModule->uniqueName()), "Calc");
 		}
 
 		// Delta F(Q) and fit
@@ -326,7 +326,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	ListIterator<ModuleGroup> groupIterator(module_->groupedTargets().groups());
 	while (ModuleGroup* group = groupIterator.iterate())
 	{
-		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the SQGraph_
+		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the estimatedSQGraph_
 		n = 0;
 		for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 		{
@@ -340,23 +340,23 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 				 */
 
 				// Unweighted estimated partial
-				SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Estimated)", id.get()), "Estimated");
+				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Estimated)", id.get()), "Estimated");
 
 				// Calculated / summed partial
-				SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Calc)", id.get()), "Calc");
+				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Calc)", id.get()), "Calc");
 
 				// Deltas
-				SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Delta)", id.get()), "Delta");
+				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Delta)", id.get()), "Delta");
 
 				/*
 				 * Partial RDFs
 				 */
 
 				// Experimentally-determined unweighted partial
-				GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Estimated)", id.get()), "Estimated");
+				estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Estimated)", id.get()), "Estimated");
 
 				// Calculated / summed partial
-				GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Calc)", id.get()), "Calc");
+				estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("%s (Calc)", id.get()), "Calc");
 			}
 		}
 	}
