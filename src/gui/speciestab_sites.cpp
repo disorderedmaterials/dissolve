@@ -20,8 +20,10 @@
 */
 
 #include "gui/speciestab.h"
-#include "templates/variantpointer.h"
+#include "gui/gui.h"
 #include "gui/helpers/listwidgetupdater.h"
+#include "main/dissolve.h"
+#include "templates/variantpointer.h"
 
 /*
  * Private Functions
@@ -49,7 +51,21 @@ void SpeciesTab::on_SiteAddButton_clicked(bool checked)
 
 void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 {
-	printf("NOT IMPLEMENTED YET\n");
+	// Get the currently-selected site
+	SpeciesSite* site = currentSite();
+	if (!site) return;
+
+	// Remove references to the site, and invalidate our site renderable
+	dissolveWindow_->dissolve().removeReferencesTo(site);
+	ui_.SiteViewerWidget->setSite(NULL);
+
+	// Remove the site proper, and update the sites tab
+	species_->removeSite(site);
+	updateSitesTab();
+
+	dissolveWindow_->setModified();
+
+	dissolveWindow_->fullUpdate();
 }
 
 void SpeciesTab::on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QListWidgetItem* previousItem)
