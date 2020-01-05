@@ -57,6 +57,8 @@ void CalculateCNModule::initialise()
 
 	keywords_.add("Target / Ranges", new ModuleKeyword<const CalculateRDFModule>("CalculateRDF"), "SourceRDF", "Source CalculateRDFModule containing the data to process");
 	keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeA"), "RangeA", "Distance range for first coordination number");
+	keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeBEnabled"), "RangeBEnabled", "Whether calculation of the second coordination number is enabled");
 	keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeB"), "RangeB", "Distance range for second coordination number");
+	keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeCEnabled"), "RangeCEnabled", "Whether calculation of the third coordination number is enabled");
 	keywords_.link("Target / Ranges", sum1D_->keywords().find("RangeC"), "RangeC", "Distance range for third coordination number");
 }

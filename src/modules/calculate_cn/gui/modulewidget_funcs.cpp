@@ -56,14 +56,21 @@ void CalculateCNModuleWidget::updateControls(int flags)
 	if (module_)
 	{
 		ui_.RegionAResultFrame->setText(module_->coordinationNumber(0));
-		ui_.RegionBResultFrame->setText(module_->coordinationNumber(1));
-		ui_.RegionCResultFrame->setText(module_->coordinationNumber(2));
+		bool rangeBOn = module_->isRangeBEnabled();
+		ui_.RegionBResultFrame->setText(rangeBOn ? module_->coordinationNumber(1) : SampledDouble());
+		ui_.RegionBResultFrame->setEnabled(rangeBOn);
+		bool rangeCOn = module_->isRangeCEnabled();
+		ui_.RegionCResultFrame->setText(rangeCOn ? module_->coordinationNumber(2) : SampledDouble());
+		ui_.RegionCResultFrame->setEnabled(rangeCOn);
 	}
 	else
 	{
 		ui_.RegionAResultFrame->setText(SampledDouble());
+		ui_.RegionAResultFrame->setEnabled(false);
 		ui_.RegionBResultFrame->setText(SampledDouble());
+		ui_.RegionBResultFrame->setEnabled(false);
 		ui_.RegionCResultFrame->setText(SampledDouble());
+		ui_.RegionCResultFrame->setEnabled(false);
 	}
 
 	// Clear and recreate graph data targets?
@@ -99,7 +106,8 @@ void CalculateCNModuleWidget::setGraphDataTargets()
 	}
 
 	// Set RDF data target
-	Renderable* rdfRenderable = rdfGraph_->createRenderable(Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->rdfResult()->processedData().name());
+	Renderable* rdfRenderable = rdfGraph_->createRenderable(Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->uniqueName());
+	rdfRenderable->setColour(StockColours::BlueStockColour);
 
 	rdfDataLocated_ = true;
 }

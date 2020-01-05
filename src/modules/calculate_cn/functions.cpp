@@ -33,3 +33,15 @@ const SampledDouble& CalculateCNModule::coordinationNumber(int index)
 
 	return sum1D_->sum(index);
 }
+
+// Return whether range B is enabled
+bool CalculateCNModule::isRangeBEnabled() const
+{
+	return (sum1D_ ? sum1D_->isRangeBEnabled() : false);
+}
+
+// Return whether range C is enabled
+bool CalculateCNModule::isRangeCEnabled() const
+{
+	return (sum1D_ ? sum1D_->isRangeCEnabled() : false);
+}
