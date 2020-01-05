@@ -64,6 +64,13 @@ void SpeciesTab::on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QL
 void SpeciesTab::on_SiteList_itemChanged(QListWidgetItem* item)
 {
 	if (refreshLock_.isLocked()) return;
+
+	// Get the site pointer from the item
+	SpeciesSite* site = VariantPointer<SpeciesSite>(item->data(Qt::UserRole));
+	if (!site) return;
+
+	// Set unique site name
+	site->setName(species_->uniqueSiteName(qPrintable(item->text()), site));
 }
 
 void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
@@ -96,7 +103,7 @@ void SpeciesTab::updateSitesTab()
 	SpeciesSite* current = currentSite();
 
 	// Update the site list
-	ListWidgetUpdater<SpeciesTab,SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(), Qt::ItemIsEnabled);
+	ListWidgetUpdater<SpeciesTab,SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(), Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 	if ((current == NULL) && (species_->nSites() != 0)) ui_.SiteList->setCurrentRow(0);
 
 	// Check for current site
