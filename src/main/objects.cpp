@@ -49,3 +49,10 @@ void Dissolve::removeReferencesTo(Species* sp)
 	ListIterator<Configuration> configIterator(configurations());
 	while (Configuration* cfg = configIterator.iterate()) if (cfg->hasUsedSpecies(sp)) cfg->empty();
 }
+
+// Remove all references to the specified SpeciesSite
+void Dissolve::removeReferencesTo(SpeciesSite* site)
+{
+	// Remove references in keywords
+	KeywordBase::objectNoLongerValid<SpeciesSite>(site);
+}

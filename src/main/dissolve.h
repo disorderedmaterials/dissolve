@@ -370,6 +370,8 @@ class Dissolve
 	void removeReferencesTo(Module* module);
 	// Remove all references to the specified Species
 	void removeReferencesTo(Species* sp);
+	// Remove all references to the specified SpeciesSite
+	void removeReferencesTo(SpeciesSite* site);
 
 
 	/*
