@@ -23,6 +23,7 @@
 #define DISSOLVE_PROCEDURENODE_SUM1D_H
 
 #include "procedure/nodes/node.h"
+#include "math/range.h"
 #include "math/sampleddouble.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -56,12 +57,20 @@ class Sum1DProcedureNode : public ProcedureNode
 	private:
 	// Process1D node that we are targetting (retrieved from keyword 'SourceData')
 	const Process1DProcedureNode* processNode_;
+	// Ranges for sums (retrieved from keywords)
+	Range rangeA_, rangeB_, rangeC_;
+	// Flags for second and third ranges
+	bool rangeBEnabled_, rangeCEnabled_;
 	// Calculated sums (stored in processing data list)
 	SampledDouble sum_[3];
 
 	public:
 	// Return calculated sum specified
 	const SampledDouble& sum(int index) const;
+	// Return whether range B is enabled (from keyword data)
+	bool isRangeBEnabled() const;
+	// Return whether range C is enabled (from keyword data)
+	bool isRangeCEnabled() const;
 
 
 	/*
