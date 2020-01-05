@@ -64,6 +64,8 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
 	keyword_->data() = site;
 
 	updateSummaryText();
+
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
