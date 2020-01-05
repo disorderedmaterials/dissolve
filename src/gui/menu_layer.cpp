@@ -34,7 +34,7 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
@@ -62,7 +62,7 @@ void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool check
 	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Atomic)"));
@@ -90,7 +90,7 @@ void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
 	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (EPSR)"));
@@ -117,7 +117,7 @@ void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Refine (EPSR)"));

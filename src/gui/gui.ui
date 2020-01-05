@@ -1147,9 +1147,9 @@ Remote Simulation</string>
       <property name="title">
        <string>E&amp;volution...</string>
       </property>
-      <addaction name="LayerCreateEvolutionMolecularAction"/>
-      <addaction name="LayerCreateEvolutionAtomicAction"/>
-      <addaction name="LayerCreateEvolutionEPSRAction"/>
+      <addaction name="LayerCreateEvolveMolecularAction"/>
+      <addaction name="LayerCreateEvolveAtomicAction"/>
+      <addaction name="LayerCreateEvolveEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
       <property name="font">
@@ -1160,7 +1160,7 @@ Remote Simulation</string>
       <property name="title">
        <string>&amp;Refinement...</string>
       </property>
-      <addaction name="LayerCreateRefinementEPSRAction"/>
+      <addaction name="LayerCreateRefineEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateCalculateMenu">
       <property name="font">
@@ -1479,17 +1479,17 @@ Remote Simulation</string>
     <string>&amp;Rename...</string>
    </property>
   </action>
-  <action name="LayerCreateEvolutionEPSRAction">
+  <action name="LayerCreateEvolveEPSRAction">
    <property name="text">
     <string>&amp;EPSR (MC Only)</string>
    </property>
   </action>
-  <action name="LayerCreateEvolutionMolecularAction">
+  <action name="LayerCreateEvolveMolecularAction">
    <property name="text">
     <string>Standard &amp;Molecular (MC/MD)</string>
    </property>
   </action>
-  <action name="LayerCreateRefinementEPSRAction">
+  <action name="LayerCreateRefineEPSRAction">
    <property name="text">
     <string>Standard &amp;EPSR</string>
    </property>
@@ -1503,7 +1503,7 @@ Remote Simulation</string>
     <string>&amp;Delete</string>
    </property>
   </action>
-  <action name="LayerCreateEvolutionAtomicAction">
+  <action name="LayerCreateEvolveAtomicAction">
    <property name="text">
     <string>Standard &amp;Atomic (MC/MD)</string>
    </property>

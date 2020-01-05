@@ -200,10 +200,10 @@ class DissolveWindow : public QMainWindow
 	void on_ConfigurationExportToXYZAction_triggered(bool checked);
 	// Layer
 	void on_LayerCreateEmptyAction_triggered(bool checked);
-	void on_LayerCreateEvolutionMolecularAction_triggered(bool checked);
-	void on_LayerCreateEvolutionAtomicAction_triggered(bool checked);
-	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
-	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
+	void on_LayerCreateEvolveMolecularAction_triggered(bool checked);
+	void on_LayerCreateEvolveAtomicAction_triggered(bool checked);
+	void on_LayerCreateEvolveEPSRAction_triggered(bool checked);
+	void on_LayerCreateRefineEPSRAction_triggered(bool checked);
 	void on_LayerCreateCalculateRDFAction_triggered(bool checked);
 	void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
 	void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
