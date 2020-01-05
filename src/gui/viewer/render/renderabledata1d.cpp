@@ -163,15 +163,17 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 	// Grab reference to transformed data
 	const Data1D& data = transformedData();
 
+	bool first = true;
 	for (int n=0; n<data.nValues(); ++n)
 	{
 		if (data.constXAxis(n) < xMin) continue;
 		else if (data.constXAxis(n) > xMax) break;
 
-		if (n == 0)
+		if (first)
 		{
 			yMin = data.constValue(n);
 			yMax = yMin;
+			first = false;
 		}
 		else
 		{

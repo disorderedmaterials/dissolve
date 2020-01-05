@@ -825,7 +825,7 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
 		// Grab axis limits and make sure the limits are sensible, expanding only if the range is zero
 		double limitMin = axes_.limitMin(axis);
 		double limitMax = axes_.limitMax(axis);
-		Axes::ensureSensibleRange(limitMin, limitMax, true);
+		Axes::ensureSensibleRange(limitMin, limitMax);
 
 		axes_.setRange(axis, limitMin, limitMax);
 // 		axes_.setToLimit(axis, true);
@@ -958,7 +958,7 @@ void View::autoFollowData()
 
 		// Get y range over the horizontal range we've established
 		bool first = true;
-		double yMin, yMax, yMinTest, yMaxTest;
+		double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
 		for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
 		{
 			// Skip this Renderable if it is not currently visible
@@ -994,8 +994,8 @@ void View::autoFollowData()
 		}
 	
 		// Ensure a sensible range for the axes
-		Axes::ensureSensibleRange(xMin, xMax, true);
-		Axes::ensureSensibleRange(yMin, yMax, false);
+		Axes::ensureSensibleRange(xMin, xMax);
+		Axes::ensureSensibleRange(yMin, yMax);
 
 		// Set new limits
 		axes_.setRange(0, xMin, xMax);

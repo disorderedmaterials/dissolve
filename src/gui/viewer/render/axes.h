@@ -109,7 +109,7 @@ class Axes
 	// Return real axis range (accounting for log axes)
 	double realRange(int axis) const;
 	// Ensure a sensible (non-zero) range, modifying the supplied values
-	static void ensureSensibleRange(double& minValue, double& maxValue, bool expandOnlyIfZero = true, double expansionFactor = -1.0);
+	static void ensureSensibleRange(double& minValue, double& maxValue, bool alwaysExpand = false, double expansionFactor = -1.0);
 	// Return central value of axes
 	Vec3<double> centre() const;
 	// Return real axis minimum (accounting for log axes)
