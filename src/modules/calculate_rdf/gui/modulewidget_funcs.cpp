@@ -39,7 +39,6 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	view.axes().setTitle(1, "g(r)");
 	view.axes().setMin(1, 0.0);
 	view.axes().setMax(1, 1.0);
-	rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	view.setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets();
@@ -95,8 +94,8 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
 	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		// Calculated SDF
-		Renderable* sdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName());
-		sdf->setColour(StockColours::BlueStockColour);
+		// Calculated RDF
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		rdf->setColour(StockColours::BlueStockColour);
 	}
 }
