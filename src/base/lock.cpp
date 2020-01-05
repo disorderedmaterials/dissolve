@@ -79,5 +79,5 @@ void Locker::unlock()
 {
 	if (!unlocked_) lock_.removeLockLevel();
 
-	unlocked_ = false;
+	unlocked_ = true;
 }
