@@ -54,6 +54,8 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 
 void SpeciesTab::on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QListWidgetItem* previousItem)
 {
+	if (refreshLock_.isLocked()) return;
+
 	ui_.SiteViewerWidget->setSite(currentSite());
 
 	updateSitesTab();
