@@ -42,6 +42,26 @@ SpeciesSite* SpeciesTab::currentSite()
  * Private Slots
  */
 
+void SpeciesTab::setCurrentSiteFromViewer()
+{
+	Locker refreshLocker(refreshLock_);
+
+	// Get the currently-displayed site in the SiteViewer - if different from ours, change our controls to reflect it
+	SpeciesSite* displayedSite = ui_.SiteViewerWidget->siteViewer()->speciesSite();
+	if (!displayedSite) return;
+
+	// Sanity check that the displayed site actually exists in our species
+	if (!species_->sites().contains(displayedSite)) return;
+
+	// Update the site list
+	ListWidgetUpdater<SpeciesTab,SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(), Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable, displayedSite);
+
+	refreshLocker.unlock();
+
+	// Now update the tab
+	updateSitesTab();
+}
+
 void SpeciesTab::on_SiteAddButton_clicked(bool checked)
 {
 	species_->addSite("NewSite");

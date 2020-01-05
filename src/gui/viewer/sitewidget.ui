@@ -331,6 +331,49 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="SiteCreateButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>500</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Create new site with origin corresponding to the current atom selection</string>
+        </property>
+        <property name="text">
+         <string>Create</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="SiteSetOriginButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">

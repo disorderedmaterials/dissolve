@@ -101,9 +101,10 @@ void SiteWidget::updateToolbar()
 
 	// Enable site-definition buttons
 	bool currentSelection = (siteViewer()->species() ? siteViewer()->species()->nSelectedAtoms() != 0 : false);
-	ui_.SiteSetOriginButton->setEnabled(currentSelection);
-	ui_.SiteSetXAxisButton->setEnabled(currentSelection);
-	ui_.SiteSetYAxisButton->setEnabled(currentSelection);
+	ui_.SiteCreateButton->setEnabled(currentSelection);
+	ui_.SiteSetOriginButton->setEnabled(currentSelection && siteViewer()->speciesSite());
+	ui_.SiteSetXAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite());
+	ui_.SiteSetYAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite());
 }
 
 // Update status bar
@@ -176,6 +177,23 @@ void SiteWidget::on_ViewSpheresButton_clicked(bool checked)
 void SiteWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
 {
 	siteViewer()->copyViewToClipboard(checked);
+}
+
+void SiteWidget::on_SiteCreateButton_clicked(bool checked)
+{
+	// Sanity check for valid Species and selection
+	Species* sp = siteViewer()->species();
+	if ((!sp) || (sp->nSelectedAtoms() == 0)) return;
+
+	// Create the new site, using the empirical formula of the selection as the base name
+	SpeciesSite* site = sp->addSite(EmpiricalFormula::formula(sp->selectedAtoms()));
+	site->setOriginAtoms(sp->selectedAtoms());
+
+	// Update the siteViewer
+	siteViewer()->setSite(site);
+	siteViewer()->postRedisplay();
+
+	emit(siteCreatedAndShown());
 }
 
 void SiteWidget::on_SiteSetOriginButton_clicked(bool checked)

@@ -86,6 +86,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainT
 	connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomSelectionChanged()), this, SLOT(updateAtomTableSelection()));
 	connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
+	connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
 	connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 }
 

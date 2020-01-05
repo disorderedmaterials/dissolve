@@ -73,6 +73,8 @@ class SiteWidget : public QWidget
 	void styleModified();
 	// Displayed data has been modified
 	void dataModified();
+	// New site created and displayed
+	void siteCreatedAndShown();
 
 
 	/*
@@ -98,6 +100,7 @@ class SiteWidget : public QWidget
 	void on_ViewSpheresButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
 	// Site
+	void on_SiteCreateButton_clicked(bool checked);
 	void on_SiteSetOriginButton_clicked(bool checked);
 	void on_SiteSetXAxisButton_clicked(bool checked);
 	void on_SiteSetYAxisButton_clicked(bool checked);

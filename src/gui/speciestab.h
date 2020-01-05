@@ -166,6 +166,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	SpeciesSite* currentSite();
 
 	private slots:
+	void setCurrentSiteFromViewer();
 	void on_SiteAddButton_clicked(bool checked);
 	void on_SiteRemoveButton_clicked(bool checked);
 	void on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QListWidgetItem* previousItem);
