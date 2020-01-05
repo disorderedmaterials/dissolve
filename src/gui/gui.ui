@@ -1445,11 +1445,6 @@ Remote Simulation</string>
     <string>&amp;Empty</string>
    </property>
   </action>
-  <action name="actionldsjflksdf">
-   <property name="text">
-    <string>ldsjflksdf</string>
-   </property>
-  </action>
   <action name="SpeciesCreateAtomicAction">
    <property name="text">
     <string>&amp;Atomic...</string>
@@ -1487,11 +1482,6 @@ Remote Simulation</string>
   <action name="LayerCreateEvolutionEPSRAction">
    <property name="text">
     <string>&amp;EPSR (MC Only)</string>
-   </property>
-  </action>
-  <action name="actionStandard_Dissolve">
-   <property name="text">
-    <string>Standard Dissolve</string>
    </property>
   </action>
   <action name="LayerCreateEvolutionMolecularAction">
