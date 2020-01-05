@@ -90,6 +90,7 @@ void SiteViewer::setSite(SpeciesSite* site)
 {
 	site_ = site;
 	if (siteRenderable_ != NULL) removeRenderable(siteRenderable_);
+	siteRenderable_ = NULL;
 
 	// Create a new Renderable for the parent Species
 	if (site_)
