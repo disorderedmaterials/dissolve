@@ -136,9 +136,8 @@ void RenderableSpeciesSite::recreatePrimitives(const View& view, const ColourDef
 // Send primitives for rendering
 const void RenderableSpeciesSite::sendToGL(const double pixelScaling)
 {
-	// Set appropriate lighting for the speciessite and interaction assemblies
-	if (displayStyle_ == LinesStyle) glDisable(GL_LIGHTING);
-	else glEnable(GL_LIGHTING);
+	glDisable(GL_LIGHTING);
+	LineStyle(1.0).sendToGL();
 	siteAssembly_.sendToGL(pixelScaling);
 }
 
