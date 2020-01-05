@@ -60,6 +60,8 @@ void SpeciesTab::setCurrentSiteFromViewer()
 
 	// Now update the tab
 	updateSitesTab();
+
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_SiteAddButton_clicked(bool checked)
@@ -107,6 +109,8 @@ void SpeciesTab::on_SiteList_itemChanged(QListWidgetItem* item)
 
 	// Set unique site name
 	site->setName(species_->uniqueSiteName(qPrintable(item->text()), site));
+
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
@@ -117,6 +121,8 @@ void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
 	site->setOriginMassWeighted(checked);
 
 	ui_.SiteViewerWidget->postRedisplay();
+
+	dissolveWindow_->setModified();
 }
 
 /*
