@@ -1176,11 +1176,23 @@ Remote Simulation</string>
       <addaction name="LayerCreateCalculateRDFNeutronAction"/>
       <addaction name="LayerCreateCalculateRDFNeutronXRayAction"/>
      </widget>
+     <widget class="QMenu" name="LayerCreateAnalyseMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Analysis...</string>
+      </property>
+      <addaction name="LayerCreateAnalyseRDFCNAction"/>
+     </widget>
      <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
      <addaction name="LayerCreateEvolutionMenu"/>
      <addaction name="LayerCreateCalculateMenu"/>
      <addaction name="LayerCreateRefinementMenu"/>
+     <addaction name="LayerCreateAnalyseMenu"/>
     </widget>
     <addaction name="LayerCreateMenu"/>
     <addaction name="LayerRenameAction"/>
@@ -1589,6 +1601,11 @@ Remote Simulation</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="LayerCreateAnalyseRDFCNAction">
+   <property name="text">
+    <string>RDF &amp;&amp; Coordination Number</string>
    </property>
   </action>
  </widget>

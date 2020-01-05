@@ -23,6 +23,7 @@
 #include "gui/selectconfigurationdialog.h"
 #include "gui/layertab.h"
 #include "main/dissolve.h"
+#include "modules/calculate_rdf/rdf.h"
 #include "modules/epsr/epsr.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
@@ -225,6 +226,30 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
 	// Add an XRaySQ module
 	module = dissolve_.createModuleInstance("XRaySQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
+	setModified();
+	fullUpdate();
+	ui_.MainTabs->setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse RDF/CN"));
+
+	Module* module;
+	CalculateRDFModule* calcRDFModule;
+
+	// Add the CalculateRDF module
+	calcRDFModule = dynamic_cast<CalculateRDFModule*>(dissolve_.createModuleInstance("CalculateRDF", newLayer));
+	calcRDFModule->addTargetConfigurations(dissolve_.configurations());
+
+	// Add a CalculateCN module
+	module = dissolve_.createModuleInstance("CalculateCN", newLayer);
+	module->keywords().set<const CalculateRDFModule*>("SourceRDF", calcRDFModule);
 
 	// Run set-up stages for modules
 	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
