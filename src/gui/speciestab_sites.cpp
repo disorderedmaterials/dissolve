@@ -156,5 +156,5 @@ void SpeciesTab::updateSitesTab()
 	ui_.SiteYAxisAtomsEdit->setText(yAxisText);
 
 	// If the current site has changed, also regenerate the SpeciesSite renderable
-	if (current != currentSite()) ui_.SiteViewerWidget->setSite(currentSite());
+	if (current != site) ui_.SiteViewerWidget->setSite(site);
 }
