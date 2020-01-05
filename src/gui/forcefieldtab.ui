@@ -101,9 +101,6 @@
              <height>16</height>
             </size>
            </property>
-           <property name="shortcut">
-            <string>Return</string>
-           </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>
            </property>
@@ -821,9 +818,6 @@
                <height>16</height>
               </size>
              </property>
-             <property name="shortcut">
-              <string>Return</string>
-             </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
@@ -969,9 +963,6 @@
                <width>16</width>
                <height>16</height>
               </size>
-             </property>
-             <property name="shortcut">
-              <string>Return</string>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -1119,9 +1110,6 @@
                <height>16</height>
               </size>
              </property>
-             <property name="shortcut">
-              <string>Return</string>
-             </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
@@ -1267,9 +1255,6 @@
                <width>16</width>
                <height>16</height>
               </size>
-             </property>
-             <property name="shortcut">
-              <string>Return</string>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
