@@ -32,7 +32,7 @@
 ExpressionFunctions expressionFunctions;
 
 // Default settings
-bool ExpressionFunctions::assumeDegrees_ = false;
+bool ExpressionFunctions::assumeDegrees_ = true;
 
 // Constructor
 ExpressionFunctions::ExpressionFunctions()
