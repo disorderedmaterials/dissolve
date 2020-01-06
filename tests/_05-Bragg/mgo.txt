@@ -61,7 +61,3 @@ PairPotentials
   GenerateAll  'LJ'
 EndPairPotentials
 
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
-

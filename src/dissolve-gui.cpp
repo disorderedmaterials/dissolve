@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 	int n = 1;
 	CharString inputFile, restartFile;
 	int nIterations = 0;
-	bool ignoreRestart = false, ignoreLayout = false, dontWriteRestart = false;
+	bool ignoreRestart = false, ignoreLayout = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -59,6 +59,7 @@ int main(int argc, char **argv)
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
+					printf("\t-r <N>\tSet restart file frequency (default = 10)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
@@ -86,6 +87,20 @@ int main(int argc, char **argv)
 				case ('q'):
 					Messenger::setQuiet(true);
 					break;
+				case ('r'):
+					// Next argument is integer restart file frequency
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected restart file frequency.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					dissolve.setRestartFileFrequency(atoi(argv[n]));
+					if (dissolve.restartFileFrequency() <= 0) Messenger::print("Restart file will not be written.\n");
+					else if (dissolve.restartFileFrequency() == 1) Messenger::print("Restart file will be written after every iteration.\n", dissolve.restartFileFrequency());
+					else Messenger::print("Restart file will be written after every %i iterations.\n", dissolve.restartFileFrequency());
+					break;
 				case ('t'):
 					// Next argument is filename
 					++n;
@@ -103,7 +118,7 @@ int main(int argc, char **argv)
 					Messenger::printVerbose("Verbose mode enabled.\n");
 					break;
 				case ('x'):
-					dontWriteRestart = true;
+					dissolve.setRestartFileFrequency(0);
 					dissolve.setWriteHeartBeat(false);
 					Messenger::print("No restart or heartbeat files will be written.\n");
 					break;
@@ -143,10 +158,6 @@ int main(int argc, char **argv)
 		ProcessPool::finalise();
 		return 1;
 	}
-
-	// Set restart file frequency to 0 if 'dontWriteRestart' is set
-	if (dontWriteRestart) dissolve.setRestartFileFrequency(0);
-    
 
 	/*
 	 * Create and launch GUI

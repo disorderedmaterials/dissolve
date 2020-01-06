@@ -46,6 +46,10 @@ Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 	// Set pointer to the input filename
 	coreData_.setInputFilename(&inputFilename_);
 
+	// Set core simulation variables
+	seed_ = -1;
+	restartFileFrequency_ = 10;
+
 	// Clear everything
 	clear();
 
@@ -106,8 +110,6 @@ void Dissolve::clear()
 
 	// Simulation
 	Messenger::printVerbose("Clearing Simulation...\n");
-	seed_ = -1;
-	restartFileFrequency_ = 10;
 	processingLayers_.clear();
 	processingModuleData_.clearAll();
 	iteration_ = 0;

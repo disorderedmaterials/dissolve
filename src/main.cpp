@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	int n = 1;
 	CharString inputFile, redirectFileName, restartDataFile, outputInputFile;
 	int nIterations = 5;
-	bool ignoreRestart = false, dontWriteRestart = false;
+	bool ignoreRestart = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -59,11 +59,12 @@ int main(int argc, char **argv)
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
 					printf("\t-h\t\tPrint what you're reading now\n");
+					printf("\t-f <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-n <iterations>\tRun for the specified number of main loop iterations, then stop\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
-					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
+					printf("\t-r <N>\tSet restart file frequency (default = 10)\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
 					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
@@ -76,6 +77,18 @@ int main(int argc, char **argv)
 				case ('c'):
 					nIterations = 0;
 					Messenger::print("System input and set-up will be checked, then Dissolve will exit.\n");
+					break;
+				case ('f'):
+					// Next argument is filename
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected redirection filename.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
+					Messenger::enableRedirect(redirectFileName.get());
 					break;
 				case ('i'):
 					Messenger::print("Restart file (if it exists) will be ignored.\n");
@@ -99,16 +112,18 @@ int main(int argc, char **argv)
 					Messenger::setQuiet(true);
 					break;
 				case ('r'):
-					// Next argument is filename
+					// Next argument is integer restart file frequency
 					++n;
 					if (n == argc)
 					{
-						Messenger::error("Expected redirection filename.\n");
+						Messenger::error("Expected restart file frequency.\n");
 						Messenger::ceaseRedirect();
 						return 1;
 					}
-					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
-					Messenger::enableRedirect(redirectFileName.get());
+					dissolve.setRestartFileFrequency(atoi(argv[n]));
+					if (dissolve.restartFileFrequency() <= 0) Messenger::print("Restart file will not be written.\n");
+					else if (dissolve.restartFileFrequency() == 1) Messenger::print("Restart file will be written after every iteration.\n", dissolve.restartFileFrequency());
+					else Messenger::print("Restart file will be written after every %i iterations.\n", dissolve.restartFileFrequency());
 					break;
 				case ('s'):
 					Messenger::print("Single main-loop iteration will be performed, then Dissolve will exit.\n");
@@ -143,7 +158,7 @@ int main(int argc, char **argv)
 					Messenger::print("Input file will be written to '%s' once read.\n", outputInputFile.get());
 					break;
 				case ('x'):
-					dontWriteRestart = true;
+					dissolve.setRestartFileFrequency(0);
 					dissolve.setWriteHeartBeat(false);
 					Messenger::print("No restart or heartbeat files will be written.\n");
 					break;
@@ -264,9 +279,6 @@ int main(int argc, char **argv)
 #ifdef PARALLEL
 	Messenger::print("This is process rank %i of %i processes total.\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
 #endif
-
-	// Set restart file frequency to 0 if 'dontWriteRestart' is set
-	if (dontWriteRestart) dissolve.setRestartFileFrequency(0);
 
 	// Run main simulation
 	bool result = dissolve.iterate(nIterations);

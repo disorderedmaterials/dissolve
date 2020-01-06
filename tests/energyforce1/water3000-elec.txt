@@ -62,6 +62,3 @@ PairPotentials
   Parameters  'HW'	0.41	LJGeometric  0.0        0.0
 EndPairPotentials
 
-Simulation
-  RestartFileFrequency  -1
-EndSimulation
