@@ -27,7 +27,7 @@
 // Forward Declarations
 class SelectProcedureNode;
 
-// Operate Number Density Normalise Node
+// Operate Multiply Node
 class OperateMultiplyProcedureNode : public OperateProcedureNodeBase
 {
 	public:
