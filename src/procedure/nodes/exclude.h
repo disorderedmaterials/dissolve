@@ -28,6 +28,7 @@
 // Forward Declarations
 class LineParser;
 class NodeScopeStack;
+class SelectProcedureNode;
 
 // Procedure Node - Exclude
 class ExcludeProcedureNode : public ProcedureNode
