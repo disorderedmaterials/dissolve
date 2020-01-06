@@ -53,6 +53,7 @@ jobs:
     env:
       DISSOLVE_VERSION: X.Y.Z
     steps:
+    - uses: actions/checkout@v1
     - name: Detect Version
       run: |
         $DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
