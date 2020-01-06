@@ -26,7 +26,6 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class SelectProcedureNode;
 class LineParser;
 class NodeScopeStack;
 

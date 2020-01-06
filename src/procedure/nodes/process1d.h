@@ -28,7 +28,6 @@
 
 // Forward Declarations
 class Collect1DProcedureNode;
-class SelectProcedureNode;
 class Data1D;
 class LineParser;
 class NodeScopeStack;

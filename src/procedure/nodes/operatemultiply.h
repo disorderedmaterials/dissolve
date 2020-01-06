@@ -25,7 +25,7 @@
 #include "procedure/nodes/operatebase.h"
 
 // Forward Declarations
-class SelectProcedureNode;
+/* none */
 
 // Operate Multiply Node
 class OperateMultiplyProcedureNode : public OperateProcedureNodeBase

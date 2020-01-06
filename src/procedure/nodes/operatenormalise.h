@@ -25,7 +25,7 @@
 #include "procedure/nodes/operatebase.h"
 
 // Forward Declarations
-class SelectProcedureNode;
+/* none */
 
 // Operate Value Normalise Node
 class OperateNormaliseProcedureNode : public OperateProcedureNodeBase

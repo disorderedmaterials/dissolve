@@ -25,7 +25,7 @@
 #include "procedure/nodes/operatebase.h"
 
 // Forward Declarations
-class SelectProcedureNode;
+/* none */
 
 // Operate Divide Node
 class OperateDivideProcedureNode : public OperateProcedureNodeBase

@@ -27,7 +27,7 @@
 #include "templates/array.h"
 
 // Forward Declarations
-class SelectProcedureNode;
+/* none */
 
 // Box Node
 class BoxProcedureNode : public ProcedureNode
