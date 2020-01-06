@@ -182,8 +182,11 @@ const Data3D& RenderableData3D::transformedData()
 
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
-{	
+{
 	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
+
+	if (!validateDataSource()) return;
+
 	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
