@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - develop
-    - release/*
+    - master
 
 jobs:
   build:
@@ -48,7 +48,7 @@ jobs:
         path: appimages/
   createrelease:
     runs-on: ubuntu-latest
-    if: contains(github.ref, 'release')
+    if: contains(github.ref, 'master')
     needs: build
     env:
       DISSOLVE_VERSION: X.Y.Z
