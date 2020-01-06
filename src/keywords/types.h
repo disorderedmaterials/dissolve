@@ -43,6 +43,7 @@
 #include "keywords/dynamicsitenodes.h"
 #include "keywords/elementreflist.h"
 #include "keywords/enumoptions.h"
+#include "keywords/expression.h"
 #include "keywords/expressionvariablelist.h"
 #include "keywords/fileandformat.h"
 #include "keywords/geometrylist.h"
