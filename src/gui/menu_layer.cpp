@@ -23,7 +23,9 @@
 #include "gui/selectconfigurationdialog.h"
 #include "gui/layertab.h"
 #include "main/dissolve.h"
+#include "modules/calculate_avgmol/avgmol.h"
 #include "modules/calculate_rdf/rdf.h"
+#include "modules/calculate_sdf/sdf.h"
 #include "modules/epsr/epsr.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
@@ -250,6 +252,29 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
 	// Add a CalculateCN module
 	module = dissolve_.createModuleInstance("CalculateCN", newLayer);
 	module->keywords().set<const CalculateRDFModule*>("SourceRDF", calcRDFModule);
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
+	setModified();
+	fullUpdate();
+	ui_.MainTabs->setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse AvgMol/SDF"));
+
+	Module* module;
+
+	// Add the CalculateAvgMol module
+	module = dissolve_.createModuleInstance("CalculateAvgMol", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Add a CalculateSDF module
+	module = dissolve_.createModuleInstance("CalculateSDF", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
 
 	// Run set-up stages for modules
 	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
