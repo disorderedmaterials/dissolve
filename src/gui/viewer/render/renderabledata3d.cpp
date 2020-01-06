@@ -671,10 +671,10 @@ double RenderableData3D::upperCutoff() const
 EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableData3D::DisplayKeyword,		"Display") <<
+		EnumOption(RenderableData3D::DisplayKeyword,		"Display",	1) <<
 		EnumOption(RenderableData3D::EndStyleKeyword,		"EndStyle") <<
-		EnumOption(RenderableData3D::LowerCutoffKeyword,	"LowerCutoff") <<
-		EnumOption(RenderableData3D::UpperCutoffKeyword,	"UpperCutoff");
+		EnumOption(RenderableData3D::LowerCutoffKeyword,	"LowerCutoff",	1) <<
+		EnumOption(RenderableData3D::UpperCutoffKeyword,	"UpperCutoff",	1);
 
 	static EnumOptions<RenderableData3D::Data3DStyleKeyword> options("Data3DStyleKeyword", StyleKeywords);
 
