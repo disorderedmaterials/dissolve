@@ -1,6 +1,6 @@
 /*
 	*** Procedure Node - Operate Site Population Normalise
-	*** src/procedure/nodes/operatesitepopulationnormaliser.cpp
+	*** src/procedure/nodes/operatesitepopulationnormalise.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -32,13 +32,13 @@
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
 }
 
-OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(RefList<SelectProcedureNode> selectNodes) : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
+OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes) : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
 
 	selectNodes_ = selectNodes;
 }
@@ -55,8 +55,8 @@ OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProc
 // Operate on Data1D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= selectNode->nAverageSites();
+	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
+	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= selectNode->nAverageSites();
 
 	return true;
 }
@@ -64,8 +64,8 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool& pro
 // Operate on Data2D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= selectNode->nAverageSites();
+	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
+	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= selectNode->nAverageSites();
 
 	return true;
 }
@@ -73,8 +73,8 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool& pro
 // Operate on Data3D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= selectNode->nAverageSites();
+	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
+	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= selectNode->nAverageSites();
 
 	return true;
 }

@@ -113,7 +113,7 @@
      </widget>
      <widget class="QWidget" name="FQFitTab">
       <attribute name="title">
-       <string>F(Q) Diff/Fit</string>
+       <string>F(Q) Delta/Fit</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
@@ -172,9 +172,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="SQTab">
+     <widget class="QWidget" name="EstimatedSQTab">
       <attribute name="title">
-       <string>S(Q)</string>
+       <string>Estimated S(Q)</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <property name="spacing">
@@ -193,7 +193,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="SQPlotFrame">
+        <widget class="QFrame" name="EstimatedSQPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -226,16 +226,16 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="DataWidget" name="SQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="EstimatedSQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="GRTab">
+     <widget class="QWidget" name="EstimatedGRTab">
       <attribute name="title">
-       <string>g(r)</string>
+       <string>Estimated g(r)</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <property name="spacing">
@@ -254,7 +254,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="GRPlotFrame">
+        <widget class="QFrame" name="EstimatedGRPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -287,16 +287,16 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="DataWidget" name="GRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="EstimatedGRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="FRTab">
+     <widget class="QWidget" name="TotalGRTab">
       <attribute name="title">
-       <string>f(r)</string>
+       <string>G(r)</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_13">
        <property name="spacing">
@@ -315,7 +315,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="FRPlotFrame">
+        <widget class="QFrame" name="TotalGRPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -348,7 +348,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="DataWidget" name="FRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="TotalGRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>

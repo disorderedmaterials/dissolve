@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1097</width>
-    <height>698</height>
+    <width>960</width>
+    <height>782</height>
    </rect>
   </property>
   <property name="font">
@@ -190,6 +190,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="ForcefieldAutoUpdateIntramolecularCheck">
+            <property name="text">
+             <string>Autogenerate angle &amp;&amp; torsion terms</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -261,9 +268,6 @@
                  <height>16</height>
                 </size>
                </property>
-               <property name="shortcut">
-                <string>Return</string>
-               </property>
                <property name="toolButtonStyle">
                 <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
@@ -305,6 +309,9 @@
                <verstretch>1</verstretch>
               </sizepolicy>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
              <property name="showDropIndicator" stdset="0">
               <bool>false</bool>
              </property>
@@ -324,7 +331,7 @@
               <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
@@ -432,9 +439,6 @@
                  <height>16</height>
                 </size>
                </property>
-               <property name="shortcut">
-                <string>Return</string>
-               </property>
                <property name="toolButtonStyle">
                 <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
@@ -470,6 +474,9 @@
            </item>
            <item>
             <widget class="QTableWidget" name="BondTable">
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
              <property name="showDropIndicator" stdset="0">
               <bool>false</bool>
              </property>
@@ -625,9 +632,6 @@
                   <height>16</height>
                  </size>
                 </property>
-                <property name="shortcut">
-                 <string>Return</string>
-                </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                 </property>
@@ -663,6 +667,9 @@
             </item>
             <item>
              <widget class="QTableWidget" name="AngleTable">
+              <property name="editTriggers">
+               <set>QAbstractItemView::AllEditTriggers</set>
+              </property>
               <property name="showDropIndicator" stdset="0">
                <bool>false</bool>
               </property>
@@ -800,9 +807,6 @@
                   <height>16</height>
                  </size>
                 </property>
-                <property name="shortcut">
-                 <string>Return</string>
-                </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                 </property>
@@ -838,6 +842,9 @@
             </item>
             <item>
              <widget class="QTableWidget" name="TorsionTable">
+              <property name="editTriggers">
+               <set>QAbstractItemView::AllEditTriggers</set>
+              </property>
               <property name="showDropIndicator" stdset="0">
                <bool>false</bool>
               </property>
@@ -980,9 +987,6 @@
                   <height>16</height>
                  </size>
                 </property>
-                <property name="shortcut">
-                 <string>Return</string>
-                </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                 </property>
@@ -1018,6 +1022,9 @@
             </item>
             <item>
              <widget class="QTableWidget" name="ImproperTable">
+              <property name="editTriggers">
+               <set>QAbstractItemView::AllEditTriggers</set>
+              </property>
               <property name="showDropIndicator" stdset="0">
                <bool>false</bool>
               </property>
@@ -1151,9 +1158,6 @@
              <height>16</height>
             </size>
            </property>
-           <property name="shortcut">
-            <string>Return</string>
-           </property>
            <property name="autoExclusive">
             <bool>false</bool>
            </property>
@@ -1202,9 +1206,6 @@
              <height>16</height>
             </size>
            </property>
-           <property name="shortcut">
-            <string>Return</string>
-           </property>
            <property name="autoExclusive">
             <bool>false</bool>
            </property>
@@ -1246,6 +1247,9 @@
        </item>
        <item>
         <widget class="QTreeWidget" name="IsotopologuesTree">
+         <property name="editTriggers">
+          <set>QAbstractItemView::AllEditTriggers</set>
+         </property>
          <column>
           <property name="text">
            <string>Isotopologue</string>
@@ -1304,9 +1308,6 @@
              <height>16</height>
             </size>
            </property>
-           <property name="shortcut">
-            <string>Return</string>
-           </property>
            <property name="autoExclusive">
             <bool>false</bool>
            </property>
@@ -1338,9 +1339,6 @@
              <height>16</height>
             </size>
            </property>
-           <property name="shortcut">
-            <string>Return</string>
-           </property>
            <property name="autoExclusive">
             <bool>false</bool>
            </property>
@@ -1353,6 +1351,284 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="SitesTab">
+      <attribute name="title">
+       <string>Analysis Sites</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_15">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_16">
+         <item>
+          <widget class="QGroupBox" name="DefinedSitesGroup">
+           <property name="title">
+            <string>Defined Sites</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <item>
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="SiteRemoveButton">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Remove</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="main.qrc">
+                    <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                  <property name="toolButtonStyle">
+                   <enum>Qt::ToolButtonTextBesideIcon</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QToolButton" name="SiteAddButton">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Add</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="main.qrc">
+                    <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                  <property name="toolButtonStyle">
+                   <enum>Qt::ToolButtonTextBesideIcon</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QListWidget" name="SiteList">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="showDropIndicator" stdset="0">
+                 <bool>false</bool>
+                </property>
+                <property name="dragDropOverwriteMode">
+                 <bool>false</bool>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_15">
+              <item>
+               <widget class="QGroupBox" name="SiteOriginGroup">
+                <property name="title">
+                 <string>Origin Atom(s)</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <item>
+                  <widget class="QLineEdit" name="SiteOriginAtomsEdit">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="SiteOriginMassWeightedCheck">
+                   <property name="text">
+                    <string>Weight by mass</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="SiteOriginAtomsLabel">
+                   <property name="font">
+                    <font>
+                     <italic>true</italic>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Atom indices whose positions will be averaged in order to generate the site origin</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="SiteXAxisGroup">
+                <property name="title">
+                 <string>X-Axis Atom(s)</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <item>
+                  <widget class="QLineEdit" name="SiteXAxisAtomsEdit">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="SiteXAxisLabel">
+                   <property name="font">
+                    <font>
+                     <italic>true</italic>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Atom indices whose positions will be averaged in order to generate a vector to define the X axis</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="SiteYAxisGroup">
+                <property name="title">
+                 <string>Y-Axis Atom(s)</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <item>
+                  <widget class="QLineEdit" name="SiteYAxisAtomsEdit">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="SiteYAxisLabel">
+                   <property name="font">
+                    <font>
+                     <italic>true</italic>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Atom indices whose positions will be averaged in order to generate a vector to define the Y axis, which will be orthogonalised against X</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="SiteWidget" name="SiteViewerWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>2</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -1362,6 +1638,12 @@
    <class>SpeciesWidget</class>
    <extends>QWidget</extends>
    <header>gui/viewer/specieswidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SiteWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/viewer/sitewidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -30,7 +30,7 @@ void SQModule::initialise()
 	keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add("Calculation", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
 	keywords_.add("Calculation", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
-	keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply in Fourier-transform of g(r) to S(Q)");
+	keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction", "Window function to apply in Fourier-transform of g(r) to S(Q)");
 
 	// Export
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");

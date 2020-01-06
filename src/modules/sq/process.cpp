@@ -36,15 +36,9 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	CharString varName;
-
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	const BroadeningFunction& qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");

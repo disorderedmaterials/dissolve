@@ -39,8 +39,8 @@ const char* MolShakeModule::brief() const
 	return "Perform molecular Monte Carlo moves";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int MolShakeModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int MolShakeModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

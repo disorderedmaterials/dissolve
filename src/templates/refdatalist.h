@@ -295,12 +295,14 @@ template <class T, class D> class RefDataList
 		printf("Couldn't find specified item %p in RefDataList, so adding to start.\n", item);
 		return addStart(item);
 	}
-	// Add reference to list, unless already there
+	// Add reference to list, unless already there, in which case we just set the data
 	RefDataItem<T,D>* addUnique(T* item, D data)
 	{
 		RefDataItem<T,D>* srch = contains(item);
 		if (srch == NULL) return append(item, data);
-		else return srch;
+
+		srch->data_ = data;
+		return srch;
 	}
 	// Cut item from list (orphan it)
 	void cut(RefDataItem<T,D>* item)
@@ -463,6 +465,15 @@ template <class T, class D> class RefDataList
 		for (RefDataItem<T,D>* r = listHead_; r != NULL; r = r->next_) if (r->data_ == data) return r->item_;
 
 		return NULL;
+	}
+	// Return data for specified item
+	D& dataForItem(T* item) const
+	{
+		// Search references for specified item
+		for (RefDataItem<T,D>* r = listHead_; r != NULL; r = r->next_) if (r->item_ == item) return r->data_;
+
+		static D dummy;
+		return dummy;
 	}
 	// Return array of items
 	RefDataItem<T,D>** array()

@@ -39,8 +39,8 @@ const char* AtomShakeModule::brief() const
 	return "Perform atomic Monte Carlo on all atoms";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int AtomShakeModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int AtomShakeModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

@@ -31,7 +31,9 @@ The important content of the simulation - species, configurations, layers etc. -
 | ![Module tab](moduletab.png) | Module tabs - show keyword options and output from indivdiual modules (the icon reflects the module type) |
 | ![Workspace tab](workspacetab.png) | Workspace tab - display a custom selection of modules and their options / output |
 
-To rename a tab, double-click on the tab itself. This also changes the name of any underlying object (e.g. the displayed Species).
+To rename a tab, double-click on the tab itself. This also changes the name of any object that the tab represents(e.g. the displayed Species). Closing a tab will delete that object from the simulation (you will be asked by Dissolve if this is really what you want to do).
+
+The order of tabs is fixed, and represent how the simulation is built-up within Dissolve. Forcefield terms are used to describe species which then make up configurations, and layers do useful things to our configurations.
 
 ### Messages Box
 

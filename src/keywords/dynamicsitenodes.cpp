@@ -26,9 +26,10 @@
 #include "base/lineparser.h"
 
 // Constructor
-DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode* parentNode, RefList<DynamicSiteProcedureNode>& nodes) : KeywordData< RefList<DynamicSiteProcedureNode>& >(KeywordBase::DynamicSiteNodesData, nodes)
+DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode* parentNode, RefList<DynamicSiteProcedureNode>& nodes, bool axesRequired) : KeywordData< RefList<DynamicSiteProcedureNode>& >(KeywordBase::DynamicSiteNodesData, nodes)
 {
 	parentNode_ = parentNode;
+	axesRequired_ = axesRequired;
 }
 
 // Destructor
@@ -83,6 +84,9 @@ bool DynamicSiteNodesKeyword::read(LineParser& parser, int startArg, const CoreD
 
 	// Attempt to read the DynamicSite data
 	if (!dynamicSite->read(parser, coreData)) return false;
+
+	// Check for required axes?
+	if (axesRequired_ && (!dynamicSite->hasAxes())) return Messenger::error("Dynamic sites defined for keyword '%s' must have axes defined.\n", name());
 
 	set_ = true;
 

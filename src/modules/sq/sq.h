@@ -60,8 +60,8 @@ class SQModule : public Module
 	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	int nTargetableConfigurations() const;
+	// Return the number of Configuration targets this Module requires
+	int nRequiredTargets() const;
 
 
 	/*

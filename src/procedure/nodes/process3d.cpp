@@ -31,14 +31,14 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode* target) : ProcedureNode(ProcedureNode::Process3DNode)
+Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode* target) : ProcedureNode(ProcedureNode::Process3DNode)
 {
-	keywords_.add("Target", new NodeKeyword<Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target), "SourceData", "Collect3D node containing the data to process");
+	keywords_.add("Target", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target), "SourceData", "Collect3D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
 	keywords_.add("Target", new CharStringKeyword("Z"), "LabelZ", "Label for the z axis");
-	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
+	keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save", "Save processed data to disk");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation", "Branch providing normalisation operations for the data");
 
 	// Initialise branch
@@ -136,7 +136,7 @@ SequenceProcedureNode* Process3DProcedureNode::branch()
 bool Process3DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve the Collect1D node target
-	collectNode_ = keywords_.retrieve<Collect3DProcedureNode*>("SourceData");
+	collectNode_ = keywords_.retrieve<const Collect3DProcedureNode*>("SourceData");
 	if (!collectNode_) return Messenger::error("No source Collect3D node set in '%s'.\n", name());
 
 	if (normalisationBranch_) normalisationBranch_->prepare(cfg, prefix, targetList);
@@ -147,12 +147,6 @@ bool Process3DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	return ProcedureNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data3D& data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
@@ -161,7 +155,7 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
-	// Copy the averaged data from the associated Collect3D node
+	// Copy the averaged data from the associated Process3D node
 	data = collectNode_->accumulatedData();
 
 	// Run normalisation on the data
@@ -183,15 +177,25 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	}
 
 	// Save data?
-	if (keywords_.asBool("Save"))
+	if (exportFileAndFormat_.hasValidFileAndFormat())
 	{
 		if (procPool.isMaster())
 		{
-			Messenger::error("Saving of 3D data is not yet implemented.\n");
-			return procPool.decideFalse();
+			if (exportFileAndFormat_.exportData(data)) procPool.decideTrue();
+			else
+			{
+				procPool.decideFalse();
+				return ProcedureNode::Failure;
+			}
 		}
-		else if (!procPool.decision()) return false;
+		else if (!procPool.decision()) return ProcedureNode::Failure;
 	}
 
+	return ProcedureNode::Success;
+}
+
+// Finalise any necessary data after execution
+bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+{
 	return true;
 }

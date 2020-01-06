@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Enforce verbosity for commands and exit on first failure
+set -ev
+
+# Create build dir and descend into it
+mkdir build
+cd build
+
+# Generate build files
+cmake ../ -G "Ninja" -DPARALLEL:bool=true
+
+# Build
+ninja
+
+# Ascend back to root dir
+cd ../
+
+# Retrieve dmg build script
+wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
+chmod u+x build-dmg.sh
+
+# Build dmg files
+./build-dmg.sh ci/osx.highsierra/dissolve.dmginfo
+
+# Clear old artifacts (the dir will have been created already by Travis)
+rm -vf artifacts/Dissolve-[0-9]*.dmg
+
+# Store artifacts
+cp Dissolve-[0-9]*.dmg artifacts/
+

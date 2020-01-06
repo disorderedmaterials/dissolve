@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLEFACTORY_H
-#define DISSOLVE_RENDERABLEFACTORY_H
+#ifndef DISSOLVE_RENDER_RENDERABLEFACTORY_H
+#define DISSOLVE_RENDER_RENDERABLEFACTORY_H
 
 #include "gui/viewer/render/renderable.h"
 

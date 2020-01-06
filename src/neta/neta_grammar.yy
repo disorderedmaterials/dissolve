@@ -10,6 +10,7 @@
 #include "neta/generator.h"
 #include "neta/connection.h"
 #include "neta/neta.h"
+#include "neta/presence.h"
 #include "neta/ring.h"
 #include "base/messenger.h"
 #include "templates/reflist.h"
@@ -41,7 +42,7 @@ CharString localName;
 %token <doubleConst> DISSOLVE_NETA_DOUBLECONSTANT
 %token <elementZ> DISSOLVE_NETA_ELEMENT
 %token <valueOperator> DISSOLVE_NETA_OPERATOR
-%token <name> DISSOLVE_NETA_MODIFIER
+%token <name> DISSOLVE_NETA_MODIFIER DISSOLVE_NETA_FLAG DISSOLVE_NETA_NAME
 %token DISSOLVE_NETA_RING DISSOLVE_NETA_UNKNOWNTOKEN
 
 %left DISSOLVE_NETA_AND DISSOLVE_NETA_OR
@@ -53,9 +54,9 @@ CharString localName;
 %right '!'
 %right '^'
 
-%type <node> node nodesequence createconnectionnode createringnode
-%type <valueOperator> valueoperator
-%type <atomTargetDummy> target targets targetlist
+%type <node> node nodeSequence ringNode ringNodeSequence createPresenceNode createConnectionNode createRingNode
+%type <valueOperator> valueOperator
+%type <atomTargetDummy> target targets targetList
 
 %%
 
@@ -66,29 +67,41 @@ CharString localName;
 /* Main Structure */
 neta:
 	/* empty */					{ YYACCEPT; }
-	| nodesequence					{ YYACCEPT; }
+	| nodeSequence					{ YYACCEPT; }
 	;
 
 /* Sequence of Nodes */
-nodesequence:
-	node						{ $$ = $1; if ($$ == NULL) YYABORT; }
-	| contextmodifier				{ $$ = NULL; }
+nodeSequence:
+	node						{ $$ = $1; }
 	| '!' node					{ $2->setReverseLogic(); $$ = $2; }
-	| nodesequence ',' node				{ $$ = $3; }
-	| contextmodifier ',' nodesequence		{ $$ = $3; }
-// 	| nodesequence '|' nodesequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
+	| nodeSequence ',' node				{ $$ = $3; }
+// 	| nodeSequence '|' nodeSequence			{ $$ = NETADefinitionGenerator::context()->joinWithLogic($1, NETALogicNode::OrLogic, $3); }
+	;
+
+/* Sequence of Nodes allowable for a Ring */
+ringNodeSequence:
+	ringNode					{ $$ = $1; }
+	| ringNodeSequence ',' ringNode			{ $$ = $3; }
+	;
+
+ringNode:
+	targetList createPresenceNode							{ $$ = $2; }
+	| targetList createPresenceNode	pushContext '(' nodeSequence ')' popContext	{ $$ = $2; }
+	| contextModifier								{ $$ = NULL; }
 	;
 
 /* Nodes */
 node:
-	'-' targetlist createconnectionnode							{ $$ = $3; }
-	| '-' targetlist createconnectionnode pushcontext '(' nodesequence ')' popcontext	{ $$ = $3; }
-	| DISSOLVE_NETA_RING createringnode pushcontext '(' nodesequence ')' popcontext		{ $$ = $2; }
+	'-' targetList createConnectionNode							{ $$ = $3; }
+	| '-' targetList createConnectionNode pushContext '(' nodeSequence ')' popContext	{ $$ = $3; }
+	| DISSOLVE_NETA_RING createRingNode pushContext '(' ringNodeSequence ')' popContext	{ $$ = $2; }
+	| contextModifier									{ $$ = NULL; }
+	| contextFlag										{ $$ = NULL; }
 	| DISSOLVE_NETA_UNKNOWNTOKEN								{ YYABORT; }
 	;
 
 /* Target Element / Type Generic */
-targetlist:
+targetList:
 	target						{ $$ = NULL; }
 	| '[' target ']'				{ $$ = NULL; }
 	| '[' targets ']'				{ $$ = NULL; }
@@ -102,37 +115,52 @@ targets:
 
 /* Target Element / Type */
 target:
-	DISSOLVE_NETA_ELEMENT				{ NETADefinitionGenerator::addTarget($1); $$ = NULL; }
-	| '&' DISSOLVE_NETA_INTEGERCONSTANT		{ NETADefinitionGenerator::addTarget(-$2); $$ = NULL; }
+	DISSOLVE_NETA_ELEMENT				{ if (!NETADefinitionGenerator::addElementTarget($1)) YYABORT; $$ = NULL; }
+	| '&' setExpectName DISSOLVE_NETA_INTEGERCONSTANT unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget($3)) YYABORT; $$ = NULL; }
+	| '&' setExpectName DISSOLVE_NETA_NAME unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget(yylval.name)) YYABORT; $$ = NULL; }
 	;
 
 /* Context Modifiers */
-contextmodifier:
-	DISSOLVE_NETA_MODIFIER storename valueoperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
+contextModifier:
+	DISSOLVE_NETA_MODIFIER storeName valueOperator DISSOLVE_NETA_INTEGERCONSTANT	{ if (!NETADefinitionGenerator::context()->setModifier(localName, $3, $4)) YYABORT; }
+	;
+
+/* Context flags */
+contextFlag:
+	DISSOLVE_NETA_FLAG storeName			{ if (!NETADefinitionGenerator::context()->setFlag(localName, true)) YYABORT; }
 	;
 
 /* Operators */
-valueoperator:
+valueOperator:
 	DISSOLVE_NETA_OPERATOR				{ $$ = yylval.valueOperator; }
 	;
 
 /* Node Creation */
-createconnectionnode:
+createPresenceNode:
+	/* empty */					{ $$ = NETADefinitionGenerator::context()->createPresenceNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
+	;
+createConnectionNode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createConnectionNode(NETADefinitionGenerator::targetElements(), NETADefinitionGenerator::targetAtomTypes()); NETADefinitionGenerator::clearTargets(); }
 	;
-createringnode:
+createRingNode:
 	/* empty */					{ $$ = NETADefinitionGenerator::context()->createRingNode(); }
 	;
 
 /* Context Management */
-pushcontext:
+pushContext:
 	/* empty */					{ NETADefinitionGenerator::pushContext(); }
 	;
-popcontext:
+popContext:
 	/* empty */					{ NETADefinitionGenerator::popContext(); }
 	;
-storename:
+storeName:
 	/* empty */					{ localName = yylval.name; }
+	;
+setExpectName:
+	/* empty */					{ NETADefinitionGenerator::setExpectName(true); }
+	;
+unsetExpectName:
+	/* empty */					{ NETADefinitionGenerator::setExpectName(false); }
 	;
 
 %%

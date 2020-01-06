@@ -24,6 +24,7 @@
 #include "classes/weights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
+#include <algorithm>
 
 // Constructor
 ScatteringMatrix::ScatteringMatrix()
@@ -71,10 +72,20 @@ void ScatteringMatrix::print() const
 {
 	// Write header
 	CharString text, line;
+	int nColsWritten = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		text.sprintf("%s-%s", pair->a()->name(), pair->b()->name());
 		line.strcatf("%10s ", text.get());
+
+		// Limit output to sensible length
+		if (line.length() >= 80)
+		{
+			line.strcat(" ...");
+			break;
+		}
+
+		++nColsWritten;
 	}
 	Messenger::print("%s", line.get());
 
@@ -82,8 +93,27 @@ void ScatteringMatrix::print() const
 	for (int row = 0; row < data_.nItems(); ++row)
 	{
 		line.clear();
-		for (int n=0; n<A_.nColumns(); ++n) line.strcatf("%10f ", A_.constAt(row, n));
+		for (int n=0; n<A_.nColumns(); ++n)
+		{
+			line.strcatf("%10f ", A_.constAt(row, n));
+
+			// Limit output to sensible length
+			if (line.length() >= 80)
+			{
+				line.strcat(" ...");
+				break;
+			}
+		}
 		Messenger::print("%s  %s\n", line.get(), data_.constAt(row).name());
+
+		// Limit to sensible number of rows
+		if (row >= std::max(nColsWritten, 10))
+		{
+			line.clear();
+			for (int n=0; n<nColsWritten; ++n) line.strcat("    ...    ");
+			Messenger::print("%s\n", line.get());
+			break;
+		}
 	}
 }
 
@@ -92,10 +122,20 @@ void ScatteringMatrix::printInverse() const
 {
 	// Write header
 	CharString text, line;
+	int nColsWritten = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		text.sprintf("%s-%s", pair->a()->name(), pair->b()->name());
 		line.strcatf("%10s ", text.get());
+
+		// Limit output to sensible length
+		if (line.length() >= 80)
+		{
+			line.strcat(" ...");
+			break;
+		}
+
+		++nColsWritten;
 	}
 	Messenger::print("%s", line.get());
 
@@ -103,8 +143,27 @@ void ScatteringMatrix::printInverse() const
 	for (int col = 0; col < inverseA_.nColumns(); ++col)
 	{
 		line.clear();
-		for (int row=0; row<inverseA_.nRows(); ++row) line.strcatf("%10f ", inverseA_.constAt(row, col));
+		for (int row=0; row<inverseA_.nRows(); ++row)
+		{
+			line.strcatf("%10f ", inverseA_.constAt(row, col));
+
+			// Limit output to sensible length
+			if (line.length() >= 80)
+			{
+				line.strcat(" ...");
+				break;
+			}
+		}
 		Messenger::print("%s  %s\n", line.get(), data_.constAt(col).name());
+
+		// Limit to sensible number of rows
+		if (col >= std::max(nColsWritten, 10))
+		{
+			line.clear();
+			for (int n=0; n<nColsWritten; ++n) line.strcat("    ...    ");
+			Messenger::print("%s\n", line.get());
+			break;
+		}
 	}
 }
 

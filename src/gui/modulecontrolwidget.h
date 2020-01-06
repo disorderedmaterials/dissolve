@@ -23,9 +23,7 @@
 #define DISSOLVE_MODULECONTROLWIDGET_H
 
 #include "gui/ui_modulecontrolwidget.h"
-#include "gui/widgets/subwidget.h"
-#include "gui/keywordwidgets/base.h"
-#include "templates/reflist.h"
+#include "templates/variantpointer.h"
 
 // Forward Declarations
 class Dissolve;
@@ -35,23 +33,60 @@ class ModuleWidget;
 class ModuleBlock;
 
 // Module Control Widget
-class ModuleControlWidget : public SubWidget
+class ModuleControlWidget : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Associated Module
-	Module* module_;
-	// Pointer to DissolveWindow
-	DissolveWindow* dissolveWindow_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
-
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title);
+	ModuleControlWidget(QWidget* parent);
 	~ModuleControlWidget();
+
+	private:
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+
+
+	/*
+	 * Setup
+	 */
+	public:
+	// Set up links to main window
+	void setUp(DissolveWindow* dissolveWindow);
+
+
+	/*
+	 * Module Target
+	 */
+	private:
+	// Pointer to Dissolve
+	Dissolve* dissolve_;
+	// Associated Module
+	Module* module_;
+
+	private slots:
+	// Run the set-up stage of the associated Module
+	void setUpModule();
+
+	public:
+	// Set target Module to display
+	void setModule(Module* module, Dissolve* dissolve);
+
+	signals:
+	void updateModuleWidget(int flags);
+
+
+	/*
+	 * Update
+	 */
+	public:
+	// Update controls within widget
+	void updateControls();
+	// Disable sensitive controls
+	void disableSensitiveControls();
+	// Enable sensitive controls
+	void enableSensitiveControls();
 
 
 	/*
@@ -59,43 +94,22 @@ class ModuleControlWidget : public SubWidget
 	 */
 	private:	
 	// Main form declaration
-	Ui::ModuleControlWidget ui;
-	// Module control widget displayed
-	ModuleBlock* controlsWidget_;
-	// ModuleWidget displayed in this control widget
-	ModuleWidget* moduleWidget_;
+	Ui::ModuleControlWidget ui_;
 
-	public:
-	// Initialise controls for the specified Module
-	void initialiseControls(Module* module);
+	private slots:
+	// Keyword data for Module has been modified
+	void keywordDataModified();
 
+	public slots:
+	void on_NameEdit_editingFinished();
+	void on_NameEdit_returnPressed();
+	void on_EnabledButton_clicked(bool checked);
+	void on_FrequencySpin_valueChanged(int value);
+	void on_ConfigurationTargetList_itemChanged(QListWidgetItem* item);
 
-	/*
-	 * SubWidget Reimplementations / Definitions
-	 */
-	protected:
-	void closeEvent(QCloseEvent* event);
-
-	public:
-	// Update controls within widget
-	void updateControls();
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
-	// Return string specifying widget type
-	const char* widgetType();
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-
-	/*
-	 * Widget Signals / Slots
-	 */
 	signals:
-	void windowClosed(QString windowTitle);
+	// Notify that the Module's data has been modified in some way
+	void dataModified();
 };
 
 #endif

@@ -1,0 +1,209 @@
+#!/bin/bash
+
+# Update / create GitHub release with assets
+
+REPO=""
+RELEASE_TAG=""
+RELEASE_NAME="UnnamedRelease"
+RELEASE_BODY=""
+RELEASE_BODY_FILE=""
+RELEASE_BODY_FILE_WARN="false"
+RELEASE_PRE="false"
+ARTIFACTS=""
+NARTIFACTS=0
+
+usage()
+{
+	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-w] [-p] artifacts ..."
+	exit 1
+}
+
+# Parse options
+while getopts ":r:t:n:b:f:pw" opt
+do
+	case "${opt}" in
+		r)
+			REPO=${OPTARG}
+			echo "Repo set to '${REPO}'"
+			;;
+		t)
+			RELEASE_TAG=${OPTARG}
+			echo "Release tag is/will be '${RELEASE_TAG}'"
+			;;
+		b)
+			RELEASE_BODY=${OPTARG}
+			echo "Release body set to '${RELEASE_BODY}'"
+			;;
+		f)
+			RELEASE_BODY_FILE=${OPTARG}
+			echo "Release body will be set from markdown file '${RELEASE_BODY_FILE}'"
+			;;
+		w)
+			RELEASE_BODY_FILE_WARN="true"
+			echo "A non-existent release body file will not cause an error."
+			;;
+		n)
+			RELEASE_NAME=${OPTARG}
+			echo "Release name set to '${RELEASE_NAME}'"
+			;;
+		p)
+			RELEASE_PRE="true"
+			echo "Release will be marked as a pre-release."
+			;;
+		\?)
+			usage
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+if [ "x$REPO" = "x" ]
+then
+	echo "Error: The owner and repo must be supplied."
+	exit 1
+fi
+
+# Set up vars
+echo "Repository is $REPO"
+REPOURL="https://api.github.com/repos/${REPO}"
+echo "API URL is $REPOURL"
+
+# Enable erroring
+set -e
+
+# Disable command expansion so we don't leak secrets
+set +x
+
+# Assemble array of artifacts to upload to release
+shift $(expr $OPTIND - 1)
+while test $# -gt 0
+do
+	if [ ! -f $1 ]
+	then
+		echo "Error: No such artifact '$1' exists."
+		exit 1
+	fi
+	ARTIFACTS[NARTIFACTS]=$1
+	let NARTIFACTS=NARTIFACTS+1
+	shift
+done
+
+# Load and process release body file if required
+if [ "x$RELEASE_BODY_FILE" != "x" ]
+then
+	if [ -e $RELEASE_BODY_FILE ]
+	then
+		# Read in the file, preserving line-feeds
+		RELEASE_BODY=$(<$RELEASE_BODY_FILE)
+
+		# Encode linefeeds for GitHub
+		RELEASE_BODY=${RELEASE_BODY//$'\n'/\\r\\n}
+	elif [ "$RELEASE_BODY_FILE_WARN" = "true" ]
+	then
+		echo "Warning: Release body file $RELEASE_BODY_FILE specified, but it does not exist."
+	else
+		echo "Error: Release body file $RELEASE_BODY_FILE does not exist."
+		exit 1
+	fi
+fi
+
+# Check tag
+if [ "x$RELEASE_TAG" = "x" ]
+then
+	echo "Error: No tag for current release - check your setup (did you push a release without --tags?)."
+	exit 1
+fi
+echo "Tag for release is: $RELEASE_TAG"
+
+# Get available releases information
+RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
+if [[ $RELEASES =~ "documentation_url" ]]
+then
+	MESSAGE=$(echo $RELEASES | jq ". | .message")
+	echo "Error returned: "$MESSAGE
+	exit 1
+fi
+
+# Does our tag already exist (i.e. the release already exists)?
+echo "Checking for presence of current release..."
+FILTER=".[] | select(.tag_name | match(\"$RELEASE_TAG\"))"
+CURRENT_RELEASEINFO=$(echo $RELEASES | jq "$FILTER")
+CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
+if [ "x$CURRENT_URL" = "x" ]
+then
+	echo " -- No release with tag $RELEASE_TAG currently exists."
+	echo "    A new one will be created."
+	if [ "${CURRENT_BRANCH}" = "${DEVELOPMENT_BRANCH}" ]
+	then
+		echo "    The current source will be tagged as a continuous build..."
+
+		# Set GitHub username and email
+		git config --local user.name "trisyoungs"
+		git config --local user.email "tristan.youngs@stfc.ac.uk"
+
+		git tag $RELEASE_TAG
+	fi
+else
+	echo " -- Found existing release with tag $RELEASE_TAG"
+	echo "    url: $CURRENT_URL"
+fi
+
+# If we don't already have info for our release, create one now
+if [ "x$CURRENT_URL" = "x" ]
+then
+	# Construct release information
+	RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
+	RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TRAVIS_COMMIT'"'
+	RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
+	RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
+	RELEASE_DATA=${RELEASE_DATA}', "draft": false'
+	RELEASE_DATA=${RELEASE_DATA}', "prerelease": '$RELEASE_PRE
+	RELEASE_DATA=${RELEASE_DATA}" }"
+	echo $RELEASE_DATA
+
+	# Create release
+	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPOURL}/releases)
+
+	# Extract url
+	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
+fi
+
+# Extract upload path for assets
+# -- Need to strip trailing {?name,label} part from the returned url
+UPLOAD_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .upload_url' | cut -d '{' -f 1)
+if [ "x$UPLOAD_URL" = "x" ]
+then
+	echo "Error: Failed to determine upload url for release."
+	exit 1
+fi
+echo "Upload url is: $UPLOAD_URL"
+
+# Upload specified assets
+echo "Uploading assets to release..."
+
+for file in ${ARTIFACTS[@]}
+do
+	# Get the basename of the file so we call it the correct name
+	BASENAME=$(basename "${file}")
+	echo "... $file (basename=$BASENAME)"
+
+	ARTIFACT_DATA=$(curl --header "Authorization: token ${GITHUB_TOKEN}" \
+	     --header "Accept: application/vnd.github.manifold-preview" \
+	     --header "Content-Type: application/octet-stream" \
+	     --data-binary @$file \
+	     "$UPLOAD_URL?name=$BASENAME")
+
+	ARTIFACT_ID=$(echo $ARTIFACT_DATA | jq -r '. | .id')
+	ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
+	if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
+	then
+		echo "Error: Failed to upload artifact."
+		echo "Returned data was: $ARTIFACT_DATA"
+		exit 1
+	fi
+	echo "   -- Success (id: $ARTIFACT_ID, url: $ARTIFACT_URL)"
+done
+
+# All done.

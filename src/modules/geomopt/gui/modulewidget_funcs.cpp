@@ -20,48 +20,14 @@
 */
 
 #include "modules/geomopt/gui/modulewidget.h"
+#include "modules/geomopt/geomopt.h"
 
 // Constructor
-GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* parent, GeometryOptimisationModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-
-// Update controls within widget
-void GeometryOptimisationModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void GeometryOptimisationModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void GeometryOptimisationModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool GeometryOptimisationModuleWidget::writeState(LineParser& parser)
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool GeometryOptimisationModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
 

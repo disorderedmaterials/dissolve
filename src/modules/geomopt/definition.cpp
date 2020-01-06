@@ -39,8 +39,8 @@ const char* GeometryOptimisationModule::brief() const
 	return "Optimise geometry with respect to energy (minimise)";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int GeometryOptimisationModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int GeometryOptimisationModule::nRequiredTargets() const
 {
-	return -1;
+	return Module::OneOrMoreTargets;
 }

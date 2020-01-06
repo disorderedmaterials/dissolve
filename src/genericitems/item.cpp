@@ -29,7 +29,7 @@ GenericItem::GenericItem(const char* name, int flags) : ListItem<GenericItem>()
 {
 	name_ = name;
 	flags_ = flags;
-	version_ = 0;
+	version_ = 1;
 }
 
 GenericItem::~GenericItem()
@@ -76,18 +76,6 @@ const char* GenericItem::name()
 	return name_.get();
 }
 
-// Set item description
-void GenericItem::setDescription(const char* description)
-{
-	description_ = description;
-}
-
-// Return item description
-const char* GenericItem::description()
-{
-	return description_.get();
-}
-
 // Return version of the item
 int GenericItem::version() const
 {
@@ -113,8 +101,13 @@ void GenericItem::setFlags(int flags)
 }
 
 // Return flags
-int GenericItem::flags()
+int GenericItem::flags() const
 {
 	return flags_;
 }
 
+// Return whether specified flag is set
+bool GenericItem::hasFlag(GenericItem::ItemFlag flag) const
+{
+	return (flags_&flag);
+}

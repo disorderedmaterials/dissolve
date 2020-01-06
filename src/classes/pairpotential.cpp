@@ -202,14 +202,14 @@ bool PairPotential::setUp(AtomType* typeI, AtomType* typeJ)
 	atomTypeI_ = typeI;
 	atomTypeJ_ = typeJ;
 	setData1DNames();
-	Parameters& paramsI = atomTypeI_->parameters();
-	Parameters& paramsJ = atomTypeJ_->parameters();
+	InteractionParameters& paramsI = atomTypeI_->parameters();
+	InteractionParameters& paramsJ = atomTypeJ_->parameters();
 
 	// Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
-	if (paramsI.empty() || paramsJ.empty())
+	if (paramsI.isEmpty() || paramsJ.isEmpty())
 	{
-		if (paramsI.empty() && paramsJ.empty()) Messenger::error("Can't set parameters for PairPotential since neither AtomType (%s and %s) contain any parameters.\n", atomTypeI_->name(), atomTypeJ_->name());
-		else if (paramsI.empty()) Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeI_->name());
+		if (paramsI.isEmpty() && paramsJ.isEmpty()) Messenger::error("Can't set parameters for PairPotential since neither AtomType (%s and %s) contain any parameters.\n", atomTypeI_->name(), atomTypeJ_->name());
+		else if (paramsI.isEmpty()) Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeI_->name());
 		else Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeJ_->name());
 		return false;
 	}

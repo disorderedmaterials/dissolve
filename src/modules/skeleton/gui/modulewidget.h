@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SKELETONMODULEWIDGET_H
-#define DISSOLVE_SKELETONMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_SKELETON_H
+#define DISSOLVE_MODULEWIDGET_SKELETON_H
 
 #include "modules/skeleton/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class SkeletonModule;
 
 // Module Widget
 class SkeletonModuleWidget : public ModuleWidget
@@ -36,37 +36,19 @@ class SkeletonModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	SkeletonModule* module_;
 
 	public:
 	// Constructor
-	SkeletonModuleWidget(QWidget* parent, Module* module);
-	// Main form declaration
-	Ui::SkeletonModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
+	SkeletonModuleWidget(QWidget* parent, SkeletonModule* module);
 
 
 	/*
-	 * ModuleWidget Implementations
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-
-	/*
-	 * Widgets / Functions
+	 * UI
 	 */
 	private:
-
-	private slots:
+	// Main form declaration
+	Ui::SkeletonModuleWidget ui_;
 };
 
 #endif

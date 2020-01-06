@@ -39,8 +39,8 @@ const char* CalculateDAngleModule::brief() const
 	return "Calculate distance/angle maps";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateDAngleModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int CalculateDAngleModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

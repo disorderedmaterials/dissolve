@@ -39,8 +39,8 @@ const char* AnalyseModule::brief() const
 	return "Perform custom analysis of one or more Configurations";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int AnalyseModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int AnalyseModule::nRequiredTargets() const
 {
-	return -1;
+	return Module::OneOrMoreTargets;
 }

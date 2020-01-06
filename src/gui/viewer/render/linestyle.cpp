@@ -132,7 +132,7 @@ const GLfloat* LineStyle::colour() const
  */
 
 // Send line styling to GL
-const void LineStyle::sendToGL(const double pixelScaling)
+void LineStyle::sendToGL(const double pixelScaling) const
 {
 	// Set line width, including any supplied scaling factor
 	glLineWidth(width_ * pixelScaling);

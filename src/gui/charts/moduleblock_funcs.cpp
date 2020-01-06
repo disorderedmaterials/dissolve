@@ -22,6 +22,7 @@
 #include "gui/charts/moduleblock.h"
 #include "gui/charts/modulelistmetrics.h"
 #include "gui/modulewidget.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include "templates/variantpointer.h"
@@ -44,14 +45,12 @@ ModuleBlock::ModuleBlock(QWidget* parent, Module* module, Dissolve& dissolve) : 
 	// Set the Module pointer
 	module_ = module;
 
-	// Set up our keywords widget
-	ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.constCoreData());
-	connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
-	connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
-
 	// Set the icon and module type label
 	ui_.TopLabel->setText(module_->type());
 	ui_.IconLabel->setPixmap(modulePixmap(module_));
+
+	// Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we will exist in a QScrollArea)
+	ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
 
 	// Update our controls
 	updateControls();
@@ -67,17 +66,6 @@ ModuleBlock::~ModuleBlock()
  * Module Target
  */
 
-// Run the set-up stage of the associated Module
-void ModuleBlock::setUpModule()
-{
-	if (!module_) return;
-
-	// Run the Module's set-up stage
-	module_->setUp(dissolve_, dissolve_.worldPool());
-
-	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
-}
-
 // Return displayed Module
 Module* ModuleBlock::module() const
 {
@@ -87,12 +75,6 @@ Module* ModuleBlock::module() const
 /*
  * Controls
  */
-
-// Hide the remove button (e.g. when shown in a ModuleTab)
-void ModuleBlock::hideRemoveButton()
-{
-	ui_.RemoveButton->setVisible(false);
-}
 
 // Return suitable QPixmap for supplied Module
 QPixmap ModuleBlock::modulePixmap(const Module* module)
@@ -140,6 +122,25 @@ void ModuleBlock::on_NameEdit_returnPressed()
 	on_NameEdit_editingFinished();
 }
 
+void ModuleBlock::on_EnabledButton_clicked(bool checked)
+{
+	if (refreshing_) return;
+
+	module_->setEnabled(checked);
+
+	ui_.IconFrame->setEnabled(checked);
+
+	emit(dataModified());
+}
+
+void ModuleBlock::on_FrequencySpin_valueChanged(int value)
+{
+	if (refreshing_) return;
+
+	module_->setFrequency(value);
+
+	emit(dataModified());
+}
 
 /*
  * QWidget Reimplementations
@@ -159,12 +160,12 @@ void ModuleBlock::paintEvent(QPaintEvent* event)
 	painter.setPen(borderPen);
 
 	QPainterPath borderPath;
+	const int blockDentLeft = width()*0.5 - metrics.blockDentRadius();
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.lineTo(metrics.blockBorderMidPoint(), metrics.blockDentOffset());
-	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentOffset()+metrics.blockBorderMidPoint(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 90, -180);
-	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
-	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
-	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
+	borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint()-metrics.blockDentRadius(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 180, 180);
+	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
+	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
+	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
 	borderPath.closeSubpath();
 
 	painter.setBrush(Qt::white);
@@ -228,35 +229,37 @@ void ModuleBlock::updateControls()
 	ui_.NameEdit->setText(module_->uniqueName());
 
 	// Set 'enabled' button status
-	ui_.EnabledButton->setChecked(module_->enabled());
+	ui_.EnabledButton->setChecked(module_->isEnabled());
+	ui_.IconFrame->setEnabled(module_->isEnabled());
 
 	// Set frequency spin
 	ui_.FrequencySpin->setValue(module_->frequency());
 
-	// Update Configuration list and HeaderFrame tooltip
-	ui_.ConfigurationTargetList->clear();
-	CharString toolTip("Targets: ");
-	ListIterator<Configuration> configIterator(dissolve_.constConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	// Update Configuration label and icon tooltip
+	if (module_->nRequiredTargets() == Module::ZeroTargets)
 	{
-		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
-
-		if (module_->isTargetConfiguration(cfg))
-		{
-			item->setCheckState(Qt::Checked);
-
-			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-			else toolTip.strcatf(", %s", cfg->name());
-		}
-		else item->setCheckState(Qt::Unchecked);
+		ui_.ConfigurationsLabel->setText("-");
+		ui_.ConfigurationsIconLabel->setToolTip("This module does not accept configuration targets.");
 	}
-	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nTargetableConfigurations() != 0));
-	ui_.HeaderFrame->setToolTip(toolTip.get());
+	else
+	{
+		// Construct the tooltip
+		QString toolTip;
 
-	// Update keywords
-	ui_.ModuleKeywordsWidget->updateControls();
+		if (module_->nRequiredTargets() == Module::OneOrMoreTargets) toolTip = "This module may target any number of configurations.\n";
+		else toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nRequiredTargets()).arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
+
+		if (module_->nTargetConfigurations() == 0) toolTip += "No configuration targets set.";
+		else
+		{
+			toolTip += "Current configuration targets:\n";
+			RefListIterator<Configuration> configIterator(module_->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) toolTip += QString("- %1\n").arg(cfg->name());
+		}
+
+		ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
+		ui_.ConfigurationsIconLabel->setToolTip(toolTip);
+	}
 
 	refreshing_ = false;
 }
@@ -264,23 +267,18 @@ void ModuleBlock::updateControls()
 // Disable sensitive controls
 void ModuleBlock::disableSensitiveControls()
 {
-	ui_.KeywordsControlWidget->setEnabled(false);
 	ui_.RemoveButton->setEnabled(false);
+	ui_.NameEdit->setEnabled(false);
+	ui_.EnabledButton->setEnabled(false);
+	ui_.FrequencySpin->setEnabled(false);
 }
 
 // Enable sensitive controls
 void ModuleBlock::enableSensitiveControls()
 {
-	ui_.KeywordsControlWidget->setEnabled(true);
 	ui_.RemoveButton->setEnabled(true);
-}
+	ui_.NameEdit->setEnabled(true);
+	ui_.EnabledButton->setEnabled(true);
+	ui_.FrequencySpin->setEnabled(true);
 
-/*
- * Signals / Slots
- */
-
-// Keyword data for node has been modified
-void ModuleBlock::keywordDataModified()
-{
-	emit(dataModified());
 }

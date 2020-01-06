@@ -62,8 +62,8 @@ const char* ForcefieldParameters::name() const
  * Parameters
  */
 
-// Return short-range parameters
-const Parameters& ForcefieldParameters::parameters() const
+// Return interatomic interaction parameters
+const InteractionParameters& ForcefieldParameters::parameters() const
 {
 	return parameters_;
 }

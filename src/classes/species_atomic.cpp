@@ -69,6 +69,20 @@ void Species::setAtomCoordinates(SpeciesAtom* i, Vec3<double> r)
 	++version_;
 }
 
+// Set coordinates of specified atom (by index and individual coordinates)
+void Species::setAtomCoordinates(int id, double x, double y, double z)
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= atoms_.nItems()))
+	{
+		Messenger::error("Atom index %i is out of range - nAtoms = %i\n", id, atoms_.nItems());
+		return;
+	}
+#endif
+
+	atoms_[id]->setCoordinates(x, y, z);
+}
+
 // Transmute specified SpeciesAtom
 void Species::transmuteAtom(SpeciesAtom* i, Element* el)
 {
@@ -77,7 +91,7 @@ void Species::transmuteAtom(SpeciesAtom* i, Element* el)
 	// Nothing to do if current element matches that supplied
 	if (i->element() == el) return;
 
-	// Remove any AtomType assignment from the specified SpeciesAngle * Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
+	// Remove any existing AtomType assignment
 	i->setAtomType(NULL);
 	i->setElement(el);
 
@@ -175,7 +189,7 @@ bool Species::isAtomSelected(SpeciesAtom* i) const
 }
 
 // Return version of the atom selection
-const int Species::atomSelectionVersion() const
+int Species::atomSelectionVersion() const
 {
 	return atomSelectionVersion_;
 }

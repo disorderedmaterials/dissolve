@@ -88,15 +88,13 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Return the current generator
 	Procedure& generator();
 	// Create the Configuration according to its generator Procedure
-	bool generate(ProcessPool& procPool);
+	bool generate(ProcessPool& procPool, double pairPotentialRange);
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
 	// Load coordinates from specified parser
 	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 	// Initialise (generate or load) the basic contents of the Configuration
 	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent = false);
-	// Finalise Configuration after loading contents from restart file
-	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -143,6 +141,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	bool hasUsedSpecies(Species* sp);
 	// Return the atomic density of the Configuration
 	double atomicDensity() const;
+	// Return the chemical density (g/cm3) of the Configuration
+	double chemicalDensity() const;
 	// Return version of current contents
 	int contentsVersion() const;
 	// Increment version of current contents
@@ -165,6 +165,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
+	// Scale geometric centres of molecules within box
+	void scaleMoleculeCentres(double factor);
 
 
 	/*
@@ -253,6 +255,16 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	public:
 	// Calculate / retrieve stack of sites for specified SpeciesSite
 	const SiteStack* siteStack(SpeciesSite* site);
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Write through specified LineParser
+	bool write(LineParser& parser) const;
+	// Read through specified LineParser
+	bool read(LineParser& parser, const List<Species>& availableSpecies, double pairPotentialRange);
 
 
 	/*

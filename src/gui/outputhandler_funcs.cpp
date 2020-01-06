@@ -39,8 +39,8 @@ GUIOutputHandler::~GUIOutputHandler()
 // Set styling for warning message
 void GUIOutputHandler::styleForWarning()
 {
-	static QColor orange(251,154,73);
-	emit(setColour(orange));
+	static QColor blue(0,0,255);
+	emit(setColour(blue));
 }
 
 // Set styling for error message
@@ -64,10 +64,5 @@ void GUIOutputHandler::resetStyling()
 // Print text
 void GUIOutputHandler::outputText(const char* text)
 {
-	static QString s;
-
-	s = QString(text).toHtmlEscaped();
-	if (s.endsWith('\n')) s.chop(1);
-
-	emit printText(s);
+	emit(printText(QString(text)));
 }

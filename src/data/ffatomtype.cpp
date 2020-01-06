@@ -25,7 +25,7 @@
 #include "neta/generator.h"
 
 // Constructors
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>(), neta_(netaDefinition, parent)
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>()
 {
 	forcefield_ = parent;
 
@@ -39,10 +39,13 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 	parameters_.setParameter(2, data2);
 	parameters_.setParameter(3, data3);
 
+	// Generate NETA
+	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), forcefield_ ? forcefield_->name() : "???", netaDefinition);
+
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(z), ListItem<ForcefieldAtomType>(), neta_(netaDefinition, parent)
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(z), ListItem<ForcefieldAtomType>()
 {
 	forcefield_ = parent;
 
@@ -52,6 +55,9 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 	parameters_.setCharge(q);
 	parameterReference_ = forcefield_->shortRangeParameters(parameterReference);
 	if (!parameterReference_) Messenger::error("Parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, forcefield_->name());
+
+	// Generate NETA
+	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), forcefield_ ? forcefield_->name() : "???", netaDefinition);
 
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
@@ -122,11 +128,17 @@ const NETADefinition& ForcefieldAtomType::neta() const
  * Parameters
  */
 
-// Return short-range parameters
-const Parameters& ForcefieldAtomType::parameters() const
+// Return interatomic interaction parameters
+const InteractionParameters& ForcefieldAtomType::parameters() const
 {
 	// If reference parameters are defined, return those
 	if (parameterReference_) return parameterReference_->parameters();
 
 	return parameters_;
+}
+
+// Return charge (from local parameters)
+double ForcefieldAtomType::charge() const
+{
+	return parameters_.charge();
 }

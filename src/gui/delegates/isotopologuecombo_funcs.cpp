@@ -40,17 +40,20 @@ QWidget* IsotopologueComboDelegate::createEditor(QWidget* parent, const QStyleOp
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox* editor = new QComboBox(parent);
 
-	// Get the model UserData for the current index - it should be a Species
-	Species* sp = VariantPointer<Species>(index.data(Qt::UserRole));
-	if (sp)
+	// Get the model UserData for the current index - it should be an Isotopologue
+	const Isotopologue* iso = VariantPointer<const Isotopologue>(index.data(Qt::UserRole));
+	if (iso)
 	{
+		// Get the parent Species from the Isotopologue
+		Species* sp = iso->parent();
+
 		// Add the natural Isotopologue
 		editor->addItem("Natural", VariantPointer<Isotopologue>(sp->naturalIsotopologue()));
 
 		// Add user-defined Isotopologues
 		ComboNameListPopulator<Isotopologue>(editor, sp->isotopologues(), true);
 	}
-	else Messenger::error("Underlying model did not contain a Species*, so IsotopologueCombo cannot provide options.\n");
+	else Messenger::error("Underlying model did not contain an Isotopologue*, so IsotopologueCombo cannot provide options.\n");
 
 	return editor;
 }

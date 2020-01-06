@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module Widget - Functions
+	*** CalculateDAngle Module Widget - Functions
 	*** src/modules/calculate_dangle/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -27,10 +27,10 @@
 CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up RDF graph
-	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
+	rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
 
 	View& rdfView = rdfGraph_->view();
 	rdfView.setViewType(View::FlatXYView);
@@ -42,24 +42,24 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	rdfView.setAutoFollowType(View::AllAutoFollow);
 
 	// Set up Angle graph
-	angleGraph_ = ui.AnglePlotWidget->dataViewer();
+	angleGraph_ = ui_.AnglePlotWidget->dataViewer();
 
 	View& angleView = angleGraph_->view();
 	angleView.setViewType(View::FlatXYView);
-	angleView.axes().setTitle(0, "Angle, \\sym{degrees}");
+	angleView.axes().setTitle(0, "Angle, \\sym{degree}");
 	angleView.axes().setRange(0, 0.0, 180.0);
 	angleView.axes().setTitle(1, "Normalised Population");
 	angleView.axes().setRange(1, 0.0, 5.0);
 	angleView.setAutoFollowType(View::AllAutoFollow);
 
 	// Set up Distance-Angle graph
-	dAngleGraph_ = ui.DAnglePlotWidget->dataViewer();
+	dAngleGraph_ = ui_.DAnglePlotWidget->dataViewer();
 
 	View& dAngleView = dAngleGraph_->view();
-	dAngleView.setViewType(View::FlatXYView);
+	dAngleView.setViewType(View::AutoStretchedView);
 	dAngleView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleView.axes().setRange(0, 0.0, 5.0);
-	dAngleView.axes().setTitle(1, "Angle, \\sym{degrees}");
+	dAngleView.axes().setTitle(1, "Angle, \\sym{degree}");
 	dAngleView.axes().setRange(1, 0.0, 180.0);
 	dAngleView.axes().setTitle(2, "Normalised Population");
 	dAngleView.axes().setRange(2, 0.0, 0.01);
@@ -72,34 +72,28 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	refreshing_ = false;
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void CalculateDAngleModuleWidget::updateControls(int flags)
 {
-	ui.RDFPlotWidget->updateToolbar();
-	ui.AnglePlotWidget->updateToolbar();
-	ui.DAnglePlotWidget->updateToolbar();
+	ui_.RDFPlotWidget->updateToolbar();
+	ui_.AnglePlotWidget->updateToolbar();
+	ui_.DAnglePlotWidget->updateToolbar();
 
 	rdfGraph_->postRedisplay();
 	angleGraph_->postRedisplay();
 	dAngleGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalculateDAngleModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalculateDAngleModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool CalculateDAngleModuleWidget::writeState(LineParser& parser)
+bool CalculateDAngleModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;

@@ -68,7 +68,7 @@ void Configuration::clear()
 	appliedSizeFactor_ = 1.0;
 
 	// Reset box / Cells
-	requestedCellDivisionLength_ = 10.0;
+	requestedCellDivisionLength_ = 7.0;
 	contentsVersion_.zero();
 
 	// Reset definition
@@ -108,7 +108,7 @@ Procedure& Configuration::generator()
 }
 
 // Create the Configuration according to its generator Procedure
-bool Configuration::generate(ProcessPool& procPool)
+bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 {
 	// Empty the current contents
 	empty();
@@ -119,8 +119,16 @@ bool Configuration::generate(ProcessPool& procPool)
 	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
 	Messenger::print("\n");
 
+	// Set-up Cells for the Box
+	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
+
+	// Make sure Cell contents / Atom locations are up-to-date
+	updateCellContents();
+
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
+
+	++contentsVersion_;
 
 	// Sanity check the contents - if we have zero atoms then there's a problem!
 	if (nAtoms() == 0) return Messenger::error("Generated contents for Configuration '%s' contains no atoms!\n", name());
@@ -169,7 +177,7 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 	if (nAtoms() == 0)
 	{
 		// Run the generator procedure (we will need species / atom info to load any coordinates in to anyway)
-		if (!generate(procPool)) return false;
+		if (!generate(procPool, pairPotentialRange)) return false;
 
 		// If there are still no atoms, complain.
 		if (nAtoms() == 0) return false;
@@ -184,41 +192,13 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 				if (!inputFileParser.openInput(inputCoordinates_)) return false;
 				if (!loadCoordinates(inputFileParser, inputCoordinates_.coordinateFormat())) return false;
 				inputFileParser.closeFiles();
+
+				// Need to update cell locations now, as we have new atom positions
+				updateCellContents();
 			}
 			else return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the file doesn't exist.\n", name(), inputCoordinates_.filename());
 		}
 	}
-
-	/*
-	 * Cell Generation
-	 */
-
-	// OK, so set-up Cells for the Box if they don't already exist
-	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
-
-	// Make sure Cell contents / Atom locations are up-to-date
-	updateCellContents();
-
-	++contentsVersion_;
-
-	return true;
-}
-
-// Finalise Configuration after loading contents from restart file
-bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
-{
-	// Set-up Cells for the Box
-	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
-
-	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
-	scaleBox(requestedSizeFactor_);
-	appliedSizeFactor_ = requestedSizeFactor_;
-
-	// Update Cell locations for Atoms
-	updateCellContents();
-
-	// Finalise used AtomType list
-	usedAtomTypes_.finalise();
 
 	return true;
 }

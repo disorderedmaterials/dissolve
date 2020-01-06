@@ -23,8 +23,8 @@
 #include "gui/selectconfigurationdialog.h"
 #include "gui/layertab.h"
 #include "main/dissolve.h"
+#include "modules/calculate_rdf/rdf.h"
 #include "modules/epsr/epsr.h"
-#include <QMessageBox>
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 {
@@ -32,10 +32,10 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
@@ -55,12 +55,15 @@ void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool check
 	module = dissolve_.createModuleInstance("Energy", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Atomic)"));
@@ -80,12 +83,15 @@ void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
 	module = dissolve_.createModuleInstance("Energy", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (EPSR)"));
@@ -104,12 +110,15 @@ void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 	module = dissolve_.createModuleInstance("Energy", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Refine (EPSR)"));
@@ -122,9 +131,12 @@ void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
 	RefList<Module> neutronSQ = dissolve_.findModuleInstances("NeutronSQ");
 	epsr->addTargets(neutronSQ);
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
@@ -139,9 +151,12 @@ void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
 	module = dissolve_.createModuleInstance("RDF", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked)
@@ -160,9 +175,12 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
 	module = dissolve_.createModuleInstance("SQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked)
@@ -181,9 +199,12 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
 	module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked)
@@ -206,48 +227,61 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
 	module = dissolve_.createModuleInstance("XRaySQ", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
-	setCurrentTab(newLayer);
+	ui_.MainTabs->setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse RDF/CN"));
+
+	Module* module;
+	CalculateRDFModule* calcRDFModule;
+
+	// Add the CalculateRDF module
+	calcRDFModule = dynamic_cast<CalculateRDFModule*>(dissolve_.createModuleInstance("CalculateRDF", newLayer));
+	calcRDFModule->addTargetConfigurations(dissolve_.configurations());
+
+	// Add a CalculateCN module
+	module = dissolve_.createModuleInstance("CalculateCN", newLayer);
+	module->keywords().set<const CalculateRDFModule*>("SourceRDF", calcRDFModule);
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
+	setModified();
+	fullUpdate();
+	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
 void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a LayerTab, then call its rename() function
-	MainTab* tab = currentTab();
+	MainTab* tab = ui_.MainTabs->currentTab();
 	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
 	tab->rename();
 }
 
 void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
 {
-	// Get the current tab - make sure it is a LayerTab
-	MainTab* tab = currentTab();
-	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
+	// Get the current tab - make sure it is a ConfigurationTab
+	MainTab* tab = ui_.MainTabs->currentTab();
+	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
 
-	// Check that we really want to delete this tab
-	QMessageBox queryBox;
-	queryBox.setText(QString("Really delete the layer '%1'?").arg(tab->title()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+	// Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
+	LayerTab* layerTab = dynamic_cast<LayerTab*>(tab);
+	if (!layerTab) return;
 
-	if (ret == QMessageBox::Yes)
-	{
-		// Cast up the tab to a LayerTab so we can get the ModuleLayer pointer
-		LayerTab* layerTab = dynamic_cast<LayerTab*>(tab);
-		if (!layerTab) return;
-		ModuleLayer* layer = layerTab->moduleLayer();
+	// Check that we really want to delete the layer
+	if (!layerTab->close()) return;
 
-		// Remove the tab
-		removeTab(layerTab);
-
-		// Remove the layer
-		dissolve_.removeProcessingLayer(layer);
-
-		// Update the GUI
-		setModified();
-		fullUpdate();
-	}
+	// Update the GUI
+	ui_.MainTabs->removeByPage(layerTab->page());
+	setModified();
+	fullUpdate();
 }

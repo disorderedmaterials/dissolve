@@ -65,7 +65,7 @@ bool DissolveWindow::checkSaveCurrentInput()
 void DissolveWindow::startNew()
 {
 	// Clear any data-related tabs from the UI
-	clearTabs();
+	ui_.MainTabs->clearTabs();
 
 	// Clear Dissolve itself
 	dissolve_.clear();
@@ -99,7 +99,7 @@ void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
 	if (!sysTemp) return;
 
 	// Clear any data-related tabs from the UI
-	clearTabs();
+	ui_.MainTabs->clearTabs();
 
 	// Load the input data
 	if (!dissolve_.loadInputFromString(qPrintable(sysTemp->inputFileData())))
@@ -182,6 +182,10 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
 	if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
 
 	modified_ = false;
+
+	// Update the current working directory to be local to the new input file
+	QFileInfo inputFileInfo(newFile);
+	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
 	updateControlsFrame();
 

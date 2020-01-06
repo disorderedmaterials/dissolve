@@ -9,7 +9,8 @@ SET(keywordwidgets_MOC_HDRS
   dropdown.h
   expressionvariablelist.h
   fileandformat.h
-  isotopologuereferencelist.h
+  isotopologuecollection.h
+  module.h
   modulegroups.h
   modulereflist.h
   node.h
@@ -18,7 +19,9 @@ SET(keywordwidgets_MOC_HDRS
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
+  range.h
   speciesreflist.h
+  speciessite.h
   speciessitereflist.h
   vec3double.h
   vec3integer.h
@@ -46,7 +49,8 @@ SET(keywordwidgets_UIS
   dropdown.ui
   expressionvariablelist.ui
   fileandformat.ui
-  isotopologuereferencelist.ui
+  isotopologuecollection.ui
+  module.ui
   modulegroups.ui
   modulereflist.ui
   node.ui
@@ -55,7 +59,9 @@ SET(keywordwidgets_UIS
   nodevalue.ui
   nodevalueenumoptions.ui
   pairbroadeningfunction.ui
+  range.ui
   speciesreflist.ui
+  speciessite.ui
   speciessitereflist.ui
   vec3double.ui
   vec3integer.ui
@@ -79,7 +85,8 @@ SET(keywordwidgets_SRCS
   expressionvariablelist_funcs.cpp
   fileandformat_funcs.cpp
   integer_funcs.cpp
-  isotopologuereferencelist_funcs.cpp
+  isotopologuecollection_funcs.cpp
+  module_funcs.cpp
   modulegroups_funcs.cpp
   modulereflist_funcs.cpp
   node_funcs.cpp
@@ -88,8 +95,10 @@ SET(keywordwidgets_SRCS
   nodevalue_funcs.cpp
   nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp
+  range_funcs.cpp
   species_funcs.cpp
   speciesreflist_funcs.cpp
+  speciessite_funcs.cpp
   speciessitereflist_funcs.cpp
   widget_funcs.cpp
   windowfunction_funcs.cpp

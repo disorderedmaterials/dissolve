@@ -53,21 +53,21 @@ void DataViewer::mouseMoved(int dx, int dy)
 			}
 			else 
 			{
-				view_.rotateView(-dy/2.0, dx/2.0);
+				view().rotateView(-dy/2.0, dx/2.0);
 				refresh = true;
 			}
 			break;
 		case (DataViewer::TranslateViewInteraction):
 			// Turn off autofollow if it is currently on...
-			if (view_.autoFollowType() != View::NoAutoFollow)
+			if (view().autoFollowType() != View::NoAutoFollow)
 			{
-				view_.setAutoFollowType(View::NoAutoFollow);
+				view().setAutoFollowType(View::NoAutoFollow);
 				emit(controlAspectChanged());
 			}
 
 			// If this is a flat view, shift the axis limits rather than translating the view
-			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
-			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			if (view().isFlatView()) view().shiftFlatAxisLimits(dx, dy);
+			else view().translateView(dx/15.0, dy/15.0, 0.0);
 			refresh = true;
 			break;
 		case (DataViewer::ZoomXRangeInteraction):
@@ -88,28 +88,30 @@ void DataViewer::mouseMoved(int dx, int dy)
 void DataViewer::mouseWheeled(int delta)
 {
 	// Turn off autofollow if it is currently on...
-	if (view_.autoFollowType() != View::NoAutoFollow)
+	if (view().autoFollowType() != View::NoAutoFollow)
 	{
-		view_.setAutoFollowType(View::NoAutoFollow);
+		view().setAutoFollowType(View::NoAutoFollow);
 		emit(controlAspectChanged());
 	}
 
 	bool scrollUp = delta > 0;
 
 	// Perform camera zoom in a 3D view, or view scaling in a 2D view
-	if (view_.isFlatView())
+	if (view().isFlatView())
 	{
 		// Scale the range
-		view_.scaleRange(scrollUp ? 0.9 : 1.1);
+		view().scaleRange(scrollUp ? 0.9 : 1.1);
 
 		// Move the centre of the axes towards the current mouse position
-		view_.centre2DAt(current2DAxesCoordinates(), 0.1);
+		view().centre2DAt(current2DAxesCoordinates(), 0.1);
 	}
 	else
 	{
-		double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
-		if (zrange < 1.0) zrange = 1.0;
-		view_.translateView(0.0, 0.0, 0.5*zrange*(scrollUp ? -1.0 : 1.0));
+		// Call the base class function
+		BaseViewer::mouseWheeled(delta);
+
+		// Display will have already been updated, so return now
+		return;
 	}
 
 	postRedisplay();
@@ -147,6 +149,29 @@ void DataViewer::mouseDoubleClicked()
 // 	clickedObjectInfo_.clear();
 }
 
+// Context menu requested
+void DataViewer::contextMenuRequested(QPoint pos)
+{
+	// Check for object under current coordinates...
+	ViewerObject objectType = queryAt(rMouseLast_.x, rMouseLast_.y);
+// 	printf("object type = %i [%s] [%s]\n", objectType, queryObjectInfo(), queryObjectSubInfo());
+
+	// Set up the menu according to the clicked object
+	if (objectType == BaseViewer::RenderableObject)
+	{
+		// Get Renderable pointer....
+		Renderable* rend = renderableWithTag(queryObjectInfo());
+		if (!rend)
+		{
+			Messenger::error("Couldn't locate renderable with tag '%s' in the DataViewer...\n", queryObjectInfo());
+			return;
+		}
+
+		showRenderableContextMenu(pos, rend);
+	}
+	else showGeneralContextMenu(pos);
+}
+
 // Key pressed
 bool DataViewer::keyPressed(int key)
 {
@@ -155,45 +180,45 @@ bool DataViewer::keyPressed(int key)
 	switch (key)
 	{
 		case (Qt::Key_Left):
-			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(-0.1, 0.0);
-			else view_.rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
+			if (view().isFlatView()) view().shiftFlatAxisLimitsFractional(-0.1, 0.0);
+			else view().rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
 			break;
 		case (Qt::Key_Right):
-			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.1, 0.0);
-			else view_.rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
+			if (view().isFlatView()) view().shiftFlatAxisLimitsFractional(0.1, 0.0);
+			else view().rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
 			break;
 		case (Qt::Key_Up):
-			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.0, -0.1);
-			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
+			if (view().isFlatView()) view().shiftFlatAxisLimitsFractional(0.0, -0.1);
+			else view().rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
 			break;
 		case (Qt::Key_Down):
-			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.0, 0.1);
-			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
+			if (view().isFlatView()) view().shiftFlatAxisLimitsFractional(0.0, 0.1);
+			else view().rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
 		case (Qt::Key_A):
 			// Turn off autofollow if it is currently on...
-			if (view_.autoFollowType() != View::NoAutoFollow)
+			if (view().autoFollowType() != View::NoAutoFollow)
 			{
-				view_.setAutoFollowType(View::NoAutoFollow);
+				view().setAutoFollowType(View::NoAutoFollow);
 				emit(controlAspectChanged());
 			}
 
 			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 				// Show only top 20% of vertical axis
-				if (view_.viewType() == View::FlatXYView) view_.showAllData(1.0, 0.2);
-				else if (view_.viewType() == View::FlatXZView) view_.showAllData(1.0, 1.0, 0.2);
-				else if (view_.viewType() == View::FlatZYView) view_.showAllData(1.0, 0.2);
+				if (view().viewType() == View::FlatXYView) view().showAllData(1.0, 0.2);
+				else if (view().viewType() == View::FlatXZView) view().showAllData(1.0, 1.0, 0.2);
+				else if (view().viewType() == View::FlatZYView) view().showAllData(1.0, 0.2);
 			}
-			else view_.showAllData();
+			else view().showAllData();
 			break;
 		case (Qt::Key_F):
-			view_.cycleAutoFollowType();
+			view().cycleAutoFollowType();
 			emit(controlAspectChanged());
 			break;
 		case (Qt::Key_L):
-			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);
-			else view_.axes().toggleLogarithmic(view_.viewType() == View::FlatZYView ? 2 : 0);
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) view().axes().toggleLogarithmic(view().viewType() == View::FlatXZView ? 2 : 1);
+			else view().axes().toggleLogarithmic(view().viewType() == View::FlatZYView ? 2 : 0);
 			break;
 		case (Qt::Key_S):
 			groupManager_.cycleVerticalShiftAmount();

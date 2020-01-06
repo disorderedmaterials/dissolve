@@ -46,7 +46,7 @@ SpeciesSiteRefListKeywordWidget::SpeciesSiteRefListKeywordWidget(QWidget* parent
 	}
 
 	// Summary text on KeywordDropDown button
-	setSummaryText("Edit...");
+	setSummaryText("<None>");
 }
 
 /*
@@ -66,6 +66,12 @@ void SpeciesSiteRefListKeywordWidget::siteCheckBox_clicked(bool checked)
 	// If the box is checked, we need to add the site to the list. If not, remove it.
 	if (checked) keyword_->data().addUnique(site);
 	else keyword_->data().remove(site);
+
+	keyword_->hasBeenSet();
+
+	updateSummaryText();
+
+	emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
@@ -114,6 +120,9 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData& coreDat
 				connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(siteCheckBox_clicked(bool)));
 				checkBox->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site));
 				layout->addWidget(checkBox);
+
+				// If this keyword demands oriented sites, disable the radio button if the site has no axes
+				if (keyword_->axesRequired() && (!site->hasAxes())) checkBox->setDisabled(true);
 			}
 
 			// Add on a vertical spacer to take up any extra space at the foot of the widget
@@ -138,5 +147,17 @@ void SpeciesSiteRefListKeywordWidget::updateKeywordData()
 // Update summary text
 void SpeciesSiteRefListKeywordWidget::updateSummaryText()
 {
-	// TODO
+	CharString siteText;
+	if (keyword_->data().nItems() == 0) siteText = "<None>";
+	else
+	{
+		RefListIterator<SpeciesSite> siteIterator(keyword_->data());
+		while (SpeciesSite* site = siteIterator.iterate())
+		{
+			if (siteIterator.isFirst()) siteText.strcatf("%s (%s)", site->name(), site->parent()->name());
+			else siteText.strcatf(", %s (%s)", site->name(), site->parent()->name());
+		}
+	}
+
+	setSummaryText(siteText);
 }

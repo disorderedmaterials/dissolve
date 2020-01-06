@@ -39,8 +39,8 @@ const char* TestModule::brief() const
 	return "Development Module";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int TestModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int TestModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }

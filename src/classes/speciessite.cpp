@@ -21,6 +21,8 @@
 
 #include "classes/speciessite.h"
 #include "classes/species.h"
+#include "classes/site.h"
+#include "data/atomicmass.h"
 #include "base/lineparser.h"
 
 // Constructor
@@ -34,6 +36,10 @@ SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
 SpeciesSite::~SpeciesSite()
 {
 }
+
+/*
+ * Basic Information
+ */
 
 // Set name of site
 void SpeciesSite::setName(const char* newName)
@@ -59,6 +65,16 @@ Species* SpeciesSite::parent()
 	return parent_;
 }
 
+// Return version
+int SpeciesSite::version() const
+{
+	return version_;
+}
+
+/*
+ * Definition
+ */
+
 // Add origin atom
 bool SpeciesSite::addOriginAtom(SpeciesAtom* originAtom)
 {
@@ -68,6 +84,8 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom* originAtom)
 	if (originAtoms_.contains(originAtom)) return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(), name_.get());
 
 	originAtoms_.append(originAtom);
+
+	++version_;
 
 	return true;
 }
@@ -79,6 +97,23 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 	if (!parent_) return Messenger::error("Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addOriginAtom(parent_->atom(atomIndex));
+}
+
+// Set origin atoms
+bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> atoms)
+{
+	originAtoms_.clear();
+
+	++version_;
+
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) if (!addOriginAtom(i))
+	{
+		originAtoms_.clear();
+		return false;
+	}
+
+	return true;
 }
 
 // Return list of origin atoms
@@ -101,6 +136,8 @@ Array<int> SpeciesSite::originAtomIndices() const
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
 	originMassWeighted_ = b;
+
+	++version_;
 }
 
 // Return whether the origin should be calculated with mass-weighted positions
@@ -119,6 +156,8 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom* xAxisAtom)
 
 	xAxisAtoms_.append(xAxisAtom);
 
+	++version_;
+
 	return true;
 }
 
@@ -129,6 +168,23 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 	if (!parent_) return Messenger::error("Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addXAxisAtom(parent_->atom(atomIndex));
+}
+
+// Set x-axis atoms
+bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
+{
+	xAxisAtoms_.clear();
+
+	++version_;
+
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) if (!addXAxisAtom(i))
+	{
+		xAxisAtoms_.clear();
+		return false;
+	}
+
+	return true;
 }
 
 // Return list of x-axis atoms
@@ -157,6 +213,8 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom* yAxisAtom)
 
 	yAxisAtoms_.append(yAxisAtom);
 
+	++version_;
+
 	return true;
 }
 
@@ -167,6 +225,23 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 	if (!parent_) return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addYAxisAtom(parent_->atom(atomIndex));
+}
+
+// Set y-axis atoms
+bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> atoms)
+{
+	yAxisAtoms_.clear();
+
+	++version_;
+
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) if (!addYAxisAtom(i))
+	{
+		yAxisAtoms_.clear();
+		return false;
+	}
+
+	return true;
 }
 
 // Return list of y-axis atoms
@@ -190,6 +265,81 @@ bool SpeciesSite::hasAxes() const
 {
 	if ((xAxisAtoms_.nItems() == 0) || (yAxisAtoms_.nItems() == 0)) return false;
 	return true;
+}
+
+/*
+ * Generation from Parent
+ */
+
+// Create and return Site description from parent Species
+Site* SpeciesSite::createFromParent() const
+{
+	// Get origin atom indices from site
+	Array<int> originIndices = originAtomIndices();
+	if (originIndices.nItems() == 0) return NULL;
+
+	Site* site = NULL;
+
+	// Calculate origin
+	Vec3<double> origin;
+	double mass;
+	if (originMassWeighted_)
+	{
+		double massNorm = 0.0;
+		for (int m=0; m<originIndices.nItems(); ++m)
+		{
+			mass = AtomicMass::mass(parent_->atom(originIndices[m])->element());
+			origin += parent_->atom(originIndices[m])->r() * mass;
+			massNorm += mass;
+		}
+		origin /= massNorm;
+	}
+	else
+	{
+		for (int m=0; m<originIndices.nItems(); ++m) origin += parent_->atom(originIndices[m])->r();
+		origin /= originIndices.nItems();
+	}
+
+	// Calculate axes and store data if required
+	if (hasAxes())
+	{
+		// If the site has axes, grab the atom indices involved
+		Array<int> xAxisIndices, yAxisIndices;
+		if (hasAxes())
+		{
+			xAxisIndices = xAxisAtomIndices();
+			yAxisIndices = yAxisAtomIndices();
+		}
+
+		Vec3<double> v;
+
+		// Get average position of supplied x-axis atoms
+		for (int m=0; m<xAxisIndices.nItems(); ++m) v += parent_->atom(xAxisIndices[m])->r();
+		v /= xAxisIndices.nItems();
+
+		// Get vector from site origin and normalise it
+		Vec3<double> x = v - origin;
+		x.normalise();
+
+		// Get average position of supplied y-axis atoms
+		v.zero();
+		for (int m=0; m<yAxisIndices.nItems(); ++m) v += parent_->atom(yAxisIndices[m])->r();
+		v /= yAxisIndices.nItems();
+
+		// Get vector from site origin, normalise it, and orthogonalise
+		Vec3<double> y = v - origin;
+		y.orthogonalise(x);
+		y.normalise();
+
+		// Calculate z vector from cross product of x and y
+		Vec3<double> z = x * y;
+
+		// Store data
+		site = new OrientedSite(NULL, origin, x, y, z);
+	}
+	else site = new Site(NULL, origin);
+
+	return site;
 }
 
 /*

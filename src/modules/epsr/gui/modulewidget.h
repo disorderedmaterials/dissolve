@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EPSRMODULEWIDGET_H
-#define DISSOLVE_EPSRMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_EPSR_H
+#define DISSOLVE_MODULEWIDGET_EPSR_H
 
 #include "modules/epsr/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -40,7 +40,7 @@ class EPSRModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
+	EPSRModuleWidget(QWidget* parent, EPSRModule* module, Dissolve& dissolve);
 	~EPSRModuleWidget();
 
 	private:
@@ -57,23 +57,19 @@ class EPSRModuleWidget : public ModuleWidget
 	// Main form declaration
 	Ui::EPSRModuleWidget ui_;
 	// DataViewers contained within this widget
-	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
+	DataViewer* FQGraph_, *FQFitGraph_, *estimatedSQGraph_, *estimatedGRGraph_, *totalGRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
 
 	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

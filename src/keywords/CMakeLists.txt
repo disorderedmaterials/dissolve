@@ -16,9 +16,10 @@ add_library(keywords
   geometrylist.cpp
   group.cpp
   integer.cpp
-  isotopologuereferencelist.cpp
+  isotopologuecollection.cpp
   linkto.cpp
   list.cpp
+  module.cpp
   modulegroups.cpp
   modulereflist.cpp
   node.cpp
@@ -29,6 +30,7 @@ add_library(keywords
   nodevalue.cpp
   pairbroadeningfunction.cpp
   procedure.cpp
+  range.cpp
   species.cpp
   speciesreflist.cpp
   speciessite.cpp
@@ -57,9 +59,10 @@ add_library(keywords
   geometrylist.h
   group.h
   integer.h
-  isotopologuereferencelist.h
+  isotopologuecollection.h
   linkto.h
   list.h
+  module.h
   modulegroups.h
   modulereflist.h
   node.h
@@ -71,6 +74,7 @@ add_library(keywords
   nodevalueenumoptions.h
   pairbroadeningfunction.h
   procedure.h
+  range.h
   species.h
   speciesreflist.h
   speciessite.h

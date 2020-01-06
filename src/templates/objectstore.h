@@ -89,6 +89,39 @@ class ObjectInfo
 	{
 		return tag_.get();
 	}
+
+
+	/*
+	 * Tag Control
+	 */
+	private:
+	// Whether automatic suffixing of tags is enabled
+	static bool autoSuffixing_;
+	// Suffix to append (if autoSuffixing_)
+	static CharString autoSuffix_;
+
+	public:
+	// Enable automatic suffixing of tags
+	static void enableAutoSuffixing(const char* suffix)
+	{
+		autoSuffixing_ = true;
+		autoSuffix_ = suffix;
+	}
+	// Disable automatic suffixing of tags
+	static void disableAutoSuffixing()
+	{
+		autoSuffixing_ = false;
+	}
+	// Return whether automatic suffixing of tags is enabled
+	static bool autoSuffixing()
+	{
+		return autoSuffixing_;
+	}
+	// Return suffix to append (if autoSuffixing_)
+	static const char* autoSuffix()
+	{
+		return autoSuffix_.get();
+	}
 };
 
 // Object Store
@@ -159,32 +192,36 @@ template <class T> class ObjectStore
 	{
 		return objectInfo_;
 	}
-	// Set tag for this object, appending type name prefix
+	// Set tag for this object, prepending type name prefix
 	void setObjectTag(const char* tag)
 	{
 		// Get actual tag of object - does the supplied tag already contain a type prefix?
 		CharString objectTag;
-		if (strchr(tag, '@'))
+		if (strchr(tag, '%'))
 		{
-			CharString typePrefix = DissolveSys::beforeChar(tag, '@');
-			objectTag = DissolveSys::afterChar(tag, '@');
+			CharString typePrefix = DissolveSys::beforeChar(tag, '%');
+			objectTag = DissolveSys::afterChar(tag, '%');
 
 			// Do a sanity check on the type prefix...
 			if (!DissolveSys::sameString(typePrefix, objectTypeName_)) Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", tag, typePrefix.get(), objectTypeName_);
 		}
 		else objectTag = tag;
+
+		// Append auto-suffix
+		if (ObjectInfo::autoSuffixing()) objectTag = CharString("%s@%s", objectTag.get(), ObjectInfo::autoSuffix());
+
 #ifdef CHECKS
 		// Check for duplicate value already in list
 		if (!objectTag.isEmpty())
 		{
-			T* object = findObject(CharString("%s@%s", objectTypeName_, objectTag.get()));
+			T* object = findObject(CharString("%s%%%s", objectTypeName_, objectTag.get()));
 			if (object && (object != this))
 			{
-				Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s@%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_, objectTypeName_, objectTag.get());
+				Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s%%%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_, objectTypeName_, objectTag.get());
 			}
 		}
 #endif
-		objectInfo_.setTag(CharString("%s@%s", objectTypeName_, objectTag.get()));
+		objectInfo_.setTag(CharString("%s%%%s", objectTypeName_, objectTag.get()));
 	}
 	// Return object tag
 	const char* objectTag() const
@@ -273,19 +310,19 @@ template <class T> class ObjectStore
 	// Return whether the specified object tag is an object of this type
 	static bool isObject(const char* objectTag)
 	{
-		// Get part before '@', which denotes the type
-		const char* prefix = DissolveSys::beforeChar(objectTag, '@');
+		// Get part before '%', which denotes the type
+		const char* prefix = DissolveSys::beforeChar(objectTag, '%');
 		return DissolveSys::sameString(prefix, objectTypeName_);
 	}
 	// Find specified object by its tag
 	static T* findObject(const char* objectTag)
 	{
 		// Does the supplied tag contain a type prefix? If so, check it and then strip it
-		CharString typePrefix = DissolveSys::beforeChar(objectTag, '@');
+		CharString typePrefix = DissolveSys::beforeChar(objectTag, '%');
 		if (typePrefix.isEmpty())
 		{
 			// No type prefix, so add ours and do the search
-			CharString tag("%s@%s", objectTypeName_, objectTag);
+			CharString tag("%s%%%s", objectTypeName_, objectTag);
 			for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next())
 			{
 				if (ri->item()->objectTagIs(tag)) return ri->item();

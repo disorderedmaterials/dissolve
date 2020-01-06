@@ -25,6 +25,6 @@
 // Return a new widget controlling this Module
 ModuleWidget* EnergyModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new EnergyModuleWidget(parent, this, dissolve);
+	return new EnergyModuleWidget(parent, this);
 }
 

@@ -22,7 +22,6 @@
 #include "modules/calculate_rdf/rdf.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "base/sysfunc.h"
@@ -37,11 +36,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 bool CalculateRDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Ensure any parameters in our nodes are set correctly
 	const Vec3<double> distanceRange = keywords_.asVec3Double("DistanceRange");
@@ -51,18 +46,14 @@ bool CalculateRDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (excludeSameMolecule) sameMoleculeExclusions.append(selectA_);
 	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
 
-	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
-	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+	// Grab Configuration pointer
+	Configuration* cfg = targetConfigurations_.firstItem();
 
-		// Set up process pool - must do this to ensure we are using all available processes
-		procPool.assignProcessesToGroups(cfg->processPool());
+	// Set up process pool - must do this to ensure we are using all available processes
+	procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Execute the analysis
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
-	}
+	// Execute the analysis
+	if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
 
 	return true;
 }

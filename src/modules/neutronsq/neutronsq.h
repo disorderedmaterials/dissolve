@@ -25,7 +25,6 @@
 #include "module/module.h"
 #include "io/import/data1d.h"
 #include "classes/partialset.h"
-#include "classes/isotopologuereference.h"
 #include "classes/data1dstore.h"
 
 // Forward Declarations
@@ -60,16 +59,16 @@ class NeutronSQModule : public Module
 	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	int nTargetableConfigurations() const;
+	// Return the number of Configuration targets this Module requires
+	int nRequiredTargets() const;
 
 
 	/*
 	 * Initialisation
 	 */
 	private:
-	// Isotopologue references
-	List<IsotopologueReference> isotopologues_;
+	// Isotopologue information
+	IsotopologueCollection isotopologues_;
 	// Exchangeable AtomTypes
 	AtomTypeList exchangeableTypes_;
 	// Reference F(Q) file and format

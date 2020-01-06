@@ -36,11 +36,7 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 bool CalculateDAngleModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Ensure any parameters in our nodes are set correctly
 	const Vec3<double> distanceRange = keywords_.asVec3Double("DistanceRange");
@@ -54,18 +50,14 @@ bool CalculateDAngleModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (excludeSameMolecule) sameMoleculeExclusions.append(selectA_);
 	selectC_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
 
-	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
-	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+	// Grab Configuration pointer
+	Configuration* cfg = targetConfigurations_.firstItem();
 
-		// Set up process pool - must do this to ensure we are using all available processes
-		procPool.assignProcessesToGroups(cfg->processPool());
+	// Set up process pool - must do this to ensure we are using all available processes
+	procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Execute the analysis
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
-	}
+	// Execute the analysis
+	if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
 
 	return true;
 }

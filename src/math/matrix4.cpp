@@ -350,14 +350,14 @@ void Matrix4::invert()
  */
 
 // Copy column contents to supplied Vec3
-Vec3<double> Matrix4::columnAsVec3(int col)
+Vec3<double> Matrix4::columnAsVec3(int col) const
 {
 	Vec3<double> vec(matrix_[col*4], matrix_[col*4+1], matrix_[col*4+2]);
 	return vec;
 }
 
 // Copy column contents to supplied Vec4
-Vec4<double> Matrix4::columnAsVec4(int col)
+Vec4<double> Matrix4::columnAsVec4(int col) const
 {
 	Vec4<double> vec(matrix_[col*4], matrix_[col*4+1], matrix_[col*4+2], matrix_[col*4+3]);
 	return vec;
@@ -407,6 +407,14 @@ void Matrix4::setColumn(int col, Vec4<double> vec)
 	matrix_[col*4+3] = vec.w;
 }
 
+// Set specified column from supplied Vec3
+void Matrix4::setColumn(int col, Vec3<double> vec)
+{
+	matrix_[col*4] = vec.x;
+	matrix_[col*4+1] = vec.y;
+	matrix_[col*4+2] = vec.z;
+}
+
 // Adjust specified column from supplied values
 void Matrix4::adjustColumn(int col, double a, double b, double c, double d)
 {
@@ -435,7 +443,7 @@ void Matrix4::adjustColumn(int col, Vec4<double> vec)
 }
 
 // Calculate column magnitude
-double Matrix4::columnMagnitude(int column)
+double Matrix4::columnMagnitude(int column) const
 {
 	double mag = 0.0;
 	for (int n=column*4; n<column*4+4; ++n) mag += (matrix_[n] * matrix_[n]);
@@ -869,6 +877,43 @@ void Matrix4::applyPreRotationAxis(double ax, double ay, double az, double angle
 	matrix_[13] = temp[7];
 }
 
+// Set rotation matrix
+void Matrix4::setRotation(const Matrix3& rotation)
+{
+	setColumn(0, rotation.columnAsVec3(0));
+	setColumn(1, rotation.columnAsVec3(1));
+	setColumn(2, rotation.columnAsVec3(2));
+}
+
+// Apply rotation matrix
+void Matrix4::applyRotation(const Matrix3& B)
+{
+	// [ row(A|this).column(B) ]
+	Matrix4 AB;
+
+	AB.matrix_[0] = matrix_[0]*B.value(0) + matrix_[4]*B.value(1) + matrix_[8]*B.value(2);
+	AB.matrix_[1] = matrix_[1]*B.value(0) + matrix_[5]*B.value(1) + matrix_[9]*B.value(2);
+	AB.matrix_[2] = matrix_[2]*B.value(0) + matrix_[6]*B.value(1) + matrix_[10]*B.value(2);
+	AB.matrix_[3] = matrix_[3]*B.value(0) + matrix_[7]*B.value(1) + matrix_[11]*B.value(2);
+
+	AB.matrix_[4] = matrix_[0]*B.value(3) + matrix_[4]*B.value(4) + matrix_[8]*B.value(5);
+	AB.matrix_[5] = matrix_[1]*B.value(3) + matrix_[5]*B.value(4) + matrix_[9]*B.value(5);
+	AB.matrix_[6] = matrix_[2]*B.value(3) + matrix_[6]*B.value(4) + matrix_[10]*B.value(5);
+	AB.matrix_[7] = matrix_[3]*B.value(3) + matrix_[7]*B.value(4) + matrix_[11]*B.value(5);
+
+	AB.matrix_[8] = matrix_[0]*B.value(6) + matrix_[4]*B.value(7) + matrix_[8]*B.value(8);
+	AB.matrix_[9] = matrix_[1]*B.value(6) + matrix_[5]*B.value(7) + matrix_[9]*B.value(8);
+	AB.matrix_[10] = matrix_[2]*B.value(6) + matrix_[6]*B.value(7) + matrix_[10]*B.value(8);
+	AB.matrix_[11] = matrix_[3]*B.value(6) + matrix_[7]*B.value(7) + matrix_[11]*B.value(8);
+
+	AB.matrix_[12] = matrix_[12];
+	AB.matrix_[13] = matrix_[13];
+	AB.matrix_[14] = matrix_[14];
+	AB.matrix_[15] = matrix_[15];
+
+	*this = AB;
+}
+
 /*
  * Translations
  */
@@ -900,21 +945,21 @@ void Matrix4::createTranslation(Vec3<double> delta)
 	createTranslation(delta.x, delta.y, delta.z);
 }
 
-// // Apply a translation to the matrix (as glTranslated would do)
-// void Matrix4::applyTranslation(double dx, double dy, double dz)
-// {
-// 	matrix_[12] += matrix_[0]*dx + matrix_[4]*dy + matrix_[8]*dz;
-// 	matrix_[13] += matrix_[1]*dx + matrix_[5]*dy + matrix_[9]*dz;
-// 	matrix_[14] += matrix_[2]*dx + matrix_[6]*dy + matrix_[10]*dz;
-// }
-// 
-// // Apply a translation to the matrix (as glTranslated would to)
-// void Matrix4::applyTranslation(Vec3<double> vec)
-// {
-// 	matrix_[12] += matrix_[0]*vec.x + matrix_[4]*vec.y + matrix_[8]*vec.z;
-// 	matrix_[13] += matrix_[1]*vec.x + matrix_[5]*vec.y + matrix_[9]*vec.z;
-// 	matrix_[14] += matrix_[2]*vec.x + matrix_[6]*vec.y + matrix_[10]*vec.z;
-// }
+// Apply a translation to the matrix (as glTranslated would do)
+void Matrix4::applyTranslation(double dx, double dy, double dz)
+{
+	matrix_[12] += matrix_[0]*dx + matrix_[4]*dy + matrix_[8]*dz;
+	matrix_[13] += matrix_[1]*dx + matrix_[5]*dy + matrix_[9]*dz;
+	matrix_[14] += matrix_[2]*dx + matrix_[6]*dy + matrix_[10]*dz;
+}
+
+// Apply a translation to the matrix (as glTranslated would to)
+void Matrix4::applyTranslation(Vec3<double> vec)
+{
+	matrix_[12] += matrix_[0]*vec.x + matrix_[4]*vec.y + matrix_[8]*vec.z;
+	matrix_[13] += matrix_[1]*vec.x + matrix_[5]*vec.y + matrix_[9]*vec.z;
+	matrix_[14] += matrix_[2]*vec.x + matrix_[6]*vec.y + matrix_[10]*vec.z;
+}
 
 // Apply a translation, premultiplying with current matrix
 void Matrix4::applyPreTranslation(double dx, double dy, double dz)

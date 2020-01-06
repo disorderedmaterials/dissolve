@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NEUTRONSQMODULEWIDGET_H
-#define DISSOLVE_NEUTRONSQMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
+#define DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
 
 #include "modules/neutronsq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
 class Dissolve;
-class Module;
 class NeutronSQModule;
 class PartialSet;
 class DataViewer;
@@ -40,7 +39,7 @@ class NeutronSQModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
+	NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* module, Dissolve& dissolve);
 	~NeutronSQModuleWidget();
 
 	private:
@@ -62,18 +61,14 @@ class NeutronSQModuleWidget : public ModuleWidget
 	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

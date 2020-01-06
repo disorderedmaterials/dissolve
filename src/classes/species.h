@@ -102,6 +102,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const List<SpeciesAtom>& atoms() const;
 	// Set coordinates of specified atom
 	void setAtomCoordinates(SpeciesAtom* i, Vec3<double> r);
+	// Set coordinates of specified atom (by index and individual coordinates)
+	void setAtomCoordinates(int id, double x, double y, double z);
 	// Transmute specified atom
 	void transmuteAtom(SpeciesAtom* i, Element* el);
 	// Clear current atom selection
@@ -123,7 +125,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return whether specified atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
 	// Return version of the atom selection
-	const int atomSelectionVersion() const;
+	int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
 	// Bump AtomTypes version
@@ -151,7 +153,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
-	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j, bool addMissingHigherOrderTerms = false);
+	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
 	// Reconnect existing SpeciesBond
@@ -238,16 +240,22 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	private:
 	// Forcefield to source terms from
 	Forcefield* forcefield_;
+	// Auto-generate missing intramolecular terms, and remove invalid ones
+	bool autoUpdateIntramolecularTerms_;
 
 	private:
-	// Add missing higher order intramolecular terms from current bond connectivity
-	void completeIntramolecularTerms();
+	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+	void updateIntramolecularTerms();
 
 	public:
 	// Set Forcefield to source terms from
 	void setForcefield(Forcefield* ff);
 	// Return Forcefield to source terms from
 	Forcefield* forcefield() const;
+	// Set whether to auto-generate missing intramolecular terms, and remove invalid ones
+	void setAutoUpdateIntramolecularTerms(bool b);
+	// Return whether to auto-generate missing intramolecular terms, and remove invalid ones
+	bool autoUpdateIntramolecularTerms() const;
 	// Apply terms from source Forcefield
 	bool applyForcefieldTerms(CoreData& coreData);
 
@@ -348,6 +356,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
+		ImproperKeyword,		/* 'Improper' - Define an Improper interaction between four atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */

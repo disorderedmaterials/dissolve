@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATEDANGLEMODULEWIDGET_H
-#define DISSOLVE_CALCULATEDANGLEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
+#define DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
 
 #include "modules/calculate_dangle/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -38,28 +38,32 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	CalculateDAngleModule* module_;
-	// DataViewers contained within this widget
-	DataViewer* rdfGraph_, *angleGraph_, *dAngleGraph_;
 
 	public:
 	// Constructor
 	CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module);
-	// Main form declaration
-	Ui::CalculateDAngleModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::CalculateDAngleModuleWidget ui_;
+	// DataViewers contained within this widget
+	DataViewer* rdfGraph_, *angleGraph_, *dAngleGraph_;
+
+	public:
+	// Update controls within widget
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+
+
+	/*
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

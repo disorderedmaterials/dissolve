@@ -101,14 +101,12 @@ class Cell
 	Cell** cellNeighbours_, **mimCellNeighbours_;
 	// Array of all neighbouring cells
 	CellNeighbour* allCellNeighbours_;
-	// Array of adjacent Cell neighbours
-	Array<Cell*> adjacentCellNeighbours_;
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours, OrderedPointerArray<Cell>& adjacentNeighbours);
+	void addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation

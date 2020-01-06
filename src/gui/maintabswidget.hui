@@ -1,0 +1,188 @@
+/*
+	*** Main Tabs Widget
+	*** src/gui/maintabswidget.hui
+	Copyright T. Youngs 2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_MAINTABSWIDGET_H
+#define DISSOLVE_MAINTABSWIDGET_H
+
+#include "gui/configurationtab.h"
+#include "gui/forcefieldtab.h"
+#include "gui/layertab.h"
+#include "gui/moduletab.h"
+#include "gui/speciestab.h"
+#include "gui/workspacetab.h"
+#include "templates/reflist.h"
+#include "templates/list.h"
+#include <QTabWidget>
+
+// Forward declarations
+class Dissolve;
+class MainTabsBar;
+class QToolButton;
+
+// MainTabsWidget
+class MainTabsWidget : public QTabWidget
+{
+	Q_OBJECT
+
+	public:
+	// Constructor
+	MainTabsWidget(QWidget* parent);
+
+
+	/*
+	 * Associated Widgets
+	 */
+	private:
+	// Tab bar
+	MainTabsBar* mainTabsBar_;
+
+
+	/*
+	 * Tab Data
+	 */
+	private:
+	// Reference list of all available tabs
+	RefList<MainTab> allTabs_;
+	// Pointer to Forcefield tab
+	ForcefieldTab* forcefieldTab_;
+	// List of Species tabs
+	List<SpeciesTab> speciesTabs_;
+	// List of Configuration tabs
+	List<ConfigurationTab> configurationTabs_;
+	// List of processing layer tabs
+	List<LayerTab> processingLayerTabs_;
+	// List of Module tabs
+	List<ModuleTab> moduleTabs_;
+	// List of Workspace tabs
+	List<WorkspaceTab> workspaceTabs_;
+
+	public:
+	// Return reference list of all current tabs
+	RefList<const MainTab> allTabs() const;
+	// Return currently-selected Species (if a SpeciesTab is the current one)
+	Species* currentSpecies() const;
+	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
+	Configuration* currentConfiguration() const;
+	// Return currently-selected ModuleLayer (if a LayerTab is the current one)
+	ModuleLayer* currentLayer() const;
+	// Find SpeciesTab containing specified page widget
+	SpeciesTab* speciesTab(QWidget* page);
+	// Find ConfigurationTab containing specified page widget
+	ConfigurationTab* configurationTab(QWidget* page);
+	// Find LayerTab containing specified page widget
+	LayerTab* processingLayerTab(QWidget* page);
+	// Find ModuleTab containing specified page widget
+	ModuleTab* moduleTab(QWidget* page);
+	// Find ModuleTab containing specified Module
+	ModuleTab* moduleTab(Module* module);
+	// Find WorkspaceTab containing specified page widget
+	WorkspaceTab* workspaceTab(QWidget* page);
+	// Find tab with title specified
+	MainTab* findTab(const char* title);
+	// Find tab with specified page widget
+	MainTab* findTab(QWidget* page);
+	// Generate unique tab name with base name provided
+	const char* uniqueTabName(const char* base);
+
+
+	/*
+	 * Tab Management
+	 */
+	public:
+	// Add core tabs
+	void addCoreTabs(DissolveWindow* dissolveWindow);
+	// Remove tabs related to the current data
+	void clearTabs();
+	// Reconcile tabs, making them consistent with the provided data
+	void reconcileTabs(DissolveWindow* dissolveWindow);
+	// Remove tab containing the specified page widget
+	void removeByPage(QWidget* page);
+	// Add tab for specified Module target
+	MainTab* addModuleTab(DissolveWindow* dissolveWindow, Module* module);
+	// Remove the ModuleTab for the specified Module, if it exists
+	void removeModuleTab(Module* module);
+	// Add on a new workspace tab
+	MainTab* addWorkspaceTab(DissolveWindow* dissolveWindow, const char* title);
+
+
+	/*
+	 * Display
+	 */
+	public:
+	// Return current tab
+	MainTab* currentTab() const;
+	// Make specified tab the current one
+	void setCurrentTab(MainTab* tab);
+	// Make specified tab the current one (by index)
+	void setCurrentTab(int tabIndex);
+	// Make specified Species tab the current one
+	void setCurrentTab(Species* species);
+	// Make specified Configuration tab the current one
+	void setCurrentTab(Configuration* cfg);
+	// Make specified processing layer tab the current one
+	void setCurrentTab(ModuleLayer* layer);
+
+
+	/*
+	 * Update
+	 */
+	public:
+	// Update all tabs
+	void updateAllTabs();
+	// Update all Species tabs
+	void updateSpeciesTabs();
+	// Disable sensitive controls in all tabs
+	void disableSensitiveControls();
+	// Enable sensitive controls in all tabs
+	void enableSensitiveControls();
+
+
+	/*
+	 * Tab Styling
+	 */
+	public:
+	// Set text colour for tab with specified page widget
+	void setTabTextColour(QWidget* pageWidget, QColor colour);
+	// Set icon for tab with specified page widget
+	void setTabIcon(QWidget* pageWidget, QIcon icon);
+	// Add close button to specified tab
+	QToolButton* addTabCloseButton(QWidget* pageWidget);
+
+
+	/*
+	 * Widget Functions
+	 */
+	private:
+	// List of close buttons and their associated pageWidgets
+	RefDataList<QToolButton,QWidget*> closeButtons_;
+
+	private slots:
+	// Tab close button clicked
+	void tabCloseButtonClicked(bool);
+	// Tab bar double-clicked
+	void tabBarDoubleClicked(int index);
+
+	signals:
+	void dataModified();
+	void tabClosed(QWidget*);
+};
+
+#endif

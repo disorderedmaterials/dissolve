@@ -40,7 +40,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QStackedWidget" name="MainStack">
+     <widget class="SuperStackedWidget" name="MainStack">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -139,6 +139,9 @@ Simulation from Scratch</string>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -179,6 +182,9 @@ From a Template</string>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -195,13 +201,6 @@ From a Template</string>
             </spacer>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="StartLine1">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
          </widget>
         </item>
         <item>
@@ -263,6 +262,9 @@ Simulation...</string>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -305,6 +307,9 @@ Simulation</string>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -349,6 +354,9 @@ Remote Simulation</string>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -365,13 +373,6 @@ Remote Simulation</string>
             </spacer>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="StartLine1_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
          </widget>
         </item>
         <item>
@@ -435,6 +436,9 @@ Remote Simulation</string>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -474,6 +478,9 @@ Remote Simulation</string>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextUnderIcon</enum>
              </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -511,7 +518,7 @@ Remote Simulation</string>
        </layout>
       </widget>
       <widget class="QWidget" name="SimulationPage">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
         <property name="spacing">
          <number>4</number>
         </property>
@@ -634,8 +641,8 @@ Remote Simulation</string>
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>32</width>
-                  <height>32</height>
+                  <width>40</width>
+                  <height>40</height>
                  </size>
                 </property>
                 <property name="toolButtonStyle">
@@ -783,7 +790,7 @@ Remote Simulation</string>
              </layout>
             </item>
             <item>
-             <widget class="SuperTabWidget" name="MainTabs">
+             <widget class="MainTabsWidget" name="MainTabs">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -797,22 +804,136 @@ Remote Simulation</string>
             </item>
            </layout>
           </widget>
-          <widget class="QTextBrowser" name="MessagesBrowser">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <family>Courier</family>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
-           <property name="acceptRichText">
-            <bool>true</bool>
-           </property>
+          <widget class="QWidget" name="MessagesWidget" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolButton" name="MessagesIncreaseFontSizeButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/general/icons/general_arrowup.svg</normaloff>:/general/icons/general_arrowup.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="MessagesFontLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="main.qrc">:/general/icons/general_font.svg</pixmap>
+                </property>
+                <property name="scaledContents">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="MessagesDecreaseFontSizeButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/general/icons/general_arrowdown.svg</normaloff>:/general/icons/general_arrowdown.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTextEdit" name="MessagesEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="undoRedoEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="acceptRichText">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -863,7 +984,7 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Workspace</string>
     </property>
-    <addaction name="WorkspaceAddNewAction"/>
+    <addaction name="WorkspaceCreateEmptyAction"/>
    </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
@@ -875,10 +996,15 @@ Remote Simulation</string>
      <string>S&amp;imulation</string>
     </property>
     <addaction name="SimulationRunAction"/>
+    <addaction name="SimulationRunForAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationPauseAction"/>
     <addaction name="SimulationStepFiveAction"/>
     <addaction name="SimulationStepAction"/>
+    <addaction name="separator"/>
+    <addaction name="SimulationSaveRestartPointAction"/>
+    <addaction name="SimulationDataManagerAction"/>
+    <addaction name="SimulationClearModuleDataAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
@@ -1021,9 +1147,9 @@ Remote Simulation</string>
       <property name="title">
        <string>E&amp;volution...</string>
       </property>
-      <addaction name="LayerCreateEvolutionMolecularAction"/>
-      <addaction name="LayerCreateEvolutionAtomicAction"/>
-      <addaction name="LayerCreateEvolutionEPSRAction"/>
+      <addaction name="LayerCreateEvolveMolecularAction"/>
+      <addaction name="LayerCreateEvolveAtomicAction"/>
+      <addaction name="LayerCreateEvolveEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
       <property name="font">
@@ -1034,7 +1160,7 @@ Remote Simulation</string>
       <property name="title">
        <string>&amp;Refinement...</string>
       </property>
-      <addaction name="LayerCreateRefinementEPSRAction"/>
+      <addaction name="LayerCreateRefineEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateCalculateMenu">
       <property name="font">
@@ -1050,11 +1176,23 @@ Remote Simulation</string>
       <addaction name="LayerCreateCalculateRDFNeutronAction"/>
       <addaction name="LayerCreateCalculateRDFNeutronXRayAction"/>
      </widget>
+     <widget class="QMenu" name="LayerCreateAnalyseMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Analysis...</string>
+      </property>
+      <addaction name="LayerCreateAnalyseRDFCNAction"/>
+     </widget>
      <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
      <addaction name="LayerCreateEvolutionMenu"/>
      <addaction name="LayerCreateCalculateMenu"/>
      <addaction name="LayerCreateRefinementMenu"/>
+     <addaction name="LayerCreateAnalyseMenu"/>
     </widget>
     <addaction name="LayerCreateMenu"/>
     <addaction name="LayerRenameAction"/>
@@ -1101,13 +1239,13 @@ Remote Simulation</string>
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="WorkspaceAddNewAction">
+  <action name="WorkspaceCreateEmptyAction">
    <property name="icon">
     <iconset resource="main.qrc">
      <normaloff>:/tabs/icons/tabs_workspace.svg</normaloff>:/tabs/icons/tabs_workspace.svg</iconset>
    </property>
    <property name="text">
-    <string>Add &amp;New...</string>
+    <string>&amp;Create New</string>
    </property>
   </action>
   <action name="WorkspaceCurrentAction">
@@ -1209,6 +1347,9 @@ Remote Simulation</string>
    </property>
   </action>
   <action name="SimulationPauseAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="main.qrc">
      <normaloff>:/control/icons/control_pause.svg</normaloff>:/control/icons/control_pause.svg</iconset>
@@ -1316,11 +1457,6 @@ Remote Simulation</string>
     <string>&amp;Empty</string>
    </property>
   </action>
-  <action name="actionldsjflksdf">
-   <property name="text">
-    <string>ldsjflksdf</string>
-   </property>
-  </action>
   <action name="SpeciesCreateAtomicAction">
    <property name="text">
     <string>&amp;Atomic...</string>
@@ -1355,22 +1491,17 @@ Remote Simulation</string>
     <string>&amp;Rename...</string>
    </property>
   </action>
-  <action name="LayerCreateEvolutionEPSRAction">
+  <action name="LayerCreateEvolveEPSRAction">
    <property name="text">
     <string>&amp;EPSR (MC Only)</string>
    </property>
   </action>
-  <action name="actionStandard_Dissolve">
-   <property name="text">
-    <string>Standard Dissolve</string>
-   </property>
-  </action>
-  <action name="LayerCreateEvolutionMolecularAction">
+  <action name="LayerCreateEvolveMolecularAction">
    <property name="text">
     <string>Standard &amp;Molecular (MC/MD)</string>
    </property>
   </action>
-  <action name="LayerCreateRefinementEPSRAction">
+  <action name="LayerCreateRefineEPSRAction">
    <property name="text">
     <string>Standard &amp;EPSR</string>
    </property>
@@ -1384,7 +1515,7 @@ Remote Simulation</string>
     <string>&amp;Delete</string>
    </property>
   </action>
-  <action name="LayerCreateEvolutionAtomicAction">
+  <action name="LayerCreateEvolveAtomicAction">
    <property name="text">
     <string>Standard &amp;Atomic (MC/MD)</string>
    </property>
@@ -1445,12 +1576,50 @@ Remote Simulation</string>
     <string>From &amp;XYZ...</string>
    </property>
   </action>
+  <action name="SimulationDataManagerAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Data Manager...</string>
+   </property>
+  </action>
+  <action name="SimulationSaveRestartPointAction">
+   <property name="text">
+    <string>Save Restart &amp;Point...</string>
+   </property>
+  </action>
+  <action name="SimulationClearModuleDataAction">
+   <property name="text">
+    <string>Clear Module Data</string>
+   </property>
+  </action>
+  <action name="SimulationRunForAction">
+   <property name="text">
+    <string>Run &amp;For...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="LayerCreateAnalyseRDFCNAction">
+   <property name="text">
+    <string>RDF &amp;&amp; Coordination Number</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SuperTabWidget</class>
+   <class>MainTabsWidget</class>
    <extends>QTabWidget</extends>
-   <header>gui/widgets/supertabwidget.hui</header>
+   <header>gui/maintabswidget.hui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SuperStackedWidget</class>
+   <extends>QStackedWidget</extends>
+   <header>gui/widgets/superstackedwidget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

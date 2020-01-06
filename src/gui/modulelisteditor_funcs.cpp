@@ -54,14 +54,16 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	localConfiguration_ = localConfiguration;
 
 	// Create a ModuleListChart widget and set its source list
-	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve()); //, localConfiguration_);
+	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve(), localConfiguration_);
 	chartWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	ui_.ChartScrollArea->setWidget(chartWidget_);
 	ui_.ChartScrollArea->setWidgetResizable(true);
-	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
 	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString&)), dissolveWindow_, SLOT(showModuleTab(const QString&)));
 	connect(chartWidget_, SIGNAL(blockRemoved(const QString&)), dissolveWindow_, SLOT(removeModuleTab(const QString&)));
+	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString&)), this, SLOT(blockSelectionChanged(const QString&)));
 
 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 	moduleCategories_.clear();
@@ -102,8 +104,17 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.AvailableModulesTree->setSortingEnabled(true);
 	ui_.AvailableModulesTree->expandAll();
 
-	// Hide palette group initially
-// 	ui_.PaletteGroup->setVisible(false);
+	// Set up the ControlsWidget, and hide it initially
+	ui_.ControlsWidget->setUp(dissolveWindow_);
+	ui_.ControlsWidget->setVisible(false);
+	connect(ui_.ControlsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+	connect(ui_.ControlsWidget, SIGNAL(dataModified()), this, SLOT(controlsWidgetDataModified()));
+
+	// Hide available modules group initially
+	ui_.ModulePaletteGroup->setVisible(false);
+
+	// Set the currently selected module to the first one in the list
+	chartWidget_->setCurrentModule(moduleLayer_->modules().first());
 
 	updateControls();
 }
@@ -120,6 +131,7 @@ void ModuleListEditor::updateControls()
 	refreshing_ = true;
 
 	chartWidget_->updateControls();
+	ui_.ControlsWidget->updateControls();
 
 	refreshing_ = false;
 }
@@ -129,6 +141,7 @@ void ModuleListEditor::disableSensitiveControls()
 {
 	ui_.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
+	ui_.ControlsWidget->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
@@ -136,11 +149,40 @@ void ModuleListEditor::enableSensitiveControls()
 {
 	ui_.AvailableModulesTree->setEnabled(true);
 	chartWidget_->enableSensitiveControls();
+	ui_.ControlsWidget->enableSensitiveControls();
+}
+
+// Show / hide module palette
+void ModuleListEditor::setModulePaletteVisible(bool visible)
+{
+	ui_.ModulePaletteGroup->setVisible(visible);
 }
 
 /*
  * Widget Functions
  */
+
+void ModuleListEditor::blockSelectionChanged(const QString& blockIdentifier)
+{
+	if (blockIdentifier.isEmpty())
+	{
+		ui_.ControlsWidget->setModule(NULL, NULL);
+		ui_.ControlsWidget->setVisible(false);
+		return;
+	}
+
+	// Get Module by unique name
+	Module* module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
+	if (!module)
+	{
+		ui_.ControlsWidget->setModule(NULL, NULL);
+		ui_.ControlsWidget->setVisible(false);
+		return;
+	}
+
+	ui_.ControlsWidget->setModule(module, &dissolveWindow_->dissolve());
+	ui_.ControlsWidget->setVisible(true);
+}
 
 void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
 {
@@ -155,7 +197,7 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 	newInstance->setConfigurationLocal(localConfiguration_);
 
 	// Set Configuration targets as appropriate
-	if (newInstance->nTargetableConfigurations() != 0)
+	if (newInstance->nRequiredTargets() != Module::ZeroTargets)
 	{
 		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
 		else
@@ -164,7 +206,7 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				newInstance->addTargetConfiguration(cfg);
-				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
+				if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations())) break;
 			}
 		}
 	}
@@ -177,12 +219,24 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 	dissolveWindow_->setModified();
 }
 
+void ModuleListEditor::chartWidgetDataModified()
+{
+	// We don't know which ModuleBlock sent the signal, so just update the controls widget
+	ui_.ControlsWidget->updateControls();
+}
+
+void ModuleListEditor::controlsWidgetDataModified()
+{
+	// The controls widget must correspond to the selected module in the chart, so update it
+	if (chartWidget_->selectedBlock()) chartWidget_->selectedBlock()->updateControls();
+}
+
 /*
  * State
  */
 
 // Write widget state through specified LineParser
-bool ModuleListEditor::writeState(LineParser& parser)
+bool ModuleListEditor::writeState(LineParser& parser) const
 {
 	if ((!chartWidget_) || (!chartWidget_->writeState(parser))) return false;
 

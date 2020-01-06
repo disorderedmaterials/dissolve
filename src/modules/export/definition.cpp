@@ -39,8 +39,8 @@ const char* ExportModule::brief() const
 	return "Export data from one or more Configurations";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int ExportModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int ExportModule::nRequiredTargets() const
 {
-	return -1;
+	return Module::OneOrMoreTargets;
 }

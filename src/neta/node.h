@@ -32,6 +32,7 @@
 class Element;
 class ForcefieldAtomType;
 class NETADefinition;
+class NETAPresenceNode;
 class NETAConnectionNode;
 class NETARingNode;
 class SpeciesAtom;
@@ -41,7 +42,7 @@ class NETANode : public ListItem<NETANode>
 {
 	public:
 	// Node types
-	enum NodeType { BasicNode, ConnectionNode, LogicNode, RingNode, nNETANodeTypes };
+	enum NodeType { BasicNode, ConnectionNode, LogicNode, PresenceNode, RingNode, RootNode, nNETANodeTypes };
 	// Value Comparison Operators
 	enum ComparisonOperator { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo };
 	// Return enum options for Comparison Operators
@@ -84,7 +85,9 @@ class NETANode : public ListItem<NETANode>
 	// Return number of nodes defined in branch
 	int nBranchNodes() const;
 	// Create connectivity node in the branch
-	NETAConnectionNode* createConnectionNode(PointerArray<Element> allowedElements, PointerArray<ForcefieldAtomType> allowedAtomTypes);
+	NETAConnectionNode* createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes);
+	// Create presence node in the branch
+	NETAPresenceNode* createPresenceNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes);
 	// Create ring node in the branch
 	NETARingNode* createRingNode();
 
@@ -94,9 +97,19 @@ class NETANode : public ListItem<NETANode>
 	 */
 	public:
 	// Return whether the specified modifier is valid for this node
-	virtual bool isValidModifier(const char* s);
+	virtual bool isValidModifier(const char* s) const;
 	// Set value and comparator for specified modifier
 	virtual bool setModifier(const char* modifier, ComparisonOperator op, int value);
+
+
+	/*
+	 * Flags
+	 */
+	public:
+	// Return whether the specified flag is valid for this node
+	virtual bool isValidFlag(const char* s) const;
+	// Set specified flag
+	virtual bool setFlag(const char* flag, bool state);
 
 
 	/*
@@ -118,7 +131,7 @@ class NETANode : public ListItem<NETANode>
 	// Set node to use reverse logic
 	void setReverseLogic();
 	// Evaluate the node and return its score
-	virtual int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
+	virtual int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& atomData) const;
 };
 
 #endif

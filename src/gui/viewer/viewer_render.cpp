@@ -113,8 +113,8 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Update the View
-	if (view_.autoFollowType() != View::NoAutoFollow) view_.autoFollowData();
-	view_.recalculateView();
+	if (view().autoFollowType() != View::NoAutoFollow) view().autoFollowData();
+	view().recalculateView();
 
 	// Set-up the GL viewport
 	glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2], view_.viewportMatrix()[3]);
@@ -124,9 +124,9 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(view_.projectionMatrix().matrix());
 
-	// Grab the View's standard and inverse matrices
-	Matrix4 viewMatrix = view_.viewMatrix();
-	Matrix4 viewRotationInverse = view_.viewRotationInverse();
+	// Grab the View's standard and inverse matrices (from the linked view if available)
+	Matrix4 viewMatrix = view().viewMatrix();
+	Matrix4 viewRotationInverse = view().viewRotationInverse();
 
 	// Apply the view matrix, and render the Axes associated to the View
 	glMatrixMode(GL_MODELVIEW);
@@ -152,9 +152,9 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 			for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 			{
 				view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-				updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
+				updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 				view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-				updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
+				updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 			}
 		}
 
@@ -166,13 +166,13 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		{
 			view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-			updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 		}
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-			updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 		}
 
 		// -- Reset line style, ensure polygons are now filled, and render the axis lines
@@ -180,7 +180,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().axisPrimitive(axis).sendToGL();
-			updateQuery(BaseViewer::AxisLineObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::AxisLineObject, DissolveSys::itoa(axis), CharString("%c", 88+axis));
 		}
 		glEnable(GL_LIGHTING);
 		glDisable(GL_LINE_SMOOTH);
@@ -199,7 +199,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
-		updateQuery(BaseViewer::RenderableObject, rend->objectTag());
+		updateQuery(BaseViewer::RenderableObject, rend->objectTag(), Renderable::renderableTypes().keyword(rend->type()));
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -217,6 +217,27 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 
 	// Call the derived-class overlay function
 	render2DOverlay();
+}
+
+// Create viewer update stack
+void BaseViewer::createUpdateStack(PointerArray<BaseViewer>& updateStack)
+{
+	// If we are already in the list, return immediately...
+	if (updateStack.contains(this)) return;
+
+	// Add ourselves to the stack
+	updateStack.append(this);
+
+	// If we are a linked view, append viewer through the linked view
+	if (linkedViewer_)
+	{
+		linkedViewer_->createUpdateStack(updateStack);
+		return;
+	}
+
+	// Add any viewers that are dependent on us (i.e. link to us)
+	RefListIterator<BaseViewer> linkedViewIterator(dependentViewers_);
+	while (BaseViewer* viewer = linkedViewIterator.iterate()) viewer->createUpdateStack(updateStack);
 }
 
 // Perform post-initialisation operations
@@ -345,7 +366,17 @@ void BaseViewer::checkGlError()
 void BaseViewer::postRedisplay()
 {
 	if ((!valid_) || drawing_) return;
-	update();
+
+	// This is the entry-point for our assmebling of a unique list of viewer to update from this call, including any linked viewers
+	PointerArray<BaseViewer> updateStack;
+	createUpdateStack(updateStack);
+
+	for (int n=0; n<updateStack.nItems(); ++n)
+	{
+		BaseViewer* viewer = updateStack[n];
+		if ((!viewer->valid_) || (viewer->drawing_)) continue;
+		viewer->update();
+	}
 }
 
 // Set scaling to use for objects measured in pixel widths / point sizes

@@ -47,6 +47,10 @@ class RenderableData1D : public Renderable
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
+	// Invalidate the current data source
+	void invalidateDataSource();
+
+	public:
 	// Return version of data
 	int dataVersion() const;
 
@@ -60,7 +64,7 @@ class RenderableData1D : public Renderable
 
 	protected:
 	// Transform data according to current settings
-	void transformData();
+	void transformValues();
 	// Return reference to transformed data
 	const Data1D& transformedData();
 
@@ -92,12 +96,38 @@ class RenderableData1D : public Renderable
 	 */
 	public:
 	// Display Styles enum
-	enum DisplayStyle { LinesStyle, nDisplayStyles };
-	// Return keyword for display style index
-	const char* displayStyle(int id);
-	// Return display style index from string
-	int displayStyle(const char* s);
+	enum Data1DDisplayStyle { LinesStyle, nDisplayStyles };
+	// Return EnumOptions for Data1DDisplayStyle
+	static EnumOptions<Data1DDisplayStyle> data1DDisplayStyles();
 
+	private:
+	// Display style for the renderable
+	Data1DDisplayStyle displayStyle_;
+
+	public:
+	// Set display style for renderable
+	void setDisplayStyle(Data1DDisplayStyle displayStyle);
+	// Return display style for the renderable
+	Data1DDisplayStyle displayStyle() const;
+
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// Data1DStyle Keywords Enum
+	enum Data1DStyleKeyword
+	{
+		DisplayKeyword,			/* 'Display' - General display style for renderable */
+		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		nData1DStyleKeywords
+	};
+	// Return enum option info for RenderableKeyword
+	static EnumOptions<RenderableData1D::Data1DStyleKeyword> data1DStyleKeywords();
+	// Write style information
+	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	// Read style information
+	bool readStyleBlock(LineParser& parser);
 };
 
 #endif

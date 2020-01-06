@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRIMITIVEINFO_H
-#define DISSOLVE_PRIMITIVEINFO_H
+#ifndef DISSOLVE_RENDER_PRIMITIVEINFO_H
+#define DISSOLVE_RENDER_PRIMITIVEINFO_H
 
 #include "gui/viewer/render/linestyle.h"
 #include "math/matrix4.h"
@@ -64,26 +64,7 @@ class UncolouredPrimitiveInfo : public PrimitiveInfo
 	Matrix4 transform_;
 
 	public:
-	// Expose contained info to GL// Style Information
-class StylePrimitiveInfo : public PrimitiveInfo
-{
-	public:
-	// Constructor / Destructor
-	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL);
-	~StylePrimitiveInfo();
-
-	private:
-	// Whether lighting is enabled
-	bool lighting_;
-	// Polygon fill mode
-	GLenum fillMode_;
-	// GL object line width (for GL_LINE etc.)
-	GLfloat lineWidth_;
-
-	public:
 	// Expose contained info to GL
-	void sendToGL(double pixelScaling);
-};
 	void sendToGL(double pixelScaling);
 };
 

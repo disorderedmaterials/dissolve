@@ -39,8 +39,8 @@ const char* IntraShakeModule::brief() const
 	return "Perform Monte Carlo shakes on intramolecular terms within Molecules";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int IntraShakeModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int IntraShakeModule::nRequiredTargets() const
 {
-	return -1;
+	return Module::OneOrMoreTargets;
 }

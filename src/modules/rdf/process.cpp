@@ -39,11 +39,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	CharString varName;
 

@@ -39,8 +39,8 @@ const char* ForcesModule::brief() const
 	return "Calculate the total atomic forces within a Configuration";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int ForcesModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int ForcesModule::nRequiredTargets() const
 {
-	return -1;
+	return Module::OneOrMoreTargets;
 }

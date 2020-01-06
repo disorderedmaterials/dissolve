@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLE_H
-#define DISSOLVE_RENDERABLE_H
+#ifndef DISSOLVE_RENDER_RENDERABLE_H
+#define DISSOLVE_RENDER_RENDERABLE_H
 
 #include "gui/viewer/render/primitiveassembly.h"
 #include "gui/viewer/render/primitivelist.h"
@@ -40,12 +40,20 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, nRenderableTypes };
+	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, SpeciesSiteRenderable, nRenderableTypes };
 	// Return enum options for RenderableType
 	static EnumOptions<RenderableType> renderableTypes();
 	// Constructor / Destructor
 	Renderable(RenderableType type, const char* objectTag);
 	virtual ~Renderable();
+
+
+	/*
+	 * Instances
+	 */
+	private:
+	// List of all current renderables
+	static RefList<Renderable> instances_;
 
 
 	/*
@@ -72,56 +80,68 @@ class Renderable : public ListItem<Renderable>
 	protected:
 	// Identifying tag for source data object
 	CharString objectTag_;
+	// Equation transformer for values
+	Transformer valuesTransform_;
+	// Coordinate limits of all data (after value transform if enabled)
+	Vec3<double> limitsMin_, limitsMax_;
+	// Positive coordinate extrema of all data (after value transform if enabled)
+	Vec3<double> positiveLimitsMin_, positiveLimitsMax_;
+	// Extrema of values (after transform if enabled)
+	double valuesMin_, valuesMax_;
+	// Extreme positive lixmits of transformed values
+	double positiveValuesMin_, positiveValuesMax_;
+	// Data version at which values were last transformed
+	int valuesTransformDataVersion_;
 
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	virtual bool validateDataSource() = 0;
-	// Return version of data
-	virtual int dataVersion() const = 0;
+	// Invalidate the current data source
+	virtual void invalidateDataSource() = 0;
+
+	protected:
+	// Transform data values
+	virtual void transformValues() = 0;
 
 	public:
 	// Return identifying tag for source data object
 	const char* objectTag() const;
-
-
-	/*
-	 * Transform
-	 */
-	protected:
-	// Equation transformers for each axis
-	Transformer transforms_[3];
-	// Extreme values of transformed data 
-	Vec3<double> transformMin_, transformMax_;
-	// Extreme positive values of transformed data
-	Vec3<double> transformMinPositive_, transformMaxPositive_;
-	// Data version at which transformed data was last calculated
-	int transformDataVersion_;
-
-	protected:
-	// Transform data according to current settings
-	virtual void transformData() = 0;
-
-	public:
-	// Return transformed data minima, calculating if necessary
-	Vec3<double> transformMin();
-	// Return transformed data maxima, calculating if necessary
-	Vec3<double> transformMax();
-	// Return transformed positive data minima
-	Vec3<double> transformMinPositive();
-	// Return transformed positive data maxima
-	Vec3<double> transformMaxPositive();
-	// Set transform equation for data
-	void setTransformEquation(int axis, const char* transformEquation);
-	// Return transform equation for data
-	const char* transformEquation(int axis) const;
-	// Return whether specified transform equation is valid
-	bool transformEquationValid(int axis) const;
-	// Set whether specified transform is enabled
-	void setTransformEnabled(int axis, bool enabled);
-	// Return whether specified transform is enabled
-	bool transformEnabled(int axis) const;
+	// Invalidate renderable data for specified object tag
+	static int invalidate(const char* objectTag);
+	// Invalidate all renderables
+	static void invalidateAll();
+	// Return version of data
+	virtual int dataVersion() const = 0;
+	// Return coordinate minima of all data (after value transform if enabled)
+	Vec3<double> limitsMin();
+	// Return coordinate maxima of all data (after value transform if enabled)
+	Vec3<double> limitsMax();
+	// Return positive coordinate minima of all data (after value transform if enabled)
+	Vec3<double> positiveLimitsMin();
+	// Return positive coordinate maxima of all data (after value transform if enabled)
+	Vec3<double> positiveLimitsMax();
+	// Return minimum of transformed values
+	double valuesMin();
+	// Return maximum of transformed values
+	double valuesMax();
+	// Return minimum positive of transformed values
+	double positiveValuesMin();
+	// Return maximum positive of transformed values
+	double positiveValuesMax();
+	// Set values transform equation
+	void setValuesTransformEquation(const char* transformEquation);
+	// Return values transform equation
+	const char* valuesTransformEquation() const;
+	// Return whether the values transform equation is valid
+	bool valuesTransformEquationValid() const;
+	// Set whether values transform is enabled
+	void setValuesTransformEnabled(bool enabled);
+	// Return whether values transform is enabled
+	bool valuesTransformEnabled() const;
+	// Return data version at which values were last transformed
+	int valuesTransformDataVersion() const;
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax) = 0;
+	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
 
 
 	/*
@@ -139,35 +159,23 @@ class Renderable : public ListItem<Renderable>
 
 
 	/*
-	 * Style
+	 * Basic Style
 	 */
 	protected:
-	// Whether data is visible
+	// Whether Renderable is visible
 	bool visible_;
-	// Display style for Renderable (set from derived class enum)
-	int displayStyle_;
-	// Colour definition for data
+	// Colour definition
 	ColourDefinition colour_;
 	// Line style
 	LineStyle lineStyle_;
-	// Surface shininess
-	double displaySurfaceShininess_;
 	// Style version (relative to data version)
 	int styleVersion_;
 
 	public:
-	// Set whether data is visible
+	// Set whether Renderable is visible
 	void setVisible(bool visible);
-	// Return whether data is visible
+	// Return whether Renderable is visible
 	bool isVisible() const;
-	// Return keyword for display style index
-	virtual const char* displayStyle(int id) = 0;
-	// Return display style index from string
-	virtual int displayStyle(const char* s) = 0;
-	// Set display style index
-	void setDisplayStyle(int id);
-	// Return display style index
-	int displayStyleIndex() const;
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
@@ -180,6 +188,17 @@ class Renderable : public ListItem<Renderable>
 	LineStyle& lineStyle();
 	// Return style version
 	int styleVersion() const;
+
+
+	/*
+	 * Style I/O
+	 */
+	public:
+	// Write style information
+	virtual bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const = 0;
+	// Read style information
+	virtual bool readStyleBlock(LineParser& parser) = 0;
+
 
 
 	/*

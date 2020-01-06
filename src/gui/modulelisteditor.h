@@ -65,6 +65,8 @@ class ModuleListEditor : public QWidget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
+	// Show / hide module palette
+	void setModulePaletteVisible(bool visible);
 
 
 	/*
@@ -93,7 +95,10 @@ class ModuleListEditor : public QWidget
 	ModuleListChart* chartWidget_;
 
 	private slots:
+	void blockSelectionChanged(const QString& blockIdentifier);
 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
+	void chartWidgetDataModified();
+	void controlsWidgetDataModified();
 
 
 	/*
@@ -101,7 +106,7 @@ class ModuleListEditor : public QWidget
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 };

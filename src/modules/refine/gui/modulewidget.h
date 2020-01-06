@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFINEMODULEWIDGET_H
-#define DISSOLVE_REFINEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_REFINE_H
+#define DISSOLVE_MODULEWIDGET_REFINE_H
 
 #include "modules/refine/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -38,6 +38,11 @@ class RefineModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	RefineModuleWidget(QWidget* parent, RefineModule* module, Dissolve& dissolve);
+	~RefineModuleWidget();
+
 	private:
 	// Associated Module
 	RefineModule* module_;
@@ -46,28 +51,27 @@ class RefineModuleWidget : public ModuleWidget
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 
-	public:
-	// Constructor / Destructor
-	RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~RefineModuleWidget();
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::RefineModuleWidget ui;
+	Ui::RefineModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * State I/O
 	 */
 	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser) const;
 
 
 	/*

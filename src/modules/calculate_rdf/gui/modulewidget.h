@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATERDFMODULEWIDGET_H
-#define DISSOLVE_CALCULATERDFMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_CALCULATERDF_H
+#define DISSOLVE_MODULEWIDGET_CALCULATERDF_H
 
 #include "modules/calculate_rdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -44,22 +44,26 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	public:
 	// Constructor
 	CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module);
-	// Main form declaration
-	Ui::CalculateRDFModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::CalculateRDFModuleWidget ui_;
+
+	public:
+	// Update controls within widget
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+
+
+	/*
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 
@@ -69,7 +73,7 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Set data targets in graphs
-	void setGraphDataTargets(CalculateRDFModule* module);
+	void setGraphDataTargets();
 
 	private slots:
 };

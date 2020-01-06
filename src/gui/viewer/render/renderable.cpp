@@ -27,6 +27,9 @@
 #include "base/sysfunc.h"
 #include <limits>
 
+// Static Singletons
+RefList<Renderable> Renderable::instances_;
+
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
@@ -35,7 +38,8 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 		EnumOption(Renderable::Data1DRenderable, 		"Data1D") <<
 		EnumOption(Renderable::Data2DRenderable, 		"Data2D") <<
 		EnumOption(Renderable::Data3DRenderable, 		"Data3D") <<
-		EnumOption(Renderable::SpeciesRenderable, 		"Species");
+		EnumOption(Renderable::SpeciesRenderable, 		"Species") <<
+		EnumOption(Renderable::SpeciesSiteRenderable, 		"SpeciesSite");
 
 	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
 
@@ -45,6 +49,9 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 // Constructor
 Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 {
+	// Instance
+	instances_.append(this);
+
 	// Identity
 	type_ = type;
 	name_ = "New Renderable";
@@ -56,17 +63,17 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	group_ = NULL;
 
 	// Transform
-	transformDataVersion_ = -1;
-	transformMin_.zero();
-	transformMax_.set(10.0, 10.0, 10.0);
-	transformMinPositive_.set(0.1, 0.1, 0.1);
-	transformMaxPositive_.set(10.0, 10.0, 10.0);
-	transforms_[0].setEnabled(false);
-	transforms_[1].setEnabled(false);
-	transforms_[2].setEnabled(false);
-	transforms_[0].setEquation("x");
-	transforms_[1].setEquation("y");
-	transforms_[2].setEquation("z");
+	valuesTransformDataVersion_ = -1;
+	limitsMin_.zero();
+	limitsMax_.set(10.0, 10.0, 10.0);
+	positiveLimitsMin_.set(0.1, 0.1, 0.1);
+	positiveLimitsMax_.set(10.0, 10.0, 10.0);
+	valuesMin_ = 0.0;
+	valuesMax_ = 10.0;
+	positiveValuesMin_ = 0.0;
+	positiveValuesMax_ = 10.0;
+	valuesTransform_.setEnabled(false);
+	valuesTransform_.setEquation("value");
 
 	// Rendering Versions
 	lastDataVersion_ = -1;
@@ -75,14 +82,13 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 
 	// Display
 	visible_ = true;
-	displayStyle_ = -1;
-	displaySurfaceShininess_ = 128.0;
 	styleVersion_ = 0;
 }
 
 // Destructor
 Renderable::~Renderable()
 {
+	instances_.remove(this);
 }
 
 /*
@@ -117,85 +123,152 @@ const char* Renderable::objectTag() const
 	return objectTag_.get();
 }
 
-/*
- * Transforms
- */
-
-// Return transformed data minima, calculating if necessary
-Vec3<double> Renderable::transformMin()
+// Invalidate renderable data for specified object tag
+int Renderable::invalidate(const char* objectTag)
 {
-	// Make sure transformed data is up to date
-	transformData();
-
-	return transformMin_;
-}
-
-// Return transformed data maxima, calculating if necessary
-Vec3<double> Renderable::transformMax()
-{
-	// Make sure transformed data is up to date
-	transformData();
-
-	return transformMax_;
-}
-
-// Return transformed positive data minima, calculating if necessary
-Vec3<double> Renderable::transformMinPositive()
-{
-	// Make sure transformed data is up to date
-	transformData();
-
-	return transformMinPositive_;
-}
-
-// Return transformed positive data maxima, calculating if necessary
-Vec3<double> Renderable::transformMaxPositive()
-{
-	// Make sure transformed data is up to date
-	transformData();
-
-	return transformMaxPositive_;
-}
-
-// Set transform equation for data
-void Renderable::setTransformEquation(int axis, const char* transformEquation)
-{
-	transforms_[axis].setEquation(transformEquation);
-
-	// Make sure transformed data is up to date
-	if (transforms_[axis].enabled())
+	int count = 0;
+	RefListIterator<Renderable> renderableIterator(instances_);
+	while (Renderable* rend = renderableIterator.iterate())
 	{
-		transformDataVersion_ = -1;
-		transformData();
+		if (!DissolveSys::sameString(objectTag, rend->objectTag_)) continue;
+
+		rend->invalidateDataSource();
+
+		++count;
+	}
+	return count;
+}
+
+// Invalidate all renderables
+void Renderable::invalidateAll()
+{
+	RefListIterator<Renderable> renderableIterator(instances_);
+	while (Renderable* rend = renderableIterator.iterate()) rend->invalidateDataSource();
+}
+
+// Return coordinate minima of all data (after value transform if enabled)
+Vec3<double> Renderable::limitsMin()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return limitsMin_;
+}
+
+// Return coordinate maxima of all data (after value transform if enabled)
+Vec3<double> Renderable::limitsMax()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return limitsMax_;
+}
+
+// Return positive coordinate minima of all data (after value transform if enabled)
+Vec3<double> Renderable::positiveLimitsMin()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return positiveLimitsMin_;
+}
+
+// Return positive coordinate maxima of all data (after value transform if enabled)
+Vec3<double> Renderable::positiveLimitsMax()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return positiveLimitsMax_;
+}
+
+// Return minimum of transformed values
+double Renderable::valuesMin()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return valuesMin_;
+}
+
+// Return maximum of transformed values
+double Renderable::valuesMax()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return valuesMax_;
+}
+
+// Return minimum positive of transformed values
+double Renderable::positiveValuesMin()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return positiveValuesMin_;
+}
+
+// Return maximum positive of transformed values
+double Renderable::positiveValuesMax()
+{
+	// Make sure transformed values are up to date
+	transformValues();
+
+	return positiveValuesMax_;
+}
+
+// Set values transform equation specified
+void Renderable::setValuesTransformEquation(const char* transformEquation)
+{
+	valuesTransform_.setEquation(transformEquation);
+
+	// Make sure transformed data is up to date
+	if (valuesTransform_.enabled())
+	{
+		valuesTransformDataVersion_ = -1;
+		transformValues();
 	}
 }
 
-// Return transform equation for data
-const char* Renderable::transformEquation(int axis) const
+// Return values transform equation
+const char* Renderable::valuesTransformEquation() const
 {
-	return transforms_[axis].text();
+	return valuesTransform_.text();
 }
 
-// Return whether specified transform equation is valid
-bool Renderable::transformEquationValid(int axis) const
+// Return whether values transform equation is valid
+bool Renderable::valuesTransformEquationValid() const
 {
-	return transforms_[axis].valid();
+	return valuesTransform_.valid();
 }
 
-// Set whether specified transform is enabled
-void Renderable::setTransformEnabled(int axis, bool enabled)
+// Set whether values transform is enabled
+void Renderable::setValuesTransformEnabled(bool enabled)
 {
-	transforms_[axis].setEnabled(enabled);
+	valuesTransform_.setEnabled(enabled);
 
 	// Make sure transformed data is up to date
-	transformDataVersion_ = -1;
-	transformData();
+	valuesTransformDataVersion_ = -1;
+	transformValues();
 }
 
-// Return whether specified transform is enabled
-bool Renderable::transformEnabled(int axis) const
+// Return whether values transform is enabled
+bool Renderable::valuesTransformEnabled() const
 {
-	return transforms_[axis].enabled();
+	return valuesTransform_.enabled();
+}
+
+// Return data version at which values were last transformed
+int Renderable::valuesTransformDataVersion() const
+{
+	return valuesTransformDataVersion_;
+}
+
+// Calculate min/max y value over specified x range (if possible in the underlying data)
+bool Renderable::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
+{
+	return false;
 }
 
 /*
@@ -218,31 +291,17 @@ RenderableGroup* Renderable::group() const
  * Style
  */
 
-// Set whether data is visible
+// Set whether Renderable is visible
 void Renderable::setVisible(bool visible)
 {
 	visible_ = visible;
 }
 
-// Return whether data is visible
+// Return whether Renderable is visible
 bool Renderable::isVisible() const
 {
 	// Group visibility overrides our own (*if* we are currently visible)...
 	return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
-}
-
-// Set display style index
-void Renderable::setDisplayStyle(int id)
-{
-	displayStyle_ = id;
-
-	++styleVersion_;
-}
-
-// Return display style index
-int Renderable::displayStyleIndex() const
-{
-	return displayStyle_;
 }
 
 // Set basic colour
@@ -294,7 +353,7 @@ Primitive* Renderable::createPrimitive(GLenum type, bool colourData)
 // Reinitialise managed Primitive list to the size specified
 void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData)
 {
-	primitives_.reinitialise(newSize, false, type, colourData);
+	primitives_.reinitialise(newSize, type, colourData);
 }
 
 // Return nth Primitive managed by the Renderable

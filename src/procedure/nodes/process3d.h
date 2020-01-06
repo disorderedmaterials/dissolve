@@ -24,6 +24,7 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/nodereference.h"
+#include "io/export/data3d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 
@@ -39,7 +40,7 @@ class Process3DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Process3DProcedureNode(Collect3DProcedureNode* target = NULL);
+	Process3DProcedureNode(const Collect3DProcedureNode* target = NULL);
 	// Destructor
 	~Process3DProcedureNode();
 
@@ -57,9 +58,11 @@ class Process3DProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Collect3D node that we are processing
-	Collect3DProcedureNode* collectNode_;
+	const Collect3DProcedureNode* collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data3D* processedData_;
+	// Export file and format
+	Data3DExportFileFormat exportFileAndFormat_;
 
 	public:
 	// Return processed data

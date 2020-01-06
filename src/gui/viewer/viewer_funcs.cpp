@@ -1,5 +1,5 @@
 /*
-	*** Base Viewer Functions
+	*** Base Viewer - Core Functions
 	*** src/gui/viewer/viewer_funcs.cpp
 	Copyright T. Youngs 2013-2019
 
@@ -34,6 +34,9 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	offscreenBuffer_ = NULL;
 	pixelScaling_ = 1.0;
 
+	// View
+	linkedViewer_ = NULL;
+
 	// Options
 	axesVisible_ = true;
 	clipToAxesVolume_ = true;
@@ -41,6 +44,8 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	// Interaction
 	interacting_ = false;
 	interactionMode_ = -1;
+	mouseReleaseTimer_.setSingleShot(true);
+	mouseReleaseTimer_.setInterval(400);
 
 	// Object Querying
 	queryingObjects_ = false;
@@ -61,30 +66,3 @@ BaseViewer::~BaseViewer()
 {
 }
 
-/*
- * Options
- */
-
-// Set whether Axes are visible
-void BaseViewer::setAxesVisible(bool visible)
-{
-	axesVisible_ = visible;
-}
-
-// Return whether Axes are visible
-bool BaseViewer::axesVisible() const
-{
-	return axesVisible_;
-}
-
-// Set whether to apply clip planes about Axes volume for Renderables
-void BaseViewer::setClipToAxesVolume(bool clip)
-{
-	clipToAxesVolume_ = clip;
-}
-
-// Return whether clip planes are applied about Axes volume for Renderables
-bool BaseViewer::clipToAxesVolume() const
-{
-	return clipToAxesVolume_;
-}

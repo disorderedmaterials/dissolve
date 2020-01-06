@@ -263,7 +263,7 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
  */
 
 // Write widget state through specified LineParser
-bool ProcedureChart::writeState(LineParser& parser)
+bool ProcedureChart::writeState(LineParser& parser) const
 {
 	return true;
 }

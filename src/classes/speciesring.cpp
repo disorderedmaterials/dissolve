@@ -43,6 +43,12 @@ void SpeciesRing::setAtoms(const PointerArray<const SpeciesAtom>& atoms)
 	atoms_ = atoms;
 }
 
+// Return nth atom in ring
+const SpeciesAtom* SpeciesRing::atom(int n) const
+{
+	return atoms_.at(n);
+}
+
 // Return array of atoms in ring
 const PointerArray<const SpeciesAtom>& SpeciesRing::atoms() const
 {

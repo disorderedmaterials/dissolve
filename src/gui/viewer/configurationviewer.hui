@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CONFIGURATIONVIEWER_H
-#define DISSOLVE_CONFIGURATIONVIEWER_H
+#ifndef DISSOLVE_VIEWER_CONFIGURATION_H
+#define DISSOLVE_VIEWER_CONFIGURATION_H
 
 #include "gui/viewer/viewer.hui"
 #include "gui/viewer/render/renderableconfiguration.h"
@@ -58,8 +58,6 @@ class ConfigurationViewer : public BaseViewer
 	protected:
 	// Mouse moved
 	void mouseMoved(int dx, int dy);
-	// Mouse 'wheeled'
-	void mouseWheeled(int delta);
 
 
 	/*
@@ -115,9 +113,9 @@ class ConfigurationViewer : public BaseViewer
 
 	public:
 	// Set renderable draw style
-	void setRenderableDrawStyle(RenderableConfiguration::DisplayStyle ds);
+	void setRenderableDrawStyle(RenderableConfiguration::ConfigurationDisplayStyle ds);
 	// Return current renderable draw style
-	RenderableConfiguration::DisplayStyle renderableDrawStyle() const;
+	RenderableConfiguration::ConfigurationDisplayStyle renderableDrawStyle() const;
 };
 
 #endif

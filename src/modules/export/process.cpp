@@ -41,7 +41,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (coordinatesFormat_.hasValidFileAndFormat())
 	{
 		// Check for zero Configuration targets
-		if (targetConfigurations_.nItems() == 0) Messenger::warn("No Configuration targets for Module.\n");
+		if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 		else
 		{
 			// Loop over target Configurations
@@ -116,7 +116,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (trajectoryFormat_.hasValidFileAndFormat())
 	{
 		// Check for zero Configuration targets
-		if (targetConfigurations_.nItems() == 0) Messenger::warn("No Configuration targets for Module.\n");
+		if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 		else
 		{
 			// Loop over target Configurations

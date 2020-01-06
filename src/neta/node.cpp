@@ -21,6 +21,7 @@
 
 #include "neta/node.h"
 #include "neta/connection.h"
+#include "neta/presence.h"
 #include "neta/ring.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
@@ -94,12 +95,21 @@ int NETANode::nBranchNodes() const
 	return branch_.nItems();
 }
 
-
 // Create connectivity node from current targets
 NETAConnectionNode* NETANode::createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes)
 {
 	// Create the new node and own it
 	NETAConnectionNode* node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
+	branch_.own(node);
+
+	return node;
+}
+
+// Create presence node in the branch
+NETAPresenceNode* NETANode::createPresenceNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes)
+{
+	// Create the new node and own it
+	NETAPresenceNode* node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
 	branch_.own(node);
 
 	return node;
@@ -120,13 +130,29 @@ NETARingNode* NETANode::createRingNode()
  */
 
 // Return whether the specified modifier is valid for this node
-bool NETANode::isValidModifier(const char* s)
+bool NETANode::isValidModifier(const char* s) const
 {
 	return false;
 }
 
 // Set value and comparator for specified modifier
 bool NETANode::setModifier(const char* modifier, ComparisonOperator op, int value)
+{
+	return false;
+}
+
+/*
+ * Flags
+ */
+
+// Return whether the specified flag is valid for this node
+bool NETANode::isValidFlag(const char* s) const
+{
+	return false;
+}
+
+// Set specified flag
+bool NETANode::setFlag(const char* flag, bool state)
 {
 	return false;
 }
@@ -179,7 +205,7 @@ void NETANode::setReverseLogic()
 }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
+int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& atomData) const
 {
 	int totalScore = 0;
 
@@ -188,7 +214,7 @@ int NETANode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath)
 	while (NETANode* node = branchIterator.iterate())
 	{
 		// Get the score from the node, returning early if NoMatch is encountered
-		int nodeScore = node->score(i, matchPath);
+		int nodeScore = node->score(i, atomData);
 		if (nodeScore == NETANode::NoMatch) return NETANode::NoMatch;
 
 		totalScore += nodeScore;

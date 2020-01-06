@@ -76,10 +76,10 @@ void Weights::clear()
 }
 
 // Add Isotopologue for Species
-bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation)
+bool Weights::addIsotopologue(Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
-	IsotopologueMix* mix = hasSpeciesIsotopologueMixture(sp);
+	Isotopologues* mix = hasIsotopologues(sp);
 	if (mix == NULL)
 	{
 		mix = isotopologueMixtures_.add();
@@ -87,7 +87,7 @@ bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* 
 	}
 
 	// Add/update Isotopologue provided?
-	if (!mix->addIsotopologue(iso, isotopologueRelativePopulation))
+	if (!mix->add(iso, isotopologueRelativePopulation))
 	{
 		Messenger::error("Failed to add Isotopologue to IsotopologueSet.\n");
 		return false;
@@ -97,9 +97,9 @@ bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* 
 }
 
 // Return whether the IsotopologueSet contains a mixtures definition for the provided Species
-IsotopologueMix* Weights::hasSpeciesIsotopologueMixture(Species* sp) const
+Isotopologues* Weights::hasIsotopologues(Species* sp) const
 {
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next()) if (mix->species() == sp) return mix;
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next()) if (topes->species() == sp) return topes;
 	return NULL;
 }
 
@@ -108,13 +108,13 @@ void Weights::print() const
 {
 	Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
 	Messenger::print("  ------------------------------------------------------\n");
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
-		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
-		while (const Isotopologue* tope = topeIterator.iterate())
+		ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+		while (IsotopologueWeight* isoWeight = weightIterator.iterate())
 		{
-			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->name(), mix->speciesPopulation(), topeIterator.currentData());
-			else Messenger::print("                   %-15s              %f\n", tope->name(), topeIterator.currentData());
+			if (weightIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes->species()->name(), isoWeight->isotopologue()->name(), topes->speciesPopulation(), isoWeight->weight());
+			else Messenger::print("                   %-15s              %f\n", isoWeight->isotopologue()->name(), isoWeight->weight());
 		}
 	}
 
@@ -177,13 +177,13 @@ void Weights::calculateWeightingMatrices()
 	Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	intraNorm = 0.0;
 	globalFlag = false;
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
 		// Get weighting for associated Species population
-		double speciesWeight = double(mix->speciesPopulation());
+		double speciesWeight = double(topes->speciesPopulation());
 
 		// Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-		Species* sp = mix->species();
+		Species* sp = topes->species();
 		const AtomTypeList& speciesAtomTypes = sp->usedAtomTypes();
 		const int nAtoms = sp->nAtoms();
 		intraFlag = false;
@@ -205,11 +205,13 @@ void Weights::calculateWeightingMatrices()
 		}
 
 		// Loop over Isotopologues defined for this mixture
-		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
-		while (const Isotopologue* tope = topeIterator.iterate())
+		ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+		while (IsotopologueWeight* isoWeight = weightIterator.iterate())
 		{
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
-			double weight = speciesWeight * topeIterator.currentData();
+			double weight = speciesWeight * isoWeight->weight();
+
+			const Isotopologue* tope = isoWeight->isotopologue();
 
 			for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next())
 			{
@@ -275,25 +277,27 @@ void Weights::calculateWeightingMatrices()
 	}
 }
 
-// Create AtomType list and matrices based on stored IsotopologueMix information
+// Create AtomType list and matrices based on stored Isotopologues information
 void Weights::createFromIsotopologues(const AtomTypeList& exchangeableTypes)
 {
-	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next()) mix->normalise();
+	// Loop over Isotopologues entries and ensure relative populations of Isotopologues sum to 1.0
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next()) topes->normalise();
 
-	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
+	// Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species populations
 	atomTypes_.clear();
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next())
+	for (Isotopologues* topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
-		// We must now loop over the Isotopologues in the mixture
-		RefDataListIterator<const Isotopologue,double> topeIterator(mix->isotopologues());
-		while (const Isotopologue* tope = topeIterator.iterate())
+		// We must now loop over the Isotopologues in the topesture
+		ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+		while (IsotopologueWeight* isoWeight = weightIterator.iterate())
 		{
+			const Isotopologue* tope = isoWeight->isotopologue();
+
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next())
+			for (SpeciesAtom* i = topes->species()->firstAtom(); i != NULL; i = i->next())
 			{
 				Isotope* iso = tope->atomTypeIsotope(i->atomType());
-				atomTypes_.addIsotope(i->atomType(), iso, topeIterator.currentData() * mix->speciesPopulation());
+				atomTypes_.addIsotope(i->atomType(), iso, isoWeight->weight() * topes->speciesPopulation());
 			}
 		}
 	}
@@ -398,13 +402,13 @@ bool Weights::read(LineParser& parser, const CoreData& coreData)
 	// Read AtomTypeList
 	if (!atomTypes_.read(parser, coreData)) return false;
 
-	// Read IsotopologueMix-tures
+	// Read Isotopologues-tures
 	isotopologueMixtures_.clear();
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int nItems = parser.argi(0);
 	for (int n=0; n<nItems; ++n)
 	{
-		IsotopologueMix* mix = isotopologueMixtures_.add();
+		Isotopologues* mix = isotopologueMixtures_.add();
 		if (!mix->read(parser, coreData)) return false;
 	}
 
@@ -428,10 +432,10 @@ bool Weights::write(LineParser& parser)
 	// Write AtomTypeList
 	if (!atomTypes_.write(parser)) return false;
 
-	// Write IsotopologueMix-tures
+	// Write Isotopologues-tures
 	if (!parser.writeLineF("%i  # nItems\n", isotopologueMixtures_.nItems())) return false;
-	ListIterator<IsotopologueMix> mixIterator(isotopologueMixtures_);
-	while (IsotopologueMix* mix = mixIterator.iterate()) if (!mix->write(parser)) return false;
+	ListIterator<Isotopologues> mixIterator(isotopologueMixtures_);
+	while (Isotopologues* mix = mixIterator.iterate()) if (!mix->write(parser)) return false;
 
 	// Write arrays using static methods in the relevant GenericItemContainer
 	if (!GenericItemContainer< Array2D<double> >::write(concentrationProducts_, parser)) return false;
@@ -453,7 +457,7 @@ bool Weights::write(LineParser& parser)
 bool Weights::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	BroadcastList<IsotopologueMix> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
+	BroadcastList<Isotopologues> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
 	if (isoMixBroadcaster.failed()) return false;
 	if (!atomTypes_.broadcast(procPool, root, coreData)) return false;
 	if (!procPool.broadcast(concentrationProducts_, root)) return false;

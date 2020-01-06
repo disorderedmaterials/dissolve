@@ -42,11 +42,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
 	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
@@ -56,9 +52,6 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
-
-		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		bool adjustAngles = keywords_.asBool("AdjustAngles");

@@ -44,23 +44,30 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	// Initialise resources
 	Q_INIT_RESOURCE(main);
 
-	// Register our custom font (for the GuideWizard)
-	QFontDatabase::addApplicationFont(":/fonts/fonts/SourceSansPro-Regular.ttf");
+	// Register custom font(s)
+	QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-Regular.ttf");
+	QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-Bold.ttf");
+	QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-Italic.ttf");
+	QFontDatabase::addApplicationFont(":/fonts/fonts/Cousine-BoldItalic.ttf");
 
 	// Set up user interface
 	ui_.setupUi(this);
+
+	// Set fonts
+	ui_.MessagesEdit->setFont(QFont("Cousine", 10));
 
 	// Connect signals to thread controller
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
-	// Connect signals from our main tab widget / bar
-	connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
-	dissolveState_ = EditingState;
+	// Connect signals from our main tab widget
+	connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(setModified()));
+	connect(ui_.MainTabs, SIGNAL(dataModified()), this, SLOT(fullUpdate()));
 
 	refreshing_ = false;
 	modified_ = false;
 	localSimulation_ = true;
+	dissolveState_ = EditingState;
 
 	// Create statusbar widgets
 	localSimulationIndicator_ = new QLabel;
@@ -79,9 +86,10 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	statusBar()->addPermanentWidget(restartFileIndicator_);
 	statusBar()->addPermanentWidget(localSimulationIndicator_);
 
-	addCoreTabs();
+	// Set up main tabs
+	ui_.MainTabs->addCoreTabs(this);
+	ui_.MainTabs->updateAllTabs();
 
-	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
 
@@ -110,7 +118,7 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 	}
 
 	// Save the state before we go...
-	saveWindowLayout();
+	saveState();
 
 	// If Dissolve is running, stop the thread now
 	if (dissolveState_ == RunningState)
@@ -121,6 +129,9 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 		// Wait for the thread to stop
 		while (dissolveState_ == RunningState) QApplication::processEvents();
 	}
+
+	// Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
+	ui_.MainTabs->clearTabs();
 
 	event->accept();
 }
@@ -157,8 +168,8 @@ const Dissolve& DissolveWindow::constDissolve() const
 void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesBrowser, SLOT(append(const QString&)));
-	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesBrowser, SLOT(setTextColor(const QColor&)));
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), this, SLOT(appendMessage(const QString&)));
+	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesEdit, SLOT(setTextColor(const QColor&)));
 }
 
 /*
@@ -169,19 +180,19 @@ void DissolveWindow::addOutputHandler()
 bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
-	clearTabs();
+	ui_.MainTabs->clearTabs();
 
 	// Clear Dissolve itself
 	dissolve_.clear();
 
 	// Set the current dir to the location of the new file
 	QFileInfo inputFileInfo(inputFile);
-	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
 	// Load the input file
 	Messenger::banner("Parse Input File");
-	if (DissolveSys::fileExists(qPrintable(inputFileInfo.fileName())))
+	if (inputFileInfo.exists())
 	{
+		QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName()))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
 	else return Messenger::error("Input file does not exist.\n");
@@ -191,7 +202,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	if (!ignoreRestartFile)
 	{
 		CharString actualRestartFile = restartFile;
-		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", qPrintable(inputFileInfo.fileName()));
+		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", dissolve_.inputFilename());
 		
 		if (DissolveSys::fileExists(actualRestartFile))
 		{
@@ -199,7 +210,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 			if (!dissolve_.loadRestart(actualRestartFile)) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 
 			// Reset the restart filename to be the standard one
-			dissolve_.setRestartFilename(CharString("%s.restart", inputFile));
+			dissolve_.setRestartFilename(CharString("%s.restart", dissolve_.inputFilename()));
 		}
 		else Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
 	}
@@ -207,20 +218,20 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 
 	refreshing_ = true;
 
-	reconcileTabs();
+	ui_.MainTabs->reconcileTabs(this);
 
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?
-	windowLayoutFilename_.sprintf("%s.state", dissolve_.inputFilename());
+	stateFilename_.sprintf("%s.state", dissolve_.inputFilename());
 
 	// Try to load in the window state file
-	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
+	if (DissolveSys::fileExists(stateFilename_) && (!ignoreLayoutFile)) loadState();
 
 	localSimulation_ = true;
 
 	// Check the beat file
-	CharString beatFile("%s.beat", qPrintable(inputFile));
+	CharString beatFile("%s.beat", dissolve_.inputFilename());
 	if (DissolveSys::fileExists(beatFile))
 	{
 		// TODO
@@ -266,14 +277,6 @@ void DissolveWindow::initialiseSystemTemplates()
  * Update Functions
  */
 
-// Update all tabs
-void DissolveWindow::updateTabs()
-{
-	RefList<MainTab> tabs = allTabs();
-	RefListIterator<MainTab> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
-}
-
 // Update window title
 void DissolveWindow::updateWindowTitle()
 {
@@ -316,7 +319,7 @@ void DissolveWindow::updateControlsFrame()
 // Update menus
 void DissolveWindow::updateMenus()
 {
-	MainTab* activeTab = currentTab();
+	MainTab* activeTab = ui_.MainTabs->currentTab();
 	if (!activeTab) return;
 
 	// Species Menu
@@ -339,9 +342,8 @@ void DissolveWindow::fullUpdate()
 {
 	refreshing_ = true;
 
-	reconcileTabs();
-
-	updateTabs();
+	ui_.MainTabs->reconcileTabs(this);
+	ui_.MainTabs->updateAllTabs();
 	updateWindowTitle();
 	updateControlsFrame();
 	updateMenus();

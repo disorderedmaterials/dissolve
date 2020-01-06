@@ -101,6 +101,8 @@ void SpeciesViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
+		case (SpeciesViewer::DefaultInteraction):
+			break;
 		case (SpeciesViewer::SelectAreaInteraction):
 			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
@@ -184,7 +186,7 @@ void SpeciesViewer::endInteraction()
 			if (!j) j = species_->addAtom(drawElement_, drawCoordinateCurrent_);
 
 			// Create a bond between the two atoms, if one doesn't currently exist
-			if ((i != j) && (!species_->hasBond(i, j))) species_->addBond(i, j, true);
+			if ((i != j) && (!species_->hasBond(i, j))) species_->addBond(i, j);
 
 			// Clear the interaction Primitive
 			speciesRenderable_->clearInteractionPrimitive();

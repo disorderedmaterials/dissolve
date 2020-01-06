@@ -23,8 +23,10 @@ While the simulation is running you cannot edit any input values, keywords etc.,
 
 If you have the [`NeutronSQ`](/userguide/modules/neutronsq) module tab still open (if you don't, go back to your _RDF and Neutron S(Q)_ layer and double-click on the [`NeutronSQ`](/userguide/modules/neutronsq) module) you can see how the calculated structure factor and total G(r) compare to the experimental data we loaded in. After the simulation has been running for a little while (perhaps 100 iterations), you'll see that the simulation and experiment actually compare quite favourably, with the G(r) and F(Q) looking something like this:
 
-![Equilibrated total G(r) for liquid argon](equilibrated-gr.png){: .img-centre}
-![Equilibrated total F(Q) for liquid argon](equilibrated-fq.png){: .img-centre}
+![](equilibrated-gr.png){: .img-centre}
+*Equilibrated total G(r) for liquid argon*
+![](equilibrated-fq.png){: .img-centre}
+*Equilibrated total F(Q) for liquid argon*
 
 We'll now stop the simulation.
 

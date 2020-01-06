@@ -69,7 +69,7 @@ class NodeKeywordBase
 	// Set the target node
 	virtual bool setNode(ProcedureNode* node) = 0;
 	// Return the current target node as the base class
-	virtual ProcedureNode* procedureNode() const = 0;
+	virtual const ProcedureNode* procedureNode() const = 0;
 
 
 	/*
@@ -149,7 +149,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 		return true;
 	}
 	// Return the current target node as the base class
-	ProcedureNode* procedureNode() const
+	const ProcedureNode* procedureNode() const
 	{
 		return KeywordData<N*>::data_;
 	}

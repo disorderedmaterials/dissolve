@@ -133,8 +133,8 @@ bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 
 			// Get vector from site origin, normalise it, and orthogonalise
 			y = box->minimumVector(origin, v);
-			y.normalise();
 			y.orthogonalise(x);
+			y.normalise();
 
 			// Calculate z vector from cross product of x and y
 			z = x * y;

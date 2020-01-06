@@ -47,7 +47,7 @@ void SpeciesAngle::clear()
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
-	form_ = SpeciesAngle::nAngleFunctions;
+	form_ = SpeciesAngle::NoForm;
 }
 
 /*
@@ -151,33 +151,18 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
  * Interaction Parameters
  */
 
-// Angle function keywords
-const char* AngleFunctionKeywords[] = { "Harmonic", "Cosine", "Cos2" };
-int AngleFunctionNParameters[] = { 2, 4, 4 };
-
-// Convert string to functional form
-SpeciesAngle::AngleFunction SpeciesAngle::angleFunction(const char* s)
+// Return enum options for AngleFunction
+EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 {
-	for (int n=0; n<SpeciesAngle::nAngleFunctions; ++n) if (DissolveSys::sameString(s, AngleFunctionKeywords[n])) return (SpeciesAngle::AngleFunction) n;
-	return SpeciesAngle::nAngleFunctions;
-}
+	static EnumOptionsList AngleFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesAngle::NoForm, 		"None",		0,0) <<
+		EnumOption(SpeciesAngle::HarmonicForm, 		"Harmonic",	2,2) <<
+		EnumOption(SpeciesAngle::CosineForm, 		"Cos",		4,4) <<
+		EnumOption(SpeciesAngle::Cos2Form, 		"Cos2",		4,4);
 
-// Return functional form text
-const char* SpeciesAngle::angleFunction(SpeciesAngle::AngleFunction func)
-{
-	return AngleFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesAngle::AngleFunction> options("AngleFunction", AngleFunctionOptions);
 
-// Return functional form text
-const char** SpeciesAngle::angleFunctions()
-{
-	return AngleFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesAngle::nFunctionParameters(AngleFunction func)
-{
-	return AngleFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters
@@ -226,7 +211,8 @@ double SpeciesAngle::energy(double angleInDegrees) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
-	if (form() == SpeciesAngle::HarmonicForm)
+	if (form() == SpeciesAngle::NoForm) return 0.0;
+	else if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
 		 * U(theta) = 0.5 * forcek * (theta - eq)**2
@@ -266,7 +252,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 		return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
 	}
 
-	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -282,7 +268,8 @@ double SpeciesAngle::force(double angleInDegrees) const
 	// Set initial derivative of angle w.r.t. cos(angle) for chain rule
 	const double dTheta_dCosTheta = -1.0 / sin(angleInDegrees/DEGRAD);
 
-	if (form() == SpeciesAngle::HarmonicForm)
+	if (form() == SpeciesAngle::NoForm) return 0.0;
+	else if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
 		 * dU/d(theta) = k * (theta - eq)
@@ -322,7 +309,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 		return dTheta_dCosTheta * -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians));
 	}
 
-	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 

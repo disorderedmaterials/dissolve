@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEW_H
-#define DISSOLVE_VIEW_H
+#ifndef DISSOLVE_RENDER_VIEW_H
+#define DISSOLVE_RENDER_VIEW_H
 
 #include "gui/viewer/render/axes.h"
 #include "gui/viewer/render/renderable.h"
@@ -81,7 +81,7 @@ class View
 	 */
 	public:
 	// View type
-	enum ViewType { NormalView, AutoStretchedView, FlatXYView, FlatXZView, FlatZYView, LinkedView, nViewTypes };
+	enum ViewType { NormalView, AutoStretchedView, FlatXYView, FlatXZView, FlatZYView, nViewTypes };
 	// Convert text string to ViewType
 	static ViewType viewType(const char* s);
 	// Convert ViewType to text string
@@ -96,6 +96,8 @@ class View
 	private:
 	// Type of view to use
 	ViewType viewType_;
+	// Linked View, if any
+	View* linkedView_;
 	// Projection matrix for GL
 	Matrix4 projectionMatrix_;
 	// Whether projection has perspective
@@ -116,14 +118,16 @@ class View
 	Matrix4 viewMatrix_;
 	// Inverse of view matrix
 	Matrix4 viewMatrixInverse_;
-	// Standard zOffset for translation matrix
-	static const double zOffset_;
+	// Default z offset for translation matrix
+	static const double defaultZTranslation_;
 	// Axes version at which view matrix was last calculated (mostly for keeping 2D view correct)
 	int viewAxesUsedAt_;
 	// Viewport version at which view matrix was last calculated
 	int viewViewportUsedAt_;
 	// Auto-follow type in effect
 	AutoFollowType autoFollowType_;
+	// Transformed data versions at last auto-follow
+	RefDataList<Renderable,int> autoFollowTransformVersions_;
 	// Length of X region to follow, if autoFollowType_ == XFollow
 	double autoFollowXLength_;
 
@@ -136,6 +140,10 @@ class View
 	void setViewType(View::ViewType vt);
 	// Return view type
 	View::ViewType viewType() const;
+	// Set linked View, if any
+	void setLinkedView(View* linkedView);
+	// Return linked View, if any
+	View* linkedView() const;
 	// Return whether view type is flat
 	bool isFlatView() const;
 	// Return projection matrix
@@ -150,8 +158,8 @@ class View
 	void setViewRotationColumn(int column, double x, double y, double z);
 	// Rotate view matrix about x and y by amounts specified
 	void rotateView(double dx, double dy);
-	// Return view rotation
-	Matrix4 viewRotation() const;
+	// Return rotation matrix
+	const Matrix4& viewRotation() const;
 	// Return view rotation inverse
 	Matrix4 viewRotationInverse();
 	// Set view translation
@@ -162,7 +170,7 @@ class View
 	Vec3<double> viewTranslation() const;
 	// Update view matrix
 	void updateViewMatrix();
-	// Return full view matrix (rotation + translation)
+	// Return view matrix
 	const Matrix4& viewMatrix() const;
 	// Project given data coordinates into world coordinates
 	Vec3<double> dataToWorld(Vec3<double> r) const;
@@ -214,15 +222,15 @@ class View
 	Vec3<double> axisPixelLength_;
 
 	public:
-	// Return absolute minimum transformed values over all associated collections
-	Vec3<double> transformedDataMinima();
-	// Return absolute maximum transformed values over all associated collections
-	Vec3<double> transformedDataMaxima();
-	// Return absolute minimum positive transformed values over all associated collections
-	Vec3<double> transformedDataPositiveMinima();
-	// Return absolute maximum positive transformed values over all associated collections
-	Vec3<double> transformedDataPositiveMaxima();
-	// Update axis limits to represent data extent of associated collections
+	// Return data minima over all displayed renderables
+	Vec3<double> dataMinima();
+	// Return data maxima over all displayed renderables
+	Vec3<double> dataMaxima();
+	// Return positive data minima over all displayed renderables
+	Vec3<double> positiveDataMinima();
+	// Return positive data maxima over all displayed renderables
+	Vec3<double> positiveDataMaxima();
+	// Update axis limits to represent data extent of renderables
 	void updateAxisLimits(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Shift flat view axis limits by specified amounts
 	void shiftFlatAxisLimits(double deltaH, double deltaV);
@@ -255,17 +263,17 @@ class View
 	// Set font point size for axis value labels
 	void setLabelPointSize(double value);
 	// Return font point size for axis value labels
-	double labelPointSize();
+	double labelPointSize() const;
 	// Return font point size for titles
 	void setTitlePointSize(double value);
 	// Return font point size for titles
-	double titlePointSize();
+	double titlePointSize() const;
 	// Return text z scaling factor
-	double textZScale();
+	double textZScale() const;
 	// Set whether axis text labels are drawn flat in 3D views
 	void setFlatLabelsIn3D(bool flat);
 	// Whether axis text labels are drawn flat in 3D views
-	bool flatLabelsIn3D();
+	bool flatLabelsIn3D() const;
 };
 
 #endif

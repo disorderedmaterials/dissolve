@@ -1,0 +1,66 @@
+name: OSX (GUI/Serial)
+
+on:
+  push:
+    branches:
+    - develop
+    - release/*
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisties
+      run: |
+        brew update
+        brew install bison ftgl ninja create-dmg
+        brew install qt5
+    - name: Build (CMake/Ninja)
+      run: |
+        QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+        export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
+        export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
+        export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
+        export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
+        export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
+        Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Create DiskImage
+      run: |
+        wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
+        chmod u+x build-dmg.sh
+        QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+        Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve.dmginfo
+        mkdir damage
+        mv *dmg damage
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1
+      if: success()
+      with:
+        name: artifacts
+        path: damage/
+  createcontinuous:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: contains(github.ref, 'develop')
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download Artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts
+    - name: Create / Update Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch.' -p artifacts/*dmg

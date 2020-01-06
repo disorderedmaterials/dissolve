@@ -39,8 +39,8 @@ const char* ImportModule::brief() const
 	return "Import data to the target Configuration";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int ImportModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int ImportModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

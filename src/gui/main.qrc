@@ -21,12 +21,14 @@
   </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
+    <file>icons/viewer_toolbar_site.svg</file>
     <file>icons/viewer_toolbar_view.svg</file>
     <file>icons/viewer_toolbar_graph.svg</file>
     <file>icons/viewer_toolbar_tools.svg</file>
   </qresource>
   <qresource prefix="viewer">
     <file>icons/viewer_edit.svg</file>
+    <file>icons/viewer_link.svg</file>
     <file>icons/viewer_edit_on.svg</file>
     <file>icons/viewer_interact.svg</file>
     <file>icons/viewer_interact_on.svg</file>
@@ -47,13 +49,17 @@
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
+    <file>fonts/Cousine-Bold.ttf</file>
+    <file>fonts/Cousine-BoldItalic.ttf</file>
+    <file>fonts/Cousine-Italic.ttf</file>
+    <file>fonts/Cousine-Regular.ttf</file>
     <file>fonts/FreeSerif.ttf</file>
-    <file>fonts/SourceSansPro-Regular.ttf</file>
   </qresource>
   <qresource prefix="modules">
     <file>icons/modules_export.svg</file>
     <file>icons/modules_molshake.svg</file>
     <file>icons/modules_checks.svg</file>
+    <file>icons/modules_epsr.svg</file>
     <file>icons/modules_energy.svg</file>
     <file>icons/modules_md.svg</file>
     <file>icons/modules_atomshake.svg</file>
@@ -68,6 +74,9 @@
   </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
+    <file>images/hexagons1.png</file>
+    <file>images/big.png</file>
+    <file>images/hexagons1.jpg</file>
   </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
@@ -98,6 +107,8 @@
     <file>icons/general_local.svg</file>
     <file>icons/general_movemodule.svg</file>
     <file>icons/general_restartfile.svg</file>
+    <file>icons/general_font.svg</file>
+    <file>icons/general_palette.svg</file>
     <file>icons/slider-off.svg</file>
     <file>icons/general_trash.svg</file>
     <file>icons/general_frequency.svg</file>

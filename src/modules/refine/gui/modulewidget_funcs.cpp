@@ -31,16 +31,18 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<RefineModule*>(module)), dissolve_(dissolve)
+RefineModuleWidget::RefineModuleWidget(QWidget* parent, RefineModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = true;
 
+	NumberFormat numberFormat;
+
 	// Data Graph
 
-	dataGraph_ = ui.DataPlotWidget->dataViewer();
+	dataGraph_ = ui_.DataPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	dataGraph_->view().setViewType(View::FlatXYView);
@@ -54,7 +56,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	// Partial S(Q) Graph
 	
-	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
+	partialSQGraph_ = ui_.PartialSQPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	partialSQGraph_->view().setViewType(View::FlatXYView);
@@ -68,7 +70,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	// Partial g(r) Graph
 	
-	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
+	partialGRGraph_ = ui_.PartialGRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	partialGRGraph_->view().setViewType(View::FlatXYView);
@@ -82,7 +84,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	// Delta phi(r) Graph
 
-	deltaPhiRGraph_ = ui.DeltaPhiRPlotWidget->dataViewer();
+	deltaPhiRGraph_ = ui_.DeltaPhiRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	deltaPhiRGraph_->view().setViewType(View::FlatXYView);
@@ -96,12 +98,14 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	// Phi(r) Magnitude Graph
 
-	phiMagGraph_ = ui.PhiMagPlotWidget->dataViewer();
+	phiMagGraph_ = ui_.PhiMagPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
-	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	numberFormat = phiMagGraph_->view().axes().numberFormat(0);
+	numberFormat.setNDecimals(0);
+	phiMagGraph_->view().axes().setNumberFormat(0, numberFormat);
 	phiMagGraph_->view().axes().setMax(0, 10.0);
 	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
 	phiMagGraph_->view().axes().setMin(1, 0.0);
@@ -110,12 +114,14 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	// Errors Graph
 
-	errorsGraph_ = ui.ErrorsPlotWidget->dataViewer();
+	errorsGraph_ = ui_.ErrorsPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	errorsGraph_->view().setViewType(View::FlatXYView);
 	errorsGraph_->view().axes().setTitle(0, "Iteration");
-	errorsGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	numberFormat = errorsGraph_->view().axes().numberFormat(0);
+	numberFormat.setNDecimals(0);
+	errorsGraph_->view().axes().setNumberFormat(0, numberFormat);
 	errorsGraph_->view().axes().setMax(0, 10.0);
 	errorsGraph_->view().axes().setTitle(1, "%Error");
 	errorsGraph_->view().axes().setMin(1, 0.0);
@@ -133,6 +139,10 @@ RefineModuleWidget::~RefineModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void RefineModuleWidget::updateControls(int flags)
 {
@@ -142,14 +152,14 @@ void RefineModuleWidget::updateControls(int flags)
 	double phiLevel = 0.0;
 	ListIterator<PairPotential> ppIterator(dissolve_.pairPotentials());
 	while (PairPotential* pp = ppIterator.iterate()) phiLevel += Integrator::absTrapezoid(pp->uAdditional());
-	ui.PhiLevelSpin->setValue(phiLevel);
+	ui_.PhiLevelSpin->setValue(phiLevel);
 
-	ui.DataPlotWidget->updateToolbar();
-	ui.PartialSQPlotWidget->updateToolbar();	
-	ui.PartialGRPlotWidget->updateToolbar();
-	ui.DeltaPhiRPlotWidget->updateToolbar();
-	ui.PhiMagPlotWidget->updateToolbar();
-	ui.ErrorsPlotWidget->updateToolbar();
+	ui_.DataPlotWidget->updateToolbar();
+	ui_.PartialSQPlotWidget->updateToolbar();	
+	ui_.PartialGRPlotWidget->updateToolbar();
+	ui_.DeltaPhiRPlotWidget->updateToolbar();
+	ui_.PhiMagPlotWidget->updateToolbar();
+	ui_.ErrorsPlotWidget->updateToolbar();
 
 	dataGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
@@ -161,22 +171,12 @@ void RefineModuleWidget::updateControls(int flags)
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget
-void RefineModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void RefineModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool RefineModuleWidget::writeState(LineParser& parser)
+bool RefineModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!dataGraph_->writeSession(parser)) return false;

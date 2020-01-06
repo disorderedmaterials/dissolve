@@ -88,6 +88,11 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			}
 		}
 
+		// Get window function to use for transformation of S(Q) to g(r)
+		const WindowFunction& referenceWindowFunction = keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
+		if (referenceWindowFunction.function() == WindowFunction::NoWindow) Messenger::print("No window function will be applied in Fourier transform of S(Q) to g(r).");
+		else Messenger::print("Window function to be applied in Fourier transform of reference data is %s (%s).", WindowFunction::functionType(referenceWindowFunction.function()), referenceWindowFunction.parameterSummary().get());
+
 		// Store the reference data in processing
 		referenceData.setName(uniqueName());
 		Data1D& storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
@@ -99,7 +104,9 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		Data1D& storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
 		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
-		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
+		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, referenceWindowFunction);
+		if (nTargetConfigurations() == 0) Messenger::warn("No configurations associated to module, so Fourier transform of reference data will use assumed atomic density of 0.1.\n");
 
 		// Save data?
 		if (keywords_.asBool("SaveReference"))
@@ -130,11 +137,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	CharString varName;
 
@@ -154,6 +157,9 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("NeutronSQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
 	else Messenger::print("NeutronSQ: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
+	const WindowFunction& referenceWindowFunction = keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
+	if (referenceWindowFunction.function() == WindowFunction::NoWindow) Messenger::print("No window function will be applied when calculating representative g(r) from S(Q).");
+	else Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is %s (%s).", WindowFunction::functionType(referenceWindowFunction.function()), referenceWindowFunction.parameterSummary().get());
 	if (normalisation == NeutronSQModule::NoNormalisation) Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
 	else if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation) Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
 	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
@@ -296,23 +302,28 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the Configuration
 		Weights weights;
-		ListIterator<IsotopologueReference> refIterator(isotopologues_);
-		while (IsotopologueReference* ref = refIterator.iterate())
+		if (isotopologues_.contains(cfg))
 		{
-			// If this reference does not target the current Configuration we are considering, continue the loop
-			if (ref->configuration() != cfg) continue;
+			// Get the set...
+			const IsotopologueSet* topeSet = isotopologues_.isotopologueSet(cfg);
 
-			// Find the referenced Species in our SpeciesInfo list
-			SpeciesInfo* spInfo = cfg->usedSpeciesInfo(ref->species());
-			if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", ref->species()->name(), cfg->niceName());
+			// Iterate over Species present in the set
+			ListIterator<Isotopologues> topeIterator(topeSet->isotopologues());
+			while (Isotopologues* topes = topeIterator.iterate())
+			{
+				// Find the referenced Species in our SpeciesInfo list
+				SpeciesInfo* spInfo = cfg->usedSpeciesInfo(topes->species());
+				if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", topes->species()->name(), cfg->niceName());
 
-			// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-			weights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
+				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
+				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
+				while (IsotopologueWeight* isoWeight = weightIterator.iterate()) weights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
+			}
 		}
 
-		// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+		// We will automatically use the natural isotopologue for a species if it is not explicitly covered by at least one Isotopologue definition
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(spInfo->species())) 
+		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasIsotopologues(spInfo->species()))
 		{
 			Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing - natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
 
@@ -379,6 +390,13 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Calculate weighted g(r)
 	calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
+
+	// Calculate representative total g(r) from FT of calculated S(Q)
+	Data1D& repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
+	repGR = summedWeightedSQ.total();
+	double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
+	Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, qDelta, qMax, referenceWindowFunction);
+	repGR.setObjectTag(CharString("%s//RepresentativeTotalGR", uniqueName_.get()));
 
 	// Save data if requested
 	if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;

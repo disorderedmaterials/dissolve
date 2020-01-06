@@ -24,7 +24,6 @@
 
 #include "gui/ui_layertab.h"
 #include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class ModuleChart;
@@ -38,7 +37,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 
 	public:
 	// Constructor / Destructor
-	LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer);
+	LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, ModuleLayer* layer);
 	~LayerTab();
 
 
@@ -60,6 +59,8 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
+	bool canClose() const;
 
 
 	/*
@@ -78,6 +79,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	 * Widgets
 	 */
 	public slots:
+	void on_ShowPaletteButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
 
@@ -101,7 +103,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 };
 
 #endif

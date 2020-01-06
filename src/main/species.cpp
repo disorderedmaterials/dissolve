@@ -161,6 +161,9 @@ Species* Dissolve::copySpecies(const Species* species)
 	Species* newSpecies = addSpecies();
 	newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
 
+	// Turn off autoupdate of intramolecular terms, since we want an exact copy of the Species contents
+	newSpecies->setAutoUpdateIntramolecularTerms(false);
+
 	// Duplicate atoms
 	ListIterator<SpeciesAtom> atomIterator(species->atoms());
 	while (SpeciesAtom* i = atomIterator.iterate())
@@ -215,9 +218,6 @@ Species* Dissolve::copySpecies(const Species* species)
 		// Copy interaction parameters, including MasterIntra if necessary
 		copySpeciesIntra(t, newImproper);
 	}
-
-	// Finalise the new Species
-	newSpecies->centreAtOrigin();
 
 	return newSpecies;
 }

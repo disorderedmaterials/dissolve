@@ -39,8 +39,8 @@ const char* BraggModule::brief() const
 	return "Calculate Bragg scattering";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int BraggModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int BraggModule::nRequiredTargets() const
 {
-	return (configurationLocal_ ? 1 : -1);
+	return Module::OneOrMoreTargets;
 }

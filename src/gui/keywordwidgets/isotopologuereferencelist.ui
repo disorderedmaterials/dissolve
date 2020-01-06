@@ -148,16 +148,13 @@
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="IsotopologueTable">
+    <widget class="QTreeWidget" name="IsotopologueTree">
+     <property name="editTriggers">
+      <set>QAbstractItemView::AllEditTriggers</set>
+     </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
-     <attribute name="horizontalHeaderVisible">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
      <column>
       <property name="text">
        <string>Configuration</string>
@@ -170,12 +167,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Isotopologue</string>
+       <string>Isotopologues</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Weight</string>
+       <string>Relative Weight</string>
       </property>
      </column>
     </widget>

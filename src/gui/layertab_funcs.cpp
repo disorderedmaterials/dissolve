@@ -24,22 +24,25 @@
 #include "gui/getmodulelayernamedialog.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
+#include <QMessageBox>
 
 // Constructor / Destructor
-LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer) : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
+LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, ModuleLayer* layer) : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {
 	ui_.setupUi(this);
+
+	Locker refreshLocker(refreshLock_);
 
 	moduleLayer_ = layer;
 
 	// Set up ModuleEditor
 	ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
-
-	refreshing_ = false;
 }
 
 LayerTab::~LayerTab()
 {
+	// Remove the Configuration represented in this tab
+	dissolve_.removeProcessingLayer(moduleLayer_);
 }
 
 /*
@@ -76,6 +79,22 @@ bool LayerTab::canChangeTitle() const
 	return true;
 }
 
+// Return whether the tab can be closed (after any necessary user querying, etc.)
+bool LayerTab::canClose() const
+{
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the layer '%1'?\nThis cannot be undone!").arg(moduleLayer_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret != QMessageBox::Yes) return false;
+
+	return true;
+}
+
 /*
  * ModuleLayer Target
  */
@@ -90,9 +109,18 @@ ModuleLayer* LayerTab::moduleLayer() const
  * Widgets
  */
 
+void LayerTab::on_ShowPaletteButton_clicked(bool checked)
+{
+	// Show / hide the module palette
+	ui_.ModuleListPanel->setModulePaletteVisible(checked);
+
+	// Set correct text on our button
+	ui_.ShowPaletteButton->setText(checked ? "Hide Palette" : "Show Palette");
+}
+
 void LayerTab::on_EnabledButton_clicked(bool checked)
 {
-	if (refreshing_ || (!moduleLayer_)) return;
+	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
 
 	moduleLayer_->setEnabled(checked);
 
@@ -101,7 +129,7 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
 
 void LayerTab::on_FrequencySpin_valueChanged(int value)
 {
-	if (refreshing_ || (!moduleLayer_)) return;
+	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
 
 	moduleLayer_->setFrequency(value);
 
@@ -117,14 +145,12 @@ void LayerTab::updateControls()
 {
 	if (!moduleLayer_) return;
 
-	refreshing_ = true;
+	Locker refreshLocker(refreshLock_);
 
 	ui_.EnabledButton->setChecked(moduleLayer_->enabled());
 	ui_.FrequencySpin->setValue(moduleLayer_->frequency());
 
 	ui_.ModuleListPanel->updateControls();
-
-	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab
@@ -156,7 +182,7 @@ bool LayerTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool LayerTab::writeState(LineParser& parser)
+bool LayerTab::writeState(LineParser& parser) const
 {
 	if (!ui_.ModuleListPanel->writeState(parser)) return false;
 

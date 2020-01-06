@@ -19,15 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #ifndef DISSOLVE_TRANSFORMER_H
 #define DISSOLVE_TRANSFORMER_H
 
 #include "expression/expression.h"
 #include "base/charstring.h"
 #include "templates/array.h"
+#include "templates/array2d.h"
+#include "data3d.h"
 
 // Forward Declarations
 class Data1D;
+class Data2D;
 class Variable;
 
 // Transformer
@@ -44,7 +48,7 @@ class Transformer
 
 
 	/*
-	 * Tree containing transform equation
+	 * Transform Equation
 	 */
 	private:
 	// Whether transform is enabled
@@ -61,30 +65,32 @@ class Transformer
 	ExpressionVariable* y_;
 	// Z variable in equation
 	ExpressionVariable* z_;
+	// Value variable in equation
+	ExpressionVariable* value_;
 
 	public:
 	// Set whether transform is enabled
 	void setEnabled(bool b);
 	// Return whether transform is enabled
 	bool enabled() const;
-	// Set equation, returning if Tree construction was successful
+	// Set equation, returning if it was successfully generated
 	bool setEquation(const char* equation);
 	// Return text used to generate last equation_
 	const char* text() const;
 	// Return whether current equation is valid
 	bool valid() const;
-	// Transform single value
-	double transform(double x, double y, double z);
-	// Transform whole array, including application of pre/post transform shift
-	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, double z, int target);
 
 
 	/*
-	 * Static Functions
+	 * Transforms
 	 */
 	public:
-	// Transform Data1D with supplied transformers
-	static void transform(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
+	// Transform supplied Data1D values
+	void transformValues(Data1D& data);
+	// Transform supplied Data2D values
+	void transformValues(Data2D& data);
+	// Transform supplied Data3D values
+	void transformValues(Data3D& data);
 };
 
 #endif

@@ -38,8 +38,10 @@ class GenericList
 	List<GenericItem> items_;
 
 	public:
-	// Clear all items
+	// Clear all items (except those that are marked protected)
 	void clear();
+	// Clear all items, including protected items
+	void clearAll();
 	// Add specified item to list (from base class pointer)
 	void add(GenericItem* item);
 	// Create an item of the specified type
@@ -48,8 +50,8 @@ class GenericList
 	bool contains(const char* name, const char* prefix = NULL);
 	// Return if named item, if it exists, is of specified type
 	bool isItemOfType(const char* type, const char* name, const char* prefix = NULL);
-	// Return head of the list
-	GenericItem* items();
+	// Return item list
+	List<GenericItem>& items();
 	// Return the named item from the list
 	GenericItem* find(const char* name);
 	// Return the named item from the list (with prefix)
@@ -57,13 +59,17 @@ class GenericList
 	// Return the version of the named item from the list
 	int version(const char* name, const char* prefix = NULL) const;
 	// Return list of all items with specified prefix (before first '_')
-	RefList<GenericItem> listWithPrefix(const char* prefix);
+	RefList<GenericItem> itemsWithPrefix(const char* prefix);
+	// Return list of all items with specified class type
+	RefList<GenericItem> itemsWithClassName(const char* className);
 	// List all items
 	void listItems();
 	// Remove named item
 	bool remove(const char* name, const char* prefix);
 	// Rename item
 	bool rename(const char* oldName, const char* oldPrefix, const char* newName, const char* newPrefix);
+	// Prune all items with '@suffix'
+	void pruneWithSuffix(const char* suffix);
 
 
 	/*

@@ -29,13 +29,13 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<BraggModule*>(module)), dissolve_(dissolve)
+BraggModuleWidget::BraggModuleWidget(QWidget* parent, BraggModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up Bragg reflections graph
-	reflectionsGraph_ = ui.ReflectionsPlotWidget->dataViewer();
+	reflectionsGraph_ = ui_.ReflectionsPlotWidget->dataViewer();
 	// -- Set view
 	reflectionsGraph_->view().setViewType(View::FlatXYView);
 	reflectionsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -46,7 +46,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	reflectionsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
-	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
+	totalsGraph_ = ui_.TotalsPlotWidget->dataViewer();
 	// -- Set view
 	totalsGraph_->view().setViewType(View::FlatXYView);
 	totalsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
@@ -74,8 +74,8 @@ BraggModuleWidget::~BraggModuleWidget()
 // Update controls within widget
 void BraggModuleWidget::updateControls(int flags)
 {
-	ui.ReflectionsPlotWidget->updateToolbar();
-	ui.TotalsPlotWidget->updateToolbar();
+	ui_.ReflectionsPlotWidget->updateToolbar();
+	ui_.TotalsPlotWidget->updateToolbar();
 
 	reflectionsGraph_->postRedisplay();
 	totalsGraph_->postRedisplay();
@@ -92,11 +92,11 @@ void BraggModuleWidget::enableSensitiveControls()
 }
 
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool BraggModuleWidget::writeState(LineParser& parser)
+bool BraggModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!reflectionsGraph_->writeSession(parser)) return false;
@@ -125,9 +125,9 @@ void BraggModuleWidget::setGraphDataTargets()
 	if (!module_) return;
 
 	// Add Configuration targets to the combo box
-	ui.TargetCombo->clear();
+	ui_.TargetCombo->clear();
 	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total Bragg F(Q)
 	CharString blockData;
@@ -145,18 +145,18 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	reflectionsGraph_->clearRenderables();
 
 	// Get target Configuration
-	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
 	CharString blockData;
 	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
+	for (AtomTypeData* atd1 = cfgTypes.first(); atd1 != NULL; atd1 = atd1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
+		for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++m)
 		{
-			CharString id("%s-%s", at1->name(), at2->name());
+			CharString id("%s-%s", atd1->atomTypeName(), atd2->atomTypeName());
 
 			// Original S(Q)
 			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()), CharString("Full//%s", id.get()), "Full");

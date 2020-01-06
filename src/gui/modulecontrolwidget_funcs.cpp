@@ -23,7 +23,6 @@
 #include "gui/gui.h"
 #include "gui/charts/moduleblock.h"
 #include "gui/modulewidget.h"
-#include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
@@ -32,15 +31,13 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title) : SubWidget(dissolveWindow, title), module_(module), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
+ModuleControlWidget::ModuleControlWidget(QWidget* parent)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
-	controlsWidget_ = NULL;
-	moduleWidget_ = NULL;
-
-	initialiseControls(module_);
+	dissolve_ = NULL;
+	module_ = NULL;
 
 	refreshing_ = false;
 }
@@ -49,108 +46,181 @@ ModuleControlWidget::~ModuleControlWidget()
 {
 }
 
-// Initialise controls for the specified Module
-void ModuleControlWidget::initialiseControls(Module* module)
+/*
+ * SetUp
+ */
+
+// Set up links to main window
+void ModuleControlWidget::setUp(DissolveWindow* dissolveWindow)
 {
-	if (!module) return;
-
-	// Check if we have already created a widget...
-	if (controlsWidget_)
-	{
-		Messenger::error("Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n", title());
-		return;
-	}
-
-	// Set a nice icon for the window
-	setWindowIcon(ModuleBlock::modulePixmap(module));
-
-	// Create a splitter into which we'll add our widgets
-	QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
-
-	// Create the controls widget (a ModuleBlock)
-	controlsWidget_ = new ModuleBlock(this, module_, dissolve_);
-	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	splitter->addWidget(controlsWidget_);
-
-	// Create a module widget if there are additional GUI elements available for the Module
-	moduleWidget_ = module->createWidget(NULL, dissolve_);
-	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
-	else
-	{
-		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-		splitter->addWidget(moduleWidget_);
-		splitter->setStretchFactor(1, 5);
-	}
-
-	// Create a layout, add the splitter, and add it to the window
-	QVBoxLayout* layout = new QVBoxLayout;
-	layout->setMargin(4);
-	layout->addWidget(splitter);
-	setLayout(layout);
+	connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
+	connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 }
 
 /*
- * SubWidget Reimplementations / Definitions
+ * Module Target
  */
 
-void ModuleControlWidget::closeEvent(QCloseEvent* event)
+// Set target Module to display
+void ModuleControlWidget::setModule(Module* module, Dissolve* dissolve)
 {
-	emit (windowClosed(title()));
+	module_ = module;
+	dissolve_ = dissolve;
+	if ((!module_) || (!dissolve_))
+	{
+		ui_.ModuleKeywordsWidget->setUp(KeywordList(), CoreData());
+		return;
+	}
+
+	// Set the icon and module type label
+	ui_.TopLabel->setText(module_->type());
+	ui_.IconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
+
+	// Set up our keywords widget
+	ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
+
+	updateControls();
 }
+
+// Run the set-up stage of the associated Module
+void ModuleControlWidget::setUpModule()
+{
+	if ((!module_) || (!dissolve_)) return;
+
+	// Run the Module's set-up stage
+	module_->setUp(*dissolve_, dissolve_->worldPool());
+
+	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
+}
+
+/*
+ * Update
+ */
 
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
-	if (!module_) return;
+	if ((!module_) || (!dissolve_)) return;
 
 	refreshing_ = true;
 
-	if (controlsWidget_) controlsWidget_->updateControls();
-	if (moduleWidget_) moduleWidget_->updateControls();
+	// Set unique name
+	ui_.NameEdit->setText(module_->uniqueName());
+
+	// Set 'enabled' button status
+	ui_.EnabledButton->setChecked(module_->isEnabled());
+	ui_.IconFrame->setEnabled(module_->isEnabled());
+
+	// Set frequency spin
+	ui_.FrequencySpin->setValue(module_->frequency());
+
+	// Update Configuration list and HeaderFrame tooltip
+	ui_.ConfigurationTargetList->clear();
+	CharString toolTip("Targets: ");
+	ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
+		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
+
+		if (module_->isTargetConfiguration(cfg))
+		{
+			item->setCheckState(Qt::Checked);
+
+			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
+			else toolTip.strcatf(", %s", cfg->name());
+		}
+		else item->setCheckState(Qt::Unchecked);
+	}
+	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nRequiredTargets() != Module::ZeroTargets));
+	ui_.HeaderFrame->setToolTip(toolTip.get());
+
+	// Update keywords
+	ui_.ModuleKeywordsWidget->updateControls();
 
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget
+// Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
-	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
-
-	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
+	ui_.ModuleKeywordsWidget->setEnabled(false);
+	ui_.ConfigurationTargetGroup->setEnabled(false);
+	ui_.HeaderFrame->setEnabled(false);
 }
 
-// Enable sensitive controls within widget
+// Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
-	if (controlsWidget_) controlsWidget_->enableSensitiveControls();
-
-	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
+	ui_.ModuleKeywordsWidget->setEnabled(true);
+	ui_.ConfigurationTargetGroup->setEnabled(true);
+	ui_.HeaderFrame->setEnabled(true);
 }
 
-// Return string specifying widget type
-const char* ModuleControlWidget::widgetType()
+/*
+ * UI
+ */
+
+// Keyword data for Module has been modified
+void ModuleControlWidget::keywordDataModified()
 {
-	return "ModuleControl";
+	emit(dataModified());
 }
 
-// Write widget state through specified LineParser
-bool ModuleControlWidget::writeState(LineParser& parser)
+void ModuleControlWidget::on_NameEdit_editingFinished()
 {
-	if (!module_) return false;
+	if (refreshing_ || (!module_) || (!dissolve_)) return;
 
-	// Write state data from ModuleWidget (if one exists)
-	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
+	// If the name is the same, return now
+	if (ui_.NameEdit->text() == module_->uniqueName()) return;
 
-	return true;
+	// Check that the new name is unique
+	CharString uniqueName = dissolve_->uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
+
+	module_->setUniqueName(uniqueName);
+
+	ui_.NameEdit->setText(uniqueName.get());
+
+	emit(dataModified());
 }
 
-// Read widget state through specified LineParser
-bool ModuleControlWidget::readState(LineParser& parser)
+void ModuleControlWidget::on_NameEdit_returnPressed()
 {
-	if (!module_) return false;
+	// Call the editingFinished() function
+	on_NameEdit_editingFinished();
+}
 
-	// Read state data from ModuleWidget (if one exists)
-	if (moduleWidget_ && (!moduleWidget_->readState(parser))) return false;
+void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
+{
+	if (refreshing_ || (!module_)) return;
 
-	return true;
+	module_->setEnabled(checked);
+
+	ui_.IconFrame->setEnabled(checked);
+
+	emit(dataModified());
+}
+
+void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
+{
+	if (refreshing_ || (!module_)) return;
+
+	module_->setFrequency(value);
+
+	emit(dataModified());
+}
+
+void ModuleControlWidget::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)
+{
+	if (refreshing_ || (!module_) || (!item)) return;
+
+	// Get configuration from item
+	Configuration* cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
+	if (!cfg) return;
+
+	if (item->checkState() == Qt::Checked) module_->addTargetConfiguration(cfg);
+	else module_->removeTargetConfiguration(cfg);
+
+	emit(dataModified());
 }

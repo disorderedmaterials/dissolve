@@ -29,13 +29,13 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<RDFModule*>(module)), dissolve_(dissolve)
+RDFModuleWidget::RDFModuleWidget(QWidget* parent, RDFModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up partial g(r) graph
-	partialsGraph_ = ui.PartialsPlotWidget->dataViewer();
+	partialsGraph_ = ui_.PartialsPlotWidget->dataViewer();
 	// -- Set view
 	partialsGraph_->view().setViewType(View::FlatXYView);
 	partialsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -56,7 +56,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	partialsGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up total G(r) graph
-	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
+	totalsGraph_ = ui_.TotalsPlotWidget->dataViewer();
 	// -- Set view
 	totalsGraph_->view().setViewType(View::FlatXYView);
 	totalsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -82,32 +82,26 @@ RDFModuleWidget::~RDFModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void RDFModuleWidget::updateControls(int flags)
 {
-	ui.PartialsPlotWidget->updateToolbar();
-	ui.TotalsPlotWidget->updateToolbar();
+	ui_.PartialsPlotWidget->updateToolbar();
+	ui_.TotalsPlotWidget->updateToolbar();
 
 	partialsGraph_->postRedisplay();
 	totalsGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void RDFModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void RDFModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool RDFModuleWidget::writeState(LineParser& parser)
+bool RDFModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!partialsGraph_->writeSession(parser)) return false;
@@ -136,9 +130,9 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	if (!module) return;
 
 	// Add Configuration targets to the combo box
-	ui.TargetCombo->clear();
+	ui_.TargetCombo->clear();
 	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total G(R)
 	CharString blockData;
@@ -156,7 +150,7 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	partialsGraph_->clearRenderables();
 
 	// Get target Configuration
-	currentConfiguration_ = VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	currentConfiguration_ = VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
 	CharString blockData;

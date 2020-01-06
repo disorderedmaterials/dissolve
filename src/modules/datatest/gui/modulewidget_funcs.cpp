@@ -20,48 +20,14 @@
 */
 
 #include "modules/datatest/gui/modulewidget.h"
+#include "modules/datatest/datatest.h"
 
 // Constructor
-DataTestModuleWidget::DataTestModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+DataTestModuleWidget::DataTestModuleWidget(QWidget* parent, DataTestModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-
-// Update controls within widget
-void DataTestModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void DataTestModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void DataTestModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool DataTestModuleWidget::writeState(LineParser& parser)
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool DataTestModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
 

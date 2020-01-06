@@ -38,10 +38,12 @@ class GenericItem : public ListItem<GenericItem>
 	GenericItem(const char* name, int flags);
 	virtual ~GenericItem();
 	// Item Flags
-	enum Flags
+	enum ItemFlag
 	{
-		NoFlag				= -1,	/* Null flag */
-		InRestartFileFlag		= 1	/* The item should be written to the restart file */
+		NoFlag				= 0,	/* No flag */
+		InRestartFileFlag		= 1,	/* The item should be written to the restart file */
+		IsReferencePointDataFlag	= 2,	/* The item was loaded as reference point data */
+		ProtectedFlag			= 4	/* The item will not be clear()'d unless forced */
 	};
 
 
@@ -71,8 +73,6 @@ class GenericItem : public ListItem<GenericItem>
 	private:
 	// Name associated to the item
 	CharString name_;
-	// Description, if any, for the item
-	CharString description_;
 	// Version of the item
 	int version_;
 	// Flags
@@ -83,10 +83,6 @@ class GenericItem : public ListItem<GenericItem>
 	void setName(const char* name);
 	// Return item name
 	const char* name();
-	// Set item description
-	void setDescription(const char* description);
-	// Return item description
-	const char* description();
 	// Return version of the item
 	int version() const;
 	// Set version of the item
@@ -96,7 +92,9 @@ class GenericItem : public ListItem<GenericItem>
 	// Set flags for item
 	void setFlags(int flags);
 	// Return flags
-	int flags();
+	int flags() const;
+	// Return whether specified flag is set
+	bool hasFlag(GenericItem::ItemFlag flag) const;
 
 
 	/*

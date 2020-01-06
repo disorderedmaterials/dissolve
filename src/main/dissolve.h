@@ -202,10 +202,6 @@ class Dissolve
 	Configuration* findConfiguration(const char* name) const;
 	// Find configuration by 'nice' name
 	Configuration* findConfigurationByNiceName(const char* name) const;
-	// Write Configuration through specified LineParser
-	bool writeConfiguration(Configuration* cfg, LineParser& parser);
-	// Read Configuration through specified LineParser
-	bool readConfiguration(Configuration* cfg, LineParser& parser);
 
 
 	/*
@@ -231,7 +227,7 @@ class Dissolve
 	// Create a Module instance for the named Module type
 	Module* createModuleInstance(const char* moduleType);
 	// Create a Module instance for the named Module type, and add it to the specified layer
-	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer);
+	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer, bool configurationLocal = false);
 	// Search for any instance of any Module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
 	// Search for any instance of any Module with the specified Module type
@@ -306,6 +302,8 @@ class Dissolve
 	bool prepare();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
+	// Reset current simulation step
+	void resetIterationCounter();
 	// Return current simulation step
 	int iteration() const;
 	// Print timing information
@@ -338,6 +336,8 @@ class Dissolve
 	bool saveInput(const char* filename);
 	// Load restart file
 	bool loadRestart(const char* filename);
+	// Load restart file as reference point
+	bool loadRestartAsReference(const char* filename, const char* dataSuffix);
 	// Save restart file
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
@@ -370,6 +370,8 @@ class Dissolve
 	void removeReferencesTo(Module* module);
 	// Remove all references to the specified Species
 	void removeReferencesTo(Species* sp);
+	// Remove all references to the specified SpeciesSite
+	void removeReferencesTo(SpeciesSite* site);
 
 
 	/*

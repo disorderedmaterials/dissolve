@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_OPTIMISEMODULEWIDGET_H
-#define DISSOLVE_OPTIMISEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_OPTIMISE_H
+#define DISSOLVE_MODULEWIDGET_OPTIMISE_H
 
 #include "modules/geomopt/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class GeometryOptimisationModule;
 
 // Module Widget
 class GeometryOptimisationModuleWidget : public ModuleWidget
@@ -36,37 +36,19 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	GeometryOptimisationModule* module_;
 
 	public:
 	// Constructor
-	GeometryOptimisationModuleWidget(QWidget* parent, Module* module);
-	// Main form declaration
-	Ui::GeometryOptimisationModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
+	GeometryOptimisationModuleWidget(QWidget* parent, GeometryOptimisationModule* module);
 
 
 	/*
-	 * ModuleWidget Implementations
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-
-	/*
-	 * Widgets / Functions
+	 * UI
 	 */
 	private:
-
-	private slots:
+	// Main form declaration
+	Ui::GeometryOptimisationModuleWidget ui_;
 };
 
 #endif

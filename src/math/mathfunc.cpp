@@ -98,7 +98,7 @@ int DissolveMath::power(int i, int p)
 // Sign function
 int DissolveMath::sgn(int x)
 {
-	return (x < 0 ? -1 : x > 0);
+	return (x < 0 ? -1 : (x == 0 ? 0 : 1));
 }
 
 // Sign function

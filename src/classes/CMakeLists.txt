@@ -19,6 +19,7 @@ add_library(classes
   configuration.cpp
   configuration_box.cpp
   configuration_contents.cpp
+  configuration_io.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
   coredata.cpp
@@ -31,8 +32,10 @@ add_library(classes
   forcekernel.cpp
   isotopedata.cpp
   isotopologue.cpp
-  isotopologuemix.cpp
-  isotopologuereference.cpp
+  isotopologuecollection.cpp
+  isotopologues.cpp
+  isotopologueset.cpp
+  isotopologueweight.cpp
   kvector.cpp
   masterintra.cpp
   molecule.cpp
@@ -88,8 +91,10 @@ add_library(classes
   forcekernel.h
   isotopedata.h
   isotopologue.h
-  isotopologuemix.h
-  isotopologuereference.h
+  isotopologuecollection.h
+  isotopologues.h
+  isotopologueset.h
+  isotopologueweight.h
   kernelflags.h
   kvector.h
   masterintra.h

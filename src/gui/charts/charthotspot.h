@@ -69,6 +69,8 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
 	int column() const;
 	// Set area information
 	void setGeometry(QRect geometry);
+	// Set the width of the hotspot
+	void setWidth(int width);
 	// Set the height of the hotspot
 	void setHeight(int height);
 	// Return the geometry of the area

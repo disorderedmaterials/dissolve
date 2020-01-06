@@ -29,7 +29,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor
-NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<NeutronSQModule*>(module)), dissolve_(dissolve)
+NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -119,6 +119,10 @@ NeutronSQModuleWidget::~NeutronSQModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void NeutronSQModuleWidget::updateControls(int flags)
 {
@@ -136,22 +140,12 @@ void NeutronSQModuleWidget::updateControls(int flags)
 	totalFQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void NeutronSQModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void NeutronSQModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool NeutronSQModuleWidget::writeState(LineParser& parser)
+bool NeutronSQModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!partialGRGraph_->writeSession(parser)) return false;
@@ -227,8 +221,13 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 	}
 
 	// Add calculated total G(r)
-	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated");
+	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated (Direct)");
 	totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
+
+	// Add calculated total representative G(r) (from FT of S(Q))
+	Renderable* repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RepresentativeTotalGR", module_->uniqueName()), "Calculated (via FT)");
+	repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
+	totalGRGraph_->addRenderableToGroup(repGR, "Calculated");
 
 	// Add calculate total F(Q)
 	Renderable* totalFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "Calculated");

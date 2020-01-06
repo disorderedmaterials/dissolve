@@ -52,6 +52,7 @@ class DissolveThreadWorker : public QObject
 	void stopIterating();
 
 	signals:
+	void clearMessages();
 	void iterated();
 	void iterationsComplete();
 };

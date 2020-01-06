@@ -27,6 +27,7 @@
 #include <QWidget>
 
 // Forward Declarations
+class Configuration;
 class Dissolve;
 class Module;
 class ModuleBlock;
@@ -38,7 +39,7 @@ class ModuleListChart : public ChartBase
 {
 	public:
 	// Constructor / Destructor
-	ModuleListChart(ModuleList* moduleList, Dissolve& dissolve);
+	ModuleListChart(ModuleList* moduleList, Dissolve& dissolve, Configuration* localConfiguration = NULL);
 	~ModuleListChart();
 
 
@@ -56,6 +57,8 @@ class ModuleListChart : public ChartBase
 	private:
 	// Target ModuleList for display
 	ModuleList* moduleList_;
+	// Configuration in which the layer exists (if any)
+	Configuration* localConfiguration_;
 
 
 	/*
@@ -83,6 +86,12 @@ class ModuleListChart : public ChartBase
 	// Update the content block widgets against the current target data
 	void updateContentBlocks();
 
+	public:
+	// Set the currently-selected Module
+	void setCurrentModule(Module* module);
+	// Return the currently-selected molecule
+	Module* currentModule() const;
+
 
 	/*
 	 * Block Interaction
@@ -100,6 +109,8 @@ class ModuleListChart : public ChartBase
 	void blockDoubleClicked(ChartBlock* block);
 	// The chart has requested removal of one of its blocks
 	void blockRemovalRequested(const QString& blockIdentifier);
+	// Block selection has changed
+	void blockSelectionChanged(ChartBlock* block);
 
 
 	/*
@@ -119,7 +130,7 @@ class ModuleListChart : public ChartBase
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 };

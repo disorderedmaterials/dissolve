@@ -1,57 +1,50 @@
 ---
-title: Step 6 - Set up Potential Refinement
+title: Step 6 - Fix the Water Molecule Geometry
 parent: Liquid Water
 grand_parent: Examples
 ---
 # Liquid Water
 
-## 6. Set up Potential Refinement
+## 6. Fix the Water Molecule Geometry
 
-Let's briefly recap what we've done so far:
+There is a hint in the structure factors for the H<sub>2</sub>O sample (particularly the G(r)), that the intramolecular geometry of our off-the-shelf forcefield is not quite consistent with the real world.  This is made clearly obvious if you look at the G(r) for the D<sub>2</sub>O sample:
 
-1. We've set up a liquid water system based on a literature forcefield (`SPC/Fw`)
-2. We've equilibrated the system and made an initial structural comparison with experimental data
-2. We adjusted the intramolecular geometry of the water molecule in order to better match the experimental data
-
-Our agreement with experiment is OK, but it is possible to make it even better by modifying the _inter_-atomic interaction parameters contained in the atom types. However, generally this is not to be attempted by hand in all but the simplest of cases, as the effects of adjusting the interatomic are seldom as obvious as those for _intra_-molecular parameters. Also, for even a modestly-complicated system the number of adjustable parameters is simply too large to tackle with manual fitting.
-
-Here we'll employ the [`EPSR`](/userguide/modules/epsr) module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
-
-> Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR
-{: .action .action_menu}
-
-Our new layer contains only the [`EPSR`](/userguide/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](/userguide/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module.
-
-> **Refine (EPSR)** tab
+> **RDF / Neutron S(Q)** tab
 {: .action .action_tabs}
-> Open the **Calculation** settings group
-{: .action .action_settings}
-> An initial value for **EReq** has been set - this determines the magnitude or "strength" of the generated interatomic potential
-{: .step}
-> The **Feedback** factor is 0.9 - this states that we are 90% confident in the experimental data, and that the calculated partial structure factors should make up 10% of the estimated partials.
-{: .step}
-> The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>)and **QMin** (0.5 &#8491;<sup>-1</sup>)
-{: .step}
-> The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the [`EPSR`](/userguide/modules/epsr) module to use.
+> Double-click on the `D2O` [`NeutronSQ`](/userguide/modules/neutronsq) module to open its additional controls in a separate tab
 {: .step}
 
-All of these default values are fine for our purpose, but before we start the refinement proper its worth going through the various quantities displayed in the  [`EPSR`](/userguide/modules/epsr) tab. We'll turn off application of the empirical potential for now, and start the simulation again to get some initial data in these graphs.
+![](equilibrated-d2o-broadened-gr.png){: .img-centre}
+*Equilibrated water (D2O) G(r) with effective broadening applied to intramolecular g(r)*
 
-> **Refine (EPSR)** tab
+> You may notice a small 'upturn' in the calculated F(Q) for the D<sub>2</sub>O sample that does not match experiment. This is caused by subtle density fluctuations in the configuration that are accentuated by the deuteration of the water, and will disappear slowly over time. You can safely proceed with the example.
+{: .warn}
+
+Clearly we have a mismatch between the peak positions at around 1 &#8491; (related to the O-H bond) and 1.7 &#8491; (related to the H-O-H angle). It is usually necessary to adjust the geometry of your species a little in order to be consistent with the experimentally-measured data, and in the present case we are lucky that we only have two parameters to adjust!
+
+> Here we are modifying the intramolecular terms based on comparison of the D<sub>2</sub>O data, but bear in mind that liquid water is amongst the systems most sensitive to isotopic substitution since all hydrogens are hydroxyl hydrogens, and subject to exchange as well as strong hydrogen bonding. As such, the differences in intramolecular geometry between H<sub>2</sub>O and D<sub>2</sub>O are measurable.<sup>[1]</sup>
+{: .warn}
+
+Since we set up our simulation to use intramolecular master terms (via the _Add Forcefield Terms..._{: .text-green-100} wizard) we can modify those to directly affect our water molecule's geometry.
+
+> **Forcefield** tab, **Master Terms** section
 {: .action .action_tabs}
-> Open the **Calculation** settings group
-{: .action .action_settings}
-> Uncheck the **ModifyPotential** option
+> Change the bond length (_Parameter 2_) of the `HW-OW` bond term from 1.0 to 0.976.
 {: .step}
-> Start the simulation running
+> Change the equilibrium angle (_Parameter 2_) of the `HW-OW-HW` angle term from 113.24 to 107.134
 {: .step}
 
-Let's go through the different tabs of the [`EPSR`](/userguide/modules/epsr) module one by one.
+Now run the simulation for a little longer and let the species adjust to their new geometry, and you should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
 
-### 1. F(Q)
+![](equilibrated-d2o-broadened-adjusted-gr.png){: .img-centre}
+*Equilibrated water (D2O) G(r) with effective broadening and adjusted intramolecular geometry*
 
-A broad overview of the agreement between 
+> The change in the G(r) will not be instant as the majority of the evolution of the system is from the [`MolShake`](/userguide/modules/molshake) which does not change the intramolecular geometry. Only the [`MD`](/userguide/modules/md) module will affect the intramolecular geometry. Also, the g(r) calculated by the [`RDF`](/userguide/modules/rdf) are averaged over five calculations by default.
+{: .tip}
 
-so you can set Dissolve running start to refine the potential
+It's also worth checking the other two samples, where the same kind of improvement should be noticeable (if a little less prominent).
+
+### References
+1. [Quantum Differences between Heavy and Light Water](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.101.065502), A. K. Soper and C. J. Benmore, Phys. Rev. Lett. **101**, 065502 (2008).
 
 [Previous Step](step5.md){: .btn }   [Next Step](step7.md){: .btn .right}

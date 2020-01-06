@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TESTMODULEWIDGET_H
-#define DISSOLVE_TESTMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_TEST_H
+#define DISSOLVE_MODULEWIDGET_TEST_H
 
 #include "modules/test/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class TestModule;
 
 // Module Widget
 class TestModuleWidget : public ModuleWidget
@@ -36,37 +36,19 @@ class TestModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	TestModule* module_;
 
 	public:
 	// Constructor
-	TestModuleWidget(QWidget* parent, Module* module);
-	// Main form declaration
-	Ui::TestModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
+	TestModuleWidget(QWidget* parent, TestModule* module);
 
 
 	/*
-	 * ModuleWidget Implementations
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-
-	/*
-	 * Widgets / Functions
+	 * UI
 	 */
 	private:
-
-	private slots:
+	// Main form declaration
+	Ui::TestModuleWidget ui_;
 };
 
 #endif

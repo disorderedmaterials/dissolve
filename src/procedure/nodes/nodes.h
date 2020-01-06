@@ -37,7 +37,9 @@
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/exclude.h"
 #include "procedure/nodes/fit1d.h"
+#include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatedivide.h"
+#include "procedure/nodes/operategridnormalise.h"
 #include "procedure/nodes/operatemultiply.h"
 #include "procedure/nodes/operatenormalise.h"
 #include "procedure/nodes/operatenumberdensitynormalise.h"
@@ -49,5 +51,6 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
+#include "procedure/nodes/sum1d.h"
 
 #endif

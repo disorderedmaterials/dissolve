@@ -22,6 +22,7 @@
 #include "gui/viewer/render/axes.h"
 #include "gui/viewer/render/view.h"
 #include "gui/viewer/render/fontinstance.h"
+#include "math/doubleexp.h"
 #include "base/sysfunc.h"
 
 // Constructor
@@ -75,12 +76,14 @@ Axes::Axes(View& parent, FontInstance& fontInstance) : parentView_(parent), font
 	title_[0] = "X Axis";
 	title_[1] = "Y Axis";
 	title_[2] = "Z Axis";
-	titleOrientation_[0].set(0.0, 0.0, 1.2, 0.5);
-	titleOrientation_[1].set(0.0, 270.0, 1.2, 0.5);
-	titleOrientation_[2].set(90.0, 90.0, 1.2, 0.5);
+	titleOrientation_[0].set(0.0, 0.0, 0.0);
+	titleOrientation_[1].set(0.0, 0.0, 270.0);
+	titleOrientation_[2].set(90.0, 270.0, 0.0);
+	titleDistances_.set(1.2, 1.2, 1.2);
+	titleHorizontalOffsets_.set(0.5, 0.5, 0.5);
 	titleAnchor_[0] = TextPrimitive::TopMiddleAnchor;
 	titleAnchor_[1] = TextPrimitive::BottomMiddleAnchor;
-	titleAnchor_[2] = TextPrimitive::TopMiddleAnchor;
+	titleAnchor_[2] = TextPrimitive::BottomMiddleAnchor;
 
 	// GridLines
 	gridLinesMajor_.set(false, false, false);
@@ -251,43 +254,22 @@ double Axes::realRange(int axis) const
 }
 
 // Ensure a sensible (non-zero) range, modifying the supplied values
-void Axes::ensureSensibleRange(double& minValue, double& maxValue, bool expandOnlyIfZero, double expansionFactor)
+void Axes::ensureSensibleRange(double& minValue, double& maxValue, bool alwaysExpand, double expansionFactor)
 {
-	// Get exponents and significands for both numbers
-	int expMin, expMax;
-	double significandMin = frexp(minValue, &expMin);
-	double significandMax = frexp(maxValue, &expMax);
-
 	/*
 	 * If exponents are different or the difference in the significands is large enough, we consider the range to be
-	 * acceptable, and only expand the range if 'expandOnlyIfZero' is false. The degree to which we expand the range is governed
+	 * acceptable, and only expand the range if 'alwaysExpand' is true. The degree to which we expand the range is governed
 	 * by the 'expansionFactor'. If positive this represents a fractional amount of the total range that we will increase by.
 	 * If negative, this represents an absolute value by which we will increase the range.
 	 */
-	if ((expMin != expMax) || (fabs(significandMax-significandMin) > 1.0e-4))
-	{
-		// Increase the range (if 'expandOnlyIfZero' is false)
-		if (!expandOnlyIfZero)
-		{
-			if (expansionFactor > 0.0)
-			{
-				double yDelta = (maxValue - minValue)*expansionFactor;
-				maxValue += yDelta;
-				minValue -= yDelta;
-			}
-			else
-			{
-				maxValue += fabs(expansionFactor);
-				minValue -= fabs(expansionFactor);
-			}
-		}
-	}
-	else
+	DoubleExp minimum(minValue), maximum(maxValue);
+	if (alwaysExpand || ((minimum.exponent() == maximum.exponent()) && (fabs(minimum.mantissa() - maximum.mantissa()) < 1.0e-4)))
 	{
 		if (expansionFactor > 0.0)
 		{
-			maxValue += expansionFactor*pow(2,expMax);
-			minValue -= expansionFactor*pow(2,expMax); 
+			double yDelta = (maxValue - minValue)*expansionFactor;
+			maxValue += yDelta;
+			minValue -= yDelta;
 		}
 		else
 		{
@@ -598,6 +580,58 @@ double Axes::transformZ(double z) const
 	else return z * stretch_.z;
 }
 
+// Transform entire array of values into local axes coordinates
+void Axes::transformZ(Array<double>& zArray) const
+{
+	if (inverted_.z && logarithmic_.z) for (int n=0; n< zArray.nItems(); ++n)
+	{
+// 		if (max_.z / zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		zArray[n] = log10(max_.z/ zArray[n]) * stretch_.z;
+	}
+	else if (inverted_.z) for (int n=0; n< zArray.nItems(); ++n) zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
+	else if (logarithmic_.z) for (int n=0; n<zArray.nItems(); ++n)
+	{
+// 		if (zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		zArray[n] = log10(zArray[n]) * stretch_.z;
+	}
+	else zArray *= stretch_.z;
+}
+
+// Transform a 2D array of values into local axes coordinates
+void Axes::transformX(Array2D<double>& xArray) const
+{
+	int n = 0;
+	while(n < xArray.linearArraySize())
+	{
+		xArray.linearValue(n) = transformX(xArray.linearValue(n));
+		n++;		
+	}
+}
+
+// Transform a 2D array of values into local axes coordinates
+void Axes::transformY(Array2D<double>& yArray) const
+{
+	int n = 0;
+	while(n < yArray.linearArraySize())
+	{
+		yArray.linearValue(n) = transformY(yArray.linearValue(n));
+		n++;		
+	}
+}
+
+// Transform a 2D array of values into local axes coordinates
+void Axes::transformZ(Array2D<double>& zArray) const
+{
+	int n = 0;
+	while(n < zArray.linearArraySize())
+	{
+		zArray.linearValue(n) = transformZ(zArray.linearValue(n));
+		n++;		
+	}
+}
+
 /*
  * Ticks / Labels / Gridlines
  */
@@ -824,9 +858,15 @@ void Axes::determineLabelFormat(int axis)
 }
 
 // Return number format for specified axis
-NumberFormat& Axes::numberFormat(int axis)
+const NumberFormat& Axes::numberFormat(int axis) const
 {
 	return numberFormat_[axis];
+}
+
+// Set number format for specified axis
+void Axes::setNumberFormat(int axis, const NumberFormat& numberFormat)
+{
+	numberFormat_[axis] = numberFormat;
 }
 
 // Return whether to determine number format automatically for the specified axis
@@ -910,7 +950,7 @@ const char* Axes::title(int axis) const
 }
 
 // Set orientation of titles for specified axis
-void Axes::setTitleOrientation(int axis, int component, double value)
+void Axes::setTitleOrientationNEW(int axis, int component, double value)
 {
 	titleOrientation_[axis].set(component, value);
 
@@ -918,22 +958,46 @@ void Axes::setTitleOrientation(int axis, int component, double value)
 }
 
 // Return orientation of titles for specified axis
-Vec4<double> Axes::titleOrientation(int axis) const
+Vec3<double> Axes::titleOrientation(int axis) const
 {
 	if (useBestFlatView_ && parentView_.isFlatView()) switch (parentView_.viewType())
 	{
 		case (View::FlatXYView):
-			return (axis == 0 ? Vec4<double>(0.0, 0.0, 0.2, 0.5) : Vec4<double>(0.0, 270.0, 0.2, 0.5));
+			return (axis == 0 ? Vec3<double>(0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
 		case (View::FlatXZView):
-			return (axis == 0 ? Vec4<double>(270.0, 0.0, 0.2, 0.5) : Vec4<double>(270.0, 90.0, 0.2, 0.5));
+			return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.0) : Vec3<double>(270.0, 0.0, 90.0));
 		case (View::FlatZYView):
-			return (axis == 1 ? Vec4<double>(90.0, 90.0, 0.2, 0.5) : Vec4<double>(90.0, 0.0, 0.2, 0.5));
+			return (axis == 1 ? Vec3<double>(0.0, 90.0, 90.0) : Vec3<double>(0.0, 90.0, 0.0));
 		default:
 			break;
 	}
 
 	// Safety catch
 	return titleOrientation_[axis];
+}
+
+// Set title distance from axis
+void Axes::setTitleDistance(int axis, double distance)
+{
+	titleDistances_.set(axis, distance);
+}
+
+// Return title distance from axis
+double Axes::titleDistance(int axis) const
+{
+	return titleDistances_.get(axis);
+}
+
+// Set title horizontal offset
+void Axes::setTitleHorizontalOffset(int axis, double offset)
+{
+	titleHorizontalOffsets_.set(axis, offset);
+}
+
+// Return title horizontal offset
+double Axes::titleHorizontalOffset(int axis) const
+{
+	return titleHorizontalOffsets_.get(axis);
 }
 
 // Set axis title text anchor position for specified axis
@@ -1114,19 +1178,22 @@ void Axes::updateAxisPrimitives()
 		if (parentView_.viewType() == View::FlatZYView) labelTransform.applyPreRotationY(labelOrientation(axis).x);
 		else labelTransform.applyPreRotationX(labelOrientation(axis).x);
 		// -- 2) Perform in-plane rotation
-		if (inPlaneAxis == 0) labelTransform.applyPreRotationX(labelOrientation(axis).y);
-		else if (inPlaneAxis == 1) labelTransform.applyPreRotationY(labelOrientation(axis).y);
+		if (parentView_.viewType() == View::FlatZYView) labelTransform.applyPreRotationX(labelOrientation(axis).y);
+		else if (parentView_.viewType() == View::FlatXZView) labelTransform.applyPreRotationY(labelOrientation(axis).y);
 		else labelTransform.applyPreRotationZ(labelOrientation(axis).y);
 
 		// Create axis title transformation matrix
 		titleTransform.setIdentity();
-		// -- 1) Apply axial rotation along label left-to-right direction
-		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationY(titleOrientation(axis).x);
-		else titleTransform.applyPreRotationX(titleOrientation(axis).x);
-		// -- 2) Perform in-plane rotation
-		if (inPlaneAxis == 0) titleTransform.applyPreRotationX(titleOrientation(axis).y);
-		else if (inPlaneAxis == 1) titleTransform.applyPreRotationY(titleOrientation(axis).y);
-		else titleTransform.applyPreRotationZ(titleOrientation(axis).y);
+// 		// -- 1) Apply axial rotation along label left-to-right direction
+// 		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationY(titleOrientation(axis).x);
+// 		else titleTransform.applyPreRotationX(titleOrientation(axis).x);
+// 		// -- 2) Perform in-plane rotation
+// 		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationX(titleOrientation(axis).y);
+// 		else if (inPlaneAxis == 1) titleTransform.applyPreRotationY(titleOrientation(axis).y);
+// 		else titleTransform.applyPreRotationZ(titleOrientation(axis).y);
+		titleTransform.applyPreRotationX(titleOrientation(axis).x);
+		titleTransform.applyPreRotationY(titleOrientation(axis).y);
+		titleTransform.applyPreRotationZ(titleOrientation(axis).z);
 
 		// Add axis labels
 		if (logarithmic_[axis])
@@ -1242,12 +1309,12 @@ void Axes::updateAxisPrimitives()
 		u = coordMin_[axis];
 		if (logarithmic_[axis])
 		{
-			value = log10(min_[axis]) + log10(max_[axis]/min_[axis]) * titleOrientation_[axis].w;
+			value = log10(min_[axis]) + log10(max_[axis]/min_[axis]) * titleHorizontalOffsets_[axis];
 			u.set(axis, (inverted_[axis] ? log10(max_[axis])-value : value) * stretch_[axis]);
 		}
 		else
 		{
-			value = min_[axis] + (max_[axis] - min_[axis]) * titleOrientation(axis).w;
+			value = min_[axis] + (max_[axis] - min_[axis]) * titleHorizontalOffsets_[axis];
 			u.set(axis, (inverted_[axis] ? (max_[axis] - value) + min_[axis]: value) * stretch_[axis]);
 		}
 		// -- Next step depends on whether we are automatically adjusting label positions
@@ -1257,7 +1324,7 @@ void Axes::updateAxisPrimitives()
 			// Project tick direction onto cuboid width/height
 			// TODO This does not account for the fact that the bounding cuboid may only partly extend over the end of ths axis tick mark (e.g. as with in-plane rotations/TopMiddle anchors)...
 			Vec3<double> extent = cuboid.maxima() - cuboid.minima();
-			extent.multiply(tickDir);
+			extent.multiply(tickDir.x, tickDir.y, tickDir.z);
 			// -- Add on extra distance from tick mark
 			u += tickDir * (tickSize_[axis]);
 			// -- Create adjustment vector. Start by adding space between tickmark, label text, and title text
@@ -1267,7 +1334,7 @@ void Axes::updateAxisPrimitives()
 			// -- Scaling will be done by the title point size in TextPrimitive, but all our adjustments were done with label point size, so scale it...
 			adjustment *= parentView_.labelPointSize() / parentView_.titlePointSize();
 		}
-		else adjustment = tickDir * titleOrientation(axis).z;
+		else adjustment = tickDir * titleDistances_[axis];
 
 		// -- Add primitive
 		titlePrimitives_[axis].add(fontInstance_, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parentView_.titlePointSize(), parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
@@ -1404,25 +1471,25 @@ Primitive& Axes::gridLineMajorPrimitive(int axis)
 }
 
 // Set major gridline style
-void Axes::setGridLineMajorStyle(int axis, LineStyle style)
+void Axes::setGridLineMajorStyle(int axis, const LineStyle& style)
 {
 	gridLineMajorStyle_[axis] = style;
 }
 
 // Return major GridLine style
-LineStyle& Axes::gridLineMajorStyle(int axis)
+const LineStyle& Axes::gridLineMajorStyle(int axis) const
 {
 	return gridLineMajorStyle_[axis];
 }
 
 // Set minor gridline style
-void Axes::setGridLineMinorStyle(int axis, LineStyle style)
+void Axes::setGridLineMinorStyle(int axis, const LineStyle& style)
 {
 	gridLineMinorStyle_[axis] = style;
 }
 
 // Return minor GridLine style
-LineStyle& Axes::gridLineMinorStyle(int axis)
+const LineStyle& Axes::gridLineMinorStyle(int axis) const
 {
 	return gridLineMinorStyle_[axis];
 }

@@ -48,7 +48,7 @@ void SpeciesTorsion::clear()
 	j_ = NULL;
 	k_ = NULL;
 	l_ = NULL;
-	form_ = SpeciesTorsion::nTorsionFunctions;
+	form_ = SpeciesTorsion::NoForm;
 }
 
 /*
@@ -185,33 +185,20 @@ bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Spe
  * Interaction Parameters
  */
 
-// Torsion function keywords
-const char* TorsionFunctionKeywords[] = { "Cos", "Cos3", "Cos4", "Cos3C", "UFFCosine" };
-int TorsionFunctionNParameters[] = { 4, 3, 4, 4, 3 };
-
-// Convert string to functional form
-SpeciesTorsion::TorsionFunction SpeciesTorsion::torsionFunction(const char* s)
+// Return enum options for TorsionFunction
+EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
-	for (int n=0; n<SpeciesTorsion::nTorsionFunctions; ++n) if (DissolveSys::sameString(s, TorsionFunctionKeywords[n])) return (SpeciesTorsion::TorsionFunction) n;
-	return SpeciesTorsion::nTorsionFunctions;
-}
+	static EnumOptionsList TorsionFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesTorsion::NoForm, 		"None",		0,0) <<
+		EnumOption(SpeciesTorsion::CosineForm, 		"Cos",		4,4) <<
+		EnumOption(SpeciesTorsion::Cos3Form, 		"Cos3",		3,3) <<
+		EnumOption(SpeciesTorsion::Cos4Form, 		"Cos4",		4,4) <<
+		EnumOption(SpeciesTorsion::Cos3CForm, 		"Cos3C",	4,4) <<
+		EnumOption(SpeciesTorsion::UFFCosineForm, 	"UFFCosine",	3,3);
 
-// Return functional form text
-const char* SpeciesTorsion::torsionFunction(SpeciesTorsion::TorsionFunction func)
-{
-	return TorsionFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
 
-// Return functional form array
-const char** SpeciesTorsion::torsionFunctions()
-{
-	return TorsionFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
-{
-	return TorsionFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters
@@ -241,7 +228,8 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 	// Convert torsion angle from degrees to radians
 	double phi = angleInDegrees / DEGRAD;
 
-	if (form() == SpeciesTorsion::CosineForm)
+	if (form() == SpeciesTorsion::NoForm) return 0.0;
+	else if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
 		 * U(phi) = k * (1 + s*cos(n*phi - eq))
@@ -305,7 +293,7 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		return 0.5 * params[0] * (1.0 - cos(params[1]*params[2]/DEGRAD) * cos(params[1]*phi));
 	}
 
-	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesTorsion term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -319,7 +307,8 @@ double SpeciesTorsion::force(double angleInDegrees) const
 	double phi = angleInDegrees / DEGRAD;
 	double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
 
-	if (form() == SpeciesTorsion::CosineForm)
+	if (form() == SpeciesTorsion::NoForm) return 0.0;
+	else if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
 		 * dU/dphi = k * n * s * -sin(n*phi - eq)
@@ -383,7 +372,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		return 0.5 * params[0] * params[0] * cos(params[1]*params[2]/DEGRAD) * params[1] * sin(params[1]*phi);
 	}
 
-	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesTorsion term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 

@@ -20,48 +20,14 @@
 */
 
 #include "modules/test/gui/modulewidget.h"
+#include "modules/test/test.h"
 
 // Constructor
-TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+TestModuleWidget::TestModuleWidget(QWidget* parent, TestModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-
-// Update controls within widget
-void TestModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void TestModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void TestModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool TestModuleWidget::writeState(LineParser& parser)
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool TestModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
 

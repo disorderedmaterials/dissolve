@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>353</width>
+    <width>522</width>
     <height>220</height>
    </rect>
   </property>
@@ -40,15 +40,18 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="QGroupBox" name="PaletteGroup">
+      <widget class="QGroupBox" name="ModulePaletteGroup">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Drag modules from here to a specific position in the list, or double-click to append</string>
+       </property>
        <property name="title">
-        <string>Palette</string>
+        <string>Module Palette</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
@@ -117,32 +120,98 @@
       </widget>
      </item>
      <item>
-      <widget class="QScrollArea" name="ChartScrollArea">
+      <widget class="QGroupBox" name="ModulesGroup">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Current Modules</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QScrollArea" name="ChartScrollArea">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="LayerScrollAreaContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>95</width>
+             <height>190</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="DetailsGroup">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
+       <property name="title">
+        <string>Module Details</string>
        </property>
-       <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
-       </property>
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <widget class="QWidget" name="LayerScrollAreaContents">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>73</width>
-          <height>216</height>
-         </rect>
+       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
+        <property name="spacing">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="ModuleControlWidget" name="ControlsWidget" native="true"/>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -154,6 +223,12 @@
    <class>MimeTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/widgets/mimetreewidget.hui</header>
+  </customwidget>
+  <customwidget>
+   <class>ModuleControlWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/modulecontrolwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

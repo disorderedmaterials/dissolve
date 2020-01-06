@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSEMODULEWIDGET_H
-#define DISSOLVE_ANALYSEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ANALYSE_H
+#define DISSOLVE_MODULEWIDGET_ANALYSE_H
 
 #include "modules/analyse/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -36,39 +36,21 @@ class AnalyseModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor
+	AnalyseModuleWidget(QWidget* parent, AnalyseModule* module, const CoreData& coreData);
+
 	private:
 	// Associated Module
 	AnalyseModule* module_;
 
-	public:
-	// Constructor
-	AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData);
-	// Main form declaration
-	Ui::AnalyseModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
-
 
 	/*
-	 * ModuleWidget Implementations
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-
-	/*
-	 * Widgets / Functions
+	 * UI
 	 */
 	private:
-
-	private slots:
+	// Main form declaration
+	Ui::AnalyseModuleWidget ui_;
 };
 
 #endif

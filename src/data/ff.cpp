@@ -124,6 +124,21 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	return NULL;
 }
 
+// Return the ForcefieldAtomType with specified id (if it exists)
+ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
+{
+	int startZ = (element ? element->Z() : 0);
+	int endZ = (element ? element->Z() : nElements()-1);
+	for (int Z=startZ; Z<=endZ; ++Z)
+	{
+		// Go through types associated to the Element
+		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
+		while (ForcefieldAtomType* type = typeIterator.iterate()) if (type->index() == id) return type;
+	}
+
+	return NULL;
+}
+
 /*
  * Term Data
  */
@@ -218,9 +233,26 @@ bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExist
 				at->parameters() = atomType->parameters();
 				at->setShortRangeType(shortRangeType());
 
+				// The atomType may reference parameters, rather than owning them, so set charge explicitly
+				at->parameters().setCharge(atomType->charge());
+
 				Messenger::print("Adding AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
 			}
-			else Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
+			else
+			{
+				Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
+
+				// If the current atomtype is empty, set its parameters
+				if (at->parameters().isEmpty())
+				{
+					// Copy parameters from the Forcefield's atom type
+					at->parameters() = atomType->parameters();
+					at->setShortRangeType(shortRangeType());
+
+					// The atomType may reference parameters, rather than owning them, so set charge explicitly
+					at->parameters().setCharge(atomType->charge());
+				}
+			}
 
 			i->setAtomType(at);
 		}

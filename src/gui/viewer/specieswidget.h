@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESWIDGET_H
-#define DISSOLVE_SPECIESWIDGET_H
+#ifndef DISSOLVE_VIEWER_SPECIESWIDGET_H
+#define DISSOLVE_VIEWER_SPECIESWIDGET_H
 
 #include "gui/viewer/ui_specieswidget.h"
 
@@ -78,13 +78,11 @@ class SpeciesWidget : public QWidget
 	/*
 	 * Species Viewer
 	 */
-	private:
-	// Return contained SpeciesViewer
-	SpeciesViewer* speciesViewer();
-
 	public:
 	// Set target Species, updating widget as necessary
 	void setSpecies(Species* sp);
+	// Return contained SpeciesViewer
+	SpeciesViewer* speciesViewer();
 
 
 	/*

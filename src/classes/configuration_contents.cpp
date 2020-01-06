@@ -127,6 +127,22 @@ double Configuration::atomicDensity() const
 	return nAtoms() / box_->volume();
 }
 
+// Return the chemical density (g/cm3) of the Configuration
+double Configuration::chemicalDensity() const
+{
+	double density = 0.0;
+
+	// Get total molar mass in configuration
+	ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
+	while (SpeciesInfo* spInfo = speciesIterator.iterate()) density += spInfo->species()->mass() * spInfo->population();
+
+	// Convert to absolute mass, and divide by box volume
+	density /= AVOGADRO;
+	density /= (box_->volume() / 1.0E24);
+
+	return density;
+}
+
 // Return version of current contents
 int Configuration::contentsVersion() const
 {
@@ -224,4 +240,32 @@ Atom* Configuration::atom(int n)
 	}
 #endif
 	return atoms_[n];
+}
+
+// Scale geometric centres of molecules within box
+void Configuration::scaleMoleculeCentres(double factor)
+{
+	Vec3<double> oldCog, newCog, newPos;
+	for (int n=0; n<molecules_.nItems(); ++n)
+	{
+		// Get Molecule pointer
+		Molecule* mol = molecules_[n];
+
+		// First, work out the centre of geometry of the Molecule, and fold it into the Box
+		oldCog = box()->fold(mol->centreOfGeometry(box()));
+
+		// Scale centre of geometry by supplied factor
+		newCog = oldCog * factor;
+
+		// Loop over Atoms in Molecule, setting new coordinates as we go
+		for (int m=0; m<mol->nAtoms(); ++m)
+		{
+			// Get Atom pointer
+			Atom* i = mol->atom(m);
+
+			// Calculate and set new position
+			newPos = newCog + box()->minimumVector(i->r(), oldCog);
+			i->setCoordinates(newPos);
+		}
+	}
 }

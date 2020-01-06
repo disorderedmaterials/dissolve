@@ -3,12 +3,30 @@
 $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe ui", arial, sans-serif;
 // $mono-font-family: "SFMono-Regular", Menlo, Consolas, Monospace;
 
+/*
+ * Images / Figures
+ */
+
 // Centred image
 .img-centre {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
+
+img + em {
+  font-size: 80%;
+  width: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/*
+ * Buttons
+ */
 
 // Right-aligned button
 .btn.right {
@@ -108,6 +126,13 @@ blockquote.action_tabs::before {
   background-image: url(action-tabs.svg);
 }
 
+// Action (Groups)
+blockquote.action_groups::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(action-groups.svg);
+}
+
 // Action (Menu)
 blockquote.action_menu {
   font-weight: bold;
@@ -119,6 +144,8 @@ blockquote.action_menu::before {
 
 // Action (Mouse)
 blockquote.action_mouse::before {
+  left: 10px;
+  top: 8px;
   background-image: url(action-mouse.svg);
 }
 
@@ -127,6 +154,8 @@ blockquote.action_key {
   font-weight: bold;
 }
 blockquote.action_key::before {
+  left: 10px;
+  top: 8px;
   background-image: url(action-key.svg);
 }
 

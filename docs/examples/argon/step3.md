@@ -12,7 +12,7 @@ A configuration represents the target system using one or more of the available 
 
 Configurations in Dissolve are created from a sequence of instructions that define box shape and size, the populations of species to add etc. This permits Dissolve to automatically regenerate configurations when it needs to, and is particularly useful when screening structures with variable parameters (density, composition, pore size etc.).
 
-Dissolve provides several standard generators for common-use cases, one of which we will use now.
+Dissolve provides several standard configuration generators for common-use cases, one of which we will use now.
 
 > Configuration &#8680; Create... &#8680; Simple random mix
 {: .action .action_menu}
@@ -23,11 +23,11 @@ You will now see that the _Generator_{: .text-green-100} section has been popula
 
 | Node | Purpose |
 |------|---------|
-| [`Parameters`](/userguide/nodes/parameters) | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. |
+| [`Parameters`](/userguide/nodes/parameters) | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one (floating point) value called `rho` which defines the density of the configuration. Note that `rho` is just a number and has no associated units - these are specified in the [`AddSpecies`](/userguide/nodes/addspecies) node. |
 | [`Box`](/userguide/nodes/box)   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
-| [`AddSpecies`](/userguide/nodes/addspecies) | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified for the species, and is used when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 &#8491;<sup>3</sup>) but the full population of molecules will still be added. |
+| [`AddSpecies`](/userguide/nodes/addspecies) | Adds a number of copies of the specified species to the configuration. The option _ScaleBox_{: .text-green-100} controls whether the box volume should be scaled to give the density specified once the species has been added, and is most useful when supplying relative box lengths. If turned off, the box would remain at its current size (defaulting to 1.0 &#8491;<sup>3</sup>) but the full population of molecules will still be added. |
 
-In the `AddSpecies` node note how we have used the `rho` parameter for the density.
+In the `AddSpecies` node note how we have reference the `rho` parameter for the density. Many numerical values for nodes 
 
 > Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.
 {: .tip}

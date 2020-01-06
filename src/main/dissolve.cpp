@@ -33,6 +33,10 @@
 #include "genericitems/item.h"
 #include "genericitems/items.h"
 
+// Static Members (ObjectInfo)
+bool ObjectInfo::autoSuffixing_ = false;
+CharString ObjectInfo::autoSuffix_;
+
 // Constructor
 Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {
@@ -105,7 +109,7 @@ void Dissolve::clear()
 	seed_ = -1;
 	restartFileFrequency_ = 10;
 	processingLayers_.clear();
-	processingModuleData_.clear();
+	processingModuleData_.clearAll();
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
 
@@ -145,7 +149,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram2D>(Histogram2D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram3D>(Histogram3D::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Isotopologues>(Isotopologues::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));

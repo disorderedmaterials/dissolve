@@ -20,12 +20,13 @@
 */
 
 #include "modules/atomshake/gui/modulewidget.h"
+#include "modules/atomshake/atomshake.h"
 
 // Constructor
-AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
@@ -34,39 +35,4 @@ AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : 
 AtomShakeModuleWidget::~AtomShakeModuleWidget()
 {
 }
-
-// Update controls within widget
-void AtomShakeModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void AtomShakeModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void AtomShakeModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool AtomShakeModuleWidget::writeState(LineParser& parser)
-{
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool AtomShakeModuleWidget::readState(LineParser& parser)
-{
-	return true;
-}
-
-/*
- * Widgets / Functions
- */
 

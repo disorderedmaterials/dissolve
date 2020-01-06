@@ -22,16 +22,30 @@ addons:
       - ftgl
       - ninja
 
+services:
+  - docker
+
 # Add updated Qt libs (serial build only)
 before_install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo add-apt-repository ppa:beineri/opt-qt-5.12.3-xenial -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get update -q; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get install qt512base -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "false" ]]; then brew install qt5; fi
+  - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "true" ]]; then brew install open-mpi; fi
 
 # Build Stages
 jobs:
   include:
+    - stage: Windows Build
+      name: Serial, GUI
+      env: PARALLEL=false
+      os: windows
+      script:
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.qt5.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.prereq.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.freetype.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ftgl.ps1
+        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ps1
     - stage: Linux Build
       name: Serial, GUI
       env: PARALLEL=false
@@ -86,11 +100,26 @@ jobs:
       name: Serial, GUI
       env: PARALLEL=false
       os: osx
+      cache:
+        directories:
+          - artifacts
       script: ./ci/osx.highsierra/build.serial.gui
+      before_deploy:
+        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
+        - chmod u+x ./travis-deploy
+      deploy:
+        provider: script
+        skip_cleanup: true
+        on:
+          all_branches: true
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/Dissolve-GUI*dmg
     - stage: OSX Build / Deploy
       name: Parallel
       env: PARALLEL=true
       os: osx
+      cache:
+        directories:
+          - artifacts
       script: ./ci/osx.highsierra/build.parallel
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
@@ -100,7 +129,7 @@ jobs:
         skip_cleanup: true
         on:
           all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*dmg
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/Dissolve*dmg
 
 # Branch Safelist (allow only develop and version-tagged builds)
 branches:
@@ -110,6 +139,7 @@ branches:
 
 # Build Stage Order
 stages:
+  - Windows Build
   - OSX Build / Deploy
   - Linux Build
   - Linux Test / Deploy

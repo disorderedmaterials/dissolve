@@ -39,8 +39,8 @@ const char* SanityCheckModule::brief() const
 	return "Perform data sanity checks across all processes";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int SanityCheckModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int SanityCheckModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }

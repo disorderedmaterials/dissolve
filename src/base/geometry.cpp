@@ -27,6 +27,10 @@
 // Constructor
 Geometry::Geometry()
 {
+	indices_[0] = -1;
+	indices_[1] = -1;
+	indices_[2] = -1;
+	indices_[3] = -1;
 	value_ = 0.0;
 }
 

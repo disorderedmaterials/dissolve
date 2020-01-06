@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_AXES_H
-#define DISSOLVE_AXES_H
+#ifndef DISSOLVE_RENDER_AXES_H
+#define DISSOLVE_RENDER_AXES_H
 
 #include "gui/viewer/render/numberformat.h"
 #include "gui/viewer/render/primitive.h"
@@ -32,6 +32,7 @@
 #include "templates/vector3.h"
 #include "templates/vector4.h"
 #include "templates/array.h"
+
 
 // Forward Declarations
 class View;
@@ -108,7 +109,7 @@ class Axes
 	// Return real axis range (accounting for log axes)
 	double realRange(int axis) const;
 	// Ensure a sensible (non-zero) range, modifying the supplied values
-	static void ensureSensibleRange(double& minValue, double& maxValue, bool expandOnlyIfZero = true, double expansionFactor = -1.0);
+	static void ensureSensibleRange(double& minValue, double& maxValue, bool alwaysExpand = false, double expansionFactor = -1.0);
 	// Return central value of axes
 	Vec3<double> centre() const;
 	// Return real axis minimum (accounting for log axes)
@@ -185,6 +186,15 @@ class Axes
 	void transformY(Array<double>& yArray) const;
 	// Return supplied data z value in local axes coordinates
 	double transformZ(double z) const;
+	// Transform entire array of values into local axes coordinates
+	void transformZ(Array<double>& zArray) const;
+	// Transform a 2D array of values into local axes coordinates
+	void transformX(Array2D<double>& xArray) const;
+	// Transform a 2D array of values into local axes coordinates
+	void transformY(Array2D<double>& yArray) const;
+	// Transform a 2D array of values into local axes coordinates
+	void transformZ(Array2D<double>& zArray) const;
+	
 
 
 	/*
@@ -249,8 +259,12 @@ class Axes
 	TextPrimitive::TextAnchor labelAnchor_[3];
 	// Axis titles
 	CharString title_[3];
-	// Orientation of axis titles (axial rot, in-plane rot, distance, h-offset)
-	Vec4<double> titleOrientation_[3];
+	// Orientation of axis titles (rotations around x, y, and z axes)
+	Vec3<double> titleOrientation_[3];
+	// Title distances from axes
+	Vec3<double> titleDistances_;
+	// Title horizontal offsets
+	Vec3<double> titleHorizontalOffsets_;
 	// Axis title text anchor positions
 	TextPrimitive::TextAnchor titleAnchor_[3];
 
@@ -260,7 +274,9 @@ class Axes
 
 	public:
 	// Return number format for specified axis
-	NumberFormat& numberFormat(int axis);
+	const NumberFormat& numberFormat(int axis) const;
+	// Set number format for specified axis
+	void setNumberFormat(int axis, const NumberFormat& numberFormat);
 	// Return whether to determine number format automatically for the specified axis
 	bool autoNumberFormat(int axis) const;
 	// Set whether to determine number format automatically for the specified axis
@@ -278,9 +294,17 @@ class Axes
 	// Return title for specified axis
 	const char* title(int axis) const;
 	// Set orientation of titles for specified axis
-	void setTitleOrientation(int axis, int component, double value);
+	void setTitleOrientationNEW(int axis, int component, double value);
 	// Return orientation of titles for specified axis
-	Vec4<double> titleOrientation(int axis) const;
+	Vec3<double> titleOrientation(int axis) const;
+	// Set title distance from axis
+	void setTitleDistance(int axis, double distance);
+	// Return title distance from axis
+	double titleDistance(int axis) const;
+	// Set title horizontal offset
+	void setTitleHorizontalOffset(int axis, double offset);
+	// Return title horizontal offset
+	double titleHorizontalOffset(int axis) const;
 	// Set axis title text anchor position for specified axis
 	void setTitleAnchor(int axis, TextPrimitive::TextAnchor anchor);
 	// Return axis title text anchor position for specified axis
@@ -386,13 +410,13 @@ class Axes
 	// Return major gridline primitive for axis specified
 	Primitive& gridLineMinorPrimitive(int axis);
 	// Set major gridline style
-	void setGridLineMajorStyle(int axis, LineStyle style);
+	void setGridLineMajorStyle(int axis, const LineStyle& style);
 	// Return major gridline style
-	LineStyle& gridLineMajorStyle(int axis);
+	const LineStyle& gridLineMajorStyle(int axis) const;
 	// Set minor gridline style
-	void setGridLineMinorStyle(int axis, LineStyle style);
+	void setGridLineMinorStyle(int axis, const LineStyle& style);
 	// Return minor gridline style
-	LineStyle& gridLineMinorStyle(int axis);
+	const LineStyle& gridLineMinorStyle(int axis) const;
 };
 
 #endif

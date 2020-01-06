@@ -27,10 +27,10 @@
 CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set up RDF graph
-	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
+	rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
 
 	View& view = rdfGraph_->view();
 	view.setViewType(View::FlatXYView);
@@ -39,10 +39,9 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	view.axes().setTitle(1, "g(r)");
 	view.axes().setMin(1, 0.0);
 	view.axes().setMax(1, 1.0);
-	rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	view.setAutoFollowType(View::AllAutoFollow);
 
-	setGraphDataTargets(module_);
+	setGraphDataTargets();
 
 	updateControls();
 
@@ -52,27 +51,17 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 // Update controls within widget
 void CalculateRDFModuleWidget::updateControls(int flags)
 {
-	ui.RDFPlotWidget->updateToolbar();
+	ui_.RDFPlotWidget->updateToolbar();
 
 	rdfGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalculateRDFModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalculateRDFModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool CalculateRDFModuleWidget::writeState(LineParser& parser)
+bool CalculateRDFModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;
@@ -94,10 +83,12 @@ bool CalculateRDFModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
+void CalculateRDFModuleWidget::setGraphDataTargets()
 {
 	// Remove any current data
 	rdfGraph_->clearRenderables();
+
+	if (!module_) return;
 
 	// Loop over Configuration targets in Module
 	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
@@ -105,6 +96,6 @@ void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 	{
 		// Calculated RDF
 		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
-		rdf->setColour(StockColours::BlackStockColour);
+		rdf->setColour(StockColours::BlueStockColour);
 	}
 }

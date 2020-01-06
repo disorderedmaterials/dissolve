@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_MAINTAB_H
 #define DISSOLVE_MAINTAB_H
 
-#include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"
+#include "base/lock.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QString>
@@ -34,9 +34,9 @@
 class Dissolve;
 class DissolveWindow;
 class LineParser;
+class MainTabsWidget;
 class QLayout;
 class QMdiArea;
-class QTabWidget;
 class QWidget;
 
 // Base Tab
@@ -44,7 +44,7 @@ class MainTab
 {
 	public:
 	// Constructor / Destructor
-	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, QWidget* page);
+	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
 	// Tab Types
 	enum TabType { ConfigurationTabType, ForcefieldTabType, LayerTabType, ModuleTabType, SpeciesTabType, WorkspaceTabType };
@@ -60,8 +60,8 @@ class MainTab
 	Dissolve& dissolve_;
 	// Pointer to main window
 	DissolveWindow* dissolveWindow_;
-	// Tab widget in which this tab is contained
-	QTabWidget* tabWidget_;
+	// MainTabsWidget in which this tab is contained
+	MainTabsWidget* tabWidget_;
 	// Page widget
 	QWidget* page_;
 	// Unique title (name) of tab
@@ -76,20 +76,30 @@ class MainTab
 	virtual TabType type() const = 0;
 	// Return page widget
 	QWidget* page() const;
-	// Return whether the title of the tab can be changed
-	virtual bool canChangeTitle() const;
-	// Rename tab through suitable dialog / widget
-	bool rename();
 	// Return title of tab
 	const char* title() const;
+
+
+	/*
+	 * Management
+	 */
+	protected:
+	// Return whether the title of the tab can be changed
+	virtual bool canChangeTitle() const;
+
+	public:
+	// Rename tab through suitable dialog / widget
+	bool rename();
+	// Return whether the tab can be closed (after any necessary user querying, etc.)
+	virtual bool canClose() const;
 
 
 	/*
 	 * Update
 	 */
 	protected:
-	// Whether the tab is currently refreshing
-	bool refreshing_;
+	// Lock for widget refresh
+	Lock refreshLock_;
 
 	public:
 	// Update controls in tab
@@ -104,10 +114,10 @@ class MainTab
 	 * State
 	 */
 	public:
+	// Write widget state through specified LineParser
+	virtual bool writeState(LineParser& parser) const = 0;
 	// Read widget state through specified LineParser
 	virtual bool readState(LineParser& parser, const CoreData& coreData) = 0;
-	// Write widget state through specified LineParser
-	virtual bool writeState(LineParser& parser) = 0;
 };
 
 #endif

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYMODULEWIDGET_H
-#define DISSOLVE_ENERGYMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ENERGY_H
+#define DISSOLVE_MODULEWIDGET_ENERGY_H
 
 #include "modules/energy/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -39,34 +39,36 @@ class EnergyModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	EnergyModuleWidget(QWidget* parent, EnergyModule* module);
+	~EnergyModuleWidget();
+
 	private:
 	// Associated Module
 	EnergyModule* module_;
 	// DataViewer contained within this widget
 	DataViewer* energyGraph_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
-
-	public:
-	// Constructor / Destructor
-	EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~EnergyModuleWidget();
-	// Main form declaration
-	Ui::EnergyModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::EnergyModuleWidget ui_;
+
+	public:
+	// Update controls within widget
+	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
+
+
+	/*
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

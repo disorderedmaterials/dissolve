@@ -20,48 +20,14 @@
 */
 
 #include "modules/skeleton/gui/modulewidget.h"
+#include "modules/skeleton/skeleton.h"
 
 // Constructor
-SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, SkeletonModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-
-// Update controls within widget
-void SkeletonModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void SkeletonModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void SkeletonModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool SkeletonModuleWidget::writeState(LineParser& parser)
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool SkeletonModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
 

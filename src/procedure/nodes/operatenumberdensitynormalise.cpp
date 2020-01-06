@@ -1,6 +1,6 @@
 /*
 	*** Procedure Node - Operate Number Density Normalise
-	*** src/procedure/nodes/operatenumberdensitynormaliser.cpp
+	*** src/procedure/nodes/operatenumberdensitynormalise.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -32,13 +32,13 @@
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
 }
 
-OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(RefList<SelectProcedureNode> selectNodes) : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
+OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes) : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
 
 	selectNodes_ = selectNodes;
 }
@@ -55,8 +55,8 @@ OperateNumberDensityNormaliseProcedureNode::~OperateNumberDensityNormaliseProced
 // Operate on Data1D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
+	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
+	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	return true;
 }
@@ -64,8 +64,8 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool& proc
 // Operate on Data2D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
+	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
+	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	return true;
 }
@@ -73,8 +73,8 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool& proc
 // Operate on Data3D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
+	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
+	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	return true;
 }

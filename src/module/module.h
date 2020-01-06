@@ -63,6 +63,13 @@ class Module : public ListItem<Module>
 	CharString uniqueName_;
 
 	public:
+	// Target Configurations Enum
+	enum TargetConfigurationNumber
+	{
+		OneOrMoreTargets = -1,
+		ZeroTargets = 0,
+		ExactlyOneTarget = 1
+	};
 	// Return type of Module
 	virtual const char* type() const = 0;
 	// Return category for Module
@@ -73,8 +80,8 @@ class Module : public ListItem<Module>
 	const char* uniqueName() const;
 	// Return brief description of Module
 	virtual const char* brief() const = 0;
-	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	virtual int nTargetableConfigurations() const = 0;
+	// Return the number of Configuration targets this Module requires
+	virtual int nRequiredTargets() const = 0;
 
 
 	/*
@@ -123,7 +130,9 @@ class Module : public ListItem<Module>
 	// Set whether the Module is enabled
 	void setEnabled(bool b);
 	// Return whether the Module is enabled
-	bool enabled() const;
+	bool isEnabled() const;
+	// Return whether the Module is disabled
+	bool isDisabled() const;
 
 
 	/*
@@ -139,11 +148,13 @@ class Module : public ListItem<Module>
 	// Add Configuration target
 	bool addTargetConfiguration(Configuration* cfg);
 	// Add Configuration targets
-	bool addTargetConfigurations(List<Configuration>& configs);
+	bool addTargetConfigurations(const List<Configuration>& configs);
 	// Remove Configuration target
 	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations
 	int nTargetConfigurations() const;
+	// Return whether the number of targeted Configurations is valid
+	bool hasValidNTargetConfigurations(bool reportError = false) const;
 	// Return targeted Configurations
 	const RefList<Configuration>& targetConfigurations() const;
 	// Return if the specified Configuration is in the targets list
@@ -168,16 +179,6 @@ class Module : public ListItem<Module>
 	virtual bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing stage
 	bool executeProcessing(Dissolve& dissolve, ProcessPool& procPool);
-
-
-	/*
-	 * LogPoints
-	 */
-	protected:
-	// Logpoint for instance-local data
-	int logPoint_;
-	// Logpoint reflecting time of last broadcast of instance-local data
-	int broadcastPoint_;
 
 
 	/*

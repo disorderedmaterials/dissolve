@@ -117,12 +117,19 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = intWidget;
 		base = intWidget;
 	}
-	else if (type == KeywordBase::IsotopologueListData)
+	else if (type == KeywordBase::IsotopologueCollectionData)
 	{
-		IsotopologueReferenceListKeywordWidget* isotopologueRefListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keywordBase, coreData);
-		connect(isotopologueRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-		widget = isotopologueRefListWidget;
-		base = isotopologueRefListWidget;
+		IsotopologueCollectionKeywordWidget* isotopologueCollectionWidget = new IsotopologueCollectionKeywordWidget(NULL, keywordBase, coreData);
+		connect(isotopologueCollectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+		widget = isotopologueCollectionWidget;
+		base = isotopologueCollectionWidget;
+	}
+	else if (type == KeywordBase::ModuleData)
+	{
+		ModuleKeywordWidget* moduleWidget = new ModuleKeywordWidget(NULL, keywordBase, coreData);
+		connect(moduleWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+		widget = moduleWidget;
+		base = moduleWidget;
 	}
 	else if (type == KeywordBase::ModuleGroupsData)
 	{
@@ -180,6 +187,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
 	}
+	else if (type == KeywordBase::RangeData)
+	{
+		RangeKeywordWidget* rangeWidget = new RangeKeywordWidget(NULL, keywordBase, coreData);
+		connect(rangeWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+		widget = rangeWidget;
+		base = rangeWidget;
+	}
 	else if (type == KeywordBase::SpeciesData)
 	{
 		SpeciesKeywordWidget* speciesWidget = new SpeciesKeywordWidget(NULL, keywordBase, coreData);
@@ -193,6 +207,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		connect(speciesRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = speciesRefListWidget;
 		base = speciesRefListWidget;
+	}
+	else if (type == KeywordBase::SpeciesSiteData)
+	{
+		SpeciesSiteKeywordWidget* speciesSiteWidget = new SpeciesSiteKeywordWidget(NULL, keywordBase, coreData);
+		connect(speciesSiteWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+		widget = speciesSiteWidget;
+		base = speciesSiteWidget;
 	}
 	else if (type == KeywordBase::SpeciesSiteRefListData)
 	{
@@ -243,6 +264,9 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 // Set up keyword controls for specified keyword list
 void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData)
 {
+	// Clear existing item groups....
+	while (count() > 0) removeItem(0);
+
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<KeywordBase> remainingKeywords;
 	ListIterator<KeywordBase> keywordIterator(keywords.keywords());
@@ -277,6 +301,9 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 
 			if (!widget)
 			{
+				// WORKAROUND - Don't raise errors for datastore types (issue #36)
+				if ((keyword->type() == KeywordBase::Data1DStoreData) || (keyword->type() == KeywordBase::Data2DStoreData) || (keyword->type() == KeywordBase::Data3DStoreData)) continue;
+
 				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(), KeywordBase::keywordDataType(keyword->type()));
 				continue;
 			}

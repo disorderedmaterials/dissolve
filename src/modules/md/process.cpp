@@ -42,11 +42,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
-	}
+	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
@@ -93,12 +89,15 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		int stabilityResult = EnergyModule::checkStability(cfg);
-		if (stabilityResult == -1) return false;
-		else if (stabilityResult == 1)
+		if (onlyWhenEnergyStable)
 		{
-			Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
-			continue;
+			int stabilityResult = EnergyModule::checkStability(cfg);
+			if (stabilityResult == -1) return false;
+			else if (stabilityResult == 1)
+			{
+				Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
+				continue;
+			}
 		}
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)

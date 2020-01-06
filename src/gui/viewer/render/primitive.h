@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRIMITIVE_H
-#define DISSOLVE_PRIMITIVE_H
+#ifndef DISSOLVE_RENDER_PRIMITIVE_H
+#define DISSOLVE_RENDER_PRIMITIVE_H
 
 #include "gui/viewer/render/primitiveinstance.h"
 #include "math/matrix4.h"
@@ -61,7 +61,7 @@ class Primitive : public ListItem<Primitive>
 
 	public:
 	// Initialise primitive storage
-	void initialise(GLenum type, bool colourData);
+	void initialise(GLenum type, bool colourData, int arrayChunkSize = -1);
 	// Forget all data, leaving arrays intact
 	void forgetAll();
 	// Return number of vertices currently defined in primitive
@@ -70,6 +70,8 @@ class Primitive : public ListItem<Primitive>
 	int nDefinedIndices() const;
 	// Return whether vertex data contains colour information
 	bool colouredVertexData() const;
+	// Update mesh (recreate instance / VBO / display list) of primitive
+	void updateMesh();
 
 
 	/*
@@ -127,11 +129,15 @@ class Primitive : public ListItem<Primitive>
 	// Plot circle of specified radius
 	void circle(double radius, int nStacks, int nSegments, bool segmented);
 	// Create vertices of cross with specified width
-	void cross(double halfWidth, Matrix4& transform, const GLfloat* rgba = NULL);
+	void cross(double halfWidth);
 	// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
 	void orthorhomboid(double sizex = 1.0, double sizey = 1.0, double sizez = 1.0, int nSubs = 4, double ox = 0.0, double oy = 0.0, double oz = 0.0);
 	// Plot wireframe orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
 	void wireOrthorhomboid(double sizex = 1.0, double sizey = 1.0, double sizez = 1.0, double ox = 0.0, double oy = 0.0, double oz = 0.0);
+	// Plot basic axes object
+	void axes(double axisLength);
+	// Plot basic coloured axes object
+	void colouredAxes(double axisLength);
 };
 
 #endif

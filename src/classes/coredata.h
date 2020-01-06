@@ -206,7 +206,20 @@ class CoreData
 	RefList<Module> findModules(const char* moduleType) const;
 	// Search for and return any instance(s) of the specified List of Module types
 	RefList<Module> findModules(const CharStringList& moduleTypes) const;
+	// Search for and return any instance(s) of the templated module class
+	template <class M> RefList<M> findModulesByClass() const
+	{
+		RefList<M> modules;
 
+		RefListIterator<Module> moduleIterator(*moduleInstances_);
+		while (Module* module = moduleIterator.iterate())
+		{
+			M* castModule = dynamic_cast<M*>(module);
+			if (castModule) modules.append(castModule);
+		}
+
+		return modules;
+	}
 
 	/*
 	 * Input Filename

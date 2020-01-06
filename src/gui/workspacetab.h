@@ -24,6 +24,7 @@
 
 #include "gui/ui_workspacetab.h"
 #include "gui/maintab.h"
+#include "gui/gizmos/gizmo.h"
 
 // Forward Declarations
 class TMdiArea;
@@ -37,7 +38,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
 	public:
 	// Constructor / Destructor
-	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
+	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title);
 	~WorkspaceTab();
 	// Main form declaration
 	Ui::WorkspaceTab ui;
@@ -49,6 +50,8 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	public:
 	// Return tab type
 	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
 
@@ -66,57 +69,35 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
 
 	/*
-	 * MDI SubWindow Management
+	 * Gizmo Management
 	 */
 	private:
-	// MDI area widget
+	// MDI area containing our Gizmos
 	TMdiArea* mdiArea_;
-	// List of all current MDI sub-windows
-	List<SubWindow> subWindows_;
-
-	private:
-	// Find SubWindow from specified data pointer
-	SubWindow* subWindow(void* data);
+	// List of current Gizmos in the MDI area
+	List<Gizmo> gizmos_;
+	// List of all Gizmos across all workspaces
+	static RefList<Gizmo> allGizmos_;
 
 	private slots:
-	// Remove subWindow with specified title
-	void removeSubWindow(QString title);
+	// Remove Gizmo with specified unique name
+	void removeGizmo(QString uniqueName);
 
 	public:
-	// Remove window for specified data (as pointer) from this widget's MDI area
-	bool removeWindowFromMDIArea(void* windowContents);
-	// Return window for specified data (as pointer) in this widget's MDI area, if it exists
-	QMdiSubWindow* findMDIWindow(void* windowContents);
-	// Find SubWindow by title
-	SubWindow* findSubWindow(const char* title);
-	// Find SubWindow by SubWidget
-	SubWindow* findSubWindow(SubWidget* subWidget);
-	// Find SubWindow by data content
-	SubWindow* findSubWindow(void* windowData);
-	// Add SubWindow for widget containing specified data (as pointer)
-	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
-	// Remove SubWindow specified
-	void removeSubWindow(SubWindow* window);
+	// Return unique name for Gizmo based on basename provided
+	static const char* uniqueGizmoName(const char* base);
+	// Create Gizmo with specified type in this workspace
+	Gizmo* createGizmo(const char* type);
+	// Find Gizmo with unique name provided
+	static Gizmo* findGizmo(const char* uniqueName);
 
 
 	/*
 	 * Context Menu
 	 */
-	private:
-	// Create Module menu with specified QMenu as parent
-	void createContextMenu(QMenu* parent);
-
 	private slots:
-	// Module selected on context menu
-	void contextMenuModuleSelected(bool checked);
-	// General widget selected on context menu
-	void contextMenuWidgetSelected(bool checked);
-
-	public:
-	// Add ModuleControl widget to workspace
-	SubWindow* addModuleControlWidget(Module* module);
-	// Add named widget to workspace
-	SubWindow* addNamedWidget(const char* widgetName, const char* title);
+	// Create Gizmo from context menu item
+	void contextMenuAddGizmo(bool checked);
 
 	public slots:
 	// Custom context menu requested
@@ -130,7 +111,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 };
 
 #endif

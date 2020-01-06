@@ -51,21 +51,21 @@ class ModuleWidget : public QWidget
 		ResetGraphDataTargetsFlag = 1		/* Any renderables should be cleared and regenerated in viewers */
 	};
 	// Update controls within widget
-	virtual void updateControls(int flags = ModuleWidget::DefaultUpdateFlag) = 0;
+	virtual void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
-	virtual void disableSensitiveControls() = 0;
+	virtual void disableSensitiveControls();
 	// Enable sensitive controls within widget
-	virtual void enableSensitiveControls() = 0;
+	virtual void enableSensitiveControls();
 
 
 	/*
 	 * State I/O
 	 */
 	public:
-	// Write widget state through specified LineParser
-	virtual bool writeState(LineParser& parser) = 0;
 	// Read widget state through specified LineParser
-	virtual bool readState(LineParser& parser) = 0;
+	virtual bool readState(LineParser& parser);
+	// Write widget state through specified LineParser
+	virtual bool writeState(LineParser& parser) const;
 };
 
 #endif

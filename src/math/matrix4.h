@@ -82,9 +82,9 @@ class Matrix4
 	 */
 	public:
 	// Copy column contents to supplied Vec3
-	Vec3<double> columnAsVec3(int col);
+	Vec3<double> columnAsVec3(int col) const;
 	// Copy column contents to supplied Vec4
-	Vec4<double> columnAsVec4(int col);
+	Vec4<double> columnAsVec4(int col) const;
 	// Set specified row from supplied triplet of values
 	void setRow(int row, double x, double y, double z);
 	// Set specified row from supplied values
@@ -95,6 +95,8 @@ class Matrix4
 	void setColumn(int col, Vec3<double> vec, double w);
 	// Set specified column from supplied Vec4
 	void setColumn(int col, Vec4<double> vec);
+	// Set specified column from supplied Vec3
+	void setColumn(int col, Vec3<double> vec);
 	// Adjust specified column from supplied values
 	void adjustColumn(int col, double a, double b, double c, double d);
 	// Adjust specified column from supplied Vec3
@@ -102,7 +104,7 @@ class Matrix4
 	// Adjust specified column from supplied Vec4
 	void adjustColumn(int col, Vec4<double> vec);
 	// Calculate column magnitude
-	double columnMagnitude(int column);
+	double columnMagnitude(int column) const;
 	// Multiply single column by single value
 	void columnMultiply(int col, double d);
 	// Multiply first three columns by values in supplied vector
@@ -143,6 +145,10 @@ class Matrix4
 	void applyPreRotationZ(double angle);
 	// Apply axis rotation quaternion, premultiplying with current matrix
 	void applyPreRotationAxis(double ax, double ay, double az, double angle, bool normalise);
+	// Set rotation matrix
+	void setRotation(const Matrix3& rotation);
+	// Apply rotation matrix
+	void applyRotation(const Matrix3& B);
 
 
 	/*

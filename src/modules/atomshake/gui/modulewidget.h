@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMSHAKEMODULEWIDGET_H
-#define DISSOLVE_ATOMSHAKEMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
+#define DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
 
 #include "modules/atomshake/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Dissolve;
-class Module;
+class AtomShakeModule;
 
 // Module Widget
 class AtomShakeModuleWidget : public ModuleWidget
@@ -37,38 +36,20 @@ class AtomShakeModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	AtomShakeModule* module_;
 
 	public:
 	// Constructor / Destructor
-	AtomShakeModuleWidget(QWidget* parent, Module* module);
+	AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* module);
 	~AtomShakeModuleWidget();
-	// Main form declaration
-	Ui::AtomShakeModuleWidget ui;
-	// Update controls within widget
-	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-
-	/*
-	 * Widgets / Functions
+	 * UI
 	 */
 	private:
-
-	private slots:
+	// Main form declaration
+	Ui::AtomShakeModuleWidget ui_;
 };
 
 #endif

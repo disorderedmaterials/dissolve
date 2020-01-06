@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SQMODULEWIDGET_H
-#define DISSOLVE_SQMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_SQ_H
+#define DISSOLVE_MODULEWIDGET_SQ_H
 
 #include "modules/sq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -38,6 +38,11 @@ class SQModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	SQModuleWidget(QWidget* parent, SQModule* module, Dissolve& dissolve);
+	~SQModuleWidget();
+
 	private:
 	// Associated Module
 	SQModule* module_;
@@ -46,26 +51,25 @@ class SQModuleWidget : public ModuleWidget
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 
-	public:
-	// Constructor / Destructor
-	SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~SQModuleWidget();
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::SQModuleWidget ui;
+	Ui::SQModuleWidget ui_;
+
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-	// Disable sensitive controls within widget
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget
-	void enableSensitiveControls();
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

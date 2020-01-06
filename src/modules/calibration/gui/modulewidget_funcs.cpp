@@ -29,13 +29,13 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<CalibrationModule*>(module)), dissolve_(dissolve)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, CalibrationModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Grab our DataViewer widget
-	dataView_ = ui.PlotWidget->dataViewer();
+	dataView_ = ui_.PlotWidget->dataViewer();
 
 	// Set up the view
 	View& view = dataView_->view();
@@ -53,28 +53,22 @@ CalibrationModuleWidget::~CalibrationModuleWidget()
 {
 }
 
+/*
+ * UI
+ */
+
 // Update controls within widget
 void CalibrationModuleWidget::updateControls(int flags)
 {
 	dataView_->postRedisplay();
 }
 
-// Disable sensitive controls within widget
-void CalibrationModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void CalibrationModuleWidget::enableSensitiveControls()
-{
-}
-
 /*
- * ModuleWidget Implementations
+ * State I/O
  */
 
 // Write widget state through specified LineParser
-bool CalibrationModuleWidget::writeState(LineParser& parser)
+bool CalibrationModuleWidget::writeState(LineParser& parser) const
 {
 	// Write DataViewer session
 	if (!dataView_->writeSession(parser)) return false;
@@ -91,6 +85,3 @@ bool CalibrationModuleWidget::readState(LineParser& parser)
 	return true;
 }
 
-/*
- * Widgets / Functions
- */

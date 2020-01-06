@@ -23,49 +23,14 @@
 #include "modules/analyse/analyse.h"
 
 // Constructor
-AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData) : ModuleWidget(parent), module_(dynamic_cast<AnalyseModule*>(module))
+AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, AnalyseModule* module, const CoreData& coreData) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Set Procedure target
-	ui.EditorWidget->setUp(&module_->analyser(), coreData);
+	ui_.EditorWidget->setUp(&module_->analyser(), coreData);
 
 	refreshing_ = false;
 }
-
-// Update controls within widget
-void AnalyseModuleWidget::updateControls(int flags)
-{
-}
-
-// Disable sensitive controls within widget
-void AnalyseModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget
-void AnalyseModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool AnalyseModuleWidget::writeState(LineParser& parser)
-{
-	return false;
-}
-
-// Read widget state through specified LineParser
-bool AnalyseModuleWidget::readState(LineParser& parser)
-{
-	return false;
-}
-
-/*
- * Widgets / Functions
- */
 

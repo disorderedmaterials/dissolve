@@ -31,10 +31,6 @@ Module::Module()
 	frequency_ = 1;
 	enabled_ = true;
 	configurationLocal_ = true;
-
-	// LogPoints
-	logPoint_ = 0;
-	broadcastPoint_ = 0;
 }
 
 // Destructor
@@ -132,7 +128,7 @@ const char* Module::frequencyDetails(int iteration) const
 	static CharString result;
 
 	if (frequency_ < 0) return "NEGATIVE?";
-	else if (frequency_ == 0) return "disabled";
+	else if ((!enabled_) || (frequency_ == 0)) return "disabled";
 	else if (frequency_ == 1) return "every time";
 	else if ((iteration%frequency_) == 0) return "this iteration";
 	else
@@ -153,9 +149,15 @@ void Module::setEnabled(bool b)
 }
 
 // Return whether the Module is enabled
-bool Module::enabled() const
+bool Module::isEnabled() const
 {
 	return enabled_;
+}
+
+// Return whether the Module is disabled
+bool Module::isDisabled() const
+{
+	return !enabled_;
 }
 
 /*
@@ -166,25 +168,40 @@ bool Module::enabled() const
 bool Module::addTargetConfiguration(Configuration* cfg)
 {
 	// Check how many Configurations we accept before we do anything else
-	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
+	if ((nRequiredTargets() == Module::OneOrMoreTargets) || (targetConfigurations_.nItems() < nRequiredTargets()))
 	{
 		targetConfigurations_.append(cfg);
 		return true;
 	}
 	else
 	{
-		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
-		else Messenger::warn("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
+		if (nRequiredTargets() == Module::ZeroTargets) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
+		else Messenger::warn("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nRequiredTargets());
 	}
 
 	return false;
 }
 
 // Add Configuration targets
-bool Module::addTargetConfigurations(List<Configuration>& configs)
+bool Module::addTargetConfigurations(const List<Configuration>& configs)
 {
-	ListIterator<Configuration> configIterator(configs);
-	while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return false;
+	if (nRequiredTargets() == Module::ZeroTargets) return Messenger::error("Module targets no configurations, so none will be set from the %i provided.\n", configs.nItems());
+	else if (nRequiredTargets() == Module::OneOrMoreTargets)
+	{
+		Messenger::print("Adding %i configurations as targets for module '%s'...\n", configs.nItems(), uniqueName());
+
+		ListIterator<Configuration> configIterator(configs);
+		while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return Messenger::error("Failed to add configuration '%s' to module '%s'.\n", cfg->name(), uniqueName());
+	}
+	else if (nTargetConfigurations() == nRequiredTargets()) return Messenger::error("Refusing to add any of the %i provided configurations as targets for the module '%s' as it already has it's specified number (%i).\n", configs.nItems(), uniqueName(), nRequiredTargets());
+	else
+	{
+		int spaces = nRequiredTargets() - nTargetConfigurations();
+		Messenger::print("Adding up to %i configurations from the %i provided as targets for module '%s'...\n", spaces, configs.nItems(), uniqueName());
+
+		ListIterator<Configuration> configIterator(configs);
+		while (Configuration* cfg = configIterator.iterate()) if (!addTargetConfiguration(cfg)) return Messenger::error("Failed to add configuration '%s' to module '%s'.\n", cfg->name(), uniqueName());
+	}
 
 	return true;
 }
@@ -205,6 +222,29 @@ int Module::nTargetConfigurations() const
 	return targetConfigurations_.nItems();
 }
 
+// Return whether the number of targeted Configurations is valid
+bool Module::hasValidNTargetConfigurations(bool reportError) const
+{
+	if (nRequiredTargets() == Module::OneOrMoreTargets)
+	{
+		bool valid = nTargetConfigurations() > 0;
+		if (reportError && (!valid)) Messenger::error("Module '%s' expects one or more configuration targets, but none have been provided.\n", uniqueName());
+		return valid;
+	}
+	else if (nRequiredTargets() == Module::ZeroTargets)
+	{
+		bool valid = (nTargetConfigurations() == 0);
+		if (reportError && (!valid)) Messenger::error("Module '%s' expects zero configuration targets, but %i ha%s been provided.\n", uniqueName(), nTargetConfigurations(), nRequiredTargets() == 1 ? "s" : "ve");
+		return valid;
+	}
+	else
+	{
+		bool valid = (nRequiredTargets() == nTargetConfigurations());
+		if (reportError && (!valid)) Messenger::error("Module '%s' expects exactly %i configuration %s, but %i ha%s been provided.\n", uniqueName(), nRequiredTargets(), nRequiredTargets() == 1 ? "target" : "targets", nTargetConfigurations(), nTargetConfigurations() == 1 ? "s" : "ve");
+		return valid;
+	}
+}
+
 // Return first targeted Configuration
 const RefList<Configuration>& Module::targetConfigurations() const
 {
@@ -221,7 +261,7 @@ bool Module::isTargetConfiguration(Configuration* cfg) const
 void Module::copyTargetConfigurations(Module* sourceModule)
 {
 	// First, check if this module actually accepts target Configurations
-	if ((nTargetableConfigurations() < sourceModule->nTargetConfigurations()) && (nTargetableConfigurations() != -1))
+	if ((nRequiredTargets() < sourceModule->nTargetConfigurations()) && (nRequiredTargets() != Module::OneOrMoreTargets))
 	{
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;

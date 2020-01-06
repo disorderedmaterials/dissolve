@@ -28,6 +28,10 @@
 // Constructor
 SkeletonModule::SkeletonModule() : Module()
 {
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
+
 	// Initialise Module - set up keywords etc.
 	initialise();
 }

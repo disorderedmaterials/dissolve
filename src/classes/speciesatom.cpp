@@ -284,7 +284,15 @@ void SpeciesAtom::setCoordinate(int index, double value)
 	r_.set(index, value);
 }
 
-// Set coordinates of atom
+// Set coordinates
+void SpeciesAtom::setCoordinates(double x, double y, double z)
+{
+	r_.x = x;
+	r_.y = y;
+	r_.z = z;
+}
+
+// Set coordinates (from Vec3)
 void SpeciesAtom::setCoordinates(const Vec3<double>& newr)
 {
 	r_ = newr;

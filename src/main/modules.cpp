@@ -23,8 +23,11 @@
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/bragg/bragg.h"
+#include "modules/calculate_avgmol/avgmol.h"
+#include "modules/calculate_cn/cn.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_rdf/rdf.h"
+#include "modules/calculate_sdf/sdf.h"
 #include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
 #include "modules/datatest/datatest.h"
@@ -79,8 +82,11 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
 	if (!registerMasterModule(new BraggModule)) return false;
+	if (!registerMasterModule(new CalculateAvgMolModule)) return false;
+	if (!registerMasterModule(new CalculateCNModule)) return false;
 	if (!registerMasterModule(new CalculateDAngleModule)) return false;
 	if (!registerMasterModule(new CalculateRDFModule)) return false;
+	if (!registerMasterModule(new CalculateSDFModule)) return false;
 	if (!registerMasterModule(new CalibrationModule)) return false;
 	if (!registerMasterModule(new ChecksModule)) return false;
 	if (!registerMasterModule(new DataTestModule)) return false;
@@ -156,13 +162,15 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 }
 
 // Create a Module instance for the named Module type, and add it to the specified layer
-Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer)
+Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer, bool configurationLocal)
 {
 	Module* module = createModuleInstance(moduleType);
 	if (!module) return NULL;
 
 	// Add the new module instance to the specified destination layer
 	destinationLayer->own(module);
+
+	module->setConfigurationLocal(configurationLocal);
 
 	return module;
 }

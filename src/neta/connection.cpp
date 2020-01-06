@@ -32,12 +32,16 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, PointerArray<Elem
 	allowedAtomTypes_ = targetAtomTypes;
 	bondType_ = bt;
 
+	// Modifiers
 	repeatCount_ = 1;
 	repeatCountOperator_ = NETANode::EqualTo;
 	nBondsValue_ = -1;
 	nBondsValueOperator_ = NETANode::EqualTo;
 	nHydrogensValue_ = -1;
 	nHydrogensValueOperator_ = NETANode::EqualTo;
+
+	// Flags
+	allowRootMatch_ = false;
 }
 
 // Destructor
@@ -63,7 +67,7 @@ EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modi
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAConnectionNode::isValidModifier(const char* s)
+bool NETAConnectionNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }
@@ -72,7 +76,7 @@ bool NETAConnectionNode::isValidModifier(const char* s)
 bool NETAConnectionNode::setModifier(const char* modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETAConnectionNode.\n", modifier);
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETAConnectionNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{
@@ -96,6 +100,45 @@ bool NETAConnectionNode::setModifier(const char* modifier, ComparisonOperator op
 }
 
 /*
+ * Flags
+ */
+
+// Return enum options for NETAConnectionFlags
+EnumOptions<NETAConnectionNode::NETAConnectionFlag> NETAConnectionNode::flags()
+{
+	static EnumOptionsList FlagOptions = EnumOptionsList() <<
+		EnumOption(RootFlag,			"root");
+
+	static EnumOptions<NETAConnectionNode::NETAConnectionFlag> options("ConnectionFlag", FlagOptions);
+
+	return options;
+}
+
+// Return whether the specified flag is valid for this node
+bool NETAConnectionNode::isValidFlag(const char* s) const
+{
+	return (flags().isValid(s));
+}
+
+// Set specified flag
+bool NETAConnectionNode::setFlag(const char* flag, bool state)
+{
+	// Check that the supplied index is valid
+	if (!flags().isValid(flag)) return Messenger::error("Invalid flag '%s' passed to NETAConnectionNode.\n", flag);
+
+	switch (flags().enumeration(flag))
+	{
+		case (NETAConnectionNode::RootFlag):
+			allowRootMatch_ = state;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
+	}
+
+	return true;
+}
+
+/*
  * Scoring
  */
 
@@ -113,7 +156,12 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 	for (int n=0; n<bonds.nItems(); ++n)
 	{
 		const SpeciesAtom* j = bonds.at(n)->partner(i);
-		if (matchPath.contains(j)) continue;
+		if (j == matchPath.firstItem())
+		{
+			// We may allow the path's root atom to be matched again, if the allowRootMatch_ is set...
+			if (!allowRootMatch_) continue;
+		}
+		else if (matchPath.contains(j)) continue;
 		neighbours.append(j, NETANode::NoMatch);
 	}
 
@@ -130,6 +178,10 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 
 			// Process branch definition via the base class, using a copy of the current match path
 			RefList<const SpeciesAtom> branchMatchPath = matchPath;
+
+			// Add ourselves to the match path so we can't backtrack
+			branchMatchPath.append(i);
+
 			int branchScore = NETANode::score(j, branchMatchPath);
 			if (branchScore == NETANode::NoMatch) continue;
 
@@ -161,7 +213,12 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 		if (atomScore == NETANode::NoMatch) continue;
 
 		// Check any specified modifier values
-		if (nBondsValue_ >= 0 && (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))) return NETANode::NoMatch;
+		if (nBondsValue_ >= 0)
+		{
+			if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_)) return NETANode::NoMatch;
+
+			++atomScore;
+		}
 		if (nHydrogensValue_ >= 0)
 		{
 			// Count number of hydrogens attached to this atom
@@ -169,6 +226,8 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 			const PointerArray<SpeciesBond>& bonds = j->bonds();
 			for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(j)->element()->Z() == ELEMENT_H) ++nH;
 			if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
+
+			++atomScore;
 		}
 
 		// Found a match, so increase the match count and store the score

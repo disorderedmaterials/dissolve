@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "7")
+set(VERSION_PATCH "8")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -68,9 +68,9 @@ endif(GUI)
 # -- Windows
 if(WIN32)
   if(PARALLEL)
-    set (target_name Dissolve)
+    set (target_name Dissolve-MPI)
   else(PARALLEL)
-    set (target_name Dissolve-Serial)
+    set (target_name Dissolve)
     set (gui_target_name Dissolve-GUI)
   endif(PARALLEL)
 
@@ -84,17 +84,17 @@ if(WIN32)
   # Add global NOMINMAX define for Windows systems, and inhibit console creation
   ADD_DEFINITIONS("-DNOMINMAX")
   #SET(GUI_TYPE WIN32)
-  if(MINGW)
-    SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
-  endif(MINGW)
+  #if(MINGW)
+  #  SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
+  #endif(MINGW)
 endif(WIN32)
 
 # -- Unix
 if(UNIX)
   if(PARALLEL)
-    set (target_name dissolve)
+    set (target_name dissolve-mpi)
   else(PARALLEL)
-    set (target_name dissolve-serial)
+    set (target_name dissolve)
     set (gui_target_name dissolve-gui)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -105,10 +105,13 @@ if(APPLE)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
+  # Suppress warnings for undefined template vars
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
+
   if(PARALLEL)
-    set (target_name dissolve)
+    set (target_name dissolve-mpi)
   else(PARALLEL)
-    set (target_name dissolve-serial)
+    set (target_name dissolve)
     set (gui_target_name dissolve-gui)
   endif(PARALLEL)
 
@@ -118,6 +121,11 @@ if(APPLE)
   if(GUI)
     # Find GLUT
     find_package(GLUT REQUIRED)
+
+    # Adjust external include directories for GUI
+    include_directories(
+      ${FTGL_INCLUDE_DIRS}
+    )
   endif(GUI)
 endif(APPLE)
 
@@ -179,12 +187,18 @@ set(BASIC_LINK_LIBS
   # Main libs
   main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
 
+  # Forcefields
+  ff_ludwig
+
   # Modules
   analysemodule
   atomshakemodule
   braggmodule
+  calculateavgmolmodule
+  calculatecnmodule
   calculatedanglemodule
   calculaterdfmodule
+  calculatesdfmodule
   calibrationmodule
   checksmodule
   datatestmodule
@@ -225,8 +239,11 @@ target_link_libraries( ${target_name}
   analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
+  calculateavgmolmodulenogui
+  calculatecnmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
+  calculatesdfmodulenogui
   calibrationmodulenogui
   datatestmodulenogui
   energymodulenogui
@@ -256,8 +273,11 @@ if(GUI)
     analysemodulegui
     atomshakemodulegui
     braggmodulegui
+    calculateavgmolmodulegui
+    calculatecnmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
+    calculatesdfmodulegui
     calibrationmodulegui
     datatestmodulegui
     energymodulegui
@@ -275,8 +295,10 @@ if(GUI)
     viewer
     widgets
     keywordwidgets
+    gizmos
     delegates
     charts
+    subwindows
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

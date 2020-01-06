@@ -52,7 +52,8 @@ void EPSRModule::addTargets(RefList<Module> targets, const char* groupName)
 Array2D< Array<double> >& EPSRModule::potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp)
 {
 	Array2D< Array<double> >& coefficients = GenericListHelper< Array2D< Array<double> > >::realise(dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
-	if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes))
+	int arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0,0).nItems() : 0);
+	if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) || ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
 	{
 		coefficients.initialise(nAtomTypes, nAtomTypes, true);
 		for (int n=0; n<coefficients.linearArraySize(); ++n)

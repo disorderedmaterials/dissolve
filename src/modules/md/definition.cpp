@@ -39,8 +39,8 @@ const char* MDModule::brief() const
 	return "Evolve a Configuration using molecular dynamics";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int MDModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int MDModule::nRequiredTargets() const
 {
-	return 1;
+	return Module::ExactlyOneTarget;
 }

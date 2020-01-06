@@ -48,7 +48,7 @@ void SpeciesBond::clear()
 	i_ = NULL;
 	j_ = NULL;
 	bondType_ = SpeciesBond::SingleBond;
-	form_ = SpeciesBond::nBondFunctions;
+	form_ = SpeciesBond::NoForm;
 }
 
 /*
@@ -179,33 +179,17 @@ double SpeciesBond::bondOrder() const
  * Interaction Parameters
  */
 
-// Bond function keywords
-const char* BondFunctionKeywords[] = { "Harmonic", "EPSR" };
-int BondFunctionNParameters[] = { 2, 2 };
-
-// Convert string to functional form
-SpeciesBond::BondFunction SpeciesBond::bondFunction(const char* s)
+// Return enum options for BondFunction
+EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-	for (int n=0; n<SpeciesBond::nBondFunctions; ++n) if (DissolveSys::sameString(s, BondFunctionKeywords[n])) return (SpeciesBond::BondFunction) n;
-	return SpeciesBond::nBondFunctions;
-}
+	static EnumOptionsList BondFunctionOptions = EnumOptionsList() <<
+		EnumOption(SpeciesBond::NoForm, 		"None",		0,0) <<
+		EnumOption(SpeciesBond::HarmonicForm, 		"Harmonic",	2,2) <<
+		EnumOption(SpeciesBond::EPSRForm, 		"EPSR",		2,2);
 
-// Return functional form text
-const char* SpeciesBond::bondFunction(SpeciesBond::BondFunction func)
-{
-	return BondFunctionKeywords[func];
-}
+	static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
-// Return functional form array
-const char** SpeciesBond::bondFunctions()
-{
-	return BondFunctionKeywords;
-}
-
-// Return number of parameters required for functional form
-int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
-{
-	return BondFunctionNParameters[func];
+	return options;
 }
 
 // Set up any necessary parameters
@@ -267,7 +251,8 @@ double SpeciesBond::energy(double distance) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
-	if (form() == SpeciesBond::HarmonicForm)
+	if (form() == SpeciesBond::NoForm) return 0.0;
+	else if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
 		 * Parameters:
@@ -291,7 +276,7 @@ double SpeciesBond::energy(double distance) const
 		return params[0] * (delta*delta) / parameters_[2];
 	}
 
-	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
+	Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate energy.\n");
 	return 0.0;
 }
 
@@ -301,7 +286,8 @@ double SpeciesBond::force(double distance) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
-	if (form() == SpeciesBond::HarmonicForm)
+	if (form() == SpeciesBond::NoForm) return 0.0;
+	else if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
 		 * Parameters:
@@ -323,7 +309,7 @@ double SpeciesBond::force(double distance) const
 		return -2.0 * params[0] * (distance - params[1]);
 	}
 
-	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");
+	Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");
 	return 0.0;
 }
 

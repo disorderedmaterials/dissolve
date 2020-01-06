@@ -85,7 +85,7 @@ template <class T, class I> class ListWidgetUpdater
 	}
 
 	// Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the list
-	ListWidgetUpdater(QListWidget* listWidget, const List<I>& list, Qt::ItemFlags flags = Qt::NoItemFlags)
+	ListWidgetUpdater(QListWidget* listWidget, const List<I>& list, Qt::ItemFlags flags = Qt::NoItemFlags, I* currentItem = NULL)
 	{
 		QListWidgetItem* listWidgetItem;
 
@@ -126,6 +126,9 @@ template <class T, class I> class ListWidgetUpdater
 				listWidgetItem->setText(dataItem->name());
 				if (flags != Qt::NoItemFlags) listWidgetItem->setFlags(listWidgetItem->flags() | flags);
 			}
+
+			// Is this the current item?
+			if (currentItem == dataItem) listWidget->setCurrentRow(currentRow);
 
 			++currentRow;
 		}

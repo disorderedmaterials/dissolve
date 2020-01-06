@@ -56,7 +56,7 @@ EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARingNode::isValidModifier(const char* s)
+bool NETARingNode::isValidModifier(const char* s) const
 {
 	return (modifiers().isValid(s));
 }
@@ -65,7 +65,7 @@ bool NETARingNode::isValidModifier(const char* s)
 bool NETARingNode::setModifier(const char* modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modified '%s' passed to NETARingNode.\n", modifier);
+	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETARingNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{
@@ -139,16 +139,6 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 // 	while (const SpeciesAtom* iii = matchIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 // 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
-	// Get directly connected atoms about 'i', excluding any that have already been matched
-	RefDataList<const SpeciesAtom, int> neighbours;
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
-	{
-		const SpeciesAtom* j = bonds.at(n)->partner(i);
-		if (matchPath.contains(j)) continue;
-		neighbours.append(j, NETANode::NoMatch);
-	}
-
 	// Generate array of rings of specified size that the atom 'i' is present in
 	List<SpeciesRing> rings;
 	PointerArray<const SpeciesAtom> ringPath;
@@ -174,8 +164,8 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 			}
 		}
 	}
-	ringIterator.restart();
-	while (SpeciesRing* ring = ringIterator.iterate()) ring->print();
+// 	ringIterator.restart();
+// 	while (SpeciesRing* ring = ringIterator.iterate()) ring->print();
 
 	// Loop over rings
 	int nMatches = 0, totalScore = 0, nodeScore;
@@ -192,37 +182,28 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 		}
 		else
 		{
-			// Disordered search
+			// Disordered search - try to match the branch definition against this ring, in any order (provide all atoms in the ring at once)
+			RefList<const SpeciesAtom> ringAtoms;
+			for (int n=0; n<ring->size(); ++n) ringAtoms.append(ring->atom(n));
+
 			const SpeciesAtom* matchedAtom;
 			ListIterator<NETANode> branchIterator(branch_);
 			while (NETANode* node = branchIterator.iterate())
 			{
-				// Search through ring atoms to find a match for the current branch node
-				matchedAtom = NULL;
-				for (int n=0; n<ringAtoms.nItems(); ++n)
-				{
-					RefList<const SpeciesAtom> emptyPath;
-					nodeScore = node->score(ringAtoms.at(n), emptyPath);
-					if (nodeScore == NETANode::NoMatch) continue;
+				nodeScore = node->score(NULL, ringAtoms);
+				if (nodeScore == NETANode::NoMatch) break;
 
-					// Match found
-					matchedAtom = ringAtoms.take(n);
-					totalScore += nodeScore;
-					break;
-				}
-
-				// If we didn't find a match for the atom described by the branch node, exit the loop now
-				if (!matchedAtom) break;
+				// Match found
+				totalScore += nodeScore;
 			}
 
-			// If we end up with a non-NULL pointer for matchedAtom then the ring matched
-			if (matchedAtom)
-			{
-				++nMatches;
+			// If we didn't find a match for the ring, exit the loop now
+			if (nodeScore == NETANode::NoMatch) break;
 
-				// Don't match more than we need to - check the repeatCount
-				if (compareValues(nMatches, repeatCountOperator_, repeatCount_)) break;
-			}
+			++nMatches;
+
+			// Don't match more than we need to - check the repeatCount
+			if (compareValues(nMatches, repeatCountOperator_, repeatCount_)) break;
 		}
 	}
 

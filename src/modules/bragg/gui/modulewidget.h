@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGMODULEWIDGET_H
-#define DISSOLVE_BRAGGMODULEWIDGET_H
+#ifndef DISSOLVE_MODULEWIDGET_BRAGG_H
+#define DISSOLVE_MODULEWIDGET_BRAGG_H
 
 #include "modules/bragg/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -39,20 +39,26 @@ class BraggModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
+	public:
+	// Constructor / Destructor
+	BraggModuleWidget(QWidget* parent, BraggModule* module);
+	~BraggModuleWidget();
+
 	private:
 	// Associated Module
 	BraggModule* module_;
 	// DataViewers contained within this widget
 	DataViewer* reflectionsGraph_, *totalsGraph_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
+
+
+	/*
+	 * UI
+	 */
+	private:
+	// Main form declaration
+	Ui::BraggModuleWidget ui_;
 
 	public:
-	// Constructor / Destructor
-	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~BraggModuleWidget();
-	// Main form declaration
-	Ui::BraggModuleWidget ui;
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
@@ -62,11 +68,11 @@ class BraggModuleWidget : public ModuleWidget
 
 
 	/*
-	 * ModuleWidget Implementations
+	 * State I/O
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	bool writeState(LineParser& parser) const;
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
 

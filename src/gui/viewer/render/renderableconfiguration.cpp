@@ -26,6 +26,7 @@
 #include "classes/box.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
+#include "base/lineparser.h"
 
 // Constructor
 RenderableConfiguration::RenderableConfiguration(const Configuration* source, const char* objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
@@ -66,6 +67,12 @@ bool RenderableConfiguration::validateDataSource()
 	return source_;
 }
 
+// Invalidate the current data source
+void RenderableConfiguration::invalidateDataSource()
+{
+	source_ = NULL;
+}
+
 // Return version of data
 int RenderableConfiguration::dataVersion() const
 {
@@ -77,52 +84,24 @@ int RenderableConfiguration::dataVersion() const
  */
 
 // Transform data according to current settings
-void RenderableConfiguration::transformData()
+void RenderableConfiguration::transformValues()
 {
 	if (!source_) return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion()) return;
 
-	// Loop over Atoms, seeking extreme x, y, and z values
-	const DynamicArray<Atom>& atoms = source_->constAtoms();
-	for (int n=0; n<atoms.nItems(); ++n)
-	{
-		const Atom* i = atoms.constValue(n);
-		if (n == 0)
-		{
-			transformMin_ = i->r();
-			transformMax_ = i->r();
-		}
-		else
-		{
-			if (i->r().x < transformMin_.x) transformMin_.x = i->r().x;
-			else if (i->r().x > transformMax_.x) transformMax_.x = i->r().x;
-			if (i->r().y < transformMin_.y) transformMin_.y = i->r().y;
-			else if (i->r().y > transformMax_.y) transformMax_.y = i->r().y;
-			if (i->r().z < transformMin_.z) transformMin_.z = i->r().z;
-			else if (i->r().z > transformMax_.z) transformMax_.z = i->r().z;
-		}
-	}
+	// Minimum corresponds to lower left corner of the box at {0,0,0}
+	limitsMin_.zero();
 
-	transformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
-	transformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
-	transformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
-	transformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
-	transformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
-	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
+	// Transform extreme upper right corner from unit to real space to get maxima
+	limitsMax_ = source_->box()->fracToReal(Vec3<double>(1.0,1.0,1.0));
+
+	positiveLimitsMin_ = limitsMin_;
+	positiveLimitsMax_ = limitsMax_;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = dataVersion();
-}
-
-// Calculate min/max y value over specified x range (if possible in the underlying data)
-bool RenderableConfiguration::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	yMin = 0.0;
-	yMax = 1.0;
-
-	return true;
+	valuesTransformDataVersion_ = dataVersion();
 }
 
 /*
@@ -185,6 +164,9 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	lineConfigurationPrimitive_->forgetAll();
 	configurationAssembly_.clear();
 	unitCellAssembly_.clear();
+
+	// Check data source
+	if (!validateDataSource()) return;
 
 	// Grab the Configuration's Box and CellArray
 	const Box* box = source_->box();
@@ -297,21 +279,92 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
  * Style
  */
 
-// Display Style Keywords
-const char* ConfigurationDisplayStyleKeywords[] = { "Lines", "Spheres" };
-
-// Convert display style index to text string
-const char* RenderableConfiguration::displayStyle(int id)
+// Return EnumOptions for ConfigurationDisplayStyle
+EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
-	if ((id < 0) || (id >= RenderableConfiguration::nDisplayStyles)) return "INVALID_STYLE";
+	static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList() <<
+		EnumOption(RenderableConfiguration::LinesStyle,	"Lines") <<
+		EnumOption(RenderableConfiguration::SpheresStyle,	"Spheres");
 
-	return ConfigurationDisplayStyleKeywords[id];
+	static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle", ConfigurationStyleOptions);
+
+	return options;
 }
 
-// Convert text string to display style index
-int RenderableConfiguration::displayStyle(const char* s)
+// Set display style for renderable
+void RenderableConfiguration::setDisplayStyle(ConfigurationDisplayStyle displayStyle)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, ConfigurationDisplayStyleKeywords[n])) return (RenderableConfiguration::DisplayStyle) n;
+	displayStyle_ = displayStyle;
 
-	return -1;
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::displayStyle() const
+{
+	return displayStyle_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableConfiguration::DisplayKeyword,	"Display",	1) <<
+		EnumOption(RenderableConfiguration::EndStyleKeyword,	"EndStyle");
+
+	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableConfiguration::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword), configurationDisplayStyles().keyword(displayStyle_))) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableConfiguration::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!configurationStyleKeywords().isValid(parser.argc(0))) return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
+		ConfigurationStyleKeyword kwd = configurationStyleKeywords().enumeration(parser.argc(0));
+		if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableConfiguration::DisplayKeyword):
+				if (!configurationDisplayStyles().isValid(parser.argc(1))) return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableConfiguration::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
 }

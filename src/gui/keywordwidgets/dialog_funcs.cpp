@@ -30,6 +30,12 @@ KeywordsDialog::KeywordsDialog(QWidget* parent, const KeywordList& keywords, con
 	ui_.setupUi(this);
 
 	ui_.Keywords->setUp(keywords, coreData);
+
+	connect(ui_.Keywords, SIGNAL(dataModified()), this, SLOT(keywordChanged()));
+	connect(ui_.Keywords, SIGNAL(setUpRequired()), this, SLOT(setUpRequired()));
+
+	keywordsModified_ = false;
+	setUpRequired_ = false;
 }
 
 // Destructor
@@ -37,14 +43,25 @@ KeywordsDialog::~KeywordsDialog()
 {
 }
 
-// Run the dialog, returning whether any modifications to keyword values were made
-bool KeywordsDialog::showOptions()
+// Run the dialog
+void KeywordsDialog::showOptions()
 {
 	keywordsModified_ = false;
+	setUpRequired_ = false;
 
 	exec();
+}
 
+// Return whether any keywords have been modified in the current 'show'
+bool KeywordsDialog::keywordsModified() const
+{
 	return keywordsModified_;
+}
+
+// Return whether any set-up needs to be re-run following keyword modification
+bool KeywordsDialog::isSetUpRequired() const
+{
+	return setUpRequired_;
 }
 
 /*
@@ -54,6 +71,11 @@ bool KeywordsDialog::showOptions()
 void KeywordsDialog::keywordChanged()
 {
 	keywordsModified_ = true;
+}
+
+void KeywordsDialog::setUpRequired()
+{
+	setUpRequired_ = true;
 }
 
 void KeywordsDialog::on_OKButton_clicked(bool checked)

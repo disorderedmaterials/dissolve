@@ -22,14 +22,9 @@
 #include "gui/gui.h"
 #include <QInputDialog>
 
-void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
+void DissolveWindow::on_WorkspaceCreateEmptyAction_triggered(bool checked)
 {
-	// Add a new workspace
-	bool ok;
-	QString text = QInputDialog::getText(this, "New Workspace", "Enter the name of the new workspace", QLineEdit::Normal, "New Workspace", &ok);
-	if (!ok || text.isEmpty()) return;
+	MainTab* workspaceTab = ui_.MainTabs->addWorkspaceTab(this, "New Workspace");
 
-	MainTab* workspaceTab = addWorkspaceTab(qPrintable(text));
-
-	setCurrentTab(workspaceTab);
+	ui_.MainTabs->setCurrentTab(workspaceTab);
 }

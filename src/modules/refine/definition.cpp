@@ -39,8 +39,8 @@ const char* RefineModule::brief() const
 	return "Refine interatomic potentials based on differences between calculated and reference data";
 }
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int RefineModule::nTargetableConfigurations() const
+// Return the number of Configuration targets this Module requires
+int RefineModule::nRequiredTargets() const
 {
-	return 0;
+	return Module::ZeroTargets;
 }

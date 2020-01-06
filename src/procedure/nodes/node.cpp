@@ -43,6 +43,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::DynamicSiteNode,			"DynamicSite") <<
 		EnumOption(ProcedureNode::ExcludeNode,				"Exclude") <<
 		EnumOption(ProcedureNode::Fit1DNode,				"Fit1D") <<
+		EnumOption(ProcedureNode::Integrate1DNode,			"Integrate1D") <<
 		EnumOption(ProcedureNode::OperateBaseNode,			"Operate(Any)") <<
 		EnumOption(ProcedureNode::OperateDivideNode,			"OperateDivide") <<
 		EnumOption(ProcedureNode::OperateMultiplyNode,			"OperateMultiply") <<
@@ -55,7 +56,8 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::Process2DNode,			"Process2D") <<
 		EnumOption(ProcedureNode::Process3DNode,			"Process3D") <<
 		EnumOption(ProcedureNode::SelectNode,				"Select") <<
-		EnumOption(ProcedureNode::SequenceNode,				"Sequence");
+		EnumOption(ProcedureNode::SequenceNode,				"Sequence") <<
+		EnumOption(ProcedureNode::Sum1DNode,				"Sum1D");
 
 	static EnumOptions<ProcedureNode::NodeType> options("NodeType", NodeTypeKeywords, ProcedureNode::nNodeTypes);
 

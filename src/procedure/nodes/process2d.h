@@ -38,7 +38,7 @@ class Process2DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Process2DProcedureNode(Collect2DProcedureNode* target = NULL);
+	Process2DProcedureNode(const Collect2DProcedureNode* target = NULL);
 	// Destructor
 	~Process2DProcedureNode();
 
@@ -56,7 +56,7 @@ class Process2DProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Collect2D node that we are processing
-	Collect2DProcedureNode* collectNode_;
+	const Collect2DProcedureNode* collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data2D* processedData_;
 

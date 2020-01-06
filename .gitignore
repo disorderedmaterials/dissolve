@@ -21,11 +21,10 @@ stamp-h1
 *.hh
 ui_*
 moc_*
-src/dissolve
+src/dissolve-mpi
 src/dissolve-gui
-src/dissolve-serial
-src/dguided
-.kdev4/
+src/dissolve
+*.kdev4
 build/
 *.exe
 
