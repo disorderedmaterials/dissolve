@@ -56,7 +56,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	dAngleGraph_ = ui_.DAnglePlotWidget->dataViewer();
 
 	View& dAngleView = dAngleGraph_->view();
-	dAngleView.setViewType(View::AutoStretchedView);
+	dAngleView.setViewType(View::FlatXYView);
 	dAngleView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleView.axes().setRange(0, 0.0, 5.0);
 	dAngleView.axes().setTitle(1, "Angle, \\sym{degree}");
@@ -125,12 +125,14 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* mod
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculated B...C RDF
-		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()));
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+		rdf->setColour(StockColours::BlueStockColour);
 
-		// Calculated Angle histogram
-		Renderable* angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()));
+		// Calculated angle histogram
+		Renderable* angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
+		angle->setColour(StockColours::RedStockColour);
 
-		// Calculated Angle histogram
-		Renderable* dAngle = dAngleGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()));
+		// Calculated distance-angle map
+		Renderable* dAngle = dAngleGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C//%s");
 	}
 }
