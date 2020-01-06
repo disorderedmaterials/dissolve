@@ -72,11 +72,14 @@ int RenderableData2D::dataVersion() const
 // Transform data according to current settings
 void RenderableData2D::transformValues()
 {
+	// Try to update data source if we need to
+	if (!source_) validateDataSource();
+
 	// If the transformed data are already up-to-date, no need to do anything
 	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
-	if (!validateDataSource()) transformedData_.clear();
+	if (!source_) transformedData_.clear();
 	else transformedData_ = *source_;
 	valuesTransform_.transformValues(transformedData_);
 
