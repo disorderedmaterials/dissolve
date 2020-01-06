@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.4.7 at 23:43:18 on 05-01-2020.
+# Input file written by Dissolve v0.5.0 at 23:07:21 on 06-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -104,8 +104,8 @@ Layer  'Evolve (Standard)'
     Frequency  1
 
     Configuration  'Bulk'
-    RotationStepSize   1.64226e+01
-    TranslationStepSize   1.71668e-01
+    RotationStepSize   1.47700e+01
+    TranslationStepSize   1.66607e-01
   EndModule
 
   Module  MD  'MD01'
@@ -178,6 +178,7 @@ EndLayer
 
 Layer  'Analyse RDF/CN'
   Frequency  1
+  Disabled
 
   Module  CalculateRDF  'CalculateRDF01'
     Frequency  1
@@ -191,6 +192,40 @@ Layer  'Analyse RDF/CN'
   Module  CalculateCN  'CalculateCN01'
     Frequency  1
     SourceRDF  'CalculateRDF01'
+  EndModule
+EndLayer
+
+Layer  'Analyse HBond'
+  Frequency  1
+
+  Module  CalculateDAngle  'CalculateDAngle01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    DistanceRange  0.000000e+00  5.000000e+00  5.000000e-02
+    SiteA  'Water'  'O'
+    SiteB  'Water'  'H1'  'Water'  'H2'
+    SiteC  'Water'  'O'
+    ExcludeSameMolecule  True
+  EndModule
+EndLayer
+
+Layer  'Analyse AvgMol/SDF'
+  Frequency  1
+
+  Module  CalculateAvgMol  'CalculateAvgMol01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    Site  'Water'  'COM'
+  EndModule
+
+  Module  CalculateSDF  'CalculateSDF01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    SiteA  'Water'  'COM'
+    SiteB  'Water'  'O'
   EndModule
 EndLayer
 

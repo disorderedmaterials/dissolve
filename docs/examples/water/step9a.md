@@ -7,7 +7,7 @@ grand_parent: Examples
 
 ## 9a. Centre-of-Mass RDF
 
-Examining the centre-of-mass RDF between molecules is often useful, as are the coordination numbers of molecules within the shells that typically form from the local structure in the liquid. Dissolve provides a predefined layer to calculate both at once, however first we need to define a suitable site - the centre of mass of the water molecule.
+Examining the centre-of-mass RDF between molecules is often useful since it gives a general picture of the arrangement between molecule. A related quantity is the coordination number, i.e. the number of molecules within solvation shells that typically form around molecules in the liquid. Here we'll set up calculation of the centre-of-mass RDF and the associated coordination number for the first solvation shell. Dissolve provides a predefined layer to calculate both at once, however first we need to define a suitable site - the centre of mass of the water molecule.
 
 ### Define the Centre-of-Mass Site
 
@@ -65,9 +65,9 @@ Now the [`CalculateCN`](/userguide/modules/calculatecn) module:
 {: .action .action_mouse}
 > Open the **Target / Ranges** settings group
 {: .action .action_groups}
-> Set the maximum for **RangeA** to 3.4
+> Set the maximum for **RangeA** to 3.4 &#8491;
 {: .step}
 
-The [`CalculateCN`](/userguide/modules/calculatecn) module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a specific [`CalculateRDF`](/userguide/modules/calculaterdf) module, indicated by the **SourceRDF** keyword (this has been automatically set).
+The [`CalculateCN`](/userguide/modules/calculatecn) module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a [`CalculateRDF`](/userguide/modules/calculaterdf) module, specified by the **SourceRDF** keyword (this was been automatically set to be the [`CalculateRDF`](/userguide/modules/calculaterdf) module in the current layer).
 
 [Previous Step](step9.md){: .btn }   [Next Step](step9b.md){: .btn .right}

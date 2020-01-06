@@ -41,6 +41,10 @@ As its name suggests, the [CalculateDAngle](/userguide/modules/calculatedangle) 
 
 > Select the [`CalculateDAngle`](/userguide/modules/calculatedangle) module to display its options
 {: .action .action_mouse}
+> Open the **Calculation** settings group
+{: .action .action_groups}
+> Change the maximum value of the **DistanceRange** to 5.0 &#8491;
+{: .step}
 > Open the **Sites** settings group
 {: .action .action_groups}
 > Press the button for **SiteA** and choose the `O` site
@@ -51,6 +55,5 @@ As its name suggests, the [CalculateDAngle](/userguide/modules/calculatedangle) 
 {: .step}
 > Enable the **ExcludeSameMolecule** to ignore interactions where site C is on the same molecule as A and B.
 {: .step}
-
 
 [Previous Step](step9a.md){: .btn }   [Next Step](step9c.md){: .btn .right}
