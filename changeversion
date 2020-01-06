@@ -45,7 +45,7 @@ then
   #cp src/main/version.h src/main/version.h.orig
   sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
 fi
-echo -n "       version.h (Program Version) : "
+echo -n "           version.h (Program Version) : "
 grep '#define DISSOLVEVERSION' src/version.h | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g'
 
 
@@ -54,38 +54,33 @@ if [ "$TEST" = "false" ]
 then
   sed -i -e "s/set(VERSION_MAJOR \"\([0-9\.]\+\)\")/set(VERSION_MAJOR \"$MAJOR\")/g" -e "s/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/set(VERSION_MINOR \"$MINOR\")/g" -e "s/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/set(VERSION_PATCH \"$PATCH\")/g" CMakeLists.txt
 fi
-echo -n "  ./CMakeLists.txt (Major Version) : "
+echo -n "      ./CMakeLists.txt (Major Version) : "
 grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g'
-echo -n "                   (Minor Version) : "
+echo -n "                       (Minor Version) : "
 grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g'
-echo -n "                   (Patch Version) : "
+echo -n "                       (Patch Version) : "
 grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g'
 
 
-# ./configure.ac
-echo -n "  ./configure.ac (Package Version) : "
-if [ "$TEST" = "false" ]
-then
-  sed -i -e "s/m4_define(\[DISSOLVE_VERSION\],\[\([0-9a-z\.]\+\)\])/m4_define([DISSOLVE_VERSION],[$MAJOR.$MINOR.$PATCH])/g" configure.ac
-fi
-grep 'm4_define(\[DISSOLVE_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[DISSOLVE_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
-
 # OSX build files
-echo -n "dissolve.dmginfo (Program Version) : "
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx.highsierra/dissolve.dmginfo
+  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve.dmginfo
+  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve-mpi.dmginfo
 fi
-grep 'APP_VERSION=' ./ci/osx.highsierra/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
+echo -n "    dissolve.dmginfo (Program Version) : "
+grep 'APP_VERSION=' ./ci/osx/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
+echo -n "dissolve-mpi.dmginfo (Program Version) : "
+grep 'APP_VERSION=' ./ci/osx/dissolve-mpi.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 
 # Windows build files
 if [ "$TEST" = "false" ]
 then
   sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-[0-9\.]*/OutputBaseFilename=Dissolve-$MAJOR.$MINOR.$PATCH/g" ci/windows/dissolve.iss
 fi
-echo -n "    dissolve.iss (Program Version) : "
+echo -n "        dissolve.iss (Program Version) : "
 grep 'define MyAppVersion' ci/windows/dissolve.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
-echo -n "    dissolve.iss (Output Filename) : "
+echo -n "        dissolve.iss (Output Filename) : "
 grep 'OutputBaseFilename' ci/windows/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
 
 # Documentation
@@ -95,9 +90,9 @@ then
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
   sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" docs/index.md
 fi
-echo -n "   Documentation (Program Version) : "
+echo -n "       Documentation (Program Version) : "
 grep 'Current Version:' docs/index.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
-echo -n "              Documentation (Date) : "
+echo -n "                  Documentation (Date) : "
 grep 'Current Version:' docs/index.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
 # README.md
@@ -107,9 +102,9 @@ then
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
   sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
 fi
-echo -n "   Documentation (Program Version) : "
+echo -n "           README.md (Program Version) : "
 grep 'Current Version:' README.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
-echo -n "              Documentation (Date) : "
+echo -n "                      README.md (Date) : "
 grep 'Current Version:' README.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
 exit 0
