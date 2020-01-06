@@ -23,7 +23,6 @@
 #define DISSOLVE_BROADCASTARRAY_H
 
 #include "base/processpool.h"
-#include "templates/mpilistitem.h"
 
 // BroadcastArray
 template <class T> class BroadcastArray

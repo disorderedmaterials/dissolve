@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_KVECTOR_H
 #define DISSOLVE_KVECTOR_H
 
-#include "templates/mpilistitem.h"
+#include "templates/listitem.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
 #include "genericitems/base.h"
@@ -31,7 +31,7 @@
 class BraggReflection;
 
 // K-Vector
-class KVector : public MPIListItem<KVector>,  public GenericItemBase
+class KVector : public ListItem<KVector>,  public GenericItemBase
 {
 	public:
 	// Constructor

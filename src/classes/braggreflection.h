@@ -23,7 +23,7 @@
 #define DISSOLVE_BRAGGREFLECTION_H
 
 #include "templates/array2d.h"
-#include "templates/mpilistitem.h"
+#include "templates/listitem.h"
 #include "genericitems/base.h"
 #include "base/lineparser.h"
 
@@ -31,7 +31,7 @@
 /* none */
 
 // BraggReflection Class
-class BraggReflection : public MPIListItem<BraggReflection>,  public GenericItemBase
+class BraggReflection : public ListItem<BraggReflection>,  public GenericItemBase
 {
 	/*
 	 *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.

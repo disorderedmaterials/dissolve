@@ -24,7 +24,7 @@
 #include "base/processpool.h"
 
 // Constructor
-KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) : MPIListItem<KVector>()
+KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) : ListItem<KVector>()
 {
 	hkl_.set(h, k, l);
 	braggReflectionIndex_ = reflectionIndex;

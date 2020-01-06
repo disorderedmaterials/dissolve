@@ -23,7 +23,6 @@
 #define DISSOLVE_BROADCASTLIST_H
 
 #include "base/processpool.h"
-#include "templates/mpilistitem.h"
 
 // BroadcastList
 template <class T> class BroadcastList
