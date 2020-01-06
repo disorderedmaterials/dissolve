@@ -99,10 +99,10 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	ui_.AvailableModulesTree->clear();
 	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
 	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
-	ui_.AvailableModulesTree->resizeColumnToContents(0);
 	ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
-	ui_.AvailableModulesTree->setSortingEnabled(true);
 	ui_.AvailableModulesTree->expandAll();
+	ui_.AvailableModulesTree->resizeColumnToContents(0);
+	ui_.AvailableModulesTree->resizeColumnToContents(1);
 
 	// Set up the ControlsWidget, and hide it initially
 	ui_.ControlsWidget->setUp(dissolveWindow_);
