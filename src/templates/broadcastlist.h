@@ -30,7 +30,7 @@ template <class T> class BroadcastList
 {
 	/*
 	 * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
-	 * to slave processes. The List must contain items which subclass MPIListItem, in order to provide the 'broadcast()' virtual.
+	 * to slave processes. The List must contain items which provide the 'broadcast()' virtual.
 	 */
 	private:
 	// Result of broadcast
@@ -47,7 +47,8 @@ template <class T> class BroadcastList
 			// Broadcast number of items in list, then list items...
 			count = items.nItems();
 			if (!procPool.broadcast(count, root)) return;
-			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next()) if (!item->broadcast(procPool, root, coreData)) return;
+			ListIterator<T> itemIterator(items);
+			while (T* item = itemIterator.iterate()) if (!item->broadcast(procPool, root, coreData)) return;
 		}
 		else
 		{
