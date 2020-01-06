@@ -166,6 +166,12 @@ const Data2D& RenderableData2D::transformedData()
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData2D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
+	if (!validateDataSource())
+	{
+		reinitialisePrimitives(0, GL_LINE_STRIP, true);
+		return;
+	}
+
 	reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
 	constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
 }
