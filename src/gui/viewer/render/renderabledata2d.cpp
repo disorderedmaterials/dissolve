@@ -65,7 +65,6 @@ int RenderableData2D::dataVersion() const
 	return (source_ ? source_->version() : -99);
 }
 
-
 /*
  * Transform / Limits
  */

@@ -71,7 +71,6 @@ int RenderableData3D::dataVersion() const
 	return (source_ ? source_->version() : -99);
 }
 
-
 /*
  * Transform / Limits
  */
@@ -158,7 +157,6 @@ void RenderableData3D::transformValues()
 	// Update the transformed data 'version'
 	valuesTransformDataVersion_ = dataVersion();
 }
-
 
 // Return reference to transformed data
 const Data3D& RenderableData3D::transformedData()
