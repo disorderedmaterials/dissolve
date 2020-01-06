@@ -22,17 +22,18 @@
 #ifndef DISSOLVE_ISOTOPEDATA_H
 #define DISSOLVE_ISOTOPEDATA_H
 
-#include "templates/mpilistitem.h"
+#include "templates/listitem.h"
 
 // Forward Declarations
 class CoreData;
 class Isotope;
 class LineParser;
+class ProcessPool;
 
 /*
  * IsotopeData Definition
  */
-class IsotopeData : public MPIListItem<IsotopeData>
+class IsotopeData : public ListItem<IsotopeData>
 {
 	public:
 	// Constructor

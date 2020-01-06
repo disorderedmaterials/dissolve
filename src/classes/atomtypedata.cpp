@@ -32,7 +32,7 @@
 #include <string.h>
 
 // Constructor
-AtomTypeData::AtomTypeData() : MPIListItem<AtomTypeData>()
+AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
 	exchangeable_ = false;

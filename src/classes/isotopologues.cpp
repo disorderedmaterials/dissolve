@@ -285,32 +285,33 @@ bool Isotopologues::broadcast(ProcessPool& procPool, const int root, const CoreD
 	int nIso = mix_.nItems();
 	if (!procPool.broadcast(nIso, root)) return false;
 	int topIndex;
+	double weight;
 	if (procPool.poolRank() == root)
 	{
 		for (int n=0; n<nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
-			topIndex = species_->indexOfIsotopologue(mix_[n]->item());
+			topIndex = species_->indexOfIsotopologue(mix_[n]->isotopologue());
 			if (!procPool.broadcast(topIndex, root)) return false;
 
 			// Broadcast relative population data
-			if (!procPool.broadcast(mix_[n]->data(), root)) return false;
+			weight = mix_[n]->weight();
+			if (!procPool.broadcast(weight, root)) return false;
 		}
 	}
 	else
 	{
 		mix_.clear();
-		double relPop;
 		for (int n=0; n<nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
 			if (!procPool.broadcast(topIndex, root)) return false;
 
 			// Broadcast relative population data
-			if (!procPool.broadcast(relPop, root)) return false;
+			if (!procPool.broadcast(weight, root)) return false;
 
 			// Add mix data
-			mix_.append(species_->isotopologue(topIndex), relPop);
+			mix_.add()->set(species_->isotopologue(topIndex), weight);
 		}
 	}
 #endif
@@ -325,13 +326,13 @@ bool Isotopologues::equality(ProcessPool& procPool)
 	if (!procPool.equality(speciesPopulation_)) return Messenger::error("Isotopologues species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
 	if (!procPool.equality(mix_.nItems())) return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
-	RefDataListIterator<const Isotopologue,double> mixIterator(mix_);
+	ListIterator<IsotopologueWeight> mixIterator(mix_);
 	int count = 0;
-	while (const Isotopologue* top = mixIterator.iterate())
+	while (const IsotopologueWeight* isoWeight = mixIterator.iterate())
 	{
 		// Just check the name and the relative population
-		if (!procPool.equality(top->name())) return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), top->name());
-		if (!procPool.equality(mixIterator.currentData())) return Messenger::error("Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), mixIterator.currentData());
+		if (!procPool.equality(isoWeight->isotopologue()->name())) return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->isotopologue()->name());
+		if (!procPool.equality(isoWeight->weight())) return Messenger::error("Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->weight());
 		++count;
 	}
 #endif

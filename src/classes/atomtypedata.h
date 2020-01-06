@@ -23,18 +23,19 @@
 #define DISSOLVE_ATOMTYPEDATA_H
 
 #include "templates/list.h"
-#include "templates/mpilistitem.h"
+#include "templates/listitem.h"
 
 // Forward Declarations
 class AtomType;
 class CoreData;
 class IsotopeData;
 class Isotope;
+class ProcessPool;
 
 /*
  * AtomTypeData Definition
  */
-class AtomTypeData : public MPIListItem<AtomTypeData>
+class AtomTypeData : public ListItem<AtomTypeData>
 {
 	public:
 	// Constructor

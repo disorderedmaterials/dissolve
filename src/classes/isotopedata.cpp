@@ -27,7 +27,7 @@
 #include "base/processpool.h"
 
 // Constructor
-IsotopeData::IsotopeData() : MPIListItem<IsotopeData>()
+IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 {
 	isotope_ = NULL;
 	population_ = 0.0;
