@@ -6,7 +6,7 @@ nav_order: 3
 ---
 # Liquid Water
 
-30 minute read
+60 - 75 minutes
 {: .label .label-blue }
 
 ## Summary

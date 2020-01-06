@@ -24,6 +24,8 @@ Our new layer contains only the [`EPSR`](/userguide/modules/epsr) module, and wh
 
 > **Refine (EPSR)** tab
 {: .action .action_tabs}
+> Double-click on the [`EPSR`](/userguide/modules/epsr) module to open it up in a new tab
+{: .action .action_mouse}
 > Open the **Calculation** settings group
 {: .action .action_groups}
 > An initial value for **EReq** has been set (3.0) - this determines the magnitude or "strength" of the generated interatomic potentials
