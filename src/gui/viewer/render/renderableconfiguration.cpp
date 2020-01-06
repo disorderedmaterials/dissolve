@@ -74,9 +74,9 @@ void RenderableConfiguration::invalidateDataSource()
 }
 
 // Return version of data
-int RenderableConfiguration::dataVersion() const
+int RenderableConfiguration::dataVersion()
 {
-	return (source_ ? source_->contentsVersion() : -99);
+	return (validateDataSource() ? source_->contentsVersion() : -99);
 }
 
 /*

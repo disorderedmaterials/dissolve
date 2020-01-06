@@ -79,9 +79,9 @@ void RenderableSpecies::invalidateDataSource()
 }
 
 // Return version of data
-int RenderableSpecies::dataVersion() const
+int RenderableSpecies::dataVersion()
 {
-	return (source_ ? source_->version() : -99);
+	return (validateDataSource() ? source_->version() : -99);
 }
 
 /*

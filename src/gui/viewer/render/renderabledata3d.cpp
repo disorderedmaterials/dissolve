@@ -66,9 +66,9 @@ void RenderableData3D::invalidateDataSource()
 }
 
 // Return version of data
-int RenderableData3D::dataVersion() const
+int RenderableData3D::dataVersion()
 {
-	return (source_ ? source_->version() : -99);
+	return (validateDataSource() ? source_->version() : -99);
 }
 
 /*
@@ -78,9 +78,6 @@ int RenderableData3D::dataVersion() const
 // Transform data according to current settings
 void RenderableData3D::transformValues()
 {
-	// Try to update data source if we need to
-	if (!source_) validateDataSource();
-
 	// If the transformed data are already up-to-date, no need to do anything
 	if (valuesTransformDataVersion_ == dataVersion()) return;
 
