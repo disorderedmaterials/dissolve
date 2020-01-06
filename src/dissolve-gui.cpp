@@ -166,6 +166,7 @@ int main(int argc, char **argv)
 
 	// Ensure that the C locale is set, otherwise printf() and friends may not use dot for the radix point
 	setlocale(LC_NUMERIC,"C");
+	QLocale::setDefault(QLocale::C);
 
 	// Create the main window
 	DissolveWindow dissolveWindow(dissolve);
