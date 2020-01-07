@@ -51,7 +51,7 @@ Along with the actual calculate of the SDF, it is useful to have the actual aver
 | [`CalculateAvgMol`](/userguide/modules/calculateavgmol) | Calculates the average geometry of the parent species aroudn a specified reference site |
 | [`CalculateSDF`](/userguide/modules/calculatesdf) | Calculates the spatial density function of a particular site around a central reference site |
 
-As the name implies, the [`CalculateAvgMol`](/userguide/modules/calculateavgmol) module will provide us with the average species geometry about which we can plot our spatial density function, calculated from the [`CalculateSDF`](/userguide/modules/calculatesdf) module. The [`CalculateSDF`](/userguide/modules/calculatesdf) module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both module, the principal (central) site must have a system of axes defined.
+As the name implies, the [`CalculateAvgMol`](/userguide/modules/calculateavgmol) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the [`CalculateSDF`](/userguide/modules/calculatesdf) module. The [`CalculateSDF`](/userguide/modules/calculatesdf) module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both module, the principal (central) site must have a system of axes defined.
 
 Let's proceed and set up the two modules in the layer:
 
@@ -67,8 +67,7 @@ Let's proceed and set up the two modules in the layer:
 {: .action .action_groups}
 > Set the central **SiteA** to `COM` (again, the only one available)
 {: .step}
-> Set the surroundingn **SiteB** to `O`
+> Set the surrounding **SiteB** to `O`
 {: .step}
-
 
 [Previous Step](step9b.md){: .btn }   [Next Step](step10.md){: .btn .right}
