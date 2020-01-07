@@ -111,7 +111,7 @@ class Renderable : public ListItem<Renderable>
 	// Invalidate all renderables
 	static void invalidateAll();
 	// Return version of data
-	virtual int dataVersion() const = 0;
+	virtual int dataVersion() = 0;
 	// Return coordinate minima of all data (after value transform if enabled)
 	Vec3<double> limitsMin();
 	// Return coordinate maxima of all data (after value transform if enabled)

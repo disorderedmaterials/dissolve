@@ -36,7 +36,7 @@ Let's change the settings of our configuration's generator to give us a suitable
 
 > Open the settings for the `Parameters` node
 {: .action .action_settings}
-> Change the value of the "rho" variable to 0.0213
+> Change the value of the "rho" variable to 0.0213 (which is our target density in units of atoms/A3)
 {: .step}
 > Open the settings for the `AddSpecies` node
 {: .action .action_settings}

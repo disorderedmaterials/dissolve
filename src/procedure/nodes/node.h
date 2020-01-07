@@ -52,7 +52,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 		ExcludeNode,
 		Fit1DNode,
 		Integrate1DNode,
-		BEGIN_OperateNodes, OperateBaseNode, OperateDivideNode, OperateGridNormaliseNode, OperateMultiplyNode, OperateNormaliseNode, OperateNumberDensityNormaliseNode, OperateSitePopulationNormaliseNode, OperateSphericalShellNormaliseNode, END_OperateNodes,
+		BEGIN_OperateNodes, OperateBaseNode, OperateDivideNode, OperateExpressionNode, OperateGridNormaliseNode, OperateMultiplyNode, OperateNormaliseNode, OperateNumberDensityNormaliseNode, OperateSitePopulationNormaliseNode, OperateSphericalShellNormaliseNode, END_OperateNodes,
 		ParametersNode, Process1DNode, Process2DNode, Process3DNode,
 		SelectNode, SequenceNode, Sum1DNode,
 		nNodeTypes };

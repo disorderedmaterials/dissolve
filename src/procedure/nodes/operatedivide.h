@@ -25,9 +25,9 @@
 #include "procedure/nodes/operatebase.h"
 
 // Forward Declarations
-class SelectProcedureNode;
+/* none */
 
-// Operate Number Density Normalise Node
+// Operate Divide Node
 class OperateDivideProcedureNode : public OperateProcedureNodeBase
 {
 	public:

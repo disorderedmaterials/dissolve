@@ -1,6 +1,6 @@
 /*
-	*** Procedure Node - Operate Grid Normalise
-	*** src/procedure/nodes/operategridnormalise.h
+	*** Procedure Node - Operate Expression
+	*** src/procedure/nodes/operateexpression.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,22 +19,39 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_OPERATEGRIDNORMALISE_H
-#define DISSOLVE_PROCEDURENODE_OPERATEGRIDNORMALISE_H
+#ifndef DISSOLVE_PROCEDURENODE_OPERATEEXPRESSION_H
+#define DISSOLVE_PROCEDURENODE_OPERATEEXPRESSION_H
 
 #include "procedure/nodes/operatebase.h"
+#include "expression/expression.h"
 
 // Forward Declarations
 /* none */
 
-// Operate Grid Normalise Node
-class OperateGridNormaliseProcedureNode : public OperateProcedureNodeBase
+// Operate Expression Node
+class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {
 	public:
-	// Constructor
-	OperateGridNormaliseProcedureNode();
+	// Constructors
+	OperateExpressionProcedureNode(const char* expressionText = "");
 	// Destructor
-	~OperateGridNormaliseProcedureNode();
+	~OperateExpressionProcedureNode();
+
+
+	/*
+	 * Expression and Variables
+	 */
+	private:
+	// Normalisation expression
+	Expression expression_;
+	// X variable in equation
+	ExpressionVariable* x_;
+	// Y variable in equation
+	ExpressionVariable* y_;
+	// Z variable in equation
+	ExpressionVariable* z_;
+	// Value variable in equation
+	ExpressionVariable* value_;
 
 
 	/*

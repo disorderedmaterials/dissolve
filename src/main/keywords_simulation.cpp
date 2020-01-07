@@ -31,7 +31,6 @@ EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 		EnumOption(SimulationBlock::EndSimulationKeyword,		"EndSimulation") <<
 		EnumOption(SimulationBlock::ParallelStrategyKeyword, 		"ParallelStrategy",		1) <<
 		EnumOption(SimulationBlock::ParallelGroupPopulationKeyword,	"ParallelGroupPopulation",	1) <<
-		EnumOption(SimulationBlock::RestartFileFrequencyKeyword,	"RestartFileFrequency",		1) <<
 		EnumOption(SimulationBlock::SeedKeyword, 			"Seed",				1);
 
 	static EnumOptions<SimulationBlock::SimulationKeyword> options("SimulationKeyword", SimulationKeywords);
@@ -73,10 +72,6 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 				break;
 			case (SimulationBlock::ParallelGroupPopulationKeyword):
 				dissolve->setParallelGroupPopulation(parser.argi(1));
-				break;
-			case (SimulationBlock::RestartFileFrequencyKeyword):
-				dissolve->setRestartFileFrequency(parser.argi(1));
-				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", dissolve->restartFileFrequency());
 				break;
 			case (SimulationBlock::SeedKeyword):
 				dissolve->setSeed(parser.argi(1));

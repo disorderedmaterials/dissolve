@@ -7,15 +7,15 @@ grand_parent: Examples
 
 ## 9. Setting up Analysis
 
-Simply by running the simulation and refining it we have a set of calculate total and partial g(r) for each atom type pair, which already gives us a great deal of information about the system. However, it is typically the case where the questionf of scientific interest are far more specific. In the case of liquid water, for instance, we may wish to know the centre-of-mass radial distribution function (i.e. a g(r) between molecules), the correlation between H&bull;&bull;&bull;O distance and O-H&bull;&bull;&bull;O angle where hydrogen bonds are present, or the three-dimensional distribution of molecules around a central molecule (i.e. a 3D radial distribution function, rather than one which is spherically averaged).
+Having now generated and refined a simulation so that it is consistent with experimental data, we can finally get round to the main goal of any total scattering experiment - understanding the structure of the system. Exactly what questions you want to ask depends on the what you really want to know about your system, and what analysis you will want to run on your simulation.
 
-To achieve this we need to define one or more 'sites' on our water molecule. Sites represent specific atoms, or averages of collections of atoms, or define axes using atoms in the species in order to provide points of reference for all of Dissolve's anlaysis routines. Moreover, while there a built-in analysis modules to calculate common properties of interest, Dissolve also allows custom analysis routines to be defined. Here, we shall only concern ourselves with Dissolve's built-in functionality.
+The process of refining a simulation against experimental structure factors means that we already have access to the atomic partial and total radial distribution functions. However, usually there are more interesting properties to know - for liquid water, we may wish to know the centre-of-mass radial distribution function (i.e. a g(r) between molecules) instead. We may want to quantify the geometry of the hydrogen bond interactions in the system, or we might be interested in the three-dimensional distribution of water molecules about a central, reference water molecule. The final "production" stage involves calculating these quantities and drawing some meaningful conclusions from them.
+
+To achieve this we need to define one or more 'sites' on our water molecule. Sites are used in all of Dissolve's analysis routines, and represent specific atoms, or averages of collections of atoms to be used as points of reference in the calculation of quantities. There are built-in analysis modules to calculate common quantities of interest, but Dissolve also allows custom analysis routines to be defined. Here, we shall only concern ourselves with Dissolve's built-in functionality.
 
 ### Defining Sites
 
-Sites are defined on a per-species basis and in the basic case comprise of a list of species atom indices whose positions should be averaged in order to define a coordinate that represents the site. They may optionally contain lists of species atom indices to average and use as defining directions for _x_ and _y_ axes (the _z_ axis being generated automatically from those).
-
-Sites can be defined from the parent species tab:
+Sites are defined within species and basically represent instructions for calculating a reference point (and possibly axes) for any molecule of that type in the simulation. Sites can be found on the relevant species tab:
 
 > Pause the simulation with **Esc**
 {: .step .action_key}

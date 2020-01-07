@@ -29,7 +29,7 @@ If you now take a look at the r-factors for your water simulation you should see
 > Start the simulation running again with **Ctrl-R**
 {: .step .action_key}
 
-Now that we're running again with a higher value of **EReq** the r-factors should start to come down again, and with a value of 6.0 the total r-factor should soon approach a value of around 1.55&times;10<sup>-4<sup>. The simulated F(Q) should now agree pretty well with the experimental data:
+Now that we're running again with a higher value of **EReq** the r-factors should start to come down again, and with a value of 6.0 the total r-factor should soon approach a value of around 1.55&times;10<sup>-4</sup>. The simulated F(Q) should now agree pretty well with the experimental data:
 
 ![](refined-fq.png){: .img-centre}
 *Experimental (solid lines) and simulated (dashed lines) total F(Q) after refinement*

@@ -64,7 +64,7 @@ Note that each of the new modules has a unique name - it is a requirement that m
 {: .step}
 > Open the **Reference Data** settings group
 {: .action .action_groups}
-> For the **Reference** keyword select the file `SLS18498-H2O.mdcs01` and set the format of the data to `mint`
+> For the **Reference** keyword select the file `SLS18498-H2O.mint01` and set the format of the data to `mint`
 {: .step}
 
 > For generality, some of Dissolve's broadening functions refer to 'omega', which should be taken to mean the reciprocal space axis (in this case, 'Q').
@@ -90,7 +90,7 @@ Note that each of the new modules has a unique name - it is a requirement that m
 {: .step}
 > Open the **Reference Data** settings group
 {: .action .action_groups}
-> For the **Reference** keyword select the file `SLS18502-D2O.mdcs01` and set the format of the data to `mint`
+> For the **Reference** keyword select the file `SLS18502-D2O.mint01` and set the format of the data to `mint`
 {: .step}
 
 ### HDO
@@ -99,6 +99,8 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 
 > As a general rule, any alcoholic or amine hydrogen is exchangeable.
 {: .tip}
+
+When we set the isotopologues for our water molecule in the `HDO` sample they were added with equal weight (1.0 in both cases) which will result in the weighted structure factors _for that species_ reflecting a 50:50 mixture. Furthermore, we had to specify that the `HW` atom type is exchangeable. When a mixture of isotopologues that contain exchangeable atoms is present, if we do not tell Dissolve that this is the case the calculate intramolecular structure factors will be wrongly weighted as, in effect, we will simulate a mix of distinct H<sub>2</sub>O and D<sub>2</sub>O molecules, which in reality is not what was measured.
 
 > Click on the third the [`NeutronSQ`](/userguide/modules/neutronsq) module (`NeutronSQ03`) to display its options
 {: .action .action_mouse}
@@ -122,9 +124,7 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 {: .step}
 > Open the **Reference Data** settings group
 {: .action .action_settings}
-> For the **Reference** keyword select the file `SLS18502-HDO5050.mdcs01` and set the format of the data to `mint`
+> For the **Reference** keyword select the file `SLS18502-HDO5050.mint01` and set the format of the data to `mint`
 {: .step}
-
-When we set the isotopologues for our water molecule in the `HDO` sample they were added with equal weight (1.0 in both cases) which will result in the weighted structure factors _for that species_ reflecting a 50:50 mixture. Furthermore, we had to specify that the `HW` atom type is exchangeable. When a mixture of isotopologues that contain exchangeable atoms is present, if we do not tell Dissolve that this is the case the calculate intramolecular structure factors will be wrongly weighted as, in effect, we will simulate a mix of distinct H<sub>2</sub>O and D<sub>2</sub>O molecules, which in reality is not what was measured.
 
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn .right}

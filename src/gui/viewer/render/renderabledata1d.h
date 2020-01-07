@@ -52,7 +52,7 @@ class RenderableData1D : public Renderable
 
 	public:
 	// Return version of data
-	int dataVersion() const;
+	int dataVersion();
 
 
 	/*

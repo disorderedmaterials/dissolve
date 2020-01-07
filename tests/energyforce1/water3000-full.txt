@@ -64,6 +64,3 @@ PairPotentials
   IncludeCoulomb  False
 EndPairPotentials
 
-Simulation
-  RestartFileFrequency  -1
-EndSimulation

@@ -29,6 +29,7 @@ CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget* parent, Calcul
 	ui_.setupUi(this);
 
 	ui_.SpeciesView->setSpecies(&module_->averageSpecies());
+
 	refreshing_ = false;
 }
 

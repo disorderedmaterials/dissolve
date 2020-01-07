@@ -59,9 +59,9 @@ void RenderableData1D::invalidateDataSource()
 }
 
 // Return version of data
-int RenderableData1D::dataVersion() const
+int RenderableData1D::dataVersion()
 {
-	return (source_ ? source_->version() : -99);
+	return (validateDataSource() ? source_->version() : -99);
 }
 
 /*
@@ -75,7 +75,7 @@ void RenderableData1D::transformValues()
 	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
-	if (!validateDataSource()) transformedData_.clear();
+	if (!source_) transformedData_.clear();
 	else transformedData_ = *source_;
 	valuesTransform_.transformValues(transformedData_);
 

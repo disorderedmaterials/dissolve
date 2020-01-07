@@ -26,9 +26,9 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class SelectProcedureNode;
 class LineParser;
 class NodeScopeStack;
+class SelectProcedureNode;
 
 // Procedure Node - Exclude
 class ExcludeProcedureNode : public ProcedureNode

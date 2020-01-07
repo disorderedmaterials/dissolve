@@ -16,6 +16,7 @@ add_library(procedurenodes
   nodereference.cpp
   operatebase.cpp
   operatedivide.cpp
+  operateexpression.cpp
   operategridnormalise.cpp
   operatemultiply.cpp
   operatenormalise.cpp
@@ -48,6 +49,7 @@ add_library(procedurenodes
   nodes.h
   operatebase.h
   operatedivide.h
+  operateexpression.h
   operategridnormalise.h
   operatemultiply.h
   operatenormalise.h

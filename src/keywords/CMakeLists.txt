@@ -11,6 +11,7 @@ add_library(keywords
   double.cpp
   dynamicsitenodes.cpp
   elementreflist.cpp
+  expression.cpp
   expressionvariablelist.cpp
   fileandformat.cpp
   geometrylist.cpp
@@ -54,6 +55,7 @@ add_library(keywords
   dynamicsitenodes.h
   elementreflist.h
   enumoptions.h
+  expression.h
   expressionvariablelist.h
   fileandformat.h
   geometrylist.h

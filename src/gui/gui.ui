@@ -1186,6 +1186,7 @@ Remote Simulation</string>
        <string>Analysis...</string>
       </property>
       <addaction name="LayerCreateAnalyseRDFCNAction"/>
+      <addaction name="LayerCreateAnalyseAvgMolSDFAction"/>
      </widget>
      <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
@@ -1606,6 +1607,11 @@ Remote Simulation</string>
   <action name="LayerCreateAnalyseRDFCNAction">
    <property name="text">
     <string>RDF &amp;&amp; Coordination Number</string>
+   </property>
+  </action>
+  <action name="LayerCreateAnalyseAvgMolSDFAction">
+   <property name="text">
+    <string>Average Molecule &amp;&amp; SDF</string>
    </property>
   </action>
  </widget>

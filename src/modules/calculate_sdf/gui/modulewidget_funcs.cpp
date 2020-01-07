@@ -25,6 +25,7 @@
 #include "gui/viewer/render/renderabledata3d.h"
 #include "gui/viewer/render/renderablespecies.h"
 #include "gui/helpers/comboboxupdater.h"
+#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
@@ -33,6 +34,10 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 {
 	// Set up user interface
 	ui_.setupUi(this);
+
+	// Set step sizes in spin widgets
+	ui_.LowerCutoffSpin->setSingleStep(0.01);
+	ui_.UpperCutoffSpin->setSingleStep(0.01);
 
 	// Set up SDF graph
 	sdfGraph_ = ui_.SDFPlotWidget->dataViewer();
@@ -51,7 +56,7 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 	referenceMolecule_ = NULL;
 	referenceMoleculeRenderable_ = NULL;
 
-	// Add on "<None>" option for refernece molecule
+	// Add on "<None>" option for reference molecule
 	ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(NULL));
 
 	setGraphDataTargets();
@@ -137,19 +142,15 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 		{
 			sdfRenderable_->setColour(StockColours::BlueStockColour);
 
-			double minValue = sdfRenderable_->valuesMin();
-			double maxValue = sdfRenderable_->valuesMax();
+			double lowerCutoff = (cfg->nMolecules() / cfg->box()->volume()) * 3.0;
+			double upperCutoff = 1.0;
 
-			// Set cutoff limits and intial values in spin widgets
-			ui_.LowerCutoffSpin->setRange(true, minValue, true, maxValue);
-			ui_.LowerCutoffSpin->setValue((maxValue - minValue) * 0.5);
-			ui_.LowerCutoffSpin->setSingleStep((maxValue-minValue)*0.05);
-			ui_.UpperCutoffSpin->setRange(true, sdfRenderable_->valuesMin(), true, sdfRenderable_->valuesMax());
-			ui_.UpperCutoffSpin->setValue(maxValue);
-			ui_.UpperCutoffSpin->setSingleStep((maxValue-minValue)*0.05);
+			// Set cutoff limits and initial values in spin widgets
+			ui_.LowerCutoffSpin->setValue(lowerCutoff);
+			ui_.UpperCutoffSpin->setValue(upperCutoff);
 
-			sdfRenderable_->setLowerCutoff((maxValue - minValue) * 0.5);
-			sdfRenderable_->setUpperCutoff(maxValue);
+			sdfRenderable_->setLowerCutoff(lowerCutoff);
+			sdfRenderable_->setUpperCutoff(upperCutoff);
 		}
 
 		// Reference molecule

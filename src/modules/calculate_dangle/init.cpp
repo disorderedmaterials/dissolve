@@ -25,6 +25,7 @@
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/operateexpression.h"
 #include "procedure/nodes/operatenormalise.h"
 #include "procedure/nodes/operatenumberdensitynormalise.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
@@ -79,7 +80,14 @@ void CalculateDAngleModule::initialise()
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
 	 * Process2D  DAngle
-	 *   NormaliseToOne  On
+	 *   Normalisation
+	 *     OperateEquationNormalise
+	 *       Equation  value/sin(y)
+	 *     EndOperateEquationNormalise
+	 *     OperateNormalise
+	 *       Value  1.0
+         *     EndOperateNormalise
+	 *   EndNormalistaion
 	 *   LabelValue  'g(r)'
 	 *   LabelX  'r, Angstroms'
 	 *   LabelY  'theta, Degrees'
@@ -150,6 +158,7 @@ void CalculateDAngleModule::initialise()
 	processAngle_->setKeyword<CharString>("LabelValue", "Normalised Frequency");
 	processAngle_->setKeyword<CharString>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
 	SequenceProcedureNode* angleNormalisation = processAngle_->addNormalisationBranch();
+	angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
 	angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processAngle_);
 
@@ -160,6 +169,7 @@ void CalculateDAngleModule::initialise()
 	processDAngle_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngle_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
 	SequenceProcedureNode* dAngleNormalisation = processDAngle_->addNormalisationBranch();
+	dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
 	dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processDAngle_);
 

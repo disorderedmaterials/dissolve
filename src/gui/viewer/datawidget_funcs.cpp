@@ -76,6 +76,7 @@ void DataWidget::on_InteractionViewButton_clicked(bool checked)
 // Graph
 void DataWidget::on_GraphResetButton_clicked(bool checked)
 {
+	dataViewer()->view().resetViewMatrix();
 	dataViewer()->view().showAllData();
 
 	dataViewer()->postRedisplay();

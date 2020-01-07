@@ -66,11 +66,10 @@ void RenderableData3D::invalidateDataSource()
 }
 
 // Return version of data
-int RenderableData3D::dataVersion() const
+int RenderableData3D::dataVersion()
 {
-	return (source_ ? source_->version() : -99);
+	return (validateDataSource() ? source_->version() : -99);
 }
-
 
 /*
  * Transform / Limits
@@ -83,7 +82,7 @@ void RenderableData3D::transformValues()
 	if (valuesTransformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
-	if (!validateDataSource()) transformedData_.clear();
+	if (!source_) transformedData_.clear();
 	else transformedData_ = *source_;
 	valuesTransform_.transformValues(transformedData_);
 
@@ -159,7 +158,6 @@ void RenderableData3D::transformValues()
 	valuesTransformDataVersion_ = dataVersion();
 }
 
-
 // Return reference to transformed data
 const Data3D& RenderableData3D::transformedData()
 {
@@ -181,8 +179,11 @@ const Data3D& RenderableData3D::transformedData()
 
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
-{	
+{
 	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
+
+	if (!validateDataSource()) return;
+
 	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.constAxes(), dataPrimitive_);
 }
 
@@ -670,10 +671,10 @@ double RenderableData3D::upperCutoff() const
 EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
 {
 	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableData3D::DisplayKeyword,		"Display") <<
+		EnumOption(RenderableData3D::DisplayKeyword,		"Display",	1) <<
 		EnumOption(RenderableData3D::EndStyleKeyword,		"EndStyle") <<
-		EnumOption(RenderableData3D::LowerCutoffKeyword,	"LowerCutoff") <<
-		EnumOption(RenderableData3D::UpperCutoffKeyword,	"UpperCutoff");
+		EnumOption(RenderableData3D::LowerCutoffKeyword,	"LowerCutoff",	1) <<
+		EnumOption(RenderableData3D::UpperCutoffKeyword,	"UpperCutoff",	1);
 
 	static EnumOptions<RenderableData3D::Data3DStyleKeyword> options("Data3DStyleKeyword", StyleKeywords);
 

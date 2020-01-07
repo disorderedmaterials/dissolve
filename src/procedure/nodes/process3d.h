@@ -30,7 +30,6 @@
 
 // Forward Declarations
 class Collect3DProcedureNode;
-class SelectProcedureNode;
 class Data3D;
 class LineParser;
 class NodeScopeStack;

@@ -186,7 +186,6 @@ namespace SimulationBlock
 		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
 		ParallelGroupPopulationKeyword,	/* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes in a pool in to */
-		RestartFileFrequencyKeyword,	/* 'RestartFileFrequency' - Frequency at which to write restart file */
 		SeedKeyword,			/* 'Seed' - Random seed to use */
 		nSimulationKeywords		/* Number of keywords defined for this block */
 	};

@@ -209,6 +209,7 @@ class DissolveWindow : public QMainWindow
 	void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
 	void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
 	void on_LayerCreateAnalyseRDFCNAction_triggered(bool checked);
+	void on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked);
 	void on_LayerRenameAction_triggered(bool checked);
 	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
