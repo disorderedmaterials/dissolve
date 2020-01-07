@@ -40,6 +40,7 @@ jobs:
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve.dmginfo
+        dmgbuild -s ci/osx/settings.py -D app=./Dissolve-GUI.app "Dissolve GUI" Dissolve-GUI-continuous.dmg
         mkdir damage
         mv *dmg damage
     - name: Upload Artifacts
