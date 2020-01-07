@@ -86,6 +86,14 @@ blockquote.warn::before {
   background-image: url(blockwarn.svg);
 }
 
+// Question
+blockquote.question {
+  border-left: 8px solid #329819;
+}
+blockquote.question::before {
+  background-image: url(blockquestion.svg);
+}
+
 // Action (Quote-style)
 blockquote.actionquote {
   border-left: 8px solid #478cc6;
