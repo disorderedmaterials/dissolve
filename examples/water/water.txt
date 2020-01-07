@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.0 at 23:07:21 on 06-01-2020.
+# Input file written by Dissolve v0.5.0 at 12:01:55 on 07-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -104,8 +104,8 @@ Layer  'Evolve (Standard)'
     Frequency  1
 
     Configuration  'Bulk'
-    RotationStepSize   1.47700e+01
-    TranslationStepSize   1.66607e-01
+    RotationStepSize   1.48184e+01
+    TranslationStepSize   1.62518e-01
   EndModule
 
   Module  MD  'MD01'
@@ -178,7 +178,6 @@ EndLayer
 
 Layer  'Analyse RDF/CN'
   Frequency  1
-  Disabled
 
   Module  CalculateRDF  'CalculateRDF01'
     Frequency  1
@@ -192,6 +191,7 @@ Layer  'Analyse RDF/CN'
   Module  CalculateCN  'CalculateCN01'
     Frequency  1
     SourceRDF  'CalculateRDF01'
+    RangeA  0.000000e+00  3.400000e+00
   EndModule
 EndLayer
 
