@@ -17,7 +17,7 @@ APP_BIN="build/dissolve-gui.app/Contents/MacOS/dissolve-gui"
 APP_PLIST="build/dissolve-gui.app/Contents/Info.plist"
 
 # -- APP_ICON : A 1024x1024 png file from which to create an icon set
-APP_ICON="../../icon/icon-1024x1024.png"
+APP_ICON="icon/icon-1024x1024.png"
 
 # -- APP_LICENSE : License information file to put in the bundle
 APP_LICENSE="./LICENSE.txt"
