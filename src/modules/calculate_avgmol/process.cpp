@@ -70,10 +70,14 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 	if (requiredSize > 0)
 	{
-		Messenger::printVerbose("Initialising arrays for average molecule: size = %i\n", requiredSize);
-		x.initialise(requiredSize);
-		y.initialise(requiredSize);
-		z.initialise(requiredSize);
+		if (x.nItems() == requiredSize && y.nItems() == requiredSize && z.nItems() == requiredSize) Messenger::print("Using existing coordinate arrays for average species.\n");
+		else
+		{
+			Messenger::printVerbose("Initialising arrays for average molecule: size = %i\n", requiredSize);
+			x.initialise(requiredSize);
+			y.initialise(requiredSize);
+			z.initialise(requiredSize);
+		}
 	}
 	else
 	{
@@ -113,9 +117,9 @@ bool CalculateAvgMolModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const SiteStack* stack = cfg->siteStack(site);
 
 	// Retrieve data arrays
-	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "X", uniqueName());
-	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "Y", uniqueName());
-	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "Z", uniqueName());
+	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "X", uniqueName());
+	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
+	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
 
 	// Loop over sites
 	Vec3<double> r;
