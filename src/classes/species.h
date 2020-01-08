@@ -151,6 +151,10 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated_;
 
+	private:
+	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+	void updateIntramolecularTerms();
+
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
 	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
@@ -242,10 +246,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	Forcefield* forcefield_;
 	// Auto-generate missing intramolecular terms, and remove invalid ones
 	bool autoUpdateIntramolecularTerms_;
-
-	private:
-	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-	void updateIntramolecularTerms();
 
 	public:
 	// Set Forcefield to source terms from
