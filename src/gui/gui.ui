@@ -1042,7 +1042,6 @@ Remote Simulation</string>
       <iconset resource="main.qrc">
        <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
      </property>
-     <addaction name="SpeciesCreateEmptyAction"/>
      <addaction name="SpeciesCreateAtomicAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesImportMenu">

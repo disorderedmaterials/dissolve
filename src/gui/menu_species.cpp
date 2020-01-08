@@ -27,15 +27,6 @@
 #include "classes/species.h"
 #include <QFileDialog>
 
-void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
-{
-	Species* newSpecies = dissolve_.addSpecies();
-
-	setModified();
-	fullUpdate();
-	ui_.MainTabs->setCurrentTab(newSpecies);
-}
-
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
 	// Raise an element selection dialog
