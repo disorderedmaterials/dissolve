@@ -46,13 +46,13 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
-	static ImportSpeciesDialog addSpeciesDialog(this, dissolve_);
+	static ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
 
-	addSpeciesDialog.reset();
+	importSpeciesDialog.reset();
 
-	if (addSpeciesDialog.exec() == QDialog::Accepted)
+	if (importSpeciesDialog.exec() == QDialog::Accepted)
 	{
-		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
+		Species* sp = importSpeciesDialog.importSpecies(dissolve_);
 
 		// Fully update GUI
 		setModified();
