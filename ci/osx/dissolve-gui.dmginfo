@@ -35,4 +35,5 @@ QT_EXTRA_IMAGEFORMATS="libqsvg.dylib"
 # --              : Format is "<input dylib | NONE>,<input dylib | NONE>,<output dylib>"
 EXTRA_DYLIBS="/usr/local/lib/libftgl.2.dylib,NONE,libftgl.2.dylib"
 EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libfreetype.6.dylib,NONE,libfreetype.6.dylib"
+EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/opt/libpng/lib/libpng16.16.dylib,NONE,libpng16.16.dylib"
 
