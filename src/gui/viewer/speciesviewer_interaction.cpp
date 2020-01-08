@@ -88,6 +88,22 @@ void SpeciesViewer::startInteraction()
 			if (clickedAtom_) speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
 			else speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
 			break;
+		// Delete
+		case (SpeciesViewer::DeleteInteraction):
+			// If the left mouse button is not flagged, do nothing
+			if (!buttonState_.testFlag(Qt::LeftButton)) break;
+
+			// Set starting atom (if there is one at the current position)
+			clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
+
+			// Get the clicked position in the coordinate space of the Species
+			drawCoordinateStart_ = clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
+			drawCoordinateCurrent_ = drawCoordinateStart_;
+
+			// Update the interaction Primitive
+			if (clickedAtom_) speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+			else speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
+			break;
 		default:
 			break;
 	}
@@ -197,6 +213,30 @@ void SpeciesViewer::endInteraction()
 			// Update display
 			postRedisplay();
 			break;
+		case (SpeciesViewer::DeleteInteraction):
+			// If the left mouse button is not flagged, do nothing
+			if (!buttonState_.testFlag(Qt::LeftButton)) break;
+
+			// If an atom was not clicked at the start of the interaction, break now
+			if (!clickedAtom_) break;
+
+			// Get atom at current coordinates - if its the same as the clicked atom, nullify the pointer so we don't try to remove a bonv
+			j = atomAt(rMouseLast_.x, rMouseLast_.y);
+			if (j == clickedAtom_) j = NULL;
+
+			// If there is an atom 'j', search for the bond to delete. Otherwise, delete clickedAtom_
+			if (!j) species_->removeAtom(clickedAtom_);
+			else if (species_->hasBond(clickedAtom_, j)) species_->removeBond(clickedAtom_, j);
+
+			// Clear the interaction Primitive
+			speciesRenderable_->clearInteractionPrimitive();
+
+			// Notify that the data has changed
+			emit(dataModified());
+
+			// Update display
+			postRedisplay();
+			break;
 		default:
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
 			break;
@@ -236,6 +276,8 @@ const char* SpeciesViewer::interactionModeText() const
 			return "Translate";
 		case (SpeciesViewer::DrawInteraction):
 			return "Draw: <b>Left</b> Draw [+<i>Ctrl</i>: Transmute]; <b>Right</b> Rotate view";
+		case (SpeciesViewer::DeleteInteraction):
+			return "Delete: <b>Left-Click</b> Delete Atom; <b>Left-Click-Drag</b> Delete Bond";
 		default:
 			return "Unknown SpeciesViewerInteraction";
 	}
