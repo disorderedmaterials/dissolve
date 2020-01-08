@@ -89,10 +89,6 @@ class SpeciesWidget : public QWidget
 	 * ToolBar
 	 */
 	private slots:
-	// Interaction
-	void on_InteractionViewButton_clicked(bool checked);
-	void on_InteractionDrawButton_clicked(bool checked);
-	void on_InteractionDrawElementButton_clicked(bool checked);
 	// View
 	void on_ViewResetButton_clicked(bool checked);
 	void on_ViewSpheresButton_clicked(bool checked);

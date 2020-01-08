@@ -35,16 +35,10 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 	// Set up our UI
 	ui_.setupUi(this);
 
-	// Create a button group for the interaction modes
-	QButtonGroup* group = new QButtonGroup;
-	group->addButton(ui_.InteractionViewButton);
-	group->addButton(ui_.InteractionDrawButton);
-
 	// Connect signals / slots
 	connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
 	connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 	connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
-	connect(ui_.SpeciesView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
 	// Make sure our controls are consistent with the underlying viewer / data
 	updateToolbar();
@@ -87,20 +81,6 @@ void SpeciesWidget::postRedisplay()
 // Update toolbar to reflect current viewer state
 void SpeciesWidget::updateToolbar()
 {
-	// Set current interaction mode
-	switch (speciesViewer()->interactionMode())
-	{
-		case (SpeciesViewer::DefaultInteraction):
-			ui_.InteractionViewButton->setChecked(true);
-			break;
-		case (SpeciesViewer::DrawInteraction):
-			ui_.InteractionDrawButton->setChecked(true);
-			break;
-	}
-
-	// Set drawing element symbol
-	ui_.InteractionDrawElementButton->setText(speciesViewer()->drawElement()->symbol());
-
 	// Set checkable buttons
 	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
 	ui_.ViewSpheresButton->setChecked(speciesViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
@@ -142,28 +122,6 @@ SpeciesViewer* SpeciesWidget::speciesViewer()
 /*
  * Toolbar
  */
-
-void SpeciesWidget::on_InteractionViewButton_clicked(bool checked)
-{
-	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DefaultInteraction);
-}
-
-void SpeciesWidget::on_InteractionDrawButton_clicked(bool checked)
-{
-	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
-}
-
-void SpeciesWidget::on_InteractionDrawElementButton_clicked(bool checked)
-{
-	// Select a new element for drawing
-	bool ok;
-	Element* newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms", speciesViewer()->drawElement(), &ok);
-	if (!ok) return;
-
-	speciesViewer()->setDrawElement(newElement);
-
-	updateToolbar();
-}
 
 void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 {
