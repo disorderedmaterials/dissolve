@@ -427,6 +427,11 @@ template <class T> class DynamicArrayIterator
 		
 		return result_;
 	}
+	// Return index of current item
+	int currentIndex() const
+	{
+		return index_;
+	}
 };
 
 // Const Iterator
