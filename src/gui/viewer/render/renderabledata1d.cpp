@@ -192,7 +192,7 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData1D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {	
-	dataPrimitive_->initialise(GL_LINE_STRIP, true, 512);
+	dataPrimitive_->initialise(GL_LINE_STRIP, true, 4096);
 
 	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
