@@ -68,8 +68,8 @@ jobs:
         wget -q https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -O linuxdeployqt
         chmod u+x ./linuxdeployqt
         # Run on the targets
-        ./linuxdeployqt Dissolve-continuous.app/usr/share/applications/*.desktop -appimage
-        ./linuxdeployqt Dissolve-GUI-continuous.app/usr/share/applications/*.desktop -appimage
+        ./linuxdeployqt Dissolve-continuous.AppDir/usr/share/applications/*.desktop -appimage
+        ./linuxdeployqt Dissolve-GUI-continuous.AppDir/usr/share/applications/*.desktop -appimage
         # Store artifacts
         mkdir appimages
         mv Dissolve-*-x86_64.AppImage appimages
