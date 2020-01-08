@@ -179,6 +179,23 @@ SpeciesBond* Species::addBond(int i, int j)
 	return addBond(atoms_[i], atoms_[j]);
 }
 
+// Remove bond between specified SpeciesAtoms*
+bool Species::removeBond(SpeciesAtom* i, SpeciesAtom* j)
+{
+	// Find the bond
+	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
+	while (SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j))
+	{
+		bonds_.removeWithReorder(bondIterator.currentIndex());
+		++version_;
+
+		// Update higher order intramolecular terms?
+		if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
+	}
+
+	return false;
+}
+
 // Reconnect existing SpeciesBond
 bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 {

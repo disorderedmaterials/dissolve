@@ -92,6 +92,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	public:
 	// Add a new atom to the Species
 	SpeciesAtom* addAtom(Element* element, Vec3<double> r);
+	// Remove the specified atom from the species
+	void removeAtom(SpeciesAtom* i);
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species
@@ -160,6 +162,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
+	// Remove bond between specified SpeciesAtoms*
+	bool removeBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Reconnect existing SpeciesBond
 	bool reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j);
 	// Reconnect existing SpeciesBond

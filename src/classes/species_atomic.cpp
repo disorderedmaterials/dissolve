@@ -35,6 +35,78 @@ SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
 	return i;
 }
 
+// Remove the specified atom from the species
+void Species::removeAtom(SpeciesAtom* i)
+{
+	// Remove any bond terms that involve 'i'
+	for (int n=0; n<i->nBonds(); ++n)
+	{
+		int index = bonds_.indexOf(i->bond(n));
+		if (index == -1)
+		{
+			Messenger::error("Internal Error: While deleting atom, bond in SpeciesAtom can't be found in Species bonds_.\n");
+			continue;
+		}
+
+		// Remove the bond
+		bonds_.removeWithReorder(index);
+	}
+
+	// Remove any bond terms that involve 'i'
+	for (int n=0; n<i->nAngles(); ++n)
+	{
+		int index = angles_.indexOf(i->angle(n));
+		if (index == -1)
+		{
+			Messenger::error("Internal Error: While deleting atom, angle in SpeciesAtom can't be found in Species angles_.\n");
+			continue;
+		}
+
+		// Remove the bond
+		angles_.removeWithReorder(index);
+	}
+
+	// Remove any torsion terms that involve 'i'
+	for (int n=0; n<i->nTorsions(); ++n)
+	{
+		int index = torsions_.indexOf(i->torsion(n));
+		if (index == -1)
+		{
+			Messenger::error("Internal Error: While deleting atom, torsion in SpeciesAtom can't be found in Species torisons_.\n");
+			continue;
+		}
+
+		// Remove the bond
+		torsions_.removeWithReorder(index);
+	}
+
+	// Now impropers
+	int index = 0;
+	while (index < impropers_.nItems())
+	{
+		// Does this improper use our targeted atom?
+		if (impropers_[index]->uses(i)) impropers_.removeWithReorder(index);
+		else ++index;
+	}
+
+	// Must now update intramolecular terms
+	updateIntramolecularTerms();
+
+	// Adjust any sites that reference this atom
+	ListIterator<SpeciesSite> siteIterator(sites_);
+	while (SpeciesSite* site = siteIterator.iterate())
+	{
+		if (site->originAtoms().contains(i)) site->removeOriginAtom(i);
+		if (site->xAxisAtoms().contains(i)) site->removeXAxisAtom(i);
+		if (site->yAxisAtoms().contains(i)) site->removeYAxisAtom(i);
+	}
+
+	// Finally, remove the atom
+	atoms_.remove(i);
+
+	++version_;
+}
+
 // Return the number of Atoms in the Species
 int Species::nAtoms() const
 {
