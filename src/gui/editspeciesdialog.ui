@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Add Forcefield Terms</string>
+   <string>Edit Species</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
