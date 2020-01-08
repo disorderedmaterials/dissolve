@@ -17,9 +17,7 @@ jobs:
     - name: Create Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch.' -p
-    - name: Prune Outdated
-      run: ./ci/scripts/prune-continuous -r trisyoungs/dissolve
+        ./ci/scripts/update-release -r ${{ github.repository }} -d -t continuous -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch at ${SHORTHASH}. Built ${`date`}.' -p
   preprelease:
     runs-on: ubuntu-latest
     env:
@@ -111,4 +109,4 @@ jobs:
     - name: Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch.' -p artifacts/*AppImage
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous artifacts/*AppImage
