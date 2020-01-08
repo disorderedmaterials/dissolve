@@ -73,6 +73,8 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	SpeciesAtom* k() const;
 	// Return fourth SpeciesAtom
 	SpeciesAtom* l() const;
+	// Return whether the improper uses the specified SpeciesAtom
+	bool uses(SpeciesAtom* spAtom) const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom

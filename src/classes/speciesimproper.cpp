@@ -94,6 +94,12 @@ SpeciesAtom* SpeciesImproper::l() const
 	return l_;
 }
 
+// Return whether the improper uses the specified SpeciesAtom
+bool SpeciesImproper::uses(SpeciesAtom* spAtom) const
+{
+	return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
+}
+
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesImproper::indexI() const
 {
