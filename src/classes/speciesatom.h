@@ -110,9 +110,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	private:
 	// List of bonds which this atom participates in
 	PointerArray<SpeciesBond> bonds_;
-	// List of bonds which this atom participates in
+	// List of angles which this atom participates in
 	PointerArray<SpeciesAngle> angles_;
-	// List of bonds which this atom participates in
+	// List of torsions which this atom participates in
 	PointerArray<SpeciesTorsion> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
 	OrderedPointerDataArray<SpeciesAtom,double> exclusions_;
@@ -136,12 +136,16 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	void addAngle(SpeciesAngle* angle);
 	// Return the number of SpeciesAngles in which the Atom is involved
 	int nAngles() const;
+	// Return specified angle
+	SpeciesAngle* angle(int index);
 	// Return array of Angles in which the Atom is involved
 	const PointerArray<SpeciesAngle>& angles() const;
 	// Add specified SpeciesTorsion to Atom
 	void addTorsion(SpeciesTorsion* torsion, double scaling14);
 	// Return the number of SpeciesTorsions in which the Atom is involved
 	int nTorsions() const;
+	// Return specified torsion
+	SpeciesTorsion* torsion(int index);
 	// Return array of Torsions in which the Atom is involved
 	const PointerArray<SpeciesTorsion>& torsions() const;
 	// Return scaling factor to employ with specified Atom

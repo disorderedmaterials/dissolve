@@ -213,6 +213,12 @@ int SpeciesAtom::nAngles() const
 	return angles_.nItems();
 }
 
+// Return specified angle
+SpeciesAngle* SpeciesAtom::angle(int index)
+{
+	return angles_.at(index);
+}
+
 // Return array of Angles in which the Atom is involved
 const PointerArray<SpeciesAngle>& SpeciesAtom::angles() const
 {
@@ -250,6 +256,12 @@ void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 int SpeciesAtom::nTorsions() const
 {
 	return torsions_.nItems();
+}
+
+// Return specified torsion
+SpeciesTorsion* SpeciesAtom::torsion(int index)
+{
+	return torsions_.at(index);
 }
 
 // Return array of Torsions in which the Atom is involved
