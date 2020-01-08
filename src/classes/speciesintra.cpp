@@ -43,6 +43,7 @@ SpeciesIntra::SpeciesIntra()
 // Destructor
 SpeciesIntra::~SpeciesIntra()
 {
+	deleteAttachedAtomArrays();
 }
 
 /*
