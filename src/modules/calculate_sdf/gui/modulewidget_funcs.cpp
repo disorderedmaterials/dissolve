@@ -35,8 +35,12 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 	// Set up user interface
 	ui_.setupUi(this);
 
-	// Set step sizes in spin widgets
+	refreshing_ = true;
+
+	// Set limits and step sizes in spin widgets
+	ui_.LowerCutoffSpin->setRange(true, 0.0, false);
 	ui_.LowerCutoffSpin->setSingleStep(0.01);
+	ui_.UpperCutoffSpin->setRange(true, 0.0, false);
 	ui_.UpperCutoffSpin->setSingleStep(0.01);
 
 	// Set up SDF graph
