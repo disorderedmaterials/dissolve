@@ -381,6 +381,13 @@ template <class T> class DynamicArray
 
 		return false;
 	}
+	// Return index of the specified object pointer (if it exists in the array)
+	bool indexOf(const T* object)
+	{
+		for (int n=0; n<array_.nItems(); ++n) if (array_.constAt(n) == object) return n;
+
+		return -1;
+	}
 };
 
 // Iterator
