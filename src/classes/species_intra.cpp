@@ -191,6 +191,8 @@ bool Species::removeBond(SpeciesAtom* i, SpeciesAtom* j)
 
 		// Update higher order intramolecular terms?
 		if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
+
+		return true;
 	}
 
 	return false;
