@@ -164,7 +164,7 @@ then
 		git config --local user.name "trisyoungs"
 		git config --local user.email "tristan.youngs@stfc.ac.uk"
 
-		git tag $RELEASE_TAG
+		git tag -f $RELEASE_TAG
 	fi
 
 	# Construct release information
