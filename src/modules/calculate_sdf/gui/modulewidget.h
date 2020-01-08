@@ -49,6 +49,7 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	// CoreData reference
 	const CoreData& coreData_;
 
+
 	/*
 	 * UI
 	 */
