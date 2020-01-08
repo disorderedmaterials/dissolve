@@ -186,11 +186,14 @@ bool Species::removeBond(SpeciesAtom* i, SpeciesAtom* j)
 	DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
 	while (SpeciesBond* b = bondIterator.iterate()) if (b->matches(i, j))
 	{
+		b->deleteAttachedAtomArrays();
+		b->detachFromMasterIntra();
+
+		i->removeBond(b);
+		j->removeBond(b);
+
 		bonds_.removeWithReorder(bondIterator.currentIndex());
 		++version_;
-
-		// Update higher order intramolecular terms?
-		if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
 
 		return true;
 	}
