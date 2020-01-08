@@ -13,7 +13,7 @@ Purpose
 The Technical Steering Committee is responsible for the following documents and processes:
 
  * To come up with the best technical solutions for given major and submitted problems.
- * Provides answers to technical questions posed by the [Project Management Committee](pmc.md).
+ * Provides answers to technical questions posed by the [Project Management Committee](project.md).
  * Provides recommendations on infrastructure and processes.
  * Approves changes to the 3rd Party dependencies of the software, and makes recommendations for changes / updates.
 
@@ -26,7 +26,7 @@ The Technical Steering Committee operates on the following basis:
  * The regular Technical Committee meetings are open to all interested parties, but the Committee seeks only to find consensus amongst Committee members, and representatives from the team that submitted any proposal under consideration.
  * The members of the committee should have deep technical knowledge and experience over a wide range of programming, best practices and infrastructure areas.
  * Acts as an arbitration/triage point for old, controversial and large issues.
- * If the committee cannot come to a majority consensus, then the issue will be raised at the [Project Management Committee](pmc.md).
+ * If the committee cannot come to a majority consensus, then the issue will be raised at the [Project Management Committee](project.md).
 
 Members
 -------
