@@ -134,6 +134,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	SpeciesBond* hasBond(SpeciesAtom* j);
 	// Add specified Angle to Atom
 	void addAngle(SpeciesAngle* angle);
+	// Remove angle reference
+	void removeAngle(SpeciesAngle* a);
 	// Return the number of SpeciesAngles in which the Atom is involved
 	int nAngles() const;
 	// Return specified angle
@@ -142,6 +144,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	const PointerArray<SpeciesAngle>& angles() const;
 	// Add specified SpeciesTorsion to Atom
 	void addTorsion(SpeciesTorsion* torsion, double scaling14);
+	// Remove torsion reference
+	void removeTorsion(SpeciesTorsion* t);
 	// Return the number of SpeciesTorsions in which the Atom is involved
 	int nTorsions() const;
 	// Return specified torsion

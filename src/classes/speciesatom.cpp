@@ -207,6 +207,13 @@ void SpeciesAtom::addAngle(SpeciesAngle* angle)
 	if (angle->k() != this) exclusions_.add(angle->k());
 }
 
+
+// Remove angle reference
+void SpeciesAtom::removeAngle(SpeciesAngle* a)
+{
+	angles_.remove(a);
+}
+
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const
 {
@@ -250,6 +257,12 @@ void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 		if (torsion->j() != this) exclusions_.add(torsion->j());
 		if (torsion->k() != this) exclusions_.add(torsion->k());
 	}
+}
+
+// Remove torsion reference
+void SpeciesAtom::removeTorsion(SpeciesTorsion* t)
+{
+	torsions_.remove(t);
 }
 
 // Return the number of Torsions in which the Atom is involved
