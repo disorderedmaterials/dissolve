@@ -22,6 +22,7 @@
 #include "gui/gui.h"
 #include "gui/speciestab.h"
 #include "gui/addforcefieldtermsdialog.h"
+#include "gui/editspeciesdialog.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "classes/species.h"
@@ -42,6 +43,20 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 	setModified();
 	fullUpdate();
 	ui_.MainTabs->setCurrentTab(newSpecies);
+}
+
+void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
+{
+	Species* newSpecies = dissolve_.addSpecies();
+
+	EditSpeciesDialog editSpeciesDialog(this, newSpecies);
+	if (editSpeciesDialog.editSpecies())
+	{
+		setModified();
+		fullUpdate();
+		ui_.MainTabs->setCurrentTab(newSpecies);
+	}
+	else dissolve_.removeSpecies(newSpecies);
 }
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)

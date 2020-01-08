@@ -1043,6 +1043,7 @@ Remote Simulation</string>
        <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
      </property>
      <addaction name="SpeciesCreateAtomicAction"/>
+     <addaction name="SpeciesCreateDrawAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesImportMenu">
      <property name="font">
@@ -1611,6 +1612,11 @@ Remote Simulation</string>
   <action name="LayerCreateAnalyseAvgMolSDFAction">
    <property name="text">
     <string>Average Molecule &amp;&amp; SDF</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateDrawAction">
+   <property name="text">
+    <string>Draw...</string>
    </property>
   </action>
  </widget>

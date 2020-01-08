@@ -185,6 +185,7 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesCreateAtomicAction_triggered(bool checked);
+	void on_SpeciesCreateDrawAction_triggered(bool checked);
 	void on_SpeciesImportFromDissolveAction_triggered(bool checked);
 	void on_SpeciesImportFromXYZAction_triggered(bool checked);
 	void on_SpeciesRenameAction_triggered(bool checked);
