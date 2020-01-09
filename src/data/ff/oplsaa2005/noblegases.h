@@ -1,6 +1,6 @@
 /*
 	*** OPLSAA (2005) Noble Gases Forcefield
-	*** src/data/ff/oplsaa2005_noblegases.h
+	*** src/data/ff/oplsaa2005/noblegases.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.

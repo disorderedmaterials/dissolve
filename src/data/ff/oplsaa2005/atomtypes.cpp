@@ -1,6 +1,6 @@
 /*
 	*** OPLSAA (2005) Atom Types
-	*** src/data/ff/oplsaa2005_atomtypes.cpp
+	*** src/data/ff/oplsaa2005/atomtypes.cpp
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/ff/oplsaa2005_atomtypes.h"
+#include "data/ff/oplsaa2005/atomtypes.h"
 #include "data/ffatomtype.h"
 
 /*

@@ -1,6 +1,6 @@
 /*
 	*** OPLSAA (2005) Atom Types
-	*** src/data/ff/oplsaa2005_atomtypes.h
+	*** src/data/ff/oplsaa2005/atomtypes.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.

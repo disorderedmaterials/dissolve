@@ -20,7 +20,7 @@
 */
 
 #include "data/fflibrary.h"
-#include "data/ff/oplsaa2005_noblegases.h"
+#include "data/ff/oplsaa2005/noblegases.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py5.h"
 #include "data/ff/ludwig/py4oh.h"

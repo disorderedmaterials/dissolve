@@ -1,6 +1,6 @@
 /*
 	*** OPLSAA (2005) Noble Gases Forcefield
-	*** src/data/ff/oplsaa2005_noblegases.cpp
+	*** src/data/ff/oplsaa2005/noblegases.cpp
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/ff/oplsaa2005_noblegases.h"
-#include "data/ff/oplsaa2005_atomtypes.h"
+#include "data/ff/oplsaa2005/noblegases.h"
+#include "data/ff/oplsaa2005/atomtypes.h"
 #include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
 #include "base/sysfunc.h"

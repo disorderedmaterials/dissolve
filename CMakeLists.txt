@@ -189,6 +189,7 @@ set(BASIC_LINK_LIBS
 
   # Forcefields
   ff_ludwig
+  ff_oplsaa2005
 
   # Modules
   analysemodule
