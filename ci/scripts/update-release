@@ -155,7 +155,7 @@ then
 	then
 		# Check hash against HEAD
 		HEAD_HASH=`git rev-parse --short HEAD`
-		echo "   head: $TAG_HASH"
+		echo "   head: $HEAD_HASH"
 		if [ "$TAG_HASH" != "$HEAD_HASH" ] || [ "$DELETE_EXISTING_ALWAYS" = "true" ]
 		then
 			echo " -- Removing existing release..."
