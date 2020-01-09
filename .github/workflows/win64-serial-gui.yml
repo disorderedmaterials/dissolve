@@ -83,7 +83,8 @@ jobs:
         echo "Executable installer is "$exe.Name
         innoextract.exe $exe.Name -d $exe.BaseName
         mv "$($exe.BaseName)\app\bin\*" $exe.BaseName
-        rm -Force "$($exe.BaseName)\app"
+        mv "$($exe.BaseName)\app" ./
+        #rm -Force "$($exe.BaseName)\app"
         $zip = $exe.BaseName + ".zip"
         zip -r $zip $exe.BaseName
         mkdir installers
