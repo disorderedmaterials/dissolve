@@ -7,14 +7,12 @@ grand_parent: Examples
 
 ## 1a. Draw the Molecule
 
-First, let's create an empty species and give it a suitable name.
+We will draw our molecule using Dissolve's built-in editor:
 
-> Species &#8680; Create... &#8680; Empty_
+> Species &#8680; Create... &#8680; Draw_
 {: .action .action_menu}
-> Double-click on the new species tab's title and change the name to `Water`
-{: .step}
 
-Now we can draw and connect the atoms we need to create our water molecule.
+A new editor window opens in which we can create our new species.
 
 > Choose "Draw mode" from the toolbar above the species viewer - ![Draw mode](../icons/viewer_edit.png)
 {: .action .action_mouse}
@@ -27,6 +25,12 @@ Now we can draw and connect the atoms we need to create our water molecule.
 > Left-click-drag from the existing oxygen atom to draw a hydrogen bound to it
 {: .step}
 > Repeat for the other hydrogen
+{: .step}
+> Click **OK** to close the editor and create the new species
+
+Finally, let's rename it:
+
+> Double-click on the new species tab's title and change the name to `Water`
 {: .step}
 
 ![](badwater.png){: .img-centre}
