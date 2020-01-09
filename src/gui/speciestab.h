@@ -112,8 +112,6 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_ForcefieldButton_clicked(bool checked);
 	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
 	void on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked);
-	void on_AtomAddButton_clicked(bool checked);
-	void on_AtomRemoveButton_clicked(bool checked);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);
 	void on_AtomTable_itemSelectionChanged();
 	void on_BondAddButton_clicked(bool checked);
