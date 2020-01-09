@@ -88,6 +88,14 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 	sp->loadFromXYZ(qPrintable(xyzFile));
 	sp->addMissingBonds();
 
+	// Offer the species up for editing before finalising
+	EditSpeciesDialog editSpeciesDialog(this, sp);
+	if (!editSpeciesDialog.editSpecies())
+	{
+		dissolve_.removeSpecies(sp);
+		return;
+	}
+
 	// Fully update GUI
 	setModified();
 	fullUpdate();
