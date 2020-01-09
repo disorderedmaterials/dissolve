@@ -179,6 +179,27 @@ then
 			# Reset url so it gets recreated
 			CURRENT_URL="x"
 		fi
+	else
+		# Patch the current release
+
+		# Set GitHub username and email
+		git config --local user.name "trisyoungs"
+		git config --local user.email "tristan.youngs@stfc.ac.uk"
+
+		git tag -f $RELEASE_TAG
+
+		# Construct release information
+		RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
+		RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TRAVIS_COMMIT'"'
+		RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
+		RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
+		RELEASE_DATA=${RELEASE_DATA}', "draft": false'
+		RELEASE_DATA=${RELEASE_DATA}', "prerelease": '$RELEASE_PRE
+		RELEASE_DATA=${RELEASE_DATA}" }"
+		echo $RELEASE_DATA
+
+		# Patch release
+		CURRENT_RELEASEINFO=$(curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
 	fi
 fi
 
