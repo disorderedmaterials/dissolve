@@ -200,40 +200,44 @@ then
 	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
 fi
 
-# Extract upload path for assets
-# -- Need to strip trailing {?name,label} part from the returned url
-UPLOAD_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .upload_url' | cut -d '{' -f 1)
-if [ "x$UPLOAD_URL" = "x" ]
+# Upload assets if provided
+if (( $NARTIFACTS > 0 ))
 then
-	echo "Error: Failed to determine upload url for release."
-	exit 1
-fi
-echo "Upload url is: $UPLOAD_URL"
+	# Upload specified assets
+	echo "Uploading assets to release..."
 
-# Upload specified assets
-echo "Uploading assets to release..."
-
-for file in ${ARTIFACTS[@]}
-do
-	# Get the basename of the file so we call it the correct name
-	BASENAME=$(basename "${file}")
-	echo "... $file (basename=$BASENAME)"
-
-	ARTIFACT_DATA=$(curl --header "Authorization: token ${GITHUB_TOKEN}" \
-	     --header "Accept: application/vnd.github.manifold-preview" \
-	     --header "Content-Type: application/octet-stream" \
-	     --data-binary @$file \
-	     "$UPLOAD_URL?name=$BASENAME")
-
-	ARTIFACT_ID=$(echo $ARTIFACT_DATA | jq -r '. | .id')
-	ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
-	if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
+	# Extract upload path for assets
+	# -- Need to strip trailing {?name,label} part from the returned url
+	UPLOAD_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .upload_url' | cut -d '{' -f 1)
+	if [ "x$UPLOAD_URL" = "x" ]
 	then
-		echo "Error: Failed to upload artifact."
-		echo "Returned data was: $ARTIFACT_DATA"
+		echo "Error: Failed to determine upload url for release."
 		exit 1
 	fi
-	echo "   -- Success (id: $ARTIFACT_ID, url: $ARTIFACT_URL)"
-done
+	echo " -- Upload url is: $UPLOAD_URL"
+
+	for file in ${ARTIFACTS[@]}
+	do
+		# Get the basename of the file so we call it the correct name
+		BASENAME=$(basename "${file}")
+		echo "... $file (basename=$BASENAME)"
+
+		ARTIFACT_DATA=$(curl --header "Authorization: token ${GITHUB_TOKEN}" \
+		     --header "Accept: application/vnd.github.manifold-preview" \
+		     --header "Content-Type: application/octet-stream" \
+		     --data-binary @$file \
+		     "$UPLOAD_URL?name=$BASENAME")
+
+		ARTIFACT_ID=$(echo $ARTIFACT_DATA | jq -r '. | .id')
+		ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
+		if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
+		then
+			echo "Error: Failed to upload artifact."
+			echo "Returned data was: $ARTIFACT_DATA"
+			exit 1
+		fi
+		echo "   -- Success (id: $ARTIFACT_ID, url: $ARTIFACT_URL)"
+	done
+fi
 
 # All done.
