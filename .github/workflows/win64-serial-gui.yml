@@ -21,6 +21,7 @@ jobs:
         #Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
         #Remove-Item qt.exe
         choco install -y ninja zip winflexbison innoextract
+        choco install mingw --version=7.3.0
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.2.1
       with:
@@ -30,8 +31,6 @@ jobs:
     - name: Build Freetype
       run: |
         cd $HOME
-        ls $env:Qt5_DIR
-        ls $env:Qt5_DIR/Tools
         git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
         Echo 'Compiling FreeType...'
         mkdir freetype-build
