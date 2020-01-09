@@ -22,19 +22,11 @@
 #include "gui/gui.h"
 #include "gui/speciestab.h"
 #include "gui/addforcefieldtermsdialog.h"
+#include "gui/editspeciesdialog.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "classes/species.h"
 #include <QFileDialog>
-
-void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
-{
-	Species* newSpecies = dissolve_.addSpecies();
-
-	setModified();
-	fullUpdate();
-	ui_.MainTabs->setCurrentTab(newSpecies);
-}
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -53,15 +45,29 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 	ui_.MainTabs->setCurrentTab(newSpecies);
 }
 
+void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
+{
+	Species* newSpecies = dissolve_.addSpecies();
+
+	EditSpeciesDialog editSpeciesDialog(this, newSpecies);
+	if (editSpeciesDialog.editSpecies())
+	{
+		setModified();
+		fullUpdate();
+		ui_.MainTabs->setCurrentTab(newSpecies);
+	}
+	else dissolve_.removeSpecies(newSpecies);
+}
+
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
-	static ImportSpeciesDialog addSpeciesDialog(this, dissolve_);
+	static ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
 
-	addSpeciesDialog.reset();
+	importSpeciesDialog.reset();
 
-	if (addSpeciesDialog.exec() == QDialog::Accepted)
+	if (importSpeciesDialog.exec() == QDialog::Accepted)
 	{
-		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
+		Species* sp = importSpeciesDialog.importSpecies(dissolve_);
 
 		// Fully update GUI
 		setModified();
@@ -81,6 +87,14 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 	Species* sp = dissolve_.addSpecies();
 	sp->loadFromXYZ(qPrintable(xyzFile));
 	sp->addMissingBonds();
+
+	// Offer the species up for editing before finalising
+	EditSpeciesDialog editSpeciesDialog(this, sp);
+	if (!editSpeciesDialog.editSpecies())
+	{
+		dissolve_.removeSpecies(sp);
+		return;
+	}
 
 	// Fully update GUI
 	setModified();

@@ -1,6 +1,6 @@
 /*
-	*** Species Widget
-	*** src/gui/viewer/specieswidget.h
+	*** Species Editor
+	*** src/gui/viewer/specieseditor.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,24 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_SPECIESWIDGET_H
-#define DISSOLVE_VIEWER_SPECIESWIDGET_H
+#ifndef DISSOLVE_VIEWER_SPECIESEDITOR_H
+#define DISSOLVE_VIEWER_SPECIESEDITOR_H
 
-#include "gui/viewer/ui_specieswidget.h"
+#include "gui/viewer/ui_specieseditor.h"
 
 // Forward Declarations
 class CoreData;
 
 // Species Widget
-class SpeciesWidget : public QWidget
+class SpeciesEditor : public QWidget
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	SpeciesWidget(QWidget* parent = 0);
-	~SpeciesWidget();
+	SpeciesEditor(QWidget* parent = 0);
+	~SpeciesEditor();
 
 	private:
 	// Main CoreData
@@ -52,7 +52,7 @@ class SpeciesWidget : public QWidget
 	 */
 	private:
 	// Main form declaration
-	Ui::SpeciesWidget ui_;
+	Ui::SpeciesEditor ui_;
 
 	private slots:
 	// Notify that the style of displayed data in the underlying viewer has changed
@@ -89,6 +89,11 @@ class SpeciesWidget : public QWidget
 	 * ToolBar
 	 */
 	private slots:
+	// Interaction
+	void on_InteractionViewButton_clicked(bool checked);
+	void on_InteractionDrawButton_clicked(bool checked);
+	void on_InteractionDrawElementButton_clicked(bool checked);
+	void on_InteractionDeleteButton_clicked(bool checked);
 	// View
 	void on_ViewResetButton_clicked(bool checked);
 	void on_ViewSpheresButton_clicked(bool checked);

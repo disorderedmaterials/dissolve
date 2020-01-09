@@ -41,6 +41,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui_.AtomTable->setItem(row, 0, item);
 	}
 	else item = ui_.AtomTable->item(row, 0);
@@ -318,23 +319,6 @@ void SpeciesTab::on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked
 	dissolveWindow_->setModified();
 
 	updateControls();
-}
-
-
-void SpeciesTab::on_AtomAddButton_clicked(bool checked)
-{
-	SpeciesAtom* atom = species_->addAtom(&Elements::element(1), Vec3<double>());
-
-	Locker refreshLocker(refreshLock_);
-
-	TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
-
-	dissolveWindow_->setModified();
-}
-
-void SpeciesTab::on_AtomRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
 }
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)

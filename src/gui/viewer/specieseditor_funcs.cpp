@@ -1,6 +1,6 @@
 /*
-	*** Species Widget - Functions 
-	*** src/gui/viewer/specieswidget_funcs.cpp
+	*** Species Editor - Functions 
+	*** src/gui/viewer/specieseditor_funcs.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/specieswidget.h"
+#include "gui/viewer/specieseditor.h"
 #include "gui/widgets/elementselector.hui"
 #include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
@@ -30,15 +30,22 @@
 #include <QButtonGroup>
 
 // Constructor
-SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
+SpeciesEditor::SpeciesEditor(QWidget* parent) : QWidget(parent)
 {
 	// Set up our UI
 	ui_.setupUi(this);
+
+	// Create a button group for the interaction modes
+	QButtonGroup* group = new QButtonGroup;
+	group->addButton(ui_.InteractionViewButton);
+	group->addButton(ui_.InteractionDrawButton);
+	group->addButton(ui_.InteractionDeleteButton);
 
 	// Connect signals / slots
 	connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
 	connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 	connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+	connect(ui_.SpeciesView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
 	// Make sure our controls are consistent with the underlying viewer / data
 	updateToolbar();
@@ -46,12 +53,12 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-SpeciesWidget::~SpeciesWidget()
+SpeciesEditor::~SpeciesEditor()
 {
 }
 
 // Set main CoreData pointer
-void SpeciesWidget::setCoreData(CoreData* coreData)
+void SpeciesEditor::setCoreData(CoreData* coreData)
 {
 	coreData_ = coreData;
 }
@@ -61,33 +68,47 @@ void SpeciesWidget::setCoreData(CoreData* coreData)
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyStyleModified()
+void SpeciesEditor::notifyStyleModified()
 {
 	emit(styleModified());
 }
 
 // Notify that the displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyDataModified()
+void SpeciesEditor::notifyDataModified()
 {
 	emit(dataModified());
 }
 
 // Post redisplay in the underlying view
-void SpeciesWidget::postRedisplay()
+void SpeciesEditor::postRedisplay()
 {
 	ui_.SpeciesView->postRedisplay();
 }
 
 // Update toolbar to reflect current viewer state
-void SpeciesWidget::updateToolbar()
+void SpeciesEditor::updateToolbar()
 {
+	// Set current interaction mode
+	switch (speciesViewer()->interactionMode())
+	{
+		case (SpeciesViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			ui_.InteractionDrawButton->setChecked(true);
+			break;
+	}
+
+	// Set drawing element symbol
+	ui_.InteractionDrawElementButton->setText(speciesViewer()->drawElement()->symbol());
+
 	// Set checkable buttons
 	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
 	ui_.ViewSpheresButton->setChecked(speciesViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
 }
 
 // Update status bar
-void SpeciesWidget::updateStatusBar()
+void SpeciesEditor::updateStatusBar()
 {
 	// Get displayed Species
 	const Species* sp = speciesViewer()->species();
@@ -105,7 +126,7 @@ void SpeciesWidget::updateStatusBar()
  */
 
 // Set target Species, updating widget as necessary
-void SpeciesWidget::setSpecies(Species* sp)
+void SpeciesEditor::setSpecies(Species* sp)
 {
 	ui_.SpeciesView->setSpecies(sp);
 
@@ -114,7 +135,7 @@ void SpeciesWidget::setSpecies(Species* sp)
 }
 
 // Return contained SpeciesViewer
-SpeciesViewer* SpeciesWidget::speciesViewer()
+SpeciesViewer* SpeciesEditor::speciesViewer()
 {
 	return ui_.SpeciesView;
 }
@@ -123,7 +144,34 @@ SpeciesViewer* SpeciesWidget::speciesViewer()
  * Toolbar
  */
 
-void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
+void SpeciesEditor::on_InteractionViewButton_clicked(bool checked)
+{
+	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DefaultInteraction);
+}
+
+void SpeciesEditor::on_InteractionDrawButton_clicked(bool checked)
+{
+	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
+}
+
+void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
+{
+	// Select a new element for drawing
+	bool ok;
+	Element* newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms", speciesViewer()->drawElement(), &ok);
+	if (!ok) return;
+
+	speciesViewer()->setDrawElement(newElement);
+
+	updateToolbar();
+}
+
+void SpeciesEditor::on_InteractionDeleteButton_clicked(bool checked)
+{
+	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DeleteInteraction);
+}
+
+void SpeciesEditor::on_ViewResetButton_clicked(bool checked)
 {
 	speciesViewer()->view().showAllData();
 	speciesViewer()->view().resetViewMatrix();
@@ -131,7 +179,7 @@ void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 	speciesViewer()->postRedisplay();
 }
 
-void SpeciesWidget::on_ViewSpheresButton_clicked(bool checked)
+void SpeciesEditor::on_ViewSpheresButton_clicked(bool checked)
 {
 	speciesViewer()->setRenderableDrawStyle(checked ? RenderableSpecies::SpheresStyle : RenderableSpecies::LinesStyle);
 
@@ -140,20 +188,20 @@ void SpeciesWidget::on_ViewSpheresButton_clicked(bool checked)
 	speciesViewer()->postRedisplay();
 }
 
-void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
+void SpeciesEditor::on_ViewAxesVisibleButton_clicked(bool checked)
 {
 	speciesViewer()->setAxesVisible(checked);
 
 	speciesViewer()->postRedisplay();
 }
 
-void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+void SpeciesEditor::on_ViewCopyToClipboardButton_clicked(bool checked)
 {
 	speciesViewer()->copyViewToClipboard(checked);
 }
 
 // Tools
-void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
+void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
 {
 	// Get displayed Species
 	Species* sp = speciesViewer()->species();
@@ -167,7 +215,7 @@ void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 	speciesViewer()->notifyDataModified();
 }
 
-void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
+void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
 {
 	// Get displayed Species
 	Species* sp = speciesViewer()->species();

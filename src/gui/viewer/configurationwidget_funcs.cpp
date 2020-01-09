@@ -71,8 +71,7 @@ void ConfigurationWidget::updateToolbar()
 	// Set current interaction mode
 	switch (configurationViewer()->interactionMode())
 	{
-		case (ConfigurationViewer::DefaultInteraction):
-			ui_.InteractionViewButton->setChecked(true);
+		default:
 			break;
 	}
 
@@ -102,11 +101,6 @@ ConfigurationViewer* ConfigurationWidget::configurationViewer()
 /*
  * Toolbar
  */
-
-void ConfigurationWidget::on_InteractionViewButton_clicked(bool checked)
-{
-	if (checked) configurationViewer()->setInteractionMode(ConfigurationViewer::DefaultInteraction);
-}
 
 void ConfigurationWidget::on_ViewResetButton_clicked(bool checked)
 {

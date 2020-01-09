@@ -24,6 +24,7 @@ SET(subwindows_MOC_HDRS
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
   datamanagerdialog.h
+  editspeciesdialog.h
   getconfigurationnamedialog.h
   getmodulelayernamedialog.h
   getspeciesnamedialog.h
@@ -54,6 +55,7 @@ SET(subwindows_UIS
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
   datamanagerdialog.ui
+  editspeciesdialog.ui
   getconfigurationnamedialog.ui
   getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
@@ -85,6 +87,7 @@ SET(subwindows_SRCS
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
   datamanagerdialog_funcs.cpp
+  editspeciesdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
   getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp

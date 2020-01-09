@@ -73,6 +73,7 @@ class SpeciesViewer : public BaseViewer
 		TranslateViewInteraction,
 		RotateViewInteraction,
 		DrawInteraction,
+		DeleteInteraction,
 		nInteractionModes
 	};
 
