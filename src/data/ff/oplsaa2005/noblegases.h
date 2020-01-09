@@ -23,7 +23,6 @@
 #define DISSOLVE_FORCEFIELD_OPLSAA_NOBLEGASES_H
 
 #include "data/ff.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class CoreData;
