@@ -135,12 +135,16 @@ then
 	echo "Error returned: "$MESSAGE
 	exit 1
 fi
+echo $RELEASES
 
 # Does our tag already exist (i.e. the release already exists)?
 echo "Checking for presence of current release..."
 FILTER=".[] | select(.tag_name | match(\"$RELEASE_TAG\"))"
 CURRENT_RELEASEINFO=$(echo $RELEASES | jq "$FILTER")
+echo $CURRENT_RELEASEINFO
 CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
+echo $CURRENT_URL
+
 if [ "x$CURRENT_URL" != "x" ]
 then
 	echo " -- Found existing release with tag $RELEASE_TAG"
