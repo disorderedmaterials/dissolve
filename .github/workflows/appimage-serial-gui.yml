@@ -17,7 +17,8 @@ jobs:
     - name: Create Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -d -t continuous -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch at ${SHORTHASH}. Built ${`date`}.' -p
+        DATE=`date`
+        ./ci/scripts/update-release -r ${{ github.repository }} -d -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p
   preprelease:
     runs-on: ubuntu-latest
     env:

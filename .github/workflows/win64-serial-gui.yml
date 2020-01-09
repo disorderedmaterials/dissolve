@@ -7,10 +7,20 @@ on:
     - release/*
 
 jobs:
+  prepcontinuous:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: contains(github.ref, 'develop')
+    steps:
+    - uses: actions/checkout@v1
+    - name: Create Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        DATE=`date`
+        ./ci/scripts/update-release -r ${{ github.repository }} -d -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p
   build:
-
     runs-on: windows-latest
-    
     steps:
     - uses: actions/checkout@v1
     - name: Install Prerequisties
