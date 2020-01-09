@@ -68,7 +68,7 @@ bool Dissolve::prepare()
 	int count = 0;
 	for (AtomType* at = atomTypes().first(); at != NULL; at = at->next(), ++count) at->setIndex(count);
 
-	// Check pair potential range against Box defined for each Configuration
+	// Check Configurations
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Check Box extent against pair potential range
@@ -78,6 +78,20 @@ bool Dissolve::prepare()
 			Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange_, maxPPRange);
 			return false;
 		}
+
+		// Check total charge of Configuration
+		double totalQ = 0.0;
+		if (pairPotentialsIncludeCoulomb_)
+		{
+			ListIterator<AtomTypeData> atdIterator(cfg->usedAtomTypesList().types());
+			while (AtomTypeData* atd = atdIterator.iterate()) totalQ += atd->population() * atd->atomType()->parameters().charge();
+		}
+		else
+		{
+			ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+			while (SpeciesInfo* spInfo = spInfoIterator.iterate()) totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
+		}
+		if (fabs(totalQ) > 1.0e-5) return Messenger::error("Total charge for Configuration '%s' is non-zero (%e). Refusing to proceed!\n", cfg->name(), totalQ);
 	}
 
 	// Make sure pair potentials are up-to-date
