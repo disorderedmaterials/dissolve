@@ -14,3 +14,5 @@ $env:LIB += "C:\build\freetype;C:\build\ftgl\src;"
 
 # Obtain latest source
 git clone
+
+# TODO
