@@ -7,18 +7,6 @@ on:
     - release/*
 
 jobs:
-  prepcontinuous:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: contains(github.ref, 'develop')
-    steps:
-    - uses: actions/checkout@v1
-    - name: Create Continuous Release
-      run: |
-        SHORTHASH=`git rev-parse --short HEAD`
-        DATE=`date`
-        ./ci/scripts/update-release -r ${{ github.repository }} -d -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p
   build:
     runs-on: macos-latest
     steps:
@@ -60,7 +48,7 @@ jobs:
       with:
         name: artifacts
         path: damage/
-  createcontinuous:
+  updatecontinuous:
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -75,4 +63,5 @@ jobs:
     - name: Create / Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous artifacts/*dmg
+        DATE=`date`
+        ./ci/scripts/update-release -r ${{ github.repository }} -d -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*dmg
