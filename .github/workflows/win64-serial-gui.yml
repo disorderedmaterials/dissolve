@@ -30,6 +30,11 @@ jobs:
     - name: Build Freetype
       run: |
         cd $HOME
+      echo $env:Qt5_DIR
+      ls $env:Qt5_DIR/..
+      ls $env:Qt5_DIR/../..
+      ls $env:Qt5_DIR/../../Tools
+      ls $env:Qt5_DIR/../../Tools/mingw730_64
         git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
         Echo 'Compiling FreeType...'
         mkdir freetype-build
