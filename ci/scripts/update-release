@@ -142,8 +142,8 @@ do
 		exit 1
 	elif (( ${#RELEASES} < 10 ))
 	then
-		echo "... Empty information returned - waiting 30 seconds and trying again..."
-		sleep 30
+		echo "... Empty information returned - waiting 60 seconds and trying again..."
+		sleep 60
 		i=$(( i+1 ))
 	else
 		break
