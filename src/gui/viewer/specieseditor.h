@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_VIEWER_SPECIESEDITOR_H
 #define DISSOLVE_VIEWER_SPECIESEDITOR_H
 
-#include "gui/ui_specieseditor.h"
+#include "gui/viewer/ui_specieseditor.h"
 
 // Forward Declarations
 class CoreData;
