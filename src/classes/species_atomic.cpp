@@ -248,6 +248,14 @@ SpeciesAtom* Species::selectedAtom(int n)
 	else return ri->item();
 }
 
+// Return total charge of species from local atomic charges
+double Species::totalChargeOnAtoms()
+{
+	double totalQ = 0.0;
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) totalQ += i->charge();
+	return totalQ;
+}
+
 // Return number of selected Atoms
 int Species::nSelectedAtoms() const
 {

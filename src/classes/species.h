@@ -136,6 +136,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const AtomTypeList& usedAtomTypes();
 	// Clear AtomType assignments for all atoms
 	void clearAtomTypes();
+	// Return total charge of species from local atomic charges
+	double totalChargeOnAtoms();
 
 
 	/*
