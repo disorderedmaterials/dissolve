@@ -32,7 +32,7 @@ Create a new directory in a suitable location and download or copy the data file
 
 > Open the Dissolve GUI
 {: .action .action_dissolve}
-> Choose **Create a New Simulation from Scratch**
+> Choose **Empty Simulation** from the _Create_ section
 {: .step}
 > Save As...
 {: .action .action_menu}
