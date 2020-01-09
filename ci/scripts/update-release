@@ -128,22 +128,33 @@ fi
 echo "Tag for release is: $RELEASE_TAG"
 
 # Get available releases information
-RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
-if [[ $RELEASES =~ "documentation_url" ]]
-then
-	MESSAGE=$(echo $RELEASES | jq ". | .message")
-	echo "Error returned: "$MESSAGE
-	exit 1
-fi
-echo $RELEASES
+i=0
+while (( i < 3 ))
+do
+	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
+	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
+
+	# Check for error or no data
+	if [[ $RELEASES =~ "documentation_url" ]]
+	then
+		MESSAGE=$(echo $RELEASES | jq ". | .message")
+		echo "Error returned: "$MESSAGE
+		exit 1
+	elif (( ${#RELEASES} < 10 ))
+	then
+		echo "... Empty information returned - waiting 30 seconds and trying again..."
+		sleep 30
+		i=$(( i+1 ))
+	else
+		break
+	fi
+done
 
 # Does our tag already exist (i.e. the release already exists)?
 echo "Checking for presence of current release..."
 FILTER=".[] | select(.tag_name | match(\"$RELEASE_TAG\"))"
 CURRENT_RELEASEINFO=$(echo $RELEASES | jq "$FILTER")
-echo $CURRENT_RELEASEINFO
 CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
-echo $CURRENT_URL
 
 if [ "x$CURRENT_URL" != "x" ]
 then
