@@ -68,17 +68,12 @@ jobs:
         $env:FTGL_DIR = "$($HOME)\ftgl-build"
         echo $env:Qt5_DIR
         $env:MINGW_DIR = $env:Qt5_DIR
-        iscc.exe /O.\ .\ci\windows\dissolve.iss
+        iscc.exe /O.\ .\ci\windows\dissolve-gui.iss
         $exe = Get-ChildItem  .\*.exe
         echo "Executable installer is "$exe.Name
         innoextract.exe $exe.Name -d $exe.BaseName
-        ls
-        cd $exe.BaseName
-        ls
-        #mv * ../
-        cd ../
-        #rm -Force bin
-        #cd ../
+        mv $exe.BaseName/app/bin/* $exe.BaseName
+        rm -Force $exe.BaseName/app
         $zip = $exe.BaseName + ".zip"
         zip -r $zip $exe.BaseName
         mkdir installers
