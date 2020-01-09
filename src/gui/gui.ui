@@ -123,8 +123,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Create a New
-Simulation from Scratch</string>
+              <string>Empty Simulation</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -166,8 +165,7 @@ Simulation from Scratch</string>
               </font>
              </property>
              <property name="text">
-              <string>Start a Simulation
-From a Template</string>
+              <string>From Template</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -246,8 +244,7 @@ From a Template</string>
               </font>
              </property>
              <property name="text">
-              <string>Open a Local
-Simulation...</string>
+              <string>Local Simulation</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -292,8 +289,7 @@ Simulation...</string>
               </font>
              </property>
              <property name="text">
-              <string>Open a Recent
-Simulation</string>
+              <string>Recent Simulations</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -338,8 +334,7 @@ Simulation</string>
               </font>
              </property>
              <property name="text">
-              <string>Connect to a
-Remote Simulation</string>
+              <string>Monitor Remote</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -1079,7 +1074,7 @@ Remote Simulation</string>
        <x>642</x>
        <y>140</y>
        <width>184</width>
-       <height>158</height>
+       <height>168</height>
       </rect>
      </property>
      <property name="font">
