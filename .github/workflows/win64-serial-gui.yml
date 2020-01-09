@@ -21,7 +21,7 @@ jobs:
         #Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
         #Remove-Item qt.exe
         choco install -y ninja zip winflexbison innoextract
-        choco install mingw --version=7.3.0
+        choco install mingw --version=7.3.0 --allow-downgrade
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.2.1
       with:
