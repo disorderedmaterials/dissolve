@@ -22,6 +22,7 @@ add_library(classes
   configuration_io.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
+  coordinateset.cpp
   coredata.cpp
   data1dstore.cpp
   data2dstore.cpp
@@ -81,6 +82,7 @@ add_library(classes
   changedata.h
   changestore.h
   configuration.h
+  coordinateset.h
   coredata.h
   data1dstore.h
   data2dstore.h

@@ -149,12 +149,20 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	// Now we add the molecules
 	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 	Vec3<double> r, cog, newCentre, fr;
+	CoordinateSet* coordSet = sp->coordinateSets().first();
 	Matrix3 transform;
 	const Box* box = cfg->box();
 	for (int n=0; n<requestedPopulation; ++n)
 	{
 		// Add the Molecule
-		Molecule* mol = cfg->addMolecule(sp);
+		Molecule* mol = cfg->addMolecule(sp, coordSet);
+
+		// Move to next coordinate set if available
+		if (coordSet)
+		{
+			coordSet = coordSet->next();
+			if (!coordSet) coordSet = sp->coordinateSets().first();
+		}
 
 		// Set / generate position of Molecule
 		switch (positioning)

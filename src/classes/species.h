@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIES_H
 
 #include "classes/atomtypelist.h"
+#include "classes/coordinateset.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
@@ -30,6 +31,7 @@
 #include "classes/speciestorsion.h"
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
+#include "io/import/coordinates.h"
 #include "base/charstring.h"
 #include "base/version.h"
 #include "templates/dynamicarray.h"
@@ -339,6 +341,26 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 
 	/*
+	 * Coordinate Sets
+	 */
+	private:
+	// Available coordinate sets representing conformers, symmetry copies etc.
+	List<CoordinateSet> coordinateSets_;
+	// File / format of coordinate sets file, if provided
+	CoordinateImportFileFormat coordinateSetInputCoordinates_;
+
+	public:
+	// Clear coordinate sets
+	void clearCoordinateSets();
+	// Add new coordinate set
+	CoordinateSet* addCoordinateSet();
+	// Return number of defined coordinate sets
+	int nCoordinateSets() const;
+	// Return coordinates sets
+	const List<CoordinateSet>& coordinateSets() const;
+
+
+	/*
 	 * File Input / Output
 	 */
 	public:
@@ -360,6 +382,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
 		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
+		CoordinateSetsKeyword,		/* 'CoordinateSets' - File and format for any associated coordinate sets */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
 		ImproperKeyword,		/* 'Improper' - Define an Improper interaction between four atoms */
