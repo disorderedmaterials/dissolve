@@ -62,7 +62,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType, const char* netaDefinition) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
 {
 	forcefield_ = parent;
 
@@ -72,7 +72,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityNam
 	if (!DissolveSys::sameString(name_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.name());
 	description_ = sourceType.description_;
 	parameters_ = sourceType.parameters_;
-	neta_.set(sourceType.neta().definitionString(), parent);
+	neta_.set(netaDefinition ? netaDefinition : sourceType.neta().definitionString(), parent);
 
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, sourceType.Z());
