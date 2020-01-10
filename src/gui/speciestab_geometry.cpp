@@ -83,6 +83,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	else item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
 	item->setSelected(speciesAtom->isSelected());
+	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 }
 
 // BondTable row update function
@@ -705,8 +706,8 @@ void SpeciesTab::updateGeometryTab()
 	ui_.ForcefieldAutoUpdateIntramolecularCheck->setChecked(species_->autoUpdateIntramolecularTerms());
 
 	// -- SpeciesAtom Table
-	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
-	else ui_.AtomTable->hideColumn(5);
+// 	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
+// 	else ui_.AtomTable->hideColumn(5);
 	if (!species_) ui_.AtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
 
