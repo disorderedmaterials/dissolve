@@ -254,7 +254,9 @@ bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExist
 				}
 			}
 
+			// Update SpeciesAtom
 			i->setAtomType(at);
+			i->setCharge(at->parameters().charge());
 		}
 	}
 
