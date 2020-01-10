@@ -73,9 +73,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return species parent
 	const Species* species() const;
 	// Set basic atom properties
-	void set(Element* element, double rx, double ry, double rz);
+	void set(Element* element, double rx, double ry, double rz, double q = 0.0);
 	// Set basic atom properties
-	void set(Element* element, const Vec3<double> r);
+	void set(Element* element, const Vec3<double> r, double q = 0.0);
 	// Set atomic element
 	void setElement(Element* el);
 	// Return atomic element
