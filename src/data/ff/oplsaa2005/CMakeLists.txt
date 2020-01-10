@@ -6,6 +6,10 @@ add_library(ff_oplsaa2005
   atomtypes.h
   base.h
 
+  # Aromatics
+  aromatics.cpp
+  aromatics.h
+
   # Noble Gases
   noblegases.cpp
   noblegases.h
