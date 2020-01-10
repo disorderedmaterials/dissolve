@@ -1,8 +1,13 @@
 add_library(ff_oplsaa2005
+  # Core
   atomtypes.cpp
-  noblegases.cpp
+  base.cpp
 
   atomtypes.h
+  base.h
+
+  # Noble Gases
+  noblegases.cpp
   noblegases.h
 )
 
