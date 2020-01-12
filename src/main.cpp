@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <N>\tSet restart file frequency (default = 10)\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
-					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
+					printf("\t-t <file>\tLoad restart data from specified file (but still write to standard restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-w <file>\tWrite input to specified file after reading it, and then quit\n");
 					printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");

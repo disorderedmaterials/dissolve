@@ -59,7 +59,8 @@ int main(int argc, char **argv)
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
-					printf("\t-r <N>\tSet restart file frequency (default = 10)\n");
+					printf("\t-r <N>\t\tSet restart file frequency (default = 10)\n");
+					printf("\t-t <file>\tLoad restart data from specified file (but still write to standard restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
