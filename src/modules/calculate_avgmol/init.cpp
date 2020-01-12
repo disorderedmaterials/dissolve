@@ -26,7 +26,7 @@
 void CalculateAvgMolModule::initialise()
 {
 	// Set up keywords
-	keywords_.add("Target", new SpeciesSiteKeyword(NULL, true), "Site", "Target site about which to calculate average species geometry");
+	keywords_.add("Target", new SpeciesSiteKeyword(NULL, true), "Site", "Target site about which to calculate average species geometry", KeywordBase::ModificationRequiresSetUpOption);
 
 	targetSpecies_ = NULL;
 }
