@@ -6,13 +6,14 @@ nav_order: 4
 ---
 # Comparing Benzene Structure
 
-60 - 75 minutes
+45 - 60 minutes
 {: .label .label-blue }
 
 ## Summary
 
 Run, refine, and analyse the structure of liquid benzene at 298 K using three neutron scattering datasets measured on the NIMROD diffractometer at the ISIS Pulsed Neutron and Muon Source in 2014, comparing the structure of the liquid between equilibrated and refined simulations.
 
+XXX How 'differnet' are reference and refined simulations?  Demonstrate size factor scaling. Demo data comparison and chekpointing.
 Steps:
 - Set up a suitable species and configuration
 - Equilibrate the system

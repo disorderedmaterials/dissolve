@@ -64,7 +64,7 @@ We will also get ahead here and edit the master terms to reflect the geometry ob
 
 Since some of the experimental data was measured on deuterated benzene, we'll need to create a suitable C<sub6</sub>D<sub6</sub> isotopologue:
 
-> **Species** tab, **Isotopologues** section
+> **Benzene** species tab, **Isotopologues** section
 {: .action .action_tabs}
 > Click _Add_{: .text-green-100}
 {: .step}
@@ -74,5 +74,25 @@ Since some of the experimental data was measured on deuterated benzene, we'll ne
 {: .step}
 > Change the name of the isotopologue to 'C6D6' (double-click on the name to do so)
 {: .step}
+
+### Add Analysis Sites
+
+We'll locate our analysis site at the centre of the benzene ring and give it some axes so that we may calculate orientational / spatial functions around it. The figure below shows the atoms we'll select for the origin (purple), x-axis (red) and y-axis (blue), and will set the XY plane to that of the ring, with the _z_ axis perpendicular to the ring.
+
+![](site.png){: .img-centre}
+*Origin (purple), x-axis (red) and y-axis (blue) atoms defining the oriented benzene site*
+
+> **Benzene** species tab, **Analysis Sites** section
+{: .action .action_tabs}
+> Select all six carbon atoms in the viewer
+{: .action .action_mouse}
+> Click **Create** in the viewer toolbar to create a new site with these six atoms at the origin
+{: .step}
+> Now select the single carbon atom and click **X Axis** in the toolbar to define the direction of the _x_ axis
+{: .step}
+> Finally, select the pair of adjacent carbon atoms and click **Y Axis** in the toolbar to define the direction of the _y_ axis
+{: .step}
+> Rename the site to `COG`
+{: .action action_edit}
 
 [Back to Overview](index.md){: .btn }   [Next Step](step2.md){: .btn .right}

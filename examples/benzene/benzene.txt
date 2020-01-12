@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.1 at 16:43:21 on 10-01-2020.
+# Input file written by Dissolve v0.5.1 at 23:25:16 on 12-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -92,6 +92,16 @@ Species 'Benzene'
   Torsion   11    1    2   12  @HA-CA-CA-HA
   Torsion   12    2    3    4  @CA-CA-CA-HA
   Torsion   12    2    3    7  @HA-CA-CA-HA
+
+  # Isotopologues
+  Isotopologue  'Deuterated'  HA=2
+
+  # Sites
+  Site  'COG'
+    Origin  1  3  4  5  6  2
+    XAxis  4
+    YAxis  2  3
+  EndSite
 EndSpecies
 
 #------------------------------------------------------------------------------#
@@ -102,7 +112,7 @@ PairPotentials
   # Atom Type Parameters
   Parameters  CA  -1.150000e-01  LJGeometric  2.928800e-01  3.550000e+00  0.000000e+00  0.000000e+00
   Parameters  HA  1.150000e-01  LJGeometric  1.255200e-01  2.420000e+00  0.000000e+00  0.000000e+00
-  Range  10.000000
+  Range  12.000000
   Delta  0.005000
   IncludeCoulomb  True
   CoulombTruncation  Shifted
@@ -127,7 +137,7 @@ Configuration  'Bulk'
     EndBox
     AddSpecies
       Species  'Benzene'
-      Population  '100'
+      Population  '200'
       ScaleBox  True
       Density  'rho'  g/cm3
       Rotate  True
@@ -144,6 +154,63 @@ EndConfiguration
 #------------------------------------------------------------------------------#
 #                              Processing Layers                               #
 #------------------------------------------------------------------------------#
+
+Layer  'Evolve (Standard)'
+  Frequency  1
+
+  Module  MolShake  'MolShake01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    RotationStepSize   9.92039e+00
+    TranslationStepSize   1.91486e-01
+  EndModule
+
+  Module  MD  'MD01'
+    Frequency  5
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  Energy  'Energy01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+EndLayer
+
+Layer  'Analyse'
+  Frequency  1
+  Disabled
+
+  Module  CalculateAvgMol  'CalculateAvgMol01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    Site  'Benzene'  'COG'
+  EndModule
+
+  Module  CalculateSDF  'CalculateSDF01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    RangeX  -1.000000e+01  1.000000e+01  5.000000e-01
+    RangeY  -1.000000e+01  1.000000e+01  5.000000e-01
+    RangeZ  -1.000000e+01  1.000000e+01  5.000000e-01
+    SiteA  'Benzene'  'COG'
+    SiteB  'Benzene'  'COG'
+    EndExportSDF
+  EndModule
+
+  Module  CalculateRDF  'CalculateRDF01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    SiteA  'Benzene'  'COG'
+    SiteB  'Benzene'  'COG'
+    ExcludeSameMolecule  True
+  EndModule
+EndLayer
 
 #------------------------------------------------------------------------------#
 #                                  Simulation                                  #
