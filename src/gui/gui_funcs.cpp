@@ -82,6 +82,8 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
 	heartbeatFileIndicator_->setMaximumSize(QSize(20,20));
 	heartbeatFileIndicator_->setScaledContents(true);
+	etaLabel_ = new QLabel("ETA: --:--:--");
+	statusBar()->addPermanentWidget(etaLabel_);
 	statusBar()->addPermanentWidget(heartbeatFileIndicator_);
 	statusBar()->addPermanentWidget(restartFileIndicator_);
 	statusBar()->addPermanentWidget(localSimulationIndicator_);
@@ -352,13 +354,18 @@ void DissolveWindow::fullUpdate()
 }
 
 // Update while running
-void DissolveWindow::updateWhileRunning()
+void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 {
 	refreshing_ = true;
 
 	// Set current iteration number
 	ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
 
+	// Set ETA text if we can
+	if (iterationsRemaining == -1) etaLabel_->setText("ETA: --:--:--");
+	else etaLabel_->setText(QString("ETA: %1").arg(Timer::etaString(iterationsRemaining*dissolve_.iterationTime())));
+
+	// Enable data access in Renderables, and update all tabs.
 	Renderable::setSourceDataAccessEnabled(true);
 	ui_.MainTabs->updateAllTabs();
 	repaint();

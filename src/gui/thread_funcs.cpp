@@ -47,7 +47,7 @@ void DissolveThreadWorker::beginIterating(int nIterations)
 		if (nIterationsToRun_ > 0) --nIterationsToRun_;
 		if (nIterationsToRun_ == 0) keepIterating_ = false;
 
-		emit(iterated());
+		emit(iterated(nIterationsToRun_));
 
 		QCoreApplication::processEvents();
 	}
@@ -76,7 +76,7 @@ DissolveThreadController::DissolveThreadController(DissolveWindow* parentWindow,
 	connect(this, SIGNAL(workerIterate(int)), worker, SLOT(beginIterating(int)));
 	connect(this, SIGNAL(workerStop()), worker, SLOT(stopIterating()));
 	connect(worker, SIGNAL(clearMessages()), parentWindow, SLOT(clearMessages()), Qt::BlockingQueuedConnection);
-	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateWhileRunning()), Qt::BlockingQueuedConnection);
+	connect(worker, SIGNAL(iterated(int)), parentWindow, SLOT(updateWhileRunning(int)), Qt::BlockingQueuedConnection);
 	connect(worker, SIGNAL(iterationsComplete()), parentWindow, SLOT(iterationsComplete()));
 
 	workerThread_.start();

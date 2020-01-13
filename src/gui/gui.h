@@ -109,6 +109,8 @@ class DissolveWindow : public QMainWindow
 	QLabel* restartFileIndicator_;
 	// Label for heartbeat file indicator
 	QLabel* heartbeatFileIndicator_;
+	// Label for simulation ETA (when using RunFor)
+	QLabel* etaLabel_;
 
 
 	/*
@@ -152,7 +154,7 @@ class DissolveWindow : public QMainWindow
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
 	// Update while running
-	void updateWhileRunning();
+	void updateWhileRunning(int iterationsRemaining);
 
 
 	/*
