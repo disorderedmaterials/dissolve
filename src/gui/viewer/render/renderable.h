@@ -78,6 +78,8 @@ class Renderable : public ListItem<Renderable>
 	 * Data
 	 */
 	protected:
+	// Whether access to source data is currently enabled
+	static bool sourceDataAccessEnabled_;
 	// Identifying tag for source data object
 	CharString objectTag_;
 	// Equation transformer for values
@@ -104,6 +106,8 @@ class Renderable : public ListItem<Renderable>
 	virtual void transformValues() = 0;
 
 	public:
+	// Set whether access to source data is currently enabled
+	static void setSourceDataAccessEnabled(bool b);
 	// Return identifying tag for source data object
 	const char* objectTag() const;
 	// Invalidate renderable data for specified object tag

@@ -46,6 +46,9 @@ RenderableData1D::~RenderableData1D()
 // Return whether a valid data source is available (attempting to set it if not)
 bool RenderableData1D::validateDataSource()
 {
+	// Don't try to access source_ if we are not currently permitted to do so
+	if (!sourceDataAccessEnabled_) return false;
+
 	// If there is no valid source set, attempt to set it now...
 	if (!source_) source_ = Data1D::findObject(objectTag_);
 
@@ -157,6 +160,9 @@ const Data1D& RenderableData1D::transformedData()
 // Calculate min/max y value over specified x range (if possible in the underlying data)
 bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
 {
+	// Check that we have a valid source
+	if (!validateDataSource()) return false;
+
 	// Ensure transformed data is up-to-date
 	transformValues();
 

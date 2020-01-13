@@ -61,6 +61,9 @@ RenderableConfiguration::~RenderableConfiguration()
 // Return whether a valid data source is available (attempting to set it if not)
 bool RenderableConfiguration::validateDataSource()
 {
+	// Don't try to access source_ if we are not currently permitted to do so
+	if (!sourceDataAccessEnabled_) return false;
+
 	// If there is no valid source set, attempt to set it now...
 	if (!source_) source_ = Configuration::findObject(objectTag_);
 
