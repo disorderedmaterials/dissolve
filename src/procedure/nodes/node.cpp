@@ -34,6 +34,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::AddSpeciesNode,			"AddSpecies") <<
 		EnumOption(ProcedureNode::BoxNode,				"Box") <<
 		EnumOption(ProcedureNode::CalculateAngleNode,			"CalculateAngle") <<
+		EnumOption(ProcedureNode::CalculateAxisAngleNode,		"CalculateAxisAngle") <<
 		EnumOption(ProcedureNode::CalculateDistanceNode,		"CalculateDistance") <<
 		EnumOption(ProcedureNode::CalculateBaseNode,			"Calculate(Any)") <<
 		EnumOption(ProcedureNode::CalculateVectorNode,			"CalculateVector") <<

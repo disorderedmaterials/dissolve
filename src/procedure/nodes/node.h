@@ -47,7 +47,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	enum NodeType {
 		AddSpeciesNode,
 		BoxNode,
-		BEGIN_CalculateNodes, CalculateAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode, END_CalculateNodes,
+		BEGIN_CalculateNodes, CalculateAngleNode, CalculateAxisAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode, END_CalculateNodes,
 		DynamicSiteNode,
 		ExcludeNode,
 		Fit1DNode,
