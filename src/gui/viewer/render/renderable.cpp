@@ -387,8 +387,6 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	// Grab copy of the relevant colour definition for this Renderable
 	const ColourDefinition& colourDefinition = colour();
 
-	printf("Renderable [%s] : force = %i axes = %i (%i) data = %i (%i) style = %i (%i)\n", name(), forceUpdate, lastAxesVersion_, axes.version(), lastDataVersion_,  dataVersion(), lastStyleVersion_, styleVersion());
-
 	// Check whether the primitive for this Renderable needs updating
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
