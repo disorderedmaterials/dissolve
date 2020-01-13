@@ -94,10 +94,22 @@ void GenericItem::bumpVersion()
 	++version_;
 }
 
-// Set flags for item
+// Set flags for item, overwriting any existing flags
 void GenericItem::setFlags(int flags)
 {
 	flags_ = flags;
+}
+
+// Add (set) flag for item
+void GenericItem::addFlag(ItemFlag flag)
+{
+	if (!hasFlag(flag)) flags_ += flag;
+}
+
+// Remove (uneset) flag for item
+void GenericItem::removeFlag(ItemFlag flag)
+{
+	if (hasFlag(flag)) flags_ -= flag;
 }
 
 // Return flags
