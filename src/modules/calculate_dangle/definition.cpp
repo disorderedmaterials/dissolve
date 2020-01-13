@@ -22,7 +22,7 @@
 #include "modules/calculate_dangle/dangle.h"
 
 // Return type of module
-const char* CalculateDAngleModule::type() const	
+const char* CalculateDAngleModule::type() const
 {
 	return "CalculateDAngle";
 }
