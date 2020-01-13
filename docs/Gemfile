@@ -1,3 +1,4 @@
 source 'https://rubygems.org'
 gem 'github-pages', group: :jekyll_plugins
 gem "just-the-docs"
+gem 'jekyll-pdf', :git => 'git://github.com/abeMedia/jekyll-pdf', :branch => 'fix-digest-gem'

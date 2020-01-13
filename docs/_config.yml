@@ -3,4 +3,6 @@ search_enabled: true
 aux_links:
     "Dissolve on GitHub":
       - "//github.com/trisyoungs/dissolve"
+gems:
+  - jekyll-pdf
 logo: "/assets/images/logo.png"
