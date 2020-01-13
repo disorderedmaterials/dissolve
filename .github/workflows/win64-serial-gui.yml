@@ -99,6 +99,9 @@ jobs:
     - name: Create / Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         DATE=`date`
+        mv artifacts/Dissolve-GUI-${VERSION}-Win64.zip artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.zip
+        mv artifacts/Dissolve-GUI-${VERSION}-Win64.exe artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.exe
         rename Win64 ${SHORTHASH}-Win64 artifacts/*
         ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*zip artifacts/*exe

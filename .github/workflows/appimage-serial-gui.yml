@@ -117,4 +117,4 @@ jobs:
     - name: Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous artifacts/*AppImage
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*AppImage
