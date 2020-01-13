@@ -28,8 +28,6 @@
 // Run set-up stage
 bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
-	int requiredSize = -1;
-
 	SpeciesSite* site = keywords_.retrieve<SpeciesSite*>("Site");
 
 	// Clear species
@@ -54,8 +52,6 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			while (SpeciesAtom* i = atomIterator.iterate()) averageSpecies_.addAtom(i->element(), i->r());
 			DynamicArrayIterator<SpeciesBond> bondIterator(targetSpecies_->bonds());
 			while (SpeciesBond* b = bondIterator.iterate()) averageSpecies_.addBond(b->indexI(), b->indexJ());
-
-			requiredSize = targetSpecies_->nAtoms();
 		}
 	}
 
@@ -63,28 +59,13 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	averageSpecies_.setName(CharString("%s@%s", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 	averageSpecies_.setObjectTag(CharString("CalculateAvgMol_%s", averageSpecies_.name()));
 
-	// Retrieve / create the three data arrays, and size accordingly
-	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "X", uniqueName(), GenericItem::InRestartFileFlag);
-	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "Y", uniqueName(), GenericItem::InRestartFileFlag);
-	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "Z", uniqueName(), GenericItem::InRestartFileFlag);
+	// Realise arrays
+	updateArrays(dissolve);
 
-	if (requiredSize > 0)
-	{
-		if (x.nItems() == requiredSize && y.nItems() == requiredSize && z.nItems() == requiredSize) Messenger::print("Using existing coordinate arrays for average species.\n");
-		else
-		{
-			Messenger::printVerbose("Initialising arrays for average molecule: size = %i\n", requiredSize);
-			x.initialise(requiredSize);
-			y.initialise(requiredSize);
-			z.initialise(requiredSize);
-		}
-	}
-	else
-	{
-		x.clear();
-		y.clear();
-		z.clear();
-	}
+	// Retrieve data arrays
+	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "X", uniqueName());
+	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
+	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
 
 	// Update our Species
 	updateSpecies(x, y, z);
@@ -112,6 +93,9 @@ bool CalculateAvgMolModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Get site parent species
 	Species* sp = site->parent();
 	if (sp != targetSpecies_) return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
+
+	// Update arrays
+	updateArrays(dissolve);
 
 	// Get the site stack
 	const SiteStack* stack = cfg->siteStack(site);

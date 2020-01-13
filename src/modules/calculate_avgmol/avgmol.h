@@ -88,6 +88,8 @@ class CalculateAvgMolModule : public Module
 	Species averageSpecies_;
 
 	private:
+	// Ensure arrays are the correct size for the current target Species
+	void updateArrays(Dissolve& dissolve);
 	// Update the local species with the coordinates from the supplied arrays
 	void updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z);
 
