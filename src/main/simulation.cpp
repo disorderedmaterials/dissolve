@@ -129,8 +129,8 @@ bool Dissolve::iterate(int nIterations)
 	 *  5)	Write restart file (master process only)
 	 */
 
-	mainLoopTimer_.zero();
-	mainLoopTimer_.start();
+	iterationTimer_.zero();
+	iterationTimer_.start();
 
 	for (int iter = 0; iter < nIterations; ++iter)
 	{
@@ -373,12 +373,12 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
-		mainLoopTimes_ += mainLoopTimer_.split();
+		iterationTime_ += iterationTimer_.split();
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DissolveSys::currentTimeAndDate());
 	}
 
-	mainLoopTimer_.stop();
+	iterationTimer_.stop();
 
 	return true;
 }
@@ -393,6 +393,12 @@ void Dissolve::resetIterationCounter()
 int Dissolve::iteration() const
 {
 	return iteration_;
+}
+
+// Return per-iteration time in seconds
+double Dissolve::iterationTime() const
+{
+	return iterationTime_.value();
 }
 
 // Print timing information
@@ -446,7 +452,7 @@ void Dissolve::printTiming()
 	Messenger::print("\n");
 
 	if (nIterationsPerformed_ == 0) Messenger::print("No iterations performed, so no per-iteration timing available.\n");
-	else Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), mainLoopTimes_.value());
+	else Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, iterationTimer_.elapsedTimeString(), iterationTime_.value());
 
 	Messenger::print("\n");
 }
