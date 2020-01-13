@@ -82,8 +82,8 @@ fi
 
 # Set up vars
 echo "Repository is $REPO"
-REPOURL="https://api.github.com/repos/${REPO}"
-echo "API URL is $REPOURL"
+REPO_URL="https://api.github.com/repos/${REPO}"
+echo "API URL is $REPO_URL"
 
 # Enable erroring
 set -e
@@ -137,7 +137,7 @@ i=0
 while (( i < 3 ))
 do
 	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
-	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
+	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
 
 	# Check for error or no data
 	if [[ $RELEASES =~ "documentation_url" ]]
@@ -246,7 +246,7 @@ then
 	echo $RELEASE_DATA
 
 	# Create release
-	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPOURL}/releases)
+	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
 
 	# Extract url
 	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
