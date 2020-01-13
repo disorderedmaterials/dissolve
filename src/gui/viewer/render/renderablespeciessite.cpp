@@ -59,6 +59,9 @@ RenderableSpeciesSite::~RenderableSpeciesSite()
 // Return whether a valid data source is available (attempting to set it if not)
 bool RenderableSpeciesSite::validateDataSource()
 {
+	// Don't try to access source_ if we are not currently permitted to do so
+	if (!sourceDataAccessEnabled_) return false;
+
 	return ((speciesSource_ != NULL) && (siteSource_ != NULL));
 }
 

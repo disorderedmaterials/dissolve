@@ -28,6 +28,7 @@
 #include <limits>
 
 // Static Singletons
+bool Renderable::sourceDataAccessEnabled_ = true;
 RefList<Renderable> Renderable::instances_;
 
 // Return enum options for RenderableType
@@ -116,6 +117,12 @@ Renderable::RenderableType Renderable::type() const
 /*
  * Data
  */
+
+// Set whether access to source data is currently enabled
+void Renderable::setSourceDataAccessEnabled(bool b)
+{
+	sourceDataAccessEnabled_ = b;
+}
 
 // Return identifying tag for source data object
 const char* Renderable::objectTag() const

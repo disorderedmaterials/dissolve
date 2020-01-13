@@ -47,6 +47,9 @@ RenderableData2D::~RenderableData2D()
 // Return whether a valid data source is available (attempting to set it if not)
 bool RenderableData2D::validateDataSource()
 {
+	// Don't try to access source_ if we are not currently permitted to do so
+	if (!sourceDataAccessEnabled_) return false;
+
 	// If there is no valid source set, attempt to set it now...
 	if (!source_) source_ = Data2D::findObject(objectTag_);
 

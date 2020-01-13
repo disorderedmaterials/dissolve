@@ -113,6 +113,7 @@ void DissolveWindow::enableSensitiveControls()
 void DissolveWindow::iterationsComplete()
 {
 	enableSensitiveControls();
+	Renderable::setSourceDataAccessEnabled(true);
 }
 
 /*
