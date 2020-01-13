@@ -46,7 +46,7 @@ void GenericList::add(GenericItem* item)
 }
 
 // Create an item of the specified type
-GenericItem* GenericList::create(const char* name, const char* itemClassName, int version)
+GenericItem* GenericList::create(const char* name, const char* itemClassName, int version, int flags)
 {
 	// Check for existing item with this name
 	GenericItem* newItem = find(name);
@@ -69,6 +69,9 @@ GenericItem* GenericList::create(const char* name, const char* itemClassName, in
 
 	// Set its version
 	newItem->setVersion(version);
+
+	// Set its flags
+	newItem->setFlags(flags);
 
 	return newItem;
 }

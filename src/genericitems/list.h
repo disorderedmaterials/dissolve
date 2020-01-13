@@ -45,7 +45,7 @@ class GenericList
 	// Add specified item to list (from base class pointer)
 	void add(GenericItem* item);
 	// Create an item of the specified type
-	GenericItem* create(const char* name, const char* itemClassName, int version = 0);
+	GenericItem* create(const char* name, const char* itemClassName, int version = 0, int flags = 0);
 	// Return whether the named item is contained in the list
 	bool contains(const char* name, const char* prefix = NULL);
 	// Return if named item, if it exists, is of specified type

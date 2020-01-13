@@ -405,7 +405,7 @@ bool Dissolve::loadRestart(const char* filename)
 			}
 
 			// Realise the item in the list
-			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3), parser.argi(4));
+			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3), parser.argi(4), parser.hasArg(5) ? parser.argi(5) : 0);
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
@@ -415,8 +415,8 @@ bool Dissolve::loadRestart(const char* filename)
 				break;
 			}
 
-			// Set the InRestartFileFlag for the item
-			item->setFlags(GenericItem::InRestartFileFlag);
+			// Add the InRestartFileFlag for the item
+			item->addFlag(GenericItem::InRestartFileFlag);
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
 		{
@@ -424,7 +424,7 @@ bool Dissolve::loadRestart(const char* filename)
 			Messenger::print("Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
 
 			// Realise the item in the list
-			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2), parser.argi(3));
+			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2), parser.argi(3), parser.hasArg(4) ? parser.argi(4) : 0);
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
@@ -434,8 +434,8 @@ bool Dissolve::loadRestart(const char* filename)
 				break;
 			}
 
-			// Set the InRestartFileFlag for the item
-			item->setFlags(GenericItem::InRestartFileFlag);
+			// Add the InRestartFileFlag for the item
+			item->addFlag(GenericItem::InRestartFileFlag);
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
 		{
@@ -535,7 +535,7 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 			else
 			{
 				// Realise the item in the list
-				GenericItem* item = cfg->moduleData().create(newName, parser.argc(3), parser.argi(4));
+				GenericItem* item = cfg->moduleData().create(newName, parser.argc(3), parser.argi(4), parser.hasArg(5) ? parser.argi(5) : 0);
 
 				// Read in the data
 				if ((!item) || (!item->read(parser, coreData_)))
@@ -545,8 +545,9 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 					break;
 				}
 
-				// Set the ReferencePointData flag for the item
-				item->setFlags(GenericItem::IsReferencePointDataFlag);
+				// Add the ReferencePointData flag for the item, and remove the InRestartFileFlag
+				item->addFlag(GenericItem::IsReferencePointDataFlag);
+				item->removeFlag(GenericItem::InRestartFileFlag);
 
 				skipCurrentItem = false;
 			}
@@ -560,7 +561,7 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 			Messenger::print("Reading item '%s' => '%s' (%s) into processing module data...\n", parser.argc(1), newName.get(), parser.argc(2));
 
 			// Realise the item in the list
-			GenericItem* item = processingModuleData_.create(newName, parser.argc(2), parser.argi(3));
+			GenericItem* item = processingModuleData_.create(newName, parser.argc(2), parser.argi(3), parser.hasArg(4) ? parser.argi(4) : 0);
 
 			// Read in the data
 			if ((!item) || (!item->read(parser, coreData_)))
@@ -570,8 +571,9 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 				break;
 			}
 
-			// Set the InRestartFileFlag for the item
-			item->setFlags(GenericItem::InRestartFileFlag);
+			// Add the ReferencePointData for the item
+			item->addFlag(GenericItem::IsReferencePointDataFlag);
+			item->removeFlag(GenericItem::InRestartFileFlag);
 
 			skipCurrentItem = false;
 		}
@@ -652,7 +654,7 @@ bool Dissolve::saveRestart(const char* filename)
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-			if (!parser.writeLineF("Local  %s  %s  %s  %i\n", cfg->name(), item->name(), item->itemClassName(), item->version())) return false;
+			if (!parser.writeLineF("Local  %s  %s  %s  %i  %i\n", cfg->name(), item->name(), item->itemClassName(), item->version(), item->flags())) return false;
 			if (!item->write(parser)) return false;
 		}
 	}
@@ -664,7 +666,7 @@ bool Dissolve::saveRestart(const char* filename)
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-		if (!parser.writeLineF("Processing  %s  %s  %i\n", item->name(), item->itemClassName(), item->version())) return false;
+		if (!parser.writeLineF("Processing  %s  %s  %i  %i\n", item->name(), item->itemClassName(), item->version(), item->flags())) return false;
 		if (!item->write(parser)) return false;
 	}
 
