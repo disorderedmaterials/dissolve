@@ -5,7 +5,7 @@ grand_parent: Examples
 ---
 # Liquid Water
 
-## 3. Set up Basic Processing
+## 3. Set up Equilibration
 
 To equilibrate our system we'll now add a standard Monte Carlo / Molecular Dynamics processing layer:
 
