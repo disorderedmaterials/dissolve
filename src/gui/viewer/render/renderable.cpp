@@ -363,6 +363,12 @@ void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourDat
 	primitives_.reinitialise(newSize, type, colourData);
 }
 
+// Return number of primitives managed by the Renderable
+int Renderable::nPrimitives() const
+{
+	return primitives_.nPrimitives();
+}
+
 // Return nth Primitive managed by the Renderable
 Primitive* Renderable::primitive(int n)
 {

@@ -74,6 +74,12 @@ void PrimitiveList::add(Primitive* primitive)
 	primitives_.own(primitive);
 }
 
+// Return number of primitives in the list
+int PrimitiveList::nPrimitives() const
+{
+	return primitives_.nItems();
+}
+
 // Remove specified Primitive
 void PrimitiveList::remove(Primitive* primitive)
 {

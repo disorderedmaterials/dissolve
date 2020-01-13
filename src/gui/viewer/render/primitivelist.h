@@ -55,6 +55,8 @@ class PrimitiveList
 	Primitive* add(GLenum type = GL_LINES, bool colourData = false);
 	// Register an existing Primitive with the list
 	void add(Primitive* primitive);
+	// Return number of primitives in the list
+	int nPrimitives() const;
 	// Remove specified Primitive
 	void remove(Primitive* primitive);
 	// Return total number of defined vertices

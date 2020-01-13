@@ -225,6 +225,8 @@ class Renderable : public ListItem<Renderable>
 	Primitive* createPrimitive(GLenum type = GL_LINES, bool colourData = false);
 	// Reinitialise managed Primitive list to the size specified
 	void reinitialisePrimitives(int newSize, GLenum type, bool colourData);
+	// Return number of primitives managed by the Renderable
+	int nPrimitives() const;
 	// Return nth Primitive managed by the Renderable
 	Primitive* primitive(int n);
 	// Remove specified Primitive
