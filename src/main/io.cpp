@@ -534,7 +534,7 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 			}
 			else
 			{
-				// Realise the item in the listblackstar
+				// Realise the item in the list
 				GenericItem* item = cfg->moduleData().create(newName, parser.argc(3), parser.argi(4));
 
 				// Read in the data
