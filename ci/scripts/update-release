@@ -11,17 +11,18 @@ RELEASE_BODY_FILE_WARN="false"
 RELEASE_PRE="false"
 DELETE_EXISTING="false"
 DELETE_EXISTING_ALWAYS="false"
+DELETE_ALL_ASSETS="false"
 ARTIFACTS=""
 NARTIFACTS=0
 
 usage()
 {
-	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-w] [-p] artifacts ..."
+	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-e] [-w] [-p] artifacts ..."
 	exit 1
 }
 
 # Parse options
-while getopts ":r:t:n:b:f:pwda" opt
+while getopts ":r:t:n:b:f:pwdae" opt
 do
 	case "${opt}" in
 		r)
@@ -59,6 +60,10 @@ do
 		d)
 			DELETE_EXISTING="true"
 			echo "Existing release with the same tag will be deleted if it exists (unless HEAD/tag hashes match)"
+			;;
+		e)
+			DELETE_ALL_ASSETS="true"
+			echo "All existing release assets will be deleted"
 			;;
 		\?)
 			usage
@@ -200,6 +205,17 @@ then
 
 		# Patch release
 		CURRENT_RELEASEINFO=$(curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
+
+		# Delete existing assets?
+		if [ "$DELETE_ALL_ASSETS" = "true" ]
+		then
+			ASSETS=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
+			ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
+			for id in $ASSET_IDS
+			do
+				curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id}
+			done
+		fi
 	fi
 fi
 
