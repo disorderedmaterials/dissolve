@@ -170,7 +170,7 @@ void RenderableData2D::recreatePrimitives(const View& view, const ColourDefiniti
 {	
 	if (!validateDataSource())
 	{
-		reinitialisePrimitives(0, GL_LINE_STRIP, true);
+		if (!source_) reinitialisePrimitives(0, GL_LINE_STRIP, true);
 		return;
 	}
 
@@ -186,13 +186,8 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 
 	// Disable lighting
 	glDisable(GL_LIGHTING);
-	
-	int n = 0;
-	while(n < transformedData_.constYAxis().nItems())
-	{
-		primitive(n)->sendToGL();
-		++n;
-	}
+
+	for (int n = 0; n < nPrimitives(); ++n) primitive(n)->sendToGL();
 
 	// Reset LineStyle back to defaults
 	LineStyle().sendToGL();
