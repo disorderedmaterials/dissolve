@@ -76,7 +76,7 @@ DissolveThreadController::DissolveThreadController(DissolveWindow* parentWindow,
 	connect(this, SIGNAL(workerIterate(int)), worker, SLOT(beginIterating(int)));
 	connect(this, SIGNAL(workerStop()), worker, SLOT(stopIterating()));
 	connect(worker, SIGNAL(clearMessages()), parentWindow, SLOT(clearMessages()), Qt::BlockingQueuedConnection);
-	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(fullUpdate()), Qt::BlockingQueuedConnection);
+	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateWhileRunning()), Qt::BlockingQueuedConnection);
 	connect(worker, SIGNAL(iterationsComplete()), parentWindow, SLOT(iterationsComplete()));
 
 	workerThread_.start();

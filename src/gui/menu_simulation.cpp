@@ -33,7 +33,7 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 
 	// Prepare the GUI
 	disableSensitiveControls();
-
+	Renderable::setSourceDataAccessEnabled(false);
 	dissolveState_ = DissolveWindow::RunningState;
 
 	// Update the controls
@@ -54,7 +54,7 @@ void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
 
 	// Prepare the GUI
 	disableSensitiveControls();
-
+	Renderable::setSourceDataAccessEnabled(false);
 	dissolveState_ = DissolveWindow::RunningState;
 
 	// Update the controls
@@ -70,7 +70,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 
 	// Prepare the GUI
 	disableSensitiveControls();
-
+	Renderable::setSourceDataAccessEnabled(false);
 	dissolveState_ = DissolveWindow::RunningState;
 
 	// Update the controls
@@ -86,7 +86,7 @@ void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 
 	// Prepare the GUI
 	disableSensitiveControls();
-
+	Renderable::setSourceDataAccessEnabled(false);
 	dissolveState_ = DissolveWindow::RunningState;
 
 	// Update the controls
@@ -105,6 +105,7 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 
 	// Disable the pause button
 	ui_.ControlPauseButton->setEnabled(false);
+	Renderable::setSourceDataAccessEnabled(true);
 }
 
 void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)

@@ -351,6 +351,22 @@ void DissolveWindow::fullUpdate()
 	refreshing_ = false;
 }
 
+// Update while running
+void DissolveWindow::updateWhileRunning()
+{
+	refreshing_ = true;
+
+	// Set current iteration number
+	ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
+
+	Renderable::setSourceDataAccessEnabled(true);
+	ui_.MainTabs->updateAllTabs();
+	repaint();
+	Renderable::setSourceDataAccessEnabled(false);
+
+	refreshing_ = false;
+}
+
 /*
  * Stack
  */
