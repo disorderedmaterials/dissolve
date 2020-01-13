@@ -122,3 +122,18 @@ const char* Timer::timeString(double seconds)
 	else result.sprintf("%0.1f seconds", seconds);
 	return result.get();
 }
+
+// Return ETA string for number of seconds provided
+const char* Timer::etaString(double seconds)
+{
+	static CharString result;
+
+	int hours = int(seconds) / 3600;
+	seconds -= hours * 3600;
+	int minutes = int(seconds) / 60;
+	seconds -= minutes * 60;
+	
+	result.sprintf("%02i:%02i:%02i", hours, minutes, int(seconds));
+
+	return result.get();
+}

@@ -74,6 +74,8 @@ class Timer
 	double secondsElapsed() const;
 	// Return time string for number of seconds provided
 	static const char* timeString(double seconds);
+	// Return ETA string for number of seconds provided
+	static const char* etaString(double seconds);
 };
 
 #endif
