@@ -41,6 +41,9 @@
      </property>
      <item>
       <widget class="QPushButton" name="ShowPaletteButton">
+       <property name="toolTip">
+        <string>Toggle the visibility of the module palette</string>
+       </property>
        <property name="text">
         <string>Show Palette</string>
        </property>
@@ -148,7 +151,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Frequency, relative to the main iteration counter, at which the layer will be executed</string>
+        <string>The layer's frequency, relative to the main iteration counter, at which the layer will be executed</string>
        </property>
        <property name="minimum">
         <number>1</number>
