@@ -550,7 +550,7 @@ bool Species::write(LineParser& parser, const char* prefix)
 	int count = 0;
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
-		if (!parser.writeLineF("%s%s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge())) return false;
+		if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge())) return false;
 	}
 
 	// Bonds
