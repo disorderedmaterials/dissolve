@@ -11,15 +11,9 @@ nav_order: 4
 
 ## Summary
 
-Run, refine, and analyse the structure of liquid benzene at 298 K using three neutron scattering datasets measured on the NIMROD diffractometer at the ISIS Pulsed Neutron and Muon Source in 2014, comparing the structure of the liquid between equilibrated and refined simulations.
+You might always be asking the question "How much does quantity _X_ differ between the equilibrated simulation at the reference forcefield parameters, and the refined simulation at the empirical parameters?". This is a very fair question, and this example will show how to checkpoint simulation data for comparison later on using some custom workspace graphs. It will also introduce the utility of size factor scaling when dealing with molecular systems containing rings.
 
-XXX How 'differnet' are reference and refined simulations?  Demonstrate size factor scaling. Demo data comparison and chekpointing.
-Steps:
-- Set up a suitable species and configuration
-- Equilibrate the system
-- Perform a structural analysis of the equilibrated simulation
-- Refine the interatomic potentials
-- Perform a structural analysis of the refined simulation and compare to the equilibrated data
+You will set up and equilibrate a small liquid benzene simulation before calculating a few properties of interest, and then refine the potential against experimental data and recalculate the properties of interest before graphing both side-by-side. The data are three neutron scattering datasets measured on the NIMROD diffractometer at the ISIS Pulsed Neutron and Muon Source in 2014.
 
 ## Data Files
 - C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/benzene/data/C6H6.mint01)

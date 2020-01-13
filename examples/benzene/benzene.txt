@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.1 at 23:25:16 on 12-01-2020.
+# Input file written by Dissolve v0.5.1 at 15:05:04 on 13-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -20,18 +20,18 @@ EndMaster
 
 Species 'Benzene'
   # Atoms
-  Atom    1    C    -1.399     0.160     0.000  'CA'    -0.115
-  Atom    2    C    -0.561     1.293     0.000  'CA'    -0.115
-  Atom    3    C     0.839     1.132     0.000  'CA'    -0.115
-  Atom    4    C     1.399    -0.160     0.000  'CA'    -0.115
-  Atom    5    C     0.560    -1.293     0.000  'CA'    -0.115
-  Atom    6    C    -0.839    -1.132     0.000  'CA'    -0.115
-  Atom    7    H     1.483     2.001     0.000  'HA'     0.115
-  Atom    8    H     2.472    -0.284     0.000  'HA'     0.115
-  Atom    9    H     0.991    -2.284     0.000  'HA'     0.115
-  Atom   10    H    -1.483    -2.000     0.000  'HA'     0.115
-  Atom   11    H    -2.472     0.282     0.000  'HA'     0.115
-  Atom   12    H    -0.990     2.284     0.000  'HA'     0.115
+  Atom    1    C  -1.399000e+00  1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
+  Atom    2    C  -5.610000e-01  1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    3    C  8.390000e-01  1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    4    C  1.399000e+00  -1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
+  Atom    5    C  5.600000e-01  -1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    6    C  -8.390000e-01  -1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    7    H  1.483000e+00  2.001000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom    8    H  2.472000e+00  -2.840000e-01  0.000000e+00  'HA'  1.150000e-01
+  Atom    9    H  9.910000e-01  -2.284000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom   10    H  -1.483000e+00  -2.000000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom   11    H  -2.472000e+00  2.820000e-01  0.000000e+00  'HA'  1.150000e-01
+  Atom   12    H  -9.900000e-01  2.284000e+00  0.000000e+00  'HA'  1.150000e-01
 
   # Bonds
   Bond    1    2  @CA-CA
@@ -157,13 +157,14 @@ EndConfiguration
 
 Layer  'Evolve (Standard)'
   Frequency  1
+  Disabled
 
   Module  MolShake  'MolShake01'
     Frequency  1
 
     Configuration  'Bulk'
-    RotationStepSize   9.92039e+00
-    TranslationStepSize   1.91486e-01
+    RotationStepSize   1.29065e+01
+    TranslationStepSize   2.88653e-01
   EndModule
 
   Module  MD  'MD01'
@@ -179,28 +180,8 @@ Layer  'Evolve (Standard)'
   EndModule
 EndLayer
 
-Layer  'Analyse'
+Layer  'Untitled Layer'
   Frequency  1
-  Disabled
-
-  Module  CalculateAvgMol  'CalculateAvgMol01'
-    Frequency  1
-
-    Configuration  'Bulk'
-    Site  'Benzene'  'COG'
-  EndModule
-
-  Module  CalculateSDF  'CalculateSDF01'
-    Frequency  1
-
-    Configuration  'Bulk'
-    RangeX  -1.000000e+01  1.000000e+01  5.000000e-01
-    RangeY  -1.000000e+01  1.000000e+01  5.000000e-01
-    RangeZ  -1.000000e+01  1.000000e+01  5.000000e-01
-    SiteA  'Benzene'  'COG'
-    SiteB  'Benzene'  'COG'
-    EndExportSDF
-  EndModule
 
   Module  CalculateRDF  'CalculateRDF01'
     Frequency  1
@@ -209,6 +190,55 @@ Layer  'Analyse'
     SiteA  'Benzene'  'COG'
     SiteB  'Benzene'  'COG'
     ExcludeSameMolecule  True
+  EndModule
+
+  Module  CalculateAxisAngle  'CalculateAxisAngle01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    SiteA  'Benzene'  'COG'
+    AxisA  3
+    SiteB  'Benzene'  'COG'
+    AxisB  3
+    ExcludeSameMolecule  True
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  5
+
+  Module  RDF  'RDF01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    IntraBroadening    Gaussian  1.800000e-01
+  EndModule
+
+  Module  NeutronSQ  'C6H6'
+    Frequency  1
+
+    Configuration  'Bulk'
+    Reference  xy  'data/C6H6.mint01'
+    EndReference
+  EndModule
+
+  Module  NeutronSQ  'C6D6'
+    Frequency  1
+
+    Configuration  'Bulk'
+    Isotopologue  'Bulk'  'Benzene'  'Deuterated'  1.000000
+    Reference  xy  'data/C6D6.mint01'
+    EndReference
+  EndModule
+
+  Module  NeutronSQ  '5050'
+    Frequency  1
+
+    Configuration  'Bulk'
+    Isotopologue  'Bulk'  'Benzene'  'Natural'  1.000000
+    Isotopologue  'Bulk'  'Benzene'  'Deuterated'  1.000000
+    Reference  xy  'data/5050.mint01'
+    EndReference
   EndModule
 EndLayer
 
