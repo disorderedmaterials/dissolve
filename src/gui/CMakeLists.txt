@@ -26,6 +26,7 @@ SET(subwindows_MOC_HDRS
   datamanagerdialog.h
   editspeciesdialog.h
   getconfigurationnamedialog.h
+  getgizmonamedialog.h
   getmodulelayernamedialog.h
   getspeciesnamedialog.h
   gettabnamedialog.h
@@ -57,6 +58,7 @@ SET(subwindows_UIS
   datamanagerdialog.ui
   editspeciesdialog.ui
   getconfigurationnamedialog.ui
+  getgizmonamedialog.ui
   getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
   gettabnamedialog.ui
@@ -89,6 +91,7 @@ SET(subwindows_SRCS
   datamanagerdialog_funcs.cpp
   editspeciesdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
+  getgizmonamedialog_funcs.cpp
   getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
   gettabnamedialog_funcs.cpp
