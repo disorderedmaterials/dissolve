@@ -24,7 +24,7 @@
 
 #include "gui/ui_workspacetab.h"
 #include "gui/maintab.h"
-#include "gui/gizmos/gizmo.h"
+#include "gui/gizmo.h"
 
 // Forward Declarations
 class TMdiArea;

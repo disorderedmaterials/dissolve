@@ -23,7 +23,7 @@
 #include "gui/gui.h"
 #include "gui/tmdiarea.hui"
 #include "gui/gettabnamedialog.h"
-#include "gui/gizmos/gizmos.h"
+#include "gui/gizmos.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"

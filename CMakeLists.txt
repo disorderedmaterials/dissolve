@@ -296,13 +296,11 @@ if(GUI)
 
     # Main gui libs
     render
-    viewer
     widgets
     keywordwidgets
-    gizmos
     delegates
     charts
-    subwindows
+    components
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

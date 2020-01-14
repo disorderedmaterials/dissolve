@@ -1,0 +1,146 @@
+/*
+	*** Species Viewer
+	*** src/gui/siteviewer.uih
+	Copyright T. Youngs 2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_VIEWER_SITE_H
+#define DISSOLVE_VIEWER_SITE_H
+
+#include "gui/viewer.hui"
+#include "gui/render/renderablespecies.h"
+#include "gui/render/renderablespeciessite.h"
+
+// Forward Declarations
+class Element;
+class Species;
+class SpeciesAtom;
+
+// Species Rendering Widget
+class SiteViewer : public BaseViewer
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	SiteViewer(QWidget *parent);
+	~SiteViewer();
+
+
+	/*
+	 * Rendering (BaseViewer virtuals)
+	 */
+	private:
+	// Perform post-initialisation operations
+	void postInitialiseGL();
+	// Perform post-resize operations
+	void postResizeGL();
+	// Render 2D overlay content
+	void render2DOverlay();
+
+
+	/*
+	 * Mouse / Keyboard Input (BaseViewer virtuals)
+	 */
+	protected:
+	// Mouse moved
+	void mouseMoved(int dx, int dy);
+
+
+	/*
+	 * Interaction (BaseViewer virtuals)
+	 */
+	public:
+	// Interaction Mode enum
+	enum InteractionMode
+	{
+		DefaultInteraction,
+		SelectAreaInteraction,
+		TranslateViewInteraction,
+		RotateViewInteraction,
+		nInteractionModes
+	};
+
+	private:
+	// Clicked atom at the start of the interaction (if any)
+	SpeciesAtom* clickedAtom_;
+
+	private:
+	// Return atom at specified coordinates
+	SpeciesAtom* atomAt(int x, int y);
+
+	protected:
+	// Start interaction at the specified screen coordinates
+	void startInteraction();
+	// End interaction at the specified screen coordinates
+	void endInteraction();
+	// Cancel current interaction
+	void cancelInteraction();
+
+	public:
+	// Return text describing current interaction mode
+	const char* interactionModeText() const;
+
+
+	/*
+	 * Source Species and Site
+	 */
+	private:
+	// Source SpeciesSite to display
+	SpeciesSite* site_;
+	// Parent Species for displayed site
+	Species* species_;
+
+	public:
+	// Set target Species
+	void setSpecies(Species* sp);
+	// Return parent Species for site
+	Species* species() const;
+	// Set target SpeciesSite
+	void setSite(SpeciesSite* site);
+	// Return target SpeciesSite
+	SpeciesSite* speciesSite() const;
+
+
+	/*
+	 * Renderables
+	 */
+	private:
+	// Renderable for parent Species of Site
+	RenderableSpecies* speciesRenderable_;
+	// Renderable for displayed site
+	RenderableSpeciesSite* siteRenderable_;
+
+	public:
+	// Set Species renderable draw style
+	void setSpeciesRenderableDrawStyle(RenderableSpecies::SpeciesDisplayStyle ds);
+	// Return current Species renderable draw style
+	RenderableSpecies::SpeciesDisplayStyle speciesRenderableDrawStyle() const;
+	// Recreate selection primitive
+	void recreateSelectionPrimitive();
+
+
+	/*
+	 * Signals
+	 */
+	signals:
+	// Atom selection changed
+	void atomSelectionChanged();
+};
+
+#endif

@@ -20,7 +20,7 @@
 */
 
 #include "modules/calibration/gui/modulewidget.h"
-#include "gui/viewer/dataviewer.hui"
+#include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/calibration/calibration.h"

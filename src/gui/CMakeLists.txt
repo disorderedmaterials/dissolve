@@ -6,8 +6,26 @@
 # -----------
 
 # Meta-Objects
-SET(subwindows_MOC_HDRS
-  # Widgets
+SET(components_MOC_HDRS
+  # Gizmos
+  graphgizmo.h
+  integrator1dgizmo.h
+
+  # Viewers
+  configurationwidget.h
+  datawidget.h
+  selectsymbol.h
+  sitewidget.h
+  specieseditor.h
+  specieswidget.h
+
+  configurationviewer.hui
+  dataviewer.hui
+  siteviewer.hui
+  speciesviewer.hui
+  viewer.hui
+
+  # Widgets and Wizards
   addconfigurationwizard.h
   addforcefieldtermswizard.h
   importspecieswizard.h
@@ -38,11 +56,23 @@ SET(subwindows_MOC_HDRS
   selectspeciesdialog.h
   selectsystemtemplatedialog.h
 )
-QT5_WRAP_CPP(subwindows_MOC_SRCS ${subwindows_MOC_HDRS})
+QT5_WRAP_CPP(components_MOC_SRCS ${components_MOC_HDRS})
 
 # User Interface Files
-SET(subwindows_UIS
-  # Widgets
+SET(components_UIS
+  # Gizmos
+  graphgizmo.ui
+  integrator1dgizmo.ui
+
+  # Viewers
+  configurationwidget.ui
+  datawidget.ui
+  selectsymbol.ui
+  sitewidget.ui
+  specieseditor.ui
+  specieswidget.ui
+
+  # Widgets and Wizards
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
   importspecieswizard.ui
@@ -70,11 +100,52 @@ SET(subwindows_UIS
   selectspeciesdialog.ui
   selectsystemtemplatedialog.ui
 )
-QT5_WRAP_UI(subwindows_UIS_H ${subwindows_UIS})
+QT5_WRAP_UI(components_UIS_H ${components_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
-SET(subwindows_SRCS
-  # Widgets
+SET(components_SRCS
+  # Gizmos
+  gizmo.cpp
+  graphgizmo_funcs.cpp
+  integrator1dgizmo_funcs.cpp
+
+  gizmo.h
+
+  # Viewers
+  configurationviewer_funcs.cpp
+  configurationviewer_input.cpp
+  configurationviewer_interaction.cpp
+  configurationviewer_render.cpp
+  configurationwidget_funcs.cpp
+  dataviewer_funcs.cpp
+  dataviewer_input.cpp
+  dataviewer_interaction.cpp
+  dataviewer_contextmenu.cpp
+  dataviewer_render.cpp
+  datawidget_funcs.cpp
+  selectsymbol_funcs.cpp
+  siteviewer_funcs.cpp
+  siteviewer_input.cpp
+  siteviewer_interaction.cpp
+  siteviewer_render.cpp
+  sitewidget_funcs.cpp
+  specieseditor_funcs.cpp
+  speciesviewer_funcs.cpp
+  speciesviewer_input.cpp
+  speciesviewer_interaction.cpp
+  speciesviewer_render.cpp
+  specieswidget_funcs.cpp
+  viewer_funcs.cpp
+  viewer_input.cpp
+  viewer_interaction.cpp
+  viewer_io.cpp
+  viewer_options.cpp
+  viewer_query.cpp
+  viewer_render.cpp
+  viewer_renderables.cpp
+  viewer_view.cpp
+
+  # Widgets and Wizards
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
   importspecieswizard_funcs.cpp
@@ -104,20 +175,20 @@ SET(subwindows_SRCS
   selectsystemtemplatedialog_funcs.cpp
 )
 
-# Target 'subwindows'
-add_library(subwindows
-  ${subwindows_UIS_H}
-  ${subwindows_SRCS}
-  ${subwindows_MOC_SRCS}
+# Target 'components'
+add_library(components
+  ${components_UIS_H}
+  ${components_SRCS}
+  ${components_MOC_SRCS}
 )
-target_include_directories(subwindows PRIVATE
+target_include_directories(components PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
 )
 
-target_link_libraries(subwindows widgets)
+target_link_libraries(components widgets)
 
 # -----------------
 # Main Dissolve GUI
@@ -236,13 +307,12 @@ target_include_directories(gui PRIVATE
   ${Qt5Widgets_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
 )
-target_link_libraries(gui keywordwidgets charts delegates viewer widgets gizmos)
+target_link_libraries(gui keywordwidgets charts delegates widgets)
 
 # Subdirectories
 add_subdirectory(keywordwidgets)
 add_subdirectory(charts)
 add_subdirectory(delegates)
-add_subdirectory(gizmos)
-add_subdirectory(viewer)
+add_subdirectory(render)
 add_subdirectory(widgets)
 

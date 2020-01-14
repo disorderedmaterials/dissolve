@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_GRADIENTBAR_H
 #define DISSOLVE_GRADIENTBAR_H
 
-#include "gui/viewer/render/colourscale.h"
+#include "gui/render/colourscale.h"
 #include <QWidget>
 
 // Forward declarations
