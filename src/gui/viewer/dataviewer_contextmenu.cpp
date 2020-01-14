@@ -59,17 +59,17 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	// -- Copy To...
 	QMenu* copyToMenu = menu.addMenu("&Copy to...");
 	copyToMenu->setFont(menu.font());
-	if (renderableDestinations_.nItems() == 0) copyToMenu->setEnabled(false);
-	else
-	{
-		int count = 1;
-		RefListIterator<DataViewer> destinationIterator(renderableDestinations_);
-		while (DataViewer* destination = destinationIterator.iterate())
-		{
-			action = copyToMenu->addAction(QString("%1. %2").arg(QString::number(count++)).arg(destination->destinationName()));
-			destinationActions.append(action, destination);
-		}
-	}
+// 	if (renderableDestinations_.nItems() == 0) copyToMenu->setEnabled(false);
+// 	else
+// 	{
+// 		int count = 1;
+// 		RefListIterator<DataViewer> destinationIterator(renderableDestinations_);
+// 		while (DataViewer* destination = destinationIterator.iterate())
+// 		{
+// 			action = copyToMenu->addAction(QString("%1. %2").arg(QString::number(count++)).arg(destination->destinationName()));
+// 			destinationActions.append(action, destination);
+// 		}
+// 	}
 
 	// Execute the menu
 	QAction* selectedAction = menu.exec(mapToGlobal(pos));

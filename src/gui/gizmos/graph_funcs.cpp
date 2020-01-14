@@ -39,10 +39,6 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 	dataViewer_->view().setViewType(View::NormalView);
 	dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
-	// Enable our DataViewer as a target
-	dataViewer_->enableAsRenderableDestination();
-	dataViewer_->setDestinationName(uniqueName);
-
 	refreshing_ = false;
 }
 
@@ -90,6 +86,36 @@ void GraphGizmo::disableSensitiveControls()
 // Enable sensitive controls within widget
 void GraphGizmo::enableSensitiveControls()
 {
+}
+
+/*
+ * Data Handling
+ */
+
+// Return whether this Gizmo accepts data of the specified type
+bool GraphGizmo::acceptsData(const char* dataType)
+{
+	if (DissolveSys::sameString("Data1D", dataType)) return true;
+	if (DissolveSys::sameString("Data2D", dataType)) return true;
+	if (DissolveSys::sameString("Data3D", dataType)) return true;
+
+	return false;
+}
+
+// Send data (referenced by its object tag) to the Gizmo
+bool GraphGizmo::sendData(const char* objectTag)
+{
+	
+}
+
+/*
+ * Data
+ */
+
+// Return pointer to the contained DataViewer
+DataViewer* GraphGizmo::dataViewer() const
+{
+	return dataViewer_;
 }
 
 /*

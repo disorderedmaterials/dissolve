@@ -114,3 +114,30 @@ Gizmo* Gizmo::find(QMdiSubWindow* window)
 
 	return NULL;
 }
+
+/*
+ * Data Handling
+ */
+
+// Return whether this Gizmo accepts data of the specified type
+bool Gizmo::acceptsData(const char* dataType)
+{
+	return false;
+}
+
+// Return all Gizmos that accept data of the specified type
+RefList<Gizmo> Gizmo::allThatAccept(const char* dataType)
+{
+	RefList<Gizmo> gizmos;
+
+	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) if (gizmo->acceptsData(dataType)) gizmos.append(gizmo);
+
+	return gizmos;
+}
+
+// Send data (referenced by its object tag) to the Gizmo
+bool Gizmo::sendData(const char* objectTag)
+{
+	return false;
+}

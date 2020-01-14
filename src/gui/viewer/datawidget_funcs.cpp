@@ -22,6 +22,7 @@
 #include "gui/viewer/datawidget.h"
 #include "gui/viewer/render/view.h"
 #include "gui/helpers/treewidgetupdater.h"
+#include "gui/gizmos/graph.h"
 #include <QButtonGroup>
 #include <QInputDialog>
 
@@ -136,8 +137,11 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 	// If the button has just been checked, request the target view
 	if (checked)
 	{
-		// Get possible target DataViewers and remove ourselves from it
-		RefList<DataViewer> targets = DataViewer::renderableDestinations();
+		// Get possible target GraphGizmos, and construct list of associated DataViewers
+		RefList<GraphGizmo> graphGizmos = Gizmo::findAll<GraphGizmo>("Graph");
+		RefDataList<DataViewer,GraphGizmo*> targets;
+		RefListIterator<GraphGizmo> gizmoIterator(graphGizmos);
+		while (GraphGizmo* gizmo = gizmoIterator.iterate()) targets.append(gizmo->dataViewer(), gizmo);
 		targets.remove(dataViewer());
 		if (targets.nItems() == 0)
 		{
@@ -148,10 +152,10 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 		// Construct a list of targets as a QStringList
 		QStringList destinations;
 		int currentItem = -1, count = 0;
-		RefListIterator<DataViewer> targetIterator(targets);
+		RefDataListIterator<DataViewer,GraphGizmo*> targetIterator(targets);
 		while (DataViewer* viewer = targetIterator.iterate())
 		{
-			destinations << viewer->destinationName();
+			destinations << targetIterator.currentData()->uniqueName();
 			if (&viewer->view() == dataViewer()->view().linkedView()) currentItem = count;
 			++count;
 		}

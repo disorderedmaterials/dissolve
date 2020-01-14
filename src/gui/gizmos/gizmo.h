@@ -23,6 +23,7 @@
 #define DISSOLVE_GIZMO_H
 
 #include "base/charstring.h"
+#include "base/sysfunc.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 #include <QWidget>
@@ -71,6 +72,14 @@ class Gizmo : public ListItem<Gizmo>
 	static Gizmo* find(const char* uniqueName, const Gizmo* excludeThis = NULL);
 	// Find Gizmo contained in specified subwindow
 	static Gizmo* find(QMdiSubWindow* window);
+	// Find all Gizmos of the specified type
+	template <class G> static RefList<G> findAll(const char* gizmoType)
+	{
+		RefList<G> gizmos;
+		RefListIterator<Gizmo> gizmoIterator(allGizmos_);
+		while (Gizmo* gizmo = gizmoIterator.iterate()) if (DissolveSys::sameString(gizmo->type(), gizmoType)) gizmos.append(dynamic_cast<G*>(gizmo));
+		return gizmos;
+	}
 
 
 	/*
@@ -91,6 +100,18 @@ class Gizmo : public ListItem<Gizmo>
 	virtual void disableSensitiveControls() = 0;
 	// Enable sensitive controls within widget
 	virtual void enableSensitiveControls() = 0;
+
+
+	/*
+	 * Data Handling
+	 */
+	public:
+	// Return whether this Gizmo accepts data of the specified type
+	virtual bool acceptsData(const char* dataType);
+	// Return all Gizmos that accept data of the specified type
+	static RefList<Gizmo> allThatAccept(const char* dataType);
+	// Send data (referenced by its object tag) to the Gizmo
+	virtual bool sendData(const char* objectTag);
 
 
 	/*

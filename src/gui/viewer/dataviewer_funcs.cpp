@@ -22,9 +22,6 @@
 #include "gui/viewer/dataviewer.hui"
 #include "base/messenger.h"
 
-// Static Singletons
-RefList<DataViewer> DataViewer::renderableDestinations_;
-
 // Constructor
 DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 {
@@ -38,36 +35,5 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 // Destructor
 DataViewer::~DataViewer()
 {
-	// Remove ourselves from the destination list if appropriate
-	if (renderableDestination_) renderableDestinations_.remove(this);
 }
 
-/*
- * Destinations
- */
-
-// Set that this DataViewer should be a Renderable destination
-void DataViewer::enableAsRenderableDestination()
-{
-	renderableDestination_ = true;
-
-	renderableDestinations_.addUnique(this);
-}
-
-// Set name of this renderable destination
-void DataViewer::setDestinationName(const char* name)
-{
-	destinationName_ = name;
-}
-
-// Return name of this renderable destination
-const char* DataViewer::destinationName() const
-{
-	return destinationName_.get();
-}
-
-// Return all destinations
-RefList<DataViewer> DataViewer::renderableDestinations()
-{
-	return renderableDestinations_;
-}
