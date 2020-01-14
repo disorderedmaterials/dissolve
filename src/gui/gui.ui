@@ -1142,8 +1142,8 @@
       <property name="title">
        <string>E&amp;volution...</string>
       </property>
-      <addaction name="LayerCreateEvolveMolecularAction"/>
       <addaction name="LayerCreateEvolveAtomicAction"/>
+      <addaction name="LayerCreateEvolveMolecularAction"/>
       <addaction name="LayerCreateEvolveEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
