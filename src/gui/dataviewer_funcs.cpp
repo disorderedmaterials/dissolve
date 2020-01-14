@@ -30,6 +30,10 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 
 	// Set up the view
 	view_.setViewType(View::FlatXYView);
+
+	// Set options
+	dissolve_ = NULL;
+	controlFlags_ = NoFlags;
 }
 
 // Destructor
@@ -37,3 +41,24 @@ DataViewer::~DataViewer()
 {
 }
 
+/*
+ * Options
+ */
+
+// Set pointer to Dissolve
+void DataViewer::setDissolve(Dissolve* dissolve)
+{
+	dissolve_ = dissolve;
+}
+
+// Set control flags
+void DataViewer::setFlags(int flags)
+{
+	controlFlags_ = flags;
+}
+
+// Return whether the specified flag is set
+bool DataViewer::hasFlag(ControlFlag flag) const
+{
+	return (controlFlags_&flag);
+}

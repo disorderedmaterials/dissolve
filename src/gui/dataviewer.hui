@@ -25,7 +25,7 @@
 #include "gui/viewer.hui"
 
 // Forward Declarations
-/* none */
+class Dissolve;
 
 // Data Viewer
 class DataViewer : public BaseViewer
@@ -112,6 +112,32 @@ class DataViewer : public BaseViewer
 	void showGeneralContextMenu(QPoint pos);
 	// Show renderable context menu
 	void showRenderableContextMenu(QPoint pos, Renderable* rend);
+
+
+	/*
+	 * Control Flags
+	 */
+	private:
+	// Pointer to Dissolve
+	Dissolve* dissolve_;
+	// Control flags
+	int controlFlags_;
+
+	public:
+	// Control Flags Enum
+	enum ControlFlag
+	{
+		NoFlags = 0,
+		UserCanAddDataFlag = 1,
+		UserCanRenameDataFlag = 2,
+		UserCanRemoveDataFlag = 4
+	};
+	// Set pointer to Dissolve
+	void setDissolve(Dissolve* dissolve);
+	// Set control flags
+	void setFlags(int flags);
+	// Return whether the specified flag is set
+	bool hasFlag(ControlFlag flag) const;
 };
 
 #endif

@@ -39,6 +39,10 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 	dataViewer_->view().setViewType(View::NormalView);
 	dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
+	// Permit the user to add data to the DataViewer
+	dataViewer_->setFlags(DataViewer::UserCanAddDataFlag + DataViewer::UserCanRenameDataFlag + DataViewer::UserCanRemoveDataFlag);
+	dataViewer_->setDissolve(&dissolve);
+
 	refreshing_ = false;
 }
 
