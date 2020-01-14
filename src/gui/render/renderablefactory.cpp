@@ -1,4 +1,3 @@
-
 /*
 	*** Renderable Factory
 	*** src/gui/render/renderablefactory.cpp
