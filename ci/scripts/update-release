@@ -9,17 +9,21 @@ RELEASE_BODY=""
 RELEASE_BODY_FILE=""
 RELEASE_BODY_FILE_WARN="false"
 RELEASE_PRE="false"
+DELETE_EXISTING="false"
+DELETE_EXISTING_ALWAYS="false"
+DELETE_ALL_ASSETS="false"
+UPDATE_TAG_SHA="false"
 ARTIFACTS=""
 NARTIFACTS=0
 
 usage()
 {
-	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-w] [-p] artifacts ..."
+	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-e] [-w] [-p] [-u] artifacts ..."
 	exit 1
 }
 
 # Parse options
-while getopts ":r:t:n:b:f:pw" opt
+while getopts ":r:t:n:b:f:pwdaeu" opt
 do
 	case "${opt}" in
 		r)
@@ -50,6 +54,22 @@ do
 			RELEASE_PRE="true"
 			echo "Release will be marked as a pre-release."
 			;;
+		a)
+			DELETE_EXISTING_ALWAYS="true"
+			echo "Existing release with the same tag will always be deleted if it exists."
+			;;
+		d)
+			DELETE_EXISTING="true"
+			echo "Existing release with the same tag will be deleted if it exists (unless HEAD/tag hashes match)"
+			;;
+		e)
+			DELETE_ALL_ASSETS="true"
+			echo "All existing release assets will be deleted"
+			;;
+		u)
+			UPDATE_TAG_SHA="true"
+			echo "SHA for specified tag will updated to reflect current HEAD"
+			;;
 		\?)
 			usage
 			;;
@@ -67,8 +87,8 @@ fi
 
 # Set up vars
 echo "Repository is $REPO"
-REPOURL="https://api.github.com/repos/${REPO}"
-echo "API URL is $REPOURL"
+REPO_URL="https://api.github.com/repos/${REPO}"
+echo "API URL is $REPO_URL"
 
 # Enable erroring
 set -e
@@ -118,19 +138,99 @@ fi
 echo "Tag for release is: $RELEASE_TAG"
 
 # Get available releases information
-RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
-if [[ $RELEASES =~ "documentation_url" ]]
-then
-	MESSAGE=$(echo $RELEASES | jq ". | .message")
-	echo "Error returned: "$MESSAGE
-	exit 1
-fi
+i=0
+while (( i < 3 ))
+do
+	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
+	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
+
+	# Check for error or no data
+	if [[ $RELEASES =~ "documentation_url" ]]
+	then
+		MESSAGE=$(echo $RELEASES | jq ". | .message")
+		echo "Error returned: "$MESSAGE
+		exit 1
+	elif (( ${#RELEASES} < 10 ))
+	then
+		echo "... Empty information returned - waiting 60 seconds and trying again..."
+		sleep 60
+		i=$(( i+1 ))
+	else
+		break
+	fi
+done
 
 # Does our tag already exist (i.e. the release already exists)?
 echo "Checking for presence of current release..."
 FILTER=".[] | select(.tag_name | match(\"$RELEASE_TAG\"))"
 CURRENT_RELEASEINFO=$(echo $RELEASES | jq "$FILTER")
 CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
+
+if [ "x$CURRENT_URL" != "x" ]
+then
+	echo " -- Found existing release with tag $RELEASE_TAG"
+	echo "    url: $CURRENT_URL"
+
+	# Get short hash for tag
+	TAG_HASH=`git rev-parse --short $RELEASE_TAG`
+	echo "   hash: $TAG_HASH"
+
+	# Delete existing release?
+	if [ "$DELETE_EXISTING" = "true" ]
+	then
+		# Check hash against HEAD
+		HEAD_HASH=`git rev-parse --short HEAD`
+		echo "   head: $HEAD_HASH"
+		if [ "$TAG_HASH" != "$HEAD_HASH" ] || [ "$DELETE_EXISTING_ALWAYS" = "true" ]
+		then
+			echo " -- Removing existing release..."
+			curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" $CURRENT_URL
+
+			# Reset url so it gets recreated
+			CURRENT_URL="x"
+		fi
+	else
+		# Patch the current release
+
+		# Set GitHub username and email
+		git config --local user.name "trisyoungs"
+		git config --local user.email "tristan.youngs@stfc.ac.uk"
+
+		# Update tag SHA?
+		if [ "$UPDATE_TAG_SHA" = "true" ]
+		then
+			FULL_HEAD_HASH=`git rev-parse HEAD`
+			echo " -- Updating tag hash to that of the current HEAD (${FULL_HEAD_HASH})"
+			curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous
+		fi
+
+		# Construct release information
+		RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
+		RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
+		RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
+		RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
+		RELEASE_DATA=${RELEASE_DATA}', "draft": false'
+		RELEASE_DATA=${RELEASE_DATA}', "prerelease": '$RELEASE_PRE
+		RELEASE_DATA=${RELEASE_DATA}" }"
+		echo $RELEASE_DATA
+
+		# Patch release
+		curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL}
+
+		# Delete existing assets?
+		if [ "$DELETE_ALL_ASSETS" = "true" ]
+		then
+			ASSETS=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
+			ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
+			for id in $ASSET_IDS
+			do
+				curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id}
+			done
+		fi
+	fi
+fi
+
+# Create new release?
 if [ "x$CURRENT_URL" = "x" ]
 then
 	echo " -- No release with tag $RELEASE_TAG currently exists."
@@ -143,19 +243,12 @@ then
 		git config --local user.name "trisyoungs"
 		git config --local user.email "tristan.youngs@stfc.ac.uk"
 
-		git tag $RELEASE_TAG
+		git tag -f $RELEASE_TAG
 	fi
-else
-	echo " -- Found existing release with tag $RELEASE_TAG"
-	echo "    url: $CURRENT_URL"
-fi
 
-# If we don't already have info for our release, create one now
-if [ "x$CURRENT_URL" = "x" ]
-then
 	# Construct release information
 	RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
-	RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TRAVIS_COMMIT'"'
+	RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
 	RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
 	RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
 	RELEASE_DATA=${RELEASE_DATA}', "draft": false'
@@ -164,46 +257,50 @@ then
 	echo $RELEASE_DATA
 
 	# Create release
-	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPOURL}/releases)
+	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
 
 	# Extract url
 	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
 fi
 
-# Extract upload path for assets
-# -- Need to strip trailing {?name,label} part from the returned url
-UPLOAD_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .upload_url' | cut -d '{' -f 1)
-if [ "x$UPLOAD_URL" = "x" ]
+# Upload assets if provided
+if (( $NARTIFACTS > 0 ))
 then
-	echo "Error: Failed to determine upload url for release."
-	exit 1
-fi
-echo "Upload url is: $UPLOAD_URL"
+	# Upload specified assets
+	echo "Uploading assets to release..."
 
-# Upload specified assets
-echo "Uploading assets to release..."
-
-for file in ${ARTIFACTS[@]}
-do
-	# Get the basename of the file so we call it the correct name
-	BASENAME=$(basename "${file}")
-	echo "... $file (basename=$BASENAME)"
-
-	ARTIFACT_DATA=$(curl --header "Authorization: token ${GITHUB_TOKEN}" \
-	     --header "Accept: application/vnd.github.manifold-preview" \
-	     --header "Content-Type: application/octet-stream" \
-	     --data-binary @$file \
-	     "$UPLOAD_URL?name=$BASENAME")
-
-	ARTIFACT_ID=$(echo $ARTIFACT_DATA | jq -r '. | .id')
-	ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
-	if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
+	# Extract upload path for assets
+	# -- Need to strip trailing {?name,label} part from the returned url
+	UPLOAD_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .upload_url' | cut -d '{' -f 1)
+	if [ "x$UPLOAD_URL" = "x" ]
 	then
-		echo "Error: Failed to upload artifact."
-		echo "Returned data was: $ARTIFACT_DATA"
+		echo "Error: Failed to determine upload url for release."
 		exit 1
 	fi
-	echo "   -- Success (id: $ARTIFACT_ID, url: $ARTIFACT_URL)"
-done
+	echo " -- Upload url is: $UPLOAD_URL"
+
+	for file in ${ARTIFACTS[@]}
+	do
+		# Get the basename of the file so we call it the correct name
+		BASENAME=$(basename "${file}")
+		echo "... $file (basename=$BASENAME)"
+
+		ARTIFACT_DATA=$(curl --header "Authorization: token ${GITHUB_TOKEN}" \
+		     --header "Accept: application/vnd.github.manifold-preview" \
+		     --header "Content-Type: application/octet-stream" \
+		     --data-binary @$file \
+		     "$UPLOAD_URL?name=$BASENAME")
+
+		ARTIFACT_ID=$(echo $ARTIFACT_DATA | jq -r '. | .id')
+		ARTIFACT_URL=$(echo $ARTIFACT_DATA | jq -r '. | .browser_download_url')
+		if [ "x$ARTIFACT_ID" = "x" ] || [ "$ARTIFACT_ID" = "null" ]
+		then
+			echo "Error: Failed to upload artifact."
+			echo "Returned data was: $ARTIFACT_DATA"
+			exit 1
+		fi
+		echo "   -- Success (id: $ARTIFACT_ID, url: $ARTIFACT_URL)"
+	done
+fi
 
 # All done.

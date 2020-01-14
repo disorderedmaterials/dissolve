@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Window
 	*** src/gui/gui.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -109,6 +109,8 @@ class DissolveWindow : public QMainWindow
 	QLabel* restartFileIndicator_;
 	// Label for heartbeat file indicator
 	QLabel* heartbeatFileIndicator_;
+	// Label for simulation ETA (when using RunFor)
+	QLabel* etaLabel_;
 
 
 	/*
@@ -151,6 +153,8 @@ class DissolveWindow : public QMainWindow
 	void updateMenus();
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
+	// Update while running
+	void updateWhileRunning(int iterationsRemaining);
 
 
 	/*
@@ -184,8 +188,8 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationClearModuleDataAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
-	void on_SpeciesCreateEmptyAction_triggered(bool checked);
 	void on_SpeciesCreateAtomicAction_triggered(bool checked);
+	void on_SpeciesCreateDrawAction_triggered(bool checked);
 	void on_SpeciesImportFromDissolveAction_triggered(bool checked);
 	void on_SpeciesImportFromXYZAction_triggered(bool checked);
 	void on_SpeciesRenameAction_triggered(bool checked);
@@ -214,9 +218,13 @@ class DissolveWindow : public QMainWindow
 	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceCreateEmptyAction_triggered(bool checked);
+	void on_WorkspaceRenameCurrentGizmoAction_triggered(bool checked);
 	// Help
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
+
+	public slots:
+	void currentWorkspaceGizmoChanged(QMdiSubWindow* gizmoWindow);
 
 
 	/*

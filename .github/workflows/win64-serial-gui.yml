@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
-    
     steps:
     - uses: actions/checkout@v1
     - name: Install Prerequisties
@@ -23,6 +21,7 @@ jobs:
         #Start-Process qt.exe -ArgumentList '--verbose --script ci/windows/qtifwsilent.qs' -NoNewWindow -Wait
         #Remove-Item qt.exe
         choco install -y ninja zip winflexbison innoextract
+        choco install mingw --version=7.3.0 --allow-downgrade
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.2.1
       with:
@@ -57,7 +56,6 @@ jobs:
         $env:LIB += "$HOME\freetype-build;"
         $env:INCLUDE += "$HOME\ftgl-latest\src;"
         $env:LIB += "$HOME\ftgl-build\src;"
-        ls $env:Qt5Gui_DIR
         cmake -G "Ninja" -DGUI:bool=true ../
         ninja
         cd ../
@@ -68,17 +66,13 @@ jobs:
         $env:FTGL_DIR = "$($HOME)\ftgl-build"
         echo $env:Qt5_DIR
         $env:MINGW_DIR = $env:Qt5_DIR
-        iscc.exe /O.\ .\ci\windows\dissolve.iss
+        iscc.exe /O.\ .\ci\windows\dissolve-gui.iss
         $exe = Get-ChildItem  .\*.exe
         echo "Executable installer is "$exe.Name
         innoextract.exe $exe.Name -d $exe.BaseName
-        ls
-        cd $exe.BaseName
-        ls
-        #mv * ../
-        cd ../
-        #rm -Force bin
-        #cd ../
+        mv "$($exe.BaseName)\app\bin\*" $exe.BaseName
+        mv "$($exe.BaseName)\app" ./
+        #rm -Force "$($exe.BaseName)\app"
         $zip = $exe.BaseName + ".zip"
         zip -r $zip $exe.BaseName
         mkdir installers
@@ -90,7 +84,7 @@ jobs:
       with:
         name: artifacts
         path: installers/
-  createcontinuous:
+  updatecontinuous:
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -105,4 +99,8 @@ jobs:
     - name: Create / Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch.' -p artifacts/*zip artifacts/*exe
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        DATE=`date`
+        mv artifacts/Dissolve-GUI-${VERSION}-Win64.zip artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.zip
+        mv artifacts/Dissolve-GUI-${VERSION}-Win64.exe artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.exe
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*zip artifacts/*exe

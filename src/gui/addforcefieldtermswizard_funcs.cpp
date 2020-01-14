@@ -1,7 +1,7 @@
 /*
 	*** Add Forcefield Terms Wizard Functions
 	*** src/gui/addforcefieldtermswizard_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -117,6 +117,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		{
 			i->atomType()->parameters() = modifiedI->atomType()->parameters();
 			i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
+			i->setCharge(modifiedI->charge());
 			dissolve.coreData().bumpAtomTypesVersion();
 		}
 
@@ -124,8 +125,8 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		modifiedI = modifiedI->next();
 	}
 
-	// Copy bond terms
-	if (ui_.BondTermsCheck->isChecked())
+	// Copy intramolecular terms
+	if (ui_.ApplyIntramolecularTermsCheck->isChecked())
 	{
 		DynamicArrayIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
 		DynamicArrayConstIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->constBonds());
@@ -136,11 +137,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedBond, originalBond);
 		}
-	}
 
-	// Copy angle terms
-	if (ui_.AngleTermsCheck->isChecked())
-	{
 		DynamicArrayIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
 		DynamicArrayConstIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->constAngles());
 		while (SpeciesAngle* originalAngle = originalAngleIterator.iterate())
@@ -150,11 +147,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedAngle, originalAngle);
 		}
-	}
 
-	// Copy torsion terms
-	if (ui_.TorsionTermsCheck->isChecked())
-	{
 		DynamicArrayIterator<SpeciesTorsion> originalTorsionIterator(targetSpecies_->torsions());
 		DynamicArrayConstIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->constTorsions());
 		while (SpeciesTorsion* originalTorsion = originalTorsionIterator.iterate())
@@ -235,103 +228,94 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
 
 			// Assign intramolecular terms
-			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked(), ui_.ImproperTermsCheck->isChecked())) return false;
-
-			// Reduce to master terms?
-			if (ui_.BondTermsMasterCheck->isChecked())
+			if (ui_.ApplyIntramolecularTermsCheck->isChecked())
 			{
-				CharString bondName;
+				if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.GenerateImproperTermsCheck->isChecked())) return false;
 
-				// Loop over bonds in the modified species
-				DynamicArrayIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
-				while (SpeciesBond* bond = bondIterator.iterate())
+				// Reduce to master terms?
+				if (ui_.ReduceToMasterTermsCheck->isChecked())
 				{
-					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-					if (QString(bond->i()->atomType()->name()) < QString(bond->j()->atomType()->name())) bondName.sprintf("%s-%s", bond->i()->atomType()->name(), bond->j()->atomType()->name());
-					else bondName.sprintf("%s-%s", bond->j()->atomType()->name(), bond->i()->atomType()->name());
+					CharString termName;
 
-					// Search for an existing master term by this name
-					MasterIntra* master = temporaryCoreData_.hasMasterBond(bondName);
-					if (!master)
+					// Loop over bonds in the modified species
+					DynamicArrayIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
+					while (SpeciesBond* bond = bondIterator.iterate())
 					{
-						// Create it now
-						master = temporaryCoreData_.addMasterBond(bondName);
-						master->setForm(bond->form());
-						master->setParameters(bond->parameters());
+						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+						if (QString(bond->i()->atomType()->name()) < QString(bond->j()->atomType()->name())) termName.sprintf("%s-%s", bond->i()->atomType()->name(), bond->j()->atomType()->name());
+						else termName.sprintf("%s-%s", bond->j()->atomType()->name(), bond->i()->atomType()->name());
+
+						// Search for an existing master term by this name
+						MasterIntra* master = temporaryCoreData_.hasMasterBond(termName);
+						if (!master)
+						{
+							// Create it now
+							master = temporaryCoreData_.addMasterBond(termName);
+							master->setForm(bond->form());
+							master->setParameters(bond->parameters());
+						}
+						bond->setMasterParameters(master);
 					}
-					bond->setMasterParameters(master);
-				}
-			}
-			if (ui_.AngleTermsMasterCheck->isChecked())
-			{
-				CharString angleName;
 
-				// Loop over angles in the modified species
-				DynamicArrayIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
-				while (SpeciesAngle* angle = angleIterator.iterate())
-				{
-					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-					if (QString(angle->i()->atomType()->name()) < QString(angle->k()->atomType()->name())) angleName.sprintf("%s-%s-%s", angle->i()->atomType()->name(), angle->j()->atomType()->name(), angle->k()->atomType()->name());
-					else angleName.sprintf("%s-%s-%s", angle->k()->atomType()->name(), angle->j()->atomType()->name(), angle->i()->atomType()->name());
-
-					// Search for an existing master term by this name
-					MasterIntra* master = temporaryCoreData_.hasMasterAngle(angleName);
-					if (!master)
+					// Loop over angles in the modified species
+					DynamicArrayIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
+					while (SpeciesAngle* angle = angleIterator.iterate())
 					{
-						// Create it now
-						master = temporaryCoreData_.addMasterAngle(angleName);
-						master->setForm(angle->form());
-						master->setParameters(angle->parameters());
+						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+						if (QString(angle->i()->atomType()->name()) < QString(angle->k()->atomType()->name())) termName.sprintf("%s-%s-%s", angle->i()->atomType()->name(), angle->j()->atomType()->name(), angle->k()->atomType()->name());
+						else termName.sprintf("%s-%s-%s", angle->k()->atomType()->name(), angle->j()->atomType()->name(), angle->i()->atomType()->name());
+
+						// Search for an existing master term by this name
+						MasterIntra* master = temporaryCoreData_.hasMasterAngle(termName);
+						if (!master)
+						{
+							// Create it now
+							master = temporaryCoreData_.addMasterAngle(termName);
+							master->setForm(angle->form());
+							master->setParameters(angle->parameters());
+						}
+						angle->setMasterParameters(master);
 					}
-					angle->setMasterParameters(master);
-				}
-			}
-			if (ui_.TorsionTermsMasterCheck->isChecked())
-			{
-				CharString torsionName;
 
-				// Loop over torsions in the modified species
-				DynamicArrayIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
-				while (SpeciesTorsion* torsion = torsionIterator.iterate())
-				{
-					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-					if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) torsionName.sprintf("%s-%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
-					else torsionName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
-
-					// Search for an existing master term by this name
-					MasterIntra* master = temporaryCoreData_.hasMasterTorsion(torsionName);
-					if (!master)
+					// Loop over torsions in the modified species
+					DynamicArrayIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
+					while (SpeciesTorsion* torsion = torsionIterator.iterate())
 					{
-						// Create it now
-						master = temporaryCoreData_.addMasterTorsion(torsionName);
-						master->setForm(torsion->form());
-						master->setParameters(torsion->parameters());
+						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+						if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) termName.sprintf("%s-%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
+						else termName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
+
+						// Search for an existing master term by this name
+						MasterIntra* master = temporaryCoreData_.hasMasterTorsion(termName);
+						if (!master)
+						{
+							// Create it now
+							master = temporaryCoreData_.addMasterTorsion(termName);
+							master->setForm(torsion->form());
+							master->setParameters(torsion->parameters());
+						}
+						torsion->setMasterParameters(master);
 					}
-					torsion->setMasterParameters(master);
-				}
-			}
-			if (ui_.ImproperTermsMasterCheck->isChecked())
-			{
-				CharString improperName;
 
-				// Loop over impropers in the modified species
-				DynamicArrayIterator<SpeciesImproper> improperIterator(modifiedSpecies_->impropers());
-				while (SpeciesImproper* improper = improperIterator.iterate())
-				{
-					// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-					if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) improperName.sprintf("%s-%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
-					else improperName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
-
-					// Search for an existing master term by this name
-					MasterIntra* master = temporaryCoreData_.hasMasterImproper(improperName);
-					if (!master)
+					// Loop over impropers in the modified species
+					DynamicArrayIterator<SpeciesImproper> improperIterator(modifiedSpecies_->impropers());
+					while (SpeciesImproper* improper = improperIterator.iterate())
 					{
-						// Create it now
-						master = temporaryCoreData_.addMasterImproper(improperName);
-						master->setForm(improper->form());
-						master->setParameters(improper->parameters());
+						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
+						if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) termName.sprintf("%s-%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
+						else termName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
+
+						// Search for an existing master term by this name
+						MasterIntra* master = temporaryCoreData_.hasMasterImproper(termName);
+						if (!master)
+						{
+							// Create it now
+							master = temporaryCoreData_.addMasterImproper(termName);
+							master->setForm(improper->form());
+							master->setParameters(improper->parameters());
+						}
+						improper->setMasterParameters(master);
 					}
-					improper->setMasterParameters(master);
 				}
 			}
 

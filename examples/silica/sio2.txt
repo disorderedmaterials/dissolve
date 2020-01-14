@@ -1,81 +1,137 @@
-# Amorphous Silica
-# Data are lifted from EPSR, the original source being XXX. The data are normalised to <b>**2
+# Input file written by Dissolve v0.5.1 at 15:13:43 on 13-01-2020.
 
-#-----------------------#
-# Define Silica Species #
-#-----------------------#
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
 
 Species 'Si'
-  Atom    1   Si     0.000    0.000    0.000    'Si'
+  # Atoms
+  Atom    1   Si  0.000000e+00  0.000000e+00  0.000000e+00  'Silicon'  0.000000e+00
 EndSpecies
 
 Species 'O'
-  Atom    1   O      0.000    0.000    0.000    'O'
+  # Atoms
+  Atom    1    O  0.000000e+00  0.000000e+00  0.000000e+00  'Oxygen'  0.000000e+00
 EndSpecies
 
-#----------------------#
-#   Pair Potentials    #
-#----------------------#
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
 
 PairPotentials
-  Parameters  Si  4.0  0.8   0.76
-  Parameters  O  -2.0  0.65  3.69
-  GenerateAll  'LJ'
+  # Atom Type Parameters
+  Parameters  Silicon  2.000000e+00  LJ  1.750000e-01  1.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  Oxygen  -1.000000e+00  LJ  1.700000e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Range  10.000000
+  Delta  0.005000
+  IncludeCoulomb  True
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
 EndPairPotentials
 
-#----------------------#
-# Define Configuration #
-#----------------------#
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
 
-Configuration 'silica'
-  Multiplier  1000
-  Density  0.0664  atoms/A3
-  SpeciesInfo  'Si'  1.0
-  SpeciesInfo  'O'  2.0
-  Temperature 10000.0
+Configuration  'NewConfiguration'
+
+  # Modules
+  Generator
+    Parameters
+      Integer  populationA  1000
+      Integer  ratioB  2
+      Real  rho  6.640000e-02
+    EndParameters
+    Box
+      Lengths  1.000000e+00  1.000000e+00  1.000000e+00
+      Angles  9.000000e+01  9.000000e+01  9.000000e+01
+      NonPeriodic  False
+    EndBox
+    AddSpecies
+      Species  'Si'
+      Population  'populationA'
+      ScaleBox  True
+      Density  'rho'  atoms/A3
+      Rotate  True
+      Positioning  Random
+    EndAddSpecies
+    AddSpecies
+      Species  'O'
+      Population  'ratioB*populationA'
+      ScaleBox  True
+      Density  'rho'  atoms/A3
+      Rotate  True
+      Positioning  Random
+    EndAddSpecies
+  EndGenerator
+
+  Temperature  10000.000000
+
+  # Modules
+  # -- None
 EndConfiguration
 
-#-----------------------#
-# Define Reference Data #
-#-----------------------#
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
 
-Data  'Experiment'
-  File  'data/NeutronSiO2sq.dat'  2  3
-  NeutronNormalisation  AverageSquared
-  AssociatedTo  'natural'
-EndData
+Layer  'Evolve (Atomic)'
+  Frequency  1
 
-#----------------------#
-#      Processing      #
-#----------------------#
+  Module  AtomShake  'AtomShake01'
+    Frequency  1
 
-# 1) Move atoms with an MC atom 'shake'
-Module AtomShake
-  Configuration  'silica'
-EndModule
+    Configuration  'NewConfiguration'
+  EndModule
 
-# 2) Calculate total energy of system, so we can assess the stability (i.e. equilibrium) of the configuration
-Module Energy
-  Configuration 'silica'
-EndModule
+  Module  MD  'MD01'
+    Frequency  5
+    Disabled
 
-# 3) Calculate partials (every five iterations)
-Module Partials 'natural'
-  Configuration  'silica'
-  Weights neutron
-  Isotopologue  'silica'  'Si'  'Natural'  1.0
-  Isotopologue  'silica'  'O'  'Natural'  1.0
-  StructureFactor  on
-  Frequency 5
-EndModule
+    Configuration  'NewConfiguration'
+  EndModule
 
-# 4) Apply potential refinement (every 5 iterations)
-Module Refine
-  Disabled
-  AugmentationParam  0.9
-  PhiLimit 1000.0
-  Data  'Experiment'
+  Module  Energy  'Energy01'
+    Frequency  1
+
+    Configuration  'NewConfiguration'
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
   Frequency  5
-  OnlyWhenStable  True
-EndModule
+
+  Module  RDF  'RDF01'
+    Frequency  1
+
+    Configuration  'NewConfiguration'
+  EndModule
+
+  Module  NeutronSQ  'NeutronSQ01'
+    Frequency  1
+
+    Configuration  'NewConfiguration'
+    Reference  xy  'data/SiO2_NIMROD.mint01'
+    EndReference
+  EndModule
+EndLayer
+
+Layer  'Refine (EPSR)'
+  Frequency  5
+  Disabled
+
+  Module  EPSR  'EPSR01'
+    Frequency  1
+    EReq   7.50000e+01
+    Target  'NeutronSQ01'  'Default'
+  EndModule
+EndLayer
+
+#------------------------------------------------------------------------------#
+#                                  Simulation                                  #
+#------------------------------------------------------------------------------#
+
+Simulation
+  Seed  -1
+EndSimulation
 

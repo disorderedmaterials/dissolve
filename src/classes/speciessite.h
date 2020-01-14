@@ -1,7 +1,7 @@
 /*
 	*** Species Site
 	*** src/classes/speciessite.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -88,6 +88,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addOriginAtom(SpeciesAtom* originAtom);
 	// Add origin atom from index
 	bool addOriginAtom(int atomIndex);
+	// Remove origin atom
+	void removeOriginAtom(SpeciesAtom* originAtom);
 	// Set origin atoms
 	bool setOriginAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of origin atoms
@@ -102,6 +104,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addXAxisAtom(SpeciesAtom* xAxisAtom);
 	// Add x-axis atom from index
 	bool addXAxisAtom(int atomIndex);
+	// Remove x-axis atom
+	void removeXAxisAtom(SpeciesAtom* xAxisAtom);
 	// Set x-axis atoms
 	bool setXAxisAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of x-axis atoms
@@ -112,6 +116,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	bool addYAxisAtom(SpeciesAtom* yAxisAtom);
 	// Add y-axis atom from indey
 	bool addYAxisAtom(int atomIndex);
+	// Remove y-axis atom
+	void removeYAxisAtom(SpeciesAtom* yAxisAtom);
 	// Set y-axis atoms
 	bool setYAxisAtoms(const RefList<SpeciesAtom> atoms);
 	// Return list of y-axis atoms

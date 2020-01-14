@@ -1,7 +1,7 @@
 /*
 	*** SpeciesImproper Definition
 	*** src/classes/speciesimproper.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -73,6 +73,8 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	SpeciesAtom* k() const;
 	// Return fourth SpeciesAtom
 	SpeciesAtom* l() const;
+	// Return whether the improper uses the specified SpeciesAtom
+	bool uses(SpeciesAtom* spAtom) const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom

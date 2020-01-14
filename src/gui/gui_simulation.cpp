@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI - Simulation Stack Page
 	*** src/gui/gui_simulation	.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -113,6 +113,7 @@ void DissolveWindow::enableSensitiveControls()
 void DissolveWindow::iterationsComplete()
 {
 	enableSensitiveControls();
+	Renderable::setSourceDataAccessEnabled(true);
 }
 
 /*

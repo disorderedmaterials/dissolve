@@ -1,7 +1,7 @@
 /*
 	*** Configuration
 	*** src/classes/configuration.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -46,6 +46,7 @@
 // Forward Declarations
 class Box;
 class Cell;
+class CoordinateSet;
 class PotentialMap;
 class Species;
 
@@ -148,7 +149,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Increment version of current contents
 	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
-	Molecule* addMolecule(Species* sp);
+	Molecule* addMolecule(Species* sp, CoordinateSet* sourceCoordinates = NULL);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return array of Molecules

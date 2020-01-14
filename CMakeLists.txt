@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "5")
-set(VERSION_PATCH "1")
+set(VERSION_PATCH "2")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -189,12 +189,14 @@ set(BASIC_LINK_LIBS
 
   # Forcefields
   ff_ludwig
+  ff_oplsaa2005
 
   # Modules
   analysemodule
   atomshakemodule
   braggmodule
   calculateavgmolmodule
+  calculateaxisanglemodule
   calculatecnmodule
   calculatedanglemodule
   calculaterdfmodule
@@ -240,6 +242,7 @@ target_link_libraries( ${target_name}
   atomshakemodulenogui
   braggmodulenogui
   calculateavgmolmodulenogui
+  calculateaxisanglemodulenogui
   calculatecnmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
@@ -274,6 +277,7 @@ if(GUI)
     atomshakemodulegui
     braggmodulegui
     calculateavgmolmodulegui
+    calculateaxisanglemodulegui
     calculatecnmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
@@ -292,13 +296,11 @@ if(GUI)
 
     # Main gui libs
     render
-    viewer
     widgets
     keywordwidgets
-    gizmos
     delegates
     charts
-    subwindows
+    components
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

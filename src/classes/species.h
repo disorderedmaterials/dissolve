@@ -1,7 +1,7 @@
 /*
 	*** Species Definition
 	*** src/classes/species.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIES_H
 
 #include "classes/atomtypelist.h"
+#include "classes/coordinateset.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
@@ -30,6 +31,7 @@
 #include "classes/speciestorsion.h"
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
+#include "io/import/coordinates.h"
 #include "base/charstring.h"
 #include "base/version.h"
 #include "templates/dynamicarray.h"
@@ -91,7 +93,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	
 	public:
 	// Add a new atom to the Species
-	SpeciesAtom* addAtom(Element* element, Vec3<double> r);
+	SpeciesAtom* addAtom(Element* element, Vec3<double> r, double q = 0.0);
+	// Remove the specified atom from the species
+	void removeAtom(SpeciesAtom* i);
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species
@@ -134,6 +138,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	const AtomTypeList& usedAtomTypes();
 	// Clear AtomType assignments for all atoms
 	void clearAtomTypes();
+	// Return total charge of species from local atomic charges
+	double totalChargeOnAtoms();
 
 
 	/*
@@ -151,11 +157,17 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated_;
 
+	private:
+	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
+	void updateIntramolecularTerms();
+
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
 	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
+	// Remove bond between specified SpeciesAtoms*
+	bool removeBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Reconnect existing SpeciesBond
 	bool reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j);
 	// Reconnect existing SpeciesBond
@@ -243,10 +255,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Auto-generate missing intramolecular terms, and remove invalid ones
 	bool autoUpdateIntramolecularTerms_;
 
-	private:
-	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-	void updateIntramolecularTerms();
-
 	public:
 	// Set Forcefield to source terms from
 	void setForcefield(Forcefield* ff);
@@ -333,6 +341,26 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 
 	/*
+	 * Coordinate Sets
+	 */
+	private:
+	// Available coordinate sets representing conformers, symmetry copies etc.
+	List<CoordinateSet> coordinateSets_;
+	// File / format of coordinate sets file, if provided
+	CoordinateImportFileFormat coordinateSetInputCoordinates_;
+
+	public:
+	// Clear coordinate sets
+	void clearCoordinateSets();
+	// Add new coordinate set
+	CoordinateSet* addCoordinateSet();
+	// Return number of defined coordinate sets
+	int nCoordinateSets() const;
+	// Return coordinates sets
+	const List<CoordinateSet>& coordinateSets() const;
+
+
+	/*
 	 * File Input / Output
 	 */
 	public:
@@ -354,6 +382,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
 		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
+		CoordinateSetsKeyword,		/* 'CoordinateSets' - File and format for any associated coordinate sets */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
 		ImproperKeyword,		/* 'Improper' - Define an Improper interaction between four atoms */

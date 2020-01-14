@@ -1,7 +1,7 @@
 /*
 	*** SpeciesTab Functions - Geometry
 	*** src/gui/speciestab_geometry.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -41,6 +41,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui_.AtomTable->setItem(row, 0, item);
 	}
 	else item = ui_.AtomTable->item(row, 0);
@@ -82,6 +83,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	else item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
 	item->setSelected(speciesAtom->isSelected());
+	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 }
 
 // BondTable row update function
@@ -318,23 +320,6 @@ void SpeciesTab::on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked
 	dissolveWindow_->setModified();
 
 	updateControls();
-}
-
-
-void SpeciesTab::on_AtomAddButton_clicked(bool checked)
-{
-	SpeciesAtom* atom = species_->addAtom(&Elements::element(1), Vec3<double>());
-
-	Locker refreshLocker(refreshLock_);
-
-	TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
-
-	dissolveWindow_->setModified();
-}
-
-void SpeciesTab::on_AtomRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
 }
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
@@ -721,8 +706,8 @@ void SpeciesTab::updateGeometryTab()
 	ui_.ForcefieldAutoUpdateIntramolecularCheck->setChecked(species_->autoUpdateIntramolecularTerms());
 
 	// -- SpeciesAtom Table
-	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
-	else ui_.AtomTable->hideColumn(5);
+// 	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
+// 	else ui_.AtomTable->hideColumn(5);
 	if (!species_) ui_.AtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
 

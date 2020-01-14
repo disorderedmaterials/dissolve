@@ -123,8 +123,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Create a New
-Simulation from Scratch</string>
+              <string>Empty Simulation</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -166,8 +165,7 @@ Simulation from Scratch</string>
               </font>
              </property>
              <property name="text">
-              <string>Start a Simulation
-From a Template</string>
+              <string>From Template</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -246,8 +244,7 @@ From a Template</string>
               </font>
              </property>
              <property name="text">
-              <string>Open a Local
-Simulation...</string>
+              <string>Local Simulation</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -292,8 +289,7 @@ Simulation...</string>
               </font>
              </property>
              <property name="text">
-              <string>Open a Recent
-Simulation</string>
+              <string>Recent Simulations</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -338,8 +334,7 @@ Simulation</string>
               </font>
              </property>
              <property name="text">
-              <string>Connect to a
-Remote Simulation</string>
+              <string>Monitor Remote</string>
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
@@ -985,6 +980,7 @@ Remote Simulation</string>
      <string>&amp;Workspace</string>
     </property>
     <addaction name="WorkspaceCreateEmptyAction"/>
+    <addaction name="WorkspaceRenameCurrentGizmoAction"/>
    </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
@@ -1042,8 +1038,8 @@ Remote Simulation</string>
       <iconset resource="main.qrc">
        <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
      </property>
-     <addaction name="SpeciesCreateEmptyAction"/>
      <addaction name="SpeciesCreateAtomicAction"/>
+     <addaction name="SpeciesCreateDrawAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesImportMenu">
      <property name="font">
@@ -1079,7 +1075,7 @@ Remote Simulation</string>
        <x>642</x>
        <y>140</y>
        <width>184</width>
-       <height>158</height>
+       <height>168</height>
       </rect>
      </property>
      <property name="font">
@@ -1147,8 +1143,8 @@ Remote Simulation</string>
       <property name="title">
        <string>E&amp;volution...</string>
       </property>
-      <addaction name="LayerCreateEvolveMolecularAction"/>
       <addaction name="LayerCreateEvolveAtomicAction"/>
+      <addaction name="LayerCreateEvolveMolecularAction"/>
       <addaction name="LayerCreateEvolveEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
@@ -1612,6 +1608,16 @@ Remote Simulation</string>
   <action name="LayerCreateAnalyseAvgMolSDFAction">
    <property name="text">
     <string>Average Molecule &amp;&amp; SDF</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateDrawAction">
+   <property name="text">
+    <string>Draw...</string>
+   </property>
+  </action>
+  <action name="WorkspaceRenameCurrentGizmoAction">
+   <property name="text">
+    <string>Rename Current Gizmo</string>
    </property>
   </action>
  </widget>

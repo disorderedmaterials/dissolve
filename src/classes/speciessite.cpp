@@ -1,7 +1,7 @@
 /*
 	*** SpeciesSite Definition
 	*** src/classes/speciessite.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -90,6 +90,18 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom* originAtom)
 	return true;
 }
 
+// Remove origin atom
+void SpeciesSite::removeOriginAtom(SpeciesAtom* originAtom)
+{
+	if (originAtoms_.contains(originAtom))
+	{
+		originAtoms_.remove(originAtom);
+
+		++version_;
+	}
+	else Messenger::error("Tried to remove a SpeciesAtom from the origin list that isn't present\n");
+}
+
 // Add origin atom from index
 bool SpeciesSite::addOriginAtom(int atomIndex)
 {
@@ -170,6 +182,18 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 	return addXAxisAtom(parent_->atom(atomIndex));
 }
 
+// Remove x-axis atom
+void SpeciesSite::removeXAxisAtom(SpeciesAtom* xAxisAtom)
+{
+	if (xAxisAtoms_.contains(xAxisAtom))
+	{
+		xAxisAtoms_.remove(xAxisAtom);
+
+		++version_;
+	}
+	else Messenger::error("Tried to remove a SpeciesAtom from the x-axis list that isn't present\n");
+}
+
 // Set x-axis atoms
 bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
 {
@@ -225,6 +249,18 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 	if (!parent_) return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addYAxisAtom(parent_->atom(atomIndex));
+}
+
+// Remove y-axis atom
+void SpeciesSite::removeYAxisAtom(SpeciesAtom* yAxisAtom)
+{
+	if (yAxisAtoms_.contains(yAxisAtom))
+	{
+		yAxisAtoms_.remove(yAxisAtom);
+
+		++version_;
+	}
+	else Messenger::error("Tried to remove a SpeciesAtom from the y-axis list that isn't present\n");
 }
 
 // Set y-axis atoms

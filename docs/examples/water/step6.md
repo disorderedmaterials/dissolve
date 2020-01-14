@@ -11,7 +11,7 @@ There is a hint in the structure factors for the H<sub>2</sub>O sample (particul
 
 > **RDF / Neutron S(Q)** tab
 {: .action .action_tabs}
-> Double-click on the `D2O` [`NeutronSQ`](/userguide/modules/neutronsq) module to open its additional controls in a separate tab
+> Double-click on the `D2O` [`NeutronSQ`](../../userguide/modules/neutronsq) module to open its additional controls in a separate tab
 {: .step}
 
 ![](equilibrated-d2o-broadened-gr.png){: .img-centre}
@@ -39,7 +39,7 @@ Now run the simulation for a little longer and let the species adjust to their n
 ![](equilibrated-d2o-broadened-adjusted-gr.png){: .img-centre}
 *Equilibrated water (D2O) G(r) with effective broadening and adjusted intramolecular geometry*
 
-> The change in the G(r) will not be instant as the majority of the evolution of the system is from the [`MolShake`](/userguide/modules/molshake) which does not change the intramolecular geometry. Only the [`MD`](/userguide/modules/md) module will affect the intramolecular geometry. Also, the g(r) calculated by the [`RDF`](/userguide/modules/rdf) are averaged over five calculations by default.
+> The change in the G(r) will not be instant as the majority of the evolution of the system is from the [`MolShake`](../../userguide/modules/molshake) which does not change the intramolecular geometry. Only the [`MD`](../../userguide/modules/md) module will affect the intramolecular geometry. Also, the g(r) calculated by the [`RDF`](../../userguide/modules/rdf) are averaged over five calculations by default.
 {: .tip}
 
 It's also worth checking the other two samples, where the same kind of improvement should be noticeable (if a little less prominent).

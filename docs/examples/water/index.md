@@ -21,10 +21,10 @@ Steps:
 - Analyse the liquid structure of the refined simulation
 
 ## Data Files
-- H<sub>2</sub>O: [SLS18498-H2O.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18498-H2O.mint01)
-- HDO: [SLS18500-HDO5050.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18500-HDO5050.mint01)
-- D<sub>2</sub>O: [SLS18502-D2O.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/data/SLS18502-D2O.mint01)
-- Reference input file: [water.txt](https://github.com/trisyoungs/dissolve/tree/develop/examples/water/water.txt)
+- H<sub>2</sub>O: [SLS18498-H2O.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18498-H2O.mint01)
+- HDO: [SLS18500-HDO5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18500-HDO5050.mint01)
+- D<sub>2</sub>O: [SLS18502-D2O.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18502-D2O.mint01)
+- Reference input file: [water.txt](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/water.txt)
 
 ## Preparation
 
@@ -32,7 +32,7 @@ Create a new directory in a suitable location and download or copy the data file
 
 > Open the Dissolve GUI
 {: .action .action_dissolve}
-> Choose **Create a New Simulation from Scratch**
+> Choose **Empty Simulation** from the _Create_ section
 {: .step}
 > Save As...
 {: .action .action_menu}

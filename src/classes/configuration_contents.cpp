@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Contents
 	*** src/classes/configuration_contents.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -156,7 +156,7 @@ void Configuration::incrementContentsVersion()
 }
 
 // Add Molecule to Configuration based on the supplied Species
-Molecule* Configuration::addMolecule(Species* sp)
+Molecule* Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinates)
 {
 	// Create the new Molecule object and set its Species pointer
 	Molecule* newMolecule = molecules_.add();
@@ -165,9 +165,10 @@ Molecule* Configuration::addMolecule(Species* sp)
 	// Update the relevant SpeciesInfo population
 	addUsedSpecies(sp, 1);
 
-	// Add Atoms from Species to the Molecule
+	// Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
 	SpeciesAtom* spi = sp->firstAtom();
-	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, spi->r());
+	if (sourceCoordinates) for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, sourceCoordinates->r(n));
+	else for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, spi->r());
 
 	return newMolecule;
 }

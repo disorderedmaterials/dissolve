@@ -1,7 +1,7 @@
 /*
 	*** Brent's Principal Axis (PrAxis) Minimiser
 	*** src/math/praxis.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

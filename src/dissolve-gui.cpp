@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI Main
 	*** src/dissolve-gui.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of dissolve.
 
@@ -59,7 +59,8 @@ int main(int argc, char **argv)
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
-					printf("\t-r <N>\tSet restart file frequency (default = 10)\n");
+					printf("\t-r <N>\t\tSet restart file frequency (default = 10)\n");
+					printf("\t-t <file>\tLoad restart data from specified file (but still write to standard restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
@@ -145,7 +146,7 @@ int main(int argc, char **argv)
 	}
 
 	// Print GPL license information
-	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");

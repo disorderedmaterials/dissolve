@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Simulation
 	*** src/main/simulation.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -68,7 +68,7 @@ bool Dissolve::prepare()
 	int count = 0;
 	for (AtomType* at = atomTypes().first(); at != NULL; at = at->next(), ++count) at->setIndex(count);
 
-	// Check pair potential range against Box defined for each Configuration
+	// Check Configurations
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Check Box extent against pair potential range
@@ -78,6 +78,20 @@ bool Dissolve::prepare()
 			Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange_, maxPPRange);
 			return false;
 		}
+
+		// Check total charge of Configuration
+		double totalQ = 0.0;
+		if (pairPotentialsIncludeCoulomb_)
+		{
+			ListIterator<AtomTypeData> atdIterator(cfg->usedAtomTypesList().types());
+			while (AtomTypeData* atd = atdIterator.iterate()) totalQ += atd->population() * atd->atomType()->parameters().charge();
+		}
+		else
+		{
+			ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+			while (SpeciesInfo* spInfo = spInfoIterator.iterate()) totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
+		}
+		if (fabs(totalQ) > 1.0e-5) return Messenger::error("Total charge for Configuration '%s' is non-zero (%e). Refusing to proceed!\n", cfg->name(), totalQ);
 	}
 
 	// Make sure pair potentials are up-to-date
@@ -115,8 +129,8 @@ bool Dissolve::iterate(int nIterations)
 	 *  5)	Write restart file (master process only)
 	 */
 
-	mainLoopTimer_.zero();
-	mainLoopTimer_.start();
+	iterationTimer_.zero();
+	iterationTimer_.start();
 
 	for (int iter = 0; iter < nIterations; ++iter)
 	{
@@ -359,12 +373,12 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
-		mainLoopTimes_ += mainLoopTimer_.split();
+		iterationTime_ += iterationTimer_.split();
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DissolveSys::currentTimeAndDate());
 	}
 
-	mainLoopTimer_.stop();
+	iterationTimer_.stop();
 
 	return true;
 }
@@ -379,6 +393,12 @@ void Dissolve::resetIterationCounter()
 int Dissolve::iteration() const
 {
 	return iteration_;
+}
+
+// Return per-iteration time in seconds
+double Dissolve::iterationTime() const
+{
+	return iterationTime_.value();
 }
 
 // Print timing information
@@ -432,7 +452,7 @@ void Dissolve::printTiming()
 	Messenger::print("\n");
 
 	if (nIterationsPerformed_ == 0) Messenger::print("No iterations performed, so no per-iteration timing available.\n");
-	else Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), mainLoopTimes_.value());
+	else Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, iterationTimer_.elapsedTimeString(), iterationTime_.value());
 
 	Messenger::print("\n");
 }

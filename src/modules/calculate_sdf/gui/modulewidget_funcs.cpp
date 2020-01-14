@@ -1,7 +1,7 @@
 /*
 	*** CalculateSDF Module Widget - Functions
 	*** src/modules/calculate_sdf/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -22,8 +22,8 @@
 #include "modules/calculate_sdf/gui/modulewidget.h"
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/calculate_avgmol/avgmol.h"
-#include "gui/viewer/render/renderabledata3d.h"
-#include "gui/viewer/render/renderablespecies.h"
+#include "gui/render/renderabledata3d.h"
+#include "gui/render/renderablespecies.h"
 #include "gui/helpers/comboboxupdater.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -35,8 +35,12 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 	// Set up user interface
 	ui_.setupUi(this);
 
-	// Set step sizes in spin widgets
+	refreshing_ = true;
+
+	// Set limits and step sizes in spin widgets
+	ui_.LowerCutoffSpin->setRange(true, 0.0, false);
 	ui_.LowerCutoffSpin->setSingleStep(0.01);
+	ui_.UpperCutoffSpin->setRange(true, 0.0, false);
 	ui_.UpperCutoffSpin->setSingleStep(0.01);
 
 	// Set up SDF graph
@@ -59,9 +63,11 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 	// Add on "<None>" option for reference molecule
 	ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(NULL));
 
-	setGraphDataTargets();
-
 	refreshing_ = false;
+
+	updateControls();
+
+	setGraphDataTargets();
 }
 
 /*
@@ -71,6 +77,8 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 // Update controls within widget
 void CalculateSDFModuleWidget::updateControls(int flags)
 {
+	refreshing_ = true;
+
 	// Update the viewer's toolbar
 	ui_.SDFPlotWidget->updateToolbar();
 
@@ -94,6 +102,8 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 	ListIterator<Species> speciesIterator(coreData_.constSpecies());
 	while (Species* sp = speciesIterator.iterate()) refMolecules.append(sp, CharString("%s (Species)", sp->name()));
 	ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
+
+	refreshing_ = false;
 }
 
 /*
@@ -114,6 +124,8 @@ bool CalculateSDFModuleWidget::readState(LineParser& parser)
 {
 	// Read DataViewer sessions
 	if (!sdfGraph_->readSession(parser)) return false;
+
+	setGraphDataTargets();
 
 	return true;
 }
@@ -138,6 +150,7 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 	{
 		// Calculated SDF
 		sdfRenderable_ = dynamic_cast<RenderableData3D*>(sdfGraph_->createRenderable(Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName()));
+
 		if (sdfRenderable_)
 		{
 			sdfRenderable_->setColour(StockColours::BlueStockColour);
@@ -160,7 +173,7 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 
 void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
 {
-	if (!sdfRenderable_) return;
+	if (refreshing_ || !sdfRenderable_) return;
 
 	sdfRenderable_->setLowerCutoff(value);
 
@@ -169,7 +182,7 @@ void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
 
 void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
 {
-	if (!sdfRenderable_) return;
+	if (refreshing_ || !sdfRenderable_) return;
 
 	sdfRenderable_->setUpperCutoff(value);
 
@@ -178,6 +191,8 @@ void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
 
 void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int index)
 {
+	if (refreshing_) return;
+
 	// Check index...
 	if (index == -1) referenceMolecule_ = NULL;
 	else referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());

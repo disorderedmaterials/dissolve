@@ -1,7 +1,7 @@
 /*
 	*** Timer
 	*** src/base/timer.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -74,6 +74,8 @@ class Timer
 	double secondsElapsed() const;
 	// Return time string for number of seconds provided
 	static const char* timeString(double seconds);
+	// Return ETA string for number of seconds provided
+	static const char* etaString(double seconds);
 };
 
 #endif

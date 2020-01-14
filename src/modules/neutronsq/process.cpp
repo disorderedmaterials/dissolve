@@ -1,7 +1,7 @@
 /*
 	*** Neutron SQ Module - Processing
 	*** src/modules/neutronsq/process.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -95,13 +95,13 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Store the reference data in processing
 		referenceData.setName(uniqueName());
-		Data1D& storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
+		Data1D& storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
 		storedData.setObjectTag(CharString("%s//ReferenceData", uniqueName()));
 		storedData = referenceData;
 
 		// Calculate and store the FT of the reference data in processing
 		referenceData.setName(uniqueName());
-		Data1D& storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
+		Data1D& storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
 		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
 		double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());

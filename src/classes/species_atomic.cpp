@@ -1,7 +1,7 @@
 /*
 	*** Species Definition - Atomic Information
 	*** src/classes/species_atomic.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -23,16 +23,33 @@
 #include "data/atomicmass.h"
 
 // Add a new atom to the Species
-SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
+SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r, double q)
 {
 	SpeciesAtom* i = atoms_.add();
 	i->setSpecies(this);
-	i->set(element, r.x, r.y, r.z);
+	i->set(element, r.x, r.y, r.z, q);
 	i->setIndex(atoms_.nItems()-1);
 
 	++version_;
 
 	return i;
+}
+
+// Remove the specified atom from the species
+void Species::removeAtom(SpeciesAtom* i)
+{
+	/*
+	 * Note: This is a deliberately simplistic function, and is intended only for use when creating / editing basic
+	 * species definitions upon which the simulation has no dependencies.
+	 */
+
+	// Remove any bond terms that involve 'i'
+	while (i->nBonds()) removeBond(i, i->bond(0)->partner(i));
+
+	// Now remove the atom
+	atoms_.remove(i);
+
+	++version_;
 }
 
 // Return the number of Atoms in the Species
@@ -174,6 +191,14 @@ SpeciesAtom* Species::selectedAtom(int n)
 	RefListItem<SpeciesAtom>* ri = selectedAtoms_[n];
 	if (ri == NULL) return NULL;
 	else return ri->item();
+}
+
+// Return total charge of species from local atomic charges
+double Species::totalChargeOnAtoms()
+{
+	double totalQ = 0.0;
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) totalQ += i->charge();
+	return totalQ;
 }
 
 // Return number of selected Atoms

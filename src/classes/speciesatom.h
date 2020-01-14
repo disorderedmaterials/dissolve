@@ -1,7 +1,7 @@
 /*
 	*** Species Atom Definition
 	*** src/classes/speciesatom.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -73,9 +73,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return species parent
 	const Species* species() const;
 	// Set basic atom properties
-	void set(Element* element, double rx, double ry, double rz);
+	void set(Element* element, double rx, double ry, double rz, double q = 0.0);
 	// Set basic atom properties
-	void set(Element* element, const Vec3<double> r);
+	void set(Element* element, const Vec3<double> r, double q = 0.0);
 	// Set atomic element
 	void setElement(Element* el);
 	// Return atomic element
@@ -110,9 +110,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	private:
 	// List of bonds which this atom participates in
 	PointerArray<SpeciesBond> bonds_;
-	// List of bonds which this atom participates in
+	// List of angles which this atom participates in
 	PointerArray<SpeciesAngle> angles_;
-	// List of bonds which this atom participates in
+	// List of torsions which this atom participates in
 	PointerArray<SpeciesTorsion> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
 	OrderedPointerDataArray<SpeciesAtom,double> exclusions_;
@@ -134,14 +134,22 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	SpeciesBond* hasBond(SpeciesAtom* j);
 	// Add specified Angle to Atom
 	void addAngle(SpeciesAngle* angle);
+	// Remove angle reference
+	void removeAngle(SpeciesAngle* a);
 	// Return the number of SpeciesAngles in which the Atom is involved
 	int nAngles() const;
+	// Return specified angle
+	SpeciesAngle* angle(int index);
 	// Return array of Angles in which the Atom is involved
 	const PointerArray<SpeciesAngle>& angles() const;
 	// Add specified SpeciesTorsion to Atom
 	void addTorsion(SpeciesTorsion* torsion, double scaling14);
+	// Remove torsion reference
+	void removeTorsion(SpeciesTorsion* t);
 	// Return the number of SpeciesTorsions in which the Atom is involved
 	int nTorsions() const;
+	// Return specified torsion
+	SpeciesTorsion* torsion(int index);
 	// Return array of Torsions in which the Atom is involved
 	const PointerArray<SpeciesTorsion>& torsions() const;
 	// Return scaling factor to employ with specified Atom

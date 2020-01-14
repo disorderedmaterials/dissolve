@@ -1,7 +1,7 @@
 /*
 	*** SpeciesAtom Definition
 	*** src/classes/speciesatom.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -55,17 +55,19 @@ const Species* SpeciesAtom::species() const
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element* element, double rx, double ry, double rz)
+void SpeciesAtom::set(Element* element, double rx, double ry, double rz, double q)
 {
 	element_ = element;
 	r_.set(rx, ry, rz);
+	charge_ = q;
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element* element, const Vec3<double> r)
+void SpeciesAtom::set(Element* element, const Vec3<double> r, double q)
 {
 	element_ = element;
 	r_ = r;
+	charge_ = q;
 }
 
 // Set atomic element
@@ -207,10 +209,23 @@ void SpeciesAtom::addAngle(SpeciesAngle* angle)
 	if (angle->k() != this) exclusions_.add(angle->k());
 }
 
+
+// Remove angle reference
+void SpeciesAtom::removeAngle(SpeciesAngle* a)
+{
+	angles_.remove(a);
+}
+
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const
 {
 	return angles_.nItems();
+}
+
+// Return specified angle
+SpeciesAngle* SpeciesAtom::angle(int index)
+{
+	return angles_.at(index);
 }
 
 // Return array of Angles in which the Atom is involved
@@ -246,10 +261,22 @@ void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 	}
 }
 
+// Remove torsion reference
+void SpeciesAtom::removeTorsion(SpeciesTorsion* t)
+{
+	torsions_.remove(t);
+}
+
 // Return the number of Torsions in which the Atom is involved
 int SpeciesAtom::nTorsions() const
 {
 	return torsions_.nItems();
+}
+
+// Return specified torsion
+SpeciesTorsion* SpeciesAtom::torsion(int index)
+{
+	return torsions_.at(index);
 }
 
 // Return array of Torsions in which the Atom is involved

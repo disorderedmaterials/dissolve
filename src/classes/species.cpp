@@ -1,7 +1,7 @@
 /*
 	*** Species Definition
 	*** src/classes/species.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -227,4 +227,35 @@ void Species::print()
 int Species::version() const
 {
 	return version_;
+}
+
+/*
+ * Coordinate Sets
+ */
+
+// Clear coordinate sets
+void Species::clearCoordinateSets()
+{
+	coordinateSets_.clear();
+}
+
+// Add new coordinate set
+CoordinateSet* Species::addCoordinateSet()
+{
+	CoordinateSet* coordSet = coordinateSets_.add();
+	coordSet->initialise(atoms_.nItems());
+
+	return coordSet;
+}
+
+// Return number of defined coordinate sets
+int Species::nCoordinateSets() const
+{
+	return coordinateSets_.nItems();
+}
+
+// Return coordinates sets
+const List<CoordinateSet>& Species::coordinateSets() const
+{
+	return coordinateSets_;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main
 	*** src/main.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 #ifdef PARALLEL
-					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2019 T. Youngs.\n\n", DISSOLVEVERSION);
+					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2020 T. Youngs.\n\n", DISSOLVEVERSION);
 #else
-					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2019 T. Youngs.\n\n", DISSOLVEVERSION);
+					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2020 T. Youngs.\n\n", DISSOLVEVERSION);
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <N>\tSet restart file frequency (default = 10)\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
-					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
+					printf("\t-t <file>\tLoad restart data from specified file (but still write to standard restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-w <file>\tWrite input to specified file after reading it, and then quit\n");
 					printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");
@@ -189,9 +189,9 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
 #else
-	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
 #endif
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");

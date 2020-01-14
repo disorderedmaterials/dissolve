@@ -1,7 +1,7 @@
 /*
 	*** Species Input/Output
 	*** src/classes/species_io.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -96,6 +96,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 		EnumOption(Species::BondKeyword,		"Bond",			2,5) <<
 		EnumOption(Species::BondTypeKeyword,		"BondType",		3) <<
 		EnumOption(Species::ChargeKeyword,		"Charge",		2) <<
+		EnumOption(Species::CoordinateSetsKeyword,	"CoordinateSets",	2,99) <<
 		EnumOption(Species::EndSpeciesKeyword,		"EndSpecies") <<
 		EnumOption(Species::ForcefieldKeyword,		"Forcefield",		1) <<
 		EnumOption(Species::ImproperKeyword, 		"Improper",		5,9) <<
@@ -311,6 +312,38 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 					error = true;
 				}
 				break;
+			case (Species::CoordinateSetsKeyword):
+				if (!coordinateSetInputCoordinates_.read(parser, 1, CharString("End%s", keywords().keyword(Species::CoordinateSetsKeyword)), coreData))
+				{
+					Messenger::error("Failed to set coordinate sets file / format.\n");
+					error = true;
+				}
+				else
+				{
+					// Open the specified file
+					LineParser coordinateSetParser(parser.processPool());
+					if ((!coordinateSetParser.openInput(coordinateSetInputCoordinates_.filename())) || (!coordinateSetParser.isFileGoodForReading()))
+					{
+						Messenger::error("Couldn't open coordinate sets file '%s'.\n", coordinateSetInputCoordinates_.filename());
+						error = true;
+						break;
+					}
+
+					while (!coordinateSetParser.eofOrBlank())
+					{
+						CoordinateSet* coordSet = addCoordinateSet();
+						if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet->coordinates()))
+						{
+							Messenger::error("Failed to read coordinate set %i from file.\n", nCoordinateSets());
+							error = true;
+							coordinateSets_.remove(coordSet);
+							break;
+						}
+					}
+
+					Messenger::print("%i coordinate sets read in for Species '%s'.\n", nCoordinateSets(), name());
+				}
+				break;
 			case (Species::EndSpeciesKeyword):
 				if (forcefield_) applyForcefieldTerms(coreData);
 				Messenger::print("Found end of Species '%s'.\n", name());
@@ -517,7 +550,7 @@ bool Species::write(LineParser& parser, const char* prefix)
 	int count = 0;
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
-		if (!parser.writeLineF("%s%s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge())) return false;
+		if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge())) return false;
 	}
 
 	// Bonds
@@ -664,6 +697,14 @@ bool Species::write(LineParser& parser, const char* prefix)
 
 		ListIterator<SpeciesSite> siteIterator(sites());
 		while (SpeciesSite* site = siteIterator.iterate()) if (!site->write(parser, newPrefix)) return false;
+	}
+
+	// Input Coordinates
+	if (coordinateSetInputCoordinates_.hasValidFileAndFormat())
+	{
+		if (!coordinateSetInputCoordinates_.writeFilenameAndFormat(parser, CharString("\n%s%s  ", newPrefix.get(), keywords().keyword(Species::CoordinateSetsKeyword)))) return false;
+		if (!coordinateSetInputCoordinates_.writeBlock(parser, newPrefix.get())) return false;
+		if (!parser.writeLineF("%sEnd%s\n", newPrefix.get(), keywords().keyword(Species::CoordinateSetsKeyword))) return false;
 	}
 
 	// Done with this species

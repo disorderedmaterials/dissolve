@@ -1,7 +1,7 @@
 /*
 	*** Procedure Node
 	*** src/procedure/nodes/node.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -34,6 +34,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::AddSpeciesNode,			"AddSpecies") <<
 		EnumOption(ProcedureNode::BoxNode,				"Box") <<
 		EnumOption(ProcedureNode::CalculateAngleNode,			"CalculateAngle") <<
+		EnumOption(ProcedureNode::CalculateAxisAngleNode,		"CalculateAxisAngle") <<
 		EnumOption(ProcedureNode::CalculateDistanceNode,		"CalculateDistance") <<
 		EnumOption(ProcedureNode::CalculateBaseNode,			"Calculate(Any)") <<
 		EnumOption(ProcedureNode::CalculateVectorNode,			"CalculateVector") <<

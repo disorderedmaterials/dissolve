@@ -1,7 +1,7 @@
 /*
 	*** SpeciesImproper Definition
 	*** src/classes/speciesimproper.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -92,6 +92,12 @@ SpeciesAtom* SpeciesImproper::k() const
 SpeciesAtom* SpeciesImproper::l() const
 {
 	return l_;
+}
+
+// Return whether the improper uses the specified SpeciesAtom
+bool SpeciesImproper::uses(SpeciesAtom* spAtom) const
+{
+	return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
 }
 
 // Return index (in parent Species) of first SpeciesAtom

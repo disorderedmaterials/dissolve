@@ -7,6 +7,33 @@ on:
     - master
 
 jobs:
+  prepcontinuous:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: contains(github.ref, 'develop')
+    steps:
+    - uses: actions/checkout@v1
+    - name: Create Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        DATE=`date`
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u
+  preprelease:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DISSOLVE_VERSION: X.Y.Z
+    if: contains(github.ref, 'master')
+    steps:
+    - uses: actions/checkout@v1
+    - name: Detect Version
+      run: |
+        DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        echo "Code version detected as: $DISSOLVE_VERSION"
+    - name: Create Versioned Release
+      run: |
+        ./ci/scripts/update-release -r ${{ github.repository }} -t ${DISSOLVE_VERSION} -n "v${DISSOLVE_VERSION}" -f Recent.md
   build:
     runs-on: ubuntu-16.04
     steps:
@@ -16,7 +43,7 @@ jobs:
         sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build
         sudo add-apt-repository ppa:beineri/opt-qt-5.12.0-xenial -y
         sudo apt-get update -q
-        sudo apt-get install qt512base -y
+        sudo apt-get install qt512base qt512svg qt512imageformats -y
     - name: Build (CMake/Ninja)
       run: |
         QT_BASE_DIR=/opt/qt512
@@ -30,23 +57,30 @@ jobs:
         cd ../
     - name: Create AppImages
       run: |
+        # Set environment vars
         QT_BASE_DIR=/opt/qt512
         export QTDIR=$QT_BASE_DIR
         export PATH=$QT_BASE_DIR/bin:$PATH
-        wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
-        chmod u+x build-appimage.sh
-        ./build-appimage.sh -a Dissolve -v continuous -b build/dissolve
-        ./build-appimage.sh -a Dissolve-GUI -v continuous -b build/dissolve-gui
+        # Prep appimage directories
+        ci/scripts/prep-appimage -a Dissolve -v continuous -b build/dissolve
+        ci/scripts/prep-appimage -a Dissolve-GUI -v continuous -b build/dissolve-gui
+        # Retrieve linuxdeployqt
+        echo -e "\nRetrieving linuxdeployqt...\n"
+        wget -q https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -O linuxdeployqt
+        chmod u+x ./linuxdeployqt
+        # Run on the targets
+        ./linuxdeployqt Dissolve-continuous.AppDir/usr/share/applications/*.desktop -appimage
+        ./linuxdeployqt Dissolve-GUI-continuous.AppDir/usr/share/applications/*.desktop -appimage
+        # Store artifacts
         mkdir appimages
-        mv Dissolve-continuous-x86_64.AppImage appimages
-        mv Dissolve-GUI-continuous-x86_64.AppImage appimages
+        mv Dissolve-*-x86_64.AppImage appimages
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       if: success()
       with:
         name: artifacts
         path: appimages/
-  createrelease:
+  updaterelease:
     runs-on: ubuntu-latest
     if: contains(github.ref, 'master')
     needs: build
@@ -58,17 +92,6 @@ jobs:
       run: |
         DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         echo "Code version detected as: $DISSOLVE_VERSION"
-    - name: Create Release
-      uses: actions/create-release@v1
-      id: create_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Version ${{ github.ref }}
-        bodyFile: Recent.md
-        draft: false
-        prerelease: false
     - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
@@ -77,25 +100,9 @@ jobs:
       run: |
         mv -v artifacts/Dissolve-continuous-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
         mv -v artifacts/Dissolve-GUI-continuous-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
-    - name: Upload Release Assets (1/2)
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./
-        asset_name: Dissolve-${{ env.DISSOLVE_VERSION }}-x86_64.AppImage
-        asset_content_type: application/appimage
-    - name: Upload Release Assets (2/2)
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./
-        asset_name: Dissolve-GUI-${{ env.DISSOLVE_VERSION }}-x86_64.AppImage
-        asset_content_type: application/appimage
-  createcontinuous:
+    - name: Update Versioned Release
+      run: ./ci/scripts/update-release -r ${{ github.repository }} -t ${DISSOLVE_VERSION} -n "v${DISSOLVE_VERSION}" -f Recent.md artifacts/*AppImage
+  updatecontinuous:
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -107,9 +114,7 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: artifacts
-    - name: Create / Update Continuous Release
+    - name: Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous/${SHORTHASH} -n "Continuous Build (${SHORTHASH})" -b 'Continuous release from current `develop` branch.' -p artifacts/*AppImage
-    - name: Prune Outdated
-      run: ./ci/scripts/prune-continuous -r trisyoungs/dissolve
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*AppImage

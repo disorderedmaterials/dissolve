@@ -1,7 +1,7 @@
 /*
 	*** Module Widget
 	*** src/modules/calculate_sdf/gui/modulewidget.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -48,6 +48,7 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	CalculateSDFModule* module_;
 	// CoreData reference
 	const CoreData& coreData_;
+
 
 	/*
 	 * UI

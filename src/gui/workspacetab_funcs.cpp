@@ -1,7 +1,7 @@
 /*
 	*** WorkspaceTab Functions
 	*** src/gui/workspacetab_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #include "gui/gui.h"
 #include "gui/tmdiarea.hui"
 #include "gui/gettabnamedialog.h"
-#include "gui/gizmos/gizmos.h"
+#include "gui/gizmos.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -31,9 +31,6 @@
 #include "templates/variantpointer.h"
 #include <QMdiSubWindow>
 #include <QMenu>
-
-// Static Singletons
-RefList<Gizmo> WorkspaceTab::allGizmos_;
 
 // Constructor
 WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
@@ -46,6 +43,7 @@ WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, M
 	mdiArea_ = new TMdiArea(dissolveWindow);
 	ui.verticalLayout->addWidget(mdiArea_);
 	connect(mdiArea_, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+	connect(mdiArea_, SIGNAL(subWindowActivated(QMdiSubWindow*)), dissolveWindow, SLOT(currentWorkspaceGizmoChanged(QMdiSubWindow*)));
 }
 
 // Destructor
@@ -66,7 +64,7 @@ MainTab::TabType WorkspaceTab::type() const
 // Raise suitable dialog for entering / checking new tab name
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
-	// Get a new, valid name for the Configuration
+	// Get a new, valid name for the workspace
 	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
 	ok = nameDialog.get(this, title());
 
@@ -121,7 +119,7 @@ void WorkspaceTab::enableSensitiveControls()
 void WorkspaceTab::removeGizmo(QString uniqueName)
 {
 	// Find the Gizmo...
-	Gizmo* gizmo = findGizmo(qPrintable(uniqueName));
+	Gizmo* gizmo = Gizmo::find(qPrintable(uniqueName));
 	if (!gizmo)
 	{
 		Messenger::error("Received signal to remove gizmo '%s' but it cannot be found...\n", qPrintable(uniqueName));
@@ -129,29 +127,6 @@ void WorkspaceTab::removeGizmo(QString uniqueName)
 	}
 
 	gizmos_.remove(gizmo);
-	allGizmos_.remove(gizmo);
-}
-
-// Return unique name for Gizmo based on basename provided
-const char* WorkspaceTab::uniqueGizmoName(const char* base)
-{
-	static CharString uniqueName;
-	CharString baseName = base;
-	uniqueName = baseName;
-	int suffix = 0;
-
-	// Must always have a baseName
-	if (baseName.isEmpty()) baseName = "NewGizmo";
-
-	// Find an unused name starting with the baseName provided
-	while (findGizmo(uniqueName))
-	{
-		// Increase suffix value and regenerate uniqueName from baseName
-		++suffix;
-		uniqueName.sprintf("%s%i", baseName.get(), suffix);
-	}
-
-	return uniqueName;
 }
 
 // Create Gizmo with specified type
@@ -163,14 +138,14 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	// Check the type of the provided gizmo...
 	if (DissolveSys::sameString(type, "Graph"))
         {
-		GraphGizmo* graph = new GraphGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Graph"));
+		GraphGizmo* graph = new GraphGizmo(dissolveWindow_->dissolve(), Gizmo::uniqueName("Graph"));
 		connect(graph, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
 		gizmo = graph;
 		widget = graph;
         }
 	else if (DissolveSys::sameString(type, "Integrator1D"))
         {
-		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), uniqueGizmoName("Integrator1D"));
+		Integrator1DGizmo* integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), Gizmo::uniqueName("Integrator1D"));
 		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
 		gizmo = integrator1D;
 		widget = integrator1D;
@@ -190,18 +165,8 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	// Update the Gizmo's controls, and add it to our lists
 	gizmo->updateControls();
 	gizmos_.own(gizmo);
-	allGizmos_.append(gizmo);
 
 	return gizmo;
-}
-
-// Find Gizmo with unique name provided
-Gizmo* WorkspaceTab::findGizmo(const char* uniqueName)
-{
-	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
-	while (Gizmo* gizmo = gizmoIterator.iterate()) if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName)) return gizmo;
-
-	return NULL;
 }
 
 /*

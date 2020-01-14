@@ -1,7 +1,7 @@
 /*
 	*** Dynamic Array
 	*** src/templates/dynamicarray.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -253,7 +253,7 @@ template <class T> class DynamicArray
 		return NULL;
 	}
 	// Return specified object to chunk stack
-	void returnObject(T* object)
+	bool returnObject(T* object)
 	{
 		// Must find chunk which owns this object
 		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
@@ -261,12 +261,13 @@ template <class T> class DynamicArray
 			if (chunk->returnObject(object))
 			{
 				object->setArrayIndex(-1);
-				return;
+				return true;
 			}
 		}
 
 		// Couldn't find it!
-		printf("Internal Error - Tried to return an object to an DynamicArray chunk which didn't produce it.\n");
+		printf("Internal Error - Tried to return an object (%p) to a DynamicArray chunk which didn't produce it.\n", object);
+		return false;
 	}
 
 
@@ -329,13 +330,14 @@ template <class T> class DynamicArray
 	void removeWithReorder(int index)
 	{
 		// Return the object at the specified index
-		returnObject(array_[index]);
+		if (!returnObject(array_[index])) return;
 
 		// Now, we will simply swap the last item in the array for this one, changing its index in the process (unless it is the last item in the list)
 		if (index != (array_.nItems()-1))
 		{
 			array_[index] = array_[array_.nItems()-1];
 			array_[index]->setArrayIndex(index);
+			array_[array_.nItems()-1] = NULL;
 		}
 
 		// Tell the array to drop the last item in the list
@@ -380,6 +382,13 @@ template <class T> class DynamicArray
 		for (int n=0; n<array_.nItems(); ++n) if (array_.constAt(n) == object) return true;
 
 		return false;
+	}
+	// Return index of the specified object pointer (if it exists in the array)
+	bool indexOf(const T* object)
+	{
+		for (int n=0; n<array_.nItems(); ++n) if (array_.constAt(n) == object) return n;
+
+		return -1;
 	}
 };
 
@@ -426,6 +435,12 @@ template <class T> class DynamicArrayIterator
 		else return NULL;
 		
 		return result_;
+	}
+	// Return index of current item
+	int currentIndex() const
+	{
+		// We return index-1, since the index_ is incremented after iterate() is called.
+		return index_ - 1;
 	}
 };
 
