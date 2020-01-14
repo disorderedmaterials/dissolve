@@ -112,36 +112,6 @@ class DataViewer : public BaseViewer
 	void showGeneralContextMenu(QPoint pos);
 	// Show renderable context menu
 	void showRenderableContextMenu(QPoint pos, Renderable* rend);
-
-
-	/*
-	 * Tool Windows
-	 */
-// 	protected:
-// 	// Axes Window
-// 	AxesWindow axesWindow_;
-// 	// Data Window
-// 	DataWindow dataWindow_;
-// 	// Style Window
-// 	StyleWindow styleWindow_;
-// 	// Transform Window
-// 	TransformWindow transformWindow_;
-// 	// View Window
-// 	ViewWindow viewWindow_;
-// 	// Create Renderable Dialog
-// 	CreateRenderableDialog createRenderableDialog_;
-// 	// Import Dialog
-// 	ImportDialog importDialog_;
-// 	// Fit Window
-// 	EditFitKernelDialog editFitKernelDialog_;
-// 	// Save Image Dialog
-// 	SaveImageDialog saveImageDialog_;
-
-	public:
-// 	// Dialog enum
-// 	enum DialogWindow { AxesWindow, DataWindow, StyleWindow, TransformWindow, ViewWindow, CreateRenderableDialog, ImportDialog, EditFitKernelDialog, SaveImageDialog };
-// 	// Show specified window / dialog
-// 	void showDialog(int window);
 };
 
 #endif
