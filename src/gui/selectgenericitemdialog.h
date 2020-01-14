@@ -108,15 +108,15 @@ class SelectGenericItemDialog : public QDialog
 
 		if (exec() == QDialog::Accepted)
 		{
-			// Get current item
-			QTableWidgetItem* item = ui_.ItemsTable->currentItem();
+			// Get item in first column on the current row
+			int row = ui_.ItemsTable->currentRow();
+			if (row == -1) return NULL;
+			QTableWidgetItem* item = ui_.ItemsTable->item(row, 0);
 
-			// Cast to correct type
-			GenericItem* genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
-			GenericItemContainer<T>* castItem = dynamic_cast< GenericItemContainer<T>* >(genericItem);
-			if (!castItem) return NULL;
+			// Retrieve the data pointer
+			T* dataItem = VariantPointer<T>(item->data(Qt::UserRole));
 
-			return &castItem->data();
+			return dataItem;
 		}
 		else return NULL;
 	}
