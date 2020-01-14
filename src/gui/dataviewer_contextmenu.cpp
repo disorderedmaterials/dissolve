@@ -20,6 +20,7 @@
 */
 
 #include "gui/dataviewer.hui"
+#include "gui/gizmo.h"
 #include "base/messenger.h"
 
 /*
@@ -42,7 +43,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 {
 	QMenu menu;
 	QAction* action;
-	RefDataList<QAction,DataViewer*> destinationActions;
+	RefDataList<QAction,Gizmo*> destinationActions;
 	menu.setFont(font());
 	QFont italicFont(menu.font());
 	italicFont.setItalic(true);
@@ -59,17 +60,18 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	// -- Copy To...
 	QMenu* copyToMenu = menu.addMenu("&Copy to...");
 	copyToMenu->setFont(menu.font());
-// 	if (renderableDestinations_.nItems() == 0) copyToMenu->setEnabled(false);
-// 	else
-// 	{
-// 		int count = 1;
-// 		RefListIterator<DataViewer> destinationIterator(renderableDestinations_);
-// 		while (DataViewer* destination = destinationIterator.iterate())
-// 		{
-// 			action = copyToMenu->addAction(QString("%1. %2").arg(QString::number(count++)).arg(destination->destinationName()));
-// 			destinationActions.append(action, destination);
-// 		}
-// 	}
+	// Get list of viable destinations that will accept our data
+	RefList<Gizmo> destinations = Gizmo::allThatAccept(Renderable::renderableTypes().keyword(rend->type()));
+	if (destinations.nItems() == 0) copyToMenu->setEnabled(false);
+	else
+	{
+		RefListIterator<Gizmo> destinationIterator(destinations);
+		while (Gizmo* destination = destinationIterator.iterate())
+		{
+			action = copyToMenu->addAction(destination->uniqueName());
+			destinationActions.append(action, destination);
+		}
+	}
 
 	// Execute the menu
 	QAction* selectedAction = menu.exec(mapToGlobal(pos));
@@ -82,9 +84,9 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	}
 	else if (destinationActions.contains(selectedAction))
 	{
-		DataViewer* destination = destinationActions.dataForItem(selectedAction);
+		Gizmo* destination = destinationActions.dataForItem(selectedAction);
 		if (!destination) return;
-		destination->createRenderable(rend->type(), rend->objectTag(), rend->name(), "Default");
+		destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
 	}
 
 	// Done

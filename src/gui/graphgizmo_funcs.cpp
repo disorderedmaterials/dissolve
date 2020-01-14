@@ -105,7 +105,12 @@ bool GraphGizmo::acceptsData(const char* dataType)
 // Send data (referenced by its object tag) to the Gizmo
 bool GraphGizmo::sendData(const char* dataType, const char* objectTag, const char* name)
 {
-	
+	Renderable::RenderableType rendType = Renderable::renderableTypes().enumeration(dataType);
+	if ((rendType != Renderable::Data1DRenderable) && (rendType != Renderable::Data2DRenderable) && (rendType != Renderable::Data3DRenderable)) return false;
+
+	dataViewer_->createRenderable(rendType, objectTag, name, "Default");
+
+	return true;
 }
 
 /*
