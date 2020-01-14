@@ -16,10 +16,10 @@ You might always be asking the question "How much does quantity _X_ differ betwe
 You will set up and equilibrate a small liquid benzene simulation before calculating a few properties of interest, and then refine the potential against experimental data and recalculate the properties of interest before graphing both side-by-side. The data are three neutron scattering datasets measured on the NIMROD diffractometer at the ISIS Pulsed Neutron and Muon Source in 2014.
 
 ## Data Files
-- C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/benzene/data/C6H6.mint01)
-- C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/benzene/data/5050.mint01)
-- C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://github.com/trisyoungs/dissolve/tree/develop/examples/benzene/data/C6D6.mint01)
-- Reference input file: [benzene.txt](https://github.com/trisyoungs/dissolve/tree/develop/examples/benzene/benzene.txt)
+- C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6H6.mint01)
+- C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/5050.mint01)
+- C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6D6.mint01)
+- Reference input file: [benzene.txt](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/benzene.txt)
 
 ## Preparation
 
