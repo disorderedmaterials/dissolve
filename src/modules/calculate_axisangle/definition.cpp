@@ -1,7 +1,7 @@
 /*
 	*** Calculate Axis Angle Module - Definition
 	*** src/modules/calculate_axisangle/definition.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

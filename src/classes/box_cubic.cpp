@@ -1,7 +1,7 @@
 /*
 	*** Cubic Box
 	*** src/classes/box_cubic.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

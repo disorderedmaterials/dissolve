@@ -1,7 +1,7 @@
 /*
 	*** Calculate Average Molecule Module - Definition
 	*** src/modules/calculate_avgmol/definition.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

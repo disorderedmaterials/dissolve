@@ -1,7 +1,7 @@
 /*
 	*** Module Widget
 	*** src/modules/calculate_cn/gui/modulewidget.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

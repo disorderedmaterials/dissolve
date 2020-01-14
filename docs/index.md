@@ -7,13 +7,13 @@ permalink: /
 
 **Structure Refinement for Scattering Data**
 
-&copy; Dr Tristan Youngs 2012-2019
+&copy; Dr Tristan Youngs 2012-2020
 
 ### Contributors
 - Simona (September 2019-present)
 - J. Busch (October 2019-present)
 
-_Current Version: 0.5.1, Tuesday 7th January 2020_
+_Current Version: 0.5.2, Tuesday 14th January 2020_
 
 ## Introduction
 
