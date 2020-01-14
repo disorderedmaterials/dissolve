@@ -76,7 +76,7 @@ class GraphGizmo : public QWidget, public Gizmo
 	// Return whether this Gizmo accepts data of the specified type
 	bool acceptsData(const char* dataType);
 	// Send data (referenced by its object tag) to the Gizmo
-	bool sendData(const char* objectTag);
+	bool sendData(const char* dataType, const char* objectTag, const char* name);
 
 
 	/*

@@ -111,7 +111,7 @@ class Gizmo : public ListItem<Gizmo>
 	// Return all Gizmos that accept data of the specified type
 	static RefList<Gizmo> allThatAccept(const char* dataType);
 	// Send data (referenced by its object tag) to the Gizmo
-	virtual bool sendData(const char* objectTag);
+	virtual bool sendData(const char* dataType, const char* objectTag, const char* name = NULL);
 
 
 	/*

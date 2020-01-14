@@ -137,7 +137,7 @@ RefList<Gizmo> Gizmo::allThatAccept(const char* dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool Gizmo::sendData(const char* objectTag)
+bool Gizmo::sendData(const char* dataType, const char* objectTag, const char* name)
 {
 	return false;
 }

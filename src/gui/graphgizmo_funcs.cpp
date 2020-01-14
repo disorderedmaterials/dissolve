@@ -103,7 +103,7 @@ bool GraphGizmo::acceptsData(const char* dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool GraphGizmo::sendData(const char* objectTag)
+bool GraphGizmo::sendData(const char* dataType, const char* objectTag, const char* name)
 {
 	
 }
