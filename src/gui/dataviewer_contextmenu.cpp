@@ -21,6 +21,8 @@
 
 #include "gui/dataviewer.hui"
 #include "gui/gizmo.h"
+#include "gui/selectgenericitemdialog.h"
+#include "math/data2d.h"
 #include "base/messenger.h"
 
 /*
@@ -40,12 +42,42 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
 	// Copy to clipboard
 	QAction* copyToClipboardAction = menu.addAction("&Copy to clipboard");
 
+	// If the user can add data, add a new section allowing it
+	RefDataList<QAction,int> addDataAction;
+	if (hasFlag(DataViewer::UserCanAddDataFlag))
+	{
+		menu.addSeparator();
+		addDataAction.append(menu.addAction("Add Data&1D..."), 1);
+		addDataAction.append(menu.addAction("Add Data&2D..."), 2);
+		addDataAction.append(menu.addAction("Add Data&3D..."), 3);
+	}
+
 	// Execute the menu
 	QAction* selectedAction = menu.exec(mapToGlobal(pos));
 
 	// Act on the action!
 	if (selectedAction == resetViewAction) view_.resetViewMatrix();
 	else if (selectedAction == copyToClipboardAction) copyViewToClipboard(true);
+	else if (addDataAction.contains(selectedAction))
+	{
+		int dimensionality = addDataAction.dataForItem(selectedAction);
+		SelectGenericItemDialog genericItemDialog(this, *dissolve_);
+		if (dimensionality == 1)
+		{
+			Data1D* item = genericItemDialog.selectGenericItem<Data1D>();
+			if (item) createRenderable(Renderable::Data1DRenderable, item->objectTag(), item->name(), "Default");
+		}
+		else if (dimensionality == 2)
+		{
+			Data2D* item = genericItemDialog.selectGenericItem<Data2D>();
+			if (item) createRenderable(Renderable::Data2DRenderable, item->objectTag(), item->name(), "Default");
+		}
+		else if (dimensionality == 3)
+		{
+			Data3D* item = genericItemDialog.selectGenericItem<Data3D>();
+			if (item) createRenderable(Renderable::Data3DRenderable, item->objectTag(), item->name(), "Default");
+		}
+	}
 }
 
 // Show renderable context menu
@@ -83,20 +115,32 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 		}
 	}
 
+	// -- Remove Renderable
+	QAction* removeAction = NULL;
+	if (hasFlag(DataViewer::UserCanRemoveDataFlag))
+	{
+		menu.addSeparator();
+		removeAction = menu.addAction("&Remove");
+	}
+
 	// Execute the menu
 	QAction* selectedAction = menu.exec(mapToGlobal(pos));
 
 	// Act on the action!
-	if (selectedAction == hideAction)
+	if (selectedAction)
 	{
-		rend->setVisible(false);
-		emit(renderableChanged());
-	}
-	else if (destinationActions.contains(selectedAction))
-	{
-		Gizmo* destination = destinationActions.dataForItem(selectedAction);
-		if (!destination) return;
-		destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
+		if (selectedAction == hideAction)
+		{
+			rend->setVisible(false);
+			emit(renderableChanged());
+		}
+		else if (destinationActions.contains(selectedAction))
+		{
+			Gizmo* destination = destinationActions.dataForItem(selectedAction);
+			if (!destination) return;
+			destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
+		}
+		else if (selectedAction == removeAction) removeRenderable(rend);
 	}
 
 	// Done
