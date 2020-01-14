@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.1 at 23:20:04 on 13-01-2020.
+# Input file written by Dissolve v0.5.1 at 10:41:34 on 14-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                 Master Terms                                 #
@@ -162,8 +162,8 @@ Layer  'Evolve (Standard)'
     Frequency  1
 
     Configuration  'Bulk'
-    RotationStepSize   1.19361e+01
-    TranslationStepSize   2.15002e-01
+    RotationStepSize   1.08426e+01
+    TranslationStepSize   2.58465e-01
   EndModule
 
   Module  MD  'MD01'
@@ -181,7 +181,6 @@ EndLayer
 
 Layer  'Analysis'
   Frequency  1
-  Disabled
 
   Module  CalculateAxisAngle  'CalculateAxisAngle01'
     Frequency  1
