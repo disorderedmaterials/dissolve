@@ -12,17 +12,18 @@ RELEASE_PRE="false"
 DELETE_EXISTING="false"
 DELETE_EXISTING_ALWAYS="false"
 DELETE_ALL_ASSETS="false"
+UPDATE_TAG_SHA="false"
 ARTIFACTS=""
 NARTIFACTS=0
 
 usage()
 {
-	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-e] [-w] [-p] artifacts ..."
+	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-e] [-w] [-p] [-u] artifacts ..."
 	exit 1
 }
 
 # Parse options
-while getopts ":r:t:n:b:f:pwdae" opt
+while getopts ":r:t:n:b:f:pwdaeu" opt
 do
 	case "${opt}" in
 		r)
@@ -64,6 +65,10 @@ do
 		e)
 			DELETE_ALL_ASSETS="true"
 			echo "All existing release assets will be deleted"
+			;;
+		u)
+			UPDATE_TAG_SHA="true"
+			echo "SHA for specified tag will updated to reflect current HEAD"
 			;;
 		\?)
 			usage
@@ -191,7 +196,13 @@ then
 		git config --local user.name "trisyoungs"
 		git config --local user.email "tristan.youngs@stfc.ac.uk"
 
-		git tag -f $RELEASE_TAG
+		# Update tag SHA?
+		if [ "$UPDATE_TAG_SHA" = "true" ]
+		then
+			FULL_HEAD_HASH=`git rev-parse HEAD`
+			echo " -- Updating tag hash to that of the current HEAD (${FULL_HEAD_HASH})"
+			curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous
+		fi
 
 		# Construct release information
 		RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
