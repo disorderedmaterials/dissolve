@@ -21,6 +21,7 @@
 
 #include "gui/gizmos/gizmo.h"
 #include "base/sysfunc.h"
+#include <QMdiSubWindow>
 
 // Static Singletons
 RefList<Gizmo> Gizmo::allGizmos_;
@@ -47,6 +48,7 @@ Gizmo::~Gizmo()
 void Gizmo::setUniqueName(const char* uniqueName)
 {
 	uniqueName_ = uniqueName;
+	if (window_) window_->setWindowTitle(uniqueName);
 }
 
 // Return unique name for Gizmo based on basename provided
