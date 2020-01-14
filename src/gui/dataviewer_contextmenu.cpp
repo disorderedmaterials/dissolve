@@ -34,8 +34,18 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
 	QAction* action;
 	menu.setFont(font());
 
+	// Reset View
+	QAction* resetViewAction = menu.addAction("&Reset View");
+
+	// Copy to clipboard
+	QAction* copyToClipboardAction = menu.addAction("&Copy to clipboard");
+
 	// Execute the menu
-	menu.exec(mapToGlobal(pos));
+	QAction* selectedAction = menu.exec(mapToGlobal(pos));
+
+	// Act on the action!
+	if (selectedAction == resetViewAction) view_.resetViewMatrix();
+	else if (selectedAction == copyToClipboardAction) copyViewToClipboard(true);
 }
 
 // Show renderable context menu
