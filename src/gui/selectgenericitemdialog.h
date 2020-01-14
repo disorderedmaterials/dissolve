@@ -63,7 +63,7 @@ class SelectGenericItemDialog : public QDialog
 			// Item name
 			item = new QTableWidgetItem(templatedItem->name());
 			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			item->setData(Qt::UserRole, VariantPointer<Data1D>(templatedItem));
+			item->setData(Qt::UserRole, VariantPointer<T>(templatedItem));
 			ui_.ItemsTable->setItem(count, 0, item);
 
 			// Item source
