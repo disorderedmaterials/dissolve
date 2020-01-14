@@ -307,7 +307,7 @@ target_include_directories(gui PRIVATE
   ${Qt5Widgets_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
 )
-target_link_libraries(gui keywordwidgets charts delegates widgets)
+target_link_libraries(gui keywordwidgets charts delegates widgets components)
 
 # Subdirectories
 add_subdirectory(keywordwidgets)
