@@ -45,5 +45,7 @@ Now we must load in our restart point containing the reference data which we can
 > A suffix to apply to the data will be suggested based on the filename, in this case 'reference', which is fine, so click _OK_
 {: .step}
 
+> Once a reference point has been added through the _Data Manager_ the filename and location are stored in the GUI state file, and the data will be reloaded the next time the state file gets read in. You can remove reference points from the _Data Manager_ if you no longer want that to happen.
+{: .tip}
 
 [Previous Step](step8.md){: .btn }   [Back to Index](index.md){: .btn .right}
