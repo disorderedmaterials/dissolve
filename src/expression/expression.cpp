@@ -1,7 +1,7 @@
 /*
 	*** Mathematical Expression
 	*** src/expression/expression.cpp
-	Copyright T. Youngs 2015-2019
+	Copyright T. Youngs 2015-2020
 
 	This file is part of Dissolve.
 

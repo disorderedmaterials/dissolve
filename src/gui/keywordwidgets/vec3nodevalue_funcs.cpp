@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Vec3NodeValue
 	*** src/gui/keywordwidgets/vec3nodevalue_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

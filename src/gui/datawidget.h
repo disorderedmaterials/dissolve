@@ -1,7 +1,7 @@
 /*
 	*** Data Widget
 	*** src/gui/datawidget.h
-	Copyright T. Youngs 2013-2019
+	Copyright T. Youngs 2013-2020
 
 	This file is part of Dissolve.
 

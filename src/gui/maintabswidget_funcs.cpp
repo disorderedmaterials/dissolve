@@ -1,7 +1,7 @@
 /*
 	*** Main Tabs Widget
 	*** src/gui/maintabswidget_funcs.cpp
-	Copyright T. Youngs 2013-2019
+	Copyright T. Youngs 2013-2020
 
 	This file is part of Dissolve.
 

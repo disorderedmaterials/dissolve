@@ -1,7 +1,7 @@
 /*
 	*** Configuration Viewer - Input
 	*** src/gui/configurationviewer_input.cpp
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 

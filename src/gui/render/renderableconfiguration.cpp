@@ -1,7 +1,7 @@
 /*
 	*** Renderable - Configuration
 	*** src/gui/render/renderableconfiguration.cpp
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
