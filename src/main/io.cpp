@@ -494,7 +494,7 @@ bool Dissolve::loadRestartAsReference(const char* filename, const char* dataSuff
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
 	LineParser parser(&worldPool());
-	if (!parser.openInput(restartFilename_)) return false;
+	if (!parser.openInput(filename)) return false;
 
 	// Variables
 	Configuration* cfg;
