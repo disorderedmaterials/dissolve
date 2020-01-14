@@ -76,20 +76,14 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	TMdiArea* mdiArea_;
 	// List of current Gizmos in the MDI area
 	List<Gizmo> gizmos_;
-	// List of all Gizmos across all workspaces
-	static RefList<Gizmo> allGizmos_;
 
 	private slots:
 	// Remove Gizmo with specified unique name
 	void removeGizmo(QString uniqueName);
 
 	public:
-	// Return unique name for Gizmo based on basename provided
-	static const char* uniqueGizmoName(const char* base);
 	// Create Gizmo with specified type in this workspace
 	Gizmo* createGizmo(const char* type);
-	// Find Gizmo with unique name provided
-	static Gizmo* findGizmo(const char* uniqueName);
 
 
 	/*

@@ -20,6 +20,10 @@
 */
 
 #include "gui/gizmos/gizmo.h"
+#include "base/sysfunc.h"
+
+// Static Singletons
+RefList<Gizmo> Gizmo::allGizmos_;
 
 // Constructor
 Gizmo::Gizmo(Dissolve& dissolve, const char* uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
@@ -27,10 +31,12 @@ Gizmo::Gizmo(Dissolve& dissolve, const char* uniqueName) : ListItem<Gizmo>(), di
 	window_ = NULL;
 	uniqueName_ = uniqueName;
 	refreshing_ = false;
+	allGizmos_.append(this);
 }
 
 Gizmo::~Gizmo()
 {
+	allGizmos_.remove(this);
 }
 
 /*
@@ -41,6 +47,28 @@ Gizmo::~Gizmo()
 void Gizmo::setUniqueName(const char* uniqueName)
 {
 	uniqueName_ = uniqueName;
+}
+
+// Return unique name for Gizmo based on basename provided
+const char* Gizmo::uniqueName(const char* base)
+{
+	static CharString uniqueName;
+	CharString baseName = base;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "NewGizmo";
+
+	// Find an unused name starting with the baseName provided
+	while (find(uniqueName))
+	{
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
 }
 
 // Return unique name of widget
@@ -59,4 +87,28 @@ void Gizmo::setWindow(QMdiSubWindow* window)
 QMdiSubWindow* Gizmo::window()
 {
 	return window_;
+}
+
+
+// Find Gizmo with unique name provided
+Gizmo* Gizmo::find(const char* uniqueName, const Gizmo* excludeThis)
+{
+	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate())
+	{
+		if (gizmo == excludeThis) continue;
+
+		if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName)) return gizmo;
+	}
+
+	return NULL;
+}
+
+// Find Gizmo contained in specified subwindow
+Gizmo* Gizmo::find(QMdiSubWindow* window)
+{
+	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
+	while (Gizmo* gizmo = gizmoIterator.iterate()) if (window == gizmo->window()) return gizmo;
+
+	return NULL;
 }

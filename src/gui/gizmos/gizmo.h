@@ -24,6 +24,7 @@
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
+#include "templates/reflist.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -50,18 +51,26 @@ class Gizmo : public ListItem<Gizmo>
 	Dissolve& dissolve_;
 	// QMdiSubWindow containing the Gizmo
 	QMdiSubWindow* window_;
+	// Reference list of all Gizmos
+	static RefList<Gizmo> allGizmos_;
 
 	public:
 	// Return string specifying Gizmo type
 	virtual const char* type() const = 0;
 	// Set unique name of gizmo
 	void setUniqueName(const char* uniqueName);
+	// Return unique name for Gizmo based on basename provided
+	static const char* uniqueName(const char* base);
 	// Return unique name of gizmo
 	const char* uniqueName();
 	// Set QMdiSubWindow containing the Gizmo
 	void setWindow(QMdiSubWindow* window);
 	// Return QMdiSubWindow containing the Gizmo
 	QMdiSubWindow* window();
+	// Find Gizmo with unique name provided
+	static Gizmo* find(const char* uniqueName, const Gizmo* excludeThis = NULL);
+	// Find Gizmo contained in specified subwindow
+	static Gizmo* find(QMdiSubWindow* window);
 
 
 	/*
