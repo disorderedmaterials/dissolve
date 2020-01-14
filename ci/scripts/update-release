@@ -215,7 +215,7 @@ then
 		echo $RELEASE_DATA
 
 		# Patch release
-		CURRENT_RELEASEINFO=$(curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
+		curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL}
 
 		# Delete existing assets?
 		if [ "$DELETE_ALL_ASSETS" = "true" ]
