@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 	}
 
 	// Print GPL license information
-	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
