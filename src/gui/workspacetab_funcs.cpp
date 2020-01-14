@@ -66,7 +66,7 @@ MainTab::TabType WorkspaceTab::type() const
 // Raise suitable dialog for entering / checking new tab name
 QString WorkspaceTab::getNewTitle(bool& ok)
 {
-	// Get a new, valid name for the Configuration
+	// Get a new, valid name for the workspace
 	GetTabNameDialog nameDialog(this, dissolveWindow_->allTabs());
 	ok = nameDialog.get(this, title());
 
