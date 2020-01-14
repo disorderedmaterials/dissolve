@@ -15,14 +15,14 @@ As noted in the introduction we have neutron-weighted experimental data, so we n
 {: .action .action_menu}
 > Show the module palette for the layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab.
 {: .action .action_mouse}
-> Drag two [`NeutronSQ`](/userguide/modules/neutronsq) modules from the _Module Palette_{: .text-green-100} on the left, placing them after the existing [`RDF`](/userguide/modules/rdf) module
+> Drag two [`NeutronSQ`](../../userguide/modules/neutronsq) modules from the _Module Palette_{: .text-green-100} on the left, placing them after the existing [`RDF`](../../userguide/modules/rdf) module
 {: .step}
 
-Let's set up the three [`NeutronSQ`](/userguide/modules/neutronsq) modules to calculate what we want:
+Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules to calculate what we want:
 
 ### C<sub>6</sub>H<sub>6</sub>
 
-> Click on the first the [`NeutronSQ`](/userguide/modules/neutronsq) module to display its options
+> Click on the first the [`NeutronSQ`](../../userguide/modules/neutronsq) module to display its options
 {: .action .action_mouse}
 > Change its name to `C6H6`
 {: .action .action_edit}
@@ -43,7 +43,7 @@ Let's set up the three [`NeutronSQ`](/userguide/modules/neutronsq) modules to ca
 
 ### C<sub>6</sub>D<sub>6</sub>
 
-> Click on the second the [`NeutronSQ`](/userguide/modules/neutronsq) module to display its options
+> Click on the second the [`NeutronSQ`](../../userguide/modules/neutronsq) module to display its options
 {: .action .action_mouse}
 > Change its name to `C6D6`
 {: .action .action_edit}
@@ -66,7 +66,7 @@ Let's set up the three [`NeutronSQ`](/userguide/modules/neutronsq) modules to ca
 
 ### 50:50 Mix
 
-> Click on the third the [`NeutronSQ`](/userguide/modules/neutronsq) module to display its options
+> Click on the third the [`NeutronSQ`](../../userguide/modules/neutronsq) module to display its options
 {: .action .action_mouse}
 > Change its name to `5050`
 {: .action .action_edit}
@@ -91,7 +91,7 @@ All that remains is to add our EPSR refinement layer:
 
 > Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR
 {: .action .action_menu}
-> Select the [`EPSR`](/userguide/modules/epsr) module to display its options
+> Select the [`EPSR`](../../userguide/modules/epsr) module to display its options
 {: .step}
 > Change the **EReq** value to 10.0
 {: .action .action_edit}

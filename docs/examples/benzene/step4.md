@@ -7,11 +7,11 @@ grand_parent: Examples
 
 ## 4. Set up Analysis
 
-For our "properties of interest" we'll calculate both the centre-of-geometry RDF and the out-of-plane angle between molecules as a function of distance. We can get both from the [CalculateAxisAngle](/userguide/modules/calculatedaxisangle) module:
+For our "properties of interest" we'll calculate both the centre-of-geometry RDF and the out-of-plane angle between molecules as a function of distance. We can get both from the [CalculateAxisAngle](../../userguide/modules/calculatedaxisangle) module:
 
 | Module | Purpose |
 |--------|---------|
-| [`CalculateAxisAngle`](/userguide/modules/calculatedaxisangle) | Calculates the distance vs. axis angle map between two sites |
+| [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) | Calculates the distance vs. axis angle map between two sites |
 
 Since our site (`COG`) is set up for the Z axis to be pointing out of the plane of the benzene ring, it is the angle formed between these axes on the different molecules that we'll consider.
 
@@ -23,9 +23,9 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 {: .step}
 > Show the module palette for the current layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab
 {: .action .action_mouse}
-> Drag a [`CalculateAxisAngle`](/userguide/modules/calculatedaxisangle) module over to the **Current Modules** list
+> Drag a [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module over to the **Current Modules** list
 {: .action .action_mouse}
-> Select the [`CalculateAxisAngle`](/userguide/modules/calculatedaxisangle) module to show its options
+> Select the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module to show its options
 {: .step}
 > Open the **Calculation** settings group
 {: .action .action_groups}

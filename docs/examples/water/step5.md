@@ -11,7 +11,7 @@ With our equilibrated (or equilibrating...) system we'll now make a basic compar
 
 > **RDF / Neutron S(Q)** tab
 {: .action .action_tabs}
-> Double-click on the `H2O` [`NeutronSQ`](/userguide/modules/neutronsq) module to open its additional controls in a separate tab
+> Double-click on the `H2O` [`NeutronSQ`](../../userguide/modules/neutronsq) module to open its additional controls in a separate tab
 {: .step}
 
 Now we can see the comparison between the total radial distribution functions (top panel) and neutron-weighted structure factors (bottom panel) for the H<sub>2</sub>O sample. When the system is approaching equilibrium you should see something similar to this:
@@ -32,11 +32,11 @@ First, stop the simulation if it is running:
 > Esc
 {: .action .action_key}
 
-Now we can safely adjust the options in the [`RDF`](/userguide/modules/rdf) module:
+Now we can safely adjust the options in the [`RDF`](../../userguide/modules/rdf) module:
 
 > **RDF / Neutron S(Q)** tab
 {: .action .action_tabs}
-> Select th [`RDF`](/userguide/modules/rdf) module to display its additional controls
+> Select th [`RDF`](../../userguide/modules/rdf) module to display its additional controls
 {: .step}
 > Open the **Calculation** settings group
 {: .action .action_groups}

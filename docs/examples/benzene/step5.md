@@ -16,11 +16,11 @@ Now that the analysis processing layer is prepared, we need to run it for a whil
 
 Dissolve will now iterate for 1000 iterations and stop - you can see the estimated time to complete these 1000 steps in the status bar at the bottom of the main window. Now might be a good time to have a drink, or write that email you've been putting off. If you think 1000 iterations is going to take too long, press **Escape** to stop the simulation and go for 500 iterations instead.
 
-To see what's being calculated, open up the [`CalculateAxisAngle`](/userguide/modules/calculatedaxisangle) in a separate tab:
+To see what's being calculated, open up the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) in a separate tab:
 
 > **Analysis** layer tab
 {: .action .action_tabs}
-> Double-click the [`CalculateAxisAngle`](/userguide/modules/calculatedaxisangle) module to open it in a separate tab
+> Double-click the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module to open it in a separate tab
 {: ..action .action_mouse}
 
 We have three graphs - top-left is the radial distribution function between the centres-of-geometry of the benzene, while the bottom-left is the angle histogram of the z-axis angles (averaged over all distances). The main graph to the right shows the distance-angle map of the two quantities. You might want to explore the latter in 3D space, rather than a top-down view - you can change the view style for the plot in the toolbar at the top (change the view type from `XY` to `3D`).

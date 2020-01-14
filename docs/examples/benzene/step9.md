@@ -7,7 +7,7 @@ grand_parent: Examples
 
 ## 9. Compare Data
 
-Viewing the output of modules in their own tabs is convenient enough, but if we want to compare data from different sources (or different restart points) on the same plot we need to use a workspace. A workspace is an empty tab to which you can add various "gizmos" to do graphing and further data analysis. Note that the contents of workspaces are not saved to the [main input file](/userguide/inputfile) - they are stored in the [GUI state file](/userguide/outputfiles/state.md).
+Viewing the output of modules in their own tabs is convenient enough, but if we want to compare data from different sources (or different restart points) on the same plot we need to use a workspace. A workspace is an empty tab to which you can add various "gizmos" to do graphing and further data analysis. Note that the contents of workspaces are not saved to the [main input file](../../userguide/inputfile) - they are stored in the [GUI state file](../../userguide/outputfiles/state.md).
 
 Let's create a workspace now, and add a plotting tool to it:
 
@@ -27,7 +27,7 @@ For sanity, we'll rename it to something we understand:
 
 First of all, let's send the centre-of-geometry RDF from the current production run to this graph. You can right-click on any data shown in any plot in Dissolve to set style options and, in this case, copy the data to any workspace gizmo that will accept it.
 
-> Open the [`CalculateAxisAngle`](/userguide/modules/calculatedaxisangle) module in a tab if it isn't already open
+> Open the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module in a tab if it isn't already open
 {: .action .action_tabs}
 > Right-click on the line plot for the centre-of-mass RDF
 {: .action .action_mouse}

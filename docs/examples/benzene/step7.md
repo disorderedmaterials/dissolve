@@ -7,18 +7,18 @@ grand_parent: Examples
 
 ## 7. Refine the Simulation
 
-Restart the simulation and monitor the progress of the r-factors and eReq value in the [`EPSR`](/userguide/modules/epsr) module.
+Restart the simulation and monitor the progress of the r-factors and eReq value in the [`EPSR`](../../userguide/modules/epsr) module.
 
 > **Refine (EPSR)** layer tab
 {: .action .action_tabs}
-> Double-click the [`EPSR`](/userguide/modules/epsr) module to open it in a tab and see all of the associated graphs
+> Double-click the [`EPSR`](../../userguide/modules/epsr) module to open it in a tab and see all of the associated graphs
 {: ..action .action_mouse}
 
 Once the additional energy has stabilised at 10.0, we can increase it to 20.0 to improve our fit a little more.
 
 > Pause the simulation
 {: .action}
-> Find the [`EPSR`](/userguide/modules/epsr) module options
+> Find the [`EPSR`](../../userguide/modules/epsr) module options
 {: .action .action_mouse}
 > Change the **EReq** value to 20
 {: .action .action_edit}
