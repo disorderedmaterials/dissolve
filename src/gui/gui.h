@@ -218,9 +218,13 @@ class DissolveWindow : public QMainWindow
 	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceCreateEmptyAction_triggered(bool checked);
+	void on_WorkspaceRenameCurrentGizmoAction_triggered(bool checked);
 	// Help
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
+
+	public slots:
+	void currentWorkspaceGizmoChanged(QMdiSubWindow* gizmoWindow);
 
 
 	/*

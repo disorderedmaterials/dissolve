@@ -980,6 +980,7 @@
      <string>&amp;Workspace</string>
     </property>
     <addaction name="WorkspaceCreateEmptyAction"/>
+    <addaction name="WorkspaceRenameCurrentGizmoAction"/>
    </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
@@ -1612,6 +1613,11 @@
   <action name="SpeciesCreateDrawAction">
    <property name="text">
     <string>Draw...</string>
+   </property>
+  </action>
+  <action name="WorkspaceRenameCurrentGizmoAction">
+   <property name="text">
+    <string>Rename Current Gizmo</string>
    </property>
   </action>
  </widget>

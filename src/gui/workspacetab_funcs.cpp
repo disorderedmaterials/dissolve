@@ -43,6 +43,7 @@ WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, M
 	mdiArea_ = new TMdiArea(dissolveWindow);
 	ui.verticalLayout->addWidget(mdiArea_);
 	connect(mdiArea_, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+	connect(mdiArea_, SIGNAL(subWindowActivated(QMdiSubWindow*)), dissolveWindow, SLOT(currentWorkspaceGizmoChanged(QMdiSubWindow*)));
 }
 
 // Destructor
