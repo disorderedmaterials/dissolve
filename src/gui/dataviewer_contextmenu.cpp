@@ -85,7 +85,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 {
 	QMenu menu;
 	QAction* action;
-	RefDataList<QAction,Gizmo*> destinationActions;
+	RefDataList<QAction,Gizmo*> copyToActions;
 	menu.setFont(font());
 	QFont italicFont(menu.font());
 	italicFont.setItalic(true);
@@ -111,7 +111,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 		while (Gizmo* destination = destinationIterator.iterate())
 		{
 			action = copyToMenu->addAction(destination->uniqueName());
-			destinationActions.append(action, destination);
+			copyToActions.append(action, destination);
 		}
 	}
 
@@ -134,9 +134,9 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 			rend->setVisible(false);
 			emit(renderableChanged());
 		}
-		else if (destinationActions.contains(selectedAction))
+		else if (copyToActions.contains(selectedAction))
 		{
-			Gizmo* destination = destinationActions.dataForItem(selectedAction);
+			Gizmo* destination = copyToActions.dataForItem(selectedAction);
 			if (!destination) return;
 			destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
 		}
