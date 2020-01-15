@@ -240,10 +240,10 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	// Read tab state information:   nGizmos
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	const int nWidgets = parser.argi(0);
+	const int nGizmos = parser.argi(0);
 
 	// Read in widgets
-	for (int n=0; n<nWidgets; ++n)
+	for (int n=0; n<nGizmos; ++n)
 	{
 		// Read line from the file, which should contain the gizmo type
 		if (parser.getArgsDelim() != LineParser::Success) return false;
