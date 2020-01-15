@@ -250,6 +250,9 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 		Gizmo* gizmo = createGizmo(parser.argc(0));
 		if (gizmo == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(0), title());
 
+		// Set the unique name
+		gizmo->setUniqueName(Gizmo::uniqueName(parser.argc(1)));
+
 		// Read in the widget's geometry / state / flags
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		gizmo->window()->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
@@ -260,6 +263,9 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 		// Now call the widget's local readState()
 		if (!gizmo->readState(parser)) return false;
 	}
+
+	// Ensure workspace 'rename' menu item is set correctly
+	dissolveWindow_->currentWorkspaceGizmoChanged(mdiArea_->currentSubWindow());
 
 	return true;
 }
@@ -275,7 +281,7 @@ bool WorkspaceTab::writeState(LineParser& parser) const
 	while (Gizmo* gizmo = gizmoIterator.iterate())
 	{
 		// Write Gizmo type
-		if (!parser.writeLineF("%s\n", gizmo->type())) return false;
+		if (!parser.writeLineF("%s  '%s'\n", gizmo->type(), gizmo->uniqueName())) return false;
 
 		// Write window geometry / state
 		QRect geometry = gizmo->window()->geometry();
