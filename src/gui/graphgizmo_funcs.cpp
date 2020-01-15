@@ -36,12 +36,15 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 	// Grab the data viewer target and set our view
 	dataViewer_ = ui_.DataView->dataViewer();
 	dataViewer_->view().setAutoFollowType(View::AllAutoFollow);
-	dataViewer_->view().setViewType(View::NormalView);
+	dataViewer_->view().setViewType(View::FlatXYView);
 	dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
 	// Permit the user to add data to the DataViewer
 	dataViewer_->setFlags(DataViewer::UserCanAddDataFlag + DataViewer::UserCanRenameDataFlag + DataViewer::UserCanRemoveDataFlag);
 	dataViewer_->setDissolve(&dissolve);
+
+	// Update associated toolbar
+	ui_.DataView->updateToolbar();
 
 	refreshing_ = false;
 }
