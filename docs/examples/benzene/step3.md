@@ -14,9 +14,13 @@ To equilibrate our system we'll now add a standard Monte Carlo / Molecular Dynam
 
 We can now start our simulation running and start to equilibrate the configuration box. If you're watching the box in the configuration tab you'll notice that it intially "explodes" because of our defined size factor of 10.0, but the box will quickly reduce in size back to normal and result in a condensed phase with no interlocked benzene rings.
 
-When the size factor has reduced the equilibrated box should have a total energy of around -200 kJ mol<sup>-1</sup> (for 100 molecules).
+When the size factor has reduced the equilibrated box should have an intermolecular energy of around -200 kJ mol<sup>-1</sup> (for 100 molecules). You can check this from the graphs of the [`Energy`](../../userguide/modules/energy) module:
 
-Once this has been achieved, we can make a snapshot of the current simulation and store this equilibrated point as a backup. The restart file written by Dissolve as it runs stores all the information necessary to continue a stopped simulation, but there is no going back to a previous point in the simulation (e.g. to undo a bad analysis choice, or to reference earlier data) unless we have a suitable restart point to go back to. At any time we can write a new restart file from the GUI, independent of the standard restart file, and which we can keep to load in at a later date.
+> **Evolve (Standard)** tab
+{: .action .action_tabs}
+> Double-click the [`Energy`](../../userguide/modules/energy) module to show its energy graphs
+
+Once equilibrated we can make a snapshot of the current simulation and store its data as a reference point. The restart file written by Dissolve as it runs stores all the information necessary to continue a stopped simulation, but there is no going back to a previous point in the simulation (e.g. to undo a bad analysis choice, or to reference earlier data) unless we have a suitable restart point to go back to. At any time we can write a new restart file from the GUI, independent of the standard restart file, and which we can keep to load in at a later date.
 
 > Simulation &#8680; Save Restart Point...
 {: .action .action_menu}
