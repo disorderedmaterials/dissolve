@@ -33,7 +33,6 @@
 // Forward Declarations
 class PlottableData;
 class RenderableGroup;
-class RenderableGroupManager;
 class View;
 
 class Renderable : public ListItem<Renderable>
@@ -238,7 +237,7 @@ class Renderable : public ListItem<Renderable>
 
 	public:
 	// Update primitives and send to display
-	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling);
+	void updateAndSendPrimitives(const View& view, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling);
 };
 
 #endif

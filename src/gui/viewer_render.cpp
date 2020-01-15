@@ -196,7 +196,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		if (!rend->isVisible()) continue;
 
 		// Make sure the Renderable is up to date, and draw it
-		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
+		rend->updateAndSendPrimitives(view(), renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
 		updateQuery(BaseViewer::RenderableObject, rend->objectTag(), Renderable::renderableTypes().keyword(rend->type()));
