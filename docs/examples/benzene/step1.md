@@ -23,13 +23,8 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 > Change the drawing element from `C` to `H` by clicking on the button next to ![Draw mode](../icons/viewer_edit.png)
 {: .step}
 > Connect a single hydrogen atom to each carbon by left-click-dragging from each carbon site 
-> Left-click somewhere in the viewer below to place an oxygen atom
 {: .step}
-> Change the drawing element to hydrogen
-{: .step}
-> Left-click-drag from the existing oxygen atom to draw a hydrogen bound to it
-{: .step}
-> Repeat for the other hydrogen
+> Left-click somewhere in the viewer outside the ring to place a hydrogen atom
 {: .step}
 > Click **OK** to close the editor and create the new species
 {: .step}
@@ -44,7 +39,7 @@ Time to make it a little prettier!  We'll assign a standard forcefield to it, an
 {: .action .action_menu}
 > From the available forcefields choose `OPLSAA2005/Aromatics` and click _Next_{: .text-green-100}
 {: .step}
-> For the atom types we want to _Assign all from Forcefield_{: .text-green-100}. For the intramolecular terms we want to assign them and reduce to master terms. Leave the settings as they currently are, and click _Next_{: .text-green-100}
+> For the atom types we want to _Assign all atom types, overwriting any that already exist_{: .text-green-100}. For the intramolecular terms we want to assign them and reduce to master terms. Leave the settings as they currently are, and click _Next_{: .text-green-100}
 {: step}
 > There should be no conflicts with existing atom types or master terms, so click _Next_{: .text-green-100} then _Finish_{: .text-green-100} to exit the wizard.
 {: .step}
@@ -62,7 +57,7 @@ We will also get ahead here and edit the master terms to reflect the geometry ob
 
 ### Create Isotopologues
 
-Since some of the experimental data was measured on deuterated benzene, we'll need to create a suitable C<sub6</sub>D<sub6</sub> isotopologue:
+Since some of the experimental data was measured on deuterated benzene, we'll need to create a suitable C<sub>6</sub>D<sub>6</sub> isotopologue:
 
 > **Benzene** species tab, **Isotopologues** section
 {: .action .action_tabs}
@@ -70,9 +65,9 @@ Since some of the experimental data was measured on deuterated benzene, we'll ne
 {: .step}
 > Expand the entries for the 'NewIsotopologue' by clicking the [+] next to its name, or by clicking _Expand All_{: .text-green-100}
 {: .step}
-> Change the isotope for the HA atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671)`
+> Change the isotope for the HA atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671)` by clicking on the isotopologue entry and chosing from the drop-down menu
 {: .step}
-> Change the name of the isotopologue to 'C6D6' (double-click on the name to do so)
+> Change the name of the isotopologue to 'C6D6' (click on the name to do so)
 {: .step}
 
 ### Add Analysis Sites
@@ -86,13 +81,13 @@ We'll locate our analysis site at the centre of the benzene ring and give it som
 {: .action .action_tabs}
 > Select all six carbon atoms in the viewer
 {: .action .action_mouse}
-> Click **Create** in the viewer toolbar to create a new site with these six atoms at the origin
+> Click **Create** in the viewer toolbar to create a new site with the origin at the center between these six atoms
 {: .step}
 > Now select the single carbon atom and click **X Axis** in the toolbar to define the direction of the _x_ axis
 {: .step}
 > Finally, select the pair of adjacent carbon atoms and click **Y Axis** in the toolbar to define the direction of the _y_ axis
 {: .step}
-> Rename the site to `COG`
+> Rename the site to `COG` by double-clicking `C6`
 {: .action action_edit}
 
 [Back to Overview](index.md){: .btn }   [Next Step](step2.md){: .btn .right}
