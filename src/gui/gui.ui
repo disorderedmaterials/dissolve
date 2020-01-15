@@ -1616,6 +1616,9 @@
    </property>
   </action>
   <action name="WorkspaceRenameCurrentGizmoAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Rename Current Gizmo</string>
    </property>
