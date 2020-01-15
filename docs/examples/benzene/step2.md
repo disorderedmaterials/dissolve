@@ -24,7 +24,7 @@ In the interests of speed, we'll use the default number of molecules (100) for t
 {: .step}
 > Open the settings for the `AddSpecies` node
 {: .action .action_settings}
-> Make sure that the units for the **Density** are set to `g/cm3` and that the equation simple references our parameter `rho`.
+> Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`.
 {: .step}
 > Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters.
 {: .action .action_mouse}
