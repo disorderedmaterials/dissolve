@@ -166,6 +166,9 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	gizmo->updateControls();
 	gizmos_.own(gizmo);
 
+	mdiArea_->setActiveSubWindow(window);
+	dissolveWindow_->currentWorkspaceGizmoChanged(window);
+
 	return gizmo;
 }
 
