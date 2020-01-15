@@ -22,8 +22,12 @@
 #include "gui/dataviewer.hui"
 #include "gui/gizmo.h"
 #include "gui/selectgenericitemdialog.h"
+#include "io/export/data1d.h"
+#include "io/export/data2d.h"
+#include "io/export/data3d.h"
 #include "math/data2d.h"
 #include "base/messenger.h"
+#include <QFileDialog>
 
 /*
  * Private Functions
@@ -99,6 +103,10 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	// -- Hide Renderable
 	QAction* hideAction = menu.addAction("&Hide");
 
+	// -- Save As...
+	QAction* saveAsAction = menu.addAction("&Save as...");
+	saveAsAction->setEnabled(rend->type() >= Renderable::Data1DRenderable && rend->type() <= Renderable::Data3DRenderable);
+
 	// -- Copy To...
 	QMenu* copyToMenu = menu.addMenu("&Copy to...");
 	copyToMenu->setFont(menu.font());
@@ -133,6 +141,32 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 		{
 			rend->setVisible(false);
 			emit(renderableChanged());
+		}
+		else if (selectedAction == saveAsAction)
+		{
+			// Get save file name
+			QString filename = QFileDialog::getSaveFileName(this, "Select Exported Data File", QDir::currentPath(), "All Files (*.*)");
+			if (!filename.isEmpty())
+			{
+				if (rend->type() == Renderable::Data1DRenderable)
+				{
+					Data1DExportFileFormat exportFormat(qPrintable(filename));
+					Data1D* data = Data1D::findObject(rend->objectTag());
+					if (!data) Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag()); else exportFormat.exportData(*data);
+				}
+				else if (rend->type() == Renderable::Data2DRenderable)
+				{
+					Data2DExportFileFormat exportFormat(qPrintable(filename));
+					Data2D* data = Data2D::findObject(rend->objectTag());
+					if (!data) Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag()); else exportFormat.exportData(*data);
+				}
+				else if (rend->type() == Renderable::Data3DRenderable)
+				{
+					Data3DExportFileFormat exportFormat(qPrintable(filename));
+					Data3D* data = Data3D::findObject(rend->objectTag());
+					if (!data) Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag()); else exportFormat.exportData(*data);
+				}
+			}
 		}
 		else if (copyToActions.contains(selectedAction))
 		{
