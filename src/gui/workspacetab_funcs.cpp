@@ -159,6 +159,7 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	// Create a new window for the Gizmo's widget and show it
 	QMdiSubWindow* window = mdiArea_->addSubWindow(widget);
 	window->setWindowTitle(gizmo->uniqueName());
+	window->setFont(font());
 	window->show();
 	gizmo->setWindow(window);
 
