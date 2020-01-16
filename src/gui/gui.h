@@ -204,6 +204,7 @@ class DissolveWindow : public QMainWindow
 	void on_ConfigurationExportToXYZAction_triggered(bool checked);
 	// Layer
 	void on_LayerCreateEmptyAction_triggered(bool checked);
+	void on_LayerCreateEvolveBasicAtomicAction_triggered(bool checked);
 	void on_LayerCreateEvolveAtomicAction_triggered(bool checked);
 	void on_LayerCreateEvolveMolecularAction_triggered(bool checked);
 	void on_LayerCreateEvolveEPSRAction_triggered(bool checked);

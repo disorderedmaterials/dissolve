@@ -37,6 +37,29 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
+void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Basic Atomic)"));
+
+	Module* module;
+
+	// Add some Monte Carlo
+	module = dissolve_.createModuleInstance("AtomShake", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Add energy calculation
+	module = dissolve_.createModuleInstance("Energy", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
+	setModified();
+	fullUpdate();
+	ui_.MainTabs->setCurrentTab(newLayer);
+}
+
 void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
