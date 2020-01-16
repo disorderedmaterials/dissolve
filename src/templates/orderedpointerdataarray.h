@@ -245,6 +245,19 @@ template <class T, class D> class OrderedPointerDataArray
 
 		++nItems_;
 	}
+	// Set data for the nth item
+	void setData(int index, D value)
+	{
+#ifdef CHECKS
+		if ((index < 0) || (index >= nItems_))
+		{
+			Messenger::error("OrderedPointerDataArray<T,D>::setData(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			return;
+		}
+#endif
+
+		data_[index] = value;
+	}
 	// Remove an item from the array, leaving the remaining items contiguous in memory
 	bool remove(T* ptr)
 	{
