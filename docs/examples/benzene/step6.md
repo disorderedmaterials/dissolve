@@ -15,7 +15,7 @@ As noted in the introduction we have neutron-weighted experimental data, so we n
 {: .action .action_menu}
 > Show the module palette for the layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab.
 {: .action .action_mouse}
-> Drag two [`NeutronSQ`](../../userguide/modules/neutronsq) modules from the _Module Palette_{: .text-green-100} on the left, placing them after the existing [`RDF`](../../userguide/modules/rdf) module
+> Drag two additional [`NeutronSQ`](../../userguide/modules/neutronsq) modules from the `Correlation Functions` in the _Module Palette_{: .text-green-100} on the left, placing them after the existing [`RDF`](../../userguide/modules/rdf) module
 {: .step}
 
 Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules to calculate what we want:
@@ -38,7 +38,7 @@ Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules 
 {: .step}
 > Open the **Reference Data** settings group
 {: .action .action_groups}
-> For the **Reference** keyword select the file `C6H6.mint01` and set the format of the data to `mint`
+> For the **Reference** keyword select the file `C6H6.mint01` and set the format of the data to `mint` instead of `xy`
 {: .step}
 
 ### C<sub>6</sub>D<sub>6</sub>
