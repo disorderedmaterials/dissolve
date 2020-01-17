@@ -30,7 +30,7 @@ Now let's generate our atomic species and assign the relevant atom types. First,
 {: .step}
 > **Si** species tab, **Contents & Forcefield** section
 {: .action .action_tabs}
-> In the list of _Atoms_ change the _AtomType_ for the atom to `Si`
+> In the list of _Atoms_ change the _AtomType_ for the atom to `Silicon`
 {: step}
 
 And now, the oxygen:
@@ -41,7 +41,7 @@ And now, the oxygen:
 {: .step}
 > **O** species tab, **Contents & Forcefield** section
 {: .action .action_tabs}
-> In the list of _Atoms_ change the _AtomType_ for the atom to `O`
+> In the list of _Atoms_ change the _AtomType_ for the atom to `Oxygen`
 {: step}
 
 [Back to Overview](index.md){: .btn }   [Next Step](step2.md){: .btn .right}
