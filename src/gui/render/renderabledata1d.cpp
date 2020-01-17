@@ -160,12 +160,6 @@ const Data1D& RenderableData1D::transformedData()
 // Calculate min/max y value over specified x range (if possible in the underlying data)
 bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
 {
-	// Check that we have a valid source
-	if (!validateDataSource()) return false;
-
-	// Ensure transformed data is up-to-date
-	transformValues();
-
 	// Grab reference to transformed data
 	const Data1D& data = transformedData();
 
