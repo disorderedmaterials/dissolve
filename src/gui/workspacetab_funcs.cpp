@@ -159,12 +159,16 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 	// Create a new window for the Gizmo's widget and show it
 	QMdiSubWindow* window = mdiArea_->addSubWindow(widget);
 	window->setWindowTitle(gizmo->uniqueName());
+	window->setFont(font());
 	window->show();
 	gizmo->setWindow(window);
 
 	// Update the Gizmo's controls, and add it to our lists
 	gizmo->updateControls();
 	gizmos_.own(gizmo);
+
+	mdiArea_->setActiveSubWindow(window);
+	dissolveWindow_->currentWorkspaceGizmoChanged(window);
 
 	return gizmo;
 }
@@ -237,15 +241,18 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	// Read tab state information:   nGizmos
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	const int nWidgets = parser.argi(0);
+	const int nGizmos = parser.argi(0);
 
 	// Read in widgets
-	for (int n=0; n<nWidgets; ++n)
+	for (int n=0; n<nGizmos; ++n)
 	{
 		// Read line from the file, which should contain the gizmo type
 		if (parser.getArgsDelim() != LineParser::Success) return false;
 		Gizmo* gizmo = createGizmo(parser.argc(0));
 		if (gizmo == NULL) return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(0), title());
+
+		// Set the unique name
+		gizmo->setUniqueName(Gizmo::uniqueName(parser.argc(1)));
 
 		// Read in the widget's geometry / state / flags
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -257,6 +264,9 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 		// Now call the widget's local readState()
 		if (!gizmo->readState(parser)) return false;
 	}
+
+	// Ensure workspace 'rename' menu item is set correctly
+	dissolveWindow_->currentWorkspaceGizmoChanged(mdiArea_->currentSubWindow());
 
 	return true;
 }
@@ -272,7 +282,7 @@ bool WorkspaceTab::writeState(LineParser& parser) const
 	while (Gizmo* gizmo = gizmoIterator.iterate())
 	{
 		// Write Gizmo type
-		if (!parser.writeLineF("%s\n", gizmo->type())) return false;
+		if (!parser.writeLineF("%s  '%s'\n", gizmo->type(), gizmo->uniqueName())) return false;
 
 		// Write window geometry / state
 		QRect geometry = gizmo->window()->geometry();

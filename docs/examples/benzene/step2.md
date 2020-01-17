@@ -24,7 +24,7 @@ In the interests of speed, we'll use the default number of molecules (100) for t
 {: .step}
 > Open the settings for the `AddSpecies` node
 {: .action .action_settings}
-> Make sure that the units for the **Density** are set to `g/cm3` and that the equation simple references our parameter `rho`.
+> Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`.
 {: .step}
 > Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters.
 {: .action .action_mouse}
@@ -43,7 +43,7 @@ In anticipation of some bad contacts:
 > Set the **Requested** value for the _Size Factor Scaling_ to 10.0.
 {: .step}
 
-Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since it is too large for our configuration:
+Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since this is larger than the half the maximum width of our simulation box.
 
 > **Forcefield** tab, **Pair Potentials** section
 {: .action .action_tabs}

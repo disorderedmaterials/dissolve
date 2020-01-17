@@ -382,7 +382,7 @@ void Renderable::removePrimitive(Primitive* primitive)
 }
 
 // Update primitives and send to display
-void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling)
+void Renderable::updateAndSendPrimitives(const View& view, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling)
 {
 	// If this Renderable is not visible, return now
 	if (!visible_) return;

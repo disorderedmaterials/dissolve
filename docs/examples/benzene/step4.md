@@ -29,13 +29,13 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 {: .step}
 > Open the **Calculation** settings group
 {: .action .action_groups}
-> Leave the **DistanceRange** settings as-is, but change the maximum and binwodth for the **AngleRange** to 90 and 10 respectively
+> Leave the **DistanceRange** settings as-is, but change the Max and Bin Width for the **AngleRange** to 90 and 10 respectively
 {: .action .action_edit}
 > Open the **Sites** settings group
 {: .action .action_groups}
 > Set both **SiteA** and **SiteB** to `COG`
 {: .step}
-> Set the **AxisA** and **AxisB** to `Z`
+> Set the **AxisA** and **AxisB** to `3`
 {: .step}
 > Enable the **ExcludeSameMolecule** to prevent the unwanted self-correlation spike at 0 in the resulting RDF
 {: .step}
