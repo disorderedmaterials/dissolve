@@ -16,7 +16,7 @@ To create our silica configuration we'll use the "relative random mix" generator
 > Double-click the new configuration tab and rename it to `Bulk`
 {: .action .action_edit}
 
-Let's set-up the parameters in the generator first of all. The relative random mix uses the population of the first species (referred to as `A`) as the reference, and sets the population of all other species as a ratio of relative to the first. So, here will use the silicon species as `A` and set its population explicitly, and set the relative population of species `B` (the oxygen) to be twice that of `A`, thus giving us SiO<sub>2</sub>.
+Let's set-up the parameters in the generator first of all. The relative random mix uses the population of the first species (referred to as `A`) as the reference, and sets the population of all other species relative to the first, based on user defined ratios. So, here we will use the silicon species as `A` and set its population explicitly, and set the relative population of species `B` (the oxygen) to be twice that of `A`, thus giving us SiO<sub>2</sub>.
 
 > Open the settings for the `Parameters` node
 {: .action .action_settings}
