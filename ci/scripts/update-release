@@ -201,7 +201,7 @@ then
 		then
 			FULL_HEAD_HASH=`git rev-parse HEAD`
 			echo " -- Updating tag hash to that of the current HEAD (${FULL_HEAD_HASH})"
-			curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous
+			RESULT=$(curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous)
 		fi
 
 		# Construct release information
@@ -215,7 +215,8 @@ then
 		echo $RELEASE_DATA
 
 		# Patch release
-		curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL}
+		echo " -- Patching existing release info..."
+		RESULT=$(curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
 
 		# Delete existing assets?
 		if [ "$DELETE_ALL_ASSETS" = "true" ]
@@ -224,7 +225,8 @@ then
 			ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
 			for id in $ASSET_IDS
 			do
-				curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id}
+				echo "  -- Removing release asset id ${id}..."
+				RESULT=$(curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id})
 			done
 		fi
 	fi
