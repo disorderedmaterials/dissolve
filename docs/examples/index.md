@@ -25,6 +25,13 @@ Setting up a simple simulation to illustrate the basic workflows of Dissolve. Re
 
 [Liquid Argon - Step-by-step manual set up of a full simulation and refinement workflow](argon/)
 
-## Small Molecules
+## Descriptive Examples
+
+These examples have more detailed descriptions of the processes involved in order to teach specific concepts or functionality.
 
 [Liquid Water - Structure of liquid water at 298 K](water/)
+[Liquid Benzene - Comparing benzene structure](benzene/)
+
+## More Examples
+
+[Bulk Silica - Bulk amorphous silica](silica_bulk/)
