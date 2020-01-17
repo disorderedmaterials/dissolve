@@ -142,9 +142,9 @@ double NodeValue::asDouble()
 }
 
 // Return value represented as a string
-const char* NodeValue::asString(bool addQuotesIfRequired) const
+CharString NodeValue::asString(bool addQuotesIfRequired) const
 {
-	static CharString result;
+	CharString result;
 
 	if (type_ == IntegerNodeValue) result = DissolveSys::itoa(valueI_);
 	else if (type_ == DoubleNodeValue) result = DissolveSys::ftoa(valueD_, "%12.6e");
@@ -154,5 +154,5 @@ const char* NodeValue::asString(bool addQuotesIfRequired) const
 		else result = CharString("%s", expression_.expressionString());
 	}
 
-	return result.get();
+	return result;
 }
