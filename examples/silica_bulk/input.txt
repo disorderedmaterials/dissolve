@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.2 at 23:37:52 on 16-01-2020.
+# Input file written by Dissolve v0.5.2 at 17:01:15 on 17-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -20,8 +20,8 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  Silicon  2.000000e+00  LJ  1.750000e-01  1.000000e+00  0.000000e+00  0.000000e+00
-  Parameters  Oxygen  -1.000000e+00  LJ  1.700000e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  Silicon  2.000000e+00  LJ  1.750000e-01  1.030000e+00  0.000000e+00  0.000000e+00
+  Parameters  Oxygen  -1.000000e+00  LJ  1.650000e-01  3.500000e+00  0.000000e+00  0.000000e+00
   Range  10.000000
   Delta  0.005000
   IncludeCoulomb  True
@@ -43,8 +43,8 @@ Configuration  'Bulk'
       Real  rho  6.640000e-02
     EndParameters
     Box
-      Lengths  1.000000e+00  1.000000e+00  1.000000e+00
-      Angles  120  120  120
+      Lengths  1  1  1
+      Angles  120  90  90
       NonPeriodic  False
     EndBox
     AddSpecies
@@ -57,7 +57,7 @@ Configuration  'Bulk'
     EndAddSpecies
     AddSpecies
       Species  'O'
-      Population  'ratioB*populationA'
+      Population  'populationA*ratioB'
       ScaleBox  True
       Density  'rho'  atoms/A3
       Rotate  True
@@ -65,7 +65,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
 
-  Temperature  300.000000
+  Temperature  298.000000
 
   # Modules
   # -- None
@@ -112,6 +112,7 @@ Layer  'RDF / Neutron S(Q)'
     Configuration  'Bulk'
     Reference  mint  'data/SiO2_NIMROD.mint01'
     EndReference
+    ReferenceIgnoreFirst  True
   EndModule
 EndLayer
 
@@ -120,7 +121,7 @@ Layer  'Refine (EPSR)'
 
   Module  EPSR  'EPSR01'
     Frequency  1
-    EReq   1.50000e+02
+    EReq   5.00000e+01
     Target  'NeutronSQ01'  'Default'
   EndModule
 EndLayer

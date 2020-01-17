@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "5")
-set(VERSION_PATCH "2")
+set(VERSION_PATCH "3")
 
 set(CMAKE_BUILD_TYPE "Release")
 

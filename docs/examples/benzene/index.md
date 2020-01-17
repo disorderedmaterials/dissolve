@@ -15,15 +15,9 @@ You might always be asking the question "How much does quantity _X_ differ betwe
 
 You will set up and equilibrate a small liquid benzene simulation before calculating a few properties of interest, and then refine the potential against experimental data and recalculate the properties of interest before graphing both side-by-side. The data are three neutron scattering datasets measured on the NIMROD diffractometer at the ISIS Pulsed Neutron and Muon Source in 2014.
 
-## Data Files
-- C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6H6.mint01)
-- C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/5050.mint01)
-- C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6D6.mint01)
-- Reference input file: [benzene.txt](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/benzene.txt)
-
 ## Preparation
 
-Create a new directory in a suitable location and download or copy the data files listed above into it.
+Download the example data file archive `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub if you haven't done so already.
 
 > Open the Dissolve GUI
 {: .action .action_dissolve}
@@ -31,7 +25,13 @@ Create a new directory in a suitable location and download or copy the data file
 {: .step}
 > Save As...
 {: .action .action_menu}
-> Save your input file under a sensible name in the directory containing the example data files
+> Save your own input file under a sensible name in the `benzene` directory of the example data
 {: .step}
+
+Alternatively, download the data files listed below and save them to your location of choice.
+
+- C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6H6.mint01)
+- C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/5050.mint01)
+- C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6D6.mint01)
 
 [Let's begin!](step1.md){: .btn }

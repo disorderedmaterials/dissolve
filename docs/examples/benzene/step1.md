@@ -70,6 +70,8 @@ Since some of the experimental data was measured on deuterated benzene, we'll ne
 > Change the name of the isotopologue to 'C6D6' (click on the name to do so)
 {: .step}
 
+The other isotopologues we need are either generated automatically by Dissolve (i.e. the natural isotopologue for C<sub>6</sub>H<sub>6</sub>) or are created by mixing existing isotopologues (as will be the case for the 50:50 mix).
+
 ### Add Analysis Sites
 
 We'll locate our analysis site at the centre of the benzene ring and give it some axes so that we may calculate orientational / spatial functions around it. The figure below shows the atoms we'll select for the origin (purple), x-axis (red) and y-axis (blue), and will set the XY plane to that of the ring, with the _z_ axis perpendicular to the ring.

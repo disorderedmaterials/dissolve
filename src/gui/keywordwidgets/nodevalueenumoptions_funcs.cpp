@@ -97,7 +97,7 @@ void NodeValueEnumOptionsKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	ui_.ValueEdit->setText(keyword_->value().asString());
+	ui_.ValueEdit->setText(keyword_->value().asString().get());
 	ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
 	ui_.OptionsCombo->setCurrentIndex(keyword_->baseOptions().currentOptionIndex());
 

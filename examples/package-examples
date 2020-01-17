@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Package Example Data - Must be run from the examples/ dir
+
+DISSOLVEVERSION=""
+
+usage()
+{
+	echo "Usage: $0 [-v Dissolve version]"
+	exit 1
+}
+
+# Parse options
+while getopts ":v:" opt
+do
+	case "${opt}" in
+		v)
+			DISSOLVEVERSION=${OPTARG}
+			echo "Dissolve version set to '${DISSOLVEVERSION}'"
+			;;
+		\?)
+			usage
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+if [ "x$DISSOLVEVERSION" = "x" ]
+then
+	echo "Error: The code version must be set with -v (for naming purposes)."
+	exit 1
+fi
+
+ARCHIVEDIR="Dissolve-${DISSOLVEVERSION}-ExampleData"
+FILES=()
+
+# Set file targets
+
+# -- Argon
+FILES+=(argon/input.txt) 
+FILES+=(argon/data/yarnell.sq)
+
+# -- Benzene
+FILES+=(benzene/input.txt)
+FILES+=(benzene/data/C6H6.mint01)
+FILES+=(benzene/data/C6D6.mint01)
+FILES+=(benzene/data/5050.mint01)
+
+# -- Silica (Bulk)
+FILES+=(silica_bulk/input.txt)
+FILES+=(silica_bulk/data/SiO2_NIMROD.mint01)
+
+# -- Species Data
+FILES+=(species/benzene.dsp)
+
+# -- Water
+FILES+=(water/input.txt)
+FILES+=(water/data/SLS18498-H2O.mint01)
+FILES+=(water/data/SLS18500-HDO5050.mint01)
+FILES+=(water/data/SLS18502-D2O.mint01)
+
+# Assemble file list from all dirs
+
+mkdir ${ARCHIVEDIR}
+for file in "${FILES[@]}"
+do
+  cp -v --parents "${file}" ${ARCHIVEDIR}
+done
+
+# Create ZIP
+zip -9rv ${ARCHIVEDIR}.zip ${ARCHIVEDIR}
+
+# Create tgz
+tar zcvf ${ARCHIVEDIR}.tar.gz ${ARCHIVEDIR}
+
+# Clean up
+rm -rf ${ARCHIVEDIR}
+
+# All done.
+

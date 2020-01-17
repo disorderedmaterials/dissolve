@@ -143,7 +143,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::name(), KeywordData< Venum<NodeValue,E> >::data_.value().asString(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
+		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::name(), KeywordData< Venum<NodeValue,E> >::data_.value().asString().get(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
 	}
 
 

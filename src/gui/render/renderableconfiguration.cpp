@@ -163,13 +163,13 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	const Atom* i, *j;
 	Vec3<double> ri, rj;
 
+	// Check data source
+	if (!validateDataSource()) return;
+
 	// Clear existing data
 	lineConfigurationPrimitive_->forgetAll();
 	configurationAssembly_.clear();
 	unitCellAssembly_.clear();
-
-	// Check data source
-	if (!validateDataSource()) return;
 
 	// Grab the Configuration's Box and CellArray
 	const Box* box = source_->box();

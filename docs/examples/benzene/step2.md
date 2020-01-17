@@ -43,7 +43,7 @@ In anticipation of some bad contacts:
 > Set the **Requested** value for the _Size Factor Scaling_ to 10.0.
 {: .step}
 
-Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since it is too large for our configuration:
+Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since this is larger than the half the maximum width of our simulation box.
 
 > **Forcefield** tab, **Pair Potentials** section
 {: .action .action_tabs}
