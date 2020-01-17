@@ -367,6 +367,9 @@ void ModuleListChart::blockRemovalRequested(const QString& blockIdentifier)
 		// If the Module is currently displayed in its own ModuleTab, remove that first
 		emit(blockRemoved(blockIdentifier));
 
+		// If the module to delete is the currently-displayed one, unset it now
+		if (module == currentModule()) setCurrentModule(NULL);
+
 		// Remove the Module instance
 		dissolve_.deleteModuleInstance(module);
 
