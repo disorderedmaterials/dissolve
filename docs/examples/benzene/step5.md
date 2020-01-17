@@ -14,7 +14,7 @@ Now that the analysis processing layer is prepared, we need to run it for a whil
 > Enter 1000 and click _OK_
 {: .action .action_edit}
 
-Dissolve will now iterate for 1000 iterations and stop - you can see the estimated time to complete these 1000 steps in the status bar at the bottom of the main window. Now might be a good time to have a drink, or write that email you've been putting off. If you think 1000 iterations is going to take too long, press **Escape** to stop the simulation and go for 500 iterations instead.
+Dissolve will now iterate for 1000 iterations and stop - you can see the estimated time (ETA) to complete these 1000 steps in the status bar at the bottom of the main window. Now might be a good time to have a drink, or write that email you've been putting off. If you think 1000 iterations is going to take too long, press **Escape** to stop the simulation and go for 500 iterations instead.
 
 To see what's being calculated, open up the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) in a separate tab:
 
