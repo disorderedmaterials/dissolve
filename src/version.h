@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_VERSION_H
 #define DISSOLVE_VERSION_H
 
-#define DISSOLVEVERSION "0.5.2"
+#define DISSOLVEVERSION "0.5.3"
 #define DISSOLVEREPO "https://github.com/trisyoungs/dissolve.git"
 
 #endif
