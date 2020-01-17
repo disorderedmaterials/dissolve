@@ -106,7 +106,13 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: artifacts
+    - name: Create Example Data Archive
+      uses: actions/download-artifact@v1
+      run: |
+        DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        cd ./examples
+        ./package-examples -v $DISSOLVE_VERSION
     - name: Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
-        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*AppImage
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*AppImage examples/*zip examples/*.tar.gz
