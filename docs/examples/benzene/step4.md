@@ -35,7 +35,7 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 {: .action .action_groups}
 > Set both **SiteA** and **SiteB** to `COG`
 {: .step}
-> Set the **AxisA** and **AxisB** to `3`
+> Set the **AxisA** and **AxisB** to `ZAxis`
 {: .step}
 > Enable the **ExcludeSameMolecule** to prevent the unwanted self-correlation spike at 0 in the resulting RDF
 {: .step}

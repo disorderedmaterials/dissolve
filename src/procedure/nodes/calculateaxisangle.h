@@ -23,6 +23,7 @@
 #define DISSOLVE_PROCEDURENODE_CALCULATEVECTOR_H
 
 #include "procedure/nodes/calculatebase.h"
+#include "classes/site.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -33,7 +34,7 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
 {
 	public:
 	// Constructor
-	CalculateAxisAngleProcedureNode(SelectProcedureNode* site0 = NULL, int axis0 = 1, SelectProcedureNode* site1 = NULL, int axis1 = 1);
+	CalculateAxisAngleProcedureNode(SelectProcedureNode* site0 = NULL, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis, SelectProcedureNode* site1 = NULL, OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
 	// Destructor
 	~CalculateAxisAngleProcedureNode();
 

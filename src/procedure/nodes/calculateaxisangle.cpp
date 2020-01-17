@@ -22,7 +22,7 @@
 #include "procedure/nodes/calculateaxisangle.h"
 #include "procedure/nodes/select.h"
 #include "keywords/bool.h"
-#include "keywords/integer.h"
+#include "keywords/enumoptions.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -30,15 +30,15 @@
 #include "base/sysfunc.h"
 
 // Constructor
-CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode* site0, int axis0, SelectProcedureNode* site1, int axis1) : CalculateProcedureNodeBase(ProcedureNode::CalculateAxisAngleNode, site0, site1)
+CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode* site0, OrientedSite::SiteAxis axis0, SelectProcedureNode* site1, OrientedSite::SiteAxis axis1) : CalculateProcedureNodeBase(ProcedureNode::CalculateAxisAngleNode, site0, site1)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
 	keywords_.add("Sites", siteKeywords_[0], "I", "Site that contains the first set of axes");
-	keywords_.add("Sites", new IntegerKeyword(axis0, 1, 3), "AxisI", "Axis to use from site I");
+	keywords_.add("Sites", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis0), "AxisI", "Axis to use from site I");
 	siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site1);
 	keywords_.add("Sites", siteKeywords_[1], "J", "Site that contains the second set of axes");
-	keywords_.add("Sites", new IntegerKeyword(axis1, 1, 3), "AxisJ", "Axis to use from site J");
+	keywords_.add("Sites", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis1), "AxisJ", "Axis to use from site J");
 }
 
 // Destructor
@@ -70,8 +70,8 @@ int CalculateAxisAngleProcedureNode::dimensionality() const
 bool CalculateAxisAngleProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Get orientation flag
-	axisI_ = keywords_.asInt("AxisI") - 1;
-	axisJ_ = keywords_.asInt("AxisJ") - 1;
+	axisI_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisI");
+	axisJ_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisJ");
 }
 
 // Execute node, targetting the supplied Configuration
