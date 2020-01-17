@@ -39,7 +39,7 @@ jobs:
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve-gui.dmginfo
-        dmgbuild -s ci/osx/settings.py -D app=./Dissolve-GUI-${VERSION}/Dissolve-GUI.app "Dissolve GUI" Dissolve-GUI-continuous.dmg
+        dmgbuild -s ci/osx/settings.py -D app=./Dissolve-GUI-${VERSION}/Dissolve-GUI.app "Dissolve GUI" Dissolve-GUI-${VERSION}.dmg
         mkdir damage
         mv *dmg damage
     - name: Upload Artifacts
@@ -63,5 +63,7 @@ jobs:
     - name: Create / Update Continuous Release
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         DATE=`date`
+        mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-Catalina.dmg
         ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*dmg

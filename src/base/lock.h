@@ -1,7 +1,7 @@
 /*
 	*** Lock and Locker
 	*** src/base/lock.h
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 

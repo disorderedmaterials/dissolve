@@ -66,22 +66,25 @@ grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9
 if [ "$TEST" = "false" ]
 then
   sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve.dmginfo
+  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve-gui.dmginfo
   sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve-mpi.dmginfo
 fi
 echo -n "    dissolve.dmginfo (Program Version) : "
 grep 'APP_VERSION=' ./ci/osx/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
+echo -n "dissolve-gui.dmginfo (Program Version) : "
+grep 'APP_VERSION=' ./ci/osx/dissolve-gui.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 echo -n "dissolve-mpi.dmginfo (Program Version) : "
 grep 'APP_VERSION=' ./ci/osx/dissolve-mpi.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 
 # Windows build files
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-[0-9\.]*/OutputBaseFilename=Dissolve-$MAJOR.$MINOR.$PATCH/g" ci/windows/dissolve.iss
+  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-GUI-[0-9\.]*-Win64/OutputBaseFilename=Dissolve-GUI-$MAJOR.$MINOR.$PATCH-Win64/g" ci/windows/dissolve-gui.iss
 fi
-echo -n "        dissolve.iss (Program Version) : "
-grep 'define MyAppVersion' ci/windows/dissolve.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
-echo -n "        dissolve.iss (Output Filename) : "
-grep 'OutputBaseFilename' ci/windows/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
+echo -n "    dissolve-gui.iss (Program Version) : "
+grep 'define MyAppVersion' ci/windows/dissolve-gui.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
+echo -n "    dissolve-gui.iss (Output Filename) : "
+grep 'OutputBaseFilename' ci/windows/dissolve-gui.iss | sed -e 's/OutputBaseFilename=Dissolve-GUI-\([0-9\.]*\)-Win64/\1/g'
 
 # Documentation
 if [ "$TEST" = "false" ]

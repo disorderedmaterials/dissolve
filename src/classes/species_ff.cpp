@@ -1,7 +1,7 @@
 /*
 	*** Species Definition - Forcefield
 	*** src/classes/species_ff.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -61,7 +61,7 @@ bool Species::applyForcefieldTerms(CoreData& coreData)
 
 	// Apply the specified Forcefield
 	if (!forcefield_->assignAtomTypes(this, coreData, false)) return false;
-	if (!forcefield_->assignIntramolecular(this, true, true, true, true, true)) return false;
+	if (!forcefield_->assignIntramolecular(this, true, true)) return false;
 
 	return true;
 }

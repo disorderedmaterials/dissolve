@@ -1,7 +1,7 @@
 /*
 	*** Select GenericItem Dialog
 	*** src/gui/selectgenericitemdialog.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -63,7 +63,7 @@ class SelectGenericItemDialog : public QDialog
 			// Item name
 			item = new QTableWidgetItem(templatedItem->name());
 			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			item->setData(Qt::UserRole, VariantPointer<Data1D>(templatedItem));
+			item->setData(Qt::UserRole, VariantPointer<T>(templatedItem));
 			ui_.ItemsTable->setItem(count, 0, item);
 
 			// Item source
@@ -108,15 +108,15 @@ class SelectGenericItemDialog : public QDialog
 
 		if (exec() == QDialog::Accepted)
 		{
-			// Get current item
-			QTableWidgetItem* item = ui_.ItemsTable->currentItem();
+			// Get item in first column on the current row
+			int row = ui_.ItemsTable->currentRow();
+			if (row == -1) return NULL;
+			QTableWidgetItem* item = ui_.ItemsTable->item(row, 0);
 
-			// Cast to correct type
-			GenericItem* genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
-			GenericItemContainer<T>* castItem = dynamic_cast< GenericItemContainer<T>* >(genericItem);
-			if (!castItem) return NULL;
+			// Retrieve the data pointer
+			T* dataItem = VariantPointer<T>(item->data(Qt::UserRole));
 
-			return &castItem->data();
+			return dataItem;
 		}
 		else return NULL;
 	}

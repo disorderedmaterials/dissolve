@@ -1,7 +1,7 @@
 /*
 	*** Species Atom Definition
 	*** src/classes/speciesatom.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -73,9 +73,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return species parent
 	const Species* species() const;
 	// Set basic atom properties
-	void set(Element* element, double rx, double ry, double rz);
+	void set(Element* element, double rx, double ry, double rz, double q = 0.0);
 	// Set basic atom properties
-	void set(Element* element, const Vec3<double> r);
+	void set(Element* element, const Vec3<double> r, double q = 0.0);
 	// Set atomic element
 	void setElement(Element* el);
 	// Return atomic element

@@ -1,7 +1,7 @@
 /*
 	*** Species Definition
 	*** src/classes/species.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -93,7 +93,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	
 	public:
 	// Add a new atom to the Species
-	SpeciesAtom* addAtom(Element* element, Vec3<double> r);
+	SpeciesAtom* addAtom(Element* element, Vec3<double> r, double q = 0.0);
 	// Remove the specified atom from the species
 	void removeAtom(SpeciesAtom* i);
 	// Return the number of atoms in the species

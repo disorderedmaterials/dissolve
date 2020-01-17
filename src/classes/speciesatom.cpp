@@ -1,7 +1,7 @@
 /*
 	*** SpeciesAtom Definition
 	*** src/classes/speciesatom.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -55,17 +55,19 @@ const Species* SpeciesAtom::species() const
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element* element, double rx, double ry, double rz)
+void SpeciesAtom::set(Element* element, double rx, double ry, double rz, double q)
 {
 	element_ = element;
 	r_.set(rx, ry, rz);
+	charge_ = q;
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element* element, const Vec3<double> r)
+void SpeciesAtom::set(Element* element, const Vec3<double> r, double q)
 {
 	element_ = element;
 	r_ = r;
+	charge_ = q;
 }
 
 // Set atomic element

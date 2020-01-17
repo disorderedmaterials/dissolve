@@ -1,7 +1,7 @@
 /*
 	*** Generic Item
 	*** src/genericitems/item.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -89,8 +89,12 @@ class GenericItem : public ListItem<GenericItem>
 	void setVersion(int version);
 	// Bump the version of the item
 	void bumpVersion();
-	// Set flags for item
+	// Set flags for item, overwriting any existing flags
 	void setFlags(int flags);
+	// Add (set) flag for item
+	void addFlag(ItemFlag flag);
+	// Remove (uneset) flag for item
+	void removeFlag(ItemFlag flag);
 	// Return flags
 	int flags() const;
 	// Return whether specified flag is set

@@ -20,8 +20,8 @@ Steps:
 - Investigate adjusting the interatomic potential by hand
 
 ## Data Files
-- Neutron data file: [yarnell.sq](https://github.com/trisyoungs/dissolve/tree/develop/examples/argon/data/yarnell.sq)
-- Reference input file: [argon.txt](https://github.com/trisyoungs/dissolve/tree/develop/examples/argon/argon.txt)
+- Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/argon/data/yarnell.sq)
+- Reference input file: [argon.txt](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/argon/argon.txt)
 
 ## Preparation
 
@@ -35,7 +35,6 @@ Create a new directory in a suitable location and download or copy the data file
 {: .action .action_menu}
 > Save your input file under a sensible name in the directory containing the example data file
 {: .step}
-
 
 [Let's begin!](step1.md){: .btn}
 

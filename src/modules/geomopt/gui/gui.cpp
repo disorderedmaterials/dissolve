@@ -1,7 +1,7 @@
 /*
 	*** Geometry Optimisation Module - GUI
 	*** src/modules/geomopt/gui/gui.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

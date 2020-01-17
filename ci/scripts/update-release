@@ -11,17 +11,19 @@ RELEASE_BODY_FILE_WARN="false"
 RELEASE_PRE="false"
 DELETE_EXISTING="false"
 DELETE_EXISTING_ALWAYS="false"
+DELETE_ALL_ASSETS="false"
+UPDATE_TAG_SHA="false"
 ARTIFACTS=""
 NARTIFACTS=0
 
 usage()
 {
-	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-w] [-p] artifacts ..."
+	echo "Usage: $0 [-r owner/repo] [-t release tag] [-n release_name] [-b release_body] [-f release_body_file] [-a] [-d] [-e] [-w] [-p] [-u] artifacts ..."
 	exit 1
 }
 
 # Parse options
-while getopts ":r:t:n:b:f:pwda" opt
+while getopts ":r:t:n:b:f:pwdaeu" opt
 do
 	case "${opt}" in
 		r)
@@ -60,6 +62,14 @@ do
 			DELETE_EXISTING="true"
 			echo "Existing release with the same tag will be deleted if it exists (unless HEAD/tag hashes match)"
 			;;
+		e)
+			DELETE_ALL_ASSETS="true"
+			echo "All existing release assets will be deleted"
+			;;
+		u)
+			UPDATE_TAG_SHA="true"
+			echo "SHA for specified tag will updated to reflect current HEAD"
+			;;
 		\?)
 			usage
 			;;
@@ -77,8 +87,8 @@ fi
 
 # Set up vars
 echo "Repository is $REPO"
-REPOURL="https://api.github.com/repos/${REPO}"
-echo "API URL is $REPOURL"
+REPO_URL="https://api.github.com/repos/${REPO}"
+echo "API URL is $REPO_URL"
 
 # Enable erroring
 set -e
@@ -132,7 +142,7 @@ i=0
 while (( i < 3 ))
 do
 	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
-	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPOURL}/releases)
+	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
 
 	# Check for error or no data
 	if [[ $RELEASES =~ "documentation_url" ]]
@@ -186,11 +196,17 @@ then
 		git config --local user.name "trisyoungs"
 		git config --local user.email "tristan.youngs@stfc.ac.uk"
 
-		git tag -f $RELEASE_TAG
+		# Update tag SHA?
+		if [ "$UPDATE_TAG_SHA" = "true" ]
+		then
+			FULL_HEAD_HASH=`git rev-parse HEAD`
+			echo " -- Updating tag hash to that of the current HEAD (${FULL_HEAD_HASH})"
+			curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous
+		fi
 
 		# Construct release information
 		RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
-		RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TRAVIS_COMMIT'"'
+		RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
 		RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
 		RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
 		RELEASE_DATA=${RELEASE_DATA}', "draft": false'
@@ -199,7 +215,18 @@ then
 		echo $RELEASE_DATA
 
 		# Patch release
-		CURRENT_RELEASEINFO=$(curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
+		curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL}
+
+		# Delete existing assets?
+		if [ "$DELETE_ALL_ASSETS" = "true" ]
+		then
+			ASSETS=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
+			ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
+			for id in $ASSET_IDS
+			do
+				curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id}
+			done
+		fi
 	fi
 fi
 
@@ -208,20 +235,10 @@ if [ "x$CURRENT_URL" = "x" ]
 then
 	echo " -- No release with tag $RELEASE_TAG currently exists."
 	echo "    A new one will be created."
-	if [ "${CURRENT_BRANCH}" = "${DEVELOPMENT_BRANCH}" ]
-	then
-		echo "    The current source will be tagged as a continuous build..."
-
-		# Set GitHub username and email
-		git config --local user.name "trisyoungs"
-		git config --local user.email "tristan.youngs@stfc.ac.uk"
-
-		git tag -f $RELEASE_TAG
-	fi
 
 	# Construct release information
 	RELEASE_DATA='{ "tag_name": "'$RELEASE_TAG'"'
-	RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TRAVIS_COMMIT'"'
+	RELEASE_DATA=${RELEASE_DATA}', "target_commitish": "'$TAG_HASH'"'
 	RELEASE_DATA=${RELEASE_DATA}', "name": "'$RELEASE_NAME'"'
 	RELEASE_DATA=${RELEASE_DATA}', "body": "'$RELEASE_BODY'"'
 	RELEASE_DATA=${RELEASE_DATA}', "draft": false'
@@ -230,7 +247,7 @@ then
 	echo $RELEASE_DATA
 
 	# Create release
-	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPOURL}/releases)
+	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
 
 	# Extract url
 	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')

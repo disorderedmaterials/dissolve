@@ -1,7 +1,7 @@
 /*
 	*** Skeleton Module - Initialisation
 	*** src/modules/skeleton/init.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

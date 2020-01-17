@@ -1,7 +1,7 @@
 /*
 	*** Py4OH cation Forcefield
 	*** src/data/ff/ludwig/py4oh.cpp
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
@@ -86,7 +86,7 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
 		{ this,	ELEMENT_H,	13,	"hc_2",	"nbonds=1,-&9",						"Hydrogen of Tail, nextnext=N",
 								0.0043,	"hc" },
 		{ this,	ELEMENT_H,	14,	"hc_3",	"nbonds=1,-&10",					"Hydrogen of Tail, nextnext=O",
-								0.0361,	"hc" },
+								0.0316,	"hc" },
 		{ this,	ELEMENT_H,	15,	"hc_4",	"nbonds=1,-&11",					"Hydrogen of Tail, adjacent to O",
 								-0.0205,	"hc" },
 		{ this,	ELEMENT_O,	16,	"oh",	"nbonds=2,-H,-&11",					"Oxygen of Hydroxyl Group",

@@ -1,7 +1,7 @@
 /*
 	*** Calculate Average Molecule Module
 	*** src/modules/calculate_avgmol/calculate_avgmol.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -88,6 +88,8 @@ class CalculateAvgMolModule : public Module
 	Species averageSpecies_;
 
 	private:
+	// Ensure arrays are the correct size for the current target Species
+	void updateArrays(Dissolve& dissolve);
 	// Update the local species with the coordinates from the supplied arrays
 	void updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z);
 

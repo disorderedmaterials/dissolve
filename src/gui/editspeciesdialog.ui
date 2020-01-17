@@ -90,7 +90,7 @@
   <customwidget>
    <class>SpeciesEditor</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/specieseditor.h</header>
+   <header>gui/specieseditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

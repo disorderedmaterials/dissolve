@@ -8,7 +8,7 @@
 APP_NAME=Dissolve-GUI
 
 # -- APP_VERSION : Should contain the version / revision number of the package (for renaming purposes)
-APP_VERSION="0.5.1"
+APP_VERSION="0.5.2"
 
 # -- APP_BIN : List of binaries (space-separated, with paths) to include in the bundle
 APP_BIN="build/dissolve-gui.app/Contents/MacOS/dissolve-gui"

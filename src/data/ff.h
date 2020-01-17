@@ -1,7 +1,7 @@
 /*
 	*** Forcefield Data
 	*** src/data/ff.h
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
@@ -134,7 +134,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Assign suitable AtomTypes to the supplied Species
 	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species
-	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions, bool generateImpropers) const;
+	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool generateImpropers) const;
 
 
 	/*

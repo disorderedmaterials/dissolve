@@ -1,7 +1,7 @@
 /*
 	*** Species Definition - Atomic Information
 	*** src/classes/species_atomic.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -23,11 +23,11 @@
 #include "data/atomicmass.h"
 
 // Add a new atom to the Species
-SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
+SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r, double q)
 {
 	SpeciesAtom* i = atoms_.add();
 	i->setSpecies(this);
-	i->set(element, r.x, r.y, r.z);
+	i->set(element, r.x, r.y, r.z, q);
 	i->setIndex(atoms_.nItems()-1);
 
 	++version_;

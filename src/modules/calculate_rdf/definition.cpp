@@ -1,7 +1,7 @@
 /*
 	*** Calculate RDF Module - Definition
 	*** src/modules/calculate_rdf/definition.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #include "modules/calculate_rdf/rdf.h"
 
 // Return type of module
-const char* CalculateRDFModule::type() const	
+const char* CalculateRDFModule::type() const
 {
 	return "CalculateRDF";
 }
