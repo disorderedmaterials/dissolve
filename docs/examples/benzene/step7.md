@@ -13,6 +13,8 @@ Restart the simulation and monitor the progress of the r-factors and eReq value 
 {: .action .action_tabs}
 > Double-click the [`EPSR`](../../userguide/modules/epsr) module to open it in a tab and see all of the associated graphs
 {: ..action .action_mouse}
+> Click the `R-Factor` tab to view the `R-Factor` (bottom) and `EReq` (top) graphs
+{: ..action .action_mouse}
 
 Once the additional energy has stabilised at 10.0, we can increase it to 20.0 to improve our fit a little more.
 
