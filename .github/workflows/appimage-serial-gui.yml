@@ -89,10 +89,11 @@ jobs:
         name: artifacts
     - name: Update Versioned Release
       run: |
+        SHORTHASH=`git rev-parse --short HEAD`
         DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         echo "Code version detected as: $DISSOLVE_VERSION"
-        mv -v artifacts/Dissolve-continuous-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
-        mv -v artifacts/Dissolve-GUI-continuous-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
+        mv -v artifacts/Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
+        mv -v artifacts/Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
         ./ci/scripts/update-release -r ${{ github.repository }} -t ${DISSOLVE_VERSION} -n "v${DISSOLVE_VERSION}" -f Recent.md artifacts/*AppImage
   updatecontinuous:
     runs-on: ubuntu-latest
