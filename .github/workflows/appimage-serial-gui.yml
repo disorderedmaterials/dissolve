@@ -106,8 +106,7 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: artifacts
-    - name: Create Example Data Archive
-      uses: actions/download-artifact@v1
+    - name: Create Example Data Archives
       run: |
         DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         cd ./examples
