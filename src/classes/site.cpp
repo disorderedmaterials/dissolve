@@ -65,7 +65,7 @@ const Matrix3& Site::axes() const
 }
 
 /*
- * Site with Axes
+ * Oriented Site
  */
 
 // Constructor

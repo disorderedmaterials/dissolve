@@ -57,7 +57,7 @@ class Site
 	virtual const Matrix3& axes() const;
 };
 
-// Site with Axes Definition
+// Oriented Site Definition
 class OrientedSite : public Site
 {
 	public:
