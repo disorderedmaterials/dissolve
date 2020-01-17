@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.2 at 13:18:41 on 17-01-2020.
+# Input file written by Dissolve v0.5.2 at 17:01:15 on 17-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -20,7 +20,7 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  Silicon  2.000000e+00  LJ  1.750000e-01  1.060000e+00  0.000000e+00  0.000000e+00
+  Parameters  Silicon  2.000000e+00  LJ  1.750000e-01  1.030000e+00  0.000000e+00  0.000000e+00
   Parameters  Oxygen  -1.000000e+00  LJ  1.650000e-01  3.500000e+00  0.000000e+00  0.000000e+00
   Range  10.000000
   Delta  0.005000
@@ -112,6 +112,7 @@ Layer  'RDF / Neutron S(Q)'
     Configuration  'Bulk'
     Reference  mint  'data/SiO2_NIMROD.mint01'
     EndReference
+    ReferenceIgnoreFirst  True
   EndModule
 EndLayer
 
@@ -120,7 +121,7 @@ Layer  'Refine (EPSR)'
 
   Module  EPSR  'EPSR01'
     Frequency  1
-    EReq   1.50000e+02
+    EReq   5.00000e+01
     Target  'NeutronSQ01'  'Default'
   EndModule
 EndLayer
