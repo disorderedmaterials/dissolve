@@ -23,6 +23,7 @@
 #define DISSOLVE_SITE_H
 
 #include "math/matrix3.h"
+#include "base/enumoptions.h"
 
 // Forward Declarations
 class Molecule;
@@ -75,6 +76,10 @@ class OrientedSite : public Site
 	Matrix3 axes_;
 
 	public:
+	// Axis Enum
+	enum SiteAxis { XAxis = 0, YAxis = 1, ZAxis = 2};
+	// Return enum options for SiteAxis
+	static EnumOptions<OrientedSite::SiteAxis> siteAxis();
 	// Return whether local axes are present
 	bool hasAxes() const;
 	// Return local axes
