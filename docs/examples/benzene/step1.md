@@ -74,14 +74,14 @@ The other isotopologues we need are either generated automatically by Dissolve (
 
 ### Add Analysis Sites
 
-We'll locate our analysis site at the centre of the benzene ring and give it some axes so that we may calculate orientational / spatial functions around it. The figure below shows the atoms we'll select for the origin (purple), x-axis (red) and y-axis (blue), and will set the XY plane to that of the ring, with the _z_ axis perpendicular to the ring.
+We'll locate our analysis site at the centre of the benzene ring and give it some axes so that we may calculate orientational / spatial functions around it. The figure below shows the atoms we'll select to define the origin (purple), x-axis (red) and y-axis (blue). Using these atoms as refence points for our corrodinate system will set the XY plane to that of the ring, with the _z_ axis perpendicular to the ring.
 
 ![](site.png){: .img-centre}
 *Origin (purple), x-axis (red) and y-axis (blue) atoms defining the oriented benzene site*
 
 > **Benzene** species tab, **Analysis Sites** section
 {: .action .action_tabs}
-> Select all six carbon atoms in the viewer
+> Select all six carbon atoms in the viewer (you may need to click _reset view_ first, to see the whole molecule)
 {: .action .action_mouse}
 > Click **Create** in the viewer toolbar to create a new site with the origin at the center between these six atoms
 {: .step}
