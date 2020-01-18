@@ -2,6 +2,7 @@
 add_subdirectory(analyse)
 add_subdirectory(atomshake)
 add_subdirectory(bragg)
+add_subdirectory(calculate_angle)
 add_subdirectory(calculate_avgmol)
 add_subdirectory(calculate_axisangle)
 add_subdirectory(calculate_cn)
