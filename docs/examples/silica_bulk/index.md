@@ -27,7 +27,7 @@ Download the example data file archive `Dissolve-X.Y.Z-ExampleData.zip` or `Diss
 
 Alternatively, download the data files listed below and save them to your location of choice.
 
-- Neutron data file: [SiO2_NIMROD.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/silica/data/SiO2_NIMROD.mint01)
+- Neutron data file: [SiO2_NIMROD.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/silica_bulk/data/SiO2_NIMROD.mint01)
 
 [Let's begin!](step1.md){: .btn}
 
