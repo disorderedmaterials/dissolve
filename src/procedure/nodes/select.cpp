@@ -24,6 +24,7 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "keywords/types.h"
+#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/sitereference.h"
@@ -36,12 +37,15 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite* site, bool axesRequired) :
 {
 	if (site) speciesSites_.append(site);
 	axesRequired_ = axesRequired;
+	distanceLimit_.set(0.0, 5.0);
 
 	keywords_.add("Target", new SpeciesSiteRefListKeyword(speciesSites_, axesRequired_), "Site", "Add target site(s) to the selection");
 	keywords_.add("Target", new DynamicSiteNodesKeyword(this, dynamicSites_, axesRequired_), "DynamicSite", "Add a new dynamic site to the selection");
 	keywords_.add("Target", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "SameMoleculeAsSite", "Request that the selected site comes from the molecule containing the current site in the specified SelectNode");
 	keywords_.add("Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameMoleculeExclusions_), "ExcludeSameMolecule", "Exclude sites from selection if they are present in the same molecule as the current site in the specified SelectNode(s)");
 	keywords_.add("Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameSiteExclusions_), "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
+	keywords_.add("Target", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "DistanceReferenceSite", "Site from which distance is measured, and sites excluded if not within range");
+	keywords_.add("Target", new RangeKeyword(distanceLimit_, Vec3Labels::MinMaxBinwidthlabels), "DistanceLimits", "Distance range to limit selection, if DistanceReferenceSite is defined");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &forEachBranch_, ProcedureNode::AnalysisContext), "ForEach", "Branch to run on each site selected");
 
 	forEachBranch_ = NULL;
@@ -50,6 +54,7 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite* site, bool axesRequired) :
 	nCumulativeSites_ = 0;
 	nSelections_ = 0;
 	sameMolecule_ = NULL;
+	distanceReferenceSite_ = NULL;
 }
 
 // Destructor
@@ -178,6 +183,8 @@ bool SelectProcedureNode::prepare(Configuration* cfg, const char* prefix, Generi
 
 	// Retrieve data from keywords
 	sameMolecule_ = keywords_.retrieve<SelectProcedureNode*>("SameMoleculeAsSite");
+	distanceReferenceSite_ = keywords_.retrieve<SelectProcedureNode*>("DistanceReferenceSite");
+	distanceLimit_ = keywords_.retrieve<Range>("DistanceLimits");
 
 	return true;
 }
@@ -200,9 +207,13 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	// Get required Molecule parent, if requested
 	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
 
+	// Site to use as distance reference point (if any)
+	const Site* distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : NULL;
+
 	/*
 	 * Add sites from specified Species/Sites
 	 */
+	double r;
 	RefListIterator<SpeciesSite> siteIterator(speciesSites_);
 	while (SpeciesSite* site = siteIterator.iterate())
 	{
@@ -223,6 +234,13 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 			// Check Site exclusions
 			if (excludedSites_.contains(site)) continue;
 
+			// Check distance from reference site (if defined)
+			if (distanceRef)
+			{
+				r = cfg->box()->minimumDistance(site->origin(), distanceRef->origin());
+				if (!distanceLimit_.contains(r)) continue;
+			}
+			
 			// All OK, so add site
 			sites_.add(site);
 		}

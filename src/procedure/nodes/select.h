@@ -23,6 +23,7 @@
 #define DISSOLVE_PROCEDURENODE_SELECT_H
 
 #include "procedure/nodes/node.h"
+#include "math/range.h"
 #include "templates/array.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -80,6 +81,10 @@ class SelectProcedureNode : public ProcedureNode
 	RefList<const Site> excludedSites_;
 	// Molecule (from site) in which the site must exist (retrieved from keyword data)
 	SelectProcedureNode* sameMolecule_;
+	// Site to use for distance check
+	SelectProcedureNode* distanceReferenceSite_;
+	// Range of distance to allow from distance reference site (if limiting)
+	Range distanceLimit_;
 
 	public:
 	// Return list of Molecules currently excluded from selection
