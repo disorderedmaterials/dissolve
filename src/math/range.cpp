@@ -62,3 +62,10 @@ double Range::maximum() const
 {
 	return maximum_;
 }
+
+// Return whether the range contains the specified value
+bool Range::contains(double d) const
+{
+	if ((d < minimum_) || (d > maximum_)) return false;
+	return true;
+}
