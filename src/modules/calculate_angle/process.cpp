@@ -39,14 +39,14 @@ bool CalculateAngleModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Ensure any parameters in our nodes are set correctly
-	RefList<SelectProcedureNode> sameMoleculeExclusions;
+	RefList<SelectProcedureNode> exclusions;
 	const Vec3<double> rangeAB = keywords_.asVec3Double("RangeAB");
 	const Vec3<double> rangeBC = keywords_.asVec3Double("RangeBC");
 	const Vec3<double> angleRange = keywords_.asVec3Double("AngleRange");
-	selectA_->setKeyword<SelectProcedureNode*>("DistanceReferenceSite", selectB_);
-	selectA_->setKeyword<Range>("DistanceLimits", Range(rangeAB.x, rangeAB.y));
-	selectC_->setKeyword<SelectProcedureNode*>("DistanceReferenceSite", selectB_);
-	selectC_->setKeyword<Range>("DistanceLimits", Range(rangeBC.x, rangeBC.y));
+	selectA_->setKeyword<SelectProcedureNode*>("ReferenceSite", selectB_);
+	selectA_->setKeyword<Range>("InclusiveRange", Range(rangeAB.x, rangeAB.y));
+	selectC_->setKeyword<SelectProcedureNode*>("ReferenceSite", selectB_);
+	selectC_->setKeyword<Range>("InclusiveRange", Range(rangeBC.x, rangeBC.y));
 	collectAB_->setKeyword< Vec3<double> >("RangeX", rangeAB);
 	collectBC_->setKeyword< Vec3<double> >("RangeX", rangeBC);
 	collectABC_->setKeyword< Vec3<double> >("RangeX", angleRange);
@@ -55,13 +55,17 @@ bool CalculateAngleModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	collectDAngleBC_->setKeyword< Vec3<double> >("RangeX", rangeBC);
 	collectDAngleBC_->setKeyword< Vec3<double> >("RangeY", angleRange);
 	const bool excludeSameMoleculeAB = keywords_.asBool("ExcludeSameMoleculeAB");
-	sameMoleculeExclusions.clear();
-	if (excludeSameMoleculeAB) sameMoleculeExclusions.append(selectB_);
-	selectA_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
+	exclusions.clear();
+	if (excludeSameMoleculeAB) exclusions.append(selectB_);
+	selectA_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", exclusions);
 	const bool excludeSameMoleculeBC = keywords_.asBool("ExcludeSameMoleculeBC");
-	sameMoleculeExclusions.clear();
-	if (excludeSameMoleculeBC) sameMoleculeExclusions.append(selectB_);
-	selectC_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
+	exclusions.clear();
+	if (excludeSameMoleculeBC) exclusions.append(selectB_);
+	selectC_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", exclusions);
+	const bool excludeSameSiteAC = keywords_.asBool("ExcludeSameSiteAC");
+	exclusions.clear();
+	if (excludeSameSiteAC) exclusions.append(selectA_);
+	selectC_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameSite", exclusions);
 
 	// Grab Configuration pointer
 	Configuration* cfg = targetConfigurations_.firstItem();

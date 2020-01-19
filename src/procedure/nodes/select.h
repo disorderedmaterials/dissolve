@@ -84,7 +84,7 @@ class SelectProcedureNode : public ProcedureNode
 	// Site to use for distance check
 	SelectProcedureNode* distanceReferenceSite_;
 	// Range of distance to allow from distance reference site (if limiting)
-	Range distanceLimit_;
+	Range inclusiveDistanceRange_;
 
 	public:
 	// Return list of Molecules currently excluded from selection

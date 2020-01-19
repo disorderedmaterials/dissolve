@@ -219,8 +219,9 @@ void CalculateAngleModule::initialise()
 	processAB_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	SequenceProcedureNode* rdfABNormalisation = processAB_->addNormalisationBranch();
 	RefList<const SelectProcedureNode> normAB;
-	normAB.append(selectA_);
 	normAB.append(selectB_);
+	normAB.append(selectA_);
+	normAB.append(selectC_);
 	rdfABNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(normAB));
 	rdfABNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectA_));
 	rdfABNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
@@ -234,6 +235,7 @@ void CalculateAngleModule::initialise()
 	SequenceProcedureNode* rdfBCNormalisation = processBC_->addNormalisationBranch();
 	RefList<const SelectProcedureNode> normBC;
 	normBC.append(selectB_);
+	normBC.append(selectA_);
 	normBC.append(selectC_);
 	rdfBCNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(normBC));
 	rdfBCNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectC_));
@@ -287,6 +289,7 @@ void CalculateAngleModule::initialise()
 	keywords_.link("Sites", selectC_->keywords().find("Site"), "SiteC", "Add site(s) which represent 'C' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeAB", "Whether to exclude correlations between A and B sites on the same molecule", "<True|False>");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeBC", "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
+	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameSiteAC", "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
 
 	// Export
 	keywords_.link("Export", processAB_->keywords().find("Save"), "SaveAB", "Whether to save calculated A-B RDF to disk", "<True|False>");
