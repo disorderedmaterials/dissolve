@@ -254,7 +254,7 @@ void CalculateAngleModule::initialise()
 
 	// Process2D: 'DAngle (A-B)-C'
 	processDAngleAB_ = new Process2DProcedureNode(collectDAngleAB_);
-	processDAngleAB_->setName("DAngle (A-B)-C");
+	processDAngleAB_->setName("DAngle((A-B)-C)");
 	processDAngleAB_->setKeyword<CharString>("LabelValue", "g\\sub{AB}(r)");
 	processDAngleAB_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngleAB_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
@@ -265,7 +265,7 @@ void CalculateAngleModule::initialise()
 
 	// Process2D: 'DAngle A-(B-C)'
 	processDAngleBC_ = new Process2DProcedureNode(collectDAngleBC_);
-	processDAngleBC_->setName("DAngle A-(B-C)");
+	processDAngleBC_->setName("DAngle(A-(B-C))");
 	processDAngleBC_->setKeyword<CharString>("LabelValue", "g\\sub{BC}(r)");
 	processDAngleBC_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngleBC_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
