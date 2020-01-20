@@ -17,7 +17,7 @@ Since our site (`COG`) is set up for the Z axis to be pointing out of the plane 
 
 Let's add an empty processing layer to to the simulation, add on our module, and set it up:
 
-> Layer &#8680; Create... &#8680; Analysis... &#8680; Empty
+> Layer &#8680; Create... &#8680; Empty
 {: .action .action_menu}
 > Double-click the layer tab and rename it to `Analysis`
 {: .step}
