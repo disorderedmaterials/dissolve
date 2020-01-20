@@ -75,7 +75,7 @@ layout: table_wrappers
             <hr>
             <h2 class="text-delta">Table of contents</h2>
             {% assign children_list = site.pages | sort:"nav_order" %}
-            <ul>
+            <ul class="text-delta-list">
               {% for child in children_list %}
                 {% if child.parent == page.title and child.title != page.title %}
                 <li>
