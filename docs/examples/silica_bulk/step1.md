@@ -25,7 +25,7 @@ Somewhat obviously, we need two atomic species for this simulation - an oxygen, 
 > Atom types created in this way are named after the symbol of the relevant element.
 {: .tip}
 	
-Now let's generate our atomic species and assign the relevant atom types. First, the silicon:
+Now let's generate our atomic species, assign the relevant atom types, and create a basic site for each. First, the silicon:
 
 > Species &#8680; Create... &#8680; Atomic...
 {: .action .action_menu}
@@ -34,7 +34,11 @@ Now let's generate our atomic species and assign the relevant atom types. First,
 > **Si** species tab, **Contents & Forcefield** section
 {: .action .action_tabs}
 > In the list of _Atoms_ change the _AtomType_ for the atom to `Si`
-{: step}
+{: .step}
+> **Si** species tab, **Sites** section
+{: .action .action_tabs}
+> Select the silicon atom in the viewer, and click _Create_ in the toolbar to create a site
+{: .step}
 
 And now, the oxygen:
 
@@ -45,6 +49,10 @@ And now, the oxygen:
 > **O** species tab, **Contents & Forcefield** section
 {: .action .action_tabs}
 > In the list of _Atoms_ change the _AtomType_ for the atom to `O`
-{: step}
+{: .step}
+> **O** species tab, **Analysis Sites** section
+{: .action .action_tabs}
+> Select the oxygen atom in the viewer, and click _Create_ in the toolbar to create a site
+{: .step}
 
 [Back to Overview](index.md){: .btn }   [Next Step](step2.md){: .btn .right}
