@@ -92,8 +92,8 @@ jobs:
         SHORTHASH=`git rev-parse --short HEAD`
         DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         echo "Code version detected as: $DISSOLVE_VERSION"
-        mv -v artifacts/Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
-        mv -v artifacts/Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
+        mv -v artifacts/Dissolve-${SHORTHASH}-x86_64.AppImage artifacts/Dissolve-${DISSOLVE_VERSION}-x86_64.AppImage
+        mv -v artifacts/Dissolve-GUI-${SHORTHASH}-x86_64.AppImage artifacts/Dissolve-GUI-${DISSOLVE_VERSION}-x86_64.AppImage
         ./ci/scripts/update-release -r ${{ github.repository }} -t ${DISSOLVE_VERSION} -n "v${DISSOLVE_VERSION}" -f Recent.md artifacts/*AppImage
   updatecontinuous:
     runs-on: ubuntu-latest
@@ -116,6 +116,6 @@ jobs:
       run: |
         DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         SHORTHASH=`git rev-parse --short HEAD`
-        mv -v artifacts/Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${DISSOLVE_VERSION}-${SHORTHASH}-x86_64.AppImage
-        mv -v artifacts/Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${DISSOLVE_VERSION}-${SHORTHASH}-x86_64.AppImage
+        mv -v artifacts/Dissolve-${SHORTHASH}-x86_64.AppImage artifacts/Dissolve-${DISSOLVE_VERSION}-${SHORTHASH}-x86_64.AppImage
+        mv -v artifacts/Dissolve-GUI-${SHORTHASH}-x86_64.AppImage artifacts/Dissolve-GUI-${DISSOLVE_VERSION}-${SHORTHASH}-x86_64.AppImage
         ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*AppImage examples/*zip examples/*.tar.gz

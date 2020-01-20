@@ -31,5 +31,7 @@ We just need to set the instrumental _Q_ broadening and add the reference data t
 {: .action .action_groups}
 > For the **Reference** keyword select the file `SiO2_NIMROD.mint01` and set the format of the data to `mint`
 {: .step}
+> The datafile contains a point at _Q_ = 0.0 which we must remove, so tick the **ReferenceIgnoreFirst** option
+{: .step}
 
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn .right}

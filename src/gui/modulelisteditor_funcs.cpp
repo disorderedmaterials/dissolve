@@ -55,12 +55,13 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 
 	// Create a ModuleListChart widget and set its source list
 	chartWidget_ = new ModuleListChart(moduleLayer_, dissolveWindow_->dissolve(), localConfiguration_);
-	chartWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	chartWidget_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 	ui_.ChartScrollArea->setWidget(chartWidget_);
 	ui_.ChartScrollArea->setWidgetResizable(true);
 	ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 	connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
+	connect(chartWidget_, SIGNAL(requiredSizeChanged()), this, SLOT(chartWidgetSizeChanged()));
 	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString&)), dissolveWindow_, SLOT(showModuleTab(const QString&)));
 	connect(chartWidget_, SIGNAL(blockRemoved(const QString&)), dissolveWindow_, SLOT(removeModuleTab(const QString&)));
 	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString&)), this, SLOT(blockSelectionChanged(const QString&)));
@@ -223,6 +224,13 @@ void ModuleListEditor::chartWidgetDataModified()
 {
 	// We don't know which ModuleBlock sent the signal, so just update the controls widget
 	ui_.ControlsWidget->updateControls();
+}
+
+// Required size of the chart widget has changed
+void ModuleListEditor::chartWidgetSizeChanged()
+{
+	ui_.ChartScrollArea->setMinimumWidth(chartWidget_->width());
+	ui_.ChartScrollArea->updateGeometry();
 }
 
 void ModuleListEditor::controlsWidgetDataModified()

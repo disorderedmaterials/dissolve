@@ -40,8 +40,6 @@ ProcedureChart::ProcedureChart(Procedure* procedure, const CoreData& coreData) :
 {
 	refreshing_ = false;
 
-	resizeToWidgets_ = true;
-
 	// Target Procedure
 	procedure_ = procedure;
 

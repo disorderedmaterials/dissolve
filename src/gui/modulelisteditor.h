@@ -98,6 +98,7 @@ class ModuleListEditor : public QWidget
 	void blockSelectionChanged(const QString& blockIdentifier);
 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 	void chartWidgetDataModified();
+	void chartWidgetSizeChanged();
 	void controlsWidgetDataModified();
 
 

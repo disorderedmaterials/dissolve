@@ -142,7 +142,7 @@ i=0
 while (( i < 3 ))
 do
 	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
-	RELEASES=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
+	RELEASES=$(curl --silent --show-error -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
 
 	# Check for error or no data
 	if [[ $RELEASES =~ "documentation_url" ]]
@@ -184,7 +184,7 @@ then
 		if [ "$TAG_HASH" != "$HEAD_HASH" ] || [ "$DELETE_EXISTING_ALWAYS" = "true" ]
 		then
 			echo " -- Removing existing release..."
-			curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" $CURRENT_URL
+			curl --silent --show-error -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" $CURRENT_URL
 
 			# Reset url so it gets recreated
 			CURRENT_URL="x"
@@ -201,7 +201,7 @@ then
 		then
 			FULL_HEAD_HASH=`git rev-parse HEAD`
 			echo " -- Updating tag hash to that of the current HEAD (${FULL_HEAD_HASH})"
-			curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous
+			RESULT=$(curl --silent --show-error -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data '{ "sha": "'${FULL_HEAD_HASH}'" }' ${REPO_URL}/git/refs/tags/continuous)
 		fi
 
 		# Construct release information
@@ -215,16 +215,18 @@ then
 		echo $RELEASE_DATA
 
 		# Patch release
-		curl -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL}
+		echo " -- Patching existing release info..."
+		RESULT=$(curl --silent --show-error -XPATCH --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${CURRENT_URL})
 
 		# Delete existing assets?
 		if [ "$DELETE_ALL_ASSETS" = "true" ]
 		then
-			ASSETS=$(curl -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
+			ASSETS=$(curl --silent --show-error -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${CURRENT_URL}/assets)
 			ASSET_IDS=$(echo $ASSETS | jq ".[] | .id")
 			for id in $ASSET_IDS
 			do
-				curl -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id}
+				echo "  -- Removing release asset id ${id}..."
+				RESULT=$(curl --silent --show-error -XDELETE --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases/assets/${id})
 			done
 		fi
 	fi
@@ -247,7 +249,7 @@ then
 	echo $RELEASE_DATA
 
 	# Create release
-	CURRENT_RELEASEINFO=$(curl --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
+	CURRENT_RELEASEINFO=$(curl --silent --show-error --header "Authorization: token ${GITHUB_TOKEN}" --data "$RELEASE_DATA" ${REPO_URL}/releases)
 
 	# Extract url
 	CURRENT_URL=$(echo $CURRENT_RELEASEINFO | jq -r '. | .url')
@@ -275,7 +277,7 @@ then
 		BASENAME=$(basename "${file}")
 		echo "... $file (basename=$BASENAME)"
 
-		ARTIFACT_DATA=$(curl --header "Authorization: token ${GITHUB_TOKEN}" \
+		ARTIFACT_DATA=$(curl --silent --show-error --header "Authorization: token ${GITHUB_TOKEN}" \
 		     --header "Accept: application/vnd.github.manifold-preview" \
 		     --header "Content-Type: application/octet-stream" \
 		     --data-binary @$file \

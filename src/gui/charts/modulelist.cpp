@@ -41,8 +41,6 @@ ModuleListChart::ModuleListChart(ModuleList* moduleList, Dissolve& dissolve, Con
 {
 	refreshing_ = false;
 
-	resizeToWidgets_ = true;
-
 	// Target ModuleLayer
 	moduleList_ = moduleList;
 	localConfiguration_ = localConfiguration;

@@ -114,7 +114,7 @@ void CalculateAxisAngleModule::initialise()
 	forEachB->addNode(calcDistance);
 
 	// -- -- Calculate: 'axisAngle'
-	CalculateAxisAngleProcedureNode* calcAngle = new CalculateAxisAngleProcedureNode(selectA_, 0, selectB_, 0);
+	CalculateAxisAngleProcedureNode* calcAngle = new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
 	forEachB->addNode(calcAngle);
 
 	// -- -- Collect2D:  'rAB vs axisAngle)'

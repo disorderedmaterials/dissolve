@@ -1,6 +1,6 @@
 /*
-	*** Procedure Node - Calculate AxisAngle
-	*** src/procedure/nodes/calculatevector.h
+	*** Procedure Node - Calculate Axis Angle
+	*** src/procedure/nodes/calculateaxisangle.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,10 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_CALCULATEVECTOR_H
-#define DISSOLVE_PROCEDURENODE_CALCULATEVECTOR_H
+#ifndef DISSOLVE_PROCEDURENODE_CALCULATEAXISANGLE_H
+#define DISSOLVE_PROCEDURENODE_CALCULATEAXISANGLE_H
 
 #include "procedure/nodes/calculatebase.h"
+#include "classes/site.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -33,7 +34,7 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
 {
 	public:
 	// Constructor
-	CalculateAxisAngleProcedureNode(SelectProcedureNode* site0 = NULL, int axis0 = 1, SelectProcedureNode* site1 = NULL, int axis1 = 1);
+	CalculateAxisAngleProcedureNode(SelectProcedureNode* site0 = NULL, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis, SelectProcedureNode* site1 = NULL, OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
 	// Destructor
 	~CalculateAxisAngleProcedureNode();
 

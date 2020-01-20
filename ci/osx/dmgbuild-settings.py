@@ -4,16 +4,7 @@ from __future__ import unicode_literals
 import biplist
 import os.path
 
-#
-# Example settings file for dmgbuild
-#
-
-# Use like this: dmgbuild -s settings.py "Test Volume" test.dmg
-
-# You can actually use this file for your own application (not just TextEdit)
-# by doing e.g.
-#
-#   dmgbuild -s settings.py -D app=/path/to/My.app "My Application" MyApp.dmg
+# Example usage: dmgbuild -s settings.py -D app=./path/to/Dissolve-GUI.app -D badge_icon=./path/to/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve-GUI" Dissolve-GUI-X.Y.Z.dmg
 
 # .. Useful stuff ..............................................................
 
@@ -151,7 +142,7 @@ list_column_sort_directions = {
 license = {
      'default-language': 'en_US',
      'licenses': {
-         'en_GB': license.txt },
+         'en_GB': 'LICENSE.txt' },
      'buttons': {
          'en_US': (
              b'English',
