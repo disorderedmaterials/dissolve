@@ -67,8 +67,13 @@ int CalculateVectorProcedureNode::dimensionality() const
 // Prepare any necessary data, ready for execution
 bool CalculateVectorProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	// Call the base class function
+	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList)) return false;
+
 	// Get orientation flag
 	rotateIntoFrame_ = keywords_.asBool("RotateIntoFrame");
+
+	return true;
 }
 
 // Execute node, targetting the supplied Configuration
