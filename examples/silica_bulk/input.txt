@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.5.3 at 00:53:57 on 18-01-2020.
+# Input file written by Dissolve v0.5.3 at 16:33:57 on 20-01-2020.
 
 #------------------------------------------------------------------------------#
 #                                   Species                                    #
@@ -7,11 +7,21 @@
 Species 'Si'
   # Atoms
   Atom    1   Si  0.000000e+00  0.000000e+00  0.000000e+00  'Si'  0.000000e+00
+
+  # Sites
+  Site  'Si'
+    Origin  1
+  EndSite
 EndSpecies
 
 Species 'O'
   # Atoms
   Atom    1    O  0.000000e+00  0.000000e+00  0.000000e+00  'O'  0.000000e+00
+
+  # Sites
+  Site  'O'
+    Origin  1
+  EndSite
 EndSpecies
 
 #------------------------------------------------------------------------------#
@@ -123,6 +133,23 @@ Layer  'Refine (EPSR)'
     Frequency  1
     EReq   5.00000e+01
     Target  'NeutronSQ01'  'Default'
+  EndModule
+EndLayer
+
+Layer  'Analysis'
+  Frequency  1
+
+  Module  CalculateAngle  'CalculateAngle01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    RangeAB  1.200000e+00  2.100000e+00  5.000000e-02
+    RangeBC  1.200000e+00  2.100000e+00  5.000000e-02
+    AngleRange  0.000000e+00  1.800000e+02  5.000000e+00
+    SiteA  'Si'  'Si'
+    SiteB  'O'  'O'
+    SiteC  'Si'  'Si'
+    ExcludeSameSiteAC  True
   EndModule
 EndLayer
 

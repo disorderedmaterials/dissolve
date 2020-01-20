@@ -11,14 +11,7 @@ nav_order: 3
 
 ## Summary
 
-Run, refine, and analyse the structure of liquid water at 298 K using three neutron scattering datasets measured on the SANDALS diffractometer at the ISIS Pulsed Neutron and Muon Source in 2001
-
-Steps:
-- Set up a suitable species and configuration
-- Equilibrate the system
-- Adjust intramolecular geometry to match experiment
-- Refine the interatomic potentials
-- Analyse the liquid structure of the refined simulation
+It should be no surprise that water is present in a significant fraction of disordered materials studies, owing to its importance to just about everything, and its presence just about everywhere! Here we'll set up, run, refine, and analyse the structure of liquid water at 298 K using three neutron scattering datasets measured on the SANDALS diffractometer at the ISIS Pulsed Neutron and Muon Source in 2001. This will illustrate most of the core workflows in Dissolve when applying it to the analysis of neutron scattering data, and is an excellent place to start if you're new to Dissolve and/or the analysis of disordered materials.
 
 ## Preparation
 

@@ -34,6 +34,11 @@ The structure factor of the system at this point looks something like this:
 ![](ereq50-fq.png)
 _Stable structure factor at EReq = 50.0_
 
-The question is, can it be better? Increase 
+The question is, can it be better? The answer is, of course, yes - the intensity of the first strong peak in the F(Q) at 1.47 &#8491; is a little low. The empirical potential will eventually sort this out (perhaps with an increase of **EReq** to 75 or so) but it takes time to get it exactly right.
+
+> What does the peak at _Q_ = 1.47 &#8491; correspond to, and why might it be difficult to reproduce?
+{: .question}
+
+For the purposes of the example, let's move on and calculate something from the (semi-) refined structure.
 
 [Previous Step](step4.md){: .btn }   [Next Step](step6.md){: .btn .right}
