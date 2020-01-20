@@ -69,9 +69,14 @@ int CalculateAxisAngleProcedureNode::dimensionality() const
 // Prepare any necessary data, ready for execution
 bool CalculateAxisAngleProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	// Call the base class function
+	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList)) return false;
+
 	// Get orientation flag
 	axisI_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisI");
 	axisJ_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisJ");
+
+	return true;
 }
 
 // Execute node, targetting the supplied Configuration

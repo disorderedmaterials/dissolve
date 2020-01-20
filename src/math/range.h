@@ -50,6 +50,8 @@ class Range
 	void setMaximum(double maximum);
 	// Return maximum for range
 	double maximum() const;
+	// Return whether the range contains the specified value
+	bool contains(double d) const;
 };
 
 #endif

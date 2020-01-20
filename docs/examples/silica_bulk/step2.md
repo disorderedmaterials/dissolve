@@ -25,7 +25,7 @@ Let's set-up the parameters in the generator first of all. The relative random m
 > Set `ratioB` to 2
 {: .action .action_edit}
 
-The density of bulk, amorphous silica is 0.0664 atoms &#8491;<sup>-3</sup>:
+The density of bulk, amorphous silica is 0.0664 atoms &#8491;<sup>-3</sup>. We use units of atoms &#8491;<sup>-3</sup> here as this allows us to add both atomic components using the same density value. If we had chosen units of g cm<sup>3</sup> we would have to know the individual densities of silicon and oxygen in amorphous silica.
 
 > Change the value of the real `rho` variable to 0.0664.
 {: .action .action_edit}

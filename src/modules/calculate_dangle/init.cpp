@@ -79,7 +79,33 @@ void CalculateDAngleModule::initialise()
 	 *     EndSelect  'B'
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
-	 * Process2D  DAngle
+	 * Process1D  'RDF(BC)'
+	 *   Normalisation
+	 *     OperateSitePopulationNormalise
+	 *       Site  'A'  'B'
+         *     EndOperateSitePopulationNormalise
+	 *     OperateNumberDensityNormalise
+	 *       Site  'C'
+         *     EndOperateNumberDensityNormalise
+	 *     OperateSphericalShellNormalise
+         *     EndOperateSphericalShellNormalise
+	 *   EndNormalisation
+	 *   LabelX  'r, Angstroms'
+	 *   LabelValue  'g(r)'
+	 * EndProcess1D
+	 * Process1D  'Angle(ABC)'
+	 *   Normalisation
+	 *     OperateExpression
+	 *       Expression("value/sin(x)")
+	 *     EndOperateExpression
+	 *     OperateNormalise
+	 *       Value  1.0
+         *     EndOperateNormalise
+	 *   EndNormalisation
+	 *   LabelX  'theta, Degrees'
+	 *   LabelValue  'Normalised Frequency'
+	 * EndProcess1D
+	 * Process2D  'DAngle(A-BC)'
 	 *   Normalisation
 	 *     OperateEquationNormalise
 	 *       Equation  value/sin(y)
