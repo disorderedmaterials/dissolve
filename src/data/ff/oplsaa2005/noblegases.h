@@ -33,7 +33,7 @@ class SpeciesBond;
 class SpeciesIntra;
 class SpeciesTorsion;
 
-// SPC/Fw Forcefield
+// OPLS-AA (2005) Noble Gases Forcefield
 class Forcefield_OPLSAA2005_NobleGases : public Forcefield
 {
 	public:

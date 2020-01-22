@@ -65,7 +65,7 @@ const Matrix3& Site::axes() const
 }
 
 /*
- * Site with Axes
+ * Oriented Site
  */
 
 // Constructor
@@ -85,6 +85,19 @@ OrientedSite::~OrientedSite()
 bool OrientedSite::hasAxes() const
 {
 	return true;
+}
+
+// Return enum options for SiteAxis
+EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
+{
+	static EnumOptionsList SiteAxisOptions = EnumOptionsList() <<
+		EnumOption(OrientedSite::XAxis, 	"XAxis") <<
+		EnumOption(OrientedSite::YAxis, 	"YAxis") <<
+		EnumOption(OrientedSite::ZAxis, 	"ZAxis");
+
+	static EnumOptions<OrientedSite::SiteAxis> options("SiteAxis", SiteAxisOptions);
+
+	return options;
 }
 
 // Return local axes

@@ -279,13 +279,13 @@ RefList<ExpressionVariable> ProcedureNode::parameterReferences() const
 // Prepare any necessary data, ready for execution
 bool ProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	return ProcedureNode::Success;
+	return true;
 }
 
 // Finalise any necessary data after execution
 bool ProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	return ProcedureNode::Success;
+	return true;
 }
 
 /*

@@ -63,7 +63,7 @@ AtomType* CoreData::addAtomType(Element* el)
 	AtomType* newAtomType = atomTypes_.add();
 
 	// Create a suitable unique name
-	newAtomType->setName(uniqueAtomTypeName(el->name()));
+	newAtomType->setName(uniqueAtomTypeName(el->symbol()));
 
 	// Set data
 	newAtomType->setElement(el);

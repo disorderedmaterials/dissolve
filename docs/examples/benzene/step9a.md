@@ -27,14 +27,14 @@ For sanity, we'll rename it to something we understand:
 
 First of all, let's send the centre-of-geometry RDF from the current production run to this graph. You can right-click on any data shown in any plot in Dissolve to set style options and, in this case, copy the data to any workspace gizmo that will accept it.
 
-> Open the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module in a tab if it isn't already open
+> Open the [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module in a tab if it isn't already open
 {: .action .action_tabs}
-> Right-click on the line plot for the centre-of-mass RDF
+> Right-click on the data curve in the line plot of the centre-of-mass RDF
 {: .action .action_mouse}
 > The **Copy to...** menu contains all the current workspace gizmos that can accept the data. There should be only one (`COG Graph`) so select it.
 {: .step}
 
-Now we must load in our restart point containing the reference data which we can do from the _Data Manager_. The current simulation data will not be overwritten, as we will append a descriptive suffix to the names of all the data stored in the file. As well as protecting the current data, this also means that the only way to visualise the additional data is through the use of workspaces.
+Now we must load in our restart point containing the reference data, which we can do from the _Data Manager_. The current simulation data will not be overwritten, as we will append a descriptive suffix to the names of all the data stored in the file. As well as protecting the current data, this also means that the only way to visualise the additional data is through the use of workspaces.
 
 > Simulation &#8680; Data Manager
 {: .action .action_menu}
@@ -43,6 +43,8 @@ Now we must load in our restart point containing the reference data which we can
 > Select the `reference.restart` file that we saved earlier
 {: .step}
 > A suffix to apply to the data will be suggested based on the filename, in this case 'reference', which is fine, so click _OK_
+{: .step}
+> Click _close_ to exit the _Data Manager_ dialog
 {: .step}
 
 > Once a reference point has been added through the _Data Manager_ the filename and location are stored in the GUI state file, and the data will be reloaded the next time the state file gets read in. You can remove reference points from the _Data Manager_ if you no longer want that to happen.
@@ -66,4 +68,4 @@ _Comparison of centre-of-geometry RDFs between reference (red) and refined (blac
 
 As we can see from the plot, the differences are quite subtle, but nevertheless they are there. On refinement we observe a decrease in the number of short contacts, suggesting a reduction in face-to-face stacking.
 
-[Previous Step](step9.md){: .btn }   [Next Step](ste9b.md){: .btn .right}
+[Previous Step](step9.md){: .btn }   [Next Step](step9b.md){: .btn .right}

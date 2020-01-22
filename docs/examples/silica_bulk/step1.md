@@ -15,14 +15,17 @@ Somewhat obviously, we need two atomic species for this simulation - an oxygen, 
 {: .step}
 > Select silicon in the periodic table dialog
 {: .step}
-> Change the _Charge_ of the new atom type to `2`, the _SR Form_ to `LJ`, _Parameter 1_ (Lennard-Jones epsilon) to `0.175`, and _Parameter 2_ (Lennard-Jones sigma) to `1.0`
+> Change the _Charge_ of the new atom type to `2`, the _SR Form_ to `LJ`, _Parameter 1_ (Lennard-Jones epsilon) to `0.175`, and _Parameter 2_ (Lennard-Jones sigma) to `1.03`
 {: .action .action_edit}
 > Click the _[+] Add_{: .text-green-100} button again, and choose oxygen from the periodic table
 {: .step}
-> Change the _Charge_ of the oxygen atom type to `-1`, the _SR Form_ to `LJ`, _Parameter 1_ (Lennard-Jones epsilon) to `0.17`, and _Parameter 2_ (Lennard-Jones sigma) to `3.5`
+> Change the _Charge_ of the oxygen atom type to `-1`, the _SR Form_ to `LJ`, _Parameter 1_ (Lennard-Jones epsilon) to `0.165`, and _Parameter 2_ (Lennard-Jones sigma) to `3.5`
 {: .action .action_edit}
 
-Now let's generate our atomic species and assign the relevant atom types. First, the silicon:
+> Atom types created in this way are named after the symbol of the relevant element.
+{: .tip}
+	
+Now let's generate our atomic species, assign the relevant atom types, and create a basic site for each. First, the silicon:
 
 > Species &#8680; Create... &#8680; Atomic...
 {: .action .action_menu}
@@ -31,7 +34,11 @@ Now let's generate our atomic species and assign the relevant atom types. First,
 > **Si** species tab, **Contents & Forcefield** section
 {: .action .action_tabs}
 > In the list of _Atoms_ change the _AtomType_ for the atom to `Si`
-{: step}
+{: .step}
+> **Si** species tab, **Sites** section
+{: .action .action_tabs}
+> Select the silicon atom in the viewer, and click _Create_ in the toolbar to create a site
+{: .step}
 
 And now, the oxygen:
 
@@ -42,6 +49,10 @@ And now, the oxygen:
 > **O** species tab, **Contents & Forcefield** section
 {: .action .action_tabs}
 > In the list of _Atoms_ change the _AtomType_ for the atom to `O`
-{: step}
+{: .step}
+> **O** species tab, **Analysis Sites** section
+{: .action .action_tabs}
+> Select the oxygen atom in the viewer, and click _Create_ in the toolbar to create a site
+{: .step}
 
 [Back to Overview](index.md){: .btn }   [Next Step](step2.md){: .btn .right}
