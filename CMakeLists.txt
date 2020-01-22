@@ -8,7 +8,7 @@ set(VERSION_PATCH "3")
 
 set(CMAKE_BUILD_TYPE "Release")
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8)
 
 if(COMMAND cmake_policy)
   cmake_policy(VERSION 2.6)
