@@ -36,6 +36,14 @@ before_install:
 # Build Stages
 jobs:
   include:
+    - stage: OSX Build / Deploy
+      name: Serial, GUI
+      env: PARALLEL=false
+      os: osx
+      cache:
+        directories:
+          - artifacts
+      script: ./ci/osx/build.serial.gui
     - stage: Windows Build
       name: Serial, GUI
       env: PARALLEL=false
@@ -96,23 +104,6 @@ jobs:
         on:
           all_branches: true
         script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
-    - stage: OSX Build / Deploy
-      name: Serial, GUI
-      env: PARALLEL=false
-      os: osx
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/osx.highsierra/build.serial.gui
-      before_deploy:
-        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
-        - chmod u+x ./travis-deploy
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/Dissolve-GUI*dmg
     - stage: OSX Build / Deploy
       name: Parallel
       env: PARALLEL=true
