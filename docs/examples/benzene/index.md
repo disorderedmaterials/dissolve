@@ -6,7 +6,7 @@ nav_order: 4
 ---
 # Comparing Benzene Structure
 
-60 - 75 minutes
+70 - 90 minutes
 {: .label .label-blue }
 
 ## Summary
