@@ -21,6 +21,7 @@ addons:
       - bison
       - ftgl
       - ninja
+      - create-dmg
 
 services:
   - docker
@@ -43,7 +44,9 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/osx/build.serial.gui
+      script:
+        - echo 'USECREATEDMG="TRUE"' >> ci/osx/dissolve-gui.dmginfo
+        - ./ci/osx/build.serial.gui
     - stage: Windows Build
       name: Serial, GUI
       env: PARALLEL=false
