@@ -57,8 +57,9 @@ jobs:
          - VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
          - DATE=`date`
          - mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-HighSierra.dmg
-         - ./ci/scripts/update-release -r trisyoungs/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p artifacts/*dmg
+         - ./ci/scripts/update-release -r trisyoungs/dissolve -t continuousHS -n "Continuous Build for High Sierra (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH} (Travis-CI). Built ${DATE}." -p artifacts/*dmg
     - stage: Windows Build
+      if: branch = FAKEBRANCH
       name: Serial, GUI
       env: PARALLEL=false
       os: windows
@@ -69,6 +70,7 @@ jobs:
         - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ftgl.ps1
         - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ps1
     - stage: Linux Build
+      if: branch = FAKEBRANCH
       name: Serial, GUI
       env: PARALLEL=false
       os: linux
@@ -77,6 +79,7 @@ jobs:
           - artifacts
       script: ./ci/ubuntu/build.serial.gui
     - stage: Linux Build
+      if: branch = FAKEBRANCH
       name: Parallel
       env: PARALLEL=true
       os: linux
@@ -85,6 +88,7 @@ jobs:
           - artifacts
       script: ./ci/ubuntu/build.parallel
     - stage: Linux Test / Deploy
+      if: branch = FAKEBRANCH
       name: Serial (also deploys GUI)
       env: PARALLEL=false
       os: linux
@@ -102,6 +106,7 @@ jobs:
           all_branches: true
         script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
     - stage: Linux Test / Deploy
+      if: branch = FAKEBRANCH
       name: Parallel
       env: PARALLEL=true
       os: linux
@@ -119,6 +124,7 @@ jobs:
           all_branches: true
         script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
     - stage: OSX Build / Deploy
+      if: branch = FAKEBRANCH
       name: Parallel
       env: PARALLEL=true
       os: osx
