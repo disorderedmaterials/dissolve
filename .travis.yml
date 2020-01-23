@@ -47,12 +47,15 @@ jobs:
       script:
         - echo 'USECREATEDMG="TRUE"' >> ci/osx/dissolve-gui.dmginfo
         - ./ci/osx/build.serial.gui
+      before_deploy:
+        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
+        - chmod u+x ./travis-deploy
       deploy:
         provider: script
         skip_cleanup: true
         on:
           all_branches: true
-        script: mv artifacts/Dissolve-GUI-0.5.4.dmg artifacts/Dissolve-GUI-0.5.4-HighSierra.dmg && ./ci/scripts/update-release -r trisyoungs/dissolve -t continuousHS -n "Continuous Build for High Sierra" -b "Continuous release from current \`develop\` branch (Travis-CI)." -p artifacts/*dmg
+        script: ./travis-deploy -n "Travis release ${TRAVIS_TAG}" -f Recent.md -w artifacts/Dissolve*dmg
     - stage: Windows Build
       if: branch = FAKEBRANCH
       name: Serial, GUI
