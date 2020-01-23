@@ -52,7 +52,7 @@ jobs:
         skip_cleanup: true
         on:
           all_branches: true
-        script: SHORTHASH=`git rev-parse --short HEAD` && VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"` && DATE=`date` && mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-HighSierra.dmg && ./ci/scripts/update-release -r trisyoungs/dissolve -t continuousHS -n "Continuous Build for High Sierra (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH} (Travis-CI). Built ${DATE}." -p artifacts/*dmg
+        script: SHORTHASH=`git rev-parse --short HEAD` && VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"` && mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-HighSierra.dmg && ./ci/scripts/update-release -r trisyoungs/dissolve -t continuousHS -n "Continuous Build for High Sierra (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH} (Travis-CI)." -p artifacts/*dmg
     - stage: Windows Build
       if: branch = FAKEBRANCH
       name: Serial, GUI
