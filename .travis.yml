@@ -10,6 +10,7 @@ addons:
       - ftgl
       - ninja
       - create-dmg
+      - jq
 
 # Add updated Qt libs (serial build only)
 before_install:
