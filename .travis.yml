@@ -22,27 +22,29 @@ jobs:
     - os: osx
       osx_image: xcode9.4
       env: FLAVOUR="HighSierra"
+      env: PARALLEL=false
     - os: osx
       osx_image: xcode11.3
       env: FLAVOUR="Mojave"
-    - stage: OSX Build / Deploy
-      name: Serial, GUI
       env: PARALLEL=false
-      cache:
-        directories:
-          - artifacts
-      script:
-        - VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-        - SHORTHASH=`git rev-parse --short HEAD`
-        - echo 'USECREATEDMG="TRUE"' >> ci/osx/dissolve-gui.dmginfo
-        - ./ci/osx/build.serial.gui
-        - mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-${FLAVOUR}.dmg
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: ./ci/scripts/update-release -r ${TRAVIS_REPO_SLUG} -t continuous -n "Continuous Build (${TRAVIS_COMMIT})" -b "Continuous release from current \`develop\` branch at ${TRAVIS_COMMIT}. Built ${DATE}." -p artifacts/*dmg
+
+cache:
+  directories:
+    - artifacts
+
+script:
+  - VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+  - SHORTHASH=`git rev-parse --short HEAD`
+  - echo 'USECREATEDMG="TRUE"' >> ci/osx/dissolve-gui.dmginfo
+  - ./ci/osx/build.serial.gui
+  - mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-${FLAVOUR}.dmg
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  on:
+    all_branches: true
+  script: ./ci/scripts/update-release -r ${TRAVIS_REPO_SLUG} -t continuous -n "Continuous Build (${TRAVIS_COMMIT})" -b "Continuous release from current \`develop\` branch at ${TRAVIS_COMMIT}. Built ${DATE}." -p artifacts/*dmg
 
 # Branch Safelist (allow only develop and version-tagged builds)
 branches:
