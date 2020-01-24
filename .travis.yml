@@ -39,9 +39,8 @@ script:
   - VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
   - SHORTHASH=`git rev-parse --short HEAD`
   - echo 'USECREATEDMG="TRUE"' >> ci/osx/dissolve-gui.dmginfo
-  - echo "PARALLEL = $PARALLEL"
-  - echo "FLAVOUR $FLAVOUR"
-  - #./ci/osx/build.serial.gui
+  - ./ci/osx/build.serial.gui
+  - echo "Flavour of build environment is: $FLAVOUR"
   - mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-${FLAVOUR}.dmg
 
 deploy:
