@@ -70,5 +70,5 @@ bool LinkToKeyword::read(LineParser& parser, int startArg, const CoreData& coreD
 bool LinkToKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	Messenger::warn("Don't call LinkToKeyword::write() - go through base().\n");
-	return data_->write(parser, prefix);
+	return data_->write(parser, data_->name(), prefix);
 }
