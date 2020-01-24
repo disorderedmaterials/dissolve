@@ -43,8 +43,9 @@ class MainTabsWidget : public QTabWidget
 	Q_OBJECT
 
 	public:
-	// Constructor
+	// Constructor / Destructor
 	MainTabsWidget(QWidget* parent);
+	~MainTabsWidget();
 
 
 	/*

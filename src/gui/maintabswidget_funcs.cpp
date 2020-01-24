@@ -37,6 +37,17 @@ MainTabsWidget::MainTabsWidget(QWidget* parent) : QTabWidget(parent)
 	connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
 }
 
+MainTabsWidget::~MainTabsWidget()
+{
+	// Need to clear tabs in the right order, as data in one can depend on another
+	workspaceTabs_.clear();
+	moduleTabs_.clear();
+	processingLayerTabs_.clear();
+	configurationTabs_.clear();
+	speciesTabs_.clear();
+	allTabs_.clear();
+}
+
 /*
  * Tab Data
  */
