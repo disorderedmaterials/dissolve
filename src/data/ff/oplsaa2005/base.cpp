@@ -1404,9 +1404,9 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		//	i	j	k	l	Type (CosineForm)		k		n	eq	s
 		{ this, "HC",	"CT",	"CT",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// hydrocarbon
 		{ this, "HC",	"C",	"C",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
-		{ this, "HC",	"Ceq",	"Ceq",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
-		{ this, "CT",	"Ceq",	"Ceq",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
-		{ this, "CT",	"Ceq",	"Ceq",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
+		{ this, "HC",	"C=",	"C=",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
+		{ this, "CT",	"C=",	"C=",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
+		{ this, "CT",	"C=",	"C=",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// 
 		{ this, "H3",	"N3",	"CT",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// ammonium
 		{ this, "HC",	"CT",	"CT",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// hydrocarbon
 		{ this, "HC",	"CT",	"CT",	"CO",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// acetal
@@ -1438,9 +1438,9 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		{ this, "NT",	"CT",	"CT",	"OH",	SpeciesTorsion::Cos3Form,	33.472,	0,	0,	0 },	// 2-aminoethanol
 		{ this, "OS",	"CT",	"CT",	"OS",	SpeciesTorsion::Cos3Form,	-2.3012,	0,	0,	0 },	// polyethers,
 		{ this, "CT",	"OS",	"CA",	"CA",	SpeciesTorsion::Cos3Form,	0,	12.552,	0,	0 },	// anisole
-		{ this, "CM",	"Ceq",	"Ceq",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// diene-
-		{ this, "CM",	"Ceq",	"Ceq",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// diene-
-		{ this, "CM",	"Ceq",	"Ceq",	"CM",	SpeciesTorsion::Cos3Form,	5.95383,	16.9661,	3.58987,	0 },	// diene
+		{ this, "CM",	"C=",	"C=",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// diene-
+		{ this, "CM",	"C=",	"C=",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// diene-
+		{ this, "CM",	"C=",	"C=",	"CM",	SpeciesTorsion::Cos3Form,	5.95383,	16.9661,	3.58987,	0 },	// diene
 		{ this, "HC",	"CT",	"CA",	"CA",	SpeciesTorsion::Cos3Form,	0,	0,	0,	0 },	// ethyl
 		{ this, "H3",	"N3",	"CA",	"CA",	SpeciesTorsion::Cos3Form,	0,	0,	0,	0 },	// anilinium
 		{ this, "HC",	"CT",	"CW",	"*",	SpeciesTorsion::Cos3Form,	0,	0,	0,	0 },	// aromatics
@@ -1705,8 +1705,8 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		{ this, "HA",	"CA",	"CA",	"Br",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
 		{ this, "HA",	"CA",	"CA",	"I",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
 		{ this, "CA",	"CA",	"CA",	"N*",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
-		{ this, "HA",	"Ceq",	"Ceq",	"C*",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
-		{ this, "C",	"Ceq",	"Ceq",	"C",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
+		{ this, "HA",	"C=",	"C=",	"C*",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
+		{ this, "C",	"C=",	"C=",	"C",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
 		{ this, "HA",	"CA",	"CA",	"CT",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
 		{ this, "CT",	"CA",	"CA",	"CT",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
 		{ this, "CT",	"CA",	"CA",	"CA",	SpeciesTorsion::Cos3Form,	0,	30.334,	0,	0 },	// 
@@ -1868,13 +1868,13 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		{ this, "CT",	"NT",	"CT",	"CT",	SpeciesTorsion::Cos3Form,	1.74054,	-0.535552,	2.90788,	0 },	// amine
 		{ this, "HC",	"CT",	"NT",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	2.34304,	0 },	// amine
 		{ this, "CT",	"CT",	"CW",	"NA",	SpeciesTorsion::Cos3Form,	7.1128,	-2.5104,	0,	0 },	// 2-ethyl
-		{ this, "CT",	"Ceq",	"Ceq",	"CM",	SpeciesTorsion::Cos3Form,	3.7656,	0.96232,	-2.11292,	0 },	// 2-Me-1,3-butadiene
-		{ this, "CT",	"Ceq",	"C",	"O*",	SpeciesTorsion::Cos3Form,	3.7656,	0.96232,	-2.11292,	0 },	// 2-Me-1,3-butadiene-like
+		{ this, "CT",	"C=",	"C=",	"CM",	SpeciesTorsion::Cos3Form,	3.7656,	0.96232,	-2.11292,	0 },	// 2-Me-1,3-butadiene
+		{ this, "CT",	"C=",	"C",	"O*",	SpeciesTorsion::Cos3Form,	3.7656,	0.96232,	-2.11292,	0 },	// 2-Me-1,3-butadiene-like
 		{ this, "CT",	"CM",	"C",	"O*",	SpeciesTorsion::Cos3Form,	3.7656,	0.96232,	-2.11292,	0 },	// 2-Me-1,3-butadiene-like
-		{ this, "CT",	"C",	"Ceq",	"CM",	SpeciesTorsion::Cos3Form,	3.3472,	-12.552,	0,	0 },	// methyl
-		{ this, "CM",	"Ceq",	"C",	"OH",	SpeciesTorsion::Cos3Form,	13.3888,	-12.552,	0,	0 },	// acrylic
+		{ this, "CT",	"C",	"C=",	"CM",	SpeciesTorsion::Cos3Form,	3.3472,	-12.552,	0,	0 },	// methyl
+		{ this, "CM",	"C=",	"C",	"OH",	SpeciesTorsion::Cos3Form,	13.3888,	-12.552,	0,	0 },	// acrylic
 		{ this, "CM",	"CM",	"C",	"OH",	SpeciesTorsion::Cos3Form,	13.3888,	-12.552,	0,	0 },	// acrylic
-		{ this, "CM",	"Ceq",	"C",	"O",	SpeciesTorsion::Cos3Form,	10.46,	25.104,	0,	0 },	// acrolein
+		{ this, "CM",	"C=",	"C",	"O",	SpeciesTorsion::Cos3Form,	10.46,	25.104,	0,	0 },	// acrolein
 		{ this, "CM",	"CM",	"C",	"O",	SpeciesTorsion::Cos3Form,	10.46,	25.104,	0,	0 },	// acrolein-like
 		{ this, "CA",	"CA",	"C",	"CT",	SpeciesTorsion::Cos3Form,	0,	0.8368,	0,	0 },	// aryl
 		{ this, "CA",	"CA",	"C",	"HC",	SpeciesTorsion::Cos3Form,	0,	0.8368,	0,	0 },	// aryl
@@ -1923,20 +1923,20 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		{ this, "CA",	"CA",	"NT",	"CT",	SpeciesTorsion::Cos3Form,	-31.7231,	14.3553,	13.3804,	0 },	// substituted-aniline
 		{ this, "CT",	"CM",	"CT",	"CT",	SpeciesTorsion::Cos3Form,	11.7863,	-0.707096,	2.27191,	0 },	// alkenes
 		{ this, "CM",	"CM",	"CT",	"CT",	SpeciesTorsion::Cos3Form,	1.44766,	1.69452,	-3.78234,	0 },	// alkenes
-		{ this, "Ceq",	"CM",	"CT",	"CT",	SpeciesTorsion::Cos3Form,	1.44766,	1.69452,	-3.78234,	0 },	// alkenes
+		{ this, "C=",	"CM",	"CT",	"CT",	SpeciesTorsion::Cos3Form,	1.44766,	1.69452,	-3.78234,	0 },	// alkenes
 		{ this, "CM",	"CM",	"CA",	"CA",	SpeciesTorsion::Cos3Form,	5.19234,	14.029,	-1.19662,	0 },	// styrene
 		{ this, "CT",	"CM",	"CA",	"CA",	SpeciesTorsion::Cos3Form,	0.85772,	-2.2217,	0,	0 },	// 1-methylstyrene
 		{ this, "Z",	"CM",	"X",	"Y",	SpeciesTorsion::Cos3Form,	0,	125.52,	0,	0 },	// improper
 		{ this, "*",	"CM",	"CM",	"*",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
 		{ this, "CT",	"CM",	"CM",	"CT",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
-		{ this, "CT",	"CM",	"Ceq",	"CT",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
-		{ this, "CT",	"CM",	"Ceq",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
-		{ this, "HC",	"CM",	"Ceq",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
-		{ this, "HC",	"CM",	"Ceq",	"CT",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
+		{ this, "CT",	"CM",	"C=",	"CT",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
+		{ this, "CT",	"CM",	"C=",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
+		{ this, "HC",	"CM",	"C=",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
+		{ this, "HC",	"CM",	"C=",	"CT",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
 		{ this, "CT",	"CM",	"CM",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
 		{ this, "C",	"CM",	"CM",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
 		{ this, "HC",	"CM",	"CM",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
-		{ this, "HC",	"CM",	"Ceq",	"Ceq",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
+		{ this, "HC",	"CM",	"C=",	"C=",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// alkene
 		{ this, "Cl",	"CM",	"CM",	"HC",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// chloroalkene
 		{ this, "HC",	"CM",	"CM",	"OS",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// vinyl
 		{ this, "CT",	"CM",	"CM",	"OS",	SpeciesTorsion::Cos3Form,	0,	58.576,	0,	0 },	// vinyl
@@ -2001,14 +2001,14 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		{ this, "C",	"NC",	"OH",	"HO",	SpeciesTorsion::Cos3Form,	12.552,	12.552,	0,	0 },	// oxime
 		{ this, "C",	"NC",	"OS",	"CT",	SpeciesTorsion::Cos3Form,	12.552,	12.552,	0,	0 },	// oxime
 		{ this, "CM",	"CM",	"OS",	"CT",	SpeciesTorsion::Cos3Form,	-14.644,	12.552,	0,	0 },	// vinyl
-		{ this, "Ceq",	"CM",	"OS",	"CT",	SpeciesTorsion::Cos3Form,	-14.644,	12.552,	0,	0 },	// vinyl
+		{ this, "C=",	"CM",	"OS",	"CT",	SpeciesTorsion::Cos3Form,	-14.644,	12.552,	0,	0 },	// vinyl
 		{ this, "CM",	"CM",	"CT",	"F",	SpeciesTorsion::Cos3Form,	2.092,	0,	0,	0 },	// allyl
 		{ this, "CM",	"CM",	"CT",	"O*",	SpeciesTorsion::Cos3Form,	2.092,	0,	0,	0 },	// allyl
-		{ this, "Ceq",	"CM",	"CT",	"O*",	SpeciesTorsion::Cos3Form,	2.092,	0,	0,	0 },	// allyl
-		{ this, "CM",	"Ceq",	"CT",	"O*",	SpeciesTorsion::Cos3Form,	2.092,	0,	0,	0 },	// allyl
+		{ this, "C=",	"CM",	"CT",	"O*",	SpeciesTorsion::Cos3Form,	2.092,	0,	0,	0 },	// allyl
+		{ this, "CM",	"C=",	"CT",	"O*",	SpeciesTorsion::Cos3Form,	2.092,	0,	0,	0 },	// allyl
 		{ this, "CM",	"CT",	"OH",	"HO",	SpeciesTorsion::Cos3Form,	-3.7656,	0,	0,	0 },	// allyl
 		{ this, "CA",	"CT",	"OH",	"HO",	SpeciesTorsion::Cos3Form,	-3.7656,	0,	0,	0 },	// benzyl
-		{ this, "Ceq",	"CT",	"OH",	"HO",	SpeciesTorsion::Cos3Form,	-3.7656,	0,	0,	0 },	// allyl
+		{ this, "C=",	"CT",	"OH",	"HO",	SpeciesTorsion::Cos3Form,	-3.7656,	0,	0,	0 },	// allyl
 		{ this, "HC",	"CT",	"SY",	"OY",	SpeciesTorsion::Cos3Form,	0,	0,	1.4644,	0 },	// sulfone
 		{ this, "HC",	"CT",	"SY",	"CT",	SpeciesTorsion::Cos3Form,	0,	0,	1.4644,	0 },	// sulfone
 		{ this, "HC",	"CT",	"SY",	"CA",	SpeciesTorsion::Cos3Form,	0,	0,	1.4644,	0 },	// sulfone
@@ -2080,9 +2080,9 @@ OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 		{ this, "CY",	"CY",	"CY",	"CY",	SpeciesTorsion::Cos3Form,	0,	0,	0,	0 },	// small
 		{ this, "HC",	"CT",	"CY",	"CY",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// small
 		{ this, "HC",	"CT",	"CM",	"CM",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
-		{ this, "HC",	"CT",	"CM",	"Ceq",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
-		{ this, "HC",	"CT",	"Ceq",	"Ceq",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
-		{ this, "HC",	"CT",	"Ceq",	"CM",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
+		{ this, "HC",	"CT",	"CM",	"C=",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
+		{ this, "HC",	"CT",	"C=",	"C=",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
+		{ this, "HC",	"CT",	"C=",	"CM",	SpeciesTorsion::Cos3Form,	0,	0,	-1.55645,	0 },	// alkenes
 		{ this, "HC",	"CM",	"CT",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.33051,	0 },	// alkene
 		{ this, "HC",	"CT",	"CT",	"CM",	SpeciesTorsion::Cos3Form,	0,	0,	1.53134,	0 },	// alkene
 		{ this, "HC",	"CT",	"CT",	"CZ",	SpeciesTorsion::Cos3Form,	0,	0,	1.53134,	0 },	// alkyne,
