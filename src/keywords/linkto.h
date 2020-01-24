@@ -37,7 +37,7 @@ class LinkToKeyword : public KeywordData<KeywordBase*>
 
 
 	/*
-	 * Base Pointer Return (Overloading KeywordBase virtual)z
+	 * Base Pointer Return (Overloading KeywordBase virtual)
 	 */
 	public:
 	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
