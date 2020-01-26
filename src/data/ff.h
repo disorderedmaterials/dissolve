@@ -114,19 +114,19 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Register specified bond term
 	void registerBondTerm(ForcefieldBondTerm* bondTerm);
 	// Return bond term for the supplied atom type pair (if it exists)
-	ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	virtual ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Register specified angle term
 	void registerAngleTerm(ForcefieldAngleTerm* angleTerm);
 	// Return angle term for the supplied atom type trio (if it exists)
-	ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	virtual ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Register specified torsion term
 	void registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm);
 	// Return torsion term for the supplied atom type quartet (if it exists)
-	ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	virtual ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 	// Register specified improper term
 	void registerImproperTerm(ForcefieldImproperTerm* improperTerm);
 	// Return improper term for the supplied atom type quartet (if it exists)
-	ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	virtual ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 
 
 	/*
