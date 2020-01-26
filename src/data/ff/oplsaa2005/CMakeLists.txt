@@ -1,9 +1,11 @@
 add_library(ff_oplsaa2005
   # Core
   atomtypes.cpp
+  intramolecular.cpp
   base.cpp
 
   atomtypes.h
+  intramolecular.h
   base.h
 
   # Aromatics

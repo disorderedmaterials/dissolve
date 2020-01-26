@@ -23,6 +23,7 @@
 #define DISSOLVE_FORCEFIELD_OPLSAA_BASE_H
 
 #include "data/ff.h"
+#include "data/ff/oplsaa2005/intramolecular.h"
 
 // Forward Declarations
 /* none */
@@ -42,6 +43,23 @@ class OPLSAA2005BaseForcefield : public Forcefield
 	public:
 	// Return short-range interaction style for AtomTypes
 	Forcefield::ShortRangeType shortRangeType() const;
+
+
+	/*
+	 * Term Data
+	 */
+	private:
+	static OPLSAA2005IntramolecularTerms intramolecularTerms_;
+
+	public:
+	// Return bond term for the supplied atom type pair (if it exists)
+	ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	// Return angle term for the supplied atom type trio (if it exists)
+	ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	// Return torsion term for the supplied atom type quartet (if it exists)
+	ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	// Return improper term for the supplied atom type quartet (if it exists)
+	ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 };
 
 #endif
