@@ -62,17 +62,19 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType, const char* netaDefinition) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* typeName, const ForcefieldAtomType& sourceType, const char* netaDefinition, const char* equivalentName) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
 {
 	forcefield_ = parent;
 
 	// Copy data from the supplied source
 	index_ = sourceType.index_;
-	name_ = sourceType.name_;
-	if (!DissolveSys::sameString(name_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.name());
+	name_ = typeName;
 	description_ = sourceType.description_;
 	parameters_ = sourceType.parameters_;
 	neta_.set(netaDefinition ? netaDefinition : sourceType.neta().definitionString(), parent);
+
+	// Equivalent name provided?
+	if (equivalentName) equivalentName_ = equivalentName;
 
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, sourceType.Z());
@@ -108,6 +110,9 @@ const char* ForcefieldAtomType::name() const
 // Return equivalent name of type
 const char* ForcefieldAtomType::equivalentName() const
 {
+	// Return defined equivalent name first, if defined
+	if (!equivalentName_.isEmpty()) return equivalentName_.get();
+
 	// If parameters are referenced, return their name. Otherwise, return ours.
 	return (parameterReference_ ? parameterReference_->name() : name_.get());
 }
