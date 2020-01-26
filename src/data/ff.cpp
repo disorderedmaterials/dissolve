@@ -67,13 +67,13 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
  * Atom Type Data
  */
 
-// Determine and return atom type for specified SpeciesAtom
-ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
+// Determine and return atom type for specified SpeciesAtom from supplied Array of types
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes)
 {
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(i->element()->Z()));
+	RefListIterator<ForcefieldAtomType> typeIterator(atomTypes.constAt(i->element()->Z()));
 	while (ForcefieldAtomType* type = typeIterator.iterate())
 	{
 		// Get the scoring for this type
@@ -86,6 +86,12 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
 	}
 
 	return bestType;
+}
+
+// Determine and return atom type for specified SpeciesAtom
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
+{
+	return determineAtomType(i, atomTypesByElementPrivate_);
 }
 
 // Register the specified short-range parameters

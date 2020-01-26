@@ -79,6 +79,8 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	Array< RefList<ForcefieldAtomType> > atomTypesByElementPrivate_;
 
 	protected:
+	// Determine and return atom type for specified SpeciesAtom from supplied Array of types
+	static ForcefieldAtomType* determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes);
 	// Determine and return atom type for specified SpeciesAtom
 	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 
