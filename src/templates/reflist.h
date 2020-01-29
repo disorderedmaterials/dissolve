@@ -27,7 +27,6 @@
 
 // Forward Declarations
 template <class T> class RefList;
-template <class T> class RefListIterator;
 
 /*
  * Item
@@ -75,7 +74,6 @@ template <class T> class RefListItem
 	}
 	// Declare the list and iterator as friends
 	friend class RefList<T>;
-	friend class RefListIterator<T>;
 };
 
 /*
@@ -450,87 +448,6 @@ template <class T> class RefList
 		for (RefListItem<T>* r = listHead_; r != NULL; r = r->next_) if (r->item_ == item) return r;
 
 		return NULL;
-	}
-};
-
-/*
- * RefListIterator
- */
-
-// Reference List Iterator
-template <class T> class RefListIterator
-{
-	public:
-	// Constructor
-	RefListIterator<T>(const RefList<T>& source, bool reverse = false) : reverse_(reverse), targetRefList_(source)
-	{
-		finished_ = false;
-		currentItem_ = NULL;
-	}
-
-	private:
-	// Whether the iterator has reached the end of the list
-	bool finished_;
-	// Whether the iterator operates in reverse (iterating tail to head)
-	bool reverse_;
-	// Target list
-	const RefList<T>& targetRefList_;
-	// Current item
-	RefListItem<T>* currentItem_;
-
-	public:
-	// Iterate
-	T* iterate()
-	{
-		if (finished_) return NULL;
-
-		// Go to initial / next item
-		if (currentItem_ == NULL) currentItem_ = reverse_ ? targetRefList_.last() : targetRefList_.first();
-		else currentItem_ = reverse_ ? currentItem_->prev_ : currentItem_->next_;
-
-		// Check for end of list
-		if (currentItem_ == NULL) finished_ = true;
-
-		return (currentItem_ ? currentItem_->item_ : NULL);
-	}
-	// Peek the next item (if any)
-	T* peek()
-	{
-		if (reverse_)
-		{
-			return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev_->item_ : NULL) : NULL);
-		}
-		else return (currentItem_ ? (currentItem_->next_ ? currentItem_->next_->item_ : NULL) : NULL);
-	}
-	// Peek the previous item (if any)
-	T* peekPrevious()
-	{
-		if (reverse_)
-		{
-			return (currentItem_ ? (currentItem_->next_ ? currentItem_->next_->item_ : NULL) : NULL);
-		}
-		else return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev_->item_ : NULL) : NULL);
-	}
-	// Return current reference item
-	RefListItem<T>* currentItem()
-	{
-		return currentItem_;
-	}
-	// Restart iteration
-	void restart()
-	{
-		finished_ = false;
-		currentItem_ = NULL;
-	}
-	// Return whether we are on the first item in the list
-	bool isFirst() const
-	{
-		return (currentItem_ == targetRefList_.first());
-	}
-	// Return whether we are on the last item in the list
-	bool isLast() const
-	{
-		return (currentItem_ == targetRefList_.last());
 	}
 };
 
