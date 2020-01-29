@@ -95,6 +95,7 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 	// Update available reference molecule combo
 	RefDataList<Species,CharString> refMolecules;
 	// -- Find available AvgMol results
+	RefList<CalculateAvgMolModule> avgMolModules = coreData_.findModulesByClass<CalculateAvgMolModule>();
 	for (CalculateAvgMolModule* module : avgMolModules) refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
 	// -- Add on current species
 	ListIterator<Species> speciesIterator(coreData_.constSpecies());

@@ -130,8 +130,7 @@ void BraggModuleWidget::setGraphDataTargets()
 
 	// Loop over Configurations and add total Bragg F(Q)
 	CharString blockData;
-	configIterator.restart();
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module_->targetConfigurations())
 	{
 		// Original F(Q)
 		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), "Totals");

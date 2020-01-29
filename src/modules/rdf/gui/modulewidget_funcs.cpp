@@ -135,8 +135,7 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 
 	// Loop over Configurations and add total G(R)
 	CharString blockData;
-	configIterator.restart();
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		// Add calculated total G(r)
 		totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), cfg->niceName(), "Calc");

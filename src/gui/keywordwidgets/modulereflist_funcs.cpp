@@ -132,10 +132,12 @@ void ModuleRefListKeywordWidget::updateSummaryText()
 	else
 	{
 		CharString summaryText;
+		bool first = true;
 		for (Module* module : selection)
 		{
-			if (moduleIterator.isFirst()) summaryText = module->uniqueName();
+			if (first) summaryText = module->uniqueName();
 			else summaryText.strcatf(", %s", module->uniqueName());
+			first = false;
 		}
 		setSummaryText(summaryText);
 	}

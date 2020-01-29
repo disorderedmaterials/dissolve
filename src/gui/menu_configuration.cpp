@@ -87,7 +87,7 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 	for (Species* sp : mixSpecies)
 	{
 		// Add a parameter for the ratio of this species to the first (or the population of the first)
-		if (mixIterator.isFirst()) generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+		if (count==0) generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
 		else
 		{
 			CharString parameterName("ratio%c", 65+count);

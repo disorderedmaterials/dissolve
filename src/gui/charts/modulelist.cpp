@@ -448,7 +448,6 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 
 		// Add on height of widget and spacing to top edge
 		top += minSize.height();
-		if (!blockIterator.isLast()) top += metrics.verticalModuleSpacing();
 
 		// Check maximal width
 		if (minSize.width() > maxWidth) maxWidth = minSize.width();
@@ -459,6 +458,8 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 		// Move to the next hotspot
 		hotSpot = hotSpot->next();
 	}
+	// Handle final block
+	top -= metrics.verticalModuleSpacing();
 
 	// Finalise required size
 	QSize requiredSize = QSize(maxWidth + 2*metrics.chartMargin(), top + metrics.chartMargin());
