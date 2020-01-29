@@ -97,8 +97,7 @@ bool DynamicSiteNodesKeyword::read(LineParser& parser, int startArg, const CoreD
 bool DynamicSiteNodesKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of dynamic sites in the RefList
-	RefListIterator<DynamicSiteProcedureNode> dynamicSiteIterator(data_);
-	while (DynamicSiteProcedureNode* dynamicSite = dynamicSiteIterator.iterate()) if (!dynamicSite->write(parser, prefix)) return false;
+	for(auto dynamicSite : data_) if (!dynamicSite->write(parser, prefix)) return false;
 
 	return true;
 }

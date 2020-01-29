@@ -526,8 +526,7 @@ Module* CoreData::findModule(const char* uniqueName) const
 		return NULL;
 	}
 
-	RefListIterator<Module> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	for(auto module : *moduleInstances_) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }
@@ -537,8 +536,7 @@ RefList<Module> CoreData::findModules(const char* moduleType) const
 {
 	RefList<Module> modules;
 
-	RefListIterator<Module> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) modules.append(module);
+	for(auto module : *moduleInstances_) if (DissolveSys::sameString(module->type(), moduleType)) modules.append(module);
 
 	return modules;
 }
@@ -548,8 +546,7 @@ RefList<Module> CoreData::findModules(const CharStringList& moduleTypes) const
 {
 	RefList<Module> modules;
 
-	RefListIterator<Module> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (moduleTypes.contains(module->type())) modules.append(module);
+	for(auto module : *moduleInstances_) if (moduleTypes.contains(module->type())) modules.append(module);
 
 	return modules;
 }

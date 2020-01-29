@@ -266,8 +266,7 @@ void Module::copyTargetConfigurations(Module* sourceModule)
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
-	RefListIterator<Configuration> configIterator(sourceModule->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate()) addTargetConfiguration(cfg);
+	for(auto cfg : sourceModule->targetConfigurations()) addTargetConfiguration(cfg);
 }
 
 // Set whether this module is a local Module in a Configuration

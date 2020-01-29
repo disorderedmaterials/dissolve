@@ -80,8 +80,7 @@ bool AtomTypeRefListKeyword::write(LineParser& parser, const char* keywordName, 
 
 	// Loop over the AtomType selection list
 	CharString atomTypes;
-	RefListIterator<AtomType> typeIterator(data_);
-	while (AtomType* at = typeIterator.iterate()) atomTypes.strcatf("  %s", at->name());
+	for(auto at : data_) atomTypes.strcatf("  %s", at->name());
 
 	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, atomTypes.get())) return false;
 

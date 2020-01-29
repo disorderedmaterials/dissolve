@@ -109,8 +109,7 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 	// Loop over the provided possible list of atoms
 	int nMatches = 0, totalScore = 0;
 	RefList<const SpeciesAtom> matches;
-	RefListIterator<const SpeciesAtom> atomIterator(availableAtoms);
-	while (const SpeciesAtom* j = atomIterator.iterate())
+	for(auto j : availableAtoms)
 	{
 		// Evaluate the atom against our elements
 		int atomScore = NETANode::NoMatch;
@@ -181,8 +180,7 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 	if (!compareValues(nMatches, repeatCountOperator_, repeatCount_)) return NETANode::NoMatch;
 
 	// Remove any matched atoms from the original list
-	RefListIterator<const SpeciesAtom> matchIterator(matches);
-	while (const SpeciesAtom* j = matchIterator.iterate()) availableAtoms.remove(j);
+	for(auto j : matches) availableAtoms.remove(j);
 
 	return totalScore;
 }

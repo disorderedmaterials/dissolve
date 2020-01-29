@@ -127,8 +127,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 		if (KeywordData< RefList<N>& >::data_.nItems() == 0) return true;
 
 		CharString nodes;
-		RefListIterator<N> nodeIterator(KeywordData< RefList<N>& >::data_);
-		while (N* node = nodeIterator.iterate()) nodes.strcatf("  '%s'", node->name());
+		for(auto node : KeywordData<RefList<N>&>::data_) nodes.strcatf("  '%s'", node->name());
 
 		if (!parser.writeLineF("%s%s  %s\n", prefix, KeywordBase::name(), nodes.get())) return false;
 
@@ -166,16 +165,14 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 	{
 		RefList<const ProcedureNode> nodes;
 		
-		RefListIterator<N> nodeIterator(KeywordData< RefList<N>& >::data_);
-		while (N* node = nodeIterator.iterate()) nodes.append(node);
+		for(auto node : KeywordData<RefList<N>&>::data_) nodes.append(node);
 	
 		return nodes;
 	}
 	// Return if the specified node is in the current list
 	bool hasNode(ProcedureNode* node)
 	{
-		RefListIterator<N> nodeIterator(KeywordData< RefList<N>& >::data_);
-		while (N* existingNode = nodeIterator.iterate()) if (existingNode == node) return true;
+		for(auto existingNode : KeywordData<RefList<N>&>::data_) if (existingNode == node) return true;
 
 		return false;
 	}

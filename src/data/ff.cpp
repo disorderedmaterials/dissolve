@@ -73,8 +73,7 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(i->element()->Z()));
-	while (ForcefieldAtomType* type = typeIterator.iterate())
+	for(auto type : atomTypesByElementPrivate_.constAt(i->element()->Z()))
 	{
 		// Get the scoring for this type
 		int score = type->neta().score(i);
@@ -103,8 +102,7 @@ void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
 // Return named short-range parameters (if they exist)
 ForcefieldParameters* Forcefield::shortRangeParameters(const char* name) const
 {
-	RefListIterator<ForcefieldParameters> paramsIterator(shortRangeParameters_);
-	while (ForcefieldParameters* params = paramsIterator.iterate()) if (DissolveSys::sameString(name, params->name())) return params;
+	for(auto params : shortRangeParameters_) if (DissolveSys::sameString(name, params->name())) return params;
 
 	return NULL;
 }
@@ -117,8 +115,7 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
-		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->name(), name)) return type;
+		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (DissolveSys::sameString(type->name(), name)) return type;
 	}
 
 	return NULL;
@@ -132,8 +129,7 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
-		while (ForcefieldAtomType* type = typeIterator.iterate()) if (type->index() == id) return type;
+		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (type->index() == id) return type;
 	}
 
 	return NULL;
@@ -152,8 +148,7 @@ void Forcefield::registerBondTerm(ForcefieldBondTerm* bondTerm)
 // Return bond term for the supplied atom type pair (if it exists)
 ForcefieldBondTerm* Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	RefListIterator<ForcefieldBondTerm> termIterator(bondTerms_);
-	while (ForcefieldBondTerm* term = termIterator.iterate()) if (term->matches(i, j)) return term;
+	for(auto term : bondTerms_) if (term->matches(i, j)) return term;
 
 	return NULL;
 }
@@ -167,8 +162,7 @@ void Forcefield::registerAngleTerm(ForcefieldAngleTerm* angleTerm)
 // Return angle term for the supplied atom type trio (if it exists)
 ForcefieldAngleTerm* Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
-	RefListIterator<ForcefieldAngleTerm> termIterator(angleTerms_);
-	while (ForcefieldAngleTerm* term = termIterator.iterate()) if (term->matches(i, j, k)) return term;
+	for(auto term : angleTerms_) if (term->matches(i, j, k)) return term;
 
 	return NULL;
 }
@@ -182,8 +176,7 @@ void Forcefield::registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm)
 // Return torsion term for the supplied atom type quartet (if it exists)
 ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	RefListIterator<ForcefieldTorsionTerm> termIterator(torsionTerms_);
-	while (ForcefieldTorsionTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
+	for(auto term : torsionTerms_) if (term->matches(i, j, k, l)) return term;
 
 	return NULL;
 }
@@ -197,8 +190,7 @@ void Forcefield::registerImproperTerm(ForcefieldImproperTerm* improperTerm)
 // Return improper term for the supplied atom type quartet (if it exists)
 ForcefieldImproperTerm* Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	RefListIterator<ForcefieldImproperTerm> termIterator(improperTerms_);
-	while (ForcefieldImproperTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
+	for(auto term : improperTerms_) if (term->matches(i, j, k, l)) return term;
 
 	return NULL;
 }

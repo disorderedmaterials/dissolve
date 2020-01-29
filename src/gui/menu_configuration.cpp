@@ -54,8 +54,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 	paramsNode->addParameter("rho", 0.1);
 	generator.addRootSequenceNode(paramsNode);
 	generator.addRootSequenceNode(new BoxProcedureNode);
-	RefListIterator<Species> mixIterator(mixSpecies);
-	while (Species* sp = mixIterator.iterate())
+	for(auto sp : mixSpecies)
 	{
 		generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
 	}
