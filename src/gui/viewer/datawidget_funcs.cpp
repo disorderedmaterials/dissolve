@@ -148,8 +148,7 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 		// Construct a list of targets as a QStringList
 		QStringList destinations;
 		int currentItem = -1, count = 0;
-		RefListIterator<DataViewer> targetIterator(targets);
-		while (DataViewer* viewer = targetIterator.iterate())
+		for (DataViewer* viewer : targets)
 		{
 			destinations << viewer->destinationName();
 			if (&viewer->view() == dataViewer()->view().linkedView()) currentItem = count;

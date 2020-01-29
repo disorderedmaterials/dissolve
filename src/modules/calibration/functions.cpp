@@ -43,16 +43,14 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 	// Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
 	int alphaIndex = 0;
 	const int nAlpha = alpha.nItems();
-	RefListIterator<Module> rdfModuleIterator(intraBroadeningModules_);
-	while (Module* rdfModule = rdfModuleIterator.iterate())
+	for (Module* rdfModule : intraBroadeningModules_)
 	{
 		// Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
 		PairBroadeningFunction& broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
 		// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 		int smoothing = rdfModule->keywords().asInt("Smoothing");
-		RefListIterator<Configuration> configIterator(rdfModule->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate())
+		for (Configuration* cfg : rdfModule->targetConfigurations())
 		{
 			const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
 			PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
@@ -69,8 +67,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 		if (!dissolve_.processingModuleData().contains("ReferenceData", module->uniqueName())) continue;
 
 		// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
-		RefListIterator<Configuration> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
+		for (Configuration* cfg : module->targetConfigurations()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
 
 		// Run the NeutronSQModule (quietly)
 		Messenger::mute();

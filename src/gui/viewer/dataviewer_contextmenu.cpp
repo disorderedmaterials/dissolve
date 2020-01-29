@@ -63,8 +63,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	else
 	{
 		int count = 1;
-		RefListIterator<DataViewer> destinationIterator(renderableDestinations_);
-		while (DataViewer* destination = destinationIterator.iterate())
+		for (DataViewer* destination : renderableDestinations_)
 		{
 			action = copyToMenu->addAction(QString("%1. %2").arg(QString::number(count++)).arg(destination->destinationName()));
 			destinationActions.append(action, destination);

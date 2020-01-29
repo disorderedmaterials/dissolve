@@ -198,8 +198,7 @@ Gizmo* WorkspaceTab::createGizmo(const char* type)
 // Find Gizmo with unique name provided
 Gizmo* WorkspaceTab::findGizmo(const char* uniqueName)
 {
-	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
-	while (Gizmo* gizmo = gizmoIterator.iterate()) if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName)) return gizmo;
+	for (Gizmo* gizmo : allGizmos_) if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName)) return gizmo;
 
 	return NULL;
 }

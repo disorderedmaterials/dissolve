@@ -67,8 +67,7 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
 	if (text.isEmpty()) nameValid = false;
 	else
 	{
-		RefListIterator<const MainTab> tabIterator(currentTabs_);
-		while (const MainTab* tab = tabIterator.iterate())
+		for (const MainTab* tab : currentTabs_)
 		{
 			if (currentTab_ == tab) continue;
 

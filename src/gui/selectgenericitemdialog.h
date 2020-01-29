@@ -57,8 +57,7 @@ class SelectGenericItemDialog : public QDialog
 		QTableWidgetItem* item;
 		int count = ui_.ItemsTable->rowCount();
 		ui_.ItemsTable->setRowCount(count + items.nItems());
-		RefListIterator<T> itemIterator(items);
-		while (T* templatedItem = itemIterator.iterate())
+		for (T* templatedItem : items)
 		{
 			// Item name
 			item = new QTableWidgetItem(templatedItem->name());

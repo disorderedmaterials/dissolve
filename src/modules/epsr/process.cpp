@@ -63,8 +63,7 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		RefDataListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
 		while (Module* module = allTargetsIterator.iterate())
 		{
-			RefListIterator<Configuration> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate())
+			for (Configuration* cfg : module->targetConfigurations())
 			{
 				configs.addUnique(cfg);
 				averagedRho += cfg->atomicDensity();
@@ -164,8 +163,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	double averagedRho = 0.0;
 	while (Module* module = allTargetsIterator.iterate())
 	{
-		RefListIterator<Configuration> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate())
+		for (Configuration* cfg : module->targetConfigurations())
 		{
 			configs.addUnique(cfg);
 			averagedRho += cfg->atomicDensity();
@@ -418,7 +416,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Grab Module list for this group and set up an iterator
 		const RefList<Module>& targetModules = group->modules();
-		RefListIterator<Module> targetIterator(targetModules);
 
 		/*
 		 * Create the full scattering matrix using all the reference (experimental) data we have.
@@ -449,8 +446,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ, uniqueName_, group->name());
 
 		// Add a row in the scattering matrix for each target in the group
-		targetIterator.restart();
-		while (Module* module = targetIterator.iterate())
+		for (Module* module : targetModules)
 		{
 			bool found;
 
@@ -623,9 +619,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Multiply each coefficient by the associated weight in the inverse scattering matrix.
 		 * Note: the data were added to the scattering matrix in the order they appear in the targets iterator.
 		 */
-		targetIterator.restart();
 		int dataIndex = 0;
-		while (Module* module = targetIterator.iterate())
+		for (Module* module : targetModules)
 		{
 			// For this Module, retrive the coefficents of the fit performed above.
 			const Array<double>& fitCoefficients = GenericListHelper< Array<double> >::value(dissolve.processingModuleData(), CharString("FitCoefficients_%s", module->uniqueName()), uniqueName_);

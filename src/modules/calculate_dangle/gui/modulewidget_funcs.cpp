@@ -121,8 +121,7 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* mod
 	rdfGraph_->clearRenderables();
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module_->targetConfigurations())
 	{
 		// Calculated B...C RDF
 		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");

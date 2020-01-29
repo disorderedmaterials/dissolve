@@ -293,8 +293,7 @@ bool KeywordList::writeGroups(LineParser& parser, const char* prefix, bool onlyI
 	{
 		// Loop over keywords in group
 		bool firstWritten = true;
-		RefListIterator<KeywordBase> keywordIterator(group->keywords());
-		while (KeywordBase* keyword = keywordIterator.iterate())
+		for (KeywordBase* keyword : group->keywords())
 		{
 			// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
 			if (onlyIfSet && (!keyword->base()->isSet())) continue;

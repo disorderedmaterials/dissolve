@@ -88,8 +88,7 @@ bool ModuleGroupsKeyword::write(LineParser& parser, const char* keywordName, con
 	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Loop over list of referenced Modules in this group
-		RefListIterator<Module> refIterator(group->modules());
-		while (Module* module = refIterator.iterate())
+		for (Module* module : group->modules())
 		{
 			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, module->uniqueName(), group->name())) return false;
 		}

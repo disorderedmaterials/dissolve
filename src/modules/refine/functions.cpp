@@ -126,8 +126,7 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 	deltaBond.values() = 0.0;
 
 	// Loop over reference list of MasterIntra
-	RefListIterator<MasterIntra> bondIterator(masterBonds);
-	while (MasterIntra* masterIntra = bondIterator.iterate())
+	for (MasterIntra* masterIntra : masterBonds)
 	{
 		// Set our variables ready for the fit
 		if (masterIntra->form() == SpeciesBond::HarmonicForm) xCentre = masterIntra->parameter(1);

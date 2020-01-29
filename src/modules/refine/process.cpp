@@ -102,8 +102,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	RefDataListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
 	while (Module* module = allTargetsIterator.iterate())
 	{
-		RefListIterator<Configuration> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
+		for (Configuration* cfg : module->targetConfigurations()) configs.addUnique(cfg);
 	}
 	Messenger::print("%i Configuration(s) are involved over all target data.\n", configs.nItems());
 
@@ -116,8 +115,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Grab Module list for this group and set up an iterator
-		RefListIterator<Module> targetIterator(group->modules());
-		while (Module* module = targetIterator.iterate())
+		for (Module* module : group->modules())
 		{
 			// Realise the error array and make sure its object name is set
 			Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
@@ -210,9 +208,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
 
-		// Grab Module list for this group and set up an iterator
+		// Grab Module list for this group
 		const RefList<Module>& targetModules = group->modules();
-		RefListIterator<Module> targetIterator(targetModules);
 
 		/*
 		 * Update our full scattering matrix, and use it to generate partials from the supplied reference data
@@ -246,8 +243,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (augmentationStyle == RefineModule::PartialsAugmentation) dataFactor = augmentationParam;
 
 		// Add a row in the scattering matrix for each target in the group
-		targetIterator.restart();
-		while (Module* module = targetIterator.iterate())
+		for (Module* module : targetModules)
 		{
 			// Retrieve the reference data and associated Weights matrix and source unweighted partials
 			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);

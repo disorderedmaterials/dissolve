@@ -59,8 +59,7 @@ SelectProcedureNode::~SelectProcedureNode()
 	if (forEachBranch_) delete forEachBranch_;
 
 	// Delete any dynamic site nodes (as we are the owner)
-	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
-	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) delete dynamicNode;
+	for (DynamicSiteProcedureNode* dynamicNode : dynamicSites_) delete dynamicNode;
 }
 
 /*
@@ -173,8 +172,7 @@ bool SelectProcedureNode::prepare(Configuration* cfg, const char* prefix, Generi
 	if (forEachBranch_ && (!forEachBranch_->prepare(cfg, prefix, targetList))) return false;
 
 	// Prepare any dynamic site nodes
-	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
-	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->prepare(cfg, prefix, targetList)) return false;
+	for (DynamicSiteProcedureNode* dynamicNode : dynamicSites_) if (!dynamicNode->prepare(cfg, prefix, targetList)) return false;
 
 	// Retrieve data from keywords
 	sameMolecule_ = keywords_.retrieve<SelectProcedureNode*>("SameMoleculeAsSite");
@@ -190,12 +188,10 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 
 	// Update our exclusion lists
 	excludedMolecules_.clear();
-	RefListIterator<SelectProcedureNode> moleculeExclusionIterator(sameMoleculeExclusions_);
-	while (SelectProcedureNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule());
+	for (SelectProcedureNode* node : sameMoleculeExclusions_) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule());
 
 	excludedSites_.clear();
-	RefListIterator<SelectProcedureNode> siteExclusionIterator(sameSiteExclusions_);
-	while (SelectProcedureNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites_.addUnique(node->currentSite());
+	for (SelectProcedureNode* node : sameSiteExclusions_) if (node->currentSite()) excludedSites_.addUnique(node->currentSite());
 
 	// Get required Molecule parent, if requested
 	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
@@ -203,8 +199,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	/*
 	 * Add sites from specified Species/Sites
 	 */
-	RefListIterator<SpeciesSite> siteIterator(speciesSites_);
-	while (SpeciesSite* site = siteIterator.iterate())
+	for (SpeciesSite* site : speciesSites_)
 	{
 		const SiteStack* siteStack = cfg->siteStack(site);
 		if (siteStack == NULL) return ProcedureNode::Failure;
@@ -232,8 +227,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	 * Add dynamically-generated sites.
 	 * Call each DynamicSiteProcedureNode's execute function in turn, adding any generated sites to our reference array afterwards.
 	 */
-	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
-	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate())
+	for (DynamicSiteProcedureNode* dynamicNode : dynamicSites_)
 	{
 		if (dynamicNode->execute(procPool, cfg, prefix, targetList) == ProcedureNode::Failure) return ProcedureNode::Failure;
 
@@ -267,8 +261,7 @@ bool SelectProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, co
 	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	// Finalise any dynamic site nodes
-	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
-	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->finalise(procPool, cfg, prefix, targetList)) return false;
+	for (DynamicSiteProcedureNode* dynamicNode : dynamicSites_) if (!dynamicNode->finalise(procPool, cfg, prefix, targetList)) return false;
 
 	// Print out summary information
 	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , sites_.nItems());

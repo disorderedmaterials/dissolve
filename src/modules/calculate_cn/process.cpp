@@ -41,8 +41,7 @@ bool CalculateCNModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	siteNormaliser_->setKeyword< RefList<const SelectProcedureNode>& >("Site", siteNodes);
 
 	// Execute the analysis on the Configurations targeted by the RDF module
-	RefListIterator<Configuration> configIterator(rdfModule->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : rdfModule->targetConfigurations())
 	{
 		if (!analyser_.execute(procPool, cfg, CharString("%s//Analyser", uniqueName()), dissolve.processingModuleData())) return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 	}

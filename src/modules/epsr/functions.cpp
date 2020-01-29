@@ -41,8 +41,7 @@ const ModuleGroups& EPSRModule::groupedTargets() const
 // Add target Modules
 void EPSRModule::addTargets(RefList<Module> targets, const char* groupName)
 {
-	RefListIterator<Module> targetIterator(targets);
-	while (Module* module = targetIterator.iterate()) groupedTargets_.addModule(module, groupName);
+	for (Module* module : targets) groupedTargets_.addModule(module, groupName);
 
 	// Must flag that the associated keyword has been set by other means
 	if (targets.nItems() > 0) keywords_.hasBeenSet("Target");

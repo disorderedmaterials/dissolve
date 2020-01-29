@@ -91,8 +91,7 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
 	if (!module_) return;
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module_->targetConfigurations())
 	{
 		// Calculated RDF
 		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());

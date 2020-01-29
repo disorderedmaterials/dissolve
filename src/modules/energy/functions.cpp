@@ -206,8 +206,7 @@ int EnergyModule::checkStability(const RefList<Configuration>& configurations)
 {
 	int nFailed = 0;
 
-	RefListIterator<Configuration> configIterator(configurations);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : configurations)
 	{
 		// Check the stability of this Configuration
 		int result = checkStability(cfg);

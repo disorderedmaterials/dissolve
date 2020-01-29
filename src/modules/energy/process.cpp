@@ -32,8 +32,7 @@
 bool EnergyModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are targeting it
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_IsEnergyModuleTarget", "", GenericItem::ProtectedFlag) = true;
+	for (Configuration* cfg : targetConfigurations_) GenericListHelper<bool>::realise(cfg->moduleData(), "_IsEnergyModuleTarget", "", GenericItem::ProtectedFlag) = true;
 
 	return true;
 }

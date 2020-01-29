@@ -135,8 +135,7 @@ void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& 
 int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
 {
 // 	printf("I AM THE RING - matchPath size = %i:\n", matchPath.nItems());
-// 	RefListIterator<const SpeciesAtom> matchIterator(matchPath);
-// 	while (const SpeciesAtom* iii = matchIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 // 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	// Generate array of rings of specified size that the atom 'i' is present in

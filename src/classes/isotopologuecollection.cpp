@@ -169,8 +169,7 @@ const Isotopologues* IsotopologueCollection::isotopologues(const Configuration* 
 // Complete the collection by making sure it contains every Species in every Configuration in the supplied list
 void IsotopologueCollection::complete(const RefList<Configuration>& configurations)
 {
-	RefListIterator<Configuration> configIterator(configurations);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : configurations)
 	{
 		// Retrieve / create a set for this Configuration
 		IsotopologueSet* set = NULL;

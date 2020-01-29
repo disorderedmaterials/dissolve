@@ -99,8 +99,7 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 	summedWeights.clear();
 
 	// Loop over Configurations
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : targetConfigurations_)
 	{
 		// Loop over Species used in this Configuration and find its entry in the defined Isotopologues for the Module
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());

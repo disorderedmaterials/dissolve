@@ -236,8 +236,7 @@ void BaseViewer::createUpdateStack(PointerArray<BaseViewer>& updateStack)
 	}
 
 	// Add any viewers that are dependent on us (i.e. link to us)
-	RefListIterator<BaseViewer> linkedViewIterator(dependentViewers_);
-	while (BaseViewer* viewer = linkedViewIterator.iterate()) viewer->createUpdateStack(updateStack);
+	for (BaseViewer* viewer : dependentViewers_) viewer->createUpdateStack(updateStack);
 }
 
 // Perform post-initialisation operations

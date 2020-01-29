@@ -151,8 +151,7 @@ void SpeciesSiteRefListKeywordWidget::updateSummaryText()
 	if (keyword_->data().nItems() == 0) siteText = "<None>";
 	else
 	{
-		RefListIterator<SpeciesSite> siteIterator(keyword_->data());
-		while (SpeciesSite* site = siteIterator.iterate())
+		for (SpeciesSite* site : keyword_->data())
 		{
 			if (siteIterator.isFirst()) siteText.strcatf("%s (%s)", site->name(), site->parent()->name());
 			else siteText.strcatf(", %s (%s)", site->name(), site->parent()->name());

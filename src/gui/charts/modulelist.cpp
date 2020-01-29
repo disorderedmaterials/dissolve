@@ -88,8 +88,7 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 	QPoint p1, p2;
 	int top = 0;
 	ModuleBlock* lastBlock = NULL;
-	RefListIterator<ModuleBlock> blockIterator(moduleBlockWidgets_);
-	while (ModuleBlock* block = blockIterator.iterate())
+	for (ModuleBlock* block : moduleBlockWidgets_)
 	{
 		// If this block is not visible, continue
 		if (!block->isVisible()) continue;
@@ -133,8 +132,7 @@ void ModuleListChart::paintEvent(QPaintEvent* event)
 // Find ModuleBlock displaying specified Module
 ModuleBlock* ModuleListChart::moduleBlock(Module* module)
 {
-	RefListIterator<ModuleBlock> moduleBlockIterator(moduleBlockWidgets_);
-	while (ModuleBlock* block = moduleBlockIterator.iterate()) if (block->module() == module) return block;
+	for (ModuleBlock* block : moduleBlockWidgets_) if (block->module() == module) return block;
 
 	return NULL;
 }
@@ -173,8 +171,7 @@ void ModuleListChart::updateContentBlocks()
 	}
 
 	// Any widgets remaining in moduleBlockWidgets_ are no longer used, and can thus be deleted
-	RefListIterator<ModuleBlock> widgetRemover(moduleBlockWidgets_);
-	while (ModuleBlock* block = widgetRemover.iterate())
+	for (ModuleBlock* block : moduleBlockWidgets_)
 	{
 		chartBlocks_.remove(block);
 		delete block;
@@ -418,8 +415,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 
 	// Loop over widgets
 	ModuleBlock* lastVisibleBlock = NULL;
-	RefListIterator<ModuleBlock> blockIterator(moduleBlockWidgets_);
-	while (ModuleBlock* block = blockIterator.iterate())
+	for (ModuleBlock* block : moduleBlockWidgets_)
 	{
 		// Set default visibility of the block
 		block->setVisible(true);

@@ -98,8 +98,7 @@ bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* keywordNam
 
 	// Loop over list of SpeciesSiteReferences
 	CharString sites;
-	RefListIterator<SpeciesSite> refIterator(data_);
-	while (SpeciesSite* site = refIterator.iterate()) sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
+	for (SpeciesSite* site : data_) sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
 
 	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, sites.get())) return false;
 

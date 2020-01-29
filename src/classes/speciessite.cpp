@@ -118,8 +118,7 @@ bool SpeciesSite::setOriginAtoms(const RefList<SpeciesAtom> atoms)
 
 	++version_;
 
-	RefListIterator<SpeciesAtom> atomIterator(atoms);
-	while (SpeciesAtom* i = atomIterator.iterate()) if (!addOriginAtom(i))
+	for (SpeciesAtom* i : atoms) if (!addOriginAtom(i))
 	{
 		originAtoms_.clear();
 		return false;
@@ -138,8 +137,7 @@ const RefList<SpeciesAtom>& SpeciesSite::originAtoms()
 Array<int> SpeciesSite::originAtomIndices() const
 {
 	Array<int> indices;
-	RefListIterator<SpeciesAtom> atomIterator(originAtoms_);
-	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
+	for (SpeciesAtom* atom : originAtoms_) indices.add(atom->index());
 
 	return indices;
 }
@@ -201,8 +199,7 @@ bool SpeciesSite::setXAxisAtoms(const RefList<SpeciesAtom> atoms)
 
 	++version_;
 
-	RefListIterator<SpeciesAtom> atomIterator(atoms);
-	while (SpeciesAtom* i = atomIterator.iterate()) if (!addXAxisAtom(i))
+	for (SpeciesAtom* i : atoms) if (!addXAxisAtom(i))
 	{
 		xAxisAtoms_.clear();
 		return false;
@@ -221,8 +218,7 @@ const RefList<SpeciesAtom>& SpeciesSite::xAxisAtoms()
 Array<int> SpeciesSite::xAxisAtomIndices() const
 {
 	Array<int> indices;
-	RefListIterator<SpeciesAtom> atomIterator(xAxisAtoms_);
-	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
+	for (SpeciesAtom* atom : xAxisAtoms_) indices.add(atom->index());
 
 	return indices;
 }
@@ -270,8 +266,7 @@ bool SpeciesSite::setYAxisAtoms(const RefList<SpeciesAtom> atoms)
 
 	++version_;
 
-	RefListIterator<SpeciesAtom> atomIterator(atoms);
-	while (SpeciesAtom* i = atomIterator.iterate()) if (!addYAxisAtom(i))
+	for (SpeciesAtom* i : atoms) if (!addYAxisAtom(i))
 	{
 		yAxisAtoms_.clear();
 		return false;
@@ -290,8 +285,7 @@ const RefList<SpeciesAtom>& SpeciesSite::yAxisAtoms()
 Array<int> SpeciesSite::yAxisAtomIndices() const
 {
 	Array<int> indices;
-	RefListIterator<SpeciesAtom> atomIterator(yAxisAtoms_);
-	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
+	for (SpeciesAtom* atom : yAxisAtoms_) indices.add(atom->index());
 
 	return indices;
 }

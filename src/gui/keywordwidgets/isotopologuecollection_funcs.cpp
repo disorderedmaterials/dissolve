@@ -88,8 +88,7 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
 	if (!item)
 	{
 		// No item selected - add next missing configuration
-		RefListIterator<Configuration> configIterator(keyword_->allowedConfigurations());
-		while (Configuration* cfg = configIterator.iterate())
+		for (Configuration* cfg : keyword_->allowedConfigurations())
 		{
 			if (keyword_->data().contains(cfg)) continue;
 			if (cfg->usedSpecies().nItems() == 0) continue;

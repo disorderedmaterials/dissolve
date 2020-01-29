@@ -132,8 +132,7 @@ void ModuleRefListKeywordWidget::updateSummaryText()
 	else
 	{
 		CharString summaryText;
-		RefListIterator<Module> moduleIterator(selection);
-		while (Module* module = moduleIterator.iterate())
+		for (Module* module : selection)
 		{
 			if (moduleIterator.isFirst()) summaryText = module->uniqueName();
 			else summaryText.strcatf(", %s", module->uniqueName());

@@ -126,8 +126,7 @@ void SpeciesRefListKeywordWidget::updateSummaryText()
 	else
 	{
 		CharString summaryText;
-		RefListIterator<Species> speciesIterator(selection);
-		while (Species* sp = speciesIterator.iterate())
+		for (Species* sp : selection)
 		{
 			if (speciesIterator.isFirst()) summaryText = sp->name();
 			else summaryText.strcatf(", %s", sp->name());

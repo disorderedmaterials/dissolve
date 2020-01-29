@@ -220,8 +220,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
-		RefListIterator<Module> targetIterator(group->modules());
-		while (Module* targetModule = targetIterator.iterate())
+		for (Module* targetModule : group->modules())
 		{
 			// Reference data
 			Renderable* refData = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("ExpFQ//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
