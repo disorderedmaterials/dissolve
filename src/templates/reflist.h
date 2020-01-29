@@ -57,6 +57,24 @@ template <class T> class RefListItem
 	{
 		return item_;
 	}
+	RefListItem<T> operator++()
+	{
+		if(next_ != nullptr) return *next_;
+		RefListItem<T> temp;
+		return temp;
+	}
+	bool operator==(RefListItem<T> that)
+	{
+		return next_ == that.next_ && prev_ == that.prev_ && item_ == that.item_;
+	}
+	bool operator!=(RefListItem<T> that)
+	{
+		return next_ != that.next_ || prev_ != that.prev_ || item_ != that.item_;
+	}
+	T* operator*()
+	{
+		return item_;
+	}
 
 
 	/*
@@ -143,6 +161,15 @@ template <class T> class RefList
 #endif
 		// Use array() function to return item
 		return array()[index];
+	}
+	RefListItem<T> begin() const
+	{
+		return *listHead_;
+	}
+	RefListItem<T> end() const
+	{
+		RefListItem<T> temp;
+		return temp;
 	}
 
 
