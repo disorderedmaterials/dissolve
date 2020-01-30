@@ -19,14 +19,14 @@ For the distance vs axis angle we'll visualise the results side-by-side. Add two
 {: .step}
 > Right-click on the empty graph and select _Add Data2D_
 {: .step}
-> Only two 2D datasets exist, both related to the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module - choose the one tagged "@reference"
+> Only two 2D datasets exist, both related to the [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module - choose the one tagged "@reference"
 {: .step}
 
 Let's get our refined simulation data:
 
 > Add another _Graph_ gizmo to the workspace and rename it to `Orientation (Refined)`
 {: .step}
-> Open the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module in a tab if it isn't already open
+> Open the [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module in a tab if it isn't already open
 {: .action .action_tabs}
 > Right-click on the distance/angle plot data
 {: .action .action_mouse}

@@ -58,5 +58,5 @@ void EditSpeciesDialog::dataModified()
 // Run the dialog, returning whether it was accepted
 bool EditSpeciesDialog::editSpecies()
 {
-	exec();
+	return (exec() == QDialog::Accepted);
 }

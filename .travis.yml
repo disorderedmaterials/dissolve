@@ -3,143 +3,63 @@ language: cpp
 
 # Package dependencies
 addons:
-  apt:
-    packages:
-      - bison
-      - libfreetype6-dev
-      - libftgl-dev
-      - pkg-config
-      - libtool
-      - automake
-      - libopenmpi-dev
-      - openmpi-bin
-      - ninja-build
-      - cmake
   homebrew:
     update: true
     packages:
       - bison
       - ftgl
       - ninja
-
-services:
-  - docker
+      - create-dmg
+      - jq
 
 # Add updated Qt libs (serial build only)
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo add-apt-repository ppa:beineri/opt-qt-5.12.3-xenial -y; fi
-  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get update -q; fi
-  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get install qt512base -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "false" ]]; then brew install qt5; fi
   - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "true" ]]; then brew install open-mpi; fi
 
 # Build Stages
 jobs:
   include:
-    - stage: Windows Build
-      name: Serial, GUI
-      env: PARALLEL=false
-      os: windows
-      script:
-        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.qt5.ps1
-        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.prereq.ps1
-        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.freetype.ps1
-        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ftgl.ps1
-        - powershell -NoProfile -ExecutionPolicy Bypass ci/windows/build.serial.gui.ps1
-    - stage: Linux Build
-      name: Serial, GUI
-      env: PARALLEL=false
-      os: linux
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/ubuntu/build.serial.gui
-    - stage: Linux Build
-      name: Parallel
-      env: PARALLEL=true
-      os: linux
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/ubuntu/build.parallel
-    - stage: Linux Test / Deploy
-      name: Serial (also deploys GUI)
-      env: PARALLEL=false
-      os: linux
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/ubuntu/test.serial
-      before_deploy:
-        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
-        - chmod u+x ./travis-deploy
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
-    - stage: Linux Test / Deploy
-      name: Parallel
-      env: PARALLEL=true
-      os: linux
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/ubuntu/test.parallel
-      before_deploy:
-        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
-        - chmod u+x ./travis-deploy
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
-    - stage: OSX Build / Deploy
-      name: Serial, GUI
-      env: PARALLEL=false
-      os: osx
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/osx.highsierra/build.serial.gui
-      before_deploy:
-        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
-        - chmod u+x ./travis-deploy
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/Dissolve-GUI*dmg
-    - stage: OSX Build / Deploy
-      name: Parallel
-      env: PARALLEL=true
-      os: osx
-      cache:
-        directories:
-          - artifacts
-      script: ./ci/osx.highsierra/build.parallel
-      before_deploy:
-        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
-        - chmod u+x ./travis-deploy
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/Dissolve*dmg
+    - os: osx
+      osx_image: xcode6.4
+      env:
+        - FLAVOUR="Yosemite"
+        - PARALLEL=false
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - FLAVOUR="HighSierra"
+        - PARALLEL=false
+    - os: osx
+      osx_image: xcode11.3
+      env:
+        - FLAVOUR="Mojave"
+        - PARALLEL=false
+
+cache:
+  directories:
+    - artifacts
+
+script:
+  - VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+  - SHORTHASH=`git rev-parse --short HEAD`
+  - echo 'USECREATEDMG="TRUE"' >> ci/osx/dissolve-gui.dmginfo
+  - ./ci/osx/build.serial.gui
+  - mv artifacts/Dissolve-GUI-${VERSION}.dmg artifacts/Dissolve-GUI-${VERSION}-${SHORTHASH}-${FLAVOUR}.dmg
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  on:
+    all_branches: true
+  script: ./ci/scripts/update-release -r ${TRAVIS_REPO_SLUG} -t continuous -n "Continuous Build (${TRAVIS_COMMIT})" -b "Continuous release from current \`develop\` branch at ${TRAVIS_COMMIT}. Built ${DATE}." -p artifacts/*dmg
 
 # Branch Safelist (allow only develop and version-tagged builds)
 branches:
   only:
     - develop
-    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+    - /^\d+\.\d+(\.\d+)?(-\S*)?$/
 
 # Build Stage Order
 stages:
-  - Windows Build
   - OSX Build / Deploy
-  - Linux Build
-  - Linux Test / Deploy

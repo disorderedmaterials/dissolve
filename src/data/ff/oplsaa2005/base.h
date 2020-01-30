@@ -27,7 +27,7 @@
 // Forward Declarations
 /* none */
 
-// SPC/Fw Forcefield
+// OPLS-AA (2005) Base Forcefield
 class OPLSAA2005BaseForcefield : public Forcefield
 {
 	public:

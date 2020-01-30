@@ -930,7 +930,11 @@ double View::autoFollowXLength() const
 // Set axis limits based on current auto-follow type
 void View::autoFollowData()
 {
+	// Is autofollowing enabled?
 	if (autoFollowType_ == View::NoAutoFollow) return;
+
+	// If renderable data access is disabled, there's nothing to do
+	if (!Renderable::sourceDataAccessEnabled()) return;
 
 	// Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive regeneration further down the line
 	bool updateRequired = false;

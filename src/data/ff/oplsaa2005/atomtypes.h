@@ -29,7 +29,7 @@
 class CoreData;
 class SpeciesAtom;
 
-// OPLSAA (2005) Atom Types Forcefield
+// OPLSAA (2005) Atom Types
 class OPLSAA2005_AtomTypes
 {
 	/*

@@ -57,7 +57,7 @@ Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules 
 {: .step}
 > Press the _Auto_{: .text-green-100} button to add the natural isotopologue for each species present
 {: .step}
-> Change the isotopologue from `Natural` to `Deuterated`
+> Change the isotopologue from `Natural` to `C6D6`
 {: .step}
 > Open the **Reference Data** settings group
 {: .action .action_groups}

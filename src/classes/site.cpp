@@ -91,9 +91,9 @@ bool OrientedSite::hasAxes() const
 EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
 {
 	static EnumOptionsList SiteAxisOptions = EnumOptionsList() <<
-		EnumOption(SiteAxis::XAxis, 	"XAxis") <<
-		EnumOption(SiteAxis::YAxis, 	"YAxis") <<
-		EnumOption(SiteAxis::ZAxis, 	"ZAxis");
+		EnumOption(OrientedSite::XAxis, 	"XAxis") <<
+		EnumOption(OrientedSite::YAxis, 	"YAxis") <<
+		EnumOption(OrientedSite::ZAxis, 	"ZAxis");
 
 	static EnumOptions<OrientedSite::SiteAxis> options("SiteAxis", SiteAxisOptions);
 

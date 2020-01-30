@@ -27,7 +27,7 @@
 // Forward Declarations
 /* none */
 
-// SPC/Fw Forcefield
+// OPLS-AA/2005 Aromatics Forcefield
 class Forcefield_OPLSAA2005_Aromatics : public OPLSAA2005BaseForcefield
 {
 	public:

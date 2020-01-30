@@ -27,7 +27,7 @@ For sanity, we'll rename it to something we understand:
 
 First of all, let's send the centre-of-geometry RDF from the current production run to this graph. You can right-click on any data shown in any plot in Dissolve to set style options and, in this case, copy the data to any workspace gizmo that will accept it.
 
-> Open the [`CalculateAxisAngle`](../../userguide/modules/calculatedaxisangle) module in a tab if it isn't already open
+> Open the [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module in a tab if it isn't already open
 {: .action .action_tabs}
 > Right-click on the data curve in the line plot of the centre-of-mass RDF
 {: .action .action_mouse}

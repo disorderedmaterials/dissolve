@@ -20,7 +20,7 @@ Let's set-up the parameters in the generator first of all. The relative random m
 
 > Open the settings for the `Parameters` node
 {: .action .action_settings}
-> Change the value of the integer `populationA` variable to 1500.
+> Change the value of the integer `populationA` variable to 1500
 {: .action .action_edit}
 > Set `ratioB` to 2
 {: .action .action_edit}
