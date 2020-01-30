@@ -27,6 +27,7 @@
 #include "expression/variablevalue.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include <algorithm>
 #include <stdarg.h>
 #include <string.h>
 
@@ -70,10 +71,9 @@ void Expression::clear()
 	statements_.clear();
 
 	// Clear variables and constants, except those that are in the persistent nodes list
-	for(auto varRef : variables_)
-	{
-		if (!persistentNodes_.contains(varRef)) variables_.remove(varRef);
-	}
+	std::remove_if(variables_.begin(), variables_.end(),
+				   [&](const ExpressionNode* x){
+					   return !persistentNodes_.contains(x);});
 
 	for(auto varRef : variables_)
 	{

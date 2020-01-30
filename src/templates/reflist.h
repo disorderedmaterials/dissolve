@@ -24,6 +24,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <iterator>
 
 // Forward Declarations
 template <class T> class RefList;
@@ -32,7 +33,7 @@ template <class T> class RefList;
  * Item
  */
 
-template <class T> class RefListItem
+template <class T> class RefListItem : public std::iterator<std::forward_iterator_tag, T*>
 {
 	public:
 	// Constructor
@@ -59,9 +60,19 @@ template <class T> class RefListItem
 	}
 	RefListItem<T> operator++()
 	{
-		if(next_ != nullptr) return *next_;
-		RefListItem<T> temp;
-		return temp;
+		if(next_ == nullptr)
+		{
+			prev_ = nullptr;
+			item_ = nullptr;
+			next_ = nullptr;
+		}
+		else
+		{
+			prev_ = next_->prev_;
+			item_ = next_->item_;
+			next_ = next_->next_;
+		}
+		return *this;
 	}
 	bool operator==(RefListItem<T> that)
 	{
@@ -71,7 +82,7 @@ template <class T> class RefListItem
 	{
 		return next_ != that.next_ || prev_ != that.prev_ || item_ != that.item_;
 	}
-	T* operator*()
+	T*& operator*()
 	{
 		return item_;
 	}
@@ -164,9 +175,12 @@ template <class T> class RefList
 	}
 	RefListItem<T> begin() const
 	{
+		if (listHead_ == nullptr) {
+			return end();
+		}
 		return *listHead_;
 	}
-	RefListItem<T> end() const
+	const RefListItem<T> end() const
 	{
 		RefListItem<T> temp;
 		return temp;
