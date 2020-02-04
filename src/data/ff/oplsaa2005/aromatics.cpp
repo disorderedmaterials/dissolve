@@ -44,6 +44,10 @@ Forcefield_OPLSAA2005_Aromatics::Forcefield_OPLSAA2005_Aromatics()
 	copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring=6)");
 	// -- Ethylbenzene
 	copyAtomType(oplsAtomTypeById(149), "CT", "nh=2, -C(nh=3), -C(ring(size=6))");
+	// -- Phenol
+	copyAtomType(oplsAtomTypeById(166), "CA", "nbonds=3,-O(-H),-C(n=2)");
+	copyAtomType(oplsAtomTypeById(167), "OH", "-&166");
+	copyAtomType(oplsAtomTypeById(168), "HO", "-&167");
 }
 
 Forcefield_OPLSAA2005_Aromatics::~Forcefield_OPLSAA2005_Aromatics()
