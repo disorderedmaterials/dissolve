@@ -72,6 +72,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* typeName,
 	description_ = sourceType.description_;
 	parameters_ = sourceType.parameters_;
 	neta_.set(netaDefinition ? netaDefinition : sourceType.neta().definitionString(), parent);
+	parameterReference_ = NULL;
 
 	// Equivalent name provided?
 	if (equivalentName) equivalentName_ = equivalentName;
