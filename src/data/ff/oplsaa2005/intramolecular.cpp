@@ -390,8 +390,8 @@ ForcefieldBondTerm* OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType*
 		{ "Zn",	"OW",	SpeciesBond::HarmonicForm,	334.72,		2.05 }
 	};
 
-	printf("sizeof bonds = %i\n", sizeof(bondTerms)/sizeof(ForcefieldBondTerm));
-	for (int n=0; n<sizeof(bondTerms)/sizeof(ForcefieldBondTerm); ++n) if (bondTerms[n].matches(i, j)) return &bondTerms[n];
+	static const int nBonds = sizeof(bondTerms)/sizeof(ForcefieldBondTerm);
+	for (int n=0; n<nBonds; ++n) if (bondTerms[n].matches(i, j)) return &bondTerms[n];
 
 	return NULL;
 }
@@ -1409,8 +1409,8 @@ ForcefieldAngleTerm* OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomTyp
 		{ "N",	"Zn",	"O",	SpeciesAngle::HarmonicForm,	167.36,		109.5 }
 	};
 
-	printf("sizeof angles = %i\n", sizeof(angleTerms)/sizeof(ForcefieldAngleTerm));
-	for (int n=0; n<sizeof(angleTerms)/sizeof(ForcefieldAngleTerm); ++n) if (angleTerms[n].matches(i, j, k)) return &angleTerms[n];
+	static const int nAngles = sizeof(angleTerms)/sizeof(ForcefieldAngleTerm);
+	for (int n=0; n<nAngles; ++n) if (angleTerms[n].matches(i, j, k)) return &angleTerms[n];
 
 	return NULL;
 }
@@ -2169,8 +2169,8 @@ ForcefieldTorsionTerm* OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAto
 		{ "N2",	"CA",	"CA",	"CA",	SpeciesTorsion::Cos4Form,	0,	6.77808,	0,	-1.84096 }	// benzamidine
 	};
 
-	printf("sizeof torsions = %i\n", sizeof(torsionTerms)/sizeof(ForcefieldTorsionTerm));
-	for (int n=0; n<sizeof(torsionTerms)/sizeof(ForcefieldTorsionTerm); ++n) if (torsionTerms[n].matches(i, j, k, l)) return &torsionTerms[n];
+	static const int nTorsions = sizeof(torsionTerms)/sizeof(ForcefieldTorsionTerm);
+	for (int n=0; n<nTorsions; ++n) if (torsionTerms[n].matches(i, j, k, l)) return &torsionTerms[n];
 
 	return NULL;
 }

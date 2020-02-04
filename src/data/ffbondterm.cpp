@@ -47,7 +47,6 @@ ForcefieldBondTerm::~ForcefieldBondTerm()
 // Return if this term matches the atom types supplied
 bool ForcefieldBondTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j)
 {
-	printf("HERE BOND %s-%s\n", typeI_.get(), typeJ_.get());
 	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName())) return true;
 	if (DissolveSys::sameWildString(typeJ_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, j->equivalentName())) return true;
 
