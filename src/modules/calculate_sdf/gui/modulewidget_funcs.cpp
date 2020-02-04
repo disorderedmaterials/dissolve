@@ -1,7 +1,7 @@
 /*
 	*** CalculateSDF Module Widget - Functions
 	*** src/modules/calculate_sdf/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -22,8 +22,8 @@
 #include "modules/calculate_sdf/gui/modulewidget.h"
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/calculate_avgmol/avgmol.h"
-#include "gui/viewer/render/renderabledata3d.h"
-#include "gui/viewer/render/renderablespecies.h"
+#include "gui/render/renderabledata3d.h"
+#include "gui/render/renderablespecies.h"
 #include "gui/helpers/comboboxupdater.h"
 #include "classes/box.h"
 #include "classes/configuration.h"

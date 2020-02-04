@@ -275,7 +275,7 @@
   <customwidget>
    <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/datawidget.h</header>
+   <header>gui/datawidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

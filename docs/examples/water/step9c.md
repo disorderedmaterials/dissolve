@@ -48,20 +48,20 @@ Along with the actual calculate of the SDF, it is useful to have the actual aver
 
 | Module | Purpose |
 |--------|---------|
-| [`CalculateAvgMol`](/userguide/modules/calculateavgmol) | Calculates the average geometry of the parent species aroudn a specified reference site |
-| [`CalculateSDF`](/userguide/modules/calculatesdf) | Calculates the spatial density function of a particular site around a central reference site |
+| [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) | Calculates the average geometry of the parent species aroudn a specified reference site |
+| [`CalculateSDF`](../../userguide/modules/calculatesdf) | Calculates the spatial density function of a particular site around a central reference site |
 
-As the name implies, the [`CalculateAvgMol`](/userguide/modules/calculateavgmol) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the [`CalculateSDF`](/userguide/modules/calculatesdf) module. The [`CalculateSDF`](/userguide/modules/calculatesdf) module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both module, the principal (central) site must have a system of axes defined.
+As the name implies, the [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the [`CalculateSDF`](../../userguide/modules/calculatesdf) module. The [`CalculateSDF`](../../userguide/modules/calculatesdf) module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both module, the principal (central) site must have a system of axes defined.
 
 Let's proceed and set up the two modules in the layer:
 
-> Select the [`CalculateAvgMol`](/userguide/modules/calculateavgmol) module to display its options
+> Select the [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) module to display its options
 {: .action .action_mouse}
 > Open the **Target** settings group
 {: .action .action_groups}
 > Set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)
 {: .step}
-> Select the [`CalculateSDF`](/userguide/modules/calculatesdf) module to display its options
+> Select the [`CalculateSDF`](../../userguide/modules/calculatesdf) module to display its options
 {: .action .action_mouse}
 > Open the **Sites** settings group
 {: .action .action_groups}

@@ -1,7 +1,7 @@
 /*
 	*** Neutron SQ Module Widget - Functions
 	*** src/modules/neutronsq/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -20,7 +20,7 @@
 */
 
 #include "modules/neutronsq/gui/modulewidget.h"
-#include "gui/viewer/dataviewer.hui"
+#include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/neutronsq/neutronsq.h"

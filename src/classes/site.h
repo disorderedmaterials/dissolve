@@ -1,7 +1,7 @@
 /*
 	*** Site
 	*** src/classes/site.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_SITE_H
 
 #include "math/matrix3.h"
+#include "base/enumoptions.h"
 
 // Forward Declarations
 class Molecule;
@@ -57,7 +58,7 @@ class Site
 	virtual const Matrix3& axes() const;
 };
 
-// Site with Axes Definition
+// Oriented Site Definition
 class OrientedSite : public Site
 {
 	public:
@@ -75,6 +76,10 @@ class OrientedSite : public Site
 	Matrix3 axes_;
 
 	public:
+	// Axis Enum
+	enum SiteAxis { XAxis = 0, YAxis = 1, ZAxis = 2};
+	// Return enum options for SiteAxis
+	static EnumOptions<OrientedSite::SiteAxis> siteAxis();
 	// Return whether local axes are present
 	bool hasAxes() const;
 	// Return local axes

@@ -5,50 +5,42 @@ grand_parent: Examples
 ---
 # Comparing Benzene Structure
 
-## 3. Set up Analysis
+## 4. Set up Analysis
 
-Let's add a processing layer to calculate the average molecule, the centre-of-mass RDF and the centre-of-mass spatial density from our equilibrated system.
+For our "properties of interest" we'll calculate both the centre-of-geometry RDF and the out-of-plane angle between molecules as a function of distance. We can get both from the [CalculateAxisAngle](../../userguide/modules/calculateaxisangle) module:
 
-> Layer &#8680; Create... &#8680; Analysis... &#8680; Average Molecule & SDF
+| Module | Purpose |
+|--------|---------|
+| [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) | Calculates the distance vs. axis angle map between two sites |
+
+Since our site (`COG`) is set up for the Z axis to be pointing out of the plane of the benzene ring, it is the angle formed between these axes on the different molecules that we'll consider.
+
+Let's add an empty processing layer to to the simulation, add on our module, and set it up:
+
+> Layer &#8680; Create... &#8680; Empty
 {: .action .action_menu}
-
-### Average Molecule
-
-For the average molecule calculation made by the [`CalculateAvgMol`](/userguide/modules/calculateavgmol) module all we need to do is set the target site (which must contain defined axes):
-
-> Select the [`CalculateAvgMol`](/userguide/modules/calculateavgmol) module to display its options
-{: .action .action_mouse}
-> Open the **Target** settings group
-{: .action .action_groups}
-> Set the target **Site** for the average molecule calculation to be `COG` (it will be the only one available, since it is the only one which has a set of axes defined)
+> Double-click the layer tab and rename it to `Analysis`
 {: .step}
-
-### Spatial Density Function
-
-We only have one site - the centre-of-geometry (`COG`) - so out spatial density function will represent the distribution of molecule centres about a central benzene molecule:
-
-> Select the [`CalculateSDF`](/userguide/modules/calculatesdf) module to display its options
-{: .action .action_mouse}
-> Open the **Sites** settings group
-{: .action .action_groups}
-> Set the central **SiteA** to `COG` (again, the only one available)
-{: .step}
-> Set the surrounding **SiteB** to `COG` also
-{: .step}
-
-### Radial Distribution Function
-
-To the end of our analysis layer we'll add a [`CalculateRDF`](/userguide/modules/calculaterdf) module to provide us with the centre-of-geometry radial distribution function.
-
 > Show the module palette for the current layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab
 {: .action .action_mouse}
-> Drag a [CalculateRDF](/userguide/modules/calculatedrdf) module over to the **Current Modules** list
+> Drag a [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module over to the **Current Modules** list
+{: .action .action_mouse}
+> Select the [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module to show its options
 {: .step}
+> Open the **Calculation** settings group
+{: .action .action_groups}
+> Leave the **DistanceRange** settings as-is, but change the Max and Bin Width for the **AngleRange** to 90 and 10 respectively
+{: .action .action_edit}
 > Open the **Sites** settings group
 {: .action .action_groups}
 > Set both **SiteA** and **SiteB** to `COG`
 {: .step}
+> Set the **AxisA** and **AxisB** to `ZAxis`
+{: .step}
 > Enable the **ExcludeSameMolecule** to prevent the unwanted self-correlation spike at 0 in the resulting RDF
 {: .step}
 
-[Previous Step](step9b.md){: .btn }   [Next Step](step10.md){: .btn .right}
+> It would also be nice here to calculate the spatial density function and compare it, but this takes more iterations than a (sane) example will allow.
+{: .tip}
+
+[Previous Step](step3.md){: .btn }   [Next Step](step5.md){: .btn .right}

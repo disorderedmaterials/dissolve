@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Node RefList
 	*** src/gui/keywordwidgets/nodereflist_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

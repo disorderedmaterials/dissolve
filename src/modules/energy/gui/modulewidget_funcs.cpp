@@ -1,7 +1,7 @@
 /*
 	*** Energy Module Widget - Functions
 	*** src/modules/energy/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -20,7 +20,7 @@
 */
 
 #include "modules/energy/gui/modulewidget.h"
-#include "gui/viewer/dataviewer.hui"
+#include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"

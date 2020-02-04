@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Vec3NodeValue
 	*** src/gui/keywordwidgets/vec3nodevalue_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -116,11 +116,11 @@ void Vec3NodeValueKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	ui_.ValueAEdit->setText(keyword_->data().x.asString());
+	ui_.ValueAEdit->setText(keyword_->data().x.asString().get());
 	ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
-	ui_.ValueBEdit->setText(keyword_->data().y.asString());
+	ui_.ValueBEdit->setText(keyword_->data().y.asString().get());
 	ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
-	ui_.ValueCEdit->setText(keyword_->data().z.asString());
+	ui_.ValueCEdit->setText(keyword_->data().z.asString().get());
 	ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
 	refreshing_ = false;

@@ -1,7 +1,7 @@
 /*
 	*** Core Data
 	*** src/classes/coredata.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -63,7 +63,7 @@ AtomType* CoreData::addAtomType(Element* el)
 	AtomType* newAtomType = atomTypes_.add();
 
 	// Create a suitable unique name
-	newAtomType->setName(uniqueAtomTypeName(el->name()));
+	newAtomType->setName(uniqueAtomTypeName(el->symbol()));
 
 	// Set data
 	newAtomType->setElement(el);

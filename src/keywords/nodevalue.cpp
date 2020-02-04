@@ -1,7 +1,7 @@
 /*
 	*** Keyword - NodeValue
 	*** src/keywords/nodevalue.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -59,7 +59,7 @@ bool NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData& co
 // Write keyword data to specified LineParser
 bool NodeValueKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.asString())) return false;
+	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.asString().get())) return false;
 
 	return true;
 }

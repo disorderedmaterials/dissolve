@@ -1,7 +1,7 @@
 /*
 	*** Node Value
 	*** src/procedure/nodevalue.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -83,7 +83,7 @@ class NodeValue
 	// Return contained value as double
 	double asDouble();
 	// Return value represented as a string
-	const char* asString(bool addQuotesIfRequired = false) const;
+	CharString asString(bool addQuotesIfRequired = false) const;
 };
 
 #endif

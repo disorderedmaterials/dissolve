@@ -1,7 +1,7 @@
 /*
 	*** Import - DLPOLY Coordinates
 	*** src/io/import/coordinates_dlpoly.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

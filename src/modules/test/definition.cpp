@@ -1,7 +1,7 @@
 /*
 	*** Test Module - Definition
 	*** src/modules/test/definition.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

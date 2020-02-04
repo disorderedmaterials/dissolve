@@ -1,7 +1,7 @@
 /*
 	*** NETA Logic Node
 	*** src/neta/logic.cpp
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 

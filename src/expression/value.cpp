@@ -1,7 +1,7 @@
 /*
 	*** Expression Value
 	*** src/expression/value.cpp
-	Copyright T. Youngs 2010-2019
+	Copyright T. Youngs 2010-2020
 
 	This file is part of Dissolve.
 

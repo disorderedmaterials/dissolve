@@ -1,7 +1,7 @@
 /*
 	*** ConfigurationTab Functions
 	*** src/gui/configurationtab_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -247,8 +247,6 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 	if (refreshLock_.isLocked()) return;
 
 	configuration_->setRequestedSizeFactor(value);
-
-	dissolveWindow_->setModified();
 }
 
 /*

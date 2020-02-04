@@ -34,12 +34,12 @@ Let's now create a new layer and add the analysis module that we want:
 {: .action .action_edit}
 > Show the module palette for the layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab.
 {: .action .action_mouse}
-> Drag a [CalculateDAngle](/userguide/modules/calculatedangle) module over to the **Current Modules** list
+> Drag a [CalculateDAngle](../../userguide/modules/calculatedangle) module over to the **Current Modules** list
 {: .step}
 
-As its name suggests, the [CalculateDAngle](/userguide/modules/calculatedangle) module calculates distance and angle histograms, and their 2D map, from three target sites. Since the module is general-purpose, we'll need to set up the module to give us information on our specific geometry of interest. The [CalculateDAngle](/userguide/modules/calculatedangle) assumes in the target interaction A&ndash;B&middot;&middot;&middot;C that A&ndash;B occur on the same molecule, and gives us a choice as to whether we exclude C sites that are also on the same molecule.
+As its name suggests, the [CalculateDAngle](../../userguide/modules/calculatedangle) module calculates distance and angle histograms, and their 2D map, from three target sites. Since the module is general-purpose, we'll need to set up the module to give us information on our specific geometry of interest. The [CalculateDAngle](../../userguide/modules/calculatedangle) assumes in the target interaction A&ndash;B&middot;&middot;&middot;C that A&ndash;B occur on the same molecule, and gives us a choice as to whether we exclude C sites that are also on the same molecule.
 
-> Select the [`CalculateDAngle`](/userguide/modules/calculatedangle) module to display its options
+> Select the [`CalculateDAngle`](../../userguide/modules/calculatedangle) module to display its options
 {: .action .action_mouse}
 > Open the **Calculation** settings group
 {: .action .action_groups}

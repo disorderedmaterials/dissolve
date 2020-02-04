@@ -1,7 +1,7 @@
 /*
 	*** OPLSAA (2005) Atom Types
 	*** src/data/ff/oplsaa2005/atomtypes.h
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
@@ -29,7 +29,7 @@
 class CoreData;
 class SpeciesAtom;
 
-// OPLSAA (2005) Atom Types Forcefield
+// OPLSAA (2005) Atom Types
 class OPLSAA2005_AtomTypes
 {
 	/*

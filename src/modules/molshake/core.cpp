@@ -1,7 +1,7 @@
 /*
 	*** MolShake Module - Core
 	*** src/modules/molshake/core.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

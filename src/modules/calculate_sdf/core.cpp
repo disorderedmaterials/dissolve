@@ -1,7 +1,7 @@
 /*
 	*** CalculateSDF Module - Core
 	*** src/modules/calculate_sdf/core.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

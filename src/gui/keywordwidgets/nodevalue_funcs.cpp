@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - NodeValue
 	*** src/gui/keywordwidgets/nodevalue_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -35,7 +35,7 @@ NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget* parent, KeywordBase* key
 	else
 	{
 		// Set expression text
-		ui_.ValueEdit->setText(keyword_->data().asString());
+		ui_.ValueEdit->setText(keyword_->data().asString().get());
 		checkValueValidity();
 	}
 
@@ -81,7 +81,7 @@ void NodeValueKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	ui_.ValueEdit->setText(keyword_->data().asString());
+	ui_.ValueEdit->setText(keyword_->data().asString().get());
 
 	refreshing_ = false;
 }

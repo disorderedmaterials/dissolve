@@ -1,7 +1,7 @@
 /*
 	*** CalculateRDF Module Widget - Functions
 	*** src/modules/calculate_rdf/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

@@ -1,7 +1,7 @@
 /*
 	*** Procedure Node - Calculate Vector
 	*** src/procedure/nodes/calculatevector.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -67,8 +67,13 @@ int CalculateVectorProcedureNode::dimensionality() const
 // Prepare any necessary data, ready for execution
 bool CalculateVectorProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	// Call the base class function
+	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList)) return false;
+
 	// Get orientation flag
 	rotateIntoFrame_ = keywords_.asBool("RotateIntoFrame");
+
+	return true;
 }
 
 // Execute node, targetting the supplied Configuration

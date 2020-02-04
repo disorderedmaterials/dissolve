@@ -1588,13 +1588,13 @@
   <customwidget>
    <class>SpeciesWidget</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/specieswidget.h</header>
+   <header>gui/specieswidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SiteWidget</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/sitewidget.h</header>
+   <header>gui/sitewidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,7 +1,7 @@
 /*
 	*** Procedure Node - Operate Divide
 	*** src/procedure/nodes/operatedivide.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

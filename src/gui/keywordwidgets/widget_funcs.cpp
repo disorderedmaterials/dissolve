@@ -1,7 +1,7 @@
 /*
 	*** Keywords Widget - Functions
 	*** src/gui/keywordwidgets/widget_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -266,6 +266,7 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 {
 	// Clear existing item groups....
 	while (count() > 0) removeItem(0);
+	keywordWidgets_.clear();
 
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<KeywordBase> remainingKeywords;

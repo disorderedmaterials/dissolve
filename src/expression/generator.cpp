@@ -1,7 +1,7 @@
 /*
 	*** Mathematical Expression Generator
 	*** src/expression/generator.cpp
-	Copyright T. Youngs 2015-2019
+	Copyright T. Youngs 2015-2020
 
 	This file is part of Dissolve.
 

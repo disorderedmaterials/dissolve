@@ -4,11 +4,11 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "5")
-set(VERSION_PATCH "1")
+set(VERSION_PATCH "4")
 
 set(CMAKE_BUILD_TYPE "Release")
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8)
 
 if(COMMAND cmake_policy)
   cmake_policy(VERSION 2.6)
@@ -195,7 +195,9 @@ set(BASIC_LINK_LIBS
   analysemodule
   atomshakemodule
   braggmodule
+  calculateanglemodule
   calculateavgmolmodule
+  calculateaxisanglemodule
   calculatecnmodule
   calculatedanglemodule
   calculaterdfmodule
@@ -240,7 +242,9 @@ target_link_libraries( ${target_name}
   analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
+  calculateanglemodulenogui
   calculateavgmolmodulenogui
+  calculateaxisanglemodulenogui
   calculatecnmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
@@ -274,7 +278,9 @@ if(GUI)
     analysemodulegui
     atomshakemodulegui
     braggmodulegui
+    calculateanglemodulegui
     calculateavgmolmodulegui
+    calculateaxisanglemodulegui
     calculatecnmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
@@ -293,13 +299,11 @@ if(GUI)
 
     # Main gui libs
     render
-    viewer
     widgets
     keywordwidgets
-    gizmos
     delegates
     charts
-    subwindows
+    components
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

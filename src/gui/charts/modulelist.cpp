@@ -1,7 +1,7 @@
 /*
 	*** ModuleList Chart
 	*** src/gui/charts/modulelist.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -40,8 +40,6 @@
 ModuleListChart::ModuleListChart(ModuleList* moduleList, Dissolve& dissolve, Configuration* localConfiguration) : ChartBase(), dissolve_(dissolve)
 {
 	refreshing_ = false;
-
-	resizeToWidgets_ = true;
 
 	// Target ModuleLayer
 	moduleList_ = moduleList;
@@ -363,6 +361,9 @@ void ModuleListChart::blockRemovalRequested(const QString& blockIdentifier)
 
 		// If the Module is currently displayed in its own ModuleTab, remove that first
 		emit(blockRemoved(blockIdentifier));
+
+		// If the module to delete is the currently-displayed one, unset it now
+		if (module == currentModule()) setCurrentModule(NULL);
 
 		// Remove the Module instance
 		dissolve_.deleteModuleInstance(module);

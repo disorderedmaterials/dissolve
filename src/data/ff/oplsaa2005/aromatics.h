@@ -1,7 +1,7 @@
 /*
 	*** OPLSAA (2005) Aromatics Forcefield
 	*** src/data/ff/oplsaa2005/aromatics.h
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
@@ -27,7 +27,7 @@
 // Forward Declarations
 /* none */
 
-// SPC/Fw Forcefield
+// OPLS-AA/2005 Aromatics Forcefield
 class Forcefield_OPLSAA2005_Aromatics : public OPLSAA2005BaseForcefield
 {
 	public:

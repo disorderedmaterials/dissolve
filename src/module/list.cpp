@@ -1,7 +1,7 @@
 /*
 	*** Module List
 	*** src/module/list.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -114,4 +114,6 @@ bool ModuleList::setUpAll(Dissolve& dissolve, ProcessPool& procPool)
 {
 	ListIterator<Module> moduleIterator(modules_);
 	while (Module* module = moduleIterator.iterate()) if (!module->setUp(dissolve, procPool)) return false;
+
+	return true;
 }

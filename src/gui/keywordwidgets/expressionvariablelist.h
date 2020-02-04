@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - ExpressionVariable List
 	*** src/gui/keywordwidgets/expressionvariablelist.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 

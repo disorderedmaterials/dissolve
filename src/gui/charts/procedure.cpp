@@ -1,7 +1,7 @@
 /*
 	*** Procedure Chart
 	*** src/gui/charts/procedure.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -39,8 +39,6 @@
 ProcedureChart::ProcedureChart(Procedure* procedure, const CoreData& coreData) : ChartBase(), coreData_(coreData)
 {
 	refreshing_ = false;
-
-	resizeToWidgets_ = true;
 
 	// Target Procedure
 	procedure_ = procedure;

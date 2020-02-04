@@ -1,7 +1,7 @@
 /*
 	*** Main Tabs Widget
 	*** src/gui/maintabswidget_funcs.cpp
-	Copyright T. Youngs 2013-2019
+	Copyright T. Youngs 2013-2020
 
 	This file is part of Dissolve.
 
@@ -35,6 +35,17 @@ MainTabsWidget::MainTabsWidget(QWidget* parent) : QTabWidget(parent)
 	mainTabsBar_ = new MainTabsBar(this);
 	setTabBar(mainTabsBar_);
 	connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
+}
+
+MainTabsWidget::~MainTabsWidget()
+{
+	// Need to clear tabs in the right order, as data in one can depend on another
+	workspaceTabs_.clear();
+	moduleTabs_.clear();
+	processingLayerTabs_.clear();
+	configurationTabs_.clear();
+	speciesTabs_.clear();
+	allTabs_.clear();
 }
 
 /*

@@ -1,7 +1,7 @@
 /*
 	*** Calculate Distance-Angle Module - Definition
 	*** src/modules/calculate_dangle/definition.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #include "modules/calculate_dangle/dangle.h"
 
 // Return type of module
-const char* CalculateDAngleModule::type() const	
+const char* CalculateDAngleModule::type() const
 {
 	return "CalculateDAngle";
 }

@@ -41,12 +41,12 @@ The new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| [`CalculateRDF`](/userguide/modules/calculaterdf) | Calculates the radial distribution function between two specified sites |
-| [`CalculateCN`](/userguide/modules/calculatecn) | Calculates a coordination number by summing histogram data calculated by a [`CalculateRDF`](/userguide/modules/calculaterdf) module |
+| [`CalculateRDF`](../../userguide/modules/calculaterdf) | Calculates the radial distribution function between two specified sites |
+| [`CalculateCN`](../../userguide/modules/calculatecn) | Calculates a coordination number by summing histogram data calculated by a [`CalculateRDF`](../../userguide/modules/calculaterdf) module |
 
-We'll need to set up both of these modules to calculate exactly what we need.  First, [`CalculateRDF`](/userguide/modules/calculaterdf).
+We'll need to set up both of these modules to calculate exactly what we need.  First, [`CalculateRDF`](../../userguide/modules/calculaterdf).
 
-> Select the [`CalculateRDF`](/userguide/modules/calculaterdf) module to display its options
+> Select the [`CalculateRDF`](../../userguide/modules/calculaterdf) module to display its options
 {: .action .action_mouse}
 > Open the **Sites** settings group
 {: .action .action_groups}
@@ -59,15 +59,15 @@ We'll need to set up both of these modules to calculate exactly what we need.  F
 
 Since we are considering the RDF of one type of site around itself, the **ExcludeSameMolecule** option prevents consideration of the same site with itself (which would give a distance of zero and result in a large undesirable spike at the beginning of the RDF). The distance range over which to calculate the RDF can be set in the **Calculation** settings group, but the defaults (0 - 10 &#8491; with a step size of 0.05 &#8491;) are fine for what we need.
 
-Now the [`CalculateCN`](/userguide/modules/calculatecn) module:
+Now the [`CalculateCN`](../../userguide/modules/calculatecn) module:
 
-> Select the [`CalculateCN`](/userguide/modules/calculatecn) module to display its options
+> Select the [`CalculateCN`](../../userguide/modules/calculatecn) module to display its options
 {: .action .action_mouse}
 > Open the **Target / Ranges** settings group
 {: .action .action_groups}
 > Set the maximum for **RangeA** to 3.4 &#8491;
 {: .step}
 
-The [`CalculateCN`](/userguide/modules/calculatecn) module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a [`CalculateRDF`](/userguide/modules/calculaterdf) module, specified by the **SourceRDF** keyword (this was been automatically set to be the [`CalculateRDF`](/userguide/modules/calculaterdf) module in the current layer).
+The [`CalculateCN`](../../userguide/modules/calculatecn) module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a [`CalculateRDF`](../../userguide/modules/calculaterdf) module, specified by the **SourceRDF** keyword (this was been automatically set to be the [`CalculateRDF`](../../userguide/modules/calculaterdf) module in the current layer).
 
 [Previous Step](step9.md){: .btn }   [Next Step](step9b.md){: .btn .right}

@@ -1,7 +1,7 @@
 /*
 	*** Keyword - EnumOptions
 	*** src/keywords/enumoptions.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -141,7 +141,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  %s\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
+		return parser.writeLineF("%s%s  %s\n", prefix, keywordName, KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
 	}
 
 

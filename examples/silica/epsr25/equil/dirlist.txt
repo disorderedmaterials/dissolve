@@ -1,3 +1,0 @@
-/home/tris/src/duq/examples/silica/epsr25/equil/O.ato
-/home/tris/src/duq/examples/silica/epsr25/equil/Si.ato
-/home/tris/src/duq/examples/silica/epsr25/equil/silicabox.ato

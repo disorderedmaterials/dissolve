@@ -1,7 +1,7 @@
 /*
 	*** Keyword - NodeValue Triplet
 	*** src/keywords/vec3nodevalue.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -83,7 +83,7 @@ bool Vec3NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData
 // Write keyword data to specified LineParser
 bool Vec3NodeValueKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %s  %s  %s\n", prefix, keywordName, data_.x.asString(true), data_.y.asString(true), data_.z.asString(true));
+	return parser.writeLineF("%s%s  %s  %s  %s\n", prefix, keywordName, data_.x.asString(true).get(), data_.y.asString(true).get(), data_.z.asString(true).get());
 }
 
 /*

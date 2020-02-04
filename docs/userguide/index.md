@@ -66,9 +66,11 @@ has_toc: false
 
 ## 6) Output Files
 
-[Heartbeat File](heartbeatfile.md) - Purpose and content of the heartbeat file.
+[Heartbeat File](heartbeat.md) - Purpose and content of the heartbeat file.
 
-[Restart File](restartfile.md) - Format and content of the restart file.
+[Restart File](restart.md) - Format and content of the restart file.
+
+[GUI State File](state.md) - Format and content of the restart file.
 
 * * *
 

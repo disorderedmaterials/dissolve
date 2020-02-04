@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI - Layer Menu Functions
 	*** src/gui/menu_layer.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -37,21 +37,16 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 	ui_.MainTabs->setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
-	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Basic Atomic)"));
 
 	Module* module;
 
-	// Add a Monte Carlo shake (MolShake) module
-	module = dissolve_.createModuleInstance("MolShake", newLayer);
+	// Add some Monte Carlo
+	module = dissolve_.createModuleInstance("AtomShake", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
-
-	// Add some MD
-	module = dissolve_.createModuleInstance("MD", newLayer);
-	module->addTargetConfigurations(dissolve_.configurations());
-	module->setFrequency(5);
 
 	// Add energy calculation
 	module = dissolve_.createModuleInstance("Energy", newLayer);
@@ -74,6 +69,34 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
 
 	// Add some Monte Carlo
 	module = dissolve_.createModuleInstance("AtomShake", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Add some MD
+	module = dissolve_.createModuleInstance("MD", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+	module->setFrequency(5);
+
+	// Add energy calculation
+	module = dissolve_.createModuleInstance("Energy", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Run set-up stages for modules
+	newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
+	setModified();
+	fullUpdate();
+	ui_.MainTabs->setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
+
+	Module* module;
+
+	// Add a Monte Carlo shake (MolShake) module
+	module = dissolve_.createModuleInstance("MolShake", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
 	// Add some MD

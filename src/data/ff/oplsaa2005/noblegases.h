@@ -1,7 +1,7 @@
 /*
 	*** OPLSAA (2005) Noble Gases Forcefield
 	*** src/data/ff/oplsaa2005/noblegases.h
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
@@ -33,7 +33,7 @@ class SpeciesBond;
 class SpeciesIntra;
 class SpeciesTorsion;
 
-// SPC/Fw Forcefield
+// OPLS-AA (2005) Noble Gases Forcefield
 class Forcefield_OPLSAA2005_NobleGases : public Forcefield
 {
 	public:

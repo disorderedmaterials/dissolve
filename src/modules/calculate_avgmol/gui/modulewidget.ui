@@ -49,7 +49,7 @@
   <customwidget>
    <class>SpeciesViewer</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/speciesviewer.hui</header>
+   <header>gui/speciesviewer.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

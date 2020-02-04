@@ -1,4 +1,0 @@
-- New analysis modules: DAngle, SDF
-- Ability to checkpoint and reference saved data for comparison
-- Lots of UI improvements, additions, and fixes
-- New IL forcefields

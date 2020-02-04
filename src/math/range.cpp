@@ -1,7 +1,7 @@
 /*
 	*** Range
 	*** src/math/range.cpp
-	Copyright T. Youngs 2013-2019
+	Copyright T. Youngs 2013-2020
 
 	This file is part of Dissolve.
 
@@ -61,4 +61,11 @@ void Range::setMaximum(double maximum)
 double Range::maximum() const
 {
 	return maximum_;
+}
+
+// Return whether the range contains the specified value
+bool Range::contains(double d) const
+{
+	if ((d < minimum_) || (d > maximum_)) return false;
+	return true;
 }

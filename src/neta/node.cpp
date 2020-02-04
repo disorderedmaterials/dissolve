@@ -1,7 +1,7 @@
 /*
 	*** General Node for NETA
 	*** src/expression/node.cpp
-	Copyright T. Youngs 2015-2019
+	Copyright T. Youngs 2015-2020
 
 	This file is part of Dissolve.
 

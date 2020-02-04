@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Modules
 	*** src/main/modules.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,9 @@
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/bragg/bragg.h"
+#include "modules/calculate_angle/angle.h"
 #include "modules/calculate_avgmol/avgmol.h"
+#include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_cn/cn.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_rdf/rdf.h"
@@ -82,7 +84,9 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
 	if (!registerMasterModule(new BraggModule)) return false;
+	if (!registerMasterModule(new CalculateAngleModule)) return false;
 	if (!registerMasterModule(new CalculateAvgMolModule)) return false;
+	if (!registerMasterModule(new CalculateAxisAngleModule)) return false;
 	if (!registerMasterModule(new CalculateCNModule)) return false;
 	if (!registerMasterModule(new CalculateDAngleModule)) return false;
 	if (!registerMasterModule(new CalculateRDFModule)) return false;

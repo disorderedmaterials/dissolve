@@ -1,7 +1,7 @@
 /*
 	*** Edit Species Dialog
 	*** src/gui/editspeciesdialog_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -58,5 +58,5 @@ void EditSpeciesDialog::dataModified()
 // Run the dialog, returning whether it was accepted
 bool EditSpeciesDialog::editSpecies()
 {
-	exec();
+	return (exec() == QDialog::Accepted);
 }

@@ -1,0 +1,743 @@
+/*
+	*** Renderable - Data3D
+	*** src/gui/render/renderabledata3d.cpp
+	Copyright T. Youngs 2013-2020
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "gui/render/renderabledata3d.h"
+#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/view.h"
+#include "math/data3d.h"
+#include "templates/array3d.h"
+#include "templates/array2d.h"
+#include "math/extrema.h"
+#include "base/lineparser.h"
+
+// Constructor
+RenderableData3D::RenderableData3D(const Data3D* source, const char* objectTag) : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
+{
+	// Set style defaults
+	displayStyle_ = SolidStyle;
+	lowerCutoff_ = 0.0;
+	upperCutoff_ = 1.0;
+	surfaceShininess_ = 128.0;
+
+	// Create primitive
+	dataPrimitive_ = createPrimitive();
+}
+
+// Destructor
+RenderableData3D::~RenderableData3D()
+{
+}
+
+/*
+ * Data
+ */
+
+// Return whether a valid data source is available (attempting to set it if not)
+bool RenderableData3D::validateDataSource()
+{
+	// Don't try to access source_ if we are not currently permitted to do so
+	if (!sourceDataAccessEnabled_) return false;
+
+	// If there is no valid source set, attempt to set it now...
+	if (!source_) source_ = Data3D::findObject(objectTag_);
+
+	return source_;
+}
+
+// Invalidate the current data source
+void RenderableData3D::invalidateDataSource()
+{
+	source_ = NULL;
+}
+
+// Return version of data
+int RenderableData3D::dataVersion()
+{
+	return (validateDataSource() ? source_->version() : -99);
+}
+
+/*
+ * Transform / Limits
+ */
+
+// Transform data according to current settings
+void RenderableData3D::transformValues()
+{
+	// If the transformed data are already up-to-date, no need to do anything
+	if (valuesTransformDataVersion_ == dataVersion()) return;
+
+	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
+	if (!source_) transformedData_.clear();
+	else transformedData_ = *source_;
+	valuesTransform_.transformValues(transformedData_);
+
+	limitsMin_ = 0.0;
+	limitsMax_ = 0.0;
+	positiveLimitsMin_ = -1.0;
+	positiveLimitsMax_ = -1.0;
+	valuesMin_ = 0.0;
+	valuesMax_ = 0.0;
+	positiveValuesMin_ = -1.0;
+	positiveValuesMax_ = -1.0;
+
+	// Set initial limits if we can
+	if (transformedData_.nValues() > 0)
+	{
+		valuesMin_ = transformedData_.minValue();
+		valuesMax_ = transformedData_.maxValue();
+		limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), transformedData_.constZAxis().firstValue());
+		limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), transformedData_.constZAxis().lastValue());
+	}
+
+	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value	
+	// X
+	for (int n=0; n<transformedData_.constXAxis().nItems(); ++n)
+	{
+		if (transformedData_.constXAxis(n) > 0.0)
+		{
+			if (positiveLimitsMin_.x < 0.0) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+			else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x) positiveLimitsMin_.x = transformedData_.constXAxis(n);
+
+			if (transformedData_.constXAxis(n) > positiveLimitsMax_.x) positiveLimitsMax_.x = transformedData_.constXAxis(n);
+		}
+	}
+
+	// Y
+	for (int n=0; n<transformedData_.constYAxis().nItems(); ++n)
+	{	
+		if (transformedData_.constYAxis(n) > 0.0)
+		{
+			if (positiveLimitsMin_.y < 0.0) positiveLimitsMin_.y = transformedData_.constYAxis(n);
+			else if (transformedData_.constYAxis(n) < positiveLimitsMin_.y) positiveLimitsMin_.y = transformedData_.constYAxis(n);
+
+			if (transformedData_.constYAxis(n) > positiveLimitsMax_.y) positiveLimitsMax_.y = transformedData_.constYAxis(n);
+		}
+	}
+	
+	// Z
+	for (int n=0; n<transformedData_.constZAxis().nItems(); ++n)
+	{	
+		if (transformedData_.constZAxis(n) > 0.0)
+		{
+			if (positiveLimitsMin_.z < 0.0) positiveLimitsMin_.z = transformedData_.constZAxis(n);
+			else if (transformedData_.constZAxis(n) < positiveLimitsMin_.z) positiveLimitsMin_.z = transformedData_.constZAxis(n);
+
+			if (transformedData_.constZAxis(n) > positiveLimitsMax_.z) positiveLimitsMax_.z = transformedData_.constZAxis(n);
+		}
+	}
+	
+	// Values
+	for (int n=0; n<transformedData_.nValues(); ++n)
+	{
+		double val = transformedData_.values().linearValue(n);
+		if (val > 0.0)
+		{
+			if (positiveValuesMin_ < 0.0) positiveValuesMin_ = val;
+			else if (val < positiveValuesMin_) positiveValuesMin_ = val;
+
+			if (val > positiveValuesMax_) positiveValuesMax_ = val;
+		}
+	}
+			
+	// Update the transformed data 'version'
+	valuesTransformDataVersion_ = dataVersion();
+}
+
+// Return reference to transformed data
+const Data3D& RenderableData3D::transformedData()
+{
+	// Check that we have a valid source
+	if (!validateDataSource()) return transformedData_;
+
+	// If the value transform is not enabled, just return the original data
+	if (!valuesTransform_.enabled()) return *source_;
+
+	// Make sure the transformed data is up-to-date
+	transformValues();
+
+	return transformedData_;
+}
+
+/*
+ * Rendering Primitives
+ */
+
+// Recreate necessary primitives / primitive assemblies for the data
+void RenderableData3D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
+{
+	dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
+
+	if (!validateDataSource()) return;
+
+	marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(), transformedData_.constValues3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.constAxes(), dataPrimitive_);
+}
+
+// Send primitives for rendering
+const void RenderableData3D::sendToGL(const double pixelScaling)
+{
+	// Apply the LineStyle of the Renderable
+	lineStyle_.sendToGL(pixelScaling);
+
+	// Enable lighting and shininess
+	glEnable(GL_LIGHTING);
+	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 127);
+
+	dataPrimitive_->sendToGL();
+
+	// Reset LineStyle back to defaults
+	LineStyle().sendToGL();
+}
+
+// Marching Cube Edge Vertex Lookup Table
+int edgevertices[12][2] = { { 0,1 }, { 1,2 }, { 2,3 }, { 0,3 },
+	{ 4,5 }, { 5,6 }, { 6,7 }, { 4,7 },
+	{ 0,4 }, { 1,5 }, { 3,7 }, { 2,6 } };
+
+Vec3<double> vertexPos[8] = { Vec3<double>(0,0,0), Vec3<double>(1,0,0), Vec3<double>(1,1,0), Vec3<double>(0,1,0), Vec3<double>(0,0,1), Vec3<double>(1,0,1), Vec3<double>(1,1,1), Vec3<double>(0,1,1) };
+	
+// Marching Cube Face Triplet Lookup Table
+int facetriples[256][15] = {
+	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 1, 2, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 0, 8, 3, 1, 2, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 9, 2, 11, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 2, 8, 3, 2, 11, 8, 11, 9, 8, -1, -1, -1, -1, -1, -1},
+	{ 3, 10, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 0, 10, 2, 8, 10, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 1, 9, 0, 2, 3, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 1, 10, 2, 1, 9, 10, 9, 8, 10, -1, -1, -1, -1, -1, -1},
+	{ 3, 11, 1, 10, 11, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 0, 11, 1, 0, 8, 11, 8, 10, 11, -1, -1, -1, -1, -1, -1},
+	{ 3, 9, 0, 3, 10, 9, 10, 11, 9, -1, -1, -1, -1, -1, -1},
+	{ 9, 8, 11, 11, 8, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 7, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 3, 0, 7, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 1, 9, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 1, 9, 4, 7, 1, 7, 3, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 2, 11, 8, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 4, 7, 3, 0, 4, 1, 2, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 2, 11, 9, 0, 2, 8, 4, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 11, 9, 2, 9, 7, 2, 7, 3, 7, 9, 4, -1, -1, -1}, 
+	{ 8, 4, 7, 3, 10, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 4, 7, 10, 2, 4, 2, 0, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 0, 1, 8, 4, 7, 2, 3, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 7, 10, 9, 4, 10, 9, 10, 2, 9, 2, 1, -1, -1, -1}, 
+	{ 3, 11, 1, 3, 10, 11, 7, 8, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 10, 11, 1, 4, 10, 1, 0, 4, 7, 10, 4, -1, -1, -1}, 
+	{ 4, 7, 8, 9, 0, 10, 9, 10, 11, 10, 0, 3, -1, -1, -1}, 
+	{ 4, 7, 10, 4, 10, 9, 9, 10, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 5, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 5, 4, 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 5, 4, 1, 5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 5, 4, 8, 3, 5, 3, 1, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 2, 11, 9, 5, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 0, 8, 1, 2, 11, 4, 9, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 2, 11, 5, 4, 2, 4, 0, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 11, 5, 3, 2, 5, 3, 5, 4, 3, 4, 8, -1, -1, -1}, 
+	{ 9, 5, 4, 2, 3, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ 0, 10, 2, 0, 8, 10, 4, 9, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 5, 4, 0, 1, 5, 2, 3, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 1, 5, 2, 5, 8, 2, 8, 10, 4, 8, 5, -1, -1, -1}, 
+	{ 11, 3, 10, 11, 1, 3, 9, 5, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 9, 5, 0, 8, 1, 8, 11, 1, 8, 10, 11, -1, -1, -1}, 
+	{ 5, 4, 0, 5, 0, 10, 5, 10, 11, 10, 0, 3, -1, -1, -1}, 
+	{ 5, 4, 8, 5, 8, 11, 11, 8, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 7, 8, 5, 7, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 3, 0, 9, 5, 3, 5, 7, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 7, 8, 0, 1, 7, 1, 5, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 5, 3, 3, 5, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 7, 8, 9, 5, 7, 11, 1, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 1, 2, 9, 5, 0, 5, 3, 0, 5, 7, 3, -1, -1, -1}, 
+	{ 8, 0, 2, 8, 2, 5, 8, 5, 7, 11, 5, 2, -1, -1, -1}, 
+	{ 2, 11, 5, 2, 5, 3, 3, 5, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 9, 5, 7, 8, 9, 3, 10, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 5, 7, 9, 7, 2, 9, 2, 0, 2, 7, 10, -1, -1, -1}, 
+	{ 2, 3, 10, 0, 1, 8, 1, 7, 8, 1, 5, 7, -1, -1, -1}, 
+	{ 10, 2, 1, 10, 1, 7, 7, 1, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 5, 8, 8, 5, 7, 11, 1, 3, 11, 3, 10, -1, -1, -1}, 
+	{ 5, 7, 10, 5, 10, 11, 1, 0, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 11, 5, 10, 5, 7, 8, 0, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 11, 5, 7, 10, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 6, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 8, 3, 5, 11, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 0, 1, 5, 11, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 8, 3, 1, 9, 8, 5, 11, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 6, 5, 2, 6, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 6, 5, 1, 2, 6, 3, 0, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 6, 5, 9, 0, 6, 0, 2, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 9, 8, 5, 8, 2, 5, 2, 6, 3, 2, 8, -1, -1, -1}, 
+	{ 2, 3, 10, 11, 6, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 0, 8, 10, 2, 0, 11, 6, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 1, 9, 2, 3, 10, 5, 11, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 11, 6, 1, 9, 2, 9, 10, 2, 9, 8, 10, -1, -1, -1}, 
+	{ 6, 3, 10, 6, 5, 3, 5, 1, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 8, 10, 0, 10, 5, 0, 5, 1, 5, 10, 6, -1, -1, -1}, 
+	{ 3, 10, 6, 0, 3, 6, 0, 6, 5, 0, 5, 9, -1, -1, -1}, 
+	{ 6, 5, 9, 6, 9, 10, 10, 9, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 11, 6, 4, 7, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 3, 0, 4, 7, 3, 6, 5, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 9, 0, 5, 11, 6, 8, 4, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 6, 5, 1, 9, 7, 1, 7, 3, 7, 9, 4, -1, -1, -1}, 
+	{ 6, 1, 2, 6, 5, 1, 4, 7, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 2, 5, 5, 2, 6, 3, 0, 4, 3, 4, 7, -1, -1, -1}, 
+	{ 8, 4, 7, 9, 0, 5, 0, 6, 5, 0, 2, 6, -1, -1, -1}, 
+	{ 7, 3, 2, 7, 2, 6, 5, 9, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 10, 2, 7, 8, 4, 11, 6, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 11, 6, 4, 7, 2, 4, 2, 0, 2, 7, 10, -1, -1, -1}, 
+	{ 0, 1, 9, 4, 7, 8, 2, 3, 10, 5, 11, 6, -1, -1, -1}, 
+	{ 9, 4, 5, 11, 2, 1, 7, 10, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 4, 7, 3, 10, 5, 3, 5, 1, 5, 10, 6, -1, -1, -1}, 
+	{ 5, 1, 0, 5, 0, 4, 7, 10, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 3, 8, 4, 5, 9, 10, 6, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 5, 9, 7, 10, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 4, 9, 6, 4, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 11, 6, 4, 9, 11, 0, 8, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 0, 1, 11, 6, 0, 6, 4, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 3, 1, 8, 1, 6, 8, 6, 4, 6, 1, 11, -1, -1, -1}, 
+	{ 1, 4, 9, 1, 2, 4, 2, 6, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 0, 8, 1, 2, 9, 2, 4, 9, 2, 6, 4, -1, -1, -1}, 
+	{ 0, 2, 4, 4, 2, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 3, 2, 8, 2, 4, 4, 2, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 4, 9, 11, 6, 4, 10, 2, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 8, 2, 2, 8, 10, 4, 9, 11, 4, 11, 6, -1, -1, -1}, 
+	{ 3, 10, 2, 0, 1, 6, 0, 6, 4, 6, 1, 11, -1, -1, -1}, 
+	{ 6, 4, 8, 6, 8, 10, 2, 1, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 6, 4, 9, 3, 6, 9, 1, 3, 10, 6, 3, -1, -1, -1}, 
+	{ 8, 10, 6, 8, 6, 4, 9, 1, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 10, 6, 3, 6, 0, 0, 6, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 6, 4, 8, 10, 6, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 11, 6, 7, 8, 11, 8, 9, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 7, 3, 0, 11, 7, 0, 9, 11, 6, 7, 11, -1, -1, -1}, 
+	{ 11, 6, 7, 1, 11, 7, 1, 7, 8, 1, 8, 0, -1, -1, -1}, 
+	{ 11, 6, 7, 11, 7, 1, 1, 7, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 2, 6, 1, 6, 8, 1, 8, 9, 8, 6, 7, -1, -1, -1}, 
+	{ 2, 6, 7, 2, 7, 3, 0, 9, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 8, 0, 7, 0, 6, 6, 0, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 3, 2, 6, 7, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 3, 10, 11, 6, 8, 11, 8, 9, 8, 6, 7, -1, -1, -1}, 
+	{ 2, 0, 9, 2, 9, 11, 6, 7, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 11, 2, 3, 8, 0, 6, 7, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 2, 1, 6, 7, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 9, 1, 8, 1, 3, 10, 6, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 9, 1, 10, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 8, 0, 10, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 10, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 6, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 0, 8, 10, 7, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 1, 9, 10, 7, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 1, 9, 8, 3, 1, 10, 7, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 1, 2, 6, 10, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 2, 11, 3, 0, 8, 6, 10, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 9, 0, 2, 11, 9, 6, 10, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 10, 3, 11, 8, 6, 11, 9, 8, 8, 7, 6, -1, -1, -1}, 
+	{ 7, 2, 3, 6, 2, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 0, 8, 7, 6, 0, 6, 2, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 7, 6, 2, 3, 7, 0, 1, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 6, 2, 1, 8, 6, 1, 9, 8, 8, 7, 6, -1, -1, -1}, 
+	{ 11, 7, 6, 11, 1, 7, 1, 3, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 7, 6, 1, 7, 11, 1, 8, 7, 1, 0, 8, -1, -1, -1}, 
+	{ 0, 3, 7, 0, 7, 11, 0, 11, 9, 6, 11, 7, -1, -1, -1}, 
+	{ 7, 6, 11, 7, 11, 8, 8, 11, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 6, 8, 4, 10, 8, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 6, 10, 3, 0, 6, 0, 4, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 6, 10, 8, 4, 6, 9, 0, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 4, 6, 9, 6, 3, 9, 3, 1, 10, 3, 6, -1, -1, -1}, 
+	{ 6, 8, 4, 6, 10, 8, 2, 11, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 2, 10, 0, 6, 1, 0, 4, 6, 6, 11, 1, -1, -1, -1}, 
+	{ 0, 2, 8, 2, 10, 8, 4, 11, 9, 4, 6, 11, -1, -1, -1}, 
+	{ 11, 9, 4, 11, 4, 6, 10, 3, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 2, 3, 8, 4, 2, 4, 6, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 4, 2, 4, 6, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 8, 0, 1, 9, 2, 2, 9, 4, 2, 4, 6, -1, -1, -1}, 
+	{ 1, 9, 4, 1, 4, 2, 2, 4, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 1, 3, 8, 6, 1, 8, 4, 6, 6, 11, 1, -1, -1, -1}, 
+	{ 11, 1, 0, 11, 0, 6, 6, 0, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 6, 11, 4, 11, 9, 0, 3, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 9, 4, 6, 11, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 9, 5, 7, 6, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 8, 3, 4, 9, 5, 10, 7, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 0, 1, 5, 4, 0, 7, 6, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 7, 4, 3, 5, 10, 3, 1, 5, 5, 6, 10, -1, -1, -1}, 
+	{ 9, 5, 4, 11, 1, 2, 7, 6, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 9, 1, 4, 8, 7, 2, 10, 3, 5, 6, 11, -1, -1, -1}, 
+	{ 5, 6, 11, 4, 2, 7, 4, 0, 2, 2, 10, 7, -1, -1, -1}, 
+	{ 3, 2, 10, 7, 4, 8, 11, 5, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 7, 2, 3, 7, 6, 2, 5, 4, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 7, 4, 9, 5, 0, 0, 5, 6, 0, 6, 2, -1, -1, -1}, 
+	{ 1, 5, 2, 5, 6, 2, 3, 4, 0, 3, 7, 4, -1, -1, -1}, 
+	{ 6, 2, 1, 6, 1, 5, 4, 8, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 5, 6, 1, 7, 9, 1, 3, 7, 7, 4, 9, -1, -1, -1}, 
+	{ 1, 0, 9, 5, 6, 11, 8, 7, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 0, 3, 4, 3, 7, 6, 11, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 6, 11, 4, 8, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 6, 9, 5, 6, 10, 9, 10, 8, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 6, 10, 0, 6, 3, 0, 5, 6, 0, 9, 5, -1, -1, -1}, 
+	{ 0, 10, 8, 0, 5, 10, 0, 1, 5, 5, 6, 10, -1, -1, -1}, 
+	{ 6, 10, 3, 6, 3, 5, 5, 3, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 6, 11, 1, 2, 9, 9, 2, 10, 9, 10, 8, -1, -1, -1}, 
+	{ 0, 9, 1, 2, 10, 3, 5, 6, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 8, 0, 10, 0, 2, 11, 5, 6, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 10, 3, 11, 5, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 8, 9, 5, 2, 8, 5, 6, 2, 3, 8, 2, -1, -1, -1}, 
+	{ 9, 5, 6, 9, 6, 0, 0, 6, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 5, 6, 1, 6, 2, 3, 8, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 5, 6, 2, 1, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 3, 8, 1, 8, 9, 5, 6, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 1, 0, 5, 6, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 3, 8, 5, 6, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 11, 5, 6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 5, 11, 7, 5, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 5, 11, 10, 7, 5, 8, 3, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 10, 7, 5, 11, 10, 1, 9, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 8, 5, 8, 7, 5, 11, 3, 1, 11, 10, 3, -1, -1, -1}, 
+	{ 10, 1, 2, 10, 7, 1, 7, 5, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 10, 3, 0, 8, 1, 1, 8, 7, 1, 7, 5, -1, -1, -1}, 
+	{ 9, 7, 5, 9, 2, 7, 9, 0, 2, 2, 10, 7, -1, -1, -1}, 
+	{ 7, 5, 9, 7, 9, 8, 3, 2, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 5, 11, 2, 3, 5, 3, 7, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 2, 0, 8, 5, 2, 8, 7, 5, 11, 2, 5, -1, -1, -1}, 
+	{ 11, 2, 1, 9, 0, 5, 5, 0, 3, 5, 3, 7, -1, -1, -1}, 
+	{ 9, 8, 7, 9, 7, 5, 11, 2, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 3, 5, 3, 7, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 8, 7, 0, 7, 1, 1, 7, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 0, 3, 9, 3, 5, 5, 3, 7, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 8, 7, 5, 9, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 8, 4, 5, 11, 8, 11, 10, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 5, 0, 4, 5, 10, 0, 5, 11, 10, 10, 3, 0, -1, -1, -1}, 
+	{ 4, 5, 9, 0, 1, 8, 8, 1, 11, 8, 11, 10, -1, -1, -1}, 
+	{ 11, 10, 3, 11, 3, 1, 9, 4, 5, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 5, 1, 2, 8, 5, 2, 10, 8, 4, 5, 8, -1, -1, -1}, 
+	{ 0, 4, 5, 0, 5, 1, 2, 10, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 2, 10, 0, 10, 8, 4, 5, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 4, 5, 2, 10, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 5, 11, 3, 5, 2, 3, 4, 5, 3, 8, 4, -1, -1, -1}, 
+	{ 5, 11, 2, 5, 2, 4, 4, 2, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 8, 0, 1, 11, 2, 4, 5, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 11, 2, 9, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 4, 5, 8, 5, 3, 3, 5, 1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 4, 5, 1, 0, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 4, 5, 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 10, 7, 4, 9, 10, 9, 11, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 8, 7, 9, 10, 0, 9, 11, 10, 10, 3, 0, -1, -1, -1}, 
+	{ 1, 11, 10, 1, 10, 4, 1, 4, 0, 7, 4, 10, -1, -1, -1}, 
+	{ 3, 1, 11, 3, 11, 10, 7, 4, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 10, 7, 9, 10, 4, 9, 2, 10, 9, 1, 2, -1, -1, -1}, 
+	{ 9, 1, 0, 8, 7, 4, 2, 10, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 10, 7, 4, 10, 4, 2, 2, 4, 0, -1, -1, -1, -1, -1, -1}, 
+	{ 8, 7, 4, 3, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 9, 11, 2, 7, 9, 2, 3, 7, 7, 4, 9, -1, -1, -1}, 
+	{ 9, 11, 2, 9, 2, 0, 8, 7, 4, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 7, 4, 3, 4, 0, 1, 11, 2, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 11, 2, 8, 7, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 9, 1, 4, 1, 7, 7, 1, 3, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 9, 1, 8, 7, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 0, 3, 7, 4, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 4, 8, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 11, 8, 11, 10, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 0, 9, 3, 9, 10, 10, 9, 11, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 1, 11, 0, 11, 8, 8, 11, 10, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 1, 11, 10, 3, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 2, 10, 1, 10, 9, 9, 10, 8, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 0, 9, 2, 10, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 2, 10, 8, 0, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 3, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 2, 3, 8, 2, 8, 11, 11, 8, 9, -1, -1, -1, -1, -1, -1}, 
+	{ 9, 11, 2, 0, 9, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 3, 8, 1, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 1, 3, 8, 9, 1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, 
+	{ 0, 3, 8, 11, 1, 2, 6, 10, 7, 4, 9, 5, -1, -1, -1 }
+// 	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
+};
+
+// marching cubes 
+// Render volumetric isosurface with Marching Cubes ORIGINAL
+void RenderableData3D::marchingCubesOriginal ( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double >& displayZAbscissa, const Array3D< double >& displayValues, double lowerCutoff, double upperCutoff, const ColourDefinition& colourDefinition, const Axes& axes, Primitive* primitive )
+{
+	int i, j, k, n, cubeType, *faces;
+	Vec3<GLfloat> normal, gradient[8];
+	Vec3<double> r, v1;
+	double vertex[8], ipol, a, b;
+	GLfloat colour[4];
+	Array<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
+
+	// Get distances between grid points
+	double dx, dy, dz;
+	dx = x.constAt(1) - x.constAt(0);
+	dy = y.constAt(1) - y.constAt(0);
+	dz = z.constAt(1) - z.constAt(0);
+
+	// Transform abscissa values (still in data space) into axes coordinates
+	axes.transformX(x);
+	int nX = x.nItems();
+	if (nX < 2) return;
+
+	// Transform abscissa values (still in data space) into axes coordinates
+	axes.transformY(y);
+	int nY = y.nItems();
+	if (nY < 2) return;
+
+	// Transform abscissa values (still in data space) into axes coordinates
+	axes.transformZ(z);
+	int nZ = z.nItems();
+	if (nZ < 2) return;
+
+	// Get single colour for surface (if colourScale style == SingleColourStyle)
+	if (colourDefinition.style() == ColourDefinition::SingleColourStyle) colourDefinition.colour(0.0, colour);
+
+	// Generate isosurface
+	for (i=1; i< x.nItems()-2; ++i)
+	{
+		for (j=1; j< y.nItems()-2; ++j)
+		{
+			for (k=1; k< z.nItems()-2; ++k)
+			{
+				// Grab values that form vertices of cube.
+				vertex[0] = displayValues.constAt(i, j, k);
+				vertex[1] = displayValues.constAt(i+1, j, k);
+				vertex[2] = displayValues.constAt(i+1, j+1, k);
+				vertex[3] = displayValues.constAt(i, j+1, k);
+				vertex[4] = displayValues.constAt(i, j, k+1);
+				vertex[5] = displayValues.constAt(i+1, j, k+1);
+				vertex[6] = displayValues.constAt(i+1, j+1, k+1);
+				vertex[7] = displayValues.constAt(i, j +1, k+1);
+
+				// Calculate gradients at the cube vertices
+				gradient[0].x = (vertex[1] - displayValues.constAt(i-1, j, k)) / dx;
+				gradient[0].y = (vertex[3] - displayValues.constAt(i, j-1, k)) / dy;
+				gradient[0].z = (vertex[4] - displayValues.constAt(i, j, k-1)) / dz;
+				gradient[1].x = (displayValues.constAt(i+2, j, k) - vertex[0]) / dx;
+				gradient[1].y = (vertex[2] - displayValues.constAt(i+1, j-1, k)) / dy;
+				gradient[1].z = (vertex[5] - displayValues.constAt(i+1, j, k-1)) / dz;
+				gradient[2].x = (displayValues.constAt(i+2, j+1, k) - vertex[3]) / dx;
+				gradient[2].y = (displayValues.constAt(i+1, j+2, k) - vertex[1]) / dy;
+				gradient[2].z = (vertex[6] - displayValues.constAt(i+1, j+1, k-1)) / dz;
+				gradient[3].x = (vertex[2] - displayValues.constAt(i-1, j+1, k)) / dx;
+				gradient[3].y = (displayValues.constAt(i , j+2, k) - vertex[0]) / dy;
+				gradient[3].z = (vertex[7] - displayValues.constAt(i, j+1, k-1)) / dz;
+				gradient[4].x = (vertex[5] - displayValues.constAt(i-1, j, k+1)) / dx;
+				gradient[4].y = (vertex[7] - displayValues.constAt(i, j-1, k+1)) / dy;
+				gradient[4].z = (displayValues.constAt(i, j, k+2) - vertex[0]) / dz;
+				gradient[5].x = (displayValues.constAt(i+2, j, k+1) - vertex[4]) / dx;
+				gradient[5].y = (vertex[6] - displayValues.constAt(i+1, j-1, k+1)) / dy;
+				gradient[5].z = (displayValues.constAt(i+1, j, k+2) - vertex[1]) / dz;
+				gradient[6].x = (displayValues.constAt(i+2, j+1, k+1) - vertex[7]) / dx;
+				gradient[6].y = (displayValues.constAt(i+1, j+2, k+1) - vertex[5]) / dy;
+				gradient[6].z = (displayValues.constAt(i+1, j+1, k+2) - vertex[2]) / dz;
+				gradient[7].x = (vertex[6] - displayValues.constAt(i-1, j+1, k+1)) / dx;
+				gradient[7].y = (displayValues.constAt(i, j+2, k+1) - vertex[4]) / dy;
+				gradient[7].z = (displayValues.constAt(i, j+1, k+2) - vertex[3]) / dz;
+
+				// Determine cube type
+				cubeType = 0;
+				if ((vertex[0] >= lowerCutoff) && (vertex[0] <= upperCutoff)) cubeType += 1;
+				if ((vertex[1] >= lowerCutoff) && (vertex[1] <= upperCutoff)) cubeType += 2;
+				if ((vertex[2] >= lowerCutoff) && (vertex[2] <= upperCutoff)) cubeType += 4;
+				if ((vertex[3] >= lowerCutoff) && (vertex[3] <= upperCutoff)) cubeType += 8;
+				if ((vertex[4] >= lowerCutoff) && (vertex[4] <= upperCutoff)) cubeType += 16;
+				if ((vertex[5] >= lowerCutoff) && (vertex[5] <= upperCutoff)) cubeType += 32;
+				if ((vertex[6] >= lowerCutoff) && (vertex[6] <= upperCutoff)) cubeType += 64;
+				if ((vertex[7] >= lowerCutoff) && (vertex[7] <= upperCutoff)) cubeType += 128;
+				
+// 				if (cubeType != 0) printf("CubeType %i %i %i = %i\n", i, j, k, cubeType); 
+				if ((cubeType != 0) && (cubeType != 255))
+				{
+					// Get edges from list and draw triangles or points
+					faces = facetriples[cubeType];
+					for (n = 0; n<15; n++)
+					{
+						if (faces[n] == -1) break;
+
+						// Interpolate between data values (a,b) along this edge
+						a = vertex[edgevertices[faces[n]][0]];
+						b = vertex[edgevertices[faces[n]][1]];
+						ipol = (lowerCutoff - a) / (b-a);
+						if (ipol > 1.0) ipol = 1.0;
+						else if (ipol < 0.0) ipol = 0.0;
+
+						// Get vector for edge (in unit coordinates) and scale to data spacing (dx, dy, dz)
+						v1 = vertexPos[edgevertices[faces[n]][0]];
+						r = (vertexPos[edgevertices[faces[n]][1]] - v1);
+						r.multiply(dx, dy, dz);
+						r *= ipol;
+
+						//printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
+						//printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
+						normal = -(gradient[edgevertices[faces[n]][0]] + (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol);
+						normal.normalise();
+
+						// Add data lower-left-corner coordinate to r, and data-scaled edge origin v1
+						r.add(x.constAt(i)+dx*v1[0], y.constAt(j)+dy*v1[1], z.constAt(k)+dz*v1[2]);
+
+						// Plot vertex
+						if (colourDefinition.style() == ColourDefinition::SingleColourStyle) primitive->defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
+						else
+						{
+							// Get the colour from the colourscale
+							// TODO CHECK - Are we using the correct data value for the colour lookup here?
+							colourDefinition.colour((a+b)*0.5, colour);
+							primitive->defineVertex(r.x, r.y, r.z, normal.x, normal.y, normal.z, colour);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+/*
+ * Style
+ */
+
+// Return EnumOptions for Data3DDisplayStyle
+EnumOptions<RenderableData3D::Data3DDisplayStyle> RenderableData3D::data3DDisplayStyles()
+{
+	static EnumOptionsList Style3DOptions = EnumOptionsList() <<
+		EnumOption(RenderableData3D::SolidStyle,	"Solid");
+
+	static EnumOptions<RenderableData3D::Data3DDisplayStyle> options("Data3DDisplayStyle", Style3DOptions);
+
+	return options;
+}
+
+// Set display style for renderable
+void RenderableData3D::setDisplayStyle(Data3DDisplayStyle displayStyle)
+{
+	displayStyle_ = displayStyle;
+
+	++styleVersion_;
+}
+
+// Return display style for the renderable
+RenderableData3D::Data3DDisplayStyle RenderableData3D::displayStyle() const
+{
+	return displayStyle_;
+}
+
+// Set lower cutoff for surface generation
+void RenderableData3D::setLowerCutoff(double cutoff)
+{
+	lowerCutoff_ = cutoff;
+
+	++styleVersion_;
+}
+
+// Return lower cutoff for surface generation
+double RenderableData3D::lowerCutoff() const
+{
+	return lowerCutoff_;
+}
+
+// Set upper cutoff for surface generation
+void RenderableData3D::setUpperCutoff(double cutoff)
+{
+	upperCutoff_ = cutoff;
+
+	++styleVersion_;
+}
+
+// Return upper cutoff for surface generation
+double RenderableData3D::upperCutoff() const
+{
+	return upperCutoff_;
+}
+
+/*
+ * Style I/O
+ */
+
+// Return enum option info for RenderableKeyword
+EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
+{
+	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
+		EnumOption(RenderableData3D::DisplayKeyword,		"Display",	1) <<
+		EnumOption(RenderableData3D::EndStyleKeyword,		"EndStyle") <<
+		EnumOption(RenderableData3D::LowerCutoffKeyword,	"LowerCutoff",	1) <<
+		EnumOption(RenderableData3D::UpperCutoffKeyword,	"UpperCutoff",	1);
+
+	static EnumOptions<RenderableData3D::Data3DStyleKeyword> options("Data3DStyleKeyword", StyleKeywords);
+
+	return options;
+}
+
+// Write style information
+bool RenderableData3D::writeStyleBlock(LineParser& parser, int indentLevel) const
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	if (!parser.writeLineF("%s%s  %s\n", indent, data3DStyleKeywords().keyword(RenderableData3D::DisplayKeyword), data3DDisplayStyles().keyword(displayStyle_))) return false;
+	if (!parser.writeLineF("%s%s  %e\n", indent, data3DStyleKeywords().keyword(RenderableData3D::LowerCutoffKeyword), lowerCutoff_)) return false;
+	if (!parser.writeLineF("%s%s  %e\n", indent, data3DStyleKeywords().keyword(RenderableData3D::UpperCutoffKeyword), upperCutoff_)) return false;
+
+	return true;
+}
+
+// Read style information
+bool RenderableData3D::readStyleBlock(LineParser& parser)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!data3DStyleKeywords().isValid(parser.argc(0))) return data3DStyleKeywords().errorAndPrintValid(parser.argc(0));
+		Data3DStyleKeyword kwd = data3DStyleKeywords().enumeration(parser.argc(0));
+		if (!data3DStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
+		{
+			// Display style
+			case (RenderableData3D::DisplayKeyword):
+				if (!data3DDisplayStyles().isValid(parser.argc(1))) return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableData3D::EndStyleKeyword):
+				return true;
+			// Lower cutoff
+			case (RenderableData3D::LowerCutoffKeyword):
+				lowerCutoff_ = parser.argd(1);
+				break;
+			// Upper cutoff
+			case (RenderableData3D::UpperCutoffKeyword):
+				upperCutoff_ = parser.argd(1);
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData3D: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	return true;
+}

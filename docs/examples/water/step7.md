@@ -15,16 +15,16 @@ Let's briefly recap what we've done so far:
 
 Our agreement with experiment is OK, but it is possible to make it even better by modifying the _inter_-atomic interaction parameters contained in the atom types. However, generally this is not to be attempted by hand in all but the simplest of cases, as the effects of adjusting the interatomic are seldom as obvious as those for _intra_-molecular parameters. Also, for even a modestly-complicated system the number of adjustable parameters is simply too large to tackle with manual fitting.
 
-Here we'll employ the [`EPSR`](/userguide/modules/epsr) module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
+Here we'll employ the [`EPSR`](../../userguide/modules/epsr) module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
 
 > Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR
 {: .action .action_menu}
 
-Our new layer contains only the [`EPSR`](/userguide/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](/userguide/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module.
+Our new layer contains only the [`EPSR`](../../userguide/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](../../userguide/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module.
 
 > **Refine (EPSR)** tab
 {: .action .action_tabs}
-> Double-click on the [`EPSR`](/userguide/modules/epsr) module to open it up in a new tab
+> Double-click on the [`EPSR`](../../userguide/modules/epsr) module to open it up in a new tab
 {: .action .action_mouse}
 > Open the **Calculation** settings group
 {: .action .action_groups}
@@ -34,14 +34,14 @@ Our new layer contains only the [`EPSR`](/userguide/modules/epsr) module, and wh
 {: .step}
 > The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>)and **QMin** (0.5 &#8491;<sup>-1</sup>)
 {: .step}
-> The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the [`EPSR`](/userguide/modules/epsr) module to use. All of the [`NeutronSQ`](/userguide/modules/neutronsq) modules have been selected automatically
+> The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the [`EPSR`](../../userguide/modules/epsr) module to use. All of the [`NeutronSQ`](../../userguide/modules/neutronsq) modules have been selected automatically
 {: .step}
 
-All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different tabs in the [`EPSR`](/userguide/modules/epsr) module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
+All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different tabs in the [`EPSR`](../../userguide/modules/epsr) module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
 
 ### 1. F(Q)
 
-Basic comparison between reference experimental data (solid lines) defined in [`NeutronSQ`](/userguide/modules/neutronsq) module **Target**s and those simulated by Dissolve (dashed lines), including the difference functions (dotted lines).
+Basic comparison between reference experimental data (solid lines) defined in [`NeutronSQ`](../../userguide/modules/neutronsq) module **Target**s and those simulated by Dissolve (dashed lines), including the difference functions (dotted lines).
 
 ![](epsrmodule-fq.png){: .img-centre}
 *Experimental, calculated, and difference functions for data targeted by the EPSR module*

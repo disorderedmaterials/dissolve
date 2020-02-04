@@ -1,7 +1,7 @@
 /*
 	*** Keyword - Link To Other Keyword
 	*** src/keywords/linkto.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -70,5 +70,5 @@ bool LinkToKeyword::read(LineParser& parser, int startArg, const CoreData& coreD
 bool LinkToKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	Messenger::warn("Don't call LinkToKeyword::write() - go through base().\n");
-	return data_->write(parser, prefix);
+	return data_->write(parser, data_->name(), prefix);
 }

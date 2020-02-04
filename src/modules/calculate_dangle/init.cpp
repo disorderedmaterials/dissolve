@@ -1,7 +1,7 @@
 /*
 	*** Calculate Distance-Angle Module - Initialisation
 	*** src/modules/calculate_dangle/init.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -79,7 +79,33 @@ void CalculateDAngleModule::initialise()
 	 *     EndSelect  'B'
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
-	 * Process2D  DAngle
+	 * Process1D  'RDF(BC)'
+	 *   Normalisation
+	 *     OperateSitePopulationNormalise
+	 *       Site  'A'  'B'
+         *     EndOperateSitePopulationNormalise
+	 *     OperateNumberDensityNormalise
+	 *       Site  'C'
+         *     EndOperateNumberDensityNormalise
+	 *     OperateSphericalShellNormalise
+         *     EndOperateSphericalShellNormalise
+	 *   EndNormalisation
+	 *   LabelX  'r, Angstroms'
+	 *   LabelValue  'g(r)'
+	 * EndProcess1D
+	 * Process1D  'Angle(ABC)'
+	 *   Normalisation
+	 *     OperateExpression
+	 *       Expression("value/sin(x)")
+	 *     EndOperateExpression
+	 *     OperateNormalise
+	 *       Value  1.0
+         *     EndOperateNormalise
+	 *   EndNormalisation
+	 *   LabelX  'theta, Degrees'
+	 *   LabelValue  'Normalised Frequency'
+	 * EndProcess1D
+	 * Process2D  'DAngle(A-BC)'
 	 *   Normalisation
 	 *     OperateEquationNormalise
 	 *       Equation  value/sin(y)
@@ -178,8 +204,8 @@ void CalculateDAngleModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "DistanceRange", "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "AngleRange", "Range (min, max, delta) of angle axis", "<min> <max> <delta> (degrees)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "DistanceRange", "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
 
 	// Sites
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");

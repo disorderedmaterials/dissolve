@@ -1,7 +1,7 @@
 /*
 	*** Layer Tab Functions
 	*** src/gui/layertab_funcs.cpp
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -91,6 +91,10 @@ bool LayerTab::canClose() const
 	int ret = queryBox.exec();
 
 	if (ret != QMessageBox::Yes) return false;
+
+	// Before closing, we must close any tabs that are displaying our associated Modules
+	ListIterator<Module> moduleIterator(moduleLayer_->modules());
+	while (Module* module = moduleIterator.iterate()) dissolveWindow_->removeModuleTab(module->uniqueName());
 
 	return true;
 }

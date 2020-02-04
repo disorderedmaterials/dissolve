@@ -2,6 +2,7 @@ add_library(procedurenodes
   addspecies.cpp
   box.cpp
   calculateangle.cpp
+  calculateaxisangle.cpp
   calculatebase.cpp
   calculatedistance.cpp
   calculatevector.cpp
@@ -34,6 +35,7 @@ add_library(procedurenodes
   addspecies.h
   box.h
   calculateangle.h
+  calculateaxisangle.h
   calculatebase.h
   calculatedistance.h
   calculatevector.h

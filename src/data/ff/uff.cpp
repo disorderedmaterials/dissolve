@@ -1,7 +1,7 @@
 /*
 	*** Universal Forcefield
 	*** src/data/ff/uff.cpp
-	Copyright T. Youngs 2019
+	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
 
@@ -665,7 +665,7 @@ bool Forcefield_UFF::assignAtomTypes(Species* sp, CoreData& coreData, bool keepE
 }
 
 // Assign intramolecular parameters to the supplied Species
-bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions, bool generateImpropers) const
+bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bool generateImpropers) const
 {
 	// Create an array of the UFFAtomTypes for the atoms in the Species for speed
 	Array<UFFAtomType*> atomTypes;
@@ -694,45 +694,33 @@ bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bo
 	}
 
 	// Generate bond terms
-	if (assignBonds)
+	DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
+	while (SpeciesBond* bond = bondIterator.iterate())
 	{
-		// Generate bond parameters
-		DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
-		while (SpeciesBond* bond = bondIterator.iterate())
-		{
-			UFFAtomType* i = atomTypes[bond->indexI()];
-			UFFAtomType* j = atomTypes[bond->indexJ()];
-			if (!generateBondTerm(sp, bond, i, j)) return Messenger::error("Failed to create parameters for bond %i-%i.\n", bond->indexI()+1, bond->indexJ()+1);
-		}
+		UFFAtomType* i = atomTypes[bond->indexI()];
+		UFFAtomType* j = atomTypes[bond->indexJ()];
+		if (!generateBondTerm(sp, bond, i, j)) return Messenger::error("Failed to create parameters for bond %i-%i.\n", bond->indexI()+1, bond->indexJ()+1);
 	}
 
 	// Generate angle terms
-	if (assignAngles)
+	DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
+	while (SpeciesAngle* angle = angleIterator.iterate())
 	{
-		// Generate angle parameters
-		DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
-		while (SpeciesAngle* angle = angleIterator.iterate())
-		{
-			UFFAtomType* i = atomTypes[angle->indexI()];
-			UFFAtomType* j = atomTypes[angle->indexJ()];
-			UFFAtomType* k = atomTypes[angle->indexK()];
-			if (!generateAngleTerm(sp, angle, i, j, k)) return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1);
-		}
+		UFFAtomType* i = atomTypes[angle->indexI()];
+		UFFAtomType* j = atomTypes[angle->indexJ()];
+		UFFAtomType* k = atomTypes[angle->indexK()];
+		if (!generateAngleTerm(sp, angle, i, j, k)) return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1);
 	}
 
 	// Generate torsion terms
-	if (assignTorsions)
+	DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
+	while (SpeciesTorsion* torsion = torsionIterator.iterate())
 	{
-		// Generate torsion parameters
-		DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
-		while (SpeciesTorsion* torsion = torsionIterator.iterate())
-		{
-			UFFAtomType* i = atomTypes[torsion->indexI()];
-			UFFAtomType* j = atomTypes[torsion->indexJ()];
-			UFFAtomType* k = atomTypes[torsion->indexK()];
-			UFFAtomType* l = atomTypes[torsion->indexL()];
-			if (!generateTorsionTerm(sp, torsion, i, j, k, l)) return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1);
-		}
+		UFFAtomType* i = atomTypes[torsion->indexI()];
+		UFFAtomType* j = atomTypes[torsion->indexJ()];
+		UFFAtomType* k = atomTypes[torsion->indexK()];
+		UFFAtomType* l = atomTypes[torsion->indexL()];
+		if (!generateTorsionTerm(sp, torsion, i, j, k, l)) return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1);
 	}
 
 	return true;

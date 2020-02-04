@@ -1,7 +1,7 @@
 /*
 	*** Keyword - Link To Other Keyword
 	*** src/keywords/linkto.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -37,7 +37,7 @@ class LinkToKeyword : public KeywordData<KeywordBase*>
 
 
 	/*
-	 * Base Pointer Return (Overloading KeywordBase virtual)z
+	 * Base Pointer Return (Overloading KeywordBase virtual)
 	 */
 	public:
 	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)

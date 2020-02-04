@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Structure
 	*** src/main/dissolve.h
-	Copyright T. Youngs 2012-2019
+	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
 
@@ -281,9 +281,9 @@ class Dissolve
 	// Number of iterations performed
 	int nIterationsPerformed_;
 	// Main loop timer
-	Timer mainLoopTimer_;
+	Timer iterationTimer_;
 	// Accumulated timing information for main loop iterations
-	SampledDouble mainLoopTimes_;
+	SampledDouble iterationTime_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
@@ -306,6 +306,8 @@ class Dissolve
 	void resetIterationCounter();
 	// Return current simulation step
 	int iteration() const;
+	// Return per-iteration time in seconds
+	double iterationTime() const;
 	// Print timing information
 	void printTiming();
 
