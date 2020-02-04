@@ -8,7 +8,11 @@ add_library(ff_oplsaa2005
 
   # Alcohols
   alcohols.cpp
+  diols.cpp
+  triols.cpp
   alcohols.h
+  diols.h
+  triols.h
 
   # Alkanes
   alkanes.cpp
