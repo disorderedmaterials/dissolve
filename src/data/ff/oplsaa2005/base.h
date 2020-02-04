@@ -23,7 +23,6 @@
 #define DISSOLVE_FORCEFIELD_OPLSAA_BASE_H
 
 #include "data/ff.h"
-#include "data/ff/oplsaa2005/intramolecular.h"
 
 // Forward Declarations
 /* none */
@@ -41,16 +40,23 @@ class OPLSAA2005BaseForcefield : public Forcefield
 	 * Definition
 	 */
 	public:
+	// Return formatted publication references
+	const char* publicationReferences() const;
 	// Return short-range interaction style for AtomTypes
 	Forcefield::ShortRangeType shortRangeType() const;
 
 
 	/*
+	 * Atom Type Data
+	 */
+	public:
+	// Return the base ForcefieldAtomType with specified id (if it exists)
+	const ForcefieldAtomType& oplsAtomTypeById(int id) const;
+
+
+	/*
 	 * Term Data
 	 */
-	private:
-	static OPLSAA2005IntramolecularTerms intramolecularTerms_;
-
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
 	ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;

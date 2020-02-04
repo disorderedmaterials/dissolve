@@ -21,9 +21,6 @@
 
 #include "data/ff/oplsaa2005/base.h"
 
-// Static singletons
-OPLSAA2005IntramolecularTerms OPLSAA2005BaseForcefield::intramolecularTerms_;
-
 // Constructor
 OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
 {
@@ -41,32 +38,4 @@ OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield()
 Forcefield::ShortRangeType OPLSAA2005BaseForcefield::shortRangeType() const
 {
 	return Forcefield::LennardJonesGeometricType;
-}
-
-/*
- * Term Assignment
- */
-
-// Return bond term for the supplied atom type pair (if it exists)
-ForcefieldBondTerm* OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
-{
-	return intramolecularTerms_.bondTerm(i, j);
-}
-
-// Return angle term for the supplied atom type trio (if it exists)
-ForcefieldAngleTerm* OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
-{
-	return intramolecularTerms_.angleTerm(i, j, k);
-}
-
-// Return torsion term for the supplied atom type quartet (if it exists)
-ForcefieldTorsionTerm* OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
-{
-	return intramolecularTerms_.torsionTerm(i, j, k, l);
-}
-
-// Return improper term for the supplied atom type quartet (if it exists)
-ForcefieldImproperTerm* OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
-{
-	return intramolecularTerms_.improperTerm(i, j, k, l);
 }

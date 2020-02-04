@@ -23,6 +23,10 @@
 #define DISSOLVE_FORCEFIELD_H
 
 #include "data/elements.h"
+#include "classes/speciesangle.h"
+#include "classes/speciesbond.h"
+#include "classes/speciesimproper.h"
+#include "classes/speciestorsion.h"
 #include "base/enumoptions.h"
 #include "templates/reflist.h"
 
@@ -74,27 +78,33 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	protected:
 	// Short-range parameter sets
-	RefList<ForcefieldParameters> shortRangeParameters_;
+	List<ForcefieldParameters> shortRangeParameters_;
+	// Atom type data
+	List<ForcefieldAtomType> atomTypes_;
 	// Atom type data, grouped by element
 	Array< RefList<ForcefieldAtomType> > atomTypesByElementPrivate_;
 
 	protected:
+	// Add short-range parameters
+	void addParameters(const char* name, double data0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	// Add new atom type with its own parameters
+	void addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2 = 0.0, double data3 = 0.0);
+	// Add new atom type referencing existing parameters by name
+	void addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference);
+	// Copy existing atom type
+	void copyAtomType(const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition = NULL, const char* equivalentName = NULL);
 	// Determine and return atom type for specified SpeciesAtom from supplied Array of types
 	static ForcefieldAtomType* determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes);
 	// Determine and return atom type for specified SpeciesAtom
 	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 
 	public:
-	// Register the specified short-range parameters
-	void registerParameters(ForcefieldParameters* params);
-	// Register specified atom type to given Element
-	void registerAtomType(ForcefieldAtomType* atomType, int Z);
 	// Return named short-range parameters (if they exist)
 	ForcefieldParameters* shortRangeParameters(const char* name) const;
 	// Return the named ForcefieldAtomType (if it exists)
-	ForcefieldAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
+	virtual ForcefieldAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
 	// Return the ForcefieldAtomType with specified id (if it exists)
-	ForcefieldAtomType* atomTypeById(int id, Element* element = NULL) const;
+	virtual ForcefieldAtomType* atomTypeById(int id, Element* element = NULL) const;
 
 
 	/*
@@ -102,29 +112,31 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	private:
 	// Bond terms of the Forcefield
-	RefList<ForcefieldBondTerm> bondTerms_;
+	List<ForcefieldBondTerm> bondTerms_;
 	// Angle terms of the Forcefield
-	RefList<ForcefieldAngleTerm> angleTerms_;
+	List<ForcefieldAngleTerm> angleTerms_;
 	// Torsion terms of the Forcefield
-	RefList<ForcefieldTorsionTerm> torsionTerms_;
+	List<ForcefieldTorsionTerm> torsionTerms_;
 	// Improper terms of the Forcefield
-	RefList<ForcefieldImproperTerm> improperTerms_;
+	List<ForcefieldImproperTerm> improperTerms_;
+
+	protected:
+	// Add bond term
+	void addBondTerm(const char* typeI, const char* typeJ, SpeciesBond::BondFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	// Add angle term
+	void addAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	// Add torsion term
+	void addTorsionTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	// Add improper term
+	void addImproperTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 
 	public:
-	// Register specified bond term
-	void registerBondTerm(ForcefieldBondTerm* bondTerm);
 	// Return bond term for the supplied atom type pair (if it exists)
 	virtual ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
-	// Register specified angle term
-	void registerAngleTerm(ForcefieldAngleTerm* angleTerm);
 	// Return angle term for the supplied atom type trio (if it exists)
 	virtual ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
-	// Register specified torsion term
-	void registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm);
 	// Return torsion term for the supplied atom type quartet (if it exists)
 	virtual ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
-	// Register specified improper term
-	void registerImproperTerm(ForcefieldImproperTerm* improperTerm);
 	// Return improper term for the supplied atom type quartet (if it exists)
 	virtual ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 

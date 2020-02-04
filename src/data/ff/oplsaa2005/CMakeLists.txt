@@ -4,9 +4,19 @@ add_library(ff_oplsaa2005
   intramolecular.cpp
   base.cpp
 
-  atomtypes.h
-  intramolecular.h
   base.h
+
+  # Alcohols
+  alcohols.cpp
+  alcohols.h
+
+  # Alkanes
+  alkanes.cpp
+  alkanes.h
+
+  # Alkenes
+  alkenes.cpp
+  alkenes.h
 
   # Aromatics
   aromatics.cpp
