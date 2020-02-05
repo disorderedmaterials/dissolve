@@ -124,6 +124,12 @@ void Renderable::setSourceDataAccessEnabled(bool b)
 	sourceDataAccessEnabled_ = b;
 }
 
+// Return whether access to source data is currently enabled
+bool Renderable::sourceDataAccessEnabled()
+{
+	return sourceDataAccessEnabled_;
+}
+
 // Return identifying tag for source data object
 const char* Renderable::objectTag() const
 {

@@ -107,6 +107,8 @@ class Renderable : public ListItem<Renderable>
 	public:
 	// Set whether access to source data is currently enabled
 	static void setSourceDataAccessEnabled(bool b);
+	// Return whether access to source data is currently enabled
+	static bool sourceDataAccessEnabled();
 	// Return identifying tag for source data object
 	const char* objectTag() const;
 	// Invalidate renderable data for specified object tag

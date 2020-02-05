@@ -42,7 +42,7 @@ You'll now have a water molecule that might look like its gone ten rounds with M
 {: .action .action_menu}
 > From the available forcefields choose `SPC/Fw` and click _Next_{: .text-green-100}
 {: .step}
-> For the atom types we want to _Assign all from Forcefield_{: .text-green-100}. For the intramolecular terms we want to assign them and reduce to master terms. Leave the settings as they currently are, and click _Next_{: .text-green-100}
+> For the atom types we want to _Assign all atom types, overwriting any that already exist_{: .text-green-100}. For the intramolecular terms we want to assign them and reduce to master terms. Leave the settings as they currently are, and click _Next_{: .text-green-100}
 {: step}
 > There should be no conflicts with existing atom types or master terms, so click _Next_{: .text-green-100} then _Finish_{: .text-green-100} to exit the wizard.
 {: .step}

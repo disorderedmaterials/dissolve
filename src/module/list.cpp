@@ -114,4 +114,6 @@ bool ModuleList::setUpAll(Dissolve& dissolve, ProcessPool& procPool)
 {
 	ListIterator<Module> moduleIterator(modules_);
 	while (Module* module = moduleIterator.iterate()) if (!module->setUp(dissolve, procPool)) return false;
+
+	return true;
 }
