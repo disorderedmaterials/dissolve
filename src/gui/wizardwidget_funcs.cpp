@@ -63,6 +63,7 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 		footerUi_.setupUi(footerWidget);
 
 		// Connect signals / slots
+		connect(footerUi_.CancelButton, SIGNAL(clicked(bool)), this, SLOT(closeWizard(bool)));
 		connect(footerUi_.BackButton, SIGNAL(clicked(bool)), this, SLOT(goToPreviousPage(bool)));
 		connect(footerUi_.NextButton, SIGNAL(clicked(bool)), this, SLOT(goToNextPage(bool)));
 		connect(footerUi_.FinishButton, SIGNAL(clicked(bool)), this, SLOT(finishWizard(bool)));
