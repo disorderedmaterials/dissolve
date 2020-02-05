@@ -115,7 +115,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	if (destinations.nItems() == 0) copyToMenu->setEnabled(false);
 	else
 	{
-	  for (Gizmo* destination : destinations)
+		for (Gizmo* destination : destinations)
 		{
 			action = copyToMenu->addAction(destination->uniqueName());
 			copyToActions.append(action, destination);
