@@ -8,6 +8,8 @@ _Current Version: 0.5.6, Wednesday 5th February 2020_
 
 **Dissolve** is in heavy ongoing development, and as such the code here is rather volatile. The [`develop`](https://github.com/trisyoungs/dissolve/tree/develop) branch should always contain a compilable, working version however.
 
-Feel free to try **Dissolve** out if you wish, but do not expect miracles or a super-easy ride at present!
+Executable installers for all major platforms can be found on the [https://github.com/trisyoungs/dissolve/releases](releases page), including [https://github.com/trisyoungs/dissolve/releases/tag/continuous](continuous builds) from the latest source.
+
+Various tutorial material and examples for **Dissolve** can be [https://trisyoungs.github.io/dissolve/examples/](found here).
 
 Documentation is a work in progress, and is available at [https://trisyoungs.github.io/dissolve](https://trisyoungs.github.io/dissolve).
