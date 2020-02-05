@@ -8,6 +8,10 @@
     <file>icons/menu_save.svg</file>
     <file>icons/menu_connect.svg</file>
   </qresource>
+  <qresource prefix="wizard">
+    <file>icons/wizard_allatoms.svg</file>
+    <file>icons/wizard_selectedatoms.svg</file>
+  </qresource>
   <qresource prefix="data">
     <file>systemtemplates/simple_two/info.xml</file>
     <file>systemtemplates/simple_two/icon.svg</file>
