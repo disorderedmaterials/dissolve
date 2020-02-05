@@ -38,7 +38,7 @@ We'll now reset the temperature of the box to 298 K and run a second equilibrati
 > Simulation &#8680; Run For...
 {: .action .action_menu}
 > Set the number of steps to 250 and click _OK_
-{: step}
+{: .step}
 
 Once finished, the structure should look a lot better:
 

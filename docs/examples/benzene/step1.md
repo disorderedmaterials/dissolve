@@ -35,13 +35,19 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 
 Time to make it a little prettier!  We'll assign a standard forcefield to it, and optimise the geometry:
 
+
+
 > Species &#8680; Add Forcefield Terms
 {: .action .action_menu}
 > From the available forcefields choose `OPLSAA2005/Aromatics` and click _Next_{: .text-green-100}
 {: .step}
-> For the atom types we want to _Assign all atom types, overwriting any that already exist_{: .text-green-100}. For the intramolecular terms we want to assign them and reduce to master terms. Leave the settings as they currently are, and click _Next_{: .text-green-100}
-{: step}
-> There should be no conflicts with existing atom types or master terms, so click _Next_{: .text-green-100} then _Finish_{: .text-green-100} to exit the wizard.
+> We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click _Next_{: .text-green-100}.
+{: .step}
+> There will be no conflicts with existing atom types as there are no atom types already defined, so click _Next_{: .text-green-100}.
+{: .step}
+> For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click _Next_{: .text-green-100} to proceed.
+{: .step}
+> There will be no conflicts with existing master terms, so click _Finish_{: .text-green-100} to exit the wizard.
 {: .step}
 > Click the "medic" icon in the species viewer toolbar - ![Medic - Geometry optimise the current species](../icons/viewer_medic.png)
 {: .action .action_mouse}
