@@ -88,6 +88,8 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.ref, 'master')
     needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v1
     - name: Download Artifacts
