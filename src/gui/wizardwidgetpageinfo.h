@@ -38,7 +38,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	WizardWidgetPageInfo();
 	~WizardWidgetPageInfo();
 	// Page Types
-	enum PageType { NormalPage, ChoicePage, FinishPage };
+	enum PageType { FinishHereFlag = -99, NormalPage = 0, ChoicePage = 1};
 
 
 	/*
@@ -53,7 +53,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	CharString title_;
 	// Resource location for icon
 	CharString iconUrl_;
-	// Index of the 'next' page
+	// Index of the 'next' page (for linear progressions)
 	int nextIndex_;
 
 	public:
