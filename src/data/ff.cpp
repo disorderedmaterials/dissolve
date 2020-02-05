@@ -67,13 +67,43 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
  * Atom Type Data
  */
 
-// Determine and return atom type for specified SpeciesAtom
-ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
+// Add new atom type with its own parameters
+void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3)
+{
+	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
+
+	atomTypes_.own(atomType);
+	
+	atomTypesByElementPrivate_[Z].append(atomType);
+}
+
+// Add new atom type referencing existing parameters by name
+void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference)
+{
+	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, Z, index, name, netaDefinition, description, q, parameterReference);
+
+	atomTypes_.own(atomType);
+	
+	atomTypesByElementPrivate_[Z].append(atomType);
+}
+
+// Copy existing atom type
+void Forcefield::copyAtomType(const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition, const char* equivalentName)
+{
+	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, sourceType, newTypeName, netaDefinition, equivalentName);
+
+	atomTypes_.own(atomType);
+	
+	atomTypesByElementPrivate_[atomType->Z()].append(atomType);
+}
+
+// Determine and return atom type for specified SpeciesAtom from supplied Array of types
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes)
 {
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(i->element()->Z()));
+	RefListIterator<ForcefieldAtomType> typeIterator(atomTypes.constAt(i->element()->Z()));
 	while (ForcefieldAtomType* type = typeIterator.iterate())
 	{
 		// Get the scoring for this type
@@ -88,22 +118,24 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
 	return bestType;
 }
 
-// Register the specified short-range parameters
-void Forcefield::registerParameters(ForcefieldParameters* params)
+// Determine and return atom type for specified SpeciesAtom
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i) const
 {
-	shortRangeParameters_.append(params);
+	return determineAtomType(i, atomTypesByElementPrivate_);
 }
 
-// Register specified atom type to given Element
-void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
+// Ass short-range parameters
+void Forcefield::addParameters(const char* name, double data0, double data1, double data2, double data3)
 {
-	atomTypesByElementPrivate_[Z].append(atomType);
+	ForcefieldParameters* params = new ForcefieldParameters(name, data0, data1, data2, data3);
+
+	shortRangeParameters_.own(params);
 }
 
 // Return named short-range parameters (if they exist)
 ForcefieldParameters* Forcefield::shortRangeParameters(const char* name) const
 {
-	RefListIterator<ForcefieldParameters> paramsIterator(shortRangeParameters_);
+	ListIterator<ForcefieldParameters> paramsIterator(shortRangeParameters_);
 	while (ForcefieldParameters* params = paramsIterator.iterate()) if (DissolveSys::sameString(name, params->name())) return params;
 
 	return NULL;
@@ -143,61 +175,69 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
  * Term Data
  */
 
-// Register specified bond term
-void Forcefield::registerBondTerm(ForcefieldBondTerm* bondTerm)
+// Add bond term
+void Forcefield::addBondTerm(const char* typeI, const char* typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3)
 {
-	bondTerms_.append(bondTerm);
+	ForcefieldBondTerm* term = new ForcefieldBondTerm(typeI, typeJ, form, data0, data1, data2, data3);
+
+	bondTerms_.own(term);
+}
+
+// Add angle term
+void Forcefield::addAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
+{
+	ForcefieldAngleTerm* term = new ForcefieldAngleTerm(typeI, typeJ, typeK, form, data0, data1, data2, data3);
+
+	angleTerms_.own(term);
+}
+
+// Add torsion term
+void Forcefield::addTorsionTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2, double data3)
+{
+	ForcefieldTorsionTerm* term = new ForcefieldTorsionTerm(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
+
+	torsionTerms_.own(term);
+}
+
+// Add improper term
+void Forcefield::addImproperTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0, double data1, double data2, double data3)
+{
+	ForcefieldImproperTerm* term = new ForcefieldImproperTerm(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
+
+	improperTerms_.own(term);
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
 ForcefieldBondTerm* Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	RefListIterator<ForcefieldBondTerm> termIterator(bondTerms_);
+	ListIterator<ForcefieldBondTerm> termIterator(bondTerms_);
 	while (ForcefieldBondTerm* term = termIterator.iterate()) if (term->matches(i, j)) return term;
 
 	return NULL;
 }
 
-// Register specified angle term
-void Forcefield::registerAngleTerm(ForcefieldAngleTerm* angleTerm)
-{
-	angleTerms_.append(angleTerm);
-}
-
 // Return angle term for the supplied atom type trio (if it exists)
 ForcefieldAngleTerm* Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
-	RefListIterator<ForcefieldAngleTerm> termIterator(angleTerms_);
+	ListIterator<ForcefieldAngleTerm> termIterator(angleTerms_);
 	while (ForcefieldAngleTerm* term = termIterator.iterate()) if (term->matches(i, j, k)) return term;
 
 	return NULL;
 }
 
-// Register specified torsion term
-void Forcefield::registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm)
-{
-	torsionTerms_.append(torsionTerm);
-}
-
 // Return torsion term for the supplied atom type quartet (if it exists)
 ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	RefListIterator<ForcefieldTorsionTerm> termIterator(torsionTerms_);
+	ListIterator<ForcefieldTorsionTerm> termIterator(torsionTerms_);
 	while (ForcefieldTorsionTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
 
 	return NULL;
 }
 
-// Register specified improper term
-void Forcefield::registerImproperTerm(ForcefieldImproperTerm* improperTerm)
-{
-	improperTerms_.append(improperTerm);
-}
-
 // Return improper term for the supplied atom type quartet (if it exists)
 ForcefieldImproperTerm* Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	RefListIterator<ForcefieldImproperTerm> termIterator(improperTerms_);
+	ListIterator<ForcefieldImproperTerm> termIterator(improperTerms_);
 	while (ForcefieldImproperTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
 
 	return NULL;

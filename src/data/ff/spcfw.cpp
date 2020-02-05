@@ -41,27 +41,15 @@
 // Constructor
 Forcefield_SPCFw::Forcefield_SPCFw()
 {
-	static ForcefieldAtomType atomTypes[] =
-	{
-		// 	Z	El	FFID	Name		Type		Description
-		//						q	Epsilon	Sigma
-		{ this, ELEMENT_H,	1,	"HW",		"-O(nh=2)",	"Water hydrogen",
-								0.41,	0.0,	0.0 },
-		{ this, ELEMENT_O,	2,	"OW",		"-H(n=2)",	"Water oxygen",
-								-0.82,	0.6503,	3.165492 }
-	};
+	// Atom types
+	addAtomType(ELEMENT_H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.41, 0.0, 0.0);
+	addAtomType(ELEMENT_O, 2, "OW", "-H(n=2)", "Water oxygen", -0.82, 0.6503, 3.165492);
 
-	static ForcefieldBondTerm bondTerms[] =
-	{
-		//	i	j	Type (Harmonic)			k		eq
-		{ this,	"HW",	"OW",	SpeciesBond::HarmonicForm,	4431.53,	1.0 }
-	};
+	// Bond terms
+	addBondTerm("HW", "OW", SpeciesBond::HarmonicForm, 4431.53, 1.0);
 
-	static ForcefieldAngleTerm angleTerms[] =
-	{
-		//	i	j	k	Type (Harmonic)			k		eq
-		{ this,	"HW",	"OW",	"HW",	SpeciesAngle::HarmonicForm,	317.5656,	113.24 }
-	};
+	// Angle terms
+	addAngleTerm("HW", "OW", "HW", SpeciesAngle::HarmonicForm, 317.5656, 113.24);
 }
 
 // Destructor

@@ -88,11 +88,6 @@ const char* NETADefinition::definitionString() const
 // Check supplied atom to see if it matches this NETA description
 int NETADefinition::score(const SpeciesAtom* i) const
 {
-	// Our entry point is the branch of our BasicNode - if there are no branch nodes, return zero (== match anything)
-	if (rootNode_.nBranchNodes() == 0) return 0;
-
 	RefList<const SpeciesAtom> matchPath;
-	int totalScore = rootNode_.score(i, matchPath);
-
-	return totalScore;
+	return rootNode_.score(i, matchPath);
 }

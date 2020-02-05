@@ -27,6 +27,7 @@ A new editor window opens in which we can create our new species.
 > Repeat for the other hydrogen
 {: .step}
 > Click **OK** to close the editor and create the new species
+{: .step}
 
 Finally, let's rename it:
 
@@ -42,9 +43,13 @@ You'll now have a water molecule that might look like its gone ten rounds with M
 {: .action .action_menu}
 > From the available forcefields choose `SPC/Fw` and click _Next_{: .text-green-100}
 {: .step}
-> For the atom types we want to _Assign all atom types, overwriting any that already exist_{: .text-green-100}. For the intramolecular terms we want to assign them and reduce to master terms. Leave the settings as they currently are, and click _Next_{: .text-green-100}
-{: step}
-> There should be no conflicts with existing atom types or master terms, so click _Next_{: .text-green-100} then _Finish_{: .text-green-100} to exit the wizard.
+> We need to assign new atom types for all of our water molecule's atoms. The default option, _Determine atom types for all atoms_, does just that so click _Next_{: .text-green-100}.
+{: .step}
+> There will be no conflicts with existing atom types as there are no atom types already defined, so click _Next_{: .text-green-100}.
+{: .step}
+>For the intramolecular terms we want to assign them and reduce to master terms, which again are the default settings. Click _Next_{: .text-green-100} to proceed.
+{: .step}
+> Dissolve will check to see if there are naming conflicts between new and existing master terms, just as it did for the atom types. There will be none as, again, we had no master terms to start with, so click _Finish_{: .text-green-100} to exit the wizard.
 {: .step}
 
 Take a look at the _Contents & Forcefield_{: .text-green-100} section for the species and you'll see that we now have atom types assigned to our atoms, and suitable intramolecular terms assigned to the bonds and angle. Note that the functional forms of the interactions are actually the names of master terms, and are preceded with `@` to distinguish them as such (e.g. `@HW-OW-HW`). Master terms are global and can be referenced by one or more species, and are particularly useful when molecules possess high symmetry as there is no need to repeat the same parameter definitions. Furthermore, as we shall see later, adjusting species geometry by modifying the master terms is much easier than modifying all the individual values within a species.

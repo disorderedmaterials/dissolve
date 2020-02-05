@@ -25,10 +25,8 @@
 #include "neta/generator.h"
 
 // Constructors
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(Z), ListItem<ForcefieldAtomType>()
 {
-	forcefield_ = parent;
-
 	index_ = index;
 	name_ = name;
 	description_ = description;
@@ -40,42 +38,32 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, con
 	parameters_.setParameter(3, data3);
 
 	// Generate NETA
-	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), forcefield_ ? forcefield_->name() : "???", netaDefinition);
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerAtomType(this, z);
+	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), parent ? parent->name() : "???", netaDefinition);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(z), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(Z), ListItem<ForcefieldAtomType>()
 {
-	forcefield_ = parent;
-
 	index_ = index;
 	name_ = name;
 	description_ = description;
 	parameters_.setCharge(q);
-	parameterReference_ = forcefield_->shortRangeParameters(parameterReference);
-	if (!parameterReference_) Messenger::error("Parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, forcefield_->name());
+	parameterReference_ = parent->shortRangeParameters(parameterReference);
+	if (!parameterReference_) Messenger::error("Parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, parent->name());
 
 	// Generate NETA
-	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), forcefield_ ? forcefield_->name() : "???", netaDefinition);
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerAtomType(this, z);
+	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), parent ? parent->name() : "???", netaDefinition);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType, const char* netaDefinition) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition, const char* equivalentName) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
 {
-	forcefield_ = parent;
-
 	// Copy data from the supplied source
 	index_ = sourceType.index_;
-	name_ = sourceType.name_;
-	if (!DissolveSys::sameString(name_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.name());
+	name_ = newTypeName;
 	description_ = sourceType.description_;
 	parameters_ = sourceType.parameters_;
 	neta_.set(netaDefinition ? netaDefinition : sourceType.neta().definitionString(), parent);
+	parameterReference_ = NULL;
 
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerAtomType(this, sourceType.Z());
+	// Equivalent name provided?
+	if (equivalentName) equivalentName_ = equivalentName;
 }
 
 // Destructor
@@ -86,12 +74,6 @@ ForcefieldAtomType::~ForcefieldAtomType()
 /*
  * Identity
  */
-
-// Return parent Forcefield
-const Forcefield* ForcefieldAtomType::forcefield() const
-{
-	return forcefield_;
-}
 
 // Return index of type
 int ForcefieldAtomType::index() const
@@ -108,6 +90,9 @@ const char* ForcefieldAtomType::name() const
 // Return equivalent name of type
 const char* ForcefieldAtomType::equivalentName() const
 {
+	// Return defined equivalent name first, if defined
+	if (!equivalentName_.isEmpty()) return equivalentName_.get();
+
 	// If parameters are referenced, return their name. Otherwise, return ours.
 	return (parameterReference_ ? parameterReference_->name() : name_.get());
 }

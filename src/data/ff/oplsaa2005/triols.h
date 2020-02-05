@@ -1,6 +1,6 @@
 /*
-	*** OPLSAA (2005) Noble Gases Forcefield
-	*** src/data/ff/oplsaa2005/noblegases.h
+	*** OPLSAA (2005) Triols Forcefield
+	*** src/data/ff/oplsaa2005/triols.h
 	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
@@ -19,27 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_OPLSAA_NOBLEGASES_H
-#define DISSOLVE_FORCEFIELD_OPLSAA_NOBLEGASES_H
+#ifndef DISSOLVE_FORCEFIELD_OPLSAA_TRIOLS_H
+#define DISSOLVE_FORCEFIELD_OPLSAA_TRIOLS_H
 
-#include "data/ff/oplsaa2005/base.h"
+#include "data/ff/oplsaa2005/alkanes.h"
 
 // Forward Declarations
-class CoreData;
-class Species;
-class SpeciesAngle;
-class SpeciesAtom;
-class SpeciesBond;
-class SpeciesIntra;
-class SpeciesTorsion;
+/* none */
 
-// OPLS-AA (2005) Noble Gases Forcefield
-class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
+// OPLS-AA/2005 Triols Forcefield
+class Forcefield_OPLSAA2005_Triols : public Forcefield_OPLSAA2005_Alkanes
 {
 	public:
 	// Constructor / Destructor
-	Forcefield_OPLSAA2005_NobleGases();
-	~Forcefield_OPLSAA2005_NobleGases();
+	Forcefield_OPLSAA2005_Triols();
+	~Forcefield_OPLSAA2005_Triols();
 
 
 	/*
@@ -50,16 +44,6 @@ class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 	const char* name() const;
 	// Return description for Forcefield
 	const char* description() const;
-	// Return short-range interaction style for AtomTypes
-	Forcefield::ShortRangeType shortRangeType() const;
-
-
-	/*
-	 * Atom Type Data
-	 */
-	public:
-	// Determine and return atom type for specified SpeciesAtom
-	ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 };
 
 #endif
