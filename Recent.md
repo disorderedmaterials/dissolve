@@ -1,0 +1,2 @@
+- New forcefields added (OPLS-AA alkanes, alkenes, alcohols, diols, and triols)
+- Improved Add Forcefield Terms wizard
