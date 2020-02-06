@@ -36,9 +36,9 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 {
 	public:
 	// Constructors
-	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, const char* parameterReference = NULL);
-	ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType, const char* netaDefinition = NULL);
+	ForcefieldAtomType(Forcefield* parent = NULL, int Z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAtomType(Forcefield* parent = NULL, int Z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, const char* parameterReference = NULL);
+	ForcefieldAtomType(Forcefield* parent, const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition = NULL, const char* equivalentName = NULL);
 	// Destructor
 	virtual ~ForcefieldAtomType();
 
@@ -47,20 +47,18 @@ class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAt
 	 * Identity
 	 */
 	private:
-	// Parent Forcefield
-	const Forcefield* forcefield_;
 	// Index of atom type
 	int index_;
 	// Name of atom type
 	CharString name_;
+	// Equivalent name, if defined
+	CharString equivalentName_;
 	// Brief description of tyoe
 	CharString description_;
 	// NETA definition for the atom type
 	NETADefinition neta_;
 
 	public:
-	// Return parent Forcefield
-	const Forcefield* forcefield() const;
 	// Return index of type
 	int index() const;
 	// Return name of type

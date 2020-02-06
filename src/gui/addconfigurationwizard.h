@@ -70,7 +70,7 @@ class AddConfigurationWizard : public WizardWidget
 	{
 		StartPage,			/* Starting page, offering choices of how to proceed */
 		SelectTemplatePage,		/* Select template to apply  */
-		FinishPage,			/* Final page, setting name and temperature for Configuration */
+		NameAndTemperaturePage,		/* Set name and temperature for Configuration */
 		nPages
 	};
 

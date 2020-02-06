@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_FORCEFIELD_OPLSAA_NOBLEGASES_H
 #define DISSOLVE_FORCEFIELD_OPLSAA_NOBLEGASES_H
 
-#include "data/ff.h"
+#include "data/ff/oplsaa2005/base.h"
 
 // Forward Declarations
 class CoreData;
@@ -34,7 +34,7 @@ class SpeciesIntra;
 class SpeciesTorsion;
 
 // OPLS-AA (2005) Noble Gases Forcefield
-class Forcefield_OPLSAA2005_NobleGases : public Forcefield
+class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 {
 	public:
 	// Constructor / Destructor

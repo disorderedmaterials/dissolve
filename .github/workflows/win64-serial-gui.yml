@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - develop
-    - release/*
+    - master
 
 jobs:
   build:
@@ -84,6 +84,23 @@ jobs:
       with:
         name: artifacts
         path: installers/
+  updaterelease:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'master')
+    needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download Artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts
+    - name: Update Versioned Release
+      run: |
+        DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        echo "Code version detected as: $DISSOLVE_VERSION"
+        ./ci/scripts/update-release -r ${{ github.repository }} -t ${DISSOLVE_VERSION} -n "${DISSOLVE_VERSION}" -f Recent.md artifacts/*zip artifacts/*exe
   updatecontinuous:
     runs-on: ubuntu-latest
     needs: build
