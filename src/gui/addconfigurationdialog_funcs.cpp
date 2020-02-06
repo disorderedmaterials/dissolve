@@ -30,6 +30,7 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget* parent, const Dissolve& 
 	ui_.AddConfigurationWidget->setMainDissolveReference(&mainDissolveInstance);
 	ui_.AddConfigurationWidget->setCloseButtonAvailable(false);
 	connect(ui_.AddConfigurationWidget, SIGNAL(finished()), this, SLOT(accept()));
+	connect(ui_.AddConfigurationWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }
 
 // Destructor

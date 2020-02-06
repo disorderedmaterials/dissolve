@@ -24,7 +24,7 @@
 #include "data/ff.h"
 
 // Constructor
-ForcefieldTorsionTerm::ForcefieldTorsionTerm(Forcefield* parent, const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2, double data3)
+ForcefieldTorsionTerm::ForcefieldTorsionTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2, double data3) : ListItem<ForcefieldTorsionTerm>()
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -35,9 +35,6 @@ ForcefieldTorsionTerm::ForcefieldTorsionTerm(Forcefield* parent, const char* typ
 	parameters_[1] = data1;
 	parameters_[2] = data2;
 	parameters_[3] = data3;
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerTorsionTerm(this);
 }
 
 // Destructor

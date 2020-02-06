@@ -58,7 +58,7 @@ ImportSpeciesWizard::ImportSpeciesWizard(QWidget* parent) : temporaryDissolve_(t
 	registerPage(ImportSpeciesWizard::SelectSpeciesPage, "Select Species", ImportSpeciesWizard::AtomTypesPage);
 	registerPage(ImportSpeciesWizard::AtomTypesPage, "Atom Types");
 	registerPage(ImportSpeciesWizard::MasterTermsPage, "Master Terms", ImportSpeciesWizard::SpeciesNamePage);
-	registerFinishPage(ImportSpeciesWizard::SpeciesNamePage, "Species Name");
+	registerPage(ImportSpeciesWizard::SpeciesNamePage, "Species Name", WizardWidgetPageInfo::FinishHereFlag);
 
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));

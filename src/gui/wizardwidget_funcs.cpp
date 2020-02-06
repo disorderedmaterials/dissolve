@@ -63,6 +63,7 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 		footerUi_.setupUi(footerWidget);
 
 		// Connect signals / slots
+		connect(footerUi_.CancelButton, SIGNAL(clicked(bool)), this, SLOT(closeWizard(bool)));
 		connect(footerUi_.BackButton, SIGNAL(clicked(bool)), this, SLOT(goToPreviousPage(bool)));
 		connect(footerUi_.NextButton, SIGNAL(clicked(bool)), this, SLOT(goToNextPage(bool)));
 		connect(footerUi_.FinishButton, SIGNAL(clicked(bool)), this, SLOT(finishWizard(bool)));
@@ -92,13 +93,16 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
 		footerUi_.BackButton->setEnabled(history_.nItems() > 1);
 		if (page)
 		{
-			bool allowNextOrFinish = progressionAllowed(page->index());
 			int nextIndex = page->nextIndex();
 			if (nextIndex == -1) nextIndex = determineNextPage(page->index());
-			footerUi_.NextButton->setVisible(page->pageType() != WizardWidgetPageInfo::FinishPage);
-			footerUi_.NextButton->setEnabled((page->pageType() == WizardWidgetPageInfo::NormalPage) && (nextIndex != -1) && allowNextOrFinish);
-			footerUi_.FinishButton->setVisible(page->pageType() == WizardWidgetPageInfo::FinishPage);
-			footerUi_.FinishButton->setEnabled(allowNextOrFinish);
+			footerUi_.NextButton->setVisible((page->pageType() == WizardWidgetPageInfo::NormalPage) && (nextIndex != WizardWidgetPageInfo::FinishHereFlag));
+			footerUi_.NextButton->setEnabled(nextIndex != -1);
+			footerUi_.FinishButton->setVisible(nextIndex == WizardWidgetPageInfo::FinishHereFlag);
+
+			// Disable controls if we're not allowed to progress yet
+			bool allowProgression = progressionAllowed(page->index());
+			footerUi_.FinishButton->setEnabled(allowProgression);
+			footerUi_.NextButton->setEnabled(allowProgression);
 		}
 		else
 		{
@@ -172,14 +176,6 @@ void WizardWidget::registerChoicePage(int index, const char* title)
 	WizardWidgetPageInfo* page = registerPage(index, title);
 
 	page->setPageType(WizardWidgetPageInfo::ChoicePage);
-}
-
-// Register exit (finish) page
-void WizardWidget::registerFinishPage(int index, const char* title)
-{
-	WizardWidgetPageInfo* page = registerPage(index, title);
-
-	page->setPageType(WizardWidgetPageInfo::FinishPage);
 }
 
 // Find page with specified index
@@ -295,7 +291,7 @@ void WizardWidget::goToPage(int index)
 // Go back one page in the history
 void WizardWidget::goBack()
 {
-	// We cannot go back further than the first item in history_, so if there is only one itfinishEnabledem in the history_ do nothing
+	// We cannot go back further than the first item in history_, so if there is only one item in the history_ do nothing
 	if (history_.nItems() == 1)
 	{
 		printf("Can't go back further than the first page visited.\n");

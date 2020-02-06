@@ -24,7 +24,7 @@
 #include "data/ff.h"
 
 // Constructor
-ForcefieldAngleTerm::ForcefieldAngleTerm(Forcefield* parent, const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
+ForcefieldAngleTerm::ForcefieldAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3) : ListItem<ForcefieldAngleTerm>()
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -34,9 +34,6 @@ ForcefieldAngleTerm::ForcefieldAngleTerm(Forcefield* parent, const char* typeI, 
 	parameters_[1] = data1;
 	parameters_[2] = data2;
 	parameters_[3] = data3;
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerAngleTerm(this);
 }
 
 // Destructor

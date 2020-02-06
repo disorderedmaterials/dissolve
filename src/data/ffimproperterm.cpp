@@ -24,7 +24,7 @@
 #include "data/ff.h"
 
 // Constructor
-ForcefieldImproperTerm::ForcefieldImproperTerm(Forcefield* parent, const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0, double data1, double data2, double data3)
+ForcefieldImproperTerm::ForcefieldImproperTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0, double data1, double data2, double data3) : ListItem<ForcefieldImproperTerm>()
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -35,9 +35,6 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(Forcefield* parent, const char* t
 	parameters_[1] = data1;
 	parameters_[2] = data2;
 	parameters_[3] = data3;
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerImproperTerm(this);
 }
 
 // Destructor

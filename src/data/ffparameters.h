@@ -24,16 +24,17 @@
 
 #include "base/charstring.h"
 #include "base/parameters.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Forcefield;
 
 // Forcefield Parameters Base Class
-class ForcefieldParameters
+class ForcefieldParameters : public ListItem<ForcefieldParameters>
 {
 	public:
 	// Constructors
-	ForcefieldParameters(Forcefield* parent = NULL, const char* name = NULL, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldParameters(const char* name = NULL, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	// Destructor
 	~ForcefieldParameters();
 
@@ -42,14 +43,10 @@ class ForcefieldParameters
 	 * Identity
 	 */
 	private:
-	// Parent Forcefield
-	const Forcefield* forcefield_;
 	// Name of parameters
 	CharString name_;
 
 	public:
-	// Return parent Forcefield
-	const Forcefield* forcefield() const;
 	// Return name of type
 	const char* name() const;
 

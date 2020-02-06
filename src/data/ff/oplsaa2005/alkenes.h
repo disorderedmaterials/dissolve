@@ -1,6 +1,6 @@
 /*
-	*** OPLSAA (2005) Atom Types
-	*** src/data/ff/oplsaa2005/atomtypes.h
+	*** OPLSAA (2005) Alkenes Forcefield
+	*** src/data/ff/oplsaa2005/alkenes.h
 	Copyright T. Youngs 2019-2020
 
 	This file is part of Dissolve.
@@ -19,39 +19,31 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_OPLS2005_ATOMTYPES_H
-#define DISSOLVE_FORCEFIELD_OPLS2005_ATOMTYPES_H
+#ifndef DISSOLVE_FORCEFIELD_OPLSAA_ALKENES_H
+#define DISSOLVE_FORCEFIELD_OPLSAA_ALKENES_H
 
-#include "data/ff.h"
-#include "templates/array.h"
+#include "data/ff/oplsaa2005/alkanes.h"
 
 // Forward Declarations
-class CoreData;
-class SpeciesAtom;
+/* none */
 
-// OPLSAA (2005) Atom Types
-class OPLSAA2005_AtomTypes
+// OPLS-AA/2005 Alkenes Forcefield
+class Forcefield_OPLSAA2005_Alkenes : public Forcefield_OPLSAA2005_Alkanes
 {
-	/*
-	 * Search Functions
-	 */
 	public:
-	// Return atom type information with index specified
-	static const ForcefieldAtomType& atomTypeByIndex(int id);
+	// Constructor / Destructor
+	Forcefield_OPLSAA2005_Alkenes();
+	~Forcefield_OPLSAA2005_Alkenes();
 
 
 	/*
-	 * Data
+	 * Definition
 	 */
 	public:
-	// Return formatted publication references
-	static const char* publicationReferences();
-
-	private:
-	// Return number of atom type definitions available
-	static int nAtomTypes();
-	// Return atom type definitions
-	static const ForcefieldAtomType* atomTypes();
+	// Return name of Forcefield
+	const char* name() const;
+	// Return description for Forcefield
+	const char* description() const;
 };
 
 #endif

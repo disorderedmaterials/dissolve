@@ -20,7 +20,6 @@
 */
 
 #include "data/ff/oplsaa2005/noblegases.h"
-#include "data/ff/oplsaa2005/atomtypes.h"
 #include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
 #include "base/sysfunc.h"
@@ -32,15 +31,12 @@
 // Constructor / Destructor
 Forcefield_OPLSAA2005_NobleGases::Forcefield_OPLSAA2005_NobleGases()
 {
-	static ForcefieldAtomType atomTypes[] =
-	{
-		// Copy required types from OPLS-AA (2005) core list
-		{ this, "He",	OPLSAA2005_AtomTypes::atomTypeByIndex(101) },
-		{ this, "Ne",	OPLSAA2005_AtomTypes::atomTypeByIndex(102) },
-		{ this, "Ar",	OPLSAA2005_AtomTypes::atomTypeByIndex(103) },
-		{ this, "Kr",	OPLSAA2005_AtomTypes::atomTypeByIndex(104) },
-		{ this, "Xe",	OPLSAA2005_AtomTypes::atomTypeByIndex(105) }
-	};
+	// Copy required types from OPLS-AA (2005) core list
+	copyAtomType(oplsAtomTypeById(101), "He");
+	copyAtomType(oplsAtomTypeById(102), "Ne");
+	copyAtomType(oplsAtomTypeById(103), "Ar");
+	copyAtomType(oplsAtomTypeById(104), "Kr");
+	copyAtomType(oplsAtomTypeById(105), "Xe");
 }
 
 Forcefield_OPLSAA2005_NobleGases::~Forcefield_OPLSAA2005_NobleGases()
@@ -60,7 +56,7 @@ const char* Forcefield_OPLSAA2005_NobleGases::name() const
 // Return description for Forcefield
 const char* Forcefield_OPLSAA2005_NobleGases::description() const
 {
-	static CharString desc("Noble gases from OPLS-AA (2005).<br/><br/>References: %s", OPLSAA2005_AtomTypes::publicationReferences());
+	static CharString desc("Noble gases from OPLS-AA (2005).<br/><br/>References: %s", publicationReferences());
 	return desc.get();
 }
 

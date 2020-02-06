@@ -40,8 +40,32 @@ class OPLSAA2005BaseForcefield : public Forcefield
 	 * Definition
 	 */
 	public:
+	// Return formatted publication references
+	const char* publicationReferences() const;
 	// Return short-range interaction style for AtomTypes
 	Forcefield::ShortRangeType shortRangeType() const;
+
+
+	/*
+	 * Atom Type Data
+	 */
+	public:
+	// Return the base ForcefieldAtomType with specified id (if it exists)
+	const ForcefieldAtomType& oplsAtomTypeById(int id) const;
+
+
+	/*
+	 * Term Data
+	 */
+	public:
+	// Return bond term for the supplied atom type pair (if it exists)
+	ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	// Return angle term for the supplied atom type trio (if it exists)
+	ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	// Return torsion term for the supplied atom type quartet (if it exists)
+	ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	// Return improper term for the supplied atom type quartet (if it exists)
+	ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 };
 
 #endif
