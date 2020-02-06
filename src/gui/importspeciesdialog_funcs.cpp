@@ -30,6 +30,7 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDi
 	ui_.ImportSpeciesWidget->setMainDissolveReference(&mainDissolveInstance);
 	ui_.ImportSpeciesWidget->setCloseButtonAvailable(false);
 	connect(ui_.ImportSpeciesWidget, SIGNAL(finished()), this, SLOT(accept()));
+	connect(ui_.ImportSpeciesWidget, SIGNAL(cancel()), this, SLOT(reject()));
 }
 
 // Destructor

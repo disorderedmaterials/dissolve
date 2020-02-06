@@ -57,13 +57,14 @@ AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryD
 	masterTorsionItemParent_->setExpanded(true);
 
 	// Register pages with the wizard
-	registerPage(AddForcefieldTermsWizard::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsWizard::SelectTermsPage);
-	registerPage(AddForcefieldTermsWizard::SelectTermsPage, "Select Terms", AddForcefieldTermsWizard::AtomTypesPage);
-	registerPage(AddForcefieldTermsWizard::AtomTypesPage, "Check AtomTypes", AddForcefieldTermsWizard::MasterTermsPage);
-	registerFinishPage(AddForcefieldTermsWizard::MasterTermsPage, "Check MasterTerms");
+	registerPage(AddForcefieldTermsWizard::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsWizard::AtomTypesPage);
+	registerPage(AddForcefieldTermsWizard::AtomTypesPage, "Determine Atom Types", AddForcefieldTermsWizard::AtomTypesConflictsPage);
+	registerPage(AddForcefieldTermsWizard::AtomTypesConflictsPage, "Check Atom Types", AddForcefieldTermsWizard::IntramolecularPage);
+	registerPage(AddForcefieldTermsWizard::IntramolecularPage, "Assign Intramolecular Terms");
+	registerPage(AddForcefieldTermsWizard::MasterTermsPage, "Check Master Terms");
 
 	// Connect signals / slots
-	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
+	connect(ui_.AtomTypesConflictsList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesConflictsListEdited(QWidget*)));
 	connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(masterTermsTreeEdited(QWidget*)));
 
 	lockedForRefresh_ = 0;
@@ -203,20 +204,20 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 {
-	Forcefield* ff;
+	Forcefield* ff = ui_.ForcefieldWidget->currentForcefield();
 	switch (currentIndex)
 	{
-		case (AddForcefieldTermsWizard::SelectTermsPage):
+		case (AddForcefieldTermsWizard::SelectForcefieldPage):
+// 			ui_.AtomTypesAssignSelectionRadio(targetSpecies_->nSelectedAtoms() != 0);
+			break;
+		case (AddForcefieldTermsWizard::AtomTypesPage):
 			// Sanity check the current Forcefield
-			ff = ui_.ForcefieldWidget->currentForcefield();
 			if (!ff) return false;
 
-			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
+			// Copy selected Species to our temporary instance
 			modifiedSpecies_ = temporaryDissolve_.copySpecies(targetSpecies_);
-			modifiedSpecies_->detachFromMasterTerms();
-			temporaryCoreData_.clearMasterTerms();
 
-			// Assign AtomTypes
+			// Determine atom types
 			if (ui_.AtomTypesAssignAllRadio->isChecked())
 			{
 				// Remove all previous AtomType association from the Species, and subsequently from the main object
@@ -226,6 +227,13 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_)) return false;
 			}
 			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
+
+			updateAtomTypesConflictsPage();
+			break;
+		case (AddForcefieldTermsWizard::AtomTypesConflictsPage):
+			// Detach any MasterTerm references, and delete the MasterTerms
+			modifiedSpecies_->detachFromMasterTerms();
+			temporaryCoreData_.clearMasterTerms();
 
 			// Assign intramolecular terms
 			if (ui_.ApplyIntramolecularTermsCheck->isChecked())
@@ -319,7 +327,6 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				}
 			}
 
-			updateAtomTypesPage();
 			updateMasterTermsPage();
 		default:
 			break;
@@ -333,10 +340,10 @@ int AddForcefieldTermsWizard::determineNextPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-		case (AddForcefieldTermsWizard::AtomTypesPage):
-			// If there are master terms present, go to that page first. Otherwise, skip straight to naming
-			if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() || temporaryCoreData_.nMasterTorsions()) return AddForcefieldTermsWizard::MasterTermsPage;
-			else return AddForcefieldTermsWizard::FinishPage;
+		case (AddForcefieldTermsWizard::IntramolecularPage):
+			if (ui_.ApplyIntramolecularTermsCheck->isChecked() && ui_.ReduceToMasterTermsCheck->isChecked()) return AddForcefieldTermsWizard::MasterTermsPage;
+			else return WizardWidgetPageInfo::FinishHereFlag;
+			break;
 		default:
 			break;
 	}
@@ -349,7 +356,7 @@ bool AddForcefieldTermsWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-		case (AddForcefieldTermsWizard::AtomTypesPage):
+		case (AddForcefieldTermsWizard::AtomTypesConflictsPage):
 			// Clear the temporary dissolve instance
 			temporaryDissolve_.clear();
 		default:
@@ -381,7 +388,7 @@ void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldSelectionChanged(bo
 
 void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldDoubleClicked()
 {
-	goToPage(AddForcefieldTermsWizard::SelectTermsPage);
+	goToPage(AddForcefieldTermsWizard::AtomTypesPage);
 	if (!ui_.ForcefieldWidget->currentForcefield()) return;
 }
 
@@ -393,8 +400,8 @@ void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldDoubleClicked()
  * AtomTypes Page
  */
 
-// Row update function for AtomTypesList
-void AddForcefieldTermsWizard::updateAtomTypesListRow(int row, AtomType* atomType, bool createItem)
+// Row update function for AtomTypesConflictsList
+void AddForcefieldTermsWizard::updateAtomTypesConflictsListRow(int row, AtomType* atomType, bool createItem)
 {
 	QListWidgetItem* item;
 	if (createItem)
@@ -402,9 +409,9 @@ void AddForcefieldTermsWizard::updateAtomTypesListRow(int row, AtomType* atomTyp
 		item = new QListWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-		ui_.AtomTypesList->insertItem(row, item);
+		ui_.AtomTypesConflictsList->insertItem(row, item);
 	}
-	else item = ui_.AtomTypesList->item(row);
+	else item = ui_.AtomTypesConflictsList->item(row);
 
 	// Set item data
 	item->setText(atomType->name());
@@ -412,10 +419,10 @@ void AddForcefieldTermsWizard::updateAtomTypesListRow(int row, AtomType* atomTyp
 }
 
 // Update page with AtomTypes in our temporary Dissolve reference
-void AddForcefieldTermsWizard::updateAtomTypesPage()
+void AddForcefieldTermsWizard::updateAtomTypesConflictsPage()
 {
 	// Update the list against the global AtomType list
-	ListWidgetUpdater<AddForcefieldTermsWizard,AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this, &AddForcefieldTermsWizard::updateAtomTypesListRow);
+	ListWidgetUpdater<AddForcefieldTermsWizard,AtomType> listUpdater(ui_.AtomTypesConflictsList, temporaryCoreData_.constAtomTypes(), this, &AddForcefieldTermsWizard::updateAtomTypesConflictsListRow);
 
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
@@ -430,27 +437,27 @@ void AddForcefieldTermsWizard::updateAtomTypesPage()
 	else ui_.AtomTypesIndicatorLabel->setText("There are no naming conflicts with the imported AtomTypes");
 }
 
-void AddForcefieldTermsWizard::on_AtomTypesList_itemSelectionChanged()
+void AddForcefieldTermsWizard::on_AtomTypesConflictsList_itemSelectionChanged()
 {
 	// Enable / disable prefix and suffix buttons as appropriate
-	bool isSelection = ui_.AtomTypesList->selectedItems().count() > 0;
+	bool isSelection = ui_.AtomTypesConflictsList->selectedItems().count() > 0;
 	ui_.AtomTypesPrefixButton->setEnabled(isSelection);
 	ui_.AtomTypesSuffixButton->setEnabled(isSelection);
 }
 
-void AddForcefieldTermsWizard::atomTypesListEdited(QWidget* lineEdit)
+void AddForcefieldTermsWizard::atomTypesConflictsListEdited(QWidget* lineEdit)
 {
 	// Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before updating the page
-	for (int n=0; n<ui_.AtomTypesList->count(); ++n)
+	for (int n=0; n<ui_.AtomTypesConflictsList->count(); ++n)
 	{
-		QListWidgetItem* item = ui_.AtomTypesList->item(n);
+		QListWidgetItem* item = ui_.AtomTypesConflictsList->item(n);
 		AtomType* at = VariantPointer<AtomType>(item->data(Qt::UserRole));
 		if (!at) continue;
 
 		at->setName(qPrintable(item->text()));
 	}
 
-	updateAtomTypesPage();
+	updateAtomTypesConflictsPage();
 }
 
 void AddForcefieldTermsWizard::on_AtomTypesPrefixButton_clicked(bool checked)
@@ -459,7 +466,7 @@ void AddForcefieldTermsWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 	QString prefix = QInputDialog::getText(this, "Prefix AtomTypes", "Enter prefix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
 	if (!ok) return;
 
-	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesList->selectedItems();
+	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesConflictsList->selectedItems();
 	QList<QListWidgetItem*>::iterator i;
 	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
 	{
@@ -467,7 +474,7 @@ void AddForcefieldTermsWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 		at->setName(CharString("%s%s", qPrintable(prefix), at->name()));
 	}
 
-	updateAtomTypesPage();
+	updateAtomTypesConflictsPage();
 }
 
 void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
@@ -476,7 +483,7 @@ void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 	QString suffix = QInputDialog::getText(this, "Suffix AtomTypes", "Enter suffix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
 	if (!ok) return;
 
-	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesList->selectedItems();
+	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesConflictsList->selectedItems();
 	QList<QListWidgetItem*>::iterator i;
 	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
 	{
@@ -484,7 +491,26 @@ void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 		at->setName(CharString("%s%s", at->name(), qPrintable(suffix)));
 	}
 
-	updateAtomTypesPage();
+	updateAtomTypesConflictsPage();
+}
+
+/*
+ * Intramolecular Page
+ */
+
+void AddForcefieldTermsWizard::on_ApplyIntramolecularTermsCheck_clicked(bool checked)
+{
+	updateProgressionControls();
+}
+
+void AddForcefieldTermsWizard::on_ApplyNoIntramolecularTermsCheck_clicked(bool checked)
+{
+	updateProgressionControls();
+}
+
+void AddForcefieldTermsWizard::on_ReduceToMasterTermsCheck_clicked(bool checked)
+{
+	updateProgressionControls();
 }
 
 /*
