@@ -24,8 +24,6 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 {: .step}
 > Connect a single hydrogen atom to each carbon by left-click-dragging from each carbon site 
 {: .step}
-> Left-click somewhere in the viewer outside the ring to place a hydrogen atom
-{: .step}
 > Click **OK** to close the editor and create the new species
 {: .step}
 > Double-click on the new species' tab and change its name to `Benzene`
@@ -35,19 +33,20 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 
 Time to make it a little prettier!  We'll assign a standard forcefield to it, and optimise the geometry:
 
-
+> You can filter forcefields by keywords in name and description by using the filter box at the top-right of the forcefield selection controls.
+{: .tip}
 
 > Species &#8680; Add Forcefield Terms
 {: .action .action_menu}
 > From the available forcefields choose `OPLSAA2005/Aromatics` and click _Next_{: .text-green-100}
 {: .step}
-> We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click _Next_{: .text-green-100}.
+> We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click _Next_{: .text-green-100}
 {: .step}
-> There will be no conflicts with existing atom types as there are no atom types already defined, so click _Next_{: .text-green-100}.
+> There will be no conflicts with existing atom types as there are no atom types already defined, so click _Next_{: .text-green-100}
 {: .step}
-> For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click _Next_{: .text-green-100} to proceed.
+> For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click _Next_{: .text-green-100} to proceed
 {: .step}
-> There will be no conflicts with existing master terms, so click _Finish_{: .text-green-100} to exit the wizard.
+> There will be no conflicts with existing master terms, so click _Finish_{: .text-green-100} to exit the wizard
 {: .step}
 > Click the "medic" icon in the species viewer toolbar - ![Medic - Geometry optimise the current species](../icons/viewer_medic.png)
 {: .action .action_mouse}
@@ -56,9 +55,9 @@ We will also get ahead here and edit the master terms to reflect the geometry ob
 
 > **Forcefield** tab, **Master Terms** section
 {: .action .action_tabs}
-> Change the bond length (_Parameter 2_) of the `CA-HA` bond term from 1.08 to 1.09.
+> Change the bond length (_Parameter 2_) of the `CA-HA` bond term from 1.08 to 1.09 &#8491;
 {: .step}
-> Change the bond length (_Parameter 2_) of the `CA-CA` bond term from 1.40 to 1.38.
+> Change the bond length (_Parameter 2_) of the `CA-CA` bond term from 1.40 to 1.38 &#8491;
 {: .step}
 
 ### Create Isotopologues

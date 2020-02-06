@@ -15,7 +15,7 @@ It should be no surprise that water is present in a significant fraction of diso
 
 ## Preparation
 
-Download the example data file archive `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub if you haven't done so already.
+Download the example data `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub and unpack it if you haven't done so already.
 
 > Open the Dissolve GUI
 {: .action .action_dissolve}
@@ -26,7 +26,7 @@ Download the example data file archive `Dissolve-X.Y.Z-ExampleData.zip` or `Diss
 > Save your own input file under a sensible name in the `water` directory of the example data
 {: .step}
 
-Alternatively, download the data files listed below and save them to your location of choice.
+Alternatively, download the data files listed below and save them to a location of your choice.
 
 - H<sub>2</sub>O: [SLS18498-H2O.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18498-H2O.mint01)
 - HDO: [SLS18500-HDO5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18500-HDO5050.mint01)

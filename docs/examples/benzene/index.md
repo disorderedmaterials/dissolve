@@ -17,7 +17,7 @@ You will set up and equilibrate a small liquid benzene simulation before calcula
 
 ## Preparation
 
-Download the example data file archive `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub if you haven't done so already.
+Download the example data `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub and unpack it if you haven't done so already.
 
 > Open the Dissolve GUI
 {: .action .action_dissolve}
@@ -28,7 +28,7 @@ Download the example data file archive `Dissolve-X.Y.Z-ExampleData.zip` or `Diss
 > Save your own input file under a sensible name in the `benzene` directory of the example data
 {: .step}
 
-Alternatively, download the data files listed below and save them to your location of choice.
+Alternatively, download the data files listed below and save them to a location of your choice.
 
 - C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6H6.mint01)
 - C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/5050.mint01)

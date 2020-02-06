@@ -13,7 +13,7 @@ As noted in the introduction we have neutron-weighted experimental data, so we n
 
 > Layer &#8680; Create... &#8680; Calculate... &#8680; RDF and Neutron S(Q)
 {: .action .action_menu}
-> Show the module palette for the layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab.
+> Show the module palette for the layer by clicking the _Show Palette_{: .text-green-100} button at the top left of the tab
 {: .action .action_mouse}
 > Drag two additional [`NeutronSQ`](../../userguide/modules/neutronsq) modules from the `Correlation Functions` in the _Module Palette_{: .text-green-100} on the left, placing them after the existing [`RDF`](../../userguide/modules/rdf) module
 {: .step}
@@ -80,7 +80,7 @@ Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules 
 {: .step}
 > Press the _Auto_{: .text-green-100} button to add the natural isotopologue for each species present
 {: .step}
-> Select the entry for the benzene species, or its isotopologue, and click the _Add_{: .text-green-100} button to insert the next "unused" isotopologue (i.e. the deuterated analogue).
+> Select the entry for the benzene species, or its isotopologue, and click the _Add_{: .text-green-100} button to insert the next "unused" isotopologue (i.e. the deuterated analogue)
 {: .step}
 > Open the **Reference Data** settings group
 {: .action .action_settings}
@@ -93,7 +93,7 @@ All that remains is to add our EPSR refinement layer:
 {: .action .action_menu}
 > Select the [`EPSR`](../../userguide/modules/epsr) module to display its options
 {: .step}
-> Change the **EReq** value to 10.0
+> Change the **EReq** value to 10.0 - the default of 3.0 will not be enough to promote the necessary changes in structure
 {: .action .action_edit}
 
 [Previous Step](step5.md){: .btn }   [Next Step](step7.md){: .btn .right}

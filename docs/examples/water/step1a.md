@@ -37,7 +37,7 @@ Finally, let's rename it:
 ![](badwater.png){: .img-centre}
 *A very badly drawn water molecule*
 
-You'll now have a water molecule that might look like its gone ten rounds with Mike Tyson, so let's clean it up. First, we'll need to assign suitable forcefield terms.
+You'll now have a water molecule that might look like its gone ten rounds with Mike Tyson, so let's clean it up. First, we'll need to assign suitable forcefield terms. We'll use a water model known as 'SPC/Fw' (Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with improved liquid-state properties', <i>Journal of Chemical Physics</i> <b>124</b> 024503 (2006), [http://dx.doi.org/10.1063/1.2136877](http://dx.doi.org/10.1063/1.2136877)) which basically means "simple point charge, flexible water".
 
 > Species &#8680; Add Forcefield Terms
 {: .action .action_menu}

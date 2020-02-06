@@ -29,7 +29,7 @@ This time we will need to set a few parameters in the [`NeutronSQ`](../../usergu
 
 The [`NeutronSQ`](../../userguide/modules/neutronsq) module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise. We'll first define the correct isotopologue for our argon species, and then tell [`NeutronSQ`](../../userguide/modules/neutronsq) to use it. The experimental measurement was made on Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring mix (1.91 fm).
 
-> **Species (Argon)** tab, **Isotopologues** section
+> **Ar** species tab, **Isotopologues** section
 {: .action .action_tabs}
 > Click _Add_{: .text-green-100}
 {: .step}
@@ -37,7 +37,7 @@ The [`NeutronSQ`](../../userguide/modules/neutronsq) module will use isotopic na
 {: .step}
 > Change the entry for the Ar atom type from `Natural (bc = 1.909 fm)` to `36 (bc = 24.9)`
 {: .step}
->For sanity's sake, you may also want to change the name of the isotopologue to something like 'Ar36' (double-click on the name to do so)
+>For sanity's sake, you may also want to change the name of the isotopologue to something like 'Ar36' (double-click on the name, 'NewIsotopologue', to do so)
 {: .step}
 
 Now, we'll open up our [`NeutronSQ`](../../userguide/modules/neutronsq) module in a tab of its own.
@@ -75,7 +75,7 @@ The [`NeutronSQ`](../../userguide/modules/neutronsq) module itself looks after a
 {: .action .action_settings}
 > Open the **Manipulations** group
 {: .action .action_groups}
-> We need to subtract the average level from the experimental data as it oscillates around 1.0, so set the **RemoveAverage** value to 9.0. This will instruct Dissolve to work out the average value of the data from x = 9.0, and remove it from the data.
+> We need to subtract the average level from the experimental data as it oscillates around 1.0, so set the **RemoveAverage** value to 9.0 &#8491;<sup>-1</sup>. This will instruct Dissolve to work out the average value of the data from a _Q_ of 9.0 &#8491;<sup>-1</sup>, and remove it from the data.
 {: .step}
 
 The data, along with its Fourier transform, are now plotted in the graphs to the right, and you'll see that the data file name now appears in the button for the **Reference** keyword. The data are normalised to the average squared value of the atomic scattering, so we will instruct Dissolve to remove this normalisation.
@@ -84,7 +84,7 @@ The data, along with its Fourier transform, are now plotted in the graphs to the
 {: .action .action_tabs}
 > Open the **Reference Data** settings group
 {: .action .action_groups}
-> Select `AverageSquared` for the **ReferenceNormalisation**
+> Set the **ReferenceNormalisation** to `AverageSquared`
 {: .step}
 
 [Previous Step](step4a.md){: .btn }   [Next Step](step5.md){: .btn .right}

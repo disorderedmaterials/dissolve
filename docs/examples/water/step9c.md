@@ -17,7 +17,7 @@ We will define axes on our centre-of-mass site. In general, a system of referenc
 
 1. Define a coordinate that will represent the origin of the axes (i.e. the local coordinate {0,0,0}). In the present example this will be the centre-of-mass of the molecule.
 2. Select a group of one or more atoms whose coordinates, when averaged, will define absolutely the direction of the _x_ axis.
-3. Select a group of one or more atoms whose coordinates, when averaged, will define the rough direction of the _y_ axis (and more importantly the XY plane), and which will be orthogonalised into the proper _y_ axis.
+3. Select a group of one or more atoms whose coordinates, when averaged, will define the rough direction of the _y_ axis (and more importantly the XY plane), and which will be orthogonalised with respect to _x_ (i.e. made to form a 90&deg; angle).
 4. Define the _z_ axis from the cross product of the _x_ and _y_ axes.
 
 When defining a site within Dissolve it is your responsibility to provide atom indices for the origin and the representative _x_ and _y_ directions - Dissolve will do the rest. Thus:
@@ -44,11 +44,11 @@ We will add another of Dissolve's predefined analysis layers to get the modules 
 > Layer &#8680; Create... &#8680; Analysis... &#8680; Average Molecule & SDF
 {: .action .action_menu}
 
-Along with the actual calculate of the SDF, it is useful to have the actual average geometry of the species around the specified site, and so the layer provides the following modules:
+Along with the calculation of the SDF, it is useful to have the actual average geometry of the species around the specified site, and so the layer provides the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) | Calculates the average geometry of the parent species aroudn a specified reference site |
+| [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) | Calculates the average geometry of the parent species around a specified reference site |
 | [`CalculateSDF`](../../userguide/modules/calculatesdf) | Calculates the spatial density function of a particular site around a central reference site |
 
 As the name implies, the [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the [`CalculateSDF`](../../userguide/modules/calculatesdf) module. The [`CalculateSDF`](../../userguide/modules/calculatesdf) module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both module, the principal (central) site must have a system of axes defined.

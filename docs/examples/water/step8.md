@@ -12,7 +12,7 @@ Now that our simulation is running and happily refining interatomic potentials, 
 The EPSR algorithm implemented within Dissolve doesn't contain any attempts at automating the adjustment of **EReq**, so a general procedure to follow is:
 
 1. Set a modest (i.e. low) value of **EReq** to begin with (the default of 3.0 is enough for neutral molecules, but should be higher for ionic systems).
-2. Run the simulation and observe the progression of the r-factors (hopefully they should decrease from their initial starting values).
+2. Run the simulation and observe the progression of the r-factors on the _R-Factor_ tab of the module (hopefully they should decrease from their initial starting values).
 3. Once the r-factors have stabilised, increase **EReq** (increasing by an amount equivalent to the initial value each time is sensible).
 4. If the r-factors decrease again, repeat (3). If not, then you have probably reached the limit of what is possible within the context of the current simulation and its forcefield.
 

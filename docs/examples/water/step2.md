@@ -18,11 +18,11 @@ We now need to set a few parameters in the generator in order to get the correct
 
 > Open the settings for the `Parameters` node
 {: .action .action_settings}
-> Check that the value of the "rho" variable is 0.1. This is the default value for the generator, and just so happens to correspond to the density (in atoms &#8491;<sup>-3</sup>) of liquid water at room temperature. The variable will be referenced in the `AddSpecies` node when setting the density of the water species.
+> Check that the value of the "rho" variable is 0.1. This is the default value of density set in all of the predefined configuration generators, and just so happens to correspond to the density (in atoms &#8491;<sup>-3</sup>) of liquid water at room temperature. The variable will be referenced in the `AddSpecies` node when setting the density of the water species.
 {: .step}
 > Open the settings for the `AddSpecies` node
 {: .action .action_settings}
-> Make sure that the units for the **Density** are set to `atoms/A3` and that the equation simple references our parameter `rho`.
+> Make sure that the units for the **Density** are set to `atoms/A3` and that the value is set to `rho`.
 {: .step}
 > Increase the **Population** to 1000.
 {: .step}

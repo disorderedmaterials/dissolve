@@ -12,8 +12,10 @@ To simulate any system we need to supply suitable parameters to describe the int
 
 We'll now describe the interactions for your argon species by taking the terms from one of Dissolve's [built-in forcefields](../../setup/forcefields.md).
 
-> **Species (Argon)** tab
+> **Ar** species tab
 {: .action .action_tabs}
+> By selecting the tab containing the Argon species you are making it 'active', and so it will be the target of any actions triggered from the _Species_ menu.
+{: .step}
 > Species &#8680; Add Forcefield Terms
 {: .action .action_menu}
 > From the available forcefields choose `OPLSAA2005/NobleGases` and click **Next**

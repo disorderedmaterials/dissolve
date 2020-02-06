@@ -25,13 +25,13 @@ Clearly we have a mismatch between the peak positions at around 1 &#8491; (relat
 > Here we are modifying the intramolecular terms based on comparison of the D<sub>2</sub>O data, but bear in mind that liquid water is amongst the systems most sensitive to isotopic substitution since all hydrogens are hydroxyl hydrogens, and subject to exchange as well as strong hydrogen bonding. As such, the differences in intramolecular geometry between H<sub>2</sub>O and D<sub>2</sub>O are measurable.<sup>[1]</sup>
 {: .warn}
 
-Since we set up our simulation to use intramolecular master terms (via the _Add Forcefield Terms..._{: .text-green-100} wizard) we can modify those to directly affect our water molecule's geometry.
+Since we set up our simulation to use intramolecular master terms (via the _Add Forcefield Terms..._{: .text-green-100} wizard) we can modify those to directly affect our water molecule's geometry. For the O&ndash;H bond it is quite straightforward to read of the true distance (0.976 &#8491;) from the reference g(r). The angle distance requires a touch more trigonometry but, given knowledge of the correct O&ndash;H distance, we can work out that the corresponding equilibrium angle we require is 107.134 &deg;.
 
 > **Forcefield** tab, **Master Terms** section
 {: .action .action_tabs}
-> Change the bond length (_Parameter 2_) of the `HW-OW` bond term from 1.0 to 0.976.
+> Change the bond length (_Parameter 2_) of the `HW-OW` bond term from 1.0 to 0.976 &#8491;
 {: .step}
-> Change the equilibrium angle (_Parameter 2_) of the `HW-OW-HW` angle term from 113.24 to 107.134
+> Change the equilibrium angle (_Parameter 2_) of the `HW-OW-HW` angle term from 113.24 to 107.134 &deg;
 {: .step}
 
 Now run the simulation for a little longer and let the species adjust to their new geometry, and you should see a marked improvement in the comparison of the D<sub>2</sub>O total G(r) and structure factor.
