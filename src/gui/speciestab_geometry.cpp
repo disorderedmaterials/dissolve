@@ -294,7 +294,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 	// Get target SpeciesAtom from the passed widget
 	SpeciesAtom* speciesAtom = w ? VariantPointer<SpeciesAtom>(w->data(Qt::UserRole)) : NULL;
 	if (!speciesAtom) return;
-	Vec3<double> r_ = speciesAtom->r();
+	Vec3<double> r = speciesAtom->r();
 	// Column of passed item tells us the type of data we need to change
 	AtomType* atomType;
 	switch (w->column())
@@ -319,11 +319,11 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 		case (3): 
 		case (4):
 			switch(w->column()){
-				case 2: r_.x = w->text().toDouble(); break;
-				case 3: r_.y = w->text().toDouble(); break; 
-				case 4: r_.z = w->text().toDouble(); break;
+				case 2: r.x = w->text().toDouble(); break;
+				case 3: r.y = w->text().toDouble(); break; 
+				case 4: r.z = w->text().toDouble(); break;
 			}
-			species_->setAtomCoordinates(speciesAtom, r_);
+			species_->setAtomCoordinates(speciesAtom, r);
 			dissolveWindow_->setModified();
 			break;
 		// Charge
