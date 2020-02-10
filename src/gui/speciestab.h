@@ -109,22 +109,11 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void updateAtomTableSelection();
 
 	private slots:
-	void on_ForcefieldButton_clicked(bool checked);
-	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
-	void on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);
 	void on_AtomTable_itemSelectionChanged();
-	void on_BondAddButton_clicked(bool checked);
-	void on_BondRemoveButton_clicked(bool checked);
 	void on_BondTable_itemChanged(QTableWidgetItem* w);
-	void on_AngleAddButton_clicked(bool checked);
-	void on_AngleRemoveButton_clicked(bool checked);
 	void on_AngleTable_itemChanged(QTableWidgetItem* w);
-	void on_TorsionAddButton_clicked(bool checked);
-	void on_TorsionRemoveButton_clicked(bool checked);
 	void on_TorsionTable_itemChanged(QTableWidgetItem* w);
-	void on_ImproperAddButton_clicked(bool checked);
-	void on_ImproperRemoveButton_clicked(bool checked);
 	void on_ImproperTable_itemChanged(QTableWidgetItem* w);
 
 	public slots:

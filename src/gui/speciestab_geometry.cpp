@@ -83,7 +83,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	else item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
 	item->setSelected(speciesAtom->isSelected());
-	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 }
 
 // BondTable row update function
@@ -102,6 +102,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool crea
 		}
 		else item = ui_.BondTable->item(row, n);
 		item->setText(QString::number(speciesBond->index(n)+1));
+		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 
 	// Interaction Form
@@ -125,7 +126,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool crea
 		}
 		else item = ui_.BondTable->item(row, n+3);
 		item->setText(QString::number(speciesBond->parameter(n)));
-		item->setFlags(speciesBond->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
+		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 }
 
@@ -145,6 +146,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool c
 		}
 		else item = ui_.AngleTable->item(row, n);
 		item->setText(QString::number(speciesAngle->index(n)+1));
+		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 
 	// Interaction Form
@@ -168,7 +170,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool c
 		}
 		else item = ui_.AngleTable->item(row, n+4);
 		item->setText(QString::number(speciesAngle->parameter(n)));
-		item->setFlags(speciesAngle->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
+		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 }
 
@@ -188,6 +190,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 		}
 		else item = ui_.TorsionTable->item(row, n);
 		item->setText(QString::number(speciesTorsion->index(n)+1));
+		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 
 	// Interaction Form
@@ -211,7 +214,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 		}
 		else item = ui_.TorsionTable->item(row, n+5);
 		item->setText(QString::number(speciesTorsion->parameter(n)));
-		item->setFlags(speciesTorsion->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
+		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 }
 
@@ -231,6 +234,8 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper* speciesImprope
 		}
 		else item = ui_.ImproperTable->item(row, n);
 		item->setText(QString::number(speciesImproper->index(n)+1));
+		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
+
 	}
 
 	// Interaction Form
@@ -254,7 +259,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper* speciesImprope
 		}
 		else item = ui_.ImproperTable->item(row, n+5);
 		item->setText(QString::number(speciesImproper->parameter(n)));
-		item->setFlags(speciesImproper->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
+		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
 }
 
@@ -281,46 +286,6 @@ void SpeciesTab::updateAtomTableSelection()
 	}
 }
 
-void SpeciesTab::on_ForcefieldButton_clicked(bool checked)
-{
-	// Select the desired Forcefield
-	static SelectForcefieldDialog selectForcefieldDialog(this, ForcefieldLibrary::forcefields());
-	Forcefield* ff = selectForcefieldDialog.selectForcefield(species_->forcefield());
-	if (!ff) return;
-
-	// Confirm, and ask whether to overwrite existing forcefield terms
-	QMessageBox queryBox;
-	queryBox.setText("Would you like to clear current terms from the Species and reapply the selected forcefield?");
-	queryBox.setInformativeText("Reapply Terms?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-	queryBox.setDefaultButton(QMessageBox::Cancel);
-	int ret = queryBox.exec();
-
-	if (ret == QMessageBox::Cancel) return;
-
-	// Set the new Forcefield on the Species
-	species_->setForcefield(ff);
-
-	if (ret == QMessageBox::Yes) species_->applyForcefieldTerms(dissolve_.coreData());
-
-	updateControls();
-
-	dissolveWindow_->setModified();
-}
-
-void SpeciesTab::on_ForcefieldAutoApplyCheck_clicked(bool checked)
-{
-	// TODO
-}
-
-void SpeciesTab::on_ForcefieldAutoUpdateIntramolecularCheck_clicked(bool checked)
-{
-	species_->setAutoUpdateIntramolecularTerms(checked);
-
-	dissolveWindow_->setModified();
-
-	updateControls();
-}
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 {
@@ -329,7 +294,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 	// Get target SpeciesAtom from the passed widget
 	SpeciesAtom* speciesAtom = w ? VariantPointer<SpeciesAtom>(w->data(Qt::UserRole)) : NULL;
 	if (!speciesAtom) return;
-
+	Vec3<double> r_ = speciesAtom->r();
 	// Column of passed item tells us the type of data we need to change
 	AtomType* atomType;
 	switch (w->column())
@@ -350,10 +315,15 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 			dissolveWindow_->setModified();
 			break;
 		// Coordinates
-		case (2):
-		case (3):
+		case (2): 
+		case (3): 
 		case (4):
-			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
+			switch(w->column()){
+				case 2: r_.x = w->text().toDouble(); break;
+				case 3: r_.y = w->text().toDouble(); break; 
+				case 4: r_.z = w->text().toDouble(); break;
+			}
+			species_->setAtomCoordinates(speciesAtom, r_);
 			dissolveWindow_->setModified();
 			break;
 		// Charge
@@ -388,16 +358,6 @@ void SpeciesTab::on_AtomTable_itemSelectionChanged()
 	// Recreate selection primitive and update viewer
 	ui_.ViewerWidget->speciesViewer()->recreateSelectionPrimitive();
 	ui_.ViewerWidget->updateStatusBar();
-}
-
-void SpeciesTab::on_BondAddButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
-
-void SpeciesTab::on_BondRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
 }
 
 void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
@@ -463,15 +423,6 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 	}
 }
 
-void SpeciesTab::on_AngleAddButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
-
-void SpeciesTab::on_AngleRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
 
 void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 {
@@ -538,15 +489,6 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 	}
 }
 
-void SpeciesTab::on_TorsionAddButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
-
-void SpeciesTab::on_TorsionRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
 
 void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 {
@@ -613,16 +555,6 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 		Locker refreshLocker(refreshLock_);
 		updateTorsionTableRow(w->row(), speciesTorsion, false);
 	}
-}
-
-void SpeciesTab::on_ImproperAddButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
-
-void SpeciesTab::on_ImproperRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
 }
 
 void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem* w)
@@ -700,10 +632,6 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem* w)
 void SpeciesTab::updateGeometryTab()
 {
 	Locker refreshLocker(refreshLock_);
-
-	// -- Forcefield and Terms
-	ui_.ForcefieldButton->setText(species_ && species_->forcefield() ? species_->forcefield()->name() : "<None>");
-	ui_.ForcefieldAutoUpdateIntramolecularCheck->setChecked(species_->autoUpdateIntramolecularTerms());
 
 	// -- SpeciesAtom Table
 // 	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
