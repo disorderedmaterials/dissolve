@@ -61,7 +61,7 @@ AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryD
 	registerPage(AddForcefieldTermsWizard::AtomTypesPage, "Determine Atom Types", AddForcefieldTermsWizard::AtomTypesConflictsPage);
 	registerPage(AddForcefieldTermsWizard::AtomTypesConflictsPage, "Check Atom Types", AddForcefieldTermsWizard::IntramolecularPage);
 	registerPage(AddForcefieldTermsWizard::IntramolecularPage, "Assign Intramolecular Terms");
-	registerPage(AddForcefieldTermsWizard::MasterTermsPage, "Check Master Terms");
+	registerPage(AddForcefieldTermsWizard::MasterTermsPage, "Check Master Terms", WizardWidgetPageInfo::FinishHereFlag);
 
 	// Connect signals / slots
 	connect(ui_.AtomTypesConflictsList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesConflictsListEdited(QWidget*)));
