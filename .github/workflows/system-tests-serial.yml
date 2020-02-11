@@ -45,4 +45,4 @@ jobs:
         cd system-tests
         pwd
         chmod u+x ./go ./dissolve
-        ./go -a -s ./dissolve broadening
+        ./go -a -s ./dissolve
