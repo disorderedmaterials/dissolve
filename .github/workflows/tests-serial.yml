@@ -1,0 +1,49 @@
+name: Tests (Serial)
+
+on:
+  push:
+    branches:
+    - develop
+    - master
+  pull_request:
+    branches:
+    - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-16.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisties
+      run: |
+        sudo apt-get install bison ninja-build
+    - name: Build (CMake/Ninja)
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Ninja" ../
+        ninja && cp dissolve ../tests
+        cd ../
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v1
+      if: success()
+      with:
+        name: system-tests
+        path: tests/
+  test_broadening:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: contains(github.ref, 'develop') && github.event_name == 'push'
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download Artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: system-tests
+    - name: Run Test
+      run: |
+        cd system-tests
+        pwd
+        ./go -s ./dissolve broadening

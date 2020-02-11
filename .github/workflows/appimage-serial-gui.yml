@@ -5,13 +5,16 @@ on:
     branches:
     - develop
     - master
+  pull_request:
+    branches:
+    - develop
 
 jobs:
   prepcontinuous:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: contains(github.ref, 'develop')
+    if: contains(github.ref, 'develop') && github.event_name == 'push'
     steps:
     - uses: actions/checkout@v1
     - name: Create Continuous Release
@@ -23,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: contains(github.ref, 'master')
+    if: contains(github.ref, 'master') && github.event_name == 'push'
     steps:
     - uses: actions/checkout@v1
     - name: Create Versioned Release
@@ -53,6 +56,7 @@ jobs:
         ninja
         cd ../
     - name: Create AppImages
+      if: github.event_name == 'push'
       run: |
         # Set environment vars
         QT_BASE_DIR=/opt/qt512
@@ -73,13 +77,13 @@ jobs:
         mv Dissolve-*-x86_64.AppImage appimages
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
-      if: success()
+      if: success() && github.event_name == 'push'
       with:
         name: artifacts
         path: appimages/
   updaterelease:
     runs-on: ubuntu-latest
-    if: contains(github.ref, 'master')
+    if: contains(github.ref, 'master') && github.event_name == 'push'
     needs: build
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,7 +106,7 @@ jobs:
     needs: build
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: contains(github.ref, 'develop')
+    if: contains(github.ref, 'develop') && github.event_name == 'push'
     steps:
     - uses: actions/checkout@v1
     - name: Download Artifacts
