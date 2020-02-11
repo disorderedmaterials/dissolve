@@ -26,7 +26,7 @@
 
 // Constructor
 SiteViewer::SiteViewer(QWidget* parent) : BaseViewer(parent)
-{
+{	
 	// Source data
 	species_ = NULL;
 	site_ = NULL;
