@@ -42,7 +42,6 @@ jobs:
         name: serial-test-artifacts
     - name: Run Tests
       run: |
-        cd system-tests
-        pwd
+        cd serial-test-artifacts
         chmod u+x ./go ./dissolve
         ./go -a -s ./dissolve
