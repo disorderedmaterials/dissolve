@@ -30,7 +30,7 @@ jobs:
       with:
         name: system-tests
         path: tests/
-  test_broadening:
+  test:
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -46,4 +46,5 @@ jobs:
       run: |
         cd system-tests
         pwd
+        chmod u+x ./go ./dissolve
         ./go -s ./dissolve broadening
