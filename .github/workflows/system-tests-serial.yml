@@ -10,7 +10,7 @@ on:
     - develop
 
 jobs:
-  build:
+  systemtests-build-serial:
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v1
@@ -28,22 +28,21 @@ jobs:
       uses: actions/upload-artifact@v1
       if: success()
       with:
-        name: system-tests
+        name: serial-test-artifacts
         path: tests/
-  test:
+  systemtests-serial:
     runs-on: ubuntu-latest
-    needs: build
+    needs: systemtests-build-serial
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - uses: actions/checkout@v1
     - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
-        name: system-tests
-    - name: Run Test
+        name: serial-test-artifacts
+    - name: Run Tests
       run: |
         cd system-tests
         pwd
         chmod u+x ./go ./dissolve
-        ./go -s ./dissolve broadening
+        ./go -a -s ./dissolve broadening
