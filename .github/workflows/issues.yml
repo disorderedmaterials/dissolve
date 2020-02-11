@@ -6,6 +6,8 @@ jobs:
   manage_issues:
     runs-on: ubuntu-latest
     steps:
+    - name: Test
+      run: echo "Event Name: "${{ GITHUB_EVENT_NAME }}
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
         action-token: "${{ secrets.MAIN_SECRET }}"
