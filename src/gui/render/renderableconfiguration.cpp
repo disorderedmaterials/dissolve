@@ -32,7 +32,7 @@
 RenderableConfiguration::RenderableConfiguration(const Configuration* source, const char* objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
 {
 	// Set defaults
-	displayStyle_ = SpheresStyle;
+	displayStyle_ = LinesStyle;
 	linesAtomRadius_ = 0.05;
 	spheresAtomRadius_ = 0.3;
 	spheresBondRadius_ = 0.1;
