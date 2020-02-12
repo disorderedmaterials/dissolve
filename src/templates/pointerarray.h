@@ -74,6 +74,7 @@ template <class T> class PointerArray : std::vector<T*>
 	{
 		return operator[](index);
 	}
+	// Return pointer array
 	T** items()
 	{
 		return data();
