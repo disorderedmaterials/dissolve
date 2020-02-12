@@ -41,6 +41,7 @@ template <class T> class PointerArray : std::vector<T*>
 	public:
 	using std::vector<T*>::begin;
 	using std::vector<T*>::clear;
+	using std::vector<T*>::data;
 	using std::vector<T*>::end;
 	using std::vector<T*>::erase;
 	using std::vector<T*>::operator[];
@@ -73,6 +74,11 @@ template <class T> class PointerArray : std::vector<T*>
 	{
 		return operator[](index);
 	}
+	T** items()
+	{
+		return data();
+	}
+
 
 	/*
 	 * Item Management
