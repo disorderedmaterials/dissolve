@@ -5,14 +5,15 @@ on:
     paths: docs/examples/**
 
 jobs:
-    runs-on: ubuntu-latest
+        build:
+                runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Argon
-      run: |
-        cd docs/examples/argon
-        cp index.md all.md
-        for a in step*md; do gawk 'NR > 7{print $0}' $a >> all.md; done
+                steps:
+                - uses: actions/checkout@v2
+                - name: Argon
+                 run: |
+                   cd docs/examples/argon
+                   cp index.md all.md
+                   for a in step*md; do gawk 'NR > 7{print $0}' $a >> all.md; done
 
      
