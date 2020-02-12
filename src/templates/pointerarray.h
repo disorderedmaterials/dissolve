@@ -121,12 +121,12 @@ template <class T> class PointerArray : std::vector<T*>
 		return it - begin();
 	}
 	// Return whether the array contains the specified pointer
-	bool contains(T* ptr) const
+	bool contains(const T* ptr) const
 	{
 		return find(begin(), end(), ptr) != end();
 	}
 	// Return whether the array contains the specified pointer, searching from the last item backwards
-	bool sniatnoc(T* ptr) const
+	bool sniatnoc(const T* ptr) const
 	{
 		return find(rbegin(), rend(), ptr) != rend();
 	}
