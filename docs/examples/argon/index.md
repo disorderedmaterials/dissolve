@@ -3,7 +3,7 @@ title: Liquid Argon
 parent: Examples
 has_children: true
 ---
-# Liquid Argon TESTINGGGGG
+# Liquid Argon
 
 20 minute read
 {: .label .label-blue }
