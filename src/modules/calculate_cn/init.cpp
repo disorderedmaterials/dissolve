@@ -35,11 +35,11 @@ void CalculateCNModule::initialise()
 	 * Process1D  '@RDF-target-data'
 	 *   NSites  A
 	 * EndProcess1D
-	 * Integrate1D  'CN'
+	 * Sum1D  'CN'
 	 *   RangeA  minA  maxA
 	 *   RangeB  minB  maxB
 	 *   RangeC  minC  maxC
-	 * EndIntegrate1D
+	 * EndSum1D
 	 */
 
 	// Process1D - targets Collect1D in source RDF module
@@ -50,7 +50,7 @@ void CalculateCNModule::initialise()
 	rdfNormalisation->addNode(siteNormaliser_);
 	analyser_.addRootSequenceNode(process1D_);
 
-	// Integrate1D
+	// Sum1D
 	sum1D_ = new Sum1DProcedureNode(process1D_);
 	sum1D_->setName("CN");
 	analyser_.addRootSequenceNode(sum1D_);
