@@ -24,7 +24,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <set>
+#include <algorithm>
+#include <vector>
 #include "base/messenger.h"
 
 // Forward Declarations
@@ -35,34 +36,23 @@
  * A contiguous pointer array class designed to be as lightweight as possible.
  * Order of items must not be important, as the arrangement of pointers is subject to change.
  */
-template <class T> class PointerArray : std::set<T*>
+template <class T> class PointerArray : std::vector<T*>
 {
 	public:
-	using std::set<T*>::begin;
-	using std::set<T*>::clear;
-	using std::set<T*>::count;
-	using std::set<T*>::end;
-	using std::set<T*>::erase;
-	using std::set<T*>::insert;
-	using std::set<T*>::size;
-	// Element access operator
-	T* operator[](int index)
-	{
-		return at(index);
-	}
+	using std::vector<T*>::begin;
+	using std::vector<T*>::clear;
+	using std::vector<T*>::end;
+	using std::vector<T*>::erase;
+	using std::vector<T*>::operator[];
+	using std::vector<T*>::push_back;
+	using std::vector<T*>::rbegin;
+	using std::vector<T*>::rend;
+	using std::vector<T*>::reserve;
+	using std::vector<T*>::size;
 	// Const access operator
 	T* at(int index) const
 	{
-#ifdef CHECKS
-		if ((index < 0) || (index >= nItems_))
-		{
-			Messenger::error("PointerArray<T>::at(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
-			return NULL;
-		}
-#endif
-		auto it = begin();
-		for (int i=0; i<index; ++i) ++it;
-		return *it;
+		return operator[](index);
 	}
 
 
@@ -71,8 +61,7 @@ template <class T> class PointerArray : std::set<T*>
 	void initialise(int size)
 	{
 		clear();
-		//This is currently a NOP because there's no real way to set
-		//the size of a set
+		reserve(size);
 	}
 	// Returns the number of items in the list
 	int nItems() const
@@ -82,7 +71,7 @@ template <class T> class PointerArray : std::set<T*>
 	// Const-value access
 	T* value(int index) const
 	{
-		return at(index);
+		return operator[](index);
 	}
 
 	/*
@@ -92,17 +81,17 @@ template <class T> class PointerArray : std::set<T*>
 	// Append an item to the list
 	void append(T* ptr)
 	{
-		insert(ptr);
+		push_back(ptr);
 	}
 	// Remove an item from the array, leaving the remaining items contiguous in memory
 	void remove(T* ptr)
 	{
-		erase(ptr);
+		erase(find(begin(), end(), ptr));
 	}
 	// Remove indexed item from the array, leaving the remaining items contiguous in memory
 	void remove(int index)
 	{
-		erase(at(index));
+		erase(begin()+index);
 	}
 	// Remove last item from the array
 	void removeLast()
@@ -127,23 +116,19 @@ template <class T> class PointerArray : std::set<T*>
 	// Return array index of specified pointer
 	int indexOf(const T* ptr) const
 	{
-		int n = 0;
-		for (auto it = begin(); it != end(); ++it) {
-			if (*it == ptr) return n;
-			++n;
-		}
-
-		return -1;
+		auto it = find(begin(), end(), ptr);
+		if (it == end()) return -1;
+		return it - begin();
 	}
 	// Return whether the array contains the specified pointer
 	bool contains(T* ptr) const
 	{
-		return count(ptr);
+		return find(begin(), end(), ptr) != end();
 	}
 	// Return whether the array contains the specified pointer, searching from the last item backwards
 	bool sniatnoc(T* ptr) const
 	{
-		return count(ptr);
+		return find(rbegin(), rend(), ptr) != rend();
 	}
 };
 
