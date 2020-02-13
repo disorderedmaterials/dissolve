@@ -6,8 +6,6 @@ on:
     - develop
     - master
   pull_request:
-    branches:
-    - develop
 
 jobs:
   systemtests-build-serial:
