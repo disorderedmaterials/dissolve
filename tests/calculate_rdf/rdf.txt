@@ -291,7 +291,7 @@ Module DataTest
   Target  'RDF(COM-COM)'
   Data1D  RDF_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
   EndData1D
-  Threshold  0.5
+  Threshold  0.6
 EndModule
 
 Module DataTest
@@ -299,7 +299,7 @@ Module DataTest
   Target  'RDF(COM-COM)-Analyser'
   Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
   EndData1D
-  Threshold  0.5
+  Threshold  0.6
 EndModule
 
 EndLayer

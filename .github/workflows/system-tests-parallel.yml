@@ -1,4 +1,4 @@
-name: System Tests (Serial)
+name: System Tests (Parallel)
 
 on:
   push:
@@ -8,39 +8,42 @@ on:
   pull_request:
 
 jobs:
-  systemtests-build-serial:
+  systemtests-build-parallel:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Install Prerequisties
       run: |
-        sudo apt-get install bison ninja-build
+        sudo apt-get install bison ninja-build libopenmpi-dev openmpi-bin openmpi-common
     - name: Build (CMake/Ninja)
       run: |
         mkdir build
         cd build
-        cmake -G "Ninja" ../
-        ninja && cp dissolve ../tests
+        cmake -G "Ninja" -DPARALLEL:bool=true ../
+        ninja && cp dissolve-mpi ../tests
         cd ../
     - name: Upload Artifacts
       uses: actions/upload-artifact@v1
       if: success()
       with:
-        name: serial-test-artifacts
+        name: parallel-test-artifacts
         path: tests/
-  systemtests-serial:
+  systemtests-parallel:
     runs-on: ubuntu-latest
-    needs: systemtests-build-serial
+    needs: systemtests-build-parallel
     strategy:
       matrix:
         test: [atomshake, broadening, calculate_avgmol, calculate_cn, calculate_dangle, calculate_rdf, calculate_sdf, correlations, energyforce1, epsr, exchangeable, pbctorsion, rdfmethod]
     steps:
+    - name: Install Prerequisties
+      run: |
+        sudo apt-get install openmpi-bin openmpi-common
     - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
-        name: serial-test-artifacts
+        name: parallel-test-artifacts
     - name: Run Tests
       run: |
-        cd serial-test-artifacts
-        chmod u+x ./go ./dissolve
-        ./go -a -s ./dissolve ${{ matrix.test }}
+        cd parallel-test-artifacts
+        chmod u+x ./go ./dissolve-mpi
+        ./go -a -p ./dissolve-mpi ${{ matrix.test }}

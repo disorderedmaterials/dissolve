@@ -223,6 +223,13 @@ Cell* Cell::mimCellNeighbour(int id) const
 	return mimCellNeighbours_[id];
 }
 
+// Return if the specified Cell requires minimum image calculation
+bool Cell::mimRequired(const Cell* otherCell) const
+{
+	for (int n=0; n<nMimCellNeighbours_; ++n) if (mimCellNeighbours_[n] == otherCell) return true;
+	return false;
+}
+
 // Return list of all Cell neighbours
 CellNeighbour* Cell::allCellNeighbours()
 {

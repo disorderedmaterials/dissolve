@@ -413,7 +413,7 @@ void ForceKernel::forces(const SpeciesBond* b, const Atom* i, const Atom* j)
 {
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
-	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
+	if (i->cell()->mimRequired(j->cell())) vecji = box_->minimumVector(i, j);
 	else vecji = j->r() - i->r();
 
 	// Get distance and normalise vector ready for force calculation
@@ -450,7 +450,7 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesBond* b, const Atom*
 
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
-	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
+	if (i->cell()->mimRequired(j->cell())) vecji = box_->minimumVector(i, j);
 	else vecji = j->r() - i->r();
 
 	// Get distance and normalise vector ready for force calculation
@@ -485,9 +485,9 @@ void ForceKernel::forces(const SpeciesAngle* a, const Atom* i, const Atom* j, co
 	Vec3<double> vecji, vecjk;
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 
 	// Calculate angle
@@ -530,9 +530,9 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom
 #endif
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 
 	// Calculate angle
@@ -573,11 +573,11 @@ void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, 
 {
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
-	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
-	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
+	if (k->cell()->mimRequired(l->cell())) veckl = box_->minimumVector(k, l);
 	else veckl = l->r() - k->r();
 
 	// Calculate cross products and torsion angle formed (in radians)
@@ -650,11 +650,11 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const At
 {
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
-	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
-	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
+	if (k->cell()->mimRequired(l->cell())) veckl = box_->minimumVector(k, l);
 	else veckl = l->r() - k->r();
 
 	// Calculate cross products and torsion angle formed (in radians)

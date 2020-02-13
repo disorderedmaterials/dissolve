@@ -587,7 +587,7 @@ double PairPotential::energy(double r)
 	return uFullInterpolation_.y(r, r*rDelta_);
 }
 
-// Return analytic potential at specified r
+// Return analytic potential at specified r, including Coulomb term from local atomtype charges
 double PairPotential::analyticEnergy(double r)
 {
 	if (r > range_) return 0.0;
@@ -599,6 +599,14 @@ double PairPotential::analyticEnergy(double r)
 	energy += analyticCoulombEnergy(chargeI_*chargeJ_, r);
 
 	return energy;
+}
+
+// Return analytic potential at specified r, including Coulomb term from supplied charge product
+double PairPotential::analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+{
+	if (r > range_) return 0.0;
+
+	return analyticShortRangeEnergy(r, shortRangeType_) + analyticCoulombEnergy(qiqj, r, truncation);
 }
 
 // Return analytic coulomb potential energy of specified charges
@@ -627,7 +635,7 @@ double PairPotential::force(double r)
 	return dUFullInterpolation_.y(r, r*rDelta_);
 }
 
-// Return analytic derivative of potential at specified r
+// Return analytic force at specified r
 double PairPotential::analyticForce(double r)
 {
 	if (r > range_) return 0.0;
@@ -639,6 +647,14 @@ double PairPotential::analyticForce(double r)
 	force += analyticCoulombForce(chargeI_*chargeJ_, r);
 
 	return force;
+}
+
+// Return analytic force at specified r, including Coulomb term from supplied charge product
+double PairPotential::analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
+{
+	if (r > range_) return 0.0;
+
+	return analyticShortRangeForce(r, shortRangeType_) + analyticCoulombForce(qiqj, r);
 }
 
 // Return analytic coulomb force of specified charges
