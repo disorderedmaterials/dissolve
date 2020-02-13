@@ -176,7 +176,7 @@ Layer  'Processing'
 # -- Partial g(r) (unbound terms)
 Module DataTest  'Unbound g(r)'
   ErrorType  RMSE
-  Threshold  0.92
+  Threshold  0.3
   Data1D  'Mix//OriginalGR//OW-OW//Unbound'  xy  'epsr/watermeth.EPSR.g01'
     Y  2
   EndData1D
@@ -245,7 +245,7 @@ EndModule
 # -- Partial g(r) (intramolecular terms)
 Module DataTest  'Bound g(r)'
   ErrorType  RMSE
-  Threshold  5.8
+  Threshold  0.5
   Data1D  'Mix//OriginalGR//OW-HW//Bound'  xy  'epsr/watermeth.EPSR.y01'
     Y  4
   EndData1D
@@ -278,7 +278,7 @@ EndModule
 # -- Partial g(r) (intramolecular terms, zero)
 Module DataTest  'Zeroed bound g(r)
   ErrorType  RMSE
-  Threshold  0.001
+  Threshold  0.00001
   Data1D  'Mix//OriginalGR//OW-OW//Bound'  xy  'epsr/watermeth.EPSR.y01'
     Y  2
   EndData1D
@@ -320,7 +320,7 @@ EndModule
 # -- Partial S(Q) (unbound terms), unweighted
 Module DataTest  'Partial unweighted unbound S(Q)'
   ErrorType  RMSE
-  Threshold  5.0
+  Threshold  0.4
   Data1D  'HHH//UnweightedSQ//OW-OW//Unbound'  xy  'epsr/watermeth.EPSR.f01'
     Y  2
   EndData1D
@@ -389,7 +389,7 @@ EndModule
 # -- Partial S(Q) (bound terms)
 Module DataTest  'Partial unweighted bound S(Q)'
   ErrorType  RMSE
-  Threshold  3.5
+  Threshold  0.05
   Data1D  'HHH//UnweightedSQ//OW-HW//Bound'  xy  'epsr/watermeth.EPSR.s01'
     Y  4
   EndData1D
@@ -422,7 +422,7 @@ EndModule
 # -- Partial S(Q) (bound terms, zero)
 Module DataTest  'Partial unweighted zeroed bound S(Q)'
   ErrorType  RMSE
-  Threshold  0.001
+  Threshold  0.00001
   Data1D  'HHH//UnweightedSQ//OW-OW//Bound'  xy  'epsr/watermeth.EPSR.s01'
     Y  2
   EndData1D
@@ -466,7 +466,7 @@ EndModule
 #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
 Module DataTest  'Total weighted S(Q)'
   ErrorType  RMSE
-  Threshold  0.09
+  Threshold  0.02
   Data1D  'HHH//WeightedSQ//Total'  xy  'epsr/watermeth.EPSR.u01'
     Y  2
   EndData1D
