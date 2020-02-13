@@ -31,8 +31,6 @@ jobs:
   systemtests-parallel:
     runs-on: ubuntu-latest
     needs: systemtests-build-parallel
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - name: Install Prerequisties
       run: |
