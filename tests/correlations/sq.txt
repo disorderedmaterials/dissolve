@@ -80,7 +80,7 @@ Module  NeutronSQ  'D2O'
   WindowFunction  None
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
-  SaveUnweighted  On
+  # SaveUnweighted  On
   Frequency  1
 EndModule
 
