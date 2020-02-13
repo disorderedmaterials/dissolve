@@ -209,39 +209,36 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 			OrderedPointerArray<Atom>& atomsJ = cellJ->atoms();
 			nJ = atomsJ.nItems();
 
-			// Only perform mim on atom pairs if we really need to...
-			if (cellI->mimRequired(cellJ))
+			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the absence of a 2D look-up array
+			for (ii = 0; ii < nI; ++ii)
 			{
-				for (ii = 0; ii < nI; ++ii)
-				{
-					i = atomsI[ii];
-					typeI = i->localTypeIndex();
-					rI = i->r();
+				i = atomsI[ii];
+				typeI = i->localTypeIndex();
+				rI = i->r();
 
-					for (jj = 0; jj < nJ; ++jj)
-					{
-						j = atomsJ[jj];
-						distance = box->minimumDistance(j, rI);
-						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-					}
+				for (jj = 0; jj < nJ; ++jj)
+				{
+					j = atomsJ[jj];
+					distance = box->minimumDistance(j, rI);
+					partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
 				}
 			}
-			else
-			{
-				for (ii = 0; ii < nI; ++ii)
-				{
-					i = atomsI[ii];
-					typeI = i->localTypeIndex();
-					rI = i->r();
-
-					for (jj = 0; jj < nJ; ++jj)
-					{
-						j = atomsJ[jj];
-						distance = (rI - j->r()).magnitude();
-						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-					}
-				}
-			}
+// 			else
+// 			{
+// 				for (ii = 0; ii < nI; ++ii)
+// 				{
+// 					i = atomsI[ii];
+// 					typeI = i->localTypeIndex();
+// 					rI = i->r();
+//
+// 					for (jj = 0; jj < nJ; ++jj)
+// 					{
+// 						j = atomsJ[jj];
+// 						distance = (rI - j->r()).magnitude();
+// 						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
+// 					}
+// 				}
+// 			}
 		}
 	}
 
