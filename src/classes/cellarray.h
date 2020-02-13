@@ -91,6 +91,8 @@ class CellArray
 	bool minimumImageRequired(const Cell* a, const Cell* b, double distance);
 	// Return the minimum image grid delta between the two specified Cells
 	Vec3<int> mimGridDelta(const Cell* a, const Cell* b) const;
+	// Return the minimum image equivalent of the supplied grid delta
+	Vec3<int> mimGridDelta(Vec3<int> delta) const;
 };
 
 #endif

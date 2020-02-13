@@ -223,13 +223,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 						j.set(x + (jCorner&1 ? 1 : 0), y + (jCorner&2 ? 1 : 0), z + (jCorner&4 ? 1 : 0));
 
 						// Get minimum image of vertex j w.r.t. i
-						j -= i;
-						j.x = j.x%divisions_.x;
-						if (j.x < 0) j.x += divisions_.x;
-						j.y = j.y%divisions_.y;
-						if (j.y < 0) j.y += divisions_.y;
-						j.z = j.z%divisions_.z;
-						if (j.z < 0) j.z += divisions_.z;
+						j = mimGridDelta(j - i);
 
 						r.set(j.x, j.y, j.z);
 						r = cellAxes * r;
@@ -433,13 +427,7 @@ bool CellArray::minimumImageRequired(const Cell* a, const Cell* b, double distan
 			if (r.magnitude() < distance) continue;
 
 			// Check minimum image distance between points - if it's less than the distance specified we require mim for this cell pair
-			j.x = j.x%divisions_.x;
-			if (j.x > divisions_.x*0.5) j.x -= divisions_.x;
-			else if (j.x < -divisions_.x*0.5) j.x += divisions_.x;
-			if (j.y > divisions_.y*0.5) j.y -= divisions_.y;
-			else if (j.y < -divisions_.y*0.5) j.y += divisions_.y;
-			if (j.z > divisions_.z*0.5) j.z -= divisions_.z;
-			else if (j.z < -divisions_.z*0.5) j.z += divisions_.z;
+			j = mimGridDelta(j);
 			r.set(j.x, j.y, j.z);
 			r = axes_ * r;
 			if (r.magnitude() < distance) return true;
@@ -453,11 +441,17 @@ bool CellArray::minimumImageRequired(const Cell* a, const Cell* b, double distan
 Vec3<int> CellArray::mimGridDelta(const Cell* a, const Cell* b) const
 {
 	Vec3<int> u = b->gridReference() - a->gridReference();
-	if (u.x > divisions_.x*0.5) u.x -= divisions_.x;
-	else if (u.x < -divisions_.x*0.5) u.x += divisions_.x;
-	if (u.y > divisions_.y*0.5) u.y -= divisions_.y;
-	else if (u.y < -divisions_.y*0.5) u.y += divisions_.y;
-	if (u.z > divisions_.z*0.5) u.z -= divisions_.z;
-	else if (u.z < -divisions_.z*0.5) u.z += divisions_.z;
-	return u;
+	return mimGridDelta(u);
+}
+
+// Return the minimum image equivalent of the supplied grid delta
+Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
+{
+	if (delta.x > divisions_.x*0.5) delta.x -= divisions_.x;
+	else if (delta.x < -divisions_.x*0.5) delta.x += divisions_.x;
+	if (delta.y > divisions_.y*0.5) delta.y -= divisions_.y;
+	else if (delta.y < -divisions_.y*0.5) delta.y += divisions_.y;
+	if (delta.z > divisions_.z*0.5) delta.z -= divisions_.z;
+	else if (delta.z < -divisions_.z*0.5) delta.z += divisions_.z;
+	return delta;
 }
