@@ -215,12 +215,12 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 				for (int iCorner = 0; iCorner < 8; ++iCorner)
 				{
 					// Set integer vertex of corner on 'central' box
-					i.set(iCorner&1, iCorner&2, iCorner&4);
+					i.set(iCorner&1 ? 1 : 0, iCorner&2 ? 1 : 0, iCorner&4 ? 1 : 0);
 
 					for (int jCorner = 0; jCorner < 8; ++jCorner)
 					{
 						// Set integer vertex of corner on 'other' box
-						j.set(x + jCorner&1, y + jCorner&2, z + jCorner&4);
+						j.set(x + (jCorner&1 ? 1 : 0), y + (jCorner&2 ? 1 : 0), z + (jCorner&4 ? 1 : 0));
 
 						// Get minimum image of vertex j w.r.t. i
 						j -= i;
@@ -255,7 +255,6 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
-	bool mimRequired;
 	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours;
 	Vec3<int> gridRef, delta;
 	for (n=0; n<nCells_; ++n)
@@ -270,10 +269,10 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next())
 		{
-			// Retrieve Cell pointers
+			// Retrieve Cell pointer
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
-			mimRequired = box_->type() == Box::NonPeriodicBoxType ? false : useMim(&cells_[n], nbr);
-			if (mimRequired) mimNeighbours.add(nbr);
+			if (box_->type() == Box::NonPeriodicBoxType) nearNeighbours.add(nbr);
+			else if (minimumImageRequired(&cells_[n], nbr, pairPotentialRange)) mimNeighbours.add(nbr);
 			else nearNeighbours.add(nbr);
 		}
 
@@ -400,22 +399,19 @@ bool CellArray::useMim(const Cell* a, const Cell* b) const
 	return false;
 }
 
-// Return if any Atoms in the supplied Cells are within the range supplied
+// Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
 bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 {
-	/*
-	 * For the supplied Cells, check whether it is possible for the contained Atoms to be within the specified distance.
-	 */
 #ifdef CHECKS
 	// Check for NULL cell pointers
 	if (a == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::useMim().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::withinRange().\n");
 		return false;
 	}
 	if (b == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::useMim().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::withinRange().\n");
 		return false;
 	}
 #endif
@@ -426,7 +422,7 @@ bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 	/*
 	 * We now have the minimum image integer grid vector from Cell a to Cell b.
 	 * Subtract 1 from any vector that is not zero (adding 1 to negative indices and -1 to positive indices.
-	 * This has the effect of shortening the vector to account for atoms being at the near edges of the distant cells.
+	 * This has the effect of shortening the vector to account for atoms being at the near edges / corners of the two cells.
 	 */
 	u.x -= DissolveMath::sgn(u.x);
 	u.y -= DissolveMath::sgn(u.y);
@@ -437,6 +433,59 @@ bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 
 	// Check ths vector magnitude against the supplied distance
 	return (v.magnitude() <= distance);
+}
+
+// Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
+bool CellArray::minimumImageRequired(const Cell* a, const Cell* b, double distance)
+{
+#ifdef CHECKS
+	// Check for NULL cell pointers
+	if (a == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::minimumImageRequired().\n");
+		return false;
+	}
+	if (b == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::minimumImageRequired().\n");
+		return false;
+	}
+#endif
+
+	// Check every pair of corners between the Cell two grid references, and determine if minimum image calculation would be required
+	Vec3<int> i, j;
+	Vec3<double> r;
+	for (int iCorner = 0; iCorner < 8; ++iCorner)
+	{
+		// Set integer vertex of corner on 'central' box
+		i.set(a->gridReference().x + (iCorner&1 ? 1 : 0), a->gridReference().y + (iCorner&2 ? 1 : 0), a->gridReference().z + (iCorner&4 ? 1 : 0));
+
+		for (int jCorner = 0; jCorner < 8; ++jCorner)
+		{
+			// Set integer vertex of corner on 'other' box
+			j.set(b->gridReference().x + (jCorner&1 ? 1 : 0), b->gridReference().y + (jCorner&2 ? 1 : 0), b->gridReference().z + (jCorner&4 ? 1 : 0));
+
+			// Check literal distance between points - if it's less than the distance specified we can continue (no mim required)
+			j -= i;
+			r.set(j.x, j.y, j.z);
+			r = axes_ * r;
+			if (r.magnitude() < distance) continue;
+
+			// Check minimum image distance between points - if it's less than the distance specified we require mim for this cell pair
+			j.x = j.x%divisions_.x;
+			if (j.x > divisions_.x*0.5) j.x -= divisions_.x;
+			else if (j.x < -divisions_.x*0.5) j.x += divisions_.x;
+			if (j.y > divisions_.y*0.5) j.y -= divisions_.y;
+			else if (j.y < -divisions_.y*0.5) j.y += divisions_.y;
+			if (j.z > divisions_.z*0.5) j.z -= divisions_.z;
+			else if (j.z < -divisions_.z*0.5) j.z += divisions_.z;
+			r.set(j.x, j.y, j.z);
+			r = axes_ * r;
+			if (r.magnitude() < distance) return true;
+		}
+	}
+
+	return false;
 }
 
 // Return the minimum image grid delta between the two specified Cells
