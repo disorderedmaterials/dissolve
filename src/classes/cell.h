@@ -119,8 +119,10 @@ class Cell
 	Cell* cellNeighbour(int id) const;
 	// Return list of Cell neighbours requiring minimum image calculation
 	Cell** mimCellNeighbours();
-	// Return specified Cell neighbour, requiring minimum image calculation
+	// Return specified Cell neighbour requiring minimum image calculation
 	Cell* mimCellNeighbour(int id) const;
+	// Return if the specified Cell requires minimum image calculation
+	bool mimRequired(const Cell* otherCell) const;
 	// Return list of all Cell neighbours
 	CellNeighbour* allCellNeighbours();
 	// Return array of adjacent Cell neighbours

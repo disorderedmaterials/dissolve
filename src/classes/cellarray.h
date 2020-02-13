@@ -85,8 +85,6 @@ class CellArray
 	Cell* cell(int id) const;
 	// Return Cell which contains specified coordinate
 	Cell* cell(const Vec3<double> r) const;
-	// Return whether two Cells need minimum image calculation
-	bool useMim(const Cell* a, const Cell* b) const;
 	// Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
 	bool withinRange(const Cell* a, const Cell* b, double distance);
 	// Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells

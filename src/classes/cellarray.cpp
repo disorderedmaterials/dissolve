@@ -360,45 +360,6 @@ Cell* CellArray::cell(const Vec3<double> r) const
 	return &cells_[indices.x*divisions_.y*divisions_.z + indices.y*divisions_.z + indices.z];
 }
 
-// Return whether two Cells need minimum image calculation
-bool CellArray::useMim(const Cell* a, const Cell* b) const
-{
-	/*
-	 * Since we partition the simulation Box up into subcells, for speed we can determine and store whether any
-	 * minimum image operations are required between the contents of the two cells. If *twice* the difference between any 
-	 * component of any grid reference is greater than or equal to the value of the number of Cells along the relevant side
-	 * then minimum image calculations should be performed. A secondary check is made to account for small systems, in which
-	 * the Cell 'b' is mirrored onto the opposite side of the Cell 'a' - if the resulting difference, minus one, between
-	 * gridReference coordinates is greater than or equal to the cellExtent in any direction, again minimum image must
-	 * be performed.
-	 */
-#ifdef CHECKS
-	// Check for NULL cell pointers
-	if (a == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::useMim().\n");
-		return false;
-	}
-	if (b == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::useMim().\n");
-		return false;
-	}
-#endif
-	// Never require images for the same Cell
-	if (a == b) return false;
-
-	Vec3<int> u = a->gridReference() - b->gridReference();
-	if (u.x < divisions_.x*0.5) return true;
-	if (u.y < divisions_.y*0.5) return true;
-	if (u.z < divisions_.z*0.5) return true;
-	if (u.x > divisions_.x*0.5) return true;
-	if (u.y > divisions_.y*0.5) return true;
-	if (u.z > divisions_.z*0.5) return true;
-
-	return false;
-}
-
 // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
 bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 {

@@ -210,7 +210,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 			nJ = atomsJ.nItems();
 
 			// Only perform mim on atom pairs if we really need to...
-			if (cellArray.useMim(cellI,cellJ))
+			if (cellI->mimRequired(cellJ))
 			{
 				for (ii = 0; ii < nI; ++ii)
 				{
@@ -324,7 +324,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 			{
 				j = atoms[jj];
 
-				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				if (i->cell()->mimRequired(j->cell())) distance = box->minimumDistance(i, j);
 				else distance = (i->r() - j->r()).magnitude();
 				originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 			}
@@ -490,7 +490,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 //
 // 					i = b->i();
 // 					j = b->j();
-// 					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+// 					if (i->mimRequired(j)) distance = box->minimumDistance(i, j);
 // 					else distance = (i->r() - j->r()).magnitude();
 // 					tempgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 //
