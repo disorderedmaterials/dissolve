@@ -38,6 +38,8 @@ class ExponentialSpin : public QDoubleSpinBox
 	 * Data
 	 */
 	private:
+	// Validator for line edit
+	QDoubleValidator validator_;
 	// Whether limits are enabled
 	bool limitMinValue_, limitMaxValue_;
 

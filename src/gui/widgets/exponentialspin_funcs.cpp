@@ -21,13 +21,23 @@
 
 #include "gui/widgets/exponentialspin.hui"
 #include "math/doubleexp.h"
+#include <QLineEdit>
 
 // Constructor
 ExponentialSpin::ExponentialSpin(QWidget* parent) : QDoubleSpinBox(parent)
 {
-	// Set default values
+	// Set up validator
+	validator_.setNotation(QDoubleValidator::ScientificNotation);
+	lineEdit()->setValidator(&validator_);
+
+	// Set local values
 	limitMinValue_ = false;
 	limitMaxValue_ = false;
+
+	// Set QDoubleSpinBox limits to be present but effectively 'off', and number of decimals
+	setMinimum(-1.0e99);
+	setMaximum(1.0e99);
+	setDecimals(3);
 }
 
 /*
