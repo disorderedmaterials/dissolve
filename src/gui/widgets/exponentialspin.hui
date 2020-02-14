@@ -22,11 +22,10 @@
 #ifndef DISSOLVE_EXPONENTIALSPIN_H
 #define DISSOLVE_EXPONENTIALSPIN_H
 
-#include <QAbstractSpinBox>
-#include "math/doubleexp.h"
+#include <QDoubleSpinBox>
 
 // Real-Value Spinbox with Exponential Notation
-class ExponentialSpin : public QAbstractSpinBox
+class ExponentialSpin : public QDoubleSpinBox
 {
 	Q_OBJECT
 	
@@ -39,84 +38,32 @@ class ExponentialSpin : public QAbstractSpinBox
 	 * Data
 	 */
 	private:
-	// Validator for data
-	QRegExpValidator validator_;
-	// Limits for value (if enabled)
-	double valueMin_, valueMax_;
 	// Whether limits are enabled
 	bool limitMinValue_, limitMaxValue_;
-	// Step value
-	double valueStep_;
-	// Mantissa/exponent representation of current value
-	DoubleExp value_;
-	// Number of decimals to use when converting to text
-	int decimals_;
-	// Suffix for value
-	QString suffix_;
-	// Whether text has changed (been edited)
-	bool textChanged_;
-
-	private:
-	// Clamp current value to allowable range
-	bool clamp();
-	// Create text from current value, and display in lineEdit
-	void updateTextFromValue();
 
 	public:
-	// Return double value
-	double value();
-	// Set value
-	void setValue(double value);
 	// Set minimum limit
-	void setMinimum(double value);
-	// Set minimum limit
-	void setMaximum(double value);
-	// Set allowable range of value
-	void setRange(bool limitMin, double minValue, bool limitMax = false, double maxValue = 0.0, int nSteps = -1);
+	void setMinimumLimit(double value);
+	// Set maximum limit
+	void setMaximumLimit(double value);
 	// Remove range limits
-	void setUnlimitedRange();
-	// Set single step value
-	void setSingleStep(double step);
-	// Return number of decimals to use when converting to text
-	int decimals();
-	// Set number of decimals to use when converting to text
-	void setDecimals(int nDecimals);
-	// Return suffix for value
-	QString suffix();
-	// Set suffix for value
-	void setSuffix(QString suffix);
+	void removeLimits();
 
 
 	/*
-	 * Signals
-	 */
-	signals:
-	// Current value has changed
-	void valueChanged(double value);
-
-
-	/*
-	 * Slots
-	 */
-	private slots:
-	// Flag that the text has been modified since the last emit of valueChanged()
-	void textChanged(QString text);
-
-	public slots:
-	// Update value from current textEdit text
-	void updateValueFromText();
-
-
-	/*
-	 * Virtual Overloads
+	 * Reimplementations
 	 */
 	public:
-	// Step value by specified amount
-	void stepBy(int nSteps);
+	// Convert supplied value to text
+	QString textFromValue(double value) const;
+	// Validate supplied text
+	QValidator::State validate(QString& text, int& pos) const;
+	// Interpret text into value
+	double valueFromText(const QString& text) const;
 
 	protected:
 	// Return which steps should be enabled
-	StepEnabled stepEnabled() const;
+// 	StepEnabled stepEnabled() const;
 };
 
 #endif
