@@ -2,7 +2,7 @@
 
 _Current Version: 0.5.6, Wednesday 5th February 2020_
 
-![](https://github.com/trisyoungs/dissolve/workflows/Win64%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/trisyoungs/dissolve/workflows/OSX%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/trisyoungs/dissolve/workflows/AppImage%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/trisyoungs/dissolve/workflows/System%20Tests%20(Serial)/badge.svg)
+![](https://github.com/trisyoungs/dissolve/workflows/Win64%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/trisyoungs/dissolve/workflows/OSX%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/trisyoungs/dissolve/workflows/AppImage%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/trisyoungs/dissolve/workflows/System%20Tests%20(Serial)/badge.svg) ![](https://github.com/trisyoungs/dissolve/workflows/System%20Tests%20(Parallel)/badge.svg)
 
 **Dissolve** is a simulation tool for the interrogation of neutron scattering data, typically total neutron scattering data. It builds on the techniques established in the Empirical Potential Structure Refinement (EPSR) method by Soper.
 
