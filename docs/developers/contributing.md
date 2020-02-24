@@ -32,11 +32,15 @@ Making changes to the documentation is one of the easiest routes to contributing
 
 More details can be found in this [GitHub guide](https://help.github.com/en/articles/editing-files-in-another-users-repository).
 
-## Contributing to the Codebase
+## Contributing Code (as a member of ProjectDissolve)
 
-Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with git, and is available from [https://github.com/projectdissolve/dissolve](). Dissolve adopts the Gitflow workflow for development, with `develop` being the main branch of the repository. `master` is reserved for released versions of the code, and associated hotfixes. All significant additions or fixes to the code should be made through a separate `feature` branch, rather than committing directly to `develop`. Minor changes (e.g. typographical errors) may be made directly to `develop`. A feature branch will typically contain a `CURRENT_BRANCH.txt` file in the root of the source, and contains the indended work in bulletised form. The file should be removed before merging the branch back in to `develop`.
+The main Dissolve development team adopts the Gitflow workflow, with `develop` being the main branch of the repository. `master` is reserved for released versions of the code, and associated hotfixes. All significant additions or fixes to the code should be made through a separate `feature` branch, rather than committing directly to `develop`. Minor changes (e.g. typographical errors) may be made directly to `develop`.
 
 For a more in-depth explanation of gitflow please refer to the excellent guide at [Atlassian.com](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) or the original [presentation of the workflow](https://nvie.com/posts/a-successful-git-branching-model/) by Vincent Driessen.
+
+## Contributing Code (as a third party)
+
+Contributing code to Dissolve as an interested third party is relatively straightforward:
 
 ### 1) Register on GitHub
 
@@ -48,9 +52,38 @@ Go to the [Dissolve repository](https://github.com/projectdissolve/dissolve) and
 
 ### 3) Experiment / Fix / Break / Play
 
-You can freely experiment with the source code without fear of breaking the actual version, as all the changes you make are isolated to your repository until such time as you choose to try and merge them back in to the main project. Follow the gitflow approach for moderate/major changes, or commit directly to `develop` for minor things.
+You can freely experiment with the source code without fear of breaking the actual version, as all the changes you make are isolated to your repository until such time as you choose to try and merge them back in to the main project.
 
-### 4) Example (Small Fix)
+### 4) Submit a Pull Request
+
+If you have added / fixed something useful, and think it's ready for inclusion back in to the main branch, then it's time to submit a pull request. Make sure you have pushed all the changes you want to your repository, then go to your repository on GitHub.com and press the "New pull request" button. Write a short comment summarising the changes / fixes you've made, and then press "Create pull request".
+
+Several things will then happen. Most importantly, the developers will be notified that you have submitted a request to merge your changes into the main repository. At the same time, a series of automated checks will be run on the merged code state to try to ensure that nothing obvious is broken by your changes. The team will then review the code changes, and comment / accept / request further changes accordingly.
+
+### 5) Staying Up-to-date
+
+Your fork is essentially independent of the main Dissolve repository, and can wander off in any direction it wants to. However, in most cases you will want to keep it up-to-date with the main repository (i.e. be able to pull changes made to the main repository in to your own fork). This can be easily achieved by adding an additionaln remote repository to your fork:
+
+```
+bob@linux:~> git remote add upstream https://github.com/projectdissolve/dissolve.git
+
+bob@linux:~> git remote -v
+
+origin    https://github.com/YOUR_NAME/dissolve.git (fetch)
+origin    https://github.com/YOUR_NAME/dissolve.git (push)
+upstream  https://github.com/projectdissolve/dissolve.git (fetch)
+upstream  https://github.com/projectdissolve/dissolve.git (push)
+```
+
+To receive any changes from the main Dissolve repository you can simply run `git pull` with an explicit remote name (in this case, `upstream`):
+
+```
+bob@linux:~> git pull upstream
+```
+
+Note that running `git push` and `git pull` without an explicit remote will still default to pushing / pulling changes to / from your fork.
+
+### 6) Example (Small Fix)
 
 Firstly, clone the repository if you haven't already:
 
@@ -160,8 +193,8 @@ To https://github.com/YOUR_GITHUB_USER_NAME/dissolve.git
    218d7884..758678a6  develop -> develop
 ```
 
-At this stage, you can create a 'pull request' to ask for those changes to be copied from your repository and merged into the main Dissolve repository. The changes you've made will be reviewed by the lead author(s), and may be immediately accepted, commented on, or more changes / corrections may be requested.
+At this stage, you can create a 'pull request' to ask for those changes to be copied from your repository and merged into the main Dissolve repository. The changes you've made will be reviewed by the development team, and may be immediately accepted, commented on, or more changes / corrections may be requested.
 
 ## Collaborators
 
-If you wish to become an official collaborator on Dissolve and want direct access to the main repository, e-mail the lead author [Tristan Youngs](mailto:tristan.youngs@stfc.ac.uk) to discuss.
+If you wish to become an official collaborator on Dissolve and want to join the [ProjectDissolve organisation](https://github.com/projectdissolve), e-mail the lead author [Tristan Youngs](mailto:tristan.youngs@stfc.ac.uk) to discuss.
