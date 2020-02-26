@@ -38,9 +38,12 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	else
 	{
 		// Set minimum and maximum values for each component
-		ui_.Spin1->setRange(keyword_->hasValidationMin(0), keyword_->validationMin(0), keyword_->hasValidationMax(0), keyword_->validationMax(0));
-		ui_.Spin2->setRange(keyword_->hasValidationMin(1), keyword_->validationMin(1), keyword_->hasValidationMax(1), keyword_->validationMax(1));
-		ui_.Spin3->setRange(keyword_->hasValidationMin(2), keyword_->validationMin(2), keyword_->hasValidationMax(2), keyword_->validationMax(2));
+		if (keyword_->hasValidationMin(0)) ui_.Spin1->setMinimumLimit(keyword_->validationMin(0));
+		if (keyword_->hasValidationMax(0)) ui_.Spin1->setMaximumLimit(keyword_->validationMax(0));
+		if (keyword_->hasValidationMin(1)) ui_.Spin2->setMinimumLimit(keyword_->validationMin(1));
+		if (keyword_->hasValidationMax(1)) ui_.Spin2->setMaximumLimit(keyword_->validationMax(1));
+		if (keyword_->hasValidationMin(2)) ui_.Spin3->setMinimumLimit(keyword_->validationMin(2));
+		if (keyword_->hasValidationMax(2)) ui_.Spin3->setMaximumLimit(keyword_->validationMax(2));
 
 		// Set current values
 		ui_.Spin1->setValue(keyword_->asVec3Double().x);

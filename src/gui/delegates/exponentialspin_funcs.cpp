@@ -59,8 +59,6 @@ void ExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel* 
 {
 	ExponentialSpin* spinBox = static_cast<ExponentialSpin*>(editor);
 
-	// Make sure the value in the spinBox has been updated from the current text
-	spinBox->updateValueFromText();
 	double value = spinBox->value();
 
 	model->setData(index, value, Qt::EditRole);
