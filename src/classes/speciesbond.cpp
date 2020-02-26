@@ -130,6 +130,19 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
 	return false;
 }
 
+// Return whether all atoms in the interaction are currently selected
+bool SpeciesBond::isSelected() const
+{
+#ifdef CHECKS
+	if (i_ == NULL || j_ == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
+		return false;
+	}
+#endif
+	return (i_->isSelected() && j_->isSelected());
+}
+
 /*
  * Bond Type
  */

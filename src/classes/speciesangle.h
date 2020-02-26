@@ -79,6 +79,8 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	int index(int n) const;
 	// Return whether SpeciesAtom match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
+	// Return whether all atoms in the interaction are currently selected
+	bool isSelected() const;
 
 
 	/*
