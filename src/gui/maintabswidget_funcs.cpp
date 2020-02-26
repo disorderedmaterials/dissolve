@@ -205,6 +205,9 @@ void MainTabsWidget::addCoreTabs(DissolveWindow* dissolveWindow)
 // Remove tabs related to the current data
 void MainTabsWidget::clearTabs()
 {
+	// Empty our list of close button references
+	closeButtons_.clear();
+
 	// Removal of the tab and widget will be handled by the class destructors
 	workspaceTabs_.clear();
 	moduleTabs_.clear();
