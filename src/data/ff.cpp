@@ -348,7 +348,6 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool g
 		ForcefieldBondTerm* term = bondTerm(i, j);
 		if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", bond->indexI()+1, bond->indexJ()+1, i->equivalentName(), j->equivalentName());
 
-		// Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
 		bond->setForm(term->form());
 		bond->setParameters(term->parameters());
 	}
