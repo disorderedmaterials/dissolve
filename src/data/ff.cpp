@@ -247,64 +247,78 @@ ForcefieldImproperTerm* Forcefield::improperTerm(const ForcefieldAtomType* i, co
  * Term Assignment
  */
 
-// Assign suitable atom types to the supplied Species
-bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
+// Assign suitable AtomType to the supplied atom
+bool Forcefield::assignAtomType(SpeciesAtom* i, CoreData& coreData) const
 {
-	Messenger::print("Assigning atomtypes to species '%s' from forcefield '%s'...\n", sp->name(), name());
-
-	// Loop over Species atoms
-	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next())
+	ForcefieldAtomType* atomType = determineAtomType(i);
+	if (atomType) 
 	{
-		// If keepExisting == true, don't reassign a type to this atom if one already exists
-		if (keepExisting && i->atomType()) continue;
+		// Check if an AtomType of the same name already exists - if it does, just use that one
+		AtomType* at = coreData.findAtomType(atomType->name());
+		if (!at)
+		{
+			at = coreData.addAtomType(i->element());
+			at->setName(atomType->name());
 
-		ForcefieldAtomType* atomType = determineAtomType(i);
-		if (!atomType) Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
+			// Copy parameters from the Forcefield's atom type
+			at->parameters() = atomType->parameters();
+			at->setShortRangeType(shortRangeType());
+
+			// The atomType may reference parameters, rather than owning them, so set charge explicitly
+			at->parameters().setCharge(atomType->charge());
+
+			Messenger::print("Adding AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
+		}
 		else
 		{
-			// Check if an AtomType of the same name already exists - if it does, just use that one
-			AtomType* at = coreData.findAtomType(atomType->name());
-			if (!at)
-			{
-				at = coreData.addAtomType(i->element());
-				at->setName(atomType->name());
+			Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
 
+			// If the current atomtype is empty, set its parameters
+			if (at->parameters().isEmpty())
+			{
 				// Copy parameters from the Forcefield's atom type
 				at->parameters() = atomType->parameters();
 				at->setShortRangeType(shortRangeType());
 
 				// The atomType may reference parameters, rather than owning them, so set charge explicitly
 				at->parameters().setCharge(atomType->charge());
-
-				Messenger::print("Adding AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
 			}
-			else
-			{
-				Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
-
-				// If the current atomtype is empty, set its parameters
-				if (at->parameters().isEmpty())
-				{
-					// Copy parameters from the Forcefield's atom type
-					at->parameters() = atomType->parameters();
-					at->setShortRangeType(shortRangeType());
-
-					// The atomType may reference parameters, rather than owning them, so set charge explicitly
-					at->parameters().setCharge(atomType->charge());
-				}
-			}
-
-			// Update SpeciesAtom
-			i->setAtomType(at);
-			i->setCharge(at->parameters().charge());
 		}
+
+		// Update SpeciesAtom
+		i->setAtomType(at);
+		i->setCharge(at->parameters().charge());
 	}
 
-	return true;
+	return (atomType != NULL);
+}
+
+// Assign suitable atom types to the supplied Species, returning the number of failures
+int Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, AtomTypeAssignmentStrategy strategy) const
+{
+	Messenger::print("Assigning atomtypes to species '%s' from forcefield '%s'...\n", sp->name(), name());
+
+	// Loop over Species atoms
+	int nFailed = 0;
+	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next())
+	{
+		// Obey the supplied strategy:
+		// -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
+		if ((strategy == Forcefield::TypeMissing) && i->atomType()) continue;
+		// -- Don't assign a type unless the atom is selected (strategy == Forcefield::TypeSelection)
+		if ((strategy == Forcefield::TypeSelection) && (!i->isSelected())) continue;
+
+		// Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
+		if (!assignAtomType(i, coreData)) ++nFailed;
+	}
+
+	if (nFailed) Messenger::error("Failed to assign atom %s to %i %s.\n", (nFailed == 1 ? "type" : "types"), nFailed, (nFailed == 1 ? "atom" : "atoms"));
+
+	return nFailed;
 }
 
 // Assign intramolecular parameters to the supplied Species
-bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool generateImpropers) const
+bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 {
 	/*
 	 * Default implementation - search through term lists for suitable ones to apply, based on ForcefieldAtomType names.
@@ -312,41 +326,23 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool g
 
 	Messenger::print("Assigning intramolecular terms to species '%s' from forcefield '%s'...\n", sp->name(), name());
 
-	// Create an array of the ForcefieldAtomTypes for the atoms in the Species for speed
-	Array<ForcefieldAtomType*> atomTypes;
-	if (useExistingTypes)
-	{
-		// For each SpeciesAtom, search for the AtomType by name...
-		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
-		{
-			if (!i->atomType()) return Messenger::error("No AtomType assigned to SpeciesAtom %i, so can't generate intramolecular terms based on existing types.\n", i->userIndex());
-			ForcefieldAtomType* at = atomTypeByName(i->atomType()->name(), i->element());
-			if (!at) return Messenger::error("Existing AtomType name '%s' does not correspond to a type in this forcefield.\n", i->atomType()->name());
-			atomTypes.add(at);
-		}
-	}
-	else
-	{
-		// Use on-the-fly generated types for all atoms
-		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
-		{
-			ForcefieldAtomType* at = determineAtomType(i);
-			if (!at) return Messenger::error("Couldn't determine a suitable AtomType for atom %i.\n", i->userIndex());
-			atomTypes.add(at);
-		}
-	}
+	bool determineTypes = flags&Forcefield::DetermineTypesFlag;
+	bool selectionOnly = flags&Forcefield::SelectionOnlyFlag;
 
 	// Assign bond terms
 	DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate())
 	{
-		ForcefieldAtomType* i = atomTypes[bond->indexI()];
-		ForcefieldAtomType* j = atomTypes[bond->indexJ()];
+		SpeciesAtom* i = bond->i();
+		SpeciesAtom* j = bond->j();
 
-		ForcefieldBondTerm* term = bondTerm(i, j);
-		if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", bond->indexI()+1, bond->indexJ()+1, i->equivalentName(), j->equivalentName());
+		if (selectionOnly && (!bond->isSelected())) continue;
+
+		ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+
+		ForcefieldBondTerm* term = bondTerm(typeI, typeJ);
+		if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", i->userIndex(), j->userIndex(), typeI->equivalentName(), typeJ->equivalentName());
 
 		bond->setForm(term->form());
 		bond->setParameters(term->parameters());
@@ -356,12 +352,18 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool g
 	DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
 	while (SpeciesAngle* angle = angleIterator.iterate())
 	{
-		ForcefieldAtomType* i = atomTypes[angle->indexI()];
-		ForcefieldAtomType* j = atomTypes[angle->indexJ()];
-		ForcefieldAtomType* k = atomTypes[angle->indexK()];
+		SpeciesAtom* i = angle->i();
+		SpeciesAtom* j = angle->j();
+		SpeciesAtom* k = angle->k();
 
-		ForcefieldAngleTerm* term = angleTerm(i, j, k);
-		if (!term) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1, i->equivalentName(), j->equivalentName(), k->equivalentName());
+		if (selectionOnly && (!angle->isSelected())) continue;
+
+		ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+		ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+
+		ForcefieldAngleTerm* term = angleTerm(typeI, typeJ, typeK);
+		if (!term) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName());
 
 		angle->setForm(term->form());
 		angle->setParameters(term->parameters());
@@ -371,56 +373,66 @@ bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool g
 	DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
 	while (SpeciesTorsion* torsion = torsionIterator.iterate())
 	{
-		ForcefieldAtomType* i = atomTypes[torsion->indexI()];
-		ForcefieldAtomType* j = atomTypes[torsion->indexJ()];
-		ForcefieldAtomType* k = atomTypes[torsion->indexK()];
-		ForcefieldAtomType* l = atomTypes[torsion->indexL()];
+		SpeciesAtom* i = torsion->i();
+		SpeciesAtom* j = torsion->j();
+		SpeciesAtom* k = torsion->k();
+		SpeciesAtom* l = torsion->l();
 
-		ForcefieldTorsionTerm* term = torsionTerm(i, j, k, l);
-		if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1, i->equivalentName(), j->equivalentName(), k->equivalentName(), l->equivalentName());
+		if (selectionOnly && (!torsion->isSelected())) continue;
+
+		ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+		ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+		ForcefieldAtomType* typeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
+
+		ForcefieldTorsionTerm* term = torsionTerm(typeI, typeJ, typeK, typeL);
+		if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
 
 		torsion->setForm(term->form());
 		torsion->setParameters(term->parameters());
 	}
 
 	// Generate improper terms
-	if (generateImpropers && (improperTerms_.nItems() > 0))
+	if ((flags&Forcefield::GenerateImpropersFlag) && (improperTerms_.nItems() > 0))
 	{
 		// Loop over potential improper sites in the Species and see if any match terms in the forcefield
 		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-		while (SpeciesAtom* ii = atomIterator.iterate())
+		while (SpeciesAtom* i = atomIterator.iterate())
 		{
 			// If we have less than three bonds to the central atom 'i', can continue now
-			if (ii->nBonds() < 3) continue;
+			if (i->nBonds() < 3) continue;
+
+			ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+			if (selectionOnly && (!i->isSelected())) continue;
 
 			// Loop over combinations of bonds to the central atom
-			for (int indexJ = 0; indexJ < ii->nBonds()-2; ++indexJ)
+			for (int indexJ = 0; indexJ < i->nBonds()-2; ++indexJ)
 			{
-				// Get SpeciesAtom 'jj'
-				SpeciesAtom* jj = ii->bond(indexJ)->partner(ii);
-				for (int indexK = indexJ+1; indexK < ii->nBonds()-1; ++indexK)
+				// Get SpeciesAtom 'j'
+				SpeciesAtom* j = i->bond(indexJ)->partner(i);
+				ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+				if (selectionOnly && (!j->isSelected())) continue;
+				for (int indexK = indexJ+1; indexK < i->nBonds()-1; ++indexK)
 				{
-					// Get SpeciesAtom 'kk'
-					SpeciesAtom* kk = ii->bond(indexK)->partner(ii);
-					for (int indexL = indexK+1; indexL < ii->nBonds(); ++indexL)
+					// Get SpeciesAtom 'k'
+					SpeciesAtom* k = i->bond(indexK)->partner(i);
+					ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+					if (selectionOnly && (!k->isSelected())) continue;
+					for (int indexL = indexK+1; indexL < i->nBonds(); ++indexL)
 					{
-						// Get SpeciesAtom 'll'
-						SpeciesAtom* ll = ii->bond(indexL)->partner(ii);
+						// Get SpeciesAtom 'l'
+						SpeciesAtom* l = i->bond(indexL)->partner(i);
+						ForcefieldAtomType* typeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
+						if (selectionOnly && (!l->isSelected())) continue;
 
-						// Get forcefield atom types and search for this improper
-						ForcefieldAtomType* i = atomTypes[ii->index()];
-						ForcefieldAtomType* j = atomTypes[jj->index()];
-						ForcefieldAtomType* k = atomTypes[kk->index()];
-						ForcefieldAtomType* l = atomTypes[ll->index()];
-
-						ForcefieldImproperTerm* term = improperTerm(i, j, k, l);
+						ForcefieldImproperTerm* term = improperTerm(typeI, typeJ, typeK, typeL);
 						if (term)
 						{
 							// Check to see if the Species already has an improper definition - if not create one
-							SpeciesImproper* improper = sp->improper(ii, jj, kk, ll);
-							if (!improper) improper = sp->addImproper(ii, jj, kk, ll);
+							SpeciesImproper* improper = sp->improper(i, j, k, l);
+							if (!improper) improper = sp->addImproper(i, j, k, l);
 
-							Messenger::print("Added improper between atoms %i-%i-%i-%i (%s-%s-%s-%s).\n", improper->indexI()+1, improper->indexJ()+1, improper->indexK()+1, improper->indexL()+1, i->equivalentName(), j->equivalentName(), k->equivalentName(), l->equivalentName());
+							Messenger::print("Added improper between atoms %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
 
 							improper->setForm(term->form());
 							improper->setParameters(term->parameters());

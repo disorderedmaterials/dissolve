@@ -136,9 +136,10 @@ class AddForcefieldTermsWizard : public WizardWidget
 	 * Intramolecular Page
 	 */
 	private slots:
-	void on_ApplyIntramolecularTermsCheck_clicked(bool checked);
-	void on_ApplyNoIntramolecularTermsCheck_clicked(bool checked);
-	void on_ReduceToMasterTermsCheck_clicked(bool checked);
+	void on_IntramolecularTermsAssignAllRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignSelectionRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignNoneRadio_clicked(bool checked);
+	void on_NoMasterTermsCheck_clicked(bool checked);
 
 
 	/*

@@ -88,6 +88,13 @@ void AddForcefieldTermsWizard::setMainDissolveReference(const Dissolve* dissolve
 void AddForcefieldTermsWizard::setTargetSpecies(Species* sp)
 {
 	targetSpecies_ = sp;
+
+	// Set initial state of controls
+	if (sp->nSelectedAtoms() != 0)
+	{
+		ui_.AtomTypesAssignSelectionRadio->setChecked(true);
+		ui_.IntramolecularTermsAssignSelectionRadio->setChecked(true);
+	}
 }
 
 // Apply our Forcefield terms to the targetted Species within the specified Dissolve object
@@ -105,11 +112,19 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	 * 4) Loop over torsions and create / assign parameters / MasterTerms (if TorsionTermsCheck is checked)
 	 */
 
+	bool typesSelectionOnly = ui_.AtomTypesAssignSelectionRadio->isChecked();
+	bool intraSelectionOnly = ui_.IntramolecularTermsAssignSelectionRadio->isChecked();
+
 	// 1) Set AtomTypes
-	ListIterator<SpeciesAtom> atomIterator(targetSpecies_->atoms());
-	SpeciesAtom* modifiedI = modifiedSpecies_->atoms().first();
-	while (SpeciesAtom* i = atomIterator.iterate())
+	ListIterator<SpeciesAtom> originalAtomIterator(targetSpecies_->atoms());
+	ListIterator<SpeciesAtom> modifiedAtomIterator(modifiedSpecies_->atoms());
+	while (SpeciesAtom* i = originalAtomIterator.iterate())
 	{
+		const SpeciesAtom* modifiedI = modifiedAtomIterator.iterate();
+
+		// Selection only?
+		if (typesSelectionOnly && (!i->isSelected())) continue;
+
 		// Copy AtomType
 		dissolve.copyAtomType(modifiedI, i);
 
@@ -121,19 +136,19 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 			i->setCharge(modifiedI->charge());
 			dissolve.coreData().bumpAtomTypesVersion();
 		}
-
-		// Move to next modified atom
-		modifiedI = modifiedI->next();
 	}
 
 	// Copy intramolecular terms
-	if (ui_.ApplyIntramolecularTermsCheck->isChecked())
+	if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
 	{
 		DynamicArrayIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
 		DynamicArrayConstIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->constBonds());
 		while (SpeciesBond* originalBond = originalBondIterator.iterate())
 		{
 			const SpeciesBond* modifiedBond = modifiedBondIterator.iterate();
+
+			// Selection only?
+			if (intraSelectionOnly && (!originalBond->isSelected())) continue;
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedBond, originalBond);
@@ -145,6 +160,9 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		{
 			const SpeciesAngle* modifiedAngle = modifiedAngleIterator.iterate();
 
+			// Selection only?
+			if (intraSelectionOnly && (!originalAngle->isSelected())) continue;
+
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedAngle, originalAngle);
 		}
@@ -154,6 +172,9 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		while (SpeciesTorsion* originalTorsion = originalTorsionIterator.iterate())
 		{
 			const SpeciesTorsion* modifiedTorsion = modifiedTorsionIterator.iterate();
+
+			// Selection only?
+			if (intraSelectionOnly && (!originalTorsion->isSelected())) continue;
 
 			// Copy interaction parameters, including MasterIntra if necessary
 			dissolve.copySpeciesIntra(modifiedTorsion, originalTorsion);
@@ -208,7 +229,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 	switch (currentIndex)
 	{
 		case (AddForcefieldTermsWizard::SelectForcefieldPage):
-// 			ui_.AtomTypesAssignSelectionRadio(targetSpecies_->nSelectedAtoms() != 0);
+			ui_.AtomTypesAssignSelectionRadio->setEnabled(targetSpecies_->nSelectedAtoms() != 0);
 			break;
 		case (AddForcefieldTermsWizard::AtomTypesPage):
 			// Sanity check the current Forcefield
@@ -224,9 +245,16 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				modifiedSpecies_->clearAtomTypes();
 				temporaryDissolve_.clearAtomTypes();
 
-				if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_)) return false;
+				if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll) != 0) return false;
 			}
-			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
+			else if (ui_.AtomTypesAssignSelectionRadio->isChecked())
+			{
+				if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection) != 0) return false;
+			}
+			else if (ui_.AtomTypesAssignMissingRadio->isChecked())
+			{
+				if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing) != 0) return false;
+			}
 
 			updateAtomTypesConflictsPage();
 			break;
@@ -236,12 +264,17 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			temporaryCoreData_.clearMasterTerms();
 
 			// Assign intramolecular terms
-			if (ui_.ApplyIntramolecularTermsCheck->isChecked())
+			if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
 			{
-				if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.GenerateImproperTermsCheck->isChecked())) return false;
+				int flags = 0;
+				if (ui_.IgnoreCurrentTypesCheck->isChecked()) flags += Forcefield::DetermineTypesFlag;
+				if (!ui_.NoImproperTermsCheck->isChecked()) flags += Forcefield::GenerateImpropersFlag;
+				if (ui_.IntramolecularTermsAssignSelectionRadio->isChecked()) flags += Forcefield::SelectionOnlyFlag;
+
+				if (!ff->assignIntramolecular(modifiedSpecies_, flags)) return false;
 
 				// Reduce to master terms?
-				if (ui_.ReduceToMasterTermsCheck->isChecked())
+				if (!ui_.NoMasterTermsCheck->isChecked())
 				{
 					CharString termName;
 
@@ -249,6 +282,9 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 					DynamicArrayIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
 					while (SpeciesBond* bond = bondIterator.iterate())
 					{
+						// Selection only?
+						if ((flags&Forcefield::SelectionOnlyFlag) && (!bond->isSelected())) continue;
+
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
 						if (QString(bond->i()->atomType()->name()) < QString(bond->j()->atomType()->name())) termName.sprintf("%s-%s", bond->i()->atomType()->name(), bond->j()->atomType()->name());
 						else termName.sprintf("%s-%s", bond->j()->atomType()->name(), bond->i()->atomType()->name());
@@ -269,6 +305,9 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 					DynamicArrayIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
 					while (SpeciesAngle* angle = angleIterator.iterate())
 					{
+						// Selection only?
+						if ((flags&Forcefield::SelectionOnlyFlag) && (!angle->isSelected())) continue;
+
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
 						if (QString(angle->i()->atomType()->name()) < QString(angle->k()->atomType()->name())) termName.sprintf("%s-%s-%s", angle->i()->atomType()->name(), angle->j()->atomType()->name(), angle->k()->atomType()->name());
 						else termName.sprintf("%s-%s-%s", angle->k()->atomType()->name(), angle->j()->atomType()->name(), angle->i()->atomType()->name());
@@ -289,6 +328,9 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 					DynamicArrayIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
 					while (SpeciesTorsion* torsion = torsionIterator.iterate())
 					{
+						// Selection only?
+						if ((flags&Forcefield::SelectionOnlyFlag) && (!torsion->isSelected())) continue;
+
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
 						if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) termName.sprintf("%s-%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
 						else termName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
@@ -309,6 +351,9 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 					DynamicArrayIterator<SpeciesImproper> improperIterator(modifiedSpecies_->impropers());
 					while (SpeciesImproper* improper = improperIterator.iterate())
 					{
+						// Selection only?
+						if ((flags&Forcefield::SelectionOnlyFlag) && (!improper->isSelected())) continue;
+
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
 						if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) termName.sprintf("%s-%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
 						else termName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
@@ -341,7 +386,7 @@ int AddForcefieldTermsWizard::determineNextPage(int currentIndex)
 	switch (currentIndex)
 	{
 		case (AddForcefieldTermsWizard::IntramolecularPage):
-			if (ui_.ApplyIntramolecularTermsCheck->isChecked() && ui_.ReduceToMasterTermsCheck->isChecked()) return AddForcefieldTermsWizard::MasterTermsPage;
+			if ((!ui_.IntramolecularTermsAssignNoneRadio->isChecked()) && (!ui_.NoMasterTermsCheck->isChecked())) return AddForcefieldTermsWizard::MasterTermsPage;
 			else return WizardWidgetPageInfo::FinishHereFlag;
 			break;
 		default:
@@ -498,17 +543,22 @@ void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
  * Intramolecular Page
  */
 
-void AddForcefieldTermsWizard::on_ApplyIntramolecularTermsCheck_clicked(bool checked)
+void AddForcefieldTermsWizard::on_IntramolecularTermsAssignAllRadio_clicked(bool checked)
 {
 	updateProgressionControls();
 }
 
-void AddForcefieldTermsWizard::on_ApplyNoIntramolecularTermsCheck_clicked(bool checked)
+void AddForcefieldTermsWizard::on_IntramolecularTermsAssignSelectionRadio_clicked(bool checked)
 {
 	updateProgressionControls();
 }
 
-void AddForcefieldTermsWizard::on_ReduceToMasterTermsCheck_clicked(bool checked)
+void AddForcefieldTermsWizard::on_IntramolecularTermsAssignNoneRadio_clicked(bool checked)
+{
+	updateProgressionControls();
+}
+
+void AddForcefieldTermsWizard::on_NoMasterTermsCheck_clicked(bool checked)
 {
 	updateProgressionControls();
 }
