@@ -56,6 +56,12 @@ class AddForcefieldTermsWizard : public WizardWidget
 	Species* targetSpecies_;
 	// Species pointer with newly-applied Forcefield terms
 	Species* modifiedSpecies_;
+	// List of atom type name mappings to be applied
+	RefDataList<const AtomType,CharString> typeNameMappings_;
+
+	private:
+	// Return (mapped) name to use for specified type
+	const char* mappedName(const AtomType* at);
 
 	public:
 	// Set Dissolve reference
@@ -124,6 +130,8 @@ class AddForcefieldTermsWizard : public WizardWidget
 	void updateAtomTypesConflictsListRow(int row, AtomType* atomType, bool createItem);
 	// Update page with AtomTypes in our temporary Dissolve reference
 	void updateAtomTypesConflictsPage();
+	// Check for atom type naming conflicts
+	void checkForAtomTypeConflicts();
 
 	private slots:
 	void on_AtomTypesConflictsList_itemSelectionChanged();

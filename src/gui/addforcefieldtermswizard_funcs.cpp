@@ -78,6 +78,14 @@ AddForcefieldTermsWizard::~AddForcefieldTermsWizard()
  * Data
  */
 
+// Return (mapped) name to use for specified type
+const char* AddForcefieldTermsWizard::mappedName(const AtomType* at)
+{
+	RefDataItem<const AtomType,CharString>* item = typeNameMappings_.contains(at);
+	if (!item) return "???";
+	else return item->data();
+}
+
 // Set Dissolve reference
 void AddForcefieldTermsWizard::setMainDissolveReference(const Dissolve* dissolveReference)
 {
@@ -257,11 +265,20 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			}
 
 			updateAtomTypesConflictsPage();
+			checkForAtomTypeConflicts();
 			break;
 		case (AddForcefieldTermsWizard::AtomTypesConflictsPage):
 			// Detach any MasterTerm references, and delete the MasterTerms
 			modifiedSpecies_->detachFromMasterTerms();
 			temporaryCoreData_.clearMasterTerms();
+
+			// Update any type name mappings we have
+			typeNameMappings_.clear();
+			for (int i=0; i<ui_.AtomTypesConflictsList->count(); ++i)
+			{
+				QListWidgetItem* item = ui_.AtomTypesConflictsList->item(i);
+				typeNameMappings_.append(VariantPointer<AtomType>(item->data(Qt::UserRole)), qPrintable(item->text()));
+			}
 
 			// Assign intramolecular terms
 			if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
@@ -286,8 +303,8 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 						if ((flags&Forcefield::SelectionOnlyFlag) && (!bond->isSelected())) continue;
 
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-						if (QString(bond->i()->atomType()->name()) < QString(bond->j()->atomType()->name())) termName.sprintf("%s-%s", bond->i()->atomType()->name(), bond->j()->atomType()->name());
-						else termName.sprintf("%s-%s", bond->j()->atomType()->name(), bond->i()->atomType()->name());
+						if (QString(mappedName(bond->i()->atomType())) < QString(mappedName(bond->j()->atomType()))) termName.sprintf("%s-%s", mappedName(bond->i()->atomType()), mappedName(bond->j()->atomType()));
+						else termName.sprintf("%s-%s", mappedName(bond->j()->atomType()), mappedName(bond->i()->atomType()));
 
 						// Search for an existing master term by this name
 						MasterIntra* master = temporaryCoreData_.hasMasterBond(termName);
@@ -309,8 +326,8 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 						if ((flags&Forcefield::SelectionOnlyFlag) && (!angle->isSelected())) continue;
 
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-						if (QString(angle->i()->atomType()->name()) < QString(angle->k()->atomType()->name())) termName.sprintf("%s-%s-%s", angle->i()->atomType()->name(), angle->j()->atomType()->name(), angle->k()->atomType()->name());
-						else termName.sprintf("%s-%s-%s", angle->k()->atomType()->name(), angle->j()->atomType()->name(), angle->i()->atomType()->name());
+						if (QString(mappedName(angle->i()->atomType())) < QString(mappedName(angle->k()->atomType()))) termName.sprintf("%s-%s-%s", mappedName(angle->i()->atomType()), mappedName(angle->j()->atomType()), mappedName(angle->k()->atomType()));
+						else termName.sprintf("%s-%s-%s", mappedName(angle->k()->atomType()), mappedName(angle->j()->atomType()), mappedName(angle->i()->atomType()));
 
 						// Search for an existing master term by this name
 						MasterIntra* master = temporaryCoreData_.hasMasterAngle(termName);
@@ -332,8 +349,8 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 						if ((flags&Forcefield::SelectionOnlyFlag) && (!torsion->isSelected())) continue;
 
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-						if (QString(torsion->i()->atomType()->name()) < QString(torsion->l()->atomType()->name())) termName.sprintf("%s-%s-%s-%s", torsion->i()->atomType()->name(), torsion->j()->atomType()->name(), torsion->k()->atomType()->name(), torsion->l()->atomType()->name());
-						else termName.sprintf("%s-%s-%s-%s", torsion->l()->atomType()->name(), torsion->k()->atomType()->name(), torsion->j()->atomType()->name(), torsion->i()->atomType()->name());
+						if (QString(mappedName(torsion->i()->atomType())) < QString(mappedName(torsion->l()->atomType()))) termName.sprintf("%s-%s-%s-%s", mappedName(torsion->i()->atomType()), mappedName(torsion->j()->atomType()), mappedName(torsion->k()->atomType()), mappedName(torsion->l()->atomType()));
+						else termName.sprintf("%s-%s-%s-%s", mappedName(torsion->l()->atomType()), mappedName(torsion->k()->atomType()), mappedName(torsion->j()->atomType()), mappedName(torsion->i()->atomType()));
 
 						// Search for an existing master term by this name
 						MasterIntra* master = temporaryCoreData_.hasMasterTorsion(termName);
@@ -355,8 +372,8 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 						if ((flags&Forcefield::SelectionOnlyFlag) && (!improper->isSelected())) continue;
 
 						// Construct a name for the master term based on the atom types - order atom types alphabetically for consistency
-						if (QString(improper->i()->atomType()->name()) < QString(improper->l()->atomType()->name())) termName.sprintf("%s-%s-%s-%s", improper->i()->atomType()->name(), improper->j()->atomType()->name(), improper->k()->atomType()->name(), improper->l()->atomType()->name());
-						else termName.sprintf("%s-%s-%s-%s", improper->l()->atomType()->name(), improper->k()->atomType()->name(), improper->j()->atomType()->name(), improper->i()->atomType()->name());
+						if (QString(mappedName(improper->i()->atomType())) < QString(mappedName(improper->l()->atomType()))) termName.sprintf("%s-%s-%s-%s", mappedName(improper->i()->atomType()), mappedName(improper->j()->atomType()), mappedName(improper->k()->atomType()), mappedName(improper->l()->atomType()));
+						else termName.sprintf("%s-%s-%s-%s", mappedName(improper->l()->atomType()), mappedName(improper->k()->atomType()), mappedName(improper->j()->atomType()), mappedName(improper->i()->atomType()));
 
 						// Search for an existing master term by this name
 						MasterIntra* master = temporaryCoreData_.hasMasterImproper(termName);
@@ -469,16 +486,29 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsPage()
 	// Update the list against the global AtomType list
 	ListWidgetUpdater<AddForcefieldTermsWizard,AtomType> listUpdater(ui_.AtomTypesConflictsList, temporaryCoreData_.constAtomTypes(), this, &AddForcefieldTermsWizard::updateAtomTypesConflictsListRow);
 
+	typeNameMappings_.clear();
+}
+
+// Check for atom type naming conflicts
+void AddForcefieldTermsWizard::checkForAtomTypeConflicts()
+{
 	// Determine whether we have any naming conflicts
-	bool conflicts = false;
-	ListIterator<AtomType> typeIterator(temporaryCoreData_.constAtomTypes());
-	while (AtomType* at = typeIterator.iterate()) if (dissolveReference_->findAtomType(at->name()))
+	int nConflicts = 0;
+	for (int i=0; i<ui_.AtomTypesConflictsList->count(); ++i)
 	{
-		conflicts = true;
-		break;
+		QListWidgetItem* item = ui_.AtomTypesConflictsList->item(i);
+
+		if (dissolveReference_->findAtomType(qPrintable(item->text())))
+		{
+			item->setIcon(QIcon(":/general/icons/general_warn.svg"));
+			++nConflicts;
+		}
+		else item->setIcon(QIcon(":/general/icons/general_true.svg"));
 	}
-	ui_.AtomTypesIndicator->setNotOK(conflicts);
-	if (conflicts) ui_.AtomTypesIndicatorLabel->setText("One or more AtomTypes in the imported Species conflict with existing types");
+
+	ui_.AtomTypesIndicator->setNotOK(nConflicts > 0);
+
+	if (nConflicts > 0) ui_.AtomTypesIndicatorLabel->setText("One or more AtomTypes in the imported Species conflict with existing types");
 	else ui_.AtomTypesIndicatorLabel->setText("There are no naming conflicts with the imported AtomTypes");
 }
 
@@ -492,17 +522,7 @@ void AddForcefieldTermsWizard::on_AtomTypesConflictsList_itemSelectionChanged()
 
 void AddForcefieldTermsWizard::atomTypesConflictsListEdited(QWidget* lineEdit)
 {
-	// Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before updating the page
-	for (int n=0; n<ui_.AtomTypesConflictsList->count(); ++n)
-	{
-		QListWidgetItem* item = ui_.AtomTypesConflictsList->item(n);
-		AtomType* at = VariantPointer<AtomType>(item->data(Qt::UserRole));
-		if (!at) continue;
-
-		at->setName(qPrintable(item->text()));
-	}
-
-	updateAtomTypesConflictsPage();
+	checkForAtomTypeConflicts();
 }
 
 void AddForcefieldTermsWizard::on_AtomTypesPrefixButton_clicked(bool checked)
@@ -513,13 +533,9 @@ void AddForcefieldTermsWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 
 	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesConflictsList->selectedItems();
 	QList<QListWidgetItem*>::iterator i;
-	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
-	{
-		AtomType* at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
-		at->setName(CharString("%s%s", qPrintable(prefix), at->name()));
-	}
+	for (i = selectedItems.begin(); i != selectedItems.end(); ++i) (*i)->setText(QString("%1%2").arg(prefix, (*i)->text()));
 
-	updateAtomTypesConflictsPage();
+	checkForAtomTypeConflicts();
 }
 
 void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
@@ -530,13 +546,9 @@ void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 
 	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesConflictsList->selectedItems();
 	QList<QListWidgetItem*>::iterator i;
-	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
-	{
-		AtomType* at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
-		at->setName(CharString("%s%s", at->name(), qPrintable(suffix)));
-	}
+	for (i = selectedItems.begin(); i != selectedItems.end(); ++i) (*i)->setText(QString("%1%2").arg((*i)->text()));
 
-	updateAtomTypesConflictsPage();
+	checkForAtomTypeConflicts();
 }
 
 /*
