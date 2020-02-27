@@ -173,8 +173,8 @@ EndLayer
 PairPotentials
   Range  12.000000
   Delta  0.01000
-  Parameters  'CT'   0.0       LJGeometric  0.276144      3.500000  
-  Parameters  'HC'   0.0       LJGeometric  0.125520      2.500000 
+  Parameters  'CT'  C   0.0       LJGeometric  0.276144      3.500000  
+  Parameters  'HC'  H   0.0       LJGeometric  0.125520      2.500000 
   IncludeCoulomb  False
   CoulombTruncation  None
 EndPairPotentials

@@ -175,7 +175,7 @@ PairPotentials
   Delta  0.01000
   ShortRangeTruncation  None
   IncludeCoulomb  False
-  Parameters  'CT'   0.0       LJGeometric  0.276144      3.500000  
-  Parameters  'HC'   0.0       LJGeometric  0.125520      2.500000 
+  Parameters  'CT'  C   0.0       LJGeometric  0.276144      3.500000  
+  Parameters  'HC'  H   0.0       LJGeometric  0.125520      2.500000 
   CoulombTruncation  None
 EndPairPotentials

@@ -502,10 +502,10 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'OW'  -0.82   LJGeometric   0.6503    3.165492
-  Parameters  'HW'  0.41   LJGeometric    0.0       0.0
-  Parameters  'CT'  -0.18   LJGeometric   0.276     3.55
-  Parameters  'HC'  0.06    LJGeometric   0.126     2.5
-  Parameters  'OH'  -0.68 LJGeometric	0.711	3.12
-  Parameters  'HO'  -0.48 LJGeometric	0.126	2.4
+  Parameters  'OW'  O  -0.82   LJGeometric   0.6503    3.165492
+  Parameters  'HW'  H  0.41   LJGeometric    0.0       0.0
+  Parameters  'CT'  C  -0.18   LJGeometric   0.276     3.55
+  Parameters  'HC'  H  0.06    LJGeometric   0.126     2.5
+  Parameters  'OH'  O  -0.68 LJGeometric	0.711	3.12
+  Parameters  'HO'  H  -0.48 LJGeometric	0.126	2.4
 EndPairPotentials

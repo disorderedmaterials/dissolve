@@ -85,7 +85,7 @@ Species 'Benzene'
 EndSpecies
 
 PairPotentials
-  Parameters  'CA'  -0.115  LJGeometric  0.29288  3.55
-  Parameters  'HA'   0.115  LJGeometric  0.12552  2.42
+  Parameters  'CA'  C  -0.115  LJGeometric  0.29288  3.55
+  Parameters  'HA'  H   0.115  LJGeometric  0.12552  2.42
 EndPairPotentials
 
