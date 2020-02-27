@@ -339,7 +339,9 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		if (selectionOnly && (!bond->isSelected())) continue;
 
 		ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+		if (!typeI) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
 		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+		if (!typeJ) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
 
 		ForcefieldBondTerm* term = bondTerm(typeI, typeJ);
 		if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", i->userIndex(), j->userIndex(), typeI->equivalentName(), typeJ->equivalentName());
@@ -359,8 +361,11 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		if (selectionOnly && (!angle->isSelected())) continue;
 
 		ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+		if (!typeI) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
 		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+		if (!typeJ) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
 		ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+		if (!typeK) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
 
 		ForcefieldAngleTerm* term = angleTerm(typeI, typeJ, typeK);
 		if (!term) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName());
@@ -381,9 +386,13 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		if (selectionOnly && (!torsion->isSelected())) continue;
 
 		ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+		if (!typeI) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
 		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+		if (!typeJ) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
 		ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+		if (!typeK) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
 		ForcefieldAtomType* typeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
+		if (!typeL) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
 
 		ForcefieldTorsionTerm* term = torsionTerm(typeI, typeJ, typeK, typeL);
 		if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
@@ -403,6 +412,7 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 			if (i->nBonds() < 3) continue;
 
 			ForcefieldAtomType* typeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+			if (!typeI) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
 			if (selectionOnly && (!i->isSelected())) continue;
 
 			// Loop over combinations of bonds to the central atom
@@ -411,18 +421,21 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 				// Get SpeciesAtom 'j'
 				SpeciesAtom* j = i->bond(indexJ)->partner(i);
 				ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+				if (!typeJ) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
 				if (selectionOnly && (!j->isSelected())) continue;
 				for (int indexK = indexJ+1; indexK < i->nBonds()-1; ++indexK)
 				{
 					// Get SpeciesAtom 'k'
 					SpeciesAtom* k = i->bond(indexK)->partner(i);
 					ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+					if (!typeK) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
 					if (selectionOnly && (!k->isSelected())) continue;
 					for (int indexL = indexK+1; indexL < i->nBonds(); ++indexL)
 					{
 						// Get SpeciesAtom 'l'
 						SpeciesAtom* l = i->bond(indexL)->partner(i);
 						ForcefieldAtomType* typeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
+						if (!typeL) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
 						if (selectionOnly && (!l->isSelected())) continue;
 
 						ForcefieldImproperTerm* term = improperTerm(typeI, typeJ, typeK, typeL);
