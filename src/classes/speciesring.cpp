@@ -58,14 +58,14 @@ const PointerArray<const SpeciesAtom>& SpeciesRing::atoms() const
 // Return size of ring (number of atoms in array)
 int SpeciesRing::size() const
 {
-	return atoms_.nItems();
+	return atoms_.size();
 }
 
 // Print ring information
 void SpeciesRing::print() const
 {
-	printf("Ring(%i) :", atoms_.nItems());
-	for (int n=0; n<atoms_.nItems(); ++n) printf(" %2i(%s)", atoms_.at(n)->userIndex(), atoms_.at(n)->element()->symbol());
+	printf("Ring(%i) :", atoms_.size());
+	for (auto a : atoms_) printf(" %2i(%s)", a->userIndex(), a->element()->symbol());
 	printf("\n");
 }
 
@@ -77,8 +77,8 @@ void SpeciesRing::print() const
 bool SpeciesRing::operator==(const SpeciesRing& other)
 {
 	// Check ring size first
-	const int nAtoms = atoms_.nItems();
-	if (nAtoms != other.atoms_.nItems()) return false;
+	const int nAtoms = atoms_.size();
+	if (nAtoms != other.atoms_.size()) return false;
 
 	// Find equivalent atom in second ring to determine starting index
 	int indexA = 0, indexB;

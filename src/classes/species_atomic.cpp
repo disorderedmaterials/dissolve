@@ -164,8 +164,7 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	const SpeciesBond* ij;
-	for (int ijIndex = 0; ijIndex < i->nBonds(); ++ijIndex, ij = i->bonds().value(ijIndex))
+	for (auto ij : i->bonds())
 	{
 		// Is this either of the excluded bonds?
 		if (exclude == ij) continue;

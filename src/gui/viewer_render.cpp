@@ -223,10 +223,10 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 void BaseViewer::createUpdateStack(PointerArray<BaseViewer>& updateStack)
 {
 	// If we are already in the list, return immediately...
-	if (updateStack.contains(this)) return;
+	if (std::find(updateStack.begin(), updateStack.end(), this) != updateStack.end()) return;
 
 	// Add ourselves to the stack
-	updateStack.append(this);
+	updateStack.push_back(this);
 
 	// If we are a linked view, append viewer through the linked view
 	if (linkedViewer_)
@@ -371,9 +371,8 @@ void BaseViewer::postRedisplay()
 	PointerArray<BaseViewer> updateStack;
 	createUpdateStack(updateStack);
 
-	for (int n=0; n<updateStack.nItems(); ++n)
+	for (auto viewer : updateStack)
 	{
-		BaseViewer* viewer = updateStack[n];
 		if ((!viewer->valid_) || (viewer->drawing_)) continue;
 		viewer->update();
 	}

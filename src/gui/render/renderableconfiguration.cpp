@@ -181,7 +181,6 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		// Set basic styling and content for assemblies
 		configurationAssembly_.add(false, GL_LINE);
 		configurationAssembly_.add(lineConfigurationPrimitive_, A);
-		const SpeciesBond* b;
 
 		// Draw Atoms
 		const DynamicArray<Atom>& atoms = source_->constAtoms();
@@ -203,11 +202,8 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			else
 			{
 				// Draw all bonds from this atom
-				const PointerArray<SpeciesBond>& bonds = i->speciesAtom()->bonds();
-				for (int n=0; n<bonds.nItems(); ++n)
+				for (auto b : i->speciesAtom()->bonds())
 				{
-					b = bonds.at(n);
-
 					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
 					j = i->molecule()->atom(b->indexJ());
 					if (i == j) continue;
@@ -245,11 +241,10 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			configurationAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 			// Bonds from this atom
-			const PointerArray<SpeciesBond>& bonds = i->speciesAtom()->bonds();
-			for (int n=0; n<bonds.nItems(); ++n)
+			for (auto b : i->speciesAtom()->bonds())
 			{
 				// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-				j = i->molecule()->atom(bonds.at(n)->indexJ());
+				j = i->molecule()->atom(b->indexJ());
 				if (i == j) continue;
 
 				if (cellArray.useMim(i->cell(), j->cell())) createCylinderBond(configurationAssembly_, i, j, box->minimumVector(i->r(), j->r()), true, spheresBondRadius_);

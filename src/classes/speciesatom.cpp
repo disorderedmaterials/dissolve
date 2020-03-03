@@ -157,13 +157,13 @@ bool SpeciesAtom::isSelected() const
 // Add Bond reference
 void SpeciesAtom::addBond(SpeciesBond* b)
 {
-	if (!bonds_.contains(b)) bonds_.append(b);
+	if (find(bonds_.begin(), bonds_.end(), b) == bonds_.end()) bonds_.push_back(b);
 }
 
 // Remove Bond reference
 void SpeciesAtom::removeBond(SpeciesBond* b)
 {
-	bonds_.remove(b);
+	bonds_.erase(find(bonds_.begin(), bonds_.end(), b));
 }
 
 // Clear all Bond references
@@ -175,7 +175,7 @@ void SpeciesAtom::clearBonds()
 // Return number of Bond references
 int SpeciesAtom::nBonds() const
 {
-	return bonds_.nItems();
+	return bonds_.size();
 }
 
 // Return specified bond
@@ -193,7 +193,9 @@ const PointerArray<SpeciesBond>& SpeciesAtom::bonds() const
 // Return whether Bond to specified Atom exists
 SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
 {
-	for (int n=0; n<bonds_.nItems(); ++n) if (bonds_.value(n)->partner(this) == j) return bonds_.value(n);
+	auto result = *find_if(bonds_.begin(), bonds_.end(),
+			       [&](const SpeciesBond* b){return b->partner(this) == j;});
+	if(result) return result;
 	return NULL;
 }
 
@@ -201,7 +203,7 @@ SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle* angle)
 {
-	angles_.append(angle);
+	angles_.push_back(angle);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (angle->i() != this) exclusions_.add(angle->i());
@@ -213,13 +215,13 @@ void SpeciesAtom::addAngle(SpeciesAngle* angle)
 // Remove angle reference
 void SpeciesAtom::removeAngle(SpeciesAngle* a)
 {
-	angles_.remove(a);
+	angles_.erase(find(angles_.begin(), angles_.end(), a));
 }
 
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const
 {
-	return angles_.nItems();
+	return angles_.size();
 }
 
 // Return specified angle
@@ -237,7 +239,7 @@ const PointerArray<SpeciesAngle>& SpeciesAtom::angles() const
 // Add specified SpeciesTorsion to Atom
 void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 {
-	torsions_.append(torsion);
+	torsions_.push_back(torsion);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (torsion->i() == this)
@@ -264,13 +266,13 @@ void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 // Remove torsion reference
 void SpeciesAtom::removeTorsion(SpeciesTorsion* t)
 {
-	torsions_.remove(t);
+	torsions_.erase(find(torsions_.begin(), torsions_.end(), t));
 }
 
 // Return the number of Torsions in which the Atom is involved
 int SpeciesAtom::nTorsions() const
 {
-	return torsions_.nItems();
+	return torsions_.size();
 }
 
 // Return specified torsion

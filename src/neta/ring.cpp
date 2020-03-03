@@ -92,27 +92,26 @@ bool NETARingNode::setModifier(const char* modifier, ComparisonOperator op, int 
 void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, PointerArray<const SpeciesAtom>& path, const int minSize, const int maxSize) const
 {
 	// Check whether the path is already at the maximum size - if so, return immediately.
-	if (path.nItems() == maxSize) return;
+	if (path.size() == maxSize) return;
 
 	// Add the current atom to the path
-	path.append(currentAtom);
+	path.push_back(currentAtom);
 
 	// Loop over bonds to the atom
 	const SpeciesAtom* j;
 	SpeciesRing* ring;
-	const PointerArray<SpeciesBond>& bonds = currentAtom->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
+	for (auto b : currentAtom->bonds())
 	{
 		/*
 		 * Get the partner atom and compare to first atom in the current path.
 		 * If it is the currentAtom then we have found a cyclic route back to the originating atom.
 		 * If not, check whether the atom is already elsewhere in the path - if so, continue with the next bond.
 		 */
-		j = bonds.at(n)->partner(currentAtom);
-		if ((path.nItems() >= minSize) && (j == path.at(0)))
+		j = b->partner(currentAtom);
+		if ((path.size() >= minSize) && (j == path.at(0)))
 		{
 			// Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum size
-			if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.nItems() == maxSize)) continue;
+			if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.size() == maxSize)) continue;
 
 			// Add new ring
 			ring = rings.add();
@@ -121,14 +120,14 @@ void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& 
 			// Continue with the next bond
 			continue;
 		}
-		else if (path.sniatnoc(j)) continue;
+		else if (find(path.rbegin(), path.rend(), j) != path.rend()) continue;
 
 		// The current atom j is not in the path, so recurse
 		findRings(j, rings, path, minSize, maxSize);
 	}
 
 	// Remove current atom from the path
-	path.removeLast();
+	path.erase(path.end()-1);
 }
 
 // Evaluate the node and return its score

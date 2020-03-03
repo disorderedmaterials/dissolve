@@ -152,10 +152,9 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 
 	// Get directly connected atoms about 'i', excluding any that have already been matched
 	RefDataList<const SpeciesAtom, int> neighbours;
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
+	for (auto b : i->bonds())
 	{
-		const SpeciesAtom* j = bonds.at(n)->partner(i);
+		const SpeciesAtom* j = b->partner(i);
 		if (j == matchPath.firstItem())
 		{
 			// We may allow the path's root atom to be matched again, if the allowRootMatch_ is set...
@@ -172,9 +171,9 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 	{
 		// Evaluate the neighbour against our elements
 		int atomScore = NETANode::NoMatch;
-		for (int n=0; n<allowedElements_.nItems(); ++n)
+		for (auto e : allowedElements_)
 		{
-			if (j->element() != allowedElements_.at(n)) continue;
+			if (j->element() != e) continue;
 
 			// Process branch definition via the base class, using a copy of the current match path
 			RefList<const SpeciesAtom> branchMatchPath = matchPath;
@@ -191,10 +190,10 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 			// Now have a match, so break out of the loop
 			break;
 		}
-		if (atomScore == NETANode::NoMatch) for (int n=0; n<allowedAtomTypes_.nItems(); ++n)
+		if (atomScore == NETANode::NoMatch) for (auto t : allowedAtomTypes_)
 		{
 			// Evaluate the neighbour against the atom type
-			int typeScore = allowedAtomTypes_.at(n)->neta().score(j);
+			int typeScore = t->neta().score(j);
 			if (typeScore == NETANode::NoMatch) continue;
 
 			// Process branch definition via the base class, using a copy of the current match path
@@ -223,8 +222,7 @@ int NETAConnectionNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& 
 		{
 			// Count number of hydrogens attached to this atom
 			int nH = 0;
-			const PointerArray<SpeciesBond>& bonds = j->bonds();
-			for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(j)->element()->Z() == ELEMENT_H) ++nH;
+			for (auto b : j->bonds()) if (b->partner(j)->element()->Z() == ELEMENT_H) ++nH;
 			if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
 
 			++atomScore;
