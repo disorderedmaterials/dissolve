@@ -371,7 +371,7 @@ void BaseViewer::postRedisplay()
 	PointerArray<BaseViewer> updateStack;
 	createUpdateStack(updateStack);
 
-	for (auto viewer : updateStack)
+	for (auto* viewer : updateStack)
 	{
 		if ((!viewer->valid_) || (viewer->drawing_)) continue;
 		viewer->update();

@@ -100,14 +100,14 @@ void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& 
 	// Loop over bonds to the atom
 	const SpeciesAtom* j;
 	SpeciesRing* ring;
-	for (auto b : currentAtom->bonds())
+	for (const auto* bond : currentAtom->bonds())
 	{
 		/*
 		 * Get the partner atom and compare to first atom in the current path.
 		 * If it is the currentAtom then we have found a cyclic route back to the originating atom.
 		 * If not, check whether the atom is already elsewhere in the path - if so, continue with the next bond.
 		 */
-		j = b->partner(currentAtom);
+		j = bond->partner(currentAtom);
 		if ((path.size() >= minSize) && (j == path.at(0)))
 		{
 			// Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum size

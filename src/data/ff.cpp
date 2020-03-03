@@ -538,9 +538,9 @@ bool Forcefield::isAtomGeometry(SpeciesAtom* i, AtomGeometry geom) const
 bool Forcefield::isBondPattern(const SpeciesAtom* i, const int nSingle, const int nDouble, const int nTriple, const int nQuadruple, const int nAromatic) const
 {
 	int actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
-	for (auto b : i->bonds())
+	for (const auto* bond : i->bonds())
 	{
-		switch (b->bondType())
+		switch (bond->bondType())
 		{
 			case (SpeciesBond::SingleBond):
 				if (nSingle == actualNSingle) return false;
@@ -583,7 +583,7 @@ bool Forcefield::isBoundTo(const SpeciesAtom* i, Element* element, const int cou
 {
 	int found = 0;
 
-	for (auto b : i->bonds()) if (b->partner(i)->element() == element) ++found;
+	for (const auto* bond : i->bonds()) if (bond->partner(i)->element() == element) ++found;
 
 	return (found < count ? false : (found == count ? true : allowMoreThanCount));
 }
@@ -603,7 +603,7 @@ int Forcefield::guessOxidationState(const SpeciesAtom* i) const
 	int nSameElement = 0;
 
 	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (auto bond : bonds)
+	for (const auto* bond : bonds)
 	{
 		Element* element = bond->partner(i)->element();
 		switch (element->Z())

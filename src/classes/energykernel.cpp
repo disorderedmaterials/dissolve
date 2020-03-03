@@ -671,21 +671,21 @@ double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
 	double intraEnergy = 0.0;
 
 	// Add energy from SpeciesBond terms
-	for (auto b : spAtom->bonds())
+	for (const auto* bond : spAtom->bonds())
 	{
-		intraEnergy += energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+		intraEnergy += energy(bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
 	}
 
 	// Add energy from SpeciesAngle terms
-	for (auto a : spAtom->angles())
+	for (const auto* angle : spAtom->angles())
 	{
-		intraEnergy += energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+		intraEnergy += energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
 	}
 
 	// Add energy from SpeciesTorsion terms
-	for (auto t : spAtom->torsions())
+	for (const auto* torsion : spAtom->torsions())
 	{
-		intraEnergy += energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+		intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
 	}
 
 	return intraEnergy;

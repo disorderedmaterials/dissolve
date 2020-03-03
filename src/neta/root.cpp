@@ -105,8 +105,7 @@ int NETARootNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 	{
 		// Count number of hydrogens attached to this atom
 		int nH = 0;
-		const PointerArray<SpeciesBond>& bonds = i->bonds();
-		for (auto b : i->bonds()) if (b->partner(i)->element()->Z() == ELEMENT_H) ++nH;
+		for (const auto* bond : i->bonds()) if (bond->partner(i)->element()->Z() == ELEMENT_H) ++nH;
 		if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
 
 		++totalScore;

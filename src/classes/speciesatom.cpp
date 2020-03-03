@@ -155,9 +155,10 @@ bool SpeciesAtom::isSelected() const
  */
 
 // Add Bond reference
-void SpeciesAtom::addBond(SpeciesBond* b)
-{
-	if (find(bonds_.begin(), bonds_.end(), b) == bonds_.end()) bonds_.push_back(b);
+void SpeciesAtom::addBond(SpeciesBond *bond) {
+  if (find(bonds_.begin(), bonds_.end(), bond) == bonds_.end()) {
+    bonds_.push_back(bond);
+  }
 }
 
 // Remove Bond reference
@@ -191,12 +192,11 @@ const PointerArray<SpeciesBond>& SpeciesAtom::bonds() const
 }
 
 // Return whether Bond to specified Atom exists
-SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
+SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* partner)
 {
-	auto result = *find_if(bonds_.begin(), bonds_.end(),
-			       [&](const SpeciesBond* b){return b->partner(this) == j;});
-	if(result) return result;
-	return NULL;
+	auto result = find_if(bonds_.begin(), bonds_.end(),
+			       [&](const SpeciesBond* bond){return bond->partner(this) == partner;});
+	return result == bonds_.end() ? *result : nullptr;
 }
 
 
@@ -213,9 +213,9 @@ void SpeciesAtom::addAngle(SpeciesAngle* angle)
 
 
 // Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle* a)
+void SpeciesAtom::removeAngle(SpeciesAngle* angle)
 {
-	angles_.erase(find(angles_.begin(), angles_.end(), a));
+	angles_.erase(find(angles_.begin(), angles_.end(), angle));
 }
 
 // Return the number of Angles in which the Atom is involved
@@ -264,9 +264,9 @@ void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 }
 
 // Remove torsion reference
-void SpeciesAtom::removeTorsion(SpeciesTorsion* t)
+void SpeciesAtom::removeTorsion(SpeciesTorsion* torsion)
 {
-	torsions_.erase(find(torsions_.begin(), torsions_.end(), t));
+	torsions_.erase(find(torsions_.begin(), torsions_.end(), torsion));
 }
 
 // Return the number of Torsions in which the Atom is involved

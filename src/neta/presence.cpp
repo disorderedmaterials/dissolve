@@ -114,9 +114,9 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 	{
 		// Evaluate the atom against our elements
 		int atomScore = NETANode::NoMatch;
-		for (auto e : allowedElements_)
+		for (const auto* element : allowedElements_)
 		{
-			if (j->element() != e) continue;
+			if (j->element() != element) continue;
 
 			// Process branch definition via the base class, using a fresh path
 			RefList<const SpeciesAtom> emptyPath;
@@ -129,10 +129,10 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 			// Now have a match, so break out of the loop
 			break;
 		}
-		if (atomScore == NETANode::NoMatch) for (auto t : allowedAtomTypes_)
+		if (atomScore == NETANode::NoMatch) for (const auto* type : allowedAtomTypes_)
 		{
 			// Evaluate the neighbour against the atom type
-			int typeScore = t->neta().score(j);
+			int typeScore = type->neta().score(j);
 			if (typeScore == NETANode::NoMatch) continue;
 
 			// Process branch definition via the base class, using an empty path
@@ -161,7 +161,7 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 		{
 			// Count number of hydrogens attached to this atom
 			int nH = 0;
-			for (auto b : j->bonds()) if (b->partner(j)->element()->Z() == ELEMENT_H) ++nH;
+			for (const auto* bond : j->bonds()) if (bond->partner(j)->element()->Z() == ELEMENT_H) ++nH;
 			if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
 
 			++atomScore;

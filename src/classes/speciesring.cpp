@@ -64,8 +64,8 @@ int SpeciesRing::size() const
 // Print ring information
 void SpeciesRing::print() const
 {
-	printf("Ring(%i) :", atoms_.size());
-	for (auto a : atoms_) printf(" %2i(%s)", a->userIndex(), a->element()->symbol());
+	printf("Ring(%lu) :", atoms_.size());
+	for (const auto* atom : atoms_) printf(" %2i(%s)", atom->userIndex(), atom->element()->symbol());
 	printf("\n");
 }
 
@@ -77,7 +77,7 @@ void SpeciesRing::print() const
 bool SpeciesRing::operator==(const SpeciesRing& other)
 {
 	// Check ring size first
-	const int nAtoms = atoms_.size();
+	const auto nAtoms = atoms_.size();
 	if (nAtoms != other.atoms_.size()) return false;
 
 	// Find equivalent atom in second ring to determine starting index

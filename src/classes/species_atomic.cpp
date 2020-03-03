@@ -163,18 +163,17 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 {
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
-	SpeciesAtom* j;
-	for (auto ij : i->bonds())
+	for (const auto* bond : i->bonds())
 	{
 		// Is this either of the excluded bonds?
-		if (exclude == ij) continue;
-		if (excludeToo == ij) continue;
+		if (exclude == bond) continue;
+		if (excludeToo == bond) continue;
 
 		// Get the partner atom in the bond and select it (if it is not selected already)
-		j = ij->partner(i);
+		auto* partner = bond->partner(i);
 
-		if (selectedAtoms_.contains(j)) continue;
-		selectFromAtom(j, exclude);
+		if (selectedAtoms_.contains(partner)) continue;
+		selectFromAtom(partner, exclude);
 	}
 }
 
