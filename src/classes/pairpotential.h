@@ -198,14 +198,18 @@ class PairPotential : public ListItem<PairPotential>
 	void calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r
 	double energy(double r);
-	// Return analytic potential at specified r
+	// Return analytic potential at specified r, including Coulomb term from local atomtype charges
 	double analyticEnergy(double r);
+	// Return analytic potential at specified r, including Coulomb term from supplied charge product
+	double analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return analytic coulomb potential energy of specified charge product
 	double analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return derivative of potential at specified r
 	double force(double r);
-	// Return analytic derivative of potential at specified r
+	// Return analytic force at specified r, including Coulomb term from local atomtype charges
 	double analyticForce(double r);
+	// Return analytic force at specified r, including Coulomb term from supplied charge product
+	double analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return analytic coulomb force of specified charge product
 	double analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return full tabulated potential (original plus additional)

@@ -603,11 +603,11 @@ double EnergyKernel::energy(const SpeciesBond* b, const Atom* i, const Atom* j)
 {
 #ifdef CHECKS
 	// Check for spurious bond distances
-	double distance = cells_.useMim(i->cell(), j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
+	double distance = i->cell()->mimRequired(j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
 	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
 	// Determine whether we need to apply minimum image to the distance calculation
-	if (cells_.useMim(i->cell(), j->cell())) return b->energy(box_->minimumDistance(i, j));
+	if (i->cell()->mimRequired(j->cell())) return b->energy(box_->minimumDistance(i, j));
 	else return b->energy((i->r() - j->r()).magnitude());
 }
 
@@ -617,9 +617,9 @@ double EnergyKernel::energy(const SpeciesAngle* a, const Atom* i, const Atom* j,
 	Vec3<double> vecji, vecjk;
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 
 	// Normalise vectors
@@ -637,11 +637,11 @@ double EnergyKernel::energy(const SpeciesTorsion* t, const Atom* i, const Atom* 
 	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 	
 	// Calculate vectors, ensuring we account for minimum image
-	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
-	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
+	if (k->cell()->mimRequired(l->cell())) veckl = box_->minimumVector(k, l);
 	else veckl = l->r() - k->r();
 
 	return t->energy(Box::torsionInDegrees(vecji, vecjk, veckl));

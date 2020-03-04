@@ -5,6 +5,8 @@ on:
     branches:
     - develop
     - master
+    paths:
+    - 'src/**'
   pull_request:
     branches:
     - develop

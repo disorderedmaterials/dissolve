@@ -1,4 +1,4 @@
-name: Tests (Serial)
+name: System Tests (Serial)
 
 on:
   push:
@@ -6,12 +6,10 @@ on:
     - develop
     - master
   pull_request:
-    branches:
-    - develop
 
 jobs:
-  build:
-    runs-on: ubuntu-16.04
+  systemtests-build-serial:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Install Prerequisties
@@ -28,22 +26,21 @@ jobs:
       uses: actions/upload-artifact@v1
       if: success()
       with:
-        name: system-tests
+        name: serial-test-artifacts
         path: tests/
-  test_broadening:
+  systemtests-serial:
     runs-on: ubuntu-latest
-    needs: build
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: contains(github.ref, 'develop') && github.event_name == 'push'
+    needs: systemtests-build-serial
+    strategy:
+      matrix:
+        test: [atomshake, broadening, calculate_avgmol, calculate_cn, calculate_dangle, calculate_rdf, calculate_sdf, correlations, energyforce1, epsr, exchangeable, pbctorsion, rdfmethod]
     steps:
-    - uses: actions/checkout@v1
     - name: Download Artifacts
       uses: actions/download-artifact@v1
       with:
-        name: system-tests
-    - name: Run Test
+        name: serial-test-artifacts
+    - name: Run Tests
       run: |
-        cd system-tests
-        pwd
-        ./go -s ./dissolve broadening
+        cd serial-test-artifacts
+        chmod u+x ./go ./dissolve
+        ./go -a -s ./dissolve ${{ matrix.test }}

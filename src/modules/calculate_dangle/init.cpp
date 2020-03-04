@@ -96,7 +96,7 @@ void CalculateDAngleModule::initialise()
 	 * Process1D  'Angle(ABC)'
 	 *   Normalisation
 	 *     OperateExpression
-	 *       Expression("value/sin(x)")
+	 *       Expression  "value/sin(x)"
 	 *     EndOperateExpression
 	 *     OperateNormalise
 	 *       Value  1.0

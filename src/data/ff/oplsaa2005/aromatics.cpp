@@ -38,8 +38,8 @@ Forcefield_OPLSAA2005_Aromatics::Forcefield_OPLSAA2005_Aromatics()
 	// -- Benzene
 	copyAtomType(oplsAtomTypeById(145), "CA", "ring(size=6),-C(n=2),-H(n=1)");
 	copyAtomType(oplsAtomTypeById(146), "HA", "-&145");
-	// -- Napthalene
-	copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,n=2),nbonds=3,-C(n=3)", "CA");
+	// -- Napthalene (or larger aromatics)
+	copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,n>=2),nbonds=3,-C(n=3)", "CA");
 	// -- Toluene
 	copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring=6)");
 	// -- Ethylbenzene
