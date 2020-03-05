@@ -24,9 +24,26 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data2D Export Keywords
-const char* Data2DExportFormatKeywords[] = { "block", "cartesian" };
-const char* NiceData2DExportFormatKeywords[] = { "Block Data", "Cartesian (x,y,value) Data" };
+// Constructor
+Data2DExportFileFormat::Data2DExportFileFormat(const char* filename, Data2DExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for Data2DExportFormat
+EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::data2DExportFormats()
+{
+	static EnumOptionsList Data2DExportFormats = EnumOptionsList() <<
+		EnumOption(Data2DExportFileFormat::BlockData2D, 	"block",	"Block Data") <<
+		EnumOption(Data2DExportFileFormat::CartesianData2D, 	"cartesian",	"Cartesian (x,y,value) Data");
+
+	static EnumOptions<Data2DExportFileFormat::Data2DExportFormat> options("Data2DExportFileFormat", Data2DExportFormats);
+
+	return options;
+}
 
 // Return number of available formats
 int Data2DExportFileFormat::nFormats() const
@@ -34,27 +51,22 @@ int Data2DExportFileFormat::nFormats() const
 	return Data2DExportFileFormat::nData2DExportFormats;
 }
 
-// Return formats array
-const char** Data2DExportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* Data2DExportFileFormat::formatKeyword(int id) const
 {
-	return Data2DExportFormatKeywords;
+	return data2DExportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** Data2DExportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* Data2DExportFileFormat::formatDescription(int id) const
 {
-	return NiceData2DExportFormatKeywords;
+	return data2DExportFormats().descriptionByIndex(id);
 }
 
 // Return current format as CoordinateExportFormat
 Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const
 {
 	return (Data2DExportFileFormat::Data2DExportFormat) format_;
-}
-
-// Constructor
-Data2DExportFileFormat::Data2DExportFileFormat(const char* filename, Data2DExportFormat format) : FileAndFormat(filename, format)
-{
 }
 
 /*
@@ -107,9 +119,13 @@ bool Data2DExportFileFormat::exportData(const Data2D& data)
 
 	// Write data
 	bool result = false;
-	if (data2DFormat() == Data2DExportFileFormat::BlockData) result = exportBlock(parser, data);
-	else if (data2DFormat() == Data2DExportFileFormat::CartesianData) result = exportCartesian(parser, data);
-	else Messenger::error("Unrecognised data format.\nKnown formats are: %s.\n", Data2DExportFileFormat().formats());
+	if (data2DFormat() == Data2DExportFileFormat::BlockData2D) result = exportBlock(parser, data);
+// 	else if (data2DFormat() == Data2DExportFileFormat::CartesianData2D) result = exportCartesian(parser, data);
+	else
+	{
+		Messenger::error("Unrecognised Data2D format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 
 	return result;
 }

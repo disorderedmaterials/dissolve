@@ -22,10 +22,6 @@
 #include "io/import/trajectory.h"
 #include "base/sysfunc.h"
 
-// Trajectory Type Keywords
-const char* TrajectoryImportFormatKeywords[] = { "xyz" };
-const char* NiceTrajectoryImportFormatKeywords[] = { "XYZ" };
-
 // Constructor
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFormat format) : FileAndFormat(format)
 {
@@ -40,22 +36,33 @@ TrajectoryImportFileFormat::~TrajectoryImportFileFormat()
  * Format Access
  */
 
+// Return enum options for TrajectoryImportFormat
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFormats()
+{
+	static EnumOptionsList TrajectoryImportFormats = EnumOptionsList() <<
+		EnumOption(TrajectoryImportFileFormat::XYZTrajectory, 	"xyz",		"XYZ Trajectory");
+
+	static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> options("TrajectoryImportFileFormat", TrajectoryImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
 int TrajectoryImportFileFormat::nFormats() const
 {
 	return TrajectoryImportFileFormat::nTrajectoryImportFormats;
 }
 
-// Return formats array
-const char** TrajectoryImportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* TrajectoryImportFileFormat::formatKeyword(int id) const
 {
-	return TrajectoryImportFormatKeywords;
+	return trajectoryImportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** TrajectoryImportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* TrajectoryImportFileFormat::formatDescription(int id) const
 {
-	return NiceTrajectoryImportFormatKeywords;
+	return trajectoryImportFormats().descriptionByIndex(id);
 }
 
 // Return current format as TrajectoryImportFormat

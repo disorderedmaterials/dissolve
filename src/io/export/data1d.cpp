@@ -24,9 +24,25 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data1D Export Keywords
-const char* Data1DExportFormatKeywords[] = { "xy" };
-const char* NiceData1DExportFormatKeywords[] = { "XY Data" };
+// Constructor
+Data1DExportFileFormat::Data1DExportFileFormat(const char* filename, Data1DExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for Data1DExportFormat
+EnumOptions<Data1DExportFileFormat::Data1DExportFormat> Data1DExportFileFormat::data1DExportFormats()
+{
+	static EnumOptionsList Data1DExportFormats = EnumOptionsList() <<
+		EnumOption(Data1DExportFileFormat::XYData1D, 		"xy",		"Simple XY data (x = bin centres)");
+
+	static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> options("Data1DExportFileFormat", Data1DExportFormats);
+
+	return options;
+}
 
 // Return number of available formats
 int Data1DExportFileFormat::nFormats() const
@@ -34,27 +50,22 @@ int Data1DExportFileFormat::nFormats() const
 	return Data1DExportFileFormat::nData1DExportFormats;
 }
 
-// Return formats array
-const char** Data1DExportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* Data1DExportFileFormat::formatKeyword(int id) const
 {
-	return Data1DExportFormatKeywords;
+	return data1DExportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** Data1DExportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* Data1DExportFileFormat::formatDescription(int id) const
 {
-	return NiceData1DExportFormatKeywords;
+	return data1DExportFormats().descriptionByIndex(id);
 }
 
 // Return current format as CoordinateExportFormat
 Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat() const
 {
 	return (Data1DExportFileFormat::Data1DExportFormat) format_;
-}
-
-// Constructor
-Data1DExportFileFormat::Data1DExportFileFormat(const char* filename, Data1DExportFormat format) : FileAndFormat(filename, format)
-{
 }
 
 /*
@@ -89,8 +100,12 @@ bool Data1DExportFileFormat::exportData(const Data1D& data)
 
 	// Write data
 	bool result = false;
-	if (data1DFormat() == Data1DExportFileFormat::XYData) result = exportXY(parser, data);
-	else Messenger::error("Unrecognised data format.\nKnown formats are: %s.\n", Data1DExportFileFormat().formats());
+	if (data1DFormat() == Data1DExportFileFormat::XYData1D) result = exportXY(parser, data);
+	else
+	{
+		Messenger::error("Unrecognised Data1D format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 
 	return result;
 }

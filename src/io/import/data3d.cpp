@@ -23,10 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data3D Type Keywords
-const char* Data3DImportFormatKeywords[] = { "cartesian" };
-const char* NiceData3DImportFormatKeywords[] = { "Cartesian X,Y,Z,f(x,y,z) data" };
-
 // Constructor
 Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFormat format) : FileAndFormat(format)
 {
@@ -41,22 +37,33 @@ Data3DImportFileFormat::~Data3DImportFileFormat()
  * Format Access
  */
 
+// Return enum options for Data3DImportFormat
+EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::data3DImportFormats()
+{
+	static EnumOptionsList Data3DImportFormats = EnumOptionsList() <<
+		EnumOption(Data3DImportFileFormat::CartesianData3D, 	"cartesian",		"Cartesian X,Y,Z,f(x,y,z) data");
+
+	static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> options("Data3DImportFileFormat", Data3DImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
 int Data3DImportFileFormat::nFormats() const
 {
 	return Data3DImportFileFormat::nData3DImportFormats;
 }
 
-// Return formats array
-const char** Data3DImportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* Data3DImportFileFormat::formatKeyword(int id) const
 {
-	return Data3DImportFormatKeywords;
+	return data3DImportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** Data3DImportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* Data3DImportFileFormat::formatDescription(int id) const
 {
-	return NiceData3DImportFormatKeywords;
+	return data3DImportFormats().descriptionByIndex(id);
 }
 
 // Return current format as Data3DImportFormat
@@ -123,7 +130,7 @@ bool Data3DImportFileFormat::importData(LineParser& parser, Data3D& data)
 	// Import the data
 	bool result = false;
 // 	if (data3DFormat() == Data3DImportFileFormat::CartesianData3D) result = importCartesian(parser, data);
-	Messenger::error("Don't know how to load Data3D of format '%s'.\n", Data3DImportFileFormat().format(data3DFormat()));
+	Messenger::error("Don't know how to load Data3D in format '%s'.\n", formatKeyword(data3DFormat()));
 
 	return result;
 }
