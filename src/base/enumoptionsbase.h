@@ -64,6 +64,8 @@ class EnumOptionsBase
 	int nOptions() const;
 	// Return nth keyword in the list
 	const char* keywordByIndex(int index) const;
+	// Return description for the nth keyword in the list
+	const char* descriptionByIndex(int index) const;
 	// Return option by keyword
 	const EnumOption& option(const char* keyword) const;
 	// Return current option keyword
