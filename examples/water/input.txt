@@ -15,9 +15,9 @@ EndMaster
 
 Species 'Water'
   # Atoms
-  Atom    1    O     5.139     5.968     5.000  'OW'     0.000
-  Atom    2    H     3.924     5.424     5.000  'HW'     0.000
-  Atom    3    H     6.088     5.120     5.000  'HW'     0.000
+  Atom    1    O     5.139     5.968     5.000  'OW'    -0.82
+  Atom    2    H     3.924     5.424     5.000  'HW'     0.41
+  Atom    3    H     6.088     5.120     5.000  'HW'     0.41
 
   # Bonds
   Bond    1    2  @HW-OW
