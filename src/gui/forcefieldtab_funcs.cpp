@@ -507,8 +507,9 @@ void ForcefieldTab::atomTypeDataModified()
 		Messenger::mute();
 		dissolve_.generatePairPotentials();
 		Messenger::unMute();
-	}
 
+		updateControls();
+	}
 }
 
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
