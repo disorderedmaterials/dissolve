@@ -87,7 +87,7 @@ PairPotential* Dissolve::addPairPotential(AtomType* at1, AtomType* at2)
 	return pp;
 }
 
-// Return first PaiPotential in list
+// Return first PairPotential in list
 const List<PairPotential>& Dissolve::pairPotentials() const
 {
 	return pairPotentials_;
