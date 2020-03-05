@@ -105,18 +105,21 @@ bool TrajectoryExportFileFormat::exportData(Configuration* cfg)
 		return false;
 	}
 
-	bool headerResult = false;
-
 	// Write header?
 	if (!fileExists)
 	{
-		// if (format == OneThatNeedsAHeader) headerResult = writeAHeader(parser, cfg);
-		// else result = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are: %s.\n", TrajectoryExportFileFormat().formats());
+		auto headerResult = false;
+
+		if (format_ == XYZTrajectory) headerResult = true;
+// 		else if (format_ == OneThatNeedsAHeaderTrajectory) headerResult = writeAHeader(parser, cfg);
+		else headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
+		printAvailableFormats();
+
+		if (!headerResult) return false;
 	}
-	if (!headerResult) return false;
 
 	// Append frame in supplied format
-	bool frameResult = false;
+	auto frameResult = false;
 	if (trajectoryFormat() == TrajectoryExportFileFormat::XYZTrajectory) frameResult = exportXYZ(parser, cfg);
 	else
 	{
