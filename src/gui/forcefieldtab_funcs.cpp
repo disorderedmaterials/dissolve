@@ -696,7 +696,6 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* 
 		Renderable* dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
 		dUFull->setColour(StockColours::GreenStockColour);
 	}
-
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
