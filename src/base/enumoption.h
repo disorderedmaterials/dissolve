@@ -29,7 +29,9 @@ class EnumOption
 {
 	public:
 	// Constructors
-	EnumOption(const int enumeration = 0, const char* keyword = NULL, int minArgs = 0, int maxArgs = 0);
+	EnumOption();
+	EnumOption(const int enumeration, const char* keyword, int minArgs = 0, int maxArgs = 0);
+	EnumOption(const int enumeration, const char* keyword, const char* description, int minArgs = 0, int maxArgs = 0);
 
 
 	/*
@@ -44,6 +46,8 @@ class EnumOption
 	int enumeration_;
 	// Option keyword
 	const char* keyword_;
+	// Option description / long text
+	const char* description_;
 	// Whether the option has any associated arguments
 	bool hasArguments_;
 	// Minimum number of arguments the option takes
@@ -58,6 +62,8 @@ class EnumOption
 	int enumeration() const;
 	// Return option keyword
 	const char* keyword() const;
+	// Return option description
+	const char* description() const;
 	// Return whether the option has any associated arguments
 	bool hasArguments() const;
 	// Return minimum number of arguments the option takes

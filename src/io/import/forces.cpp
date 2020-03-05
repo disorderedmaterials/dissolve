@@ -42,22 +42,34 @@ ForceImportFileFormat::~ForceImportFileFormat()
  * Format Access
  */
 
+// Return enum options for ForceImportFormat
+EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::forceImportFormats()
+{
+	static EnumOptionsList ForceImportFileFormats = EnumOptionsList() <<
+		EnumOption(ForceImportFileFormat::XYZForces, 		"xyz",		"Simple X,Y,Z,f(x,y,z) Data") <<
+		EnumOption(ForceImportFileFormat::DLPOLYForces, 	"dlpoly",	"DL_POLY Config File Forces");
+
+	static EnumOptions<ForceImportFileFormat::ForceImportFormat> options("ForceImportFileFormat", ForceImportFileFormats);
+
+	return options;
+}
+
 // Return number of available formats
 int ForceImportFileFormat::nFormats() const
 {
 	return ForceImportFileFormat::nForceImportFormats;
 }
 
-// Return formats array
-const char** ForceImportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* ForceImportFileFormat::formatKeyword(int id) const
 {
-	return ForcesFormatKeywords;
+	return forceImportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** ForceImportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* ForceImportFileFormat::formatDescription(int id) const
 {
-	return NiceForcesFormatKeywords;
+	return forceImportFormats().descriptionByIndex(id);
 }
 
 // Return current format as ForceImportFormat
@@ -92,7 +104,7 @@ bool ForceImportFileFormat::importData(LineParser& parser, Array<double>& fx, Ar
 	bool result = false;
 	if (forceFormat() == ForceImportFileFormat::XYZForces) result = importXYZ(parser, fx, fy, fz);
 	else if (forceFormat() == ForceImportFileFormat::DLPOLYForces) return importDLPOLY(parser, fx, fy, fz);
-	else Messenger::error("Don't know how to load forces in format '%s'.\n", ForceImportFileFormat().format(forceFormat()));
+	else Messenger::error("Don't know how to load forces in format '%s'.\n", formatKeyword(forceFormat()));
 
 	return result;
 }

@@ -24,9 +24,27 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data3D Export Keywords
-const char* Data3DExportFormatKeywords[] = { "block", "cartesian", "pdens" };
-const char* NiceData3DExportFormatKeywords[] = { "Block Data", "Cartesian (x,y,z,value) Data", "PDens Data" };
+// Constructor
+Data3DExportFileFormat::Data3DExportFileFormat(const char* filename, Data3DExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for Data3DExportFormat
+EnumOptions<Data3DExportFileFormat::Data3DExportFormat> Data3DExportFileFormat::data3DExportFormats()
+{
+	static EnumOptionsList Data3DExportFormats = EnumOptionsList() <<
+		EnumOption(Data3DExportFileFormat::BlockData3D, 	"block",	"Block Data") <<
+		EnumOption(Data3DExportFileFormat::CartesianData3D, 	"cartesian",	"Cartesian (x,y,value) Data") <<
+		EnumOption(Data3DExportFileFormat::CartesianData3D, 	"pdens",	"DLPutils PDens Data");
+
+	static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> options("Data3DExportFileFormat", Data3DExportFormats);
+
+	return options;
+}
 
 // Return number of available formats
 int Data3DExportFileFormat::nFormats() const
@@ -34,27 +52,22 @@ int Data3DExportFileFormat::nFormats() const
 	return Data3DExportFileFormat::nData3DExportFormats;
 }
 
-// Return formats array
-const char** Data3DExportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* Data3DExportFileFormat::formatKeyword(int id) const
 {
-	return Data3DExportFormatKeywords;
+	return data3DExportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** Data3DExportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* Data3DExportFileFormat::formatDescription(int id) const
 {
-	return NiceData3DExportFormatKeywords;
+	return data3DExportFormats().descriptionByIndex(id);
 }
 
 // Return current format as CoordinateExportFormat
 Data3DExportFileFormat::Data3DExportFormat Data3DExportFileFormat::data3DFormat() const
 {
 	return (Data3DExportFileFormat::Data3DExportFormat) format_;
-}
-
-// Constructor
-Data3DExportFileFormat::Data3DExportFileFormat(const char* filename, Data3DExportFormat format) : FileAndFormat(filename, format)
-{
 }
 
 /*
@@ -153,10 +166,14 @@ bool Data3DExportFileFormat::exportData(const Data3D& data)
 
 	// Write data
 	bool result = false;
-	if (data3DFormat() == Data3DExportFileFormat::BlockData) result = exportBlock(parser, data);
-	else if (data3DFormat() == Data3DExportFileFormat::CartesianData) result = exportCartesian(parser, data);
-	else if (data3DFormat() == Data3DExportFileFormat::PDensData) result = exportPDens(parser, data);
-	else Messenger::error("Unrecognised data format.\nKnown formats are: %s.\n", Data3DExportFileFormat().formats());
+	if (data3DFormat() == Data3DExportFileFormat::BlockData3D) result = exportBlock(parser, data);
+	else if (data3DFormat() == Data3DExportFileFormat::CartesianData3D) result = exportCartesian(parser, data);
+	else if (data3DFormat() == Data3DExportFileFormat::PDensData3D) result = exportPDens(parser, data);
+	else
+	{
+		Messenger::error("Unrecognised Data3D format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 
 	return result;
 }

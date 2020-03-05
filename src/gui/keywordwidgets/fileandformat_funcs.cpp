@@ -49,7 +49,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 
 	// Populate combo with the file formats available
 	ui_.FormatCombo->clear();
-	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FormatCombo->addItem(keyword_->data().format(n));
+	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FormatCombo->addItem(keyword_->data().formatKeyword(n));
 
 	// If the FileAndFormat has keyword options, enable the options button.
 	ui_.OptionsButton->setEnabled(keyword_->hasOptions());

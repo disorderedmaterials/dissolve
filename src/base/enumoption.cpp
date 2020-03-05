@@ -27,10 +27,28 @@
 // Static Singleton
 UnrecognisedEnumOption EnumOptionsBase::unrecognisedOption_;
 
+// Constructors
+EnumOption::EnumOption()
+{
+	enumeration_ = 0;
+	keyword_ = "";
+	description_ = "";
+	minArgs_ = 0;
+	maxArgs_ = 0;
+}
 EnumOption::EnumOption(const int enumeration, const char* keyword, int minArgs, int maxArgs)
 {
 	enumeration_ = enumeration;
 	keyword_ = keyword;
+	description_ = "";
+	minArgs_ = minArgs;
+	maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
+}
+EnumOption::EnumOption(const int enumeration, const char* keyword, const char* description, int minArgs, int maxArgs)
+{
+	enumeration_ = enumeration;
+	keyword_ = keyword;
+	description_ = description;
 	minArgs_ = minArgs;
 	maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
 }
@@ -51,6 +69,12 @@ int EnumOption::enumeration() const
 const char* EnumOption::keyword() const
 {
 	return keyword_;
+}
+
+// Return option description
+const char* EnumOption::description() const
+{
+	return description_;
 }
 
 // Return whether the option has any associated arguments

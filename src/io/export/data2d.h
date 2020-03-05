@@ -32,17 +32,25 @@ class Data2DExportFileFormat : public FileAndFormat
 {
 	public:
 	// Available data formats
-	enum Data2DExportFormat { BlockData, CartesianData, nData2DExportFormats };
+	enum Data2DExportFormat { BlockData2D, CartesianData2D, nData2DExportFormats };
+	// Constructor
+	Data2DExportFileFormat(const char* filename = NULL, Data2DExportFormat format = Data2DExportFileFormat::BlockData2D);
+
+
+	/*
+	 * Format Access
+	 */
+	public:
+	// Return enum options for Data2DExportFormat
+	static EnumOptions<Data2DExportFileFormat::Data2DExportFormat> data2DExportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char* formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char* formatDescription(int id) const;
 	// Return current format as Data2DExportFormat
 	Data2DExportFormat data2DFormat() const;
-	// Constructor
-	Data2DExportFileFormat(const char* filename = NULL, Data2DExportFormat format = Data2DExportFileFormat::BlockData);
 
 
 	/*

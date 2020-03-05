@@ -77,6 +77,18 @@ const char* EnumOptionsBase::keywordByIndex(int index) const
 	return options_.constAt(index).keyword();
 }
 
+// Return description for the nth keyword in the list
+const char* EnumOptionsBase::descriptionByIndex(int index) const
+{
+	if ((index < 0) || (index >= options_.nItems()))
+	{
+		Messenger::error("Keyword index %i out of range for EnumOptions '%s'.\n", index, name_);
+		return unrecognisedOption_.keyword();
+	}
+
+	return options_.constAt(index).description();
+}
+
 // Return option by keyword
 const EnumOption& EnumOptionsBase::option(const char* keyword) const
 {

@@ -46,7 +46,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	configuration_ = cfg;
 
 	// Populate coordinates file format combo
-	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
+	for (int n=0; n < cfg->inputCoordinates().nFormats(); ++n) ui_.CoordinatesFileFormatCombo->addItem(cfg->inputCoordinates().formatKeyword(n));
 
 	// Populate density units combo
 	ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
