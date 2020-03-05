@@ -94,9 +94,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui_.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
 
 	// Set sensible lower limits and steps for range and delta
-	ui_.PairPotentialRangeSpin->setRange(true, 1.0);
+	ui_.PairPotentialRangeSpin->setRange(1.0, 1.0e5);
 	ui_.PairPotentialRangeSpin->setSingleStep(1.0);
-	ui_.PairPotentialDeltaSpin->setRange(true, 0.001);
+	ui_.PairPotentialDeltaSpin->setRange(0.001, 1.0);
 	ui_.PairPotentialDeltaSpin->setSingleStep(0.001);
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
