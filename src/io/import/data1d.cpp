@@ -24,10 +24,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data1D Type Keywords
-const char* Data1DImportFormatKeywords[] = { "xy", "histogram", "mint" };
-const char* NiceData1DImportFormatKeywords[] = { "Simple XY data (x = bin centres)", "Histogrammed Data (x = bin left-boundaries)", "Gudrun output (mint01)" };
-
 // Constructor
 Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format)
 {
@@ -46,22 +42,35 @@ Data1DImportFileFormat::~Data1DImportFileFormat()
  * Format Access
  */
 
+// Return enum options for Data1DImportFormat
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
+{
+	static EnumOptionsList Data1DImportFormats = EnumOptionsList() <<
+		EnumOption(Data1DImportFileFormat::XYData1D, 		"xy",		"Simple XY data (x = bin centres)") <<
+		EnumOption(Data1DImportFileFormat::HistogramData1D, 	"histogram",	"Histogrammed Data (x = bin left-boundaries)") <<
+		EnumOption(Data1DImportFileFormat::GudrunMintData1D, 	"mint",		"Gudrun output (mint01)");
+
+	static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> options("Data1DImportFileFormat", Data1DImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
 int Data1DImportFileFormat::nFormats() const
 {
 	return Data1DImportFileFormat::nData1DImportFormats;
 }
 
-// Return formats array
-const char** Data1DImportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* Data1DImportFileFormat::formatKeyword(int id) const
 {
-	return Data1DImportFormatKeywords;
+	return data1DImportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** Data1DImportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* Data1DImportFileFormat::formatDescription(int id) const
 {
-	return NiceData1DImportFormatKeywords;
+	return data1DImportFormats().descriptionByIndex(id);
 }
 
 // Return current format as Data1DImportFormat
@@ -97,7 +106,7 @@ bool Data1DImportFileFormat::importData(LineParser& parser, Data1D& data)
 	if (data1DFormat() == Data1DImportFileFormat::XYData1D) result = importXY(parser, data);
 	else if (data1DFormat() == Data1DImportFileFormat::HistogramData1D) result = importHistogram(parser, data);
 	else if (data1DFormat() == Data1DImportFileFormat::GudrunMintData1D) result = importGudrunMint(parser, data);
-	else Messenger::error("Don't know how to load Data1D of format '%s'.\n", Data1DImportFileFormat().format(data1DFormat()));
+	else Messenger::error("Don't know how to load Data1D of format '%s'.\n", formatKeyword(data1DFormat()));
 
 	// If we failed, may as well return now
 	if (!result) return false;

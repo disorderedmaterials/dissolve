@@ -20,13 +20,13 @@ In the interests of speed, we'll use the default number of molecules (100) for t
 
 > Open the settings for the `Parameters` node
 {: .action .action_settings}
-> Check that the value of the "rho" variable is 0.876. Note that this is "just a number" - units are given in the `AddSpecies` node when we reference this value.
+> Check that the value of the "rho" variable is 0.876. Note that this is "just a number" - units are given in the `AddSpecies` node when we reference this value
 {: .step}
 > Open the settings for the `AddSpecies` node
 {: .action .action_settings}
-> Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`.
+> Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`
 {: .step}
-> Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters.
+> Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters
 {: .action .action_mouse}
 
 The resulting box will have a side length of just over 24.5 &#8491;.
@@ -40,7 +40,7 @@ In anticipation of some bad contacts:
 
 > **Liquid** configuration tab
 {: .action .action_tabs}
-> Set the **Requested** value for the _Size Factor Scaling_ to 10.0.
+> Set the **Requested** value for the _Size Factor Scaling_ to 10.0
 {: .step}
 
 Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since this is larger than the half the maximum width of our simulation box.
@@ -49,5 +49,8 @@ Finally, before we move on, we will have to reduce our pair potential range from
 {: .action .action_tabs}
 > Reduce the pair potential **Range** from 15 to 12 &#8491;
 {: .step}
+
+> For a cubic box, you can't have a cutoff value greater than half the box length, as this means that a given atom will 'see' other atoms twice because of the periodic boundary conditions.
+{: .tip}
 
 [Previous Step](step1.md){: .btn }   [Next Step](step3.md){: .btn .right}

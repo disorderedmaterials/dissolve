@@ -33,16 +33,24 @@ class PairPotentialExportFileFormat : public FileAndFormat
 	public:
 	// Available data formats
 	enum PairPotentialExportFormat { BlockPairPotential, DLPOLYTABLEPairPotential, nPairPotentialExportFormats };
-	// Return number of available formats
-	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
-	// Return current format as PairPotentialExportFormat
-	PairPotentialExportFormat pairPotentialFormat() const;
 	// Constructor
 	PairPotentialExportFileFormat(const char* filename = NULL, PairPotentialExportFormat format = BlockPairPotential);
+
+
+	/*
+	 * Format Access
+	 */
+	public:
+	// Return enum options for PairPotentialExportFormat
+	static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> pairPotentialExportFormats();
+	// Return number of available formats
+	int nFormats() const;
+	// Return format keyword for supplied index
+	const char* formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char* formatDescription(int id) const;
+	// Return current format as PairPotentialExportFormat
+	PairPotentialExportFormat pairPotentialFormat() const;
 
 
 	/*

@@ -147,6 +147,19 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 	return false;
 }
 
+// Return whether all atoms in the interaction are currently selected
+bool SpeciesAngle::isSelected() const
+{
+#ifdef CHECKS
+	if (i_ == NULL || j_ == NULL || k_ == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesAngle::isSelected(). Returning false...\n");
+		return false;
+	}
+#endif
+	return (i_->isSelected() && j_->isSelected() && k_->isSelected());
+}
+
 /*
  * Interaction Parameters
  */

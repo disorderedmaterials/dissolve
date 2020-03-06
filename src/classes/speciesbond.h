@@ -75,6 +75,8 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	int index(int n) const;
 	// Return whether SpeciesAtoms match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Return whether all atoms in the interaction are currently selected
+	bool isSelected() const;
 
 
 	/*

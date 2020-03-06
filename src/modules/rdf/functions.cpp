@@ -209,39 +209,36 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 			OrderedPointerArray<Atom>& atomsJ = cellJ->atoms();
 			nJ = atomsJ.nItems();
 
-			// Only perform mim on atom pairs if we really need to...
-			if (cellArray.useMim(cellI,cellJ))
+			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the absence of a 2D look-up array
+			for (ii = 0; ii < nI; ++ii)
 			{
-				for (ii = 0; ii < nI; ++ii)
-				{
-					i = atomsI[ii];
-					typeI = i->localTypeIndex();
-					rI = i->r();
+				i = atomsI[ii];
+				typeI = i->localTypeIndex();
+				rI = i->r();
 
-					for (jj = 0; jj < nJ; ++jj)
-					{
-						j = atomsJ[jj];
-						distance = box->minimumDistance(j, rI);
-						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-					}
+				for (jj = 0; jj < nJ; ++jj)
+				{
+					j = atomsJ[jj];
+					distance = box->minimumDistance(j, rI);
+					partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
 				}
 			}
-			else
-			{
-				for (ii = 0; ii < nI; ++ii)
-				{
-					i = atomsI[ii];
-					typeI = i->localTypeIndex();
-					rI = i->r();
-
-					for (jj = 0; jj < nJ; ++jj)
-					{
-						j = atomsJ[jj];
-						distance = (rI - j->r()).magnitude();
-						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
-					}
-				}
-			}
+// 			else
+// 			{
+// 				for (ii = 0; ii < nI; ++ii)
+// 				{
+// 					i = atomsI[ii];
+// 					typeI = i->localTypeIndex();
+// 					rI = i->r();
+//
+// 					for (jj = 0; jj < nJ; ++jj)
+// 					{
+// 						j = atomsJ[jj];
+// 						distance = (rI - j->r()).magnitude();
+// 						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
+// 					}
+// 				}
+// 			}
 		}
 	}
 
@@ -324,7 +321,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 			{
 				j = atoms[jj];
 
-				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				if (i->cell()->mimRequired(j->cell())) distance = box->minimumDistance(i, j);
 				else distance = (i->r() - j->r()).magnitude();
 				originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 			}
@@ -490,7 +487,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 //
 // 					i = b->i();
 // 					j = b->j();
-// 					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+// 					if (i->mimRequired(j)) distance = box->minimumDistance(i, j);
 // 					else distance = (i->r() - j->r()).magnitude();
 // 					tempgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 //

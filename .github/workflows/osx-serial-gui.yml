@@ -5,6 +5,8 @@ on:
     branches:
     - develop
     - master
+    paths:
+    - 'src/**'
 
 jobs:
   build:
@@ -39,6 +41,7 @@ jobs:
         Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
         DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
         ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve-gui.dmginfo
+        sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Info.plist
         dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${DISSOLVE_VERSION}.dmg
         mkdir damage
         mv *dmg damage

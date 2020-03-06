@@ -56,6 +56,12 @@ class AddForcefieldTermsWizard : public WizardWidget
 	Species* targetSpecies_;
 	// Species pointer with newly-applied Forcefield terms
 	Species* modifiedSpecies_;
+	// List of atom type name mappings to be applied
+	RefDataList<const AtomType,CharString> typeNameMappings_;
+
+	private:
+	// Return (mapped) name to use for specified type
+	const char* mappedName(const AtomType* at);
 
 	public:
 	// Set Dissolve reference
@@ -124,6 +130,8 @@ class AddForcefieldTermsWizard : public WizardWidget
 	void updateAtomTypesConflictsListRow(int row, AtomType* atomType, bool createItem);
 	// Update page with AtomTypes in our temporary Dissolve reference
 	void updateAtomTypesConflictsPage();
+	// Check for atom type naming conflicts
+	void checkForAtomTypeConflicts();
 
 	private slots:
 	void on_AtomTypesConflictsList_itemSelectionChanged();
@@ -136,9 +144,10 @@ class AddForcefieldTermsWizard : public WizardWidget
 	 * Intramolecular Page
 	 */
 	private slots:
-	void on_ApplyIntramolecularTermsCheck_clicked(bool checked);
-	void on_ApplyNoIntramolecularTermsCheck_clicked(bool checked);
-	void on_ReduceToMasterTermsCheck_clicked(bool checked);
+	void on_IntramolecularTermsAssignAllRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignSelectionRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignNoneRadio_clicked(bool checked);
+	void on_NoMasterTermsCheck_clicked(bool checked);
 
 
 	/*

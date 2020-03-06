@@ -46,15 +46,6 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainT
 	ui_.AtomTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
 	for (int n=2; n<6; ++n) ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	ui_.AtomTable->horizontalHeader()->setFont(font());
-	// -- Bond Table
-	for (int n=0; n<2; ++n) ui_.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions()), dissolve_.coreData().masterBonds()));
-	// -- Angle Table
-	for (int n=0; n<3; ++n) ui_.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	// -- Torsion Table
-	for (int n=0; n<4; ++n) ui_.TorsionTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	// -- Improper Table
-	for (int n=0; n<4; ++n) ui_.ImproperTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Isotopologues Tree
 	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
 	ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));

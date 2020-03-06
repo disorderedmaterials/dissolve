@@ -40,7 +40,7 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 > Enable the **ExcludeSameMolecule** to prevent the unwanted self-correlation spike at 0 in the resulting RDF
 {: .step}
 
-> It would also be nice here to calculate the spatial density function and compare it, but this takes more iterations than a (sane) example will allow.
+> It would also be nice here to calculate the spatial density function (the three-dimensional distribution of molecules around a reference point) and compare it, but this takes more iterations than a (sane) example will allow.
 {: .tip}
 
 [Previous Step](step3.md){: .btn }   [Next Step](step5.md){: .btn .right}

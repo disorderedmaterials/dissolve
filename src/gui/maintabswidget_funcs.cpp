@@ -35,6 +35,10 @@ MainTabsWidget::MainTabsWidget(QWidget* parent) : QTabWidget(parent)
 	mainTabsBar_ = new MainTabsBar(this);
 	setTabBar(mainTabsBar_);
 	connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
+
+	// Always show scroll buttons when there are many tabs
+	setUsesScrollButtons(true);
+	mainTabsBar_->setUsesScrollButtons(true);
 }
 
 MainTabsWidget::~MainTabsWidget()
@@ -198,6 +202,9 @@ void MainTabsWidget::addCoreTabs(DissolveWindow* dissolveWindow)
 // Remove tabs related to the current data
 void MainTabsWidget::clearTabs()
 {
+	// Empty our list of close button references
+	closeButtons_.clear();
+
 	// Removal of the tab and widget will be handled by the class destructors
 	workspaceTabs_.clear();
 	moduleTabs_.clear();

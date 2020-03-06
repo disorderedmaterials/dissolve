@@ -144,11 +144,29 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	/*
 	 * Term Assignment
 	 */
+	protected:
+	// Assign suitable AtomType to the supplied atom
+	virtual bool assignAtomType(SpeciesAtom* i, CoreData& coreData) const;
+
 	public:
-	// Assign suitable AtomTypes to the supplied Species
-	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
+	// AtomType Assignment Strategy
+	enum AtomTypeAssignmentStrategy
+	{
+		 TypeAll,		/* Assign atom types to all atoms, overwriting any that exist */
+		 TypeMissing,		/* Assign atom types to all atoms that do not currently have a type assigned */
+		 TypeSelection		/* Assign atom types to the current selection, overwriting any types on the atoms that already exist */
+	};
+	// Intramolecular Term Assignment Flags
+	enum IntramolecularTermAssignmentFlags
+	{
+		DetermineTypesFlag = 1,		/* Attempt to determine atom types on-the-fly, rather than use those existing on the atoms */
+		GenerateImpropersFlag = 2,	/* Generate improper terms where available */
+		SelectionOnlyFlag = 4		/* Only assign terms where all atoms are in the current selection */
+	};
+	// Assign suitable AtomTypes to the supplied Species, returning the number of failures
+	int assignAtomTypes(Species* sp, CoreData& coreData, AtomTypeAssignmentStrategy strategy) const;
 	// Assign intramolecular parameters to the supplied Species
-	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool generateImpropers) const;
+	virtual bool assignIntramolecular(Species* sp, int flags = 0) const;
 
 
 	/*

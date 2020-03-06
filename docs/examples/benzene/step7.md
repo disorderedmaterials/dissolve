@@ -27,7 +27,7 @@ Once the additional energy has stabilised at 10.0, we can increase it to 20.0 to
 > Start the simulation
 {: .action}
 
-Keep running until the applied potential gets to the new limit - we don't want the empirical potential to be varying too much while we're conducting our production run. Once it has, we can save another restart file if we want:
+Keep running until the applied potential gets to the new limit - we don't want the empirical potential to be varying too much while we're conducting our production run, otherwise any properties we calculate may be calculated from a series of configuration that do no represent a stable structural point. Once it has, we can save another restart file if we want:
 
 > Simulation &#8680; Save Restart Point...
 {: .action .action_menu}

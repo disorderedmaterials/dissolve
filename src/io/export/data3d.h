@@ -32,17 +32,25 @@ class Data3DExportFileFormat : public FileAndFormat
 {
 	public:
 	// Available data formats
-	enum Data3DExportFormat { BlockData, CartesianData, PDensData, nData3DExportFormats };
+	enum Data3DExportFormat { BlockData3D, CartesianData3D, PDensData3D, nData3DExportFormats };
+	// Constructor
+	Data3DExportFileFormat(const char* filename = NULL, Data3DExportFormat format = Data3DExportFileFormat::BlockData3D);
+
+
+	/*
+	 * Format Access
+	 */
+	public:
+	// Return enum options for Data3DExportFormat
+	static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> data3DExportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char* formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char* formatDescription(int id) const;
 	// Return current format as Data3DExportFormat
 	Data3DExportFormat data3DFormat() const;
-	// Constructor
-	Data3DExportFileFormat(const char* filename = NULL, Data3DExportFormat format = Data3DExportFileFormat::BlockData);
 
 
 	/*

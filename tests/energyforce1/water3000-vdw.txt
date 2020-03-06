@@ -58,6 +58,6 @@ PairPotentials
   Range  15.000000
   ShortRangeTruncation  None
   Delta  0.001
-  Parameters  'OW'  0.0   LJGeometric   0.6503    3.165492
-  Parameters  'HW'  0.0    LJGeometric  0.0       0.0
+  Parameters  'OW'  O  0.0   LJGeometric   0.6503    3.165492
+  Parameters  'HW'  H  0.0    LJGeometric  0.0       0.0
 EndPairPotentials

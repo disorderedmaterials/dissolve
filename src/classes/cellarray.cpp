@@ -215,21 +215,15 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 				for (int iCorner = 0; iCorner < 8; ++iCorner)
 				{
 					// Set integer vertex of corner on 'central' box
-					i.set(iCorner&1, iCorner&2, iCorner&4);
+					i.set(iCorner&1 ? 1 : 0, iCorner&2 ? 1 : 0, iCorner&4 ? 1 : 0);
 
 					for (int jCorner = 0; jCorner < 8; ++jCorner)
 					{
 						// Set integer vertex of corner on 'other' box
-						j.set(x + jCorner&1, y + jCorner&2, z + jCorner&4);
+						j.set(x + (jCorner&1 ? 1 : 0), y + (jCorner&2 ? 1 : 0), z + (jCorner&4 ? 1 : 0));
 
 						// Get minimum image of vertex j w.r.t. i
-						j -= i;
-						j.x = j.x%divisions_.x;
-						if (j.x < 0) j.x += divisions_.x;
-						j.y = j.y%divisions_.y;
-						if (j.y < 0) j.y += divisions_.y;
-						j.z = j.z%divisions_.z;
-						if (j.z < 0) j.z += divisions_.z;
+						j = mimGridDelta(j - i);
 
 						r.set(j.x, j.y, j.z);
 						r = cellAxes * r;
@@ -255,7 +249,6 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
-	bool mimRequired;
 	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours;
 	Vec3<int> gridRef, delta;
 	for (n=0; n<nCells_; ++n)
@@ -270,10 +263,10 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next())
 		{
-			// Retrieve Cell pointers
+			// Retrieve Cell pointer
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
-			mimRequired = box_->type() == Box::NonPeriodicBoxType ? false : useMim(&cells_[n], nbr);
-			if (mimRequired) mimNeighbours.add(nbr);
+			if (box_->type() == Box::NonPeriodicBoxType) nearNeighbours.add(nbr);
+			else if (minimumImageRequired(&cells_[n], nbr, pairPotentialRange)) mimNeighbours.add(nbr);
 			else nearNeighbours.add(nbr);
 		}
 
@@ -361,61 +354,19 @@ Cell* CellArray::cell(const Vec3<double> r) const
 	return &cells_[indices.x*divisions_.y*divisions_.z + indices.y*divisions_.z + indices.z];
 }
 
-// Return whether two Cells need minimum image calculation
-bool CellArray::useMim(const Cell* a, const Cell* b) const
-{
-	/*
-	 * Since we partition the simulation Box up into subcells, for speed we can determine and store whether any
-	 * minimum image operations are required between the contents of the two cells. If *twice* the difference between any 
-	 * component of any grid reference is greater than or equal to the value of the number of Cells along the relevant side
-	 * then minimum image calculations should be performed. A secondary check is made to account for small systems, in which
-	 * the Cell 'b' is mirrored onto the opposite side of the Cell 'a' - if the resulting difference, minus one, between
-	 * gridReference coordinates is greater than or equal to the cellExtent in any direction, again minimum image must
-	 * be performed.
-	 */
-#ifdef CHECKS
-	// Check for NULL cell pointers
-	if (a == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::useMim().\n");
-		return false;
-	}
-	if (b == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::useMim().\n");
-		return false;
-	}
-#endif
-	// Never require images for the same Cell
-	if (a == b) return false;
-
-	Vec3<int> u = a->gridReference() - b->gridReference();
-	if (u.x < divisions_.x*0.5) return true;
-	if (u.y < divisions_.y*0.5) return true;
-	if (u.z < divisions_.z*0.5) return true;
-	if (u.x > divisions_.x*0.5) return true;
-	if (u.y > divisions_.y*0.5) return true;
-	if (u.z > divisions_.z*0.5) return true;
-
-	return false;
-}
-
-// Return if any Atoms in the supplied Cells are within the range supplied
+// Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
 bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 {
-	/*
-	 * For the supplied Cells, check whether it is possible for the contained Atoms to be within the specified distance.
-	 */
 #ifdef CHECKS
 	// Check for NULL cell pointers
 	if (a == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::useMim().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::withinRange().\n");
 		return false;
 	}
 	if (b == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::useMim().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::withinRange().\n");
 		return false;
 	}
 #endif
@@ -426,7 +377,7 @@ bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 	/*
 	 * We now have the minimum image integer grid vector from Cell a to Cell b.
 	 * Subtract 1 from any vector that is not zero (adding 1 to negative indices and -1 to positive indices.
-	 * This has the effect of shortening the vector to account for atoms being at the near edges of the distant cells.
+	 * This has the effect of shortening the vector to account for atoms being at the near edges / corners of the two cells.
 	 */
 	u.x -= DissolveMath::sgn(u.x);
 	u.y -= DissolveMath::sgn(u.y);
@@ -439,15 +390,68 @@ bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 	return (v.magnitude() <= distance);
 }
 
+// Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
+bool CellArray::minimumImageRequired(const Cell* a, const Cell* b, double distance)
+{
+#ifdef CHECKS
+	// Check for NULL cell pointers
+	if (a == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::minimumImageRequired().\n");
+		return false;
+	}
+	if (b == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::minimumImageRequired().\n");
+		return false;
+	}
+#endif
+
+	// Check every pair of corners between the Cell two grid references, and determine if minimum image calculation would be required
+	Vec3<int> i, j;
+	Vec3<double> r;
+	for (int iCorner = 0; iCorner < 8; ++iCorner)
+	{
+		// Set integer vertex of corner on 'central' box
+		i.set(a->gridReference().x + (iCorner&1 ? 1 : 0), a->gridReference().y + (iCorner&2 ? 1 : 0), a->gridReference().z + (iCorner&4 ? 1 : 0));
+
+		for (int jCorner = 0; jCorner < 8; ++jCorner)
+		{
+			// Set integer vertex of corner on 'other' box
+			j.set(b->gridReference().x + (jCorner&1 ? 1 : 0), b->gridReference().y + (jCorner&2 ? 1 : 0), b->gridReference().z + (jCorner&4 ? 1 : 0));
+
+			// Check literal distance between points - if it's less than the distance specified we can continue (no mim required)
+			j -= i;
+			r.set(j.x, j.y, j.z);
+			r = axes_ * r;
+			if (r.magnitude() < distance) continue;
+
+			// Check minimum image distance between points - if it's less than the distance specified we require mim for this cell pair
+			j = mimGridDelta(j);
+			r.set(j.x, j.y, j.z);
+			r = axes_ * r;
+			if (r.magnitude() < distance) return true;
+		}
+	}
+
+	return false;
+}
+
 // Return the minimum image grid delta between the two specified Cells
 Vec3<int> CellArray::mimGridDelta(const Cell* a, const Cell* b) const
 {
 	Vec3<int> u = b->gridReference() - a->gridReference();
-	if (u.x > divisions_.x*0.5) u.x -= divisions_.x;
-	else if (u.x < -divisions_.x*0.5) u.x += divisions_.x;
-	if (u.y > divisions_.y*0.5) u.y -= divisions_.y;
-	else if (u.y < -divisions_.y*0.5) u.y += divisions_.y;
-	if (u.z > divisions_.z*0.5) u.z -= divisions_.z;
-	else if (u.z < -divisions_.z*0.5) u.z += divisions_.z;
-	return u;
+	return mimGridDelta(u);
+}
+
+// Return the minimum image equivalent of the supplied grid delta
+Vec3<int> CellArray::mimGridDelta(Vec3<int> delta) const
+{
+	if (delta.x > divisions_.x*0.5) delta.x -= divisions_.x;
+	else if (delta.x < -divisions_.x*0.5) delta.x += divisions_.x;
+	if (delta.y > divisions_.y*0.5) delta.y -= divisions_.y;
+	else if (delta.y < -divisions_.y*0.5) delta.y += divisions_.y;
+	if (delta.z > divisions_.z*0.5) delta.z -= divisions_.z;
+	else if (delta.z < -divisions_.z*0.5) delta.z += divisions_.z;
+	return delta;
 }

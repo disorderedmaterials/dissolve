@@ -25,9 +25,26 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// PairPotential Export Keywords
-const char* PairPotentialExportFormatKeywords[] = { "block", "TABLE" };
-const char* NicePairPotentialExportFormatKeywords[] = { "Block Data", "DL_POLY TABLE file" };
+// Constructor
+PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char* filename, PairPotentialExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for PairPotentialExportFormat
+EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> PairPotentialExportFileFormat::pairPotentialExportFormats()
+{
+	static EnumOptionsList PairPotentialExportFormats = EnumOptionsList() <<
+		EnumOption(PairPotentialExportFileFormat::BlockPairPotential, 		"block",	"Block Data") <<
+		EnumOption(PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, 	"table",	"DL_POLY TABLE File");
+
+	static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> options("PairPotentialExportFileFormat", PairPotentialExportFormats);
+
+	return options;
+}
 
 // Return number of available formats
 int PairPotentialExportFileFormat::nFormats() const
@@ -35,27 +52,22 @@ int PairPotentialExportFileFormat::nFormats() const
 	return PairPotentialExportFileFormat::nPairPotentialExportFormats;
 }
 
-// Return formats array
-const char** PairPotentialExportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* PairPotentialExportFileFormat::formatKeyword(int id) const
 {
-	return PairPotentialExportFormatKeywords;
+	return pairPotentialExportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** PairPotentialExportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* PairPotentialExportFileFormat::formatDescription(int id) const
 {
-	return NicePairPotentialExportFormatKeywords;
+	return pairPotentialExportFormats().descriptionByIndex(id);
 }
 
 // Return current format as PairPotentialExportFormat
 PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
 {
 	return (PairPotentialExportFileFormat::PairPotentialExportFormat) format_;
-}
-
-// Constructor
-PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char* filename, PairPotentialExportFormat format) : FileAndFormat(filename, format)
-{
 }
 
 /*
@@ -136,7 +148,10 @@ bool PairPotentialExportFileFormat::exportData(PairPotential* pp)
 	bool result = false;
 	if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential) result = exportBlock(parser, pp);
 	else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential) result = exportDLPOLY(parser, pp);
-	else Messenger::error("Unrecognised pair potential format.\nKnown formats are: %s.\n", PairPotentialExportFileFormat().formats());
-
+	else
+	{
+		Messenger::error("Unrecognised pair potential format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 	return result;
 }

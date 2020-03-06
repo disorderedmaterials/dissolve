@@ -26,9 +26,25 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Trajectory Type Keywords
-const char* TrajectoryExportFormatKeywords[] = { "xyz" };
-const char* NiceTrajectoryExportFormatKeywords[] = { "XYZ Trajectory" };
+// Constructor
+TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char* filename, TrajectoryExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for TrajectoryExportFormat
+EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExportFileFormat::trajectoryExportFormats()
+{
+	static EnumOptionsList TrajectoryExportFormats = EnumOptionsList() <<
+		EnumOption(TrajectoryExportFileFormat::XYZTrajectory, 	"xyz",		"XYZ Trajectory");
+
+	static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> options("TrajectoryExportFileFormat", TrajectoryExportFormats);
+
+	return options;
+}
 
 // Return number of available formats
 int TrajectoryExportFileFormat::nFormats() const
@@ -36,27 +52,22 @@ int TrajectoryExportFileFormat::nFormats() const
 	return TrajectoryExportFileFormat::nTrajectoryExportFormats;
 }
 
-// Return formats array
-const char** TrajectoryExportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* TrajectoryExportFileFormat::formatKeyword(int id) const
 {
-	return TrajectoryExportFormatKeywords;
+	return trajectoryExportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** TrajectoryExportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* TrajectoryExportFileFormat::formatDescription(int id) const
 {
-	return NiceTrajectoryExportFormatKeywords;
+	return trajectoryExportFormats().descriptionByIndex(id);
 }
 
 // Return current format as TrajectoryExportFormat
 TrajectoryExportFileFormat::TrajectoryExportFormat TrajectoryExportFileFormat::trajectoryFormat() const
 {
 	return (TrajectoryExportFileFormat::TrajectoryExportFormat) format_;
-}
-
-// Constructor
-TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char* filename, TrajectoryExportFormat format) : FileAndFormat(filename, format)
-{
 }
 
 /*
@@ -94,20 +105,27 @@ bool TrajectoryExportFileFormat::exportData(Configuration* cfg)
 		return false;
 	}
 
-	bool headerResult = false;
-
 	// Write header?
 	if (!fileExists)
 	{
-		// if (format == OneThatNeedsAHeader) headerResult = writeAHeader(parser, cfg);
-		// else result = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are: %s.\n", TrajectoryExportFileFormat().formats());
+		auto headerResult = false;
+
+		if (format_ == XYZTrajectory) headerResult = true;
+// 		else if (format_ == OneThatNeedsAHeaderTrajectory) headerResult = writeAHeader(parser, cfg);
+		else headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
+		printAvailableFormats();
+
+		if (!headerResult) return false;
 	}
-	if (!headerResult) return false;
 
 	// Append frame in supplied format
-	bool frameResult = false;
+	auto frameResult = false;
 	if (trajectoryFormat() == TrajectoryExportFileFormat::XYZTrajectory) frameResult = exportXYZ(parser, cfg);
-	else Messenger::error("Unrecognised trajectory format.\nKnown formats are: %s.\n", TrajectoryExportFileFormat().formats());
+	else
+	{
+		Messenger::error("Unrecognised trajectory format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 
 	parser.closeFiles();
 

@@ -1,0 +1,58 @@
+name: IssueBot
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  manage_issues:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Documentation"
+        label-name: "Scope: Documentation"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "GUI"
+        label-name: "Scope: GUI"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Modules"
+        label-name: "Scope: Modules"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Workflow"
+        label-name: "Scope: Workflow"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Forcefields"
+        label-name: "Scope: Forcefields"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Source Code"
+        label-name: "Scope: Source Code"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Speed"
+        label-name: "Scope: Speed"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.MAIN_SECRET }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Distribution"
+        label-name: "Scope: Distribution"

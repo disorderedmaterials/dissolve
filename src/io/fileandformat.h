@@ -53,24 +53,22 @@ class FileAndFormat
 	public:
 	// Return number of available formats
 	virtual int nFormats() const = 0;
-	// Return formats array
-	virtual const char** formats() const = 0;
-	// Return nice formats array
-	virtual const char** niceFormats() const = 0;
+	// Return format keyword for supplied index
+	virtual const char* formatKeyword(int id) const = 0;
+	// Return description string for supplied index
+	virtual const char* formatDescription(int id) const = 0;
 	// Convert text string to format index
 	int format(const char* s) const;
-	// Convert format index to text string
-	const char* format(int id) const;
-	// Convert format index to nice text string
-	const char* niceFormat(int id) const;
 	// Set format index
 	void setFormatIndex(int id);
 	// Return format index
 	int formatIndex() const;
 	// Return format string
 	const char* format() const;
-	// Return nice format string
-	const char* niceFormat() const;
+	// Return description string
+	const char* description() const;
+	// Print available formats
+	void printAvailableFormats() const;
 
 
 	/*

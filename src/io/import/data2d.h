@@ -47,12 +47,14 @@ class Data2DImportFileFormat : public FileAndFormat
 	 * Format Access
 	 */
 	public:
+	// Return enum options for Data2DImportFormat
+	static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> data2DImportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char* formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char* formatDescription(int id) const;
 	// Return current format as Data2DImportFormat
 	Data2DImportFormat data2DFormat() const;
 

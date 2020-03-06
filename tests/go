@@ -8,7 +8,7 @@ SERIALBINARY=../src/dissolve
 PARALLELBINARY=../src/dissolve-mpi
 TESTS=""
 NTESTS="0"
-COMMONARGS="-x"
+COMMONARGS="-x -i"
 
 while getopts "as:p:" op
 do

@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_DELEGATES_EXPONENTIALSPIN_H
 #define DISSOLVE_DELEGATES_EXPONENTIALSPIN_H
 
-#include <QtWidgets/QItemDelegate>
+#include <QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
 #include "gui/widgets/exponentialspin.hui"
