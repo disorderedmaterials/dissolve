@@ -55,7 +55,7 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'OW'  0.0    LJGeometric    0.0      0.0
-  Parameters  'HW'  0.0    LJGeometric    0.0      0.0
+  Parameters  'OW'  O  0.0    LJGeometric    0.0      0.0
+  Parameters  'HW'  H  0.0    LJGeometric    0.0      0.0
 EndPairPotentials
 

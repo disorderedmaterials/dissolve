@@ -116,11 +116,11 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  CT  1.450000e-01  LJGeometric  2.761440e-01  3.500000e+00  0.000000e+00  0.000000e+00
-  Parameters  CT2  -1.200000e-01  LJGeometric  2.761440e-01  3.500000e+00  0.000000e+00  0.000000e+00
-  Parameters  OH  -7.000000e-01  LJGeometric  7.112800e-01  3.070000e+00  0.000000e+00  0.000000e+00
-  Parameters  HC  6.000000e-02  LJGeometric  1.255200e-01  2.500000e+00  0.000000e+00  0.000000e+00
-  Parameters  HO  4.350000e-01  LJGeometric  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  CT  C  1.450000e-01  LJGeometric  2.761440e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  CT2  C  -1.200000e-01  LJGeometric  2.761440e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  OH  O  -7.000000e-01  LJGeometric  7.112800e-01  3.070000e+00  0.000000e+00  0.000000e+00
+  Parameters  HC  H  6.000000e-02  LJGeometric  1.255200e-01  2.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  HO  H  4.350000e-01  LJGeometric  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
   Range  15.000000
   Delta  0.005000
   IncludeCoulomb  False

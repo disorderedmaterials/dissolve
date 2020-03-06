@@ -170,6 +170,7 @@ Species* Dissolve::copySpecies(const Species* species)
 	{
 		// Create the Atom in our new Species
 		SpeciesAtom* newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
+		if (i->isSelected()) newSpecies->selectAtom(newAtom);
 
 		// Search for the existing atom's AtomType by name, and create it if it doesn't exist
 		copyAtomType(i, newAtom);

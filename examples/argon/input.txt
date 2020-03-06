@@ -18,7 +18,7 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  Ar  0.000000e+00  LJGeometric  9.786380e-01  3.401000e+00  0.000000e+00  0.000000e+00
+  Parameters  Ar  Ar  0.000000e+00  LJGeometric  9.786380e-01  3.401000e+00  0.000000e+00  0.000000e+00
   Range  10.000000
   Delta  0.005000
   CoulombTruncation  Shifted

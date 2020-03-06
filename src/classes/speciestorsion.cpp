@@ -181,6 +181,19 @@ bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Spe
 	return false;
 }
 
+// Return whether all atoms in the interaction are currently selected
+bool SpeciesTorsion::isSelected() const
+{
+#ifdef CHECKS
+	if (i_ == NULL || j_ == NULL || k_ == NULL || l_ == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesTorsion::isSelected(). Returning false...\n");
+		return false;
+	}
+#endif
+	return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
+}
+
 /*
  * Interaction Parameters
  */

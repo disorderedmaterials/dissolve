@@ -12,18 +12,18 @@ EndMaster
 
 Species 'Benzene'
   # Atoms
-  Atom   1  C   -1.203775     0.695000     0.000000   CA
-  Atom   2  H   -2.069801     1.195000     0.000000   HA
-  Atom   3  C   -0.000000     1.390000     0.000000   CA
-  Atom   4  H   -0.000000     2.390000     0.000000   HA
-  Atom   5  C    1.203775     0.695000     0.000000   CA
-  Atom   6  H    2.069801     1.195000     0.000000   HA
-  Atom   7  C    1.203775    -0.695000     0.000000   CA
-  Atom   8  H    2.069801    -1.195000     0.000000   HA
-  Atom   9  C   -0.000000    -1.390000     0.000000   CA
-  Atom  10  H   -0.000000    -2.390000     0.000000   HA
-  Atom  11  C   -1.203775    -0.695000     0.000000   CA
-  Atom  12  H   -2.069801    -1.195000     0.000000   HA
+  Atom   1  C   -1.203775     0.695000     0.000000   CA  -0.115
+  Atom   2  H   -2.069801     1.195000     0.000000   HA  0.115
+  Atom   3  C   -0.000000     1.390000     0.000000   CA  -0.115
+  Atom   4  H   -0.000000     2.390000     0.000000   HA  0.115
+  Atom   5  C    1.203775     0.695000     0.000000   CA  -0.115
+  Atom   6  H    2.069801     1.195000     0.000000   HA  0.115
+  Atom   7  C    1.203775    -0.695000     0.000000   CA  -0.115
+  Atom   8  H    2.069801    -1.195000     0.000000   HA  0.115
+  Atom   9  C   -0.000000    -1.390000     0.000000   CA  -0.115
+  Atom  10  H   -0.000000    -2.390000     0.000000   HA  0.115
+  Atom  11  C   -1.203775    -0.695000     0.000000   CA  -0.115
+  Atom  12  H   -2.069801    -1.195000     0.000000   HA  0.115
 
   # Intramolecular Terms
   Bond  1     2  @CH
@@ -85,7 +85,7 @@ Species 'Benzene'
 EndSpecies
 
 PairPotentials
-  Parameters  'CA'  -0.115  LJGeometric  0.29288  3.55
-  Parameters  'HA'   0.115  LJGeometric  0.12552  2.42
+  Parameters  'CA'  C  -0.115  LJGeometric  0.29288  3.55
+  Parameters  'HA'  H   0.115  LJGeometric  0.12552  2.42
 EndPairPotentials
 

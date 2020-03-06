@@ -30,8 +30,8 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  Si  2.000000e+00  LJ  1.750000e-01  1.030000e+00  0.000000e+00  0.000000e+00
-  Parameters  O  -1.000000e+00  LJ  1.650000e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  Si  Si  2.000000e+00  LJ  1.750000e-01  1.030000e+00  0.000000e+00  0.000000e+00
+  Parameters  O  O  -1.000000e+00  LJ  1.650000e-01  3.500000e+00  0.000000e+00  0.000000e+00
   Range  10.000000
   Delta  0.005000
   IncludeCoulomb  True

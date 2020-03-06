@@ -49,9 +49,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
 	Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
-	AtomType* at1, *at2;
-	PairPotential* pot;
-	Forcefield::ShortRangeType srType;
+	AtomType* at1;
 	PairPotential::CoulombTruncationScheme cTrunc;
 	PairPotential::ShortRangeTruncationScheme srTrunc;
 	bool blockDone = false, error = false;
@@ -130,29 +128,43 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 				dissolve->setPairPotentialsIncludeCoulomb(parser.argb(1));
 				break;
 			case (PairPotentialsBlock::ParametersKeyword):
-				// Find AtomType...
+				// Sanity check element
+				if (Elements::element(parser.argc(2)).isUnknown())
+				{
+					Messenger::error("Unknown element '%s' given for atom type '%s' in PairPotentials block.\n", parser.argc(2), parser.argc(1));
+					error = true;
+					break;
+				}
+
+				// Find / create AtomType and check element...
 				at1 = dissolve->findAtomType(parser.argc(1));
 				if (!at1)
 				{
-					Messenger::error("Unknown AtomType '%s' referenced in PairPotentials block.\n", parser.argc(1));
+					Messenger::warn("Unknown atom type '%s' referenced in PairPotentials block - creating it now...\n", parser.argc(1));
+					at1 = dissolve->addAtomType(&Elements::element(parser.argc(2)));
+					at1->setName(parser.argc(1));
+				}
+				else if (&Elements::element(parser.argc(2)) != at1->element())
+				{
+					Messenger::error("Element '%s' does not match that for the existing atom type '%s' in PairPotentials block.\n", parser.argc(2), parser.argc(1));
 					error = true;
 					break;
 				}
 
 				// Set charge value
-				at1->parameters().setCharge(parser.argd(2));
+				at1->parameters().setCharge(parser.argd(3));
 
 				// Get short-range type
-				if (!Forcefield::shortRangeTypes().isValid(parser.argc(3)))
+				if (!Forcefield::shortRangeTypes().isValid(parser.argc(4)))
 				{
-					Forcefield::shortRangeTypes().errorAndPrintValid(parser.argc(3));
+					Forcefield::shortRangeTypes().errorAndPrintValid(parser.argc(4));
 					error = true;
 					break;
 				}
-				at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argc(3)));
+				at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argc(4)));
 
 				// Set interaction parameters
-				for (int n=4; n<parser.nArgs(); ++n) at1->parameters().setParameter(n-4, parser.argd(n));
+				for (int n=5; n<parser.nArgs(); ++n) at1->parameters().setParameter(n-5, parser.argd(n));
 				break;
 			case (PairPotentialsBlock::RangeKeyword):
 				dissolve->setPairPotentialRange(parser.argd(1));

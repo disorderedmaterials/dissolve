@@ -665,62 +665,60 @@ bool Forcefield_UFF::assignAtomTypes(Species* sp, CoreData& coreData, bool keepE
 }
 
 // Assign intramolecular parameters to the supplied Species
-bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bool generateImpropers) const
+bool Forcefield_UFF::assignIntramolecular(Species* sp, int flags) const
 {
-	// Create an array of the UFFAtomTypes for the atoms in the Species for speed
-	Array<UFFAtomType*> atomTypes;
-	if (useExistingTypes)
-	{
-		// For each SpeciesAtom, search for the AtomType by name...
-		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
-		{
-			if (!i->atomType()) return Messenger::error("No AtomType assigned to SpeciesAtom %i, so can't generate intramolecular terms based on existing types.\n", i->userIndex());
-			UFFAtomType* at = dynamic_cast<UFFAtomType*>(atomTypeByName(i->atomType()->name(), i->element()));
-			if (!at) return Messenger::error("Existing AtomType name '%s' does not correspond to a type in this forcefield.\n", i->atomType()->name());
-			atomTypes.add(at);
-		}
-	}
-	else
-	{
-		// Use on-the-fly generated types for all atoms
-		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
-		{
-			UFFAtomType* at = dynamic_cast<UFFAtomType*>(determineAtomType(i));
-			if (!at) return Messenger::error("Couldn't determine a suitable AtomType for atom %i.\n", i->userIndex());
-			atomTypes.add(at);
-		}
-	}
+	bool determineTypes = flags&Forcefield::DetermineTypesFlag;
+	bool selectionOnly = flags&Forcefield::SelectionOnlyFlag;
 
 	// Generate bond terms
 	DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate())
 	{
-		UFFAtomType* i = atomTypes[bond->indexI()];
-		UFFAtomType* j = atomTypes[bond->indexJ()];
-		if (!generateBondTerm(sp, bond, i, j)) return Messenger::error("Failed to create parameters for bond %i-%i.\n", bond->indexI()+1, bond->indexJ()+1);
+		SpeciesAtom* i = bond->i();
+		SpeciesAtom* j = bond->j();
+
+		if (selectionOnly && (!bond->isSelected())) continue;
+
+		UFFAtomType* typeI = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element()));
+		UFFAtomType* typeJ = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element()));
+
+		if (!generateBondTerm(sp, bond, typeI, typeJ)) return Messenger::error("Failed to create parameters for bond %i-%i.\n", i->userIndex(), j->userIndex());
 	}
 
 	// Generate angle terms
 	DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
 	while (SpeciesAngle* angle = angleIterator.iterate())
 	{
-		UFFAtomType* i = atomTypes[angle->indexI()];
-		UFFAtomType* j = atomTypes[angle->indexJ()];
-		UFFAtomType* k = atomTypes[angle->indexK()];
-		if (!generateAngleTerm(sp, angle, i, j, k)) return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1);
+		SpeciesAtom* i = angle->i();
+		SpeciesAtom* j = angle->j();
+		SpeciesAtom* k = angle->k();
+
+		if (selectionOnly && (!angle->isSelected())) continue;
+
+		UFFAtomType* typeI = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element()));
+		UFFAtomType* typeJ = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element()));
+		UFFAtomType* typeK = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element()));
+
+		if (!generateAngleTerm(sp, angle, typeI, typeJ, typeK)) return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", i->userIndex(), j->userIndex(), k->userIndex());
 	}
 
 	// Generate torsion terms
 	DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
 	while (SpeciesTorsion* torsion = torsionIterator.iterate())
 	{
-		UFFAtomType* i = atomTypes[torsion->indexI()];
-		UFFAtomType* j = atomTypes[torsion->indexJ()];
-		UFFAtomType* k = atomTypes[torsion->indexK()];
-		UFFAtomType* l = atomTypes[torsion->indexL()];
-		if (!generateTorsionTerm(sp, torsion, i, j, k, l)) return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1);
+		SpeciesAtom* i = torsion->i();
+		SpeciesAtom* j = torsion->j();
+		SpeciesAtom* k = torsion->k();
+		SpeciesAtom* l = torsion->l();
+
+		if (selectionOnly && (!torsion->isSelected())) continue;
+
+		UFFAtomType* typeI = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element()));
+		UFFAtomType* typeJ = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element()));
+		UFFAtomType* typeK = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element()));
+		UFFAtomType* typeL = dynamic_cast<UFFAtomType*>(determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element()));
+
+		if (!generateTorsionTerm(sp, torsion, typeI, typeJ, typeK, typeL)) return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex());
 	}
 
 	return true;

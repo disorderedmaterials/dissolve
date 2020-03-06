@@ -452,14 +452,14 @@ Leave current atom types as they are</string>
              <number>4</number>
             </property>
             <item>
-             <widget class="QRadioButton" name="ApplyIntramolecularTermsCheck">
+             <widget class="QRadioButton" name="IntramolecularTermsAssignAllRadio">
               <property name="text">
                <string>Apply intramolecular terms to the whole species
 Existing data will be overwritten</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_edit.svg</normaloff>:/general/icons/general_edit.svg</iconset>
+                <normaloff>:/wizard/icons/wizard_allatoms.svg</normaloff>:/wizard/icons/wizard_allatoms.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -473,105 +473,28 @@ Existing data will be overwritten</string>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <property name="spacing">
-               <number>0</number>
+             <widget class="QRadioButton" name="IntramolecularTermsAssignSelectionRadio">
+              <property name="text">
+               <string>Apply intramolecular terms between selected atoms
+Existing data will be overwritten</string>
               </property>
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QWidget" name="IntramolecularTermsWidget" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_19">
-                 <property name="spacing">
-                  <number>4</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>4</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>4</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>4</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>4</number>
-                 </property>
-                 <item>
-                  <widget class="QCheckBox" name="ReduceToMasterTermsCheck">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Reduce to master terms</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="GenerateImproperTermsCheck">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Generate improper terms</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="UseTypesFromSpeciesCheck">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="toolTip">
-                    <string>If enabled, current/assigned atom types in the Species will be used. If disabled, temporary types from the Forcefield will be generated and used to assign terms.</string>
-                   </property>
-                   <property name="text">
-                    <string>Use existing atom types</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-             </layout>
+              <property name="icon">
+               <iconset resource="main.qrc">
+                <normaloff>:/wizard/icons/wizard_selectedatoms.svg</normaloff>:/wizard/icons/wizard_selectedatoms.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>40</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="ApplyNoIntramolecularTermsCheck">
+             <widget class="QRadioButton" name="IntramolecularTermsAssignNoneRadio">
               <property name="text">
                <string>Do not apply any intramolecular terms
 Existing data will remain unchanged</string>
@@ -603,6 +526,87 @@ Existing data will remain unchanged</string>
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="IntramolecularOptionsGroup">
+              <property name="title">
+               <string>Options</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <property name="leftMargin">
+                <number>4</number>
+               </property>
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <property name="rightMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
+                <number>4</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="NoMasterTermsCheck">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>If enabled, terms will not be reduced to master term entries</string>
+                 </property>
+                 <property name="text">
+                  <string>Don't reduce to master terms</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="NoImproperTermsCheck">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>If enabled, no improper terms will be generated / applied</string>
+                 </property>
+                 <property name="text">
+                  <string>Don't generate improper terms</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="IgnoreCurrentTypesCheck">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>If enabled, temporary type names from the Forcefield will be assigned / generated and used to assign terms. Otherwise, current atom type names will be used</string>
+                 </property>
+                 <property name="text">
+                  <string>Ignore current atom types</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </item>
            </layout>
           </item>

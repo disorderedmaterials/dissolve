@@ -94,9 +94,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui_.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
 
 	// Set sensible lower limits and steps for range and delta
-	ui_.PairPotentialRangeSpin->setRange(true, 1.0);
+	ui_.PairPotentialRangeSpin->setRange(1.0, 1.0e5);
 	ui_.PairPotentialRangeSpin->setSingleStep(1.0);
-	ui_.PairPotentialDeltaSpin->setRange(true, 0.001);
+	ui_.PairPotentialDeltaSpin->setRange(0.001, 1.0);
 	ui_.PairPotentialDeltaSpin->setSingleStep(0.001);
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
@@ -468,9 +468,17 @@ void ForcefieldTab::updateControls()
 	ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
 	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
 	ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
+
 	// -- Table
+	// -- Get current row index before we refresh...
+	int ppRowIndex = ui_.PairPotentialsTable->currentRow();
 	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
 	ui_.PairPotentialsTable->resizeColumnsToContents();
+
+	refreshLocker.unlock();
+
+	// Re-set active row in pair potentials table
+	ui_.PairPotentialsTable->setCurrentCell(ppRowIndex == -1 ? 0 : ppRowIndex, 0);
 }
 
 // Disable sensitive controls within tab
@@ -499,8 +507,9 @@ void ForcefieldTab::atomTypeDataModified()
 		Messenger::mute();
 		dissolve_.generatePairPotentials();
 		Messenger::unMute();
-	}
 
+		updateControls();
+	}
 }
 
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
@@ -606,12 +615,10 @@ void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
 	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
 	{
 		dissolve_.regeneratePairPotentials();
+
 		updateControls();
 	}
 
-	// Need to update to show/hide the charges column in atoms tables
-	dissolveWindow_->fullUpdate();
-	
 	dissolveWindow_->setModified();
 }
 
@@ -672,6 +679,8 @@ void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
 
 void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
 {
+	if (refreshLock_.isLocked()) return;
+
 	// Clear all data in the graph
 	DataViewer* graph = ui_.PairPotentialsPlotWidget->dataViewer();
 	graph->clearRenderables();
@@ -696,7 +705,6 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* 
 		Renderable* dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
 		dUFull->setColour(StockColours::GreenStockColour);
 	}
-
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
