@@ -24,7 +24,7 @@
 #include "classes/speciesatom.h"
 
 // Constructor
-NETAPresenceNode::NETAPresenceNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt) : NETANode(parent, NETANode::PresenceNode)
+NETAPresenceNode::NETAPresenceNode(NETADefinition* parent, std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes, SpeciesBond::BondType bt) : NETANode(parent, NETANode::PresenceNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;

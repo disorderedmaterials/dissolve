@@ -26,7 +26,7 @@
 #include "templates/refdatalist.h"
 
 // Constructor
-NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt) : NETANode(parent, NETANode::ConnectionNode)
+NETAConnectionNode::NETAConnectionNode(NETADefinition* parent, std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes, SpeciesBond::BondType bt) : NETANode(parent, NETANode::ConnectionNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;

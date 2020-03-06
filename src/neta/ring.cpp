@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "neta/ring.h"
 #include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
@@ -89,7 +90,7 @@ bool NETARingNode::setModifier(const char* modifier, ComparisonOperator op, int 
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, PointerArray<const SpeciesAtom>& path, const int minSize, const int maxSize) const
+void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, std::vector<const SpeciesAtom*>& path, const int minSize, const int maxSize) const
 {
 	// Check whether the path is already at the maximum size - if so, return immediately.
 	if (path.size() == maxSize) return;
@@ -140,7 +141,7 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 
 	// Generate array of rings of specified size that the atom 'i' is present in
 	List<SpeciesRing> rings;
-	PointerArray<const SpeciesAtom> ringPath;
+	std::vector<const SpeciesAtom*> ringPath;
 	if (sizeValue_ == -1) findRings(i, rings, ringPath, 3, 6);
 	else if (sizeValueOperator_ == NETANode::EqualTo) findRings(i, rings, ringPath, sizeValue_, sizeValue_);
 	else if (sizeValueOperator_ == NETANode::LessThan) findRings(i, rings, ringPath, 3, sizeValue_-1);
@@ -172,7 +173,7 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 	while (SpeciesRing* ring = ringIterator.iterate())
 	{
 		// Copy the atoms in the ring into an array we can modify
-		PointerArray<const SpeciesAtom> ringAtoms = ring->atoms();
+		std::vector<const SpeciesAtom*> ringAtoms = ring->atoms();
 
 		// Check through atoms in the ring - either in order or not - to see if the ring matches
 		if (false)

@@ -38,7 +38,7 @@ SpeciesRing::~SpeciesRing()
  */
 
 // Set atoms in ring
-void SpeciesRing::setAtoms(const PointerArray<const SpeciesAtom>& atoms)
+void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom*>& atoms)
 {
 	atoms_ = atoms;
 }
@@ -50,7 +50,7 @@ const SpeciesAtom* SpeciesRing::atom(int n) const
 }
 
 // Return array of atoms in ring
-const PointerArray<const SpeciesAtom>& SpeciesRing::atoms() const
+const std::vector<const SpeciesAtom*>& SpeciesRing::atoms() const
 {
 	return atoms_;
 }

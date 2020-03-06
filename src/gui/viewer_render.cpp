@@ -28,6 +28,7 @@
 #include <QOpenGLFramebufferObjectFormat>
 #include <QPainter>
 #include <QProgressDialog>
+#include <algorithm>
 
 // Initialise context widget (when created by Qt)
 void BaseViewer::initializeGL()
@@ -220,7 +221,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 }
 
 // Create viewer update stack
-void BaseViewer::createUpdateStack(PointerArray<BaseViewer>& updateStack)
+void BaseViewer::createUpdateStack(std::vector<BaseViewer*>& updateStack)
 {
 	// If we are already in the list, return immediately...
 	if (std::find(updateStack.begin(), updateStack.end(), this) != updateStack.end()) return;
@@ -368,7 +369,7 @@ void BaseViewer::postRedisplay()
 	if ((!valid_) || drawing_) return;
 
 	// This is the entry-point for our assmebling of a unique list of viewer to update from this call, including any linked viewers
-	PointerArray<BaseViewer> updateStack;
+	std::vector<BaseViewer*> updateStack;
 	createUpdateStack(updateStack);
 
 	for (auto* viewer : updateStack)

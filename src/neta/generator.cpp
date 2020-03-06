@@ -34,8 +34,8 @@
 const Forcefield* NETADefinitionGenerator::associatedForcefield_ = NULL;
 NETADefinition* NETADefinitionGenerator::definition_ = NULL;
 NETADefinitionGenerator* NETADefinitionGenerator::generator_ = NULL;
-PointerArray<Element> NETADefinitionGenerator::targetElements_;
-PointerArray<ForcefieldAtomType> NETADefinitionGenerator::targetAtomTypes_;
+std::vector<Element*> NETADefinitionGenerator::targetElements_;
+std::vector<ForcefieldAtomType*> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
@@ -357,13 +357,13 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char* typeName)
 }
 
 // Return target Elements array
-PointerArray<Element> NETADefinitionGenerator::targetElements()
+std::vector<Element*> NETADefinitionGenerator::targetElements()
 {
 	return targetElements_;
 }
 
 // Return target ForcefieldAtomTypes array
-PointerArray<ForcefieldAtomType> NETADefinitionGenerator::targetAtomTypes()
+std::vector<ForcefieldAtomType*> NETADefinitionGenerator::targetAtomTypes()
 {
 	return targetAtomTypes_;
 }

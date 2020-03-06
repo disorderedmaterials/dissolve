@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
@@ -186,7 +187,7 @@ SpeciesBond* SpeciesAtom::bond(int index)
 }
 
 // Return bonds list
-const PointerArray<SpeciesBond>& SpeciesAtom::bonds() const
+const std::vector<SpeciesBond*>& SpeciesAtom::bonds() const
 {
 	return bonds_;
 }
@@ -231,7 +232,7 @@ SpeciesAngle* SpeciesAtom::angle(int index)
 }
 
 // Return array of Angles in which the Atom is involved
-const PointerArray<SpeciesAngle>& SpeciesAtom::angles() const
+const std::vector<SpeciesAngle*>& SpeciesAtom::angles() const
 {
 	return angles_;
 }
@@ -282,7 +283,7 @@ SpeciesTorsion* SpeciesAtom::torsion(int index)
 }
 
 // Return array of Torsions in which the Atom is involved
-const PointerArray<SpeciesTorsion>& SpeciesAtom::torsions() const
+const std::vector<SpeciesTorsion*>& SpeciesAtom::torsions() const
 {
 	return torsions_;
 }

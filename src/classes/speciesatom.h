@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_SPECIESATOM_H
 #define DISSOLVE_SPECIESATOM_H
 
+#include <vector>
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/orderedpointerdataarray.h"
-#include "templates/pointerarray.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 
@@ -109,11 +109,11 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	 */
 	private:
 	// List of bonds which this atom participates in
-	PointerArray<SpeciesBond> bonds_;
+	std::vector<SpeciesBond*> bonds_;
 	// List of angles which this atom participates in
-	PointerArray<SpeciesAngle> angles_;
+	std::vector<SpeciesAngle*> angles_;
 	// List of torsions which this atom participates in
-	PointerArray<SpeciesTorsion> torsions_;
+	std::vector<SpeciesTorsion*> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
 	OrderedPointerDataArray<SpeciesAtom,double> exclusions_;
 
@@ -129,7 +129,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return specified bond
 	SpeciesBond* bond(int index);
 	// Return bonds list
-	const PointerArray<SpeciesBond>& bonds() const;
+	const std::vector<SpeciesBond*>& bonds() const;
 	// Return whether bond to specified atom exists
 	SpeciesBond* hasBond(SpeciesAtom* j);
 	// Add specified Angle to Atom
@@ -141,7 +141,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return specified angle
 	SpeciesAngle* angle(int index);
 	// Return array of Angles in which the Atom is involved
-	const PointerArray<SpeciesAngle>& angles() const;
+	const std::vector<SpeciesAngle*>& angles() const;
 	// Add specified SpeciesTorsion to Atom
 	void addTorsion(SpeciesTorsion* torsion, double scaling14);
 	// Remove torsion reference
@@ -151,7 +151,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return specified torsion
 	SpeciesTorsion* torsion(int index);
 	// Return array of Torsions in which the Atom is involved
-	const PointerArray<SpeciesTorsion>& torsions() const;
+	const std::vector<SpeciesTorsion*>& torsions() const;
 	// Return scaling factor to employ with specified Atom
 	double scaling(const SpeciesAtom* j) const;
 

@@ -602,7 +602,7 @@ int Forcefield::guessOxidationState(const SpeciesAtom* i) const
 	// Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments (OS == 0)
 	int nSameElement = 0;
 
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
+	const std::vector<SpeciesBond*>& bonds = i->bonds();
 	for (const auto* bond : bonds)
 	{
 		Element* element = bond->partner(i)->element();
