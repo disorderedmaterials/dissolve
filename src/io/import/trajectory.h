@@ -33,10 +33,19 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	public:
 	// Available trajectory formats
 	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
-	// Constructor
+	// Constructors
 	TrajectoryImportFileFormat(TrajectoryImportFormat format = XYZTrajectory);
+	TrajectoryImportFileFormat(const char* filename, TrajectoryImportFormat format = XYZTrajectory);
 	// Destructor
 	~TrajectoryImportFileFormat();
+
+
+	/*
+	 * Keyword Options
+	 */
+	private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 
 	/*
