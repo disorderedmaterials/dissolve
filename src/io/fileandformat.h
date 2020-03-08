@@ -81,6 +81,8 @@ class FileAndFormat
 	public:
 	// Return whether the file must exist
 	virtual bool fileMustExist() const = 0;
+	// Return whether the file actually exists
+	bool fileExists() const;
 	// Set filename / basename
 	void setFilename(const char* filename);
 	// Return filename / basename
