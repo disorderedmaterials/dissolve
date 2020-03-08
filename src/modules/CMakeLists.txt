@@ -1,6 +1,7 @@
 # Module subdirectories
 add_subdirectory(analyse)
 add_subdirectory(atomshake)
+add_subdirectory(benchmark)
 add_subdirectory(bragg)
 add_subdirectory(calculate_angle)
 add_subdirectory(calculate_avgmol)

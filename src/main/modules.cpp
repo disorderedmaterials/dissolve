@@ -22,6 +22,7 @@
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
+#include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_avgmol/avgmol.h"
@@ -83,6 +84,7 @@ bool Dissolve::registerMasterModules()
 {
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
+	if (!registerMasterModule(new BenchmarkModule)) return false;
 	if (!registerMasterModule(new BraggModule)) return false;
 	if (!registerMasterModule(new CalculateAngleModule)) return false;
 	if (!registerMasterModule(new CalculateAvgMolModule)) return false;

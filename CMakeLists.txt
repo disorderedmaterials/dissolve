@@ -194,6 +194,7 @@ set(BASIC_LINK_LIBS
   # Modules
   analysemodule
   atomshakemodule
+  benchmarkmodule
   braggmodule
   calculateanglemodule
   calculateavgmolmodule
@@ -241,6 +242,7 @@ target_link_libraries( ${target_name}
   # Module 'nogui' libs
   analysemodulenogui
   atomshakemodulenogui
+  benchmarkmodulenogui
   braggmodulenogui
   calculateanglemodulenogui
   calculateavgmolmodulenogui
@@ -277,6 +279,7 @@ if(GUI)
     # Module gui libs
     analysemodulegui
     atomshakemodulegui
+    benchmarkmodulegui
     braggmodulegui
     calculateanglemodulegui
     calculateavgmolmodulegui
