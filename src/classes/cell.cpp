@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/cell.h"
 #include "classes/cellneighbour.h"
 #include "classes/box.h"
@@ -151,24 +152,27 @@ bool Cell::removeAtom(Atom* i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours)
+void Cell::addCellNeighbours(std::set<Cell*>& nearNeighbours, std::set<Cell*>& mimNeighbours)
 {
 	int n;
 
 	// Create near-neighbour array of Cells not requiring minimum image to be applied
-	nCellNeighbours_ = nearNeighbours.nItems();
+	nCellNeighbours_ = nearNeighbours.size();
 	cellNeighbours_.resize(nCellNeighbours_);
-	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = nearNeighbours[n];
+	std::copy(nearNeighbours.begin(), nearNeighbours.end(),
+		  cellNeighbours_.begin());
 
 	// Create array of neighbours that require minimum image calculation
-	nMimCellNeighbours_ = mimNeighbours.nItems();
+	nMimCellNeighbours_ = mimNeighbours.size();
+	mimCellNeighbours_.clear();
 	mimCellNeighbours_.resize(nMimCellNeighbours_);
-	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours[n];
+	std::copy(mimNeighbours.begin(), mimNeighbours.end(),
+		  mimCellNeighbours_.begin());
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
 	OrderedPointerDataArray<Cell,bool> allCells;
-	for (n=0; n<nearNeighbours.nItems(); ++n) allCells.add(nearNeighbours[n], false);
-	for (n=0; n<mimNeighbours.nItems(); ++n) allCells.add(mimNeighbours[n], true);
+	for (auto* near : nearNeighbours) allCells.add(near, false);
+	for (auto* mim : mimNeighbours) allCells.add(mim, true);
 
 	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
 	allCellNeighbours_.resize(allCells.nItems());

@@ -249,7 +249,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
-	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours;
+	std::set<Cell*> nearNeighbours, mimNeighbours;
 	Vec3<int> gridRef, delta;
 	for (n=0; n<nCells_; ++n)
 	{
@@ -265,9 +265,9 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		{
 			// Retrieve Cell pointer
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
-			if (box_->type() == Box::NonPeriodicBoxType) nearNeighbours.add(nbr);
-			else if (minimumImageRequired(&cells_[n], nbr, pairPotentialRange)) mimNeighbours.add(nbr);
-			else nearNeighbours.add(nbr);
+			if (box_->type() == Box::NonPeriodicBoxType) nearNeighbours.insert(nbr);
+			else if (minimumImageRequired(&cells_[n], nbr, pairPotentialRange)) mimNeighbours.insert(nbr);
+			else nearNeighbours.insert(nbr);
 		}
 
 		// Set up lists in the cell

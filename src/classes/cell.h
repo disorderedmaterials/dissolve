@@ -25,11 +25,7 @@
 #include <set>
 #include <vector>
 #include "classes/atom.h"
-#include "templates/array.h"
 #include "templates/vector3.h"
-#include "templates/reflist.h"
-#include "templates/ordereddaoarray.h"
-#include "templates/orderedpointerarray.h"
 
 // Forward Declarations
 class Box;
@@ -114,7 +110,7 @@ class Cell
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours);
+	void addCellNeighbours(std::set<Cell*>& nearNeighbours, std::set<Cell*>& mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation

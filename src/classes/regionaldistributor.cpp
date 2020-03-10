@@ -392,13 +392,12 @@ Molecule* RegionalDistributor::assignMolecule(Cell* cell, int processOrGroup)
 
 	// Loop over Atoms in Cell
 	Molecule* mol;
-	Atom** atoms = cell->indexOrderedAtoms();
-	for (int n=0; n<cell->nAtoms(); ++n)
+	for (auto* atom : cell->indexOrderedAtoms())
 	{
 		// Get the Atom's Molecule pointer
-		mol = atoms[n]->molecule();
+		mol = atom->molecule();
 
-		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", mol->arrayIndex(), atoms[n]->arrayIndex(), checkedMolecules.contains(mol) ? "IS" : "IS NOT");
+		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", mol->arrayIndex(), atom->arrayIndex(), checkedMolecules.contains(mol) ? "IS" : "IS NOT");
 
 		// Have we already checked this Molecule?
 		if (checkedMolecules.contains(mol)) continue;
