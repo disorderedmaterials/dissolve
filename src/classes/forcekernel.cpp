@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <iterator>
 #include "classes/configuration.h"
 #include "classes/forcekernel.h"
 #include "classes/box.h"
@@ -145,18 +146,15 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	// Get start/stride for specified loop context
 	int start = processPool_.interleavedLoopStart(strategy);
 	int stride = processPool_.interleavedLoopStride(strategy);
+	std::advance(central, start);
 
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		index = 0;
 		for (i = start; i < centralAtoms.size(); i += stride)
 		{
-			while (index < i) {
-			  central++;
-			  index++;
-			}
 			ii = *central;
+			std::advance(central, stride);
 			molI = ii->molecule();
 			rI = ii->r();
 
@@ -178,14 +176,10 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	}
 	else
 	{
-		index = 0;
 		for (i = start; i < centralCell->atoms().size(); i += stride)
 		{
-			while (index < i) {
-			  central++;
-			  index++;
-			}
 			ii = *central;
+			std::advance(central, stride);
 			molI = ii->molecule();
 			rI = ii->r();
 
@@ -281,16 +275,13 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 			}
 		}
 		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) {
-		  index = 0;
 		  auto other = otherAtoms.begin();
+		  std::advance(other, start);
 		  for (j=start; j<nOtherAtoms; j += stride)
 		  {
-			while (index < j) {
-			  other++;
-			  index++;
-			}
 			// Grab other Atom pointer
 			jj = *other;
+			std::advance(other, stride);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
@@ -304,17 +295,15 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 			}
 		  }
 		}
-		  else {
-		  index = 0;
-		  auto other = otherAtoms.begin();
+		else {
+		    index = 0;
+		    auto other = otherAtoms.begin();
+		    std::advance(other, start);
 		    for (j=start; j<nOtherAtoms; j += stride)
 		    {
-			while (index < j) {
-			  other++;
-			  index++;
-			}
 			// Grab other Atom pointer
 			jj = *other;
+			std::advance(other, stride);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
@@ -328,17 +317,14 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	}
 	else
 	{
-		index = 0;
 		auto other = otherAtoms.begin();
+		std::advance(other, start);
 		// Loop over atom neighbours
 		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			while (index < j) {
-			  other++;
-			  index++;
-			}
 			// Grab other Atom pointer
 			jj = *other;
+			std::advance(other, stride);
 
 			// Check for same atom
 			if (i == jj) continue;
@@ -353,12 +339,9 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 		}
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			while (index < j) {
-			  other++;
-			  index++;
-			}
 			// Grab other Atom pointer
 			jj = *other;
+			std::advance(other, stride);
 
 			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
@@ -373,12 +356,9 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 		}
 		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			while (index < j) {
-			  other++;
-			  index++;
-			}
 			// Grab other Atom pointer
 			jj = *other;
+			std::advance(other, stride);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
@@ -393,12 +373,9 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 		}
 		else for (j=start; j<nOtherAtoms; j += stride)
 		{
-			while (index < j) {
-			  other++;
-			  index++;
-			}
 			// Grab other Atom pointer
 			jj = *other;
+			std::advance(other, stride);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
