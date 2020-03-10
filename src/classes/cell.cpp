@@ -170,13 +170,17 @@ void Cell::addCellNeighbours(std::set<Cell*>& nearNeighbours, std::set<Cell*>& m
 		  mimCellNeighbours_.begin());
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
-	OrderedPointerDataArray<Cell,bool> allCells;
-	for (auto* near : nearNeighbours) allCells.add(near, false);
-	for (auto* mim : mimNeighbours) allCells.add(mim, true);
+	std::set<std::pair<Cell*, bool>> allCells;
+	for (auto* near : nearNeighbours) allCells.emplace(near, false);
+	for (auto* mim : mimNeighbours) allCells.emplace(mim, true);
 
-	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-	allCellNeighbours_.resize(allCells.nItems());
-	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
+	if (allCells.size() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+	allCellNeighbours_.resize(allCells.size());
+	auto destination = allCellNeighbours_.begin();
+	for (auto source : allCells) {
+	  (*destination).set(source.first, source.second);
+	  ++destination;
+	}
 }
 
 // Return number of Cell near-neighbours, not requiring minimum image calculation

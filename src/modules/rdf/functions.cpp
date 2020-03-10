@@ -35,7 +35,6 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "genericitems/listhelper.h"
-#include "templates/orderedpointerarray.h"
 
 /*
  * Private Functions
