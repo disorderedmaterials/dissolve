@@ -90,9 +90,9 @@ std::set<Atom*>& Cell::atoms()
 }
 
 // Return array of contained Atoms, ordered by their array indices
-Atom** Cell::indexOrderedAtoms() const
+const std::set<Atom*, IndexComparator<Atom>>& Cell::indexOrderedAtoms() const
 {
-	return indexOrderedAtoms_.constItems();
+	return indexOrderedAtoms_;
 }
 
 // Return number of Atoms in list
@@ -113,7 +113,7 @@ bool Cell::addAtom(Atom* i)
 #endif
 	// Add Atom to our pointer- and index-ordered arrays
 	atoms_.insert(i);
-	indexOrderedAtoms_.add(i);
+	indexOrderedAtoms_.insert(i);
 
 	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
 	i->setCell(this);
@@ -134,7 +134,7 @@ bool Cell::removeAtom(Atom* i)
 	// Remove atom from this cell
 	if (atoms_.erase(i))
 	{
-		indexOrderedAtoms_.remove(i);
+		indexOrderedAtoms_.erase(i);
 		i->setCell(NULL);
 	}
 	else

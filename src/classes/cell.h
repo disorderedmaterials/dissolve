@@ -35,6 +35,12 @@
 class Box;
 class CellNeighbour;
 
+template <class T> struct IndexComparator {
+  bool operator()(const T* lhs, const T* rhs) const {
+    return lhs->arrayIndex() < rhs->arrayIndex();
+  }
+};
+
 /*
  * Cell Definition
  */
@@ -80,13 +86,13 @@ class Cell
 	// Array of Atoms contained in this Cell
 	std::set<Atom*> atoms_;
 	// Return array of contained Atoms, ordered by their array indices
-	OrderedDAOArray<Atom> indexOrderedAtoms_;
+	std::set<Atom*, IndexComparator<Atom>> indexOrderedAtoms_;
 
 	public:
 	// Return array of contained Atoms
 	std::set<Atom*>& atoms();
 	// Return array of contained Atoms, ordered by their array indices
-	Atom** indexOrderedAtoms() const;
+	const std::set<Atom*, IndexComparator<Atom>>& indexOrderedAtoms() const;
 	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell
