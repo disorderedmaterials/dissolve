@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/ff/oplsaa2005/atomtypes.h"
+#include "data/ff/oplsaa2005/base.h"
 #include "data/ffatomtype.h"
 
 /*
@@ -40,29 +40,11 @@
  */
 
 /*
- * Search Functions
- */
-
-// Return atom type information with index specified
-const ForcefieldAtomType& OPLSAA2005_AtomTypes::atomTypeByIndex(int id)
-{
-	// Grab atom type array
-	const ForcefieldAtomType* types = atomTypes();
-
-	// Search through list
-	for (int n=0; n<nAtomTypes(); ++n) if (types[n].index() == id) return types[n];
-
-	// No match found
-	static ForcefieldAtomType dummyType(NULL, ELEMENT_XX, 0, "??", "", "<undefined>", 0.0, 0.0, 0.0);
-	return dummyType;
-}
-
-/*
  * Data
  */
 
 // Return formatted publication references
-const char* OPLSAA2005_AtomTypes::publicationReferences()
+const char* OPLSAA2005BaseForcefield::publicationReferences() const
 {
 	return "W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>J. Am. Chem. Soc.</i> <b>118</b>, 11225-11236 (1996).\nW. L. Jorgensen and N. A. McDonald, <i>Theochem</i> <b>424</b>, 145-155 (1998).\nW. L. Jorgensen and N. A. McDonald, <i>J. Phys. Chem. B</i> <b>102</b>, 8049-8059 (1998).\nR. C. Rizzo and W. L. Jorgensen, <i>J. Am. Chem. Soc.</i> <b>121</b>, 4827-4836 (1999).\nM. L. Price, D. Ostrovsky, and W. L. Jorgensen, <i>J. Comp. Chem.</i> <b>22</b>, 1340-1352 (2001).\nE. K. Watkins and W. L. Jorgensen, <i>J. Phys. Chem. A</i> <b>105</b>, 4118-4125 (2001).";
 }
@@ -71,14 +53,8 @@ const char* OPLSAA2005_AtomTypes::publicationReferences()
  * Atom Type Data
  */
 
-// Return number of atom type definitions available
-int OPLSAA2005_AtomTypes::nAtomTypes()
-{
-	return 898;
-}
-
-// Return atom type definitions
-const ForcefieldAtomType* OPLSAA2005_AtomTypes::atomTypes()
+// Return the base ForcefieldAtomType with specified id (if it exists)
+const ForcefieldAtomType& OPLSAA2005BaseForcefield::oplsAtomTypeById(int id) const
 {
 	static ForcefieldAtomType atomTypes[] =
 	{
@@ -986,7 +962,7 @@ const ForcefieldAtomType* OPLSAA2005_AtomTypes::atomTypes()
 									-0.035000,	0.276144,	3.500000 },
 		{ NULL,	ELEMENT_C,	499,	"CT",		"",	"CH2 all-atom C: sulfoxide",
 									0.025000,	0.276144,	3.500000 },
-		{ NULL,	ELEMENT_C,	500,	"C*",		"",	"CG in TRP",
+		{ NULL,	ELEMENT_C,	500,	"Cstar",	"",	"CG in TRP",
 									0.075000,	0.292880,	3.550000 },
 		{ NULL,	ELEMENT_C,	501,	"CB",		"",	"CD C in TRP",
 									-0.055000,	0.292880,	3.550000 },
@@ -1882,5 +1858,12 @@ const ForcefieldAtomType* OPLSAA2005_AtomTypes::atomTypes()
 									0.200000,	0.125520,	2.420000 }
 	};
 
-	return atomTypes;
+	const int nAtomTypes = 898;
+
+	// Search through list
+	for (int n=0; n<nAtomTypes; ++n) if (atomTypes[n].index() == id) return atomTypes[n];
+
+	// No match found
+	static ForcefieldAtomType dummyType(NULL, ELEMENT_XX, 0, "??", "", "<undefined>", 0.0, 0.0, 0.0);
+	return dummyType;
 }

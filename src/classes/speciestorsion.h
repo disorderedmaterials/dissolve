@@ -85,6 +85,8 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	int index(int n) const;
 	// Return whether SpeciesAtoms match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	// Return whether all atoms in the interaction are currently selected
+	bool isSelected() const;
 
 
 	/*

@@ -116,6 +116,9 @@ void CalculateRDFModule::initialise()
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", "<Species> <Site>");
 	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", "<Species> <Site>");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+
+	// Export
+	keywords_.link("Export", processDistance_->keywords().find("Save"), "Save", "Whether to save calculated RDF to disk", "<True|False>");
 }
 
 

@@ -24,10 +24,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data2D Type Keywords
-const char* Data2DImportFormatKeywords[] = { "cartesian" };
-const char* NiceData2DImportFormatKeywords[] = { "Cartesian X,Y,f(X,Y) data" };
-
 // Constructor
 Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFormat format) : FileAndFormat(format)
 {
@@ -44,22 +40,33 @@ Data2DImportFileFormat::~Data2DImportFileFormat()
  * Format Access
  */
 
+// Return enum options for Data2DImportFormat
+EnumOptions<Data2DImportFileFormat::Data2DImportFormat> Data2DImportFileFormat::data2DImportFormats()
+{
+	static EnumOptionsList Data2DImportFormats = EnumOptionsList() <<
+		EnumOption(Data2DImportFileFormat::CartesianData2D, 	"cartesian",		"Cartesian X,Y,f(X,Y) data");
+
+	static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> options("Data2DImportFileFormat", Data2DImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
 int Data2DImportFileFormat::nFormats() const
 {
 	return Data2DImportFileFormat::nData2DImportFormats;
 }
 
-// Return formats array
-const char** Data2DImportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* Data2DImportFileFormat::formatKeyword(int id) const
 {
-	return Data2DImportFormatKeywords;
+	return data2DImportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** Data2DImportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* Data2DImportFileFormat::formatDescription(int id) const
 {
-	return NiceData2DImportFormatKeywords;
+	return data2DImportFormats().descriptionByIndex(id);
 }
 
 // Return current format as Data2DImportFormat
@@ -93,7 +100,7 @@ bool Data2DImportFileFormat::importData(LineParser& parser, Data2D& data)
 	// Import the data
 	bool result = false;
 	if (data2DFormat() == Data2DImportFileFormat::CartesianData2D) result = importCartesian(parser, data);
-	else Messenger::error("Don't know how to load Data2D of format '%s'.\n", Data2DImportFileFormat().format(data2DFormat()));
+	else Messenger::error("Don't know how to load Data2D of format '%s'.\n", formatKeyword(data2DFormat()));
 
 	return result;
 }

@@ -31,18 +31,26 @@ class Configuration;
 class TrajectoryExportFileFormat : public FileAndFormat
 {
 	public:
-	// Available trajectory formats
+	// Trajectory Export Formats
 	enum TrajectoryExportFormat { XYZTrajectory, nTrajectoryExportFormats };
-	// Return number of available formats
-	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
-	// Return current format as TrajectoryExportFormat
-	TrajectoryExportFormat trajectoryFormat() const;
 	// Constructor
 	TrajectoryExportFileFormat(const char* filename = NULL, TrajectoryExportFormat format = XYZTrajectory);
+
+
+	/*
+	 * Format Access
+	 */
+	public:
+	// Return enum options for TrajectoryExportFormat
+	static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFormats();
+	// Return number of available formats
+	int nFormats() const;
+	// Return format keyword for supplied index
+	const char* formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char* formatDescription(int id) const;
+	// Return current format as TrajectoryExportFormat
+	TrajectoryExportFormat trajectoryFormat() const;
 
 
 	/*

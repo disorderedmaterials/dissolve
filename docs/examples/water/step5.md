@@ -21,7 +21,7 @@ Now we can see the comparison between the total radial distribution functions (t
 ![](equilibrated-h2o-fq.png){: .img-centre}
 *Equilibrated water (H2O) F(Q)*
 
-At first glance the calculated and experimental F(Q) agree reasonably well, but the G(r) clearly show that we have a problem, with the peak for the O-H bond far too sharp and intense in the calculated data. This is less to do with inaccuracy of the intramolecular parameters present in the forcefield, and more to do with the apparent broadening of bound features caused by the relative speed of the probe particle to that of chemically-bound, vibrating atoms. To account for this difference we will apply an effective broadening function to the intramolecular g(r).
+At first glance the calculated and experimental F(Q) agree reasonably well, but the G(r) clearly show that we have a problem, with the peak for the O-H bond far too sharp and intense in the calculated data. This is less to do with inaccuracy of the intramolecular parameters present in the forcefield, and more to do with the apparent broadening of intramolecular features caused by the relative speed of the probe particle to that of the vibrational frequency of atoms in a chemical bond. To account for this difference we will apply an effective broadening function to the intramolecular g(r).
 
 First, stop the simulation if it is running:
 

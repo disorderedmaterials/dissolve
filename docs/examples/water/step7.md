@@ -9,7 +9,7 @@ grand_parent: Examples
 
 Let's briefly recap what we've done so far:
 
-1. Set up a liquid water system based on a literature forcefield (`SPC/Fw`)
+1. Set up a liquid water system based on a literature forcefield (`SPC/Fw`, see [http://dx.doi.org/10.1063/1.2136877](http://dx.doi.org/10.1063/1.2136877))
 2. Equilibrated the system and made an initial structural comparison with experimental data
 2. Adjusted the intramolecular geometry of the water molecule in order to better match the experimental data
 
@@ -20,7 +20,7 @@ Here we'll employ the [`EPSR`](../../userguide/modules/epsr) module in order to 
 > Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR
 {: .action .action_menu}
 
-Our new layer contains only the [`EPSR`](../../userguide/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](../../userguide/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module.
+Our new layer contains only the [`EPSR`](../../userguide/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](../../userguide/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the [`EPSR`](../../userguide/modules/epsr) module page.
 
 > **Refine (EPSR)** tab
 {: .action .action_tabs}
@@ -64,7 +64,7 @@ Estimated (**not** experimental) partial structure factors (solid lines) derived
 
 Partial radial distribution functions for each atom type pair in the system, showing estimated partials (solid lines, calculate by Fourier transform of the estimated S(Q)) and those from the simulation (dashed lines, calculated by Fourier transform of the simulated partial g(r)).
 
-Note that the estimated g(r) from the combination of the experimental and simulated data are _intermolecular_ partials - i.e. they contain no contributions from _intramolecular_ terms related to the intramolecular bonding. The simulated partial g(r) (dashed lines), however, are the full simulated partials include both intermolecular and intramolecular terms. The reason for this is to aid in detection of cases where the intramolecular structure of the molecules in the simulation is significantly different from that measured experimentally, which would manifest as small features in the estimated g(r) at or around the _r_-values associated to bond or angle (1,3) distances.
+Note that the estimated g(r) from the combination of the experimental and simulated data are _intermolecular_ partials - i.e. they contain no contributions from _intramolecular_ terms related to the intramolecular bonding. The simulated partial g(r) (dashed lines), however, are the those calculated directly from the configuration(s) in the simulation, and include both intermolecular and intramolecular terms. The reason for this is to aid in detection of cases where the intramolecular structure of the molecules in the simulation is significantly different from that measured experimentally, which would manifest as small features in the estimated g(r) at or around the _r_-values associated to bond or angle (1,3) distances.
 
 ![](epsrmodule-gr.png){: .img-centre}
 *Estimated partial radial distribution functions*

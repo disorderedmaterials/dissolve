@@ -38,5 +38,5 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'Ar'  0.0  LJGeometric  0.0  0.0
+  Parameters  'Ar'  Ar  0.0  LJGeometric  0.0  0.0
 EndPairPotentials

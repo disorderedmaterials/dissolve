@@ -24,6 +24,7 @@
 #include "gui/render/view.h"
 #include "data/elementcolours.h"
 #include "classes/box.h"
+#include "classes/cell.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 #include "base/lineparser.h"
@@ -216,7 +217,7 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 					rj = j->r();
 
 					// Determine half delta i-j for bond
-					const Vec3<double> dij = (cellArray.useMim(i->cell(), j->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
+					const Vec3<double> dij = (i->cell()->mimRequired(j->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
 
 					// Draw bond halves
 					lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(b->i()->element()));
@@ -252,7 +253,7 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 				j = i->molecule()->atom(bonds.at(n)->indexJ());
 				if (i == j) continue;
 
-				if (cellArray.useMim(i->cell(), j->cell())) createCylinderBond(configurationAssembly_, i, j, box->minimumVector(i->r(), j->r()), true, spheresBondRadius_);
+				if (i->cell()->mimRequired(j->cell())) createCylinderBond(configurationAssembly_, i, j, box->minimumVector(i->r(), j->r()), true, spheresBondRadius_);
 				else createCylinderBond(configurationAssembly_, i, j, j->r() - i->r(), false, spheresBondRadius_);
 			}
 		}

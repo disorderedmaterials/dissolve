@@ -5411,8 +5411,8 @@ PairPotentials
   Range  12.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  Parameters  'O'    0.0  0.251040  3.118146
-  Parameters  'Si'   0.0  1.681968  3.826410
+  Parameters  'O'  O  0.0  0.251040  3.118146
+  Parameters  'Si'  Si  0.0  1.681968  3.826410
   GenerateAll  'LJ'
 EndPairPotentials
 

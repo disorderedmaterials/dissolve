@@ -23,10 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Coordinate Type Keywords
-const char* CoordinateImportFormatKeywords[] = { "xyz", "dlpoly", "epsr" };
-const char* NiceCoordinateImportFormatKeywords[] = { "XYZ", "DL_POLY", "EPSR (ATO)" };
-
 // Constructor
 CoordinateImportFileFormat::CoordinateImportFileFormat(CoordinateImportFormat format) : FileAndFormat(format)
 {
@@ -41,22 +37,35 @@ CoordinateImportFileFormat::~CoordinateImportFileFormat()
  * Format Access
  */
 
+// Return enum options for CoordinateImportFormat
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFormats()
+{
+	static EnumOptionsList CoordinateImportFormats = EnumOptionsList() <<
+		EnumOption(CoordinateImportFileFormat::XYZCoordinates, 		"xyz",		"Simple XYZ") <<
+		EnumOption(CoordinateImportFileFormat::DLPOLYCoordinates, 	"dlpoly",	"DL_POLY CONFIG") <<
+		EnumOption(CoordinateImportFileFormat::EPSRCoordinates, 	"epsr",		"EPSR ATO");
+
+	static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> options("CoordinateImportFileFormat", CoordinateImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
 int CoordinateImportFileFormat::nFormats() const
 {
 	return CoordinateImportFileFormat::nCoordinateImportFormats;
 }
 
-// Return formats array
-const char** CoordinateImportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* CoordinateImportFileFormat::formatKeyword(int id) const
 {
-	return CoordinateImportFormatKeywords;
+	return coordinateImportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** CoordinateImportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* CoordinateImportFileFormat::formatDescription(int id) const
 {
-	return NiceCoordinateImportFormatKeywords;
+	return coordinateImportFormats().descriptionByIndex(id);
 }
 
 // Return current format as CoordinateImportFormat
@@ -92,7 +101,7 @@ bool CoordinateImportFileFormat::importData(LineParser& parser, Array< Vec3<doub
 	if (coordinateFormat() == CoordinateImportFileFormat::XYZCoordinates) result = importXYZ(parser, r);
 	else if (coordinateFormat() == CoordinateImportFileFormat::DLPOLYCoordinates) result = importDLPOLY(parser, r);
 	else if (coordinateFormat() == CoordinateImportFileFormat::EPSRCoordinates) result = importEPSR(parser, r);
-	else Messenger::error("Don't know how to load coordinates in format '%s'.\n", CoordinateImportFileFormat().format(coordinateFormat()));
+	else Messenger::error("Don't know how to load coordinates in format '%s'.\n", formatKeyword(coordinateFormat()));
 
 	return result;
 }

@@ -20,8 +20,13 @@
 */
 
 #include "data/fflibrary.h"
+#include "data/ff/oplsaa2005/alcohols.h"
+#include "data/ff/oplsaa2005/alkanes.h"
+#include "data/ff/oplsaa2005/alkenes.h"
 #include "data/ff/oplsaa2005/aromatics.h"
+#include "data/ff/oplsaa2005/diols.h"
 #include "data/ff/oplsaa2005/noblegases.h"
+#include "data/ff/oplsaa2005/triols.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py5.h"
 #include "data/ff/ludwig/py4oh.h"
@@ -39,8 +44,13 @@ List<Forcefield> ForcefieldLibrary::forcefields_;
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+	forcefields_.own(new Forcefield_OPLSAA2005_Alcohols);
+	forcefields_.own(new Forcefield_OPLSAA2005_Alkanes);
+	forcefields_.own(new Forcefield_OPLSAA2005_Alkenes);
 	forcefields_.own(new Forcefield_OPLSAA2005_Aromatics);
+	forcefields_.own(new Forcefield_OPLSAA2005_Diols);
 	forcefields_.own(new Forcefield_OPLSAA2005_NobleGases);
+	forcefields_.own(new Forcefield_OPLSAA2005_Triols);
 	forcefields_.own(new Forcefield_SPCFw);
 	forcefields_.own(new Forcefield_UFF);
 	forcefields_.own(new Forcefield_NTf2_Ludwig);

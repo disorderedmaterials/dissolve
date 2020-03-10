@@ -32,7 +32,8 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, 
 	else
 	{
 		// Set minimum and maximum values
-		setRange(keyword_->hasValidationMin(), keyword_->validationMin(), keyword_->hasValidationMax(), keyword_->validationMax());
+		if (keyword_->hasValidationMin()) setMinimumLimit(keyword_->validationMin());
+		if (keyword_->hasValidationMax()) setMaximumLimit(keyword_->validationMax());
 
 		// Set current value
 		setValue(keyword_->asDouble());

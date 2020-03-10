@@ -56,6 +56,12 @@ class AddForcefieldTermsWizard : public WizardWidget
 	Species* targetSpecies_;
 	// Species pointer with newly-applied Forcefield terms
 	Species* modifiedSpecies_;
+	// List of atom type name mappings to be applied
+	RefDataList<const AtomType,CharString> typeNameMappings_;
+
+	private:
+	// Return (mapped) name to use for specified type
+	const char* mappedName(const AtomType* at);
 
 	public:
 	// Set Dissolve reference
@@ -78,10 +84,10 @@ class AddForcefieldTermsWizard : public WizardWidget
 	enum WidgetPage
 	{
 		SelectForcefieldPage,		/* Select Forcefield to apply to Species */
-		SelectTermsPage,		/* Select terms to generate */
-		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes */
+		AtomTypesPage,			/* AtomTypes page - select how / what to assign */
+		AtomTypesConflictsPage,		/* AtomTypes conflicts page - check / re-map AtomTypes */
+		IntramolecularPage,		/* Select intramolecular terms to generate */
 		MasterTermsPage,		/* MasterTerms page - check / re-map MasterTerms */
-		FinishPage,			/* Finish page */
 		nPages
 	};
 
@@ -120,16 +126,28 @@ class AddForcefieldTermsWizard : public WizardWidget
 	 * AtomTypes Page
 	 */
 	private:
-	// Row update function for AtomTypesList
-	void updateAtomTypesListRow(int row, AtomType* atomType, bool createItem);
+	// Row update function for AtomTypesConflictsList
+	void updateAtomTypesConflictsListRow(int row, AtomType* atomType, bool createItem);
 	// Update page with AtomTypes in our temporary Dissolve reference
-	void updateAtomTypesPage();
+	void updateAtomTypesConflictsPage();
+	// Check for atom type naming conflicts
+	void checkForAtomTypeConflicts();
 
 	private slots:
-	void on_AtomTypesList_itemSelectionChanged();
-	void atomTypesListEdited(QWidget* lineEdit);
+	void on_AtomTypesConflictsList_itemSelectionChanged();
+	void atomTypesConflictsListEdited(QWidget* lineEdit);
 	void on_AtomTypesPrefixButton_clicked(bool checked);
 	void on_AtomTypesSuffixButton_clicked(bool checked);
+
+
+	/*
+	 * Intramolecular Page
+	 */
+	private slots:
+	void on_IntramolecularTermsAssignAllRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignSelectionRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignNoneRadio_clicked(bool checked);
+	void on_NoMasterTermsCheck_clicked(bool checked);
 
 
 	/*

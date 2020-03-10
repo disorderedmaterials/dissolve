@@ -461,6 +461,9 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			case (ProcedureNode::OperateDivideNode):
 				newNode = new OperateDivideProcedureNode();
 				break;
+			case (ProcedureNode::OperateExpressionNode):
+				newNode = new OperateExpressionProcedureNode();
+				break;
 			case (ProcedureNode::OperateMultiplyNode):
 				newNode = new OperateMultiplyProcedureNode();
 				break;

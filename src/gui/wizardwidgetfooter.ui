@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
-    <height>37</height>
+    <width>366</width>
+    <height>40</height>
    </rect>
   </property>
   <property name="font">
@@ -58,6 +58,23 @@
       <property name="bottomMargin">
        <number>4</number>
       </property>
+      <item>
+       <widget class="QPushButton" name="CancelButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+        <property name="icon">
+         <iconset resource="main.qrc">
+          <normaloff>:/general/icons/general_false.svg</normaloff>:/general/icons/general_false.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">

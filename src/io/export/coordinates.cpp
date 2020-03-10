@@ -28,9 +28,26 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Coordinate Type Keywords
-const char* CoordinateExportFormatKeywords[] = { "xyz", "dlpoly" };
-const char* NiceCoordinateExportFormatKeywords[] = { "XYZ Coordinates", "DL_POLY CONFIG File" };
+// Constructor
+CoordinateExportFileFormat::CoordinateExportFileFormat(const char* filename, CoordinateExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for CoordinateExportFormat
+EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> CoordinateExportFileFormat::coordinateExportFormats()
+{
+	static EnumOptionsList CoordinateExportFormats = EnumOptionsList() <<
+		EnumOption(CoordinateExportFileFormat::XYZCoordinates, 		"xyz",	"Simple XYZ Coordinates") <<
+		EnumOption(CoordinateExportFileFormat::DLPOLYCoordinates, 	"dlpoly",	"DL_POLY CONFIG File");
+
+	static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> options("CoordinateExportFileFormat", CoordinateExportFormats);
+
+	return options;
+}
 
 // Return number of available formats
 int CoordinateExportFileFormat::nFormats() const
@@ -38,27 +55,22 @@ int CoordinateExportFileFormat::nFormats() const
 	return CoordinateExportFileFormat::nCoordinateExportFormats;
 }
 
-// Return formats array
-const char** CoordinateExportFileFormat::formats() const
+// Return format keyword for supplied index
+const char* CoordinateExportFileFormat::formatKeyword(int id) const
 {
-	return CoordinateExportFormatKeywords;
+	return coordinateExportFormats().keywordByIndex(id);
 }
 
-// Return nice formats array
-const char** CoordinateExportFileFormat::niceFormats() const
+// Return description string for supplied index
+const char* CoordinateExportFileFormat::formatDescription(int id) const
 {
-	return NiceCoordinateExportFormatKeywords;
+	return coordinateExportFormats().descriptionByIndex(id);
 }
 
 // Return current format as CoordinateExportFormat
 CoordinateExportFileFormat::CoordinateExportFormat CoordinateExportFileFormat::coordinateFormat() const
 {
 	return (CoordinateExportFileFormat::CoordinateExportFormat) format_;
-}
-
-// Constructor
-CoordinateExportFileFormat::CoordinateExportFileFormat(const char* filename, CoordinateExportFormat format) : FileAndFormat(filename, format)
-{
 }
 
 /*
@@ -137,7 +149,11 @@ bool CoordinateExportFileFormat::exportData(Configuration* cfg)
 	bool result = false;
 	if (coordinateFormat() == CoordinateExportFileFormat::XYZCoordinates) result = exportXYZ(parser, cfg);
 	else if (coordinateFormat() == CoordinateExportFileFormat::DLPOLYCoordinates) result = exportDLPOLY(parser, cfg);
-	else Messenger::error("Unrecognised coordinate format.\nKnown formats are: %s.\n", CoordinateExportFileFormat().formats());
+	else
+	{
+		Messenger::error("Unrecognised coordinate format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 
 	return result;
 }

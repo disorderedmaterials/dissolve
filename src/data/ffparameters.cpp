@@ -23,18 +23,13 @@
 #include "data/ff.h"
 
 // Constructors
-ForcefieldParameters::ForcefieldParameters(Forcefield* parent, const char* name, double data0, double data1, double data2, double data3)
+ForcefieldParameters::ForcefieldParameters(const char* name, double data0, double data1, double data2, double data3) : ListItem<ForcefieldParameters>()
 {
-	forcefield_ = parent;
-
 	name_ = name;
 	parameters_.setParameter(0, data0);
 	parameters_.setParameter(1, data1);
 	parameters_.setParameter(2, data2);
 	parameters_.setParameter(3, data3);
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerParameters(this);
 }
 
 // Destructor
@@ -45,12 +40,6 @@ ForcefieldParameters::~ForcefieldParameters()
 /*
  * Identity
  */
-
-// Return parent Forcefield
-const Forcefield* ForcefieldParameters::forcefield() const
-{
-	return forcefield_;
-}
 
 // Return name of type
 const char* ForcefieldParameters::name() const

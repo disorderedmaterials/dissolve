@@ -231,7 +231,7 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("  # Atom Type Parameters\n")) return false;
 	for (AtomType* atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
 	{
-		CharString s("  %s  %s  %12.6e  %s", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge(), Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
+		CharString s("  %s  %s  %s  %12.6e  %s", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->element()->symbol(), atomType->parameters().charge(), Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", atomType->parameters().parameter(n));
 		if (!parser.writeLineF("%s\n", s.get())) return false;
 	}

@@ -33,16 +33,24 @@ class CoordinateExportFileFormat : public FileAndFormat
 	public:
 	// Available coordinate formats
 	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
-	// Return number of available formats
-	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
-	// Return current format as CoordinateExportFormat
-	CoordinateExportFormat coordinateFormat() const;
 	// Constructor
 	CoordinateExportFileFormat(const char* filename = NULL, CoordinateExportFormat format = XYZCoordinates);
+
+
+	/*
+	 * Format Access
+	 */
+	public:
+	// Return enum options for CoordinateExportFormat
+	static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> coordinateExportFormats();
+	// Return number of available formats
+	int nFormats() const;
+	// Return format keyword for supplied index
+	const char* formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char* formatDescription(int id) const;
+	// Return current format as CoordinateExportFormat
+	CoordinateExportFormat coordinateFormat() const;
 
 
 	/*

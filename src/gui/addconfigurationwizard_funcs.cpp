@@ -42,8 +42,8 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget* parent)
 
 	// Register pages with the wizard
 	registerChoicePage(AddConfigurationWizard::StartPage, "Create Configuration");
-	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template", AddConfigurationWizard::FinishPage);
-	registerFinishPage(AddConfigurationWizard::FinishPage, "Name and Temperature");
+	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template", AddConfigurationWizard::NameAndTemperaturePage);
+	registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature", WizardWidgetPageInfo::FinishHereFlag);
 
 	// Connect signals / slots
 // 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
@@ -115,7 +115,7 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-		case (AddConfigurationWizard::FinishPage):
+		case (AddConfigurationWizard::NameAndTemperaturePage):
 			return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
 		default:
 			break;
@@ -192,7 +192,7 @@ void AddConfigurationWizard::reset()
 
 void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked)
 {
-	goToPage(AddConfigurationWizard::FinishPage);
+	goToPage(AddConfigurationWizard::NameAndTemperaturePage);
 }
 
 void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked)

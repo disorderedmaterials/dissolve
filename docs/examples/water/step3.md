@@ -44,7 +44,7 @@ Since a [`NeutronSQ`](../../userguide/modules/neutronsq) module calculates the p
 
 The [`NeutronSQ`](../../userguide/modules/neutronsq) module calculates the structure factors from existing radial distribution functions - it does not calculate these itself. This is the role of the [`RDF`](../../userguide/modules/rdf) module and, as such, it must be the first module in the list (i.e. be at the top).
 
-Note that each of the new modules has a unique name - it is a requirement that modules within Dissolve can be uniquely identified by their name. We'll now give the modules sensible names that describe our three datasets, and set the isotopologues, reference data files, and instrumental broadening as necessary. The latter, for SANDALS, is described by a _Q_-dependent Gaussian with a FWHM of 0.02 &#8491;.
+Note that each of the new modules has a unique name - it is a requirement that modules within Dissolve can be uniquely identified by their name. We'll now give the modules sensible names that describe our three datasets, and set the isotopologues, reference data files, and instrumental broadening as necessary. The latter is specific to each instrument and, for SANDALS, is described by a _Q_-dependent Gaussian with a FWHM of 0.02 &#8491;.
 
 ### H<sub>2</sub>O
 

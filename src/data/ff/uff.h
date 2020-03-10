@@ -78,7 +78,7 @@ class Forcefield_UFF : public Forcefield
 	// Assign suitable AtomTypes to the supplied Species
 	bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species
-	bool assignIntramolecular(Species* sp, bool useExistingTypes, bool generateImpropers) const;
+	bool assignIntramolecular(Species* sp, int flags = 0) const;
 	// Perform some test calculations
 	void test() const;
 };

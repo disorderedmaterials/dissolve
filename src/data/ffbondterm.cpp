@@ -24,7 +24,7 @@
 #include "data/ff.h"
 
 // Constructor
-ForcefieldBondTerm::ForcefieldBondTerm(Forcefield* parent, const char* typeI, const char* typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3)
+ForcefieldBondTerm::ForcefieldBondTerm(const char* typeI, const char* typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3) : ListItem<ForcefieldBondTerm>()
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -33,9 +33,6 @@ ForcefieldBondTerm::ForcefieldBondTerm(Forcefield* parent, const char* typeI, co
 	parameters_[1] = data1;
 	parameters_[2] = data2;
 	parameters_[3] = data3;
-
-	// Register this atom type with the parent forcefield
-	if (parent) parent->registerBondTerm(this);
 }
 
 // Destructor

@@ -155,6 +155,9 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser& parser, const char* pref
 	int count = 0;
 	switch (function_)
 	{
+		case (PairBroadeningFunction::NoFunction):
+			if (!parser.writeLineF("%s%s\n", prefix, functionType(function_))) return false;
+			break;
 		case (PairBroadeningFunction::GaussianFunction):
 			if (!parser.writeLineF("%s%s  %e\n", prefix, functionType(function_), gaussianFWHM_)) return false;
 			break;

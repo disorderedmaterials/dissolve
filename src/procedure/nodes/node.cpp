@@ -47,6 +47,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::Integrate1DNode,			"Integrate1D") <<
 		EnumOption(ProcedureNode::OperateBaseNode,			"Operate(Any)") <<
 		EnumOption(ProcedureNode::OperateDivideNode,			"OperateDivide") <<
+		EnumOption(ProcedureNode::OperateExpressionNode,		"OperateExpression") <<
 		EnumOption(ProcedureNode::OperateMultiplyNode,			"OperateMultiply") <<
 		EnumOption(ProcedureNode::OperateNormaliseNode,			"OperateNormalise") <<
 		EnumOption(ProcedureNode::OperateNumberDensityNormaliseNode,	"OperateNumberDensityNormalise") <<

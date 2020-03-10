@@ -47,5 +47,35 @@ bool CalculateCNModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (!analyser_.execute(procPool, cfg, CharString("%s//Analyser", uniqueName()), dissolve.processingModuleData())) return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 	}
 
+	// Test?
+	const double testThreshold = keywords_.asDouble("TestThreshold");
+	if (keywords_.isSet("TestRangeA"))
+	{
+		const double delta = keywords_.asDouble("TestRangeA") - coordinationNumber(0).value();
+
+		Messenger::print("Reference coordination number delta with correct value for range A is %15.9e and is %s (threshold is %10.3e)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+	}
+	if (keywords_.isSet("TestRangeB"))
+	{
+		// Is range B enabled?
+		if (!isRangeBEnabled()) return Messenger::error("Test coordination number for range B supplied, but calculation for that range is not active.\n");
+
+		const double delta = keywords_.asDouble("TestRangeB") - coordinationNumber(1).value();
+
+		Messenger::print("Reference coordination number delta with correct value for range B is %15.9e and is %s (threshold is %10.3e)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+	}
+	if (keywords_.isSet("TestRangeC"))
+	{
+		// Is range B enabled?
+		if (!isRangeBEnabled()) return Messenger::error("Test coordination number for range C supplied, but calculation for that range is not active.\n");
+
+		const double delta = keywords_.asDouble("TestRangeC") - coordinationNumber(2).value();
+
+		Messenger::print("Reference coordination number delta with correct value for range C is %15.9e and is %s (threshold is %10.3e)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+	}
+
 	return true;
 }

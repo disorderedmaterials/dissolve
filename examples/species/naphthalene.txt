@@ -1,0 +1,171 @@
+# Input file written by Dissolve v0.5.4 at 15:56:28 on 04-02-2020.
+
+#------------------------------------------------------------------------------#
+#                                 Master Terms                                 #
+#------------------------------------------------------------------------------#
+
+Master
+  Bond  'CA-CA'  Harmonic  3924.590     1.400
+  Bond  'CA-CNap'  Harmonic  3924.590     1.400
+  Bond  'CNap-CNap'  Harmonic  3924.590     1.400
+  Bond  'CA-HA'  Harmonic  3071.060     1.080
+  Angle  'CA-CA-CNap'  Harmonic   527.184   120.000
+  Angle  'CA-CNap-CA'  Harmonic   527.184   120.000
+  Angle  'CA-CA-CA'  Harmonic   527.184   120.000
+  Angle  'CA-CNap-CNap'  Harmonic   527.184   120.000
+  Angle  'CA-CA-HA'  Harmonic   292.880   120.000
+  Angle  'CNap-CA-HA'  Harmonic   292.880   120.000
+  Torsion  'CA-CNap-CA-CA'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CA-CNap-CA'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CA-CA-CNap'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CA-CA-CA'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CA-CNap-CNap'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CNap-CNap-CA'  Cos3     0.000    30.334     0.000
+  Torsion  'CNap-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  Torsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  Torsion  'CA-CNap-CA-HA'  Cos3     0.000    30.334     0.000
+  Torsion  'CNap-CNap-CA-HA'  Cos3     0.000    30.334     0.000
+EndMaster
+
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species 'Naphthalene'
+  # Atoms
+  Atom    1    C  -2.526384e+00  3.376305e-01  3.552714e-15  'CA'  -1.150000e-01
+  Atom    2    C  -1.424928e+00  1.217232e+00  3.552714e-15  'CA'  -1.150000e-01
+  Atom    3    C  -8.731141e-02  7.071866e-01  3.552714e-15  'CNap'  0.000000e+00
+  Atom    4    C  1.026994e+00  1.580287e+00  3.552714e-15  'CA'  -1.150000e-01
+  Atom    5    C  2.341247e+00  1.047083e+00  3.552714e-15  'CA'  -1.150000e-01
+  Atom    6    C  2.537987e+00  -3.497113e-01  3.552714e-15  'CA'  -1.150000e-01
+  Atom    7    C  1.413531e+00  -1.211323e+00  3.552714e-15  'CA'  -1.150000e-01
+  Atom    8    C  1.017224e-01  -7.063916e-01  3.552714e-15  'CNap'  0.000000e+00
+  Atom    9    C  -2.323631e+00  -1.052615e+00  3.552714e-15  'CA'  -1.150000e-01
+  Atom   10    C  -1.016200e+00  -1.585517e+00  3.552714e-15  'CA'  -1.150000e-01
+  Atom   11    H  -3.514030e+00  7.853961e-01  3.552714e-15  'HA'  1.150000e-01
+  Atom   12    H  -3.201706e+00  -1.700267e+00  3.552714e-15  'HA'  1.150000e-01
+  Atom   13    H  -8.522278e-01  -2.631771e+00  3.552714e-15  'HA'  1.150000e-01
+  Atom   14    H  1.514716e+00  -2.305141e+00  3.552714e-15  'HA'  1.150000e-01
+  Atom   15    H  3.528416e+00  -7.926654e-01  3.552714e-15  'HA'  1.150000e-01
+  Atom   16    H  3.197721e+00  1.716501e+00  3.552714e-15  'HA'  1.150000e-01
+  Atom   17    H  8.907446e-01  2.650501e+00  3.552714e-15  'HA'  1.150000e-01
+  Atom   18    H  -1.606661e+00  2.293586e+00  3.552714e-15  'HA'  1.150000e-01
+
+  # Bonds
+  Bond    1    2  @CA-CA
+  Bond    2    3  @CA-CNap
+  Bond    3    4  @CA-CNap
+  Bond    4    5  @CA-CA
+  Bond    5    6  @CA-CA
+  Bond    6    7  @CA-CA
+  Bond    7    8  @CA-CNap
+  Bond    8    3  @CNap-CNap
+  Bond    1    9  @CA-CA
+  Bond    9   10  @CA-CA
+  Bond   10    8  @CA-CNap
+  Bond   11    1  @CA-HA
+  Bond   12    9  @CA-HA
+  Bond   13   10  @CA-HA
+  Bond   14    7  @CA-HA
+  Bond   15    6  @CA-HA
+  Bond   16    5  @CA-HA
+  Bond   17    4  @CA-HA
+  Bond   18    2  @CA-HA
+
+  # Angles
+  Angle    1    2    3  @CA-CA-CNap
+  Angle    2    3    4  @CA-CNap-CA
+  Angle    3    4    5  @CA-CA-CNap
+  Angle    4    5    6  @CA-CA-CA
+  Angle    5    6    7  @CA-CA-CA
+  Angle    6    7    8  @CA-CA-CNap
+  Angle    2    3    8  @CA-CNap-CNap
+  Angle    8    3    4  @CA-CNap-CNap
+  Angle    7    8    3  @CA-CNap-CNap
+  Angle    9    1    2  @CA-CA-CA
+  Angle    1    9   10  @CA-CA-CA
+  Angle    7    8   10  @CA-CNap-CA
+  Angle   10    8    3  @CA-CNap-CNap
+  Angle    9   10    8  @CA-CA-CNap
+  Angle   11    1    2  @CA-CA-HA
+  Angle   11    1    9  @CA-CA-HA
+  Angle    1    9   12  @CA-CA-HA
+  Angle   12    9   10  @CA-CA-HA
+  Angle    9   10   13  @CA-CA-HA
+  Angle   13   10    8  @CNap-CA-HA
+  Angle    6    7   14  @CA-CA-HA
+  Angle   14    7    8  @CNap-CA-HA
+  Angle    5    6   15  @CA-CA-HA
+  Angle   15    6    7  @CA-CA-HA
+  Angle    4    5   16  @CA-CA-HA
+  Angle   16    5    6  @CA-CA-HA
+  Angle    3    4   17  @CNap-CA-HA
+  Angle   17    4    5  @CA-CA-HA
+  Angle    1    2   18  @CA-CA-HA
+  Angle   18    2    3  @CNap-CA-HA
+
+  # Torsions
+  Torsion    1    2    3    4  @CA-CNap-CA-CA
+  Torsion    2    3    4    5  @CA-CA-CNap-CA
+  Torsion    3    4    5    6  @CA-CA-CA-CNap
+  Torsion    4    5    6    7  @CA-CA-CA-CA
+  Torsion    5    6    7    8  @CA-CA-CA-CNap
+  Torsion    1    2    3    8  @CA-CA-CNap-CNap
+  Torsion    8    3    4    5  @CA-CA-CNap-CNap
+  Torsion    6    7    8    3  @CA-CA-CNap-CNap
+  Torsion    7    8    3    2  @CA-CNap-CNap-CA
+  Torsion    7    8    3    4  @CA-CNap-CNap-CA
+  Torsion    9    1    2    3  @CA-CA-CA-CNap
+  Torsion    2    1    9   10  @CA-CA-CA-CA
+  Torsion    6    7    8   10  @CA-CNap-CA-CA
+  Torsion   10    8    3    2  @CA-CNap-CNap-CA
+  Torsion   10    8    3    4  @CA-CNap-CNap-CA
+  Torsion    1    9   10    8  @CA-CA-CA-CNap
+  Torsion    9   10    8    7  @CA-CNap-CA-CA
+  Torsion    9   10    8    3  @CA-CA-CNap-CNap
+  Torsion   11    1    2    3  @CNap-CA-CA-HA
+  Torsion   11    1    9   10  @CA-CA-CA-HA
+  Torsion    2    1    9   12  @CA-CA-CA-HA
+  Torsion   11    1    9   12  @HA-CA-CA-HA
+  Torsion   12    9   10    8  @CNap-CA-CA-HA
+  Torsion    1    9   10   13  @CA-CA-CA-HA
+  Torsion   12    9   10   13  @HA-CA-CA-HA
+  Torsion   13   10    8    7  @CA-CNap-CA-HA
+  Torsion   13   10    8    3  @CNap-CNap-CA-HA
+  Torsion    5    6    7   14  @CA-CA-CA-HA
+  Torsion   14    7    8    3  @CNap-CNap-CA-HA
+  Torsion   14    7    8   10  @CA-CNap-CA-HA
+  Torsion    4    5    6   15  @CA-CA-CA-HA
+  Torsion   15    6    7    8  @CNap-CA-CA-HA
+  Torsion   15    6    7   14  @HA-CA-CA-HA
+  Torsion    3    4    5   16  @CNap-CA-CA-HA
+  Torsion   16    5    6    7  @CA-CA-CA-HA
+  Torsion   16    5    6   15  @HA-CA-CA-HA
+  Torsion    2    3    4   17  @CA-CNap-CA-HA
+  Torsion    8    3    4   17  @CNap-CNap-CA-HA
+  Torsion   17    4    5    6  @CA-CA-CA-HA
+  Torsion   17    4    5   16  @HA-CA-CA-HA
+  Torsion    9    1    2   18  @CA-CA-CA-HA
+  Torsion   11    1    2   18  @HA-CA-CA-HA
+  Torsion   18    2    3    4  @CA-CNap-CA-HA
+  Torsion   18    2    3    8  @CNap-CNap-CA-HA
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  CA  C  -1.150000e-01  LJGeometric  2.928800e-01  3.550000e+00  0.000000e+00  0.000000e+00
+  Parameters  CNap  C  0.000000e+00  LJGeometric  2.928800e-01  3.550000e+00  0.000000e+00  0.000000e+00
+  Parameters  HA  H  1.150000e-01  LJGeometric  1.255200e-01  2.420000e+00  0.000000e+00  0.000000e+00
+  Range  15.000000
+  Delta  0.005000
+  IncludeCoulomb  False
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+

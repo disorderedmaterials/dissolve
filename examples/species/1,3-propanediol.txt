@@ -1,0 +1,130 @@
+# Input file written by Dissolve v0.5.4 at 22:43:39 on 04-02-2020.
+
+#------------------------------------------------------------------------------#
+#                                 Master Terms                                 #
+#------------------------------------------------------------------------------#
+
+Master
+  Bond  'CT-CT2'  Harmonic  2652.660     1.495
+  Bond  'CT-OH'  Harmonic  2677.760     1.410
+  Bond  'CT-HC'  Harmonic  2845.120     1.080
+  Bond  'CT2-HC'  Harmonic  2845.120     1.080
+  Bond  'HO-OH'  Harmonic  4627.500     0.945
+  Angle  'CT-CT2-CT'  Harmonic   527.184   115.600
+  Angle  'CT2-CT-OH'  Harmonic   418.400   109.500
+  Angle  'CT2-CT-HC'  Harmonic   292.880   109.500
+  Angle  'HC-CT-OH'  Harmonic   292.880   109.500
+  Angle  'HC-CT-HC'  Harmonic   276.144   107.800
+  Angle  'CT-CT2-HC'  Harmonic   292.880   109.500
+  Angle  'HC-CT2-HC'  Harmonic   276.144   107.800
+  Angle  'CT-OH-HO'  Harmonic   460.240   108.500
+  Torsion  'CT-CT2-CT-OH'  Cos3     7.159    -2.092     2.774
+  Torsion  'CT-CT2-CT-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'HC-CT2-CT-OH'  Cos3     0.000     0.000     1.958
+  Torsion  'HC-CT2-CT-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'HC-CT-CT2-HC'  Cos3     0.000     0.000     1.255
+  Torsion  'CT2-CT-OH-HO'  Cos3    -1.490    -0.728     2.059
+  Torsion  'HC-CT-OH-HO'  Cos3     0.000     0.000     1.474
+EndMaster
+
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species '1,3-propanediol'
+  # Atoms
+  Atom    1    C  -1.336390e+00  -2.166313e-01  -2.643242e-01  'CT'  1.450000e-01
+  Atom    2    C  -5.580831e-02  1.969121e-01  4.006424e-01  'CT2'  -1.200000e-01
+  Atom    3    C  1.203002e+00  -2.642974e-01  -2.740181e-01  'CT'  1.450000e-01
+  Atom    4    O  2.327035e+00  2.258409e-01  4.276803e-01  'OH'  -7.000000e-01
+  Atom    5    O  -2.450612e+00  2.421280e-01  4.735249e-01  'OH'  -7.000000e-01
+  Atom    6    H  -1.379145e+00  -1.294505e+00  -3.362600e-01  'HC'  6.000000e-02
+  Atom    7    H  -1.376393e+00  1.803877e-01  -1.269042e+00  'HC'  6.000000e-02
+  Atom    8    H  -5.576718e-02  -1.808053e-01  1.413994e+00  'HC'  6.000000e-02
+  Atom    9    H  -2.998695e-02  1.275428e+00  4.683195e-01  'HC'  6.000000e-02
+  Atom   10    H  1.226741e+00  9.360106e-02  -1.293953e+00  'HC'  6.000000e-02
+  Atom   11    H  1.229270e+00  -1.344897e+00  -3.001876e-01  'HC'  6.000000e-02
+  Atom   12    H  3.116849e+00  -9.885752e-02  1.959909e-02  'HO'  4.350000e-01
+  Atom   13    H  -2.418796e+00  1.185696e+00  5.340260e-01  'HO'  4.350000e-01
+
+  # Bonds
+  Bond    1    2  @CT-CT2
+  Bond    2    3  @CT-CT2
+  Bond    3    4  @CT-OH
+  Bond    1    5  @CT-OH
+  Bond    1    6  @CT-HC
+  Bond    1    7  @CT-HC
+  Bond    2    8  @CT2-HC
+  Bond    2    9  @CT2-HC
+  Bond    3   10  @CT-HC
+  Bond    3   11  @CT-HC
+  Bond    4   12  @HO-OH
+  Bond    5   13  @HO-OH
+
+  # Angles
+  Angle    1    2    3  @CT-CT2-CT
+  Angle    2    3    4  @CT2-CT-OH
+  Angle    5    1    2  @CT2-CT-OH
+  Angle    6    1    2  @CT2-CT-HC
+  Angle    6    1    5  @HC-CT-OH
+  Angle    7    1    2  @CT2-CT-HC
+  Angle    7    1    5  @HC-CT-OH
+  Angle    7    1    6  @HC-CT-HC
+  Angle    1    2    8  @CT-CT2-HC
+  Angle    8    2    3  @CT-CT2-HC
+  Angle    1    2    9  @CT-CT2-HC
+  Angle    9    2    3  @CT-CT2-HC
+  Angle    9    2    8  @HC-CT2-HC
+  Angle    2    3   10  @CT2-CT-HC
+  Angle   10    3    4  @HC-CT-OH
+  Angle    2    3   11  @CT2-CT-HC
+  Angle   11    3    4  @HC-CT-OH
+  Angle   11    3   10  @HC-CT-HC
+  Angle    3    4   12  @CT-OH-HO
+  Angle    1    5   13  @CT-OH-HO
+
+  # Torsions
+  Torsion    1    2    3    4  @CT-CT2-CT-OH
+  Torsion    5    1    2    3  @CT-CT2-CT-OH
+  Torsion    6    1    2    3  @CT-CT2-CT-HC
+  Torsion    7    1    2    3  @CT-CT2-CT-HC
+  Torsion    5    1    2    8  @HC-CT2-CT-OH
+  Torsion    6    1    2    8  @HC-CT2-CT-HC
+  Torsion    7    1    2    8  @HC-CT2-CT-HC
+  Torsion    8    2    3    4  @HC-CT2-CT-OH
+  Torsion    5    1    2    9  @HC-CT2-CT-OH
+  Torsion    6    1    2    9  @HC-CT2-CT-HC
+  Torsion    7    1    2    9  @HC-CT2-CT-HC
+  Torsion    9    2    3    4  @HC-CT2-CT-OH
+  Torsion    1    2    3   10  @CT-CT2-CT-HC
+  Torsion    8    2    3   10  @HC-CT-CT2-HC
+  Torsion    9    2    3   10  @HC-CT-CT2-HC
+  Torsion    1    2    3   11  @CT-CT2-CT-HC
+  Torsion    8    2    3   11  @HC-CT-CT2-HC
+  Torsion    9    2    3   11  @HC-CT-CT2-HC
+  Torsion    2    3    4   12  @CT2-CT-OH-HO
+  Torsion   10    3    4   12  @HC-CT-OH-HO
+  Torsion   11    3    4   12  @HC-CT-OH-HO
+  Torsion    2    1    5   13  @CT2-CT-OH-HO
+  Torsion    6    1    5   13  @HC-CT-OH-HO
+  Torsion    7    1    5   13  @HC-CT-OH-HO
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  CT  C  1.450000e-01  LJGeometric  2.761440e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  CT2  C  -1.200000e-01  LJGeometric  2.761440e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  OH  O  -7.000000e-01  LJGeometric  7.112800e-01  3.070000e+00  0.000000e+00  0.000000e+00
+  Parameters  HC  H  6.000000e-02  LJGeometric  1.255200e-01  2.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  HO  H  4.350000e-01  LJGeometric  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Range  15.000000
+  Delta  0.005000
+  IncludeCoulomb  False
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+

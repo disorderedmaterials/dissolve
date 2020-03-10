@@ -25,7 +25,7 @@ We can use the [CalculateCN](../../userguide/modules/calculatecn) module graphs 
 > Double-click the [CalculateCN](../../userguide/modules/calculatecn) module to open it in a new tab
 {: .step}
 
-The source radial distribution function is shown in the graph and exhibits a strong peak at around 2.8 &#8491; for the COM&ndash;COM distance in the liquid. Integrating the curve up to the first minimum (3.4 &#8491;) gives us a first shell coordination number of around 4.7 molecules (displayed in the panel above the graph).
+The source radial distribution function is shown in the graph and exhibits a strong peak at around 2.8 &#8491; for the COM&ndash;COM distance in the liquid. Integrating the curve up to the first minimum (approximately 3.4 &#8491;) gives us a first shell coordination number of around 4.7 molecules (displayed in the panel above the graph).
 
 > Is the coordination number of 4.7 realistic?
 {: .question}
@@ -48,7 +48,7 @@ There are three graphs on display here - the B&middot;&middot;&middot;C g(r) (to
 
 Open the [CalculateSDF](../../userguide/modules/calculatesdf) module to see the spatial distribution function - we will need to set the central reference molecule to the average molecule we also requested, and adjust the cutoff to get a sensible surface.
 
-> Cutoffs for the surface display are given in terms of the number density per cubic &#8491; of the surrounding molecule / site in the simulation box. In the present example, the number density of water molecule centres is **1000 &divide; 31.0723<sup>3</sup> = 0.033**. The cutoff we will set below therefore gives a surface that represents the positions of molecules approximately twice the bulk density of water molecules.
+> Cutoffs for the surface display are given in terms of the number density per cubic &#8491; of the surrounding molecule / site in the simulation box. In the present example we have 1000 water molecules in a cubic box of side length 31.0723 &#8491;, so the number density of water molecules is **1000 &divide; 31.0723<sup>3</sup> = 0.033**. The cutoff we will set below therefore gives a surface that represents twice the bulk density of water molecules, i.e. a higher than normal probability of finding water molecules.
 {: .tip}
 
 > **Analyse AvgMol/SDF** tab

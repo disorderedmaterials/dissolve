@@ -53,25 +53,9 @@ FileAndFormat::operator const char*() const
 // Convert text string to format index
 int FileAndFormat::format(const char* s) const
 {
-	for (int n=0; n<nFormats(); ++n) if (DissolveSys::sameString(s, formats()[n])) return n;
+	for (int n=0; n<nFormats(); ++n) if (DissolveSys::sameString(s, formatKeyword(n))) return n;
 
 	return nFormats();
-}
-
-// Convert format index to text string
-const char* FileAndFormat::format(int id) const
-{
-	if ((id < 0) || (id >= nFormats())) return "???";
-
-	return formats()[id];
-}
-
-// Convert format index to nice text string
-const char* FileAndFormat::niceFormat(int id) const
-{
-	if ((id < 0) || (id >= nFormats())) return "???";
-
-	return niceFormats()[id];
 }
 
 // Set format index
@@ -90,14 +74,20 @@ int FileAndFormat::formatIndex() const
 const char* FileAndFormat::format() const
 {
 	if ((format_ < 0) || (format_ >= nFormats())) return "???";
-	else return format(format_);
+	else return formatKeyword(format_);
 }
 
 // Return nice format string
-const char* FileAndFormat::niceFormat() const
+const char* FileAndFormat::description() const
 {
 	if ((format_ < 0) || (format_ >= nFormats())) return "???";
-	else return niceFormats()[format_];
+	else return formatDescription(format_);
+}
+
+// Print available formats
+void FileAndFormat::printAvailableFormats() const
+{
+	for (int n=0; n<nFormats(); ++n) Messenger::print("  %12s  %s\n", formatKeyword(n), formatDescription(n));
 }
 
 /*
@@ -158,7 +148,7 @@ bool FileAndFormat::read(LineParser& parser, int startArg, const char* endKeywor
 	{
 		Messenger::print("Unrecognised format '%s' given for file. Recognised formats are:\n\n", parser.argc(startArg));
 
-		for (int n=0; n<nFormats(); ++n) Messenger::print("  %12s  %s\n", format(n), niceFormat(n));
+		printAvailableFormats();
 
 		return false;
 	}
@@ -195,7 +185,7 @@ bool FileAndFormat::read(LineParser& parser, int startArg, const char* endKeywor
 // Write format / filename to specified parser
 bool FileAndFormat::writeFilenameAndFormat(LineParser& parser, const char* prefix)
 {
-	return parser.writeLineF("%s%s  '%s'\n", prefix, format(format_), filename_.get());
+	return parser.writeLineF("%s%s  '%s'\n", prefix, formatKeyword(format_), filename_.get());
 }
 
 // Write options and end block

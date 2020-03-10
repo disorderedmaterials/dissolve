@@ -56,7 +56,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Only the pool master saves the data
 				if (procPool.isMaster())
 				{
-					Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", coordinatesFormat_.niceFormat(), cfg->name());
+					Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", coordinatesFormat_.description(), cfg->name());
 
 					if (!coordinatesFormat_.exportData(cfg))
 					{
@@ -86,7 +86,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			for (PairPotential* pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next())
 			{
-				Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.niceFormat(), pp->atomTypeNameI(), pp->atomTypeNameJ());
+				Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.description(), pp->atomTypeNameI(), pp->atomTypeNameJ());
 
 				// Generate filename
 				pairPotentialFormat_.setFilename(CharString("%s-%s-%s.pp", rootPPName.get(), pp->atomTypeNameI(), pp->atomTypeNameJ()));
@@ -131,7 +131,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Only the pool master saves the data
 				if (procPool.isMaster())
 				{
-					Messenger::print("Export: Appending trajectory file (%s) for Configuration '%s'...\n", trajectoryFormat_.niceFormat(), cfg->name());
+					Messenger::print("Export: Appending trajectory file (%s) for Configuration '%s'...\n", trajectoryFormat_.description(), cfg->name());
 
 					if (!trajectoryFormat_.exportData(cfg))
 					{

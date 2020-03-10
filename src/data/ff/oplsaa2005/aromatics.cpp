@@ -20,34 +20,34 @@
 */
 
 #include "data/ff/oplsaa2005/aromatics.h"
-#include "data/ff/oplsaa2005/atomtypes.h"
 #include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
 #include "base/sysfunc.h"
 
 /*
- * OPLS-AA (2005) Noble Gases
+ * OPLS-AA (2005) Aromatics
  */
 
 // Constructor / Destructor
 Forcefield_OPLSAA2005_Aromatics::Forcefield_OPLSAA2005_Aromatics()
 {
-	static ForcefieldAtomType atomTypes[] =
-	{
-		// Copy required types from OPLS-AA (2005) core list
-		// -- AA Alkanes
-		{ this, "CT",	OPLSAA2005_AtomTypes::atomTypeByIndex(135), "nh=3" },
-		{ this, "HC",	OPLSAA2005_AtomTypes::atomTypeByIndex(140), "-&135" },
-		// -- Benzene
-		{ this, "CA",	OPLSAA2005_AtomTypes::atomTypeByIndex(145), "ring(size=6),-C(n=2),-H(n=1)" },
-		{ this, "HA",	OPLSAA2005_AtomTypes::atomTypeByIndex(146), "-&145" },
-		// -- Napthalene
-		{ this, "CA",	OPLSAA2005_AtomTypes::atomTypeByIndex(147), "ring(size=6,n=2),nbonds=3,-C(n=3)" },
-		// -- Toluene
-		{ this, "CT",	OPLSAA2005_AtomTypes::atomTypeByIndex(148), "nh=3, -C(ring=6)" },
-		// -- Ethylbenzene
-		{ this, "CT",	OPLSAA2005_AtomTypes::atomTypeByIndex(149), "nh=2, -C(nh=3), -C(ring(size=6))" }
-	};
+	// Copy required types from OPLS-AA (2005) core list
+	// -- AA Alkanes
+	copyAtomType(oplsAtomTypeById(135), "CT", "nh=3");
+	copyAtomType(oplsAtomTypeById(140), "HC", "-&135");
+	// -- Benzene
+	copyAtomType(oplsAtomTypeById(145), "CA", "ring(size=6),-C(n=2),-H(n=1)");
+	copyAtomType(oplsAtomTypeById(146), "HA", "-&145");
+	// -- Napthalene (or larger aromatics)
+	copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,n>=2),nbonds=3,-C(n=3)", "CA");
+	// -- Toluene
+	copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring=6)");
+	// -- Ethylbenzene
+	copyAtomType(oplsAtomTypeById(149), "CT", "nh=2, -C(nh=3), -C(ring(size=6))");
+	// -- Phenol
+	copyAtomType(oplsAtomTypeById(166), "CA", "nbonds=3,-O(-H),-C(n=2)");
+	copyAtomType(oplsAtomTypeById(167), "OH", "-&166");
+	copyAtomType(oplsAtomTypeById(168), "HO", "-&167");
 }
 
 Forcefield_OPLSAA2005_Aromatics::~Forcefield_OPLSAA2005_Aromatics()
@@ -67,6 +67,6 @@ const char* Forcefield_OPLSAA2005_Aromatics::name() const
 // Return description for Forcefield
 const char* Forcefield_OPLSAA2005_Aromatics::description() const
 {
-	static CharString desc("Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: %s", OPLSAA2005_AtomTypes::publicationReferences());
+	static CharString desc("Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: %s", publicationReferences());
 	return desc.get();
 }
