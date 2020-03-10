@@ -84,7 +84,7 @@ const Vec3< double >& Cell::centre() const
  */
 
 // Return array of contained Atoms
-OrderedPointerArray<Atom>& Cell::atoms()
+std::set<Atom*>& Cell::atoms()
 {
 	return atoms_;
 }
@@ -98,7 +98,7 @@ Atom** Cell::indexOrderedAtoms() const
 // Return number of Atoms in list
 int Cell::nAtoms() const
 {
-	return atoms_.nItems();
+	return atoms_.size();
 }
 
 // Add atom to Cell
@@ -112,7 +112,7 @@ bool Cell::addAtom(Atom* i)
 	}
 #endif
 	// Add Atom to our pointer- and index-ordered arrays
-	atoms_.add(i);
+	atoms_.insert(i);
 	indexOrderedAtoms_.add(i);
 
 	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
@@ -132,7 +132,7 @@ bool Cell::removeAtom(Atom* i)
 	}
 #endif
 	// Remove atom from this cell
-	if (atoms_.remove(i))
+	if (atoms_.erase(i))
 	{
 		indexOrderedAtoms_.remove(i);
 		i->setCell(NULL);
