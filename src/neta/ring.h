@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_NETA_RING_H
 #define DISSOLVE_NETA_RING_H
 
+#include <vector>
 #include "neta/node.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesring.h"
-#include "templates/pointerarray.h"
 
 // Forward Declarations
 class Element;
@@ -75,7 +75,7 @@ class NETARingNode : public NETANode
 	 */
 	private:
 	// Locate rings in which the specified atom is involved
-	void findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, PointerArray<const SpeciesAtom>& path, const int minSize, const int maxSize) const;
+	void findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, std::vector<const SpeciesAtom*>& path, const int minSize, const int maxSize) const;
 
 	public:
 	// Evaluate the node and return its score

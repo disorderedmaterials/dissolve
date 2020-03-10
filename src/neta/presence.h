@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_NETA_PRESENCE_H
 #define DISSOLVE_NETA_PRESENCE_H
 
+#include <vector>
 #include "neta/node.h"
 #include "classes/speciesbond.h"
-#include "templates/pointerarray.h"
 
 // Forward Declarations
 class Element;
@@ -36,14 +36,14 @@ class NETAPresenceNode : public NETANode
 {
 	public:
 	// Constructor / Destructor
-	NETAPresenceNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+	NETAPresenceNode(NETADefinition* parent, std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAPresenceNode();
 
 	private:
 	// Array of elements that the current context atom may be
-	PointerArray<Element> allowedElements_;
+	std::vector<Element*> allowedElements_;
 	// Array of ForcefieldAtomTypes that the current context atom may be
-	PointerArray<ForcefieldAtomType> allowedAtomTypes_;
+	std::vector<ForcefieldAtomType*> allowedAtomTypes_;
 
 
 	/*
