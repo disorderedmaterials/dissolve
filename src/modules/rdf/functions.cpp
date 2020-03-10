@@ -180,18 +180,17 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 	for (n = start; n<cellArray.nCells(); n += stride)
 	{
 		cellI = cellArray.cell(n);
-		OrderedPointerArray<Atom>& atomsI = cellI->atoms();
-		nI = atomsI.nItems();
+		std::set<Atom*>& atomsI = cellI->atoms();
 
 		// Add contributions between atoms in cellI
-		for (ii = 0; ii < nI-1; ++ii)
+		for (auto iter = atomsI.begin(); iter != --atomsI.end(); ++iter)
 		{
-			i = atomsI[ii];
+			i = *iter;
 			typeI = i->localTypeIndex();
 
-			for (jj = ii+1; jj < nI; ++jj)
+			for (auto jter = std::next(iter, 1); jter != atomsI.end(); ++jter)
 			{
-				j = atomsI[jj];
+				j = *jter;
 
 				// No need to perform MIM since we're in the same cell
 				distance = (i->r() - j->r()).magnitude();
@@ -206,19 +205,16 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 			cellJ = cellArray.cell(m);
 			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
 
-			OrderedPointerArray<Atom>& atomsJ = cellJ->atoms();
-			nJ = atomsJ.nItems();
+			std::set<Atom*>& atomsJ = cellJ->atoms();
 
 			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the absence of a 2D look-up array
-			for (ii = 0; ii < nI; ++ii)
+			for (auto* i : atomsI)
 			{
-				i = atomsI[ii];
 				typeI = i->localTypeIndex();
 				rI = i->r();
 
-				for (jj = 0; jj < nJ; ++jj)
+				for (auto* j : atomsJ)
 				{
-					j = atomsJ[jj];
 					distance = box->minimumDistance(j, rI);
 					partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
 				}
