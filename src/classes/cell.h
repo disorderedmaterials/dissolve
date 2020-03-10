@@ -127,8 +127,6 @@ class Cell
 	bool mimRequired(const Cell* otherCell) const;
 	// Return list of all Cell neighbours
 	std::vector<CellNeighbour> allCellNeighbours();
-	// Return array of adjacent Cell neighbours
-	const Array<Cell*>& adjacentCellNeighbours();
 };
 
 #endif
