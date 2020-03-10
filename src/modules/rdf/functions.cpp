@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <iterator>
 #include "modules/rdf/rdf.h"
 #include "main/dissolve.h"
 #include "module/group.h"
@@ -183,7 +184,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 		std::set<Atom*>& atomsI = cellI->atoms();
 
 		// Add contributions between atoms in cellI
-		for (auto iter = atomsI.begin(); iter != --atomsI.end(); ++iter)
+		for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
 		{
 			i = *iter;
 			typeI = i->localTypeIndex();
