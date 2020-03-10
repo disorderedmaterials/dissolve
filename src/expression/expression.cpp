@@ -27,6 +27,7 @@
 #include "expression/variablevalue.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include <algorithm>
 #include <stdarg.h>
 #include <string.h>
 
@@ -70,20 +71,13 @@ void Expression::clear()
 	statements_.clear();
 
 	// Clear variables and constants, except those that are in the persistent nodes list
-	RefListItem<ExpressionVariable>* varRef = variables_.first(), *nextRef;
-	while (varRef)
-	{
-		nextRef = varRef->next();
-		if (!persistentNodes_.contains(varRef->item())) variables_.remove(varRef);
-		varRef = nextRef;
-	}
+	std::remove_if(variables_.begin(), variables_.end(),
+				   [&](const ExpressionNode* x){
+					   return !persistentNodes_.contains(x);});
 
-	varRef = constants_.first();
-	while (varRef)
+	for(auto varRef : variables_)
 	{
-		nextRef = varRef->next();
-		if (!persistentNodes_.contains(varRef->item())) constants_.remove(varRef);
-		varRef = nextRef;
+		if (!persistentNodes_.contains(varRef)) constants_.remove(varRef);
 	}
 
 	externalVariables_.clear();
@@ -357,16 +351,14 @@ void Expression::setExternalVariables(RefList<ExpressionVariable> externalVariab
 ExpressionVariable* Expression::variable(const char* name)
 {
 	// Search external variables
-	RefListIterator<ExpressionVariable> externalIterator(externalVariables_);
-	while (ExpressionVariable* variable = externalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
+	for(auto variable : externalVariables_) if (DissolveSys::sameString(variable->name(), name))
 	{
 		Messenger::printVerbose("...external variable '%s' found.\n", name);
 		return variable;
 	}
 
 	// Search internal variables
-	RefListIterator<ExpressionVariable> internalIterator(variables_);
-	while (ExpressionVariable* variable = internalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
+	for(auto variable : variables_) if (DissolveSys::sameString(variable->name(), name)) if (DissolveSys::sameString(variable->name(), name))
 	{
 		Messenger::printVerbose("...internal variable '%s' found.\n", name);
 		return variable;

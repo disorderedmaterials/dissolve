@@ -102,8 +102,7 @@ bool Dissolve::prepare()
 	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
 
 	// Check Modules have suitable numbers of Configuration targets
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate())
+	for (Module* module : moduleInstances_)
 	{
 		if (module->isDisabled()) continue;
 
@@ -408,8 +407,7 @@ void Dissolve::printTiming()
 
 	// Determine format for timing information output, accounting for the longest Module name we have
 	int maxLength = 0, length;
-	RefListIterator<Module> instanceIterator(moduleInstances_);
-	while (Module* module = instanceIterator.iterate())
+	for (Module* module : moduleInstances_)
 	{
 		length = strlen(module->uniqueName());
 		if (length > maxLength) maxLength = length;

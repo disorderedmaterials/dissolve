@@ -88,8 +88,7 @@ template <class T, class I> class TableWidgetUpdater
 
 		int rowCount = 0;
 
-		RefListIterator<I> itemIterator(list);
-		while (I* item = itemIterator.iterate())
+		for (I* item : list)
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 

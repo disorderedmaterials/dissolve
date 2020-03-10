@@ -28,8 +28,7 @@ void Dissolve::removeReferencesTo(Configuration* cfg)
 	KeywordBase::objectNoLongerValid<Configuration>(cfg);
 
 	// Remove references (targets) in Modules
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (module->isTargetConfiguration(cfg)) module->removeTargetConfiguration(cfg);
+	for (Module* module : moduleInstances_) if (module->isTargetConfiguration(cfg)) module->removeTargetConfiguration(cfg);
 }
 
 // Remove all references to the specified Module

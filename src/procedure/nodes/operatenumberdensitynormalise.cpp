@@ -55,8 +55,7 @@ OperateNumberDensityNormaliseProcedureNode::~OperateNumberDensityNormaliseProced
 // Operate on Data1D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
+	for (const SelectProcedureNode* selectNode : selectNodes_) (*targetData1D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	return true;
 }
@@ -64,8 +63,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData1D(ProcessPool& proc
 // Operate on Data2D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
+	for (const SelectProcedureNode* selectNode : selectNodes_) (*targetData2D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	return true;
 }
@@ -73,8 +71,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData2D(ProcessPool& proc
 // Operate on Data3D target
 bool OperateNumberDensityNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
+	for (const SelectProcedureNode* selectNode : selectNodes_) (*targetData3D_) /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	return true;
 }

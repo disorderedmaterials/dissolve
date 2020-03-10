@@ -100,8 +100,7 @@ bool NETAPresenceNode::setModifier(const char* modifier, ComparisonOperator op, 
 int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& availableAtoms) const
 {
 // 	printf("I AM THE PRESENCE - availableAtoms size = %i:\n", availableAtoms.nItems());
-// 	RefListIterator<const SpeciesAtom> availableAtomsIterator(availableAtoms);
-// 	while (const SpeciesAtom* iii = availableAtomsIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+// 	for (const SpeciesAtom* iii : availableAtoms) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 
 	// We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will modify as appropriate)
 	if (i != NULL) printf("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
@@ -109,8 +108,7 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 	// Loop over the provided possible list of atoms
 	int nMatches = 0, totalScore = 0;
 	RefList<const SpeciesAtom> matches;
-	RefListIterator<const SpeciesAtom> atomIterator(availableAtoms);
-	while (const SpeciesAtom* j = atomIterator.iterate())
+	for(auto j : availableAtoms)
 	{
 		// Evaluate the atom against our elements
 		int atomScore = NETANode::NoMatch;
@@ -180,8 +178,7 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 	if (!compareValues(nMatches, repeatCountOperator_, repeatCount_)) return NETANode::NoMatch;
 
 	// Remove any matched atoms from the original list
-	RefListIterator<const SpeciesAtom> matchIterator(matches);
-	while (const SpeciesAtom* j = matchIterator.iterate()) availableAtoms.remove(j);
+	for(auto j : matches) availableAtoms.remove(j);
 
 	return totalScore;
 }

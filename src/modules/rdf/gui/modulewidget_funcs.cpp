@@ -131,13 +131,11 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 
 	// Add Configuration targets to the combo box
 	ui_.TargetCombo->clear();
-	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	for (Configuration* config : module->targetConfigurations()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total G(R)
 	CharString blockData;
-	configIterator.restart();
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		// Add calculated total G(r)
 		totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), cfg->niceName(), "Calc");

@@ -76,8 +76,7 @@ class Gizmo : public ListItem<Gizmo>
 	template <class G> static RefList<G> findAll(const char* gizmoType)
 	{
 		RefList<G> gizmos;
-		RefListIterator<Gizmo> gizmoIterator(allGizmos_);
-		while (Gizmo* gizmo = gizmoIterator.iterate()) if (DissolveSys::sameString(gizmo->type(), gizmoType)) gizmos.append(dynamic_cast<G*>(gizmo));
+		for (Gizmo* gizmo : allGizmos_) if (DissolveSys::sameString(gizmo->type(), gizmoType)) gizmos.append(dynamic_cast<G*>(gizmo));
 		return gizmos;
 	}
 

@@ -103,8 +103,7 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const Array< R
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	RefListIterator<ForcefieldAtomType> typeIterator(atomTypes.constAt(i->element()->Z()));
-	while (ForcefieldAtomType* type = typeIterator.iterate())
+	for(auto type : atomTypes.constAt(i->element()->Z()))
 	{
 		// Get the scoring for this type
 		int score = type->neta().score(i);
@@ -149,8 +148,7 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
-		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->name(), name)) return type;
+		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (DissolveSys::sameString(type->name(), name)) return type;
 	}
 
 	return NULL;
@@ -164,8 +162,7 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
-		while (ForcefieldAtomType* type = typeIterator.iterate()) if (type->index() == id) return type;
+		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (type->index() == id) return type;
 	}
 
 	return NULL;
