@@ -203,21 +203,16 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
 	Vec3<double> rJ, v;
-	Cell* otherCell;
 
 	// Straight loop over Cells *not* requiring mim
-	Cell** neighbours = cell->cellNeighbours();
-	for (int n = 0; n<cell->nCellNeighbours(); ++n)
+	for (auto* otherCell : cell->cellNeighbours())
 	{
-		otherCell = neighbours[n];
 		forces(cell, otherCell, false, excludeIgeJ, strategy);
 	}
 
 	// Straight loop over Cells requiring mim
-	Cell** mimNeighbours = cell->mimCellNeighbours();
-	for (int n = 0; n<cell->nMimCellNeighbours(); ++n)
+	for (auto* otherCell : cell->mimCellNeighbours())
 	{
-		otherCell = mimNeighbours[n];
 		forces(cell, otherCell, true, excludeIgeJ, strategy);
 	}
 }
@@ -396,12 +391,10 @@ void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
 	forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy);
 
 	// This Atom with other Atoms in neighbour Cells
-	Cell** neighbours = cellI->cellNeighbours();
-	for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(i, neighbours[n], KernelFlags::NoFlags, strategy);
+	for (auto* neighbour : cellI->cellNeighbours()) forces(i, neighbour, KernelFlags::NoFlags, strategy);
 
 	// This Atom with other Atoms in neighbour Cells which require minimum image
-	Cell** mimNeighbours = cellI->mimCellNeighbours();
-	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy);
+	for (auto* neighbour : cellI->mimCellNeighbours()) forces(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy);
 }
 
 /*

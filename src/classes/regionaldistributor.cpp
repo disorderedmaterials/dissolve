@@ -306,10 +306,9 @@ bool RegionalDistributor::assignMolecule(const Molecule* mol, int processOrGroup
 	for (int c=0; c<primaryCells.nItems(); ++c)
 	{
 		// Loop over all cell neighbours for this primary Cell
-		CellNeighbour* neighbours = primaryCells[c]->allCellNeighbours();
-		for (int n=0; n<primaryCells[c]->nTotalCellNeighbours(); ++n)
+		for (auto& neighbour : primaryCells[c]->allCellNeighbours())
 		{
-			readOnlyCell = neighbours[n].cell();
+			readOnlyCell = neighbour.cell();
 			cellIndex = readOnlyCell->index();
 
 			// If we have locked this Cell already, continue

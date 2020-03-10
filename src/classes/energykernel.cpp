@@ -200,7 +200,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	Atom* ii, *jj;
 	Vec3<double> rJ;
 	int i, j;
-	Cell* otherCell;
 	Molecule* molJ;
 	double rSq, scale;
 
@@ -209,10 +208,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Straight loop over Cells *not* requiring mim
-	Cell** neighbours = centralCell->cellNeighbours();
-	for (int n = 0; n<centralCell->nCellNeighbours(); ++n)
+	for (auto* otherCell : centralCell->cellNeighbours())
 	{
-		otherCell = neighbours[n];
 		OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
 
 		for (j = 0; j < otherAtoms.nItems(); ++j)
@@ -245,10 +242,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	}
 
 	// Straight loop over Cells requiring mim
-	Cell** mimNeighbours = centralCell->mimCellNeighbours();
-	for (int n = 0; n<centralCell->nMimCellNeighbours(); ++n)
+	for (auto* otherCell : centralCell->mimCellNeighbours())
 	{
-		otherCell = mimNeighbours[n];
 		OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
 
 		for (j = 0; j < otherAtoms.nItems(); ++j)
@@ -501,12 +496,10 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::DivisionStrategy strateg
 	double totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
 
 	// Cell neighbours not requiring minimum image
-	Cell** neighbours = cellI->cellNeighbours();
-	for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(i, neighbours[n], KernelFlags::NoFlags, strategy, false);
+	for (auto* neighbour : cellI->cellNeighbours()) totalEnergy += energy(i, neighbour, KernelFlags::NoFlags, strategy, false);
 
 	// Cell neighbours requiring minimum image
-	Cell** mimNeighbours = cellI->mimCellNeighbours();
-	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy, false);
+	for (auto* neighbour : cellI->mimCellNeighbours()) totalEnergy += energy(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy, false);
 
 	// Perform relevant sum if requested
 	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
@@ -530,12 +523,10 @@ double EnergyKernel::energy(const Molecule* mol, ProcessPool::DivisionStrategy s
 		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
 		// Cell neighbours not requiring minimum image
-		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+		for (auto* neighbour : cellI->cellNeighbours()) totalEnergy += energy(ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
 		// Cell neighbours requiring minimum image
-		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+		for (auto* neighbour : cellI->mimCellNeighbours()) totalEnergy += energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 	}
 
 	// Perform relevant sum if requested
