@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_CELL_H
 #define DISSOLVE_CELL_H
 
+#include <vector>
 #include "classes/atom.h"
 #include "templates/array.h"
 #include "templates/vector3.h"
@@ -98,9 +99,9 @@ class Cell
 	 */
 	private:
 	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
-	Cell** cellNeighbours_, **mimCellNeighbours_;
+	std::vector<Cell*> cellNeighbours_, mimCellNeighbours_;
 	// Array of all neighbouring cells
-	CellNeighbour* allCellNeighbours_;
+	std::vector<CellNeighbour> allCellNeighbours_;
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 
@@ -114,17 +115,17 @@ class Cell
 	// Return total number of Cell neighbours
 	int nTotalCellNeighbours() const;
 	// Return adjacent Cell neighbour list
-	Cell** cellNeighbours();
+	std::vector<Cell*> cellNeighbours();
 	// Return specified adjacent Cell neighbour
 	Cell* cellNeighbour(int id) const;
 	// Return list of Cell neighbours requiring minimum image calculation
-	Cell** mimCellNeighbours();
+	std::vector<Cell*> mimCellNeighbours();
 	// Return specified Cell neighbour requiring minimum image calculation
 	Cell* mimCellNeighbour(int id) const;
 	// Return if the specified Cell requires minimum image calculation
 	bool mimRequired(const Cell* otherCell) const;
 	// Return list of all Cell neighbours
-	CellNeighbour* allCellNeighbours();
+	std::vector<CellNeighbour> allCellNeighbours();
 	// Return array of adjacent Cell neighbours
 	const Array<Cell*>& adjacentCellNeighbours();
 };

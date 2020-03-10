@@ -28,9 +28,6 @@
 Cell::Cell()
 {
 	index_ = -1;
-	cellNeighbours_ = NULL;
-	mimCellNeighbours_ = NULL;
-	allCellNeighbours_ = NULL;
 	nCellNeighbours_ = 0;
 	nMimCellNeighbours_ = 0;
 }
@@ -38,9 +35,6 @@ Cell::Cell()
 // Destructor
 Cell::~Cell()
 {
-	if (cellNeighbours_) delete[] cellNeighbours_;
-	if (mimCellNeighbours_) delete[] mimCellNeighbours_;
-	if (allCellNeighbours_) delete[] allCellNeighbours_;
 }
 
 /*
@@ -163,12 +157,12 @@ void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedP
 
 	// Create near-neighbour array of Cells not requiring minimum image to be applied
 	nCellNeighbours_ = nearNeighbours.nItems();
-	cellNeighbours_ = new Cell*[nCellNeighbours_];
+	cellNeighbours_.resize(nCellNeighbours_);
 	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = nearNeighbours[n];
 
 	// Create array of neighbours that require minimum image calculation
 	nMimCellNeighbours_ = mimNeighbours.nItems();
-	mimCellNeighbours_ = new Cell*[nMimCellNeighbours_];
+	mimCellNeighbours_.resize(nMimCellNeighbours_);
 	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours[n];
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
@@ -177,7 +171,7 @@ void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedP
 	for (n=0; n<mimNeighbours.nItems(); ++n) allCells.add(mimNeighbours[n], true);
 
 	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-	allCellNeighbours_ = new CellNeighbour[allCells.nItems()];
+	allCellNeighbours_.resize(allCells.nItems());
 	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
 }
 
@@ -200,7 +194,7 @@ int Cell::nTotalCellNeighbours() const
 }
 
 // Return adjacent Cell neighbour list
-Cell** Cell::cellNeighbours()
+std::vector<Cell*> Cell::cellNeighbours()
 {
 	return cellNeighbours_;
 }
@@ -212,7 +206,7 @@ Cell* Cell::cellNeighbour(int id) const
 }
 
 // Return list of Cell neighbours requiring minimum image calculation
-Cell** Cell::mimCellNeighbours()
+std::vector<Cell*> Cell::mimCellNeighbours()
 {
 	return mimCellNeighbours_;
 }
@@ -231,7 +225,7 @@ bool Cell::mimRequired(const Cell* otherCell) const
 }
 
 // Return list of all Cell neighbours
-CellNeighbour* Cell::allCellNeighbours()
+std::vector<CellNeighbour> Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;
 }
