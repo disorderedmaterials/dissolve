@@ -100,7 +100,7 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			double r, angle;
 			Atom* i, *j;
 			Vec3<double> vecji, vecjk, veckl;
-			std::shared_ptr<Molecule> molN, *molM;
+			std::shared_ptr<Molecule> molN, molM;
 			const Box* box = cfg->box();
 			double scale;
 			const double cutoff = dissolve.potentialMap().range();

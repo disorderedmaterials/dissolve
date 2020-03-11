@@ -127,7 +127,7 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 			if (excludedMolecules.contains(molecule.get())) continue;
 
 			// All OK, so generate sites
-			generateSites(molecules);
+			generateSites(molecule);
 		}
 	}
 

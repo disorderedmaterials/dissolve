@@ -123,7 +123,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (distributor.cycle())
 		{
 			// Get next set of Molecule targets from the distributor
-			Array<int> targetMolecules = distributor.assignedMolecules();
+			std::vector<int> targetMolecules = distributor.assignedMolecules();
 
 			// Switch parallel strategy if necessary
 			if (distributor.currentStrategy() != strategy)
@@ -136,7 +136,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecule
-			for (int n = 0; n<targetMolecules.nItems(); ++n)
+			for (int n = 0; n<targetMolecules.size(); ++n)
 			{
 				/*
 				* Calculation Begins

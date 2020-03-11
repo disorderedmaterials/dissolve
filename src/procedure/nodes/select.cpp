@@ -198,7 +198,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	// Update our exclusion lists
 	excludedMolecules_.clear();
 	RefListIterator<SelectProcedureNode> moleculeExclusionIterator(sameMoleculeExclusions_);
-	while (SelectProcedureNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule());
+	while (SelectProcedureNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule().get());
 
 	excludedSites_.clear();
 	RefListIterator<SelectProcedureNode> siteExclusionIterator(sameSiteExclusions_);
@@ -229,7 +229,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 			{
 				if (site->molecule() != moleculeParent) continue; 
 			}
-			else if (excludedMolecules_.contains(site->molecule())) continue;
+			else if (excludedMolecules_.contains(site->molecule().get())) continue;
 
 			// Check Site exclusions
 			if (excludedSites_.contains(site)) continue;

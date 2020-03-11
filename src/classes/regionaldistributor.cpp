@@ -195,7 +195,7 @@ bool RegionalDistributor::cycle()
 			{
 				if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
 				{
-					assignedMolecules_[0].add(n);
+					assignedMolecules_[0].push_back(n);
 					++nMoleculesDistributed_;
 				}
 			}
@@ -216,7 +216,7 @@ bool RegionalDistributor::cycle()
 	// Summarise
 	for (processOrGroup=0; processOrGroup<nProcessesOrGroups_; ++processOrGroup)
 	{
-		Messenger::printVerbose("Distributor cycle %i : Process/Group %i has %i Molecules asigned to it over %i locked Cells.\n", nCycles_, processOrGroup, assignedMolecules_[processOrGroup].nItems(), lockedCells_[processOrGroup].nItems());
+		Messenger::printVerbose("Distributor cycle %i : Process/Group %i has %i Molecules asigned to it over %i locked Cells.\n", nCycles_, processOrGroup, assignedMolecules_[processOrGroup].size(), lockedCells_[processOrGroup].nItems());
 	}
 
 // 	XXX Check for balanced load (molecules/atoms)
@@ -269,7 +269,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
 	int cellIndex;
 
 	// Obvious check first - is the Molecule available for distribution / assignment?
-	const int molId = mol->arrayIndex();
+	const int molId = find(moleculeArray_.begin(), moleculeArray_.end(), mol) - moleculeArray_.begin();
 
 	if (DND) Messenger::print("  -- Checking Molecule %i for process/group %i: status = %s\n", molId, processOrGroup, moleculeStatusFlag(moleculeStatus_[molId]));
 
@@ -397,16 +397,17 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell* cell, int pr
 		// Get the Atom's Molecule pointer
 		mol = atom->molecule();
 
-		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", mol->arrayIndex(), atom->arrayIndex(), checkedMolecules.contains(mol) ? "IS" : "IS NOT");
+		int index = find(moleculeArray_.begin(), moleculeArray_.end(), mol) - moleculeArray_.begin();
+		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", index, atom->arrayIndex(), checkedMolecules.contains(mol.get()) ? "IS" : "IS NOT");
 
 		// Have we already checked this Molecule?
-		if (checkedMolecules.contains(mol)) continue;
+		if (checkedMolecules.contains(mol.get())) continue;
 
 		// Try to assign this Molecule to the present process/group
 		if (assignMolecule(mol, processOrGroup)) return mol;
 
 		// Not possible to assign the Molecule, so add it to our list of checked Molecules and move on
-		checkedMolecules.addExclusive(mol);
+		checkedMolecules.addExclusive(mol.get());
 	}
 
 	return NULL;
@@ -477,7 +478,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
 }
 
 // Return next set of Molecule IDs assigned to this process
-Array<int> RegionalDistributor::assignedMolecules()
+std::vector<int>& RegionalDistributor::assignedMolecules()
 {
 	return assignedMolecules_[processOrGroupIndex_];
 }
