@@ -51,7 +51,7 @@ void Configuration::updateCellLocation(Atom* i)
 }
 
 // Update Cell location of specified Molecule
-void Configuration::updateCellLocation(Molecule* mol)
+void Configuration::updateCellLocation(std::shared_ptr<Molecule> mol)
 {
 	for (int n = 0; n < mol->nAtoms(); ++n) updateCellLocation(mol->atom(n));
 }

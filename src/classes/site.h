@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_SITE_H
 #define DISSOLVE_SITE_H
 
+#include <memory>
 #include "math/matrix3.h"
 #include "base/enumoptions.h"
 
@@ -33,7 +34,7 @@ class Site
 {
 	public:
 	// Constructor
-	Site(const Molecule* molecule = NULL, Vec3<double> origin = Vec3<double>());
+	Site(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>());
 	// Destructor
 	virtual ~Site();
 
@@ -45,13 +46,13 @@ class Site
 	// Site origin
 	Vec3<double> origin_;
 	// Molecule to which site is related (if relevant)
-	const Molecule* molecule_;
+	std::shared_ptr<const Molecule> molecule_;
 
 	public:
 	// Return site origin
 	const Vec3<double>& origin() const;
 	// Return Molecule to which site is related (if relevant)
-	const Molecule* molecule() const;
+	std::shared_ptr<const Molecule> molecule() const;
 	// Return whether local axes are present
 	virtual bool hasAxes() const;
 	// Return local axes
@@ -63,7 +64,7 @@ class OrientedSite : public Site
 {
 	public:
 	// Constructor
-	OrientedSite(const Molecule* molecule = NULL, Vec3<double> origin = Vec3<double>(), Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
+	OrientedSite(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>(), Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
 	// Destructor
 	~OrientedSite();
 

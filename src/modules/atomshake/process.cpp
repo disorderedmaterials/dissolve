@@ -70,7 +70,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
 		// Create a Molecule distributor
-		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		std::deque<std::shared_ptr<Molecule>>& moleculeArray = cfg->molecules();
 		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and EnergyKernel
@@ -114,7 +114,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Get Molecule index and pointer
 				molId = targetMolecules[m];
-				Molecule* mol = cfg->molecule(molId);
+				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 
 				// Set current Atom targets in ChangeStore (whole Molecule)
 				changeStore.add(mol);

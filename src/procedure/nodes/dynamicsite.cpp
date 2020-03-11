@@ -69,7 +69,7 @@ bool DynamicSiteProcedureNode::mustBeNamed() const
  */
 
 // Generate sites from the specified Molecule
-void DynamicSiteProcedureNode::generateSites(const Molecule* molecule)
+void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> molecule)
 {
 	// Loop over Atoms in the Molecule
 	for (int n=0; n<molecule->nAtoms(); ++n)
