@@ -24,7 +24,6 @@
 
 #include <vector>
 #include "templates/dynamicarrayobject.h"
-#include "templates/reflist.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
@@ -59,8 +58,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	const Species* species_;
 	// Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
 	std::vector<Atom*> atoms_;
-	// Array of restraints involving atoms in this Molecule
-// 	Array<Bond*> restraints_;
 
 	public:
 	// Set Species that this Molecule represents
