@@ -66,6 +66,7 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 	cellLockOwners_ = -1;
 
 	// Molecules
+	assignedMolecules_.resize(nProcessesOrGroups_);
 	moleculeStatus_.initialise(moleculeArray_.size());
 	moleculeStatus_ = RegionalDistributor::WaitingFlag;
 	nMoleculesToDistribute_ = moleculeArray_.size();
