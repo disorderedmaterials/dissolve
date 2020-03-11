@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/regionaldistributor.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
@@ -65,7 +66,6 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 	cellLockOwners_ = -1;
 
 	// Molecules
-	assignedMolecules_ = new Array<int>[nProcessesOrGroups_];
 	moleculeStatus_.initialise(moleculeArray_.size());
 	moleculeStatus_ = RegionalDistributor::WaitingFlag;
 	nMoleculesToDistribute_ = moleculeArray_.size();
@@ -75,7 +75,6 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 // Destructor
 RegionalDistributor::~RegionalDistributor()
 {
-	delete[] assignedMolecules_;
 	delete[] lockedCells_;
 }
 
@@ -144,7 +143,7 @@ bool RegionalDistributor::cycle()
 		{
 			if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
 			{
-				assignedMolecules_[0].add(n);
+				assignedMolecules_[0].push_back(n);
 				++nMoleculesDistributed_;
 			}
 		}
@@ -170,12 +169,13 @@ bool RegionalDistributor::cycle()
 			else
 			{
 				// Valid Molecule found, so add it to our distribution array and mark it as such
-				assignedMolecules_[processOrGroup].add(molecule->arrayIndex());
-				moleculeStatus_[molecule->arrayIndex()] = RegionalDistributor::DistributedFlag;
+				int index = find(moleculeArray_.begin(), moleculeArray_.end(), molecule) - moleculeArray_.begin();
+				assignedMolecules_[processOrGroup].push_back(index);
+				moleculeStatus_[index] = RegionalDistributor::DistributedFlag;
 				++nMoleculesDistributed_;
 				++nMoleculesAssigned;
 
-				if (DND) Messenger::print("Molecule %i assigned to process/group %i - nMoleculesDistributed is now %i. Process/group has %i locked Cells in total.\n", molecule->arrayIndex(), processOrGroup, nMoleculesDistributed_, lockedCells_[processOrGroup].nItems());
+				if (DND) Messenger::print("Molecule %i assigned to process/group %i - nMoleculesDistributed is now %i. Process/group has %i locked Cells in total.\n", index, processOrGroup, nMoleculesDistributed_, lockedCells_[processOrGroup].nItems());
 			}
 
 			// Have all possible Molecules been assigned?

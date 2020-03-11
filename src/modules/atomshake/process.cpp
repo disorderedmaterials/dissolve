@@ -93,7 +93,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (distributor.cycle())
 		{
 			// Get next set of Molecule targets from the distributor
-			Array<int> targetMolecules = distributor.assignedMolecules();
+			auto& targetMolecules = distributor.assignedMolecules();
 
 			// Switch parallel strategy if necessary
 			if (distributor.currentStrategy() != strategy)
@@ -106,7 +106,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecules
-			for (m = 0; m<targetMolecules.nItems(); ++m)
+			for (m = 0; m<targetMolecules.size(); ++m)
 			{
 				/*
 				 * Calculation Begins

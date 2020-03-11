@@ -24,6 +24,7 @@
 
 #include <deque>
 #include <memory>
+#include <vector>
 #include "classes/cellarray.h"
 #include "base/processpool.h"
 #include "templates/array.h"
@@ -111,7 +112,7 @@ class RegionalDistributor
 	// Molecule status array
 	Array<MoleculeStatusFlag> moleculeStatus_;
 	// Arrays of Molecule IDs assigned to each process / group
-	Array<int>* assignedMolecules_;
+	std::vector<std::vector<int>> assignedMolecules_;
 
 	private:
 	// Assign Molecule to process/group if possible
@@ -123,7 +124,7 @@ class RegionalDistributor
 
 	public:
 	// Return next set of Molecule IDs assigned to this process
-	Array<int> assignedMolecules();
+	std::vector<int>&  assignedMolecules();
 
 
 	/*
