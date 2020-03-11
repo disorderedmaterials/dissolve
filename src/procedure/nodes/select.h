@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_PROCEDURENODE_SELECT_H
 #define DISSOLVE_PROCEDURENODE_SELECT_H
 
+#include <memory>
 #include "procedure/nodes/node.h"
 #include "math/range.h"
 #include "templates/array.h"
@@ -92,7 +93,7 @@ class SelectProcedureNode : public ProcedureNode
 	// List of Sites currently excluded from selection
 	const RefList<const Site>& excludedSites() const;
 	// Return Molecule (from site) in which the site must exist
-	const Molecule* sameMoleculeMolecule();
+	std::shared_ptr<const Molecule> sameMoleculeMolecule();
 
 
 	/*

@@ -117,7 +117,8 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
-	Molecule* molI;
+	std::shared_ptr<Molecule> molI;
+	int i, j;
 	double rSq, scale;
 	auto central = centralAtoms.begin();
 
@@ -196,7 +197,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rJ;
-	Molecule* molJ;
+	int i, j;
+	std::shared_ptr<Molecule> molJ;
 	double rSq, scale;
 
 	// Get start/stride for specified loop context
@@ -301,7 +303,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	int nOtherAtoms = cell->nAtoms();
 	
 	// Grab some information on the supplied Atom
-	Molecule* moleculeI = i->molecule();
+	std::shared_ptr<Molecule> moleculeI = i->molecule();
 	const Vec3<double> rI = i->r();
 
 	// Get start/stride for specified loop context
@@ -505,7 +507,7 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::DivisionStrategy strateg
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	Atom* ii;
 	Cell* cellI;
@@ -636,7 +638,7 @@ double EnergyKernel::energy(const SpeciesTorsion* t, const Atom* i, const Atom* 
 }
 
 // Return intramolecular energy for the supplied Atom
-double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
+double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom* i)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -689,7 +691,7 @@ double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
 }
 
 // Return intramolecular energy for the supplied Molecule
-double EnergyKernel::intramolecularEnergy(const Molecule* mol)
+double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
 {
 #ifdef CHECKS
 	if (mol == NULL)

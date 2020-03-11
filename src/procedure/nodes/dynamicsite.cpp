@@ -108,23 +108,23 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 
 	// Grab exclusion lists and any specific Molecule parent
 	const RefList<const Molecule>& excludedMolecules = parent_->excludedMolecules();
-	const Molecule* moleculeParent = parent_->sameMoleculeMolecule();
+	std::shared_ptr<const Molecule> moleculeParent = parent_->sameMoleculeMolecule();
 
 	/*
 	 * We'll loop over all Molecules in the Configuration, rather than all Atoms, since there are useful exclusions we can make based on the parent Molecule.
 	 * If, however, a sameMolecule_ is defined then we can simply grab this Molecule and do the checks within it, rather than looping.
-	 * Both use the local function generateSites(Molecule*) in order to extract site information.
+	 * Both use the local function generateSites(std::shared_ptr<Molecule>) in order to extract site information.
 	 */
 
 	if (moleculeParent) generateSites(moleculeParent);
 	else
 	{
 		// Loop over Molecules in the target Configuration
-		DynamicArray<Molecule>& molecules = cfg->molecules();
-		for (int n=0; n<molecules.nItems(); ++n)
+		std::deque<std::shared_ptr<Molecule>>& molecules = cfg->molecules();
+		for (auto molecule : molecules)
 		{
 			// Check Molecule exclusions
-			if (excludedMolecules.contains(molecules[n])) continue;
+			if (excludedMolecules.contains(molecule.get())) continue;
 
 			// All OK, so generate sites
 			generateSites(molecules[n]);

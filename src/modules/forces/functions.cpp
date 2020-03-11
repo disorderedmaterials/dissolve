@@ -175,7 +175,7 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 	{
 		const Atom* i = atoms.constValue(targetIndices.constAt(n));
 		const SpeciesAtom* spAtom = i->speciesAtom();
-		const Molecule* mol = i->molecule();
+		std::shared_ptr<const Molecule> mol = i->molecule();
 
 		// Calcualte forces from SpeciesBond terms
 		const PointerArray<SpeciesBond>& bonds = spAtom->bonds();
@@ -270,7 +270,7 @@ void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const 
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const Array<Molecule*>& targetMolecules, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const Array<std::shared_ptr<Molecule>>& targetMolecules, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
 	 * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions
@@ -288,7 +288,7 @@ void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const 
 	Array<int> indices;
 	for (int n=0; n<targetMolecules.nItems(); ++n)
 	{
-		Molecule* mol = targetMolecules.constAt(n);
+		std::shared_ptr<Molecule> mol = targetMolecules.constAt(n);
 
 		for (int i=0; i<mol->nAtoms(); ++i)
 		{

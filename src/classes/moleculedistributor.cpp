@@ -23,7 +23,7 @@
 #include "classes/atom.h"
 
 // Constructor
-MoleculeDistributor::MoleculeDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed) : Distributor(moleculeArray.nItems(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
+MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed) : Distributor(moleculeArray.size(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
 {
 }
 
@@ -40,7 +40,7 @@ MoleculeDistributor::~MoleculeDistributor()
 Array<Cell*> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
 {
 	// Grab specified molecule
-	const Molecule* molecule = moleculeArray_.constValue(objectId);
+	std::shared_ptr<const Molecule> molecule = moleculeArray_[objectId];
 
 	// Loop over Atoms in the Molecule, and add the (unique) cellID each Atom is in
 	Array<Cell*> cells;

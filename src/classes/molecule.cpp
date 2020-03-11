@@ -24,7 +24,7 @@
 #include "classes/box.h"
 
 // Constructor
-Molecule::Molecule() : DynamicArrayObject<Molecule>()
+Molecule::Molecule()
 {
 	species_ = NULL;
 }
@@ -68,7 +68,7 @@ void Molecule::addAtom(Atom* i)
 	atoms_.push_back(i);
 
 	if (i->molecule() != NULL) Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n", i->arrayIndex());
-	i->setMolecule(this);
+	i->setMolecule(shared_from_this());
 }
 
 // Return size of Atom array

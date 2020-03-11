@@ -50,7 +50,7 @@ const char* RegionalDistributor::cellStatusFlag(RegionalDistributor::CellStatusF
 }
 
 // Constructor
-RegionalDistributor::RegionalDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy) :  processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray), moleculeArray_(moleculeArray)
+RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecule>>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy) :  processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray), moleculeArray_(moleculeArray)
 {
 	// Core
 	currentStrategy_ = originalStrategy_;
@@ -66,9 +66,9 @@ RegionalDistributor::RegionalDistributor(const DynamicArray<Molecule>& moleculeA
 
 	// Molecules
 	assignedMolecules_ = new Array<int>[nProcessesOrGroups_];
-	moleculeStatus_.initialise(moleculeArray_.nItems());
+	moleculeStatus_.initialise(moleculeArray_.size());
 	moleculeStatus_ = RegionalDistributor::WaitingFlag;
-	nMoleculesToDistribute_ = moleculeArray_.nItems();
+	nMoleculesToDistribute_ = moleculeArray_.size();
 	nMoleculesDistributed_ = 0;
 }
 
@@ -114,7 +114,7 @@ bool RegionalDistributor::cycle()
 		return false;
 	}
 
-	Molecule* molecule;
+	std::shared_ptr<Molecule> molecule;
 	Array<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_);
 	allPossibleMoleculesAssigned = false;
 	int processOrGroup, nMoleculesAssigned, allPossibleMoleculesAssignedCount = 0;
@@ -263,7 +263,7 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
  */
 
 // Assign Molecule to process/group if possible
-bool RegionalDistributor::assignMolecule(const Molecule* mol, int processOrGroup)
+bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup)
 {
 	Cell* primaryCell, *readOnlyCell;
 	int cellIndex;
@@ -381,7 +381,7 @@ bool RegionalDistributor::assignMolecule(const Molecule* mol, int processOrGroup
 }
 
 // Try to assign a Molecule from the specified Cell to the process/group
-Molecule* RegionalDistributor::assignMolecule(Cell* cell, int processOrGroup)
+std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell* cell, int processOrGroup)
 {
 	// TODO May be beneficial to do this by size order (nAtoms in molecules)?
 
@@ -391,7 +391,7 @@ Molecule* RegionalDistributor::assignMolecule(Cell* cell, int processOrGroup)
 	OrderedPointerList<Molecule> checkedMolecules;
 
 	// Loop over Atoms in Cell
-	Molecule* mol;
+	std::shared_ptr<Molecule> mol;
 	for (auto* atom : cell->indexOrderedAtoms())
 	{
 		// Get the Atom's Molecule pointer
@@ -413,14 +413,14 @@ Molecule* RegionalDistributor::assignMolecule(Cell* cell, int processOrGroup)
 }
 
 // Try to find a Molecule target for the process/group
-Molecule* RegionalDistributor::assignMolecule(int processOrGroup)
+std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup)
 {
 	/*
 	 * For this process/group, look at its current list of locked Cells, and search for a suitable Molecule within those.
 	 * If there are no suitable Molecules (or there are no Cells, as is the case at the beginning), pick a suitable Cell close to 
 	 * those already in the list (or one at a suitable starting location for the current process/group).
 	 */
-	Molecule* molecule = NULL;
+	std::shared_ptr<Molecule> molecule = NULL;
 
 	OrderedPointerListIterator<Cell> lockedCellIterator(lockedCells_[processOrGroup]);
 	while (Cell* cell = lockedCellIterator.iterate())

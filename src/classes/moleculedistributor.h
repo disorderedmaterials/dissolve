@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_MOLECULEDISTRIBUTOR_H
 #define DISSOLVE_MOLECULEDISTRIBUTOR_H
 
+#include <deque>
+#include <memory>
 #include "classes/distributor.h"
 #include "classes/molecule.h"
 #include "templates/dynamicarray.h"
@@ -34,7 +36,7 @@ class MoleculeDistributor : public Distributor
 {
 	public:
 	// Constructor
-	MoleculeDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
+	MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
 	// Destructor
 	~MoleculeDistributor();
 
@@ -44,7 +46,7 @@ class MoleculeDistributor : public Distributor
 	 */
 	private:
 	// Source Molecule Array
-	const DynamicArray<Molecule>& moleculeArray_;
+	const std::deque<std::shared_ptr<Molecule>>& moleculeArray_;
 
 
 	/*

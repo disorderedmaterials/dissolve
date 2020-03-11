@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_REGIONALDISTRIBUTOR_H
 #define DISSOLVE_REGIONALDISTRIBUTOR_H
 
+#include <deque>
+#include <memory>
 #include "classes/cellarray.h"
 #include "base/processpool.h"
 #include "templates/array.h"
@@ -37,7 +39,7 @@ class RegionalDistributor
 {
 	public:
 	// Constructor
-	RegionalDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy);
+	RegionalDistributor(const std::deque<std::shared_ptr<Molecule>>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy);
 	// Destructor
 	~RegionalDistributor();
 	// Molecule Status Flag
@@ -101,7 +103,7 @@ class RegionalDistributor
 	 */
 	private:
 	// Source Molecule Array
-	const DynamicArray<Molecule>& moleculeArray_;
+	const std::deque<std::shared_ptr<Molecule>>& moleculeArray_;
 	// Number of Molecules to distribute
 	int nMoleculesToDistribute_;
 	// Counter for distributed Molecules
@@ -113,11 +115,11 @@ class RegionalDistributor
 
 	private:
 	// Assign Molecule to process/group if possible
-	bool assignMolecule(const Molecule* mol, int processOrGroup);
+	bool assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup);
 	// Try to assign a Molecule from the specified Cell to the process/group
-	Molecule* assignMolecule(Cell* cell, int processOrGroup);
+	std::shared_ptr<Molecule> assignMolecule(Cell* cell, int processOrGroup);
 	// Try to find a Molecule target for the process/group
-	Molecule* assignMolecule(int processOrGroup);
+	std::shared_ptr<Molecule> assignMolecule(int processOrGroup);
 
 	public:
 	// Return next set of Molecule IDs assigned to this process

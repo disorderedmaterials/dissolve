@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ATOM_H
 #define DISSOLVE_ATOM_H
 
+#include <memory>
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 #include "templates/dynamicarrayobject.h"
@@ -93,7 +94,7 @@ class Atom : public DynamicArrayObject<Atom>
 	// SpeciesAtom that this Atom represents
 	const SpeciesAtom* speciesAtom_;
 	// Molecule in which this Atom exists
-	Molecule* molecule_;
+	std::shared_ptr<Molecule> molecule_;
 	// Cell in which the atom exists
 	Cell* cell_;
 
@@ -103,9 +104,9 @@ class Atom : public DynamicArrayObject<Atom>
 	// Return SpeciesAtom that this Atom represents
 	const SpeciesAtom* speciesAtom() const;
 	// Set Molecule in which this Atom exists 
-	void setMolecule(Molecule* mol);
+	void setMolecule(std::shared_ptr<Molecule> mol);
 	// Return Molecule in which this Atom exists
-	Molecule* molecule() const;
+	std::shared_ptr<Molecule> molecule() const;
 	// Set cell in which the atom exists
 	void setCell(Cell* cell);
 	// Return cell in which the atom exists

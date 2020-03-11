@@ -86,7 +86,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
 		// Create a Molecule distributor
-		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		std::deque<std::shared_ptr<Molecule>>& moleculeArray = cfg->molecules();
 		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and EnergyKernel
@@ -144,7 +144,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Get Molecule index and pointer
 				molId = targetMolecules[n];
-				Molecule* mol = cfg->molecule(molId);
+				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 				const int indexOffset = mol->atom(0)->arrayIndex();
 
 				// Set current atom targets in ChangeStore (whole molecule)

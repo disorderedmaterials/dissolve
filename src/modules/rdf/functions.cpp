@@ -307,7 +307,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	Atom* i, *j, *k;
 	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
-		Molecule* mol = cfg->molecule(m);
+		std::shared_ptr<Molecule> mol = cfg->molecule(m);
 		std::vector<Atom*> atoms = mol->atoms();
 
 		for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
@@ -472,8 +472,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 // 			tempgr.reset();
 //
 // 			// Add contributions from this SpeciesIntra only
-// 			const Molecule** molecules = cfg->molecules().array();
-// 			const Molecule* mol;
+// 			std::shared_ptr<const Molecule>* molecules = cfg->molecules().array();
+// 			std::shared_ptr<const Molecule> mol;
 // 			for (int n=0; n<molecules.nItems(); ++n, mol = molecules.at(n))
 // 			{
 // 				for (int n=bondPointers.nItems()-1; n>=0; --n)

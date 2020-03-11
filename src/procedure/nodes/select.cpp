@@ -95,7 +95,7 @@ const RefList<const Site>& SelectProcedureNode::excludedSites() const
 }
 
 // Return Molecule (from site) in which the site must exist
-const Molecule* SelectProcedureNode::sameMoleculeMolecule()
+std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 {
 	if (!sameMolecule_) return NULL;
 
@@ -205,7 +205,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	while (SelectProcedureNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites_.addUnique(node->currentSite());
 
 	// Get required Molecule parent, if requested
-	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
+	std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
 
 	// Site to use as distance reference point (if any)
 	const Site* distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : NULL;

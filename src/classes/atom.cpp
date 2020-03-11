@@ -136,13 +136,13 @@ const SpeciesAtom* Atom::speciesAtom() const
 }
 
 // Set Molecule in which this Atom exists 
-void Atom::setMolecule(Molecule* mol)
+void Atom::setMolecule(std::shared_ptr<Molecule> mol)
 {
 	molecule_ = mol;
 }
 
 // Return Molecule in which this Atom exists 
-Molecule* Atom::molecule() const
+std::shared_ptr<Molecule> Atom::molecule() const
 {
 	return molecule_;
 }

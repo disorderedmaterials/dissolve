@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_MOLECULE_H
 #define DISSOLVE_MOLECULE_H
 
+#include <memory>
 #include <vector>
 #include "templates/dynamicarrayobject.h"
 #include "templates/vector3.h"
@@ -33,7 +34,7 @@ class Matrix3;
 class Species;
 
 // Molecule Definition
-class Molecule : public DynamicArrayObject<Molecule>
+class Molecule : std::enable_shared_from_this<Molecule>
 {
 	public:
 	// Constructor
