@@ -26,6 +26,7 @@
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "modules/import/import.h"
+#include <memory>
 
 // Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
@@ -157,8 +158,8 @@ void Configuration::incrementContentsVersion()
 std::shared_ptr<Molecule> Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinates)
 {
 	// Create the new Molecule object and set its Species pointer
-	molecules_.emplace_back();
-	std::shared_ptr<Molecule> newMolecule = molecules_.back();
+	std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+	molecules_.push_back(newMolecule);
 	newMolecule->setSpecies(sp);
 
 	// Update the relevant SpeciesInfo population

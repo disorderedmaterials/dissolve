@@ -68,7 +68,8 @@ void Molecule::addAtom(Atom* i)
 	atoms_.push_back(i);
 
 	if (i->molecule() != NULL) Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n", i->arrayIndex());
-	i->setMolecule(shared_from_this());
+	std::shared_ptr<Molecule> parent = shared_from_this();
+	i->setMolecule(parent);
 }
 
 // Return size of Atom array
