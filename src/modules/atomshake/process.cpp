@@ -119,13 +119,10 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Set current Atom targets in ChangeStore (whole Molecule)
 				changeStore.add(mol);
 
+				n = 0;
 				// Loop over atoms in the Molecule
-				Atom** atoms = mol->atoms();
-				for (n = 0; n < mol->nAtoms(); ++n)
+				for (auto* i : mol->atoms())
 				{
-					// Grab Atom pointer
-					Atom* i = atoms[n];
-
 					// Calculate reference energy for the Atom
 					currentEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
 					currentIntraEnergy = kernel.intramolecularEnergy(mol, i) * termScale;
@@ -167,6 +164,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 							}
 							++nAttempts;
 						}
+						++n;
 					}
 
 				}

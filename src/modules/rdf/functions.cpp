@@ -308,14 +308,14 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
 		Molecule* mol = cfg->molecule(m);
-		Atom** atoms = mol->atoms();
+		std::vector<Atom*> atoms = mol->atoms();
 
-		for (int ii=0; ii<mol->nAtoms()-1; ++ii)
+		for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
 		{
-			i = atoms[ii];
-			for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
+			i = *ii;
+			for (auto jj=std::next(ii); jj< atoms.end(); ++jj)
 			{
-				j = atoms[jj];
+				j = *jj;
 
 				if (i->cell()->mimRequired(j->cell())) distance = box->minimumDistance(i, j);
 				else distance = (i->r() - j->r()).magnitude();

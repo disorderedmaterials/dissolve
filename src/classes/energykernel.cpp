@@ -537,13 +537,13 @@ double EnergyKernel::correct(const Atom* i)
 {
 	// Loop over atoms in molecule
 	int nMolAtoms = i->molecule()->nAtoms();
-	Atom* j, **atoms = i->molecule()->atoms();
+	Atom* j;
+	std::vector<Atom*> atoms = i->molecule()->atoms();
 	double scale, r, correctionEnergy = 0.0;
 	Vec3<double> rI = i->r();
 
-	for (int n = 0; n < nMolAtoms; ++n)
+	for (auto* j : atoms)
 	{
-		j = atoms[n];
 		if (i == j) continue;
 		scale = 1.0 - i->scaling(j);
 		if (scale > 1.0e-3)
