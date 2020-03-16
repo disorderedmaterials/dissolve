@@ -25,17 +25,12 @@
 #include <set>
 #include <vector>
 #include "classes/atom.h"
+#include "templates/orderedvector.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
 class Box;
 class CellNeighbour;
-
-template <class T> struct IndexComparator {
-  bool operator()(const T* lhs, const T* rhs) const {
-    return lhs->arrayIndex() < rhs->arrayIndex();
-  }
-};
 
 /*
  * Cell Definition
@@ -80,15 +75,17 @@ class Cell
 	 */
 	private:
 	// Array of Atoms contained in this Cell
-	std::set<Atom*> atoms_;
+	ordered_vector<Atom*> atoms_;
 	// Return array of contained Atoms, ordered by their array indices
-	std::set<Atom*, IndexComparator<Atom>> indexOrderedAtoms_;
+	ordered_vector<Atom*> indexOrderedAtoms_ = ordered_vector<Atom*>([](const Atom* lhs, const Atom* rhs){
+	  return lhs->arrayIndex() < rhs->arrayIndex();
+	});
 
 	public:
 	// Return array of contained Atoms
-	std::set<Atom*>& atoms();
+	ordered_vector<Atom*>& atoms();
 	// Return array of contained Atoms, ordered by their array indices
-	const std::set<Atom*, IndexComparator<Atom>>& indexOrderedAtoms() const;
+	const ordered_vector<Atom*>& indexOrderedAtoms() const;
 	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell
@@ -110,7 +107,7 @@ class Cell
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(std::set<Cell*>& nearNeighbours, std::set<Cell*>& mimNeighbours);
+	void addCellNeighbours(ordered_vector<Cell*>& nearNeighbours, ordered_vector<Cell*>& mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation

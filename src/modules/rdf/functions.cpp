@@ -180,7 +180,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 	for (n = start; n<cellArray.nCells(); n += stride)
 	{
 		cellI = cellArray.cell(n);
-		std::set<Atom*>& atomsI = cellI->atoms();
+		ordered_vector<Atom*>& atomsI = cellI->atoms();
 
 		// Add contributions between atoms in cellI
 		for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
@@ -205,7 +205,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 			cellJ = cellArray.cell(m);
 			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
 
-			std::set<Atom*>& atomsJ = cellJ->atoms();
+			ordered_vector<Atom*>& atomsJ = cellJ->atoms();
 
 			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the absence of a 2D look-up array
 			for (auto* i : atomsI)

@@ -24,6 +24,7 @@
 #include "classes/cellneighbour.h"
 #include "classes/box.h"
 #include "classes/atom.h"
+#include "templates/orderedvector.h"
 
 // Constructor
 Cell::Cell()
@@ -85,13 +86,13 @@ const Vec3< double >& Cell::centre() const
  */
 
 // Return array of contained Atoms
-std::set<Atom*>& Cell::atoms()
+ordered_vector<Atom*>& Cell::atoms()
 {
 	return atoms_;
 }
 
 // Return array of contained Atoms, ordered by their array indices
-const std::set<Atom*, IndexComparator<Atom>>& Cell::indexOrderedAtoms() const
+const ordered_vector<Atom*>& Cell::indexOrderedAtoms() const
 {
 	return indexOrderedAtoms_;
 }
@@ -152,7 +153,7 @@ bool Cell::removeAtom(Atom* i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(std::set<Cell*>& nearNeighbours, std::set<Cell*>& mimNeighbours)
+void Cell::addCellNeighbours(ordered_vector<Cell*>& nearNeighbours, ordered_vector<Cell*>& mimNeighbours)
 {
 	int n;
 
@@ -170,7 +171,7 @@ void Cell::addCellNeighbours(std::set<Cell*>& nearNeighbours, std::set<Cell*>& m
 		  mimCellNeighbours_.begin());
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
-	std::set<std::pair<Cell*, bool>> allCells;
+	ordered_vector<std::pair<Cell*, bool>> allCells;
 	for (auto* near : nearNeighbours) allCells.emplace(near, false);
 	for (auto* mim : mimNeighbours) allCells.emplace(mim, true);
 

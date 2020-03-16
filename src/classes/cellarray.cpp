@@ -249,7 +249,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
-	std::set<Cell*> nearNeighbours, mimNeighbours;
+	ordered_vector<Cell*> nearNeighbours, mimNeighbours;
 	Vec3<int> gridRef, delta;
 	for (n=0; n<nCells_; ++n)
 	{

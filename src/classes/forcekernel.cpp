@@ -28,6 +28,7 @@
 #include "classes/molecule.h"
 #include "classes/species.h"
 #include "base/processpool.h"
+#include "templates/orderedvector.h"
 
 // Constructor
 ForceKernel::ForceKernel(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance) : configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz), processPool_(procPool)
@@ -133,8 +134,8 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		return;
 	}
 #endif
-	std::set<Atom*>& centralAtoms = centralCell->atoms();
-	std::set<Atom*>& otherAtoms = otherCell->atoms();
+	ordered_vector<Atom*>& centralAtoms = centralCell->atoms();
+	ordered_vector<Atom*>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
@@ -237,7 +238,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	Molecule* moleculeI = i->molecule();
 
 	// Grab the array of Atoms in the supplied Cell
-	std::set<Atom*>& otherAtoms = cell->atoms();
+	ordered_vector<Atom*>& otherAtoms = cell->atoms();
 	int nOtherAtoms = cell->nAtoms();
 
 	// Get start/stride for specified loop context
