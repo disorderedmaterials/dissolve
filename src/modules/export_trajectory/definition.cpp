@@ -1,6 +1,6 @@
 /*
-	*** Export Module - Definition
-	*** src/modules/export/definition.cpp
+	*** Export Trajectory Module - Definition
+	*** src/modules/export_trajectory/definition.cpp
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,28 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export/export.h"
+#include "modules/export_trajectory/exporttraj.h"
 
 // Return type of module
-const char* ExportModule::type() const
+const char* ExportTrajectoryModule::type() const
 {
 	return "Export";
 }
 
 // Return category for module
-const char* ExportModule::category() const
+const char* ExportTrajectoryModule::category() const
 {
 	return "Input / Output";
 }
 
 // Return brief description of module
-const char* ExportModule::brief() const
+const char* ExportTrajectoryModule::brief() const
 {
-	return "Export data from one or more Configurations";
+	return "Export trajectory for a Configuration";
 }
 
 // Return the number of Configuration targets this Module requires
-int ExportModule::nRequiredTargets() const
+int ExportTrajectoryModule::nRequiredTargets() const
 {
-	return Module::OneOrMoreTargets;
+	return Module::ExactlyOneTarget;
 }

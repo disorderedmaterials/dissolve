@@ -207,7 +207,9 @@ set(BASIC_LINK_LIBS
   datatestmodule
   energymodule
   epsrmodule
-  exportmodule
+  exportcoordinatesmodule
+  exportpairpotentialsmodule
+  exporttrajectorymodule
   forcesmodule
   geomoptmodule
   importmodule

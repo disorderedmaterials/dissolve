@@ -29,7 +29,6 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "modules/energy/energy.h"
-#include "modules/export/export.h"
 
 // Static Members (ObjectStore)
 template<class Configuration> RefDataList<Configuration,int> ObjectStore<Configuration>::objects_;

@@ -1,6 +1,6 @@
 /*
-	*** Export Module - Initialisation
-	*** src/modules/export/init.cpp
+	*** Export Trajectory Module - Initialisation
+	*** src/modules/export_trajectory/init.cpp
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,15 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export/export.h"
+#include "modules/export_trajectory/exporttraj.h"
 #include "keywords/types.h"
 
 // Perform any necessary initialisation for the Module
-void ExportModule::initialise()
+void ExportTrajectoryModule::initialise()
 {
-	// Export
-	keywords_.add("Export", new FileAndFormatKeyword(coordinatesFormat_, "EndWriteCoordinates"), "WriteCoordinates", "Write coordinates for the Configuration targets");
-	keywords_.add("Export", new FileAndFormatKeyword(pairPotentialFormat_, "EndWritePairPotentials"), "WritePairPotentials", "Write all pair potentials to supplied basename");
-	keywords_.add("Export", new FileAndFormatKeyword(trajectoryFormat_, "EndWriteTrajectory"), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
+	// Format
+	keywords_.add("Format", new FileAndFormatKeyword(trajectoryFormat_, "EndFormat"), "Format", "File / format for trajectory");
 }
 

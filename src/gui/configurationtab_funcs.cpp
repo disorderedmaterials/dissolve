@@ -27,7 +27,6 @@
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
-#include "modules/export/export.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
