@@ -20,7 +20,7 @@ jobs:
         DATE=`date`
         ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u
   build:
-    runs-on: %{{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       os: [ubuntu-16.04, windows-latest, macos-latest]
     steps:
