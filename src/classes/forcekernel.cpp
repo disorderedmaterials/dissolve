@@ -141,21 +141,19 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	Molecule* molI;
 	int i, j, index;
 	double scale;
-	auto central = centralAtoms.begin();
-
 
 	// Get start/stride for specified loop context
 	int start = processPool_.interleavedLoopStart(strategy);
 	int stride = processPool_.interleavedLoopStride(strategy);
-	std::advance(central, start);
 
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		for (i = start; i < centralAtoms.size(); i += stride)
+		for (auto indexI = centralAtoms.begin()+start;
+		     indexI < centralAtoms.end();
+		     indexI += stride)
 		{
-			ii = *central;
-			std::advance(central, stride);
+			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
@@ -177,10 +175,11 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	}
 	else
 	{
-		for (i = start; i < centralCell->atoms().size(); i += stride)
+	  for (auto indexI = centralCell->atoms().begin()+start;
+	       indexI< centralCell->atoms().end();
+	       indexI+= stride)
 		{
-			ii = *central;
-			std::advance(central, stride);
+			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
@@ -276,13 +275,12 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 			}
 		}
 		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) {
-		  auto other = otherAtoms.begin();
-		  std::advance(other, start);
-		  for (j=start; j<nOtherAtoms; j += stride)
+                  for (auto indexJ = otherAtoms.begin()+start;
+		       indexJ < otherAtoms.end();
+		       indexJ += stride)
 		  {
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+                        jj = *indexJ;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
@@ -298,13 +296,13 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 		}
 		else {
 		    index = 0;
-		    auto other = otherAtoms.begin();
-		    std::advance(other, start);
-		    for (j=start; j<nOtherAtoms; j += stride)
+                    auto indexJ = otherAtoms.begin();
+                    for (auto indexJ = otherAtoms.begin()+start;
+			 indexJ < otherAtoms.end();
+			 indexJ += stride)
 		    {
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+                        jj = *indexJ;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
@@ -318,14 +316,13 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	}
 	else
 	{
-		auto other = otherAtoms.begin();
-		std::advance(other, start);
 		// Loop over atom neighbours
-		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
+		if (flags&KernelFlags::ExcludeSelfFlag) for (auto indexJ = otherAtoms.begin() + start;
+							     indexJ < otherAtoms.end();
+							     indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Check for same atom
 			if (i == jj) continue;
@@ -338,11 +335,10 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for(auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
@@ -355,11 +351,10 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for(auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
@@ -372,11 +367,10 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
-		else for (j=start; j<nOtherAtoms; j += stride)
+		else for(auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
