@@ -27,5 +27,6 @@ void ExportCoordinatesModule::initialise()
 {
 	// Format
 	keywords_.add("Format", new FileAndFormatKeyword(coordinatesFormat_, "EndFormat"), "Format", "File / format for coordinates");
+	keywords_.add("Format", new BoolKeyword(false), "TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index");
 }
 
