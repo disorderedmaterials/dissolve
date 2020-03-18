@@ -151,7 +151,7 @@ jobs:
         mv $zip installers
         mv $exe.Name installers
     - name: Create Artifacts (OSX)
-      if: matrix.os == 'windows-latest'
+      if: matrix.os == 'macos-latest'
       run: |
         wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
         chmod u+x build-dmg.sh
