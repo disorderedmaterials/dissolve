@@ -75,17 +75,17 @@ class Cell
 	 */
 	private:
 	// Array of Atoms contained in this Cell
-	ordered_vector<Atom*> atoms_;
+	OrderedVector<Atom*> atoms_;
 	// Return array of contained Atoms, ordered by their array indices
-	ordered_vector<Atom*> indexOrderedAtoms_ = ordered_vector<Atom*>([](const Atom* lhs, const Atom* rhs){
+	OrderedVector<Atom*> indexOrderedAtoms_ = OrderedVector<Atom*>([](const Atom* lhs, const Atom* rhs){
 	  return lhs->arrayIndex() < rhs->arrayIndex();
 	});
 
 	public:
 	// Return array of contained Atoms
-	ordered_vector<Atom*>& atoms();
+	OrderedVector<Atom*>& atoms();
 	// Return array of contained Atoms, ordered by their array indices
-	const ordered_vector<Atom*>& indexOrderedAtoms() const;
+	const OrderedVector<Atom*>& indexOrderedAtoms() const;
 	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell
@@ -107,7 +107,7 @@ class Cell
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(ordered_vector<Cell*>& nearNeighbours, ordered_vector<Cell*>& mimNeighbours);
+	void addCellNeighbours(OrderedVector<Cell*>& nearNeighbours, OrderedVector<Cell*>& mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation

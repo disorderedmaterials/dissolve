@@ -26,7 +26,7 @@
 #include <functional>
 #include <vector>
 
-template <class T> class ordered_vector : std::vector<T> {
+template <class T> class OrderedVector : std::vector<T> {
   private:
   std::function<bool(T,T)> compare_ = std::less<T>();
   using std::vector<T>::back;
@@ -41,8 +41,8 @@ template <class T> class ordered_vector : std::vector<T> {
   using std::vector<T>::clear;
   using std::vector<T>::end;
   using std::vector<T>::size;
-  ordered_vector() : std::vector<T>() {};
-  ordered_vector(std::function<bool(T,T)> comp) : compare_(comp) {};
+  OrderedVector() : std::vector<T>() {};
+  OrderedVector(std::function<bool(T,T)> comp) : compare_(comp) {};
   void insert(T& value) {
       auto location = std::lower_bound(begin(), end(), value, compare_);
       if(location != end() && *location == value) return;

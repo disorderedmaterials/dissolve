@@ -134,8 +134,8 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		return;
 	}
 #endif
-	ordered_vector<Atom*>& centralAtoms = centralCell->atoms();
-	ordered_vector<Atom*>& otherAtoms = otherCell->atoms();
+	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
+	OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
@@ -237,7 +237,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	Molecule* moleculeI = i->molecule();
 
 	// Grab the array of Atoms in the supplied Cell
-	ordered_vector<Atom*>& otherAtoms = cell->atoms();
+	OrderedVector<Atom*>& otherAtoms = cell->atoms();
 	int nOtherAtoms = cell->nAtoms();
 
 	// Get start/stride for specified loop context
