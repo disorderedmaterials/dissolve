@@ -1,6 +1,6 @@
 /*
-	*** Export Module - Definition
-	*** src/modules/export/definition.cpp
+	*** Export PairPotentials Module - Core
+	*** src/modules/export_pairpotentials/core.cpp
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,28 +19,30 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export/export.h"
+#include "modules/export_pairpotentials/exportpp.h"
 
-// Return type of module
-const char* ExportModule::type() const
+/*
+ * Constructor / Destructor
+ */
+
+// Constructor
+ExportPairPotentialsModule::ExportPairPotentialsModule() : Module()
 {
-	return "Export";
+	// Initialise Module - set up keywords etc.
+	initialise();
 }
 
-// Return category for module
-const char* ExportModule::category() const
+// Destructor
+ExportPairPotentialsModule::~ExportPairPotentialsModule()
 {
-	return "Input / Output";
 }
 
-// Return brief description of module
-const char* ExportModule::brief() const
-{
-	return "Export data from one or more Configurations";
-}
+/*
+ * Instances
+ */
 
-// Return the number of Configuration targets this Module requires
-int ExportModule::nRequiredTargets() const
+// Create instance of this module
+Module* ExportPairPotentialsModule::createInstance() const
 {
-	return Module::OneOrMoreTargets;
+	return new ExportPairPotentialsModule;
 }
