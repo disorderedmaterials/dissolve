@@ -118,7 +118,6 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
-	int i, j;
 	double rSq, scale;
 	auto central = centralAtoms.begin();
 
@@ -129,10 +128,9 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		for (i = start; i < centralAtoms.size(); i += stride)
+		for (auto indexI = centralAtoms.begin()+start; indexI < centralAtoms.end(); indexI += stride)
 		{
-			ii = *central;
-			std::advance(central, stride);
+			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
@@ -158,10 +156,9 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 	else
 	{
-		for (i = start; i < centralCell->atoms().size(); i += stride)
+		for (auto indexI = centralCell->atoms().begin() + start; indexI < centralCell->atoms().end(); indexI += stride)
 		{
-			ii = *central;
-			std::advance(central, stride);
+			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
@@ -199,7 +196,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	ordered_vector<Atom*>& centralAtoms = centralCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rJ;
-	int i, j;
 	Molecule* molJ;
 	double rSq, scale;
 
@@ -219,11 +215,9 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 
 			auto central = centralAtoms.begin();
 			// Loop over central cell atoms
-			std::advance(central, start);
-			for (i = start; i < centralAtoms.size(); i += stride)
+			for (auto indexI = centralAtoms.begin()+start; indexI < centralAtoms.end(); indexI += stride)
 			{
-                                ii = *central;
-				std::advance(central, stride);
+                                ii = *indexI;
 
 				// Check exclusion of I >= J (comparison by pointer)
 				if (excludeIgeJ && (ii >= jj)) continue;
@@ -255,11 +249,9 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 
 			auto central = centralAtoms.begin();
 			// Loop over central cell atoms
-			std::advance(central, start);
-			for (i = start; i < centralAtoms.size(); i += stride)
+			for (auto indexI = centralAtoms.begin()+start; indexI < centralAtoms.end(); indexI += stride)
 			{
-				ii = *central;
-				std::advance(central, stride);
+				ii = *indexI;
 
 				// Check exclusion of I >= J (comparison by pointer)
 				if (excludeIgeJ && (ii >= jj)) continue;
@@ -315,16 +307,14 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	// Get start/stride for specified loop context
 	int start = processPool_.interleavedLoopStart(strategy);
 	int stride = processPool_.interleavedLoopStride(strategy);
-	std::advance(other, start);
 
 	if (flags&KernelFlags::ApplyMinimumImageFlag)
 	{
 		// Loop over other Atoms
-	  if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
+	  if (flags&KernelFlags::ExcludeSelfFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Check for same atom
 			if (i == jj) continue;
@@ -341,11 +331,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
@@ -362,11 +351,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
@@ -383,11 +371,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else for (j=start; j<nOtherAtoms; j += stride)
+		else for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
@@ -405,11 +392,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	else
 	{
 		// Loop over atom neighbours
-		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
+		if (flags&KernelFlags::ExcludeSelfFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Check for same atom
 			if (i == jj) continue;
@@ -426,11 +412,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
@@ -447,11 +432,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
@@ -468,11 +452,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else for (j=start; j<nOtherAtoms; j += stride)
+		else for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = *other;
-			std::advance(other, stride);
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
