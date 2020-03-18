@@ -23,7 +23,8 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
-      os: [ubuntu-16.04, windows-latest, macos-latest]
+      matrix:
+        os: [ubuntu-16.04, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v1
     - name: Install Prerequisites (Linux)
