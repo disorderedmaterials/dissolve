@@ -24,7 +24,7 @@
 // Return type of module
 const char* ExportTrajectoryModule::type() const
 {
-	return "Export";
+	return "ExportTrajectory";
 }
 
 // Return category for module

@@ -24,7 +24,7 @@
 // Return type of module
 const char* ExportCoordinatesModule::type() const
 {
-	return "Export";
+	return "ExportCoordinates";
 }
 
 // Return category for module

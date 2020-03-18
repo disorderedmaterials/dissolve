@@ -24,7 +24,7 @@
 // Return type of module
 const char* ExportPairPotentialsModule::type() const
 {
-	return "Export";
+	return "ExportPairPotentials";
 }
 
 // Return category for module
