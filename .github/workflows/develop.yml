@@ -4,8 +4,9 @@ on:
   push:
     branches:
     - develop
-    paths:
-    - 'src/**'
+  pull_request:
+    branches:
+    - develop
 
 jobs:
   prepcontinuous:

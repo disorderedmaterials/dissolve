@@ -9,7 +9,7 @@ on:
     - 'src/**'
   pull_request:
     branches:
-    - develop
+    - NOdevelop
 
 jobs:
   prepcontinuous:

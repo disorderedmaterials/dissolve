@@ -5,8 +5,8 @@ on:
     branches:
     - NOdevelop
     - NOmaster
-    paths:
-    - 'src/**'
+      #paths:
+      #- 'src/**'
 
 jobs:
   build:

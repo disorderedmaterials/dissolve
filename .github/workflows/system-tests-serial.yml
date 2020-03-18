@@ -5,7 +5,7 @@ on:
     branches:
     - NOdevelop
     - NOmaster
-  pull_request:
+      #pull_request:
 
 jobs:
   systemtests-build-serial:
