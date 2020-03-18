@@ -1,0 +1,241 @@
+name: Development Build
+
+on:
+  push:
+    branches:
+    - develop
+    paths:
+    - 'src/**'
+
+jobs:
+  prepcontinuous:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Create Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        DATE=`date`
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u
+  build:
+    runs-on: %{{ matrix.os }}
+    strategy:
+      os: [ubuntu-16.04, windows-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisites (Linux)
+      if: matrix.os == 'ubuntu-16.04'
+      run: |
+        sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build
+    - name: Install Prerequisites (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install -y ninja zip winflexbison innoextract
+        choco install mingw --version=7.3.0 --allow-downgrade
+    - name: Install Prerequisties (OSX)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew update
+        brew install bison ftgl ninja
+        pip install dmgbuild
+        brew install qt5
+    - name: Install Qt (Linux)
+      if: matrix.os == 'ubuntu-16.04'
+      run: |
+        sudo add-apt-repository ppa:beineri/opt-qt-5.12.0-xenial -y
+        sudo apt-get update -q
+        sudo apt-get install qt512base qt512svg qt512imageformats -y
+    - name: Install Qt (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: jurplel/install-qt-action@v2.2.1
+      with:
+        version: 5.13.1
+        host: windows
+        arch: win64_mingw73
+    - name: Install Qt (OSX)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install qt5
+    - name: Build Prerequisites [Freetype] (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        cd $HOME
+        git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
+        Echo 'Compiling FreeType...'
+        mkdir freetype-build
+        cd freetype-build
+        cmake -G "Ninja" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
+        ninja
+    - name: Build Prerequisites [FTGL] (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        cd $HOME
+        echo 'Compiling FTGL'
+        git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
+        mkdir ftgl-build
+        cd ftgl-build
+        $env:INCLUDE += "$HOME\freetype-2.10.1;"
+        $env:LIB += "$HOME\freetype-build;"
+        cmake -G "Ninja" ..\ftgl-latest
+        ninja
+    - name: Build (Linux)
+      if: matrix.os == 'ubuntu-16.04'
+      run: |
+        QT_BASE_DIR=/opt/qt512
+        export QTDIR=$QT_BASE_DIR
+        export PATH=$QT_BASE_DIR/bin:$PATH
+        export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Build (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        mkdir build
+        cd build
+        $env:INCLUDE += "$HOME\freetype-2.10.1;"
+        $env:LIB += "$HOME\freetype-build;"
+        $env:INCLUDE += "$HOME\ftgl-latest\src;"
+        $env:LIB += "$HOME\ftgl-build\src;"
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Build (OSX)
+      if: matrix.os == 'macos-latest'
+      run: |
+        QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+        export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
+        export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
+        export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
+        export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
+        export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
+        Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DGUI:bool=true ../
+        ninja
+        cd ../
+    - name: Create Artifacts (Linux)
+      if: matrix.os == 'ubuntu-16.04'
+      run: |
+        # Set environment vars
+        QT_BASE_DIR=/opt/qt512
+        export QTDIR=$QT_BASE_DIR
+        export PATH=$QT_BASE_DIR/bin:$PATH
+        # Prep appimage directories
+        ci/scripts/prep-appimage -a Dissolve -v continuous -b build/dissolve
+        ci/scripts/prep-appimage -a Dissolve-GUI -v continuous -b build/dissolve-gui
+        # Retrieve linuxdeployqt
+        echo -e "\nRetrieving linuxdeployqt...\n"
+        wget -q https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -O linuxdeployqt
+        chmod u+x ./linuxdeployqt
+        # Run on the targets
+        ./linuxdeployqt Dissolve-continuous.AppDir/usr/share/applications/*.desktop -appimage
+        ./linuxdeployqt Dissolve-GUI-continuous.AppDir/usr/share/applications/*.desktop -appimage
+        # Store artifacts
+        mkdir appimages
+        mv Dissolve-*-x86_64.AppImage appimages
+    - name: Create Artifacts (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        $env:DISSOLVE_DIR = $(Get-Location).path + "\build"
+        $env:FREETYPE_DIR = "$($HOME)\freetype-build"
+        $env:FTGL_DIR = "$($HOME)\ftgl-build"
+        echo $env:Qt5_DIR
+        $env:MINGW_DIR = $env:Qt5_DIR
+        iscc.exe /O.\ .\ci\windows\dissolve-gui.iss
+        $exe = Get-ChildItem  .\*.exe
+        echo "Executable installer is "$exe.Name
+        innoextract.exe $exe.Name -d $exe.BaseName
+        mv "$($exe.BaseName)\app\bin\*" $exe.BaseName
+        mv "$($exe.BaseName)\app" ./
+        #rm -Force "$($exe.BaseName)\app"
+        $zip = $exe.BaseName + ".zip"
+        zip -r $zip $exe.BaseName
+        mkdir installers
+        mv $zip installers
+        mv $exe.Name installers
+    - name: Create Artifacts (OSX)
+      if: matrix.os == 'windows-latest'
+      run: |
+        wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
+        chmod u+x build-dmg.sh
+        QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+        Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+        DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        ./build-dmg.sh -d ${Qt5_ROOT} -f ${Qt5_ROOT}/Frameworks ci/osx/dissolve-gui.dmginfo
+        sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Info.plist
+        dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${DISSOLVE_VERSION}.dmg
+        mkdir damage
+        mv *dmg damage
+    - name: Upload Artifacts (Linux)
+      if: matrix.os == 'ubuntu-16.04'
+      uses: actions/upload-artifact@v1
+      with:
+        name: artifacts-linux
+        path: appimages/
+    - name: Upload Artifacts (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v1
+      with:
+        name: artifacts-windows
+        path: installers/
+    - name: Upload Artifacts (OSX)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v1
+      with:
+        name: artifacts-osx
+        path: damage/
+  updatecontinuous:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: contains(github.ref, 'develop') && github.event_name == 'push'
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download Artifacts (Linux)
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts-linux
+    - name: Download Artifacts (Windows)
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts-windows
+    - name: Download Artifacts (OSX)
+      uses: actions/download-artifact@v1
+      with:
+        name: artifacts-osx
+    - name: Rename Artifacts
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        DATE=`date`
+        # Linux AppImages
+        cd artifacts-linux
+        mv Dissolve-GUI-${VERSION}-Win64.zip Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.zip
+        mv Dissolve-GUI-${VERSION}-Win64.exe Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.exe
+        cd ../
+        # Windows Installer / Zip
+        cd artifacts-windows
+        mv Dissolve-GUI-${VERSION}-Win64.zip Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.zip
+        mv Dissolve-GUI-${VERSION}-Win64.exe Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.exe
+        cd ../
+        # OSX Disk Image
+        cd artifacts-osx
+        mv Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-${SHORTHASH}-Catalina.dmg
+        cd ../
+    - name: Create Example Data Archives
+      run: |
+        DISSOLVE_VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+        cd ./examples
+        ./package-examples -v $DISSOLVE_VERSION
+    - name: Update Continuous Release
+      run: |
+        SHORTHASH=`git rev-parse --short HEAD`
+        DATE=`date`
+        ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u artifacts-linux/*AppImage artifacts-windows/*.exe artifacts-windows/*.zip artifacts-osx/*dmg examples/*zip examples/*.tar.gz
