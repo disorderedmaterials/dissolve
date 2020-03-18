@@ -3,8 +3,8 @@ name: OSX (GUI/Serial)
 on:
   push:
     branches:
-    - develop
-    - master
+    - NOdevelop
+    - NOmaster
     paths:
     - 'src/**'
 

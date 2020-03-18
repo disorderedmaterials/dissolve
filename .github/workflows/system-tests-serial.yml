@@ -3,8 +3,8 @@ name: System Tests (Serial)
 on:
   push:
     branches:
-    - develop
-    - master
+    - NOdevelop
+    - NOmaster
   pull_request:
 
 jobs:
