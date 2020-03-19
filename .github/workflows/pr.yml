@@ -141,7 +141,7 @@ jobs:
     - name: Run Test (Serial)
       if: matrix.method == 'serial'
       run: |
-        cd serial-test-artifacts
+        cd test-artifacts
         chmod u+x ./go ./dissolve
         ./go -a -s ./dissolve ${{ matrix.test }}
     - name: Run Test (Parallel)
