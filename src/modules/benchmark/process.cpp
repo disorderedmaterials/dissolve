@@ -21,6 +21,7 @@
 
 #include "modules/benchmark/benchmark.h"
 #include "main/dissolve.h"
+#include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "io/export/data1d.h"
 #include "io/import/data1d.h"
@@ -48,23 +49,60 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		/*
 		 * RDF Calculation - Cells method, to maximum range allowed by box
 		 */
-		SampledDouble rdfCellsTiming;
-		for (int n=0; n<N; ++n)
+		if (keywords_.asBool("TestRDFCells"))
 		{
-			RDFModule rdfModule;
-			rdfModule.addTargetConfiguration(cfg);
-			cfg->incrementContentsVersion();
-			srand(dissolve.seed());
+			SampledDouble timing;
+			for (int n=0; n<N; ++n)
+			{
+				RDFModule rdfModule;
+				rdfModule.addTargetConfiguration(cfg);
+				cfg->incrementContentsVersion();
+				srand(dissolve.seed());
 
-			// Run the Module calculation
-			bool upToDate;
-			Timer timer;
-			Messenger::mute();
-			rdfModule.calculateGR(procPool, cfg, RDFModule::CellsMethod, cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
-			Messenger::unMute();
-			rdfCellsTiming += timer.split();
+				// Run the Module calculation
+				bool upToDate;
+				Timer timer;
+				Messenger::mute();
+				rdfModule.calculateGR(procPool, cfg, RDFModule::CellsMethod, cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
+				Messenger::unMute();
+				timing += timer.split();
+			}
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFCells"), "RDF (Cells) to half-cell limit", timing, saveTimings);
 		}
-		printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFCells"), "RDF (Cells) to half-cell limit", rdfCellsTiming, saveTimings);
+
+		/*
+		 * Energy Calculation - Intramolecular Terms
+		 */
+		if (keywords_.asBool("TestIntraEnergy"))
+		{
+			SampledDouble timing;
+			for (int n=0; n<N; ++n)
+			{
+				Timer timer;
+				Messenger::mute();
+				EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
+				Messenger::unMute();
+				timing += timer.split();
+			}
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "IntraEnergy"), "Intramolecular energy", timing, saveTimings);
+		}
+
+		/*
+		 * Energy Calculation - Intermolecular Terms
+		 */
+		if (keywords_.asBool("TestInterEnergy"))
+		{
+			SampledDouble timing;
+			for (int n=0; n<N; ++n)
+			{
+				Timer timer;
+				Messenger::mute();
+				EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
+				Messenger::unMute();
+				timing += timer.split();
+			}
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy", timing, saveTimings);
+		}
 	}
 
 	return true;
