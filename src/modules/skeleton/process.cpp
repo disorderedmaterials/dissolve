@@ -34,8 +34,8 @@ bool SkeletonModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Check for zero Configuration targets
 	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate())
+	// Loop over target Configurations
+	for (Configuration* cfg : targetConfigurations_)
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
