@@ -200,7 +200,6 @@ jobs:
       run: |
         SHORTHASH=`git rev-parse --short HEAD`
         VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-        DATE=`date`
         # Linux AppImages
         cd artifacts-linux
         mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
