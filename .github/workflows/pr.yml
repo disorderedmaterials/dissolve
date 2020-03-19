@@ -16,7 +16,7 @@ jobs:
     - name: Install Prerequisites (Linux)
       if: matrix.os == 'ubuntu-16.04'
       run: |
-        sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build
+        sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build libopenmpi-dev openmpi-bin openmpi-common
     - name: Install Prerequisites (Windows)
       if: matrix.os == 'windows-latest'
       run: |
