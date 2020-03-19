@@ -69,15 +69,17 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         return;
     }
 
-    // Set the icon and module type label
-    ui_.TopLabel->setText(QString::fromStdString(std::string(module_->type())));
-    ui_.IconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
+    // Set the icon
+    ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
 
     // Set up our keywords widget
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
 
     updateControls();
 }
+
+// Return target Module for the widget
+Module *ModuleControlWidget::module() const { return module_; }
 
 // Run the set-up stage of the associated Module
 void ModuleControlWidget::setUpModule()
@@ -103,40 +105,35 @@ void ModuleControlWidget::updateControls()
 
     refreshing_ = true;
 
-    // Set unique name
-    ui_.NameEdit->setText(QString::fromStdString(std::string(module_->uniqueName())));
-
-    // Set 'enabled' button status
-    ui_.EnabledButton->setChecked(module_->isEnabled());
-    ui_.IconFrame->setEnabled(module_->isEnabled());
-
-    // Set frequency spin
-    ui_.FrequencySpin->setValue(module_->frequency());
+    // Set unique name and status of icon frame
+    ui_.ModuleNameLabel->setText(QString::fromStdString(std::string(module_->uniqueName())));
+    ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
 
     // Update Configuration list and HeaderFrame tooltip
-    ui_.ConfigurationTargetList->clear();
-    QString toolTip("Targets: ");
-    ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
-    while (Configuration *cfg = configIterator.iterate())
-    {
-        QListWidgetItem *item =
-            new QListWidgetItem(QString::fromStdString(std::string(cfg->name())), ui_.ConfigurationTargetList);
-        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-        item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
-
-        if (module_->isTargetConfiguration(cfg))
+    /*	ui_.ConfigurationTargetList->clear();
+        CharString toolTip("Targets: ");
+        ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
+        while (Configuration *cfg = configIterator.iterate())
         {
-            item->setCheckState(Qt::Checked);
+            QListWidgetItem *item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
 
-            toolTip +=
-                QString("%1%2").arg(configIterator.isFirst() ? "" : ", ", QString::fromStdString(std::string(cfg->name())));
+            if (module_->isTargetConfiguration(cfg))
+            {
+                item->setCheckState(Qt::Checked);
+
+                if (configIterator.isFirst())
+                    toolTip.strcatf("%s", cfg->name());
+                else
+                    toolTip.strcatf(", %s", cfg->name());
+            }
+            else
+                item->setCheckState(Qt::Unchecked);
         }
-        else
-            item->setCheckState(Qt::Unchecked);
-    }
-    ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) &&
-                                             (module_->nRequiredTargets() != Module::ZeroTargets));
-    ui_.HeaderFrame->setToolTip(toolTip);
+        ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nRequiredTargets() !=
+       Module::ZeroTargets)); ui_.HeaderFrame->setToolTip(toolTip.get()); */
+    printf("FIX THE SELETION OF CONFIGURATIONS WITH A KEYWORD!\n");
 
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
@@ -148,16 +145,16 @@ void ModuleControlWidget::updateControls()
 void ModuleControlWidget::disableSensitiveControls()
 {
     ui_.ModuleKeywordsWidget->setEnabled(false);
-    ui_.ConfigurationTargetGroup->setEnabled(false);
-    ui_.HeaderFrame->setEnabled(false);
+    // 	ui_.ConfigurationTargetGroup->setEnabled(false);
+    printf("FIX THE DISABLING OF CONFIGURATION CONTROL\n");
 }
 
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
     ui_.ModuleKeywordsWidget->setEnabled(true);
-    ui_.ConfigurationTargetGroup->setEnabled(true);
-    ui_.HeaderFrame->setEnabled(true);
+    // 	ui_.ConfigurationTargetGroup->setEnabled(true);
+    printf("FIX THE ENABLING OF CONFIGURATION CONTROL\n");
 }
 
 /*
@@ -166,68 +163,3 @@ void ModuleControlWidget::enableSensitiveControls()
 
 // Keyword data for Module has been modified
 void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }
-
-void ModuleControlWidget::on_NameEdit_editingFinished()
-{
-    if (refreshing_ || (!module_) || (!dissolve_))
-        return;
-
-    // If the name is the same, return now
-    if (DissolveSys::sameString(qPrintable(ui_.NameEdit->text()), module_->uniqueName(), true))
-        return;
-
-    // Check that the new name is unique
-    std::string uniqueName = dissolve_->uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
-
-    module_->setUniqueName(uniqueName);
-
-    ui_.NameEdit->setText(QString::fromStdString(uniqueName));
-
-    emit(dataModified());
-}
-
-void ModuleControlWidget::on_NameEdit_returnPressed()
-{
-    // Call the editingFinished() function
-    on_NameEdit_editingFinished();
-}
-
-void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
-{
-    if (refreshing_ || (!module_))
-        return;
-
-    module_->setEnabled(checked);
-
-    ui_.IconFrame->setEnabled(checked);
-
-    emit(dataModified());
-}
-
-void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
-{
-    if (refreshing_ || (!module_))
-        return;
-
-    module_->setFrequency(value);
-
-    emit(dataModified());
-}
-
-void ModuleControlWidget::on_ConfigurationTargetList_itemChanged(QListWidgetItem *item)
-{
-    if (refreshing_ || (!module_) || (!item))
-        return;
-
-    // Get configuration from item
-    Configuration *cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
-    if (!cfg)
-        return;
-
-    if (item->checkState() == Qt::Checked)
-        module_->addTargetConfiguration(cfg);
-    else
-        module_->removeTargetConfiguration(cfg);
-
-    emit(dataModified());
-}

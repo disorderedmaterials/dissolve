@@ -38,7 +38,8 @@ class ModuleControlWidget : public QWidget
     Q_OBJECT
 
     public:
-    ModuleControlWidget(QWidget *parent);
+    // Constructor / Destructor
+    ModuleControlWidget(QWidget *parent = nullptr);
     ~ModuleControlWidget();
 
     private:
@@ -68,6 +69,8 @@ class ModuleControlWidget : public QWidget
     public:
     // Set target Module to display
     void setModule(Module *module, Dissolve *dissolve);
+    // Return target Module for the widget
+    Module *module() const;
 
     signals:
     void updateModuleWidget(int flags);
@@ -93,13 +96,6 @@ class ModuleControlWidget : public QWidget
     private slots:
     // Keyword data for Module has been modified
     void keywordDataModified();
-
-    public slots:
-    void on_NameEdit_editingFinished();
-    void on_NameEdit_returnPressed();
-    void on_EnabledButton_clicked(bool checked);
-    void on_FrequencySpin_valueChanged(int value);
-    void on_ConfigurationTargetList_itemChanged(QListWidgetItem *item);
 
     signals:
     // Notify that the Module's data has been modified in some way

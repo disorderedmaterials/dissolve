@@ -19,7 +19,8 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#ifndef DISSOLVE_MODULELISTEDITOR_H
+#define DISSOLVE_MODULELISTEDITOR_H
 
 #include "gui/ui_modulelisteditor.h"
 #include "templates/refdatalist.h"
@@ -29,6 +30,8 @@ class Configuration;
 class DissolveWindow;
 class LineParser;
 class MimeTreeWidgetItem;
+class Module;
+class ModuleControlWidget;
 class ModuleListChart;
 class ModuleLayer;
 class ModulePalette;
@@ -79,7 +82,7 @@ class ModuleListEditor : public QWidget
 
     public:
     // Set up the ModuleListEditor for the specified ModuleLayer
-    bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = nullptr);
+    bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = NULL);
 
     /*
      * Widget Functions
@@ -88,8 +91,15 @@ class ModuleListEditor : public QWidget
     // Chart widget being displayed
     ModuleListChart *chartWidget_;
 
+    private:
+    // Find the ModuleControlWidget for this Module in the stack, if it exists
+    ModuleControlWidget *controlWidgetForModule(Module *module) const;
+    // Return the index of the ModuleControlWidget for this Module in the stack, if it exists
+    int widgetIndexForModule(Module *module) const;
+
     private slots:
-    void blockSelectionChanged(const QString &blockIdentifier);
+    void moduleDeleted(const QString &blockIdentifier);
+    void moduleSelectionChanged(const QString &blockIdentifier);
     void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem *item);
     void chartWidgetDataModified();
     void chartWidgetSizeChanged();
@@ -104,3 +114,5 @@ class ModuleListEditor : public QWidget
     // Read widget state through specified LineParser
     bool readState(LineParser &parser);
 };
+
+#endif
