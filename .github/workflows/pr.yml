@@ -124,6 +124,7 @@ jobs:
         path: tests/
   system-tests:
     runs-on: ubuntu-latest
+    needs: build
     strategy:
       matrix:
         test: [atomshake, broadening, calculate_avgmol, calculate_cn, calculate_dangle, calculate_rdf, calculate_sdf, correlations, energyforce1, epsr, exchangeable, pbctorsion, rdfmethod]
