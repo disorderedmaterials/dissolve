@@ -39,6 +39,9 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const auto N = keywords_.asInt("N");
 	const auto saveTimings = keywords_.asBool("Save");
 
+	Messenger::print("Benchmark: Test timings will be averaged over %i %s.\n", N, N == 1 ? "run" : "runs");
+	Messenger::print("Benchmark: Test timings %s be saved to disk.\n", saveTimings ? "will" : "will not");
+
 	// Loop over target Configurations
 	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
