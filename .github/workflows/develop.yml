@@ -31,7 +31,6 @@ jobs:
         brew update
         brew install bison ftgl ninja
         pip install dmgbuild
-        brew install qt5
     - name: Install Qt (Linux)
       if: matrix.os == 'ubuntu-16.04'
       run: |
