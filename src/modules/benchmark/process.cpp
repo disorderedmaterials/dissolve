@@ -118,9 +118,11 @@ void BenchmarkModule::printTimingResult(const char* testFile, const char* testDe
 
 	// Open the existing timings file if it exists
 	Data1D existingTimings;
+	existingTimings.addErrors();
 	Data1DImportFileFormat importer(testFile, Data1DImportFileFormat::XYData1D);
 	if (importer.fileExists())
 	{
+		importer.keywords().set("Error", 3);
 		existingDataAvailable = importer.importData(existingTimings);
 		if (existingDataAvailable) existingDataAvailable = existingTimings.nValues() > 0;
 	}
@@ -137,7 +139,7 @@ void BenchmarkModule::printTimingResult(const char* testFile, const char* testDe
 	// Store new timing?
 	if (storeNewTiming)
 	{
-		existingTimings.addPoint(existingTimings.nValues()+1, timing.value());
+		existingTimings.addPoint(existingTimings.nValues()+1, timing.value(), timing.stDev());
 
 		Data1DExportFileFormat exporter(testFile, Data1DExportFileFormat::XYData1D);
 		exporter.exportData(existingTimings);
