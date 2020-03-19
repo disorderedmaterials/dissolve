@@ -51,6 +51,25 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		/*
+		 * Configuration Generation
+		 */
+		if (keywords_.asBool("TestGenerator"))
+		{
+			SampledDouble timing;
+			for (int n=0; n<N; ++n)
+			{
+				srand(dissolve.seed());
+
+				Timer timer;
+				Messenger::mute();
+				cfg->generate(procPool, dissolve.pairPotentialRange());
+				Messenger::unMute();
+				timing += timer.split();
+			}
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "Generator"), "Configuration generator", timing, saveTimings);
+		}
+
+		/*
 		 * RDF Calculation - Cells method, to maximum range allowed by box
 		 */
 		if (keywords_.asBool("TestRDFCells"))
