@@ -98,7 +98,6 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * a rotation, 10% using only translations, and 10% using only rotations.
 		 */
 
-		int molId;
 
 		// Set initial random offset for our counter determining whether to perform R+T, R, or T.
 		int count = procPool.random()*10;
@@ -122,14 +121,13 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecules
-			for (int n = 0; n<targetMolecules.size(); ++n)
+			for (auto molId : targetMolecules)
 			{
 				/*
 				 * Calculation Begins
 				 */
 
 				// Get Molecule index and pointer
-				molId = targetMolecules[n];
 				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 
 				// Set current atom targets in ChangeStore (whole Molecule)

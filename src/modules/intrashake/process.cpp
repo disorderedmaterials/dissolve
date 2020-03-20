@@ -110,7 +110,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0, nTorsionAccepted = 0;
-		int molId, terminus;
+		int terminus;
 		bool accept;
 		double ppEnergy, newPPEnergy, intraEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 		Vec3<double> vji, vjk, v;
@@ -136,14 +136,13 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecule
-			for (int n = 0; n<targetMolecules.size(); ++n)
+			for (auto molId : targetMolecules)
 			{
 				/*
 				* Calculation Begins
 				*/
 
 				// Get Molecule index and pointer
-				molId = targetMolecules[n];
 				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 				const int indexOffset = mol->atom(0)->arrayIndex();
 

@@ -86,8 +86,6 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 		Vec3<double> rDelta;
 
-		int molId;
-
 		Timer timer;
 		procPool.resetAccumulatedTime();
 		while (distributor.cycle())
@@ -106,14 +104,13 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecules
-			for (m = 0; m<targetMolecules.size(); ++m)
+			for (auto molId : targetMolecules)
 			{
 				/*
 				 * Calculation Begins
 				 */
 
 				// Get Molecule index and pointer
-				molId = targetMolecules[m];
 				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 
 				// Set current Atom targets in ChangeStore (whole Molecule)
