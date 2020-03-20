@@ -21,10 +21,13 @@
 
 #pragma once
 
+#include "base/lock.h"
 #include "gui/ui_modulecontrolwidget.h"
 #include "templates/variantpointer.h"
 
 // Forward Declarations
+class ConfigurationRefListKeyword;
+class ConfigurationRefListKeywordWidget;
 class Dissolve;
 class DissolveWindow;
 class Module;
@@ -43,8 +46,8 @@ class ModuleControlWidget : public QWidget
     ~ModuleControlWidget();
 
     private:
-    // Whether the widget is currently refreshing
-    bool refreshing_;
+    // Lock for widget refresh
+    Lock refreshLock_;
 
     /*
      * Setup
@@ -78,6 +81,10 @@ class ModuleControlWidget : public QWidget
     /*
      * Update
      */
+    private:
+    // Update basic Module controls
+    void updateBasicControls();
+
     public:
     // Update controls within widget
     void updateControls();
@@ -92,8 +99,12 @@ class ModuleControlWidget : public QWidget
     private:
     // Main form declaration
     Ui::ModuleControlWidget ui_;
+    // Keyword widget for Configuration editing
+    ConfigurationRefListKeywordWidget *configurationsWidget_;
 
     private slots:
+    // Configuration targets for the Module have been modified
+    void configurationKeywordEdited(int flags);
     // Keyword data for Module has been modified
     void keywordDataModified();
 

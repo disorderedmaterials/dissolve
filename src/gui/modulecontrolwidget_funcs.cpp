@@ -23,8 +23,10 @@
 #include "classes/configuration.h"
 #include "gui/charts/moduleblock.h"
 #include "gui/gui.h"
+#include "gui/keywordwidgets/configurationreflist.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/modulewidget.h"
+#include "keywordwidgets/configurationreflist.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include <QGridLayout>
@@ -37,8 +39,7 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 
     dissolve_ = nullptr;
     module_ = nullptr;
-
-    refreshing_ = false;
+    configurationsWidget_ = nullptr;
 }
 
 ModuleControlWidget::~ModuleControlWidget() {}
@@ -72,6 +73,20 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     // Set the icon
     ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
 
+    // Create a suitable keyword widget for our Configuration targets
+    auto *cfgKeyword = module_->keywords().find("Configuration");
+    if (cfgKeyword)
+    {
+        configurationsWidget_ = new ConfigurationRefListKeywordWidget(NULL, cfgKeyword, dissolve_->coreData());
+        connect(configurationsWidget_, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
+        auto *layout = new QHBoxLayout;
+        layout->setMargin(0);
+        layout->addWidget(configurationsWidget_);
+        ui_.ConfigurationsPlaceholderWidget->setLayout(layout);
+        if (module_->nRequiredTargets() == Module::ZeroTargets)
+            configurationsWidget_->setEnabled(false);
+    }
+
     // Set up our keywords widget
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
 
@@ -97,69 +112,56 @@ void ModuleControlWidget::setUpModule()
  * Update
  */
 
+// Update basic Module controls
+void ModuleControlWidget::updateBasicControls()
+{
+    Lock refreshLocker(refreshLock_);
+
+    // Set unique name and status of icon frame
+    ui_.ModuleNameLabel->setText(QString::fromStdString(std::string(module_->uniqueName())));
+    ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
+
+    // Update configurations info
+    ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
+    if (configurationsWidget_)
+        configurationsWidget_->updateValue();
+}
+
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
     if ((!module_) || (!dissolve_))
         return;
 
-    refreshing_ = true;
+    Lock refreshLocker(refreshLock_);
 
-    // Set unique name and status of icon frame
-    ui_.ModuleNameLabel->setText(QString::fromStdString(std::string(module_->uniqueName())));
-    ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
-
-    // Update Configuration list and HeaderFrame tooltip
-    /*	ui_.ConfigurationTargetList->clear();
-        CharString toolTip("Targets: ");
-        ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
-        while (Configuration *cfg = configIterator.iterate())
-        {
-            QListWidgetItem *item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
-            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-            item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
-
-            if (module_->isTargetConfiguration(cfg))
-            {
-                item->setCheckState(Qt::Checked);
-
-                if (configIterator.isFirst())
-                    toolTip.strcatf("%s", cfg->name());
-                else
-                    toolTip.strcatf(", %s", cfg->name());
-            }
-            else
-                item->setCheckState(Qt::Unchecked);
-        }
-        ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nRequiredTargets() !=
-       Module::ZeroTargets)); ui_.HeaderFrame->setToolTip(toolTip.get()); */
-    printf("FIX THE SELETION OF CONFIGURATIONS WITH A KEYWORD!\n");
+    updateBasicControls();
 
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
-
-    refreshing_ = false;
 }
 
 // Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
     ui_.ModuleKeywordsWidget->setEnabled(false);
-    // 	ui_.ConfigurationTargetGroup->setEnabled(false);
-    printf("FIX THE DISABLING OF CONFIGURATION CONTROL\n");
+    ui_.ConfigurationsPlaceholderWidget->setEnabled(false);
 }
 
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
     ui_.ModuleKeywordsWidget->setEnabled(true);
-    // 	ui_.ConfigurationTargetGroup->setEnabled(true);
-    printf("FIX THE ENABLING OF CONFIGURATION CONTROL\n");
+    if (module_ && (module_->nRequiredTargets() != Module::ZeroTargets))
+        ui_.ConfigurationsPlaceholderWidget->setEnabled(true);
 }
 
 /*
  * UI
  */
+
+// Configuration targets for the Module have been modified
+void ModuleControlWidget::configurationKeywordEdited(int flags) { updateBasicControls(); }
 
 // Keyword data for Module has been modified
 void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }

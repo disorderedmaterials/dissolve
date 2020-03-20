@@ -138,11 +138,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="SelectConfigurationTargetsButton">
-          <property name="text">
-           <string>&lt;None&gt;</string>
-          </property>
-         </widget>
+         <widget class="QWidget" name="ConfigurationsPlaceholderWidget" native="true"/>
         </item>
         <item>
          <spacer name="horizontalSpacer">

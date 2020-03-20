@@ -159,7 +159,7 @@
        <widget class="QWidget" name="NoModuleSelectedPage">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="NoModuleSelectedLabel">
            <property name="text">
             <string>&lt;No Module Selected&gt;</string>
            </property>
