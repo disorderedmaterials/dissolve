@@ -75,9 +75,6 @@ class ModuleControlWidget : public QWidget
     // Return target Module for the widget
     Module *module() const;
 
-    signals:
-    void updateModuleWidget(int flags);
-
     /*
      * Update
      */
@@ -109,4 +106,13 @@ class ModuleControlWidget : public QWidget
     signals:
     // Notify that the Module's data has been modified in some way
     void dataModified();
+
+    /*
+     * State I/O
+     */
+    public:
+    // Read widget state through specified LineParser
+    bool readState(LineParser &parser);
+    // Write widget state through specified LineParser
+    bool writeState(LineParser &parser) const;
 };
