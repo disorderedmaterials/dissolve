@@ -118,7 +118,6 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	std::shared_ptr<Molecule> molI;
-	int i, j;
 	double rSq, scale;
 	auto central = centralAtoms.begin();
 
@@ -197,7 +196,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rJ;
-	int i, j;
 	std::shared_ptr<Molecule> molJ;
 	double rSq, scale;
 
