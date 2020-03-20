@@ -389,7 +389,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell* cell, int pr
 	if (DND) Messenger::print("  Looking through molecules in Cell %i for process/group %i..\n", cell->index(), processOrGroup);
 
 	// There will likely be multiple atoms from the same, so note each Molecule as we check it
-	OrderedPointerList<Molecule> checkedMolecules;
+	OrderedVector<std::shared_ptr<Molecule>> checkedMolecules;
 
 	// Loop over Atoms in Cell
 	std::shared_ptr<Molecule> mol;
@@ -399,16 +399,16 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell* cell, int pr
 		mol = atom->molecule();
 
 		int index = find(moleculeArray_.begin(), moleculeArray_.end(), mol) - moleculeArray_.begin();
-		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", index, atom->arrayIndex(), checkedMolecules.contains(mol.get()) ? "IS" : "IS NOT");
+		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", index, atom->arrayIndex(), std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
 
 		// Have we already checked this Molecule?
-		if (checkedMolecules.contains(mol.get())) continue;
+		if (std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end()) continue;
 
 		// Try to assign this Molecule to the present process/group
 		if (assignMolecule(mol, processOrGroup)) return mol;
 
 		// Not possible to assign the Molecule, so add it to our list of checked Molecules and move on
-		checkedMolecules.addExclusive(mol.get());
+		checkedMolecules.insert(mol);
 	}
 
 	return NULL;
