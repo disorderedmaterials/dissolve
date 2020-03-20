@@ -61,7 +61,6 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
     connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
     connect(chartWidget_, SIGNAL(requiredSizeChanged()), this, SLOT(chartWidgetSizeChanged()));
-    connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString &)), dissolveWindow_, SLOT(showModuleTab(const QString &)));
     connect(chartWidget_, SIGNAL(blockRemoved(const QString &)), this, SLOT(moduleDeleted(const QString &)));
     connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this, SLOT(moduleSelectionChanged(const QString &)));
 
@@ -107,13 +106,6 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     ui_.AvailableModulesTree->expandAll();
     ui_.AvailableModulesTree->resizeColumnToContents(0);
     ui_.AvailableModulesTree->resizeColumnToContents(1);
-
-    // Set up the ControlsWidget, and hide it initially
-    // 	ui_.ControlsWidget->setUp(dissolveWindow_);
-    // 	ui_.ControlsWidget->setVisible(false);
-    // 	connect(ui_.ControlsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
-    // 	connect(ui_.ControlsWidget, SIGNAL(dataModified()), this, SLOT(controlsWidgetDataModified()));
-    printf("REMOVE THIS\n");
 
     // Hide available modules group initially
     ui_.ModulePaletteGroup->setVisible(false);

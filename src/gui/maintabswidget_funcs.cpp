@@ -44,7 +44,6 @@ MainTabsWidget::~MainTabsWidget()
 {
     // Need to clear tabs in the right order, as data in one can depend on another
     workspaceTabs_.clear();
-    moduleTabs_.clear();
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
@@ -131,26 +130,6 @@ LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
     return nullptr;
 }
 
-// Find ModuleTab containing specified page widget
-ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
-{
-    for (auto *tab = moduleTabs_.first(); tab != nullptr; tab = tab->next())
-        if (tab->page() == page)
-            return tab;
-
-    return nullptr;
-}
-
-// Find ModuleTab containing specified Module
-ModuleTab *MainTabsWidget::moduleTab(Module *module)
-{
-    for (auto *tab = moduleTabs_.first(); tab != nullptr; tab = tab->next())
-        if (tab->module() == module)
-            return tab;
-
-    return nullptr;
-}
-
 // Find WorkspaceTab containing specified page widget
 WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
 {
@@ -195,11 +174,7 @@ const QString MainTabsWidget::uniqueTabName(const QString base)
 
     // Find an unused name starting with the baseName provided
     while (findTab(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName = QStringLiteral("%1%2").arg(baseName, suffix);
-    }
+        uniqueName = QStringLiteral("%1%2").arg(baseName, ++suffix);
 
     return uniqueName;
 }
@@ -227,7 +202,6 @@ void MainTabsWidget::clearTabs()
 
     // Removal of the tab and widget will be handled by the class destructors
     workspaceTabs_.clear();
-    moduleTabs_.clear();
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
@@ -381,11 +355,6 @@ void MainTabsWidget::removeByPage(QWidget *page)
         processingLayerTabs_.remove(processingLayerTab(page));
         updateAll = true;
     }
-    else if (moduleTab(page))
-    {
-        allTabs_.remove(moduleTab(page));
-        moduleTabs_.remove(moduleTab(page));
-    }
     else if (workspaceTab(page))
     {
         allTabs_.remove(workspaceTab(page));
@@ -397,42 +366,6 @@ void MainTabsWidget::removeByPage(QWidget *page)
         emit(dataModified());
         updateAllTabs();
     }
-}
-
-// Create / go to Module tab for specified Module, provided it has a Module control widget
-MainTab *MainTabsWidget::addModuleTab(DissolveWindow *dissolveWindow, Module *module)
-{
-    // Does a tab for this Module already exist
-    ModuleTab *tab = moduleTab(module);
-    if (!tab)
-    {
-        // Need to create a new ModuleTab
-        QString tabTitle = QString::fromStdString(std::string(module->uniqueName()));
-        tab = new ModuleTab(dissolveWindow, dissolveWindow->dissolve(), this, tabTitle, module);
-        moduleTabs_.own(tab);
-        allTabs_.append(tab);
-        addTab(tab, tabTitle);
-        addTabCloseButton(tab);
-        setTabIcon(tab->page(), QIcon(ModuleBlock::modulePixmap(module)));
-
-        // If we are currently running, disable the necessary controls in widget
-        if (dissolveWindow->dissolveState() == DissolveWindow::RunningState)
-            tab->disableSensitiveControls();
-    }
-
-    setCurrentTab(tab);
-
-    return tab;
-}
-
-// Remove the ModuleTab for the specifeid Module, if it exists
-void MainTabsWidget::removeModuleTab(Module *module)
-{
-    ModuleTab *tab = moduleTab(module);
-    if (!tab)
-        return;
-
-    removeByPage(tab->page());
 }
 
 // Add on a new workspace tab

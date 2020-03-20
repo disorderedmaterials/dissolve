@@ -94,18 +94,8 @@ bool DissolveWindow::loadState()
             }
             else
             {
-                // Must first create the tab first.
-                if (DissolveSys::sameString(stateParser.argsv(2), "ModuleTab"))
-                {
-                    // The title represents the unique name of the Module, so find it now
-                    Module *module = dissolve_.findModuleInstance(stateParser.argsv(1));
-                    if (!module)
-                        return Messenger::error("Failed to find Module instance '{}' for display in a ModuleTab.\n",
-                                                stateParser.argsv(1));
-
-                    tab = ui_.MainTabs->addModuleTab(this, module);
-                }
-                else if (DissolveSys::sameString(stateParser.argsv(2), "WorkspaceTab"))
+                // Must create the tab first.
+                if (DissolveSys::sameString(stateParser.argsv(2), "WorkspaceTab"))
                 {
                     // Create a new workspace with the desired name
                     tab = ui_.MainTabs->addWorkspaceTab(this, QString::fromStdString(std::string(stateParser.argsv(1))));

@@ -89,11 +89,6 @@ bool LayerTab::canClose() const
     if (ret != QMessageBox::Yes)
         return false;
 
-    // Before closing, we must close any tabs that are displaying our associated Modules
-    ListIterator<Module> moduleIterator(moduleLayer_->modules());
-    while (Module *module = moduleIterator.iterate())
-        dissolveWindow_->removeModuleTab(QString::fromStdString(std::string(module->uniqueName())));
-
     return true;
 }
 

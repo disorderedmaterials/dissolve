@@ -132,28 +132,6 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 // Return list of all current tabs
 RefList<const MainTab> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
 
-// Add or go to Module tab for the Module with the unique name provided
-void DissolveWindow::showModuleTab(const QString &uniqueName)
-{
-    // Find the Module
-    Module *module = dissolve_.findModuleInstance(qPrintable(uniqueName));
-    if (!module)
-        return;
-
-    ui_.MainTabs->addModuleTab(this, module);
-}
-
-// Remove the Module tab (if it exists) for the Module with the unique name provided
-void DissolveWindow::removeModuleTab(const QString &uniqueName)
-{
-    // Find the Module
-    Module *module = dissolve_.findModuleInstance(qPrintable(uniqueName));
-    if (!module)
-        return;
-
-    ui_.MainTabs->removeModuleTab(module);
-}
-
 /*
  * Messages
  */
