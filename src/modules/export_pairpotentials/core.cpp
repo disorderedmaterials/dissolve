@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-ExportPairPotentialsModule::ExportPairPotentialsModule() : Module()
+ExportPairPotentialsModule::ExportPairPotentialsModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

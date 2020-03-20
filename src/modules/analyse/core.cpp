@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-AnalyseModule::AnalyseModule() : Module(), analyser_(ProcedureNode::AnalysisContext, "EndAnalyser")
+AnalyseModule::AnalyseModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext, "EndAnalyser")
 {
     // Initialise Module - set up keywords etc.
     initialise();

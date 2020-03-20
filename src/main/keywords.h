@@ -132,11 +132,10 @@ namespace ModuleBlock
 // Module Block Keyword Enum
 enum ModuleKeyword
 {
-    ConfigurationKeyword, /* 'Configuration' - Associates the specified Configuration to this Module */
-    DisableKeyword,       /* 'Disable' - Disables the module, preventing it from running */
-    EndModuleKeyword,     /* 'EndModule' - Signals the end of the Module block */
-    FrequencyKeyword,     /* 'Frequency' - Frequency at which the Module is run */
-    nModuleKeywords       /* Number of keywords defined for this block */
+    DisableKeyword,   /* 'Disable' - Disables the module, preventing it from running */
+    EndModuleKeyword, /* 'EndModule' - Signals the end of the Module block */
+    FrequencyKeyword, /* 'Frequency' - Frequency at which the Module is run */
+    nModuleKeywords   /* Number of keywords defined for this block */
 };
 // Return enum option info for ModuleKeyword
 EnumOptions<ModuleBlock::ModuleKeyword> keywords();

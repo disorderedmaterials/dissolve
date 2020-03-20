@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-DataTestModule::DataTestModule() : Module()
+DataTestModule::DataTestModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

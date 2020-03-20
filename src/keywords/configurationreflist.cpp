@@ -55,7 +55,7 @@ int ConfigurationRefListKeyword::minArguments() const { return 1; }
 int ConfigurationRefListKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Each argument is the name of a Configuration that we will add to our list
     for (int n = startArg; n < parser.nArgs(); ++n)

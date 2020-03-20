@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-EnergyModule::EnergyModule() : Module()
+EnergyModule::EnergyModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

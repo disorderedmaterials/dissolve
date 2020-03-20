@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-RDFModule::RDFModule() : Module()
+RDFModule::RDFModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-ExportTrajectoryModule::ExportTrajectoryModule() : Module()
+ExportTrajectoryModule::ExportTrajectoryModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

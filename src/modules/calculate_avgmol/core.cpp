@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-CalculateAvgMolModule::CalculateAvgMolModule() : Module()
+CalculateAvgMolModule::CalculateAvgMolModule() : Module(nRequiredTargets())
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

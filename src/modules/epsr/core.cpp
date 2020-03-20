@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-EPSRModule::EPSRModule() : Module()
+EPSRModule::EPSRModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

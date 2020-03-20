@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-NeutronSQModule::NeutronSQModule() : Module()
+NeutronSQModule::NeutronSQModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

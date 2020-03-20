@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-SanityCheckModule::SanityCheckModule() : Module()
+SanityCheckModule::SanityCheckModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

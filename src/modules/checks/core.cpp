@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-ChecksModule::ChecksModule() : Module()
+ChecksModule::ChecksModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

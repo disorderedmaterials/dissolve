@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-ImportModule::ImportModule() : Module()
+ImportModule::ImportModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

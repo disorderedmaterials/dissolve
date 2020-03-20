@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-SQModule::SQModule() : Module()
+SQModule::SQModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-BenchmarkModule::BenchmarkModule() : Module()
+BenchmarkModule::BenchmarkModule() : Module(nRequiredTargets())
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-AtomShakeModule::AtomShakeModule() : Module()
+AtomShakeModule::AtomShakeModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

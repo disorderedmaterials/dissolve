@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-ExportCoordinatesModule::ExportCoordinatesModule() : Module()
+ExportCoordinatesModule::ExportCoordinatesModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

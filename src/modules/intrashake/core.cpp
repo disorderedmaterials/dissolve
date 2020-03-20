@@ -25,7 +25,7 @@
  * Constructor / Destructor
  */
 
-IntraShakeModule::IntraShakeModule() : Module()
+IntraShakeModule::IntraShakeModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

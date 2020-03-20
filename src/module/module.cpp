@@ -23,16 +23,24 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
+#include "keywords/configurationreflist.h"
 #include "main/dissolve.h"
 
-Module::Module()
+Module::Module(int nTargetConfiguration) : targetConfigurationsKeyword_(targetConfigurations_, nTargetConfiguration)
 {
     frequency_ = 1;
     enabled_ = true;
     configurationLocal_ = true;
+
+    // Set up basic keywords for the Module
+    keywords_.add("HIDDEN", &targetConfigurationsKeyword_, "Configuration", "Set target configuration(s) for the module");
 }
 
-Module::~Module() {}
+Module::~Module()
+{
+    // Need to remove our local keywords from the list before it gets destructed to avoid a double free
+    keywords_.cut(&targetConfigurationsKeyword_);
+}
 
 /*
  * Definition
