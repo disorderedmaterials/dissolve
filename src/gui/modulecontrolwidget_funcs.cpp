@@ -40,6 +40,7 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
     dissolve_ = nullptr;
     module_ = nullptr;
     configurationsWidget_ = nullptr;
+    moduleWidget_ = nullptr;
 }
 
 ModuleControlWidget::~ModuleControlWidget() {}
@@ -70,25 +71,18 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         return;
     }
 
-    // Set the icon
-    ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
-
-    // Create a suitable keyword widget for our Configuration targets
-    auto *cfgKeyword = module_->keywords().find("Configuration");
-    if (cfgKeyword)
-    {
-        configurationsWidget_ = new ConfigurationRefListKeywordWidget(NULL, cfgKeyword, dissolve_->coreData());
-        connect(configurationsWidget_, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
-        auto *layout = new QHBoxLayout;
-        layout->setMargin(0);
-        layout->addWidget(configurationsWidget_);
-        ui_.ConfigurationsPlaceholderWidget->setLayout(layout);
-        if (module_->nRequiredTargets() == Module::ZeroTargets)
-            configurationsWidget_->setEnabled(false);
-    }
-
-    // Set up our keywords widget
+    // Set up our control widgets
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
+
+    // Create any additional controls offered by the Module
+    moduleWidget_ = module->createWidget(NULL, *dissolve_);
+    if (moduleWidget_ == NULL)
+        Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
+    else
+    {
+        ui_.ModuleControlsStack->addWidget(moduleWidget_);
+        ui_.ModuleOutputButton->setEnabled(true);
+    }
 
     updateControls();
 }
@@ -112,21 +106,6 @@ void ModuleControlWidget::setUpModule()
  * Update
  */
 
-// Update basic Module controls
-void ModuleControlWidget::updateBasicControls()
-{
-    Lock refreshLocker(refreshLock_);
-
-    // Set unique name and status of icon frame
-    ui_.ModuleNameLabel->setText(QString::fromStdString(std::string(module_->uniqueName())));
-    ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
-
-    // Update configurations info
-    ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
-    if (configurationsWidget_)
-        configurationsWidget_->updateValue();
-}
-
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
@@ -135,33 +114,45 @@ void ModuleControlWidget::updateControls()
 
     Lock refreshLocker(refreshLock_);
 
-    updateBasicControls();
-
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
+
+    // Update additional controls (if they exist)
+    if (moduleWidget_)
+        moduleWidget_->updateControls();
 }
 
 // Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
     ui_.ModuleKeywordsWidget->setEnabled(false);
-    ui_.ConfigurationsPlaceholderWidget->setEnabled(false);
+    if (moduleWidget_)
+        moduleWidget_->disableSensitiveControls();
 }
 
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
     ui_.ModuleKeywordsWidget->setEnabled(true);
-    if (module_ && (module_->nRequiredTargets() != Module::ZeroTargets))
-        ui_.ConfigurationsPlaceholderWidget->setEnabled(true);
+    if (moduleWidget_)
+        moduleWidget_->enableSensitiveControls();
 }
 
 /*
  * UI
  */
 
-// Configuration targets for the Module have been modified
-void ModuleControlWidget::configurationKeywordEdited(int flags) { updateBasicControls(); }
+void ModuleControlWidget::on_ModuleControlsButton_clicked(bool checked)
+{
+    if (checked)
+        ui_.ModuleControlsStack->setCurrentIndex(0);
+}
+
+void ModuleControlWidget::on_ModuleOutputButton_clicked(bool checked)
+{
+    if (checked)
+        ui_.ModuleControlsStack->setCurrentIndex(1);
+}
 
 // Keyword data for Module has been modified
 void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }

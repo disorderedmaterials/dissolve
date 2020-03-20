@@ -112,6 +112,17 @@ class ModuleBlock : public QWidget, public ChartBlock
     bool isDragPoint(QPoint point) const;
 
     /*
+     * Update
+     */
+    private:
+    // Update configuration labels and tooltips
+    void updateConfigurationLabels();
+
+    private slots:
+    // Configuration targets for the Module have been modified
+    void configurationKeywordEdited(int flags);
+
+    /*
      * Update (ChartBlock Reimplementations)
      */
     public:

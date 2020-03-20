@@ -81,10 +81,6 @@ class ModuleControlWidget : public QWidget
     /*
      * Update
      */
-    private:
-    // Update basic Module controls
-    void updateBasicControls();
-
     public:
     // Update controls within widget
     void updateControls();
@@ -101,10 +97,12 @@ class ModuleControlWidget : public QWidget
     Ui::ModuleControlWidget ui_;
     // Keyword widget for Configuration editing
     ConfigurationRefListKeywordWidget *configurationsWidget_;
+    // Additional controls widget for the Module (if any)
+    ModuleWidget *moduleWidget_;
 
     private slots:
-    // Configuration targets for the Module have been modified
-    void configurationKeywordEdited(int flags);
+    void on_ModuleControlsButton_clicked(bool checked);
+    void on_ModuleOutputButton_clicked(bool checked);
     // Keyword data for Module has been modified
     void keywordDataModified();
 
