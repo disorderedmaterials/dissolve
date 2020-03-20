@@ -121,7 +121,7 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/general/icons/general_options.svg</normaloff>:/general/icons/general_options.svg</iconset>
+             <normaloff>:/general/icons/general_screen.svg</normaloff>:/general/icons/general_screen.svg</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -256,8 +256,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="main.qrc"/>
-  <include location="main.qrc"/>
   <include location="main.qrc"/>
  </resources>
  <connections/>
