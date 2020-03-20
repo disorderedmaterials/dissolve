@@ -5,6 +5,7 @@
 SET(keywordwidgets_MOC_HDRS
   atomtypeselection.h
   broadeningfunction.h
+  configurationreflist.h
   dialog.h
   dropdown.h
   expressionvariablelist.h
@@ -45,6 +46,7 @@ QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 SET(keywordwidgets_UIS
   atomtypeselection.ui
   broadeningfunction.ui
+  configurationreflist.ui
   dialog.ui
   dropdown.ui
   expressionvariablelist.ui
@@ -76,6 +78,7 @@ SET(keywordwidgets_SRCS
   atomtypeselection_funcs.cpp
   bool_funcs.cpp
   broadeningfunction_funcs.cpp
+  configurationreflist_funcs.cpp
   dialog_funcs.cpp
   double_funcs.cpp
   dropdown_funcs.cpp

@@ -49,6 +49,7 @@ class KeywordBase : public ListItem<KeywordBase>
         AtomTypeSelectionData,
         BoolData,
         BroadeningFunctionData,
+        ConfigurationRefListData,
         Data1DStoreData,
         Data2DStoreData,
         Data3DStoreData,

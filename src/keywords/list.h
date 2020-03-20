@@ -63,6 +63,8 @@ class KeywordList
               std::string_view arguments, int optionMask = KeywordBase::NoOptions);
     // Find named keyword
     KeywordBase *find(std::string_view name) const;
+    // Cut keyword from list
+    void cut(KeywordBase *kwd);
     // Return keywords list
     const List<KeywordBase> &keywords() const;
 

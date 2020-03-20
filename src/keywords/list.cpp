@@ -97,6 +97,9 @@ KeywordBase *KeywordList::find(std::string_view name) const
     return nullptr;
 }
 
+// Cut keyword from list
+void KeywordList::cut(KeywordBase *kwd) { keywords_.cut(kwd); }
+
 // Return first keyword in list
 const List<KeywordBase> &KeywordList::keywords() const { return keywords_; }
 
