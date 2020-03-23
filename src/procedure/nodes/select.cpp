@@ -83,7 +83,7 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  */
 
 // Return list of Molecules currently excluded from selection
-const RefList<const Molecule>& SelectProcedureNode::excludedMolecules() const
+const OrderedVector<std::shared_ptr<const Molecule>>& SelectProcedureNode::excludedMolecules() const
 {
 	return excludedMolecules_;
 }
@@ -198,7 +198,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	// Update our exclusion lists
 	excludedMolecules_.clear();
 	RefListIterator<SelectProcedureNode> moleculeExclusionIterator(sameMoleculeExclusions_);
-	while (SelectProcedureNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule().get());
+	while (SelectProcedureNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.insert(node->currentSite()->molecule());
 
 	excludedSites_.clear();
 	RefListIterator<SelectProcedureNode> siteExclusionIterator(sameSiteExclusions_);
@@ -229,7 +229,9 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 			{
 				if (site->molecule() != moleculeParent) continue; 
 			}
-			else if (excludedMolecules_.contains(site->molecule().get())) continue;
+			else if (find(excludedMolecules_.begin(),
+				      excludedMolecules_.end(),
+				      site->molecule()) != excludedMolecules_.end()) continue;
 
 			// Check Site exclusions
 			if (excludedSites_.contains(site)) continue;

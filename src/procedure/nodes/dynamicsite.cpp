@@ -107,7 +107,7 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 	generatedSites_.clear();
 
 	// Grab exclusion lists and any specific Molecule parent
-	const RefList<const Molecule>& excludedMolecules = parent_->excludedMolecules();
+	const auto& excludedMolecules = parent_->excludedMolecules();
 	std::shared_ptr<const Molecule> moleculeParent = parent_->sameMoleculeMolecule();
 
 	/*
@@ -124,7 +124,9 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 		for (auto molecule : molecules)
 		{
 			// Check Molecule exclusions
-			if (excludedMolecules.contains(molecule.get())) continue;
+			if (find(excludedMolecules.begin(),
+				 excludedMolecules.end(),
+				 molecule) != excludedMolecules.end()) continue;
 
 			// All OK, so generate sites
 			generateSites(molecule);

@@ -28,6 +28,7 @@
 #include "templates/array.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include "templates/orderedvector.h"
 
 // Forward Declarations
 class DynamicSiteProcedureNode;
@@ -75,7 +76,7 @@ class SelectProcedureNode : public ProcedureNode
 	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
 	RefList<SelectProcedureNode> sameMoleculeExclusions_;
 	// List of Molecules currently excluded from selection
-	RefList<const Molecule> excludedMolecules_;
+	OrderedVector<std::shared_ptr<const Molecule>> excludedMolecules_;
 	// List of other sites (nodes) which will exclude one of our sites if it is the same site
 	RefList<SelectProcedureNode> sameSiteExclusions_;
 	// List of Sites currently excluded from selection
@@ -89,7 +90,7 @@ class SelectProcedureNode : public ProcedureNode
 
 	public:
 	// Return list of Molecules currently excluded from selection
-	const RefList<const Molecule>& excludedMolecules() const;
+	const OrderedVector<std::shared_ptr<const Molecule>>& excludedMolecules() const;
 	// List of Sites currently excluded from selection
 	const RefList<const Site>& excludedSites() const;
 	// Return Molecule (from site) in which the site must exist
