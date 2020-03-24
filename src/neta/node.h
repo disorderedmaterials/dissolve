@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_NETA_NODE_H
 #define DISSOLVE_NETA_NODE_H
 
+#include <vector>
 #include "base/enumoptions.h"
 #include "templates/listitem.h"
 #include "templates/list.h"
-#include "templates/pointerarray.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -85,9 +85,9 @@ class NETANode : public ListItem<NETANode>
 	// Return number of nodes defined in branch
 	int nBranchNodes() const;
 	// Create connectivity node in the branch
-	NETAConnectionNode* createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes);
+	NETAConnectionNode* createConnectionNode(std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes);
 	// Create presence node in the branch
-	NETAPresenceNode* createPresenceNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes);
+	NETAPresenceNode* createPresenceNode(std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes);
 	// Create ring node in the branch
 	NETARingNode* createRingNode();
 

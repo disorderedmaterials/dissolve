@@ -56,8 +56,7 @@ void AtomTypeSelectionKeyword::checkSelection()
 	while (AtomTypeData* atd = typeIterator.iterate())
 	{
 		bool found = false;
-		RefListIterator<Configuration> cfgIterator(sourceConfigurations_);
-		while (Configuration* cfg = cfgIterator.iterate())
+		for(auto cfg : sourceConfigurations_)
 		{
 			if (cfg->usedAtomTypesList().contains(atd->atomType()))
 			{

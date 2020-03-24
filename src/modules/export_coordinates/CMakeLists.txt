@@ -1,11 +1,11 @@
 # Main Module Library
-add_library(exportmodule
+add_library(exportcoordinatesmodule
   core.cpp
   definition.cpp
   init.cpp
   process.cpp
 
-  export.h
+  exportcoords.h
 )
 
 include_directories(

@@ -305,11 +305,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			else
 			{
 				// Draw all bonds from this atom
-				const PointerArray<SpeciesBond>& bonds = i->bonds();
-				for (int n=0; n<bonds.nItems(); ++n)
+				for (const auto* bond : i->bonds())
 				{
-					const Vec3<double> ri = i->r();
-					const Vec3<double> dij = (bonds.at(n)->partner(i)->r() - ri) * 0.5;
+					const auto ri = i->r();
+					const auto dij = (bond->partner(i)->r() - ri) * 0.5;
 
 					// Draw bond halves
 					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);

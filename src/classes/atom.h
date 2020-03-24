@@ -23,10 +23,10 @@
 #define DISSOLVE_ATOM_H
 
 #include <memory>
+#include <vector>
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 #include "templates/dynamicarrayobject.h"
-#include "templates/pointerarray.h"
 #include "templates/orderedpointerdataarray.h"
 
 // Forward Declarations

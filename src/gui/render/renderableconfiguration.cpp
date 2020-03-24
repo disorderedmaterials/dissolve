@@ -161,7 +161,7 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	Matrix4 A;
 	const GLfloat* colour;
 	const GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
-	const Atom* i, *j;
+	const Atom* i, *partner;
 	Vec3<double> ri, rj;
 
 	// Check data source
@@ -182,7 +182,6 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		// Set basic styling and content for assemblies
 		configurationAssembly_.add(false, GL_LINE);
 		configurationAssembly_.add(lineConfigurationPrimitive_, A);
-		const SpeciesBond* b;
 
 		// Draw Atoms
 		const DynamicArray<Atom>& atoms = source_->constAtoms();
@@ -204,24 +203,21 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			else
 			{
 				// Draw all bonds from this atom
-				const PointerArray<SpeciesBond>& bonds = i->speciesAtom()->bonds();
-				for (int n=0; n<bonds.nItems(); ++n)
+				for (const auto* bond : i->speciesAtom()->bonds())
 				{
-					b = bonds.at(n);
-
 					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-					j = i->molecule()->atom(b->indexJ());
-					if (i == j) continue;
+					partner = i->molecule()->atom(bond->indexJ());
+					if (i == partner) continue;
 
 					ri = i->r();
-					rj = j->r();
+					rj = partner->r();
 
 					// Determine half delta i-j for bond
-					const Vec3<double> dij = (i->cell()->mimRequired(j->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
+					const Vec3<double> dij = (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
 
 					// Draw bond halves
-					lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(b->i()->element()));
-					lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(b->j()->element()));
+					lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(bond->i()->element()));
+					lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(bond->j()->element()));
 				}
 			}
 		}
@@ -246,15 +242,14 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			configurationAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 			// Bonds from this atom
-			const PointerArray<SpeciesBond>& bonds = i->speciesAtom()->bonds();
-			for (int n=0; n<bonds.nItems(); ++n)
+			for (const auto* bond : i->speciesAtom()->bonds())
 			{
 				// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-				j = i->molecule()->atom(bonds.at(n)->indexJ());
-				if (i == j) continue;
+				partner = i->molecule()->atom(bond->indexJ());
+				if (i == partner) continue;
 
-				if (i->cell()->mimRequired(j->cell())) createCylinderBond(configurationAssembly_, i, j, box->minimumVector(i->r(), j->r()), true, spheresBondRadius_);
-				else createCylinderBond(configurationAssembly_, i, j, j->r() - i->r(), false, spheresBondRadius_);
+				if (i->cell()->mimRequired(partner->cell())) createCylinderBond(configurationAssembly_, i, partner, box->minimumVector(i->r(), partner->r()), true, spheresBondRadius_);
+				else createCylinderBond(configurationAssembly_, i, partner, partner->r() - i->r(), false, spheresBondRadius_);
 			}
 		}
 	}

@@ -280,8 +280,7 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 		if (DissolveSys::sameString(group->name(), "HIDDEN"))
 		{
 			// Remove all keywords in this group from the remainingKeywords list
-			RefListIterator<KeywordBase> groupKeywordIterator(group->keywords());
-			while (KeywordBase* keyword = groupKeywordIterator.iterate()) remainingKeywords.remove(keyword);
+			for (KeywordBase* keyword : group->keywords()) remainingKeywords.remove(keyword);
 
 			continue;
 		}
@@ -291,8 +290,7 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 		QFormLayout* groupLayout = new QFormLayout(groupWidget);
 
 		// Loop over keywords in the group and add them to our groupbox
-		RefListIterator<KeywordBase> groupKeywordIterator(group->keywords());
-		while (KeywordBase* keyword = groupKeywordIterator.iterate())
+		for (KeywordBase* keyword : group->keywords())
 		{
 			// Create / setup the keyword widget
 			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
@@ -326,8 +324,7 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 		QWidget* groupWidget = new QWidget;
 		QFormLayout* groupLayout = new QFormLayout(groupWidget);
 
-		RefListIterator<KeywordBase> remainingKeywordsIterator(remainingKeywords);
-		while (KeywordBase* keyword = remainingKeywordsIterator.iterate())
+		for (KeywordBase* keyword : remainingKeywords)
 		{
 			// Create / setup the keyword widget
 			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
@@ -355,8 +352,7 @@ void KeywordsWidget::updateControls()
 	refreshing_ = true;
 
 	// Update all our keyword widgets
-	RefListIterator<KeywordWidgetBase> keywordIterator(keywordWidgets_);
-	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue();
+	for (KeywordWidgetBase* keywordWidget : keywordWidgets_) keywordWidget->updateValue();
 
 	refreshing_ = false;
 }

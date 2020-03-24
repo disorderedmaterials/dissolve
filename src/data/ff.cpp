@@ -103,8 +103,7 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const Array< R
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	RefListIterator<ForcefieldAtomType> typeIterator(atomTypes.constAt(i->element()->Z()));
-	while (ForcefieldAtomType* type = typeIterator.iterate())
+	for(auto type : atomTypes.constAt(i->element()->Z()))
 	{
 		// Get the scoring for this type
 		int score = type->neta().score(i);
@@ -149,8 +148,7 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
-		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->name(), name)) return type;
+		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (DissolveSys::sameString(type->name(), name)) return type;
 	}
 
 	return NULL;
@@ -164,8 +162,7 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
-		while (ForcefieldAtomType* type = typeIterator.iterate()) if (type->index() == id) return type;
+		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (type->index() == id) return type;
 	}
 
 	return NULL;
@@ -562,10 +559,9 @@ bool Forcefield::isAtomGeometry(SpeciesAtom* i, AtomGeometry geom) const
 bool Forcefield::isBondPattern(const SpeciesAtom* i, const int nSingle, const int nDouble, const int nTriple, const int nQuadruple, const int nAromatic) const
 {
 	int actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
+	for (const auto* bond : i->bonds())
 	{
-		switch (bonds.at(n)->bondType())
+		switch (bond->bondType())
 		{
 			case (SpeciesBond::SingleBond):
 				if (nSingle == actualNSingle) return false;
@@ -608,8 +604,7 @@ bool Forcefield::isBoundTo(const SpeciesAtom* i, Element* element, const int cou
 {
 	int found = 0;
 
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(i)->element() == element) ++found;
+	for (const auto* bond : i->bonds()) if (bond->partner(i)->element() == element) ++found;
 
 	return (found < count ? false : (found == count ? true : allowMoreThanCount));
 }
@@ -628,10 +623,9 @@ int Forcefield::guessOxidationState(const SpeciesAtom* i) const
 	// Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments (OS == 0)
 	int nSameElement = 0;
 
-	const PointerArray<SpeciesBond>& bonds = i->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
+	const std::vector<SpeciesBond*>& bonds = i->bonds();
+	for (const auto* bond : bonds)
 	{
-		const SpeciesBond* bond = bonds.at(n);
 		Element* element = bond->partner(i)->element();
 		switch (element->Z())
 		{

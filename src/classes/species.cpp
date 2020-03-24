@@ -115,13 +115,12 @@ bool Species::checkSetUp()
 		}
 
 		// Check each Bond for two-way consistency
-		const PointerArray<SpeciesBond>& bonds = i->bonds();
-		for (int n=0; n<bonds.nItems(); ++n)
+		for (const auto* bond : i->bonds())
 		{
-			SpeciesAtom* j = bonds.at(n)->partner(i);
-			if (!j->hasBond(i))
+			SpeciesAtom* partner = bond->partner(i);
+			if (!partner->hasBond(i))
 			{
-				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
+				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), partner->userIndex(), partner->userIndex());
 				++nErrors;
 			}
 		}

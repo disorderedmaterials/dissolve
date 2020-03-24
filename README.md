@@ -1,6 +1,6 @@
 ![Dissolve's Logo](icon/logo.png)
 
-_Current Version: 0.5.6, Wednesday 5th February 2020_
+_Current Version: 0.6.99, Tuesday 10th March 2020_
 
 ![](https://github.com/projectdissolve/dissolve/workflows/Win64%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/projectdissolve/dissolve/workflows/OSX%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/projectdissolve/dissolve/workflows/AppImage%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/projectdissolve/dissolve/workflows/System%20Tests%20(Serial)/badge.svg) ![](https://github.com/projectdissolve/dissolve/workflows/System%20Tests%20(Parallel)/badge.svg)
 

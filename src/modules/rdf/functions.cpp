@@ -638,8 +638,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 double RDFModule::summedRho(Module* module, GenericList& processingModuleData)
 {
 	double rho0 = 0.0, totalWeight = 0.0;
-	RefListIterator<Configuration> targetIterator(module->targetConfigurations());
-	while (Configuration* cfg = targetIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
@@ -657,8 +656,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 {
 	// Create an AtomTypeList containing the sum of atom types over all target configurations
 	AtomTypeList combinedAtomTypes;
-	RefListIterator<Configuration> targetIterator(module->targetConfigurations());
-	while (Configuration* cfg = targetIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
+	for (Configuration* cfg : module->targetConfigurations()) combinedAtomTypes.add(cfg->usedAtomTypesList());
 
 	// Finalise and print the combined AtomTypes matrix
 	combinedAtomTypes.finalise();
@@ -669,9 +667,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 
 	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight RefList for simplicity
 	RefDataList<Configuration,double> configWeights;
-	targetIterator.restart();
 	double totalWeight = 0.0;
-	while (Configuration* cfg = targetIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		// Get weighting factor for this Configuration to contribute to the summed partials
 		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
@@ -718,12 +715,10 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 	// Determine total weighting factor over all Configurations, and set up a Configuration/weight RefList for simplicity
 	RefDataList<Configuration,double> configWeights;
 	double totalWeight = 0.0;
-	RefListIterator<Module> moduleIterator(moduleGroup->modules());
-	while (Module* module = moduleIterator.iterate())
+	for (Module* module : moduleGroup->modules())
 	{
 		// Loop over Configurations defined in this target
-		RefListIterator<Configuration> targetIterator(module->targetConfigurations());
-		while (Configuration* cfg = targetIterator.iterate())
+		for (Configuration* cfg : module->targetConfigurations())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
 			double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);

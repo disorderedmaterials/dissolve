@@ -34,8 +34,8 @@
 const Forcefield* NETADefinitionGenerator::associatedForcefield_ = NULL;
 NETADefinition* NETADefinitionGenerator::definition_ = NULL;
 NETADefinitionGenerator* NETADefinitionGenerator::generator_ = NULL;
-PointerArray<Element> NETADefinitionGenerator::targetElements_;
-PointerArray<ForcefieldAtomType> NETADefinitionGenerator::targetAtomTypes_;
+std::vector<Element*> NETADefinitionGenerator::targetElements_;
+std::vector<ForcefieldAtomType*> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
@@ -323,7 +323,7 @@ bool NETADefinitionGenerator::addElementTarget(int elementZ)
 	Element& el = Elements::element(elementZ);
 	if (el.isUnknown()) return Messenger::error("Unknown element Z %i passed to NETADefinitionGenerator::addTarget().\n", elementZ);
 
-	targetElements_.append(&el);
+	targetElements_.push_back(&el);
 
 	return true;
 }
@@ -337,7 +337,7 @@ bool NETADefinitionGenerator::addAtomTypeTarget(int id)
 	ForcefieldAtomType* at = associatedForcefield_->atomTypeById(id);
 	if (!at) return Messenger::error("No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id, associatedForcefield_->name());
 
-	targetAtomTypes_.append(at);
+	targetAtomTypes_.push_back(at);
 
 	return true;
 }
@@ -351,19 +351,19 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char* typeName)
 	ForcefieldAtomType* at = associatedForcefield_->atomTypeByName(typeName);
 	if (!at) return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n", typeName);
 
-	targetAtomTypes_.append(at);
+	targetAtomTypes_.push_back(at);
 
 	return true;
 }
 
 // Return target Elements array
-PointerArray<Element> NETADefinitionGenerator::targetElements()
+std::vector<Element*> NETADefinitionGenerator::targetElements()
 {
 	return targetElements_;
 }
 
 // Return target ForcefieldAtomTypes array
-PointerArray<ForcefieldAtomType> NETADefinitionGenerator::targetAtomTypes()
+std::vector<ForcefieldAtomType*> NETADefinitionGenerator::targetAtomTypes()
 {
 	return targetAtomTypes_;
 }

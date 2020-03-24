@@ -141,8 +141,7 @@ template <class T, class I> class TreeWidgetRefListUpdater
 	{
 		int count = 0;
 
-		RefListIterator<I> dataIterator(data);
-		while (I* dataItem = dataIterator.iterate())
+		for (I* dataItem : data)
 		{
 			// Our QTreeWidget may or may not be populated, and with different items to those in the list.
 
@@ -191,8 +190,7 @@ template <class T, class I> class TreeWidgetRefListUpdater
 
 		int count = 0;
 
-		RefListIterator<I> itemIterator(list);
-		while (I* dataItem = itemIterator.iterate())
+		for (I* dataItem : list)
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 

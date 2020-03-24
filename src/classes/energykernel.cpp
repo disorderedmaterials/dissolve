@@ -659,30 +659,21 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
 	double intraEnergy = 0.0;
 
 	// Add energy from SpeciesBond terms
-	const PointerArray<SpeciesBond>& bonds = spAtom->bonds();
-	const SpeciesBond* b;
-	for (int n=0; n<bonds.nItems(); ++n)
+	for (const auto* bond : spAtom->bonds())
 	{
-		b = bonds.at(n);
-		intraEnergy += energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+		intraEnergy += energy(bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
 	}
 
 	// Add energy from SpeciesAngle terms
-	const PointerArray<SpeciesAngle>& angles = spAtom->angles();
-	const SpeciesAngle* a;
-	for (int n=0; n<angles.nItems(); ++n)
+	for (const auto* angle : spAtom->angles())
 	{
-		a = angles.at(n);
-		intraEnergy += energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+		intraEnergy += energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
 	}
 
 	// Add energy from SpeciesTorsion terms
-	const PointerArray<SpeciesTorsion>& torsions = spAtom->torsions();
-	const SpeciesTorsion* t;
-	for (int n=0; n<torsions.nItems(); ++n)
+	for (const auto* torsion : spAtom->torsions())
 	{
-		t = torsions.at(n);
-		intraEnergy += energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+		intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
 	}
 
 	return intraEnergy;

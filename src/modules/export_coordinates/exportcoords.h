@@ -1,6 +1,6 @@
 /*
-	*** Export Module
-	*** src/modules/export/export.h
+	*** Export Coordinates Module
+	*** src/modules/export_coordinates/export.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,19 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_EXPORT_H
-#define DISSOLVE_MODULE_EXPORT_H
+#ifndef DISSOLVE_MODULE_EXPORT_COORDINATES_H
+#define DISSOLVE_MODULE_EXPORT_COORDINATES_H
 
 #include "module/module.h"
 #include "io/export/coordinates.h"
-#include "io/export/pairpotential.h"
-#include "io/export/trajectory.h"
 
 // Forward Declarations
 /* none */
 
-// Export Module
-class ExportModule : public Module
+// Export Coordinates Module
+class ExportCoordinatesModule : public Module
 {
 	/*
 	 * Export data in various formats
@@ -39,9 +37,9 @@ class ExportModule : public Module
 
 	public:
 	// Constructor
-	ExportModule();
+	ExportCoordinatesModule();
 	// Destructor
-	~ExportModule();
+	~ExportCoordinatesModule();
 
 
 	/*
@@ -80,10 +78,6 @@ class ExportModule : public Module
 	private:
 	// Filename and format for coordinate export
 	CoordinateExportFileFormat coordinatesFormat_;
-	// Basename and format for PairPotential export
-	PairPotentialExportFileFormat pairPotentialFormat_;
-	// Filename and format for trajectory export
-	TrajectoryExportFileFormat trajectoryFormat_;
 
 
 	/*

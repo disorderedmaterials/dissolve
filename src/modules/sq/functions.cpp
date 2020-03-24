@@ -76,8 +76,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 {
 	// Create an AtomTypeList containing all AtomTypes present in all target configurations
 	AtomTypeList combinedAtomTypes;
-	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
+	for (Configuration* cfg : module->targetConfigurations()) combinedAtomTypes.add(cfg->usedAtomTypesList());
 	combinedAtomTypes.finalise();
 
 	// Set up PartialSet container
@@ -88,8 +87,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 	// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
 	double totalWeight = 0.0;
 	CharString fingerprint;
-	configIterator.restart();
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		// Update fingerprint
 		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());

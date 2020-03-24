@@ -51,11 +51,9 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Make a list of all Configurations related to all RDF module
 		 */
 		RefList<Configuration> configs;
-		RefListIterator<Module> rdfModuleIterator(intraBroadeningModules_);
-		while (Module* module = rdfModuleIterator.iterate())
+		for (Module* module : intraBroadeningModules_)
 		{
-			RefListIterator<Configuration> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
+			for (Configuration* cfg : module->targetConfigurations()) configs.addUnique(cfg);
 		}
 		Messenger::print("%i Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
 
@@ -80,11 +78,9 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 		RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
 
-		RefListIterator<Module> neutronSQIterator(intraBroadeningNeutronSQReferences_);
-		while (Module* module = neutronSQIterator.iterate()) neutronReferences.addUnique(module, CalibrationModule::IntraBroadeningTargetSQ);
+		for (Module* module : intraBroadeningNeutronSQReferences_) neutronReferences.addUnique(module, CalibrationModule::IntraBroadeningTargetSQ);
 
-		RefListIterator<Module> neutronGRIterator(intraBroadeningNeutronGRReferences_);
-		while (Module* module = neutronGRIterator.iterate())
+		for (Module* module : intraBroadeningNeutronGRReferences_)
 		{
 			// If the Module target is already in the list, just set its data to 'both'
 			RefDataItem<Module,CalibrationModule::IntraBroadeningFitTarget>* oldItem = neutronReferences.contains(module);
@@ -101,11 +97,10 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		PrAxisMinimiser<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
 		broadeningMinimiser.setTolerance(0.001);
 		broadeningMinimiser.setPokeBeforeCost(true);
-		rdfModuleIterator.restart();
 		Array<bool> broadeningAdded(PairBroadeningFunction::nFunctionTypes);
 		broadeningAdded = false;
 		
-		while (Module* module = rdfModuleIterator.iterate())
+		for (Module* module : intraBroadeningModules_)
 		{
 			// Retrieve the PairBroadeningFunction
 			PairBroadeningFunction& broadening = module->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
@@ -139,8 +134,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
 		// Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-		rdfModuleIterator.restart();
-		while (Module* rdfModule = rdfModuleIterator.iterate())
+		for (Module* rdfModule : intraBroadeningModules_)
 		{
 			// Retrieve the PairBroadeningFunction
 			PairBroadeningFunction& broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
@@ -149,8 +143,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 			int smoothing = rdfModule->keywords().asInt("Smoothing");
-			RefListIterator<Configuration> configIterator(rdfModule->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate())
+			for (Configuration* cfg : rdfModule->targetConfigurations())
 			{
 				const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
 				PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
@@ -166,8 +159,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* module = neutronModuleIterator.iterate())
 		{
 			// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
-			RefListIterator<Configuration> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
+			for (Configuration* cfg : module->targetConfigurations()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
 
 			// Run the NeutronSQModule (quietly)
 			Messenger::mute();

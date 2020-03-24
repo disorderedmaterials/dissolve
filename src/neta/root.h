@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_NETA_ROOT_H
 #define DISSOLVE_NETA_ROOT_H
 
+#include <vector>
 #include "neta/node.h"
 #include "classes/speciesbond.h"
-#include "templates/pointerarray.h"
 
 // Forward Declarations
 class Element;

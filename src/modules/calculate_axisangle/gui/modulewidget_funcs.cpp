@@ -121,8 +121,7 @@ void CalculateAxisAngleModuleWidget::setGraphDataTargets(CalculateAxisAngleModul
 	rdfGraph_->clearRenderables();
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module_->targetConfigurations())
 	{
 		// Calculated A...B RDF
 		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(AB)", module_->uniqueName(), cfg->niceName()), "A...B g(r)");

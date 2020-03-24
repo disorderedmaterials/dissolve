@@ -140,8 +140,7 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 		// Get possible target GraphGizmos, and construct list of associated DataViewers
 		RefList<GraphGizmo> graphGizmos = Gizmo::findAll<GraphGizmo>("Graph");
 		RefDataList<DataViewer,GraphGizmo*> targets;
-		RefListIterator<GraphGizmo> gizmoIterator(graphGizmos);
-		while (GraphGizmo* gizmo = gizmoIterator.iterate()) targets.append(gizmo->dataViewer(), gizmo);
+		for (GraphGizmo* gizmo : graphGizmos) targets.append(gizmo->dataViewer(), gizmo);
 		targets.remove(dataViewer());
 		if (targets.nItems() == 0)
 		{
