@@ -18,11 +18,6 @@ jobs:
       run: |
         choco install -y ninja winflexbison
         choco install mingw --version=7.3.0 --allow-downgrade
-    - name: Install Prerequisties (OSX)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew update
-        brew install bison ftgl ninja
     - name: Install Qt (Windows)
       if: matrix.os == 'windows-latest'
       uses: jurplel/install-qt-action@v2.2.1
@@ -30,10 +25,6 @@ jobs:
         version: 5.13.1
         host: windows
         arch: win64_mingw73
-    - name: Install Qt (OSX)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install qt5
     - name: Build Prerequisites [Freetype] (Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -81,18 +72,7 @@ jobs:
     - name: Build (OSX)
       if: matrix.os == 'macos-latest'
       run: |
-        QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
-        export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
-        export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
-        export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
-        export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
-        export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
-        Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
-        mkdir build
-        cd build
-        cmake -G "Ninja" -DGUI:bool=true ../
-        ninja
-        cd ../
+        ci/osx/build_serial_gui
     - name: Upload Test Artifacts (Linux)
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v1
