@@ -23,6 +23,7 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
+#include "classes/regionaldistributor.h"
 #include "io/export/data1d.h"
 #include "io/import/data1d.h"
 #include "classes/box.h"
@@ -48,6 +49,7 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
+		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
 		/*
 		 * Configuration Generation
@@ -124,6 +126,49 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				timing += timer.split();
 			}
 			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy", timing, saveTimings);
+		}
+
+		/*
+		 * Distributors
+		 */
+		if (keywords_.asBool("TestDistributors"))
+		{
+			SampledDouble timing;
+			for (int n=0; n<N; ++n)
+			{
+				// Create a Molecule distributor
+				DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+				RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
+
+				Timer timer;
+				Messenger::mute();
+				while (distributor.cycle())
+				{
+					// Get next set of Molecule targets from the distributor
+					Array<int> targetMolecules = distributor.assignedMolecules();
+
+					// Switch parallel strategy if necessary
+					if (distributor.currentStrategy() != strategy)
+					{
+						// Set the new strategy
+						strategy = distributor.currentStrategy();
+
+						// Re-initialise the random buffer
+						procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+					}
+
+					// Loop over target Molecules
+					for (int n = 0; n<targetMolecules.nItems(); ++n)
+					{
+						// Get Molecule index and pointer
+						auto molId = targetMolecules[n];
+						Molecule* mol = cfg->molecule(molId);
+					}
+				}
+				Messenger::unMute();
+				timing += timer.split();
+			}
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RegionalDist"), "Distributor (regional)", timing, saveTimings);
 		}
 	}
 

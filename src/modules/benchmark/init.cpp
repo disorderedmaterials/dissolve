@@ -31,4 +31,5 @@ void BenchmarkModule::initialise()
 	keywords_.add("Tests", new BoolKeyword(true), "TestInterEnergy", "Whether to benchmark interatomic energy calculation");
 	keywords_.add("Tests", new BoolKeyword(true), "TestGenerator", "Whether to benchmark configuration generator");
 	keywords_.add("Tests", new BoolKeyword(true), "TestRDFCells", "Whether to benchmark the RDF cells method (to half-cell range)");
+	keywords_.add("Tests", new BoolKeyword(true), "TestDistributors", "Whether to benchmark molecule distributors");
 }
