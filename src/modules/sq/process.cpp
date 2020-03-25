@@ -60,8 +60,7 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Loop over target Configurations and Fourier transform their UnweightedGR into the UnweightedSQ.
 	 */
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : targetConfigurations_)
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());

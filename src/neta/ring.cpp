@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "neta/ring.h"
 #include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
@@ -89,30 +90,29 @@ bool NETARingNode::setModifier(const char* modifier, ComparisonOperator op, int 
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, PointerArray<const SpeciesAtom>& path, const int minSize, const int maxSize) const
+void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, std::vector<const SpeciesAtom*>& path, const int minSize, const int maxSize) const
 {
 	// Check whether the path is already at the maximum size - if so, return immediately.
-	if (path.nItems() == maxSize) return;
+	if (path.size() == maxSize) return;
 
 	// Add the current atom to the path
-	path.append(currentAtom);
+	path.push_back(currentAtom);
 
 	// Loop over bonds to the atom
 	const SpeciesAtom* j;
 	SpeciesRing* ring;
-	const PointerArray<SpeciesBond>& bonds = currentAtom->bonds();
-	for (int n=0; n<bonds.nItems(); ++n)
+	for (const auto* bond : currentAtom->bonds())
 	{
 		/*
 		 * Get the partner atom and compare to first atom in the current path.
 		 * If it is the currentAtom then we have found a cyclic route back to the originating atom.
 		 * If not, check whether the atom is already elsewhere in the path - if so, continue with the next bond.
 		 */
-		j = bonds.at(n)->partner(currentAtom);
-		if ((path.nItems() >= minSize) && (j == path.at(0)))
+		j = bond->partner(currentAtom);
+		if ((path.size() >= minSize) && (j == path.at(0)))
 		{
 			// Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum size
-			if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.nItems() == maxSize)) continue;
+			if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.size() == maxSize)) continue;
 
 			// Add new ring
 			ring = rings.add();
@@ -121,27 +121,26 @@ void NETARingNode::findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& 
 			// Continue with the next bond
 			continue;
 		}
-		else if (path.sniatnoc(j)) continue;
+		else if (find(path.rbegin(), path.rend(), j) != path.rend()) continue;
 
 		// The current atom j is not in the path, so recurse
 		findRings(j, rings, path, minSize, maxSize);
 	}
 
 	// Remove current atom from the path
-	path.removeLast();
+	path.erase(path.end()-1);
 }
 
 // Evaluate the node and return its score
 int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
 {
 // 	printf("I AM THE RING - matchPath size = %i:\n", matchPath.nItems());
-// 	RefListIterator<const SpeciesAtom> matchIterator(matchPath);
-// 	while (const SpeciesAtom* iii = matchIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 // 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	// Generate array of rings of specified size that the atom 'i' is present in
 	List<SpeciesRing> rings;
-	PointerArray<const SpeciesAtom> ringPath;
+	std::vector<const SpeciesAtom*> ringPath;
 	if (sizeValue_ == -1) findRings(i, rings, ringPath, 3, 6);
 	else if (sizeValueOperator_ == NETANode::EqualTo) findRings(i, rings, ringPath, sizeValue_, sizeValue_);
 	else if (sizeValueOperator_ == NETANode::LessThan) findRings(i, rings, ringPath, 3, sizeValue_-1);
@@ -173,7 +172,7 @@ int NETARingNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 	while (SpeciesRing* ring = ringIterator.iterate())
 	{
 		// Copy the atoms in the ring into an array we can modify
-		PointerArray<const SpeciesAtom> ringAtoms = ring->atoms();
+		std::vector<const SpeciesAtom*> ringAtoms = ring->atoms();
 
 		// Check through atoms in the ring - either in order or not - to see if the ring matches
 		if (false)

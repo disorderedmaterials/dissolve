@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
@@ -155,15 +156,16 @@ bool SpeciesAtom::isSelected() const
  */
 
 // Add Bond reference
-void SpeciesAtom::addBond(SpeciesBond* b)
-{
-	if (!bonds_.contains(b)) bonds_.append(b);
+void SpeciesAtom::addBond(SpeciesBond *bond) {
+  if (find(bonds_.begin(), bonds_.end(), bond) == bonds_.end()) {
+    bonds_.push_back(bond);
+  }
 }
 
 // Remove Bond reference
 void SpeciesAtom::removeBond(SpeciesBond* b)
 {
-	bonds_.remove(b);
+	bonds_.erase(find(bonds_.begin(), bonds_.end(), b));
 }
 
 // Clear all Bond references
@@ -175,7 +177,7 @@ void SpeciesAtom::clearBonds()
 // Return number of Bond references
 int SpeciesAtom::nBonds() const
 {
-	return bonds_.nItems();
+	return bonds_.size();
 }
 
 // Return specified bond
@@ -185,23 +187,24 @@ SpeciesBond* SpeciesAtom::bond(int index)
 }
 
 // Return bonds list
-const PointerArray<SpeciesBond>& SpeciesAtom::bonds() const
+const std::vector<SpeciesBond*>& SpeciesAtom::bonds() const
 {
 	return bonds_;
 }
 
 // Return whether Bond to specified Atom exists
-SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
+SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* partner)
 {
-	for (int n=0; n<bonds_.nItems(); ++n) if (bonds_.value(n)->partner(this) == j) return bonds_.value(n);
-	return NULL;
+	auto result = find_if(bonds_.begin(), bonds_.end(),
+			       [&](const SpeciesBond* bond){return bond->partner(this) == partner;});
+	return result == bonds_.end() ? nullptr : *result;
 }
 
 
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle* angle)
 {
-	angles_.append(angle);
+	angles_.push_back(angle);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (angle->i() != this) exclusions_.add(angle->i());
@@ -211,15 +214,15 @@ void SpeciesAtom::addAngle(SpeciesAngle* angle)
 
 
 // Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle* a)
+void SpeciesAtom::removeAngle(SpeciesAngle* angle)
 {
-	angles_.remove(a);
+	angles_.erase(find(angles_.begin(), angles_.end(), angle));
 }
 
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const
 {
-	return angles_.nItems();
+	return angles_.size();
 }
 
 // Return specified angle
@@ -229,7 +232,7 @@ SpeciesAngle* SpeciesAtom::angle(int index)
 }
 
 // Return array of Angles in which the Atom is involved
-const PointerArray<SpeciesAngle>& SpeciesAtom::angles() const
+const std::vector<SpeciesAngle*>& SpeciesAtom::angles() const
 {
 	return angles_;
 }
@@ -237,7 +240,7 @@ const PointerArray<SpeciesAngle>& SpeciesAtom::angles() const
 // Add specified SpeciesTorsion to Atom
 void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 {
-	torsions_.append(torsion);
+	torsions_.push_back(torsion);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (torsion->i() == this)
@@ -262,15 +265,15 @@ void SpeciesAtom::addTorsion(SpeciesTorsion* torsion, double scaling14)
 }
 
 // Remove torsion reference
-void SpeciesAtom::removeTorsion(SpeciesTorsion* t)
+void SpeciesAtom::removeTorsion(SpeciesTorsion* torsion)
 {
-	torsions_.remove(t);
+	torsions_.erase(find(torsions_.begin(), torsions_.end(), torsion));
 }
 
 // Return the number of Torsions in which the Atom is involved
 int SpeciesAtom::nTorsions() const
 {
-	return torsions_.nItems();
+	return torsions_.size();
 }
 
 // Return specified torsion
@@ -280,7 +283,7 @@ SpeciesTorsion* SpeciesAtom::torsion(int index)
 }
 
 // Return array of Torsions in which the Atom is involved
-const PointerArray<SpeciesTorsion>& SpeciesAtom::torsions() const
+const std::vector<SpeciesTorsion*>& SpeciesAtom::torsions() const
 {
 	return torsions_;
 }

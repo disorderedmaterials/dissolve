@@ -36,7 +36,9 @@
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
-#include "modules/export/export.h"
+#include "modules/export_coordinates/exportcoords.h"
+#include "modules/export_pairpotentials/exportpp.h"
+#include "modules/export_trajectory/exporttraj.h"
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
 #include "modules/import/import.h"
@@ -98,7 +100,9 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new DataTestModule)) return false;
 	if (!registerMasterModule(new EnergyModule)) return false;
 	if (!registerMasterModule(new EPSRModule)) return false;
-	if (!registerMasterModule(new ExportModule)) return false;
+	if (!registerMasterModule(new ExportCoordinatesModule)) return false;
+	if (!registerMasterModule(new ExportPairPotentialsModule)) return false;
+	if (!registerMasterModule(new ExportTrajectoryModule)) return false;
 	if (!registerMasterModule(new ForcesModule)) return false;
 	if (!registerMasterModule(new GeometryOptimisationModule)) return false;
 	if (!registerMasterModule(new ImportModule)) return false;
@@ -184,8 +188,7 @@ Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* dest
 // Search for any instance of any Module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	for (Module* module : moduleInstances_) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }
@@ -195,8 +198,7 @@ RefList<Module> Dissolve::findModuleInstances(const char* moduleType)
 {
 	RefList<Module> instances;
 
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) instances.append(module);
+	for (Module* module : moduleInstances_) if (DissolveSys::sameString(module->type(), moduleType)) instances.append(module);
 
 	return instances;
 }

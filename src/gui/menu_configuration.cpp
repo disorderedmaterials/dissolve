@@ -54,8 +54,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 	paramsNode->addParameter("rho", 0.1);
 	generator.addRootSequenceNode(paramsNode);
 	generator.addRootSequenceNode(new BoxProcedureNode);
-	RefListIterator<Species> mixIterator(mixSpecies);
-	while (Species* sp = mixIterator.iterate())
+	for(auto sp : mixSpecies)
 	{
 		generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
 	}
@@ -84,12 +83,11 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 	paramsNode->addParameter("rho", 0.1);
 	generator.addRootSequenceNode(paramsNode);
 	generator.addRootSequenceNode(new BoxProcedureNode);
-	RefListIterator<Species> mixIterator(mixSpecies);
 	int count = 0;
-	while (Species* sp = mixIterator.iterate())
+	for (Species* sp : mixSpecies)
 	{
 		// Add a parameter for the ratio of this species to the first (or the population of the first)
-		if (mixIterator.isFirst()) generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+		if (count==0) generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
 		else
 		{
 			CharString parameterName("ratio%c", 65+count);

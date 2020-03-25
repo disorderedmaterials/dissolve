@@ -57,8 +57,7 @@ void ChangeStore::add(Molecule* mol)
 // Add Cell to watch
 void ChangeStore::add(Cell* cell)
 {
-	OrderedPointerArray<Atom>& atoms = cell->atoms();
-	for (int n=0; n<atoms.nItems(); ++n) add(atoms[n]);
+	for (auto* atom : cell->atoms()) add(atom);
 }
 
 /*

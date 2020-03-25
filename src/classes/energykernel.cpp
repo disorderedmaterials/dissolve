@@ -27,6 +27,7 @@
 #include "classes/molecule.h"
 #include "classes/species.h"
 #include "base/processpool.h"
+#include <iterator>
 
 // Constructor
 EnergyKernel::EnergyKernel(ProcessPool& procPool, Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : configuration_(config), cells_(config->cells()), potentialMap_(potentialMap), processPool_(procPool)
@@ -112,13 +113,13 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 #endif
 	double totalEnergy = 0.0;
-	OrderedPointerArray<Atom>& centralAtoms = centralCell->atoms();
-	OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
+	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
+	OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
-	int i, j;
 	double rSq, scale;
+	auto central = centralAtoms.begin();
 
 	// Get start/stride for specified loop context
 	int start = processPool_.interleavedLoopStart(strategy);
@@ -127,17 +128,15 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		for (i = start; i < centralAtoms.nItems(); i += stride)
+		for (auto indexI = centralAtoms.begin()+start; indexI < centralAtoms.end(); indexI += stride)
 		{
-			ii = centralAtoms[i];
+			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
-			for (j = 0; j < otherCell->atoms().nItems(); ++j)
+			for (auto* jj : otherAtoms)
 			{
-				jj = otherAtoms[j];
-
 				// Check exclusion of I >= J
 				if (excludeIgeJ && (ii >= jj)) continue;
 
@@ -157,17 +156,15 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 	else
 	{
-		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		for (auto indexI = centralCell->atoms().begin() + start; indexI < centralCell->atoms().end(); indexI += stride)
 		{
-			ii = centralAtoms[i];
+			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
-			for (j = 0; j < otherCell->atoms().nItems(); ++j)
+			for (auto* jj : otherAtoms)
 			{
-				jj = otherAtoms[j];
-				
 				// Check exclusion of I >= J
 				if (excludeIgeJ && (ii >= jj)) continue;
 
@@ -196,11 +193,9 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	double totalEnergy = 0.0;
-	OrderedPointerArray<Atom>& centralAtoms = centralCell->atoms();
+	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rJ;
-	int i, j;
-	Cell* otherCell;
 	Molecule* molJ;
 	double rSq, scale;
 
@@ -209,22 +204,20 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Straight loop over Cells *not* requiring mim
-	Cell** neighbours = centralCell->cellNeighbours();
-	for (int n = 0; n<centralCell->nCellNeighbours(); ++n)
+	for (auto* otherCell : centralCell->cellNeighbours())
 	{
-		otherCell = neighbours[n];
-		OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
+		OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
 
-		for (j = 0; j < otherAtoms.nItems(); ++j)
+		for (auto* jj : otherAtoms)
 		{
-			jj = otherAtoms[j];
 			molJ = jj->molecule();
 			rJ = jj->r();
 
+			auto central = centralAtoms.begin();
 			// Loop over central cell atoms
-			for (i = start; i < centralAtoms.nItems(); i += stride)
+			for (auto indexI = centralAtoms.begin()+start; indexI < centralAtoms.end(); indexI += stride)
 			{
-				ii = centralAtoms[i];
+                                ii = *indexI;
 
 				// Check exclusion of I >= J (comparison by pointer)
 				if (excludeIgeJ && (ii >= jj)) continue;
@@ -245,22 +238,20 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	}
 
 	// Straight loop over Cells requiring mim
-	Cell** mimNeighbours = centralCell->mimCellNeighbours();
-	for (int n = 0; n<centralCell->nMimCellNeighbours(); ++n)
+	for (auto* otherCell : centralCell->mimCellNeighbours())
 	{
-		otherCell = mimNeighbours[n];
-		OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
+		OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
 
-		for (j = 0; j < otherAtoms.nItems(); ++j)
+		for (auto* jj : otherAtoms)
 		{
-			jj = otherAtoms[j];
 			molJ = jj->molecule();
 			rJ = jj->r();
 
+			auto central = centralAtoms.begin();
 			// Loop over central cell atoms
-			for (i = start; i < centralAtoms.nItems(); i += stride)
+			for (auto indexI = centralAtoms.begin()+start; indexI < centralAtoms.end(); indexI += stride)
 			{
-				ii = centralAtoms[i];
+				ii = *indexI;
 
 				// Check exclusion of I >= J (comparison by pointer)
 				if (excludeIgeJ && (ii >= jj)) continue;
@@ -305,7 +296,8 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	Atom* jj;
 	int j;
 	double rSq, scale;
-	OrderedPointerArray<Atom>& otherAtoms = cell->atoms();
+	OrderedVector<Atom*>& otherAtoms = cell->atoms();
+	auto other = otherAtoms.begin();
 	int nOtherAtoms = cell->nAtoms();
 	
 	// Grab some information on the supplied Atom
@@ -319,10 +311,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	if (flags&KernelFlags::ApplyMinimumImageFlag)
 	{
 		// Loop over other Atoms
-		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
+	  if (flags&KernelFlags::ExcludeSelfFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Check for same atom
 			if (i == jj) continue;
@@ -339,10 +331,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
@@ -359,10 +351,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
@@ -379,10 +371,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else for (j=start; j<nOtherAtoms; j += stride)
+		else for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
@@ -400,10 +392,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	else
 	{
 		// Loop over atom neighbours
-		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
+		if (flags&KernelFlags::ExcludeSelfFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Check for same atom
 			if (i == jj) continue;
@@ -420,10 +412,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
@@ -440,10 +432,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
@@ -460,10 +452,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
-		else for (j=start; j<nOtherAtoms; j += stride)
+		else for (auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
 		{
 			// Grab other Atom pointer
-			jj = otherAtoms[j];
+			jj = *indexJ;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
@@ -501,12 +493,10 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::DivisionStrategy strateg
 	double totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
 
 	// Cell neighbours not requiring minimum image
-	Cell** neighbours = cellI->cellNeighbours();
-	for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(i, neighbours[n], KernelFlags::NoFlags, strategy, false);
+	for (auto* neighbour : cellI->cellNeighbours()) totalEnergy += energy(i, neighbour, KernelFlags::NoFlags, strategy, false);
 
 	// Cell neighbours requiring minimum image
-	Cell** mimNeighbours = cellI->mimCellNeighbours();
-	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy, false);
+	for (auto* neighbour : cellI->mimCellNeighbours()) totalEnergy += energy(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy, false);
 
 	// Perform relevant sum if requested
 	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
@@ -530,12 +520,10 @@ double EnergyKernel::energy(const Molecule* mol, ProcessPool::DivisionStrategy s
 		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
 		// Cell neighbours not requiring minimum image
-		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+		for (auto* neighbour : cellI->cellNeighbours()) totalEnergy += energy(ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
 		// Cell neighbours requiring minimum image
-		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+		for (auto* neighbour : cellI->mimCellNeighbours()) totalEnergy += energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 	}
 
 	// Perform relevant sum if requested
@@ -671,30 +659,21 @@ double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
 	double intraEnergy = 0.0;
 
 	// Add energy from SpeciesBond terms
-	const PointerArray<SpeciesBond>& bonds = spAtom->bonds();
-	const SpeciesBond* b;
-	for (int n=0; n<bonds.nItems(); ++n)
+	for (const auto* bond : spAtom->bonds())
 	{
-		b = bonds.at(n);
-		intraEnergy += energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+		intraEnergy += energy(bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
 	}
 
 	// Add energy from SpeciesAngle terms
-	const PointerArray<SpeciesAngle>& angles = spAtom->angles();
-	const SpeciesAngle* a;
-	for (int n=0; n<angles.nItems(); ++n)
+	for (const auto* angle : spAtom->angles())
 	{
-		a = angles.at(n);
-		intraEnergy += energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+		intraEnergy += energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
 	}
 
 	// Add energy from SpeciesTorsion terms
-	const PointerArray<SpeciesTorsion>& torsions = spAtom->torsions();
-	const SpeciesTorsion* t;
-	for (int n=0; n<torsions.nItems(); ++n)
+	for (const auto* torsion : spAtom->torsions())
 	{
-		t = torsions.at(n);
-		intraEnergy += energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+		intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
 	}
 
 	return intraEnergy;

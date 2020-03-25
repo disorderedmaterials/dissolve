@@ -314,10 +314,11 @@ bool Dissolve::saveInput(const char* filename)
 			if (module->isDisabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write Configuration target(s)
-			RefListIterator<Configuration> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate())
+			bool first = true;
+			for (Configuration* cfg : module->targetConfigurations())
 			{
-				if (configIterator.isFirst() && (!parser.writeLineF("\n"))) return false;
+				if (first && (!parser.writeLineF("\n"))) return false;
+				first = false;
 				if (!parser.writeLineF("    %s  '%s'\n", ModuleBlock::keywords().keyword(ModuleBlock::ConfigurationKeyword), cfg->name())) return false;
 			}
 
@@ -631,8 +632,7 @@ bool Dissolve::saveRestart(const char* filename)
 	if (!parser.writeLineF("# Restart file written by Dissolve v%s at %s.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate())) return false;
 
 	// Module Keyword Data
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate())
+	for (Module* module : moduleInstances_)
 	{
 		ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
 		while (KeywordBase* keyword = keywordIterator.iterate())
@@ -678,8 +678,7 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Module timing information
-	moduleIterator.restart();
-	while (Module* module = moduleIterator.iterate())
+	for (Module* module : moduleInstances_)
 	{
 		if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;
 		if (!module->processTimes().write(parser)) return false;

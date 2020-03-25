@@ -55,8 +55,7 @@ OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProc
 // Operate on Data1D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= selectNode->nAverageSites();
+	for (const SelectProcedureNode* selectNode : selectNodes_) (*targetData1D_) /= selectNode->nAverageSites();
 
 	return true;
 }
@@ -64,8 +63,7 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool& pro
 // Operate on Data2D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= selectNode->nAverageSites();
+	for (const SelectProcedureNode* selectNode : selectNodes_) (*targetData2D_) /= selectNode->nAverageSites();
 
 	return true;
 }
@@ -73,8 +71,7 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool& pro
 // Operate on Data3D target
 bool OperateSitePopulationNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= selectNode->nAverageSites();
+	for (const SelectProcedureNode* selectNode : selectNodes_) (*targetData3D_) /= selectNode->nAverageSites();
 
 	return true;
 }

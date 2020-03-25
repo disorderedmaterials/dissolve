@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <iterator>
 #include "modules/rdf/rdf.h"
 #include "main/dissolve.h"
 #include "module/group.h"
@@ -34,7 +35,6 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "genericitems/listhelper.h"
-#include "templates/orderedpointerarray.h"
 
 /*
  * Private Functions
@@ -180,18 +180,17 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 	for (n = start; n<cellArray.nCells(); n += stride)
 	{
 		cellI = cellArray.cell(n);
-		OrderedPointerArray<Atom>& atomsI = cellI->atoms();
-		nI = atomsI.nItems();
+		OrderedVector<Atom*>& atomsI = cellI->atoms();
 
 		// Add contributions between atoms in cellI
-		for (ii = 0; ii < nI-1; ++ii)
+		for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
 		{
-			i = atomsI[ii];
+			i = *iter;
 			typeI = i->localTypeIndex();
 
-			for (jj = ii+1; jj < nI; ++jj)
+			for (auto jter = std::next(iter, 1); jter != atomsI.end(); ++jter)
 			{
-				j = atomsI[jj];
+				j = *jter;
 
 				// No need to perform MIM since we're in the same cell
 				distance = (i->r() - j->r()).magnitude();
@@ -206,19 +205,16 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 			cellJ = cellArray.cell(m);
 			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
 
-			OrderedPointerArray<Atom>& atomsJ = cellJ->atoms();
-			nJ = atomsJ.nItems();
+			OrderedVector<Atom*>& atomsJ = cellJ->atoms();
 
 			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the absence of a 2D look-up array
-			for (ii = 0; ii < nI; ++ii)
+			for (auto* i : atomsI)
 			{
-				i = atomsI[ii];
 				typeI = i->localTypeIndex();
 				rI = i->r();
 
-				for (jj = 0; jj < nJ; ++jj)
+				for (auto* j : atomsJ)
 				{
-					j = atomsJ[jj];
 					distance = box->minimumDistance(j, rI);
 					partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
 				}
@@ -642,8 +638,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 double RDFModule::summedRho(Module* module, GenericList& processingModuleData)
 {
 	double rho0 = 0.0, totalWeight = 0.0;
-	RefListIterator<Configuration> targetIterator(module->targetConfigurations());
-	while (Configuration* cfg = targetIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
@@ -661,8 +656,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 {
 	// Create an AtomTypeList containing the sum of atom types over all target configurations
 	AtomTypeList combinedAtomTypes;
-	RefListIterator<Configuration> targetIterator(module->targetConfigurations());
-	while (Configuration* cfg = targetIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
+	for (Configuration* cfg : module->targetConfigurations()) combinedAtomTypes.add(cfg->usedAtomTypesList());
 
 	// Finalise and print the combined AtomTypes matrix
 	combinedAtomTypes.finalise();
@@ -673,9 +667,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 
 	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight RefList for simplicity
 	RefDataList<Configuration,double> configWeights;
-	targetIterator.restart();
 	double totalWeight = 0.0;
-	while (Configuration* cfg = targetIterator.iterate())
+	for (Configuration* cfg : module->targetConfigurations())
 	{
 		// Get weighting factor for this Configuration to contribute to the summed partials
 		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
@@ -722,12 +715,10 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 	// Determine total weighting factor over all Configurations, and set up a Configuration/weight RefList for simplicity
 	RefDataList<Configuration,double> configWeights;
 	double totalWeight = 0.0;
-	RefListIterator<Module> moduleIterator(moduleGroup->modules());
-	while (Module* module = moduleIterator.iterate())
+	for (Module* module : moduleGroup->modules())
 	{
 		// Loop over Configurations defined in this target
-		RefListIterator<Configuration> targetIterator(module->targetConfigurations());
-		while (Configuration* cfg = targetIterator.iterate())
+		for (Configuration* cfg : module->targetConfigurations())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
 			double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);

@@ -590,8 +590,7 @@ bool Species::write(LineParser& parser, const char* prefix)
 				if (!parser.writeLineF("\n%s# Bond Types\n", newPrefix.get())) return false;
 				bondTypeHeaderWritten = true;
 			}
-			RefListIterator<const SpeciesBond> bondIterator(bondTypes[bt]);
-			while (const SpeciesBond* bond = bondIterator.iterate()) if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(), keywords().keyword(Species::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
+			for (const SpeciesBond* bond : bondTypes[bt]) if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(), keywords().keyword(Species::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
 		}
 	}
 

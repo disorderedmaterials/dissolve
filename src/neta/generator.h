@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_NETA_GENERATOR_H
 #define DISSOLVE_NETA_GENERATOR_H
 
+#include <vector>
 #include "base/charstring.h"
 #include "base/enumoptions.h"
-#include "templates/pointerarray.h"
 #include "templates/reflist.h"
 
 // External declarations
@@ -97,9 +97,9 @@ class NETADefinitionGenerator
 	// Encompassing forcefield for the definition (if any)
 	static const Forcefield* associatedForcefield_;
 	// Temporary element array used in definition creation
-	static PointerArray<Element> targetElements_;
+	static std::vector<Element*> targetElements_;
 	// Temporary atomtype array used in definition creation
-	static PointerArray<ForcefieldAtomType> targetAtomTypes_;
+	static std::vector<ForcefieldAtomType*> targetAtomTypes_;
 	// Context (branch) stack
 	static RefList<NETANode> contextStack_;
 	// Whether to recognise text elements as generic names, rather than an element or unrecognised token
@@ -113,9 +113,9 @@ class NETADefinitionGenerator
 	// Add atomtype target to array (by name)
 	static bool addAtomTypeTarget(const char* typeName);
 	// Return target Elements array
-	static PointerArray<Element> targetElements();
+	static std::vector<Element*> targetElements();
 	// Return target ForcefieldAtomTypes array
-	static PointerArray<ForcefieldAtomType> targetAtomTypes();
+	static std::vector<ForcefieldAtomType*> targetAtomTypes();
 	// Clear element / atomtype targets
 	static void clearTargets();
 	// Return topmost context

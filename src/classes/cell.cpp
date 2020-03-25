@@ -19,18 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/cell.h"
 #include "classes/cellneighbour.h"
 #include "classes/box.h"
 #include "classes/atom.h"
+#include "templates/orderedvector.h"
 
 // Constructor
 Cell::Cell()
 {
 	index_ = -1;
-	cellNeighbours_ = NULL;
-	mimCellNeighbours_ = NULL;
-	allCellNeighbours_ = NULL;
 	nCellNeighbours_ = 0;
 	nMimCellNeighbours_ = 0;
 }
@@ -38,9 +37,6 @@ Cell::Cell()
 // Destructor
 Cell::~Cell()
 {
-	if (cellNeighbours_) delete[] cellNeighbours_;
-	if (mimCellNeighbours_) delete[] mimCellNeighbours_;
-	if (allCellNeighbours_) delete[] allCellNeighbours_;
 }
 
 /*
@@ -90,21 +86,21 @@ const Vec3< double >& Cell::centre() const
  */
 
 // Return array of contained Atoms
-OrderedPointerArray<Atom>& Cell::atoms()
+OrderedVector<Atom*>& Cell::atoms()
 {
 	return atoms_;
 }
 
 // Return array of contained Atoms, ordered by their array indices
-Atom** Cell::indexOrderedAtoms() const
+const OrderedVector<Atom*>& Cell::indexOrderedAtoms() const
 {
-	return indexOrderedAtoms_.constItems();
+	return indexOrderedAtoms_;
 }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const
 {
-	return atoms_.nItems();
+	return atoms_.size();
 }
 
 // Add atom to Cell
@@ -118,8 +114,8 @@ bool Cell::addAtom(Atom* i)
 	}
 #endif
 	// Add Atom to our pointer- and index-ordered arrays
-	atoms_.add(i);
-	indexOrderedAtoms_.add(i);
+	atoms_.insert(i);
+	indexOrderedAtoms_.insert(i);
 
 	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
 	i->setCell(this);
@@ -138,9 +134,9 @@ bool Cell::removeAtom(Atom* i)
 	}
 #endif
 	// Remove atom from this cell
-	if (atoms_.remove(i))
+	if (atoms_.erase(i))
 	{
-		indexOrderedAtoms_.remove(i);
+		indexOrderedAtoms_.erase(i);
 		i->setCell(NULL);
 	}
 	else
@@ -157,28 +153,35 @@ bool Cell::removeAtom(Atom* i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours)
+void Cell::addCellNeighbours(OrderedVector<Cell*>& nearNeighbours, OrderedVector<Cell*>& mimNeighbours)
 {
 	int n;
 
 	// Create near-neighbour array of Cells not requiring minimum image to be applied
-	nCellNeighbours_ = nearNeighbours.nItems();
-	cellNeighbours_ = new Cell*[nCellNeighbours_];
-	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = nearNeighbours[n];
+	nCellNeighbours_ = nearNeighbours.size();
+	cellNeighbours_.resize(nCellNeighbours_);
+	std::copy(nearNeighbours.begin(), nearNeighbours.end(),
+		  cellNeighbours_.begin());
 
 	// Create array of neighbours that require minimum image calculation
-	nMimCellNeighbours_ = mimNeighbours.nItems();
-	mimCellNeighbours_ = new Cell*[nMimCellNeighbours_];
-	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours[n];
+	nMimCellNeighbours_ = mimNeighbours.size();
+	mimCellNeighbours_.clear();
+	mimCellNeighbours_.resize(nMimCellNeighbours_);
+	std::copy(mimNeighbours.begin(), mimNeighbours.end(),
+		  mimCellNeighbours_.begin());
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
-	OrderedPointerDataArray<Cell,bool> allCells;
-	for (n=0; n<nearNeighbours.nItems(); ++n) allCells.add(nearNeighbours[n], false);
-	for (n=0; n<mimNeighbours.nItems(); ++n) allCells.add(mimNeighbours[n], true);
+	OrderedVector<std::pair<Cell*, bool>> allCells;
+	for (auto* near : nearNeighbours) allCells.emplace(near, false);
+	for (auto* mim : mimNeighbours) allCells.emplace(mim, true);
 
-	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-	allCellNeighbours_ = new CellNeighbour[allCells.nItems()];
-	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
+	if (allCells.size() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+	allCellNeighbours_.resize(allCells.size());
+	auto destination = allCellNeighbours_.begin();
+	for (auto source : allCells) {
+	  (*destination).set(source.first, source.second);
+	  ++destination;
+	}
 }
 
 // Return number of Cell near-neighbours, not requiring minimum image calculation
@@ -200,7 +203,7 @@ int Cell::nTotalCellNeighbours() const
 }
 
 // Return adjacent Cell neighbour list
-Cell** Cell::cellNeighbours()
+std::vector<Cell*> Cell::cellNeighbours()
 {
 	return cellNeighbours_;
 }
@@ -212,7 +215,7 @@ Cell* Cell::cellNeighbour(int id) const
 }
 
 // Return list of Cell neighbours requiring minimum image calculation
-Cell** Cell::mimCellNeighbours()
+std::vector<Cell*> Cell::mimCellNeighbours()
 {
 	return mimCellNeighbours_;
 }
@@ -231,7 +234,7 @@ bool Cell::mimRequired(const Cell* otherCell) const
 }
 
 // Return list of all Cell neighbours
-CellNeighbour* Cell::allCellNeighbours()
+std::vector<CellNeighbour> Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;
 }

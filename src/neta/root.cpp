@@ -92,8 +92,7 @@ bool NETARootNode::setModifier(const char* modifier, ComparisonOperator op, int 
 int NETARootNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
 {
 // 	printf("I AM THE ROOT - matchPath size = %i:\n", matchPath.nItems());
-// 	RefListIterator<const SpeciesAtom> matchIterator(matchPath);
-// 	while (const SpeciesAtom* iii = matchIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 // 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	int totalScore = 0;
@@ -105,8 +104,7 @@ int NETARootNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchP
 	{
 		// Count number of hydrogens attached to this atom
 		int nH = 0;
-		const PointerArray<SpeciesBond>& bonds = i->bonds();
-		for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(i)->element()->Z() == ELEMENT_H) ++nH;
+		for (const auto* bond : i->bonds()) if (bond->partner(i)->element()->Z() == ELEMENT_H) ++nH;
 		if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
 
 		++totalScore;

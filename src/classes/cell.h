@@ -22,12 +22,11 @@
 #ifndef DISSOLVE_CELL_H
 #define DISSOLVE_CELL_H
 
+#include <set>
+#include <vector>
 #include "classes/atom.h"
-#include "templates/array.h"
+#include "templates/orderedvector.h"
 #include "templates/vector3.h"
-#include "templates/reflist.h"
-#include "templates/ordereddaoarray.h"
-#include "templates/orderedpointerarray.h"
 
 // Forward Declarations
 class Box;
@@ -76,15 +75,17 @@ class Cell
 	 */
 	private:
 	// Array of Atoms contained in this Cell
-	OrderedPointerArray<Atom> atoms_;
+	OrderedVector<Atom*> atoms_;
 	// Return array of contained Atoms, ordered by their array indices
-	OrderedDAOArray<Atom> indexOrderedAtoms_;
+	OrderedVector<Atom*> indexOrderedAtoms_ = OrderedVector<Atom*>([](const Atom* lhs, const Atom* rhs){
+	  return lhs->arrayIndex() < rhs->arrayIndex();
+	});
 
 	public:
 	// Return array of contained Atoms
-	OrderedPointerArray<Atom>& atoms();
+	OrderedVector<Atom*>& atoms();
 	// Return array of contained Atoms, ordered by their array indices
-	Atom** indexOrderedAtoms() const;
+	const OrderedVector<Atom*>& indexOrderedAtoms() const;
 	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell
@@ -98,15 +99,15 @@ class Cell
 	 */
 	private:
 	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
-	Cell** cellNeighbours_, **mimCellNeighbours_;
+	std::vector<Cell*> cellNeighbours_, mimCellNeighbours_;
 	// Array of all neighbouring cells
-	CellNeighbour* allCellNeighbours_;
+	std::vector<CellNeighbour> allCellNeighbours_;
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours);
+	void addCellNeighbours(OrderedVector<Cell*>& nearNeighbours, OrderedVector<Cell*>& mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation
@@ -114,19 +115,17 @@ class Cell
 	// Return total number of Cell neighbours
 	int nTotalCellNeighbours() const;
 	// Return adjacent Cell neighbour list
-	Cell** cellNeighbours();
+	std::vector<Cell*> cellNeighbours();
 	// Return specified adjacent Cell neighbour
 	Cell* cellNeighbour(int id) const;
 	// Return list of Cell neighbours requiring minimum image calculation
-	Cell** mimCellNeighbours();
+	std::vector<Cell*> mimCellNeighbours();
 	// Return specified Cell neighbour requiring minimum image calculation
 	Cell* mimCellNeighbour(int id) const;
 	// Return if the specified Cell requires minimum image calculation
 	bool mimRequired(const Cell* otherCell) const;
 	// Return list of all Cell neighbours
-	CellNeighbour* allCellNeighbours();
-	// Return array of adjacent Cell neighbours
-	const Array<Cell*>& adjacentCellNeighbours();
+	std::vector<CellNeighbour> allCellNeighbours();
 };
 
 #endif

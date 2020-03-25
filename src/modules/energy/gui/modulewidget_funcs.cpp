@@ -150,8 +150,7 @@ void EnergyModuleWidget::setGraphDataTargets(EnergyModule* module)
 
 	// Add Configuration targets to the combo box
 	ui_.TargetCombo->clear();
-	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	for (Configuration* config : module->targetConfigurations()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 }
 
 void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)

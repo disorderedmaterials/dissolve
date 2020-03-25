@@ -38,7 +38,7 @@ SpeciesRing::~SpeciesRing()
  */
 
 // Set atoms in ring
-void SpeciesRing::setAtoms(const PointerArray<const SpeciesAtom>& atoms)
+void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom*>& atoms)
 {
 	atoms_ = atoms;
 }
@@ -50,7 +50,7 @@ const SpeciesAtom* SpeciesRing::atom(int n) const
 }
 
 // Return array of atoms in ring
-const PointerArray<const SpeciesAtom>& SpeciesRing::atoms() const
+const std::vector<const SpeciesAtom*>& SpeciesRing::atoms() const
 {
 	return atoms_;
 }
@@ -58,14 +58,14 @@ const PointerArray<const SpeciesAtom>& SpeciesRing::atoms() const
 // Return size of ring (number of atoms in array)
 int SpeciesRing::size() const
 {
-	return atoms_.nItems();
+	return atoms_.size();
 }
 
 // Print ring information
 void SpeciesRing::print() const
 {
-	printf("Ring(%i) :", atoms_.nItems());
-	for (int n=0; n<atoms_.nItems(); ++n) printf(" %2i(%s)", atoms_.at(n)->userIndex(), atoms_.at(n)->element()->symbol());
+	printf("Ring(%lu) :", atoms_.size());
+	for (const auto* atom : atoms_) printf(" %2i(%s)", atom->userIndex(), atom->element()->symbol());
 	printf("\n");
 }
 
@@ -77,8 +77,8 @@ void SpeciesRing::print() const
 bool SpeciesRing::operator==(const SpeciesRing& other)
 {
 	// Check ring size first
-	const int nAtoms = atoms_.nItems();
-	if (nAtoms != other.atoms_.nItems()) return false;
+	const auto nAtoms = atoms_.size();
+	if (nAtoms != other.atoms_.size()) return false;
 
 	// Find equivalent atom in second ring to determine starting index
 	int indexA = 0, indexB;

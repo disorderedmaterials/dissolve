@@ -211,8 +211,7 @@ class CoreData
 	{
 		RefList<M> modules;
 
-		RefListIterator<Module> moduleIterator(*moduleInstances_);
-		while (Module* module = moduleIterator.iterate())
+		for(auto module : *moduleInstances_)
 		{
 			M* castModule = dynamic_cast<M*>(module);
 			if (castModule) modules.append(castModule);

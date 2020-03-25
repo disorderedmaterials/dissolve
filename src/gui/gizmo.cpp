@@ -95,8 +95,7 @@ QMdiSubWindow* Gizmo::window()
 // Find Gizmo with unique name provided
 Gizmo* Gizmo::find(const char* uniqueName, const Gizmo* excludeThis)
 {
-	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
-	while (Gizmo* gizmo = gizmoIterator.iterate())
+	for (Gizmo* gizmo : allGizmos_)
 	{
 		if (gizmo == excludeThis) continue;
 
@@ -109,8 +108,7 @@ Gizmo* Gizmo::find(const char* uniqueName, const Gizmo* excludeThis)
 // Find Gizmo contained in specified subwindow
 Gizmo* Gizmo::find(QMdiSubWindow* window)
 {
-	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
-	while (Gizmo* gizmo = gizmoIterator.iterate()) if (window == gizmo->window()) return gizmo;
+	for (Gizmo* gizmo : allGizmos_) if (window == gizmo->window()) return gizmo;
 
 	return NULL;
 }
@@ -130,8 +128,7 @@ RefList<Gizmo> Gizmo::allThatAccept(const char* dataType)
 {
 	RefList<Gizmo> gizmos;
 
-	RefListIterator<Gizmo> gizmoIterator(allGizmos_);
-	while (Gizmo* gizmo = gizmoIterator.iterate()) if (gizmo->acceptsData(dataType)) gizmos.append(gizmo);
+	for (Gizmo* gizmo : allGizmos_) if (gizmo->acceptsData(dataType)) gizmos.append(gizmo);
 
 	return gizmos;
 }

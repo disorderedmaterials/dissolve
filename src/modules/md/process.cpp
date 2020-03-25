@@ -77,14 +77,12 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (restrictToSpecies_.nItems() > 0)
 	{
 		CharString speciesNames;
-		RefListIterator<Species> speciesIterator(restrictToSpecies_);
-		while (Species* sp = speciesIterator.iterate()) speciesNames.strcatf("  %s", sp->name());
+		for (Species* sp : restrictToSpecies_) speciesNames.strcatf("  %s", sp->name());
 		Messenger::print("MD: Calculation will be restricted to Species:%s\n", speciesNames.get());
 	}
 	Messenger::print("\n");
 
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : targetConfigurations_)
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());

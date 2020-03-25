@@ -54,8 +54,7 @@ ChartBase::~ChartBase()
 ChartBlock* ChartBase::dragBlockAt(QPoint point)
 {
 	// Check through all the defined ChartBlocks and see if we grab one
-	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) if (block->isDragPoint(point)) return block;
+	for (ChartBlock* block : chartBlocks_) if (block->isDragPoint(point)) return block;
 
 	return NULL;
 }
@@ -70,8 +69,7 @@ void ChartBase::updateControls()
 	// Ensure that blocks for display are up-to-date
 	updateContentBlocks();
 
-	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) block->updateControls();
+	for (ChartBlock* block : chartBlocks_) block->updateControls();
 
 	// Update the layout
 	layOutWidgets();
@@ -80,15 +78,13 @@ void ChartBase::updateControls()
 // Disable sensitive controls within widget
 void ChartBase::disableSensitiveControls()
 {
-	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) block->disableSensitiveControls();
+	for (ChartBlock* block : chartBlocks_) block->disableSensitiveControls();
 }
 
 // Enable sensitive controls within widget
 void ChartBase::enableSensitiveControls()
 {
-	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) block->enableSensitiveControls();
+	for (ChartBlock* block : chartBlocks_) block->enableSensitiveControls();
 }
 
 /*
@@ -348,8 +344,7 @@ void ChartBase::layOutWidgets(bool animate)
 	QSize requiredSize = calculateNewWidgetGeometry(minimumSizeHint_);
 
 	// Commit new block geometries
-	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) block->setNewGeometry(animate);
+	for (ChartBlock* block : chartBlocks_) block->setNewGeometry(animate);
 
 	// Alter our minimum size hint if requested
 	if (resizeToWidgets_)

@@ -201,8 +201,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	template <class O> static void objectNoLongerValid(O* object)
 	{
 		// Loop over all keyword objects and call their local functions
-		RefListIterator<KeywordBase> keywordIterator(allKeywords_);
-		while (KeywordBase* kwd = keywordIterator.iterate()) kwd->removeReferencesTo(object);
+		for(auto kwd : allKeywords_) kwd->removeReferencesTo(object);
 	}
 };
 

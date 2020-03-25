@@ -96,8 +96,7 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 	RefDataList<Species,CharString> refMolecules;
 	// -- Find available AvgMol results
 	RefList<CalculateAvgMolModule> avgMolModules = coreData_.findModulesByClass<CalculateAvgMolModule>();
-	RefListIterator<CalculateAvgMolModule> avgMolIterator(avgMolModules);
-	while (CalculateAvgMolModule* module = avgMolIterator.iterate()) refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
+	for (CalculateAvgMolModule* module : avgMolModules) refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
 	// -- Add on current species
 	ListIterator<Species> speciesIterator(coreData_.constSpecies());
 	while (Species* sp = speciesIterator.iterate()) refMolecules.append(sp, CharString("%s (Species)", sp->name()));
@@ -145,8 +144,7 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 	if (!module_) return;
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration* cfg : module_->targetConfigurations())
 	{
 		// Calculated SDF
 		sdfRenderable_ = dynamic_cast<RenderableData3D*>(sdfGraph_->createRenderable(Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName()));

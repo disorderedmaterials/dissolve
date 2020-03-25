@@ -159,8 +159,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 
 	// Print equation info
 	Messenger::print("Expression to fit is: %s\n", equation_.expressionString());
-	RefListIterator<ExpressionVariable> variableIterator(equation_.variables());
-	while (ExpressionVariable* var = variableIterator.iterate())
+	for (ExpressionVariable* var : equation_.variables())
 	{
 		if (var == xVariable_) Messenger::print("  %10s                (axis variable)\n", var->name());
 		else if (fitTargets_.contains(var)) Messenger::print("  %10s = %e (fit)\n", var->name(), var->value().asDouble());
@@ -176,14 +175,12 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 		mcMinimiser.setMaxIterations(1000);
 		mcMinimiser.setStepSize(0.1);
 // 		mcMinimiser.setMinStepSize(0.001);
-		RefListIterator<ExpressionVariable> targetIterator(fitTargets_);
-		while (ExpressionVariable* var = targetIterator.iterate()) mcMinimiser.addTarget(var);
+		for (ExpressionVariable* var : fitTargets_) mcMinimiser.addTarget(var);
 
 		mcMinimiser.minimise();
 
 		Messenger::print("Optimised values:\n");
-		targetIterator.restart();
-		while (ExpressionVariable* var = targetIterator.iterate()) Messenger::print("  %10s = %e\n", var->name(), var->value().asDouble());
+		for (ExpressionVariable* var : fitTargets_) Messenger::print("  %10s = %e\n", var->name(), var->value().asDouble());
 	}
 
 	// Generate final fit data
@@ -214,8 +211,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 			LineParser parser;
 			if (!parser.openOutput(CharString("%s_%s.fit", name(), cfg->name()))) return procPool.decideFalse();
 			if (!parser.writeLineF("# Fit Equation : %s\n", equation_.expressionString())) return procPool.decideFalse();
-			RefListIterator<ExpressionVariable> variableIterator(equation_.variables());
-			while (ExpressionVariable* var = variableIterator.iterate())
+			for (ExpressionVariable* var : equation_.variables())
 			{
 				if (var == xVariable_)
 				{
@@ -306,12 +302,10 @@ bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Constants
-	RefListIterator<ExpressionVariable> constantsIterator(constants_);
-	while (ExpressionVariable* var = constantsIterator.iterate()) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(), var->value().asDouble())) return false;
+	for (ExpressionVariable* var : constants_) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(), var->value().asDouble())) return false;
 
 	// Constants
-	RefListIterator<ExpressionVariable> targetsIterator(fitTargets_);
-	while (ExpressionVariable* var = targetsIterator.iterate()) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword), var->name(), var->value().asDouble())) return false;
+	for (ExpressionVariable* var : fitTargets_) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword), var->name(), var->value().asDouble())) return false;
 
 	// Equation
 	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword), equation_.expressionString())) return false;

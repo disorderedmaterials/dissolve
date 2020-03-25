@@ -79,8 +79,7 @@ bool ElementRefListKeyword::write(LineParser& parser, const char* keywordName, c
 
 	// Loop over the Element list
 	CharString elements;
-	RefListIterator<Element> elementIterator(data_);
-	while (Element* el = elementIterator.iterate()) elements.strcatf("  %s", el->symbol());
+	for(auto el : data_) elements.strcatf("  %s", el->symbol());
 
 	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, elements.get())) return false;
 

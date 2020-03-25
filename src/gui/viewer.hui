@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_VIEWER_BASE_H
 #define DISSOLVE_VIEWER_BASE_H
 
+#include <vector>
 #include "gui/render/renderable.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
@@ -31,7 +32,6 @@
 #include "base/enumoptions.h"
 #include "base/timer.h"
 #include "templates/list.h"
-#include "templates/pointerarray.h"
 #include "templates/reflist.h"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -197,7 +197,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Main rendering function
 	void renderGL(int xOffset = 0, int yOffset = 0);
 	// Create viewer update stack
-	void createUpdateStack(PointerArray<BaseViewer>& updateStack);
+	void createUpdateStack(std::vector<BaseViewer*>& updateStack);
 	// Perform post-initialisation operations
 	virtual void postInitialiseGL();
 	// Perform post-resize operations

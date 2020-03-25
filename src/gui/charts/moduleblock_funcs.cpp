@@ -253,8 +253,7 @@ void ModuleBlock::updateControls()
 		else
 		{
 			toolTip += "Current configuration targets:\n";
-			RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) toolTip += QString("- %1\n").arg(cfg->name());
+			for (Configuration* cfg : module_->targetConfigurations()) toolTip += QString("- %1\n").arg(cfg->name());
 		}
 
 		ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));

@@ -140,8 +140,7 @@ const char* Renderable::objectTag() const
 int Renderable::invalidate(const char* objectTag)
 {
 	int count = 0;
-	RefListIterator<Renderable> renderableIterator(instances_);
-	while (Renderable* rend = renderableIterator.iterate())
+	for (Renderable* rend : instances_)
 	{
 		if (!DissolveSys::sameString(objectTag, rend->objectTag_)) continue;
 
@@ -155,8 +154,7 @@ int Renderable::invalidate(const char* objectTag)
 // Invalidate all renderables
 void Renderable::invalidateAll()
 {
-	RefListIterator<Renderable> renderableIterator(instances_);
-	while (Renderable* rend = renderableIterator.iterate()) rend->invalidateDataSource();
+	for (Renderable* rend : instances_) rend->invalidateDataSource();
 }
 
 // Return coordinate minima of all data (after value transform if enabled)

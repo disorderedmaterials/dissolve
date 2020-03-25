@@ -138,8 +138,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 	}
 
 	// Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
-	RefListIterator<ProcedureChartNodeBlock> widgetRemover(oldSequenceWidgets);
-	while (ProcedureChartNodeBlock* block = widgetRemover.iterate())
+	for (ProcedureChartNodeBlock* block : oldSequenceWidgets)
 	{
 		chartBlocks_.remove(block);
 		delete block;
@@ -158,8 +157,7 @@ ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node)
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
 ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node, const RefList<ProcedureChartNodeBlock>& list)
 {
-	RefListIterator<ProcedureChartNodeBlock> nodeBlockIterator(list);
-	while (ProcedureChartNodeBlock* block = nodeBlockIterator.iterate())
+	for (ProcedureChartNodeBlock* block : list)
 	{
 		if (block->node() == node) return block;
 
@@ -200,8 +198,7 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeW
 	const int leftIndent = indentLevel * metrics_.indentWidth();
 
 	// Loop over widgets in this sequence
-	RefListIterator<ProcedureChartNodeBlock> widgetIterator(nodeWidgets);
-	while (ProcedureChartNodeBlock* block = widgetIterator.iterate())
+	for (ProcedureChartNodeBlock* block : nodeWidgets)
 	{
 		// Set basic position of the block, accounting for the indent
 		block->setNewPosition(leftIndent, requiredSize.height());
@@ -247,8 +244,7 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 	calculateGeometries(rootSequenceNodeWidgets_, requiredSize, indentLevel);
 
 	// Set the widths of all widgets so their right edges are aligned
-	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) block->setNewRightEdge(requiredSize.width());
+	for (ChartBlock* block : chartBlocks_) block->setNewRightEdge(requiredSize.width());
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
 	requiredSize += QSize(2*metrics_.chartMargin(), 2*metrics_.chartMargin());

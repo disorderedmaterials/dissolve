@@ -178,8 +178,7 @@ void RenderableGroup::setRenderableColour(Renderable* rend)
 // Set all renderable colours
 void RenderableGroup::setRenderableColours()
 {
-	RefListIterator<Renderable> renderableIterator(renderables_);
-	while (Renderable* renderable = renderableIterator.iterate()) setRenderableColour(renderable);
+	for (Renderable* renderable : renderables_) setRenderableColour(renderable);
 }
 
 // Set colouring style for the group
@@ -223,8 +222,7 @@ void RenderableGroup::setRenderableLineStyle(Renderable* rend)
 // Set all Renderable line styles
 void RenderableGroup::setRenderableLineStyles()
 {
-	RefListIterator<Renderable> renderableIterator(renderables_);
-	while (Renderable* renderable = renderableIterator.iterate()) setRenderableLineStyle(renderable);
+	for (Renderable* renderable : renderables_) setRenderableLineStyle(renderable);
 }
 
 // Set line stipple for the group
@@ -272,8 +270,7 @@ void RenderableGroup::setRenderableVerticalShift(Renderable* renderable, int ren
 void RenderableGroup::setRenderableVerticalShifts()
 {
 	int index = 0;
-	RefListIterator<Renderable> renderableIterator(renderables_);
-	while (Renderable* renderable = renderableIterator.iterate()) setRenderableVerticalShift(renderable, index++);
+	for (Renderable* renderable : renderables_) setRenderableVerticalShift(renderable, index++);
 }
 
 // Set whether vertical shifting is enabled in this group

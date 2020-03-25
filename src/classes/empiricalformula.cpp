@@ -114,8 +114,7 @@ const char* EmpiricalFormula::formula(const RefList<SpeciesAtom>& atoms, bool ri
 
 	formula.reset();
 
-	RefListIterator<SpeciesAtom> atomIterator(atoms);
-	while (SpeciesAtom* i = atomIterator.iterate()) formula.add(i->element());
+	for (SpeciesAtom* i : atoms) formula.add(i->element());
 
 	return (richText ? formula.richTextFormula() : formula.formula());
 }

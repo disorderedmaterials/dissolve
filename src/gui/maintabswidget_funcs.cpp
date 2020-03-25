@@ -60,8 +60,7 @@ MainTabsWidget::~MainTabsWidget()
 RefList<const MainTab> MainTabsWidget::allTabs() const
 {
 	RefList<const MainTab> constTabs;
-	RefListIterator<MainTab> tabIterator(allTabs_);
-	while (MainTab* tab = tabIterator.iterate()) constTabs.append(tab);
+	for (MainTab* tab : allTabs_) constTabs.append(tab);
 
 	return constTabs;
 }
@@ -150,8 +149,7 @@ WorkspaceTab* MainTabsWidget::workspaceTab(QWidget* page)
 // Find tab with title specified
 MainTab* MainTabsWidget::findTab(const char* title)
 {
-	RefListIterator<MainTab> tabIterator(allTabs_);
-	while (MainTab* tab = tabIterator.iterate()) if (DissolveSys::sameString(tab->title(), title)) return tab;
+	for (MainTab* tab : allTabs_) if (DissolveSys::sameString(tab->title(), title)) return tab;
 
 	return NULL;
 }
@@ -159,8 +157,7 @@ MainTab* MainTabsWidget::findTab(const char* title)
 // Find tab with specified page widget
 MainTab* MainTabsWidget::findTab(QWidget* page)
 {
-	RefListIterator<MainTab> tabIterator(allTabs_);
-	while (MainTab* tab = tabIterator.iterate()) if (tab->page() == page) return tab;
+	for (MainTab* tab : allTabs_) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -511,8 +508,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer* layer)
 // Update all tabs
 void MainTabsWidget::updateAllTabs()
 {
-	RefListIterator<MainTab> tabIterator(allTabs_);
-	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
+	for (MainTab* tab : allTabs_) tab->updateControls();
 }
 
 // Update all Species tabs
@@ -525,8 +521,7 @@ void MainTabsWidget::updateSpeciesTabs()
 // Disable sensitive controls in all tabs
 void MainTabsWidget::disableSensitiveControls()
 {
-	RefListIterator<MainTab> tabIterator(allTabs_);
-	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
+	for (MainTab* tab : allTabs_) tab->disableSensitiveControls();
 
 	// Disable tab close buttons
 	RefDataListIterator<QToolButton,QWidget*> buttonIterator(closeButtons_);
@@ -536,8 +531,7 @@ void MainTabsWidget::disableSensitiveControls()
 // Enable sensitive controls in all tabs
 void MainTabsWidget::enableSensitiveControls()
 {
-	RefListIterator<MainTab> tabIterator(allTabs_);
-	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
+	for (MainTab* tab : allTabs_) tab->enableSensitiveControls();
 
 	// Enable tab close buttons
 	RefDataListIterator<QToolButton,QWidget*> buttonIterator(closeButtons_);
