@@ -27,7 +27,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       uses: jurplel/install-qt-action@v2.2.1
       with:
-        version: 5.13.1
+        version: 5.13.2
         host: windows
         arch: win64_mingw73
     - name: Build (Windows)
