@@ -13,40 +13,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v1
-    - name: Install Prerequisites (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        choco install -y ninja winflexbison
-        choco install mingw --version=7.3.0 --allow-downgrade
-    - name: Install Qt (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: jurplel/install-qt-action@v2.2.1
-      with:
-        version: 5.13.1
-        host: windows
-        arch: win64_mingw73
-    - name: Build Prerequisites [Freetype] (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        cd $HOME
-        git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
-        Echo 'Compiling FreeType...'
-        mkdir freetype-build
-        cd freetype-build
-        cmake -G "Ninja" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
-        ninja
-    - name: Build Prerequisites [FTGL] (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        cd $HOME
-        echo 'Compiling FTGL'
-        git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
-        mkdir ftgl-build
-        cd ftgl-build
-        $env:INCLUDE += "$HOME\freetype-2.10.1;"
-        $env:LIB += "$HOME\freetype-build;"
-        cmake -G "Ninja" ..\ftgl-latest
-        ninja
     - name: Build (Linux / Serial+GUI)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -57,18 +23,17 @@ jobs:
       run: |
         ci/ubuntu/build_parallel
         cp build/dissolve-mpi tests/
+    - name: Install Qt (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: jurplel/install-qt-action@v2.2.1
+      with:
+        version: 5.13.1
+        host: windows
+        arch: win64_mingw73
     - name: Build (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        mkdir build
-        cd build
-        $env:INCLUDE += "$HOME\freetype-2.10.1;"
-        $env:LIB += "$HOME\freetype-build;"
-        $env:INCLUDE += "$HOME\ftgl-latest\src;"
-        $env:LIB += "$HOME\ftgl-build\src;"
-        cmake -G "Ninja" -DGUI:bool=true ../
-        ninja
-        cd ../
+        ci/windows/build_serial_gui.ps1
     - name: Build (OSX)
       if: matrix.os == 'macos-latest'
       run: |
