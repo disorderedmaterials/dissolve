@@ -47,7 +47,8 @@ ninja
 #
 # Build
 #
-cd $GITHUB_WORKSPACE
+pwd
+cd $GITHUB_WORKSPACE/dissolve/dissolve
 mkdir build
 cd build
 $env:INCLUDE += "$HOME\freetype-2.10.1;"
