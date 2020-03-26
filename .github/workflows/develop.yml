@@ -19,7 +19,7 @@ jobs:
         ci/ubuntu/build_16.04_serial_gui
     - name: Install Qt (Windows)
       if: matrix.os == 'windows-latest'
-      uses: jurplel/install-qt-action@v2.2.1
+      uses: jurplel/install-qt-action@v2.5.3
       with:
         version: 5.13.2
         host: windows
