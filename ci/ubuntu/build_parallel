@@ -18,8 +18,8 @@ sudo apt-get install bison ninja-build libopenmpi-dev openmpi-bin openmpi-common
 #
 # Build
 #
-mkdir build
-cd build
+mkdir build-parallel
+cd build-parallel
 cmake -G "Ninja" -DPARALLEL:bool=true ../
 ninja
 cd ../
