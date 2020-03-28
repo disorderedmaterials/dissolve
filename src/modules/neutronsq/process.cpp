@@ -155,8 +155,8 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
-	 * Calculate weighted or unweighted partials and total g(r)/G(r) or S(Q)/F(Q)
-	 *
+	 * Calculate neutron structure factors from existing g(r) data
+	 * 
 	 * This is a serial routine, with each process constructing its own copy of the data.
 	 * Partial calculation routines called by this routine are parallel.
 	 */
