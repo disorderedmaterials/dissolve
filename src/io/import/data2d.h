@@ -37,10 +37,19 @@ class Data2DImportFileFormat : public FileAndFormat
 	public:
 	// Available Data2D formats
 	enum Data2DImportFormat { CartesianData2D, nData2DImportFormats };
-	// Constructor
+	// Constructors
 	Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
+	Data2DImportFileFormat(const char* filename, Data2DImportFormat format = CartesianData2D);
 	// Destructor
 	~Data2DImportFileFormat();
+
+
+	/*
+	 * Keyword Options
+	 */
+	private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 
 	/*

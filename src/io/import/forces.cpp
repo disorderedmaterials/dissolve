@@ -23,18 +23,27 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Force Type Keywords
-const char* ForcesFormatKeywords[] = { "xyz", "dlpoly" };
-const char* NiceForcesFormatKeywords[] = { "XYZ", "DL_POLY" };
-
-
-// Constructor
-ForceImportFileFormat::ForceImportFileFormat(ForceImportFormat format) : FileAndFormat(format)
+// Constructors
+ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(format)
 {
+	setUpKeywords();
+}
+ForceImportFileFormat::ForceImportFileFormat(const char* filename, ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(filename, format)
+{
+	setUpKeywords();
 }
 
 // Destructor
 ForceImportFileFormat::~ForceImportFileFormat()
+{
+}
+
+/*
+ * Keyword Options
+ */
+
+// Set up keywords for the format
+void ForceImportFileFormat::setUpKeywords()
 {
 }
 

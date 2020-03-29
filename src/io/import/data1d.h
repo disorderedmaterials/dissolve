@@ -35,10 +35,19 @@ class Data1DImportFileFormat : public FileAndFormat
 	public:
 	// Data1D Formats
 	enum Data1DImportFormat { XYData1D, HistogramData1D, GudrunMintData1D, nData1DImportFormats };
-	// Constructor
+	// Constructors
 	Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
+	Data1DImportFileFormat(const char* filename, Data1DImportFormat format = XYData1D);
 	// Destructor
 	~Data1DImportFileFormat();
+
+
+	/*
+	 * Keyword Options
+	 */
+	private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 
 	/*

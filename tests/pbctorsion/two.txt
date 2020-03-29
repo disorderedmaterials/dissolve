@@ -139,7 +139,7 @@ Configuration  'Liquid'
     AddSpecies
       Population  2
       Species  'Hexane'
-      ScaleBox  False
+      BoxAction  None
     EndAddSpecies
   EndGenerator
   InputCoordinates  dlpoly  'dlpoly_two/CONFIG'

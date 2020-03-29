@@ -24,18 +24,32 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
+// Constructors
 Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format)
 {
-	keywords_.add("Columns", new IntegerKeyword(1, 1), "X", "Column index to use for x values");
-	keywords_.add("Columns", new IntegerKeyword(2, 1), "Y", "Column index to use for y values");
-	keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
-	keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage", "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
+	setUpKeywords();
+}
+Data1DImportFileFormat::Data1DImportFileFormat(const char* filename, Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(filename, format)
+{
+	setUpKeywords();
 }
 
 // Destructor
 Data1DImportFileFormat::~Data1DImportFileFormat()
 {
+}
+
+/*
+ * Keyword Options
+ */
+
+// Set up keywords for the format
+void Data1DImportFileFormat::setUpKeywords()
+{
+	keywords_.add("Columns", new IntegerKeyword(1, 1), "X", "Column index to use for x values");
+	keywords_.add("Columns", new IntegerKeyword(2, 1), "Y", "Column index to use for y values");
+	keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
+	keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage", "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
 }
 
 /*
