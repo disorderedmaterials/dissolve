@@ -95,6 +95,30 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		/*
+		 * RDF Calculation - Simple method, to maximum range allowed by box
+		 */
+		if (keywords_.asBool("TestRDFSimple"))
+		{
+			SampledDouble timing;
+			for (int n=0; n<N; ++n)
+			{
+				RDFModule rdfModule;
+				rdfModule.addTargetConfiguration(cfg);
+				cfg->incrementContentsVersion();
+				srand(dissolve.seed());
+
+				// Run the Module calculation
+				bool upToDate;
+				Timer timer;
+				Messenger::mute();
+				rdfModule.calculateGR(procPool, cfg, RDFModule::SimpleMethod, cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
+				Messenger::unMute();
+				timing += timer.split();
+			}
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFSimple"), "RDF (Simple) to half-cell limit", timing, saveTimings);
+		}
+
+		/*
 		 * Energy Calculation - Intramolecular Terms
 		 */
 		if (keywords_.asBool("TestIntraEnergy"))
