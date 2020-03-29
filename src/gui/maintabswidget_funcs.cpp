@@ -225,8 +225,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         // Loop over existing tabs
         while (currentTabIndex < speciesTabs_.nItems())
         {
-            // If the existing tab is displaying the current Species already, then we can move on. Otherwise, delete
-            // it
+            // If the existing tab is displaying the current Species already, then we can move on.
+            // Otherwise, delete it.
             if (speciesTabs_[currentTabIndex]->species() == sp)
                 break;
             else
@@ -319,7 +319,10 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
-            setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+            if (layer->enabled())
+                setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+            else
+                setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
         }
 
         ++currentTabIndex;

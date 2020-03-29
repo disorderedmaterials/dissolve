@@ -23,6 +23,7 @@
 #include "gui/getmodulelayernamedialog.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
+#include "gui/maintabswidget.hui"
 #include "main/dissolve.h"
 #include <QMessageBox>
 
@@ -118,6 +119,10 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
         return;
 
     moduleLayer_->setEnabled(checked);
+    if (checked)
+        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+    else
+        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
 
     dissolveWindow_->setModified();
 }
