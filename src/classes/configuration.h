@@ -140,6 +140,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	List<SpeciesInfo>& usedSpecies();
 	// Return if the specified Species is present in the usedSpecies list
 	bool hasUsedSpecies(Species* sp);
+	// Return the total atomic mass present in the Configuration
+	double atomicMass() const;
 	// Return the atomic density of the Configuration
 	double atomicDensity() const;
 	// Return the chemical density (g/cm3) of the Configuration
