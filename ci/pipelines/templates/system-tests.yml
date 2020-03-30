@@ -1,46 +1,45 @@
 parameters:
-  - name: tests
+  - name: test
     default: 'atomshake'
   - name: parallel
     default: false
 
 jobs:
-  - ${{ each test in parameters.tests }}:
-    - job:
-      condition: eq(parameters.parallel, false)
-      displayName: 'Test ${{ test }} (Serial)'
-      pool:
-        vmImage: ubuntu-18.04
-      steps:
-        - task: DownloadBuildArtifacts@0
-          inputs:
-            buildType: 'current'
-            specificBuildWithTriggering: true
-            downloadType: 'single'
-            artifactName: 'linux-tests-serial'
-            downloadPath: 'test-artifacts'
-          displayName: 'Download Serial Test Artifacts'
-        - bash:
-            cd test-artifacts
-            chmod u+x ./go ./dissolve
-            ./go -a -s ./dissolve ${{ test }}
-          displayName: 'Run Test (${{ test }})'
-    - job:
-      condition: eq(parameters.parallel, true)
-      displayName: 'Test ${{ test }} (Parallel)'
-      pool:
-        vmImage: ubuntu-18.04
-      steps:
-        - task: DownloadBuildArtifacts@0
-          inputs:
-            buildType: 'current'
-            specificBuildWithTriggering: true
-            downloadType: 'single'
-            artifactName: 'linux-tests-parallel'
-            downloadPath: 'test-artifacts'
-          displayName: 'Download Parallel Test Artifacts'
-        - bash:
-            cd test-artifacts
-            chmod u+x ./go ./dissolve-mpi
-            ./go -a -p ./dissolve-mpi ${{ test }}
-          displayName: 'Run Test (${{ test }})'
+  - job:
+    condition: eq(parameters.parallel, false)
+    displayName: 'Test ${{ test }} (Serial)'
+    pool:
+      vmImage: ubuntu-18.04
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-serial'
+          downloadPath: 'test-artifacts'
+        displayName: 'Download Serial Test Artifacts'
+      - bash:
+          cd test-artifacts
+          chmod u+x ./go ./dissolve
+          ./go -a -s ./dissolve ${{ test }}
+        displayName: 'Run Test (${{ test }})'
+  - job:
+    condition: eq(parameters.parallel, true)
+    displayName: 'Test ${{ test }} (Parallel)'
+    pool:
+      vmImage: ubuntu-18.04
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-parallel'
+          downloadPath: 'test-artifacts'
+        displayName: 'Download Parallel Test Artifacts'
+      - bash:
+          cd test-artifacts
+          chmod u+x ./go ./dissolve-mpi
+          ./go -a -p ./dissolve-mpi ${{ test }}
+        displayName: 'Run Test (${{ test }})'

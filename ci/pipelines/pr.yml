@@ -40,4 +40,4 @@ stages:
     jobs:
       - template: templates/system-tests.yml
         parameters:
-          tests: [ 'atomshake', 'broadening', 'calculate_avgmol', 'calculate_cn', 'calculate_dangle', 'calculate_rdf', 'calculate_sdf', 'correlations', 'energyforce1', 'epsr', 'exchangeable', 'pbctorsion', 'rdfmethod' ]
+          test: 'atomshake'
