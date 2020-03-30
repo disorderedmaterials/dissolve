@@ -6,7 +6,7 @@ parameters:
 
 jobs:
   - job:
-    condition: eq(parameters.parallel, false)
+    condition: eq('${{ parameters.parallel }}', false)
     displayName: 'Test ${{ parameters.test }} (Serial)'
     pool:
       vmImage: ubuntu-18.04
@@ -25,7 +25,7 @@ jobs:
           ./go -a -s ./dissolve ${{ parameters.test }}
         displayName: 'Run Test (${{ parameters.test }})'
   - job:
-    condition: eq(parameters.parallel, true)
+    condition: eq('${{ parameters.parallel }}', true)
     displayName: 'Test ${{ parameters.test }} (Parallel)'
     pool:
       vmImage: ubuntu-18.04
