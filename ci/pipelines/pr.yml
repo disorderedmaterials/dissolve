@@ -11,7 +11,7 @@ pr:
 
 stages:
   # Perform Code Quality Checks
-  # - template: ci/pipelines/templates/code_quality_checks.yml
+  # - template: templates/code_quality_checks.yml
 
   # Build Executables
   - stage: 'build'
@@ -22,7 +22,7 @@ stages:
         pool:
           vmImage: 'ubuntu-18.04' 
         steps:
-          - template: ci/pipelines/templates/build-linux-serial-gui.yml
+          - template: templates/build-linux-serial-gui.yml
             parameters:
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
@@ -32,4 +32,4 @@ stages:
     displayName: 'System Tests'
 
     jobs:
-      - template: ci/pipelines/templates/system-tests-serial.yml
+      - template: templates/system-tests-serial.yml
