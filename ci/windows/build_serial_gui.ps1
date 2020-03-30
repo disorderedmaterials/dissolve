@@ -9,7 +9,8 @@
 # -- Enforce exit on first failure
 $ErrorActionPreference = 'Stop'
 echo $env:PATH
-
+# -- Store current directory on runner
+$location = Get-Location
 
 #
 # Install Prerequisites
@@ -47,8 +48,7 @@ ninja
 #
 # Build
 #
-pwd
-cd $GITHUB_WORKSPACE/dissolve/dissolve
+Set-Location $location
 mkdir build
 cd build
 $env:INCLUDE += "$HOME\freetype-2.10.1;"
