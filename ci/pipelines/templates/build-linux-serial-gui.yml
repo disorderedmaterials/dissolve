@@ -1,6 +1,6 @@
 parameters:
   - name: ppa
-    defailt: 'beineri/opt-qt-5.13.2-bionic'
+    default: 'beineri/opt-qt-5.13.2-bionic'
   - name: qtver
     default: 513
 
