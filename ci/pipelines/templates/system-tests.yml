@@ -1,6 +1,6 @@
 parameters:
   - name: tests
-    default: [ 'atomshake', 'broadening', 'calculate_avgmol', 'calculate_cn', 'calculate_dangle', 'calculate_rdf', 'calculate_sdf', 'correlations', 'energyforce1', 'epsr', 'exchangeable', 'pbctorsion', 'rdfmethod' ]
+    default: 'atomshake'
   - name: parallel
     default: false
 
