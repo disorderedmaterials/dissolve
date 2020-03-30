@@ -7,7 +7,7 @@ parameters:
 jobs:
   - job:
     condition: eq(parameters.parallel, false)
-    displayName: 'Test ${{ test }} (Serial)'
+    displayName: 'Test ${{ parameters.test }} (Serial)'
     pool:
       vmImage: ubuntu-18.04
     steps:
@@ -22,11 +22,11 @@ jobs:
       - bash:
           cd test-artifacts
           chmod u+x ./go ./dissolve
-          ./go -a -s ./dissolve ${{ test }}
-        displayName: 'Run Test (${{ test }})'
+          ./go -a -s ./dissolve ${{ parameters.test }}
+        displayName: 'Run Test (${{ parameters.test }})'
   - job:
     condition: eq(parameters.parallel, true)
-    displayName: 'Test ${{ test }} (Parallel)'
+    displayName: 'Test ${{ parameters.test }} (Parallel)'
     pool:
       vmImage: ubuntu-18.04
     steps:
@@ -41,5 +41,5 @@ jobs:
       - bash:
           cd test-artifacts
           chmod u+x ./go ./dissolve-mpi
-          ./go -a -p ./dissolve-mpi ${{ test }}
-        displayName: 'Run Test (${{ test }})'
+          ./go -a -p ./dissolve-mpi ${{ parameters.test }}
+        displayName: 'Run Test (${{ parameters.test }})'
