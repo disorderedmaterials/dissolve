@@ -34,10 +34,19 @@ class CoordinateImportFileFormat : public FileAndFormat
 	public:
 	// Coordinate Import Formats
 	enum CoordinateImportFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateImportFormats };
-	// Constructor
+	// Constructors
 	CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
+	CoordinateImportFileFormat(const char* filename, CoordinateImportFormat format = XYZCoordinates);
 	// Destructor
 	~CoordinateImportFileFormat();
+
+
+	/*
+	 * Keyword Options
+	 */
+	private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 
 	/*

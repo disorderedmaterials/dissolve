@@ -120,6 +120,19 @@ bool Configuration::hasUsedSpecies(Species* sp)
 	return false;
 }
 
+// Return the total atomic mass present in the Configuration
+double Configuration::atomicMass() const
+{
+	double mass = 0.0;
+
+	// Get total molar mass in configuration
+	ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
+	while (SpeciesInfo* spInfo = speciesIterator.iterate()) mass += spInfo->species()->mass() * spInfo->population();
+
+	// Convert to absolute mass
+	return mass / AVOGADRO;
+}
+
 // Return the atomic density of the Configuration
 double Configuration::atomicDensity() const
 {
@@ -129,17 +142,7 @@ double Configuration::atomicDensity() const
 // Return the chemical density (g/cm3) of the Configuration
 double Configuration::chemicalDensity() const
 {
-	double density = 0.0;
-
-	// Get total molar mass in configuration
-	ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
-	while (SpeciesInfo* spInfo = speciesIterator.iterate()) density += spInfo->species()->mass() * spInfo->population();
-
-	// Convert to absolute mass, and divide by box volume
-	density /= AVOGADRO;
-	density /= (box_->volume() / 1.0E24);
-
-	return density;
+	return atomicMass() / (box_->volume() / 1.0E24);
 }
 
 // Return version of current contents

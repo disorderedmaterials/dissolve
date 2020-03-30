@@ -32,10 +32,10 @@
 AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, NodeValue population, NodeValue density, Units::DensityUnits densityUnits) : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
 	// Set up keywords
-	keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target Species to add");
-	keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target Species to add");
-	keywords_.add("Target", new BoolKeyword(true), "ScaleBox", "Use the specified density to scale the box accordingly");
-	keywords_.add("Target", new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits), "Density", "Density at which to add the target Species");
+	keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target species to add");
+	keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
+	keywords_.add("Target", new EnumOptionsKeyword<AddSpeciesProcedureNode::BoxActionStyle>(boxActionStyles() = AddSpeciesProcedureNode::AddVolume), "BoxAction", "Action to take on the Box geometry / volume on addition of the species");	
+	keywords_.add("Target", new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits), "Density", "Density at which to add the target species");
 	keywords_.add("Positioning", new BoolKeyword(true), "Rotate", "Whether to rotate molecules on insertion");
 	keywords_.add("Positioning", new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(positioningTypes() = AddSpeciesProcedureNode::RandomPositioning), "Positioning", "Positioning type for individual molecules");
 }
@@ -65,7 +65,20 @@ bool AddSpeciesProcedureNode::mustBeNamed() const
  * Node Data
  */
 
-// Return enum option info for AddSpeciesNodeKeyword
+// Return enum option info for PositioningType
+EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::boxActionStyles()
+{
+	static EnumOptionsList BoxActionStyleKeywords = EnumOptionsList() <<
+		EnumOption(AddSpeciesProcedureNode::None,			"None") <<
+		EnumOption(AddSpeciesProcedureNode::AddVolume,			"AddVolume") <<
+		EnumOption(AddSpeciesProcedureNode::ScaleVolume,		"ScaleVolume");
+
+	static EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> options("BoxAction", BoxActionStyleKeywords);
+
+	return options;
+}
+
+// Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::positioningTypes()
 {
 	static EnumOptionsList PositioningTypeKeywords = EnumOptionsList() <<
@@ -112,10 +125,11 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	// If a density was not given, just add new molecules to the current box without adjusting its size
 	Venum<NodeValue,Units::DensityUnits>& densityAndUnits = keywords_.retrieve< Venum<NodeValue,Units::DensityUnits> >("Density");
 	double density = densityAndUnits.value().asDouble();
-	const bool scaleBox = keywords_.asBool("ScaleBox");
-	if (scaleBox)
+	AddSpeciesProcedureNode::BoxActionStyle boxAction = keywords_.enumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction");
+	if (boxAction == AddSpeciesProcedureNode::None) Messenger::print("[AddSpecies] Current box geometry / volume will remain as-is.\n");
+	else if (boxAction == AddSpeciesProcedureNode::AddVolume)
 	{
-		Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density, Units::densityUnits().keyword(densityAndUnits.enumeration()));
+		Messenger::print("[AddSpecies] Current box volume will be increased to accommodate volume of new species.\n");
 
 		// Get current cell volume
 		double currentVolume = cfg->box()->volume();
@@ -125,8 +139,12 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		if (densityAndUnits.enumeration() == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density;
 		else requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
 
+		Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density, Units::densityUnits().keyword(densityAndUnits.enumeration()));
+		Messenger::print("[AddSpecies] Required volume for new species is %f cubic Angstroms.\n", requiredVolume);
+
 		// If the current box has no atoms in it, absorb the current volume rather than adding to it
 		if (cfg->nAtoms() > 0) requiredVolume += currentVolume;
+		else Messenger::print("[AddSpecies] Current box is empty, so new volume will be set to exactly %f cubic Angstroms.\n", requiredVolume);
 
 		double scaleFactor = pow(requiredVolume / currentVolume, 1.0/3.0);
 
@@ -136,9 +154,38 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		// Scale the current Box so there is enough space for our new species
 		cfg->scaleBox(scaleFactor);
 
-		Messenger::print("[AddSpecies] Current Box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
+		Messenger::print("[AddSpecies] New box volume is %e cubic Angstroms (scale factor was %f).\n", cfg->box()->volume(), scaleFactor);
 	}
-	else Messenger::print("[AddSpecies] Box will not be scaled to accommodate addition of the species.\n");
+	else if (boxAction == AddSpeciesProcedureNode::ScaleVolume)
+	{
+		Messenger::print("[AddSpecies] Box volume will be set to give supplied density.\n");
+
+		// Get volume required to hold current cell contents at the requested density
+		double existingRequiredVolume = 0.0;
+		if (densityAndUnits.enumeration() == Units::AtomsPerAngstromUnits) existingRequiredVolume = cfg->nAtoms() / density;
+		else existingRequiredVolume = cfg->atomicMass() / (density / 1.0E24);
+		Messenger::print("[AddSpecies] Existing contents requires volume of %f cubic Angstroms at specified density.\n", existingRequiredVolume);
+
+		// Determine volume required to contain the population of the specified Species at the requested density
+		double requiredVolume = 0.0;
+		if (densityAndUnits.enumeration() == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density;
+		else requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
+
+		Messenger::print("[AddSpecies] Required volume for new species is %f cubic Angstroms.\n", requiredVolume);
+
+		// Add on required volume for existing box contents
+		if (cfg->nAtoms() > 0) requiredVolume += existingRequiredVolume;
+
+		double scaleFactor = pow(requiredVolume / cfg->box()->volume(), 1.0/3.0);
+
+		// Scale centres of geometry of existing contents
+		cfg->scaleMoleculeCentres(scaleFactor);
+
+		// Scale the current Box so there is enough space for our new species
+		cfg->scaleBox(scaleFactor);
+
+		Messenger::print("[AddSpecies] Current box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
+	}
 
 	// Get the positioning type and rotation flag
 	AddSpeciesProcedureNode::PositioningType positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
@@ -192,7 +239,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		}
 	}
 
-	Messenger::print("[AddSpecies] New Configuration density is %f atoms/Angstrom3.\n", cfg->atomicDensity());
+	Messenger::print("[AddSpecies] New box density is %e cubic Angstroms (%f g/cm3).\n", cfg->atomicDensity(), cfg->chemicalDensity());
 
 	return ProcedureNode::Success;
 }

@@ -94,6 +94,13 @@ void FileAndFormat::printAvailableFormats() const
  * Filename
  */
 
+// Return whether the file actually exists
+bool FileAndFormat::fileExists() const
+{
+	// If no filename is currently set, return false. Otherwise, check for it
+	return (filename_.isEmpty() ? false : DissolveSys::fileExists(filename_));
+}
+
 // Set filename / basename
 void FileAndFormat::setFilename(const char* filename)
 {

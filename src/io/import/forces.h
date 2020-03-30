@@ -34,10 +34,19 @@ class ForceImportFileFormat : public FileAndFormat
 	public:
 	// Forces Formats
 	enum ForceImportFormat { XYZForces, DLPOLYForces, nForceImportFormats };
-	// Constructor
+	// Constructors
 	ForceImportFileFormat(ForceImportFormat format = XYZForces);
+	ForceImportFileFormat(const char* filename, ForceImportFormat format = XYZForces);
 	// Destructor
 	~ForceImportFileFormat();
+
+
+	/*
+	 * Keyword Options
+	 */
+	private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 
 	/*

@@ -66,7 +66,11 @@ bool Dissolve::loadInput(LineParser& parser)
 				cfg = addConfiguration();
 				cfg->setName(parser.argc(1));
 				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
-				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
+				if (!ConfigurationBlock::parse(parser, this, cfg))
+				{
+					error = true;
+					break;
+				}
 
 				// Prepare the Configuration
 				if (!cfg->initialiseContent(worldPool(), pairPotentialRange_)) Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());

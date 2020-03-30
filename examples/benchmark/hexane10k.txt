@@ -1,5 +1,3 @@
-# Test Case 07 - Liquid Hexane - Torsion Energy and Forces
-
 Species 'Hexane'
   # Atoms
   Atom    1    C    0.0    0.0    0.0    'CT'   -0.12
@@ -131,51 +129,44 @@ Species 'Hexane'
 EndSpecies
 
 # Define Configuration
-Configuration  'Liquid'
+Configuration  'Hexane100k'
   Generator
     Box
       Lengths  30.769064857500  46.153597286200  30.769064857500
     EndBox
     AddSpecies
-      Population  200
+      Population  100000
       Species  'Hexane'
-      BoxAction  None
+      ScaleBox  False
     EndAddSpecies
   EndGenerator
-  InputCoordinates  dlpoly  'dlpoly/CONFIG'
-  EndInputCoordinates
 EndConfiguration
-
-Layer  'Processing'
-
-Module  Energy
-  Test  On
-  TestAnalytic  On
-  Configuration  'Liquid'
-  TestReferenceInter  -2903.925000	# LJ (-5124.720) + Coul (2020.063) - LJ correct (-200.732)
-  TestReferenceIntra  11488.122
-EndModule
-
-Module Forces
-  Test  On
-  Configuration  'Liquid'
-  TestReference  dlpoly  'dlpoly/REVCON'
-  EndTestReference
-  TestThreshold  0.1
-EndModule
-
-Module SanityCheck
-EndModule
-
-EndLayer
 
 # Pair Potentials
 PairPotentials
   Range  12.000000
   Delta  0.01000
-  ShortRangeTruncation  None
-  IncludeCoulomb  False
   Parameters  'CT'  C   0.0       LJGeometric  0.276144      3.500000  
   Parameters  'HC'  H   0.0       LJGeometric  0.125520      2.500000 
-  CoulombTruncation  None
 EndPairPotentials
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+Layer  'Benchmark'
+  Frequency  1
+
+  Module  Benchmark  'Benchmark'
+    Configuration  'Hexane100k'
+  EndModule
+EndLayer
+
+#------------------------------------------------------------------------------#
+#                                  Simulation                                  #
+#------------------------------------------------------------------------------#
+
+Simulation
+  Seed  12345
+EndSimulation
+

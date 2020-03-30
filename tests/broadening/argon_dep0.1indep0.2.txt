@@ -18,7 +18,7 @@ Configuration 'liquid'
     AddSpecies
       Species  'Argon'
       Population  10000
-      ScaleBox  False
+      BoxAction  None
     EndAddSpecies
   EndGenerator
   InputCoordinates  epsr  'epsr_dep0.1indep0.2/argonbox.ato'

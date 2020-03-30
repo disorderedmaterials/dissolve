@@ -24,16 +24,30 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
-Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFormat format) : FileAndFormat(format)
+// Constructors
+Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(format)
 {
-	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "XAxis", "Min, max, and delta to assume for x axis");
-	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "YAxis", "Min, max, and delta to assume for y axis");
+	setUpKeywords();
+}
+Data2DImportFileFormat::Data2DImportFileFormat(const char* filename, Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(filename, format)
+{
+	setUpKeywords();
 }
 
 // Destructor
 Data2DImportFileFormat::~Data2DImportFileFormat()
 {
+}
+
+/*
+ * Keyword Options
+ */
+
+// Set up keywords for the format
+void Data2DImportFileFormat::setUpKeywords()
+{
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "XAxis", "Min, max, and delta to assume for x axis");
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "YAxis", "Min, max, and delta to assume for y axis");
 }
 
 /*
