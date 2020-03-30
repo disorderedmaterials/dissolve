@@ -1,0 +1,35 @@
+trigger:
+  branches:
+    exclude:
+      - '*'
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - '*'
+
+stages:
+  # Perform Code Quality Checks
+  # - template: ci/pipelines/templates/code_quality_checks.yml
+
+  # Build Executables
+  - stage: 'build'
+    displayName: 'Build'
+    jobs:
+      - job: 'linux-serial'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
+        pool:
+          vmImage: 'ubuntu-18.04' 
+        steps:
+          - template: ci/pipelines/templates/build-linux-serial-gui.yml
+            parameters:
+              ppa: 'beineri/opt-qt-5.13.2-bionic'
+              qtver: 513
+
+  # Run System Tests
+  - stage: 'system_tests'
+    displayName: 'System Tests'
+
+    jobs:
+      - template: ci/pipelines/templates/system-tests-serial.yml
