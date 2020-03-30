@@ -26,10 +26,16 @@ stages:
             parameters:
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
+          - bash: |
+              cp build/dissolve tests/
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "tests/"
+              ArtifactName: 'linux-tests-serial'
+            displayName: 'Publish Serial Test Artifacts'
 
   # Run System Tests
   - stage: 'system_tests'
     displayName: 'System Tests'
-
     jobs:
       - template: templates/system-tests-serial.yml

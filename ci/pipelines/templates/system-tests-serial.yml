@@ -1,0 +1,19 @@
+jobs:
+  - job: Test
+    strategy:
+      matrix:
+        test: [atomshake, broadening, calculate_avgmol, calculate_cn, calculate_dangle, calculate_rdf, calculate_sdf, correlations, energyforce1, epsr, exchangeable, pbctorsion, rdfmethod]
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-serial'
+          downloadPath: 'test-artifacts'
+        displayName: 'Download Serial Test Artifacts'
+      - bash:
+          cd test-artifacts
+          chmod u+x ./go ./dissolve
+          ./go -a -s ./dissolve ${{ matrix.test }}
+        displayName: 'Run Test'
