@@ -35,7 +35,7 @@ stages:
             displayName: 'Publish Serial Test Artifacts'
 
   # Run System Tests
-  - stage: 'system_tests'
-    displayName: 'System Tests'
+  - stage: 'system_tests_serial'
+    displayName: 'System Tests (Serial)'
     jobs:
-      - template: templates/system-tests-serial.yml
+      - template: templates/system-tests.yml
