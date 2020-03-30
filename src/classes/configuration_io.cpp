@@ -67,8 +67,7 @@ bool Configuration::write(LineParser& parser) const
 	for (int n=0; n<atoms_.nItems(); ++n)
 	{
 		const Atom* i = atoms_.constValue(n);
-		int index = find(molecules_.begin(), molecules_.end(), i->molecule()) - molecules_.begin();
-		if (!parser.writeLineF("%i %e %e %e\n", index, i->x(), i->y(), i->z())) return false;
+		if (!parser.writeLineF("%i %e %e %e\n", i->molecule()->arrayIndex(), i->x(), i->y(), i->z())) return false;
 	}
 
 	return true;

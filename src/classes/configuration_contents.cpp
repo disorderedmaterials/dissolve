@@ -159,6 +159,7 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species* sp, CoordinateSet*
 {
 	// Create the new Molecule object and set its Species pointer
 	std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+	newMolecule->setArrayIndex(molecules_.size());
 	molecules_.push_back(newMolecule);
 	newMolecule->setSpecies(sp);
 

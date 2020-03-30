@@ -34,7 +34,7 @@ class Matrix3;
 class Species;
 
 // Molecule Definition
-class Molecule : public std::enable_shared_from_this<Molecule>
+class Molecule : public DynamicArrayObject<Molecule> , public std::enable_shared_from_this<Molecule>
 {
 	public:
 	// Constructor

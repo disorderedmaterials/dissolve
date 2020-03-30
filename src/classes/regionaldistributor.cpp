@@ -170,13 +170,12 @@ bool RegionalDistributor::cycle()
 			else
 			{
 				// Valid Molecule found, so add it to our distribution array and mark it as such
-				int index = find(moleculeArray_.begin(), moleculeArray_.end(), molecule) - moleculeArray_.begin();
-				assignedMolecules_[processOrGroup].push_back(index);
-				moleculeStatus_[index] = RegionalDistributor::DistributedFlag;
+				assignedMolecules_[processOrGroup].push_back(molecule->arrayIndex());
+				moleculeStatus_[molecule->arrayIndex()] = RegionalDistributor::DistributedFlag;
 				++nMoleculesDistributed_;
 				++nMoleculesAssigned;
 
-				if (DND) Messenger::print("Molecule %i assigned to process/group %i - nMoleculesDistributed is now %i. Process/group has %i locked Cells in total.\n", index, processOrGroup, nMoleculesDistributed_, lockedCells_[processOrGroup].nItems());
+				if (DND) Messenger::print("Molecule %i assigned to process/group %i - nMoleculesDistributed is now %i. Process/group has %i locked Cells in total.\n", molecule->arrayIndex(), processOrGroup, nMoleculesDistributed_, lockedCells_[processOrGroup].nItems());
 			}
 
 			// Have all possible Molecules been assigned?
@@ -270,7 +269,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
 	int cellIndex;
 
 	// Obvious check first - is the Molecule available for distribution / assignment?
-	const int molId = find(moleculeArray_.begin(), moleculeArray_.end(), mol) - moleculeArray_.begin();
+	const int molId = mol->arrayIndex();
 
 	if (DND) Messenger::print("  -- Checking Molecule %i for process/group %i: status = %s\n", molId, processOrGroup, moleculeStatusFlag(moleculeStatus_[molId]));
 
@@ -398,8 +397,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell* cell, int pr
 		// Get the Atom's Molecule pointer
 		mol = atom->molecule();
 
-		int index = find(moleculeArray_.begin(), moleculeArray_.end(), mol) - moleculeArray_.begin();
-		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", index, atom->arrayIndex(), std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
+		if (DND) Messenger::print("  <> Molecule index is %i (from Atom index %i) and this molecule %s already in our list..\n", mol->arrayIndex(), atom->arrayIndex(), std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
 
 		// Have we already checked this Molecule?
 		if (std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end()) continue;
