@@ -17,7 +17,7 @@ stages:
   - stage: 'build'
     displayName: 'Build'
     jobs:
-      - job: 'linux-serial'
+      - job: 'linux_serial'
         displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
         pool:
           vmImage: 'ubuntu-18.04' 
