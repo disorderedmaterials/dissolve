@@ -11,6 +11,7 @@ jobs:
     pool:
       vmImage: ubuntu-18.04
     steps:
+      - checkout: none
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'
@@ -19,7 +20,7 @@ jobs:
           artifactName: 'linux-tests-serial'
           downloadPath: 'test-artifacts'
         displayName: 'Download Serial Test Artifacts'
-      - bash:
+      - bash: |
           cd test-artifacts
           chmod u+x ./go ./dissolve
           ./go -a -s ./dissolve ${{ parameters.test }}
@@ -30,6 +31,7 @@ jobs:
     pool:
       vmImage: ubuntu-18.04
     steps:
+      - checkout: none
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'
@@ -38,7 +40,7 @@ jobs:
           artifactName: 'linux-tests-parallel'
           downloadPath: 'test-artifacts'
         displayName: 'Download Parallel Test Artifacts'
-      - bash:
+      - bash: |
           cd test-artifacts
           chmod u+x ./go ./dissolve-mpi
           ./go -a -p ./dissolve-mpi ${{ parameters.test }}
