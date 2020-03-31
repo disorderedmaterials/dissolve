@@ -20,7 +20,7 @@ jobs:
           artifactName: 'linux-tests-serial'
         displayName: 'Download Serial Test Artifacts'
       - bash: |
-          cd $(System.ArtifactsDirectory)/test-artifacts
+          cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
           ./go -a -s ./dissolve ${{ parameters.test }}
         displayName: 'Run Test (${{ parameters.test }})'
@@ -39,7 +39,7 @@ jobs:
           artifactName: 'linux-tests-parallel'
         displayName: 'Download Parallel Test Artifacts'
       - bash: |
-          cd $(System.ArtifactsDirectory)/test-artifacts
+          cd $(System.ArtifactsDirectory)/linux-tests-parallel
           chmod u+x ./go ./dissolve-mpi
           ./go -a -p ./dissolve-mpi ${{ parameters.test }}
         displayName: 'Run Test (${{ parameters.test }})'
