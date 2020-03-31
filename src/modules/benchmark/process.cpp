@@ -161,7 +161,7 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (int n=0; n<N; ++n)
 			{
 				// Create a Molecule distributor
-				DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+				auto& moleculeArray = cfg->molecules();
 				RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 				Timer timer;
@@ -169,7 +169,7 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				while (distributor.cycle())
 				{
 					// Get next set of Molecule targets from the distributor
-					Array<int> targetMolecules = distributor.assignedMolecules();
+					auto targetMolecules = distributor.assignedMolecules();
 
 					// Switch parallel strategy if necessary
 					if (distributor.currentStrategy() != strategy)
@@ -182,11 +182,11 @@ bool BenchmarkModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Loop over target Molecules
-					for (int n = 0; n<targetMolecules.nItems(); ++n)
+					for (int n = 0; n<targetMolecules.size(); ++n)
 					{
 						// Get Molecule index and pointer
 						auto molId = targetMolecules[n];
-						Molecule* mol = cfg->molecule(molId);
+						auto mol = cfg->molecule(molId);
 					}
 				}
 				Messenger::unMute();
