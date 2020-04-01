@@ -31,7 +31,7 @@
 class BraggReflection;
 
 // K-Vector
-class KVector : public ListItem<KVector>,  public GenericItemBase
+class KVector : public GenericItemBase
 {
 	public:
 	// Constructor
