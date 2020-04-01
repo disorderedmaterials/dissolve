@@ -23,14 +23,14 @@
 #include "base/messenger.h"
 
 // Static Singletons
-Array< List<ElementColour> > ElementColours::coloursByElementPrivate_;
+std::vector< std::vector<ElementColour*>> ElementColours::coloursByElementPrivate_;
 
 /*
  * Isotopic Neutron Scattering Data
  */
 
 // Constructor
-ElementColour::ElementColour(int z, float r, float g, float b, float a) : ElementReference(z), ListItem<ElementColour>()
+ElementColour::ElementColour(int z, float r, float g, float b, float a) : ElementReference(z)
 {
 	// Set the colour data
 	colour_[0] = r;
@@ -64,18 +64,12 @@ const float* ElementColour::colour() const
  */
 
 // Return colour data, grouped by element
-List<ElementColour>& ElementColours::coloursByElement(int Z)
+std::vector<ElementColour*>& ElementColours::coloursByElement(int Z)
 {
 	// Has the master array been initialised yet? If not, do it now, before the Sears data is constructed
-	if (coloursByElementPrivate_.nItems() == 0)
+	if (coloursByElementPrivate_.empty())
 	{
-		/*
-		 * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
-		 * Need to do this otherwise each Isotope will be destructed twice - once from the List<T> destructor, and once
-		 * again from the destruction of the static array colourData.
-		 */
-		coloursByElementPrivate_.initialise(Elements::nElements());
-		for (int n=0; n<Elements::nElements(); ++n) coloursByElementPrivate_[n].setDisownOnDestruction(true);
+		coloursByElementPrivate_.resize(Elements::nElements());
 	}
 
 	/* Copied from Aten */
@@ -213,19 +207,19 @@ List<ElementColour>& ElementColours::coloursByElement(int Z)
 }
 
 // Register specified Isotope to given Element
-void ElementColours::registerElementColour(ElementColour* ec, int Z)
+  void ElementColours::registerElementColour(ElementColour* ec, int Z)
 {
-	coloursByElementPrivate_[Z].own(ec);
+	coloursByElementPrivate_[Z].push_back(ec);
 }
 
 // Return colour for specified Element
 const float* ElementColours::colour(int Z)
 {
-	return coloursByElement(Z).first()->colour();
+	return coloursByElement(Z).front()->colour();
 }
 
 // Return colour for specified Element
 const float* ElementColours::colour(Element* el)
 {
-	return coloursByElement(el->Z()).first()->colour();
+	return coloursByElement(el->Z()).front()->colour();
 }

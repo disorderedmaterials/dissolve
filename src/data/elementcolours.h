@@ -22,12 +22,14 @@
 #ifndef DISSOLVE_DATA_ELEMENTCOLOURS_H
 #define DISSOLVE_DATA_ELEMENTCOLOURS_H
 
+#include <array>
+#include <memory>
+#include <vector>
 #include "data/elements.h"
 #include "templates/array.h"
-#include "templates/list.h"
 
 // Isotopic Neutron Scattering Data
-class ElementColour : public ElementReference, public ListItem<ElementColour>
+class ElementColour : public ElementReference
 {
 	public:
 	// Constructor
@@ -53,11 +55,11 @@ class ElementColours : public Elements
 {
 	private:
 	// ElementColour data, grouped by element
-	static Array< List<ElementColour> > coloursByElementPrivate_;
+	static std::vector< std::vector<ElementColour*> > coloursByElementPrivate_;
 
 	private:
 	// Return colour data for specified Element
-	static List<ElementColour>& coloursByElement(int Z);
+	static std::vector<ElementColour*>& coloursByElement(int Z);
 
 	public:
 	// Register specified ElementColour to given Element
