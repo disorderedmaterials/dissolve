@@ -117,7 +117,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
-	Molecule* molI;
+	std::shared_ptr<Molecule> molI;
 	double rSq, scale;
 	auto central = centralAtoms.begin();
 
@@ -196,7 +196,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolec
 	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rJ;
-	Molecule* molJ;
+	std::shared_ptr<Molecule> molJ;
 	double rSq, scale;
 
 	// Get start/stride for specified loop context
@@ -301,7 +301,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	int nOtherAtoms = cell->nAtoms();
 	
 	// Grab some information on the supplied Atom
-	Molecule* moleculeI = i->molecule();
+	std::shared_ptr<Molecule> moleculeI = i->molecule();
 	const Vec3<double> rI = i->r();
 
 	// Get start/stride for specified loop context
@@ -505,7 +505,7 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::DivisionStrategy strateg
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	Atom* ii;
 	Cell* cellI;
@@ -537,13 +537,13 @@ double EnergyKernel::correct(const Atom* i)
 {
 	// Loop over atoms in molecule
 	int nMolAtoms = i->molecule()->nAtoms();
-	Atom* j, **atoms = i->molecule()->atoms();
+	Atom* j;
+	std::vector<Atom*> atoms = i->molecule()->atoms();
 	double scale, r, correctionEnergy = 0.0;
 	Vec3<double> rI = i->r();
 
-	for (int n = 0; n < nMolAtoms; ++n)
+	for (auto* j : atoms)
 	{
-		j = atoms[n];
 		if (i == j) continue;
 		scale = 1.0 - i->scaling(j);
 		if (scale > 1.0e-3)
@@ -636,7 +636,7 @@ double EnergyKernel::energy(const SpeciesTorsion* t, const Atom* i, const Atom* 
 }
 
 // Return intramolecular energy for the supplied Atom
-double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
+double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom* i)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -680,7 +680,7 @@ double EnergyKernel::intramolecularEnergy(const Molecule* mol, const Atom* i)
 }
 
 // Return intramolecular energy for the supplied Molecule
-double EnergyKernel::intramolecularEnergy(const Molecule* mol)
+double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
 {
 #ifdef CHECKS
 	if (mol == NULL)

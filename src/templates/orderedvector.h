@@ -43,7 +43,7 @@ template <class T> class OrderedVector : std::vector<T> {
   using std::vector<T>::size;
   OrderedVector() : std::vector<T>() {};
   OrderedVector(std::function<bool(T,T)> comp) : compare_(comp) {};
-  void insert(T& value) {
+  void insert(const T& value) {
       auto location = std::lower_bound(begin(), end(), value, compare_);
       if(location != end() && *location == value) return;
       insert(location, value);

@@ -82,7 +82,7 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  */
 
 // Return list of Molecules currently excluded from selection
-const RefList<const Molecule>& SelectProcedureNode::excludedMolecules() const
+const OrderedVector<std::shared_ptr<const Molecule>>& SelectProcedureNode::excludedMolecules() const
 {
 	return excludedMolecules_;
 }
@@ -94,7 +94,7 @@ const RefList<const Site>& SelectProcedureNode::excludedSites() const
 }
 
 // Return Molecule (from site) in which the site must exist
-const Molecule* SelectProcedureNode::sameMoleculeMolecule()
+std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 {
 	if (!sameMolecule_) return NULL;
 
@@ -195,13 +195,13 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 
 	// Update our exclusion lists
 	excludedMolecules_.clear();
-	for (SelectProcedureNode* node : sameMoleculeExclusions_) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule());
+	for (SelectProcedureNode* node : sameMoleculeExclusions_) if (node->currentSite()) excludedMolecules_.insert(node->currentSite()->molecule());
 
 	excludedSites_.clear();
 	for (SelectProcedureNode* node : sameSiteExclusions_) if (node->currentSite()) excludedSites_.addUnique(node->currentSite());
 
 	// Get required Molecule parent, if requested
-	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
+	std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
 
 	// Site to use as distance reference point (if any)
 	const Site* distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : NULL;
@@ -224,7 +224,9 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 			{
 				if (site->molecule() != moleculeParent) continue; 
 			}
-			else if (excludedMolecules_.contains(site->molecule())) continue;
+			else if (find(excludedMolecules_.begin(),
+				      excludedMolecules_.end(),
+				      site->molecule()) != excludedMolecules_.end()) continue;
 
 			// Check Site exclusions
 			if (excludedSites_.contains(site)) continue;

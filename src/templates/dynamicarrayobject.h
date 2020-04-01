@@ -50,9 +50,7 @@ template <class T> class DynamicArrayObjectBase
 // Dynamic Array Object Class
 template <class T> class DynamicArrayObject : public DynamicArrayObjectBase<T>
 {
-	friend class DynamicArray<T>;
-
-	protected:
+	public:
 	// Clear object, ready for re-use
 	virtual void clear() = 0;
 	// Return index of object within parent DynamicArray

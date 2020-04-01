@@ -77,13 +77,12 @@ bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 	orientedSites_.clear();
 
 	// Get Molecule array from Configuration and search for the target Species
-	DynamicArray<Molecule>& molecules = cfg->molecules();
+	std::deque<std::shared_ptr<Molecule>>& molecules = cfg->molecules();
 	Species* targetSpecies = speciesSite->parent();
 	Vec3<double> origin, v, x, y, z;
 	Matrix3 axes;
-	for (int n=0; n<molecules.nItems(); ++n)
+	for (auto molecule : molecules)
 	{
-		Molecule* molecule = molecules[n];
 		if (molecule->species() != targetSpecies) continue;
 
 		// Calculate origin

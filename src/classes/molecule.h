@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_MOLECULE_H
 #define DISSOLVE_MOLECULE_H
 
-#include "templates/array.h"
+#include <memory>
+#include <vector>
 #include "templates/dynamicarrayobject.h"
-#include "templates/reflist.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
@@ -34,7 +34,7 @@ class Matrix3;
 class Species;
 
 // Molecule Definition
-class Molecule : public DynamicArrayObject<Molecule>
+class Molecule : public DynamicArrayObject<Molecule> , public std::enable_shared_from_this<Molecule>
 {
 	public:
 	// Constructor
@@ -58,9 +58,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Species that this Molecule represents
 	const Species* species_;
 	// Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
-	Array<Atom*> atoms_;
-	// Array of restraints involving atoms in this Molecule
-// 	Array<Bond*> restraints_;
+	std::vector<Atom*> atoms_;
 
 	public:
 	// Set Species that this Molecule represents
@@ -72,7 +70,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Return size of Atom array
 	int nAtoms() const;
 	// Return Atoms array
-	Atom** atoms();
+	std::vector<Atom*>& atoms();
 	// Return nth Atom pointer
 	Atom* atom(int n) const;
 

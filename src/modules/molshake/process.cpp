@@ -76,7 +76,7 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
 		// Create a Molecule distributor
-		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		std::deque<std::shared_ptr<Molecule>>& moleculeArray = cfg->molecules();
 		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and a suitable EnergyKernel
@@ -98,7 +98,6 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * a rotation, 10% using only translations, and 10% using only rotations.
 		 */
 
-		int molId;
 
 		// Set initial random offset for our counter determining whether to perform R+T, R, or T.
 		int count = procPool.random()*10;
@@ -109,7 +108,7 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (distributor.cycle())
 		{
 			// Get next set of Molecule targets from the distributor
-			Array<int> targetMolecules = distributor.assignedMolecules();
+			std::vector<int> targetMolecules = distributor.assignedMolecules();
 
 			// Switch parallel strategy if necessary
 			if (distributor.currentStrategy() != strategy)
@@ -122,15 +121,14 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecules
-			for (int n = 0; n<targetMolecules.nItems(); ++n)
+			for (auto molId : targetMolecules)
 			{
 				/*
 				 * Calculation Begins
 				 */
 
 				// Get Molecule index and pointer
-				molId = targetMolecules[n];
-				Molecule* mol = cfg->molecule(molId);
+				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 
 				// Set current atom targets in ChangeStore (whole Molecule)
 				changeStore.add(mol);

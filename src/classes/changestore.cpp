@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <memory>
 #include "classes/changestore.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
@@ -49,7 +50,7 @@ void ChangeStore::add(Atom* i)
 }
 
 // Add Molecule to watch
-void ChangeStore::add(Molecule* mol)
+void ChangeStore::add(std::shared_ptr<Molecule> mol)
 {
 	for (int n=0; n<mol->nAtoms(); ++n) add(mol->atom(n));
 }

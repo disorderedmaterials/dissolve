@@ -102,7 +102,7 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
 			Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 			double magxpj, magxpk, phi, du_dphi;
-			Molecule* molN, *molM;
+			std::shared_ptr<Molecule> molN, molM;
 			const Box* box = cfg->box();
 			double scale;
 

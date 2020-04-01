@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ENERGYKERNEL_H
 #define DISSOLVE_ENERGYKERNEL_H
 
+#include <memory>
 #include "classes/kernelflags.h"
 #include "templates/orderedpointerlist.h"
 #include "base/processpool.h"
@@ -93,7 +94,7 @@ class EnergyKernel
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of Molecule with world
-	double energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum);
+	double energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
 	// Return total interatomic PairPotential energy of the system
@@ -111,9 +112,9 @@ class EnergyKernel
 	// Return SpeciesTorsion energy
 	double energy(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l);
 	// Return intramolecular energy for the supplied Atom
-	double intramolecularEnergy(const Molecule* mol, const Atom* i);
+	double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom* i);
 	// Return intramolecular energy for the supplied Molecule
-	double intramolecularEnergy(const Molecule* mol);
+	double intramolecularEnergy(std::shared_ptr<const Molecule> mol);
 
 
 	/*

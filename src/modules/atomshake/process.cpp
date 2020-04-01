@@ -69,7 +69,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
 		// Create a Molecule distributor
-		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		std::deque<std::shared_ptr<Molecule>>& moleculeArray = cfg->molecules();
 		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and EnergyKernel
@@ -85,14 +85,12 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 		Vec3<double> rDelta;
 
-		int molId;
-
 		Timer timer;
 		procPool.resetAccumulatedTime();
 		while (distributor.cycle())
 		{
 			// Get next set of Molecule targets from the distributor
-			Array<int> targetMolecules = distributor.assignedMolecules();
+			auto& targetMolecules = distributor.assignedMolecules();
 
 			// Switch parallel strategy if necessary
 			if (distributor.currentStrategy() != strategy)
@@ -105,26 +103,22 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Loop over target Molecules
-			for (m = 0; m<targetMolecules.nItems(); ++m)
+			for (auto molId : targetMolecules)
 			{
 				/*
 				 * Calculation Begins
 				 */
 
 				// Get Molecule index and pointer
-				molId = targetMolecules[m];
-				Molecule* mol = cfg->molecule(molId);
+				std::shared_ptr<Molecule> mol = cfg->molecule(molId);
 
 				// Set current Atom targets in ChangeStore (whole Molecule)
 				changeStore.add(mol);
 
+				n = 0;
 				// Loop over atoms in the Molecule
-				Atom** atoms = mol->atoms();
-				for (n = 0; n < mol->nAtoms(); ++n)
+				for (auto* i : mol->atoms())
 				{
-					// Grab Atom pointer
-					Atom* i = atoms[n];
-
 					// Calculate reference energy for the Atom
 					currentEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
 					currentIntraEnergy = kernel.intramolecularEnergy(mol, i) * termScale;
@@ -166,6 +160,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 							}
 							++nAttempts;
 						}
+						++n;
 					}
 
 				}

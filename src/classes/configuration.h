@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_CONFIGURATION_H
 #define DISSOLVE_CONFIGURATION_H
 
+#include <deque>
+#include <memory>
 #include "classes/atom.h"
 #include "classes/atomtypelist.h"
 #include "classes/cellarray.h"
@@ -113,7 +115,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Contents version, incremented whenever Configuration content or Atom positions change
 	VersionCounter contentsVersion_;
 	// Array of Molecules
-	DynamicArray<Molecule> molecules_;
+	std::deque<std::shared_ptr<Molecule>> molecules_;
 	// Array of Atoms
 	DynamicArray<Atom> atoms_;
 
@@ -151,15 +153,15 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Increment version of current contents
 	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
-	Molecule* addMolecule(Species* sp, CoordinateSet* sourceCoordinates = NULL);
+	std::shared_ptr<Molecule> addMolecule(Species* sp, CoordinateSet* sourceCoordinates = NULL);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return array of Molecules
-	DynamicArray<Molecule>& molecules();
+	std::deque<std::shared_ptr<Molecule>>& molecules();
 	// Return nth Molecule
-	Molecule* molecule(int n);
+	std::shared_ptr<Molecule> molecule(int n);
 	// Add new Atom to Configuration
-	Atom* addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r = Vec3<double>());
+	Atom* addAtom(const SpeciesAtom* sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r = Vec3<double>());
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
@@ -221,7 +223,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Update Cell location of specified Atom
 	void updateCellLocation(Atom* i);
 	// Update Cell location of specified Molecule
-	void updateCellLocation(Molecule* mol);
+	void updateCellLocation(std::shared_ptr<Molecule> mol);
 	// Update Cell location of specified Atom indices (in array)
 	void updateCellLocation(int nIndices, int* atomIndices, int indexOffset);
 

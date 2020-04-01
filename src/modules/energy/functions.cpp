@@ -56,8 +56,8 @@ double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* 
 	int start = procPool.interleavedLoopStart(strategy);
 	int stride = procPool.interleavedLoopStride(strategy);
 
-	Molecule** molecules = cfg->molecules().array();
-	const Molecule* mol;
+	std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
+	std::shared_ptr<const Molecule> mol;
 	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
 		// Get Molecule pointer

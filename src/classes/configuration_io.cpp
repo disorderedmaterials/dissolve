@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/configuration.h"
 #include "classes/box.h"
 #include "classes/species.h"
@@ -30,7 +31,7 @@ bool Configuration::write(LineParser& parser) const
 {
 	int molId;
 
-	if (!parser.writeLineF("'%s'  %i  # nMolecules\n", name(), molecules_.nItems())) return false;
+	if (!parser.writeLineF("'%s'  %i  # nMolecules\n", name(), molecules_.size())) return false;
 
 	// Write unit cell (box) lengths and angles
 	Vec3<double> lengths = box()->axisLengths();
@@ -39,15 +40,15 @@ bool Configuration::write(LineParser& parser) const
 	if (!parser.writeLineF("%12e %12e %12e\n", angles.x, angles.y, angles.z)) return false;
 
 	// Write total number of Molecules
-	if (!parser.writeLineF("%i\n", molecules_.nItems())) return false;
+	if (!parser.writeLineF("%i\n", molecules_.size())) return false;
 
 	// Write Molecule types - write sequential Molecules with same type as single line
 	int moleculeCount = 0;
 	const Species* lastType = NULL;
-	for (int n=0; n<molecules_.nItems(); ++n)
+	for (int n=0; n<molecules_.size(); ++n)
 	{
 		// If the last Molecule's Species is the same as this one, increment counter and move on
-		if (lastType == molecules_.constValue(n)->species())
+		if (lastType == molecules_[n]->species())
 		{
 			++moleculeCount;
 			continue;
@@ -56,7 +57,7 @@ bool Configuration::write(LineParser& parser) const
 		// Species is different between this molecule and the last - write this info, and reset the counter
 		if (lastType && (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name()))) return false;
 		moleculeCount = 1;
-		lastType = molecules_.constValue(n)->species();
+		lastType = molecules_[n]->species();
 	}
 	// Write final molecule count / type
 	if ((moleculeCount > 0) && (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name()))) return false;

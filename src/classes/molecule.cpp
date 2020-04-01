@@ -24,12 +24,9 @@
 #include "classes/box.h"
 
 // Constructor
-Molecule::Molecule() : DynamicArrayObject<Molecule>()
+Molecule::Molecule()
 {
 	species_ = NULL;
-
-	// Set sensible defaults for Arrays
-	atoms_.setChunkSize(2);
 }
 
 // Destructor
@@ -68,22 +65,23 @@ const Species* Molecule::species() const
 // Add Atom to Molecule
 void Molecule::addAtom(Atom* i)
 {
-	atoms_.add(i);
+	atoms_.push_back(i);
 
 	if (i->molecule() != NULL) Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n", i->arrayIndex());
-	i->setMolecule(this);
+	std::shared_ptr<Molecule> parent = shared_from_this();
+	i->setMolecule(parent);
 }
 
 // Return size of Atom array
 int Molecule::nAtoms() const
 {
-	return atoms_.nItems();
+	return atoms_.size();
 }
 
 // Return atoms array
-Atom** Molecule::atoms()
+std::vector<Atom*>& Molecule::atoms()
 {
-	return atoms_.array();
+	return atoms_;
 }
 
 // Return nth Atom pointer
@@ -101,7 +99,7 @@ Atom* Molecule::atom(int n) const
 		return NULL;
 	}
 #endif
-	return atoms_.constAt(n);
+	return atoms_[n];
 }
 
 /*

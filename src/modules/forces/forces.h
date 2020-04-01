@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_MODULE_FORCES_H
 #define DISSOLVE_MODULE_FORCES_H
 
+#include <memory>
 #include "module/module.h"
 #include "io/import/forces.h"
 
@@ -109,7 +110,7 @@ class ForcesModule : public Module
 	// Calculate forces acting on specific atoms within the specified Configuration (arising from all atoms)
 	static void totalForces(ProcessPool& procPool, Configuration* cfg, const Array<int>& targetIndices, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-	static void totalForces(ProcessPool& procPool, Configuration* cfg, const Array<Molecule*>& targetMolecules, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	static void totalForces(ProcessPool& procPool, Configuration* cfg, const Array<std::shared_ptr<Molecule>>& targetMolecules, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 };
 
 #endif

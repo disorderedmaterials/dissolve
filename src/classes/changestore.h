@@ -55,7 +55,7 @@ class ChangeStore
 	// Add atom to watch
 	void add(Atom* i);
 	// Add molecule to watch
-	void add(Molecule* mol);
+	void add(std::shared_ptr<Molecule> mol);
 	// Add cell to watch
 	void add(Cell* cell);
 

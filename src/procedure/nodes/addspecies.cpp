@@ -202,7 +202,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	for (int n=0; n<requestedPopulation; ++n)
 	{
 		// Add the Molecule
-		Molecule* mol = cfg->addMolecule(sp, coordSet);
+		std::shared_ptr<Molecule> mol = cfg->addMolecule(sp, coordSet);
 
 		// Move to next coordinate set if available
 		if (coordSet)

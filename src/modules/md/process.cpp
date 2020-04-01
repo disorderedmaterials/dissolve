@@ -99,12 +99,12 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)
-		Array<Molecule*> targetMolecules;
+		Array<std::shared_ptr<Molecule>> targetMolecules;
 		if (restrictToSpecies_.nItems() > 0)
 		{
 			for (int n=0; n<cfg->nMolecules(); ++n)
 			{
-				Molecule* mol = cfg->molecule(n);
+				std::shared_ptr<Molecule> mol = cfg->molecule(n);
 				if (restrictToSpecies_.contains(mol->species())) targetMolecules.add(mol);
 			}
 		}

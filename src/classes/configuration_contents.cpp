@@ -26,6 +26,7 @@
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "modules/import/import.h"
+#include <memory>
 
 // Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
@@ -48,8 +49,6 @@ void Configuration::initialiseArrays(int nMolecules)
 {
 	// Clear current contents
 	empty();
-
-	molecules_.initialise(nMolecules);
 }
 
 // Return specified used type
@@ -159,10 +158,12 @@ void Configuration::incrementContentsVersion()
 }
 
 // Add Molecule to Configuration based on the supplied Species
-Molecule* Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinates)
+std::shared_ptr<Molecule> Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinates)
 {
 	// Create the new Molecule object and set its Species pointer
-	Molecule* newMolecule = molecules_.add();
+	std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+	newMolecule->setArrayIndex(molecules_.size());
+	molecules_.push_back(newMolecule);
 	newMolecule->setSpecies(sp);
 
 	// Update the relevant SpeciesInfo population
@@ -179,23 +180,23 @@ Molecule* Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinat
 // Return number of Molecules in Configuration
 int Configuration::nMolecules() const
 {
-	return molecules_.nItems();
+	return molecules_.size();
 }
 
 // Return array of Molecules
-DynamicArray<Molecule>& Configuration::molecules()
+std::deque<std::shared_ptr<Molecule>>& Configuration::molecules()
 {
 	return molecules_;
 }
 
 // Return nth Molecule
-Molecule* Configuration::molecule(int n)
+std::shared_ptr<Molecule> Configuration::molecule(int n)
 {
 	return molecules_[n];
 }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r)
+Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
 {
 	// Create new Atom object and set its source pointer
 	Atom* newAtom = atoms_.add();
@@ -250,11 +251,8 @@ Atom* Configuration::atom(int n)
 void Configuration::scaleMoleculeCentres(double factor)
 {
 	Vec3<double> oldCog, newCog, newPos;
-	for (int n=0; n<molecules_.nItems(); ++n)
+	for (auto mol : molecules_)
 	{
-		// Get Molecule pointer
-		Molecule* mol = molecules_[n];
-
 		// First, work out the centre of geometry of the Molecule, and fold it into the Box
 		oldCog = box()->fold(mol->centreOfGeometry(box()));
 

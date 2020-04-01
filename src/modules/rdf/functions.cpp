@@ -307,15 +307,15 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	Atom* i, *j, *k;
 	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
-		Molecule* mol = cfg->molecule(m);
-		Atom** atoms = mol->atoms();
+		std::shared_ptr<Molecule> mol = cfg->molecule(m);
+		std::vector<Atom*> atoms = mol->atoms();
 
-		for (int ii=0; ii<mol->nAtoms()-1; ++ii)
+		for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
 		{
-			i = atoms[ii];
-			for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
+			i = *ii;
+			for (auto jj=std::next(ii); jj< atoms.end(); ++jj)
 			{
-				j = atoms[jj];
+				j = *jj;
 
 				if (i->cell()->mimRequired(j->cell())) distance = box->minimumDistance(i, j);
 				else distance = (i->r() - j->r()).magnitude();
@@ -472,8 +472,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 // 			tempgr.reset();
 //
 // 			// Add contributions from this SpeciesIntra only
-// 			const Molecule** molecules = cfg->molecules().array();
-// 			const Molecule* mol;
+// 			std::shared_ptr<const Molecule>* molecules = cfg->molecules().array();
+// 			std::shared_ptr<const Molecule> mol;
 // 			for (int n=0; n<molecules.nItems(); ++n, mol = molecules.at(n))
 // 			{
 // 				for (int n=bondPointers.nItems()-1; n>=0; --n)

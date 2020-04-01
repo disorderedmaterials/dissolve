@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_PROCEDURENODE_DYNAMICSITE_H
 #define DISSOLVE_PROCEDURENODE_DYNAMICSITE_H
 
+#include <memory>
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
@@ -83,7 +84,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
 
 	private:
 	// Generate dynamic sites from the specified Molecule
-	void generateSites(const Molecule* molecule); 
+	void generateSites(std::shared_ptr<const Molecule> molecule); 
 
 	public:
 	// Return Array of generated sites
