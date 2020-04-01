@@ -40,9 +40,10 @@ steps:
       $ErrorActionPreference = 'Stop'
       mkdir build
       cd build
-      ls $(Build.BinariesDirectory)\Qt\
-      ls $(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\
       $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\mingw73_64"
+      ls $env:Qt5_DIR
+      ls $env:Qt5_DIR\bin
+      $env:PATH += $env:Qt5_DIR\bin
       echo $env:Qt5_DIR
       $env:MINGW_DIR = $env:Qt5_DIR
       $env:INCLUDE += "$HOME\freetype-2.10.1;"
