@@ -28,6 +28,7 @@ stages:
               qtver: 513
           - bash: |
               cp build/dissolve tests/
+            displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "tests/"
@@ -40,7 +41,8 @@ stages:
         steps:
           - template: templates/build-linux-parallel.yml
           - bash: |
-              cp build/dissolve-mpi tests/
+              cp build-parallel/dissolve-mpi tests/
+            displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "tests/"
