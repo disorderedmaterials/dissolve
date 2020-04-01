@@ -1,0 +1,51 @@
+parameters:
+  - name: qtver
+    default: 5.13.2
+
+steps:
+  - checkout: self
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+  - script: |
+      choco install -y ninja winflexbison
+    displayName: 'Install Prerequisites'
+  - script: |
+      choco install mingw --version=7.3.0 --allow-downgrade
+    displayName: 'Downgrade MinGW'
+  - script: |
+      cd $(Build.SourcesDirectory)
+      python -m pip install aqtinstall
+      python -m aqt install --outputdir $(Build.BinariesDirectory)\\Qt ${{ parameters.qtver }} windows desktop win64_mingw73 -m qtcore qtgui qtwidgets qtprintsupport
+    displayName: 'Install Qt'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd $HOME
+      git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
+      mkdir freetype-build
+      cd freetype-build
+      cmake -G "Ninja" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
+      ninja
+    displayName: 'Build FreeType'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd $HOME
+      git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
+      mkdir ftgl-build
+      cd ftgl-build
+      $env:INCLUDE += "$HOME\freetype-2.10.1;"
+      $env:LIB += "$HOME\freetype-build;"
+      cmake -G "Ninja" ..\ftgl-latest
+      ninja
+    displayName: 'Build FTGL'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      mkdir build
+      cd build
+      $env:INCLUDE += "$HOME\freetype-2.10.1;"
+      $env:LIB += "$HOME\freetype-build;"
+      $env:INCLUDE += "$HOME\ftgl-latest\src;"
+      $env:LIB += "$HOME\ftgl-build\src;"
+      cmake -G "Ninja" -DGUI:bool=true ../
+      ninja
+    displayName: 'Build'

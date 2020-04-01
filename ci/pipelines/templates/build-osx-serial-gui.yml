@@ -1,0 +1,24 @@
+steps:
+  - checkout: self
+  - bash: |
+      set -ex
+      # -- General
+      brew update
+      brew install bison ftgl ninja
+      # -- Qt
+      brew install qt5
+    displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
+      QTVER=`ls -d /usr/local/Cellar/qt/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+      export Qt5_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5
+      export Qt5Core_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Core
+      export Qt5Widgets_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Widgets
+      export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
+      export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
+      Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+      mkdir build
+      cd build
+      cmake -G "Ninja" -DGUI:bool=true ../
+      ninja
+    displayName: 'Build'

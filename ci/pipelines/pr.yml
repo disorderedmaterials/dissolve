@@ -17,7 +17,7 @@ stages:
   - stage: 'build'
     displayName: 'Build'
     jobs:
-      - job: 'linux_serial'
+      - job: 'linux_serialgui'
         displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
         pool:
           vmImage: 'ubuntu-18.04' 
@@ -33,7 +33,31 @@ stages:
               PathtoPublish: "tests/"
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
-
+      - job: 'linux_parallel'
+        displayName: 'Build Linux (Parallel, ubuntu-18.04)'
+        pool:
+          vmImage: 'ubuntu-18.04' 
+        steps:
+          - template: templates/build-linux-parallel.yml
+          - bash: |
+              cp build/dissolve-mpi tests/
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "tests/"
+              ArtifactName: 'linux-tests-parallel'
+            displayName: 'Publish Parallel Test Artifacts'
+      - job: 'osx_serialgui'
+        displayName: 'Build OSX (Serial/GUI, macos-latest)'
+        pool:
+          vmImage: 'macos-latest' 
+        steps:
+          - template: templates/build-osx-serial-gui.yml
+      - job: 'windows_serialgui'
+        displayName: 'Build Windows (Serial/GUI, windows-latest)'
+        pool:
+          vmImage: 'windows-latest' 
+        steps:
+          - template: templates/build-windows-serial-gui.yml
   # Run System Tests
   - stage: 'system_tests_serial'
     displayName: 'System Tests (Serial)'
@@ -41,3 +65,10 @@ stages:
       - template: templates/system-tests.yml
         parameters:
           test: 'atomshake'
+  - stage: 'system_tests_parallel'
+    displayName: 'System Tests (Parallel)'
+    jobs:
+      - template: templates/system-tests.yml
+        parameters:
+          test: 'atomshake'
+          parallel: true
