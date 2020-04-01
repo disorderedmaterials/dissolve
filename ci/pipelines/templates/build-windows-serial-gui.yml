@@ -40,6 +40,8 @@ steps:
       $ErrorActionPreference = 'Stop'
       mkdir build
       cd build
+      ls $(Build.BinariesDirectory)\Qt\
+      ls $(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\
       $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\mingw73_64"
       echo $env:Qt5_DIR
       $env:MINGW_DIR = $env:Qt5_DIR
