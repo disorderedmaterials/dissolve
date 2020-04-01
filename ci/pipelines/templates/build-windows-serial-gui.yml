@@ -33,8 +33,6 @@ steps:
       git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
       mkdir ftgl-build
       cd ftgl-build
-      $env:INCLUDE += "$HOME\freetype-2.10.1;"
-      $env:LIB += "$HOME\freetype-build;"
       cmake -G "Ninja" ..\ftgl-latest
       ninja
     displayName: 'Build FTGL'
@@ -42,6 +40,9 @@ steps:
       $ErrorActionPreference = 'Stop'
       mkdir build
       cd build
+      $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\mingw73_64"
+      echo $env:Qt5_DIR
+      $env:MINGW_DIR = $env:Qt5_DIR
       $env:INCLUDE += "$HOME\freetype-2.10.1;"
       $env:LIB += "$HOME\freetype-build;"
       $env:INCLUDE += "$HOME\ftgl-latest\src;"
