@@ -45,3 +45,8 @@ stages:
         steps:
           - template: templates/build-windows-serial-gui.yml
           - template: templates/package-windows-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'windows-packages'
+            displayName: 'Publish Windows Packages'
