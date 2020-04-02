@@ -3,6 +3,9 @@ parameters:
     default: 5.13.2
 
 steps:
+  - script: |
+      choco install -y zip innoextract
+    displayName: 'Install Prerequisites'
   - powershell: |
       $ErrorActionPreference = 'Stop'
       # Set paths
