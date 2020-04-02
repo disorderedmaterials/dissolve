@@ -23,49 +23,19 @@
 #define DISSOLVE_DATA_ELEMENTCOLOURS_H
 
 #include <array>
-#include <memory>
 #include <vector>
 #include "data/elements.h"
-#include "templates/array.h"
-
-// Isotopic Neutron Scattering Data
-class ElementColour : public ElementReference
-{
-	public:
-	// Constructor
-	ElementColour(int z = 0, float r = 0.0, float g = 0.0, float b = 0.0, float a = 1.0);
-	// Assignment Operator
-	ElementColour& operator=(const ElementColour& source);
-
-
-	/*
-	 * Element Colour Data
-	 */
-	private:
-	// Colour
-	float colour_[4];
-
-	public:
-	// Return colour
-	const float* colour() const;
-};
 
 // Element Colours
-class ElementColours : public Elements
+class ElementColours
 {
 	private:
-	// ElementColour data, grouped by element
-	static std::vector< std::vector<ElementColour*> > coloursByElementPrivate_;
-
-	private:
-	// Return colour data for specified Element
-	static std::vector<ElementColour*>& coloursByElement(int Z);
+	static const std::vector<std::array<float, 4>> colours_;
 
 	public:
-	// Register specified ElementColour to given Element
-	static void registerElementColour(ElementColour* ec, int Z);
 	// Return colour for specified Z
 	static const float* colour(int Z);
+
 	// Return colour for specified Element
 	static const float* colour(Element* el);
 };
