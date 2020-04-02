@@ -21,18 +21,9 @@
 
 #include "data/elementcolours.h"
 
-const float* ElementColours::colour(int Z)
-{
-	return colours_[Z].data();
-}
+namespace ElementColours {
 
-// Return colour for specified Element
-const float* ElementColours::colour(Element* el)
-{
-	return colours_[el->Z()].data();
-}
-
-const std::vector<std::array<float, 4>> ElementColours::colours_ = {
+const std::vector<std::array<float, 4>> colours_ = {
 	//R	G	B	A
 	{0.5,	0.5,	0.5,	1.0 }, // XX
 	{0.87,	0.87,	0.87,	1.0 }, // H
@@ -154,3 +145,16 @@ const std::vector<std::array<float, 4>> ElementColours::colours_ = {
 	{1.0,	1.0,	1.0,	1.0 }, // TS
 	{1.0,	1.0,	1.0,	1.0 }  // OG
 };
+
+const float* colour(int Z)
+{
+	return colours_[Z].data();
+}
+
+// Return colour for specified Element
+const float* colour(Element* el)
+{
+	return colours_[el->Z()].data();
+}
+
+}

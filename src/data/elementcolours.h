@@ -27,17 +27,14 @@
 #include "data/elements.h"
 
 // Element Colours
-class ElementColours
-{
-	private:
-	static const std::vector<std::array<float, 4>> colours_;
+namespace ElementColours {
 
-	public:
-	// Return colour for specified Z
-	static const float* colour(int Z);
+// Return colour for specified Z
+const float* colour(int Z);
 
-	// Return colour for specified Element
-	static const float* colour(Element* el);
-};
+// Return colour for specified Element
+const float* colour(Element* el);
+
+}
 
 #endif
