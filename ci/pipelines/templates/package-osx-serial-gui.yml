@@ -1,4 +1,7 @@
 steps:
+  - script: |
+      pip install dmgbuild
+    displayName: 'Install Prerequisites'
   - bash: |
       set -ex
       wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-dmg.sh -O build-dmg.sh
