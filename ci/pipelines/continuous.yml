@@ -12,9 +12,9 @@ stages:
     displayName: 'Build and Package'
     jobs:
       - job: 'linux_serialgui'
-        displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
         pool:
-          vmImage: 'ubuntu-18.04' 
+          vmImage: 'ubuntu-16.04'
         steps:
           - template: templates/build-linux-serial-gui.yml
             parameters:
