@@ -34,7 +34,7 @@ steps:
   - powershell: |
       $ErrorActionPreference = 'Stop'
       cd $(Build.BinariesDirectory)
-      git clone ${{ ftglrepo }} ftgl-latest
+      git clone ${{ parameters.ftglrepo }} ftgl-latest
       mkdir ftgl-build
       cd ftgl-build
       cmake -G "Ninja" ..\ftgl-latest
