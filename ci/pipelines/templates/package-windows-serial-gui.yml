@@ -3,7 +3,7 @@ parameters:
     default: 5.13.2
 
 steps:
-  - bash: |
+  - powershell: |
       $ErrorActionPreference = 'Stop'
       # Set paths
       $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\mingw73_64"
