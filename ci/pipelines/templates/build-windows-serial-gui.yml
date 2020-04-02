@@ -1,6 +1,10 @@
 parameters:
   - name: qtver
     default: 5.13.2
+  - name: ftrepo
+    default: git://git.sv.nongnu.org/freetype/freetype2.git
+  - name: ftglrepo
+    default: https://github.com/frankheckenbach/ftgl.git
 
 steps:
   - checkout: self
@@ -20,8 +24,8 @@ steps:
     displayName: 'Install Qt'
   - powershell: |
       $ErrorActionPreference = 'Stop'
-      cd $HOME
-      git clone 'git://git.sv.nongnu.org/freetype/freetype2.git' freetype-latest
+      cd $(Build.BinariesDirectory)
+      git clone ${{ parameters.ftrepo }} freetype-latest
       mkdir freetype-build
       cd freetype-build
       cmake -G "Ninja" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
@@ -29,8 +33,8 @@ steps:
     displayName: 'Build FreeType'
   - powershell: |
       $ErrorActionPreference = 'Stop'
-      cd $HOME
-      git clone 'https://github.com/frankheckenbach/ftgl.git' ftgl-latest
+      cd $(Build.BinariesDirectory)
+      git clone ${{ ftglrepo }} ftgl-latest
       mkdir ftgl-build
       cd ftgl-build
       cmake -G "Ninja" ..\ftgl-latest
@@ -38,19 +42,16 @@ steps:
     displayName: 'Build FTGL'
   - powershell: |
       $ErrorActionPreference = 'Stop'
-      mkdir build
-      cd build
       $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\mingw73_64"
-      ls $env:Qt5_DIR
-      ls $env:Qt5_DIR\bin
-      $env:PATH += ";$env:Qt5_DIR"
-      $env:PATH += "\bin"
+      $env:PATH += ";$env:Qt5_DIR" + "\bin"
       echo $env:Qt5_DIR
       $env:MINGW_DIR = $env:Qt5_DIR
-      $env:INCLUDE += "$HOME\freetype-2.10.1;"
-      $env:LIB += "$HOME\freetype-build;"
-      $env:INCLUDE += "$HOME\ftgl-latest\src;"
-      $env:LIB += "$HOME\ftgl-build\src;"
+      $env:INCLUDE += "$(Build.BinariesDirectory)\freetype-latest;"
+      $env:LIB += "$(Build.BinariesDirectory)\freetype-build;"
+      $env:INCLUDE += "$(Build.BinariesDirectory)\ftgl-latest\src;"
+      $env:LIB += "$(Build.BinariesDirectory)\ftgl-build\src;"
+      mkdir build
+      cd build
       cmake -G "Ninja" -DGUI:bool=true ../
       ninja
     displayName: 'Build'
