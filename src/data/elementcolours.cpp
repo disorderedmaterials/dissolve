@@ -23,7 +23,16 @@
 
 namespace ElementColours {
 
-const std::vector<std::array<float, 4>> colours_ = {
+struct color {
+	float red;
+	float green;
+	float blue;
+	float alpha;
+};
+
+
+
+constexpr color const colours_[] = {
 	//R	G	B	A
 	{0.5,	0.5,	0.5,	1.0 }, // XX
 	{0.87,	0.87,	0.87,	1.0 }, // H
@@ -148,13 +157,13 @@ const std::vector<std::array<float, 4>> colours_ = {
 
 const float* colour(int Z)
 {
-	return colours_[Z].data();
+	return reinterpret_cast<const float*>(&colours_[Z]);
 }
 
 // Return colour for specified Element
 const float* colour(Element* el)
 {
-	return colours_[el->Z()].data();
+	return reinterpret_cast<const float*>(&colours_[el->Z()]);
 }
 
 }

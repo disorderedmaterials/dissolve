@@ -22,8 +22,6 @@
 #ifndef DISSOLVE_DATA_ELEMENTCOLOURS_H
 #define DISSOLVE_DATA_ELEMENTCOLOURS_H
 
-#include <array>
-#include <vector>
 #include "data/elements.h"
 
 // Element Colours
