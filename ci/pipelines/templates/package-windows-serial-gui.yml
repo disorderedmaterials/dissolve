@@ -1,0 +1,31 @@
+parameters:
+  - name: qtver
+    default: 5.13.2
+
+steps:
+  - bash: |
+      $ErrorActionPreference = 'Stop'
+      # Set paths
+      $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\mingw73_64"
+      $env:PATH += ";$env:Qt5_DIR" + "\bin"
+      echo $env:Qt5_DIR
+      $env:MINGW_DIR = $env:Qt5_DIR
+      $env:FREETYPE_DIR += "$(Build.BinariesDirectory)\freetype-build;"
+      $env:FTGL_DIR += "$(Build.BinariesDirectory)\ftgl-build\src;"
+      $env:DISSOLVE_DIR = $(Get-Location).path + "\build"
+      # Run Inno Setup Compiler
+      iscc.exe /O.\ .\ci\windows\dissolve-gui.iss
+      $exe = Get-ChildItem  .\*.exe
+      echo "Executable installer is "$exe.Name
+      # Create Zip from Exe
+      innoextract.exe $exe.Name -d $exe.BaseName
+      mv "$($exe.BaseName)\app\bin\*" $exe.BaseName
+      mv "$($exe.BaseName)\app" ./
+      #rm -Force "$($exe.BaseName)\app"
+      $zip = $exe.BaseName + ".zip"
+      zip -r $zip $exe.BaseName
+      # Collect artifacts
+      mkdir packages
+      mv $zip packages
+      mv $exe.Name packages
+    displayName: 'Create Packages'

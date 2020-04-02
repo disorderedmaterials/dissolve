@@ -1,0 +1,46 @@
+trigger: develop
+
+pr: none
+
+stages:
+  # Perform Code Quality Checks
+  # - template: templates/code_quality_checks.yml
+
+  # Build Executables
+  - stage: 'build'
+    displayName: 'Build and Package'
+    jobs:
+      - job: 'linux_serialgui'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
+        pool:
+          vmImage: 'ubuntu-18.04' 
+        steps:
+          - template: templates/build-linux-serial-gui.yml
+            parameters:
+              ppa: 'beineri/opt-qt-5.12.0-xenial'
+              qtver: 512
+          - template: templates/package-linux-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'linux-packages'
+            displayName: 'Publish Linux Packages'
+      - job: 'osx_serialgui'
+        displayName: 'Build OSX (Serial/GUI, macos-latest)'
+        pool:
+          vmImage: 'macos-latest' 
+        steps:
+          - template: templates/build-osx-serial-gui.yml
+          - template: templates/package-osx-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'osx-packages'
+            displayName: 'Publish OSX Packages'
+      - job: 'windows_serialgui'
+        displayName: 'Build Windows (Serial/GUI, windows-latest)'
+        pool:
+          vmImage: 'windows-latest' 
+        steps:
+          - template: templates/build-windows-serial-gui.yml
+          - template: templates/package-windows-serial-gui.yml
