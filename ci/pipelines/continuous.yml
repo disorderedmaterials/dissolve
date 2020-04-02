@@ -1,4 +1,5 @@
-trigger: develop
+trigger:
+  - develop
 
 pr: none
 
