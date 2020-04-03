@@ -141,10 +141,10 @@ stages:
               # -- Generated names are OK
               cd ../
             displayName: 'Rename Artifacts'
-#          - bash: |
-#              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-#              ./ci/scripts/update-release -r ${{ github.repository }} -t ${VERSION} -n "${VERSION}" -f Recent.md linux-artifacts/*AppImage windows-artifacts/*.exe windows-artifacts/*.zip osx-artifacts/*dmg examples/*zip examples/*.tar.gz
-#            displayName: 'Create Versioned Release (GitHub)'
+          - bash: |
+              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md linux-artifacts/*AppImage windows-artifacts/*.exe windows-artifacts/*.zip osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+            displayName: 'Create Versioned Release (GitHub)'
 #          - bash: |
 #              # TODO
 #            displayName: 'Build and Deploy Web'
