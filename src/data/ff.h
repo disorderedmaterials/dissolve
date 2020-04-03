@@ -32,6 +32,8 @@
 #include "base/enumoptions.h"
 #include "templates/reflist.h"
 
+template<class T>using optional = std::tuple<T, bool>;
+
 // Forward Declarations
 class CoreData;
 class ForcefieldAngleTerm;
@@ -134,7 +136,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
-	virtual std::tuple<const ForcefieldBondTerm&, bool> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	virtual optional<const ForcefieldBondTerm&> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
 	virtual ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)

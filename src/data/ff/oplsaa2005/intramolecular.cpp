@@ -32,7 +32,7 @@
  */
 
 // Return bond term for the supplied atom type pair (if it exists)
-std::tuple<const ForcefieldBondTerm&, bool> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+optional<const ForcefieldBondTerm&> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
 	static std::vector<ForcefieldBondTerm> bondTerms =
 	{

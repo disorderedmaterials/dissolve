@@ -59,7 +59,7 @@ class OPLSAA2005BaseForcefield : public Forcefield
 	 */
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
-	std::tuple<const ForcefieldBondTerm&, bool> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	optional<const ForcefieldBondTerm&> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
 	ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)

@@ -205,7 +205,7 @@ void Forcefield::addImproperTerm(const char* typeI, const char* typeJ, const cha
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
-std::tuple<const ForcefieldBondTerm&, bool> Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+optional<const ForcefieldBondTerm&> Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
 	auto it = std::find_if(bondTerms_.begin(), bondTerms_.end(),
 		     [&](const ForcefieldBondTerm& term){
