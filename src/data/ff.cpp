@@ -19,6 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <functional>
 #include "data/ff.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
@@ -175,9 +177,7 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 // Add bond term
 void Forcefield::addBondTerm(const char* typeI, const char* typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3)
 {
-	ForcefieldBondTerm* term = new ForcefieldBondTerm(typeI, typeJ, form, data0, data1, data2, data3);
-
-	bondTerms_.own(term);
+	bondTerms_.emplace_back(typeI, typeJ, form, data0, data1, data2, data3);
 }
 
 // Add angle term
@@ -205,12 +205,14 @@ void Forcefield::addImproperTerm(const char* typeI, const char* typeJ, const cha
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
-ForcefieldBondTerm* Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+std::tuple<const ForcefieldBondTerm&, bool> Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	ListIterator<ForcefieldBondTerm> termIterator(bondTerms_);
-	while (ForcefieldBondTerm* term = termIterator.iterate()) if (term->matches(i, j)) return term;
-
-	return NULL;
+	auto it = std::find_if(bondTerms_.begin(), bondTerms_.end(),
+		     [&](const ForcefieldBondTerm& term){
+		       return term.matches(i, j);
+		     });
+	return std::make_tuple(std::ref(*it),
+			       it == bondTerms_.end());
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
@@ -340,11 +342,13 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
 		if (!typeJ) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
 
-		ForcefieldBondTerm* term = bondTerm(typeI, typeJ);
-		if (!term) return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", i->userIndex(), j->userIndex(), typeI->equivalentName(), typeJ->equivalentName());
-
-		bond->setForm(term->form());
-		bond->setParameters(term->parameters());
+		auto opt_term = bondTerm(typeI, typeJ);
+		if (std::get<1>(opt_term)) {
+			return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", i->userIndex(), j->userIndex(), typeI->equivalentName(), typeJ->equivalentName());
+		}
+		const ForcefieldBondTerm& term = std::get<0>(opt_term);
+		bond->setForm(term.form());
+		bond->setParameters(term.parameters());
 	}
 
 	// Generate angle parameters

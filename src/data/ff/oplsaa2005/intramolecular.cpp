@@ -19,6 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <functional>
+#include <vector>
 #include "data/ff/oplsaa2005/base.h"
 #include "data/ffangleterm.h"
 #include "data/ffbondterm.h"
@@ -29,9 +32,9 @@
  */
 
 // Return bond term for the supplied atom type pair (if it exists)
-ForcefieldBondTerm* OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+std::tuple<const ForcefieldBondTerm&, bool> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	static ForcefieldBondTerm bondTerms[] =
+	static std::vector<ForcefieldBondTerm> bondTerms =
 	{
 		//	i	j	Type (Harmonic)			k	eq
 		{ "OW",	"HW",	SpeciesBond::HarmonicForm,	5020.8,		0.9572 },
@@ -390,10 +393,12 @@ ForcefieldBondTerm* OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType*
 		{ "Zn",	"OW",	SpeciesBond::HarmonicForm,	334.72,		2.05 }
 	};
 
-	static const int nBonds = sizeof(bondTerms)/sizeof(ForcefieldBondTerm);
-	for (int n=0; n<nBonds; ++n) if (bondTerms[n].matches(i, j)) return &bondTerms[n];
-
-	return NULL;
+	auto it = std::find_if(bondTerms.begin(), bondTerms.end(),
+			       [&](ForcefieldBondTerm& term){
+				 return term.matches(i, j);
+			       });
+	return std::make_tuple(std::ref(*it),
+			       it == bondTerms.end());
 }
 
 // Return angle term for the supplied atom type trio (if it exists)

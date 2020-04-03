@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_FORCEFIELD_H
 #define DISSOLVE_FORCEFIELD_H
 
+#include <tuple>
+#include <vector>
 #include "data/elements.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
@@ -112,7 +114,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	private:
 	// Bond terms of the Forcefield
-	List<ForcefieldBondTerm> bondTerms_;
+	std::vector<ForcefieldBondTerm> bondTerms_;
 	// Angle terms of the Forcefield
 	List<ForcefieldAngleTerm> angleTerms_;
 	// Torsion terms of the Forcefield
@@ -132,7 +134,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
-	virtual ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	virtual std::tuple<const ForcefieldBondTerm&, bool> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
 	virtual ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)
