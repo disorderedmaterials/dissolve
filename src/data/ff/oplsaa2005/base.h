@@ -61,11 +61,11 @@ class OPLSAA2005BaseForcefield : public Forcefield
 	// Return bond term for the supplied atom type pair (if it exists)
 	optional<const ForcefieldBondTerm&> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
-	ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	optional<const ForcefieldAngleTerm&> angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)
-	ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	optional<const ForcefieldTorsionTerm&> torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 	// Return improper term for the supplied atom type quartet (if it exists)
-	ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	optional<const ForcefieldImproperTerm&> improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 };
 
 #endif

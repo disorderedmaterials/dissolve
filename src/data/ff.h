@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_FORCEFIELD_H
 #define DISSOLVE_FORCEFIELD_H
 
+#include <algorithm>
 #include <tuple>
 #include <vector>
 #include "data/elements.h"
@@ -118,11 +119,11 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Bond terms of the Forcefield
 	std::vector<ForcefieldBondTerm> bondTerms_;
 	// Angle terms of the Forcefield
-	List<ForcefieldAngleTerm> angleTerms_;
+	std::vector<ForcefieldAngleTerm> angleTerms_;
 	// Torsion terms of the Forcefield
-	List<ForcefieldTorsionTerm> torsionTerms_;
+	std::vector<ForcefieldTorsionTerm> torsionTerms_;
 	// Improper terms of the Forcefield
-	List<ForcefieldImproperTerm> improperTerms_;
+	std::vector<ForcefieldImproperTerm> improperTerms_;
 
 	protected:
 	// Add bond term
@@ -133,16 +134,18 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	void addTorsionTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	// Add improper term
 	void addImproperTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	// Match any kind of term
+	template<class T, class Filter> static optional<const T&> termMatch_(std::vector<T>, Filter);
 
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
 	virtual optional<const ForcefieldBondTerm&> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
-	virtual ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	virtual optional<const ForcefieldAngleTerm&> angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)
-	virtual ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	virtual optional<const ForcefieldTorsionTerm&> torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 	// Return improper term for the supplied atom type quartet (if it exists)
-	virtual ForcefieldImproperTerm* improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	virtual optional<const ForcefieldImproperTerm&> improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 
 
 	/*
@@ -192,5 +195,11 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Guess and return oxidation state for the specified SpeciesAtom
 	int guessOxidationState(const SpeciesAtom* i) const;
 };
+
+template<class T, class Filter> optional<const T&> Forcefield::termMatch_(std::vector<T> container, Filter filter)
+{
+	auto it = std::find_if(container.begin(), container.end(), filter);
+	return std::make_tuple(*it, it == container.end());
+}
 
 #endif

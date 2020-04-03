@@ -19,8 +19,6 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
-#include <functional>
 #include "data/ff.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
@@ -183,63 +181,55 @@ void Forcefield::addBondTerm(const char* typeI, const char* typeJ, SpeciesBond::
 // Add angle term
 void Forcefield::addAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
 {
-	ForcefieldAngleTerm* term = new ForcefieldAngleTerm(typeI, typeJ, typeK, form, data0, data1, data2, data3);
-
-	angleTerms_.own(term);
+	angleTerms_.emplace_back(typeI, typeJ, typeK, form, data0, data1, data2, data3);
 }
 
 // Add torsion term
 void Forcefield::addTorsionTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2, double data3)
 {
-	ForcefieldTorsionTerm* term = new ForcefieldTorsionTerm(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
-
-	torsionTerms_.own(term);
+	torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0, double data1, double data2, double data3)
 {
-	ForcefieldImproperTerm* term = new ForcefieldImproperTerm(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
-
-	improperTerms_.own(term);
+	improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
 optional<const ForcefieldBondTerm&> Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	auto it = std::find_if(bondTerms_.begin(), bondTerms_.end(),
-		     [&](const ForcefieldBondTerm& term){
-		       return term.matches(i, j);
-		     });
-	return std::make_tuple(std::ref(*it),
-			       it == bondTerms_.end());
+	return termMatch_(bondTerms_,
+			  [&](const ForcefieldBondTerm& term){
+			    return term.matches(i, j);
+			  });
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-ForcefieldAngleTerm* Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
+optional<const ForcefieldAngleTerm&> Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
-	ListIterator<ForcefieldAngleTerm> termIterator(angleTerms_);
-	while (ForcefieldAngleTerm* term = termIterator.iterate()) if (term->matches(i, j, k)) return term;
-
-	return NULL;
+	return termMatch_(angleTerms_,
+			  [&](const ForcefieldAngleTerm& term){
+			    return term.matches(i, j, k);
+			  });
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+optional<const ForcefieldTorsionTerm&> Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	ListIterator<ForcefieldTorsionTerm> termIterator(torsionTerms_);
-	while (ForcefieldTorsionTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
-
-	return NULL;
+	return termMatch_(torsionTerms_,
+			  [&](const ForcefieldTorsionTerm& term){
+			    return term.matches(i, j, k, l);
+			  });
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-ForcefieldImproperTerm* Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+optional<const ForcefieldImproperTerm&> Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	ListIterator<ForcefieldImproperTerm> termIterator(improperTerms_);
-	while (ForcefieldImproperTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
-
-	return NULL;
+	return termMatch_(improperTerms_,
+			  [&](const ForcefieldImproperTerm& term){
+			    return term.matches(i, j, k, l);
+			  });
 }
 
 /*
@@ -368,11 +358,12 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
 		if (!typeK) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
 
-		ForcefieldAngleTerm* term = angleTerm(typeI, typeJ, typeK);
-		if (!term) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName());
+		auto opt_term = angleTerm(typeI, typeJ, typeK);
+		if (std::get<1>(opt_term)) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName());
 
-		angle->setForm(term->form());
-		angle->setParameters(term->parameters());
+		const auto& term = std::get<0>(opt_term);
+		angle->setForm(term.form());
+		angle->setParameters(term.parameters());
 	}
 
 	// Generate torsion parameters
@@ -395,15 +386,16 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		ForcefieldAtomType* typeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
 		if (!typeL) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
 
-		ForcefieldTorsionTerm* term = torsionTerm(typeI, typeJ, typeK, typeL);
-		if (!term) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
+		auto opt_term = torsionTerm(typeI, typeJ, typeK, typeL);
+		if (std::get<1>(opt_term)) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
 
-		torsion->setForm(term->form());
-		torsion->setParameters(term->parameters());
+		const auto& term = std::get<0>(opt_term);
+		torsion->setForm(term.form());
+		torsion->setParameters(term.parameters());
 	}
 
 	// Generate improper terms
-	if ((flags&Forcefield::GenerateImpropersFlag) && (improperTerms_.nItems() > 0))
+	if ((flags&Forcefield::GenerateImpropersFlag) && (improperTerms_.size() > 0))
 	{
 		// Loop over potential improper sites in the Species and see if any match terms in the forcefield
 		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
@@ -439,17 +431,18 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 						if (!typeL) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
 						if (selectionOnly && (!l->isSelected())) continue;
 
-						ForcefieldImproperTerm* term = improperTerm(typeI, typeJ, typeK, typeL);
-						if (term)
+						auto opt_term = improperTerm(typeI, typeJ, typeK, typeL);
+						if (!std::get<1>(opt_term))
 						{
+							const auto& term = std::get<0>(opt_term);
 							// Check to see if the Species already has an improper definition - if not create one
 							SpeciesImproper* improper = sp->improper(i, j, k, l);
 							if (!improper) improper = sp->addImproper(i, j, k, l);
 
 							Messenger::print("Added improper between atoms %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
 
-							improper->setForm(term->form());
-							improper->setParameters(term->parameters());
+							improper->setForm(term.form());
+							improper->setParameters(term.parameters());
 						}
 					}
 				}
