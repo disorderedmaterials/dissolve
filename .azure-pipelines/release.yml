@@ -144,6 +144,8 @@ stages:
           - bash: |
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
               ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md linux-artifacts/*AppImage windows-artifacts/*.exe windows-artifacts/*.zip osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+            env:
+              GITHUB_TOKEN: $(GITHUB_TOKEN)
             displayName: 'Create Versioned Release (GitHub)'
 #          - bash: |
 #              # TODO
