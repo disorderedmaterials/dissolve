@@ -31,7 +31,6 @@
 class Dissolve;
 class ModuleGroup;
 class PartialSet;
-class Weights;
 
 // RDF Module
 class RDFModule : public Module

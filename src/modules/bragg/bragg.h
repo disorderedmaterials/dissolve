@@ -29,7 +29,6 @@
 
 // Forward Declarations
 class PartialSet;
-class Weights;
 
 // Bragg Module
 class BraggModule : public Module

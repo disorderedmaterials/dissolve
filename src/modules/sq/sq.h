@@ -30,7 +30,6 @@
 
 // Forward Declarations
 class PartialSet;
-class Weights;
 
 // SQ Module
 class SQModule : public Module
