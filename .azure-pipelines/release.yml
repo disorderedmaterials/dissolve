@@ -143,9 +143,9 @@ stages:
             displayName: 'Rename Artifacts'
           - bash: |
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-              ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md linux-artifacts/*AppImage windows-artifacts/*.exe windows-artifacts/*.zip osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+              ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg $(System.ArtifactsDirectory)/examples/*zip $(System.ArtifactsDirectory)/examples/*.tar.gz
             env:
-              GITHUB_TOKEN: $(GITHUB_TOKEN)
+              GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Create Versioned Release (GitHub)'
 #          - bash: |
 #              # TODO
