@@ -21,9 +21,9 @@
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
+#include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/scatteringmatrix.h"
-#include "classes/weights.h"
 #include "data/isotopes.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
@@ -304,10 +304,11 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			if (!found)
 				return Messenger::error("Could not locate ReferenceData for target '%s'.\n",
 							module->uniqueName());
-			Weights &weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights",
-										module->uniqueName(), Weights(), &found);
+			NeutronWeights &weights = GenericListHelper<NeutronWeights>::retrieve(
+				dissolve.processingModuleData(), "FullWeights", module->uniqueName(), NeutronWeights(), &found);
 			if (!found)
-				return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
+				return Messenger::error("Could not locate NeutronWeights for target '%s'.\n",
+							module->uniqueName());
 			const PartialSet &unweightedSQ = GenericListHelper<PartialSet>::value(
 				dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
 			if (!found)

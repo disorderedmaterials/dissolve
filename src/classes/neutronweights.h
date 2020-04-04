@@ -1,6 +1,6 @@
 /*
-	*** Weights Container
-	*** src/classes/weights.h
+	*** Neutron Weights Container
+	*** src/classes/neutronweights.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WEIGHTS_H
-#define DISSOLVE_WEIGHTS_H
+#ifndef DISSOLVE_NEUTRONWEIGHTS_H
+#define DISSOLVE_NEUTRONWEIGHTS_H
 
 #include "classes/atomtypelist.h"
 #include "classes/isotopologues.h"
@@ -31,13 +31,13 @@
 // Forward Declarations
 /* none */
 
-// Weights Container
-class Weights : public GenericItemBase
+// Neutron Weights Container
+class NeutronWeights : public GenericItemBase
 {
 	public:
-	Weights();
-	Weights(const Weights &source);
-	void operator=(const Weights &source);
+	NeutronWeights();
+	NeutronWeights(const NeutronWeights &source);
+	void operator=(const NeutronWeights &source);
 
 	/*
 	 * Construction

@@ -106,14 +106,14 @@ class NeutronSQModule : public Module
 	Data1DStore testData_;
 
 	public:
-	// Calculate weighted g(r) from supplied unweighted g(r) and Weights
-	bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights,
+	// Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
+	bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
 				 NeutronSQModule::NormalisationType normalisation);
-	// Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-	bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights,
+	// Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
+	bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
 				 NeutronSQModule::NormalisationType normalisation);
-	// Calculate Weights matrix summed over target Configurations
-	bool calculateSummedWeights(Weights &summedWeights) const;
+	// Calculate neutron weights summed over target Configurations
+	bool calculateSummedWeights(NeutronWeights &summedWeights) const;
 
 	/*
 	 * GUI Widget

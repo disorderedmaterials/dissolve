@@ -23,9 +23,9 @@
 #include "classes/atomtype.h"
 #include "classes/braggreflection.h"
 #include "classes/kvector.h"
+#include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/species.h"
-#include "classes/weights.h"
 #include "genericitems/item.h"
 #include "genericitems/items.h"
 #include "math/histogram1d.h"
@@ -145,7 +145,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<Histogram3D>(Histogram3D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Isotopologues>(Isotopologues::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<NeutronWeights>(NeutronWeights::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
 }

@@ -21,9 +21,9 @@
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
+#include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/scatteringmatrix.h"
-#include "classes/weights.h"
 #include "data/isotopes.h"
 #include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
@@ -533,17 +533,18 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		{
 			bool found;
 
-			// Retrieve the reference data, associated Weights matrix and source unweighted and weighted partials
+			// Retrieve the reference data, associated neutron weights and source unweighted and weighted partials
 			const Data1D &referenceData = GenericListHelper<Data1D>::value(
 				dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
 			if (!found)
 				return Messenger::error("Could not locate ReferenceData for target '%s'.\n",
 							module->uniqueName());
 
-			Weights &weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights",
-										module->uniqueName(), Weights(), &found);
+			NeutronWeights &weights = GenericListHelper<NeutronWeights>::retrieve(
+				dissolve.processingModuleData(), "FullWeights", module->uniqueName(), NeutronWeights(), &found);
 			if (!found)
-				return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
+				return Messenger::error("Could not locate NeutronWeights for target '%s'.\n",
+							module->uniqueName());
 
 			const PartialSet &unweightedSQ = GenericListHelper<PartialSet>::value(
 				dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);

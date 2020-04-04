@@ -22,8 +22,8 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/neutronweights.h"
 #include "classes/species.h"
-#include "classes/weights.h"
 #include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
@@ -75,7 +75,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 		if (normType != NeutronSQModule::NoNormalisation)
 		{
 			// We need the summed Weights in order to do the normalisation
-			Weights summedWeights;
+			NeutronWeights summedWeights;
 			if (!calculateSummedWeights(summedWeights))
 			{
 				Messenger::error("Couldn't get summed Weights for reference data in NeutronSQ module '%s', and "
@@ -381,7 +381,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
 		// Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the
 		// Configuration
-		Weights weights;
+		NeutronWeights weights;
 		if (isotopologues_.contains(cfg))
 		{
 			// Get the set...
@@ -468,12 +468,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
 	// Calculate weighted S(Q)
 	Messenger::print("Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
-	Weights summedWeights;
+	NeutronWeights summedWeights;
 	if (!calculateSummedWeights(summedWeights))
 		return false;
 	summedWeights.print();
-	GenericListHelper<Weights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
-					    GenericItem::InRestartFileFlag) = summedWeights;
+	GenericListHelper<NeutronWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
+						   GenericItem::InRestartFileFlag) = summedWeights;
 	calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
 	// Create/retrieve PartialSet for summed unweighted g(r)

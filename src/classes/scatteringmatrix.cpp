@@ -21,7 +21,7 @@
 
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
-#include "classes/weights.h"
+#include "classes/neutronweights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
 #include <algorithm>
@@ -263,7 +263,7 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, Weights &dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(const Data1D& weightedData, NeutronWeights& dataWeights, double factor)
 {
 	// Make sure that the scattering weights are valid
 	if (!dataWeights.isValid())

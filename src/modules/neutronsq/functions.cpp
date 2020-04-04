@@ -25,8 +25,8 @@
 #include "classes/speciesinfo.h"
 #include "modules/neutronsq/neutronsq.h"
 
-// Calculate weighted g(r) from supplied unweighted g(r) and Weights
-bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights,
+// Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
+bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
 					  NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
@@ -62,8 +62,8 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &
 	return true;
 }
 
-// Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights,
+// Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
+bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
 					  NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
@@ -99,8 +99,8 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &
 	return true;
 }
 
-// Calculate Weights matrix summed over target Configurations
-bool NeutronSQModule::calculateSummedWeights(Weights &summedWeights) const
+// Calculate nwutron weights summed over target Configurations
+bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) const
 {
 	summedWeights.clear();
 

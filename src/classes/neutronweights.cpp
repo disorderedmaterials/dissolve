@@ -1,6 +1,6 @@
 /*
-	*** Weights Container
-	*** src/classes/weights.cpp
+	*** Neutron Weights Container
+	*** src/classes/neutronweights.cpp
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,25 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/weights.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "classes/atomtype.h"
+#include "classes/neutronweights.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 #include "genericitems/array2ddouble.h"
 #include "templates/broadcastlist.h"
 
-Weights::Weights()
+NeutronWeights::NeutronWeights()
 {
 	boundCoherentSquareOfAverage_ = 0.0;
 	boundCoherentAverageOfSquares_ = 0.0;
 	valid_ = false;
 }
 
-Weights::Weights(const Weights &source) { (*this) = source; }
+NeutronWeights::NeutronWeights(const NeutronWeights &source) { (*this) = source; }
 
-void Weights::operator=(const Weights &source)
+void NeutronWeights::operator=(const NeutronWeights &source)
 {
 	// Isotopologue Mix
 	isotopologueMixtures_ = source.isotopologueMixtures_;
@@ -56,7 +56,7 @@ void Weights::operator=(const Weights &source)
  */
 
 // Clear contents
-void Weights::clear()
+void NeutronWeights::clear()
 {
 	isotopologueMixtures_.clear();
 	atomTypes_.clear();
@@ -70,8 +70,8 @@ void Weights::clear()
 }
 
 // Add Isotopologue for Species
-bool Weights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
-			      double isotopologueRelativePopulation)
+bool NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+				     double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
 	Isotopologues *mix = hasIsotopologues(sp);
@@ -92,7 +92,7 @@ bool Weights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopol
 }
 
 // Return whether the IsotopologueSet contains a mixtures definition for the provided Species
-Isotopologues *Weights::hasIsotopologues(Species *sp) const
+Isotopologues *NeutronWeights::hasIsotopologues(Species *sp) const
 {
 	for (Isotopologues *topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 		if (topes->species() == sp)
@@ -101,7 +101,7 @@ Isotopologues *Weights::hasIsotopologues(Species *sp) const
 }
 
 // Print atomtype / weights information
-void Weights::print() const
+void NeutronWeights::print() const
 {
 	Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
 	Messenger::print("  ------------------------------------------------------\n");
@@ -133,7 +133,7 @@ void Weights::print() const
  */
 
 // Calculate weighting matrices based on current AtomType / Isotope information
-void Weights::calculateWeightingMatrices()
+void NeutronWeights::calculateWeightingMatrices()
 {
 	// Create weights matrices and calculate average scattering lengths
 	// Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
@@ -195,7 +195,8 @@ void Weights::calculateWeightingMatrices()
 			// Find this AtomType in our local AtomTypeList
 			int typeI = atomTypes_.indexOf(atd1->atomType());
 			if (typeI == -1)
-				Messenger::error("Failed to find AtomType '%s' in local Weights.\n", atd1->atomTypeName());
+				Messenger::error("Failed to find AtomType '%s' in local NeutronWeights.\n",
+						 atd1->atomTypeName());
 
 			// Inner loop
 			for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next())
@@ -203,7 +204,7 @@ void Weights::calculateWeightingMatrices()
 				// Get AtomType for this Atom and find it in our local AtomTypeList
 				int typeJ = atomTypes_.indexOf(atd2->atomType());
 				if (typeJ == -1)
-					Messenger::error("Failed to find AtomType '%s' in local Weights.\n",
+					Messenger::error("Failed to find AtomType '%s' in local NeutronWeights.\n",
 							 atd2->atomTypeName());
 
 				intraFlag.at(typeI, typeJ) = true;
@@ -291,7 +292,7 @@ void Weights::calculateWeightingMatrices()
 }
 
 // Create AtomType list and matrices based on stored Isotopologues information
-void Weights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
+void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
 {
 	// Loop over Isotopologues entries and ensure relative populations of Isotopologues sum to 1.0
 	for (Isotopologues *topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
@@ -325,7 +326,7 @@ void Weights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
 }
 
 // Reduce data to be naturally-weighted
-void Weights::naturalise()
+void NeutronWeights::naturalise()
 {
 	atomTypes_.naturalise();
 
@@ -335,47 +336,47 @@ void Weights::naturalise()
 }
 
 // Return AtomTypeList
-AtomTypeList &Weights::atomTypes() { return atomTypes_; }
+AtomTypeList &NeutronWeights::atomTypes() { return atomTypes_; }
 
 // Return number of used AtomTypes
-int Weights::nUsedTypes() const { return atomTypes_.nItems(); }
+int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }
 
 // Return concentration product for types i and j
-double Weights::concentrationProduct(int i, int j) const { return concentrationProducts_.constAt(i, j); }
+double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_.constAt(i, j); }
 
 // Return bound coherent scattering product for types i
-double Weights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_.constAt(i, j); }
+double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_.constAt(i, j); }
 
 // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-double Weights::weight(int i, int j) const { return weights_.constAt(i, j); }
+double NeutronWeights::weight(int i, int j) const { return weights_.constAt(i, j); }
 
 // Return full bound weighting for types i and j
-double Weights::boundWeight(int i, int j) const { return boundWeights_.constAt(i, j); }
+double NeutronWeights::boundWeight(int i, int j) const { return boundWeights_.constAt(i, j); }
 
 // Return full weights matrix
-Array2D<double> &Weights::weights() { return weights_; }
+Array2D<double> &NeutronWeights::weights() { return weights_; }
 
 // Return full bound scattering weights matrix
-Array2D<double> &Weights::boundWeights() { return boundWeights_; }
+Array2D<double> &NeutronWeights::boundWeights() { return boundWeights_; }
 
 // Return bound coherent average squared scattering (<b>**2)
-double Weights::boundCoherentSquareOfAverage() const { return boundCoherentSquareOfAverage_; }
+double NeutronWeights::boundCoherentSquareOfAverage() const { return boundCoherentSquareOfAverage_; }
 
 // Return bound coherent squared average scattering (<b**2>)
-double Weights::boundCoherentAverageOfSquares() const { return boundCoherentAverageOfSquares_; }
+double NeutronWeights::boundCoherentAverageOfSquares() const { return boundCoherentAverageOfSquares_; }
 
 // Return whether the structure is valid (i.e. has been finalised)
-bool Weights::isValid() const { return valid_; }
+bool NeutronWeights::isValid() const { return valid_; }
 
 /*
  * GenericItemBase Implementations
  */
 
 // Return class name
-const char *Weights::itemClassName() { return "Weights"; }
+const char *NeutronWeights::itemClassName() { return "NeutronWeights"; }
 
 // Read data through specified LineParser
-bool Weights::read(LineParser &parser, const CoreData &coreData)
+bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 {
 	clear();
 
@@ -415,7 +416,7 @@ bool Weights::read(LineParser &parser, const CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Weights::write(LineParser &parser)
+bool NeutronWeights::write(LineParser &parser)
 {
 	// Write AtomTypeList
 	if (!atomTypes_.write(parser))
@@ -451,7 +452,7 @@ bool Weights::write(LineParser &parser)
  */
 
 // Broadcast item contents
-bool Weights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
+bool NeutronWeights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
 	BroadcastList<Isotopologues> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
@@ -478,27 +479,29 @@ bool Weights::broadcast(ProcessPool &procPool, const int root, const CoreData &c
 }
 
 // Check item equality
-bool Weights::equality(ProcessPool &procPool)
+bool NeutronWeights::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!atomTypes_.equality(procPool))
-		return Messenger::error("Weights AtomTypes are not equivalent.\n");
+		return Messenger::error("NeutronWeights AtomTypes are not equivalent.\n");
 	if (!procPool.equality(concentrationProducts_))
-		return Messenger::error("Weights concentration matrix is not equivalent.\n");
+		return Messenger::error("NeutronWeights concentration matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentProducts_))
-		return Messenger::error("Weights bound coherent matrix is not equivalent.\n");
+		return Messenger::error("NeutronWeights bound coherent matrix is not equivalent.\n");
 	if (!procPool.equality(weights_))
 		return Messenger::error("Unbound weights matrix is not equivalent.\n");
 	if (!procPool.equality(boundWeights_))
 		return Messenger::error("Bound weights matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentAverageOfSquares_))
-		return Messenger::error("Weights bound coherent average of squares is not equivalent (process %i has %e).\n",
-					procPool.poolRank(), boundCoherentAverageOfSquares_);
+		return Messenger::error(
+			"NeutronWeights bound coherent average of squares is not equivalent (process %i has %e).\n",
+			procPool.poolRank(), boundCoherentAverageOfSquares_);
 	if (!procPool.equality(boundCoherentSquareOfAverage_))
-		return Messenger::error("Weights bound coherent square of average is not equivalent (process %i has %e).\n",
-					procPool.poolRank(), boundCoherentSquareOfAverage_);
+		return Messenger::error(
+			"NeutronWeights bound coherent square of average is not equivalent (process %i has %e).\n",
+			procPool.poolRank(), boundCoherentSquareOfAverage_);
 	if (!procPool.equality(valid_))
-		return Messenger::error("Weights validity is not equivalent (process %i has %i).\n", procPool.poolRank(),
+		return Messenger::error("NeutronWeights validity is not equivalent (process %i has %i).\n", procPool.poolRank(),
 					valid_);
 #endif
 	return true;
