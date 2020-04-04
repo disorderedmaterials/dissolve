@@ -12,6 +12,7 @@ add_library(data
   ffparameters.cpp
   fftorsionterm.cpp
   formfactor.cpp
+  formfactors.cpp
   formfactors_wk1995.cpp
   isotopes.cpp
   spacegroups.cpp
@@ -29,6 +30,7 @@ add_library(data
   ffparameters.h
   fftorsionterm.h
   formfactor.h
+  formfactors.h
   formfactors_wk1995.h
   isotopes.h
   spacegroups.h

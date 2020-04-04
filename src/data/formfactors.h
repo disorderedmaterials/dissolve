@@ -1,0 +1,54 @@
+/*
+	*** X-Ray Form Factors
+	*** src/data/formfactors.h
+	Copyright T. Youngs 2012-2020
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_DATA_FORMFACTORS_H
+#define DISSOLVE_DATA_FORMFACTORS_H
+
+#include <tuple>
+#include "data/elements.h"
+#include "data/formfactor.h"
+#include "base/enumoptions.h"
+
+template <class T> using optional = std::tuple<T, bool>;
+
+// X-Ray Form Factors
+namespace XRayFormFactors
+{
+	// X-Ray Form Factor Data Sets
+	enum XRayFormFactorData
+	{
+		WaasmaierKirfel1995
+	};
+
+	// Return EnumOptions for XRayFormFactorData
+	EnumOptions<XRayFormFactorData> xRayFormFactorData();
+
+	// Return form factor data from specified dataset for given element and formal charge (if it exists)
+	optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge = 0);
+
+	// Return form factor data from specified dataset for given element and formal charge (if it exists)
+	optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, Element* el, int formalCharge = 0);
+
+	// Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
+	optional<const FormFactorData&> wk1995Data(int Z, int formalCharge = 0);
+};
+
+#endif

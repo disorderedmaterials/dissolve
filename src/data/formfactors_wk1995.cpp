@@ -1,5 +1,5 @@
 /*
-	*** Waasmaier & Kirfel X-Ray Form Factors
+	*** Waasmaier & Kirfel '95 X-Ray Form Factors
 	*** src/data/formfactors_wk1995.h
 	Copyright T. Youngs 2012-2020
 
@@ -19,19 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <functional>
+#include <vector>
 #include "data/formfactors_wk1995.h"
-#include "base/messenger.h"
-
-// Static Singletons
-Array< List<FormFactorData_WK1995> > FormFactors_WK1995::formFactorsByElementPrivate_;
-
-/*
- * Isotopic Neutron Scattering Data
- */
+#include "data/formfactors.h"
 
 // Constructor
-FormFactorData_WK1995::FormFactorData_WK1995(int z, int formalCharge, double a1, double b1, double a2, double b2, double a3, double b3, double a4, double b4, double a5, double b5, double c) : FormFactorData(z, formalCharge), ListItem<FormFactorData_WK1995>()
-{
+FormFactorData_WK1995::FormFactorData_WK1995(int z, int formalCharge, double a1, double b1, double a2, double b2, double a3, double b3, double a4, double b4, double a5, double b5, double c) : FormFactorData(z, formalCharge) {
 	// Set the form factor data
 	a_[0] = a1;
 	b_[0] = b1;
@@ -44,14 +39,10 @@ FormFactorData_WK1995::FormFactorData_WK1995(int z, int formalCharge, double a1,
 	a_[4] = a5;
 	b_[4] = b5;
 	c_ = c;
-
-	// Add this data to its parent element's list
-	FormFactors_WK1995::registerFormFactorData(this, z);
 }
 
 // Assignment Operator
-FormFactorData_WK1995& FormFactorData_WK1995::operator=(const FormFactorData_WK1995& source)
-{
+FormFactorData_WK1995& FormFactorData_WK1995::operator=(const FormFactorData_WK1995& source) {
 	// Set the form factor data
 	a_[0] = source.a_[0];
 	b_[0] = source.b_[0];
@@ -69,22 +60,34 @@ FormFactorData_WK1995& FormFactorData_WK1995::operator=(const FormFactorData_WK1
 	return (*this);
 }
 
-/*
- * Waasmaier & Kirfel '95 Analytic X-Ray Form Factors
- */
+// Return magnitude of form factor at specified Q value
+double FormFactorData_WK1995::magnitude(double Q) const {
+	/*
+	 * Equation is:
+	 * 
+	 * f = c + SUM[ai*exp(-bi*k^2)]  i=1,5
+	 *
+	 * k = sin(theta) / lambda
+	 *
+	 * So, remove factor of 4Pi implicit in our Q value before squaring.
+	 */
 
-// Return isotope data, grouped by element
-List<FormFactorData_WK1995>& FormFactors_WK1995::formFactorsByElement(int Z)
+	const double k = Q / (4*PI);
+	const double k2 = k*k;
+	return c_ + (a_[0]*exp(-b_[0]*k2) + a_[1]*exp(-b_[1]*k2) + a_[2]*exp(-b_[2]*k2) + a_[3]*exp(-b_[3]*k2) + a_[4]*exp(-b_[4]*k2));
+}
+
+namespace XRayFormFactors
 {
-	// Has the master array been initialised yet? If not, do it now, before the form factor data is constructed
-	if (formFactorsByElementPrivate_.nItems() == 0) Elements::createElementListArray<FormFactorData_WK1995>(formFactorsByElementPrivate_);
 
+// Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
+optional<const FormFactorData&> wk1995Data(int Z, int formalCharge) {
 	/*
 	 * New Analytical Scattering Factor Functions for Free Atoms and Ions    
 	 * D. Waasmaier & A. Kirfel                          
 	 * Acta Cryst. (1995). A51, 416-413                     
 	 *
-	 * Fitparameters of all atoms/ions (with the excepetion of O1-)           
+	 * Fit parameters of all atoms/ions (with the excepetion of O1-)           
 	 * from publication "New Analytical Scattering Factor Functions for       
 	 * Free Atoms and Ions", D. Waasmaier & A. Kirfel, Acta Cryst. A 95       
 	 *
@@ -96,7 +99,7 @@ List<FormFactorData_WK1995>& FormFactors_WK1995::formFactorsByElement(int Z)
 	 * (International Tables for Crystallography, Vol. C, 1992).      
 	 */
 
-	static FormFactorData_WK1995 sears91Data[] = {
+	static std::vector<FormFactorData_WK1995> wk1995 = {
 		// El		Q	a1		b1		a2		b2		a3		b3		a4		b4		a5		b5		c
 		{ ELEMENT_H,	0,	0.413048,	15.569946,	0.294953,	32.398468,	0.187491,	5.711404,	0.080701,	61.889874,	0.023736,	1.334118,	0.000049 },
 		{ ELEMENT_H,	1,	0.206524,	15.569946,	0.147477,	32.398468,	0.093746,	5.711404,	0.040351,	61.889874,	0.011868,	1.334118,	0.000025 },
@@ -312,25 +315,10 @@ List<FormFactorData_WK1995>& FormFactors_WK1995::formFactorsByElement(int Z)
 		{ ELEMENT_CF,	0,	33.794075,	0.550447,	25.467693,	3.581973,	16.048487,	14.357388,	3.657525,	96.064972,	16.008982,	0.052450,	3.005326 }
 	};
 
-	if ((Z < 0) || (Z > nElements()))
-	{
-		Messenger::error("FormFactors_WK1995::isotopesByElement() - Element with Z=%i is out of range!\n", Z);
-		return formFactorsByElementPrivate_[0];
-	}
-
-	return formFactorsByElementPrivate_[Z];
+	auto it = std::find_if(wk1995.begin(), wk1995.end(), [&](FormFactorData_WK1995& data) {
+		return data.Z() == Z && data.formalCharge() == formalCharge;
+	});
+	return std::make_tuple(std::ref(*it), it == wk1995.end());
 }
 
-// Register specified FormFactorData_WK1995 to given Element
-void FormFactors_WK1995::registerFormFactorData(FormFactorData_WK1995* formFactorData, int Z)
-{
-	formFactorsByElementPrivate_[Z].own(formFactorData);
-}
-
-// Return form factor data for specified element and formal charge (if it exists)
-FormFactorData_WK1995* FormFactors_WK1995::formFactorData(int Z, int formalCharge)
-{
-	for (FormFactorData_WK1995* data = formFactorsByElement(Z).first(); data != NULL; data = data->next()) if (data->formalCharge() == formalCharge) return data;
-
-	return NULL;
 }

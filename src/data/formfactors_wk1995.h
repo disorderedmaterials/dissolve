@@ -22,13 +22,10 @@
 #ifndef DISSOLVE_DATA_FORMFACTORS_WK1995_H
 #define DISSOLVE_DATA_FORMFACTORS_WK1995_H
 
-#include "data/elements.h"
 #include "data/formfactor.h"
-#include "templates/array.h"
-#include "templates/list.h"
 
 // Waasmaier & Kirfel '95 Form Factor Data
-class FormFactorData_WK1995 : public FormFactorData, public ListItem<FormFactorData_WK1995>
+class FormFactorData_WK1995 : public FormFactorData
 {
 	public:
 	// Constructor
@@ -53,26 +50,8 @@ class FormFactorData_WK1995 : public FormFactorData, public ListItem<FormFactorD
 	 * Form Factor Generation
 	 */
 	public:
-	// TODO 
-	// double XXX
-};
-
-// Waasmaier & Kirfel '95 Analytic X-Ray Form Factors
-class FormFactors_WK1995 : public Elements
-{
-	private:
-	// Form factor data, grouped by element
-	static Array< List<FormFactorData_WK1995> > formFactorsByElementPrivate_;
-
-	private:
-	// Return form factor data for specified Element
-	static List<FormFactorData_WK1995>& formFactorsByElement(int Z);
-
-	public:
-	// Register specified form factor data to given Element
-	static void registerFormFactorData(FormFactorData_WK1995* formFactorData, int Z);
-	// Return form factor data for specified element and formal charge (if it exists)
-	static FormFactorData_WK1995* formFactorData(int Z, int formalCharge = 0);
+	// Return magnitude of form factor at specified Q value
+	double magnitude(double Q = 0.0) const;
 };
 
 #endif

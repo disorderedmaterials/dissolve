@@ -22,24 +22,26 @@
 #ifndef DISSOLVE_DATA_FORMFACTORDATA_H
 #define DISSOLVE_DATA_FORMFACTORDATA_H
 
-#include "data/elements.h"
-
 // Form Factor Base Class
-class FormFactorData : public ElementReference
+class FormFactorData
 {
 	public:
 	// Constructor
-	FormFactorData(int z = 0, int formalCharge = 0);
+	FormFactorData(int Z = 0, int formalCharge = 0);
 
 
 	/*
 	 * Element State
 	 */
 	protected:
+	// Element to which the data relates
+	int Z_;
 	// Formal charge of element to which the data relates
 	int formalCharge_;
 
 	public:
+	// Return element to which the data relates
+	int Z() const;
 	// Return formal charge of element to which the data relates
 	int formalCharge() const;
 
@@ -48,8 +50,8 @@ class FormFactorData : public ElementReference
 	 * Form Factor Generation
 	 */
 	public:
-	// TODO 
-	// virtual double XXX
+	// Return magnitude of form factor at specified Q value
+	virtual double magnitude(double Q = 0.0) const;
 };
 
 #endif
