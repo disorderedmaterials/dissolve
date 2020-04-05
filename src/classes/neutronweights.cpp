@@ -384,7 +384,7 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 	if (!atomTypes_.read(parser, coreData))
 		return false;
 
-	// Read Isotopologues-tures
+	// Read isotopologue mixtures
 	isotopologueMixtures_.clear();
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
 		return false;
@@ -424,7 +424,7 @@ bool NeutronWeights::write(LineParser &parser)
 	if (!atomTypes_.write(parser))
 		return false;
 
-	// Write Isotopologues-tures
+	// Write isotopologue mixtures
 	if (!parser.writeLineF("%i  # nItems\n", isotopologueMixtures_.nItems()))
 		return false;
 	ListIterator<Isotopologues> mixIterator(isotopologueMixtures_);
