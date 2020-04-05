@@ -45,7 +45,7 @@ void NeutronWeights::operator=(const NeutronWeights &source)
 	boundCoherentProducts_ = source.boundCoherentProducts_;
 	concentrationProducts_ = source.concentrationProducts_;
 	weights_ = source.weights_;
-	boundWeights_ = source.boundWeights_;
+	intramolecularWeights_ = source.intramolecularWeights_;
 	boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
 	boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
 	valid_ = source.valid_;
@@ -63,7 +63,7 @@ void NeutronWeights::clear()
 	concentrationProducts_.clear();
 	boundCoherentProducts_.clear();
 	weights_.clear();
-	boundWeights_.clear();
+	intramolecularWeights_.clear();
 	boundCoherentSquareOfAverage_ = 0.0;
 	boundCoherentAverageOfSquares_ = 0.0;
 	valid_ = false;
@@ -140,7 +140,7 @@ void NeutronWeights::calculateWeightingMatrices()
 	concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	boundCoherentProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	weights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-	boundWeights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	intramolecularWeights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	boundCoherentAverageOfSquares_ = 0.0;
 	boundCoherentSquareOfAverage_ = 0.0;
 
@@ -174,7 +174,7 @@ void NeutronWeights::calculateWeightingMatrices()
 
 	// Determine bound (intramolecular) scattering weights
 	// Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
-	boundWeights_ = 0.0;
+	intramolecularWeights_ = 0.0;
 	Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	Array2D<bool> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
@@ -262,7 +262,7 @@ void NeutronWeights::calculateWeightingMatrices()
 					}
 					bj *= 0.1;
 
-					boundWeights_.at(typeI, typeJ) += weight * bi * bj;
+					intramolecularWeights_.at(typeI, typeJ) += weight * bi * bj;
 					intraNorm.at(typeI, typeJ) += weight;
 					globalFlag.at(typeI, typeJ) = true;
 				}
@@ -270,7 +270,7 @@ void NeutronWeights::calculateWeightingMatrices()
 		}
 	}
 
-	// Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
+	// Normalise the intramolecularWeights_ array, and multiply by atomic concentrations and Kronecker delta
 	atd1 = atomTypes_.first();
 	for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI, atd1 = atd1->next())
 	{
@@ -285,8 +285,8 @@ void NeutronWeights::calculateWeightingMatrices()
 
 			cj = atd2->fraction();
 
-			boundWeights_.at(typeI, typeJ) /= intraNorm.at(typeI, typeJ);
-			boundWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
+			intramolecularWeights_.at(typeI, typeJ) /= intraNorm.at(typeI, typeJ);
+			intramolecularWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
 		}
 	}
 }
@@ -350,14 +350,14 @@ double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCo
 // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
 double NeutronWeights::weight(int i, int j) const { return weights_.constAt(i, j); }
 
-// Return full bound weighting for types i and j
-double NeutronWeights::boundWeight(int i, int j) const { return boundWeights_.constAt(i, j); }
+// Return full intramolecular weighting for types i and j
+double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_.constAt(i, j); }
 
 // Return full weights matrix
 Array2D<double> &NeutronWeights::weights() { return weights_; }
 
-// Return full bound scattering weights matrix
-Array2D<double> &NeutronWeights::boundWeights() { return boundWeights_; }
+// Return full intramolecular scattering weights matrix
+Array2D<double> &NeutronWeights::intramolecularWeights() { return intramolecularWeights_; }
 
 // Return bound coherent average squared scattering (<b>**2)
 double NeutronWeights::boundCoherentSquareOfAverage() const { return boundCoherentSquareOfAverage_; }
@@ -405,6 +405,8 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 		return false;
 	if (!GenericItemContainer<Array2D<double>>::read(boundWeights_, parser))
 		return false;
+	if (!GenericItemContainer<Array2D<double>>::read(intramolecularWeights_, parser))
+		return false;
 
 	// Read averages
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -437,7 +439,7 @@ bool NeutronWeights::write(LineParser &parser)
 		return false;
 	if (!GenericItemContainer<Array2D<double>>::write(weights_, parser))
 		return false;
-	if (!GenericItemContainer<Array2D<double>>::write(boundWeights_, parser))
+	if (!GenericItemContainer<Array2D<double>>::write(intramolecularWeights_, parser))
 		return false;
 
 	// Write averages
@@ -466,7 +468,7 @@ bool NeutronWeights::broadcast(ProcessPool &procPool, const int root, const Core
 		return false;
 	if (!procPool.broadcast(weights_, root))
 		return false;
-	if (!procPool.broadcast(boundWeights_, root))
+	if (!procPool.broadcast(intramolecularWeights_, root))
 		return false;
 	if (!procPool.broadcast(boundCoherentAverageOfSquares_, root))
 		return false;
@@ -490,8 +492,8 @@ bool NeutronWeights::equality(ProcessPool &procPool)
 		return Messenger::error("NeutronWeights bound coherent matrix is not equivalent.\n");
 	if (!procPool.equality(weights_))
 		return Messenger::error("Unbound weights matrix is not equivalent.\n");
-	if (!procPool.equality(boundWeights_))
-		return Messenger::error("Bound weights matrix is not equivalent.\n");
+	if (!procPool.equality(intramolecularWeights_))
+		return Messenger::error("Intramolecular weights matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentAverageOfSquares_))
 		return Messenger::error(
 			"NeutronWeights bound coherent average of squares is not equivalent (process %i has %e).\n",

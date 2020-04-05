@@ -35,11 +35,11 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &
 		for (typeJ = typeI; typeJ < unweightedgr.nAtomTypes(); ++typeJ)
 		{
 			double weight = weights.weight(typeI, typeJ);
-			double boundWeight = weights.boundWeight(typeI, typeJ);
+			double intraWeight = weights.intramolecularWeight(typeI, typeJ);
 
 			// Bound (intramolecular) partial (multiplied by the bound term weight)
 			weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
-			weightedgr.boundPartial(typeI, typeJ).values() *= boundWeight;
+			weightedgr.boundPartial(typeI, typeJ).values() *= intraWeight;
 
 			// Unbound partial (multiplied by the full weight)
 			weightedgr.unboundPartial(typeI, typeJ).copyArrays(unweightedgr.unboundPartial(typeI, typeJ));
@@ -73,7 +73,7 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &
 		{
 			// Weight bound and unbound S(Q) and sum into full partial
 			double weight = weights.weight(typeI, typeJ);
-			double boundWeight = weights.boundWeight(typeI, typeJ);
+			double boundWeight = weights.intramolecularWeight(typeI, typeJ);
 
 			// Bound (intramolecular) partial (multiplied by the bound term weight)
 			weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));

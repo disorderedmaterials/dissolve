@@ -69,8 +69,8 @@ class NeutronWeights : public GenericItemBase
 	Array2D<double> boundCoherentProducts_;
 	// Full scattering weights
 	Array2D<double> weights_;
-	// Bound scattering weights
-	Array2D<double> boundWeights_;
+	// Intramolecular scattering weights
+	Array2D<double> intramolecularWeights_;
 	// Bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage_;
 	// Bound coherent squared average scattering (<b**2>)
@@ -97,12 +97,12 @@ class NeutronWeights : public GenericItemBase
 	double boundCoherentProduct(int i, int j) const;
 	// Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
 	double weight(int i, int j) const;
-	// Return bound weighting for types i and j
-	double boundWeight(int i, int j) const;
+	// Return full intramolecular weighting for types i and j
+	double intramolecularWeight(int i, int j) const;
 	// Return full scattering weights matrix
 	Array2D<double> &weights();
-	// Return full bound scattering weights matrix
-	Array2D<double> &boundWeights();
+	// Return full intramolecular scattering weights matrix
+	Array2D<double> &intramolecularWeights();
 	// Return bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage() const;
 	// Return bound coherent squared average scattering (<b**2>)
