@@ -68,6 +68,7 @@ add_library(classes
   speciesring.cpp
   speciessite.cpp
   speciestorsion.cpp
+  xrayweights.cpp
   
   atom.h
   atomtypedata.h
@@ -122,6 +123,7 @@ add_library(classes
   speciesring.h
   speciessite.h
   speciestorsion.h
+  xrayweights.h
 )
 
 include_directories(
