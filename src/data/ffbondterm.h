@@ -31,7 +31,7 @@ class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Bond Term
-class ForcefieldBondTerm : public ListItem<ForcefieldBondTerm>
+class ForcefieldBondTerm
 {
 	public:
 	// Constructor / Destructor
@@ -52,7 +52,7 @@ class ForcefieldBondTerm : public ListItem<ForcefieldBondTerm>
 
 	public:
 	// Return if this term matches the atom types supplied
-	bool matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j);
+	bool isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return functional form index of interaction
 	SpeciesBond::BondFunction form() const;
 	// Return array of parameters

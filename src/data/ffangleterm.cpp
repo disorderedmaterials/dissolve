@@ -24,7 +24,7 @@
 #include "data/ff.h"
 
 // Constructor
-ForcefieldAngleTerm::ForcefieldAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3) : ListItem<ForcefieldAngleTerm>()
+ForcefieldAngleTerm::ForcefieldAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -46,7 +46,7 @@ ForcefieldAngleTerm::~ForcefieldAngleTerm()
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldAngleTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k)
+bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
 	if (!DissolveSys::sameWildString(typeJ_, j->equivalentName())) return false;
 	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName())) return true;

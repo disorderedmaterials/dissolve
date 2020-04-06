@@ -19,9 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <functional>
+#include <vector>
 #include "data/ff/oplsaa2005/base.h"
 #include "data/ffangleterm.h"
 #include "data/ffbondterm.h"
+#include "data/ffimproperterm.h"
 #include "data/fftorsionterm.h"
 
 /*
@@ -29,9 +33,9 @@
  */
 
 // Return bond term for the supplied atom type pair (if it exists)
-ForcefieldBondTerm* OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+optional<const ForcefieldBondTerm&> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	static ForcefieldBondTerm bondTerms[] =
+	static std::vector<ForcefieldBondTerm> bondTerms =
 	{
 		//	i	j	Type (Harmonic)			k	eq
 		{ "OW",	"HW",	SpeciesBond::HarmonicForm,	5020.8,		0.9572 },
@@ -390,17 +394,13 @@ ForcefieldBondTerm* OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType*
 		{ "Zn",	"OW",	SpeciesBond::HarmonicForm,	334.72,		2.05 }
 	};
 
-	static const int nBonds = sizeof(bondTerms)/sizeof(ForcefieldBondTerm);
-	for (int n=0; n<nBonds; ++n) if (bondTerms[n].matches(i, j)) return &bondTerms[n];
-
-	return NULL;
+	return Forcefield::termMatch_(bondTerms, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-ForcefieldAngleTerm* OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
+optional<const ForcefieldAngleTerm&> OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
-	static ForcefieldAngleTerm angleTerms[] =
-	{
+	static std::vector<ForcefieldAngleTerm> angleTerms = {
 		//	i	j	k	Type (Harmonic)			k	eq
 		{ "HW",	"OW",	"HW",	SpeciesAngle::HarmonicForm,	627.6,		109.5 },
 		/* { "HW",	"OW",	"LP",	SpeciesAngle::HarmonicForm,	418.4,		54.75 }, */
@@ -1409,16 +1409,13 @@ ForcefieldAngleTerm* OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomTyp
 		{ "N",	"Zn",	"O",	SpeciesAngle::HarmonicForm,	167.36,		109.5 }
 	};
 
-	static const int nAngles = sizeof(angleTerms)/sizeof(ForcefieldAngleTerm);
-	for (int n=0; n<nAngles; ++n) if (angleTerms[n].matches(i, j, k)) return &angleTerms[n];
-
-	return NULL;
+	return Forcefield::termMatch_(angleTerms, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-ForcefieldTorsionTerm* OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+optional<const ForcefieldTorsionTerm&> OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	static ForcefieldTorsionTerm torsionTerms[] =
+	static std::vector<ForcefieldTorsionTerm> torsionTerms =
 	{
 		//	i	j	k	l	Type (CosineForm)		k		n	eq	s
 		{ "HC",	"CT",	"CT",	"HC",	SpeciesTorsion::Cos3Form,	0,	0,	1.2552,	0 },	// hydrocarbon
@@ -2169,14 +2166,12 @@ ForcefieldTorsionTerm* OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAto
 		{ "N2",	"CA",	"CA",	"CA",	SpeciesTorsion::Cos4Form,	0,	6.77808,	0,	-1.84096 }	// benzamidine
 	};
 
-	static const int nTorsions = sizeof(torsionTerms)/sizeof(ForcefieldTorsionTerm);
-	for (int n=0; n<nTorsions; ++n) if (torsionTerms[n].matches(i, j, k, l)) return &torsionTerms[n];
-
-	return NULL;
+	return Forcefield::termMatch_(torsionTerms, i, j, k, l);
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-ForcefieldImproperTerm* OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+optional<const ForcefieldImproperTerm&> OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	return NULL;
+	static std::vector<ForcefieldImproperTerm> improperTerms = {};
+	return Forcefield::termMatch_(improperTerms, i, j, k, l);
 }

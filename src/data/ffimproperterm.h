@@ -31,7 +31,7 @@ class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Improper Term
-class ForcefieldImproperTerm : public ListItem<ForcefieldImproperTerm>
+class ForcefieldImproperTerm
 {
 	public:
 	// Constructor / Destructor
@@ -52,7 +52,7 @@ class ForcefieldImproperTerm : public ListItem<ForcefieldImproperTerm>
 
 	public:
 	// Return if this term matches the atom types supplied
-	bool matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l);
+	bool isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 	// Return functional form index of interaction
 	SpeciesImproper::ImproperFunction form() const;
 	// Return array of parameters
