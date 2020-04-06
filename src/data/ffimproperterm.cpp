@@ -47,7 +47,7 @@ ForcefieldImproperTerm::~ForcefieldImproperTerm()
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldImproperTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+bool ForcefieldImproperTerm::isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
 	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName()) && DissolveSys::sameWildString(typeL_, l->equivalentName())) return true;
 	if (DissolveSys::sameWildString(typeL_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, j->equivalentName()) && DissolveSys::sameWildString(typeJ_, k->equivalentName()) && DissolveSys::sameWildString(typeI_, l->equivalentName())) return true;

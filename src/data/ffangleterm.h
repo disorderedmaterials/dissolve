@@ -52,7 +52,7 @@ class ForcefieldAngleTerm
 
 	public:
 	// Return if this term matches the atom types supplied
-	bool matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	bool isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return functional form index of interaction
 	SpeciesAngle::AngleFunction form() const;
 	// Return array of parameters

@@ -52,7 +52,7 @@ class ForcefieldTorsionTerm
 
 	public:
 	// Return if this term matches the atom types supplied
-	bool matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	bool isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 	// Return functional form index of interaction
 	SpeciesTorsion::TorsionFunction form() const;
 	// Return array of parameters

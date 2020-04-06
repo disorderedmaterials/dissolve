@@ -139,13 +139,13 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
-	virtual optional<const ForcefieldBondTerm&> bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	virtual optional<const ForcefieldBondTerm&> getBondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
-	virtual optional<const ForcefieldAngleTerm&> angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	virtual optional<const ForcefieldAngleTerm&> getAngleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)
-	virtual optional<const ForcefieldTorsionTerm&> torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	virtual optional<const ForcefieldTorsionTerm&> getTorsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 	// Return improper term for the supplied atom type quartet (if it exists)
-	virtual optional<const ForcefieldImproperTerm&> improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+	virtual optional<const ForcefieldImproperTerm&> getImproperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
 
 
 	/*
@@ -199,7 +199,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 template<class T, typename... Args> optional<const T&> Forcefield::termMatch_(std::vector<T> container, Args... args)
 {
 	auto it = std::find_if(container.begin(), container.end(), [&](const T& item){
-		return item.matches(args...);
+		return item.isMatch(args...);
 	});
 	return std::make_tuple(*it, it == container.end());
 }

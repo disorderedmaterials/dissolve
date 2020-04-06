@@ -46,7 +46,7 @@ ForcefieldAngleTerm::~ForcefieldAngleTerm()
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldAngleTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
+bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
 	if (!DissolveSys::sameWildString(typeJ_, j->equivalentName())) return false;
 	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName())) return true;

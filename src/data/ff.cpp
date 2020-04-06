@@ -197,25 +197,25 @@ void Forcefield::addImproperTerm(const char* typeI, const char* typeJ, const cha
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
-optional<const ForcefieldBondTerm&> Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+optional<const ForcefieldBondTerm&> Forcefield::getBondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
 	return termMatch_(bondTerms_, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-optional<const ForcefieldAngleTerm&> Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
+optional<const ForcefieldAngleTerm&> Forcefield::getAngleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
 	return termMatch_(angleTerms_, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-optional<const ForcefieldTorsionTerm&> Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+optional<const ForcefieldTorsionTerm&> Forcefield::getTorsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
 	return termMatch_(torsionTerms_, i, j, k, l);
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-optional<const ForcefieldImproperTerm&> Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+optional<const ForcefieldImproperTerm&> Forcefield::getImproperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
 	return termMatch_(improperTerms_, i, j, k, l);
 }
@@ -320,7 +320,7 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		ForcefieldAtomType* typeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
 		if (!typeJ) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
 
-		auto opt_term = bondTerm(typeI, typeJ);
+		auto opt_term = getBondTerm(typeI, typeJ);
 		if (std::get<1>(opt_term)) {
 			return Messenger::error("Failed to locate parameters for bond %i-%i (%s-%s).\n", i->userIndex(), j->userIndex(), typeI->equivalentName(), typeJ->equivalentName());
 		}
@@ -346,7 +346,7 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		ForcefieldAtomType* typeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
 		if (!typeK) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
 
-		auto opt_term = angleTerm(typeI, typeJ, typeK);
+		auto opt_term = getAngleTerm(typeI, typeJ, typeK);
 		if (std::get<1>(opt_term)) return Messenger::error("Failed to locate parameters for angle %i-%i-%i (%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName());
 
 		const auto& term = std::get<0>(opt_term);
@@ -374,7 +374,7 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 		ForcefieldAtomType* typeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
 		if (!typeL) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
 
-		auto opt_term = torsionTerm(typeI, typeJ, typeK, typeL);
+		auto opt_term = getTorsionTerm(typeI, typeJ, typeK, typeL);
 		if (std::get<1>(opt_term)) return Messenger::error("Failed to locate parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), typeI->equivalentName(), typeJ->equivalentName(), typeK->equivalentName(), typeL->equivalentName());
 
 		const auto& term = std::get<0>(opt_term);
@@ -419,7 +419,7 @@ bool Forcefield::assignIntramolecular(Species* sp, int flags) const
 						if (!typeL) return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
 						if (selectionOnly && (!l->isSelected())) continue;
 
-						auto opt_term = improperTerm(typeI, typeJ, typeK, typeL);
+						auto opt_term = getImproperTerm(typeI, typeJ, typeK, typeL);
 						if (!std::get<1>(opt_term))
 						{
 							const auto& term = std::get<0>(opt_term);
