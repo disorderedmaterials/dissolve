@@ -394,9 +394,7 @@ optional<const ForcefieldBondTerm&> OPLSAA2005BaseForcefield::bondTerm(const For
 		{ "Zn",	"OW",	SpeciesBond::HarmonicForm,	334.72,		2.05 }
 	};
 
-	return Forcefield::termMatch_(bondTerms, [&i, &j](const ForcefieldBondTerm& term) {
-	  return term.matches(i, j);
-	});
+	return Forcefield::termMatch_(bondTerms, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
@@ -1411,9 +1409,7 @@ optional<const ForcefieldAngleTerm&> OPLSAA2005BaseForcefield::angleTerm(const F
 		{ "N",	"Zn",	"O",	SpeciesAngle::HarmonicForm,	167.36,		109.5 }
 	};
 
-	return Forcefield::termMatch_(angleTerms, [&i, &j, &k](const ForcefieldAngleTerm& term){
-	  return term.matches(i,j,k);
-	});
+	return Forcefield::termMatch_(angleTerms, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
@@ -2170,16 +2166,12 @@ optional<const ForcefieldTorsionTerm&> OPLSAA2005BaseForcefield::torsionTerm(con
 		{ "N2",	"CA",	"CA",	"CA",	SpeciesTorsion::Cos4Form,	0,	6.77808,	0,	-1.84096 }	// benzamidine
 	};
 
-	return Forcefield::termMatch_(torsionTerms, [&i, &j, &k, &l](const ForcefieldTorsionTerm& term){
-	  return term.matches(i,j,k,l);
-	});
+	return Forcefield::termMatch_(torsionTerms, i, j, k, l);
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
 optional<const ForcefieldImproperTerm&> OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
 	static std::vector<ForcefieldImproperTerm> improperTerms = {};
-	return Forcefield::termMatch_(improperTerms, [&i, &j, &k, &l](const ForcefieldImproperTerm& term){
-	  return term.matches(i,j,k,l);
-	});
+	return Forcefield::termMatch_(improperTerms, i, j, k, l);
 }

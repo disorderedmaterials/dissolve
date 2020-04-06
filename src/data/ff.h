@@ -135,7 +135,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Add improper term
 	void addImproperTerm(const char* typeI, const char* typeJ, const char* typeK, const char* typeL, SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	// Match any kind of term
-	template<class T, class Filter> static optional<const T&> termMatch_(std::vector<T>, Filter);
+	template<class T, typename... Args> static optional<const T&> termMatch_(std::vector<T>, Args ...);
 
 	public:
 	// Return bond term for the supplied atom type pair (if it exists)
@@ -196,9 +196,11 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	int guessOxidationState(const SpeciesAtom* i) const;
 };
 
-template<class T, class Filter> optional<const T&> Forcefield::termMatch_(std::vector<T> container, Filter filter)
+template<class T, typename... Args> optional<const T&> Forcefield::termMatch_(std::vector<T> container, Args... args)
 {
-	auto it = std::find_if(container.begin(), container.end(), filter);
+	auto it = std::find_if(container.begin(), container.end(), [&](const T& item){
+		return item.matches(args...);
+	});
 	return std::make_tuple(*it, it == container.end());
 }
 

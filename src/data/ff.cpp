@@ -199,37 +199,25 @@ void Forcefield::addImproperTerm(const char* typeI, const char* typeJ, const cha
 // Return bond term for the supplied atom type pair (if it exists)
 optional<const ForcefieldBondTerm&> Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	return termMatch_(bondTerms_,
-			  [&](const ForcefieldBondTerm& term){
-			    return term.matches(i, j);
-			  });
+	return termMatch_(bondTerms_, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
 optional<const ForcefieldAngleTerm&> Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
-	return termMatch_(angleTerms_,
-			  [&](const ForcefieldAngleTerm& term){
-			    return term.matches(i, j, k);
-			  });
+	return termMatch_(angleTerms_, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
 optional<const ForcefieldTorsionTerm&> Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	return termMatch_(torsionTerms_,
-			  [&](const ForcefieldTorsionTerm& term){
-			    return term.matches(i, j, k, l);
-			  });
+	return termMatch_(torsionTerms_, i, j, k, l);
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
 optional<const ForcefieldImproperTerm&> Forcefield::improperTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	return termMatch_(improperTerms_,
-			  [&](const ForcefieldImproperTerm& term){
-			    return term.matches(i, j, k, l);
-			  });
+	return termMatch_(improperTerms_, i, j, k, l);
 }
 
 /*
