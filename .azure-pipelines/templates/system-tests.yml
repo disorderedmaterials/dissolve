@@ -1,13 +1,11 @@
 parameters:
-  - name: test
-    default: 'atomshake'
   - name: parallel
     default: false
 
 jobs:
   - job:
     condition: eq('${{ parameters.parallel }}', false)
-    displayName: 'Test ${{ parameters.test }} (Serial)'
+    displayName: 'System Tests (Serial)'
     pool:
       vmImage: ubuntu-18.04
     steps:
@@ -22,11 +20,11 @@ jobs:
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
-          ./go -a -s ./dissolve ${{ parameters.test }}
-        displayName: 'Run Test (${{ parameters.test }})'
+          ./go -a -s ./dissolve]
+        displayName: 'Run Serial System Tests'
   - job:
     condition: eq('${{ parameters.parallel }}', true)
-    displayName: 'Test ${{ parameters.test }} (Parallel)'
+    displayName: 'System Tests (Parallel)'
     pool:
       vmImage: ubuntu-18.04
     steps:
@@ -41,5 +39,5 @@ jobs:
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-parallel
           chmod u+x ./go ./dissolve-mpi
-          ./go -a -p ./dissolve-mpi ${{ parameters.test }}
-        displayName: 'Run Test (${{ parameters.test }})'
+          ./go -a -p ./dissolve-mpi
+        displayName: 'Run Parallel System Tests'

@@ -66,12 +66,9 @@ stages:
     displayName: 'System Tests (Serial)'
     jobs:
       - template: templates/system-tests.yml
-        parameters:
-          test: 'atomshake'
   - stage: 'system_tests_parallel'
     displayName: 'System Tests (Parallel)'
     jobs:
       - template: templates/system-tests.yml
         parameters:
-          test: 'atomshake'
           parallel: true
