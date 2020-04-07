@@ -106,11 +106,14 @@ stages:
               mv -v Dissolve-GUI-${VERSION}-Win64.exe Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.exe
               cd ../
             displayName: 'Rename Artifacts'
-#          - bash: |
-#              SHORTHASH=`git rev-parse --short HEAD`
-#              DATE=`date`
-#              ./ci/scripts/update-release -r ${{ github.repository }} -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u linux-artifacts/*AppImage windows-artifacts/*.exe windows-artifacts/*.zip osx-artifacts/*dmg examples/*zip examples/*.tar.gz
-#            displayName: 'Update Continuous Release (GitHub)'
+          - bash: |
+              SHORTHASH=`git rev-parse --short HEAD`
+              DATE=`date`
+              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg $(System.ArtifactsDirectory)/examples/*zip $(System.ArtifactsDirectory)/examples/*.tar.gz
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
+            displayName: 'Update Continuous Release (GitHub)'
 #          - bash: |
 #              # TODO
 #            displayName: 'Build and Deploy Web'
