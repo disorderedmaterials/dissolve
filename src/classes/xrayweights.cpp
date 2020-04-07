@@ -96,6 +96,25 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 		for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
 			atomTypes_.add(i->atomType(), spInfo->population());
 	}
+
+	// Perform final setup based on now-completed atomtypes list
+	return finalise(formFactors);
+}
+
+// Add Species to weights in the specified population
+void XRayWeights::addSpecies(const Species *sp, int population)
+{
+	for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
+		atomTypes_.add(i->atomType(), population);
+
+	valid_ = false;
+}
+
+// Finalise weights after addition of all individual Species
+bool XRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
+{
+	valid_ = false;
+
 	atomTypes_.finalise();
 
 	// Retrieve form factor data for the current atom types
@@ -103,7 +122,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 	if (!getFormFactors())
 		return false;
 
-	calculateMatrices();
+	setUpMatrices();
 
 	valid_ = true;
 
@@ -128,8 +147,8 @@ void XRayWeights::print() const
  * Data
  */
 
-// Calculate matrices from current AtomType information
-void XRayWeights::calculateMatrices()
+// Set up matrices based on current AtomType information
+void XRayWeights::setUpMatrices()
 {
 	concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	preFactors_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
@@ -230,16 +249,7 @@ bool XRayWeights::read(LineParser &parser, const CoreData &coreData)
 	if (!atomTypes_.read(parser, coreData))
 		return false;
 
-	// Get form factors
-	if (!getFormFactors())
-		return false;
-
-	// Calculate matrices
-	calculateMatrices();
-
-	valid_ = true;
-
-	return true;
+	return finalise(formFactors_);
 }
 
 // Write data through specified LineParser

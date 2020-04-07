@@ -31,6 +31,7 @@
 #include <vector>
 
 // Forward Declarations
+class Species;
 class SpeciesInfo;
 
 // XRay Weights Container
@@ -65,7 +66,15 @@ class XRayWeights : public GenericItemBase
 	// Clear contents
 	void clear();
 	// Set-up from supplied SpeciesInfo list
+<<<<<<< HEAD
 	bool setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
+=======
+	bool setUp(List<SpeciesInfo>& speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
+	// Add Species to weights in the specified population
+	void addSpecies(const Species* sp, int population);
+	// Finalise weights after addition of all individual Species
+	bool finalise(XRayFormFactors::XRayFormFactorData formFactors);
+>>>>>>> 42916d84... Update XRaySQ module.
 	// Return AtomTypeList
 	AtomTypeList &atomTypes();
 	// Return number of used AtomTypes
@@ -83,8 +92,8 @@ class XRayWeights : public GenericItemBase
 	Array2D<double> preFactors_;
 
       private:
-	// Calculate  matrices based on current AtomType information
-	void calculateMatrices();
+	// Set up matrices based on current AtomType information
+	void setUpMatrices();
 
       public:
 	// Return concentration product for types i and j
@@ -120,3 +129,5 @@ class XRayWeights : public GenericItemBase
 };
 
 #endif
+
+
