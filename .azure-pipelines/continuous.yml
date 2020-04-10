@@ -55,8 +55,8 @@ stages:
   - stage: 'deploy'
     displayName: 'Deploy'
     jobs:
-      - job: 'rename_artifacts'
-        displayName: 'Rename Artifacts'
+      - job: 'continuous_gh'
+        displayName: 'Create Continuous Release (GH)'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
