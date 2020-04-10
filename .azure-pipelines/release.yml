@@ -120,7 +120,6 @@ stages:
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
               cd ./examples
               ./package-examples -v $VERSION
-              ls -lart
             displayName: 'Create Example Data Archives'
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
@@ -141,7 +140,6 @@ stages:
             displayName: 'Rename Artifacts'
           - bash: |
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-              ls examples
               ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
