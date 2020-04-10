@@ -90,7 +90,7 @@ stages:
     displayName: 'Deploy'
     jobs:
       - job: 'release_gh'
-        displayName: 'Release on GH'
+        displayName: 'Create Versioned Release (GH)'
         pool:
           vmImage: 'ubuntu-latest'
         steps:
