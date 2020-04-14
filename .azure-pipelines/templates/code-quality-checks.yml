@@ -1,0 +1,42 @@
+stages:
+  - stage: 'code_quality'
+    displayName: 'Code Quality Checks'
+
+    jobs:
+      - job: 'cpp_checks'
+        displayName: 'C++ Checks'
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - bash: |
+              set -ex
+              sudo apt-get remove --yes clang libllvm6.0
+              sudo add-apt-repository --yes 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main'
+              sudo apt-get update
+              sudo apt-get install --yes clang-format-6.0
+            displayName: 'Install tooling'
+          - bash: |
+              set -ex
+              clang-format-6.0 --version
+              find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\)' -exec clang-format-6.0 -i {} +
+              git diff
+              git diff --quiet
+            displayName: 'Run clang-format'
+
+      - job: 'cmake_checks'
+        displayName: 'CMake Checks'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
+              architecture: 'x64'
+          - bash: pip install cmake_format==0.6.9
+            displayName: 'Install tooling'
+          - bash: |
+              set -ex
+              cmake-format --version
+              find . -type f \( -name CMakeLists.txt -or -name '*.cmake' \) -exec cmake-format --check '{}' \;
+            displayName: 'Run cmake-format'
