@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_CHANGESTORE_H
 #define DISSOLVE_CHANGESTORE_H
 
+#include <memory>
 #include "classes/changedata.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
