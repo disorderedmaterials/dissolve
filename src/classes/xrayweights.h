@@ -66,15 +66,11 @@ class XRayWeights : public GenericItemBase
 	// Clear contents
 	void clear();
 	// Set-up from supplied SpeciesInfo list
-<<<<<<< HEAD
 	bool setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
-=======
-	bool setUp(List<SpeciesInfo>& speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
 	// Add Species to weights in the specified population
-	void addSpecies(const Species* sp, int population);
+	void addSpecies(const Species *sp, int population);
 	// Finalise weights after addition of all individual Species
 	bool finalise(XRayFormFactors::XRayFormFactorData formFactors);
->>>>>>> 42916d84... Update XRaySQ module.
 	// Return AtomTypeList
 	AtomTypeList &atomTypes();
 	// Return number of used AtomTypes
@@ -86,24 +82,34 @@ class XRayWeights : public GenericItemBase
 	 * Data
 	 */
       private:
+	// Concentration products (ci)
+	Array<double> concentrations_;
 	// Concentration product matrix (ci * cj)
 	Array2D<double> concentrationProducts_;
 	// Pre-factors matrix (ci * cj * [2-dij])
 	Array2D<double> preFactors_;
+	// Average squared scattering (<b>**2)
+	double boundCoherentSquareOfAverage_;
+	// Bound coherent squared average scattering (<b**2>)
+	double boundCoherentAverageOfSquares_;
 
       private:
 	// Set up matrices based on current AtomType information
 	void setUpMatrices();
 
       public:
+	// Return concentration product for type i
+	double concentration(int typeIndexI) const;
 	// Return concentration product for types i and j
-	double concentrationProduct(int i, int j) const;
+	double concentrationProduct(int typeIndexI, int typeIndexJ) const;
 	// Return form factor product for types i and j at specified Q value
-	double formFactorProduct(int i, int j, double Q) const;
+	double formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const;
+	// Return form factor for type i over supplied Q values
+	Array<double> formFactor(int typeIndexI, const Array<double> &Q) const;
 	// Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-	double weight(int i, int j, double Q) const;
+	double weight(int typeIndexI, int typetypeIndexJ, double Q) const;
 	// Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-	Array<double> weight(int i, int j, const Array<double> Q) const;
+	Array<double> weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const;
 	// Return whether the structure is valid (i.e. has been finalised)
 	bool isValid() const;
 
@@ -129,5 +135,3 @@ class XRayWeights : public GenericItemBase
 };
 
 #endif
-
-

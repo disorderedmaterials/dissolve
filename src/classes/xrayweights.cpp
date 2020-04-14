@@ -32,6 +32,8 @@
 XRayWeights::XRayWeights()
 {
 	formFactors_ = XRayFormFactors::NoFormFactorData;
+	boundCoherentSquareOfAverage_ = 0.0;
+	boundCoherentAverageOfSquares_ = 0.0;
 	valid_ = false;
 }
 
@@ -42,7 +44,10 @@ XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
 void XRayWeights::operator=(const XRayWeights &source)
 {
 	formFactors_ = source.formFactors_;
+	boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
+	boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
 	atomTypes_ = source.atomTypes_;
+	concentrations_ = source.concentrations_;
 	concentrationProducts_ = source.concentrationProducts_;
 	preFactors_ = source.preFactors_;
 	valid_ = source.valid_;
@@ -77,7 +82,9 @@ bool XRayWeights::getFormFactors()
 void XRayWeights::clear()
 {
 	atomTypes_.clear();
+	concentrations_.clear();
 	concentrationProducts_.clear();
+	preFactors_.clear();
 	valid_ = false;
 }
 
@@ -150,6 +157,7 @@ void XRayWeights::print() const
 // Set up matrices based on current AtomType information
 void XRayWeights::setUpMatrices()
 {
+	concentrations_.initialise(atomTypes_.nItems());
 	concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	preFactors_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 
@@ -160,6 +168,7 @@ void XRayWeights::setUpMatrices()
 	for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI, atd1 = atd1->next())
 	{
 		ci = atd1->fraction();
+		concentrations_.at(typeI) = ci;
 
 		atd2 = atd1;
 		for (int typeJ = typeI; typeJ < atomTypes_.nItems(); ++typeJ, atd2 = atd2->next())
@@ -172,52 +181,80 @@ void XRayWeights::setUpMatrices()
 	}
 }
 
-// Return concentration product for types i and j
-double XRayWeights::concentrationProduct(int i, int j) const { return concentrationProducts_.constAt(i, j); }
+// Return concentration product for type i
+double XRayWeights::concentration(int typeIndexI) const
+{
+	return concentrations_.constAt(typeIndexI);
+}
 
-// Return form factor product for types i and j at specified Q value
-double XRayWeights::formFactorProduct(int i, int j, double Q) const
+// Return concentration product for types i and j
+double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const { return concentrationProducts_.constAt(typeIndexI, typeIndexJ); }
+
+// Return form factor for type i over supplied Q values
+Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double>& Q) const
 {
 #ifdef CHECKS
-	if ((i < 0) || (i >= formFactorData_.size()))
+	if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
 	{
-		Messenger::error("XRayWeights::formFactorProduct() - Type i index %i is out of range.\n", i);
-		return 0.0;
-	}
-	if ((j < 0) || (j >= formFactorData_.size()))
-	{
-		Messenger::error("XRayWeights::formFactorProduct() - Type j index %i is out of range.\n", j);
+		Messenger::error("XRayWeights::formFactorProduct() - Type i index %i is out of range.\n", typeIndexI);
 		return 0.0;
 	}
 #endif
-	return formFactorData_[i].get().magnitude(Q) * formFactorData_[j].get().magnitude(Q);
+
+	// Initialise results array
+	Array<double> fiq(Q.nItems());
+
+	auto& fi = formFactorData_[typeIndexI].get();
+
+	for (int n=0; n<Q.nItems(); ++n) fiq[n] = fi.magnitude(Q.constAt(n));
+
+	return fiq;
+}
+
+// Return form factor product for types i and j at specified Q value
+double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const
+{
+#ifdef CHECKS
+	if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
+	{
+		Messenger::error("XRayWeights::formFactorProduct() - Type i index %i is out of range.\n", typeIndexI);
+		return 0.0;
+	}
+	if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
+	{
+		Messenger::error("XRayWeights::formFactorProduct() - Type j index %i is out of range.\n", typeIndexJ);
+		return 0.0;
+	}
+#endif
+	return formFactorData_[typeIndexI].get().magnitude(Q) * formFactorData_[typeIndexJ].get().magnitude(Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-double XRayWeights::weight(int i, int j, double Q) const { return preFactors_.constAt(i, j) * formFactorProduct(i, j, Q); }
+double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const { return preFactors_.constAt(typeIndexI, typeIndexJ) * formFactorProduct(typeIndexI, typeIndexJ, Q); }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-Array<double> XRayWeights::weight(int i, int j, const Array<double> Q) const
+Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<double>& Q) const
 {
-	// Initialise results array
-	Array<double> fijq(Q.nItems());
-
 	// Get form factor data for involved types
 #ifdef CHECKS
-	if ((i < 0) || (i >= formFactorData_.size()))
+	if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
 	{
-		Messenger::error("XRayWeights::formFactorProduct() - Type i index %i is out of range.\n", i);
+		Messenger::error("XRayWeights::weight() - Type i index %i is out of range.\n", typeIndexI);
 		return 0.0;
 	}
-	if ((j < 0) || (j >= formFactorData_.size()))
+	if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
 	{
-		Messenger::error("XRayWeights::formFactorProduct() - Type j index %i is out of range.\n", j);
+		Messenger::error("XRayWeights::weight() - Type j index %i is out of range.\n", typeIndexJ);
 		return 0.0;
 	}
 #endif
-	auto fi = formFactorData_[i].get();
-	auto fj = formFactorData_[j].get();
-	auto preFactor = preFactors_.constAt(i, j);
+
+	// Initialise results array
+	Array<double> fijq(Q.nItems());
+
+	auto& fi = formFactorData_[typeIndexI].get();
+	auto& fj = formFactorData_[typeIndexJ].get();
+	auto preFactor = preFactors_.constAt(typeIndexI, typeIndexJ);
 
 	for (int n = 0; n < Q.nItems(); ++n)
 		fijq[n] = fi.magnitude(Q.constAt(n)) * fj.magnitude(Q.constAt(n)) * preFactor;
@@ -278,6 +315,8 @@ bool XRayWeights::broadcast(ProcessPool &procPool, const int root, const CoreDat
 		return false;
 	if (!atomTypes_.broadcast(procPool, root, coreData))
 		return false;
+	if (!procPool.broadcast(concentrations_, root))
+		return false;
 	if (!procPool.broadcast(concentrationProducts_, root))
 		return false;
 	if (!procPool.broadcast(preFactors_, root))
@@ -296,6 +335,8 @@ bool XRayWeights::equality(ProcessPool &procPool)
 		return Messenger::error("XRayWeights form factor datasets are not equivalent.\n");
 	if (!atomTypes_.equality(procPool))
 		return Messenger::error("XRayWeights AtomTypes are not equivalent.\n");
+	if (!procPool.equality(concentrations_))
+		return Messenger::error("XRayWeights concentrations array is not equivalent.\n");
 	if (!procPool.equality(concentrationProducts_))
 		return Messenger::error("XRayWeights concentration matrix is not equivalent.\n");
 	if (!procPool.equality(preFactors_))
