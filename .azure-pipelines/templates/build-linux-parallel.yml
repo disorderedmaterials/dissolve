@@ -1,3 +1,7 @@
+parameters:
+  - name: extraflags
+    default: ''
+
 steps:
   - checkout: self
   - bash: |
@@ -9,6 +13,6 @@ steps:
       set -ex
       mkdir build-parallel
       cd build-parallel
-      cmake -G "Ninja" -DPARALLEL:bool=true ../
+      cmake -G "Ninja" -DPARALLEL:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

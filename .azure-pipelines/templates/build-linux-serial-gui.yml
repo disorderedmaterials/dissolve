@@ -1,4 +1,6 @@
 parameters:
+  - name: extraflags
+    default: ''
   - name: ppa
     default: 'beineri/opt-qt-5.13.2-bionic'
   - name: qtver
@@ -23,6 +25,6 @@ steps:
       export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
       mkdir build
       cd build
-      cmake -G "Ninja" -DGUI:bool=true ../
+      cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

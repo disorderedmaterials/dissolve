@@ -1,4 +1,6 @@
 parameters:
+  - name: extraflags
+    default: ''
   - name: qtver
     default: 5.13.2
   - name: ftrepo
@@ -52,6 +54,6 @@ steps:
       $env:LIB += "$(Build.BinariesDirectory)\ftgl-build\src;"
       mkdir build
       cd build
-      cmake -G "Ninja" -DGUI:bool=true ../
+      cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

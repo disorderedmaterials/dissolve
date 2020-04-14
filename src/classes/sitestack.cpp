@@ -87,7 +87,7 @@ bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 
 		// Calculate origin
 #ifdef CHECKS
-		for (int i = 0; i < originAtomIndices.nItems(); ++i) if ((originAtomIndices[i] < 0) || (originAtomIndices[i] >= molecule->nAtoms())) return Messenger::error("Origin atom index %i is out of range for Molecule %i which contains %i atoms.\n", originAtomIndices[i], n, molecule->nAtoms());
+		for (int i = 0; i < originAtomIndices.nItems(); ++i) if ((originAtomIndices[i] < 0) || (originAtomIndices[i] >= molecule->nAtoms())) return Messenger::error("Origin atom index %i is out of range for molecule (contains %i atoms).\n", originAtomIndices[i], molecule->nAtoms());
 #endif
 		if (speciesSite->originMassWeighted())
 		{
@@ -113,8 +113,8 @@ bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 		if (sitesHaveOrientation_)
 		{
 #ifdef CHECKS
-			for (int i = 0; i < xAxisAtomIndices.nItems(); ++i) if ((xAxisAtomIndices[i] < 0) || (xAxisAtomIndices[i] >= molecule->nAtoms())) return Messenger::error("X-axis atom index %i is out of range for Molecule %i which contains %i atoms.\n", xAxisAtomIndices[i], n, molecule->nAtoms());
-			for (int i = 0; i < yAxisAtomIndices.nItems(); ++i) if ((yAxisAtomIndices[i] < 0) || (yAxisAtomIndices[i] >= molecule->nAtoms())) return Messenger::error("Y-axis atom index %i is out of range for Molecule %i which contains %i atoms.\n", yAxisAtomIndices[i], n, molecule->nAtoms());
+			for (int i = 0; i < xAxisAtomIndices.nItems(); ++i) if ((xAxisAtomIndices[i] < 0) || (xAxisAtomIndices[i] >= molecule->nAtoms())) return Messenger::error("X-axis atom index %i is out of range for molecule (contains %i atoms).\n", xAxisAtomIndices[i], molecule->nAtoms());
+			for (int i = 0; i < yAxisAtomIndices.nItems(); ++i) if ((yAxisAtomIndices[i] < 0) || (yAxisAtomIndices[i] >= molecule->nAtoms())) return Messenger::error("Y-axis atom index %i is out of range for molecule (contains %i atoms).\n", yAxisAtomIndices[i], molecule->nAtoms());
 #endif
 			// Get average position of supplied x-axis atoms
 			v = molecule->atom(xAxisAtomIndices.firstValue())->r();

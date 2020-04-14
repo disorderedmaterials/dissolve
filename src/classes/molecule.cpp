@@ -93,11 +93,6 @@ Atom* Molecule::atom(int n) const
 		Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::atom().\n", n);
 		return NULL;
 	}
-	if (atoms_.constAt(n) == NULL)
-	{
-		Messenger::print("NULL_POINTER - The pointer to Atom %i in Molecule::atom() is NULL.\n", n);
-		return NULL;
-	}
 #endif
 	return atoms_[n];
 }

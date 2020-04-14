@@ -24,6 +24,7 @@ stages:
         steps:
           - template: templates/build-linux-serial-gui.yml
             parameters:
+              extraflags: '-DCHECKS:bool=true'
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
           - bash: |
