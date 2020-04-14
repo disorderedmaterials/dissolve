@@ -1,0 +1,47 @@
+parameters:
+  - name: parallel
+    default: false
+
+jobs:
+  - job:
+    condition: eq('${{ parameters.parallel }}', false)
+    displayName: 'System Tests (Serial)'
+    pool:
+      vmImage: ubuntu-18.04
+    steps:
+      - checkout: none
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-serial'
+        displayName: 'Download Serial Test Artifacts'
+      - bash: |
+          cd $(System.ArtifactsDirectory)/linux-tests-serial
+          chmod u+x ./go ./dissolve
+          ./go -a -s ./dissolve
+        displayName: 'Run Serial System Tests'
+  - job:
+    condition: eq('${{ parameters.parallel }}', true)
+    displayName: 'System Tests (Parallel)'
+    pool:
+      vmImage: ubuntu-18.04
+    steps:
+      - checkout: none
+      - bash: |
+          set -ex
+          sudo apt-get install libopenmpi-dev openmpi-bin openmpi-common
+        displayName: 'Install Prerequisites'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'linux-tests-parallel'
+        displayName: 'Download Parallel Test Artifacts'
+      - bash: |
+          cd $(System.ArtifactsDirectory)/linux-tests-parallel
+          chmod u+x ./go ./dissolve-mpi
+          ./go -a -p ./dissolve-mpi
+        displayName: 'Run Parallel System Tests'
