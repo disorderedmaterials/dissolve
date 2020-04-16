@@ -37,8 +37,6 @@
 // Constructor / Destructor
 Forcefield::Forcefield() : ListItem<Forcefield>()
 {
-	// Initialise the Element RefList Array
-	Elements::createElementRefListArray<ForcefieldAtomType>(atomTypesByElementPrivate_);
 }
 
 Forcefield::~Forcefield()
@@ -72,13 +70,13 @@ void Forcefield::addAtomType(int Z, int index, const char* name, const char* net
 {
 	atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
 	
-	atomTypesByElementPrivate_[Z].append(&atomTypes_.back());
+	atomTypesByElementPrivate_[Z].push_back(atomTypes_.back());
 }
 
 // Add new atom type referencing existing parameters by name
 void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference)
 {
-	atomTypesByElementPrivate_[Z].append(&atomTypes_.back());
+	atomTypesByElementPrivate_[Z].push_back(atomTypes_.back());
 }
 
 // Copy existing atom type
@@ -86,23 +84,23 @@ void Forcefield::copyAtomType(const ForcefieldAtomType& sourceType, const char* 
 {
 	atomTypes_.emplace_back(this, sourceType, newTypeName, netaDefinition, equivalentName);
 	
-	atomTypesByElementPrivate_[atomTypes_.back().Z()].append(&atomTypes_.back());
+	atomTypesByElementPrivate_[atomTypes_.back().Z()].push_back(atomTypes_.back());
 }
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
-ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes)
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const std::vector< std::vector<std::reference_wrapper<ForcefieldAtomType>>>& atomTypes)
 {
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	for(auto type : atomTypes.constAt(i->element()->Z()))
+	for(ForcefieldAtomType& type : atomTypes[i->element()->Z()])
 	{
 		// Get the scoring for this type
-		int score = type->neta().score(i);
+		int score = type.neta().score(i);
 		if (score > bestScore)
 		{
 			bestScore = score;
-			bestType = type;
+			bestType = &type;
 		}
 	}
 
@@ -140,7 +138,7 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (DissolveSys::sameString(type->name(), name)) return type;
+		for(ForcefieldAtomType& type : atomTypesByElementPrivate_[Z]) if (DissolveSys::sameString(type.name(), name)) return &type;
 	}
 
 	return NULL;
@@ -154,7 +152,7 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (type->index() == id) return type;
+		for(ForcefieldAtomType& type : atomTypesByElementPrivate_[Z]) if (type.index() == id) return &type;
 	}
 
 	return NULL;
