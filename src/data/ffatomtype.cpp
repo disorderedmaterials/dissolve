@@ -25,7 +25,7 @@
 #include "neta/generator.h"
 
 // Constructors
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(Z), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(Z)
 {
 	index_ = index;
 	name_ = name;
@@ -40,7 +40,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, con
 	// Generate NETA
 	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), parent ? parent->name() : "???", netaDefinition);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(Z), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference) : ElementReference(Z)
 {
 	index_ = index;
 	name_ = name;
@@ -52,7 +52,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int Z, int index, con
 	// Generate NETA
 	if (!neta_.set(netaDefinition, parent)) Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(), parent ? parent->name() : "???", netaDefinition);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition, const char* equivalentName) : ElementReference(sourceType.Z()), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition, const char* equivalentName) : ElementReference(sourceType.Z())
 {
 	// Copy data from the supplied source
 	index_ = sourceType.index_;

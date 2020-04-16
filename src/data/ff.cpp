@@ -70,31 +70,23 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3)
 {
-	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
-
-	atomTypes_.own(atomType);
+	atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
 	
-	atomTypesByElementPrivate_[Z].append(atomType);
+	atomTypesByElementPrivate_[Z].append(&atomTypes_.back());
 }
 
 // Add new atom type referencing existing parameters by name
 void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference)
 {
-	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, Z, index, name, netaDefinition, description, q, parameterReference);
-
-	atomTypes_.own(atomType);
-	
-	atomTypesByElementPrivate_[Z].append(atomType);
+	atomTypesByElementPrivate_[Z].append(&atomTypes_.back());
 }
 
 // Copy existing atom type
 void Forcefield::copyAtomType(const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition, const char* equivalentName)
 {
-	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, sourceType, newTypeName, netaDefinition, equivalentName);
-
-	atomTypes_.own(atomType);
+	atomTypes_.emplace_back(this, sourceType, newTypeName, netaDefinition, equivalentName);
 	
-	atomTypesByElementPrivate_[atomType->Z()].append(atomType);
+	atomTypesByElementPrivate_[atomTypes_.back().Z()].append(&atomTypes_.back());
 }
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types

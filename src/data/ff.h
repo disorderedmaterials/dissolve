@@ -85,7 +85,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Short-range parameter sets
 	List<ForcefieldParameters> shortRangeParameters_;
 	// Atom type data
-	List<ForcefieldAtomType> atomTypes_;
+	std::vector<ForcefieldAtomType> atomTypes_;
 	// Atom type data, grouped by element
 	Array< RefList<ForcefieldAtomType> > atomTypesByElementPrivate_;
 
