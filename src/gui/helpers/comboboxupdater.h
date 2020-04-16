@@ -23,6 +23,7 @@
 #include "templates/variantpointer.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
+#include "templates/reflist.h"
 #include <QComboBox>
 
 #ifndef DISSOLVE_COMBOBOXUPDATER_H

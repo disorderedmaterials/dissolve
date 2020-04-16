@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_FORCEKERNEL_H
 #define DISSOLVE_FORCEKERNEL_H
 
+#include "classes/cellarray.h"
 #include "classes/kernelflags.h"
 #include "templates/orderedpointerlist.h"
 #include "base/processpool.h"

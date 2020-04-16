@@ -22,11 +22,10 @@
 #ifndef DISSOLVE_POISSONFIT_H
 #define DISSOLVE_POISSONFIT_H
 
+#include "math/data1d.h"
 #include "math/functionspace.h"
 #include "templates/array.h"
-
-// Forward Declarations
-class Data1D;
+#include "templates/array2d.h"
 
 // Poisson Function Approximation to Q-Space Data (replicating EPSR's methodology)
 class PoissonFit

@@ -22,11 +22,10 @@
 #ifndef DISSOLVE_GAUSSFIT_H
 #define DISSOLVE_GAUSSFIT_H
 
+#include "math/data1d.h"
 #include "math/functionspace.h"
 #include "templates/array.h"
-
-// Forward Declarations
-class Data1D;
+#include "templates/array2d.h"
 
 // Gaussian Function Approximation
 class GaussFit
