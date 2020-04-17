@@ -26,7 +26,7 @@
 #include <string.h>
 
 // Constructor
-SymmetryGenerator::SymmetryGenerator() : ListItem<SymmetryGenerator>()
+SymmetryGenerator::SymmetryGenerator()
 {
 }
 
