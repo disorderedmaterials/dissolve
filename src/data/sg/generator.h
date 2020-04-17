@@ -24,13 +24,12 @@
 
 #include "math/matrix4.h"
 #include "base/charstring.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 /* none */
 
 // Symmetry Generator
-class SymmetryGenerator : public ListItem<SymmetryGenerator>
+class SymmetryGenerator
 {
 	public:
 	// Constructor
