@@ -139,8 +139,15 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		for(ForcefieldAtomType& type : atomTypesByElementPrivate_[Z]) if (DissolveSys::sameString(type.name(), name)) return &type;
-	}
+		auto it = std::find_if(atomTypesByElementPrivate_[Z].begin(),
+				       atomTypesByElementPrivate_[Z].end(),
+				       [&name](ForcefieldAtomType& type) {
+					 return DissolveSys::sameString(type.name(), name);
+				       });
+                if (it != atomTypesByElementPrivate_[Z].end()) {
+                  return &it->get();
+                }
+        }
 
 	return NULL;
 }
