@@ -93,9 +93,10 @@ ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const std::vec
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	for(ForcefieldAtomType& type : atomTypes[i->element()->Z()])
+	for(const auto& typeRef : atomTypes[i->element()->Z()])
 	{
 		// Get the scoring for this type
+		auto& type = typeRef.get();
 		int score = type.neta().score(i);
 		if (score > bestScore)
 		{
@@ -152,7 +153,12 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		for(ForcefieldAtomType& type : atomTypesByElementPrivate_[Z]) if (type.index() == id) return &type;
+		auto it = std::find_if(atomTypesByElementPrivate_[Z].begin(),
+				       atomTypesByElementPrivate_[Z].end(),
+				       [&id](ForcefieldAtomType& type) {
+					 return type.index() == id;
+				       });
+		if(it != atomTypesByElementPrivate_[Z].end()) return &it->get();
 	}
 
 	return NULL;
