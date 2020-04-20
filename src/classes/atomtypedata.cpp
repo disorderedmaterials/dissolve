@@ -79,7 +79,7 @@ bool AtomTypeData::initialise(int listIndex, AtomType *atomType, double populati
 void AtomTypeData::add(double nAdd) { population_ += nAdd; }
 
 // Add to population of Isotope
-void AtomTypeData::add(Isotope *tope, double nAdd)
+void AtomTypeData::add(std::shared_ptr<Isotope> tope, double nAdd)
 {
 	// Has this isotope already been added to the list?
 	IsotopeData *topeData = NULL;
@@ -152,7 +152,7 @@ void AtomTypeData::naturalise()
 }
 
 // Return if specified Isotope is already in the list
-bool AtomTypeData::hasIsotope(Isotope *tope)
+bool AtomTypeData::hasIsotope(std::shared_ptr<Isotope> tope)
 {
 	for (IsotopeData *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
 		if (topeData->isotope() == tope)
@@ -162,7 +162,7 @@ bool AtomTypeData::hasIsotope(Isotope *tope)
 }
 
 // Set this AtomType to have only the single Isotope provided
-void AtomTypeData::setSingleIsotope(Isotope *tope)
+void AtomTypeData::setSingleIsotope(std::shared_ptr<Isotope> tope)
 {
 	isotopes_.clear();
 	IsotopeData *topeData = isotopes_.add();

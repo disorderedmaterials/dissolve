@@ -65,7 +65,7 @@ class AtomTypeList : public GenericItemBase
 	// Remove specified AtomType from the list
 	void remove(AtomType *atomType);
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-	void addIsotope(AtomType *atomType, Isotope *tope = NULL, double popAdd = 0);
+	void addIsotope(AtomType *atomType, std::shared_ptr<Isotope> tope = NULL, double popAdd = 0);
 	// Finalise list, calculating fractional populations etc.
 	void finalise();
 	// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
@@ -75,7 +75,7 @@ class AtomTypeList : public GenericItemBase
 	// Check for presence of AtomType in list
 	bool contains(AtomType *atomType) const;
 	// Check for presence of AtomType/Isotope pair in list
-	bool contains(AtomType *atomType, Isotope *tope);
+	bool contains(AtomType *atomType, std::shared_ptr<Isotope> tope);
 	// Return number of AtomType/Isotopes in list
 	int nItems() const;
 	// Return first item in list

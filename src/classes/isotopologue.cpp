@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "classes/isotopologue.h"
 #include "base/processpool.h"
 #include "classes/atomtype.h"
@@ -68,15 +69,11 @@ void Isotopologue::update()
 	}
 
 	// Construct a temporary RefList, and move all existing RefListItems to it
-	RefDataList<AtomType, Isotope *> oldItems;
-	RefDataItem<AtomType, Isotope *> *rli;
-	while (isotopes_.last() != NULL)
-	{
-		rli = isotopes_.last();
-		isotopes_.cut(rli);
-		oldItems.own(rli);
-	}
+	std::vector<std::tuple<AtomType*,std::shared_ptr<Isotope>>> oldItems;
+	std::tuple<AtomType*, std::shared_ptr<Isotope>> rli;
 
+	std::copy(isotopes_.rbegin(), isotopes_.rend(), oldItems.begin());
+	
 	// Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
 	for (SpeciesAtom *i = parent_->firstAtom(); i != NULL; i = i->next())
 	{
@@ -88,24 +85,29 @@ void Isotopologue::update()
 		}
 
 		// If this AtomType is already in the list, we're done
-		if (isotopes_.contains(at))
-			continue;
-
+		auto it = std::find_if(isotopes_.begin(), isotopes_.end(),
+				       [&at](std::tuple<AtomType*, std::shared_ptr<Isotope>> item) {
+					 return at == std::get<0>(item);
+				       });
+		if (it != isotopes_.end()) continue;
+		
 		// Otherwise, search for old item...
-		rli = oldItems.contains(at);
+		it = std::find_if(oldItems.begin(), oldItems.end(),
+				  [&at](std::tuple<AtomType*, std::shared_ptr<Isotope>> item) {
+				    return at == std::get<0>(item);
+				  });
 		// If we found the existing item, append it to the local list. Otherwise, make a new entry
-		if (rli != NULL)
+		if (it != isotopes_.end())
 		{
-			oldItems.cut(rli);
-			isotopes_.own(rli);
+			oldItems.erase(it);
+			isotopes_.push_back(*it);
 		}
-		else
-			isotopes_.append(at, Isotopes::naturalIsotope(at->element()));
+		else isotopes_.emplace_back(at, Isotopes::naturalIsotope(at->element()));
 	}
 }
 
 // Set Isotope associated to AtomType
-bool Isotopologue::setAtomTypeIsotope(AtomType *at, Isotope *isotope)
+bool Isotopologue::setAtomTypeIsotope(AtomType* at, std::shared_ptr<Isotope> isotope)
 {
 	// Check for NULL pointer
 	if (at == NULL)
@@ -115,32 +117,45 @@ bool Isotopologue::setAtomTypeIsotope(AtomType *at, Isotope *isotope)
 	}
 
 	// Find the requested AtomType in the list
-	RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
-	if (!rdi)
-	{
+	// std::tuple<AtomType*,std::shared_ptr<Isotope>> rdi = isotopes_.contains(at);
+	auto rdi = std::find_if(isotopes_.begin(),
+				isotopes_.end(),
+				[&at](std::tuple<AtomType*, std::shared_ptr<Isotope>> atom) {
+				  return at == std::get<0>(atom);
+				});
+	if (rdi == isotopes_.end()) {
 		Messenger::error("AtomType '%s' not found in Isotopologue '%s'.\n", at->name(), name_.get());
 		return false;
 	}
-
-	rdi->data() = isotope;
+	
+	std::get<1>(*rdi) = isotope;
 
 	return true;
 }
 
 // Return Isotope for specified AtomType
-Isotope *Isotopologue::atomTypeIsotope(AtomType *at) const
+std::shared_ptr<Isotope> Isotopologue::atomTypeIsotope(AtomType* at) const
 {
-	RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
-	if (!rdi)
+	auto it = std::find_if(isotopes_.begin(), isotopes_.end(),
+			       [&at](std::tuple<AtomType*, std::shared_ptr<Isotope>> item) {
+				 return at == std::get<0>(item);
+			       });
+	if (it == isotopes_.end())
 	{
 		Messenger::error("Couldn't retrieve AtomType '%s' from Isotopologue '%s' as it doesn't exist.\n", at->name(), name_.get());
-		return NULL;
+		return nullptr;
 	}
-	return rdi->data();
+	return std::get<1>(*it);
 }
 
 // Return AtomType/Isotope pairs list
-const RefDataList<AtomType, Isotope *> &Isotopologue::isotopes() const { return isotopes_; }
+const std::vector<std::tuple<AtomType*,std::shared_ptr<Isotope>>>& Isotopologue::isotopes() const
+{
+	return isotopes_;
+}
 
 // Return nth AtomType/Isotope pair
-RefDataItem<AtomType, Isotope *> *Isotopologue::isotope(int n) { return isotopes_[n]; }
+std::tuple<AtomType*,std::shared_ptr<Isotope>> Isotopologue::isotope(int n)
+{
+	return isotopes_[n];
+}

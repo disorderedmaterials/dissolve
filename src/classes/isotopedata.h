@@ -23,6 +23,7 @@
 #define DISSOLVE_ISOTOPEDATA_H
 
 #include "templates/listitem.h"
+#include <memory>
 
 // Forward Declarations
 class CoreData;
@@ -48,7 +49,7 @@ class IsotopeData : public ListItem<IsotopeData>
 	 */
       private:
 	// Reference Isotope
-	Isotope *isotope_;
+	std::shared_ptr<Isotope> isotope_;
 	// Population of Isotope
 	double population_;
 	// Local fractional population (e.g. within an AtomTypeData)
@@ -56,7 +57,7 @@ class IsotopeData : public ListItem<IsotopeData>
 
       public:
 	// Initialise
-	bool initialise(Isotope *isotope);
+	bool initialise(std::shared_ptr<Isotope> isotope);
 	// Add to population of Isotope
 	void add(double nAdd);
 	// Finalise, calculating local fractional population (e.g. within an AtomTypeData)
@@ -64,7 +65,7 @@ class IsotopeData : public ListItem<IsotopeData>
 	// Zero population and fraction
 	void zeroPopulation();
 	// Return reference Isotope
-	Isotope *isotope() const;
+	std::shared_ptr<Isotope> isotope() const;
 	// Return total population
 	double population() const;
 	// Return local fractional population (e.g. within an AtomTypeData)

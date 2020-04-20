@@ -50,7 +50,7 @@ void IsotopeData::operator=(const IsotopeData &source)
  */
 
 // Initialise
-bool IsotopeData::initialise(Isotope *isotope)
+bool IsotopeData::initialise(std::shared_ptr<Isotope> isotope)
 {
 	isotope_ = isotope;
 	if (isotope_ == NULL)
@@ -79,7 +79,7 @@ void IsotopeData::zeroPopulation()
 }
 
 // Return reference Isotope
-Isotope *IsotopeData::isotope() const { return isotope_; }
+std::shared_ptr<Isotope> IsotopeData::isotope() const { return isotope_; }
 
 // Return total population over all isotopes
 double IsotopeData::population() const { return population_; }

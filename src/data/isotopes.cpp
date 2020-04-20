@@ -21,9 +21,11 @@
 
 #include "data/isotopes.h"
 #include "base/messenger.h"
+#include <algorithm>
+#include <vector>
 
 // Static Singletons
-Array<List<Isotope>> Isotopes::isotopesByElementPrivate_;
+std::vector<std::vector<std::shared_ptr<Isotope>>> Isotopes::isotopesByElementPrivate_;
 
 /*
  * Isotopic Neutron Scattering Data
@@ -65,7 +67,13 @@ Isotope &Isotope::operator=(const Isotope &source)
 }
 
 // Return index of isotope in it's Element parent's list
-int Isotope::index() const { return Isotopes::isotopes(element().Z()).indexOf(this); }
+int Isotope::index() const
+{
+	// return Isotopes::isotopes(element().Z()).indexOf(this);
+	auto &isotopes = Isotopes::isotopes(element().Z());
+	auto it = std::find_if(isotopes.begin(), isotopes.end(), [this](const std::shared_ptr<Isotope> isotope) { return this == isotope.get(); });
+	return it - isotopes.begin();
+}
 
 // Return mass number (A) of Isotope
 int Isotope::A() const { return A_; }
@@ -96,12 +104,8 @@ double Isotope::absorptionXS() const { return absorptionXS_; }
  */
 
 // Return isotope data, grouped by element
-List<Isotope> &Isotopes::isotopesByElement(int Z)
+std::vector<std::shared_ptr<Isotope>> &Isotopes::isotopesByElement(int Z)
 {
-	// Has the master array been initialised yet? If not, do it now, before the Sears data is constructed
-	if (isotopesByElementPrivate_.nItems() == 0)
-		Elements::createElementListArray<Isotope>(isotopesByElementPrivate_);
-
 	/*
 	 * Neutron Scattering Lengths and Cross Sections
 	 *
@@ -508,20 +512,21 @@ List<Isotope> &Isotopes::isotopesByElement(int Z)
 }
 
 // Register specified Isotope to given Element
-void Isotopes::registerIsotope(Isotope *isotope, int Z) { isotopesByElementPrivate_[Z].own(isotope); }
+void Isotopes::registerIsotope(Isotope *isotope, int Z) { isotopesByElementPrivate_[Z].emplace_back(isotope); }
 
 // Return Isotope with specified A for given Element (if it exists)
-Isotope *Isotopes::isotope(int Z, int A)
+std::shared_ptr<Isotope> Isotopes::isotope(int Z, int A)
 {
-	for (Isotope *isotope = isotopesByElement(Z).first(); isotope != NULL; isotope = isotope->next())
-		if (isotope->A() == A)
-			return isotope;
+	auto &topes = isotopesByElement(Z);
+	auto it = std::find_if(topes.begin(), topes.end(), [&A](const std::shared_ptr<Isotope> isotope) { return isotope->A() == A; });
+	if (it != topes.end())
+		return *it;
 
 	return NULL;
 }
 
 // Return Isotope with specified A for given Element (if it exists)
-Isotope *Isotopes::isotope(Element *el, int A)
+std::shared_ptr<Isotope> Isotopes::isotope(Element *el, int A)
 {
 	if (el == NULL)
 	{
@@ -533,10 +538,10 @@ Isotope *Isotopes::isotope(Element *el, int A)
 }
 
 // Return List of all isotopes available for specified Element
-const List<Isotope> &Isotopes::isotopes(int Z) { return isotopesByElement(Z); }
+const std::vector<std::shared_ptr<Isotope>> &Isotopes::isotopes(int Z) { return isotopesByElement(Z); }
 
 // Return Isotope with specified index (if it exists) in its parent Element
-Isotope *Isotopes::isotopeAtIndex(int Z, int index) { return isotopesByElement(Z)[index]; }
+std::shared_ptr<Isotope> Isotopes::isotopeAtIndex(int Z, int index) { return isotopesByElement(Z)[index]; }
 
 // Return natural Isotope for given Element
-Isotope *Isotopes::naturalIsotope(Element *el) { return isotope(el, 0); }
+std::shared_ptr<Isotope> Isotopes::naturalIsotope(Element *el) { return isotope(el, 0); }

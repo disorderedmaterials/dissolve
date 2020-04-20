@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ATOMTYPEDATA_H
 #define DISSOLVE_ATOMTYPEDATA_H
 
+#include <memory>
 #include "templates/list.h"
 #include "templates/listitem.h"
 
@@ -70,7 +71,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	// Add to population
 	void add(double nAdd);
 	// Add to population of Isotope
-	void add(Isotope *tope, double nAdd);
+	void add(std::shared_ptr<Isotope> tope, double nAdd);
 	// Zero populations
 	void zeroPopulations();
 	// Return list index of AtomTypeData in AtomTypeList
@@ -86,9 +87,9 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	// Remove any existing isotopes, and add only the natural isotope
 	void naturalise();
 	// Return if specified Isotope is already in the list
-	bool hasIsotope(Isotope *tope);
+	bool hasIsotope(std::shared_ptr<Isotope> tope);
 	// Set this AtomType to have only the single Isotope provided
-	void setSingleIsotope(Isotope *tope);
+	void setSingleIsotope(std::shared_ptr<Isotope> tope);
 	// Return first IsotopeData
 	IsotopeData *isotopeData();
 	// Return total population over all isotopes

@@ -72,6 +72,7 @@ template <class T, class D> class RefDataItem
 	RefDataItem<T, D> *next() const { return next_; }
 	// Declare the list and iterator as friends
 	friend class RefDataList<T, D>;
+		// else isotopes_.append(at, Isotopes::naturalIsotope(at->element()));
 	friend class RefDataListIterator<T, D>;
 };
 

@@ -25,7 +25,9 @@
 #include "base/charstring.h"
 #include "data/elements.h"
 #include "templates/list.h"
-#include "templates/refdatalist.h"
+#include <memory>
+#include <tuple>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -68,19 +70,19 @@ class Isotopologue : public ListItem<Isotopologue>
 	 */
       private:
 	// List of AtomType references and their assigned Isotopes
-	RefDataList<AtomType, Isotope *> isotopes_;
+	std::vector<std::tuple<AtomType *, std::shared_ptr<Isotope>>> isotopes_;
 
       public:
 	// Update AtomType/Isotope RefList
 	void update();
 	// Set AtomType/Isotope pair in list
-	bool setAtomTypeIsotope(AtomType *at, Isotope *isotope);
+	bool setAtomTypeIsotope(AtomType *at, std::shared_ptr<Isotope> isotope);
 	// Return Isotope for specified AtomType
-	Isotope *atomTypeIsotope(AtomType *at) const;
+	std::shared_ptr<Isotope> atomTypeIsotope(AtomType *at) const;
 	// Return AtomType/Isotope pairs list
-	const RefDataList<AtomType, Isotope *> &isotopes() const;
+	const std::vector<std::tuple<AtomType *, std::shared_ptr<Isotope>>> &isotopes() const;
 	// Return nth Atom/Isotope pair
-	RefDataItem<AtomType, Isotope *> *isotope(int n);
+	std::tuple<AtomType *, std::shared_ptr<Isotope>> isotope(int n);
 };
 
 #endif

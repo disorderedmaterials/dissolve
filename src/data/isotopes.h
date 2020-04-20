@@ -25,6 +25,8 @@
 #include "data/elements.h"
 #include "templates/array.h"
 #include "templates/list.h"
+#include <memory>
+#include <vector>
 
 // Isotopic Neutron Scattering Data
 class Isotope : public ElementReference, public ListItem<Isotope>
@@ -84,25 +86,25 @@ class Isotopes : public Elements
 {
       private:
 	// Isotope data, grouped by element
-	static Array<List<Isotope>> isotopesByElementPrivate_;
+	static std::vector<std::vector<std::shared_ptr<Isotope>>> isotopesByElementPrivate_;
 
       private:
 	// Return isotope data for specified Element
-	static List<Isotope> &isotopesByElement(int Z);
+	static std::vector<std::shared_ptr<Isotope>> &isotopesByElement(int Z);
 
       public:
 	// Register specified Isotope to given Element
 	static void registerIsotope(Isotope *isotope, int Z);
 	// Return Isotope with specified A (if it exists) for given Z
-	static Isotope *isotope(int Z, int A);
+	static std::shared_ptr<Isotope> isotope(int Z, int A);
 	// Return Isotope with specified A (if it exists) for given Element
-	static Isotope *isotope(Element *el, int A);
+	static std::shared_ptr<Isotope> isotope(Element *el, int A);
 	// Return Isotope with specified index (if it exists) in its parent Element
-	static Isotope *isotopeAtIndex(int Z, int index);
+	static std::shared_ptr<Isotope> isotopeAtIndex(int Z, int index);
 	// Return List of all Isotopes available for specified Element
-	static const List<Isotope> &isotopes(int Z);
+	static const std::vector<std::shared_ptr<Isotope>> &isotopes(int Z);
 	// Return natural Isotope for given Element
-	static Isotope *naturalIsotope(Element *el);
+	static std::shared_ptr<Isotope> naturalIsotope(Element *el);
 };
 
 #endif

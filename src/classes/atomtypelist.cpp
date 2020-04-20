@@ -119,7 +119,7 @@ void AtomTypeList::remove(AtomType *atomType)
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType *atomType, Isotope *tope, double popAdd)
+void AtomTypeList::addIsotope(AtomType *atomType, std::shared_ptr<Isotope> tope, double popAdd)
 {
 	AtomTypeData *atd = add(atomType, 0);
 
@@ -189,7 +189,7 @@ bool AtomTypeList::contains(AtomType *atomType) const
 }
 
 // Check for presence of AtomType/Isotope pair in list
-bool AtomTypeList::contains(AtomType *atomType, Isotope *tope)
+bool AtomTypeList::contains(AtomType *atomType, std::shared_ptr<Isotope> tope)
 {
 	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
