@@ -20,7 +20,6 @@
 */
 
 #include "data/ff.h"
-#include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/coredata.h"
@@ -33,11 +32,6 @@
 #include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
-
-// Constructor / Destructor
-Forcefield::Forcefield() {}
-
-Forcefield::~Forcefield() {}
 
 /*
  * Definition

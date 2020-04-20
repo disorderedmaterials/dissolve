@@ -22,12 +22,17 @@
 #ifndef DISSOLVE_FORCEFIELD_H
 #define DISSOLVE_FORCEFIELD_H
 
-#include "base/enumoptions.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include "data/elements.h"
+#include "data/ffangleterm.h"
+#include "data/ffatomtype.h"
+#include "data/ffbondterm.h"
+#include "data/ffimproperterm.h"
+#include "data/ffparameters.h"
+#include "data/fftorsionterm.h"
 #include <algorithm>
 #include <functional>
 #include <tuple>
@@ -37,12 +42,6 @@ template <class T> using optional = std::tuple<T, bool>;
 
 // Forward Declarations
 class CoreData;
-class ForcefieldAngleTerm;
-class ForcefieldAtomType;
-class ForcefieldBondTerm;
-class ForcefieldImproperTerm;
-class ForcefieldParameters;
-class ForcefieldTorsionTerm;
 class Species;
 class SpeciesAtom;
 
@@ -51,8 +50,8 @@ class Forcefield : public Elements
 {
       public:
 	// Constructor / Destructor
-	Forcefield();
-	virtual ~Forcefield();
+	Forcefield() = default;
+	virtual ~Forcefield() = default;
 
 	/*
 	 * Definition
@@ -103,7 +102,7 @@ class Forcefield : public Elements
 
       public:
 	// Return named short-range parameters (if they exist)
-	const ForcefieldParameters* shortRangeParameters(const char* name) const;
+	const ForcefieldParameters *shortRangeParameters(const char *name) const;
 	// Return the named ForcefieldAtomType (if it exists)
 	virtual ForcefieldAtomType *atomTypeByName(const char *name, Element *element = NULL) const;
 	// Return the ForcefieldAtomType with specified id (if it exists)
