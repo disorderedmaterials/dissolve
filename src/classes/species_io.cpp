@@ -126,7 +126,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 	SpeciesImproper::ImproperFunction impf;
 	SpeciesTorsion::TorsionFunction tf;
 	SpeciesBond::BondType bt;
-	Isotope *tope;
+	std::shared_ptr<Isotope> tope;
 	bool blockDone = false, error = false;
 
 	// Turn off intramolecular term autogeneration while we're reading
@@ -733,14 +733,17 @@ bool Species::write(LineParser &parser, const char *prefix)
 		{
 			if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword), iso->name()))
 				return false;
-			RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-			while (AtomType *atomType = isotopeIterator.iterate())
+			// RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+			for (const auto &items : iso->isotopes())
+			// while (AtomType* atomType = isotopeIterator.iterate())
 			{
+				const auto atomType = std::get<0>(items);
+				const auto data = std::get<1>(items);
 				// No need to write anything that's the natural isotope...
-				if (isotopeIterator.currentData()->A() == 0)
+				if (data->A() == 0)
 					continue;
 
-				if (!parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A()))
+				if (!parser.writeLineF("  %s=%i", atomType->name(), data->A()))
 					return false;
 			}
 			if (!parser.writeLineF("\n"))
