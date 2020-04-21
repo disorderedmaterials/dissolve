@@ -228,7 +228,7 @@ void Weights::calculateWeightingMatrices()
 				else
 				{
 					// Get the Isotope associated to this AtomType in the current Isotopologue
-					Isotope *isotope = tope->atomTypeIsotope(atd1->atomType());
+					const auto isotope = tope->atomTypeIsotope(atd1->atomType());
 					bi = isotope->boundCoherent();
 				}
 				bi *= 0.1;
@@ -250,7 +250,7 @@ void Weights::calculateWeightingMatrices()
 					else
 					{
 						// Get the Isotope associated to this AtomType in the current Isotopologue
-						Isotope *isotope = tope->atomTypeIsotope(atd2->atomType());
+						const auto isotope = tope->atomTypeIsotope(atd2->atomType());
 						bj = isotope->boundCoherent();
 					}
 					bj *= 0.1;
@@ -304,7 +304,7 @@ void Weights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
 			for (SpeciesAtom *i = topes->species()->firstAtom(); i != NULL; i = i->next())
 			{
-				Isotope *iso = tope->atomTypeIsotope(i->atomType());
+				const auto iso = tope->atomTypeIsotope(i->atomType());
 				atomTypes_.addIsotope(i->atomType(), iso, isoWeight->weight() * topes->speciesPopulation());
 			}
 		}
