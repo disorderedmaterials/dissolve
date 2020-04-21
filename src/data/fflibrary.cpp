@@ -73,19 +73,16 @@ std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 }
 
 // Return named Forcefield, if it exists
-std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const char *name)
+std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const string name)
 {
 	for (auto &ff : forcefields())
 	{
-		if (DissolveSys::sameString(ff->name(), name))
+		if (DissolveSys::sameString(ff->name(), name.c_str()))
 			return ff;
 	}
-	auto it = std::find_if(forcefields().begin(),
-			       forcefields().end(),
-			       [&name](const std::shared_ptr<Forcefield> ff) {
-				 return DissolveSys::sameString(ff->name(), name);
-			       });
-	if (it == forcefields().end()) return nullptr;
+	auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> ff) { return DissolveSys::sameString(ff->name(), name.c_str()); });
+	if (it == forcefields().end())
+		return nullptr;
 
 	return *it;
 }
