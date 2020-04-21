@@ -37,8 +37,6 @@
 // Constructor / Destructor
 Forcefield::Forcefield() : ListItem<Forcefield>()
 {
-	// Initialise the Element RefList Array
-	Elements::createElementRefListArray<ForcefieldAtomType>(atomTypesByElementPrivate_);
 }
 
 Forcefield::~Forcefield()
@@ -70,47 +68,40 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, double data0, double data1, double data2, double data3)
 {
-	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
-
-	atomTypes_.own(atomType);
+	atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
 	
-	atomTypesByElementPrivate_[Z].append(atomType);
+	atomTypesByElementPrivate_[Z].push_back(atomTypes_.back());
 }
 
 // Add new atom type referencing existing parameters by name
 void Forcefield::addAtomType(int Z, int index, const char* name, const char* netaDefinition, const char* description, double q, const char* parameterReference)
 {
-	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, Z, index, name, netaDefinition, description, q, parameterReference);
-
-	atomTypes_.own(atomType);
-	
-	atomTypesByElementPrivate_[Z].append(atomType);
+	atomTypesByElementPrivate_[Z].push_back(atomTypes_.back());
 }
 
 // Copy existing atom type
 void Forcefield::copyAtomType(const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition, const char* equivalentName)
 {
-	ForcefieldAtomType* atomType = new ForcefieldAtomType(this, sourceType, newTypeName, netaDefinition, equivalentName);
-
-	atomTypes_.own(atomType);
+	atomTypes_.emplace_back(this, sourceType, newTypeName, netaDefinition, equivalentName);
 	
-	atomTypesByElementPrivate_[atomType->Z()].append(atomType);
+	atomTypesByElementPrivate_[atomTypes_.back().Z()].push_back(atomTypes_.back());
 }
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
-ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes)
+ForcefieldAtomType* Forcefield::determineAtomType(SpeciesAtom* i, const std::vector< std::vector<std::reference_wrapper<ForcefieldAtomType>>>& atomTypes)
 {
 	// Go through AtomTypes defined for the target's element, and check NETA scores
 	int bestScore = -1;
 	ForcefieldAtomType* bestType = NULL;
-	for(auto type : atomTypes.constAt(i->element()->Z()))
+	for(const auto& typeRef : atomTypes[i->element()->Z()])
 	{
 		// Get the scoring for this type
-		int score = type->neta().score(i);
+		auto& type = typeRef.get();
+		int score = type.neta().score(i);
 		if (score > bestScore)
 		{
 			bestScore = score;
-			bestType = type;
+			bestType = &type;
 		}
 	}
 
@@ -148,8 +139,15 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (DissolveSys::sameString(type->name(), name)) return type;
-	}
+		auto it = std::find_if(atomTypesByElementPrivate_[Z].begin(),
+				       atomTypesByElementPrivate_[Z].end(),
+				       [&name](ForcefieldAtomType& type) {
+					 return DissolveSys::sameString(type.name(), name);
+				       });
+                if (it != atomTypesByElementPrivate_[Z].end()) {
+                  return &it->get();
+                }
+        }
 
 	return NULL;
 }
@@ -162,7 +160,12 @@ ForcefieldAtomType* Forcefield::atomTypeById(int id, Element* element) const
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		for(auto type : atomTypesByElementPrivate_.constAt(Z)) if (type->index() == id) return type;
+		auto it = std::find_if(atomTypesByElementPrivate_[Z].begin(),
+				       atomTypesByElementPrivate_[Z].end(),
+				       [&id](ForcefieldAtomType& type) {
+					 return type.index() == id;
+				       });
+		if(it != atomTypesByElementPrivate_[Z].end()) return &it->get();
 	}
 
 	return NULL;

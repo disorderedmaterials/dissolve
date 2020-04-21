@@ -23,6 +23,7 @@
 #define DISSOLVE_FORCEFIELD_H
 
 #include <algorithm>
+#include <functional>
 #include <tuple>
 #include <vector>
 #include "data/elements.h"
@@ -31,7 +32,6 @@
 #include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include "base/enumoptions.h"
-#include "templates/reflist.h"
 
 template<class T>using optional = std::tuple<T, bool>;
 
@@ -85,9 +85,9 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Short-range parameter sets
 	List<ForcefieldParameters> shortRangeParameters_;
 	// Atom type data
-	List<ForcefieldAtomType> atomTypes_;
+	std::vector<ForcefieldAtomType> atomTypes_;
 	// Atom type data, grouped by element
-	Array< RefList<ForcefieldAtomType> > atomTypesByElementPrivate_;
+	std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> atomTypesByElementPrivate_;
 
 	protected:
 	// Add short-range parameters
@@ -99,7 +99,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Copy existing atom type
 	void copyAtomType(const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition = NULL, const char* equivalentName = NULL);
 	// Determine and return atom type for specified SpeciesAtom from supplied Array of types
-	static ForcefieldAtomType* determineAtomType(SpeciesAtom* i, const Array< RefList<ForcefieldAtomType> >& atomTypes);
+	static ForcefieldAtomType* determineAtomType(SpeciesAtom* i, const std::vector< std::vector<std::reference_wrapper<ForcefieldAtomType>>>& atomTypes);
 	// Determine and return atom type for specified SpeciesAtom
 	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
 

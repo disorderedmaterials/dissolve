@@ -412,7 +412,8 @@ ForcefieldAtomType* Forcefield_UFF::determineAtomType(SpeciesAtom* i) const
 			break;
 		// Default - all elements with only one type
 		default:
-			return atomTypesByElementPrivate_.constAt(i->element()->Z()).firstItem();
+			const auto& tempRef = atomTypesByElementPrivate_[i->element()->Z()].front();
+			return &tempRef.get();
 			break;
 	}
 

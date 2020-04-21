@@ -32,7 +32,7 @@ class Forcefield;
 class ForcefieldParameters;
 
 // Forcefield AtomType Base Class
-class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAtomType>
+class ForcefieldAtomType : public ElementReference
 {
 	public:
 	// Constructors
