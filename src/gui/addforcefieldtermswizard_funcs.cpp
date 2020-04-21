@@ -224,7 +224,7 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 	switch (index)
 	{
 	case (AddForcefieldTermsWizard::SelectForcefieldPage):
-		return (ui_.ForcefieldWidget->currentForcefield() != nullptr);
+		return (!ui_.ForcefieldWidget->currentForcefield());
 	default:
 		break;
 	}
