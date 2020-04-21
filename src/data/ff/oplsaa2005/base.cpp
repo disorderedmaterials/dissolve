@@ -22,20 +22,13 @@
 #include "data/ff/oplsaa2005/base.h"
 
 // Constructor
-OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield()
-{
-}
+OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield() {}
 
-OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield()
-{
-}
+OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield() {}
 
 /*
  * Definition
  */
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType OPLSAA2005BaseForcefield::shortRangeType() const
-{
-	return Forcefield::LennardJonesGeometricType;
-}
+Forcefield::ShortRangeType OPLSAA2005BaseForcefield::shortRangeType() const { return Forcefield::LennardJonesGeometricType; }

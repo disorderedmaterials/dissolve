@@ -27,40 +27,39 @@
 // Character String
 class CharString : public ListItem<CharString>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	CharString();
 	CharString(int size);
-	CharString(const char* fmt, ...);
+	CharString(const char *fmt, ...);
 	~CharString();
 	// Copy constructor
-	CharString(const CharString&);
-
+	CharString(const CharString &);
 
 	/*
 	 * Data / Access
 	 */
-	private:
+      private:
 	// Current size
 	int size_;
 	// Position of '\0' character
 	int endPosition_;
 	// Pointer to character array
-	char* data_;
+	char *data_;
 
-	public:
+      public:
 	// Print string info
 	void info() const;
 	// Clear string but don't free
 	void clear();
 	// Set value
-	void set(const char* s);
+	void set(const char *s);
 	// Get value
-	const char* get() const;
+	const char *get() const;
 	// Resize data
 	void createEmpty(int);
 	// Resize data (to be same length as source CharString)
-	void createEmpty(CharString&);
+	void createEmpty(CharString &);
 	// Fill current string with specified character
 	void fill(char c);
 	// Returns the length of the current string
@@ -72,11 +71,10 @@ class CharString : public ListItem<CharString>
 	// Return char at specified position
 	char at(int n) const;
 
-	
 	/*
 	 * Erase / Cut
 	 */
-	public:
+      public:
 	// Erase range of characters from the string
 	void erase(int, int);
 	// Erase 'n' characters from start of string
@@ -86,43 +84,41 @@ class CharString : public ListItem<CharString>
 	// Erase from nth character to the end of string
 	void eraseFrom(int);
 	// Cut n characters from start of string and place in other
-	void cutStart(int, CharString&);
+	void cutStart(int, CharString &);
 	// Replace characters
 	void replace(char fromChar, char toChar);
 	// Replace multiple characters
-	void replace(const char* fromChars, char toChar);
-
+	void replace(const char *fromChars, char toChar);
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment operator
-	void operator=(const char*);
+	void operator=(const char *);
 	// Assignment operator
-	void operator=(const CharString&);
+	void operator=(const CharString &);
 	// Equality operator (const char*)
-	bool operator==(const char*) const;
+	bool operator==(const char *) const;
 	// Inequality operator (const char*)
-	bool operator!=(const char*) const;
+	bool operator!=(const char *) const;
 	// Equality operator
-	bool operator==(const CharString&) const;
+	bool operator==(const CharString &) const;
 	// Inequality operator
-	bool operator!=(const CharString&) const;
+	bool operator!=(const CharString &) const;
 	// Array subscript operator
-	char& operator[](int);
+	char &operator[](int);
 	// Character addition operator
 	void operator+=(char);
 	// String addition operator
-	void operator+=(const char*);
+	void operator+=(const char *);
 	// Conversion operators
-	operator const char*() const;
-
+	operator const char *() const;
 
 	/*
 	 * Conversion
 	 */
-	public:
+      public:
 	// Returns contents as double
 	double asDouble() const;
 	// Returns contents as integer
@@ -134,37 +130,35 @@ class CharString : public ListItem<CharString>
 	// Returns true if the string contains a number
 	bool isNumeric() const;
 	// Return the lowercase conversion of the string
-	const char* lower() const;
+	const char *lower() const;
 	// Return the uppercase conversion of the string
-	const char* upper() const;
-
+	const char *upper() const;
 
 	/*
 	 * Search (Returning integer index)
 	 */
-	public:
+      public:
 	// Find position of first occurrence of character 'c'
 	int find(char c) const;
 	// Find position of last occurrence of character 'c'
 	int rFind(char c, char stopat1 = '\0', char stopat2 = '\0') const;
 
-
 	/*
 	 * C-String Routines
 	 */
-	public:
+      public:
 	// Concatenate supplied string on to end of this string
-	void strcat(const char* s, int charcount = -1);
+	void strcat(const char *s, int charcount = -1);
 	// Append formatted string (not actually a C string function, but would be useful!)
-	void strcatf(const char* fmt, ...);
+	void strcatf(const char *fmt, ...);
 	// Create formatted string
-	void sprintf(const char* fmt, ...);
+	void sprintf(const char *fmt, ...);
 	// Search for character in string
-	char* strchr(char c) const;
+	char *strchr(char c) const;
 	// Copy substring of supplied string into this string
-	void substr(const char* source, int pos, int nchars);
+	void substr(const char *source, int pos, int nchars);
 	// Static sprintf
-	static const char* string(const char* fmt, ...);
+	static const char *string(const char *fmt, ...);
 };
 
 #endif

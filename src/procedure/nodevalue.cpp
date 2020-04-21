@@ -20,8 +20,8 @@
 */
 
 #include "procedure/nodevalue.h"
-#include "expression/generator.h"
 #include "base/sysfunc.h"
+#include "expression/generator.h"
 
 // Constructors
 NodeValue::NodeValue()
@@ -42,7 +42,7 @@ NodeValue::NodeValue(const double d)
 	valueD_ = d;
 	type_ = DoubleNodeValue;
 }
-NodeValue::NodeValue(const char* expressionText, RefList<ExpressionVariable> parameters)
+NodeValue::NodeValue(const char *expressionText, RefList<ExpressionVariable> parameters)
 {
 	valueI_ = 0;
 	valueD_ = 0.0;
@@ -50,27 +50,16 @@ NodeValue::NodeValue(const char* expressionText, RefList<ExpressionVariable> par
 }
 
 // Destructor
-NodeValue::~NodeValue()
-{
-}
+NodeValue::~NodeValue() {}
 
 // Assignment from integer
-void NodeValue::operator=(const int value)
-{
-	set(value);
-}
+void NodeValue::operator=(const int value) { set(value); }
 
 // Assignment from integer
-void NodeValue::operator=(const double value)
-{
-	set(value);
-}
+void NodeValue::operator=(const double value) { set(value); }
 
 // Conversion (to double)
-NodeValue::operator double()
-{
-	return asDouble();
-}
+NodeValue::operator double() { return asDouble(); }
 
 /*
  * Data
@@ -95,15 +84,17 @@ bool NodeValue::set(double value)
 }
 
 // Set from expression text
-bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable> parameters)
+bool NodeValue::set(const char *expressionText, RefList<ExpressionVariable> parameters)
 {
 	// Is this just a plain number, rather than an equation.
 	bool isFloatingPoint;
 	if (DissolveSys::isNumber(expressionText, isFloatingPoint))
 	{
 		type_ = isFloatingPoint ? DoubleNodeValue : IntegerNodeValue;
-		if (isFloatingPoint) valueD_ = atof(expressionText);
-		else valueI_ = atoi(expressionText);
+		if (isFloatingPoint)
+			valueD_ = atof(expressionText);
+		else
+			valueI_ = atoi(expressionText);
 	}
 	else
 	{
@@ -116,10 +107,7 @@ bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable> para
 }
 
 // Return whether value is currently valid
-bool NodeValue::isValid() const
-{
-	return (type_ == ExpressionNodeValue ? expression_.isValid() : true);
-}
+bool NodeValue::isValid() const { return (type_ == ExpressionNodeValue ? expression_.isValid() : true); }
 
 /*
  * Value Retrieval
@@ -128,17 +116,23 @@ bool NodeValue::isValid() const
 // Return contained value as integer
 int NodeValue::asInteger()
 {
-	if (type_ == IntegerNodeValue) return valueI_;
-	else if (type_ == DoubleNodeValue) return (int) valueD_;
-	else return expression_.asInteger();
+	if (type_ == IntegerNodeValue)
+		return valueI_;
+	else if (type_ == DoubleNodeValue)
+		return (int)valueD_;
+	else
+		return expression_.asInteger();
 }
 
 // Return contained value as double
 double NodeValue::asDouble()
 {
-	if (type_ == IntegerNodeValue) return (double) valueI_;
-	else if (type_ == DoubleNodeValue) return valueD_;
-	else return expression_.asDouble();
+	if (type_ == IntegerNodeValue)
+		return (double)valueI_;
+	else if (type_ == DoubleNodeValue)
+		return valueD_;
+	else
+		return expression_.asDouble();
 }
 
 // Return value represented as a string
@@ -146,12 +140,16 @@ CharString NodeValue::asString(bool addQuotesIfRequired) const
 {
 	CharString result;
 
-	if (type_ == IntegerNodeValue) result = DissolveSys::itoa(valueI_);
-	else if (type_ == DoubleNodeValue) result = DissolveSys::ftoa(valueD_, "%12.6e");
+	if (type_ == IntegerNodeValue)
+		result = DissolveSys::itoa(valueI_);
+	else if (type_ == DoubleNodeValue)
+		result = DissolveSys::ftoa(valueD_, "%12.6e");
 	else
 	{
-		if (addQuotesIfRequired) result = CharString("'%s'", expression_.expressionString());
-		else result = CharString("%s", expression_.expressionString());
+		if (addQuotesIfRequired)
+			result = CharString("'%s'", expression_.expressionString());
+		else
+			result = CharString("%s", expression_.expressionString());
 	}
 
 	return result;

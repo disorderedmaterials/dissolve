@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_SKELETON_H
 #define DISSOLVE_MODULEWIDGET_SKELETON_H
 
-#include "modules/skeleton/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/skeleton/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class SkeletonModule;
@@ -34,19 +34,18 @@ class SkeletonModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	SkeletonModule* module_;
+	SkeletonModule *module_;
 
-	public:
+      public:
 	// Constructor
-	SkeletonModuleWidget(QWidget* parent, SkeletonModule* module);
-
+	SkeletonModuleWidget(QWidget *parent, SkeletonModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::SkeletonModuleWidget ui_;
 };

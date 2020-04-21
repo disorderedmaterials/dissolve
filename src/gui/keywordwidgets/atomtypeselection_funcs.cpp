@@ -19,29 +19,30 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/atomtypeselection.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/helpers/listwidgetupdater.h"
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
 #include "classes/coredata.h"
 #include "genericitems/listhelper.h"
-#include <QHBoxLayout>
+#include "gui/helpers/listwidgetupdater.h"
+#include "gui/keywordwidgets/atomtypeselection.h"
+#include "gui/keywordwidgets/dropdown.h"
 #include <QComboBox>
+#include <QHBoxLayout>
 #include <QString>
 
 // Constructor
-AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
 
 	// Connect signals / slots
-	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
+	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(itemChanged(QListWidgetItem *)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<AtomTypeSelectionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into AtomTypeSelectionKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<AtomTypeSelectionKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into AtomTypeSelectionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -54,12 +55,12 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, 
  */
 
 // Selection list update function
-void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType* atomType, bool createItem)
+void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType *atomType, bool createItem)
 {
 	// Grab the target AtomTypeSelection
-	AtomTypeList& selection = keyword_->data();
+	AtomTypeList &selection = keyword_->data();
 
-	QListWidgetItem* item;
+	QListWidgetItem *item;
 	if (createItem)
 	{
 		item = new QListWidgetItem(atomType->name());
@@ -67,14 +68,16 @@ void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType* atomT
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui.SelectionList->insertItem(row, item);
 	}
-	else item = ui.SelectionList->item(row);
+	else
+		item = ui.SelectionList->item(row);
 	item->setCheckState(selection.contains(atomType) ? Qt::Checked : Qt::Unchecked);
 }
 
 // List item changed
-void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem* item)
+void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem *item)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -88,18 +91,15 @@ void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem* item)
  */
 
 // Update value displayed in widget
-void AtomTypeSelectionKeywordWidget::updateValue()
-{
-	updateWidgetValues(coreData_);
-}
+void AtomTypeSelectionKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
 	refreshing_ = true;
-	
+
 	// Update the list against the global AtomType list
-	ListWidgetUpdater<AtomTypeSelectionKeywordWidget,AtomType> listUpdater(ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<AtomTypeSelectionKeywordWidget, AtomType> listUpdater(ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 
@@ -111,10 +111,11 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 {
 	// Loop over items in the QListWidget, adding the associated AtomTypes for any that are checked
 	AtomTypeList newSelection;
-	for (int n=0; n<ui.SelectionList->count(); ++n)
+	for (int n = 0; n < ui.SelectionList->count(); ++n)
 	{
-		QListWidgetItem* item = ui.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.add(VariantPointer<AtomType>(item->data(Qt::UserRole)));
+		QListWidgetItem *item = ui.SelectionList->item(n);
+		if (item->checkState() == Qt::Checked)
+			newSelection.add(VariantPointer<AtomType>(item->data(Qt::UserRole)));
 	}
 	keyword_->setData(newSelection);
 }
@@ -123,16 +124,19 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 void AtomTypeSelectionKeywordWidget::updateSummaryText()
 {
 	// Create summary text for the KeywordDropDown button
-	AtomTypeList& selection = keyword_->data();
-	if (selection.nItems() == 0) setSummaryText("<None>");
+	AtomTypeList &selection = keyword_->data();
+	if (selection.nItems() == 0)
+		setSummaryText("<None>");
 	else
 	{
 		CharString summaryText;
 		ListIterator<AtomTypeData> atomTypeIterator(selection.types());
-		while (AtomTypeData* atd = atomTypeIterator.iterate())
+		while (AtomTypeData *atd = atomTypeIterator.iterate())
 		{
-			if (atomTypeIterator.isFirst()) summaryText = atd->atomTypeName();
-			else summaryText.strcatf(", %s", atd->atomTypeName());
+			if (atomTypeIterator.isFirst())
+				summaryText = atd->atomTypeName();
+			else
+				summaryText.strcatf(", %s", atd->atomTypeName());
 		}
 		setSummaryText(summaryText);
 	}

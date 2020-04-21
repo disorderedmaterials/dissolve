@@ -20,18 +20,18 @@
 */
 
 #include "math/histogram3d.h"
-#include "math/histogram1d.h"
-#include "base/messenger.h"
 #include "base/lineparser.h"
+#include "base/messenger.h"
+#include "math/histogram1d.h"
 
 // Static Members (ObjectStore)
-template<class Histogram3D> RefDataList<Histogram3D,int> ObjectStore<Histogram3D>::objects_;
-template<class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
-template<class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
-template<class Histogram3D> const char* ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";
+template <class Histogram3D> RefDataList<Histogram3D, int> ObjectStore<Histogram3D>::objects_;
+template <class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
+template <class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
+template <class Histogram3D> const char *ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";
 
 // Constructor
-Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(this) 
+Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(this)
 {
 	accumulatedData_.addErrors();
 
@@ -39,15 +39,10 @@ Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(t
 }
 
 // Destructor
-Histogram3D::~Histogram3D()
-{
-}
+Histogram3D::~Histogram3D() {}
 
 // Copy Constructor
-Histogram3D::Histogram3D(const Histogram3D& source) : ObjectStore<Histogram3D>(this)
-{
-	(*this) = source;
-}
+Histogram3D::Histogram3D(const Histogram3D &source) : ObjectStore<Histogram3D>(this) { (*this) = source; }
 
 // Clear Data
 void Histogram3D::clear()
@@ -82,16 +77,18 @@ void Histogram3D::clear()
 void Histogram3D::updateAccumulatedData()
 {
 	// Store bin centres and accumulated averages in the object
-	for (int x=0; x<nXBins_; ++x)
+	for (int x = 0; x < nXBins_; ++x)
 	{
 		accumulatedData_.xAxis(x) = xBinCentres_[x];
-		for (int y=0; y<nYBins_; ++y)
+		for (int y = 0; y < nYBins_; ++y)
 		{
-			if (x == 0) accumulatedData_.yAxis(y) = yBinCentres_[y];
+			if (x == 0)
+				accumulatedData_.yAxis(y) = yBinCentres_[y];
 
-			for (int z=0; z<nZBins_; ++z)
+			for (int z = 0; z < nZBins_; ++z)
 			{
-				if (x == 0) accumulatedData_.zAxis(z) = zBinCentres_[z];
+				if (x == 0)
+					accumulatedData_.zAxis(z) = zBinCentres_[z];
 
 				accumulatedData_.value(x, y, z) = averages_.constAt(x, y, z);
 				accumulatedData_.error(x, y, z) = averages_.constAt(x, y, z).stDev();
@@ -143,52 +140,28 @@ void Histogram3D::zeroBins()
 }
 
 // Return minimum value for x data (hard left-edge of first bin)
-double Histogram3D::xMinimum() const
-{
-	return xMinimum_;
-}
+double Histogram3D::xMinimum() const { return xMinimum_; }
 
 // Return maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
-double Histogram3D::xMaximum() const
-{
-	return xMaximum_;
-}
+double Histogram3D::xMaximum() const { return xMaximum_; }
 
 // Return x bin width
-double Histogram3D::xBinWidth() const
-{
-	return xBinWidth_;
-}
+double Histogram3D::xBinWidth() const { return xBinWidth_; }
 
 // Return number of x bins
-int Histogram3D::nXBins() const
-{
-	return nXBins_;
-}
+int Histogram3D::nXBins() const { return nXBins_; }
 
 // Return minimum value for y data (hard left-edge of first bin)
-double Histogram3D::yMinimum() const
-{
-	return yMinimum_;
-}
+double Histogram3D::yMinimum() const { return yMinimum_; }
 
 // Return maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
-double Histogram3D::yMaximum() const
-{
-	return yMaximum_;
-}
+double Histogram3D::yMaximum() const { return yMaximum_; }
 
 // Return y bin width
-double Histogram3D::yBinWidth() const
-{
-	return yBinWidth_;
-}
+double Histogram3D::yBinWidth() const { return yBinWidth_; }
 
 // Return number of y bins
-int Histogram3D::nYBins() const
-{
-	return nYBins_;
-}
+int Histogram3D::nYBins() const { return nYBins_; }
 
 // Bin specified value, returning success
 bool Histogram3D::bin(double x, double y, double z)
@@ -224,25 +197,20 @@ bool Histogram3D::bin(double x, double y, double z)
 }
 
 // Bin specified value (as Vec3), returning success
-bool Histogram3D::bin(Vec3<double> v)
-{
-	return bin(v.x, v.y, v.z);
-}
+bool Histogram3D::bin(Vec3<double> v) { return bin(v.x, v.y, v.z); }
 
 // Return number of values binned over all bins
-long int Histogram3D::nBinned() const
-{
-	return nBinned_;
-}
+long int Histogram3D::nBinned() const { return nBinned_; }
 
 // Accumulate current histogram bins into averages
 void Histogram3D::accumulate()
 {
-	for (int x=0; x<nXBins_; ++x)
+	for (int x = 0; x < nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y)
+		for (int y = 0; y < nYBins_; ++y)
 		{
-			for (int z=0; z<nZBins_; ++z) averages_.at(x,y,z) += double(bins_.at(x,y,z));
+			for (int z = 0; z < nZBins_; ++z)
+				averages_.at(x, y, z) += double(bins_.at(x, y, z));
 		}
 	}
 
@@ -251,25 +219,16 @@ void Histogram3D::accumulate()
 }
 
 // Return Array of x centre-bin values
-const Array<double>& Histogram3D::xBinCentres() const
-{
-	return xBinCentres_;
-}
+const Array<double> &Histogram3D::xBinCentres() const { return xBinCentres_; }
 
 // Return Array of y centre-bin values
-const Array<double>& Histogram3D::yBinCentres() const
-{
-	return yBinCentres_;
-}
+const Array<double> &Histogram3D::yBinCentres() const { return yBinCentres_; }
 
 // Return histogram data
-Array3D<long int>& Histogram3D::bins()
-{
-	return bins_;
-}
+Array3D<long int> &Histogram3D::bins() { return bins_; }
 
 // Add source histogram data into local array
-void Histogram3D::add(Histogram3D& other, int factor)
+void Histogram3D::add(Histogram3D &other, int factor)
 {
 	if ((nXBins_ != other.nXBins_) || (nYBins_ != other.nYBins_))
 	{
@@ -277,27 +236,25 @@ void Histogram3D::add(Histogram3D& other, int factor)
 		return;
 	}
 
-	for (int x=0; x<nXBins_; ++x)
+	for (int x = 0; x < nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y)
+		for (int y = 0; y < nYBins_; ++y)
 		{
-			for (int z=0; z<nZBins_; ++z) bins_.at(x,y,z) += other.bins_.at(x,y,z) * factor;
+			for (int z = 0; z < nZBins_; ++z)
+				bins_.at(x, y, z) += other.bins_.at(x, y, z) * factor;
 		}
 	}
 }
 
 // Return accumulated (averaged) data
-const Data3D& Histogram3D::accumulatedData() const
-{
-	return accumulatedData_;
-}
+const Data3D &Histogram3D::accumulatedData() const { return accumulatedData_; }
 
 /*
  * Operators
  */
 
 // Operator =
-void Histogram3D::operator=(const Histogram3D& source)
+void Histogram3D::operator=(const Histogram3D &source)
 {
 	xMinimum_ = source.xMinimum_;
 	xMaximum_ = source.xMaximum_;
@@ -320,31 +277,33 @@ void Histogram3D::operator=(const Histogram3D& source)
  */
 
 // Return class name
-const char* Histogram3D::itemClassName()
-{
-	return "Histogram3D";
-}
+const char *Histogram3D::itemClassName() { return "Histogram3D"; }
 
 // Read data through specified LineParser
-bool Histogram3D::read(LineParser& parser, const CoreData& coreData)
+bool Histogram3D::read(LineParser &parser, const CoreData &coreData)
 {
 	clear();
 
-	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
+		return false;
 	setObjectTag(parser.line());
 
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5), parser.argd(6), parser.argd(7), parser.argd(8));
 
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	nBinned_ = parser.argli(0);
 	nMissed_ = parser.argli(1);
 
-	for (int x=0; x<nXBins_; ++x)
+	for (int x = 0; x < nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y)
+		for (int y = 0; y < nYBins_; ++y)
 		{
-			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).read(parser, coreData)) return false;
+			for (int z = 0; z < nZBins_; ++z)
+				if (!averages_.at(x, y, z).read(parser, coreData))
+					return false;
 		}
 	}
 
@@ -352,16 +311,21 @@ bool Histogram3D::read(LineParser& parser, const CoreData& coreData)
 }
 
 // Write data through specified LineParser
-bool Histogram3D::write(LineParser& parser)
+bool Histogram3D::write(LineParser &parser)
 {
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%f %f %f %f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_)) return false;
-	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
-	for (int x=0; x<nXBins_; ++x)
+	if (!parser.writeLineF("%s\n", objectTag()))
+		return false;
+	if (!parser.writeLineF("%f %f %f %f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_))
+		return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_))
+		return false;
+	for (int x = 0; x < nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y)
+		for (int y = 0; y < nYBins_; ++y)
 		{
-			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).write(parser)) return false;
+			for (int z = 0; z < nZBins_; ++z)
+				if (!averages_.at(x, y, z).write(parser))
+					return false;
 		}
 	}
 
@@ -373,71 +337,112 @@ bool Histogram3D::write(LineParser& parser)
  */
 
 // Sum histogram data onto all processes
-bool Histogram3D::allSum(ProcessPool& procPool)
+bool Histogram3D::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.allSum(bins_.linearArray(), bins_.linearArraySize())) return false;
+	if (!procPool.allSum(bins_.linearArray(), bins_.linearArraySize()))
+		return false;
 #endif
 
 	return true;
 }
 
 // Broadcast data
-bool Histogram3D::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool Histogram3D::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
 	// Range data
-	if (!procPool.broadcast(xMinimum_, root)) return false;
-	if (!procPool.broadcast(xMaximum_, root)) return false;
-	if (!procPool.broadcast(xBinWidth_, root)) return false;
-	if (!procPool.broadcast(nXBins_, root)) return false;
-	if (!procPool.broadcast(yMinimum_, root)) return false;
-	if (!procPool.broadcast(yMaximum_, root)) return false;
-	if (!procPool.broadcast(yBinWidth_, root)) return false;
-	if (!procPool.broadcast(nYBins_, root)) return false;
-	if (!procPool.broadcast(zMinimum_, root)) return false;
-	if (!procPool.broadcast(zMaximum_, root)) return false;
-	if (!procPool.broadcast(zBinWidth_, root)) return false;
-	if (!procPool.broadcast(nZBins_, root)) return false;
+	if (!procPool.broadcast(xMinimum_, root))
+		return false;
+	if (!procPool.broadcast(xMaximum_, root))
+		return false;
+	if (!procPool.broadcast(xBinWidth_, root))
+		return false;
+	if (!procPool.broadcast(nXBins_, root))
+		return false;
+	if (!procPool.broadcast(yMinimum_, root))
+		return false;
+	if (!procPool.broadcast(yMaximum_, root))
+		return false;
+	if (!procPool.broadcast(yBinWidth_, root))
+		return false;
+	if (!procPool.broadcast(nYBins_, root))
+		return false;
+	if (!procPool.broadcast(zMinimum_, root))
+		return false;
+	if (!procPool.broadcast(zMaximum_, root))
+		return false;
+	if (!procPool.broadcast(zBinWidth_, root))
+		return false;
+	if (!procPool.broadcast(nZBins_, root))
+		return false;
 
 	// Data
-	if (!procPool.broadcast(nBinned_, root)) return false;
-	if (!procPool.broadcast(nMissed_, root)) return false;
-	if (!procPool.broadcast(xBinCentres_, root)) return false;
-	if (!procPool.broadcast(yBinCentres_, root)) return false;
-	if (!procPool.broadcast(zBinCentres_, root)) return false;
-	if (!procPool.broadcast(bins_.linearArray(), bins_.linearArraySize(), root)) return false;
-	SampledDouble* avgs = averages_.linearArray();
-	for (int n=0; n<averages_.linearArraySize(); ++n) if (!avgs[n].broadcast(procPool, root, coreData)) return false;
+	if (!procPool.broadcast(nBinned_, root))
+		return false;
+	if (!procPool.broadcast(nMissed_, root))
+		return false;
+	if (!procPool.broadcast(xBinCentres_, root))
+		return false;
+	if (!procPool.broadcast(yBinCentres_, root))
+		return false;
+	if (!procPool.broadcast(zBinCentres_, root))
+		return false;
+	if (!procPool.broadcast(bins_.linearArray(), bins_.linearArraySize(), root))
+		return false;
+	SampledDouble *avgs = averages_.linearArray();
+	for (int n = 0; n < averages_.linearArraySize(); ++n)
+		if (!avgs[n].broadcast(procPool, root, coreData))
+			return false;
 #endif
 	return true;
 }
 
 // Check item equality
-bool Histogram3D::equality(ProcessPool& procPool)
+bool Histogram3D::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	// Check number of items in arrays first
-	if (!procPool.equality(xMinimum_)) return Messenger::error("Histogram3D minimum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), xMinimum_);
-	if (!procPool.equality(xMaximum_)) return Messenger::error("Histogram3D maximum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), xMaximum_);
-	if (!procPool.equality(xBinWidth_)) return Messenger::error("Histogram3D bin x width is not equivalent (process %i has %e).\n", procPool.poolRank(), xBinWidth_);
-	if (!procPool.equality(nXBins_)) return Messenger::error("Histogram3D number of x bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nXBins_);
-	if (!procPool.equality(xBinCentres_)) return Messenger::error("Histogram3D x bin centre values not equivalent.\n");
-	if (!procPool.equality(yMinimum_)) return Messenger::error("Histogram3D minimum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), yMinimum_);
-	if (!procPool.equality(yMaximum_)) return Messenger::error("Histogram3D maximum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), yMaximum_);
-	if (!procPool.equality(yBinWidth_)) return Messenger::error("Histogram3D bin y width is not equivalent (process %i has %e).\n", procPool.poolRank(), yBinWidth_);
-	if (!procPool.equality(nYBins_)) return Messenger::error("Histogram3D number of y bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nYBins_);
-	if (!procPool.equality(yBinCentres_)) return Messenger::error("Histogram3D y bin centre values not equivalent.\n");
-	if (!procPool.equality(zMinimum_)) return Messenger::error("Histogram3D minimum z value is not equivalent (process %i has %e).\n", procPool.poolRank(), zMinimum_);
-	if (!procPool.equality(zMaximum_)) return Messenger::error("Histogram3D maximum z value is not equivalent (process %i has %e).\n", procPool.poolRank(), zMaximum_);
-	if (!procPool.equality(zBinWidth_)) return Messenger::error("Histogram3D bin z width is not equivalent (process %i has %e).\n", procPool.poolRank(), zBinWidth_);
-	if (!procPool.equality(nZBins_)) return Messenger::error("Histogram3D number of z bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nZBins_);
-	if (!procPool.equality(zBinCentres_)) return Messenger::error("Histogram3D z bin centre values not equivalent.\n");
-	if (!procPool.equality(bins_.linearArray(), bins_.linearArraySize())) return Messenger::error("Histogram3D bin values not equivalent.\n");
-	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
-	if (!procPool.equality(nMissed_)) return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
-	SampledDouble* avgs = averages_.linearArray();
-	for (int n=0; n<averages_.linearArraySize(); ++n) if (!avgs[n].equality(procPool)) return Messenger::error("Histogram3D average values not equivalent.\n");
+	if (!procPool.equality(xMinimum_))
+		return Messenger::error("Histogram3D minimum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), xMinimum_);
+	if (!procPool.equality(xMaximum_))
+		return Messenger::error("Histogram3D maximum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), xMaximum_);
+	if (!procPool.equality(xBinWidth_))
+		return Messenger::error("Histogram3D bin x width is not equivalent (process %i has %e).\n", procPool.poolRank(), xBinWidth_);
+	if (!procPool.equality(nXBins_))
+		return Messenger::error("Histogram3D number of x bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nXBins_);
+	if (!procPool.equality(xBinCentres_))
+		return Messenger::error("Histogram3D x bin centre values not equivalent.\n");
+	if (!procPool.equality(yMinimum_))
+		return Messenger::error("Histogram3D minimum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), yMinimum_);
+	if (!procPool.equality(yMaximum_))
+		return Messenger::error("Histogram3D maximum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), yMaximum_);
+	if (!procPool.equality(yBinWidth_))
+		return Messenger::error("Histogram3D bin y width is not equivalent (process %i has %e).\n", procPool.poolRank(), yBinWidth_);
+	if (!procPool.equality(nYBins_))
+		return Messenger::error("Histogram3D number of y bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nYBins_);
+	if (!procPool.equality(yBinCentres_))
+		return Messenger::error("Histogram3D y bin centre values not equivalent.\n");
+	if (!procPool.equality(zMinimum_))
+		return Messenger::error("Histogram3D minimum z value is not equivalent (process %i has %e).\n", procPool.poolRank(), zMinimum_);
+	if (!procPool.equality(zMaximum_))
+		return Messenger::error("Histogram3D maximum z value is not equivalent (process %i has %e).\n", procPool.poolRank(), zMaximum_);
+	if (!procPool.equality(zBinWidth_))
+		return Messenger::error("Histogram3D bin z width is not equivalent (process %i has %e).\n", procPool.poolRank(), zBinWidth_);
+	if (!procPool.equality(nZBins_))
+		return Messenger::error("Histogram3D number of z bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nZBins_);
+	if (!procPool.equality(zBinCentres_))
+		return Messenger::error("Histogram3D z bin centre values not equivalent.\n");
+	if (!procPool.equality(bins_.linearArray(), bins_.linearArraySize()))
+		return Messenger::error("Histogram3D bin values not equivalent.\n");
+	if (!procPool.equality(nBinned_))
+		return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+	if (!procPool.equality(nMissed_))
+		return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+	SampledDouble *avgs = averages_.linearArray();
+	for (int n = 0; n < averages_.linearArraySize(); ++n)
+		if (!avgs[n].equality(procPool))
+			return Messenger::error("Histogram3D average values not equivalent.\n");
 #endif
 	return true;
 }

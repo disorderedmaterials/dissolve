@@ -35,25 +35,25 @@ class SelectElementDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	SelectElementDialog(QWidget* parent);
+	SelectElementDialog(QWidget *parent);
 	// Destructor
 	~SelectElementDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::SelectElementDialog ui_;
 
-	private slots:
+      private slots:
 	void on_ElementWidget_elementSelected(bool dummy);
 	void on_ElementWidget_elementDoubleClicked();
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 
-	public:
+      public:
 	// Run the dialog, returning the selected Element
-	Element* selectElement(Element* currentElement = NULL);
+	Element *selectElement(Element *currentElement = NULL);
 };
 
 #endif

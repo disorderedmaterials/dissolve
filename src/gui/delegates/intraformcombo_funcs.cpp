@@ -19,49 +19,46 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/delegates/intraformcombo.hui"
-#include "gui/delegates/combolist.hui"
-#include "gui/helpers/combopopulator.h"
 #include "classes/speciesbond.h"
+#include "gui/delegates/combolist.hui"
+#include "gui/delegates/intraformcombo.hui"
+#include "gui/helpers/combopopulator.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IntraFormComboDelegate::IntraFormComboDelegate(QObject* parent, ComboListItems* items, const List<MasterIntra>& masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms)
-{
-	items_ = items;
-}
+IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms) { items_ = items; }
 
 // Destructor
-IntraFormComboDelegate::~IntraFormComboDelegate()
-{
-}
+IntraFormComboDelegate::~IntraFormComboDelegate() {}
 
 // Create editor
-QWidget* IntraFormComboDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
-	QComboBox* editor = new QComboBox(parent);
+	QComboBox *editor = new QComboBox(parent);
 
 	// Add on standard bond forms first
 	items_->restartIterator();
-	while (items_->nextItem()) editor->addItem(items_->currentItemText());
+	while (items_->nextItem())
+		editor->addItem(items_->currentItemText());
 
 	// Now append any MasterBonds we have
-	if (masterTerms_.nItems() > 0) ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);
+	if (masterTerms_.nItems() > 0)
+		ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);
 
 	return editor;
 }
 
 // Set initial value in editor
-void IntraFormComboDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
-  {
+void IntraFormComboDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
 	// Grab (cast) the QComboBox
-	QComboBox* comboBox = static_cast<QComboBox*>(editor);
+	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
 	// Get the current text and search for it in the combo
 	QString value = index.model()->data(index, Qt::EditRole).toString();
 
-	for (int n=0; n<comboBox->count(); ++n)
+	for (int n = 0; n < comboBox->count(); ++n)
 	{
 		if (comboBox->itemText(n) == value)
 		{
@@ -72,17 +69,14 @@ void IntraFormComboDelegate::setEditorData(QWidget* editor, const QModelIndex& i
 }
 
 // Get value from editing widget, and set back in model
-void IntraFormComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void IntraFormComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
 	// Grab (cast) the QComboBox
-	QComboBox* comboBox = static_cast<QComboBox*>(editor);
+	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
 	// Set the current text in the model
 	model->setData(index, comboBox->currentText(), Qt::EditRole);
 }
 
 // Update widget geometry
-void IntraFormComboDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-	editor->setGeometry(option.rect);
-}
+void IntraFormComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }

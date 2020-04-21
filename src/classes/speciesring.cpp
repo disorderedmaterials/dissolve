@@ -24,48 +24,33 @@
 #include "data/elements.h"
 
 // Constructor
-SpeciesRing::SpeciesRing() : ListItem<SpeciesRing>()
-{
-}
+SpeciesRing::SpeciesRing() : ListItem<SpeciesRing>() {}
 
 // Destructor
-SpeciesRing::~SpeciesRing()
-{
-}
+SpeciesRing::~SpeciesRing() {}
 
 /*
  * Atoms
  */
 
 // Set atoms in ring
-void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom*>& atoms)
-{
-	atoms_ = atoms;
-}
+void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom *> &atoms) { atoms_ = atoms; }
 
 // Return nth atom in ring
-const SpeciesAtom* SpeciesRing::atom(int n) const
-{
-	return atoms_.at(n);
-}
+const SpeciesAtom *SpeciesRing::atom(int n) const { return atoms_.at(n); }
 
 // Return array of atoms in ring
-const std::vector<const SpeciesAtom*>& SpeciesRing::atoms() const
-{
-	return atoms_;
-}
+const std::vector<const SpeciesAtom *> &SpeciesRing::atoms() const { return atoms_; }
 
 // Return size of ring (number of atoms in array)
-int SpeciesRing::size() const
-{
-	return atoms_.size();
-}
+int SpeciesRing::size() const { return atoms_.size(); }
 
 // Print ring information
 void SpeciesRing::print() const
 {
 	printf("Ring(%lu) :", atoms_.size());
-	for (const auto* atom : atoms_) printf(" %2i(%s)", atom->userIndex(), atom->element()->symbol());
+	for (const auto *atom : atoms_)
+		printf(" %2i(%s)", atom->userIndex(), atom->element()->symbol());
 	printf("\n");
 }
 
@@ -74,23 +59,28 @@ void SpeciesRing::print() const
  */
 
 // Equality operator
-bool SpeciesRing::operator==(const SpeciesRing& other)
+bool SpeciesRing::operator==(const SpeciesRing &other)
 {
 	// Check ring size first
 	const auto nAtoms = atoms_.size();
-	if (nAtoms != other.atoms_.size()) return false;
+	if (nAtoms != other.atoms_.size())
+		return false;
 
 	// Find equivalent atom in second ring to determine starting index
 	int indexA = 0, indexB;
-	for (indexB = 0; indexB<nAtoms; ++indexB) if (atoms_.at(indexA) == other.atoms_.at(indexB)) break;
+	for (indexB = 0; indexB < nAtoms; ++indexB)
+		if (atoms_.at(indexA) == other.atoms_.at(indexB))
+			break;
 
 	// If we didn't find the atom, can return now
-	if (indexB == nAtoms) return false;
+	if (indexB == nAtoms)
+		return false;
 
 	// Go over atoms and compare in both directions around the other ring
-	for (int n=1; n<nAtoms; ++n)
+	for (int n = 1; n < nAtoms; ++n)
 	{
-		if ((atoms_.at(indexA+n) != other.atoms_.at((indexB+n)%nAtoms)) && (atoms_.at(indexA+n) != other.atoms_.at((nAtoms+indexB-n)%nAtoms))) return false;
+		if ((atoms_.at(indexA + n) != other.atoms_.at((indexB + n) % nAtoms)) && (atoms_.at(indexA + n) != other.atoms_.at((nAtoms + indexB - n) % nAtoms)))
+			return false;
 	}
 
 	return true;

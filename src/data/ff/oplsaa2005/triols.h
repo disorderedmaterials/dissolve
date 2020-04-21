@@ -30,20 +30,19 @@
 // OPLS-AA/2005 Triols Forcefield
 class Forcefield_OPLSAA2005_Triols : public Forcefield_OPLSAA2005_Alkanes
 {
-	public:
+      public:
 	// Constructor / Destructor
 	Forcefield_OPLSAA2005_Triols();
 	~Forcefield_OPLSAA2005_Triols();
 
-
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return name of Forcefield
-	const char* name() const;
+	const char *name() const;
 	// Return description for Forcefield
-	const char* description() const;
+	const char *description() const;
 };
 
 #endif

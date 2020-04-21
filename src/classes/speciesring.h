@@ -22,12 +22,12 @@
 #ifndef DISSOLVE_SPECIESRING_H
 #define DISSOLVE_SPECIESRING_H
 
-#include <vector>
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/orderedpointerdataarray.h"
-#include "templates/vector3.h"
 #include "templates/reflist.h"
+#include "templates/vector3.h"
+#include <vector>
 
 // Forward Declarations
 class SpeciesAtom;
@@ -35,39 +35,37 @@ class SpeciesAtom;
 // SpeciesRing Definition
 class SpeciesRing : public ListItem<SpeciesRing>
 {
-	public:
+      public:
 	// Constructor
 	SpeciesRing();
 	// Destructor
 	~SpeciesRing();
 
-
 	/*
 	 * Atoms
 	 */
-	private:
+      private:
 	// Array of atoms in the ring, in the order in which they appear
-	std::vector<const SpeciesAtom*> atoms_;
+	std::vector<const SpeciesAtom *> atoms_;
 
-	public:
+      public:
 	// Set atoms in ring
-	void setAtoms(const std::vector<const SpeciesAtom*>& atoms);
+	void setAtoms(const std::vector<const SpeciesAtom *> &atoms);
 	// Return nth atom in ring
-	const SpeciesAtom* atom(int n) const;
+	const SpeciesAtom *atom(int n) const;
 	// Return array of atoms in ring
-	const std::vector<const SpeciesAtom*>& atoms() const;
+	const std::vector<const SpeciesAtom *> &atoms() const;
 	// Return size of ring (number of atoms in array)
 	int size() const;
 	// Print ring information
 	void print() const;
 
-
 	/*
 	 * Comparison
 	 */
-	public:
+      public:
 	// Equality operator
-	bool operator==(const SpeciesRing& other);
+	bool operator==(const SpeciesRing &other);
 };
 
 #endif

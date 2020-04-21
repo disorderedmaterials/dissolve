@@ -20,12 +20,12 @@
 */
 
 #include "expression/node.h"
-#include "base/sysfunc.h"
 #include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "templates/reflist.h"
+#include <cctype>
 #include <stdarg.h>
 #include <string.h>
-#include <cctype>
 
 // Local constant
 const int MAXNODEARGS = 10;
@@ -42,12 +42,10 @@ ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 }
 
 // Destructor
-ExpressionNode::~ExpressionNode()
-{
-}
+ExpressionNode::~ExpressionNode() {}
 
 // Copy data
-void ExpressionNode::copy(ExpressionNode* source)
+void ExpressionNode::copy(ExpressionNode *source)
 {
 	nodeType_ = source->nodeType_;
 	parent_ = source->parent_;
@@ -56,43 +54,25 @@ void ExpressionNode::copy(ExpressionNode* source)
 }
 
 // Retrieve node type
-ExpressionNode::NodeType ExpressionNode::nodeType() const
-{
-	return nodeType_;
-}
+ExpressionNode::NodeType ExpressionNode::nodeType() const { return nodeType_; }
 
-// Set parent 
-void ExpressionNode::setParent(Expression* parent)
-{
-	parent_ = parent;
-}
+// Set parent
+void ExpressionNode::setParent(Expression *parent) { parent_ = parent; }
 
 // Retrieve parent
-Expression* ExpressionNode::parent() const
-{
-	return parent_;
-}
+Expression *ExpressionNode::parent() const { return parent_; }
 
 // Set the readonly status of the variable to true
-void ExpressionNode::setReadOnly()
-{
-	readOnly_ = true;
-}
+void ExpressionNode::setReadOnly() { readOnly_ = true; }
 
 // Return readonly status
-bool ExpressionNode::readOnly() const
-{
-	return readOnly_;
-}
+bool ExpressionNode::readOnly() const { return readOnly_; }
 
 // Return number of arguments currently assigned to node
-int ExpressionNode::nArgs() const
-{
-	return args_.nItems();
-}
+int ExpressionNode::nArgs() const { return args_.nItems(); }
 
 // Set argument specified
-bool ExpressionNode::setArg(int i, ExpressionValue& result)
+bool ExpressionNode::setArg(int i, ExpressionValue &result)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
@@ -104,7 +84,7 @@ bool ExpressionNode::setArg(int i, ExpressionValue& result)
 	if (args_[i]->item()->readOnly())
 	{
 		args_[i]->item()->nodePrint(0);
-		//printf("Argument %i is read-only and can't be set.\n", i);
+		// printf("Argument %i is read-only and can't be set.\n", i);
 		return false;
 	}
 
@@ -112,27 +92,28 @@ bool ExpressionNode::setArg(int i, ExpressionValue& result)
 }
 
 // Return whether argument i was given
-bool ExpressionNode::hasArg(int i)
-{
-	return (i < args_.nItems());
-}
+bool ExpressionNode::hasArg(int i) { return (i < args_.nItems()); }
 
 // Add list of arguments formas as a plain List<Node>, beginning from supplied list head
-void ExpressionNode::addListArguments(ExpressionNode* leaf)
+void ExpressionNode::addListArguments(ExpressionNode *leaf)
 {
-	for (ExpressionNode* node = leaf; node != NULL; node = node->next()) args_.append(node);
+	for (ExpressionNode *node = leaf; node != NULL; node = node->next())
+		args_.append(node);
 }
 
 // Add list of arguments formed as a linked Node list
-void ExpressionNode::addJoinedArguments(ExpressionNode* lastleaf)
+void ExpressionNode::addJoinedArguments(ExpressionNode *lastleaf)
 {
 	/*
 	 * The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case if Joined by the parser)
 	 * Therefore, must walk backwards through the list first to get to the head...
 	 */
-	ExpressionNode* first;
-	for (first = lastleaf; first != NULL; first = first->prevArgument) if (first->prevArgument == NULL) break;
-	for (ExpressionNode* node = first; node != NULL; node = node->nextArgument) args_.append(node);
+	ExpressionNode *first;
+	for (first = lastleaf; first != NULL; first = first->prevArgument)
+		if (first->prevArgument == NULL)
+			break;
+	for (ExpressionNode *node = first; node != NULL; node = node->nextArgument)
+		args_.append(node);
 }
 
 // Add multiple arguments to node
@@ -140,21 +121,19 @@ void ExpressionNode::addArguments(int nargs, ...)
 {
 	// Create variable argument parser
 	va_list vars;
-	va_start(vars,nargs);
+	va_start(vars, nargs);
 
 	// Add arguments in the order they were provided
-	for (int n=0; n<nargs; n++) addArgument(va_arg(vars, ExpressionNode*));
+	for (int n = 0; n < nargs; n++)
+		addArgument(va_arg(vars, ExpressionNode *));
 	va_end(vars);
 }
 
 // Add multiple arguments to node
-void ExpressionNode::addArgument(ExpressionNode* arg)
-{
-	args_.append(arg);
-}
+void ExpressionNode::addArgument(ExpressionNode *arg) { args_.append(arg); }
 
 // Return (execute) argument specified
-bool ExpressionNode::arg(int i, ExpressionValue& result)
+bool ExpressionNode::arg(int i, ExpressionValue &result)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
@@ -174,7 +153,8 @@ bool ExpressionNode::argb(int i)
 	}
 
 	ExpressionValue argValue;
-	if (!args_[i]->item()->execute(argValue)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
+	if (!args_[i]->item()->execute(argValue))
+		Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
 
 	return (argValue.isInteger() ? argValue.asInteger() > 0 : argValue.asDouble() > 0.0);
 }
@@ -189,7 +169,8 @@ int ExpressionNode::argi(int i)
 	}
 
 	ExpressionValue argValue;
-	if (!args_[i]->item()->execute(argValue)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
+	if (!args_[i]->item()->execute(argValue))
+		Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
 
 	return argValue.asInteger();
 }
@@ -204,13 +185,14 @@ double ExpressionNode::argd(int i)
 	}
 
 	ExpressionValue argValue;
-	if (!args_[i]->item()->execute(argValue)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
+	if (!args_[i]->item()->execute(argValue))
+		Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
 
 	return argValue.asDouble();
 }
 
 // Return the Node corresponding to the argument, rather than executing it
-ExpressionNode* ExpressionNode::argNode(int i)
+ExpressionNode *ExpressionNode::argNode(int i)
 {
 	if ((i < 0) || (i > args_.nItems()))
 	{

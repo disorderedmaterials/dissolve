@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_SPECIESTORSION_H
 #define DISSOLVE_SPECIESTORSION_H
 
-#include "classes/speciesintra.h"
 #include "base/enumoptions.h"
+#include "classes/speciesintra.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -34,45 +34,43 @@ class ProcessPool;
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTorsion>
 {
-	public:
+      public:
 	// Constructor
 	SpeciesTorsion();
 	// Destructor
 	~SpeciesTorsion();
 
-
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-	public:
+      public:
 	// Clear object, ready for re-use
 	void clear();
-
 
 	/*
 	 * Atom Information
 	 */
-	private:
+      private:
 	// First SpeciesAtom in interaction
-	SpeciesAtom* i_;
+	SpeciesAtom *i_;
 	// Second SpeciesAtom in interaction
-	SpeciesAtom* j_;
+	SpeciesAtom *j_;
 	// Third SpeciesAtom in interaction
-	SpeciesAtom* k_;
+	SpeciesAtom *k_;
 	// Fourth SpeciesAtom in interaction
-	SpeciesAtom* l_;
+	SpeciesAtom *l_;
 
-	public:
+      public:
 	// Set Atoms involved in Torsion
-	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
+	void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
 	// Return first SpeciesAtom
-	SpeciesAtom* i() const;
+	SpeciesAtom *i() const;
 	// Return second SpeciesAtom
-	SpeciesAtom* j() const;
+	SpeciesAtom *j() const;
 	// Return third SpeciesAtom
-	SpeciesAtom* k() const;
+	SpeciesAtom *k() const;
 	// Return fourth SpeciesAtom
-	SpeciesAtom* l() const;
+	SpeciesAtom *l() const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom
@@ -84,15 +82,14 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	// Return index (in parent Species) of nth SpeciesAtom in interaction
 	int index(int n) const;
 	// Return whether SpeciesAtoms match those specified
-	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	bool matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
 	// Return whether all atoms in the interaction are currently selected
 	bool isSelected() const;
-
 
 	/*
 	 * Interaction Parameters
 	 */
-	public:
+      public:
 	// Torsion functional forms
 	enum TorsionFunction
 	{
@@ -104,9 +101,9 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 		UFFCosineForm
 	};
 	// Return enum options for TorsionFunction
-	static EnumOptions<TorsionFunction> torsionFunctions(); 
+	static EnumOptions<TorsionFunction> torsionFunctions();
 
-	public:
+      public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -118,13 +115,12 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	// Return force multiplier for specified angle
 	double force(double angleInDegrees) const;
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms);
+	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };
 
 #endif

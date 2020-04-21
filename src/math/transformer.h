@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef DISSOLVE_TRANSFORMER_H
 #define DISSOLVE_TRANSFORMER_H
 
-#include "expression/expression.h"
 #include "base/charstring.h"
+#include "data3d.h"
+#include "expression/expression.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
-#include "data3d.h"
 
 // Forward Declarations
 class Data1D;
@@ -37,20 +36,19 @@ class Variable;
 // Transformer
 class Transformer
 {
-	public:
+      public:
 	// Constructor / Destructor
 	Transformer();
 	~Transformer();
 	// Copy constructor
-	Transformer(const Transformer& source);
+	Transformer(const Transformer &source);
 	// Assignment operator
-	void operator=(const Transformer& source);
-
+	void operator=(const Transformer &source);
 
 	/*
 	 * Transform Equation
 	 */
-	private:
+      private:
 	// Whether transform is enabled
 	bool enabled_;
 	// Transform equation
@@ -60,37 +58,36 @@ class Transformer
 	// Whether current equation is valid
 	bool valid_;
 	// X variable in equation
-	ExpressionVariable* x_;
+	ExpressionVariable *x_;
 	// Y variable in equation
-	ExpressionVariable* y_;
+	ExpressionVariable *y_;
 	// Z variable in equation
-	ExpressionVariable* z_;
+	ExpressionVariable *z_;
 	// Value variable in equation
-	ExpressionVariable* value_;
+	ExpressionVariable *value_;
 
-	public:
+      public:
 	// Set whether transform is enabled
 	void setEnabled(bool b);
 	// Return whether transform is enabled
 	bool enabled() const;
 	// Set equation, returning if it was successfully generated
-	bool setEquation(const char* equation);
+	bool setEquation(const char *equation);
 	// Return text used to generate last equation_
-	const char* text() const;
+	const char *text() const;
 	// Return whether current equation is valid
 	bool valid() const;
-
 
 	/*
 	 * Transforms
 	 */
-	public:
+      public:
 	// Transform supplied Data1D values
-	void transformValues(Data1D& data);
+	void transformValues(Data1D &data);
 	// Transform supplied Data2D values
-	void transformValues(Data2D& data);
+	void transformValues(Data2D &data);
 	// Transform supplied Data3D values
-	void transformValues(Data3D& data);
+	void transformValues(Data3D &data);
 };
 
 #endif

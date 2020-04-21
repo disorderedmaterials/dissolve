@@ -36,71 +36,68 @@ class LineParser;
 // IsotopologueSet - Isotopologues for one or more Species in a single Configuration
 class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	IsotopologueSet();
 	// Destructor
 	~IsotopologueSet();
 
-
 	/*
 	 * Parent Collection
 	 */
-	private:
+      private:
 	// Parent IsotopologueCollection in which this set exists
-	IsotopologueCollection* parentCollection_;
+	IsotopologueCollection *parentCollection_;
 
-	public:
+      public:
 	// Set parent IsotopologueCollection in which this set exists
-	void setParentCollection(IsotopologueCollection* parent);
+	void setParentCollection(IsotopologueCollection *parent);
 	// Parent IsotopologueCollection in which this set exists
-	IsotopologueCollection* parentCollection() const;
-
+	IsotopologueCollection *parentCollection() const;
 
 	/*
 	 * Mix Definitions
 	 */
-	private:
+      private:
 	// Configuration in which the Species are used
-	Configuration* configuration_;
+	Configuration *configuration_;
 	// Isotopologue mixtures for individual Species
 	List<Isotopologues> isotopologues_;
 
-	public:
+      public:
 	// Clear all existing data
 	void clear();
 	// Set Configuration in which the Species are used
-	void setConfiguration(Configuration* cfg);
+	void setConfiguration(Configuration *cfg);
 	// Return Configuration in which the Species are used
-	Configuration* configuration() const;
+	Configuration *configuration() const;
 	// Add Isotopologue with the specified relative weight
-	void add(Isotopologue* iso, double relativeWeight);
+	void add(Isotopologue *iso, double relativeWeight);
 	// Remove specified Species from the list (if it exists)
-	void remove(Species* sp);
+	void remove(Species *sp);
 	// Remove any occurrences of the specified Isotopologue
-	void remove(Isotopologue* iso);
+	void remove(Isotopologue *iso);
 	// Remove the specified IsotopologueWeight
-	void remove(IsotopologueWeight* isoWeight);
+	void remove(IsotopologueWeight *isoWeight);
 	// Return whether an IsotopologueSet for the specified Species exists
-	bool contains(const Species* sp) const;
+	bool contains(const Species *sp) const;
 	// Return Isotopologues for the specified Species
-	Isotopologues* isotopologues(const Species* sp);
+	Isotopologues *isotopologues(const Species *sp);
 	// Return number of Isotopologues defined
 	int nIsotopologues() const;
 	// Return list of all Isotopologues
-	const List<Isotopologues>& isotopologues() const;
-
+	const List<Isotopologues> &isotopologues() const;
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
+	bool write(LineParser &parser);
 };
 
 #endif

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_NETA_PRESENCE_H
 #define DISSOLVE_NETA_PRESENCE_H
 
-#include <vector>
-#include "neta/node.h"
 #include "classes/speciesbond.h"
+#include "neta/node.h"
+#include <vector>
 
 // Forward Declarations
 class Element;
@@ -34,22 +34,21 @@ class NETADefinition;
 // NETA Character Node
 class NETAPresenceNode : public NETANode
 {
-	public:
+      public:
 	// Constructor / Destructor
-	NETAPresenceNode(NETADefinition* parent, std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+	NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAPresenceNode();
 
-	private:
+      private:
 	// Array of elements that the current context atom may be
-	std::vector<Element*> allowedElements_;
+	std::vector<Element *> allowedElements_;
 	// Array of ForcefieldAtomTypes that the current context atom may be
-	std::vector<ForcefieldAtomType*> allowedAtomTypes_;
-
+	std::vector<ForcefieldAtomType *> allowedAtomTypes_;
 
 	/*
 	 * Modifiers
 	 */
-	private:
+      private:
 	// Repeat count value
 	int repeatCount_;
 	// Repeat count comparison operator
@@ -63,29 +62,28 @@ class NETAPresenceNode : public NETANode
 	// Numbe of hydrogens value comparison operator
 	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
-	public:
+      public:
 	// Available modifiers
 	enum NETACharacterModifier
 	{
-		NBondsModifier,			/* 'nbonds' - Specifies number of bonds (default = -1) */
-		NHydrogensModifier,		/* 'nh' - Specifies number of hydrogens (default = -1) */
-		RepeatCharacterModifier,	/* 'n' - Specifies the number of matches required (default = 1) */
+		NBondsModifier,		 /* 'nbonds' - Specifies number of bonds (default = -1) */
+		NHydrogensModifier,      /* 'nh' - Specifies number of hydrogens (default = -1) */
+		RepeatCharacterModifier, /* 'n' - Specifies the number of matches required (default = 1) */
 		nCharacterModifiers
 	};
 	// Return enum options for NETACharacterModifiers
 	static EnumOptions<NETAPresenceNode::NETACharacterModifier> modifiers();
 	// Return whether the specified modifier is valid for this node
-	bool isValidModifier(const char* s) const;
+	bool isValidModifier(const char *s) const;
 	// Set value and comparator for specified modifier
-	bool setModifier(const char* modifier, ComparisonOperator op, int value);
-
+	bool setModifier(const char *modifier, ComparisonOperator op, int value);
 
 	/*
 	 * Scoring
 	 */
-	public:
+      public:
 	// Evaluate the node and return its score
-	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& availableAtoms) const;
+	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const;
 };
 
 #endif

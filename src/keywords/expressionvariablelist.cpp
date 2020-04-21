@@ -20,77 +20,63 @@
 */
 
 #include "keywords/expressionvariablelist.h"
+#include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "expression/variable.h"
 #include "procedure/nodes/node.h"
-#include "base/lineparser.h"
 
 // Constructor
-ExpressionVariableListKeyword::ExpressionVariableListKeyword(ProcedureNode* parentNode, List<ExpressionNode>& variables, ExpressionValue::ValueType variableType) : KeywordData< List<ExpressionNode>& >(KeywordBase::ExpressionVariableListData, variables)
+ExpressionVariableListKeyword::ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables, ExpressionValue::ValueType variableType)
+    : KeywordData<List<ExpressionNode> &>(KeywordBase::ExpressionVariableListData, variables)
 {
 	parentNode_ = parentNode;
 	variableType_ = variableType;
 }
 
 // Destructor
-ExpressionVariableListKeyword::~ExpressionVariableListKeyword()
-{
-}
+ExpressionVariableListKeyword::~ExpressionVariableListKeyword() {}
 
 /*
  * Parent Node
  */
 
 // Return parent ProcedureNode
-const ProcedureNode* ExpressionVariableListKeyword::parentNode() const
-{
-	return parentNode_;
-}
+const ProcedureNode *ExpressionVariableListKeyword::parentNode() const { return parentNode_; }
 
 /*
  * Variable Type
  */
 
 // Return assumed type for variables in the list
-ExpressionValue::ValueType ExpressionVariableListKeyword::variableType() const
-{
-	return variableType_;
-}
+ExpressionValue::ValueType ExpressionVariableListKeyword::variableType() const { return variableType_; }
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ExpressionVariableListKeyword::isDataEmpty() const
-{
-	return data_.nItems() > 0;
-}
+bool ExpressionVariableListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ExpressionVariableListKeyword::minArguments() const
-{
-	return 2;
-}
+int ExpressionVariableListKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int ExpressionVariableListKeyword::maxArguments() const
-{
-	return 2;
-}
+int ExpressionVariableListKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionVariableListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	if (!parentNode_) return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableList data.\n");
+	if (!parentNode_)
+		return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableList data.\n");
 
 	// First argument is the name of the parameter to create - does it already exist in the node's current scope?
-	ExpressionVariable* parameter = parentNode_->parameterInScope(parser.argc(startArg));
-	if (parameter) return Messenger::error("A parameter with the name '%s' is already in scope, and cannot be redefined.\n", parser.argc(startArg));
+	ExpressionVariable *parameter = parentNode_->parameterInScope(parser.argc(startArg));
+	if (parameter)
+		return Messenger::error("A parameter with the name '%s' is already in scope, and cannot be redefined.\n", parser.argc(startArg));
 
 	// Create a new one
 	parameter = new ExpressionVariable;
@@ -100,11 +86,13 @@ bool ExpressionVariableListKeyword::read(LineParser& parser, int startArg, const
 	// Set the initial value
 	if (variableType_ == ExpressionValue::IntegerType)
 	{
-		if (!parameter->set(parser.argi(startArg+1))) return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+		if (!parameter->set(parser.argi(startArg + 1)))
+			return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
 	}
 	else if (variableType_ == ExpressionValue::DoubleType)
 	{
-		if (!parameter->set(parser.argd(startArg+1))) return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+		if (!parameter->set(parser.argd(startArg + 1)))
+			return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
 	}
 
 	set_ = true;
@@ -113,22 +101,25 @@ bool ExpressionVariableListKeyword::read(LineParser& parser, int startArg, const
 }
 
 // Write keyword data to specified LineParser
-bool ExpressionVariableListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool ExpressionVariableListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over list of defined ExpressionNode's (ExpressionVariables)
 	ListIterator<ExpressionNode> nodeIterator(data_);
-	while (ExpressionNode* node = nodeIterator.iterate())
+	while (ExpressionNode *node = nodeIterator.iterate())
 	{
 		// Cast up to ExpressionVariable
-		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (!var) Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing ExpressionVariableList data.\n");
+		ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+		if (!var)
+			Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing ExpressionVariableList data.\n");
 		else if (variableType_ == ExpressionValue::IntegerType)
 		{
-			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, keywordName, var->name(), var->value().asInteger())) return false;
+			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, keywordName, var->name(), var->value().asInteger()))
+				return false;
 		}
 		else if (variableType_ == ExpressionValue::DoubleType)
 		{
-			if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, keywordName, var->name(), var->value().asDouble())) return false;
+			if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, keywordName, var->name(), var->value().asDouble()))
+				return false;
 		}
 	}
 

@@ -20,11 +20,11 @@
 */
 
 #include "gui/render/renderable.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/interpolator.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include <limits>
 
 // Static Singletons
@@ -34,13 +34,9 @@ RefList<Renderable> Renderable::instances_;
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-	static EnumOptionsList RenderableTypeOptions = EnumOptionsList() <<
-		EnumOption(Renderable::ConfigurationRenderable, 	"Configuration") <<
-		EnumOption(Renderable::Data1DRenderable, 		"Data1D") <<
-		EnumOption(Renderable::Data2DRenderable, 		"Data2D") <<
-		EnumOption(Renderable::Data3DRenderable, 		"Data3D") <<
-		EnumOption(Renderable::SpeciesRenderable, 		"Species") <<
-		EnumOption(Renderable::SpeciesSiteRenderable, 		"SpeciesSite");
+	static EnumOptionsList RenderableTypeOptions = EnumOptionsList() << EnumOption(Renderable::ConfigurationRenderable, "Configuration") << EnumOption(Renderable::Data1DRenderable, "Data1D")
+									 << EnumOption(Renderable::Data2DRenderable, "Data2D") << EnumOption(Renderable::Data3DRenderable, "Data3D")
+									 << EnumOption(Renderable::SpeciesRenderable, "Species") << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
 
 	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
 
@@ -48,7 +44,7 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 }
 
 // Constructor
-Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
+Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
 {
 	// Instance
 	instances_.append(this);
@@ -87,62 +83,42 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 }
 
 // Destructor
-Renderable::~Renderable()
-{
-	instances_.remove(this);
-}
+Renderable::~Renderable() { instances_.remove(this); }
 
 /*
  * Identity
  */
 
 // Set name of Renderable
-void Renderable::setName(const char* name)
-{
-	name_ = name;
-}
+void Renderable::setName(const char *name) { name_ = name; }
 
 // Return name of Renderable
-const char* Renderable::name()
-{
-	return name_.get();
-}
+const char *Renderable::name() { return name_.get(); }
 
 // Return type of Renderable
-Renderable::RenderableType Renderable::type() const
-{
-	return type_;
-}
+Renderable::RenderableType Renderable::type() const { return type_; }
 
 /*
  * Data
  */
 
 // Set whether access to source data is currently enabled
-void Renderable::setSourceDataAccessEnabled(bool b)
-{
-	sourceDataAccessEnabled_ = b;
-}
+void Renderable::setSourceDataAccessEnabled(bool b) { sourceDataAccessEnabled_ = b; }
 
 // Return whether access to source data is currently enabled
-bool Renderable::sourceDataAccessEnabled()
-{
-	return sourceDataAccessEnabled_;
-}
+bool Renderable::sourceDataAccessEnabled() { return sourceDataAccessEnabled_; }
 
 // Return identifying tag for source data object
-const char* Renderable::objectTag() const
-{
-	return objectTag_.get();
-}
+const char *Renderable::objectTag() const { return objectTag_.get(); }
 
 // Invalidate renderable data for specified object tag
-int Renderable::invalidate(const char* objectTag)
+int Renderable::invalidate(const char *objectTag)
 {
 	int count = 0;
-	for (Renderable* rend : instances_)
+	for (Renderable *rend : instances_)
 	{
-		if (!DissolveSys::sameString(objectTag, rend->objectTag_)) continue;
+		if (!DissolveSys::sameString(objectTag, rend->objectTag_))
+			continue;
 
 		rend->invalidateDataSource();
 
@@ -154,7 +130,8 @@ int Renderable::invalidate(const char* objectTag)
 // Invalidate all renderables
 void Renderable::invalidateAll()
 {
-	for (Renderable* rend : instances_) rend->invalidateDataSource();
+	for (Renderable *rend : instances_)
+		rend->invalidateDataSource();
 }
 
 // Return coordinate minima of all data (after value transform if enabled)
@@ -230,7 +207,7 @@ double Renderable::positiveValuesMax()
 }
 
 // Set values transform equation specified
-void Renderable::setValuesTransformEquation(const char* transformEquation)
+void Renderable::setValuesTransformEquation(const char *transformEquation)
 {
 	valuesTransform_.setEquation(transformEquation);
 
@@ -243,16 +220,10 @@ void Renderable::setValuesTransformEquation(const char* transformEquation)
 }
 
 // Return values transform equation
-const char* Renderable::valuesTransformEquation() const
-{
-	return valuesTransform_.text();
-}
+const char *Renderable::valuesTransformEquation() const { return valuesTransform_.text(); }
 
 // Return whether values transform equation is valid
-bool Renderable::valuesTransformEquationValid() const
-{
-	return valuesTransform_.valid();
-}
+bool Renderable::valuesTransformEquationValid() const { return valuesTransform_.valid(); }
 
 // Set whether values transform is enabled
 void Renderable::setValuesTransformEnabled(bool enabled)
@@ -265,48 +236,30 @@ void Renderable::setValuesTransformEnabled(bool enabled)
 }
 
 // Return whether values transform is enabled
-bool Renderable::valuesTransformEnabled() const
-{
-	return valuesTransform_.enabled();
-}
+bool Renderable::valuesTransformEnabled() const { return valuesTransform_.enabled(); }
 
 // Return data version at which values were last transformed
-int Renderable::valuesTransformDataVersion() const
-{
-	return valuesTransformDataVersion_;
-}
+int Renderable::valuesTransformDataVersion() const { return valuesTransformDataVersion_; }
 
 // Calculate min/max y value over specified x range (if possible in the underlying data)
-bool Renderable::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
-{
-	return false;
-}
+bool Renderable::yRangeOverX(double xMin, double xMax, double &yMin, double &yMax) { return false; }
 
 /*
  * Group
  */
 
 // Set group that this Renderable is associated to
-void Renderable::setGroup(RenderableGroup* group)
-{
-	group_ = group;
-}
+void Renderable::setGroup(RenderableGroup *group) { group_ = group; }
 
 // Return group that this Renderable is associated to
-RenderableGroup* Renderable::group() const
-{
-	return group_;
-}
+RenderableGroup *Renderable::group() const { return group_; }
 
 /*
  * Style
  */
 
 // Set whether Renderable is visible
-void Renderable::setVisible(bool visible)
-{
-	visible_ = visible;
-}
+void Renderable::setVisible(bool visible) { visible_ = visible; }
 
 // Return whether Renderable is visible
 bool Renderable::isVisible() const
@@ -316,94 +269,67 @@ bool Renderable::isVisible() const
 }
 
 // Set basic colour
-void Renderable::setColour(int r, int g, int b, int a)
-{
-	colour_.setSingleColour(QColor(r, g, b, a));
-}
+void Renderable::setColour(int r, int g, int b, int a) { colour_.setSingleColour(QColor(r, g, b, a)); }
 
 // Set basic colour
-void Renderable::setColour(StockColours::StockColour stockColour)
-{
-	colour_.setSingleColour(StockColours::stockColour(stockColour));
-}
+void Renderable::setColour(StockColours::StockColour stockColour) { colour_.setSingleColour(StockColours::stockColour(stockColour)); }
 
 // Return local colour definition for display
-ColourDefinition& Renderable::colour()
-{
-	return colour_;
-}
+ColourDefinition &Renderable::colour() { return colour_; }
 
 // Return local colour definition for display (const)
-const ColourDefinition& Renderable::constColour() const
-{
-	return colour_;
-}
+const ColourDefinition &Renderable::constColour() const { return colour_; }
 
 // Return line style
-LineStyle& Renderable::lineStyle()
-{
-	return lineStyle_;
-}
+LineStyle &Renderable::lineStyle() { return lineStyle_; }
 
 // Return style version
-int Renderable::styleVersion() const
-{
-	return styleVersion_;
-}
+int Renderable::styleVersion() const { return styleVersion_; }
 
 /*
  * Rendering Primitives
  */
 
 // Create single Primitive, whose instances will be managed by the Renderable
-Primitive* Renderable::createPrimitive(GLenum type, bool colourData)
-{
-	return primitives_.add(type, colourData);
-}
+Primitive *Renderable::createPrimitive(GLenum type, bool colourData) { return primitives_.add(type, colourData); }
 
 // Reinitialise managed Primitive list to the size specified
-void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData)
-{
-	primitives_.reinitialise(newSize, type, colourData);
-}
+void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData) { primitives_.reinitialise(newSize, type, colourData); }
 
 // Return number of primitives managed by the Renderable
-int Renderable::nPrimitives() const
-{
-	return primitives_.nPrimitives();
-}
+int Renderable::nPrimitives() const { return primitives_.nPrimitives(); }
 
 // Return nth Primitive managed by the Renderable
-Primitive* Renderable::primitive(int n)
-{
-	return primitives_[n];
-}
+Primitive *Renderable::primitive(int n) { return primitives_[n]; }
 
 // Remove specified Primitive
-void Renderable::removePrimitive(Primitive* primitive)
-{
-	primitives_.remove(primitive);
-}
+void Renderable::removePrimitive(Primitive *primitive) { primitives_.remove(primitive); }
 
 // Update primitives and send to display
-void Renderable::updateAndSendPrimitives(const View& view, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling)
+void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context, double pixelScaling)
 {
 	// If this Renderable is not visible, return now
-	if (!visible_) return;
+	if (!visible_)
+		return;
 
 	// Grab axes for the View
-	const Axes& axes = view.constAxes();
+	const Axes &axes = view.constAxes();
 
 	// Grab copy of the relevant colour definition for this Renderable
-	const ColourDefinition& colourDefinition = colour();
+	const ColourDefinition &colourDefinition = colour();
 
 	// Check whether the primitive for this Renderable needs updating
 	bool upToDate = true;
-	if (forceUpdate) upToDate = false;
-	else if (lastAxesVersion_ != axes.version()) upToDate = false;
-	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
-	else if (lastDataVersion_ != dataVersion()) upToDate = false;
-	else if (lastStyleVersion_ != styleVersion()) upToDate = false;
+	if (forceUpdate)
+		upToDate = false;
+	else if (lastAxesVersion_ != axes.version())
+		upToDate = false;
+	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true))
+		upToDate = false;
+	else if (lastDataVersion_ != dataVersion())
+		upToDate = false;
+	else if (lastStyleVersion_ != styleVersion())
+		upToDate = false;
 
 	// If the primitive is out of date, recreate it's data.
 	if (!upToDate)
@@ -412,17 +338,20 @@ void Renderable::updateAndSendPrimitives(const View& view, bool forceUpdate, boo
 		recreatePrimitives(view, colourDefinition);
 
 		// Pop old Primitive instance (if they exist)
-		if (primitives_.nInstances() != 0) primitives_.popInstance(context);
+		if (primitives_.nInstances() != 0)
+			primitives_.popInstance(context);
 	}
 
 	// If there are no current instances, or we are forcing a push/pop of an instance, push an instance here
-	if ((primitives_.nInstances() == 0) || pushAndPop) primitives_.pushInstance(context);
+	if ((primitives_.nInstances() == 0) || pushAndPop)
+		primitives_.pushInstance(context);
 
 	// Send to GL
 	sendToGL(pixelScaling);
 
 	// Pop current instances if required
-	if (pushAndPop) primitives_.popInstance(context);
+	if (pushAndPop)
+		primitives_.popInstance(context);
 
 	// Store version points for the up-to-date primitive
 	lastAxesVersion_ = axes.version();

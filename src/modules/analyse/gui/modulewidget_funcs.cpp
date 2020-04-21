@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/analyse/gui/modulewidget.h"
 #include "modules/analyse/analyse.h"
+#include "modules/analyse/gui/modulewidget.h"
 
 // Constructor
-AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, AnalyseModule* module, const CoreData& coreData) : ModuleWidget(parent), module_(module)
+AnalyseModuleWidget::AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, const CoreData &coreData) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -33,4 +33,3 @@ AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, AnalyseModule* module,
 
 	refreshing_ = false;
 }
-

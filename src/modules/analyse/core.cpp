@@ -33,16 +33,11 @@ AnalyseModule::AnalyseModule() : Module(), analyser_(ProcedureNode::AnalysisCont
 }
 
 // Destructor
-AnalyseModule::~AnalyseModule()
-{
-}
+AnalyseModule::~AnalyseModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* AnalyseModule::createInstance() const
-{
-	return new AnalyseModule;
-}
+Module *AnalyseModule::createInstance() const { return new AnalyseModule; }

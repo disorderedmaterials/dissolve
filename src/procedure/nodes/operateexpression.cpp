@@ -20,15 +20,15 @@
 */
 
 #include "procedure/nodes/operateexpression.h"
-#include "keywords/types.h"
-#include "expression/variable.h"
-#include "math/data1d.h"
-#include "math/integrator.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "expression/variable.h"
+#include "keywords/types.h"
+#include "math/data1d.h"
+#include "math/integrator.h"
 
 // Constructors
-OperateExpressionProcedureNode::OperateExpressionProcedureNode(const char* expressionText) : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
+OperateExpressionProcedureNode::OperateExpressionProcedureNode(const char *expressionText) : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
 {
 	// Set up persistent variables and initial expression value
 	x_ = expression_.createDoubleVariable("x", true);
@@ -41,25 +41,23 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(const char* expre
 }
 
 // Destructor
-OperateExpressionProcedureNode::~OperateExpressionProcedureNode()
-{
-}
+OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */
 
 // Operate on Data1D target
-bool OperateExpressionProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
+bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-	const Array<double>& x = targetData1D_->constXAxis();
-	Array<double>& values = targetData1D_->values();
+	const Array<double> &x = targetData1D_->constXAxis();
+	Array<double> &values = targetData1D_->values();
 
 	y_->set(0.0);
 	z_->set(0.0);
 
 	// Evaluate the expression over all values
-	for (int i=0; i<x.nItems(); ++i)
+	for (int i = 0; i < x.nItems(); ++i)
 	{
 		// Set variables in expression
 		x_->set(x.constAt(i));
@@ -73,28 +71,28 @@ bool OperateExpressionProcedureNode::operateData1D(ProcessPool& procPool, Config
 }
 
 // Operate on Data2D target
-bool OperateExpressionProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
+bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-	const Array<double>& x = targetData2D_->constXAxis();
-	const Array<double>& y = targetData2D_->constYAxis();
-	Array2D<double>& values = targetData2D_->values();
+	const Array<double> &x = targetData2D_->constXAxis();
+	const Array<double> &y = targetData2D_->constYAxis();
+	Array2D<double> &values = targetData2D_->values();
 
 	z_->set(0.0);
 
 	// Evaluate the expression over all values
-	for (int i=0; i<x.nItems(); ++i)
+	for (int i = 0; i < x.nItems(); ++i)
 	{
 		// Set x value in expression
 		x_->set(x.constAt(i));
 
-		for (int j=0; j<y.nItems(); ++j)
+		for (int j = 0; j < y.nItems(); ++j)
 		{
 			// Set y and value in expression
 			y_->set(y.constAt(j));
-			value_->set(values.at(i,j));
+			value_->set(values.at(i, j));
 
 			// Evaluate and store new value
-			values.at(i,j) = expression_.asDouble();
+			values.at(i, j) = expression_.asDouble();
 		}
 	}
 
@@ -102,34 +100,34 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool& procPool, Config
 }
 
 // Operate on Data3D target
-bool OperateExpressionProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
+bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-	const Array<double>& x = targetData3D_->constXAxis();
-	const Array<double>& y = targetData3D_->constYAxis();
-	const Array<double>& z = targetData3D_->constZAxis();
-	Array3D<double>& values = targetData3D_->values();
+	const Array<double> &x = targetData3D_->constXAxis();
+	const Array<double> &y = targetData3D_->constYAxis();
+	const Array<double> &z = targetData3D_->constZAxis();
+	Array3D<double> &values = targetData3D_->values();
 
 	z_->set(0.0);
 
 	// Evaluate the expression over all values
-	for (int i=0; i<x.nItems(); ++i)
+	for (int i = 0; i < x.nItems(); ++i)
 	{
 		// Set x value in expression
 		x_->set(x.constAt(i));
 
-		for (int j=0; j<y.nItems(); ++j)
+		for (int j = 0; j < y.nItems(); ++j)
 		{
 			// Set y value in expression
 			y_->set(y.constAt(j));
 
-			for (int k=0; k<z.nItems(); ++k)
+			for (int k = 0; k < z.nItems(); ++k)
 			{
 				// Set z and  value in expression
 				z_->set(z.constAt(k));
-				value_->set(values.at(i,j,k));
+				value_->set(values.at(i, j, k));
 
 				// Evaluate and store new value
-				values.at(i,j,k) = expression_.asDouble();
+				values.at(i, j, k) = expression_.asDouble();
 			}
 		}
 	}

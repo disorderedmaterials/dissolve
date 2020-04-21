@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/atomshake/gui/modulewidget.h"
 #include "modules/atomshake/atomshake.h"
+#include "modules/atomshake/gui/modulewidget.h"
 
 // Constructor
-AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* module) : ModuleWidget(parent), module_(module)
+AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -32,7 +32,4 @@ AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* m
 }
 
 // Destructor
-AtomShakeModuleWidget::~AtomShakeModuleWidget()
-{
-}
-
+AtomShakeModuleWidget::~AtomShakeModuleWidget() {}

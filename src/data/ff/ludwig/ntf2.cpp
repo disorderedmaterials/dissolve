@@ -20,22 +20,22 @@
 */
 
 #include "data/ff/ludwig/ntf2.h"
+#include "base/sysfunc.h"
+#include "classes/atomtype.h"
+#include "classes/speciesatom.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
+#include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
-#include "data/ffimproperterm.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "base/sysfunc.h"
 
 /*
  * Implements "Revisiting imidazolium based ionic liquids: Effect of the conformation bias of the [NTf2] anion studied by molecular dynamics simulations"
  * J. Neumann, B. Golub, LM. Odebrecht, R. Ludwig, D. Paschek
  * Journal of Chemical Physics 148 193828 (2018)
  * http://doi.org/10.1063/1.5013096
- * 
+ *
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of JB.
  * All energy values are in kJ/mol.
@@ -72,7 +72,7 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
 	addAngleTerm("O", "S", "N", SpeciesAngle::HarmonicForm, 789.0, 113.6);
 	addAngleTerm("C", "S", "N", SpeciesAngle::HarmonicForm, 816.0, 100.2);
 	addAngleTerm("S", "N", "S", SpeciesAngle::HarmonicForm, 671.0, 125.6);
-	
+
 	// Torsion Terms
 	addTorsionTerm("F", "C", "S", "N", SpeciesTorsion::CosineForm, 2.0401, 3.0, 0.0, 1);
 	addTorsionTerm("F", "C", "S", "O", SpeciesTorsion::NoForm);
@@ -87,28 +87,20 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
 	addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, 1.0165, 6.0, 0.0, 1);
 }
 
-Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig()
-{
-}
+Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_NTf2_Ludwig::name() const
-{
-	return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group";
-}
+const char *Forcefield_NTf2_Ludwig::name() const { return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group"; }
 
 // Return description for Forcefield
-const char* Forcefield_NTf2_Ludwig::description() const
+const char *Forcefield_NTf2_Ludwig::description() const
 {
 	return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_NTf2_Ludwig::shortRangeType() const
-{
-	return Forcefield::LennardJonesType;
-}
+Forcefield::ShortRangeType Forcefield_NTf2_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }

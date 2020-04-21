@@ -23,51 +23,38 @@
 #include "base/processpool.h"
 
 // Constructor
-VersionCounter::VersionCounter()
-{
-	version_ = 0;
-}
+VersionCounter::VersionCounter() { version_ = 0; }
 
 // Destructor
-VersionCounter::~VersionCounter()
-{
-}
+VersionCounter::~VersionCounter() {}
 
 /*
  * Version Information
  */
 
 // Reset version counter to zero
-void VersionCounter::zero()
-{
-	version_ = 0;
-}
+void VersionCounter::zero() { version_ = 0; }
 
 /*
  * Operators
  */
 
 // Automatic conversion to integer
-VersionCounter::operator int() const
-{
-	return version_;
-}
+VersionCounter::operator int() const { return version_; }
 
 // Prefix increment
-int VersionCounter::operator++()
-{
-	return (++version_);
-}
+int VersionCounter::operator++() { return (++version_); }
 
 /*
  * Parallel Comms
  */
 
 // Broadcast data from Master to all Slaves
-bool VersionCounter::broadcast(ProcessPool& procPool, const int root)
+bool VersionCounter::broadcast(ProcessPool &procPool, const int root)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(version_, root)) return false;
+	if (!procPool.broadcast(version_, root))
+		return false;
 #endif
 	return true;
 }

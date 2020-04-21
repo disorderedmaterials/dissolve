@@ -35,29 +35,28 @@ class ProcessPool;
  */
 class IsotopeData : public ListItem<IsotopeData>
 {
-	public:
+      public:
 	// Constructor
 	IsotopeData();
 	// Copy Constructor
-	IsotopeData(const IsotopeData& source);
+	IsotopeData(const IsotopeData &source);
 	// Assignment Operator
-	void operator=(const IsotopeData& source);
-
+	void operator=(const IsotopeData &source);
 
 	/*
 	 * Properties
 	 */
-	private:
+      private:
 	// Reference Isotope
-	Isotope* isotope_;
+	Isotope *isotope_;
 	// Population of Isotope
 	double population_;
 	// Local fractional population (e.g. within an AtomTypeData)
 	double fraction_;
 
-	public:
+      public:
 	// Initialise
-	bool initialise(Isotope* isotope);
+	bool initialise(Isotope *isotope);
 	// Add to population of Isotope
 	void add(double nAdd);
 	// Finalise, calculating local fractional population (e.g. within an AtomTypeData)
@@ -65,31 +64,29 @@ class IsotopeData : public ListItem<IsotopeData>
 	// Zero population and fraction
 	void zeroPopulation();
 	// Return reference Isotope
-	Isotope* isotope() const;
+	Isotope *isotope() const;
 	// Return total population
 	double population() const;
 	// Return local fractional population (e.g. within an AtomTypeData)
 	double fraction() const;
 
-
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
+	bool write(LineParser &parser);
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
-
+	bool read(LineParser &parser, const CoreData &coreData);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

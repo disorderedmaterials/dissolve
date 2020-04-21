@@ -37,102 +37,95 @@ class ModuleList;
 // ModuleList Chart - Manages display of a sequence of modules from a ModuleList
 class ModuleListChart : public ChartBase
 {
-	public:
+      public:
 	// Constructor / Destructor
-	ModuleListChart(ModuleList* moduleList, Dissolve& dissolve, Configuration* localConfiguration = NULL);
+	ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = NULL);
 	~ModuleListChart();
-
 
 	/*
 	 * Dissolve Reference
 	 */
-	private:
+      private:
 	// Dissolve reference
-	Dissolve& dissolve_;
-
+	Dissolve &dissolve_;
 
 	/*
 	 * Target ModuleList
 	 */
-	private:
+      private:
 	// Target ModuleList for display
-	ModuleList* moduleList_;
+	ModuleList *moduleList_;
 	// Configuration in which the layer exists (if any)
-	Configuration* localConfiguration_;
-
+	Configuration *localConfiguration_;
 
 	/*
 	 * QWidget Reimplementations
 	 */
-	protected:
+      protected:
 	// Paint event
-	void paintEvent(QPaintEvent* event);
-
+	void paintEvent(QPaintEvent *event);
 
 	/*
 	 * Chart Blocks
 	 */
-	private:
+      private:
 	// Widgets for our Module blocks
 	RefList<ModuleBlock> moduleBlockWidgets_;
 	// Insertion block
-	ModuleInsertionBlock* insertionBlock_;
+	ModuleInsertionBlock *insertionBlock_;
 
-	private:
+      private:
 	// Find ModuleBlock displaying specified Module
-	ModuleBlock* moduleBlock(Module* module);
+	ModuleBlock *moduleBlock(Module *module);
 
-	protected:
+      protected:
 	// Update the content block widgets against the current target data
 	void updateContentBlocks();
 
-	public:
+      public:
 	// Set the currently-selected Module
-	void setCurrentModule(Module* module);
+	void setCurrentModule(Module *module);
 	// Return the currently-selected molecule
-	Module* currentModule() const;
-
+	Module *currentModule() const;
 
 	/*
 	 * Block Interaction
 	 */
-	protected:
+      protected:
 	// Return whether to accept the dragged object (described by its mime info)
-	bool acceptDraggedObject(const MimeStrings* strings);
+	bool acceptDraggedObject(const MimeStrings *strings);
 	// Handle hover over specified hotspot
-	bool handleHotSpotHover(const ChartHotSpot* hotSpot);
+	bool handleHotSpotHover(const ChartHotSpot *hotSpot);
 	// Handle the drop of an object (described by its mime info)
-	void handleDroppedObject(const MimeStrings* strings);
+	void handleDroppedObject(const MimeStrings *strings);
 	// Return mime info for specified block (owned by this chart)
-	MimeStrings mimeInfo(ChartBlock* block);
+	MimeStrings mimeInfo(ChartBlock *block);
 	// Specified block has been double clicked
-	void blockDoubleClicked(ChartBlock* block);
+	void blockDoubleClicked(ChartBlock *block);
 	// The chart has requested removal of one of its blocks
-	void blockRemovalRequested(const QString& blockIdentifier);
+	void blockRemovalRequested(const QString &blockIdentifier);
 	// Block selection has changed
-	void blockSelectionChanged(ChartBlock* block);
-
+	void blockSelectionChanged(ChartBlock *block);
 
 	/*
 	 * Widget Layout
 	 */
-	private:
+      private:
 	// Chart metrics
 	ModuleListChartMetrics metrics_;
 
-	private:
+      private:
 	// Calculate new widget geometry according to the layout requirements, returning the entire area required
 	QSize calculateNewWidgetGeometry(QSize currentSize);
-
 
 	/*
 	 * State I/O (ChartBase Reimplementations)
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
+	bool readState(LineParser &parser);
 };
 
 #endif

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORD_DYNAMICSITELIST_H
 #define DISSOLVE_KEYWORD_DYNAMICSITELIST_H
 
-#include "keywords/data.h"
 #include "expression/node.h"
+#include "keywords/data.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -31,62 +31,56 @@ class DynamicSiteProcedureNode;
 class SelectProcedureNode;
 
 // Keyword with DynamicSiteProcedureNode (Ref)List
-class DynamicSiteNodesKeyword : public KeywordData< RefList<DynamicSiteProcedureNode>& >
+class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureNode> &>
 {
-	public:
+      public:
 	// Constructor
-	DynamicSiteNodesKeyword(SelectProcedureNode* parentNode, RefList<DynamicSiteProcedureNode>& nodes, bool axesRequired = false);
+	DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes, bool axesRequired = false);
 	// Destructor
 	~DynamicSiteNodesKeyword();
-
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent SelectProcedureNode
-	SelectProcedureNode* parentNode_;
+	SelectProcedureNode *parentNode_;
 
-	public:
+      public:
 	// Return parent SelectProcedureNode
-	const SelectProcedureNode* parentNode() const;
-
+	const SelectProcedureNode *parentNode() const;
 
 	/*
 	 * Specification
 	 */
-	private:
+      private:
 	// Whether sites in the list must have a defined orientation
 	bool axesRequired_;
-
 
 	/*
 	 * Data
 	 */
-	protected:
+      protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 };
 
 #endif
-

@@ -30,19 +30,19 @@
 // Forcefield Library
 class ForcefieldLibrary
 {
-	private:
+      private:
 	// List of all available forcefields
 	static List<Forcefield> forcefields_;
 
-	private:
+      private:
 	// Register Forcefields for use
 	static void registerForcefields();
 
-	public:
+      public:
 	// Return list of available Forcefields
-	static List<Forcefield>& forcefields();
+	static List<Forcefield> &forcefields();
 	// Return named Forcefield, if it exists
-	static Forcefield* forcefield(const char* name);
+	static Forcefield *forcefield(const char *name);
 };
 
 #endif

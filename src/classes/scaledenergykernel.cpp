@@ -20,29 +20,28 @@
 */
 
 #include "classes/scaledenergykernel.h"
-#include "classes/potentialmap.h"
 #include "classes/atom.h"
-#include "classes/molecule.h"
 #include "classes/box.h"
+#include "classes/molecule.h"
+#include "classes/potentialmap.h"
 
 // Constructor
-ScaledEnergyKernel::ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool& procPool, Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : EnergyKernel(procPool, config, potentialMap, energyCutoff)
+ScaledEnergyKernel::ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
+    : EnergyKernel(procPool, config, potentialMap, energyCutoff)
 {
 	interMoleculeRScale_ = interMoleculeRScale;
 	intraMoleculeEScale_ = intraMoleculeEScale;
 }
 
 // Destructor
-ScaledEnergyKernel::~ScaledEnergyKernel()
-{
-}
+ScaledEnergyKernel::~ScaledEnergyKernel() {}
 
 /*
  * Internal Routines
  */
 
 // Return PairPotential energy between atoms provided as pointers, at the distance specified
-double ScaledEnergyKernel::pairPotentialEnergy(const Atom* i, const Atom* j, double r)
+double ScaledEnergyKernel::pairPotentialEnergy(const Atom *i, const Atom *j, double r)
 {
 	/*
 	 * Check the Molecules of the supplied Atoms - if they exist within different Molecules we scale the distance

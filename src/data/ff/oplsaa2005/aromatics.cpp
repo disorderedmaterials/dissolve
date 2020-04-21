@@ -20,9 +20,9 @@
 */
 
 #include "data/ff/oplsaa2005/aromatics.h"
-#include "data/ffatomtype.h"
-#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
+#include "data/ffatomtype.h"
 
 /*
  * OPLS-AA (2005) Aromatics
@@ -50,22 +50,17 @@ Forcefield_OPLSAA2005_Aromatics::Forcefield_OPLSAA2005_Aromatics()
 	copyAtomType(oplsAtomTypeById(168), "HO", "-&167");
 }
 
-Forcefield_OPLSAA2005_Aromatics::~Forcefield_OPLSAA2005_Aromatics()
-{
-}
+Forcefield_OPLSAA2005_Aromatics::~Forcefield_OPLSAA2005_Aromatics() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_OPLSAA2005_Aromatics::name() const
-{
-	return "OPLSAA2005/Aromatics";
-}
+const char *Forcefield_OPLSAA2005_Aromatics::name() const { return "OPLSAA2005/Aromatics"; }
 
 // Return description for Forcefield
-const char* Forcefield_OPLSAA2005_Aromatics::description() const
+const char *Forcefield_OPLSAA2005_Aromatics::description() const
 {
 	static CharString desc("Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: %s", publicationReferences());
 	return desc.get();

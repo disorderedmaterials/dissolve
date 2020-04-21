@@ -31,23 +31,21 @@ class SpeciesAtom;
 // NTf2 Forcefield by Ludwig Group
 class Forcefield_NTf2_Ludwig : public Forcefield
 {
-	public:
+      public:
 	// Constructor / Destructor
 	Forcefield_NTf2_Ludwig();
 	~Forcefield_NTf2_Ludwig();
 
-
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return name of Forcefield
-	const char* name() const;
+	const char *name() const;
 	// Return description for Forcefield
-	const char* description() const;
+	const char *description() const;
 	// Return short-range interaction style for AtomTypes
 	Forcefield::ShortRangeType shortRangeType() const;
-
 };
 
 #endif

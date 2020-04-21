@@ -27,7 +27,7 @@
 // Mantissa/exponent class
 class DoubleExp
 {
-	public:
+      public:
 	// Constructors
 	DoubleExp();
 	DoubleExp(double value);
@@ -35,11 +35,10 @@ class DoubleExp
 	// Conversion (double)
 	operator double();
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment Operator
 	void operator=(double d);
 	// Equality Operator
@@ -47,11 +46,10 @@ class DoubleExp
 	// Inequality Operator
 	bool operator!=(const double other);
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Mantissa
 	double mantissa_;
 	// Exponent
@@ -59,15 +57,14 @@ class DoubleExp
 	// Value
 	double value_;
 
-
 	/*
 	 * Functions
 	 */
-	private:
+      private:
 	// Recalculate value from stored mantissa and exponent
 	void recalculate();
 
-	public:
+      public:
 	// Retrieve full, real value
 	double value() const;
 	// Set mantissa and exponent
@@ -75,7 +72,7 @@ class DoubleExp
 	// Set from normal value
 	void set(double value);
 	// Set from supplied text
-	void set(const char* text);
+	void set(const char *text);
 	// Set mantissa
 	void setMantissa(double mantissa);
 	// Return mantissa
@@ -89,4 +86,3 @@ class DoubleExp
 };
 
 #endif
-

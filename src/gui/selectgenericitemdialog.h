@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_DIALOG_SELECTGENERICITEM_H
 #define DISSOLVE_DIALOG_SELECTGENERICITEM_H
 
-#include "gui/ui_selectgenericitemdialog.h"
 #include "genericitems/listhelper.h"
+#include "gui/ui_selectgenericitemdialog.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QDialog>
@@ -38,26 +38,26 @@ class SelectGenericItemDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	SelectGenericItemDialog(QWidget* parent, Dissolve& dissolve);
+	SelectGenericItemDialog(QWidget *parent, Dissolve &dissolve);
 	// Destructor
 	~SelectGenericItemDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::SelectGenericItemDialog ui_;
 	// Reference to Dissolve
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 
-	private:
+      private:
 	// Append GenericItems to table under specified source
-	template <class T> void addToTable(RefList<T>& items, const char* source)
+	template <class T> void addToTable(RefList<T> &items, const char *source)
 	{
-		QTableWidgetItem* item;
+		QTableWidgetItem *item;
 		int count = ui_.ItemsTable->rowCount();
 		ui_.ItemsTable->setRowCount(count + items.nItems());
-		for (T* templatedItem : items)
+		for (T *templatedItem : items)
 		{
 			// Item name
 			item = new QTableWidgetItem(templatedItem->name());
@@ -80,21 +80,21 @@ class SelectGenericItemDialog : public QDialog
 	}
 
 	// Update the table of GenericItems, optionally filtering them by name and description
-	void updateGenericItemTable(GenericItem* current, QString filter);
+	void updateGenericItemTable(GenericItem *current, QString filter);
 
-	private slots:
-	void on_FilterEdit_textChanged(const QString& text);
-	void on_ItemsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* prevItem);
-	void on_ItemsTable_itemDoubleClicked(QTableWidgetItem* w);
+      private slots:
+	void on_FilterEdit_textChanged(const QString &text);
+	void on_ItemsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem);
+	void on_ItemsTable_itemDoubleClicked(QTableWidgetItem *w);
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 
-	signals:
+      signals:
 	void genericItemSelectionChanged(bool isValid);
 
-	public:
+      public:
 	// Run the dialog, returning the selected GenericItem
-	template <class T> T* selectGenericItem(T* currentItem = NULL)
+	template <class T> T *selectGenericItem(T *currentItem = NULL)
 	{
 		// Populate the table with available items of the specified class type
 		RefList<T> items;
@@ -109,15 +109,17 @@ class SelectGenericItemDialog : public QDialog
 		{
 			// Get item in first column on the current row
 			int row = ui_.ItemsTable->currentRow();
-			if (row == -1) return NULL;
-			QTableWidgetItem* item = ui_.ItemsTable->item(row, 0);
+			if (row == -1)
+				return NULL;
+			QTableWidgetItem *item = ui_.ItemsTable->item(row, 0);
 
 			// Retrieve the data pointer
-			T* dataItem = VariantPointer<T>(item->data(Qt::UserRole));
+			T *dataItem = VariantPointer<T>(item->data(Qt::UserRole));
 
 			return dataItem;
 		}
-		else return NULL;
+		else
+			return NULL;
 	}
 };
 

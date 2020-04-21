@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/configurationviewer.hui"
-#include "gui/render/renderableconfiguration.h"
 #include "classes/configuration.h"
 #include "data/elements.h"
+#include "gui/configurationviewer.hui"
+#include "gui/render/renderableconfiguration.h"
 
 // Constructor
-ConfigurationViewer::ConfigurationViewer(QWidget* parent) : BaseViewer(parent)
+ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Source data
 	configuration_ = NULL;
@@ -45,9 +45,7 @@ ConfigurationViewer::ConfigurationViewer(QWidget* parent) : BaseViewer(parent)
 }
 
 // Destructor
-ConfigurationViewer::~ConfigurationViewer()
-{
-}
+ConfigurationViewer::~ConfigurationViewer() {}
 
 /*
  * Target Configuration
@@ -72,10 +70,7 @@ void ConfigurationViewer::setConfiguration(Configuration *sp)
 }
 
 // Return target Configuration
-Configuration* ConfigurationViewer::configuration() const
-{
-	return configuration_;
-}
+Configuration *ConfigurationViewer::configuration() const { return configuration_; }
 
 /*
  * Renderable
@@ -84,13 +79,15 @@ Configuration* ConfigurationViewer::configuration() const
 // Set renderable draw style
 void ConfigurationViewer::setRenderableDrawStyle(RenderableConfiguration::ConfigurationDisplayStyle ds)
 {
-	if (configurationRenderable_) configurationRenderable_->setDisplayStyle(ds);
+	if (configurationRenderable_)
+		configurationRenderable_->setDisplayStyle(ds);
 }
 
 // Return current renderable draw style
 RenderableConfiguration::ConfigurationDisplayStyle ConfigurationViewer::renderableDrawStyle() const
 {
-	if (configurationRenderable_) return configurationRenderable_->displayStyle();
+	if (configurationRenderable_)
+		return configurationRenderable_->displayStyle();
 
 	return RenderableConfiguration::LinesStyle;
 }

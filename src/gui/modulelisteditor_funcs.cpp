@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/modulelisteditor.h"
-#include "gui/gui.h"
-#include "gui/charts/modulelist.h"
+#include "base/lineparser.h"
 #include "gui/charts/moduleblock.h"
+#include "gui/charts/modulelist.h"
+#include "gui/gui.h"
+#include "gui/modulelisteditor.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
-#include "base/lineparser.h"
 #include "templates/variantpointer.h"
 
 // Constructor / Destructor
-ModuleListEditor::ModuleListEditor(QWidget* parent) : QWidget(parent)
+ModuleListEditor::ModuleListEditor(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);
 
@@ -38,16 +38,14 @@ ModuleListEditor::ModuleListEditor(QWidget* parent) : QWidget(parent)
 	refreshing_ = false;
 }
 
-ModuleListEditor::~ModuleListEditor()
-{
-}
+ModuleListEditor::~ModuleListEditor() {}
 
 /*
  * Setup
  */
 
 // Setup up the ModuleListEditor for the specified Module list
-bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration)
+bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration)
 {
 	dissolveWindow_ = dissolveWindow;
 	moduleLayer_ = moduleLayer;
@@ -62,32 +60,35 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 	connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
 	connect(chartWidget_, SIGNAL(requiredSizeChanged()), this, SLOT(chartWidgetSizeChanged()));
-	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString&)), dissolveWindow_, SLOT(showModuleTab(const QString&)));
-	connect(chartWidget_, SIGNAL(blockRemoved(const QString&)), dissolveWindow_, SLOT(removeModuleTab(const QString&)));
-	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString&)), this, SLOT(blockSelectionChanged(const QString&)));
+	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString &)), dissolveWindow_, SLOT(showModuleTab(const QString &)));
+	connect(chartWidget_, SIGNAL(blockRemoved(const QString &)), dissolveWindow_, SLOT(removeModuleTab(const QString &)));
+	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this, SLOT(blockSelectionChanged(const QString &)));
 
 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 	moduleCategories_.clear();
 	ListIterator<Module> moduleIterator(dissolveWindow->dissolve().masterModules());
-	while (const Module* module = moduleIterator.iterate())
+	while (const Module *module = moduleIterator.iterate())
 	{
 		// Check that the category is not 'HIDDEN' (in which case we don't show it)
-		if (DissolveSys::sameString("HIDDEN", module->category())) continue;
+		if (DissolveSys::sameString("HIDDEN", module->category()))
+			continue;
 
 		// Find category for this Module (if it exists) or create a new one
-		MimeTreeWidgetItem* categoryItem = NULL;
-		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-		while ((categoryItem = categoryIterator.iterate())) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
+		MimeTreeWidgetItem *categoryItem = NULL;
+		RefDataListIterator<MimeTreeWidgetItem, CharString> categoryIterator(moduleCategories_);
+		while ((categoryItem = categoryIterator.iterate()))
+			if (DissolveSys::sameString(module->category(), categoryIterator.currentData()))
+				break;
 		if (categoryItem == NULL)
 		{
-			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
+			categoryItem = new MimeTreeWidgetItem((QTreeWidget *)NULL, 1000);
 			categoryItem->setText(0, module->category());
 			categoryItem->setFlags(Qt::ItemIsEnabled);
 			moduleCategories_.append(categoryItem, module->category());
 		}
 
 		// Create item for the Module
-		MimeTreeWidgetItem* item = new MimeTreeWidgetItem(categoryItem, 1000);
+		MimeTreeWidgetItem *item = new MimeTreeWidgetItem(categoryItem, 1000);
 		item->setIcon(0, ModuleBlock::modulePixmap(module));
 		item->setText(0, module->type());
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
@@ -98,8 +99,9 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 
 	// Populate the available Modules tree with the categories we now have
 	ui_.AvailableModulesTree->clear();
-	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
+	RefDataListIterator<MimeTreeWidgetItem, CharString> categoryIterator(moduleCategories_);
+	while (MimeTreeWidgetItem *categoryItem = categoryIterator.iterate())
+		ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
 	ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
 	ui_.AvailableModulesTree->expandAll();
 	ui_.AvailableModulesTree->resizeColumnToContents(0);
@@ -129,7 +131,8 @@ bool ModuleListEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* module
 // Update controls in tab
 void ModuleListEditor::updateControls()
 {
-	if (!chartWidget_) return;
+	if (!chartWidget_)
+		return;
 
 	refreshing_ = true;
 
@@ -156,16 +159,13 @@ void ModuleListEditor::enableSensitiveControls()
 }
 
 // Show / hide module palette
-void ModuleListEditor::setModulePaletteVisible(bool visible)
-{
-	ui_.ModulePaletteGroup->setVisible(visible);
-}
+void ModuleListEditor::setModulePaletteVisible(bool visible) { ui_.ModulePaletteGroup->setVisible(visible); }
 
 /*
  * Widget Functions
  */
 
-void ModuleListEditor::blockSelectionChanged(const QString& blockIdentifier)
+void ModuleListEditor::blockSelectionChanged(const QString &blockIdentifier)
 {
 	if (blockIdentifier.isEmpty())
 	{
@@ -175,7 +175,7 @@ void ModuleListEditor::blockSelectionChanged(const QString& blockIdentifier)
 	}
 
 	// Get Module by unique name
-	Module* module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
+	Module *module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
 	if (!module)
 	{
 		ui_.ControlsWidget->setModule(NULL, NULL);
@@ -187,29 +187,33 @@ void ModuleListEditor::blockSelectionChanged(const QString& blockIdentifier)
 	ui_.ControlsWidget->setVisible(true);
 }
 
-void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
+void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem *item)
 {
-	if (!moduleLayer_) return;
+	if (!moduleLayer_)
+		return;
 
 	// Get the Module associated to the double-clicked item
-	const Module* module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
-	if (!module) return;
+	const Module *module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
+	if (!module)
+		return;
 
 	// Create a new instance of the Module
-	Module* newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
+	Module *newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
 	newInstance->setConfigurationLocal(localConfiguration_);
 
 	// Set Configuration targets as appropriate
 	if (newInstance->nRequiredTargets() != Module::ZeroTargets)
 	{
-		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
+		if (localConfiguration_)
+			newInstance->addTargetConfiguration(localConfiguration_);
 		else
 		{
 			ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-			while (Configuration* cfg = configIterator.iterate())
+			while (Configuration *cfg = configIterator.iterate())
 			{
 				newInstance->addTargetConfiguration(cfg);
-				if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations())) break;
+				if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
+					break;
 			}
 		}
 	}
@@ -238,7 +242,8 @@ void ModuleListEditor::chartWidgetSizeChanged()
 void ModuleListEditor::controlsWidgetDataModified()
 {
 	// The controls widget must correspond to the selected module in the chart, so update it
-	if (chartWidget_->selectedBlock()) chartWidget_->selectedBlock()->updateControls();
+	if (chartWidget_->selectedBlock())
+		chartWidget_->selectedBlock()->updateControls();
 }
 
 /*
@@ -246,17 +251,19 @@ void ModuleListEditor::controlsWidgetDataModified()
  */
 
 // Write widget state through specified LineParser
-bool ModuleListEditor::writeState(LineParser& parser) const
+bool ModuleListEditor::writeState(LineParser &parser) const
 {
-	if ((!chartWidget_) || (!chartWidget_->writeState(parser))) return false;
+	if ((!chartWidget_) || (!chartWidget_->writeState(parser)))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool ModuleListEditor::readState(LineParser& parser)
+bool ModuleListEditor::readState(LineParser &parser)
 {
-	if ((!chartWidget_) || (!chartWidget_->readState(parser))) return false;
+	if ((!chartWidget_) || (!chartWidget_->readState(parser)))
+		return false;
 
 	return true;
 }

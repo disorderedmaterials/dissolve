@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_BENCHMARK_H
 #define DISSOLVE_MODULEWIDGET_BENCHMARK_H
 
-#include "modules/benchmark/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/benchmark/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class BenchmarkModule;
@@ -34,19 +34,18 @@ class BenchmarkModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	BenchmarkModule* module_;
+	BenchmarkModule *module_;
 
-	public:
+      public:
 	// Constructor
-	BenchmarkModuleWidget(QWidget* parent, BenchmarkModule* module);
-
+	BenchmarkModuleWidget(QWidget *parent, BenchmarkModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::BenchmarkModuleWidget ui_;
 };

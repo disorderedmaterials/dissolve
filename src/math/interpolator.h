@@ -30,31 +30,30 @@ class Data1D;
 // Interpolator
 class Interpolator
 {
-	public:
+      public:
 	// Interpolation Schemes
 	enum InterpolationScheme
 	{
 		NoInterpolation,
 		SplineInterpolation,
-		/* ConstrainedSplineInterpolation, */  // Removed for now as it produces spurious features in some fits.
+		/* ConstrainedSplineInterpolation, */ // Removed for now as it produces spurious features in some fits.
 		LinearInterpolation,
 		ThreePointInterpolation
 	};
 	// Constructors
-	Interpolator(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme = SplineInterpolation);
-	Interpolator(const Data1D& source, InterpolationScheme scheme = SplineInterpolation);
+	Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme = SplineInterpolation);
+	Interpolator(const Data1D &source, InterpolationScheme scheme = SplineInterpolation);
 	// Destructor
 	~Interpolator();
-
 
 	/*
 	 * Interpolation
 	 */
-	private:
+      private:
 	// Target x array
-	const Array<double>& x_;
+	const Array<double> &x_;
 	// Target y array
-	const Array<double>& y_;
+	const Array<double> &y_;
 	// Interpolation scheme currently employed
 	InterpolationScheme scheme_;
 	// Interpolation parameters
@@ -62,7 +61,7 @@ class Interpolator
 	// Interval of last returned interpolated point
 	int lastInterval_;
 
-	private:
+      private:
 	// Prepare natural spline interpolation of data
 	void interpolateSpline();
 	// Prepare constrained natural spline interpolation of data
@@ -72,7 +71,7 @@ class Interpolator
 	// Prepare three-point interpolation of data
 	void interpolateThreePoint();
 
-	public:
+      public:
 	// Regenerate using specified scheme
 	void interpolate(InterpolationScheme scheme = SplineInterpolation);
 	// Return interpolated y value for supplied x
@@ -80,15 +79,14 @@ class Interpolator
 	// Return interpolated y value for supplied x, specifying containing interval
 	double y(double x, int interval);
 
-
 	/*
 	 * Static Functions
 	 */
-	public:
+      public:
 	// Approximate y at specified x value using three-point interpolation of supplied data
-	static double approximate(const Data1D& data, double x);
+	static double approximate(const Data1D &data, double x);
 	// Add interpolated data B to data A, with supplied multiplication factor
-	static void addInterpolated(Data1D& A, const Data1D& B, double factor = 1.0);
+	static void addInterpolated(Data1D &A, const Data1D &B, double factor = 1.0);
 };
 
 #endif

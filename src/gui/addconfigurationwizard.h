@@ -35,32 +35,30 @@ class AddConfigurationWizard : public WizardWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	AddConfigurationWizard(QWidget* parent);
+	AddConfigurationWizard(QWidget *parent);
 	~AddConfigurationWizard();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Main instance of Dissolve that we're using as a reference
-	const Dissolve* dissolveReference_;
+	const Dissolve *dissolveReference_;
 	// Target Configuration for import
-	Configuration* importTarget_;
+	Configuration *importTarget_;
 
-	public:
+      public:
 	// Set Dissolve reference
-	void setMainDissolveReference(const Dissolve* dissolveReference);
+	void setMainDissolveReference(const Dissolve *dissolveReference);
 	// Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
-	Configuration* importConfiguration(Dissolve& dissolve);
-
+	Configuration *importConfiguration(Dissolve &dissolve);
 
 	/*
 	 * Controls
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::AddConfigurationWizard ui_;
 	// Lock counter for the widget refreshing
@@ -68,13 +66,13 @@ class AddConfigurationWizard : public WizardWidget
 	// Pages Enum
 	enum WidgetPage
 	{
-		StartPage,			/* Starting page, offering choices of how to proceed */
-		SelectTemplatePage,		/* Select template to apply  */
-		NameAndTemperaturePage,		/* Set name and temperature for Configuration */
+		StartPage,		/* Starting page, offering choices of how to proceed */
+		SelectTemplatePage,     /* Select template to apply  */
+		NameAndTemperaturePage, /* Set name and temperature for Configuration */
 		nPages
 	};
 
-	protected:
+      protected:
 	// Go to specified page index in the controls widget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
@@ -86,29 +84,26 @@ class AddConfigurationWizard : public WizardWidget
 	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
-	public:
+      public:
 	// Reset, ready for adding a new Configuration
 	void reset();
-
 
 	/*
 	 * Start Page
 	 */
-	private slots:
+      private slots:
 	void on_StartCreateEmptyButton_clicked(bool checked);
 	void on_StartCreateTemplateButton_clicked(bool checked);
-
 
 	/*
 	 * Select Template Page
 	 */
 	// TODO
 
-
 	/*
 	 * Configuration Name Page (final page)
 	 */
-	private slots:
+      private slots:
 	void on_FinishNameEdit_textChanged(const QString text);
 };
 

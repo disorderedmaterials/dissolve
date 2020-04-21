@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/selectforcefieldwidget.h"
 #include "data/ff.h"
+#include "gui/selectforcefieldwidget.h"
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
 // Constructor
-SelectForcefieldWidget::SelectForcefieldWidget(QWidget* parent, const List<Forcefield>& forcefields) : QWidget(parent), forcefields_(forcefields)
+SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const List<Forcefield> &forcefields) : QWidget(parent), forcefields_(forcefields)
 {
 	ui_.setupUi(this);
 
@@ -33,9 +33,9 @@ SelectForcefieldWidget::SelectForcefieldWidget(QWidget* parent, const List<Force
 
 	// Populate the list with available forcefields
 	ListIterator<Forcefield> forcefieldIterator(forcefields_);
-	while (Forcefield* ff = forcefieldIterator.iterate())
+	while (Forcefield *ff = forcefieldIterator.iterate())
 	{
-		QListWidgetItem* item = new QListWidgetItem(ff->name(), ui_.ForcefieldsList);
+		QListWidgetItem *item = new QListWidgetItem(ff->name(), ui_.ForcefieldsList);
 		item->setData(Qt::UserRole, VariantPointer<Forcefield>(ff));
 	}
 
@@ -43,19 +43,18 @@ SelectForcefieldWidget::SelectForcefieldWidget(QWidget* parent, const List<Force
 }
 
 // Destructor
-SelectForcefieldWidget::~SelectForcefieldWidget()
-{
-}
+SelectForcefieldWidget::~SelectForcefieldWidget() {}
 
 // Update the list of Forcefields, optionally filtering them by name and description
-void SelectForcefieldWidget::updateForcefieldsList(Forcefield* current, QString filter)
+void SelectForcefieldWidget::updateForcefieldsList(Forcefield *current, QString filter)
 {
 	// Loop over items in the list
-	for (int n=0; n<ui_.ForcefieldsList->count(); ++n)
+	for (int n = 0; n < ui_.ForcefieldsList->count(); ++n)
 	{
-		QListWidgetItem* item = ui_.ForcefieldsList->item(n);
-		if (!item) continue;
-		Forcefield* ff = VariantPointer<Forcefield>(item->data(Qt::UserRole));
+		QListWidgetItem *item = ui_.ForcefieldsList->item(n);
+		if (!item)
+			continue;
+		Forcefield *ff = VariantPointer<Forcefield>(item->data(Qt::UserRole));
 		if (ff == current)
 		{
 			ui_.ForcefieldsList->setCurrentRow(n);
@@ -63,7 +62,8 @@ void SelectForcefieldWidget::updateForcefieldsList(Forcefield* current, QString 
 		}
 
 		// Check filtering
-		if (filter.isEmpty()) item->setHidden(false);
+		if (filter.isEmpty())
+			item->setHidden(false);
 		else
 		{
 			// Check name
@@ -88,12 +88,9 @@ void SelectForcefieldWidget::updateForcefieldsList(Forcefield* current, QString 
 	}
 }
 
-void SelectForcefieldWidget::on_FilterEdit_textChanged(const QString& text)
-{
-	updateForcefieldsList(NULL, text);
-}
+void SelectForcefieldWidget::on_FilterEdit_textChanged(const QString &text) { updateForcefieldsList(NULL, text); }
 
-void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
+void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
 	if (!current)
 	{
@@ -103,7 +100,7 @@ void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetIt
 	}
 
 	// Get the selected forcefield
-	Forcefield* ff = VariantPointer<Forcefield>(current->data(Qt::UserRole));
+	Forcefield *ff = VariantPointer<Forcefield>(current->data(Qt::UserRole));
 
 	// Update the informational text
 	ui_.ForcefieldDetailsTextEdit->setText(ff->description());
@@ -111,24 +108,23 @@ void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetIt
 	emit(forcefieldSelectionChanged(true));
 }
 
-void SelectForcefieldWidget::on_ForcefieldsList_itemDoubleClicked(QListWidgetItem* item)
+void SelectForcefieldWidget::on_ForcefieldsList_itemDoubleClicked(QListWidgetItem *item)
 {
-	if (!item) return;
+	if (!item)
+		return;
 
 	emit(forcefieldDoubleClicked());
 }
 
 // Set the current forcefield
-void SelectForcefieldWidget::setCurrentForcefield(Forcefield* currentFF)
-{
-	updateForcefieldsList(currentFF, ui_.FilterEdit->text());
-}
+void SelectForcefieldWidget::setCurrentForcefield(Forcefield *currentFF) { updateForcefieldsList(currentFF, ui_.FilterEdit->text()); }
 
 // Return the currently-selected Forcefield
-Forcefield* SelectForcefieldWidget::currentForcefield() const
+Forcefield *SelectForcefieldWidget::currentForcefield() const
 {
-	QListWidgetItem* item = ui_.ForcefieldsList->currentItem();
-	if (item == NULL) return NULL;
+	QListWidgetItem *item = ui_.ForcefieldsList->currentItem();
+	if (item == NULL)
+		return NULL;
 
 	return VariantPointer<Forcefield>(item->data(Qt::UserRole));
 }

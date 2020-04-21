@@ -20,21 +20,16 @@
 */
 
 #include "classes/speciesimproper.h"
-#include "classes/speciesatom.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesImproper::SpeciesImproper() : SpeciesIntra(), DynamicArrayObject<SpeciesImproper>()
-{
-	clear();
-}
+SpeciesImproper::SpeciesImproper() : SpeciesIntra(), DynamicArrayObject<SpeciesImproper>() { clear(); }
 
 // Destructor
-SpeciesImproper::~SpeciesImproper()
-{
-}
+SpeciesImproper::~SpeciesImproper() {}
 
 /*
  * DynamicArrayObject Virtuals
@@ -56,49 +51,38 @@ void SpeciesImproper::clear()
  */
 
 // Set Atoms involved in Improper
-void SpeciesImproper::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+void SpeciesImproper::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
 	i_ = i;
 	j_ = j;
 	k_ = k;
 	l_ = l;
 #ifdef CHECKS
-	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesImproper::set().\n");
-	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesImproper::set().\n");
-	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesImproper::set().\n");
-	if (l_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesImproper::set().\n");
+	if (i_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesImproper::set().\n");
+	if (j_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesImproper::set().\n");
+	if (k_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesImproper::set().\n");
+	if (l_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesImproper::set().\n");
 #endif
 }
 
 // Return first SpeciesAtom
-SpeciesAtom* SpeciesImproper::i() const
-{
-	return i_;
-}
+SpeciesAtom *SpeciesImproper::i() const { return i_; }
 
 // Return second SpeciesAtom
-SpeciesAtom* SpeciesImproper::j() const
-{
-	return j_;
-}
+SpeciesAtom *SpeciesImproper::j() const { return j_; }
 
 // Return third SpeciesAtom
-SpeciesAtom* SpeciesImproper::k() const
-{
-	return k_;
-}
+SpeciesAtom *SpeciesImproper::k() const { return k_; }
 
 // Return fourth SpeciesAtom
-SpeciesAtom* SpeciesImproper::l() const
-{
-	return l_;
-}
+SpeciesAtom *SpeciesImproper::l() const { return l_; }
 
 // Return whether the improper uses the specified SpeciesAtom
-bool SpeciesImproper::uses(SpeciesAtom* spAtom) const
-{
-	return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
-}
+bool SpeciesImproper::uses(SpeciesAtom *spAtom) const { return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom)); }
 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesImproper::indexI() const
@@ -155,29 +139,39 @@ int SpeciesImproper::indexL() const
 // Return index (in parent Species) of nth SpeciesAtom in interaction
 int SpeciesImproper::index(int n) const
 {
-	if (n == 0) return indexI();
-	else if (n == 1) return indexJ();
-	else if (n == 2) return indexK();
-	else if (n == 3) return indexL();
+	if (n == 0)
+		return indexI();
+	else if (n == 1)
+		return indexJ();
+	else if (n == 2)
+		return indexK();
+	else if (n == 3)
+		return indexL();
 
 	Messenger::error("SpeciesAtom index %i is out of range in SpeciesImproper::index(int). Returning 0...\n");
 	return 0;
 }
 
 // Return whether Atoms in Improper match those specified
-bool SpeciesImproper::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+bool SpeciesImproper::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
 {
 	if (i_ == i)
 	{
-		if (j_ != j) return false;
-		if (k_ != k) return false;
-		if (l_ == l) return true;
+		if (j_ != j)
+			return false;
+		if (k_ != k)
+			return false;
+		if (l_ == l)
+			return true;
 	}
 	else if (i_ == l)
 	{
-		if (j_ != k) return false;
-		if (k_ != j) return false;
-		if (l_ == i) return true;
+		if (j_ != k)
+			return false;
+		if (k_ != j)
+			return false;
+		if (l_ == i)
+			return true;
 	}
 
 	return false;
@@ -203,8 +197,7 @@ bool SpeciesImproper::isSelected() const
 // Return enum options for ImproperFunction
 EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-	static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() <<
-		EnumOption(SpeciesImproper::CosineForm, 	"Cos",		4,4);
+	static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() << EnumOption(SpeciesImproper::CosineForm, "Cos", 4, 4);
 
 	static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 
@@ -212,9 +205,7 @@ EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunction
 }
 
 // Set up any necessary parameters
-void SpeciesImproper::setUp()
-{
-}
+void SpeciesImproper::setUp() {}
 
 // Calculate and return fundamental frequency for the interaction
 double SpeciesImproper::fundamentalFrequency(double reducedMass) const
@@ -224,21 +215,19 @@ double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesImproper::type() const
-{
-	return SpeciesIntra::ImproperInteraction;
-}
+SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::ImproperInteraction; }
 
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
 	// Convert torsion angle from degrees to radians
 	double phi = angleInDegrees / DEGRAD;
 
-	if (form() == SpeciesImproper::NoForm) return 0.0;
+	if (form() == SpeciesImproper::NoForm)
+		return 0.0;
 	else if (form() == SpeciesImproper::CosineForm)
 	{
 		/*
@@ -250,7 +239,7 @@ double SpeciesImproper::energy(double angleInDegrees) const
 		 * 2 : equilibrium angle (degrees)
 		 * 3 : Sign 's'
 		 */
-		return params[0] * (1.0 + params[3] * cos(params[1]*phi - (params[2] / DEGRAD)));
+		return params[0] * (1.0 + params[3] * cos(params[1] * phi - (params[2] / DEGRAD)));
 	}
 
 	Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate energy.\n");
@@ -261,13 +250,14 @@ double SpeciesImproper::energy(double angleInDegrees) const
 double SpeciesImproper::force(double angleInDegrees) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
 	// Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
 	double phi = angleInDegrees / DEGRAD;
 	double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
 
-	if (form() == SpeciesImproper::NoForm) return 0.0;
+	if (form() == SpeciesImproper::NoForm)
+		return 0.0;
 	else if (form() == SpeciesImproper::CosineForm)
 	{
 		/*
@@ -279,7 +269,7 @@ double SpeciesImproper::force(double angleInDegrees) const
 		 * 2 : Equilibrium angle (degrees)
 		 * 3 : Sign 's'
 		 */
-		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1]*phi - (params[2] / DEGRAD));
+		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1] * phi - (params[2] / DEGRAD));
 	}
 
 	Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate force.\n");
@@ -291,7 +281,7 @@ double SpeciesImproper::force(double angleInDegrees) const
  */
 
 // Broadcast data from Master to all Slaves
-bool SpeciesImproper::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms)
+bool SpeciesImproper::broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms)
 {
 #ifdef PARALLEL
 	int buffer[4];
@@ -304,8 +294,9 @@ bool SpeciesImproper::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& 
 		buffer[2] = indexK();
 		buffer[3] = indexL();
 	}
-	if (!procPool.broadcast(buffer, 4)) return false;
-	
+	if (!procPool.broadcast(buffer, 4))
+		return false;
+
 	// Slaves now take Atom pointers from supplied List
 	if (procPool.isSlave())
 	{
@@ -314,10 +305,12 @@ bool SpeciesImproper::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& 
 		k_ = atoms.item(buffer[2]);
 		l_ = atoms.item(buffer[3]);
 	}
-	
+
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
-	if (!procPool.broadcast(form_)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS))
+		return false;
+	if (!procPool.broadcast(form_))
+		return false;
 #endif
 	return true;
 }

@@ -20,16 +20,16 @@
 */
 
 #include "gui/widgets/checkindicator.hui"
-#include <QSizePolicy>
 #include <QLabel>
 #include <QPixmap>
+#include <QSizePolicy>
 
 // Constructor
-CheckIndicator::CheckIndicator(QWidget* parent) : QLabel(parent)
+CheckIndicator::CheckIndicator(QWidget *parent) : QLabel(parent)
 {
 	// Set minimum size
-	setMinimumSize(QSize(20,20));
-	setMaximumSize(QSize(20,20));
+	setMinimumSize(QSize(20, 20));
+	setMaximumSize(QSize(20, 20));
 	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	setScaledContents(true);
 
@@ -38,10 +38,7 @@ CheckIndicator::CheckIndicator(QWidget* parent) : QLabel(parent)
 }
 
 // Return state of indicator
-CheckIndicator::IndicatorState CheckIndicator::state() const
-{
-	return state_;
-}
+CheckIndicator::IndicatorState CheckIndicator::state() const { return state_; }
 
 /*
  * State Update
@@ -50,10 +47,14 @@ CheckIndicator::IndicatorState CheckIndicator::state() const
 // Update state icon
 void CheckIndicator::updateStateIcon()
 {
-	if (state_ == CheckIndicator::OKState) setPixmap(QPixmap(":/general/icons/general_true.svg"));
-	else if (state_ == CheckIndicator::NotOKState) setPixmap(QPixmap(":/general/icons/general_false.svg"));
-	else if (state_ == CheckIndicator::WarningState) setPixmap(QPixmap(":/general/icons/general_warn.svg"));
-	else setPixmap(QPixmap(":/general/icons/general_unknown.svg"));
+	if (state_ == CheckIndicator::OKState)
+		setPixmap(QPixmap(":/general/icons/general_true.svg"));
+	else if (state_ == CheckIndicator::NotOKState)
+		setPixmap(QPixmap(":/general/icons/general_false.svg"));
+	else if (state_ == CheckIndicator::WarningState)
+		setPixmap(QPixmap(":/general/icons/general_warn.svg"));
+	else
+		setPixmap(QPixmap(":/general/icons/general_unknown.svg"));
 }
 
 // Set indicator to OK (green tick)

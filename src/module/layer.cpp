@@ -20,9 +20,9 @@
 */
 
 #include "module/layer.h"
-#include "module/module.h"
-#include "base/sysfunc.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "module/module.h"
 
 // Constructor
 ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
@@ -33,64 +33,49 @@ ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
 }
 
 // Destructor
-ModuleLayer::~ModuleLayer()
-{
-}
+ModuleLayer::~ModuleLayer() {}
 
 /*
  * Layer Definition
  */
 
 // Set name of layer
-void ModuleLayer::setName(const char* name)
-{
-	name_ = name;
-}
+void ModuleLayer::setName(const char *name) { name_ = name; }
 
 // Return name of layer
-const char* ModuleLayer::name() const
-{
-	return name_.get();
-}
+const char *ModuleLayer::name() const { return name_.get(); }
 
 // Set whether the layer is enabled
-void ModuleLayer::setEnabled(bool enabled)
-{
-	enabled_ = enabled;
-}
+void ModuleLayer::setEnabled(bool enabled) { enabled_ = enabled; }
 
 // Return whether the layer is enabled
-bool ModuleLayer::enabled() const
-{
-	return enabled_;
-}
+bool ModuleLayer::enabled() const { return enabled_; }
 
 // Frequency, relative to the main iteration counter, at which to execute the layer
-void ModuleLayer::setFrequency(int frequency)
-{
-	frequency_ = frequency;
-}
+void ModuleLayer::setFrequency(int frequency) { frequency_ = frequency; }
 
 // Return frequency, relative to the main iteration counter, at which to execute the layer
-int ModuleLayer::frequency() const
-{
-	return frequency_;
-}
+int ModuleLayer::frequency() const { return frequency_; }
 
 // Return short descriptive text relating frequency to supplied iteration number
-const char* ModuleLayer::frequencyDetails(int iteration) const
+const char *ModuleLayer::frequencyDetails(int iteration) const
 {
 	static CharString result;
 
-	if (frequency_ < 0) return "NEGATIVE?";
-	else if ((!enabled_) || (frequency_ == 0)) return "disabled";
-	else if (frequency_ == 1) return "every time";
-	else if ((iteration%frequency_) == 0) return "this iteration";
+	if (frequency_ < 0)
+		return "NEGATIVE?";
+	else if ((!enabled_) || (frequency_ == 0))
+		return "disabled";
+	else if (frequency_ == 1)
+		return "every time";
+	else if ((iteration % frequency_) == 0)
+		return "this iteration";
 	else
 	{
 		// Calculate number of steps necessary to get to next multiple of the frequency_
-		int nToGo = frequency_ - (iteration - frequency_*(iteration/frequency_));
-		if (nToGo == 1) return "next iteration";
+		int nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
+		if (nToGo == 1)
+			return "next iteration";
 
 		result.sprintf("in %i steps time", nToGo);
 		return result.get();
@@ -100,7 +85,10 @@ const char* ModuleLayer::frequencyDetails(int iteration) const
 // Return whether the layer should execute this iteration
 bool ModuleLayer::runThisIteration(int iteration) const
 {
-	if ((frequency_ < 1) || (!enabled_)) return false;
-	else if ((iteration%frequency_) == 0) return true;
-	else return false;
+	if ((frequency_ < 1) || (!enabled_))
+		return false;
+	else if ((iteration % frequency_) == 0)
+		return true;
+	else
+		return false;
 }

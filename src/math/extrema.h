@@ -30,23 +30,23 @@ template <class T> class Array3D;
 // Extrema
 class Extrema
 {
-	public:
+      public:
 	// Return minimum from array provided
-	static double min(const Array<double>& A);
+	static double min(const Array<double> &A);
 	// Return maximum from array provided
-	static double max(const Array<double>& A);
+	static double max(const Array<double> &A);
 	// Return minimum from 2D array provided
-	static double min(const Array2D<double>& A);
+	static double min(const Array2D<double> &A);
 	// Return maximum from 2D array provided
-	static double max(const Array2D<double>& A);
+	static double max(const Array2D<double> &A);
 	// Return absolute minimum from array provided
-	static double absMin(const Array<double>& A);
+	static double absMin(const Array<double> &A);
 	// Return absolute maximum from array provided
-	static double absMax(const Array<double>& A);
+	static double absMax(const Array<double> &A);
 	// Return absolute minimum from 2D array provided
-	static double absMin(const Array2D<double>& A);
+	static double absMin(const Array2D<double> &A);
 	// Return absolute maximum from 2D array provided
-	static double absMax(const Array2D<double>& A);
+	static double absMax(const Array2D<double> &A);
 };
 
 #endif

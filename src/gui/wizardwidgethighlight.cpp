@@ -23,33 +23,26 @@
 #include <QWidget>
 
 // Constructor
-WizardWidgetHighlight::WizardWidgetHighlight() : ListItem<WizardWidgetHighlight>()
-{
-	widget_ = NULL;
-}
+WizardWidgetHighlight::WizardWidgetHighlight() : ListItem<WizardWidgetHighlight>() { widget_ = NULL; }
 
 // Destructor
-WizardWidgetHighlight::~WizardWidgetHighlight()
-{
-}
+WizardWidgetHighlight::~WizardWidgetHighlight() {}
 
 /*
  * Data
  */
 
 // Set target widget
-void WizardWidgetHighlight::setWidget(QWidget* widget)
+void WizardWidgetHighlight::setWidget(QWidget *widget)
 {
 	widget_ = widget;
 
-	if (widget_) originalPalette_ = widget_->palette();
+	if (widget_)
+		originalPalette_ = widget_->palette();
 }
 
 // Set highlight colour
-void WizardWidgetHighlight::setColour(QColor colour)
-{
-	colour_ = colour;
-}
+void WizardWidgetHighlight::setColour(QColor colour) { colour_ = colour; }
 
 /*
  * Highlighting
@@ -58,7 +51,8 @@ void WizardWidgetHighlight::setColour(QColor colour)
 // Highlight the target widget
 void WizardWidgetHighlight::highlight()
 {
-	if (!widget_) return;
+	if (!widget_)
+		return;
 
 	QPalette palette = widget_->palette();
 	palette.setColor(QPalette::Base, colour_);
@@ -71,7 +65,8 @@ void WizardWidgetHighlight::highlight()
 // Remove highlight from the target widget
 void WizardWidgetHighlight::unHighlight()
 {
-	if (!widget_) return;
+	if (!widget_)
+		return;
 
 	widget_->setAutoFillBackground(false);
 	widget_->setPalette(originalPalette_);

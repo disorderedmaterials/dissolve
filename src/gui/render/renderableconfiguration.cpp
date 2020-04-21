@@ -20,17 +20,17 @@
 */
 
 #include "gui/render/renderableconfiguration.h"
-#include "gui/render/renderablegroupmanager.h"
-#include "gui/render/view.h"
-#include "data/elementcolours.h"
+#include "base/lineparser.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
-#include "base/lineparser.h"
+#include "data/elementcolours.h"
+#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/view.h"
 
 // Constructor
-RenderableConfiguration::RenderableConfiguration(const Configuration* source, const char* objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
+RenderableConfiguration::RenderableConfiguration(const Configuration *source, const char *objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
@@ -51,9 +51,7 @@ RenderableConfiguration::RenderableConfiguration(const Configuration* source, co
 }
 
 // Destructor
-RenderableConfiguration::~RenderableConfiguration()
-{
-}
+RenderableConfiguration::~RenderableConfiguration() {}
 
 /*
  * Data
@@ -63,25 +61,21 @@ RenderableConfiguration::~RenderableConfiguration()
 bool RenderableConfiguration::validateDataSource()
 {
 	// Don't try to access source_ if we are not currently permitted to do so
-	if (!sourceDataAccessEnabled_) return false;
+	if (!sourceDataAccessEnabled_)
+		return false;
 
 	// If there is no valid source set, attempt to set it now...
-	if (!source_) source_ = Configuration::findObject(objectTag_);
+	if (!source_)
+		source_ = Configuration::findObject(objectTag_);
 
 	return source_;
 }
 
 // Invalidate the current data source
-void RenderableConfiguration::invalidateDataSource()
-{
-	source_ = NULL;
-}
+void RenderableConfiguration::invalidateDataSource() { source_ = NULL; }
 
 // Return version of data
-int RenderableConfiguration::dataVersion()
-{
-	return (validateDataSource() ? source_->contentsVersion() : -99);
-}
+int RenderableConfiguration::dataVersion() { return (validateDataSource() ? source_->contentsVersion() : -99); }
 
 /*
  * Transform / Limits
@@ -90,16 +84,18 @@ int RenderableConfiguration::dataVersion()
 // Transform data according to current settings
 void RenderableConfiguration::transformValues()
 {
-	if (!source_) return;
+	if (!source_)
+		return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (valuesTransformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion())
+		return;
 
 	// Minimum corresponds to lower left corner of the box at {0,0,0}
 	limitsMin_.zero();
 
 	// Transform extreme upper right corner from unit to real space to get maxima
-	limitsMax_ = source_->box()->fracToReal(Vec3<double>(1.0,1.0,1.0));
+	limitsMax_ = source_->box()->fracToReal(Vec3<double>(1.0, 1.0, 1.0));
 
 	positiveLimitsMin_ = limitsMin_;
 	positiveLimitsMax_ = limitsMax_;
@@ -113,7 +109,7 @@ void RenderableConfiguration::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly& assembly, const Atom* i, const Atom* j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
+void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
 {
 	Matrix4 A;
 	Vec3<double> unit = vij;
@@ -123,7 +119,7 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly& assembly, co
 	A.setColumn(2, unit.x, unit.y, unit.z, 0.0);
 	A.setColumn(0, unit.orthogonal(), 0.0);
 	A.setColumn(1, unit * A.columnAsVec3(0), 0.0);
-	A.columnMultiply(2, 0.5*mag);
+	A.columnMultiply(2, 0.5 * mag);
 	A.applyScaling(radialScaling, radialScaling, 1.0);
 
 	// If drawing from individual Atoms, locate on each Atom and draw the bond halves from there. If not, locate to the bond centre.
@@ -131,41 +127,42 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly& assembly, co
 	{
 		// Render half of Bond in colour of Atom j
 		A.setTranslation(i->r());
-		const float* colour = ElementColours::colour(j->speciesAtom()->element());
+		const float *colour = ElementColours::colour(j->speciesAtom()->element());
 		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		// Render half of Bond in colour of Atom i
 		A.setTranslation(j->r());
-		A.columnMultiply(2,-1.0);
+		A.columnMultiply(2, -1.0);
 		colour = ElementColours::colour(i->speciesAtom()->element());
 		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 	}
 	else
 	{
-		A.setTranslation(i->r()+vij*0.5);
+		A.setTranslation(i->r() + vij * 0.5);
 
 		// Render half of Bond in colour of Atom j
-		const float* colour = ElementColours::colour(j->speciesAtom()->element());
+		const float *colour = ElementColours::colour(j->speciesAtom()->element());
 		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		// Render half of Bond in colour of Atom i
-		A.columnMultiply(2,-1.0);
+		A.columnMultiply(2, -1.0);
 		colour = ElementColours::colour(i->speciesAtom()->element());
 		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 	}
 }
 
 // Recreate necessary primitives / primitive assemblies for the data
-void RenderableConfiguration::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
+void RenderableConfiguration::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
 	Matrix4 A;
-	const GLfloat* colour;
-	const GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
-	const Atom* i, *partner;
+	const GLfloat *colour;
+	const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
+	const Atom *i, *partner;
 	Vec3<double> ri, rj;
 
 	// Check data source
-	if (!validateDataSource()) return;
+	if (!validateDataSource())
+		return;
 
 	// Clear existing data
 	lineConfigurationPrimitive_->forgetAll();
@@ -173,8 +170,8 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	unitCellAssembly_.clear();
 
 	// Grab the Configuration's Box and CellArray
-	const Box* box = source_->box();
-	const CellArray& cellArray = source_->constCells();
+	const Box *box = source_->box();
+	const CellArray &cellArray = source_->constCells();
 
 	// Render according to the current displayStyle
 	if (displayStyle_ == LinesStyle)
@@ -184,8 +181,8 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		configurationAssembly_.add(lineConfigurationPrimitive_, A);
 
 		// Draw Atoms
-		const DynamicArray<Atom>& atoms = source_->constAtoms();
-		for (int n=0; n<atoms.nItems(); ++n)
+		const DynamicArray<Atom> &atoms = source_->constAtoms();
+		for (int n = 0; n < atoms.nItems(); ++n)
 		{
 			// Get the Atom pointer
 			i = atoms.constValue(n);
@@ -203,11 +200,13 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			else
 			{
 				// Draw all bonds from this atom
-				for (const auto* bond : i->speciesAtom()->bonds())
+				for (const auto *bond : i->speciesAtom()->bonds())
 				{
-					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
+					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond
+					// only once)
 					partner = i->molecule()->atom(bond->indexJ());
-					if (i == partner) continue;
+					if (i == partner)
+						continue;
 
 					ri = i->r();
 					rj = partner->r();
@@ -228,10 +227,10 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		configurationAssembly_.add(true, GL_FILL);
 
 		// Draw Atoms
-		const DynamicArray<Atom>& atoms = source_->constAtoms();
-		for (int n=0; n<atoms.nItems(); ++n)
+		const DynamicArray<Atom> &atoms = source_->constAtoms();
+		for (int n = 0; n < atoms.nItems(); ++n)
 		{
-			const Atom* i = atoms.constValue(n);
+			const Atom *i = atoms.constValue(n);
 
 			A.setIdentity();
 			A.setTranslation(i->r());
@@ -242,14 +241,17 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			configurationAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 			// Bonds from this atom
-			for (const auto* bond : i->speciesAtom()->bonds())
+			for (const auto *bond : i->speciesAtom()->bonds())
 			{
 				// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
 				partner = i->molecule()->atom(bond->indexJ());
-				if (i == partner) continue;
+				if (i == partner)
+					continue;
 
-				if (i->cell()->mimRequired(partner->cell())) createCylinderBond(configurationAssembly_, i, partner, box->minimumVector(i->r(), partner->r()), true, spheresBondRadius_);
-				else createCylinderBond(configurationAssembly_, i, partner, partner->r() - i->r(), false, spheresBondRadius_);
+				if (i->cell()->mimRequired(partner->cell()))
+					createCylinderBond(configurationAssembly_, i, partner, box->minimumVector(i->r(), partner->r()), true, spheresBondRadius_);
+				else
+					createCylinderBond(configurationAssembly_, i, partner, partner->r() - i->r(), false, spheresBondRadius_);
 			}
 		}
 	}
@@ -264,8 +266,10 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 const void RenderableConfiguration::sendToGL(const double pixelScaling)
 {
 	// Set appropriate lighting for the configuration and interaction assemblies
-	if (displayStyle_ == LinesStyle) glDisable(GL_LIGHTING);
-	else glEnable(GL_LIGHTING);
+	if (displayStyle_ == LinesStyle)
+		glDisable(GL_LIGHTING);
+	else
+		glEnable(GL_LIGHTING);
 	configurationAssembly_.sendToGL(pixelScaling);
 	interactionAssembly_.sendToGL(pixelScaling);
 
@@ -281,9 +285,8 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
-	static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList() <<
-		EnumOption(RenderableConfiguration::LinesStyle,	"Lines") <<
-		EnumOption(RenderableConfiguration::SpheresStyle,	"Spheres");
+	static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList()
+							   << EnumOption(RenderableConfiguration::LinesStyle, "Lines") << EnumOption(RenderableConfiguration::SpheresStyle, "Spheres");
 
 	static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle", ConfigurationStyleOptions);
 
@@ -299,10 +302,7 @@ void RenderableConfiguration::setDisplayStyle(ConfigurationDisplayStyle displayS
 }
 
 // Return display style for the renderable
-RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::displayStyle() const
-{
-	return displayStyle_;
-}
+RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::displayStyle() const { return displayStyle_; }
 
 /*
  * Style I/O
@@ -311,9 +311,8 @@ RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::disp
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableConfiguration::DisplayKeyword,	"Display",	1) <<
-		EnumOption(RenderableConfiguration::EndStyleKeyword,	"EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableConfiguration::DisplayKeyword, "Display", 1)
+								 << EnumOption(RenderableConfiguration::EndStyleKeyword, "EndStyle");
 
 	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
 
@@ -321,47 +320,53 @@ EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfig
 }
 
 // Write style information
-bool RenderableConfiguration::writeStyleBlock(LineParser& parser, int indentLevel) const
+bool RenderableConfiguration::writeStyleBlock(LineParser &parser, int indentLevel) const
 {
 	// Construct indent string
-	char* indent = new char[indentLevel*2+1];
-	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
-	indent[indentLevel*2] = '\0';
+	char *indent = new char[indentLevel * 2 + 1];
+	for (int n = 0; n < indentLevel * 2; ++n)
+		indent[n] = ' ';
+	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword), configurationDisplayStyles().keyword(displayStyle_))) return false;
+	if (!parser.writeLineF("%s%s  %s\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword), configurationDisplayStyles().keyword(displayStyle_)))
+		return false;
 
 	return true;
 }
 
 // Read style information
-bool RenderableConfiguration::readStyleBlock(LineParser& parser)
+bool RenderableConfiguration::readStyleBlock(LineParser &parser)
 {
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
+			return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!configurationStyleKeywords().isValid(parser.argc(0))) return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
+		if (!configurationStyleKeywords().isValid(parser.argc(0)))
+			return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
 		ConfigurationStyleKeyword kwd = configurationStyleKeywords().enumeration(parser.argc(0));
-		if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+		if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
+			return false;
 
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-			// Display style
-			case (RenderableConfiguration::DisplayKeyword):
-				if (!configurationDisplayStyles().isValid(parser.argc(1))) return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
-				displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
-				break;
-			// End of block
-			case (RenderableConfiguration::EndStyleKeyword):
-				return true;
-			// Unrecognised Keyword
-			default:
-				Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));
-				return false;
-				break;
+		// Display style
+		case (RenderableConfiguration::DisplayKeyword):
+			if (!configurationDisplayStyles().isValid(parser.argc(1)))
+				return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
+			displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
+			break;
+		// End of block
+		case (RenderableConfiguration::EndStyleKeyword):
+			return true;
+		// Unrecognised Keyword
+		default:
+			Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));
+			return false;
+			break;
 		}
 	}
 

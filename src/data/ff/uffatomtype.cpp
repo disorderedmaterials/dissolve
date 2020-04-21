@@ -23,7 +23,9 @@
 #include "data/ff/uff.h"
 
 // Constructor
-UFFAtomType::UFFAtomType(Forcefield* parent, int z, int index, const char* name, const char* neta, const char* description, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ForcefieldAtomType(parent, z, index, name, neta, description, 0.0, 0.0, 0.0)
+UFFAtomType::UFFAtomType(Forcefield *parent, int z, int index, const char *name, const char *neta, const char *description, double r, double theta, double x, double D, double zeta, double Z,
+			 double chi, int geom, double V, double U)
+    : ForcefieldAtomType(parent, z, index, name, neta, description, 0.0, 0.0, 0.0)
 {
 	// Set the atomtype's data
 	r_ = r;
@@ -39,7 +41,7 @@ UFFAtomType::UFFAtomType(Forcefield* parent, int z, int index, const char* name,
 }
 
 // Assignment Operator
-UFFAtomType& UFFAtomType::operator=(const UFFAtomType& source)
+UFFAtomType &UFFAtomType::operator=(const UFFAtomType &source)
 {
 	r_ = source.r_;
 	theta_ = source.theta_;
@@ -60,61 +62,31 @@ UFFAtomType& UFFAtomType::operator=(const UFFAtomType& source)
  */
 
 // Return single bond radius (r, Angstroms)
-double UFFAtomType::r() const
-{
-	return r_;
-}
+double UFFAtomType::r() const { return r_; }
 
 // Return descriptive angle (theta, degrees)
-double UFFAtomType::theta() const
-{
-	return theta_;
-}
+double UFFAtomType::theta() const { return theta_; }
 
 // Return nonbond distance (x, Angstroms)
-double UFFAtomType::x() const
-{
-	return x_;
-}
+double UFFAtomType::x() const { return x_; }
 
 // Return nonbond energy (D, kcal)
-double UFFAtomType::D() const
-{
-	return D_;
-}
+double UFFAtomType::D() const { return D_; }
 
 // Return nonbond scale (zeta)
-double UFFAtomType::zeta() const
-{
-	return zeta_;
-}
+double UFFAtomType::zeta() const { return zeta_; }
 
 // Return effective charge (Z)
-double UFFAtomType::Z() const
-{
-	return Z_;
-}
+double UFFAtomType::Z() const { return Z_; }
 
 // Return GMP electronegativity (chi)
-double UFFAtomType::chi() const
-{
-	return chi_;
-}
+double UFFAtomType::chi() const { return chi_; }
 
 // Return torsional parameter 1 (V)
-double UFFAtomType::V() const
-{
-	return V_;
-}
+double UFFAtomType::V() const { return V_; }
 
 // Return torsional parameter 2 (U)
-double UFFAtomType::U() const
-{
-	return U_;
-}
+double UFFAtomType::U() const { return U_; }
 
 // Return integer representing geometry about the type (geom)
-int UFFAtomType::geom() const
-{
-	return geom_;
-}
+int UFFAtomType::geom() const { return geom_; }

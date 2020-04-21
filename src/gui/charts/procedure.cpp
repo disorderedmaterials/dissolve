@@ -22,10 +22,10 @@
 #include "gui/charts/procedure.h"
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
-#include "gui/widgets/mimestrings.h"
 #include "gui/stockcolours.h"
-#include "procedure/procedure.h"
+#include "gui/widgets/mimestrings.h"
 #include "procedure/nodes/sequence.h"
+#include "procedure/procedure.h"
 #include <QApplication>
 #include <QDrag>
 #include <QMessageBox>
@@ -36,7 +36,7 @@
 #include <QWidget>
 
 // Constructor
-ProcedureChart::ProcedureChart(Procedure* procedure, const CoreData& coreData) : ChartBase(), coreData_(coreData)
+ProcedureChart::ProcedureChart(Procedure *procedure, const CoreData &coreData) : ChartBase(), coreData_(coreData)
 {
 	refreshing_ = false;
 
@@ -48,22 +48,20 @@ ProcedureChart::ProcedureChart(Procedure* procedure, const CoreData& coreData) :
 	recalculateLayout();
 
 	// Create the insertion widget if we don't already have one
-// 	insertionWidget_ = new ProcedureChartInsertionBlock(this, dissolveWindow_);
-// 	insertionWidget_->setVisible(false);
+	// 	insertionWidget_ = new ProcedureChartInsertionBlock(this, dissolveWindow_);
+	// 	insertionWidget_->setVisible(false);
 
 	updateControls();
 }
 
-ProcedureChart::~ProcedureChart()
-{
-}
+ProcedureChart::~ProcedureChart() {}
 
 /*
  * QWidget Reimplementations
  */
 
 // Paint event
-void ProcedureChart::paintEvent(QPaintEvent* event)
+void ProcedureChart::paintEvent(QPaintEvent *event)
 {
 	// Draw suitable connecting lines between widgets, illustrating the execution path of the code
 	QPainter painter(this);
@@ -84,7 +82,8 @@ void ProcedureChart::paintEvent(QPaintEvent* event)
 	if (false)
 	{
 		ListIterator<ChartHotSpot> hotSpotIterator(hotSpots_);
-		while (ChartHotSpot* hotSpot = hotSpotIterator.iterate()) painter.fillRect(hotSpot->geometry(), QBrush(QColor(200,200,0,50)));
+		while (ChartHotSpot *hotSpot = hotSpotIterator.iterate())
+			painter.fillRect(hotSpot->geometry(), QBrush(QColor(200, 200, 0, 50)));
 	}
 }
 
@@ -93,17 +92,17 @@ void ProcedureChart::paintEvent(QPaintEvent* event)
  */
 
 // Update the content block widgets against the current target data for the supplied SequenceNode
-void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets, int& indentLevel)
+void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence, RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel)
 {
 	// Create a temporary list that will store our widgets to be 'reused'
 	RefList<ProcedureChartNodeBlock> newSequenceWidgets;
 
 	// Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
 	ListIterator<ProcedureNode> nodeIterator(sequence->sequence());
-	while (ProcedureNode* node = nodeIterator.iterate())
+	while (ProcedureNode *node = nodeIterator.iterate())
 	{
 		// Does this node have an existing widget?
-		ProcedureChartNodeBlock* block = nodeBlock(node);
+		ProcedureChartNodeBlock *block = nodeBlock(node);
 		if (block)
 		{
 			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
@@ -117,7 +116,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 			block = new ProcedureChartNodeBlock(this, node, coreData_);
 			connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
 			connect(block, SIGNAL(keywordsToggled()), this, SLOT(recalculateLayout()));
-// 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
+			// 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newSequenceWidgets.append(block);
 			chartBlocks_.append(block);
 			Messenger::printVerbose("Creating new ProcedureChartNodeBlock %p for node %p (%s).\n", block, node, node->name());
@@ -138,7 +137,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 	}
 
 	// Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
-	for (ProcedureChartNodeBlock* block : oldSequenceWidgets)
+	for (ProcedureChartNodeBlock *block : oldSequenceWidgets)
 	{
 		chartBlocks_.remove(block);
 		delete block;
@@ -149,21 +148,20 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 }
 
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
-ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node)
-{
-	return nodeBlock(node, rootSequenceNodeWidgets_);
-}
+ProcedureChartNodeBlock *ProcedureChart::nodeBlock(ProcedureNode *node) { return nodeBlock(node, rootSequenceNodeWidgets_); }
 
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node, const RefList<ProcedureChartNodeBlock>& list)
+ProcedureChartNodeBlock *ProcedureChart::nodeBlock(ProcedureNode *node, const RefList<ProcedureChartNodeBlock> &list)
 {
-	for (ProcedureChartNodeBlock* block : list)
+	for (ProcedureChartNodeBlock *block : list)
 	{
-		if (block->node() == node) return block;
+		if (block->node() == node)
+			return block;
 
 		// Search the branch list of this node
-		ProcedureChartNodeBlock* branchBlock = nodeBlock(node, block->branchWidgets());
-		if (branchBlock) return branchBlock;
+		ProcedureChartNodeBlock *branchBlock = nodeBlock(node, block->branchWidgets());
+		if (branchBlock)
+			return branchBlock;
 	}
 
 	return NULL;
@@ -172,7 +170,8 @@ ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node, const Re
 // Update the content block widgets against the current target data
 void ProcedureChart::updateContentBlocks()
 {
-	if (!procedure_) return;
+	if (!procedure_)
+		return;
 
 	// Set initial indent level
 	int indentLevel = 0;
@@ -189,16 +188,16 @@ void ProcedureChart::updateContentBlocks()
 
 /*
  * Widget Layout
-*/
+ */
 
 // Calculate geometries for the widgets in the supplied sequence list
-void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel)
+void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeWidgets, QSize &requiredSize, int &indentLevel)
 {
 	// Precalculate some useful metrics
 	const int leftIndent = indentLevel * metrics_.indentWidth();
 
 	// Loop over widgets in this sequence
-	for (ProcedureChartNodeBlock* block : nodeWidgets)
+	for (ProcedureChartNodeBlock *block : nodeWidgets)
 	{
 		// Set basic position of the block, accounting for the indent
 		block->setNewPosition(leftIndent, requiredSize.height());
@@ -209,7 +208,8 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeW
 
 		// Update the maximum width if necessary
 		int blockWidth = block->widgetWidth() + leftIndent;
-		if (blockWidth > requiredSize.width()) requiredSize.setWidth(blockWidth);
+		if (blockWidth > requiredSize.width())
+			requiredSize.setWidth(blockWidth);
 
 		// Increase the required height
 		requiredSize.setHeight(requiredSize.height() + block->widgetHeight() + metrics_.blockVerticalSpacing());
@@ -238,16 +238,17 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 
 	// Set initial indent level and widget position
 	int indentLevel = 0;
-	QSize requiredSize(0,0);
+	QSize requiredSize(0, 0);
 
 	// Begin by calling the layout function for the root sequence - we recurse from there
 	calculateGeometries(rootSequenceNodeWidgets_, requiredSize, indentLevel);
 
 	// Set the widths of all widgets so their right edges are aligned
-	for (ChartBlock* block : chartBlocks_) block->setNewRightEdge(requiredSize.width());
+	for (ChartBlock *block : chartBlocks_)
+		block->setNewRightEdge(requiredSize.width());
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
-	requiredSize += QSize(2*metrics_.chartMargin(), 2*metrics_.chartMargin());
+	requiredSize += QSize(2 * metrics_.chartMargin(), 2 * metrics_.chartMargin());
 
 	return requiredSize;
 }
@@ -257,13 +258,7 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
  */
 
 // Write widget state through specified LineParser
-bool ProcedureChart::writeState(LineParser& parser) const
-{
-	return true;
-}
+bool ProcedureChart::writeState(LineParser &parser) const { return true; }
 
 // Read widget state through specified LineParser
-bool ProcedureChart::readState(LineParser& parser)
-{
-	return true;
-}
+bool ProcedureChart::readState(LineParser &parser) { return true; }

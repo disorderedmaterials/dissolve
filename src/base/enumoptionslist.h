@@ -28,15 +28,15 @@
 // Enum Options List
 class EnumOptionsList
 {
-	private:
+      private:
 	// List of options
 	Array<EnumOption> options_;
 
-	public:
+      public:
 	// Return list of options
-	const Array<EnumOption>& options() const;
+	const Array<EnumOption> &options() const;
 	// Add item
-	EnumOptionsList& operator<<(EnumOption option);
+	EnumOptionsList &operator<<(EnumOption option);
 };
 
 #endif

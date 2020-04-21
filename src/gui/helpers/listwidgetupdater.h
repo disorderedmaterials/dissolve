@@ -19,9 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "templates/variantpointer.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include "templates/variantpointer.h"
 #include <QListWidget>
 
 #ifndef DISSOLVE_LISTWIDGETUPDATER_H
@@ -31,18 +31,18 @@
 template <class T, class I> class ListWidgetUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*ListWidgetRowUpdateFunction)(int row, I* item, bool createItem);
+	typedef void (T::*ListWidgetRowUpdateFunction)(int row, I *item, bool createItem);
 
-	public:
+      public:
 	// Update widget from supplied List, calling supplied function to create / modify data
-	ListWidgetUpdater(QListWidget* listWidget, const List<I>& data, T* functionParent, ListWidgetRowUpdateFunction updateRow)
+	ListWidgetUpdater(QListWidget *listWidget, const List<I> &data, T *functionParent, ListWidgetRowUpdateFunction updateRow)
 	{
-		QListWidgetItem* listWidgetItem;
+		QListWidgetItem *listWidgetItem;
 
 		int currentRow = 0;
 
 		ListIterator<I> dataIterator(data);
-		while (I* dataItem = dataIterator.iterate())
+		while (I *dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -51,7 +51,7 @@ template <class T, class I> class ListWidgetUpdater
 			while (currentRow < listWidget->count())
 			{
 				listWidgetItem = listWidget->item(currentRow);
-				I* rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -61,8 +61,9 @@ template <class T, class I> class ListWidgetUpdater
 				}
 				else
 				{
-					QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-					if (oldItem) delete oldItem;
+					QListWidgetItem *oldItem = listWidget->takeItem(currentRow);
+					if (oldItem)
+						delete oldItem;
 				}
 			}
 
@@ -79,20 +80,21 @@ template <class T, class I> class ListWidgetUpdater
 		// If there are still rows remaining in the widget, delete them now
 		while (currentRow < listWidget->count())
 		{
-			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-			if (oldItem) delete oldItem;
+			QListWidgetItem *oldItem = listWidget->takeItem(currentRow);
+			if (oldItem)
+				delete oldItem;
 		}
 	}
 
 	// Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the list
-	ListWidgetUpdater(QListWidget* listWidget, const List<I>& list, Qt::ItemFlags flags = Qt::NoItemFlags, I* currentItem = NULL)
+	ListWidgetUpdater(QListWidget *listWidget, const List<I> &list, Qt::ItemFlags flags = Qt::NoItemFlags, I *currentItem = NULL)
 	{
-		QListWidgetItem* listWidgetItem;
+		QListWidgetItem *listWidgetItem;
 
 		int currentRow = 0;
 
 		ListIterator<I> dataIterator(list);
-		while (I* dataItem = dataIterator.iterate())
+		while (I *dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -101,7 +103,7 @@ template <class T, class I> class ListWidgetUpdater
 			while (currentRow < listWidget->count())
 			{
 				listWidgetItem = listWidget->item(currentRow);
-				I* rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -111,8 +113,9 @@ template <class T, class I> class ListWidgetUpdater
 				}
 				else
 				{
-					QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-					if (oldItem) delete oldItem;
+					QListWidgetItem *oldItem = listWidget->takeItem(currentRow);
+					if (oldItem)
+						delete oldItem;
 				}
 			}
 
@@ -124,11 +127,13 @@ template <class T, class I> class ListWidgetUpdater
 				listWidget->addItem(listWidgetItem);
 				listWidgetItem->setData(Qt::UserRole, VariantPointer<I>(dataItem));
 				listWidgetItem->setText(dataItem->name());
-				if (flags != Qt::NoItemFlags) listWidgetItem->setFlags(listWidgetItem->flags() | flags);
+				if (flags != Qt::NoItemFlags)
+					listWidgetItem->setFlags(listWidgetItem->flags() | flags);
 			}
 
 			// Is this the current item?
-			if (currentItem == dataItem) listWidget->setCurrentRow(currentRow);
+			if (currentItem == dataItem)
+				listWidget->setCurrentRow(currentRow);
 
 			++currentRow;
 		}
@@ -136,19 +141,20 @@ template <class T, class I> class ListWidgetUpdater
 		// If there are still rows remaining in the widget, delete them now
 		while (currentRow < listWidget->count())
 		{
-			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-			if (oldItem) delete oldItem;
+			QListWidgetItem *oldItem = listWidget->takeItem(currentRow);
+			if (oldItem)
+				delete oldItem;
 		}
 	}
 
 	// Update widget from supplied RefList, calling supplied function to create / modify data
-	ListWidgetUpdater(QListWidget* listWidget, const RefList<I>& list, T* functionParent, ListWidgetRowUpdateFunction updateRow)
+	ListWidgetUpdater(QListWidget *listWidget, const RefList<I> &list, T *functionParent, ListWidgetRowUpdateFunction updateRow)
 	{
-		QListWidgetItem* listWidgetItem;
+		QListWidgetItem *listWidgetItem;
 
 		int currentRow = 0;
 
-		for (I* dataItem : list)
+		for (I *dataItem : list)
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -157,7 +163,7 @@ template <class T, class I> class ListWidgetUpdater
 			while (currentRow < listWidget->count())
 			{
 				listWidgetItem = listWidget->item(currentRow);
-				I* rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -167,8 +173,9 @@ template <class T, class I> class ListWidgetUpdater
 				}
 				else
 				{
-					QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-					if (oldItem) delete oldItem;
+					QListWidgetItem *oldItem = listWidget->takeItem(currentRow);
+					if (oldItem)
+						delete oldItem;
 				}
 			}
 
@@ -185,8 +192,9 @@ template <class T, class I> class ListWidgetUpdater
 		// If there are still rows remaining in the widget, delete them now
 		while (currentRow < listWidget->count())
 		{
-			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-			if (oldItem) delete oldItem;
+			QListWidgetItem *oldItem = listWidget->takeItem(currentRow);
+			if (oldItem)
+				delete oldItem;
 		}
 	}
 };

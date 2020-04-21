@@ -20,9 +20,9 @@
 */
 
 #include "data/ff/oplsaa2005/triols.h"
-#include "data/ffatomtype.h"
-#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
+#include "data/ffatomtype.h"
 
 /*
  * OPLS-AA (2005) Noble Gases
@@ -41,22 +41,17 @@ Forcefield_OPLSAA2005_Triols::Forcefield_OPLSAA2005_Triols()
 	copyAtomType(oplsAtomTypeById(176), "HC", "-[&173,&174,&175]");
 }
 
-Forcefield_OPLSAA2005_Triols::~Forcefield_OPLSAA2005_Triols()
-{
-}
+Forcefield_OPLSAA2005_Triols::~Forcefield_OPLSAA2005_Triols() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_OPLSAA2005_Triols::name() const
-{
-	return "OPLSAA2005/Triols";
-}
+const char *Forcefield_OPLSAA2005_Triols::name() const { return "OPLSAA2005/Triols"; }
 
 // Return description for Forcefield
-const char* Forcefield_OPLSAA2005_Triols::description() const
+const char *Forcefield_OPLSAA2005_Triols::description() const
 {
 	static CharString desc("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: %s", publicationReferences());
 	return desc.get();

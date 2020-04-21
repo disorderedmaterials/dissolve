@@ -23,13 +23,13 @@
 #define DISSOLVE_VECTOR4_H
 
 #include "templates/vector3.h"
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
 // 4D vector
 template <class T> class Vec4
 {
-	public:
+      public:
 	// Constructor
 	Vec4<T>(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
 	{
@@ -44,7 +44,7 @@ template <class T> class Vec4
 	/*
 	 * Set / adjust / retrieve
 	 */
-	public:
+      public:
 	// Set the vector to 0,0,0,0
 	void zero()
 	{
@@ -64,10 +64,14 @@ template <class T> class Vec4
 	// Set single component
 	void set(int el, T value)
 	{
-		if (el == 0) x = value;
-		else if (el == 1) y = value;
-		else if (el == 2) z = value;
-		else if (el == 3) w = value;
+		if (el == 0)
+			x = value;
+		else if (el == 1)
+			y = value;
+		else if (el == 2)
+			z = value;
+		else if (el == 3)
+			w = value;
 	}
 	// Adjust all four components simultaneously
 	void add(T a, T b, T c, T d)
@@ -88,72 +92,60 @@ template <class T> class Vec4
 	// Retrieve single element
 	T get(int index) const
 	{
-		if (index == 0) return x;
-		else if (index == 1) return y;
-		else if (index == 2) return z;
-		else if (index == 3) return w;
+		if (index == 0)
+			return x;
+		else if (index == 1)
+			return y;
+		else if (index == 2)
+			return z;
+		else if (index == 3)
+			return w;
 		printf("Vec4 - retrieve index %i is out of range.\n", index);
 		return T();
 	}
 
-	
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Operators + and +=
-	Vec4<T>& operator+=(Vec4<T>& v)
+	Vec4<T> &operator+=(Vec4<T> &v)
 	{
 		x += v.x;
 		y += v.y;
 		z += v.z;
 		w += v.w;
-		return* this;
+		return *this;
 	}
-	Vec4<T>& operator+=(Vec3<T>& v)
+	Vec4<T> &operator+=(Vec3<T> &v)
 	{
 		x += v.x;
 		y += v.y;
 		z += v.z;
-		return* this;
+		return *this;
 	}
-	Vec4<T> operator+(Vec4<T>& v)
-	{
-		return Vec4<T>(x+v.x, y+v.y, z+v.z, w+v.w);
-	}
-	Vec4<T> operator+(Vec3<T>& v)
-	{
-		return Vec4<T>(x+v.x, y+v.y, z+v.z, w);
-	}
+	Vec4<T> operator+(Vec4<T> &v) { return Vec4<T>(x + v.x, y + v.y, z + v.z, w + v.w); }
+	Vec4<T> operator+(Vec3<T> &v) { return Vec4<T>(x + v.x, y + v.y, z + v.z, w); }
 	// Operators - and -=
-	Vec4<T>& operator-=(Vec4<T>& v)
+	Vec4<T> &operator-=(Vec4<T> &v)
 	{
 		x -= v.x;
 		y -= v.y;
 		z -= v.z;
 		w -= v.w;
-		return* this;
+		return *this;
 	}
-	Vec4<T>& operator-=(Vec3<T>& v)
+	Vec4<T> &operator-=(Vec3<T> &v)
 	{
 		x -= v.x;
 		y -= v.y;
 		z -= v.z;
-		return* this;
+		return *this;
 	}
-	Vec4<T> operator-(Vec4<T>& v)
-	{
-		return Vec4<T>(x-v.x, y-v.y, z-v.z, w-v.w);
-	}
-	Vec4<T> operator-(Vec3<T>& v)
-	{
-		return Vec4<T>(x-v.x, y-v.y, z-v.z, w);
-	}
+	Vec4<T> operator-(Vec4<T> &v) { return Vec4<T>(x - v.x, y - v.y, z - v.z, w - v.w); }
+	Vec4<T> operator-(Vec3<T> &v) { return Vec4<T>(x - v.x, y - v.y, z - v.z, w); }
 	// Operators * and *=
-	Vec4<T> operator*(T value) const
-	{
-		return Vec4<T>(x*value, y*value, z*value, w*value);
-	}
+	Vec4<T> operator*(T value) const { return Vec4<T>(x * value, y * value, z * value, w * value); }
 	void operator*=(T value)
 	{
 		x *= value;
@@ -164,10 +156,14 @@ template <class T> class Vec4
 	// Element access operator
 	T operator[](int index)
 	{
-		if (index == 0) return x;
-		else if (index == 1) return y;
-		else if (index == 2) return z;
-		else if (index == 3) return w;
+		if (index == 0)
+			return x;
+		else if (index == 1)
+			return y;
+		else if (index == 2)
+			return z;
+		else if (index == 3)
+			return w;
 		printf("Vec4 - array access failed - index %i is out of bounds.\n", index);
 		return 0;
 	}
@@ -179,8 +175,9 @@ template <class T> class Vec4
 	// Normalise to unity
 	void normalise()
 	{
-		double mag = sqrt(w*w + x*x + y*y + z*z);
-		if (mag < 1.0E-8) zero();
+		double mag = sqrt(w * w + x * x + y * y + z * z);
+		if (mag < 1.0E-8)
+			zero();
 		else
 		{
 			x /= mag;
@@ -191,10 +188,7 @@ template <class T> class Vec4
 	}
 
 	// Print
-	void print() const
-	{
-		printf("vec(xyzw) = %8.4f %8.4f %8.4f %8.4f\n", (double)x, (double)y, (double)z, (double)w);
-	}
+	void print() const { printf("vec(xyzw) = %8.4f %8.4f %8.4f %8.4f\n", (double)x, (double)y, (double)z, (double)w); }
 };
 
 #endif

@@ -20,20 +20,20 @@
 */
 
 #include "expression/generator.h"
+#include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "expression/expression.h"
 #include "expression/generator_grammar.hh"
-#include "base/sysfunc.h"
-#include "base/messenger.h"
+#include <ctype.h>
 #include <stdarg.h>
 #include <string.h>
-#include <ctype.h>
 
 // Static members
-Expression* ExpressionGenerator::expression_ = NULL;
-ExpressionGenerator* ExpressionGenerator::generator_ = NULL;
+Expression *ExpressionGenerator::expression_ = NULL;
+ExpressionGenerator *ExpressionGenerator::generator_ = NULL;
 
 // Constructors
-ExpressionGenerator::ExpressionGenerator(Expression& expression, const char* expressionText)
+ExpressionGenerator::ExpressionGenerator(Expression &expression, const char *expressionText)
 {
 	// Private variables
 	useAdditionalConstants_ = false;
@@ -47,25 +47,17 @@ ExpressionGenerator::ExpressionGenerator(Expression& expression, const char* exp
 }
 
 // Destructor
-ExpressionGenerator::~ExpressionGenerator()
-{
-}
+ExpressionGenerator::~ExpressionGenerator() {}
 
 /*
  * Target Expression and Generator
  */
 
 // Return target Expression (static to allow ExpressionGenerator_parse() to use it)
-Expression* ExpressionGenerator::expression()
-{
-	return expression_;
-}
+Expression *ExpressionGenerator::expression() { return expression_; }
 
 // Return current ExpressionGenerator (static to allow ExpressionGenerator_parse() to use it)
-ExpressionGenerator* ExpressionGenerator::generator()
-{
-	return generator_;
-}
+ExpressionGenerator *ExpressionGenerator::generator() { return generator_; }
 
 /*
  * Lexer
@@ -74,21 +66,16 @@ ExpressionGenerator* ExpressionGenerator::generator()
 // Return enum options for SymbolToken
 EnumOptions<int> ExpressionGenerator::symbolTokens()
 {
-	static EnumOptionsList SymbolTokenOptions = EnumOptionsList() <<
-		EnumOption(DISSOLVE_EXPR_EQ,		"==") <<
-		EnumOption(DISSOLVE_EXPR_GEQ,		">=") <<
-		EnumOption(DISSOLVE_EXPR_LEQ,		"<=") <<
-		EnumOption(DISSOLVE_EXPR_NEQ,		"!=") <<
-		EnumOption(DISSOLVE_EXPR_AND,		"&&") <<
-		EnumOption(DISSOLVE_EXPR_OR,		"||");
-	
+	static EnumOptionsList SymbolTokenOptions = EnumOptionsList() << EnumOption(DISSOLVE_EXPR_EQ, "==") << EnumOption(DISSOLVE_EXPR_GEQ, ">=") << EnumOption(DISSOLVE_EXPR_LEQ, "<=")
+								      << EnumOption(DISSOLVE_EXPR_NEQ, "!=") << EnumOption(DISSOLVE_EXPR_AND, "&&") << EnumOption(DISSOLVE_EXPR_OR, "||");
+
 	static EnumOptions<int> options("SymbolToken", SymbolTokenOptions);
 
 	return options;
 }
 
 // Set string source for lexer
-void ExpressionGenerator::setSource(const char* expressionText)
+void ExpressionGenerator::setSource(const char *expressionText)
 {
 	// Set parsing source, always ensuring that we have a terminating ';'
 	expressionString_ = expressionText;
@@ -108,7 +95,8 @@ char ExpressionGenerator::getChar()
 	char c = 0;
 
 	// Are we at the end of the current string?
-	if (stringPos_ == stringLength_) return 0;
+	if (stringPos_ == stringLength_)
+		return 0;
 
 	// Return current char
 	c = expressionString_[stringPos_];
@@ -117,23 +105,18 @@ char ExpressionGenerator::getChar()
 }
 
 // Peek next character from current input stream
-char ExpressionGenerator::peekChar()
-{
-	return (stringPos_ == stringLength_ ? 0 : expressionString_[stringPos_]);
-}
+char ExpressionGenerator::peekChar() { return (stringPos_ == stringLength_ ? 0 : expressionString_[stringPos_]); }
 
 // 'Replace' last character read from current input stream
-void ExpressionGenerator::unGetChar()
-{
-	--stringPos_;
-}
-
+void ExpressionGenerator::unGetChar() { --stringPos_; }
 
 // Bison-required ExpressionGenerator_lex()
 int ExpressionGenerator_lex()
 {
-	if (!ExpressionGenerator::expression()) return 0;
-	if (!ExpressionGenerator::generator()) return 0;
+	if (!ExpressionGenerator::expression())
+		return 0;
+	if (!ExpressionGenerator::generator())
+		return 0;
 	return ExpressionGenerator::generator()->lex();
 }
 
@@ -147,12 +130,14 @@ int ExpressionGenerator::lex()
 	token.clear();
 
 	// Skip over whitespace
-	while ((c = getChar()) == ' ' || c == '\t' || c == '\r' || c == '\n' );
+	while ((c = getChar()) == ' ' || c == '\t' || c == '\r' || c == '\n')
+		;
 
-	if (c == 0) return 0;
+	if (c == 0)
+		return 0;
 
 	// Set this point as the start of our new token (for error reporting)
-	tokenStart_ = stringPos_-1;
+	tokenStart_ = stringPos_ - 1;
 
 	/*
 	 * Number Detection - Either '.' or a digit begins a number
@@ -167,7 +152,8 @@ int ExpressionGenerator::lex()
 		do
 		{
 			c = getChar();
-			if (isdigit(c)) token += c;
+			if (isdigit(c))
+				token += c;
 			else if (c == '.')
 			{
 				token += '.';
@@ -192,7 +178,8 @@ int ExpressionGenerator::lex()
 					unGetChar();
 					done = true;
 				}
-				else token += c;
+				else
+					token += c;
 			}
 			else
 			{
@@ -219,14 +206,13 @@ int ExpressionGenerator::lex()
 	/*
 	 * Alpha-token - function or variable
 	 */
-	if (isalpha (c))
+	if (isalpha(c))
 	{
 		do
 		{
 			token += c;
 			c = getChar();
-		}
-		while (isalnum(c) || (c == '_'));
+		} while (isalnum(c) || (c == '_'));
 		unGetChar();
 		Messenger::printVerbose("LEXER (%p): found an alpha token [%s]...\n", this, token.get());
 
@@ -279,16 +265,18 @@ int ExpressionGenerator::lex()
 
 		// Is this a recognised high-level keyword?
 		n = 0;
-		if (token == "if") n = DISSOLVE_EXPR_IF;
-		else if (token == "else") n = DISSOLVE_EXPR_ELSE;
+		if (token == "if")
+			n = DISSOLVE_EXPR_IF;
+		else if (token == "else")
+			n = DISSOLVE_EXPR_ELSE;
 		if (n != 0)
 		{
-			Messenger::printVerbose("LEXER (%p): ...which is a high-level keyword (%i)\n",this,n);
+			Messenger::printVerbose("LEXER (%p): ...which is a high-level keyword (%i)\n", this, n);
 			return n;
 		}
 
 		// Is it an existing variable?
-		ExpressionVariable* v = expression_->variable(token);
+		ExpressionVariable *v = expression_->variable(token);
 		if (v != NULL)
 		{
 			Messenger::printVerbose("LEXER (%p): ...which is an existing variable (->VAR)\n", this);
@@ -317,17 +305,19 @@ int ExpressionGenerator::lex()
 	// Return immediately in the case of brackets, comma, and semicolon
 	if ((c == '(') || (c == ')') || (c == ';') || (c == ',') || (c == '{') || (c == '}') || (c == '[') || (c == ']') || (c == '%') || (c == ':'))
 	{
-		Messenger::printVerbose("LEXER (%p): found symbol [%c]\n",this,c);
+		Messenger::printVerbose("LEXER (%p): found symbol [%c]\n", this, c);
 		return c;
 	}
 	token += c;
 
 	// Similarly, if the next character is a period, bracket or double quotes, return immediately
 	char c2 = peekChar();
-	if ((c2 == '.') || (c2 == '(') || (c2 == ')') || (c2 == ';') || (c2 == '{') || (c2 == '}') || (c2 == '"')) return c;
+	if ((c2 == '.') || (c2 == '(') || (c2 == ')') || (c2 == ';') || (c2 == '{') || (c2 == '}') || (c2 == '"'))
+		return c;
 
 	// If next character is '-', return now if previous char was *not* another '-'
-	if ((c2 == '-') && (c != '-')) return c;
+	if ((c2 == '-') && (c != '-'))
+		return c;
 
 	// If it is 'punctuation', add this second character to our operator and search for it
 	if (ispunct(c2))
@@ -335,9 +325,11 @@ int ExpressionGenerator::lex()
 		c = getChar();
 		token += c;
 		Messenger::printVerbose("LEXER (%p): found symbol [%s]\n", this, token.get());
-		if (symbolTokens().isValid(token.get())) return symbolTokens().enumeration(token.get());
-		else Messenger::error("Unrecognised symbol '%s' found in input.\n", token.get());
- 	}
+		if (symbolTokens().isValid(token.get()))
+			return symbolTokens().enumeration(token.get());
+		else
+			Messenger::error("Unrecognised symbol '%s' found in input.\n", token.get());
+	}
 	else
 	{
 		// Make sure that this is a known symbol
@@ -345,7 +337,8 @@ int ExpressionGenerator::lex()
 		{
 			printf("Error: Unrecognised symbol found in input (%c).\n", c);
 		}
-		else return c;
+		else
+			return c;
 	}
 
 	return 0;
@@ -356,19 +349,20 @@ int ExpressionGenerator::lex()
  */
 
 // Static generation functions
-bool ExpressionGenerator::generate(Expression& expression)
+bool ExpressionGenerator::generate(Expression &expression)
 {
 	// Create a generator
 	ExpressionGenerator generator(expression, expression.expressionString());
 
 	// Generate expression
 	bool result = ExpressionGenerator_parse() == 0;
-	if (!result) expression_->clear();
+	if (!result)
+		expression_->clear();
 
 	return result;
 }
 
-bool ExpressionGenerator::generate(Expression& expression, RefList<ExpressionVariable> externalVariables)
+bool ExpressionGenerator::generate(Expression &expression, RefList<ExpressionVariable> externalVariables)
 {
 	// Create a generator
 	ExpressionGenerator generator(expression, expression.expressionString());
@@ -378,7 +372,8 @@ bool ExpressionGenerator::generate(Expression& expression, RefList<ExpressionVar
 
 	// Generate expression
 	bool result = ExpressionGenerator_parse() == 0;
-	if (!result) expression_->clear();
+	if (!result)
+		expression_->clear();
 
 	return result;
 }

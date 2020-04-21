@@ -20,54 +20,55 @@
 */
 
 #include "classes/data1dstore.h"
-#include "io/import/data1d.h"
 #include "base/lineparser.h"
+#include "io/import/data1d.h"
 
 // Constructor
-Data1DStore::Data1DStore()
-{
-}
+Data1DStore::Data1DStore() {}
 
 // Destructor
-Data1DStore::~Data1DStore()
-{
-}
+Data1DStore::~Data1DStore() {}
 
 /*
  * Data
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data1DStore::addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData)
+bool Data1DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
 {
 	// Create new data
-	Data1D* data = data_.add();
+	Data1D *data = data_.add();
 	data->setName(dataName);
 
 	// Add reference to data
-	RefDataItem<Data1D,Data1DImportFileFormat>* ref = dataReferences_.append(data);
+	RefDataItem<Data1D, Data1DImportFileFormat> *ref = dataReferences_.append(data);
 
 	// Read the file / format
-	if (!ref->data().read(parser, startArg, endKeyword, coreData)) return false;
+	if (!ref->data().read(parser, startArg, endKeyword, coreData))
+		return false;
 
 	// Load the data
 	return ref->data().importData(*data, parser.processPool());
 }
 
 // Check to see if the named data is present in the store
-bool Data1DStore::containsData(const char* name) const
+bool Data1DStore::containsData(const char *name) const
 {
 	ListIterator<Data1D> dataIterator(data_);
-	while (Data1D* data = dataIterator.iterate()) if (DissolveSys::sameString(name, data->name())) return true;
+	while (Data1D *data = dataIterator.iterate())
+		if (DissolveSys::sameString(name, data->name()))
+			return true;
 
 	return false;
 }
 
 // Return named data
-const Data1D& Data1DStore::data(const char* name) const
+const Data1D &Data1DStore::data(const char *name) const
 {
 	ListIterator<Data1D> dataIterator(data_);
-	while (Data1D* xyData = dataIterator.iterate()) if (DissolveSys::sameString(name, xyData->name())) return (*xyData);
+	while (Data1D *xyData = dataIterator.iterate())
+		if (DissolveSys::sameString(name, xyData->name()))
+			return (*xyData);
 
 	static Data1D dummy;
 	Messenger::warn("Data named '%s' was requested from Data1DStore, but it does not exist. Returning an empty Data1D...\n", name);
@@ -75,13 +76,7 @@ const Data1D& Data1DStore::data(const char* name) const
 }
 
 // Return list of all data
-const List<Data1D>& Data1DStore::data() const
-{
-	return data_;
-}
+const List<Data1D> &Data1DStore::data() const { return data_; }
 
 // Return list of all data references
-const RefDataList<Data1D,Data1DImportFileFormat>& Data1DStore::dataReferences() const
-{
-	return dataReferences_;
-}
+const RefDataList<Data1D, Data1DImportFileFormat> &Data1DStore::dataReferences() const { return dataReferences_; }

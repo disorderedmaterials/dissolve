@@ -30,52 +30,47 @@ class NodeValue;
 class SequenceProcedureNode;
 
 // Keyword with NodeValue
-class NodeBranchKeyword : public KeywordData<SequenceProcedureNode**>
+class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
 {
-	public:
+      public:
 	// Constructor
-	NodeBranchKeyword(ProcedureNode* parentNode, SequenceProcedureNode** branchPointer, ProcedureNode::NodeContext branchContext);
+	NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer, ProcedureNode::NodeContext branchContext);
 	// Destructor
 	~NodeBranchKeyword();
-
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
-
+	ProcedureNode *parentNode_;
 
 	/*
 	 * Data
 	 */
-	protected:
+      protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
-	
 
 	/*
 	 * Branch Specification
 	 */
-	private:
+      private:
 	// Context for the target branch
 	ProcedureNode::NodeContext branchContext_;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif
-

@@ -20,56 +20,45 @@
 */
 
 #include "keywords/speciessitereflist.h"
-#include "classes/configuration.h"
-#include "classes/species.h"
-#include "classes/coredata.h"
 #include "base/lineparser.h"
+#include "classes/configuration.h"
+#include "classes/coredata.h"
+#include "classes/species.h"
 
 // Constructor
-SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references, bool axesRequired) : KeywordData< RefList<SpeciesSite>& >(KeywordData::SpeciesSiteRefListData, references)
+SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite> &references, bool axesRequired) : KeywordData<RefList<SpeciesSite> &>(KeywordData::SpeciesSiteRefListData, references)
 {
 	axesRequired_ = axesRequired;
 }
 
 // Destructor
-SpeciesSiteRefListKeyword::~SpeciesSiteRefListKeyword()
-{
-}
+SpeciesSiteRefListKeyword::~SpeciesSiteRefListKeyword() {}
 
 /*
  * Specification
  */
 
 // Return whether axes are required for the site
-bool SpeciesSiteRefListKeyword::axesRequired() const
-{
-	return axesRequired_;
-}
+bool SpeciesSiteRefListKeyword::axesRequired() const { return axesRequired_; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int SpeciesSiteRefListKeyword::minArguments() const
-{
-	return 2;
-}
+int SpeciesSiteRefListKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteRefListKeyword::maxArguments() const
-{
-	return 99;
-}
+int SpeciesSiteRefListKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Loop over arguments
-	for (int n=startArg; n<parser.nArgs()-1; n += 2)
+	for (int n = startArg; n < parser.nArgs() - 1; n += 2)
 	{
 		// Find target Species (first argument)
-		Species* sp = coreData.findSpecies(parser.argc(n));
+		Species *sp = coreData.findSpecies(parser.argc(n));
 		if (!sp)
 		{
 			Messenger::error("Error adding SpeciesSite - no Species named '%s' exists.\n", parser.argc(startArg));
@@ -77,9 +66,11 @@ bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const Cor
 		}
 
 		// Find specified Site (second argument) in the Species
-		SpeciesSite* site = sp->findSite(parser.argc(n+1));
-		if (!site) return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(n+1), sp->name());
-		if (axesRequired_ && (!site->hasAxes())) return Messenger::error("Can't add site '%s' to keyword '%s', as the keyword requires axes specifications for all sites.\n", site->name(), name());
+		SpeciesSite *site = sp->findSite(parser.argc(n + 1));
+		if (!site)
+			return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(n + 1), sp->name());
+		if (axesRequired_ && (!site->hasAxes()))
+			return Messenger::error("Can't add site '%s' to keyword '%s', as the keyword requires axes specifications for all sites.\n", site->name(), name());
 
 		// Add site to the list
 		data_.append(site);
@@ -91,16 +82,19 @@ bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const Cor
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool SpeciesSiteRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// If there are no sites in the list, no need to write anything
-	if (data_.nItems() == 0) return true;
+	if (data_.nItems() == 0)
+		return true;
 
 	// Loop over list of SpeciesSiteReferences
 	CharString sites;
-	for (SpeciesSite* site : data_) sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
+	for (SpeciesSite *site : data_)
+		sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, sites.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, sites.get()))
+		return false;
 
 	return true;
 }
@@ -110,19 +104,17 @@ bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* keywordNam
  */
 
 // Prune any references to the supplied Species in the contained data
-void SpeciesSiteRefListKeyword::removeReferencesTo(Species* sp)
+void SpeciesSiteRefListKeyword::removeReferencesTo(Species *sp)
 {
-	RefListItem<SpeciesSite>* ri = data_.first(), *nextItem;
+	RefListItem<SpeciesSite> *ri = data_.first(), *nextItem;
 	while (ri)
 	{
 		nextItem = ri->next();
-		if (ri->item()->parent() == sp) data_.remove(ri);
+		if (ri->item()->parent() == sp)
+			data_.remove(ri);
 		ri = nextItem;
 	}
 }
 
 // Prune any references to the supplied SpeciesSite in the contained data
-void SpeciesSiteRefListKeyword::removeReferencesTo(SpeciesSite* spSite)
-{
-	data_.remove(spSite);
-}
+void SpeciesSiteRefListKeyword::removeReferencesTo(SpeciesSite *spSite) { data_.remove(spSite); }

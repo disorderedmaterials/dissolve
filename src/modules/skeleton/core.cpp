@@ -37,16 +37,11 @@ SkeletonModule::SkeletonModule() : Module()
 }
 
 // Destructor
-SkeletonModule::~SkeletonModule()
-{
-}
+SkeletonModule::~SkeletonModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* SkeletonModule::createInstance() const
-{
-	return new SkeletonModule;
-}
+Module *SkeletonModule::createInstance() const { return new SkeletonModule; }

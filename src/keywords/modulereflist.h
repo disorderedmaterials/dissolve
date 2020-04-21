@@ -30,56 +30,53 @@
 class Module;
 
 // Keyword with Module RefList data
-class ModuleRefListKeyword : public KeywordData< RefList<Module>& >
+class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 {
-	public:
+      public:
 	// Constructors
-	ModuleRefListKeyword(RefList<Module>& references, int maxModules = -1);
-	ModuleRefListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules = -1);
+	ModuleRefListKeyword(RefList<Module> &references, int maxModules = -1);
+	ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules = -1);
 	// Destructor
 	~ModuleRefListKeyword();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Module type(s) to allow
 	CharStringList moduleTypes_;
 	// Maximum number of modules to allow in list (-1 for any number)
 	int maxModules_;
 
-	protected:
+      protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 
-	public:
+      public:
 	// Return the Module type(s) to allow
-	const CharStringList& moduleTypes() const;
+	const CharStringList &moduleTypes() const;
 	// Return maximum number of Modules to allow in the list
 	int maxModules() const;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied Module in the contained data
-	void removeReferencesTo(Module* module);
+	void removeReferencesTo(Module *module);
 };
 
 #endif

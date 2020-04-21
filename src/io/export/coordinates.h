@@ -30,53 +30,51 @@ class Configuration;
 // Coordinate Export Formats
 class CoordinateExportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Available coordinate formats
-	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
+	enum CoordinateExportFormat
+	{
+		XYZCoordinates,
+		DLPOLYCoordinates,
+		nCoordinateExportFormats
+	};
 	// Constructor
-	CoordinateExportFileFormat(const char* filename = NULL, CoordinateExportFormat format = XYZCoordinates);
-
+	CoordinateExportFileFormat(const char *filename = NULL, CoordinateExportFormat format = XYZCoordinates);
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
 	// Return enum options for CoordinateExportFormat
 	static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> coordinateExportFormats();
 	// Return number of available formats
 	int nFormats() const;
 	// Return format keyword for supplied index
-	const char* formatKeyword(int id) const;
+	const char *formatKeyword(int id) const;
 	// Return description string for supplied index
-	const char* formatDescription(int id) const;
+	const char *formatDescription(int id) const;
 	// Return current format as CoordinateExportFormat
 	CoordinateExportFormat coordinateFormat() const;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return false;
-	}
-
+	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-	private:
+      private:
 	// Export Configuration as XYZ
-	bool exportXYZ(LineParser& parser, Configuration* cfg);
+	bool exportXYZ(LineParser &parser, Configuration *cfg);
 	// Export Configuration as DL_POLY CONFIG
-	bool exportDLPOLY(LineParser& parser, Configuration* cfg);
+	bool exportDLPOLY(LineParser &parser, Configuration *cfg);
 
-	public:
+      public:
 	// Export Configuration using current filename and format
-	bool exportData(Configuration* cfg);
+	bool exportData(Configuration *cfg);
 };
 
 #endif
-

@@ -23,11 +23,10 @@
 #include "modules/skeleton/skeleton.h"
 
 // Constructor
-SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, SkeletonModule* module) : ModuleWidget(parent), module_(module)
+SkeletonModuleWidget::SkeletonModuleWidget(QWidget *parent, SkeletonModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-

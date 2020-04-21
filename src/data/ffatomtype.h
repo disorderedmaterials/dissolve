@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_FORCEFIELD_ATOMTYPE_H
 #define DISSOLVE_FORCEFIELD_ATOMTYPE_H
 
-#include "neta/neta.h"
-#include "data/elements.h"
 #include "base/charstring.h"
 #include "base/parameters.h"
+#include "data/elements.h"
+#include "neta/neta.h"
 
 // Forward Declarations
 class Forcefield;
@@ -34,19 +34,20 @@ class ForcefieldParameters;
 // Forcefield AtomType Base Class
 class ForcefieldAtomType : public ElementReference
 {
-	public:
+      public:
 	// Constructors
-	ForcefieldAtomType(Forcefield* parent = NULL, int Z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-	ForcefieldAtomType(Forcefield* parent = NULL, int Z = 0, int index = -1, const char* name = NULL, const char* netaDefinition = NULL, const char* description = NULL, double q = 0.0, const char* parameterReference = NULL);
-	ForcefieldAtomType(Forcefield* parent, const ForcefieldAtomType& sourceType, const char* newTypeName, const char* netaDefinition = NULL, const char* equivalentName = NULL);
+	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL, const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
+			   double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL, const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
+			   const char *parameterReference = NULL);
+	ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition = NULL, const char *equivalentName = NULL);
 	// Destructor
 	virtual ~ForcefieldAtomType();
-
 
 	/*
 	 * Identity
 	 */
-	private:
+      private:
 	// Index of atom type
 	int index_;
 	// Name of atom type
@@ -58,31 +59,30 @@ class ForcefieldAtomType : public ElementReference
 	// NETA definition for the atom type
 	NETADefinition neta_;
 
-	public:
+      public:
 	// Return index of type
 	int index() const;
 	// Return name of type
-	const char* name() const;
+	const char *name() const;
 	// Return equivalent name of type
-	const char* equivalentName() const;
+	const char *equivalentName() const;
 	// Return description for type
-	const char* description() const;
+	const char *description() const;
 	// Return NETA definition for the atom type
-	const NETADefinition& neta() const;
-
+	const NETADefinition &neta() const;
 
 	/*
 	 * Parameters
 	 */
-	private:
+      private:
 	// Parameters that this atom type references (if any)
-	const ForcefieldParameters* parameterReference_;
+	const ForcefieldParameters *parameterReference_;
 	// Interatomic interaction parameters for this atom type
 	InteractionParameters parameters_;
 
-	public:
+      public:
 	// Return interatomic interaction parameters (referenced or otherwise)
-	const InteractionParameters& parameters() const;
+	const InteractionParameters &parameters() const;
 	// Return charge (from local parameters)
 	double charge() const;
 };

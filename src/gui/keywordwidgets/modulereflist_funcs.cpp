@@ -19,28 +19,29 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/modulereflist.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "module/module.h"
 #include "classes/coredata.h"
 #include "genericitems/listhelper.h"
-#include <QHBoxLayout>
+#include "gui/helpers/listwidgetupdater.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/modulereflist.h"
+#include "module/module.h"
 #include <QComboBox>
+#include <QHBoxLayout>
 #include <QString>
 
 // Constructor
-ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
 
 	// Connect signals / slots
-	connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
+	connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(itemChanged(QListWidgetItem *)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<ModuleRefListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword into ModuleRefListKeyword.\n");
+	keyword_ = dynamic_cast<ModuleRefListKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword into ModuleRefListKeyword.\n");
 	else
 	{
 		// Set current information
@@ -53,12 +54,12 @@ ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget* parent, KeywordB
  */
 
 // Selection list update function
-void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module* module, bool createItem)
+void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module *module, bool createItem)
 {
 	// Grab the target reference list
-	RefList<Module>& selection = keyword_->data();
+	RefList<Module> &selection = keyword_->data();
 
-	QListWidgetItem* item;
+	QListWidgetItem *item;
 	if (createItem)
 	{
 		item = new QListWidgetItem(module->uniqueName());
@@ -66,14 +67,16 @@ void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module* module, boo
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui_.SelectionList->insertItem(row, item);
 	}
-	else item = ui_.SelectionList->item(row);
+	else
+		item = ui_.SelectionList->item(row);
 	item->setCheckState(selection.contains(module) ? Qt::Checked : Qt::Unchecked);
 }
 
 // List item changed
-void ModuleRefListKeywordWidget::itemChanged(QListWidgetItem* item)
+void ModuleRefListKeywordWidget::itemChanged(QListWidgetItem *item)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -87,13 +90,10 @@ void ModuleRefListKeywordWidget::itemChanged(QListWidgetItem* item)
  */
 
 // Update value displayed in widget
-void ModuleRefListKeywordWidget::updateValue()
-{
-	updateWidgetValues(coreData_);
-}
+void ModuleRefListKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
 	refreshing_ = true;
 
@@ -101,7 +101,7 @@ void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
 
 	// Update the list widget
-	ListWidgetUpdater<ModuleRefListKeywordWidget,Module> listUpdater(ui_.SelectionList, availableModules, this, &ModuleRefListKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<ModuleRefListKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this, &ModuleRefListKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 
@@ -113,10 +113,11 @@ void ModuleRefListKeywordWidget::updateKeywordData()
 {
 	// Loop over items in the QListWidget, adding the associated Modules for any that are checked
 	RefList<Module> newSelection;
-	for (int n=0; n<ui_.SelectionList->count(); ++n)
+	for (int n = 0; n < ui_.SelectionList->count(); ++n)
 	{
-		QListWidgetItem* item = ui_.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Module>(item->data(Qt::UserRole)));
+		QListWidgetItem *item = ui_.SelectionList->item(n);
+		if (item->checkState() == Qt::Checked)
+			newSelection.append(VariantPointer<Module>(item->data(Qt::UserRole)));
 	}
 
 	// Update the data
@@ -127,16 +128,19 @@ void ModuleRefListKeywordWidget::updateKeywordData()
 void ModuleRefListKeywordWidget::updateSummaryText()
 {
 	// Create summary text for the KeywordDropDown button
-	RefList<Module>& selection = keyword_->data();
-	if (selection.nItems() == 0) setSummaryText("<None>");
+	RefList<Module> &selection = keyword_->data();
+	if (selection.nItems() == 0)
+		setSummaryText("<None>");
 	else
 	{
 		CharString summaryText;
 		bool first = true;
-		for (Module* module : selection)
+		for (Module *module : selection)
 		{
-			if (first) summaryText = module->uniqueName();
-			else summaryText.strcatf(", %s", module->uniqueName());
+			if (first)
+				summaryText = module->uniqueName();
+			else
+				summaryText.strcatf(", %s", module->uniqueName());
 			first = false;
 		}
 		setSummaryText(summaryText);

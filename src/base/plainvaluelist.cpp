@@ -21,34 +21,27 @@
 
 #include "base/plainvaluelist.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
 
 // Constructor
-PlainValueList::PlainValueList()
-{
-}
+PlainValueList::PlainValueList() {}
 
 // Destructor
-PlainValueList::~PlainValueList()
-{
-}
+PlainValueList::~PlainValueList() {}
 
 /*
  * Values
  */
 
 // Return first Value in list
-PlainValue* PlainValueList::values()
-{
-	return values_.first();
-}
+PlainValue *PlainValueList::values() { return values_.first(); }
 
 // Add/set value
-PlainValue* PlainValueList::add(const char* name, PlainValue newValue, const char* description, int genericItemFlags)
+PlainValue *PlainValueList::add(const char *name, PlainValue newValue, const char *description, int genericItemFlags)
 {
 	// Does the value already exist?
-	PlainValue* var = value(name);
+	PlainValue *var = value(name);
 	if (!var)
 	{
 		var = values_.add();
@@ -65,10 +58,10 @@ PlainValue* PlainValueList::add(const char* name, PlainValue newValue, const cha
 }
 
 // Retrieve named value (bool)
-bool PlainValueList::valueAsBool(const char* name)
+bool PlainValueList::valueAsBool(const char *name)
 {
 	// Does the value already exist?
-	PlainValue* oldValue = value(name);
+	PlainValue *oldValue = value(name);
 	if (!oldValue)
 	{
 		Messenger::error("PlainValueList::valueAsBool - Can't find value '%s'.\n", name);
@@ -79,10 +72,10 @@ bool PlainValueList::valueAsBool(const char* name)
 }
 
 // Retrieve named value (int)
-int PlainValueList::valueAsInt(const char* name)
+int PlainValueList::valueAsInt(const char *name)
 {
 	// Does the value already exist?
-	PlainValue* oldValue = value(name);
+	PlainValue *oldValue = value(name);
 	if (!oldValue)
 	{
 		Messenger::error("PlainValueList::valueAsInt - Can't find value '%s'.\n", name);
@@ -93,10 +86,10 @@ int PlainValueList::valueAsInt(const char* name)
 }
 
 // Retrieve named value (double)
-double PlainValueList::valueAsDouble(const char* name)
+double PlainValueList::valueAsDouble(const char *name)
 {
 	// Does the value already exist?
-	PlainValue* oldValue = value(name);
+	PlainValue *oldValue = value(name);
 	if (!oldValue)
 	{
 		Messenger::error("PlainValueList::valueAsDouble - Can't find value '%s'.\n", name);
@@ -107,10 +100,10 @@ double PlainValueList::valueAsDouble(const char* name)
 }
 
 // Retrieve named value (string)
-const char* PlainValueList::valueAsString(const char* name)
+const char *PlainValueList::valueAsString(const char *name)
 {
 	// Does the value already exist?
-	PlainValue* oldValue = value(name);
+	PlainValue *oldValue = value(name);
 	if (!oldValue)
 	{
 		Messenger::error("PlainValueList::valueAsString - Can't find value '%s'.\n", name);
@@ -125,9 +118,11 @@ const char* PlainValueList::valueAsString(const char* name)
  */
 
 // Return named value
-PlainValue* PlainValueList::value(const char* name)
+PlainValue *PlainValueList::value(const char *name)
 {
-	for (PlainValue* oldValue = values_.first(); oldValue != NULL; oldValue = oldValue->next()) if (DissolveSys::sameString(name, oldValue->name())) return oldValue;
+	for (PlainValue *oldValue = values_.first(); oldValue != NULL; oldValue = oldValue->next())
+		if (DissolveSys::sameString(name, oldValue->name()))
+			return oldValue;
 
 	return NULL;
 }
@@ -137,20 +132,24 @@ PlainValue* PlainValueList::value(const char* name)
  */
 
 // Broadcast data
-bool PlainValueList::broadcast(ProcessPool& procPool)
+bool PlainValueList::broadcast(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	// Clear list on slaves
-	if (procPool.isSlave()) values_.clear();
+	if (procPool.isSlave())
+		values_.clear();
 
 	// Broadcast number of values to expect
 	int varCount = values_.nItems();
-	if (!procPool.broadcast(&varCount, 1)) return false;
-	for (int n=0; n<varCount; ++n)
+	if (!procPool.broadcast(&varCount, 1))
+		return false;
+	for (int n = 0; n < varCount; ++n)
 	{
-		PlainValue* value;
-		if (procPool.isMaster()) value = values_[n];
-		else value = values_.add();
+		PlainValue *value;
+		if (procPool.isMaster())
+			value = values_[n];
+		else
+			value = values_.add();
 		value->broadcast(procPool);
 	}
 #endif

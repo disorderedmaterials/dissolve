@@ -19,24 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/nodereflist.h"
-#include "gui/helpers/listwidgetupdater.h"
 #include "classes/coredata.h"
+#include "gui/helpers/listwidgetupdater.h"
+#include "gui/keywordwidgets/nodereflist.h"
 #include "templates/variantpointer.h"
-#include <QHBoxLayout>
 #include <QCheckBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QSpacerItem>
 
 // Constructor
-NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<NodeRefListKeywordBase*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<NodeRefListKeywordBase *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into NodeKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -44,7 +45,7 @@ NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget* parent, KeywordBase*
 	}
 
 	// Connect signals / slots
-	connect(ui_.NodeList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(nodeItemChanged(QListWidgetItem*)));
+	connect(ui_.NodeList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(nodeItemChanged(QListWidgetItem *)));
 
 	// Summary text on KeywordDropDown button
 	setSummaryText("Edit...");
@@ -54,17 +55,21 @@ NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget* parent, KeywordBase*
  * Widgets
  */
 
-void NodeRefListKeywordWidget::nodeItemChanged(QListWidgetItem* item)
+void NodeRefListKeywordWidget::nodeItemChanged(QListWidgetItem *item)
 {
-	if (refreshing_ || (!item)) return;
+	if (refreshing_ || (!item))
+		return;
 
 	// Get the ProcedureNode from the item
-	ProcedureNode* node = VariantPointer<ProcedureNode>(item->data(Qt::UserRole));
-	if (!node) return;
+	ProcedureNode *node = VariantPointer<ProcedureNode>(item->data(Qt::UserRole));
+	if (!node)
+		return;
 
 	// If the box is checked, we need to add the site to the list. If not, remove it.
-	if (item->checkState() == Qt::Checked) keyword_->addNode(node);
- 	else keyword_->removeNode(node);
+	if (item->checkState() == Qt::Checked)
+		keyword_->addNode(node);
+	else
+		keyword_->removeNode(node);
 }
 
 /*
@@ -72,9 +77,9 @@ void NodeRefListKeywordWidget::nodeItemChanged(QListWidgetItem* item)
  */
 
 // List widget row update function
-void NodeRefListKeywordWidget::updateListRow(int row, ProcedureNode* node, bool createItem)
+void NodeRefListKeywordWidget::updateListRow(int row, ProcedureNode *node, bool createItem)
 {
-	QListWidgetItem* item;
+	QListWidgetItem *item;
 	if (createItem)
 	{
 		item = new QListWidgetItem;
@@ -82,7 +87,8 @@ void NodeRefListKeywordWidget::updateListRow(int row, ProcedureNode* node, bool 
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
 		ui_.NodeList->insertItem(row, item);
 	}
-	else item = ui_.NodeList->item(row);
+	else
+		item = ui_.NodeList->item(row);
 
 	// Set item data
 	item->setText(node->name());
@@ -90,13 +96,10 @@ void NodeRefListKeywordWidget::updateListRow(int row, ProcedureNode* node, bool 
 }
 
 // Update value displayed in widget
-void NodeRefListKeywordWidget::updateValue()
-{
-	updateWidgetValues(coreData_);
-}
+void NodeRefListKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void NodeRefListKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void NodeRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
 	refreshing_ = true;
 

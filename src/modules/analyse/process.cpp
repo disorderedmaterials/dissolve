@@ -19,29 +19,30 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/analyse/analyse.h"
-#include "main/dissolve.h"
 #include "base/sysfunc.h"
+#include "main/dissolve.h"
+#include "modules/analyse/analyse.h"
 
 // Run main processing
-bool AnalyseModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool AnalyseModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+	for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+		Configuration *cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Execute the analysis
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("Analysis failed.\n");
+		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData()))
+			return Messenger::error("Analysis failed.\n");
 	}
 
 	return true;
 }
-

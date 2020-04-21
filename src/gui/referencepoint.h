@@ -31,30 +31,29 @@
 // Reference Point
 class ReferencePoint : public ListItem<ReferencePoint>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	ReferencePoint();
 	~ReferencePoint();
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Suffix applied to data items from the referenced file
 	CharString suffix_;
 	// Restart file from which the reference point data was read
 	CharString restartFile_;
 
-	public:
+      public:
 	// Set suffix for data items
-	void setSuffix(const char* suffix);
+	void setSuffix(const char *suffix);
 	// Return suffix for data items
-	const char* suffix() const;
+	const char *suffix() const;
 	// Set restart file from which the reference point data was read
-	void setRestartFile(const char* restartFile);
+	void setRestartFile(const char *restartFile);
 	// Return restart file from which the reference point data was read
-	const char* restartFile() const;
+	const char *restartFile() const;
 };
 
 #endif

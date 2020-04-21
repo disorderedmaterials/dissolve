@@ -23,14 +23,10 @@
 #include <QColor>
 
 // Constructor
-GUIOutputHandler::GUIOutputHandler()
-{
-}
+GUIOutputHandler::GUIOutputHandler() {}
 
 // Destructor
-GUIOutputHandler::~GUIOutputHandler()
-{
-}
+GUIOutputHandler::~GUIOutputHandler() {}
 
 /*
  * Styling
@@ -39,21 +35,21 @@ GUIOutputHandler::~GUIOutputHandler()
 // Set styling for warning message
 void GUIOutputHandler::styleForWarning()
 {
-	static QColor blue(0,0,255);
+	static QColor blue(0, 0, 255);
 	emit(setColour(blue));
 }
 
 // Set styling for error message
 void GUIOutputHandler::styleForError()
 {
-	static QColor red(251,0,0);
+	static QColor red(251, 0, 0);
 	emit(setColour(red));
 }
 
 // Reset styling for normal text
 void GUIOutputHandler::resetStyling()
 {
-	static QColor black(0,0,0);
+	static QColor black(0, 0, 0);
 	emit(setColour(black));
 }
 
@@ -62,7 +58,4 @@ void GUIOutputHandler::resetStyling()
  */
 
 // Print text
-void GUIOutputHandler::outputText(const char* text)
-{
-	emit(printText(QString(text)));
-}
+void GUIOutputHandler::outputText(const char *text) { emit(printText(QString(text))); }

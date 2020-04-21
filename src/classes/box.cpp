@@ -20,10 +20,10 @@
 */
 
 #include "classes/box.h"
-#include "classes/cell.h"
 #include "base/processpool.h"
-#include "math/interpolator.h"
+#include "classes/cell.h"
 #include "math/data1d.h"
+#include "math/interpolator.h"
 #include <string.h>
 
 // Constructor
@@ -35,12 +35,10 @@ Box::Box()
 }
 
 // Virtual Destructor
-Box::~Box()
-{
-}
+Box::~Box() {}
 
 // Assignment operator
-void Box::operator=(const Box& source)
+void Box::operator=(const Box &source)
 {
 	// Basic Definition
 	type_ = source.type_;
@@ -63,17 +61,14 @@ void Box::operator=(const Box& source)
  */
 
 // Box Type Keywords
-const char* BoxTypeKeywords[] = { "NonPeriodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
+const char *BoxTypeKeywords[] = {"NonPeriodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic"};
 
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-	static EnumOptionsList BoxTypeOptions = EnumOptionsList() <<
-		EnumOption(Box::NonPeriodicBoxType,	"NonPeriodic") <<
-		EnumOption(Box::CubicBoxType,		"Cubic") <<
-		EnumOption(Box::OrthorhombicBoxType,	"Orthorhombic") <<
-		EnumOption(Box::MonoclinicBoxType,	"Monoclinic") <<
-		EnumOption(Box::TriclinicBoxType,	"Triclinic");
+	static EnumOptionsList BoxTypeOptions = EnumOptionsList() << EnumOption(Box::NonPeriodicBoxType, "NonPeriodic") << EnumOption(Box::CubicBoxType, "Cubic")
+								  << EnumOption(Box::OrthorhombicBoxType, "Orthorhombic") << EnumOption(Box::MonoclinicBoxType, "Monoclinic")
+								  << EnumOption(Box::TriclinicBoxType, "Triclinic");
 
 	static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
 
@@ -81,10 +76,7 @@ EnumOptions<Box::BoxType> Box::boxTypes()
 }
 
 // Return Box type
-Box::BoxType Box::type() const
-{
-	return type_;
-}
+Box::BoxType Box::type() const { return type_; }
 
 // Finalise Box, storing volume and reciprocal and inverted axes
 void Box::finalise()
@@ -110,16 +102,10 @@ void Box::finalise()
 }
 
 // Return volume
-double Box::volume() const
-{
-	return volume_;
-}
+double Box::volume() const { return volume_; }
 
 // Return axis lengths
-Vec3<double> Box::axisLengths() const
-{
-	return Vec3<double>(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2));
-}
+Vec3<double> Box::axisLengths() const { return Vec3<double>(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2)); }
 
 // Return axis length specified
 double Box::axisLength(int n) const
@@ -135,10 +121,7 @@ double Box::axisLength(int n) const
 }
 
 // Return axis angles
-Vec3<double> Box::axisAngles() const
-{
-	return Vec3<double>(axisAngle(0), axisAngle(1), axisAngle(2));
-}
+Vec3<double> Box::axisAngles() const { return Vec3<double>(axisAngle(0), axisAngle(1), axisAngle(2)); }
 
 // Return axis angle specified
 double Box::axisAngle(int n) const
@@ -151,43 +134,28 @@ double Box::axisAngle(int n) const
 	}
 #endif
 	Vec3<double> u, v;
-	u = axes_.columnAsVec3((n+1)%3);
-	v = axes_.columnAsVec3((n+2)%3);
+	u = axes_.columnAsVec3((n + 1) % 3);
+	v = axes_.columnAsVec3((n + 2) % 3);
 	u.normalise();
 	v.normalise();
 	double dp = u.dp(v);
-	return acos(dp)*DEGRAD;
+	return acos(dp) * DEGRAD;
 }
 
 // Return axes matrix
-const Matrix3& Box::axes() const
-{
-	return axes_;
-}
+const Matrix3 &Box::axes() const { return axes_; }
 
 // Return inverse axes matrix
-const Matrix3& Box::inverseAxes() const
-{
-	return inverseAxes_;
-}
+const Matrix3 &Box::inverseAxes() const { return inverseAxes_; }
 
 // Return reciprocal box volume
-double Box::reciprocalVolume() const
-{
-	return reciprocalVolume_;
-}
+double Box::reciprocalVolume() const { return reciprocalVolume_; }
 
 // Return reciprocal axis lengths
-Vec3<double> Box::reciprocalAxisLengths() const
-{
-	return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1), reciprocalAxes_.columnMagnitude(2));
-}
+Vec3<double> Box::reciprocalAxisLengths() const { return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1), reciprocalAxes_.columnMagnitude(2)); }
 
 // Return reciprocal axes matrix
-const Matrix3& Box::reciprocalAxes() const
-{
-	return reciprocalAxes_;
-}
+const Matrix3 &Box::reciprocalAxes() const { return reciprocalAxes_; }
 
 // Scale Box by specified factor
 void Box::scale(double factor)
@@ -199,7 +167,7 @@ void Box::scale(double factor)
 	ra_ = 1.0 / a_;
 	rb_ = 1.0 / b_;
 	rc_ = 1.0 / c_;
-	
+
 	// Scale axes
 	axes_.columnMultiply(0, factor);
 	axes_.columnMultiply(1, factor);
@@ -229,20 +197,22 @@ void Box::scale(double factor)
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles, and volume
-Box* Box::generate(Vec3<double> lengths, Vec3<double> angles)
+Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
 	// Determine box type from supplied lengths / angles
-	bool rightAlpha = (fabs(angles.x-90.0) < 0.001);
-	bool rightBeta = (fabs(angles.y-90.0) < 0.001);
-	bool rightGamma = (fabs(angles.z-90.0) < 0.001);
+	bool rightAlpha = (fabs(angles.x - 90.0) < 0.001);
+	bool rightBeta = (fabs(angles.y - 90.0) < 0.001);
+	bool rightGamma = (fabs(angles.z - 90.0) < 0.001);
 
 	if (rightAlpha && rightBeta && rightGamma)
 	{
 		// Cubic or orthorhombic
-		bool abSame = (fabs(lengths.x-lengths.y) < 0.0001);
-		bool acSame = (fabs(lengths.x-lengths.z) < 0.0001);
-		if (abSame && acSame) return new CubicBox(lengths.x);
-		else return new OrthorhombicBox(lengths);
+		bool abSame = (fabs(lengths.x - lengths.y) < 0.0001);
+		bool acSame = (fabs(lengths.x - lengths.z) < 0.0001);
+		if (abSame && acSame)
+			return new CubicBox(lengths.x);
+		else
+			return new OrthorhombicBox(lengths);
 	}
 	else if (rightAlpha && (!rightBeta) && rightGamma)
 	{
@@ -263,71 +233,79 @@ double Box::inscribedSphereRadius() const
 	double mag, diameter, result = 0.0;
 	Vec3<double> cross;
 	int n, i, j;
-	for (n=0; n<3; ++n)
+	for (n = 0; n < 3; ++n)
 	{
-		i = (n+1)%3;
-		j = (n+2)%3;
+		i = (n + 1) % 3;
+		j = (n + 2) % 3;
 		cross = axes_.columnAsVec3(i) * axes_.columnAsVec3(j);
 		mag = cross.magnitude();
 		diameter = fabs(axes_.columnAsVec3(n).dp(cross / mag));
-		if (n == 0) result = diameter;
-		else if (diameter < result) result = diameter;
+		if (n == 0)
+			result = diameter;
+		else if (diameter < result)
+			result = diameter;
 	}
-	return result*0.5;
+	return result * 0.5;
 }
 
 // Calculate the RDF normalisation for the Box
-bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data1D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
+bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
 {
 	// Set up array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
 	const double binWidth = 0.1;
-	const double rBinWidth = 1.0/binWidth;
+	const double rBinWidth = 1.0 / binWidth;
 	int bin, nBins = rdfRange / binWidth;
 	Data1D normData;
 	normData.initialise(nBins);
-	Array<double>& y = normData.values();
-	for (int n=0; n<nBins; ++n) normData.xAxis(n) = (n+0.5)*binWidth;
-	
-	Vec3<double> centre = axes_*Vec3<double>(0.5,0.5,0.5);
+	Array<double> &y = normData.values();
+	for (int n = 0; n < nBins; ++n)
+		normData.xAxis(n) = (n + 0.5) * binWidth;
+
+	Vec3<double> centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
 
 	// Divide points over processes
 	const int nPointsPerProcess = nPoints / procPool.nProcesses();
-	Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess, nPointsPerProcess*procPool.nProcesses());
+	Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess, nPointsPerProcess * procPool.nProcesses());
 
 	// Pre-waste random numbers so that the random number generators in all processes line up
-	for (int n=0; n<nPointsPerProcess*procPool.poolRank(); ++n) randomCoordinate();
+	for (int n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
+		randomCoordinate();
 
 	// Calculate the function
 	y = 0.0;
-	for (int n=0; n<nPointsPerProcess; ++n)
+	for (int n = 0; n < nPointsPerProcess; ++n)
 	{
 		bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
-		if (bin < nBins) y[bin] += 1.0;
+		if (bin < nBins)
+			y[bin] += 1.0;
 	}
-	if (!procPool.allSum(y.array(), nBins)) return false;
+	if (!procPool.allSum(y.array(), nBins))
+		return false;
 
 	// Post-waste random numbers so that the random number generators in all processes line up
-	for (int n=0; n<nPointsPerProcess*(procPool.nProcesses()-1-procPool.poolRank()); ++n) randomCoordinate();
+	for (int n = 0; n < nPointsPerProcess * (procPool.nProcesses() - 1 - procPool.poolRank()); ++n)
+		randomCoordinate();
 
 	// Normalise histogram data, and scale by volume and binWidth ratio
-	y /= double(nPointsPerProcess*procPool.nProcesses());
+	y /= double(nPointsPerProcess * procPool.nProcesses());
 	y *= volume_ * (rdfBinWidth / binWidth);
 
 	// Interpolate the normalisation data, and create the final function
-	nBins = rdfRange/rdfBinWidth;
+	nBins = rdfRange / rdfBinWidth;
 	boxNorm.clear();
 	Interpolator boxNormInterp(normData);
 
 	// Rescale against expected volume for spherical shells
-	double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5*rdfBinWidth;
-	for (int n=0; n<nBins; ++n)
+	double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5 * rdfBinWidth;
+	for (int n = 0; n < nBins; ++n)
 	{
 		// We know that up to the maximum (orthogonal) half-cell width the normalisation should be exactly 1.0...
-		if (x < maxHalf) boxNorm.addPoint(x, 1.0);
+		if (x < maxHalf)
+			boxNorm.addPoint(x, 1.0);
 		else
 		{
-			shellVolume = (4.0/3.0)*PI*(pow(r+rdfBinWidth,3.0) - pow(r,3.0));
-			boxNorm.addPoint(x,  shellVolume / boxNormInterp.y(x));
+			shellVolume = (4.0 / 3.0) * PI * (pow(r + rdfBinWidth, 3.0) - pow(r, 3.0));
+			boxNorm.addPoint(x, shellVolume / boxNormInterp.y(x));
 		}
 		r += rdfBinWidth;
 		x += rdfBinWidth;
@@ -341,14 +319,14 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data1D& boxNorm, doub
  */
 
 // Return angle (in degrees) between Atoms
-double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
+double Box::angleInDegrees(const Atom *i, const Atom *j, const Atom *k) const
 {
 	Vec3<double> vecji, vecjk;
 
 	// Ge minimum image vectors 'j-i' and 'j-k'
 	vecji = minimumVector(j, i);
 	vecjk = minimumVector(j, k);
-	
+
 	// Normalise vectors
 	vecji.normalise();
 	vecjk.normalise();
@@ -358,12 +336,12 @@ double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
 }
 
 // Return angle (in degrees) between coordinates
-double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k) const
+double Box::angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k) const
 {
 	static Vec3<double> vecji, vecjk;
 	vecji = minimumVector(j, i);
 	vecjk = minimumVector(j, k);
-	
+
 	// Normalise vectors
 	vecji.normalise();
 	vecjk.normalise();
@@ -373,20 +351,17 @@ double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const V
 }
 
 // Return angle (in degrees) between supplied normalised vectors
-double Box::angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk)
-{
-	return acos(normji.dp(normjk)) * DEGRAD;
-}
+double Box::angleInDegrees(const Vec3<double> &normji, const Vec3<double> &normjk) { return acos(normji.dp(normjk)) * DEGRAD; }
 
 // Return angle (in degrees) between supplied normalised vectors
-double Box::angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct)
+double Box::angleInDegrees(const Vec3<double> &normji, const Vec3<double> &normjk, double &dotProduct)
 {
 	dotProduct = normji.dp(normjk);
 	return acos(dotProduct) * DEGRAD;
 }
 
 // Return literal angle (in degrees) between coordinates, without applying minimum image convention
-double Box::literalAngleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
+double Box::literalAngleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k)
 {
 	static Vec3<double> vecji, vecjk;
 	vecji = i - j;
@@ -397,23 +372,23 @@ double Box::literalAngleInDegrees(const Vec3<double>& i, const Vec3<double>& j, 
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
-double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl)
+double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl)
 {
 	// Calculate cross products and torsion angle formed (in radians)
 	Vec3<double> xpj, xpk;
 	double magxpj, magxpk;
 
-	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk)*DEGRAD;
+	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
-double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
+double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk)
 {
-	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk)*DEGRAD;
+	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
 }
 
 // Return torsion (in radians) between supplied unnormalised vectors
-double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl)
+double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl)
 {
 	// Calculate cross products and torsion angle formed (in radians)
 	Vec3<double> xpj, xpk;
@@ -423,11 +398,11 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 }
 
 // Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
+double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk)
 {
 	xpj = vecjk * vecji;
 	xpk = vecjk * veckl;
 	magxpj = xpj.magAndNormalise();
 	magxpk = xpk.magAndNormalise();
-	return atan2(vecjk.dp(xpj*xpk) / vecjk.magnitude(), xpj.dp(xpk));
+	return atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), xpj.dp(xpk));
 }

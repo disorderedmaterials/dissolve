@@ -20,19 +20,15 @@
 */
 
 #include "keywords/data1dstore.h"
-#include "io/import/data1d.h"
-#include "classes/data1dstore.h"
 #include "base/lineparser.h"
+#include "classes/data1dstore.h"
+#include "io/import/data1d.h"
 
 // Constructor
-Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore& data1DStore) : KeywordData<Data1DStore&>(KeywordBase::Data1DStoreData, data1DStore)
-{
-}
+Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data1DStore) : KeywordData<Data1DStore &>(KeywordBase::Data1DStoreData, data1DStore) {}
 
 // Destructor
-Data1DStoreKeyword::~Data1DStoreKeyword()
-{
-}
+Data1DStoreKeyword::~Data1DStoreKeyword() {}
 
 /*
  * Arguments
@@ -53,11 +49,12 @@ int Data1DStoreKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool Data1DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
+	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2), parser.argc(startArg + 1));
 
-	if (!data_.addData(parser.argc(startArg), parser, startArg+1, CharString("End%s", name()), coreData)) return Messenger::error("Failed to add data.\n");
+	if (!data_.addData(parser.argc(startArg), parser, startArg + 1, CharString("End%s", name()), coreData))
+		return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 
@@ -65,16 +62,19 @@ bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool Data1DStoreKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool Data1DStoreKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over list of one-dimensional data
-	RefDataListIterator<Data1D,Data1DImportFileFormat> dataIterator(data_.dataReferences());
-	while (Data1D* data = dataIterator.iterate())
+	RefDataListIterator<Data1D, Data1DImportFileFormat> dataIterator(data_.dataReferences());
+	while (Data1D *data = dataIterator.iterate())
 	{
-		Data1DImportFileFormat& ff = dataIterator.currentData();
-		if (!ff.writeFilenameAndFormat(parser, CharString("%s%s  '%s'  ", prefix, keywordName, data->name()))) return false;
-		if (!ff.writeBlock(parser, CharString("%s  ", prefix))) return false;
-		if (!parser.writeLineF("%sEnd%s\n", prefix, name())) return false;
+		Data1DImportFileFormat &ff = dataIterator.currentData();
+		if (!ff.writeFilenameAndFormat(parser, CharString("%s%s  '%s'  ", prefix, keywordName, data->name())))
+			return false;
+		if (!ff.writeBlock(parser, CharString("%s  ", prefix)))
+			return false;
+		if (!parser.writeLineF("%sEnd%s\n", prefix, name()))
+			return false;
 	}
 
 	return true;

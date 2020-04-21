@@ -36,32 +36,26 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
 }
 
 // Destructor (virtual)
-ExpressionVariable::~ExpressionVariable()
-{
-}
+ExpressionVariable::~ExpressionVariable() {}
 
 // Set name of variable
-void ExpressionVariable::setName(const char* s)
-{
-	name_ = s;
-}
+void ExpressionVariable::setName(const char *s) { name_ = s; }
 
 // Get name of variable
-const char* ExpressionVariable::name() const
-{
-	return name_.get();
-}
+const char *ExpressionVariable::name() const { return name_.get(); }
 
 // Initialise variable
 bool ExpressionVariable::initialise()
 {
-	if (initialValue_ == NULL) value_ = 0.0;
+	if (initialValue_ == NULL)
+		value_ = 0.0;
 	else
 	{
 		ExpressionValue result;
 		if (initialValue_->execute(result))
 		{
-			if (set(result)) return true;
+			if (set(result))
+				return true;
 			else
 			{
 				Messenger::error("Failed to initialise variable '%s'.\n", name_.get());
@@ -74,19 +68,17 @@ bool ExpressionVariable::initialise()
 }
 
 // Set initial value expression
-bool ExpressionVariable::setInitialValue(ExpressionNode* node)
+bool ExpressionVariable::setInitialValue(ExpressionNode *node)
 {
 	initialValue_ = node;
-	if (initialValue_ == NULL) return true;
+	if (initialValue_ == NULL)
+		return true;
 
 	return true;
 }
 
 // Return Node corresponding to initial value
-ExpressionNode* ExpressionVariable::initialValue() const
-{
-	return initialValue_;
-}
+ExpressionNode *ExpressionVariable::initialValue() const { return initialValue_; }
 
 /*
  * Set / Get
@@ -107,19 +99,13 @@ bool ExpressionVariable::set(ExpressionValue value)
 }
 
 // Return value
-const ExpressionValue& ExpressionVariable::value() const
-{
-	return value_;
-}
+const ExpressionValue &ExpressionVariable::value() const { return value_; }
 
 // Return pointer to value
-ExpressionValue* ExpressionVariable::valuePointer()
-{
-	return &value_;
-}
+ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
 // Return value of node
-bool ExpressionVariable::execute(ExpressionValue& value)
+bool ExpressionVariable::execute(ExpressionValue &value)
 {
 	value = value_;
 
@@ -127,23 +113,29 @@ bool ExpressionVariable::execute(ExpressionValue& value)
 }
 
 // Print node contents
-void ExpressionVariable::nodePrint(int offset, const char* prefix)
+void ExpressionVariable::nodePrint(int offset, const char *prefix)
 {
 	// Construct tabbed offset
 	CharString tab;
-	for (int n=0; n<offset-1; n++) tab += '\t';
-	if (offset > 1) tab += "   |--> ";
+	for (int n = 0; n < offset - 1; n++)
+		tab += '\t';
+	if (offset > 1)
+		tab += "   |--> ";
 	tab += prefix;
 
 	// Output node data
 	if (readOnly_)
 	{
-		if (value_.isInteger()) printf("[C]%s%i (constant integer value)\n", tab.get(), value_.asInteger());
-		else printf("[C]%s%f (constant double value)\n", tab.get(), value_.asDouble());
+		if (value_.isInteger())
+			printf("[C]%s%i (constant integer value)\n", tab.get(), value_.asInteger());
+		else
+			printf("[C]%s%f (constant double value)\n", tab.get(), value_.asDouble());
 	}
 	else
 	{
-		if (value_.isInteger()) printf("[V]%s%i (integer variable '%s')\n", tab.get(), value_.asInteger(), name());
-		else printf("[V]%s%f (double variable '%s')\n", tab.get(), value_.asDouble(), name());
+		if (value_.isInteger())
+			printf("[V]%s%i (integer variable '%s')\n", tab.get(), value_.asInteger(), name());
+		else
+			printf("[V]%s%f (double variable '%s')\n", tab.get(), value_.asDouble(), name());
 	}
 }

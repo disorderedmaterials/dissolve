@@ -33,16 +33,11 @@ MolShakeModule::MolShakeModule() : Module()
 }
 
 // Destructor
-MolShakeModule::~MolShakeModule()
-{
-}
+MolShakeModule::~MolShakeModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* MolShakeModule::createInstance() const
-{
-	return new MolShakeModule;
-}
+Module *MolShakeModule::createInstance() const { return new MolShakeModule; }

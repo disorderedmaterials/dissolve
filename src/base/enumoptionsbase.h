@@ -27,74 +27,70 @@
 // Enum Options Base
 class EnumOptionsBase
 {
-	public:
+      public:
 	// Constructors
 	EnumOptionsBase();
-	EnumOptionsBase(const char* name, const EnumOptionsList& options);
-	EnumOptionsBase(const char* name, const EnumOptionsList& options, int defaultEnumeration);
-
+	EnumOptionsBase(const char *name, const EnumOptionsList &options);
+	EnumOptionsBase(const char *name, const EnumOptionsList &options, int defaultEnumeration);
 
 	/*
 	 * Name
 	 */
-	protected:
+      protected:
 	// Name of options (e.g. from source enumeration)
-	const char* name_;
+	const char *name_;
 
-	protected:
+      protected:
 	// Unrecognised option
 	static UnrecognisedEnumOption unrecognisedOption_;
 
-	public:
+      public:
 	// Return name of options (e.g. from source enumeration)
-	const char* name() const;
-
+	const char *name() const;
 
 	/*
 	 * Enum Option Data
 	 */
-	protected:
+      protected:
 	// Options
 	Array<EnumOption> options_;
 	// Current option index in local options_ array
 	int currentOptionIndex_;
 
-	public:
+      public:
 	// Return number of options available
 	int nOptions() const;
 	// Return nth keyword in the list
-	const char* keywordByIndex(int index) const;
+	const char *keywordByIndex(int index) const;
 	// Return description for the nth keyword in the list
-	const char* descriptionByIndex(int index) const;
+	const char *descriptionByIndex(int index) const;
 	// Return option by keyword
-	const EnumOption& option(const char* keyword) const;
+	const EnumOption &option(const char *keyword) const;
 	// Return current option keyword
-	const char* currentOptionKeyword() const;
+	const char *currentOptionKeyword() const;
 	// Return current option
-	const EnumOption& currentOption() const;
+	const EnumOption &currentOption() const;
 	// Return current option index
 	int currentOptionIndex() const;
 	// Set current option index
 	bool setCurrentOptionIndex(int index);
 	// Set current option from keyword
-	bool setCurrentOption(const char* keyword);
+	bool setCurrentOption(const char *keyword);
 	// Return whether specified option keyword is valid
-	bool isValid(const char* keyword) const;
-
+	bool isValid(const char *keyword) const;
 
 	/*
 	 * Error Reporting
 	 */
-	public:
+      public:
 	// Raise error, printing valid options
-	bool errorAndPrintValid(const char* badKeyword) const;
-
+	bool errorAndPrintValid(const char *badKeyword) const;
 
 	/*
 	 * Operators
 	 */
-	public:
-	EnumOptionsBase& operator=(int index);
+      public:
+	EnumOptionsBase &operator=(int index);
 };
 
 #endif

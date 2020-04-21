@@ -22,60 +22,56 @@
 #ifndef DISSOLVE_KEYWORD_ATOMTYPESELECTION_H
 #define DISSOLVE_KEYWORD_ATOMTYPESELECTION_H
 
-#include "keywords/data.h"
 #include "classes/atomtypelist.h"
+#include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Configuration;
 
 // Keyword with AtomTypeList Data
-class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
+class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 {
-	public:
+      public:
 	// Constructor
-	AtomTypeSelectionKeyword(AtomTypeList& selection_, const RefList<Configuration>& sourceConfigurations);
+	AtomTypeSelectionKeyword(AtomTypeList &selection_, const RefList<Configuration> &sourceConfigurations);
 	// Destructor
 	~AtomTypeSelectionKeyword();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source Configurations from which we take our valid AtomTypes
-	const RefList<Configuration>& sourceConfigurations_;
+	const RefList<Configuration> &sourceConfigurations_;
 
-	public:
+      public:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 	// Check selection and make sure it is consistent based on the source Configurations
 	void checkSelection();
 	// Return selection after checking it for validity
-	AtomTypeList& selection();
-
+	AtomTypeList &selection();
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied AtomType in the contained data
-	void removeReferencesTo(AtomType* at);
+	void removeReferencesTo(AtomType *at);
 };
 
 #endif
-

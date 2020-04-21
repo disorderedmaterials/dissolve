@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_KEYWORD_NODEANDINTEGER_H
 #define DISSOLVE_KEYWORD_NODEANDINTEGER_H
 
+#include "base/lineparser.h"
 #include "keywords/data.h"
 #include "procedure/nodes/node.h"
-#include "base/lineparser.h"
 #include "templates/pair.h"
 
 // Forward Declarations
@@ -34,49 +34,46 @@ class ProcedureNode;
 // Keyword with ProcedureNode and integer index base class
 class NodeAndIntegerKeywordBase
 {
-	public:
+      public:
 	// Constructor
-	NodeAndIntegerKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
+	NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
 	// Destructor
 	virtual ~NodeAndIntegerKeywordBase();
-
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
+	ProcedureNode *parentNode_;
 
-	public:
+      public:
 	// Return parent ProcedureNode
-	ProcedureNode* parentNode() const;
-
+	ProcedureNode *parentNode() const;
 
 	/*
 	 * Target Node
 	 */
-	private:
+      private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 	// Whether to accept nodes within scope only
 	bool onlyInScope_;
 
-	public:
+      public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
 	// Return whether to accept nodes within scope only
 	bool onlyInScope() const;
 	// Set the target node
-	virtual bool setNode(ProcedureNode* node) = 0;
+	virtual bool setNode(ProcedureNode *node) = 0;
 	// Return the current target node
-	virtual ProcedureNode* node() const = 0;
-
+	virtual ProcedureNode *node() const = 0;
 
 	/*
 	 * Associated Index
 	 */
-	public:
+      public:
 	// Set target index
 	virtual void setIndex(int index) = 0;
 	// Return target index
@@ -84,142 +81,124 @@ class NodeAndIntegerKeywordBase
 	// Return whether index has been set
 	virtual bool indexSet() const = 0;
 
-
 	/*
 	 * Access to KeywordBase
 	 */
-	public:
+      public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
 
 // Keyword with ProcedureNode and integer index
-template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData< Pair<N*,int> >
+template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData<Pair<N *, int>>
 {
-	public:
+      public:
 	// Constructors
-	NodeAndIntegerKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node) : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData< Pair<N*,int> >(KeywordBase::NodeAndIntegerData, Pair<N*,int>(node))
+	NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node)
+	    : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(KeywordBase::NodeAndIntegerData, Pair<N *, int>(node))
 	{
 	}
-	NodeAndIntegerKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node, int index) : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData< Pair<N*,int> >(KeywordBase::NodeAndIntegerData, Pair<N*,int>(node, index))
+	NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node, int index)
+	    : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(KeywordBase::NodeAndIntegerData, Pair<N *, int>(node, index))
 	{
 	}
 	// Destructor
-	~NodeAndIntegerKeyword()
-	{
-	}
-
+	~NodeAndIntegerKeyword() {}
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
-	int minArguments() const
-	{
-		return 1;
-	}
+	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
-	int maxArguments() const
-	{
-		return 1;
-	}
+	int maxArguments() const { return 1; }
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData)
+	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
-		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+		if (!parentNode())
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
 		// Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode* node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
-		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+		ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+		if (!node)
+			return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
 
 		return setNode(node);
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix)
+	bool write(LineParser &parser, const char *keywordName, const char *prefix)
 	{
 		// Grab the node pointer
-		const N* node = KeywordData< Pair<N*,int> >::data_.a();
+		const N *node = KeywordData<Pair<N *, int>>::data_.a();
 
 		// If an index was set, write it after the node name
-		if (KeywordData< Pair<N*,int> >::data_.isBSet())
+		if (KeywordData<Pair<N *, int>>::data_.isBSet())
 		{
-			if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), node ? node->name() : "???")) return false;
+			if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), node ? node->name() : "???"))
+				return false;
 		}
 		else
 		{
-			if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???", KeywordData< Pair<N*,int> >::data_.b())) return false;
+			if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???", KeywordData<Pair<N *, int>>::data_.b()))
+				return false;
 		}
 
 		return true;
 	}
-
 
 	/*
 	 * Target Node
 	 */
-	public:
+      public:
 	// Set the target node
-	bool setNode(ProcedureNode* node)
+	bool setNode(ProcedureNode *node)
 	{
-		if (!node) return false;
+		if (!node)
+			return false;
 
-		if (!node->isType(nodeType())) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (!node->isType(nodeType()))
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
-		KeywordData< Pair<N*,int> >::data_.setA(dynamic_cast<N*>(node));
+		KeywordData<Pair<N *, int>>::data_.setA(dynamic_cast<N *>(node));
 
-		KeywordData< Pair<N*,int> >::set_ = true;
+		KeywordData<Pair<N *, int>>::set_ = true;
 
 		return true;
 	}
 	// Return the current target node
-	ProcedureNode* node() const
-	{
-		return KeywordData< Pair<N*,int> >::data_.a();
-	}
-
+	ProcedureNode *node() const { return KeywordData<Pair<N *, int>>::data_.a(); }
 
 	/*
-	* Associated Index
-	*/
-	public:
+	 * Associated Index
+	 */
+      public:
 	// Set target index
 	void setIndex(int index)
 	{
-		KeywordData< Pair<N*,int> >::data_.setB(index);
+		KeywordData<Pair<N *, int>>::data_.setB(index);
 
-		KeywordData< Pair<N*,int> >::set_ = true;
+		KeywordData<Pair<N *, int>>::set_ = true;
 	}
 
 	// Return target index
-	int index() const
-	{
-		return KeywordData< Pair<N*,int> >::data_.b();
-	}
+	int index() const { return KeywordData<Pair<N *, int>>::data_.b(); }
 
 	// Return whether index has been set
-	bool indexSet() const
-	{
-		return KeywordData< Pair<N*,int> >::data_.isBSet();
-	}
-
+	bool indexSet() const { return KeywordData<Pair<N *, int>>::data_.isBSet(); }
 
 	/*
 	 * Access to KeywordBase
 	 */
-	public:
+      public:
 	// Return option mask for keyword
-	int optionMask() const
-	{
-		return KeywordBase::optionMask();
-	}
-
+	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 };
 
 #endif
-

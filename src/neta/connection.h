@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_NETA_CONNECTION_H
 #define DISSOLVE_NETA_CONNECTION_H
 
-#include <vector>
-#include "neta/node.h"
 #include "classes/speciesbond.h"
+#include "neta/node.h"
+#include <vector>
 
 // Forward Declarations
 class Element;
@@ -34,24 +34,23 @@ class NETADefinition;
 // NETA Connection Node
 class NETAConnectionNode : public NETANode
 {
-	public:
+      public:
 	// Constructor / Destructor
-	NETAConnectionNode(NETADefinition* parent, std::vector<Element*> targetElements, std::vector<ForcefieldAtomType*> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+	NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAConnectionNode();
 
-	private:
+      private:
 	// Array of elements that the current context atom may be
-	std::vector<Element*> allowedElements_;
+	std::vector<Element *> allowedElements_;
 	// Array of ForcefieldAtomTypes that the current context atom may be
-	std::vector<ForcefieldAtomType*> allowedAtomTypes_;
+	std::vector<ForcefieldAtomType *> allowedAtomTypes_;
 	// Type of required connection
 	SpeciesBond::BondType bondType_;
-
 
 	/*
 	 * Modifiers
 	 */
-	private:
+      private:
 	// Repeat count value
 	int repeatCount_;
 	// Repeat count comparison operator
@@ -65,51 +64,49 @@ class NETAConnectionNode : public NETANode
 	// Numbe of hydrogens value comparison operator
 	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
-	public:
+      public:
 	// Available modifiers
 	enum NETAConnectionModifier
 	{
-		NBondsModifier,			/* 'nbonds' - Specifies number of bonds (default = -1) */
-		NHydrogensModifier,		/* 'nh' - Specifies number of hydrogens (default = -1) */
-		RepeatConnectionModifier,	/* 'n' - Specifies the number of matches required (default = 1) */
+		NBondsModifier,		  /* 'nbonds' - Specifies number of bonds (default = -1) */
+		NHydrogensModifier,       /* 'nh' - Specifies number of hydrogens (default = -1) */
+		RepeatConnectionModifier, /* 'n' - Specifies the number of matches required (default = 1) */
 		nConnectionModifiers
 	};
 	// Return enum options for NETAConnectionModifiers
 	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> modifiers();
 	// Return whether the specified modifier is valid for this node
-	bool isValidModifier(const char* s) const;
+	bool isValidModifier(const char *s) const;
 	// Set value and comparator for specified modifier
-	bool setModifier(const char* modifier, ComparisonOperator op, int value);
-
+	bool setModifier(const char *modifier, ComparisonOperator op, int value);
 
 	/*
 	 * Flags
 	 */
-	private:
+      private:
 	// Whether to allow the root atom of the path to be re-matched within this node
 	bool allowRootMatch_;
 
-	public:
+      public:
 	// Available flags
 	enum NETAConnectionFlag
 	{
-		RootFlag,			/* 'root' - Specifies that the root atom of the current path may be re-matched */
+		RootFlag, /* 'root' - Specifies that the root atom of the current path may be re-matched */
 		nConnectionFlags
 	};
 	// Return enum options for NETAConnectionFlags
 	static EnumOptions<NETAConnectionNode::NETAConnectionFlag> flags();
 	// Return whether the specified flag is valid for this node
-	bool isValidFlag(const char* s) const;
+	bool isValidFlag(const char *s) const;
 	// Set specified flag
-	bool setFlag(const char* flag, bool state);
-
+	bool setFlag(const char *flag, bool state);
 
 	/*
 	 * Scoring
 	 */
-	public:
+      public:
 	// Evaluate the node and return its score
-	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
+	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };
 
 #endif

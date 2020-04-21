@@ -36,63 +36,63 @@ class QMdiSubWindow;
 // Gizmo - Base class for any widget to be displayed in a QMdiSubWindow
 class Gizmo : public ListItem<Gizmo>
 {
-	public:
+      public:
 	// Constructor / Destructor
-	Gizmo(Dissolve& dissolve, const char* uniqueName);
+	Gizmo(Dissolve &dissolve, const char *uniqueName);
 	virtual ~Gizmo();
-
 
 	/*
 	 * Core
 	 */
-	protected:
+      protected:
 	// Unique name of gizmo
 	CharString uniqueName_;
 	// Reference to Dissolve
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 	// QMdiSubWindow containing the Gizmo
-	QMdiSubWindow* window_;
+	QMdiSubWindow *window_;
 	// Reference list of all Gizmos
 	static RefList<Gizmo> allGizmos_;
 
-	public:
+      public:
 	// Return string specifying Gizmo type
-	virtual const char* type() const = 0;
+	virtual const char *type() const = 0;
 	// Set unique name of gizmo
-	void setUniqueName(const char* uniqueName);
+	void setUniqueName(const char *uniqueName);
 	// Return unique name for Gizmo based on basename provided
-	static const char* uniqueName(const char* base);
+	static const char *uniqueName(const char *base);
 	// Return unique name of gizmo
-	const char* uniqueName();
+	const char *uniqueName();
 	// Set QMdiSubWindow containing the Gizmo
-	void setWindow(QMdiSubWindow* window);
+	void setWindow(QMdiSubWindow *window);
 	// Return QMdiSubWindow containing the Gizmo
-	QMdiSubWindow* window();
+	QMdiSubWindow *window();
 	// Find Gizmo with unique name provided
-	static Gizmo* find(const char* uniqueName, const Gizmo* excludeThis = NULL);
+	static Gizmo *find(const char *uniqueName, const Gizmo *excludeThis = NULL);
 	// Find Gizmo contained in specified subwindow
-	static Gizmo* find(QMdiSubWindow* window);
+	static Gizmo *find(QMdiSubWindow *window);
 	// Find all Gizmos of the specified type
-	template <class G> static RefList<G> findAll(const char* gizmoType)
+	template <class G> static RefList<G> findAll(const char *gizmoType)
 	{
 		RefList<G> gizmos;
-		for (Gizmo* gizmo : allGizmos_) if (DissolveSys::sameString(gizmo->type(), gizmoType)) gizmos.append(dynamic_cast<G*>(gizmo));
+		for (Gizmo *gizmo : allGizmos_)
+			if (DissolveSys::sameString(gizmo->type(), gizmoType))
+				gizmos.append(dynamic_cast<G *>(gizmo));
 		return gizmos;
 	}
-
 
 	/*
 	 * UI
 	 */
-	protected:
+      protected:
 	// Whether the gizmo is currently refreshing
 	bool refreshing_;
 
-	protected:
+      protected:
 	// Window close event
-	virtual void closeEvent(QCloseEvent* event) = 0;
+	virtual void closeEvent(QCloseEvent *event) = 0;
 
-	public:
+      public:
 	// Update controls within widget
 	virtual void updateControls() = 0;
 	// Disable sensitive controls within widget
@@ -100,27 +100,25 @@ class Gizmo : public ListItem<Gizmo>
 	// Enable sensitive controls within widget
 	virtual void enableSensitiveControls() = 0;
 
-
 	/*
 	 * Data Handling
 	 */
-	public:
+      public:
 	// Return whether this Gizmo accepts data of the specified type
-	virtual bool acceptsData(const char* dataType);
+	virtual bool acceptsData(const char *dataType);
 	// Return all Gizmos that accept data of the specified type
-	static RefList<Gizmo> allThatAccept(const char* dataType);
+	static RefList<Gizmo> allThatAccept(const char *dataType);
 	// Send data (referenced by its object tag) to the Gizmo
-	virtual bool sendData(const char* dataType, const char* objectTag, const char* name = NULL);
-
+	virtual bool sendData(const char *dataType, const char *objectTag, const char *name = NULL);
 
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	virtual bool writeState(LineParser& parser) const = 0;
+	virtual bool writeState(LineParser &parser) const = 0;
 	// Read widget state through specified LineParser
-	virtual bool readState(LineParser& parser) = 0;
+	virtual bool readState(LineParser &parser) = 0;
 };
 
 #endif

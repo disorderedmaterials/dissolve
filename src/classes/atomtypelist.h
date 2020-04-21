@@ -23,8 +23,8 @@
 #define DISSOLVE_ATOMTYPELIST_H
 
 #include "classes/atomtypedata.h"
-#include "templates/list.h"
 #include "genericitems/base.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class AtomType;
@@ -34,89 +34,86 @@ class Isotope;
 // AtomTypeList
 class AtomTypeList : public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	AtomTypeList();
 	// Destructor
 	~AtomTypeList();
 	// Copy Constructor
-	AtomTypeList(const AtomTypeList& source);
+	AtomTypeList(const AtomTypeList &source);
 	// Assignment Operator
-	void operator=(const AtomTypeList& source);
+	void operator=(const AtomTypeList &source);
 	// Array access operator
-	AtomTypeData* operator[](int n);
-
+	AtomTypeData *operator[](int n);
 
 	/*
 	 * Type List
 	 */
-	private:
+      private:
 	// List of AtomTypeData
 	List<AtomTypeData> types_;
 
-	public:
+      public:
 	// Clear all data
 	void clear();
 	// Zero populations of all types in the list
 	void zero();
 	// Add the specified AtomType to the list, returning the AtomTypeData
-	AtomTypeData* add(AtomType* atomType, double popAdd = 0);
+	AtomTypeData *add(AtomType *atomType, double popAdd = 0);
 	// Add the AtomTypes in the supplied list into this one, increasing populations etc.
-	void add(const AtomTypeList& source);
+	void add(const AtomTypeList &source);
 	// Remove specified AtomType from the list
-	void remove(AtomType* atomType);
+	void remove(AtomType *atomType);
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-	void addIsotope(AtomType* atomType, Isotope* tope = NULL, double popAdd = 0);
+	void addIsotope(AtomType *atomType, Isotope *tope = NULL, double popAdd = 0);
 	// Finalise list, calculating fractional populations etc.
 	void finalise();
 	// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-	void finalise(const AtomTypeList& exchangeable);
+	void finalise(const AtomTypeList &exchangeable);
 	// Make all AtomTypeData in the list reference only their natural isotope
 	void naturalise();
 	// Check for presence of AtomType in list
-	bool contains(AtomType* atomType) const;
+	bool contains(AtomType *atomType) const;
 	// Check for presence of AtomType/Isotope pair in list
-	bool contains(AtomType* atomType, Isotope* tope);
+	bool contains(AtomType *atomType, Isotope *tope);
 	// Return number of AtomType/Isotopes in list
 	int nItems() const;
 	// Return first item in list
-	AtomTypeData* first() const;
+	AtomTypeData *first() const;
 	// Return types list
-	const List<AtomTypeData>& types() const;
+	const List<AtomTypeData> &types() const;
 	// Return index of AtomType in list
-	int indexOf(AtomType* atomtype) const;
+	int indexOf(AtomType *atomtype) const;
 	// Return index of names AtomType in list
-	int indexOf(const char* name) const;
+	int indexOf(const char *name) const;
 	// Return total population of all types in list
 	double totalPopulation() const;
 	// Return nth referenced AtomType
-	AtomType* atomType(int n);
+	AtomType *atomType(int n);
 	// Return AtomTypeData for specified AtomType
-	AtomTypeData* atomTypeData(AtomType* atomType);
+	AtomTypeData *atomTypeData(AtomType *atomType);
 	// Print AtomType populations
 	void print() const;
-
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-	*** Species Widget - Functions 
+	*** Species Widget - Functions
 	*** src/gui/specieswidget_funcs.cpp
 	Copyright T. Youngs 2013-2020
 
@@ -19,18 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/specieswidget.h"
-#include "gui/widgets/elementselector.hui"
-#include "procedure/nodes/addspecies.h"
-#include "procedure/nodes/box.h"
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
+#include "gui/specieswidget.h"
+#include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
+#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
 // Constructor
-SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
+SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
 	ui_.setupUi(this);
@@ -46,37 +46,23 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-SpeciesWidget::~SpeciesWidget()
-{
-}
+SpeciesWidget::~SpeciesWidget() {}
 
 // Set main CoreData pointer
-void SpeciesWidget::setCoreData(CoreData* coreData)
-{
-	coreData_ = coreData;
-}
+void SpeciesWidget::setCoreData(CoreData *coreData) { coreData_ = coreData; }
 
 /*
  * UI
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyStyleModified()
-{
-	emit(styleModified());
-}
+void SpeciesWidget::notifyStyleModified() { emit(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void SpeciesWidget::notifyDataModified()
-{
-	emit(dataModified());
-}
+void SpeciesWidget::notifyDataModified() { emit(dataModified()); }
 
 // Post redisplay in the underlying view
-void SpeciesWidget::postRedisplay()
-{
-	ui_.SpeciesView->postRedisplay();
-}
+void SpeciesWidget::postRedisplay() { ui_.SpeciesView->postRedisplay(); }
 
 // Update toolbar to reflect current viewer state
 void SpeciesWidget::updateToolbar()
@@ -90,7 +76,7 @@ void SpeciesWidget::updateToolbar()
 void SpeciesWidget::updateStatusBar()
 {
 	// Get displayed Species
-	const Species* sp = speciesViewer()->species();
+	const Species *sp = speciesViewer()->species();
 
 	// Set interaction mode text
 	ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
@@ -105,7 +91,7 @@ void SpeciesWidget::updateStatusBar()
  */
 
 // Set target Species, updating widget as necessary
-void SpeciesWidget::setSpecies(Species* sp)
+void SpeciesWidget::setSpecies(Species *sp)
 {
 	ui_.SpeciesView->setSpecies(sp);
 
@@ -114,10 +100,7 @@ void SpeciesWidget::setSpecies(Species* sp)
 }
 
 // Return contained SpeciesViewer
-SpeciesViewer* SpeciesWidget::speciesViewer()
-{
-	return ui_.SpeciesView;
-}
+SpeciesViewer *SpeciesWidget::speciesViewer() { return ui_.SpeciesView; }
 
 /*
  * Toolbar
@@ -147,17 +130,15 @@ void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 	speciesViewer()->postRedisplay();
 }
 
-void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
-{
-	speciesViewer()->copyViewToClipboard(checked);
-}
+void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { speciesViewer()->copyViewToClipboard(checked); }
 
 // Tools
 void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 {
 	// Get displayed Species
-	Species* sp = speciesViewer()->species();
-	if (!sp) return;
+	Species *sp = speciesViewer()->species();
+	if (!sp)
+		return;
 
 	// Calculate missing bonds
 	sp->addMissingBonds();
@@ -170,8 +151,9 @@ void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 {
 	// Get displayed Species
-	Species* sp = speciesViewer()->species();
-	if (!sp) return;
+	Species *sp = speciesViewer()->species();
+	if (!sp)
+		return;
 
 	// Apply forcefield terms now?
 	if (sp->forcefield())
@@ -180,36 +162,43 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	}
 
 	// Check that the Species set up is valid
-	if (!sp->checkSetUp()) return;
+	if (!sp->checkSetUp())
+		return;
 
 	// Create a temporary CoreData and Dissolve
 	CoreData temporaryCoreData;
 	Dissolve temporaryDissolve(temporaryCoreData);
-	if (!temporaryDissolve.registerMasterModules()) return;
+	if (!temporaryDissolve.registerMasterModules())
+		return;
 
 	// Copy our target species to the temporary structure, and create a simple Configuration from it
-	Species* temporarySpecies = temporaryDissolve.copySpecies(sp);
-	Configuration* temporaryCfg = temporaryDissolve.addConfiguration();
-	Procedure& generator = temporaryCfg->generator();
-	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0,1.0,1.0), Vec3<double>(90,90,90), true));
-	AddSpeciesProcedureNode* addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
+	Species *temporarySpecies = temporaryDissolve.copySpecies(sp);
+	Configuration *temporaryCfg = temporaryDissolve.addConfiguration();
+	Procedure &generator = temporaryCfg->generator();
+	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0, 1.0, 1.0), Vec3<double>(90, 90, 90), true));
+	AddSpeciesProcedureNode *addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
 	addSpeciesNode->setKeyword<bool>("Rotate", false);
 	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
-	if (!temporaryCfg->initialiseContent(temporaryDissolve.worldPool(), 15.0)) return;
+	if (!temporaryCfg->initialiseContent(temporaryDissolve.worldPool(), 15.0))
+		return;
 
 	// Create a Geometry Optimisation Module in a new processing layer, and set everything up
-	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
-	if (!temporaryDissolve.generatePairPotentials()) return;
+	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg))
+		return;
+	if (!temporaryDissolve.generatePairPotentials())
+		return;
 
 	// Run the calculation
-	if (!temporaryDissolve.prepare()) return;
+	if (!temporaryDissolve.prepare())
+		return;
 	temporaryDissolve.iterate(1);
 
 	// Copy the optimised coordinates from the temporary Configuration to the target Species
 	ListIterator<SpeciesAtom> atomIterator(sp->atoms());
 	int index = 0;
-	while (SpeciesAtom* i = atomIterator.iterate()) sp->setAtomCoordinates(i, temporaryCfg->atom(index++)->r());
+	while (SpeciesAtom *i = atomIterator.iterate())
+		sp->setAtomCoordinates(i, temporaryCfg->atom(index++)->r());
 
 	// Centre the Species back at the origin
 	sp->centreAtOrigin();

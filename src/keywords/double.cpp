@@ -46,37 +46,23 @@ DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue) : K
 }
 
 // Destructor
-DoubleKeyword::~DoubleKeyword()
-{
-}
+DoubleKeyword::~DoubleKeyword() {}
 
 /*
  * Data Validation
  */
 
 // Return whether a minimum validation limit has been set
-bool DoubleKeyword::hasValidationMin()
-{
-	return minimumLimit_;
-}
+bool DoubleKeyword::hasValidationMin() { return minimumLimit_; }
 
 // Return validation minimum limit
-double DoubleKeyword::validationMin()
-{
-	return min_;
-}
+double DoubleKeyword::validationMin() { return min_; }
 
 // Return whether a maximum validation limit has been set
-bool DoubleKeyword::hasValidationMax()
-{
-	return maximumLimit_;
-}
+bool DoubleKeyword::hasValidationMax() { return maximumLimit_; }
 
 // Return validation maximum limit
-double DoubleKeyword::validationMax()
-{
-	return max_;
-}
+double DoubleKeyword::validationMax() { return max_; }
 
 // Validate supplied value
 bool DoubleKeyword::isValid(double value)
@@ -84,13 +70,15 @@ bool DoubleKeyword::isValid(double value)
 	// Check minimum limit
 	if (minimumLimit_)
 	{
-		if (value < min_) return false;
+		if (value < min_)
+			return false;
 	}
 
 	// Check maximum limit
 	if (maximumLimit_)
 	{
-		if (value > max_) return false;
+		if (value > max_)
+			return false;
 	}
 
 	return true;
@@ -101,27 +89,24 @@ bool DoubleKeyword::isValid(double value)
  */
 
 // Return minimum number of arguments accepted
-int DoubleKeyword::minArguments() const
-{
-	return 1;
-}
+int DoubleKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int DoubleKeyword::maxArguments() const
-{
-	return 1;
-}
+int DoubleKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	if (parser.hasArg(startArg))
 	{
 		if (!setData(parser.argd(startArg)))
 		{
-			if (minimumLimit_ && maximumLimit_) Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_, min_, max_);
-			else if (minimumLimit_) Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_, min_);
-			else Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_, max_);
+			if (minimumLimit_ && maximumLimit_)
+				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_, min_, max_);
+			else if (minimumLimit_)
+				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_, min_);
+			else
+				Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_, max_);
 
 			return false;
 		}
@@ -132,35 +117,20 @@ bool DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreD
 }
 
 // Write keyword data to specified LineParser
-bool DoubleKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
-{
-	return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_);
-}
+bool DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_); }
 
 /*
  * Conversion
  */
 
 // Return value (as bool)
-bool DoubleKeyword::asBool()
-{
-	return data_;
-}
+bool DoubleKeyword::asBool() { return data_; }
 
 // Return value (as int)
-int DoubleKeyword::asInt()
-{
-	return data_;
-}
+int DoubleKeyword::asInt() { return data_; }
 
 // Return value (as double)
-double DoubleKeyword::asDouble()
-{
-	return data_;
-}
+double DoubleKeyword::asDouble() { return data_; }
 
 // Return value (as string)
-const char* DoubleKeyword::asString()
-{
-	return DissolveSys::ftoa(data_);
-}
+const char *DoubleKeyword::asString() { return DissolveSys::ftoa(data_); }

@@ -19,12 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/sq/sq.h"
 #include "modules/sq/gui/modulewidget.h"
+#include "modules/sq/sq.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* SQModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new SQModuleWidget(parent, this, dissolve);
-}
-
+ModuleWidget *SQModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new SQModuleWidget(parent, this, dissolve); }

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_WIDGET_SELECTFORCEFIELD_H
 #define DISSOLVE_WIDGET_SELECTFORCEFIELD_H
 
-#include "gui/ui_selectforcefieldwidget.h"
 #include "data/fflibrary.h"
+#include "gui/ui_selectforcefieldwidget.h"
 #include "templates/list.h"
 #include <QWidget>
 
@@ -36,38 +36,38 @@ class SelectForcefieldWidget : public QWidget
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	SelectForcefieldWidget(QWidget* parent, const List<Forcefield>& forcefields = ForcefieldLibrary::forcefields());
+	SelectForcefieldWidget(QWidget *parent, const List<Forcefield> &forcefields = ForcefieldLibrary::forcefields());
 	// Destructor
 	~SelectForcefieldWidget();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::SelectForcefieldWidget ui_;
 	// Available forcefields
-	const List<Forcefield>& forcefields_;
+	const List<Forcefield> &forcefields_;
 	// Whether the widget is refreshing
 	bool refreshing_;
 
-	private:
+      private:
 	// Update the list of Forcefields, optionally filtering them by name and description
-	void updateForcefieldsList(Forcefield* current = NULL, QString filter = QString());
+	void updateForcefieldsList(Forcefield *current = NULL, QString filter = QString());
 
-	private slots:
-	void on_FilterEdit_textChanged(const QString& text);
-	void on_ForcefieldsList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
-	void on_ForcefieldsList_itemDoubleClicked(QListWidgetItem* item);
+      private slots:
+	void on_FilterEdit_textChanged(const QString &text);
+	void on_ForcefieldsList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+	void on_ForcefieldsList_itemDoubleClicked(QListWidgetItem *item);
 
-	signals:
+      signals:
 	void forcefieldSelectionChanged(bool isValid);
 	void forcefieldDoubleClicked();
 
-	public:
+      public:
 	// Set the current forcefield
-	void setCurrentForcefield(Forcefield* currentFF);
+	void setCurrentForcefield(Forcefield *currentFF);
 	// Return the currently-selected Forcefield
-	Forcefield* currentForcefield() const;
+	Forcefield *currentForcefield() const;
 };
 
 #endif

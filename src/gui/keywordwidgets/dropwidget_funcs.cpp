@@ -23,16 +23,11 @@
 #include <stdio.h>
 
 // Constructor
-DropWidget::DropWidget(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHint | Qt::Popup)
-{
-}
+DropWidget::DropWidget(QWidget *parent) : QWidget(parent, Qt::FramelessWindowHint | Qt::Popup) {}
 
 /*
  * Reimplementations
  */
 
 // Hide event
-void DropWidget::hideEvent(QHideEvent *event)
-{
-	emit (hidden());
-}
+void DropWidget::hideEvent(QHideEvent *event) { emit(hidden()); }

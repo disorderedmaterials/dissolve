@@ -33,23 +33,23 @@ class AddForcefieldTermsDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	AddForcefieldTermsDialog(QWidget* parent, const Dissolve& mainDissolveInstance);
+	AddForcefieldTermsDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
 	// Destructor
 	~AddForcefieldTermsDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::AddForcefieldTermsDialog ui_;
 
-	public:
+      public:
 	// Reset, ready for adding a new Configuration
 	void reset();
 	// Set target Species that we are acquiring forcefield terms for
-	void setTargetSpecies(Species* sp);
+	void setTargetSpecies(Species *sp);
 	// Apply Forcefield terms to the targetted Species within the specified Dissolve object
-	bool applyForcefieldTerms(Dissolve& dissolve);
+	bool applyForcefieldTerms(Dissolve &dissolve);
 };
 
 #endif

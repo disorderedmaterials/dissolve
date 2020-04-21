@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "templates/variantpointer.h"
 #include "templates/array.h"
 #include "templates/dynamicarray.h"
 #include "templates/list.h"
-#include "templates/reflist.h"
 #include "templates/refdatalist.h"
+#include "templates/reflist.h"
+#include "templates/variantpointer.h"
 #include <QTableWidget>
 
 #ifndef DISSOLVE_TABLEWIDGETUPDATER_H
@@ -34,18 +34,18 @@
 template <class T, class I> class TableWidgetUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I* item, bool createItems);
+	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, bool createItems);
 
-	public:
+      public:
 	// Constructor (from const List<I>)
-	TableWidgetUpdater(QTableWidget* table, const List<I>& list, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
-		QTableWidgetItem* tableItem;
+		QTableWidgetItem *tableItem;
 
 		int rowCount = 0;
 
 		ListIterator<I> dataIterator(list);
-		while (I* dataItem = dataIterator.iterate())
+		while (I *dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -54,7 +54,7 @@ template <class T, class I> class TableWidgetUpdater
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
-				I* rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -62,14 +62,15 @@ template <class T, class I> class TableWidgetUpdater
 
 					break;
 				}
-				else table->removeRow(rowCount);
+				else
+					table->removeRow(rowCount);
 			}
 
 			// If the current row index is (now) out of range, add a new row to the table
 			if (rowCount == table->rowCount())
 			{
 				// Increase row count
-				table->setRowCount(rowCount+1);
+				table->setRowCount(rowCount + 1);
 
 				// Create new items
 				(functionParent->*updateRow)(rowCount, dataItem, true);
@@ -82,13 +83,13 @@ template <class T, class I> class TableWidgetUpdater
 		table->setRowCount(rowCount);
 	}
 	// Constructor (from const RefList<I>)
-	TableWidgetUpdater(QTableWidget* table, const RefList<I>& list, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetUpdater(QTableWidget *table, const RefList<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
-		QTableWidgetItem* tableItem;
+		QTableWidgetItem *tableItem;
 
 		int rowCount = 0;
 
-		for (I* item : list)
+		for (I *item : list)
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -97,7 +98,7 @@ template <class T, class I> class TableWidgetUpdater
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
-				I* rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
 				if (rowData == item)
 				{
 					// Update the current row and quit the loop
@@ -105,14 +106,15 @@ template <class T, class I> class TableWidgetUpdater
 
 					break;
 				}
-				else table->removeRow(rowCount);
+				else
+					table->removeRow(rowCount);
 			}
 
 			// If the current row index is (now) out of range, add a new row to the table
 			if (rowCount == table->rowCount())
 			{
 				// Increase row count
-				table->setRowCount(rowCount+1);
+				table->setRowCount(rowCount + 1);
 
 				// Create new items
 				(functionParent->*updateRow)(rowCount, item, true);
@@ -125,14 +127,14 @@ template <class T, class I> class TableWidgetUpdater
 		table->setRowCount(rowCount);
 	}
 	// Constructor (from const DynamicArray<I>)
-	TableWidgetUpdater(QTableWidget* table, DynamicArray<I>& array, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetUpdater(QTableWidget *table, DynamicArray<I> &array, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
-		QTableWidgetItem* tableItem;
+		QTableWidgetItem *tableItem;
 
 		int rowCount = 0;
 
 		DynamicArrayIterator<I> dataIterator(array);
-		while (I* dataItem = dataIterator.iterate())
+		while (I *dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -141,7 +143,7 @@ template <class T, class I> class TableWidgetUpdater
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
-				I* rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -149,14 +151,15 @@ template <class T, class I> class TableWidgetUpdater
 
 					break;
 				}
-				else table->removeRow(rowCount);
+				else
+					table->removeRow(rowCount);
 			}
 
 			// If the current row index is (now) out of range, add a new row to the table
 			if (rowCount == table->rowCount())
 			{
 				// Increase row count
-				table->setRowCount(rowCount+1);
+				table->setRowCount(rowCount + 1);
 
 				// Create new items
 				(functionParent->*updateRow)(rowCount, dataItem, true);
@@ -174,18 +177,18 @@ template <class T, class I> class TableWidgetUpdater
 template <class T, class I, class D> class TableWidgetRefDataListUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I* item, D data, bool createItems);
+	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, D data, bool createItems);
 
-	public:
+      public:
 	// Constructor
-	TableWidgetRefDataListUpdater(QTableWidget* table, const RefDataList<I,D>& list, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetRefDataListUpdater(QTableWidget *table, const RefDataList<I, D> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
-		QTableWidgetItem* tableItem;
+		QTableWidgetItem *tableItem;
 
 		int rowCount = 0;
 
-		RefDataListIterator<I,D> itemIterator(list);
-		while (I* item = itemIterator.iterate())
+		RefDataListIterator<I, D> itemIterator(list);
+		while (I *item = itemIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
 
@@ -194,7 +197,7 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
-				I* rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
+				I *rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
 				if (rowData == item)
 				{
 					// Update the current row and quit the loop
@@ -202,14 +205,15 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
 
 					break;
 				}
-				else table->removeRow(rowCount);
+				else
+					table->removeRow(rowCount);
 			}
 
 			// If the current row index is (now) out of range, add a new row to the table
 			if (rowCount == table->rowCount())
 			{
 				// Increase row count
-				table->setRowCount(rowCount+1);
+				table->setRowCount(rowCount + 1);
 
 				// Create new items
 				(functionParent->*updateRow)(rowCount, item, itemIterator.currentData(), true);

@@ -33,17 +33,11 @@ BraggModule::BraggModule() : Module()
 }
 
 // Destructor
-BraggModule::~BraggModule()
-{
-}
+BraggModule::~BraggModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* BraggModule::createInstance() const
-{
-	return new BraggModule;
-}
-
+Module *BraggModule::createInstance() const { return new BraggModule; }

@@ -19,24 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/configurationtab.h"
-#include "gui/gui.h"
-#include "gui/delegates/combolist.hui"
-#include "gui/delegates/exponentialspin.hui"
-#include "gui/getconfigurationnamedialog.h"
-#include "gui/helpers/combopopulator.h"
-#include "gui/helpers/tablewidgetupdater.h"
-#include "main/dissolve.h"
+#include "base/lineparser.h"
+#include "base/units.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/units.h"
+#include "gui/configurationtab.h"
+#include "gui/delegates/combolist.hui"
+#include "gui/delegates/exponentialspin.hui"
+#include "gui/getconfigurationnamedialog.h"
+#include "gui/gui.h"
+#include "gui/helpers/combopopulator.h"
+#include "gui/helpers/tablewidgetupdater.h"
+#include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Configuration *cfg)
+    : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -45,7 +46,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	configuration_ = cfg;
 
 	// Populate coordinates file format combo
-	for (int n=0; n < cfg->inputCoordinates().nFormats(); ++n) ui_.CoordinatesFileFormatCombo->addItem(cfg->inputCoordinates().formatKeyword(n));
+	for (int n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
+		ui_.CoordinatesFileFormatCombo->addItem(cfg->inputCoordinates().formatKeyword(n));
 
 	// Populate density units combo
 	ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
@@ -72,13 +74,10 @@ ConfigurationTab::~ConfigurationTab()
  */
 
 // Return tab type
-MainTab::TabType ConfigurationTab::type() const
-{
-	return MainTab::ConfigurationTabType;
-}
+MainTab::TabType ConfigurationTab::type() const { return MainTab::ConfigurationTabType; }
 
 // Raise suitable dialog for entering / checking new tab name
-QString ConfigurationTab::getNewTitle(bool& ok)
+QString ConfigurationTab::getNewTitle(bool &ok)
 {
 	// Get a new, valid name for the Configuration
 	GetConfigurationNameDialog nameDialog(this, dissolve_.coreData());
@@ -96,10 +95,7 @@ QString ConfigurationTab::getNewTitle(bool& ok)
 }
 
 // Return whether the title of the tab can be changed
-bool ConfigurationTab::canChangeTitle() const
-{
-	return true;
-}
+bool ConfigurationTab::canChangeTitle() const { return true; }
 
 // Return whether the tab can be closed (after any necessary user querying, etc.)
 bool ConfigurationTab::canClose() const
@@ -112,7 +108,8 @@ bool ConfigurationTab::canClose() const
 	queryBox.setDefaultButton(QMessageBox::No);
 	int ret = queryBox.exec();
 
-	if (ret != QMessageBox::Yes) return false;
+	if (ret != QMessageBox::Yes)
+		return false;
 
 	return true;
 }
@@ -122,10 +119,7 @@ bool ConfigurationTab::canClose() const
  */
 
 // Return displayed Configuration
-Configuration* ConfigurationTab::configuration() const
-{
-	return configuration_;
-}
+Configuration *ConfigurationTab::configuration() const { return configuration_; }
 
 /*
  * Update
@@ -140,8 +134,10 @@ void ConfigurationTab::updateDensityLabel()
 		return;
 	}
 
-	if (ui_.DensityUnitsCombo->currentIndex() == 0) ui_.DensityUnitsLabel->setText(QString::number(configuration_->atomicDensity()));
-	else ui_.DensityUnitsLabel->setText(QString::number(configuration_->chemicalDensity()));
+	if (ui_.DensityUnitsCombo->currentIndex() == 0)
+		ui_.DensityUnitsLabel->setText(QString::number(configuration_->atomicDensity()));
+	else
+		ui_.DensityUnitsLabel->setText(QString::number(configuration_->chemicalDensity()));
 }
 // Update controls in tab
 void ConfigurationTab::updateControls()
@@ -152,7 +148,7 @@ void ConfigurationTab::updateControls()
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
 	// Current Box
-	const Box* box = configuration_->box();
+	const Box *box = configuration_->box();
 	ui_.CurrentBoxTypeLabel->setText(Box::boxTypes().keyword(box->type()));
 	ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
 	ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
@@ -216,7 +212,8 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	configuration_->setTemperature(value);
 
@@ -224,26 +221,26 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 }
 
 // Current Box
-void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
-{
-	updateDensityLabel();
-}
+void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
 
 // Initial Coordinates
 void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 }
 
 void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 }
 
 // Size Factor Scaling
 void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	configuration_->setRequestedSizeFactor(value);
 }
@@ -253,13 +250,7 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
  */
 
 // Read widget state through specified LineParser
-bool ConfigurationTab::readState(LineParser& parser, const CoreData& coreData)
-{
-	return true;
-}
+bool ConfigurationTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
 
 // Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser& parser) const
-{
-	return true;
-}
+bool ConfigurationTab::writeState(LineParser &parser) const { return true; }

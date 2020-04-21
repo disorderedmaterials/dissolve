@@ -33,16 +33,11 @@ RefineModule::RefineModule() : Module(), interpolatedFitData_(fitData_)
 }
 
 // Destructor
-RefineModule::~RefineModule()
-{
-}
+RefineModule::~RefineModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* RefineModule::createInstance() const
-{
-	return new RefineModule;
-}
+Module *RefineModule::createInstance() const { return new RefineModule; }

@@ -19,24 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export_trajectory/exporttraj.h"
-#include "main/dissolve.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
-#include "base/sysfunc.h"
-#include "base/lineparser.h"
+#include "main/dissolve.h"
+#include "modules/export_trajectory/exporttraj.h"
 
 // Run main processing
-bool ExportTrajectoryModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-	if (!trajectoryFormat_.hasValidFileAndFormat()) Messenger::error("No valid file/format set for trajectory export.\n");
+	if (!trajectoryFormat_.hasValidFileAndFormat())
+		Messenger::error("No valid file/format set for trajectory export.\n");
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration target set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration target set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	auto* cfg = targetConfigurations_.firstItem();
+	auto *cfg = targetConfigurations_.firstItem();
 
 	// Set up process pool - must do this to ensure we are using all available processes
 	procPool.assignProcessesToGroups(cfg->processPool());
@@ -55,7 +57,8 @@ bool ExportTrajectoryModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		procPool.decideTrue();
 	}
-	else if (!procPool.decision()) return false;
+	else if (!procPool.decision())
+		return false;
 
 	return true;
 }

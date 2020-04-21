@@ -34,12 +34,12 @@ class ColourScalePoint;
 // Colour Scale Delta
 class ColourScaleDelta
 {
-	public:
+      public:
 	// Constructors
 	ColourScaleDelta();
-	ColourScaleDelta(const ColourScalePoint& start, const ColourScalePoint& end, bool useHSV);
+	ColourScaleDelta(const ColourScalePoint &start, const ColourScalePoint &end, bool useHSV);
 
-	private:
+      private:
 	// Value at which the delta starts
 	double start_;
 	// Range of the data from the start value
@@ -51,19 +51,19 @@ class ColourScaleDelta
 	// Whether to use HSV, rather than RGB, when generating colours
 	bool useHSV_;
 
-	public:
+      public:
 	// Check whether the delta 'contains' the supplied value
 	bool containsValue(double d) const;
 	// Create delta from ColourScalePoints
-	void set(const ColourScalePoint& start, const ColourScalePoint& end, bool useHSV);
+	void set(const ColourScalePoint &start, const ColourScalePoint &end, bool useHSV);
 	// Return colour of the delta's starting point
 	QColor startColour() const;
 	// Return colour of the delta's starting point as GLfloat[4]
-	void startColour(GLfloat* rgba) const;
+	void startColour(GLfloat *rgba) const;
 	// Get colour for value, assuming that v is within the range 0 -> value_
 	QColor colour(double v) const;
 	// Get colour for value as GLfloat[4], assuming that v is within the range 0 -> value_
-	void colour(double v, GLfloat* rgba) const;
+	void colour(double v, GLfloat *rgba) const;
 	// Return the starting value of the range
 	double start() const;
 	// Return the range of the delta

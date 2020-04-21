@@ -22,13 +22,13 @@
 #ifndef DISSOLVE_PROCEDURENODE_SELECT_H
 #define DISSOLVE_PROCEDURENODE_SELECT_H
 
-#include <memory>
-#include "procedure/nodes/node.h"
 #include "math/range.h"
+#include "procedure/nodes/node.h"
 #include "templates/array.h"
 #include "templates/list.h"
-#include "templates/reflist.h"
 #include "templates/orderedvector.h"
+#include "templates/reflist.h"
+#include <memory>
 
 // Forward Declarations
 class DynamicSiteProcedureNode;
@@ -42,25 +42,23 @@ class SpeciesSite;
 // Select Node
 class SelectProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructors
-	SelectProcedureNode(SpeciesSite* site = NULL, bool axesRequired = false);
+	SelectProcedureNode(SpeciesSite *site = NULL, bool axesRequired = false);
 	// Destructor
 	~SelectProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Selection Targets
 	 */
-	private:
+      private:
 	// Whether sites must have a defined orientation
 	bool axesRequired_;
 	// List of sites within Species to select
@@ -68,11 +66,10 @@ class SelectProcedureNode : public ProcedureNode
 	// List of DynamicSites to select, if any
 	RefList<DynamicSiteProcedureNode> dynamicSites_;
 
-
 	/*
 	 * Selection Control
 	 */
-	private:
+      private:
 	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
 	RefList<SelectProcedureNode> sameMoleculeExclusions_;
 	// List of Molecules currently excluded from selection
@@ -82,27 +79,26 @@ class SelectProcedureNode : public ProcedureNode
 	// List of Sites currently excluded from selection
 	RefList<const Site> excludedSites_;
 	// Molecule (from site) in which the site must exist (retrieved from keyword data)
-	SelectProcedureNode* sameMolecule_;
+	SelectProcedureNode *sameMolecule_;
 	// Site to use for distance check
-	SelectProcedureNode* distanceReferenceSite_;
+	SelectProcedureNode *distanceReferenceSite_;
 	// Range of distance to allow from distance reference site (if limiting)
 	Range inclusiveDistanceRange_;
 
-	public:
+      public:
 	// Return list of Molecules currently excluded from selection
-	const OrderedVector<std::shared_ptr<const Molecule>>& excludedMolecules() const;
+	const OrderedVector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
 	// List of Sites currently excluded from selection
-	const RefList<const Site>& excludedSites() const;
+	const RefList<const Site> &excludedSites() const;
 	// Return Molecule (from site) in which the site must exist
 	std::shared_ptr<const Molecule> sameMoleculeMolecule();
-
 
 	/*
 	 * Selected Sites
 	 */
-	private:
+      private:
 	// Array containing pointers to our selected sites
-	Array<const Site*> sites_;
+	Array<const Site *> sites_;
 	// Current Site index
 	int currentSiteIndex_;
 	// Number of selections made by the node
@@ -110,7 +106,7 @@ class SelectProcedureNode : public ProcedureNode
 	// Cumulative number of sites ever selected
 	int nCumulativeSites_;
 
-	public:
+      public:
 	// Return the number of available sites in the current stack, if any
 	int nSitesInStack() const;
 	// Return the average number of sites selected
@@ -118,35 +114,33 @@ class SelectProcedureNode : public ProcedureNode
 	// Return the cumulative number of sites ever selected
 	int nCumulativeSites() const;
 	// Return current site
-	const Site* currentSite() const;
-
+	const Site *currentSite() const;
 
 	/*
 	 * Branch
 	 */
-	private:
+      private:
 	// Branch for ForEach (if defined)
-	SequenceProcedureNode* forEachBranch_;
+	SequenceProcedureNode *forEachBranch_;
 
-	public:
+      public:
 	// Return whether this node has a branch
 	bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
-	SequenceProcedureNode* branch();
+	SequenceProcedureNode *branch();
 	// Add and return ForEach sequence
-	SequenceProcedureNode* addForEachBranch(ProcedureNode::NodeContext context);
-
+	SequenceProcedureNode *addForEachBranch(ProcedureNode::NodeContext context);
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Finalise any necessary data after execution
-	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

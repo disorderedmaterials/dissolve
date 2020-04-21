@@ -19,12 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
 #include "modules/test/gui/modulewidget.h"
+#include "modules/test/test.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* TestModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new TestModuleWidget(parent, this);
-}
-
+ModuleWidget *TestModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new TestModuleWidget(parent, this); }

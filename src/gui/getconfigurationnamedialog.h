@@ -34,31 +34,30 @@ class GetConfigurationNameDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	GetConfigurationNameDialog(QWidget* parent, const CoreData& coreData);
+	GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData);
 	// Destructor
 	~GetConfigurationNameDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::GetConfigurationNameDialog ui_;
 	// CoreData reference
-	const CoreData& coreData_;
+	const CoreData &coreData_;
 	// Current Configuration that we are renaming
-	const Configuration* configuration_;
+	const Configuration *configuration_;
 
-	public:
+      public:
 	// Run the dialog
-	bool get(const Configuration* currentConfiguration, const char* currentName);
+	bool get(const Configuration *currentConfiguration, const char *currentName);
 	// Return the name string
 	QString newName() const;
-
 
 	/*
 	 * Slots
 	 */
-	private slots:
+      private slots:
 	void on_NameEdit_textChanged(const QString text);
 	void on_CancelButton_clicked(bool checked);
 	void on_OKButton_clicked(bool checked);

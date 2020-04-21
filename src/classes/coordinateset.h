@@ -32,21 +32,20 @@
 // Coordinate Set
 class CoordinateSet : public ListItem<CoordinateSet>
 {
-	public:
+      public:
 	// Constructor
 	CoordinateSet();
 	// Destructor
 	~CoordinateSet();
 
-
 	/*
 	 * Coordinates
 	 */
-	protected:
+      protected:
 	// Coordinates
-	Array< Vec3<double> > coordinates_;
+	Array<Vec3<double>> coordinates_;
 
-	public:
+      public:
 	// Initialise to specified size
 	void initialise(int size);
 	// Return size
@@ -56,8 +55,7 @@ class CoordinateSet : public ListItem<CoordinateSet>
 	// Return specified coordinates
 	Vec3<double> r(int index) const;
 	// Return coordinates array
-	Array< Vec3<double> >& coordinates();
+	Array<Vec3<double>> &coordinates();
 };
 
 #endif
-

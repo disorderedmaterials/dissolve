@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer.hui"
 #include "base/messenger.h"
+#include "gui/viewer.hui"
 
 // Constructor
-BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderables_, fontInstance_)
+BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderables_, fontInstance_)
 {
 	// Character / Setup
 	contextWidth_ = 0;
@@ -58,11 +58,7 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	QSurfaceFormat surfaceFormat;
 	surfaceFormat.setSamples(4);
 	setFormat(surfaceFormat);
-	
 }
 
 // Destructor
-BaseViewer::~BaseViewer()
-{
-}
-
+BaseViewer::~BaseViewer() {}

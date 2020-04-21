@@ -32,38 +32,36 @@ class Module;
 // ModuleGroup
 class ModuleGroup : public ListItem<ModuleGroup>
 {
-	public:
+      public:
 	// Constructor
-	ModuleGroup(const char* name = NULL);
+	ModuleGroup(const char *name = NULL);
 	// Destructor
 	~ModuleGroup();
-
 
 	/*
 	 * Module Group
 	 */
-	private:
+      private:
 	// Name of the group
 	CharString name_;
 	// RefList of Modules in this group
 	RefList<Module> modules_;
 
-	public:
+      public:
 	// Return name of group
-	const char* name();
+	const char *name();
 	// Return whether name of group is as specified
-	bool isName(const char* queryName);
+	bool isName(const char *queryName);
 	// Associate Module to group
-	void add(Module* module);
+	void add(Module *module);
 	// Remove Module from group
-	void remove(Module* module);
+	void remove(Module *module);
 	// Return whether the specified Module is in the group
-	bool contains(Module* module) const;
+	bool contains(Module *module) const;
 	// Return number of Modules in the group
 	int nModules() const;
 	// Return reflist of Modules
-	const RefList<Module>& modules() const;
+	const RefList<Module> &modules() const;
 };
 
 #endif
-

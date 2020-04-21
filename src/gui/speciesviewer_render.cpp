@@ -22,14 +22,10 @@
 #include "gui/speciesviewer.hui"
 
 // Perform post-initialisation operations
-void SpeciesViewer::postInitialiseGL()
-{
-}
+void SpeciesViewer::postInitialiseGL() {}
 
 // Perform post-resize operations
-void SpeciesViewer::postResizeGL()
-{
-}
+void SpeciesViewer::postResizeGL() {}
 
 // Render 2D overlay content
 void SpeciesViewer::render2DOverlay()
@@ -41,8 +37,9 @@ void SpeciesViewer::render2DOverlay()
 
 	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interacting()) switch (interactionMode())
-	{
+	if (interacting())
+		switch (interactionMode())
+		{
 		case (SpeciesViewer::SelectAreaInteraction):
 			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
 			selectionBoxStyle.sendToGL();
@@ -55,5 +52,5 @@ void SpeciesViewer::render2DOverlay()
 			break;
 		default:
 			break;
-	}
+		}
 }

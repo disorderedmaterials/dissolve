@@ -20,54 +20,55 @@
 */
 
 #include "classes/data2dstore.h"
-#include "io/import/data2d.h"
 #include "base/lineparser.h"
+#include "io/import/data2d.h"
 
 // Constructor
-Data2DStore::Data2DStore()
-{
-}
+Data2DStore::Data2DStore() {}
 
 // Destructor
-Data2DStore::~Data2DStore()
-{
-}
+Data2DStore::~Data2DStore() {}
 
 /*
  * Data
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data2DStore::addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData)
+bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
 {
 	// Create new data
-	Data2D* data = data_.add();
+	Data2D *data = data_.add();
 	data->setName(dataName);
 
 	// Add reference to data
-	RefDataItem<Data2D,Data2DImportFileFormat>* ref = dataReferences_.append(data);
+	RefDataItem<Data2D, Data2DImportFileFormat> *ref = dataReferences_.append(data);
 
 	// Read the file / format
-	if (!ref->data().read(parser, startArg, endKeyword, coreData)) return false;
+	if (!ref->data().read(parser, startArg, endKeyword, coreData))
+		return false;
 
 	// Load the data
 	return ref->data().importData(*data, parser.processPool());
 }
 
 // Check to see if the named data is present in the store
-bool Data2DStore::containsData(const char* name) const
+bool Data2DStore::containsData(const char *name) const
 {
 	ListIterator<Data2D> dataIterator(data_);
-	while (Data2D* data = dataIterator.iterate()) if (DissolveSys::sameString(name, data->name())) return true;
+	while (Data2D *data = dataIterator.iterate())
+		if (DissolveSys::sameString(name, data->name()))
+			return true;
 
 	return false;
 }
 
 // Return named data
-const Data2D& Data2DStore::data(const char* name) const
+const Data2D &Data2DStore::data(const char *name) const
 {
 	ListIterator<Data2D> dataIterator(data_);
-	while (Data2D* xyData = dataIterator.iterate()) if (DissolveSys::sameString(name, xyData->name())) return (*xyData);
+	while (Data2D *xyData = dataIterator.iterate())
+		if (DissolveSys::sameString(name, xyData->name()))
+			return (*xyData);
 
 	static Data2D dummy;
 	Messenger::warn("Data named '%s' was requested from Data2DStore, but it does not exist. Returning an empty Data2D...\n", name);
@@ -75,13 +76,7 @@ const Data2D& Data2DStore::data(const char* name) const
 }
 
 // Return list of all data
-const List<Data2D>& Data2DStore::data() const
-{
-	return data_;
-}
+const List<Data2D> &Data2DStore::data() const { return data_; }
 
 // Return list of all data references
-const RefDataList<Data2D,Data2DImportFileFormat>& Data2DStore::dataReferences() const
-{
-	return dataReferences_;
-}
+const RefDataList<Data2D, Data2DImportFileFormat> &Data2DStore::dataReferences() const { return dataReferences_; }

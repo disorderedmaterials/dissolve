@@ -22,7 +22,7 @@
 #include "gui/keywordwidgets/dropdown.h"
 
 // Constructor
-KeywordDropDown::KeywordDropDown(QWidget* parent)
+KeywordDropDown::KeywordDropDown(QWidget *parent)
 {
 	ui_.setupUi(this);
 
@@ -35,10 +35,7 @@ KeywordDropDown::KeywordDropDown(QWidget* parent)
  */
 
 // Return the drop widget
-DropWidget* KeywordDropDown::dropWidget()
-{
-	return &dropWidget_;
-}
+DropWidget *KeywordDropDown::dropWidget() { return &dropWidget_; }
 
 /*
  * Signals / Slots
@@ -46,11 +43,13 @@ DropWidget* KeywordDropDown::dropWidget()
 
 void KeywordDropDown::on_CallDropWidgetButton_clicked(bool checked)
 {
-	if (!checked) dropWidget_.hide();
+	if (!checked)
+		dropWidget_.hide();
 	else
 	{
 		QPoint popupPos;
-		if (parentWidget()) popupPos = parentWidget()->mapToGlobal(pos()+QPoint(0, height()));
+		if (parentWidget())
+			popupPos = parentWidget()->mapToGlobal(pos() + QPoint(0, height()));
 		dropWidget_.show();
 		dropWidget_.move(popupPos);
 	}
@@ -70,13 +69,7 @@ void KeywordDropDown::dropWidgetHidden()
  */
 
 // Set summary text on call button
-void KeywordDropDown::setSummaryText(const char* text)
-{
-	ui_.CallDropWidgetButton->setText(text);
-}
+void KeywordDropDown::setSummaryText(const char *text) { ui_.CallDropWidgetButton->setText(text); }
 
 // Set icon on call button
-void KeywordDropDown::setSummaryIcon(QIcon icon)
-{
-	ui_.CallDropWidgetButton->setIcon(icon);
-}
+void KeywordDropDown::setSummaryIcon(QIcon icon) { ui_.CallDropWidgetButton->setIcon(icon); }

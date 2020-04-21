@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_WIZARDWIDGETPAGEINFO_H
 #define DISSOLVE_WIZARDWIDGETPAGEINFO_H
 
-#include "gui/wizardwidgethighlight.h"
 #include "base/charstring.h"
+#include "gui/wizardwidgethighlight.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 
@@ -33,18 +33,22 @@ class QWidget;
 // Wizard Page Info
 class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	WizardWidgetPageInfo();
 	~WizardWidgetPageInfo();
 	// Page Types
-	enum PageType { FinishHereFlag = -99, NormalPage = 0, ChoicePage = 1};
-
+	enum PageType
+	{
+		FinishHereFlag = -99,
+		NormalPage = 0,
+		ChoicePage = 1
+	};
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Page type
 	PageType pageType_;
 	// Identifying index for this page
@@ -56,13 +60,13 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	// Index of the 'next' page (for linear progressions)
 	int nextIndex_;
 
-	public:
+      public:
 	// Set page information
-	void set(int index, const char* title, int nextIndex = -1);
+	void set(int index, const char *title, int nextIndex = -1);
 	// Set page index
 	void setIndex(int index);
 	// Set page title
-	void setTitle(const char* title);
+	void setTitle(const char *title);
 	// Set next page index
 	void setNextPageIndex(int nextIndex);
 	// Set page type
@@ -72,29 +76,28 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	// Return identifying index for page
 	int index() const;
 	// Return title text for page
-	const char* title() const;
+	const char *title() const;
 	// Return index of the 'next' page
 	int nextIndex() const;
 	// Return whether this is an exit (finish) point
 	bool isFinishPoint() const;
 
-
 	/*
 	 * Widget Interaction
 	 */
-	private:
+      private:
 	// Associated widget in QStackedWidget
-	QWidget* stackedWidgetPage_;
+	QWidget *stackedWidgetPage_;
 	// Highlighted widgets
 	List<WizardWidgetHighlight> widgetHighlights_;
 
-	public:
+      public:
 	// Set Associated widget in QStackedWidget
-	void setStackedWidgetPage(QWidget* widget);
+	void setStackedWidgetPage(QWidget *widget);
 	// Return associated widget in QStackedWidget
-	QWidget* stackedWidgetPage() const;
+	QWidget *stackedWidgetPage() const;
 	// Add new widget highlight
-	WizardWidgetHighlight* addWidgetHighlight();
+	WizardWidgetHighlight *addWidgetHighlight();
 	// Highlight all defined widgets
 	void highlightWidgets();
 	// Un-highlight all defined widgets

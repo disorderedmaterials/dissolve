@@ -23,28 +23,18 @@
 #include "base/sysfunc.h"
 
 // Constructors
-TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFileFormat::TrajectoryImportFormat format) : FileAndFormat(format)
-{
-	setUpKeywords();
-}
-TrajectoryImportFileFormat::TrajectoryImportFileFormat(const char* filename, TrajectoryImportFileFormat::TrajectoryImportFormat format) : FileAndFormat(filename, format)
-{
-	setUpKeywords();
-}
+TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFileFormat::TrajectoryImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
+TrajectoryImportFileFormat::TrajectoryImportFileFormat(const char *filename, TrajectoryImportFileFormat::TrajectoryImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
 // Destructor
-TrajectoryImportFileFormat::~TrajectoryImportFileFormat()
-{
-}
+TrajectoryImportFileFormat::~TrajectoryImportFileFormat() {}
 
 /*
  * Keyword Options
  */
 
 // Set up keywords for the format
-void TrajectoryImportFileFormat::setUpKeywords()
-{
-}
+void TrajectoryImportFileFormat::setUpKeywords() {}
 
 /*
  * Format Access
@@ -53,8 +43,7 @@ void TrajectoryImportFileFormat::setUpKeywords()
 // Return enum options for TrajectoryImportFormat
 EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFormats()
 {
-	static EnumOptionsList TrajectoryImportFormats = EnumOptionsList() <<
-		EnumOption(TrajectoryImportFileFormat::XYZTrajectory, 	"xyz",		"XYZ Trajectory");
+	static EnumOptionsList TrajectoryImportFormats = EnumOptionsList() << EnumOption(TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory");
 
 	static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> options("TrajectoryImportFileFormat", TrajectoryImportFormats);
 
@@ -62,25 +51,13 @@ EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImport
 }
 
 // Return number of available formats
-int TrajectoryImportFileFormat::nFormats() const
-{
-	return TrajectoryImportFileFormat::nTrajectoryImportFormats;
-}
+int TrajectoryImportFileFormat::nFormats() const { return TrajectoryImportFileFormat::nTrajectoryImportFormats; }
 
 // Return format keyword for supplied index
-const char* TrajectoryImportFileFormat::formatKeyword(int id) const
-{
-	return trajectoryImportFormats().keywordByIndex(id);
-}
+const char *TrajectoryImportFileFormat::formatKeyword(int id) const { return trajectoryImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char* TrajectoryImportFileFormat::formatDescription(int id) const
-{
-	return trajectoryImportFormats().descriptionByIndex(id);
-}
+const char *TrajectoryImportFileFormat::formatDescription(int id) const { return trajectoryImportFormats().descriptionByIndex(id); }
 
 // Return current format as TrajectoryImportFormat
-TrajectoryImportFileFormat::TrajectoryImportFormat TrajectoryImportFileFormat::trajectoryFormat() const
-{
-	return (TrajectoryImportFileFormat::TrajectoryImportFormat) format_;
-}
+TrajectoryImportFileFormat::TrajectoryImportFormat TrajectoryImportFileFormat::trajectoryFormat() const { return (TrajectoryImportFileFormat::TrajectoryImportFormat)format_; }

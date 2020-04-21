@@ -30,25 +30,22 @@
 
 class MouseWheelWidgetAdjustmentGuard : public QObject
 {
-	public:
+      public:
 	// Constructor
-	explicit MouseWheelWidgetAdjustmentGuard(QWidget* widget) : QObject(widget)
-	{
-		widget->setFocusPolicy(Qt::StrongFocus);
-	}
+	explicit MouseWheelWidgetAdjustmentGuard(QWidget *widget) : QObject(widget) { widget->setFocusPolicy(Qt::StrongFocus); }
 
-	protected:
+      protected:
 	// Custom event filter
-	bool eventFilter(QObject* o, QEvent* e) override
+	bool eventFilter(QObject *o, QEvent *e) override
 	{
 		/*
 		 * Ignore the event *if*:
-		 * 
+		 *
 		 * 1) The event came from a mouse wheel
 		 * 2) The widget is valid (obvs)
 		 * 3) The widget *does not* have focus
 		 */
-		const QWidget* widget = static_cast<QWidget*>(o);
+		const QWidget *widget = static_cast<QWidget *>(o);
 		if (e->type() == QEvent::Wheel && widget && !widget->hasFocus())
 		{
 			e->ignore();

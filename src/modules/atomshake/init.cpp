@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/atomshake/atomshake.h"
 #include "keywords/types.h"
+#include "modules/atomshake/atomshake.h"
 
 // Perform any necessary initialisation for the Module
 void AtomShakeModule::initialise()

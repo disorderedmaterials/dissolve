@@ -31,16 +31,15 @@ class Primitive;
 // Primitive Info
 class PrimitiveInfo
 {
-	public:
+      public:
 	// Constructor / Desctructor
 	PrimitiveInfo();
 	virtual ~PrimitiveInfo();
 
-	
 	/*
 	 * GL
 	 */
-	public:
+      public:
 	// Expose contained info to GL
 	virtual void sendToGL(double pixelScaling) = 0;
 };
@@ -52,18 +51,18 @@ class PrimitiveInfo
 // Primitive Only
 class UncolouredPrimitiveInfo : public PrimitiveInfo
 {
-	public:
+      public:
 	// Constructor / Destructor
-	UncolouredPrimitiveInfo(Primitive* prim = NULL, Matrix4 transform = Matrix4());
+	UncolouredPrimitiveInfo(Primitive *prim = NULL, Matrix4 transform = Matrix4());
 	~UncolouredPrimitiveInfo();
 
-	private:
+      private:
 	// Target primitive
-	Primitive* primitive_;
+	Primitive *primitive_;
 	// Transformation to apply before rendering Primitive
 	Matrix4 transform_;
 
-	public:
+      public:
 	// Expose contained info to GL
 	void sendToGL(double pixelScaling);
 };
@@ -71,20 +70,20 @@ class UncolouredPrimitiveInfo : public PrimitiveInfo
 // Primitive and Colour
 class ColouredPrimitiveInfo : public PrimitiveInfo
 {
-	public:
+      public:
 	// Constructor / Destructor
-	ColouredPrimitiveInfo(Primitive* prim = NULL, Matrix4 transform = Matrix4(), GLfloat r = 0.0, GLfloat g = 0.0, GLfloat b = 0.0, GLfloat a = 0.0);
+	ColouredPrimitiveInfo(Primitive *prim = NULL, Matrix4 transform = Matrix4(), GLfloat r = 0.0, GLfloat g = 0.0, GLfloat b = 0.0, GLfloat a = 0.0);
 	~ColouredPrimitiveInfo();
 
-	private:
+      private:
 	// Target primitive
-	Primitive* primitive_;
+	Primitive *primitive_;
 	// Transformation to apply before rendering Primitive
 	Matrix4 transform_;
 	// Colour of Primitive
 	GLfloat colour_[4];
 
-	public:
+      public:
 	// Expose contained info to GL
 	void sendToGL(double pixelScaling);
 };
@@ -92,18 +91,18 @@ class ColouredPrimitiveInfo : public PrimitiveInfo
 // Style Information
 class StylePrimitiveInfo : public PrimitiveInfo
 {
-	public:
+      public:
 	// Constructor / Destructor
 	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL);
 	~StylePrimitiveInfo();
 
-	private:
+      private:
 	// Whether lighting is enabled
 	bool lighting_;
 	// Polygon fill mode
 	GLenum fillMode_;
 
-	public:
+      public:
 	// Expose contained info to GL
 	void sendToGL(double pixelScaling);
 };
@@ -111,16 +110,16 @@ class StylePrimitiveInfo : public PrimitiveInfo
 // Line Style Information
 class LineStylePrimitiveInfo : public PrimitiveInfo
 {
-	public:
+      public:
 	// Constructor / Destructor
 	LineStylePrimitiveInfo(LineStyle style = LineStyle());
 	~LineStylePrimitiveInfo();
 
-	private:
+      private:
 	// Line styling to apply
 	LineStyle lineStyle_;
 
-	public:
+      public:
 	// Expose contained info to GL
 	void sendToGL(double pixelScaling);
 };

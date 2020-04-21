@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_PLOTTABLEDATA_H
 #define DISSOLVE_PLOTTABLEDATA_H
 
-#include "math/sampleddouble.h"
 #include "base/charstring.h"
+#include "math/sampleddouble.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -32,59 +32,57 @@ template <class T> class Array3D;
 // Plottable
 class PlottableData
 {
-	public:
+      public:
 	// Plottable Types
-	enum PlottableDataType {
-		OneAxisPlottable, 		/* Contains data points plotted against one axis (x) */
-		TwoAxisPlottable,		/* Contains data points plotted against two axes (x and y) */
-		ThreeAxisPlottable		/* Contains data points plotted againas three axes (x, y, and z) */
+	enum PlottableDataType
+	{
+		OneAxisPlottable,  /* Contains data points plotted against one axis (x) */
+		TwoAxisPlottable,  /* Contains data points plotted against two axes (x and y) */
+		ThreeAxisPlottable /* Contains data points plotted againas three axes (x, y, and z) */
 	};
 	// Constructor
 	PlottableData(PlottableDataType type);
 
-	
 	/*
 	 * Basic Information
 	 */
-	private:
+      private:
 	// Type of plottable
 	PlottableDataType type_;
 
-	protected:
+      protected:
 	// Name of plottable
 	CharString name_;
 
-	public:
+      public:
 	// Set name of plottable
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return name of plottable
-	const char* name() const;
-
+	const char *name() const;
 
 	/*
 	 * Axis Information
 	 */
-	public:
+      public:
 	// Return x axis Array
-	virtual const Array<double>& constXAxis() const = 0;
+	virtual const Array<double> &constXAxis() const = 0;
 	// Return y axis Array
-	virtual const Array<double>& constYAxis() const;
+	virtual const Array<double> &constYAxis() const;
 	// Return z axis Array
-	virtual const Array<double>& constZAxis() const;
-
+	virtual const Array<double> &constZAxis() const;
 
 	/*
 	 * Values / Errors
 	 */
-	public:
+      public:
 	// Return data version
 	virtual int version() const = 0;
 	// Return values Array
-	virtual const Array<double>& constValues() const;
+	virtual const Array<double> &constValues() const;
 	// Return values Array
-	virtual const Array2D<double>& constValues2D() const;
+	virtual const Array2D<double> &constValues2D() const;
 	// Return three-dimensional values Array
-	virtual const Array3D<double>& constValues3D() const;
+	virtual const Array3D<double> &constValues3D() const;
 	// Return number of values present in the whole dataset
 	virtual int nValues() const = 0;
 	// Return minimum value over all data points
@@ -94,11 +92,11 @@ class PlottableData
 	// Return whether the values have associated errors
 	virtual bool valuesHaveErrors() const;
 	// Return errors Array
-	virtual const Array<double>& constErrors() const;
+	virtual const Array<double> &constErrors() const;
 	// Return errors Array
-	virtual const Array2D<double>& constErrors2D() const;
+	virtual const Array2D<double> &constErrors2D() const;
 	// Return three-dimensional errors Array
-	virtual const Array3D<double>& constErrors3D() const;
+	virtual const Array3D<double> &constErrors3D() const;
 };
 
 #endif

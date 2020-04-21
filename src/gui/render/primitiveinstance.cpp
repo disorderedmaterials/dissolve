@@ -37,31 +37,19 @@ PrimitiveInstance::PrimitiveInstance() : ListItem<PrimitiveInstance>()
 }
 
 // Return global instance type to use
-PrimitiveInstance::InstanceType PrimitiveInstance::globalInstanceType()
-{
-	return globalInstanceType_;
-}
+PrimitiveInstance::InstanceType PrimitiveInstance::globalInstanceType() { return globalInstanceType_; }
 
 // Set global instance type to use
-void PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::InstanceType instanceType)
-{
-	globalInstanceType_ = instanceType;
-}
+void PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::InstanceType instanceType) { globalInstanceType_ = instanceType; }
 
 // Return context to which primitive instance is associated
-const QOpenGLContext* PrimitiveInstance::context()
-{
-	return context_;
-}
+const QOpenGLContext *PrimitiveInstance::context() { return context_; }
 
 // Return type of instance
-PrimitiveInstance::InstanceType PrimitiveInstance::type() const
-{
-	return type_;
-}
+PrimitiveInstance::InstanceType PrimitiveInstance::type() const { return type_; }
 
 // Set display list data
-void PrimitiveInstance::setDisplayList(const QOpenGLContext* context, GLuint listObject)
+void PrimitiveInstance::setDisplayList(const QOpenGLContext *context, GLuint listObject)
 {
 	context_ = context;
 	type_ = PrimitiveInstance::ListInstance;
@@ -69,7 +57,7 @@ void PrimitiveInstance::setDisplayList(const QOpenGLContext* context, GLuint lis
 }
 
 // Set vbo object data
-void PrimitiveInstance::setVBO(const QOpenGLContext* context, GLuint vertexObject, GLuint indexObject)
+void PrimitiveInstance::setVBO(const QOpenGLContext *context, GLuint vertexObject, GLuint indexObject)
 {
 	context_ = context;
 	type_ = PrimitiveInstance::VBOInstance;
@@ -78,19 +66,10 @@ void PrimitiveInstance::setVBO(const QOpenGLContext* context, GLuint vertexObjec
 }
 
 // Return display list object for instance
-GLuint PrimitiveInstance::listObject() const
-{
-	return listObject_;
-}
+GLuint PrimitiveInstance::listObject() const { return listObject_; }
 
 // Return VBO ID of vertex array for instance
-GLuint PrimitiveInstance::vboVertexObject() const
-{
-	return vboVertexObject_;
-}
+GLuint PrimitiveInstance::vboVertexObject() const { return vboVertexObject_; }
 
 // Return VBO ID of index array for instance
-GLuint PrimitiveInstance::vboIndexObject() const
-{
-	return vboIndexObject_;
-}
+GLuint PrimitiveInstance::vboIndexObject() const { return vboIndexObject_; }

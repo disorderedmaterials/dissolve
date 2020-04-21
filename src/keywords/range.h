@@ -32,38 +32,35 @@
 // Keyword with Double Triplet Data
 class RangeKeyword : public KeywordData<Range>
 {
-	public:
+      public:
 	// Constructors
 	RangeKeyword(Range value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	// Destructor
 	~RangeKeyword();
 
-
 	/*
 	 * Label Type
 	 */
-	private:
+      private:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType_;
 
-	public:
+      public:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType() const;
 
-	
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif
-

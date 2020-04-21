@@ -20,16 +20,17 @@
 */
 
 #include "procedure/nodes/calculatevector.h"
-#include "procedure/nodes/select.h"
-#include "keywords/bool.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "keywords/bool.h"
+#include "procedure/nodes/select.h"
 
 // Constructor
-CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode* site0, SelectProcedureNode* site1, bool rotateIntoFrame) : CalculateProcedureNodeBase(ProcedureNode::CalculateVectorNode, site0, site1)
+CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1, bool rotateIntoFrame)
+    : CalculateProcedureNodeBase(ProcedureNode::CalculateVectorNode, site0, site1)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
@@ -40,35 +41,28 @@ CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode* 
 }
 
 // Destructor
-CalculateVectorProcedureNode::~CalculateVectorProcedureNode()
-{
-}
+CalculateVectorProcedureNode::~CalculateVectorProcedureNode() {}
 
 /*
  * Observable Target
  */
 
 // Return number of sites required to calculate observable
-int CalculateVectorProcedureNode::nSitesRequired() const
-{
-	return 2;
-}
+int CalculateVectorProcedureNode::nSitesRequired() const { return 2; }
 
 // Return dimensionality of calculated observable
-int CalculateVectorProcedureNode::dimensionality() const
-{
-	return 3;
-}
+int CalculateVectorProcedureNode::dimensionality() const { return 3; }
 
-/* 
+/*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateVectorProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool CalculateVectorProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Call the base class function
-	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList)) return false;
+	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
+		return false;
 
 	// Get orientation flag
 	rotateIntoFrame_ = keywords_.asBool("RotateIntoFrame");
@@ -77,10 +71,10 @@ bool CalculateVectorProcedureNode::prepare(Configuration* cfg, const char* prefi
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
-	for (int n=0; n<nSitesRequired(); ++n)
+	for (int n = 0; n < nSitesRequired(); ++n)
 	{
 		if (sites_[n]->currentSite() == NULL)
 		{
@@ -93,7 +87,8 @@ ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(Process
 	value_ = cfg->box()->minimumVector(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
 
 	// Rotate the vector into the local frame defined on the first site?
-	if (rotateIntoFrame_) value_ = sites_[0]->currentSite()->axes() * value_;
+	if (rotateIntoFrame_)
+		value_ = sites_[0]->currentSite()->axes() * value_;
 
 	return ProcedureNode::Success;
 }

@@ -22,12 +22,12 @@
 #ifndef DISSOLVE_MODULE_REFINE_H
 #define DISSOLVE_MODULE_REFINE_H
 
-#include "module/module.h"
-#include "module/groups.h"
-#include "math/broadeningfunction.h"
-#include "math/windowfunction.h"
 #include "classes/scatteringmatrix.h"
+#include "math/broadeningfunction.h"
 #include "math/interpolator.h"
+#include "math/windowfunction.h"
+#include "module/groups.h"
+#include "module/module.h"
 
 // Forward Declarations
 class AtomType;
@@ -40,46 +40,43 @@ class RefineModule : public Module
 	 * Performs adjustment of interatomic potentials, based on differences between calculated and reference datasets.
 	 */
 
-	public:
+      public:
 	// Constructor
 	RefineModule();
 	// Destructor
 	~RefineModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	public:
+      public:
 	// Potential Inversion Method Enum
 	enum PotentialInversionMethod
 	{
-		DirectFourierPotentialInversion,	/* Invert delta S(Q) by direct FT, and treat as addition to potential */
-		DirectGaussianPotentialInversion,	/* Invert delta S(Q) by approximating with Gaussians, and treat as addition to potential */
-		PercusYevickPotentialInversion,		/* Use Percus-Yevick closure to generate potential from delta S(Q) */
-		HypernettedChainPotentialInversion,	/* Use the hypernetted chain closure to generate potential from delta S(Q) */
+		DirectFourierPotentialInversion,    /* Invert delta S(Q) by direct FT, and treat as addition to potential */
+		DirectGaussianPotentialInversion,   /* Invert delta S(Q) by approximating with Gaussians, and treat as addition to potential */
+		PercusYevickPotentialInversion,     /* Use Percus-Yevick closure to generate potential from delta S(Q) */
+		HypernettedChainPotentialInversion, /* Use the hypernetted chain closure to generate potential from delta S(Q) */
 		nPotentialInversionMethods
 	};
 	// Return enum options for PotentialInversionMethod
@@ -87,29 +84,28 @@ class RefineModule : public Module
 	// Matrix Augmentation Style
 	enum MatrixAugmentationStyle
 	{
-		NoAugmentation,				/* Do not supplement the scattering matrix with any additional data */
-		PartialsAugmentation,			/* Augment scattering matrix with individual partial S(Q), as EPSR does */
+		NoAugmentation,       /* Do not supplement the scattering matrix with any additional data */
+		PartialsAugmentation, /* Augment scattering matrix with individual partial S(Q), as EPSR does */
 		nMatrixAugmentationStyles
 	};
 	// Return enum options for MatrixAugmentationStyle
 	static EnumOptions<RefineModule::MatrixAugmentationStyle> matrixAugmentationStyles();
 
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-	private:
+      private:
 	// Target Modules, divided into groups
 	ModuleGroups groupedTargets_;
 	// Full scattering matrix containing reference dat
@@ -123,34 +119,33 @@ class RefineModule : public Module
 	// Starting position and maximum delta to allow on the x-intercept while fitting
 	double xCentreStart_, xCentreDeltaLimit_;
 
-	private:
+      private:
 	// Calculate c(r) from supplied S(Q)
-	Data1D calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
+	Data1D calculateCR(const Data1D &sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(),
+			   BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
-	bool modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond);
+	bool modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, AtomType *typeI, AtomType *typeJ, Data1D &deltaBond);
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 	// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
-	double costFunction2Exp(const Array<double>& alpha);
+	double costFunction2Exp(const Array<double> &alpha);
 	// Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
-	double costFunction3Exp(const Array<double>& alpha);
+	double costFunction3Exp(const Array<double> &alpha);
 	// Sum fitting equation with the specified parameters into the specified Data1D
-	void sumFitEquation(Data1D& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
+	void sumFitEquation(Data1D &target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 
-	public:
+      public:
 	// Return list of target Modules / data for fitting process
-	const RefDataList<Module,ModuleGroup*>& allTargets() const;
+	const RefDataList<Module, ModuleGroup *> &allTargets() const;
 	// Return grouped target Modules
-	const ModuleGroups& groupedTargets() const;
-
+	const ModuleGroups &groupedTargets() const;
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

@@ -20,40 +20,30 @@
 */
 
 #include "classes/atomtypelist.h"
+#include "base/lineparser.h"
+#include "base/processpool.h"
+#include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "templates/broadcastlist.h"
 #include <string.h>
 
 // Constructor
-AtomTypeList::AtomTypeList()
-{
-}
+AtomTypeList::AtomTypeList() {}
 
 // Destructor
-AtomTypeList::~AtomTypeList()
-{
-}
+AtomTypeList::~AtomTypeList() {}
 
 // Copy Constructor
-AtomTypeList::AtomTypeList(const AtomTypeList& source)
-{
-	(*this) = source;
-}
+AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 
 // Assignment Operator
-void AtomTypeList::operator=(const AtomTypeList& source)
-{
-	types_ = source.types_;
-}
+void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types_; }
 
 // Array access operator
-AtomTypeData* AtomTypeList::operator[](int n)
+AtomTypeData *AtomTypeList::operator[](int n)
 {
 #ifdef CHECKS
 	if ((n < 0) || (n >= types_.nItems()))
@@ -70,29 +60,29 @@ AtomTypeData* AtomTypeList::operator[](int n)
  */
 
 // Clear all data
-void AtomTypeList::clear()
-{
-	types_.clear();
-}
+void AtomTypeList::clear() { types_.clear(); }
 
 // Zero populations of all types in the list
 void AtomTypeList::zero()
 {
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) atd->zeroPopulations();
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		atd->zeroPopulations();
 }
 
 // Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData* AtomTypeList::add(AtomType* atomType, double population)
+AtomTypeData *AtomTypeList::add(AtomType *atomType, double population)
 {
 	// Search the list for the AtomType provided.
-	AtomTypeData* atd = NULL;
-	for (atd = types_.first(); atd != NULL; atd = atd->next()) if (atd->atomType() == atomType) break;
-	
+	AtomTypeData *atd = NULL;
+	for (atd = types_.first(); atd != NULL; atd = atd->next())
+		if (atd->atomType() == atomType)
+			break;
+
 	// Create new entry if one wasn't found
 	if (atd == NULL)
 	{
 		atd = types_.add();
-		atd->initialise(types_.nItems()-1, atomType, 0);
+		atd->initialise(types_.nItems() - 1, atomType, 0);
 	}
 
 	// Increase general (non-isotopic) population
@@ -102,37 +92,40 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, double population)
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
-void AtomTypeList::add(const AtomTypeList& source)
+void AtomTypeList::add(const AtomTypeList &source)
 {
 	// Loop over AtomTypes in the source list
-	for (AtomTypeData* newType = source.first(); newType != NULL; newType = newType->next())
+	for (AtomTypeData *newType = source.first(); newType != NULL; newType = newType->next())
 	{
-		AtomTypeData* atd = add(newType->atomType());
+		AtomTypeData *atd = add(newType->atomType());
 
 		// Now add Isotope data
-		for (IsotopeData* topeData = newType->isotopeData(); topeData != NULL; topeData = topeData->next()) atd->add(topeData->isotope(), topeData->population());
+		for (IsotopeData *topeData = newType->isotopeData(); topeData != NULL; topeData = topeData->next())
+			atd->add(topeData->isotope(), topeData->population());
 	}
 }
 
 // Remove specified AtomType from the list
-void AtomTypeList::remove(AtomType* atomType)
+void AtomTypeList::remove(AtomType *atomType)
 {
-	AtomTypeData* atd = types_.first(), *atdNext;
+	AtomTypeData *atd = types_.first(), *atdNext;
 	while (atd)
 	{
 		atdNext = atd->next();
-		if (atd->atomType() == atomType) types_.remove(atd);
+		if (atd->atomType() == atomType)
+			types_.remove(atd);
 		atd = atdNext;
 	}
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, double popAdd)
+void AtomTypeList::addIsotope(AtomType *atomType, Isotope *tope, double popAdd)
 {
-	AtomTypeData* atd = add(atomType, 0);
-	
+	AtomTypeData *atd = add(atomType, 0);
+
 	// Add / increase isotope population
-	if (tope != NULL) atd->add(tope, popAdd);
+	if (tope != NULL)
+		atd->add(tope, popAdd);
 }
 
 // Finalise list, calculating fractional populations etc.
@@ -140,21 +133,23 @@ void AtomTypeList::finalise()
 {
 	// Finalise AtomTypeData
 	double total = totalPopulation();
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) atd->finalise(total);
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		atd->finalise(total);
 }
 
 // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-void AtomTypeList::finalise(const AtomTypeList& exchangeable)
+void AtomTypeList::finalise(const AtomTypeList &exchangeable)
 {
 	// Perform basic tasks
 	finalise();
 
 	// Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
 	double totalFraction = 0.0, boundCoherent = 0.0;
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next())
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
 		// If this type is not exchangable, move on
-		if (!exchangeable.contains(atd->atomType())) continue;
+		if (!exchangeable.contains(atd->atomType()))
+			continue;
 
 		// Sum total atomic fraction and weighted bound coherent scattering length
 		totalFraction += atd->fraction();
@@ -163,10 +158,11 @@ void AtomTypeList::finalise(const AtomTypeList& exchangeable)
 	boundCoherent /= totalFraction;
 
 	// Now go back through the list and set the new scattering length for exchangeable components
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next())
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
 		// If this type is not exchangable, move on
-		if (!exchangeable.contains(atd->atomType())) continue;
+		if (!exchangeable.contains(atd->atomType()))
+			continue;
 
 		// Set the bound coherent scattering length of this component to the average of all exchangable components
 		atd->setBoundCoherent(boundCoherent);
@@ -178,24 +174,29 @@ void AtomTypeList::finalise(const AtomTypeList& exchangeable)
 void AtomTypeList::naturalise()
 {
 	// Loop over AtomTypes in the source list
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) atd->naturalise();
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		atd->naturalise();
 }
 
 // Check for presence of AtomType in list
-bool AtomTypeList::contains(AtomType* atomType) const
+bool AtomTypeList::contains(AtomType *atomType) const
 {
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) if (atd->atomType() == atomType) return true;
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		if (atd->atomType() == atomType)
+			return true;
 
 	return false;
 }
 
 // Check for presence of AtomType/Isotope pair in list
-bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
+bool AtomTypeList::contains(AtomType *atomType, Isotope *tope)
 {
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next())
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
-		if (atd->atomType() != atomType) continue;
-		if (!atd->hasIsotope(tope)) continue;
+		if (atd->atomType() != atomType)
+			continue;
+		if (!atd->hasIsotope(tope))
+			continue;
 		return true;
 	}
 
@@ -203,30 +204,22 @@ bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
 }
 
 // Return number of AtomType/Isotopes in list
-int AtomTypeList::nItems() const
-{
-	return types_.nItems();
-}
+int AtomTypeList::nItems() const { return types_.nItems(); }
 
 // Return first item in list
-AtomTypeData* AtomTypeList::first() const
-{
-	return types_.first();
-}
+AtomTypeData *AtomTypeList::first() const { return types_.first(); }
 
 // Return types list
-const List<AtomTypeData>& AtomTypeList::types() const
-{
-	return types_;
-}
+const List<AtomTypeData> &AtomTypeList::types() const { return types_; }
 
 // Return index of AtomType in list
-int AtomTypeList::indexOf(AtomType* atomtype) const
+int AtomTypeList::indexOf(AtomType *atomtype) const
 {
 	int count = 0;
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next())
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
-		if (atd->atomType() == atomtype) return count;
+		if (atd->atomType() == atomtype)
+			return count;
 		++count;
 	}
 
@@ -234,12 +227,13 @@ int AtomTypeList::indexOf(AtomType* atomtype) const
 }
 
 // Return index of names AtomType in list
-int AtomTypeList::indexOf(const char* name) const
+int AtomTypeList::indexOf(const char *name) const
 {
 	int count = 0;
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next())
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
-		if (DissolveSys::sameString(atd->atomType()->name(), name)) return count;
+		if (DissolveSys::sameString(atd->atomType()->name(), name))
+			return count;
 		++count;
 	}
 
@@ -250,12 +244,13 @@ int AtomTypeList::indexOf(const char* name) const
 double AtomTypeList::totalPopulation() const
 {
 	double total = 0;
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) total += atd->population();
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		total += atd->population();
 	return total;
 }
 
 // Return nth referenced AtomType
-AtomType* AtomTypeList::atomType(int n)
+AtomType *AtomTypeList::atomType(int n)
 {
 #ifdef CHECKS
 	if ((n < 0) || (n >= types_.nItems()))
@@ -268,9 +263,11 @@ AtomType* AtomTypeList::atomType(int n)
 }
 
 // Return AtomTypeData for specified AtomType
-AtomTypeData* AtomTypeList::atomTypeData(AtomType* atomType)
+AtomTypeData *AtomTypeList::atomTypeData(AtomType *atomType)
 {
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) if (atomType == atd->atomType()) return atd;
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		if (atomType == atd->atomType())
+			return atd;
 
 	return NULL;
 }
@@ -280,24 +277,26 @@ void AtomTypeList::print() const
 {
 	Messenger::print("  AtomType  El  Isotope  Population      Fraction           bc (fm)\n");
 	Messenger::print("  -----------------------------------------------------------------\n");
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next())
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
 	{
 		char exch = atd->exchangeable() ? 'E' : ' ';
 
 		// If there are isotopes defined, print them
 		if (atd->isotopeData())
 		{
-			Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
+			Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(),
+					 atd->fraction(), atd->boundCoherent());
 
-			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next())
+			for (IsotopeData *topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next())
 			{
-				Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
+				Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(),
+						 topeData->isotope()->boundCoherent());
 			}
-
 		}
-		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
+		else
+			Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
 
-		Messenger::print("  -----------------------------------------------------------------\n");	
+		Messenger::print("  -----------------------------------------------------------------\n");
 	}
 }
 
@@ -306,33 +305,35 @@ void AtomTypeList::print() const
  */
 
 // Return class name
-const char* AtomTypeList::itemClassName()
-{
-	return "AtomTypeList";
-}
+const char *AtomTypeList::itemClassName() { return "AtomTypeList"; }
 
 // Read data through specified LineParser
-bool AtomTypeList::read(LineParser& parser, const CoreData& coreData)
+bool AtomTypeList::read(LineParser &parser, const CoreData &coreData)
 {
 	types_.clear();
 
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	int nItems = parser.argi(0);
-	for (int n=0; n<nItems; ++n)
+	for (int n = 0; n < nItems; ++n)
 	{
-		AtomTypeData* atd = types_.add();
-		if (!atd->read(parser, coreData)) return false;
+		AtomTypeData *atd = types_.add();
+		if (!atd->read(parser, coreData))
+			return false;
 	}
 
 	return true;
 }
 
 // Write data through specified LineParser
-bool AtomTypeList::write(LineParser& parser)
+bool AtomTypeList::write(LineParser &parser)
 {
-	if (!parser.writeLineF("%i  # nItems\n", types_.nItems())) return false;
+	if (!parser.writeLineF("%i  # nItems\n", types_.nItems()))
+		return false;
 	ListIterator<AtomTypeData> atdIterator(types_);
-	while (AtomTypeData* atd = atdIterator.iterate()) if (!atd->write(parser)) return false;
+	while (AtomTypeData *atd = atdIterator.iterate())
+		if (!atd->write(parser))
+			return false;
 
 	return true;
 }
@@ -342,23 +343,27 @@ bool AtomTypeList::write(LineParser& parser)
  */
 
 // Broadcast item contents
-bool AtomTypeList::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
 	// Broadcast AtomTypeData list
 	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_, coreData);
-	if (atdBroadcaster.failed()) return false;
+	if (atdBroadcaster.failed())
+		return false;
 #endif
 	return true;
 }
 
 // Check item equality
-bool AtomTypeList::equality(ProcessPool& procPool)
+bool AtomTypeList::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	// Check number of types in list first
-	if (!procPool.equality(types_.nItems())) return Messenger::error("AtomTypeList size is not equivalent (process %i has %i).\n", procPool.poolRank(), types_.nItems());
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next()) if (!atd->equality(procPool)) return Messenger::error("AtomTypeList entry for type '%s' is not equivalent.\n", atd->atomTypeName());
+	if (!procPool.equality(types_.nItems()))
+		return Messenger::error("AtomTypeList size is not equivalent (process %i has %i).\n", procPool.poolRank(), types_.nItems());
+	for (AtomTypeData *atd = types_.first(); atd != NULL; atd = atd->next())
+		if (!atd->equality(procPool))
+			return Messenger::error("AtomTypeList entry for type '%s' is not equivalent.\n", atd->atomTypeName());
 #endif
 	return true;
 }

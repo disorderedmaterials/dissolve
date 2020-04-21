@@ -30,51 +30,48 @@ class Configuration;
 // Trajectory Export Formats
 class TrajectoryExportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Trajectory Export Formats
-	enum TrajectoryExportFormat { XYZTrajectory, nTrajectoryExportFormats };
+	enum TrajectoryExportFormat
+	{
+		XYZTrajectory,
+		nTrajectoryExportFormats
+	};
 	// Constructor
-	TrajectoryExportFileFormat(const char* filename = NULL, TrajectoryExportFormat format = XYZTrajectory);
-
+	TrajectoryExportFileFormat(const char *filename = NULL, TrajectoryExportFormat format = XYZTrajectory);
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
 	// Return enum options for TrajectoryExportFormat
 	static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFormats();
 	// Return number of available formats
 	int nFormats() const;
 	// Return format keyword for supplied index
-	const char* formatKeyword(int id) const;
+	const char *formatKeyword(int id) const;
 	// Return description string for supplied index
-	const char* formatDescription(int id) const;
+	const char *formatDescription(int id) const;
 	// Return current format as TrajectoryExportFormat
 	TrajectoryExportFormat trajectoryFormat() const;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return false;
-	}
-
+	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-	private:
+      private:
 	// Append XYZ frame to trajectory
-	bool exportXYZ(LineParser& parser, Configuration* cfg);
+	bool exportXYZ(LineParser &parser, Configuration *cfg);
 
-	public:
+      public:
 	// Append trajectory using current filename and format
-	bool exportData(Configuration* cfg);
+	bool exportData(Configuration *cfg);
 };
 
 #endif
-

@@ -28,9 +28,9 @@ template <class A> class Array2D;
 // Gauss-Jordan Inversion
 class GaussJordan
 {
-	public:
+      public:
 	// Perform Gauss-Jordan inversion of the supplied Array2D<double>
-	static bool invert(Array2D<double>& A);
+	static bool invert(Array2D<double> &A);
 };
 
 #endif

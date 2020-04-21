@@ -30,12 +30,10 @@ TextFragment::TextFragment() : ListItem<TextFragment>()
 }
 
 // Destructor
-TextFragment::~TextFragment()
-{
-}
+TextFragment::~TextFragment() {}
 
 // Set fragment data
-void TextFragment::set(QString& text, double scale, Vec3<double> translation, bool italic, bool bold)
+void TextFragment::set(QString &text, double scale, Vec3<double> translation, bool italic, bool bold)
 {
 	text_ = text;
 	scale_ = scale;
@@ -45,31 +43,16 @@ void TextFragment::set(QString& text, double scale, Vec3<double> translation, bo
 }
 
 // Return text of fragment
-QString TextFragment::text()
-{
-	return text_;
-}
+QString TextFragment::text() { return text_; }
 
 // Return local scale for fragment
-double TextFragment::scale()
-{
-	return scale_;
-}
+double TextFragment::scale() { return scale_; }
 
 // Return local translation for fragment
-Vec3<double> TextFragment::translation()
-{
-	return translation_;
-}
+Vec3<double> TextFragment::translation() { return translation_; }
 
 // Return whether fragment is to be drawn italic
-bool TextFragment::italic()
-{
-	return italic_;
-}
+bool TextFragment::italic() { return italic_; }
 
 // Return whether fragment is to be drawn bold
-bool TextFragment::bold()
-{
-	return bold_;
-}
+bool TextFragment::bold() { return bold_; }

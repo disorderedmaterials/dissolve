@@ -35,36 +35,34 @@ class ImportSpeciesWizard : public WizardWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ImportSpeciesWizard(QWidget* parent);
+	ImportSpeciesWizard(QWidget *parent);
 	~ImportSpeciesWizard();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Main instance of Dissolve that we're using as a reference
-	const Dissolve* dissolveReference_;
+	const Dissolve *dissolveReference_;
 	// Temporary core data for creating / importing new Species
 	CoreData temporaryCoreData_;
 	// Temporary Dissolve reference for creating / importing new Species
 	Dissolve temporaryDissolve_;
 	// Target Species (in temporaryCoreData_) for import
-	Species* importTarget_;
+	Species *importTarget_;
 
-	public:
+      public:
 	// Set Dissolve reference
-	void setMainDissolveReference(const Dissolve* dissolveReference);
+	void setMainDissolveReference(const Dissolve *dissolveReference);
 	// Copy imported Species over to the specified Dissolve object, returning the new pointer to it
-	Species* importSpecies(Dissolve& dissolve);
-
+	Species *importSpecies(Dissolve &dissolve);
 
 	/*
 	 * Controls
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ImportSpeciesWizard ui_;
 	// Lock counter for the widget refreshing
@@ -72,15 +70,15 @@ class ImportSpeciesWizard : public WizardWidget
 	// Pages Enum
 	enum WidgetPage
 	{
-		SelectFilePage,			/* Select File (Dissolve input or species file) */
-		SelectSpeciesPage,		/* Choose Species */
-		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes */
-		MasterTermsPage,		/* MasterTerms page - check / re-map MasterTerms */
-		SpeciesNamePage,		/* Final page, setting name for Species */
+		SelectFilePage,    /* Select File (Dissolve input or species file) */
+		SelectSpeciesPage, /* Choose Species */
+		AtomTypesPage,     /* AtomTypes page - check / re-map AtomTypes */
+		MasterTermsPage,   /* MasterTerms page - check / re-map MasterTerms */
+		SpeciesNamePage,   /* Final page, setting name for Species */
 		nPages
 	};
 
-	protected:
+      protected:
 	// Go to specified page index in the controls widget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
@@ -92,60 +90,56 @@ class ImportSpeciesWizard : public WizardWidget
 	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
-	public:
+      public:
 	// Reset, ready for adding a new Species
 	void reset();
-
 
 	/*
 	 * Select File Page
 	 */
-	private slots:
+      private slots:
 	// Input File Page
 	void on_InputFileEdit_textChanged(const QString text);
 	void on_InputFileSelectButton_clicked(bool checked);
 	void on_SpeciesList_currentRowChanged(int currentRow);
 
-
 	/*
 	 * AtomTypes Page
 	 */
-	private:
+      private:
 	// Row update function for AtomTypesList
-	void updateAtomTypesListRow(int row, AtomType* atomType, bool createItem);
+	void updateAtomTypesListRow(int row, AtomType *atomType, bool createItem);
 	// Update page with AtomTypes in our temporary Dissolve reference
 	void updateAtomTypesPage();
 
-	private slots:
+      private slots:
 	void on_AtomTypesList_itemSelectionChanged();
-	void atomTypesListEdited(QWidget* lineEdit);
+	void atomTypesListEdited(QWidget *lineEdit);
 	void on_AtomTypesPrefixButton_clicked(bool checked);
 	void on_AtomTypesSuffixButton_clicked(bool checked);
-
 
 	/*
 	 * MasterTerms Page
 	 */
-	private:
+      private:
 	// Parental tree widgets for master terms
-	QTreeWidgetItem* masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
-	
-	private:
+	QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
+
+      private:
 	// Row update function for MasterTermsTree
-	void updateMasterTermsTreeChild(QTreeWidgetItem* parent, int childIndex, MasterIntra* masterIntra, bool createItem);
+	void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra, bool createItem);
 	void updateMasterTermsPage();
 
-	private slots:
+      private slots:
 	void on_MasterTermsTree_itemSelectionChanged();
-	void masterTermsTreeEdited(QWidget* lineEdit);
+	void masterTermsTreeEdited(QWidget *lineEdit);
 	void on_MasterTermsPrefixButton_clicked(bool checked);
 	void on_MasterTermsSuffixButton_clicked(bool checked);
-
 
 	/*
 	 * Species Name Page (final page)
 	 */
-	private slots:
+      private slots:
 	void on_SpeciesNameEdit_textChanged(const QString text);
 };
 

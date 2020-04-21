@@ -19,21 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/keywords.h"
-#include "main/dissolve.h"
-#include "classes/species.h"
-#include "base/sysfunc.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "classes/species.h"
+#include "main/dissolve.h"
+#include "main/keywords.h"
 
 // Return enum option info for MasterKeyword
 EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 {
-	static EnumOptionsList MasterKeywords = EnumOptionsList() <<
-		EnumOption(MasterBlock::AngleKeyword, 		"Angle",	2,7) <<
-		EnumOption(MasterBlock::BondKeyword, 		"Bond",		2,6) <<
-		EnumOption(MasterBlock::EndMasterKeyword,	"EndMaster") <<
-		EnumOption(MasterBlock::ImproperKeyword, 	"Improper",	2,8) <<
-		EnumOption(MasterBlock::TorsionKeyword, 	"Torsion",	2,8);
+	static EnumOptionsList MasterKeywords = EnumOptionsList() << EnumOption(MasterBlock::AngleKeyword, "Angle", 2, 7) << EnumOption(MasterBlock::BondKeyword, "Bond", 2, 6)
+								  << EnumOption(MasterBlock::EndMasterKeyword, "EndMaster") << EnumOption(MasterBlock::ImproperKeyword, "Improper", 2, 8)
+								  << EnumOption(MasterBlock::TorsionKeyword, "Torsion", 2, 8);
 
 	static EnumOptions<MasterBlock::MasterKeyword> options("MasterKeyword", MasterKeywords);
 
@@ -41,12 +38,12 @@ EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 }
 
 // Parse Master block
-bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
+bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
 {
 	Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword));
 
 	CharString arg1, arg2;
-	MasterIntra* masterIntra;
+	MasterIntra *masterIntra;
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
 	SpeciesImproper::ImproperFunction impf;
@@ -56,167 +53,180 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		if (parser.getArgsDelim() != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success)
+			return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		if (!keywords().isValid(parser.argc(0)))
+			return keywords().errorAndPrintValid(parser.argc(0));
 		MasterKeyword kwd = keywords().enumeration(parser.argc(0));
-		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+		if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
+			return false;
 
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-			case (MasterBlock::AngleKeyword):
-				// Check the functional form specified
-				if (!SpeciesAngle::angleFunctions().isValid(parser.argc(2)))
-				{
-					Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(2));
-					error = true;
-					break;
-				}
-				af = SpeciesAngle::angleFunctions().enumeration(parser.argc(2));
-
-				// Create a new master angle definition
-				masterIntra = coreData.addMasterAngle(parser.argc(1));
-				if (masterIntra)
-				{
-					masterIntra->setForm(af);
-
-					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesAngle::angleFunctions().keywordFromInt(masterIntra->form()));
-
-					for (int n=0; n<SpeciesAngle::angleFunctions().minArgs(af); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunctions().keywordFromInt(af), SpeciesAngle::angleFunctions().minArgs(af));
-							error = true;
-							break;
-						}
-						masterIntra->setParameter(n, parser.argd(n+3));
-						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
-					}
-
-					Messenger::printVerbose("Defined master angle term: %s\n", termInfo.get());
-				}
-				else error = true;
-				break;
-			case (MasterBlock::BondKeyword):
-				// Check the functional form specified
-				if (!SpeciesBond::bondFunctions().isValid(parser.argc(2)))
-				{
-					Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(2));
-					error = true;
-					break;
-				}
-				bf = SpeciesBond::bondFunctions().enumeration(parser.argc(2));
-
-				// Create a new master bond definition
-				masterIntra = coreData.addMasterBond(parser.argc(1));
-				if (masterIntra)
-				{
-					masterIntra->setForm(bf);
-
-					CharString termInfo("%-10s  %-12s", masterIntra->name(), SpeciesBond::bondFunctions().keywordFromInt(masterIntra->form()));
-
-					for (int n=0; n<SpeciesBond::bondFunctions().minArgs(bf); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunctions().keywordFromInt(bf), SpeciesBond::bondFunctions().minArgs(bf));
-							error = true;
-							break;
-						}
-						masterIntra->setParameter(n, parser.argd(n+3));
-						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
-					}
-
-					Messenger::printVerbose("Defined master bond term: %s\n", termInfo.get());
-				}
-				else error = true;
-				break;
-			case (MasterBlock::EndMasterKeyword):
-				Messenger::print("Found end of Master block.\n");
-				blockDone = true;
-				break;
-			case (MasterBlock::ImproperKeyword):
-				// Check the functional form specified
-				if (!SpeciesImproper::improperFunctions().isValid(parser.argc(2)))
-				{
-					Messenger::error("Functional form of improper (%s) not recognised.\n", parser.argc(2));
-					error = true;
-					break;
-				}
-				impf = SpeciesImproper::improperFunctions().enumeration(parser.argc(2));
-
-				// Create a new master improper definition
-				masterIntra = coreData.addMasterImproper(parser.argc(1));
-				if (masterIntra)
-				{
-					masterIntra->setForm(impf);
-
-					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesImproper::improperFunctions().keywordFromInt(masterIntra->form()));
-
-					for (int n=0; n<SpeciesImproper::improperFunctions().minArgs(impf); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Improper function type '%s' requires %i parameters\n", SpeciesImproper::improperFunctions().keyword(impf), SpeciesImproper::improperFunctions().minArgs(impf));
-							error = true;
-							break;
-						}
-						masterIntra->setParameter(n, parser.argd(n+3));
-						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
-					}
-
-					Messenger::printVerbose("Defined master improper term: %s\n", termInfo.get());
-				}
-				else error = true;
-				break;
-			case (MasterBlock::TorsionKeyword):
-				// Check the functional form specified
-				if (!SpeciesTorsion::torsionFunctions().isValid(parser.argc(2)))
-				{
-					Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(2));
-					error = true;
-					break;
-				}
-				tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(2));
-
-				// Create a new master torsion definition
-				masterIntra = coreData.addMasterTorsion(parser.argc(1));
-				if (masterIntra)
-				{
-					masterIntra->setForm(tf);
-
-					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra->form()));
-
-					for (int n=0; n<SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunctions().keyword(tf), SpeciesTorsion::torsionFunctions().minArgs(tf));
-							error = true;
-							break;
-						}
-						masterIntra->setParameter(n, parser.argd(n+3));
-						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
-					}
-
-					Messenger::printVerbose("Defined master torsion term: %s\n", termInfo.get());
-				}
-				else error = true;
-				break;
-			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword), keywords().keyword(kwd));
+		case (MasterBlock::AngleKeyword):
+			// Check the functional form specified
+			if (!SpeciesAngle::angleFunctions().isValid(parser.argc(2)))
+			{
+				Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(2));
 				error = true;
 				break;
+			}
+			af = SpeciesAngle::angleFunctions().enumeration(parser.argc(2));
+
+			// Create a new master angle definition
+			masterIntra = coreData.addMasterAngle(parser.argc(1));
+			if (masterIntra)
+			{
+				masterIntra->setForm(af);
+
+				CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesAngle::angleFunctions().keywordFromInt(masterIntra->form()));
+
+				for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
+				{
+					if (!parser.hasArg(n + 3))
+					{
+						Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunctions().keywordFromInt(af),
+								 SpeciesAngle::angleFunctions().minArgs(af));
+						error = true;
+						break;
+					}
+					masterIntra->setParameter(n, parser.argd(n + 3));
+					termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+				}
+
+				Messenger::printVerbose("Defined master angle term: %s\n", termInfo.get());
+			}
+			else
+				error = true;
+			break;
+		case (MasterBlock::BondKeyword):
+			// Check the functional form specified
+			if (!SpeciesBond::bondFunctions().isValid(parser.argc(2)))
+			{
+				Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(2));
+				error = true;
+				break;
+			}
+			bf = SpeciesBond::bondFunctions().enumeration(parser.argc(2));
+
+			// Create a new master bond definition
+			masterIntra = coreData.addMasterBond(parser.argc(1));
+			if (masterIntra)
+			{
+				masterIntra->setForm(bf);
+
+				CharString termInfo("%-10s  %-12s", masterIntra->name(), SpeciesBond::bondFunctions().keywordFromInt(masterIntra->form()));
+
+				for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
+				{
+					if (!parser.hasArg(n + 3))
+					{
+						Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunctions().keywordFromInt(bf),
+								 SpeciesBond::bondFunctions().minArgs(bf));
+						error = true;
+						break;
+					}
+					masterIntra->setParameter(n, parser.argd(n + 3));
+					termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+				}
+
+				Messenger::printVerbose("Defined master bond term: %s\n", termInfo.get());
+			}
+			else
+				error = true;
+			break;
+		case (MasterBlock::EndMasterKeyword):
+			Messenger::print("Found end of Master block.\n");
+			blockDone = true;
+			break;
+		case (MasterBlock::ImproperKeyword):
+			// Check the functional form specified
+			if (!SpeciesImproper::improperFunctions().isValid(parser.argc(2)))
+			{
+				Messenger::error("Functional form of improper (%s) not recognised.\n", parser.argc(2));
+				error = true;
+				break;
+			}
+			impf = SpeciesImproper::improperFunctions().enumeration(parser.argc(2));
+
+			// Create a new master improper definition
+			masterIntra = coreData.addMasterImproper(parser.argc(1));
+			if (masterIntra)
+			{
+				masterIntra->setForm(impf);
+
+				CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesImproper::improperFunctions().keywordFromInt(masterIntra->form()));
+
+				for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
+				{
+					if (!parser.hasArg(n + 3))
+					{
+						Messenger::error("Improper function type '%s' requires %i parameters\n", SpeciesImproper::improperFunctions().keyword(impf),
+								 SpeciesImproper::improperFunctions().minArgs(impf));
+						error = true;
+						break;
+					}
+					masterIntra->setParameter(n, parser.argd(n + 3));
+					termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+				}
+
+				Messenger::printVerbose("Defined master improper term: %s\n", termInfo.get());
+			}
+			else
+				error = true;
+			break;
+		case (MasterBlock::TorsionKeyword):
+			// Check the functional form specified
+			if (!SpeciesTorsion::torsionFunctions().isValid(parser.argc(2)))
+			{
+				Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(2));
+				error = true;
+				break;
+			}
+			tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(2));
+
+			// Create a new master torsion definition
+			masterIntra = coreData.addMasterTorsion(parser.argc(1));
+			if (masterIntra)
+			{
+				masterIntra->setForm(tf);
+
+				CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra->form()));
+
+				for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
+				{
+					if (!parser.hasArg(n + 3))
+					{
+						Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunctions().keyword(tf),
+								 SpeciesTorsion::torsionFunctions().minArgs(tf));
+						error = true;
+						break;
+					}
+					masterIntra->setParameter(n, parser.argd(n + 3));
+					termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+				}
+
+				Messenger::printVerbose("Defined master torsion term: %s\n", termInfo.get());
+			}
+			else
+				error = true;
+			break;
+		default:
+			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword), keywords().keyword(kwd));
+			error = true;
+			break;
 		}
 
 		// Error encountered?
-		if (error) break;
-		
+		if (error)
+			break;
+
 		// End of block?
-		if (blockDone) break;
+		if (blockDone)
+			break;
 	}
 
 	// If there's no error and the blockDone flag isn't set, return an error

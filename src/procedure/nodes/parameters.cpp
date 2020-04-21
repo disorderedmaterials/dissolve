@@ -20,10 +20,10 @@
 */
 
 #include "procedure/nodes/parameters.h"
-#include "keywords/types.h"
-#include "expression/variable.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "expression/variable.h"
+#include "keywords/types.h"
 
 // Constructor
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
@@ -33,79 +33,77 @@ ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode
 }
 
 // Destructor
-ParametersProcedureNode::~ParametersProcedureNode()
-{
-}
+ParametersProcedureNode::~ParametersProcedureNode() {}
 
 /*
  * Identity
  */
 
 // Return whether specified context is relevant for this node type
-bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-	return (context != ProcedureNode::NoContext);
-}
+bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context != ProcedureNode::NoContext); }
 
 // Return whether a name for the node must be provided
-bool ParametersProcedureNode::mustBeNamed() const
-{
-	return false;
-}
+bool ParametersProcedureNode::mustBeNamed() const { return false; }
 
 /*
  * Parameters
  */
 
 // Add new integer parameter
-bool ParametersProcedureNode::addParameter(const char* name, int initialValue)
+bool ParametersProcedureNode::addParameter(const char *name, int initialValue)
 {
 	// Create a new one
-	ExpressionVariable* parameter = new ExpressionVariable;
+	ExpressionVariable *parameter = new ExpressionVariable;
 	integerParameters_.own(parameter);
 	parameter->setName(name);
 
 	// Set the initial value
-	if (!parameter->set(initialValue)) return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+	if (!parameter->set(initialValue))
+		return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
 
 	return true;
 }
 
 // Add new double parameter
-bool ParametersProcedureNode::addParameter(const char* name, double initialValue)
+bool ParametersProcedureNode::addParameter(const char *name, double initialValue)
 {
 	// Create a new one
-	ExpressionVariable* parameter = new ExpressionVariable;
+	ExpressionVariable *parameter = new ExpressionVariable;
 	doubleParameters_.own(parameter);
 	parameter->setName(name);
 
 	// Set the initial value
-	if (!parameter->set(initialValue)) return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+	if (!parameter->set(initialValue))
+		return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
 
 	return true;
 }
 
 // Return whether this node has the named parameter specified
-ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name, ExpressionVariable* excludeParameter)
+ExpressionVariable *ParametersProcedureNode::hasParameter(const char *name, ExpressionVariable *excludeParameter)
 {
 	// Search integer parameters
 	ListIterator<ExpressionNode> integerIterator(integerParameters_);
-	while (ExpressionNode* node = integerIterator.iterate())
+	while (ExpressionNode *node = integerIterator.iterate())
 	{
 		// Cast up the node into an ExpressionVariable
-		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (!var) continue;
-		if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name))) return var;
+		ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+		if (!var)
+			continue;
+		if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
+			return var;
 	}
 
 	// Search double parameters
 	ListIterator<ExpressionNode> doubleIterator(doubleParameters_);
-	while (ExpressionNode* node = doubleIterator.iterate())
+	while (ExpressionNode *node = doubleIterator.iterate())
 	{
 		// Cast up the node into an ExpressionVariable
-		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (!var) continue;
-		if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name))) return var;
+		ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+		if (!var)
+			continue;
+		if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
+			return var;
 	}
 
 	return NULL;
@@ -118,37 +116,33 @@ RefList<ExpressionVariable> ParametersProcedureNode::parameterReferences() const
 
 	// Add integer parameters
 	ListIterator<ExpressionNode> integerIterator(integerParameters_);
-	while (ExpressionNode* node = integerIterator.iterate())
+	while (ExpressionNode *node = integerIterator.iterate())
 	{
 		// Cast up the node into an ExpressionVariable
-		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (var) params.append(var);
+		ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+		if (var)
+			params.append(var);
 	}
 
 	// Add double parameters
 	ListIterator<ExpressionNode> doubleIterator(doubleParameters_);
-	while (ExpressionNode* node = doubleIterator.iterate())
+	while (ExpressionNode *node = doubleIterator.iterate())
 	{
 		// Cast up the node into an ExpressionVariable
-		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (var) params.append(var);
+		ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+		if (var)
+			params.append(var);
 	}
 
 	return params;
 }
 
-/* 
+/*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool ParametersProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
-{
-	return true;
-}
+bool ParametersProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
-	return ProcedureNode::Success;
-}
+ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return ProcedureNode::Success; }

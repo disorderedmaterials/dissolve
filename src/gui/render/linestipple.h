@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_RENDER_LINESTIPPLE_H
 #define DISSOLVE_RENDER_LINESTIPPLE_H
 
-#include <QtGui/qopengl.h>
-#include <QVector>
 #include <QString>
+#include <QVector>
+#include <QtGui/qopengl.h>
 
 // Forward Declarations
 class QComboBox;
@@ -32,45 +32,52 @@ class QComboBox;
 // Line Stipple
 class LineStipple
 {
-	public:
+      public:
 	// Line Stipple Types
-	enum StippleType { NoStipple, DotStipple, FineDashStipple, EighthDashStipple, QuarterDashStipple, HalfDashStipple, DotDash1Stipple, nStippleTypes };
+	enum StippleType
+	{
+		NoStipple,
+		DotStipple,
+		FineDashStipple,
+		EighthDashStipple,
+		QuarterDashStipple,
+		HalfDashStipple,
+		DotDash1Stipple,
+		nStippleTypes
+	};
 	// Convert text string to StippleType
 	static LineStipple::StippleType stippleType(QString s);
 	// Convert InputBlock to text string
-	static const char* stippleType(LineStipple::StippleType stipple);
-
+	static const char *stippleType(LineStipple::StippleType stipple);
 
 	/*
 	 * Stipple
 	 */
-	public:
+      public:
 	// Line stipple factor
 	GLint stippleFactor;
 	// Line stipple pattern
 	GLushort stipplePattern;
 	// Name of stipple
-	const char* name;
+	const char *name;
 
-	public:
+      public:
 	// Add stipple pattern to specified QComboBox
-	void addStippleItem(QComboBox* combo, int lineHeight);
+	void addStippleItem(QComboBox *combo, int lineHeight);
 	// Return stipple pattern as a Qt-compatible dash pattern
-	QVector<qreal>& dashPattern();
-
+	QVector<qreal> &dashPattern();
 
 	/*
 	 * GL
 	 */
-	public:
+      public:
 	// Apply stipple pattern
 	void apply();
-
 
 	/*
 	 * Singleton
 	 */
-	public:
+      public:
 	// Static list of line stipples
 	static LineStipple stipple[];
 };

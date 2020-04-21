@@ -20,27 +20,27 @@
 */
 
 #include "neta/generator.h"
-#include "neta/neta.h"
-#include "neta/neta_grammar.hh"
+#include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "data/elements.h"
 #include "data/ff.h"
-#include "base/sysfunc.h"
-#include "base/messenger.h"
+#include "neta/neta.h"
+#include "neta/neta_grammar.hh"
+#include <ctype.h>
 #include <stdarg.h>
 #include <string.h>
-#include <ctype.h>
 
 // Static members
-const Forcefield* NETADefinitionGenerator::associatedForcefield_ = NULL;
-NETADefinition* NETADefinitionGenerator::definition_ = NULL;
-NETADefinitionGenerator* NETADefinitionGenerator::generator_ = NULL;
-std::vector<Element*> NETADefinitionGenerator::targetElements_;
-std::vector<ForcefieldAtomType*> NETADefinitionGenerator::targetAtomTypes_;
+const Forcefield *NETADefinitionGenerator::associatedForcefield_ = NULL;
+NETADefinition *NETADefinitionGenerator::definition_ = NULL;
+NETADefinitionGenerator *NETADefinitionGenerator::generator_ = NULL;
+std::vector<Element *> NETADefinitionGenerator::targetElements_;
+std::vector<ForcefieldAtomType *> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
 // Constructor
-NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition& definition, const char* definitionText, const Forcefield* associatedFF)
+NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, const char *definitionText, const Forcefield *associatedFF)
 {
 	// Clear any possible old data
 	contextStack_.clear();
@@ -59,32 +59,24 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition& definition, con
 }
 
 // Destructor
-NETADefinitionGenerator::~NETADefinitionGenerator()
-{
-}
+NETADefinitionGenerator::~NETADefinitionGenerator() {}
 
 /*
  * Target Objects
  */
 
 // Return target NETADefinition (static to allow NETADefinitionGenerator_parse() to use it)
-NETADefinition* NETADefinitionGenerator::definition()
-{
-	return definition_;
-}
+NETADefinition *NETADefinitionGenerator::definition() { return definition_; }
 
 // Return current NETADefinitionGenerator (static to allow NETADefinitionGenerator_parse() to use it)
-NETADefinitionGenerator* NETADefinitionGenerator::generator()
-{
-	return generator_;
-}
+NETADefinitionGenerator *NETADefinitionGenerator::generator() { return generator_; }
 
 /*
  * Lexer
  */
 
 // Set string source for lexer
-void NETADefinitionGenerator::setSource(const char* definitionText)
+void NETADefinitionGenerator::setSource(const char *definitionText)
 {
 	// Set parsing source, always ensuring that we have a terminating ';'
 	definitionString_ = definitionText;
@@ -104,7 +96,8 @@ char NETADefinitionGenerator::getChar()
 	char c = 0;
 
 	// Are we at the end of the current string?
-	if (stringPos_ == stringLength_) return 0;
+	if (stringPos_ == stringLength_)
+		return 0;
 
 	// Return current char
 	c = definitionString_[stringPos_];
@@ -113,22 +106,18 @@ char NETADefinitionGenerator::getChar()
 }
 
 // Peek next character from current input stream
-char NETADefinitionGenerator::peekChar()
-{
-	return (stringPos_ == stringLength_ ? 0 : definitionString_[stringPos_]);
-}
+char NETADefinitionGenerator::peekChar() { return (stringPos_ == stringLength_ ? 0 : definitionString_[stringPos_]); }
 
 // 'Replace' last character read from current input stream
-void NETADefinitionGenerator::unGetChar()
-{
-	--stringPos_;
-}
+void NETADefinitionGenerator::unGetChar() { --stringPos_; }
 
 // Bison-required NETADefinitionGenerator_lex()
 int NETADefinitionGenerator_lex()
 {
-	if (!NETADefinitionGenerator::definition()) return 0;
-	if (!NETADefinitionGenerator::generator()) return 0;
+	if (!NETADefinitionGenerator::definition())
+		return 0;
+	if (!NETADefinitionGenerator::generator())
+		return 0;
 	return NETADefinitionGenerator::generator()->lex();
 }
 
@@ -142,12 +131,14 @@ int NETADefinitionGenerator::lex()
 	token.clear();
 
 	// Skip over whitespace
-	while ((c = getChar()) == ' ' || c == '\t' || c == '\r' || c == '\n' );
+	while ((c = getChar()) == ' ' || c == '\t' || c == '\r' || c == '\n')
+		;
 
-	if (c == 0) return 0;
+	if (c == 0)
+		return 0;
 
 	// Set this point as the start of our new token (for error reporting)
-	tokenStart_ = stringPos_-1;
+	tokenStart_ = stringPos_ - 1;
 
 	/*
 	 * Number Detection - Either '.' or a digit begins a number
@@ -162,7 +153,8 @@ int NETADefinitionGenerator::lex()
 		do
 		{
 			c = getChar();
-			if (isdigit(c)) token += c;
+			if (isdigit(c))
+				token += c;
 			else if (c == '.')
 			{
 				token += '.';
@@ -187,7 +179,8 @@ int NETADefinitionGenerator::lex()
 					unGetChar();
 					done = true;
 				}
-				else token += c;
+				else
+					token += c;
 			}
 			else
 			{
@@ -214,14 +207,13 @@ int NETADefinitionGenerator::lex()
 	/*
 	 * Alpha-token
 	 */
-	if (isalpha (c))
+	if (isalpha(c))
 	{
 		do
 		{
 			token += c;
 			c = getChar();
-		}
-		while (isalnum(c) || (c == '_'));
+		} while (isalnum(c) || (c == '_'));
 		unGetChar();
 		Messenger::printVerbose("NETA (%p): found an alpha token [%s]...\n", definition_, token.get());
 
@@ -256,7 +248,7 @@ int NETADefinitionGenerator::lex()
 		// Chemical Element?
 		if (!expectName_)
 		{
-			const Element& el = Elements::element(token);
+			const Element &el = Elements::element(token);
 			if (!el.isUnknown())
 			{
 				NETADefinitionGenerator_lval.elementZ = el.Z();
@@ -291,10 +283,12 @@ int NETADefinitionGenerator::lex()
 
 	// Similarly, if the next character is a period, bracket or double quotes, return immediately
 	char c2 = peekChar();
-	if ((c2 == '.') || (c2 == '(') || (c2 == ')') || (c2 == ';') || (c2 == '{') || (c2 == '}') || (c2 == '"')) return c;
+	if ((c2 == '.') || (c2 == '(') || (c2 == ')') || (c2 == ';') || (c2 == '{') || (c2 == '}') || (c2 == '"'))
+		return c;
 
 	// If next character is '-', return now if previous char was *not* another '-'
-	if ((c2 == '-') && (c != '-')) return c;
+	if ((c2 == '-') && (c != '-'))
+		return c;
 
 	// If it is 'punctuation', add this second character to our operator and search for it
 	if (ispunct(c2))
@@ -302,7 +296,7 @@ int NETADefinitionGenerator::lex()
 		c = getChar();
 		token += c;
 	}
-	
+
 	Messenger::printVerbose("NETA (%p): found symbol [%s]\n", definition_, token.get());
 	if (NETANode::comparisonOperators().isValid(token.get()))
 	{
@@ -320,8 +314,9 @@ int NETADefinitionGenerator::lex()
 // Add element target to array (by Z)
 bool NETADefinitionGenerator::addElementTarget(int elementZ)
 {
-	Element& el = Elements::element(elementZ);
-	if (el.isUnknown()) return Messenger::error("Unknown element Z %i passed to NETADefinitionGenerator::addTarget().\n", elementZ);
+	Element &el = Elements::element(elementZ);
+	if (el.isUnknown())
+		return Messenger::error("Unknown element Z %i passed to NETADefinitionGenerator::addTarget().\n", elementZ);
 
 	targetElements_.push_back(&el);
 
@@ -332,10 +327,12 @@ bool NETADefinitionGenerator::addElementTarget(int elementZ)
 bool NETADefinitionGenerator::addAtomTypeTarget(int id)
 {
 	// Is a forcefield available to search?
-	if (!associatedForcefield_) return false;
+	if (!associatedForcefield_)
+		return false;
 
-	ForcefieldAtomType* at = associatedForcefield_->atomTypeById(id);
-	if (!at) return Messenger::error("No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id, associatedForcefield_->name());
+	ForcefieldAtomType *at = associatedForcefield_->atomTypeById(id);
+	if (!at)
+		return Messenger::error("No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id, associatedForcefield_->name());
 
 	targetAtomTypes_.push_back(at);
 
@@ -343,13 +340,15 @@ bool NETADefinitionGenerator::addAtomTypeTarget(int id)
 }
 
 // Add atomtype target to array (by name)
-bool NETADefinitionGenerator::addAtomTypeTarget(const char* typeName)
+bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
 {
 	// Is a forcefield available to search?
-	if (!associatedForcefield_) return false;
+	if (!associatedForcefield_)
+		return false;
 
-	ForcefieldAtomType* at = associatedForcefield_->atomTypeByName(typeName);
-	if (!at) return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n", typeName);
+	ForcefieldAtomType *at = associatedForcefield_->atomTypeByName(typeName);
+	if (!at)
+		return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n", typeName);
 
 	targetAtomTypes_.push_back(at);
 
@@ -357,16 +356,10 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char* typeName)
 }
 
 // Return target Elements array
-std::vector<Element*> NETADefinitionGenerator::targetElements()
-{
-	return targetElements_;
-}
+std::vector<Element *> NETADefinitionGenerator::targetElements() { return targetElements_; }
 
 // Return target ForcefieldAtomTypes array
-std::vector<ForcefieldAtomType*> NETADefinitionGenerator::targetAtomTypes()
-{
-	return targetAtomTypes_;
-}
+std::vector<ForcefieldAtomType *> NETADefinitionGenerator::targetAtomTypes() { return targetAtomTypes_; }
 
 // Clear element / atomtype targets
 void NETADefinitionGenerator::clearTargets()
@@ -376,17 +369,16 @@ void NETADefinitionGenerator::clearTargets()
 }
 
 // Return topmost context
-NETANode* NETADefinitionGenerator::context()
-{
-	return contextStack_.lastItem();
-}
+NETANode *NETADefinitionGenerator::context() { return contextStack_.lastItem(); }
 
 // Push branch in last node of topmost context onto the context stack
 bool NETADefinitionGenerator::pushContext()
 {
-	if (!context()) return Messenger::error("No context exists, so can't push any branch.\n");
+	if (!context())
+		return Messenger::error("No context exists, so can't push any branch.\n");
 
-	if (!context()->lastBranchNode()) return Messenger::error("No nodes exist in the current context, so can't push any branch.\n");
+	if (!context()->lastBranchNode())
+		return Messenger::error("No nodes exist in the current context, so can't push any branch.\n");
 
 	contextStack_.append(context()->lastBranchNode());
 
@@ -394,30 +386,25 @@ bool NETADefinitionGenerator::pushContext()
 }
 
 // Pop topmost context
-void NETADefinitionGenerator::popContext()
-{
-	contextStack_.removeLast();
-}
+void NETADefinitionGenerator::popContext() { contextStack_.removeLast(); }
 
 // Set whether to recognise text elements as generic names
-void NETADefinitionGenerator::setExpectName(bool b)
-{
-	expectName_ = b;
-}
+void NETADefinitionGenerator::setExpectName(bool b) { expectName_ = b; }
 
 // Static generation functions
-bool NETADefinitionGenerator::generate(NETADefinition& neta, const char* netaDefinition, const Forcefield* associatedFF)
+bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDefinition, const Forcefield *associatedFF)
 {
 	// Set the source string
 	neta.setDefinitionString(netaDefinition);
-// 	if ((netaDefinition == NULL) || (netaDefinition[0] == '\0')) return true;
+	// 	if ((netaDefinition == NULL) || (netaDefinition[0] == '\0')) return true;
 
 	// Create a generator
 	NETADefinitionGenerator generator(neta, neta.definitionString(), associatedFF);
 
 	// Generate definition
 	bool result = NETADefinitionGenerator_parse() == 0;
-	if (!result) definition_->clear();
+	if (!result)
+		definition_->clear();
 
 	return result;
 }

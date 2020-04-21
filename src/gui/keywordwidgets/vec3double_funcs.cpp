@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/vec3double.h"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/vec3double.h"
 #include "vec3labels.h"
 
 // Constructor
-Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -33,17 +33,24 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<Vec3DoubleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3DoubleKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<Vec3DoubleKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into Vec3DoubleKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values for each component
-		if (keyword_->hasValidationMin(0)) ui_.Spin1->setMinimumLimit(keyword_->validationMin(0));
-		if (keyword_->hasValidationMax(0)) ui_.Spin1->setMaximumLimit(keyword_->validationMax(0));
-		if (keyword_->hasValidationMin(1)) ui_.Spin2->setMinimumLimit(keyword_->validationMin(1));
-		if (keyword_->hasValidationMax(1)) ui_.Spin2->setMaximumLimit(keyword_->validationMax(1));
-		if (keyword_->hasValidationMin(2)) ui_.Spin3->setMinimumLimit(keyword_->validationMin(2));
-		if (keyword_->hasValidationMax(2)) ui_.Spin3->setMaximumLimit(keyword_->validationMax(2));
+		if (keyword_->hasValidationMin(0))
+			ui_.Spin1->setMinimumLimit(keyword_->validationMin(0));
+		if (keyword_->hasValidationMax(0))
+			ui_.Spin1->setMaximumLimit(keyword_->validationMax(0));
+		if (keyword_->hasValidationMin(1))
+			ui_.Spin2->setMinimumLimit(keyword_->validationMin(1));
+		if (keyword_->hasValidationMax(1))
+			ui_.Spin2->setMaximumLimit(keyword_->validationMax(1));
+		if (keyword_->hasValidationMin(2))
+			ui_.Spin3->setMinimumLimit(keyword_->validationMin(2));
+		if (keyword_->hasValidationMax(2))
+			ui_.Spin3->setMaximumLimit(keyword_->validationMax(2));
 
 		// Set current values
 		ui_.Spin1->setValue(keyword_->asVec3Double().x);
@@ -60,7 +67,7 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	Vec3WidgetLabels::set(ui_.Label1, keyword_->labelType(), 0);
 	Vec3WidgetLabels::set(ui_.Label2, keyword_->labelType(), 1);
 	Vec3WidgetLabels::set(ui_.Label3, keyword_->labelType(), 2);
-	
+
 	refreshing_ = false;
 }
 
@@ -71,7 +78,8 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 // Spin box value changed
 void Vec3DoubleKeywordWidget::on_Spin1_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	Vec3<double> newVec = keyword_->data();
 	newVec.x = value;
@@ -83,7 +91,8 @@ void Vec3DoubleKeywordWidget::on_Spin1_valueChanged(double value)
 // Spin box value changed
 void Vec3DoubleKeywordWidget::on_Spin2_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	Vec3<double> newVec = keyword_->data();
 	newVec.y = value;
@@ -95,7 +104,8 @@ void Vec3DoubleKeywordWidget::on_Spin2_valueChanged(double value)
 // Spin box value changed
 void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	Vec3<double> newVec = keyword_->data();
 	newVec.z = value;

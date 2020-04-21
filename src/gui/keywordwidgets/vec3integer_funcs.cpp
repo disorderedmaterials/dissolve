@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/vec3integer.h"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/vec3integer.h"
 #include "gui/keywordwidgets/vec3labels.h"
 
 // Constructor
-Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -33,8 +33,9 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase*
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<Vec3IntegerKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3IntegerKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<Vec3IntegerKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into Vec3IntegerKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values for each component
@@ -46,14 +47,13 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase*
 		ui_.Spin1->setValue(keyword_->asVec3Int().x);
 		ui_.Spin2->setValue(keyword_->asVec3Int().y);
 		ui_.Spin3->setValue(keyword_->asVec3Int().z);
-		
 	}
 
 	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
 	ui_.Spin1->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin1));
 	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
 	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
-	
+
 	// Set appropriate labels
 	Vec3WidgetLabels::set(ui_.Label1, keyword_->labelType(), 0);
 	Vec3WidgetLabels::set(ui_.Label2, keyword_->labelType(), 1);
@@ -69,7 +69,8 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase*
 // Spin box value changed
 void Vec3IntegerKeywordWidget::on_Spin1_valueChanged(int value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	Vec3<int> newVec = keyword_->data();
 	newVec.x = value;
@@ -81,7 +82,8 @@ void Vec3IntegerKeywordWidget::on_Spin1_valueChanged(int value)
 // Spin box value changed
 void Vec3IntegerKeywordWidget::on_Spin2_valueChanged(int value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	Vec3<int> newVec = keyword_->data();
 	newVec.y = value;
@@ -93,7 +95,8 @@ void Vec3IntegerKeywordWidget::on_Spin2_valueChanged(int value)
 // Spin box value changed
 void Vec3IntegerKeywordWidget::on_Spin3_valueChanged(int value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	Vec3<int> newVec = keyword_->data();
 	newVec.z = value;

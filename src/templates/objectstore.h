@@ -32,7 +32,7 @@
 // -- Object type_ should be set from a local enum, for instance, containing all object types relevant in the use case.
 class ObjectInfo
 {
-	public:
+      public:
 	// Constructor
 	ObjectInfo()
 	{
@@ -54,7 +54,7 @@ class ObjectInfo
 		nObjectTypes
 	};
 
-	private:
+      private:
 	// Object target type
 	int type_;
 	// Target object id
@@ -62,7 +62,7 @@ class ObjectInfo
 	// Target object tag
 	CharString tag_;
 
-	public:
+      public:
 	// Set object target type and id
 	void set(int type, int id)
 	{
@@ -70,66 +70,44 @@ class ObjectInfo
 		id_ = id;
 	}
 	// Return object target type
-	int type() const
-	{
-		return type_;
-	}
+	int type() const { return type_; }
 	// Return target object id
-	int id() const
-	{
-		return id_;
-	}
+	int id() const { return id_; }
 	// Set object tag
-	void setTag(const char* tag)
-	{
-		tag_ = tag;
-	}
+	void setTag(const char *tag) { tag_ = tag; }
 	// Return object tag
-	const char* tag() const
-	{
-		return tag_.get();
-	}
-
+	const char *tag() const { return tag_.get(); }
 
 	/*
 	 * Tag Control
 	 */
-	private:
+      private:
 	// Whether automatic suffixing of tags is enabled
 	static bool autoSuffixing_;
 	// Suffix to append (if autoSuffixing_)
 	static CharString autoSuffix_;
 
-	public:
+      public:
 	// Enable automatic suffixing of tags
-	static void enableAutoSuffixing(const char* suffix)
+	static void enableAutoSuffixing(const char *suffix)
 	{
 		autoSuffixing_ = true;
 		autoSuffix_ = suffix;
 	}
 	// Disable automatic suffixing of tags
-	static void disableAutoSuffixing()
-	{
-		autoSuffixing_ = false;
-	}
+	static void disableAutoSuffixing() { autoSuffixing_ = false; }
 	// Return whether automatic suffixing of tags is enabled
-	static bool autoSuffixing()
-	{
-		return autoSuffixing_;
-	}
+	static bool autoSuffixing() { return autoSuffixing_; }
 	// Return suffix to append (if autoSuffixing_)
-	static const char* autoSuffix()
-	{
-		return autoSuffix_.get();
-	}
+	static const char *autoSuffix() { return autoSuffix_.get(); }
 };
 
 // Object Store
 template <class T> class ObjectStore
 {
-	public:
+      public:
 	// Constructor
-	ObjectStore<T>(T* object)
+	ObjectStore<T>(T *object)
 	{
 		// If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy constructor)
 		if (object == NULL)
@@ -149,51 +127,42 @@ template <class T> class ObjectStore
 	~ObjectStore<T>()
 	{
 		// Remove our pointer from the master list
-		if (object_) objects_.remove(object_);
+		if (object_)
+			objects_.remove(object_);
 	}
 	// Copy Constructor
-	ObjectStore<T>(const ObjectStore<T>& source)
+	ObjectStore<T>(const ObjectStore<T> &source)
 	{
 		// ObjectStore<T> members are *not* copied, since a named object should be unique.
 	}
 	// Assignment Operator
-	void operator=(const ObjectStore<T>& source)
+	void operator=(const ObjectStore<T> &source)
 	{
 		// ObjectStore<T> members are *not* copied, since a named object should be unique.
 	}
 	// Object type identifier
 	static int objectType_;
 	// Object type name
-	static const char* objectTypeName_;
-
+	static const char *objectTypeName_;
 
 	/*
 	 * Object Data
 	 */
-	private:
+      private:
 	// Pointer to object that this ObjectStore was created with
-	T* object_;
+	T *object_;
 	// Object info
 	ObjectInfo objectInfo_;
 
-	public:
+      public:
 	// Return object type
-	int objectType()
-	{
-		return objectInfo_.type();
-	}
+	int objectType() { return objectInfo_.type(); }
 	// Return object ID
-	int objectId()
-	{
-		return objectInfo_.id();
-	}
+	int objectId() { return objectInfo_.id(); }
 	// Return object information
-	ObjectInfo objectInfo()
-	{
-		return objectInfo_;
-	}
+	ObjectInfo objectInfo() { return objectInfo_; }
 	// Set tag for this object, prepending type name prefix
-	void setObjectTag(const char* tag)
+	void setObjectTag(const char *tag)
 	{
 		// Get actual tag of object - does the supplied tag already contain a type prefix?
 		CharString objectTag;
@@ -203,56 +172,55 @@ template <class T> class ObjectStore
 			objectTag = DissolveSys::afterChar(tag, '%');
 
 			// Do a sanity check on the type prefix...
-			if (!DissolveSys::sameString(typePrefix, objectTypeName_)) Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", tag, typePrefix.get(), objectTypeName_);
+			if (!DissolveSys::sameString(typePrefix, objectTypeName_))
+				Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", tag, typePrefix.get(),
+						 objectTypeName_);
 		}
-		else objectTag = tag;
+		else
+			objectTag = tag;
 
 		// Append auto-suffix
-		if (ObjectInfo::autoSuffixing()) objectTag = CharString("%s@%s", objectTag.get(), ObjectInfo::autoSuffix());
+		if (ObjectInfo::autoSuffixing())
+			objectTag = CharString("%s@%s", objectTag.get(), ObjectInfo::autoSuffix());
 
 #ifdef CHECKS
 		// Check for duplicate value already in list
 		if (!objectTag.isEmpty())
 		{
-			T* object = findObject(CharString("%s%%%s", objectTypeName_, objectTag.get()));
+			T *object = findObject(CharString("%s%%%s", objectTypeName_, objectTag.get()));
 			if (object && (object != this))
 			{
-				Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s%%%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_, objectTypeName_, objectTag.get());
+				Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s%%%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_,
+						objectTypeName_, objectTag.get());
 			}
 		}
 #endif
 		objectInfo_.setTag(CharString("%s%%%s", objectTypeName_, objectTag.get()));
 	}
 	// Return object tag
-	const char* objectTag() const
-	{
-		return objectInfo_.tag();
-	}
+	const char *objectTag() const { return objectInfo_.tag(); }
 	// Return whether object tag matches that supplied
-	bool objectTagIs(const char* tag) const
-	{
-		return (DissolveSys::sameString(objectInfo_.tag(), tag, true));
-	}
-
+	bool objectTagIs(const char *tag) const { return (DissolveSys::sameString(objectInfo_.tag(), tag, true)); }
 
 	/*
 	 * Object List
 	 */
-	private:
+      private:
 	// Master list of available objects
-	static RefDataList<T,int> objects_;
+	static RefDataList<T, int> objects_;
 	// Integer count for object IDs
 	static int objectCount_;
 
-	public:
+      public:
 	// Return whether specified object still exists
-	static bool objectValid(T* object)
+	static bool objectValid(T *object)
 	{
-		if ((object == NULL) || (!objects_.contains(object))) return false;
+		if ((object == NULL) || (!objects_.contains(object)))
+			return false;
 		return true;
 	}
 	// Return whether specified object still exists, reporting errors if it does not
-	static bool objectValid(T* object, const char* objectDescription)
+	static bool objectValid(T *object, const char *objectDescription)
 	{
 		if (object == NULL)
 		{
@@ -267,21 +235,20 @@ template <class T> class ObjectStore
 		return true;
 	}
 	// Return number of available objects
-	static int nObjects()
-	{
-		return objects_.nItems();
-	}
+	static int nObjects() { return objects_.nItems(); }
 	// Return object with specified ID
-	static T* object(int id)
+	static T *object(int id)
 	{
-		for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next()) if (ri->data() == id) return ri->item();
+		for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
+			if (ri->data() == id)
+				return ri->item();
 		return NULL;
 	}
 	// Set id of specified object, returning if we were successful
-	static bool setObjectId(T* target, int id)
+	static bool setObjectId(T *target, int id)
 	{
 		// Find the RefDataItem object in the list
-		RefDataItem<T,int>* targetRefItem = objects_.contains(target);
+		RefDataItem<T, int> *targetRefItem = objects_.contains(target);
 		if (targetRefItem == NULL)
 		{
 			printf("Internal Error: Couldn't find specified object %p in object list.\n", target);
@@ -289,7 +256,7 @@ template <class T> class ObjectStore
 		}
 
 		// Can we find an object with the same id?
-		RefDataItem<T,int>* rj = objects_.containsData(id);
+		RefDataItem<T, int> *rj = objects_.containsData(id);
 		if ((rj != NULL) && (rj != targetRefItem))
 		{
 			printf("Internal Error: Another object with id %i already exists in the ObjectStore, so refusing to duplicate it.\n", id);
@@ -308,14 +275,14 @@ template <class T> class ObjectStore
 		return true;
 	}
 	// Return whether the specified object tag is an object of this type
-	static bool isObject(const char* objectTag)
+	static bool isObject(const char *objectTag)
 	{
 		// Get part before '%', which denotes the type
-		const char* prefix = DissolveSys::beforeChar(objectTag, '%');
+		const char *prefix = DissolveSys::beforeChar(objectTag, '%');
 		return DissolveSys::sameString(prefix, objectTypeName_);
 	}
 	// Find specified object by its tag
-	static T* findObject(const char* objectTag)
+	static T *findObject(const char *objectTag)
 	{
 		// Does the supplied tag contain a type prefix? If so, check it and then strip it
 		CharString typePrefix = DissolveSys::beforeChar(objectTag, '%');
@@ -323,9 +290,10 @@ template <class T> class ObjectStore
 		{
 			// No type prefix, so add ours and do the search
 			CharString tag("%s%%%s", objectTypeName_, objectTag);
-			for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next())
+			for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
 			{
-				if (ri->item()->objectTagIs(tag)) return ri->item();
+				if (ri->item()->objectTagIs(tag))
+					return ri->item();
 			}
 		}
 		else
@@ -336,9 +304,10 @@ template <class T> class ObjectStore
 				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(), objectTypeName_);
 				return NULL;
 			}
-			for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next())
+			for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
 			{
-				if (ri->item()->objectTagIs(objectTag)) return ri->item();
+				if (ri->item()->objectTagIs(objectTag))
+					return ri->item();
 			}
 		}
 		return NULL;

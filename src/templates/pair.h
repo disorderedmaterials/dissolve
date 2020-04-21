@@ -25,9 +25,9 @@
 #include "templates/list.h"
 
 // Pair
-template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
+template <class T1, class T2> class Pair : public ListItem<Pair<T1, T2>>
 {
-	public:
+      public:
 	// Constructors
 	Pair()
 	{
@@ -42,21 +42,13 @@ template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
 		b_ = T2();
 		bSet_ = false;
 	}
-	Pair(T1 a, T2 b)
-	{
-		set(a,b);
-	}
+	Pair(T1 a, T2 b) { set(a, b); }
 	// Destructor
-	~Pair()
-	{
-	}
+	~Pair() {}
 	// Copy constructor
-	Pair(const Pair<T1,T2>& source)
-	{
-		(*this) = source;
-	}
+	Pair(const Pair<T1, T2> &source) { (*this) = source; }
 	// Assignment operator
-	void operator=(const Pair<T1,T2>& source)
+	void operator=(const Pair<T1, T2> &source)
 	{
 		a_ = source.a_;
 		aSet_ = source.aSet_;
@@ -64,11 +56,10 @@ template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
 		bSet_ = source.bSet_;
 	}
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Object A
 	T1 a_;
 	// Whether object A has been set
@@ -78,7 +69,7 @@ template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
 	// Whether object B has been set
 	bool bSet_;
 
-	public:
+      public:
 	// Set object A
 	void setA(T1 newA)
 	{
@@ -86,15 +77,9 @@ template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
 		aSet_ = true;
 	}
 	// Return object A
-	const T1& a() const
-	{
-		return a_;
-	}
+	const T1 &a() const { return a_; }
 	// Return whether object A has been set
-	bool isASet() const
-	{
-		return aSet_;
-	}
+	bool isASet() const { return aSet_; }
 	// Set object B
 	void setB(T2 newB)
 	{
@@ -102,15 +87,9 @@ template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
 		bSet_ = true;
 	}
 	// Return object B
-	const T2& b() const
-	{
-		return b_;
-	}
+	const T2 &b() const { return b_; }
 	// Return whether object B has been set
-	bool isBSet() const
-	{
-		return bSet_;
-	}
+	bool isBSet() const { return bSet_; }
 	// Set both objects
 	void set(T1 newA, T2 newB)
 	{

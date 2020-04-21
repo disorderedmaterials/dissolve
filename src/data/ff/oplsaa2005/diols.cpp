@@ -20,9 +20,9 @@
 */
 
 #include "data/ff/oplsaa2005/diols.h"
-#include "data/ffatomtype.h"
-#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
+#include "data/ffatomtype.h"
 
 /*
  * OPLS-AA (2005) Noble Gases
@@ -40,22 +40,17 @@ Forcefield_OPLSAA2005_Diols::Forcefield_OPLSAA2005_Diols()
 	copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O");
 }
 
-Forcefield_OPLSAA2005_Diols::~Forcefield_OPLSAA2005_Diols()
-{
-}
+Forcefield_OPLSAA2005_Diols::~Forcefield_OPLSAA2005_Diols() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_OPLSAA2005_Diols::name() const
-{
-	return "OPLSAA2005/Diols";
-}
+const char *Forcefield_OPLSAA2005_Diols::name() const { return "OPLSAA2005/Diols"; }
 
 // Return description for Forcefield
-const char* Forcefield_OPLSAA2005_Diols::description() const
+const char *Forcefield_OPLSAA2005_Diols::description() const
 {
 	static CharString desc("Alcohols from OPLS-AA (2005), covering diols only.<br/><br/>References: %s", publicationReferences());
 	return desc.get();

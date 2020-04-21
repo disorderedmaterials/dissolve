@@ -33,16 +33,11 @@ TestModule::TestModule() : Module()
 }
 
 // Destructor
-TestModule::~TestModule()
-{
-}
+TestModule::~TestModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* TestModule::createInstance() const
-{
-	return new TestModule;
-}
+Module *TestModule::createInstance() const { return new TestModule; }

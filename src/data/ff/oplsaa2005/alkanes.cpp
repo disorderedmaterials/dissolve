@@ -20,9 +20,9 @@
 */
 
 #include "data/ff/oplsaa2005/alkanes.h"
-#include "data/ffatomtype.h"
-#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
+#include "data/ffatomtype.h"
 
 /*
  * OPLS-AA (2005) Alkanes
@@ -40,22 +40,17 @@ Forcefield_OPLSAA2005_Alkanes::Forcefield_OPLSAA2005_Alkanes()
 	copyAtomType(oplsAtomTypeById(140), "HC", "-[&135,&136,&137,&138]");
 }
 
-Forcefield_OPLSAA2005_Alkanes::~Forcefield_OPLSAA2005_Alkanes()
-{
-}
+Forcefield_OPLSAA2005_Alkanes::~Forcefield_OPLSAA2005_Alkanes() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_OPLSAA2005_Alkanes::name() const
-{
-	return "OPLSAA2005/Alkanes";
-}
+const char *Forcefield_OPLSAA2005_Alkanes::name() const { return "OPLSAA2005/Alkanes"; }
 
 // Return description for Forcefield
-const char* Forcefield_OPLSAA2005_Alkanes::description() const
+const char *Forcefield_OPLSAA2005_Alkanes::description() const
 {
 	static CharString desc("Alkanes from OPLS-AA (2005), covering linear and branched alkanes.<br/><br/>References: %s", publicationReferences());
 	return desc.get();

@@ -28,11 +28,11 @@ class Data1D;
 // Regression
 class Regression
 {
-	public:
+      public:
 	// Return gradient of last n points
-	static double linear(const Data1D& data, int nSamples);
+	static double linear(const Data1D &data, int nSamples);
 	// Return gradient of last n points, along with average y value
-	static double linear(const Data1D& data, int nSamples, double& yBar);
+	static double linear(const Data1D &data, int nSamples, double &yBar);
 };
 
 #endif

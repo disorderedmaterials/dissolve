@@ -32,51 +32,48 @@ class ExpressionVariable;
 // Parameters Node
 class ParametersProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
 	ParametersProcedureNode();
 	// Destructor
 	~ParametersProcedureNode();
 
-
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 	// Return whether a name for the node must be provided
 	bool mustBeNamed() const;
 
-
 	/*
 	 * Parameters
 	 */
-	private:
+      private:
 	// List of defined integer parameters (as base ExpressionNode type)
 	List<ExpressionNode> integerParameters_;
 	// List of defined double parameters (as base ExpressionNode type)
 	List<ExpressionNode> doubleParameters_;
 
-	public:
+      public:
 	// Add new integer parameter
-	bool addParameter(const char* name, int initialValue = 0);
+	bool addParameter(const char *name, int initialValue = 0);
 	// Add new double parameter
-	bool addParameter(const char* name, double initialValue = 0.0);
+	bool addParameter(const char *name, double initialValue = 0.0);
 	// Return whether this node has the named parameter specified
-	ExpressionVariable* hasParameter(const char* name, ExpressionVariable* excludeParameter);
+	ExpressionVariable *hasParameter(const char *name, ExpressionVariable *excludeParameter);
 	// Return list of all parameters for this node
 	RefList<ExpressionVariable> parameterReferences() const;
-
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

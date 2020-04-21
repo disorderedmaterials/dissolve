@@ -24,7 +24,7 @@
 #include <QRegExp>
 
 // Constructor
-SelectGenericItemDialog::SelectGenericItemDialog(QWidget* parent, Dissolve& dissolve) : dissolve_(dissolve)
+SelectGenericItemDialog::SelectGenericItemDialog(QWidget *parent, Dissolve &dissolve) : dissolve_(dissolve)
 {
 	ui_.setupUi(this);
 
@@ -32,19 +32,18 @@ SelectGenericItemDialog::SelectGenericItemDialog(QWidget* parent, Dissolve& diss
 }
 
 // Destructor
-SelectGenericItemDialog::~SelectGenericItemDialog()
-{
-}
+SelectGenericItemDialog::~SelectGenericItemDialog() {}
 
 // Update the table of GenericItems, optionally filtering them by name and description
-void SelectGenericItemDialog::updateGenericItemTable(GenericItem* current, QString filter)
+void SelectGenericItemDialog::updateGenericItemTable(GenericItem *current, QString filter)
 {
 	// Loop over rows in the table
-	for (int n=0; n<ui_.ItemsTable->rowCount(); ++n)
+	for (int n = 0; n < ui_.ItemsTable->rowCount(); ++n)
 	{
-		QTableWidgetItem* item = ui_.ItemsTable->item(n, 0);
-		if (!item) continue;
-		GenericItem* genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
+		QTableWidgetItem *item = ui_.ItemsTable->item(n, 0);
+		if (!item)
+			continue;
+		GenericItem *genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
 		if (genericItem == current)
 		{
 			ui_.ItemsTable->setCurrentItem(item);
@@ -52,7 +51,8 @@ void SelectGenericItemDialog::updateGenericItemTable(GenericItem* current, QStri
 		}
 
 		// Check filtering
-		if (filter.isEmpty()) ui_.ItemsTable->setRowHidden(n, false);
+		if (filter.isEmpty())
+			ui_.ItemsTable->setRowHidden(n, false);
 		else
 		{
 			// Check name
@@ -77,28 +77,18 @@ void SelectGenericItemDialog::updateGenericItemTable(GenericItem* current, QStri
 	}
 }
 
-void SelectGenericItemDialog::on_FilterEdit_textChanged(const QString& text)
+void SelectGenericItemDialog::on_FilterEdit_textChanged(const QString &text) { updateGenericItemTable(NULL, text); }
+
+void SelectGenericItemDialog::on_ItemsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem)
 {
-	updateGenericItemTable(NULL, text);
+	if (currentItem)
+		emit(genericItemSelectionChanged(true));
+	else
+		emit(genericItemSelectionChanged(false));
 }
 
-void SelectGenericItemDialog::on_ItemsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* prevItem)
-{
-	if (currentItem) emit(genericItemSelectionChanged(true));
-	else emit(genericItemSelectionChanged(false));
-}
+void SelectGenericItemDialog::on_ItemsTable_itemDoubleClicked(QTableWidgetItem *w) { accept(); }
 
-void SelectGenericItemDialog::on_ItemsTable_itemDoubleClicked(QTableWidgetItem* w)
-{
-	accept();
-}
+void SelectGenericItemDialog::on_SelectButton_clicked(bool checked) { accept(); }
 
-void SelectGenericItemDialog::on_SelectButton_clicked(bool checked)
-{
-	accept();
-}
-
-void SelectGenericItemDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void SelectGenericItemDialog::on_CancelButton_clicked(bool checked) { reject(); }

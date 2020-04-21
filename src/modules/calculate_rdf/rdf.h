@@ -34,84 +34,77 @@ class SpeciesSite;
 // Calculate RDF Module
 class CalculateRDFModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	CalculateRDFModule();
 	// Destructor
 	~CalculateRDFModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run set-up stage
-	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
+	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-	private:
+      private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A
-	SelectProcedureNode* selectA_;
+	SelectProcedureNode *selectA_;
 	// SelectNode for site B
-	SelectProcedureNode* selectB_;
+	SelectProcedureNode *selectB_;
 	// Collect1DNode for A-B RDF
-	Collect1DProcedureNode* collectDistance_;
+	Collect1DProcedureNode *collectDistance_;
 	// Process1DNode for A-B RDF
-	Process1DProcedureNode* processDistance_;
+	Process1DProcedureNode *processDistance_;
 
-	public:
+      public:
 	// Return Collect1DNode for A-B RDF
-	const Collect1DProcedureNode* collectDistanceNode() const;
+	const Collect1DProcedureNode *collectDistanceNode() const;
 	// Return SelectNode for site A
-	const SelectProcedureNode* selectANode() const;
+	const SelectProcedureNode *selectANode() const;
 	// Return Process1DNode result (i.e. RDF)
-	const Process1DProcedureNode* rdfResult() const;
-
+	const Process1DProcedureNode *rdfResult() const;
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

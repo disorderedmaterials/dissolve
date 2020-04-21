@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_angle/gui/modulewidget.h"
-#include "modules/calculate_angle/angle.h"
 #include "classes/configuration.h"
+#include "modules/calculate_angle/angle.h"
+#include "modules/calculate_angle/gui/modulewidget.h"
 
 // Constructor
-CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget* parent, CalculateAngleModule* module) : ModuleWidget(parent), module_(module)
+CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, CalculateAngleModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -32,7 +32,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget* parent, Calculat
 	// Set up RDF A-B graph
 	rdfABGraph_ = ui_.RDFABPlotWidget->dataViewer();
 
-	View& rdfABView = rdfABGraph_->view();
+	View &rdfABView = rdfABGraph_->view();
 	rdfABView.setViewType(View::FlatXYView);
 	rdfABView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	rdfABView.axes().setMax(0, 10.0);
@@ -44,7 +44,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget* parent, Calculat
 	// Set up RDF B-C graph
 	rdfBCGraph_ = ui_.RDFBCPlotWidget->dataViewer();
 
-	View& rdfBCView = rdfBCGraph_->view();
+	View &rdfBCView = rdfBCGraph_->view();
 	rdfBCView.setViewType(View::FlatXYView);
 	rdfBCView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	rdfBCView.axes().setMax(0, 10.0);
@@ -56,7 +56,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget* parent, Calculat
 	// Set up Angle graph
 	angleGraph_ = ui_.AnglePlotWidget->dataViewer();
 
-	View& angleView = angleGraph_->view();
+	View &angleView = angleGraph_->view();
 	angleView.setViewType(View::FlatXYView);
 	angleView.axes().setTitle(0, "Angle, \\sym{degree}");
 	angleView.axes().setRange(0, 0.0, 180.0);
@@ -67,7 +67,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget* parent, Calculat
 	// Set up Distance(AB)-Angle graph
 	dAngleABGraph_ = ui_.DAngleABPlotWidget->dataViewer();
 
-	View& dAngleABView = dAngleABGraph_->view();
+	View &dAngleABView = dAngleABGraph_->view();
 	dAngleABView.setViewType(View::FlatXYView);
 	dAngleABView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleABView.axes().setRange(0, 0.0, 5.0);
@@ -80,7 +80,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget* parent, Calculat
 	// Set up Distance(BC)-Angle graph
 	dAngleBCGraph_ = ui_.DAngleBCPlotWidget->dataViewer();
 
-	View& dAngleBCView = dAngleBCGraph_->view();
+	View &dAngleBCView = dAngleBCGraph_->view();
 	dAngleBCView.setViewType(View::FlatXYView);
 	dAngleBCView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleBCView.axes().setRange(0, 0.0, 5.0);
@@ -122,27 +122,37 @@ void CalculateAngleModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool CalculateAngleModuleWidget::writeState(LineParser& parser) const
+bool CalculateAngleModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!rdfABGraph_->writeSession(parser)) return false;
-	if (!rdfBCGraph_->writeSession(parser)) return false;
-	if (!angleGraph_->writeSession(parser)) return false;
-	if (!dAngleABGraph_->writeSession(parser)) return false;
-	if (!dAngleBCGraph_->writeSession(parser)) return false;
+	if (!rdfABGraph_->writeSession(parser))
+		return false;
+	if (!rdfBCGraph_->writeSession(parser))
+		return false;
+	if (!angleGraph_->writeSession(parser))
+		return false;
+	if (!dAngleABGraph_->writeSession(parser))
+		return false;
+	if (!dAngleBCGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool CalculateAngleModuleWidget::readState(LineParser& parser)
+bool CalculateAngleModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!rdfABGraph_->readSession(parser)) return false;
-	if (!rdfBCGraph_->readSession(parser)) return false;
-	if (!angleGraph_->readSession(parser)) return false;
-	if (!dAngleABGraph_->readSession(parser)) return false;
-	if (!dAngleBCGraph_->readSession(parser)) return false;
+	if (!rdfABGraph_->readSession(parser))
+		return false;
+	if (!rdfBCGraph_->readSession(parser))
+		return false;
+	if (!angleGraph_->readSession(parser))
+		return false;
+	if (!dAngleABGraph_->readSession(parser))
+		return false;
+	if (!dAngleBCGraph_->readSession(parser))
+		return false;
 
 	return true;
 }
@@ -152,7 +162,7 @@ bool CalculateAngleModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule* module)
+void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *module)
 {
 	// Remove any current data
 	rdfABGraph_->clearRenderables();
@@ -162,24 +172,25 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule* modul
 	dAngleBCGraph_->clearRenderables();
 
 	// Get Configuration target
-	Configuration* cfg = module_->targetConfigurations().firstItem();
-	if (!cfg) return;
+	Configuration *cfg = module_->targetConfigurations().firstItem();
+	if (!cfg)
+		return;
 
 	// Calculated A...B RDF
-	Renderable* rdfAB = rdfABGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(AB)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+	Renderable *rdfAB = rdfABGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(AB)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
 	rdfAB->setColour(StockColours::BlueStockColour);
 
 	// Calculated B...C RDF
-	Renderable* rdfBC = rdfBCGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+	Renderable *rdfBC = rdfBCGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
 	rdfBC->setColour(StockColours::BlueStockColour);
 
 	// Calculated angle histogram
-	Renderable* angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
+	Renderable *angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
 	angle->setColour(StockColours::RedStockColour);
 
 	// Calculated (A-B)-C distance-angle map
-	Renderable* dAngleAB = dAngleABGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()), "A-B vs A-B-C");
+	Renderable *dAngleAB = dAngleABGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()), "A-B vs A-B-C");
 
 	// Calculated A-(B-C) distance-angle map
-	Renderable* dAngleBC = dAngleBCGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()), "B-C vs A-B-C");
+	Renderable *dAngleBC = dAngleBCGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()), "B-C vs A-B-C");
 }

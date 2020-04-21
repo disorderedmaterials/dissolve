@@ -19,18 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export_pairpotentials/exportpp.h"
-#include "main/dissolve.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
-#include "base/sysfunc.h"
-#include "base/lineparser.h"
+#include "main/dissolve.h"
+#include "modules/export_pairpotentials/exportpp.h"
 
 // Run main processing
-bool ExportPairPotentialsModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-	if (!pairPotentialFormat_.hasValidFileAndFormat()) return Messenger::error("No valid file/format set for pair potential export.\n");
+	if (!pairPotentialFormat_.hasValidFileAndFormat())
+		return Messenger::error("No valid file/format set for pair potential export.\n");
 
 	// Only the pool master saves the data
 	if (procPool.isMaster())
@@ -38,7 +39,7 @@ bool ExportPairPotentialsModule::process(Dissolve& dissolve, ProcessPool& procPo
 		// Store the current (root) pair potential filename
 		CharString rootPPName = pairPotentialFormat_.filename();
 
-		for (PairPotential* pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next())
+		for (PairPotential *pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next())
 		{
 			Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.description(), pp->atomTypeNameI(), pp->atomTypeNameJ());
 
@@ -60,7 +61,8 @@ bool ExportPairPotentialsModule::process(Dissolve& dissolve, ProcessPool& procPo
 		// Revert root name in FileAndFormat
 		pairPotentialFormat_.setFilename(rootPPName);
 	}
-	else if (!procPool.decision()) return false; 
+	else if (!procPool.decision())
+		return false;
 
 	return true;
 }

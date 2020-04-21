@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_DATATEST_H
 #define DISSOLVE_MODULEWIDGET_DATATEST_H
 
-#include "modules/datatest/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/datatest/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class DataTestModule;
@@ -34,19 +34,18 @@ class DataTestModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	DataTestModule* module_;
+	DataTestModule *module_;
 
-	public:
+      public:
 	// Constructor
-	DataTestModuleWidget(QWidget* parent, DataTestModule* module);
-
+	DataTestModuleWidget(QWidget *parent, DataTestModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::DataTestModuleWidget ui_;
 };

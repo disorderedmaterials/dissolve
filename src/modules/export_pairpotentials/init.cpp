@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export_pairpotentials/exportpp.h"
 #include "keywords/types.h"
+#include "modules/export_pairpotentials/exportpp.h"
 
 // Perform any necessary initialisation for the Module
 void ExportPairPotentialsModule::initialise()
@@ -28,4 +28,3 @@ void ExportPairPotentialsModule::initialise()
 	// Format
 	keywords_.add("Format", new FileAndFormatKeyword(pairPotentialFormat_, "EndFormat"), "Format", "Basename and format in which to write potentials");
 }
-

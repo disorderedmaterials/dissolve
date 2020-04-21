@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_BROADENINGFUNCTION_H
 #define DISSOLVE_KEYWORDWIDGET_BROADENINGFUNCTION_H
 
-#include "gui/keywordwidgets/ui_broadeningfunction.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "keywords/broadeningfunction.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/ui_broadeningfunction.h"
+#include "keywords/broadeningfunction.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -36,45 +36,42 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	BroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	BroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	BroadeningFunctionKeyword* keyword_;
-
+	BroadeningFunctionKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::BroadeningFunctionWidget ui_;
 
-	private slots:
+      private slots:
 	// Function type combo changed
 	void functionCombo_currentIndexChanged(int index);
 	// Parameter value changed
 	void parameterSpin_valueChanged(double value);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues(const CoreData& coreData);
+	void updateWidgetValues(const CoreData &coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 };

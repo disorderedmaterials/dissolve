@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_PROCEDURENODE_H
 #define DISSOLVE_PROCEDURENODE_H
 
-#include "keywords/list.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"
+#include "keywords/list.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -42,24 +42,56 @@ class Site;
 // Procedure Node
 class ProcedureNode : public ListItem<ProcedureNode>
 {
-	public:
+      public:
 	// Node Types
-	enum NodeType {
+	enum NodeType
+	{
 		AddSpeciesNode,
 		BoxNode,
-		BEGIN_CalculateNodes, CalculateAngleNode, CalculateAxisAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode, END_CalculateNodes,
+		BEGIN_CalculateNodes,
+		CalculateAngleNode,
+		CalculateAxisAngleNode,
+		CalculateDistanceNode,
+		CalculateBaseNode,
+		CalculateVectorNode,
+		Collect1DNode,
+		Collect2DNode,
+		Collect3DNode,
+		END_CalculateNodes,
 		DynamicSiteNode,
 		ExcludeNode,
 		Fit1DNode,
 		Integrate1DNode,
-		BEGIN_OperateNodes, OperateBaseNode, OperateDivideNode, OperateExpressionNode, OperateGridNormaliseNode, OperateMultiplyNode, OperateNormaliseNode, OperateNumberDensityNormaliseNode, OperateSitePopulationNormaliseNode, OperateSphericalShellNormaliseNode, END_OperateNodes,
-		ParametersNode, Process1DNode, Process2DNode, Process3DNode,
-		SelectNode, SequenceNode, Sum1DNode,
-		nNodeTypes };
+		BEGIN_OperateNodes,
+		OperateBaseNode,
+		OperateDivideNode,
+		OperateExpressionNode,
+		OperateGridNormaliseNode,
+		OperateMultiplyNode,
+		OperateNormaliseNode,
+		OperateNumberDensityNormaliseNode,
+		OperateSitePopulationNormaliseNode,
+		OperateSphericalShellNormaliseNode,
+		END_OperateNodes,
+		ParametersNode,
+		Process1DNode,
+		Process2DNode,
+		Process3DNode,
+		SelectNode,
+		SequenceNode,
+		Sum1DNode,
+		nNodeTypes
+	};
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();
 	// Node Contexts
-	enum NodeContext { NoContext = 0, AnalysisContext = 1, GenerationContext = 2, OperateContext = 4 };
+	enum NodeContext
+	{
+		NoContext = 0,
+		AnalysisContext = 1,
+		GenerationContext = 2,
+		OperateContext = 4
+	};
 	// Return enum option info for NodeContext
 	static EnumOptions<NodeContext> nodeContexts();
 	// Constructor
@@ -67,11 +99,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	// Destructor
 	virtual ~ProcedureNode();
 
-
 	/*
 	 * Identity
 	 */
-	protected:
+      protected:
 	// Node type
 	NodeType type_;
 	// Node name
@@ -79,7 +110,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	// Node nice name
 	CharString niceName_;
 
-	public:
+      public:
 	// Return node type
 	NodeType type() const;
 	// Return whether the node is of the specified type (detecting derived node classes as well)
@@ -89,109 +120,102 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	// Return whether a name for the node must be provided
 	virtual bool mustBeNamed() const;
 	// Set node name (and nice name)
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return node name
-	const char* name() const;
+	const char *name() const;
 	// Return node nice name
-	const char* niceName() const;
-
+	const char *niceName() const;
 
 	/*
 	 * Keywords
 	 */
-	protected:
+      protected:
 	// Keywords for this node
 	KeywordList keywords_;
 
-	public:
+      public:
 	// Return keywords for this node
-	const KeywordList& keywords() const;
+	const KeywordList &keywords() const;
 	// Set specified keyword (pass-thru to KeywordList::set<D>())
-	template <class D> bool setKeyword(const char* name, D value)
-	{
-		return keywords_.set<D>(name, value);
-	}
+	template <class D> bool setKeyword(const char *name, D value) { return keywords_.set<D>(name, value); }
 	// Set specified enum keyword (pass-thru to KeywordList::setEnumeration<D>())
-	template <class E> bool setEnumeration(const char* name, E enumeration)
-	{
-		return keywords_.setEnumeration<E>(name, enumeration);
-	}
-
+	template <class E> bool setEnumeration(const char *name, E enumeration) { return keywords_.setEnumeration<E>(name, enumeration); }
 
 	/*
 	 * Scope
 	 */
-	private:
+      private:
 	// Scope (SequenceNode) in which this node exists
-	SequenceProcedureNode* scope_;
+	SequenceProcedureNode *scope_;
 
-	public:
+      public:
 	// Set scope
-	void setScope(SequenceProcedureNode* scopeNode);
+	void setScope(SequenceProcedureNode *scopeNode);
 	// Return scope (SequenceNode) in which this node exists
-	SequenceProcedureNode* scope() const;
+	SequenceProcedureNode *scope() const;
 	// Return Procedure in which this node exists
-	const Procedure* procedure() const;
+	const Procedure *procedure() const;
 	// Return context of scope in which this node exists
 	ProcedureNode::NodeContext scopeContext() const;
 	// Return named node if it is currently in scope, and optionally matches the type given
-	ProcedureNode* nodeInScope(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	ProcedureNode *nodeInScope(const char *name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
 	// Return list of nodes of specified type present in this node's scope
 	RefList<ProcedureNode> nodesInScope(ProcedureNode::NodeType nt);
 	// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-	ProcedureNode* nodeExists(const char* name, ProcedureNode* excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+	ProcedureNode *nodeExists(const char *name, ProcedureNode *excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return list of nodes of specified type present in the Procedure
 	RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
 	// Return whether the named parameter is currently in scope
-	ExpressionVariable* parameterInScope(const char* name, ExpressionVariable* excludeParameter = NULL);
+	ExpressionVariable *parameterInScope(const char *name, ExpressionVariable *excludeParameter = NULL);
 	// Return whether the named parameter exists anywhere in the same Procedure
-	ExpressionVariable* parameterExists(const char* name, ExpressionVariable* excludeParameter = NULL) const;
+	ExpressionVariable *parameterExists(const char *name, ExpressionVariable *excludeParameter = NULL) const;
 	// Create and return reference list of parameters in scope
 	RefList<ExpressionVariable> parametersInScope();
-
 
 	/*
 	 * Branch
 	 */
-	public:
+      public:
 	// Return whether this node has a branch
 	virtual bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
-	virtual SequenceProcedureNode* branch();
-
+	virtual SequenceProcedureNode *branch();
 
 	/*
 	 * Parameters
 	 */
-	public:
+      public:
 	// Return whether this node has the named parameter specified
-	virtual ExpressionVariable* hasParameter(const char* name, ExpressionVariable* excludeParameter = NULL);
+	virtual ExpressionVariable *hasParameter(const char *name, ExpressionVariable *excludeParameter = NULL);
 	// Return references to all parameters for this node
 	virtual RefList<ExpressionVariable> parameterReferences() const;
-
 
 	/*
 	 * Execution
 	 */
-	public:
+      public:
 	// Node execution result
-	enum NodeExecutionResult { Failure, Success, SomethingElse };
+	enum NodeExecutionResult
+	{
+		Failure,
+		Success,
+		SomethingElse
+	};
 	// Prepare any necessary data, ready for execution
-	virtual bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	virtual bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	virtual NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList) = 0;
+	virtual NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) = 0;
 	// Finalise any necessary data after execution
-	virtual bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
+	virtual bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 
 	/*
 	 * Read / Write
 	 */
-	public:
+      public:
 	// Read node data from specified LineParser
-	virtual bool read(LineParser& parser, const CoreData& coreData);
+	virtual bool read(LineParser &parser, const CoreData &coreData);
 	// Write node data to specified LineParser
-	virtual bool write(LineParser& parser, const char* prefix);
+	virtual bool write(LineParser &parser, const char *prefix);
 };
 
 #endif

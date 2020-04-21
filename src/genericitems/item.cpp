@@ -25,36 +25,32 @@
 List<GenericItem> GenericItem::itemClasses_;
 
 // Constructor
-GenericItem::GenericItem(const char* name, int flags) : ListItem<GenericItem>()
+GenericItem::GenericItem(const char *name, int flags) : ListItem<GenericItem>()
 {
 	name_ = name;
 	flags_ = flags;
 	version_ = 1;
 }
 
-GenericItem::~GenericItem()
-{
-};
+GenericItem::~GenericItem(){};
 
 /*
  * Item Class
  */
 
 // Add class to list of representative itemClasses_
-void GenericItem::addItemClass(GenericItem* item)
-{
-	itemClasses_.own(item);
-}
+void GenericItem::addItemClass(GenericItem *item) { itemClasses_.own(item); }
 
 // Return new, empty GenericItem containing the class specified
-GenericItem* GenericItem::newItem(const char* className, const char* name, int flags)
+GenericItem *GenericItem::newItem(const char *className, const char *name, int flags)
 {
 	// Search through registered item classes list for one matching the class name provided
-	for (GenericItem* item = itemClasses_.first(); item != NULL; item = item->next())
+	for (GenericItem *item = itemClasses_.first(); item != NULL; item = item->next())
 	{
 		// See if the item can create a GenericItem of the desired type. If it can't, move on
-		GenericItem* newItem = item->createItem(className, name, flags);
-		if (newItem != NULL) return newItem;
+		GenericItem *newItem = item->createItem(className, name, flags);
+		if (newItem != NULL)
+			return newItem;
 	}
 
 	return NULL;
@@ -65,61 +61,39 @@ GenericItem* GenericItem::newItem(const char* className, const char* name, int f
  */
 
 // Set item name
-void GenericItem::setName(const char* name)
-{
-	name_ = name;
-}
+void GenericItem::setName(const char *name) { name_ = name; }
 
 // Return item name
-const char* GenericItem::name()
-{
-	return name_.get();
-}
+const char *GenericItem::name() { return name_.get(); }
 
 // Return version of the item
-int GenericItem::version() const
-{
-	return version_;
-}
+int GenericItem::version() const { return version_; }
 
 // Set version of the item
-void GenericItem::setVersion(int version)
-{
-	version_ = version;
-}
+void GenericItem::setVersion(int version) { version_ = version; }
 
 // Bump the version of the item
-void GenericItem::bumpVersion()
-{
-	++version_;
-}
+void GenericItem::bumpVersion() { ++version_; }
 
 // Set flags for item, overwriting any existing flags
-void GenericItem::setFlags(int flags)
-{
-	flags_ = flags;
-}
+void GenericItem::setFlags(int flags) { flags_ = flags; }
 
 // Add (set) flag for item
 void GenericItem::addFlag(ItemFlag flag)
 {
-	if (!hasFlag(flag)) flags_ += flag;
+	if (!hasFlag(flag))
+		flags_ += flag;
 }
 
 // Remove (uneset) flag for item
 void GenericItem::removeFlag(ItemFlag flag)
 {
-	if (hasFlag(flag)) flags_ -= flag;
+	if (hasFlag(flag))
+		flags_ -= flag;
 }
 
 // Return flags
-int GenericItem::flags() const
-{
-	return flags_;
-}
+int GenericItem::flags() const { return flags_; }
 
 // Return whether specified flag is set
-bool GenericItem::hasFlag(GenericItem::ItemFlag flag) const
-{
-	return (flags_&flag);
-}
+bool GenericItem::hasFlag(GenericItem::ItemFlag flag) const { return (flags_ & flag); }

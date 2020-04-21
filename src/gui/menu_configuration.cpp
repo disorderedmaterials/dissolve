@@ -19,20 +19,20 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/gui.h"
 #include "gui/configurationtab.h"
+#include "gui/gui.h"
 #include "gui/selectspeciesdialog.h"
+#include "io/export/coordinates.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/parameters.h"
-#include "io/export/coordinates.h"
 #include <QFileDialog>
 #include <QMessageBox>
 
 void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
 {
-	Configuration* newConfiguration = dissolve_.addConfiguration();
+	Configuration *newConfiguration = dissolve_.addConfiguration();
 
 	setModified();
 	fullUpdate();
@@ -45,16 +45,17 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 	SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
 
 	RefList<Species> mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
-	if (mixSpecies.nItems() == 0) return;
+	if (mixSpecies.nItems() == 0)
+		return;
 
 	// Create the Configuration and a suitable generator
-	Configuration* newConfiguration = dissolve_.addConfiguration();
-	Procedure& generator = newConfiguration->generator();
-	ParametersProcedureNode* paramsNode = new ParametersProcedureNode;
+	Configuration *newConfiguration = dissolve_.addConfiguration();
+	Procedure &generator = newConfiguration->generator();
+	ParametersProcedureNode *paramsNode = new ParametersProcedureNode;
 	paramsNode->addParameter("rho", 0.1);
 	generator.addRootSequenceNode(paramsNode);
 	generator.addRootSequenceNode(new BoxProcedureNode);
-	for(auto sp : mixSpecies)
+	for (auto sp : mixSpecies)
 	{
 		generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
 	}
@@ -73,27 +74,31 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 	SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
 
 	RefList<Species> mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
-	if (mixSpecies.nItems() == 0) return;
+	if (mixSpecies.nItems() == 0)
+		return;
 
 	// Create the Configuration and a suitable generator
-	Configuration* newConfiguration = dissolve_.addConfiguration();
-	Procedure& generator = newConfiguration->generator();
-	ParametersProcedureNode* paramsNode = new ParametersProcedureNode;
+	Configuration *newConfiguration = dissolve_.addConfiguration();
+	Procedure &generator = newConfiguration->generator();
+	ParametersProcedureNode *paramsNode = new ParametersProcedureNode;
 	paramsNode->addParameter("populationA", 100);
 	paramsNode->addParameter("rho", 0.1);
 	generator.addRootSequenceNode(paramsNode);
 	generator.addRootSequenceNode(new BoxProcedureNode);
 	int count = 0;
-	for (Species* sp : mixSpecies)
+	for (Species *sp : mixSpecies)
 	{
 		// Add a parameter for the ratio of this species to the first (or the population of the first)
-		if (count==0) generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+		if (count == 0)
+			generator.addRootSequenceNode(
+			    new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
 		else
 		{
-			CharString parameterName("ratio%c", 65+count);
+			CharString parameterName("ratio%c", 65 + count);
 			paramsNode->addParameter(parameterName, 1);
 
-			generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue(CharString("%s*populationA", parameterName.get()), paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+			generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue(CharString("%s*populationA", parameterName.get()), paramsNode->parameterReferences()),
+										  NodeValue("rho", paramsNode->parameterReferences())));
 		}
 
 		++count;
@@ -110,23 +115,27 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a ConfigurationTab, then call its rename() function
-	MainTab* tab = ui_.MainTabs->currentTab();
-	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
+	MainTab *tab = ui_.MainTabs->currentTab();
+	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
+		return;
 	tab->rename();
 }
 
 void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a ConfigurationTab
-	MainTab* tab = ui_.MainTabs->currentTab();
-	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
+	MainTab *tab = ui_.MainTabs->currentTab();
+	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType))
+		return;
 
 	// Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
-	ConfigurationTab* cfgTab = dynamic_cast<ConfigurationTab*>(tab);
-	if (!cfgTab) return;
+	ConfigurationTab *cfgTab = dynamic_cast<ConfigurationTab *>(tab);
+	if (!cfgTab)
+		return;
 
 	// Check that we really want to delete the Configuration
-	if (!cfgTab->close()) return;
+	if (!cfgTab->close())
+		return;
 
 	// Update the GUI
 	ui_.MainTabs->removeByPage(cfgTab->page());
@@ -137,14 +146,18 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
 void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
 {
 	// Get the currently-displayed Configuration
-	Configuration* cfg = ui_.MainTabs->currentConfiguration();
-	if (!cfg) return;
+	Configuration *cfg = ui_.MainTabs->currentConfiguration();
+	if (!cfg)
+		return;
 
 	// Get a suitable export file name
 	QString exportFile = QFileDialog::getSaveFileName(this, "Choose XYZ export file name", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
-	if (exportFile.isEmpty()) return;
+	if (exportFile.isEmpty())
+		return;
 
 	CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::XYZCoordinates);
-	if (!fileAndFormat.exportData(cfg)) QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.", QMessageBox::Ok, QMessageBox::Ok);
-	else Messenger::print("Successfully exported configuration '%s' to '%s'.\n", cfg->name(), fileAndFormat.filename());
+	if (!fileAndFormat.exportData(cfg))
+		QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.", QMessageBox::Ok, QMessageBox::Ok);
+	else
+		Messenger::print("Successfully exported configuration '%s' to '%s'.\n", cfg->name(), fileAndFormat.filename());
 }

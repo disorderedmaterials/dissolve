@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/dataviewer.hui"
 #include "base/messenger.h"
+#include "gui/dataviewer.hui"
 
 // Constructor
-DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
+DataViewer::DataViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Interaction
 	setInteractionMode(DataViewer::DefaultInteraction);
@@ -37,28 +37,17 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 }
 
 // Destructor
-DataViewer::~DataViewer()
-{
-}
+DataViewer::~DataViewer() {}
 
 /*
  * Options
  */
 
 // Set pointer to Dissolve
-void DataViewer::setDissolve(Dissolve* dissolve)
-{
-	dissolve_ = dissolve;
-}
+void DataViewer::setDissolve(Dissolve *dissolve) { dissolve_ = dissolve; }
 
 // Set control flags
-void DataViewer::setFlags(int flags)
-{
-	controlFlags_ = flags;
-}
+void DataViewer::setFlags(int flags) { controlFlags_ = flags; }
 
 // Return whether the specified flag is set
-bool DataViewer::hasFlag(ControlFlag flag) const
-{
-	return (controlFlags_&flag);
-}
+bool DataViewer::hasFlag(ControlFlag flag) const { return (controlFlags_ & flag); }

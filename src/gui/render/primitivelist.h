@@ -31,20 +31,19 @@ class QOpenGLContext;
 // Rendering Primitive List
 class PrimitiveList
 {
-	public:
+      public:
 	// Constructor / Destructor
 	PrimitiveList();
 	~PrimitiveList();
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// List of Primitives owned and managed by this list
 	List<Primitive> primitives_;
 
-	public:
+      public:
 	// Clear all existing Primitives
 	void clear();
 	// Forget all data, leaving arrays intact
@@ -52,33 +51,32 @@ class PrimitiveList
 	// Reinitialise list so it is large enough to accomodate specified number of Primitives
 	void reinitialise(int newSize, GLenum type, bool colourData);
 	// Add a new Primitive to the end of the list
-	Primitive* add(GLenum type = GL_LINES, bool colourData = false);
+	Primitive *add(GLenum type = GL_LINES, bool colourData = false);
 	// Register an existing Primitive with the list
-	void add(Primitive* primitive);
+	void add(Primitive *primitive);
 	// Return number of primitives in the list
 	int nPrimitives() const;
 	// Remove specified Primitive
-	void remove(Primitive* primitive);
+	void remove(Primitive *primitive);
 	// Return total number of defined vertices
 	int nDefinedVertices();
 	// Return total number of defined indices
 	int nDefinedIndices();
 	// Push instance layer
-	void pushInstance(const QOpenGLContext* context);
+	void pushInstance(const QOpenGLContext *context);
 	// Pop topmost instance layer
-	void popInstance(const QOpenGLContext* context);
+	void popInstance(const QOpenGLContext *context);
 	// Return number of instances of topmost primitive
 	int nInstances();
 	// Send to OpenGL (i.e. render)
 	void sendToGL();
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Element access operator
-	Primitive* operator[](int index);
+	Primitive *operator[](int index);
 };
 
 #endif

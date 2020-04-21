@@ -22,12 +22,12 @@
 #ifndef DISSOLVE_SPECIESATOM_H
 #define DISSOLVE_SPECIESATOM_H
 
-#include <vector>
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/orderedpointerdataarray.h"
-#include "templates/vector3.h"
 #include "templates/reflist.h"
+#include "templates/vector3.h"
+#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -41,55 +41,54 @@ class ProcessPool;
 // SpeciesAtom Definition
 class SpeciesAtom : public ListItem<SpeciesAtom>
 {
-	public:
+      public:
 	// Constructor
 	SpeciesAtom();
 	// Destructor
 	~SpeciesAtom();
 
-
 	/*
 	 * Properties
 	 */
-	private:
+      private:
 	// Parent Species
-	Species* parent_;
+	Species *parent_;
 	// Atomic Element
-	Element* element_;
+	Element *element_;
 	// Coordinates
 	Vec3<double> r_;
 	// Charge (if contained in file)
 	double charge_;
 	// Assigned AtomType
-	AtomType* atomType_;
+	AtomType *atomType_;
 	// Index in Species
 	int index_;
 	// Whether the atom is currently selected
 	bool selected_;
 
-	public:
+      public:
 	// Set Species parent
-	void setSpecies(Species* sp);
+	void setSpecies(Species *sp);
 	// Return species parent
-	const Species* species() const;
+	const Species *species() const;
 	// Set basic atom properties
-	void set(Element* element, double rx, double ry, double rz, double q = 0.0);
+	void set(Element *element, double rx, double ry, double rz, double q = 0.0);
 	// Set basic atom properties
-	void set(Element* element, const Vec3<double> r, double q = 0.0);
+	void set(Element *element, const Vec3<double> r, double q = 0.0);
 	// Set atomic element
-	void setElement(Element* el);
+	void setElement(Element *el);
 	// Return atomic element
-	Element* element() const;
+	Element *element() const;
 	// Return coordinates (read-only)
-	const Vec3<double>& r() const;
+	const Vec3<double> &r() const;
 	// Set charge of Atom
 	void setCharge(double charge);
 	// Return charge of Atom
 	double charge() const;
 	// Set AtomType of Atom
-	void setAtomType(AtomType* at);
+	void setAtomType(AtomType *at);
 	// Return AtomType of Atom
-	AtomType* atomType() const;
+	AtomType *atomType() const;
 	// Set List index (0->[N-1])
 	void setIndex(int id);
 	// Return List index (0->[N-1])
@@ -101,73 +100,71 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return whether the atom is currently selected
 	bool isSelected() const;
 	// Copy properties from supplied Atom
-	void copyProperties(const SpeciesAtom* source);
-
+	void copyProperties(const SpeciesAtom *source);
 
 	/*
 	 * Intramolecular Information
 	 */
-	private:
+      private:
 	// List of bonds which this atom participates in
-	std::vector<SpeciesBond*> bonds_;
+	std::vector<SpeciesBond *> bonds_;
 	// List of angles which this atom participates in
-	std::vector<SpeciesAngle*> angles_;
+	std::vector<SpeciesAngle *> angles_;
 	// List of torsions which this atom participates in
-	std::vector<SpeciesTorsion*> torsions_;
+	std::vector<SpeciesTorsion *> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
-	OrderedPointerDataArray<SpeciesAtom,double> exclusions_;
+	OrderedPointerDataArray<SpeciesAtom, double> exclusions_;
 
-	public:
+      public:
 	// Add bond reference
-	void addBond(SpeciesBond* b);
+	void addBond(SpeciesBond *b);
 	// Remove bond reference
-	void removeBond(SpeciesBond* b);
+	void removeBond(SpeciesBond *b);
 	// Clear all bond references
 	void clearBonds();
 	// Return number of bonds
 	int nBonds() const;
 	// Return specified bond
-	SpeciesBond* bond(int index);
+	SpeciesBond *bond(int index);
 	// Return bonds list
-	const std::vector<SpeciesBond*>& bonds() const;
+	const std::vector<SpeciesBond *> &bonds() const;
 	// Return whether bond to specified atom exists
-	SpeciesBond* hasBond(SpeciesAtom* j);
+	SpeciesBond *hasBond(SpeciesAtom *j);
 	// Add specified Angle to Atom
-	void addAngle(SpeciesAngle* angle);
+	void addAngle(SpeciesAngle *angle);
 	// Remove angle reference
-	void removeAngle(SpeciesAngle* a);
+	void removeAngle(SpeciesAngle *a);
 	// Return the number of SpeciesAngles in which the Atom is involved
 	int nAngles() const;
 	// Return specified angle
-	SpeciesAngle* angle(int index);
+	SpeciesAngle *angle(int index);
 	// Return array of Angles in which the Atom is involved
-	const std::vector<SpeciesAngle*>& angles() const;
+	const std::vector<SpeciesAngle *> &angles() const;
 	// Add specified SpeciesTorsion to Atom
-	void addTorsion(SpeciesTorsion* torsion, double scaling14);
+	void addTorsion(SpeciesTorsion *torsion, double scaling14);
 	// Remove torsion reference
-	void removeTorsion(SpeciesTorsion* t);
+	void removeTorsion(SpeciesTorsion *t);
 	// Return the number of SpeciesTorsions in which the Atom is involved
 	int nTorsions() const;
 	// Return specified torsion
-	SpeciesTorsion* torsion(int index);
+	SpeciesTorsion *torsion(int index);
 	// Return array of Torsions in which the Atom is involved
-	const std::vector<SpeciesTorsion*>& torsions() const;
+	const std::vector<SpeciesTorsion *> &torsions() const;
 	// Return scaling factor to employ with specified Atom
-	double scaling(const SpeciesAtom* j) const;
-
+	double scaling(const SpeciesAtom *j) const;
 
 	/*
 	 * Coordinate Manipulation
 	 */
-	public:
+      public:
 	// Set coordinate
 	void setCoordinate(int index, double value);
 	// Set coordinates
 	void setCoordinates(double x, double y, double z);
 	// Set coordinates (from Vec3)
-	void setCoordinates(const Vec3<double>& newr);
+	void setCoordinates(const Vec3<double> &newr);
 	// Translate coordinates
-	void translateCoordinates(const Vec3<double>& delta);
+	void translateCoordinates(const Vec3<double> &delta);
 };
 
 #endif

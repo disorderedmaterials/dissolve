@@ -31,20 +31,19 @@
 // Line Style
 class LineStyle
 {
-	public:
+      public:
 	// Constructor / Destructor
 	LineStyle(double width = 1.0, LineStipple::StippleType stipple = LineStipple::NoStipple, double r = 0.0, double g = 0.0, double b = 0.0, double a = 1.0);
 	~LineStyle();
 	// Copy constructor
-	LineStyle(const LineStyle& source);
+	LineStyle(const LineStyle &source);
 	// Assignment operator
-	void operator=(const LineStyle& source);
-
+	void operator=(const LineStyle &source);
 
 	/*
 	 * Style
 	 */
-	private:
+      private:
 	// Line width
 	double width_;
 	// Line stipple
@@ -52,7 +51,7 @@ class LineStyle
 	// Line colour
 	GLfloat colour_[4];
 
-	public:
+      public:
 	// Set line style
 	void set(double width, LineStipple::StippleType stipple);
 	// Set line style and colour
@@ -72,13 +71,12 @@ class LineStyle
 	// Set line colour
 	void setColour(QColor colour);
 	// Return line colour
-	const GLfloat* colour() const;
-
+	const GLfloat *colour() const;
 
 	/*
 	 * GL
 	 */
-	public:
+      public:
 	// Send line styling to GL
 	void sendToGL(const double pixelScaling = 1.0) const;
 };

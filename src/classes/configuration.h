@@ -22,28 +22,28 @@
 #ifndef DISSOLVE_CONFIGURATION_H
 #define DISSOLVE_CONFIGURATION_H
 
-#include <deque>
-#include <memory>
+#include "base/processpool.h"
+#include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypelist.h"
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
-#include "classes/speciesinfo.h"
 #include "classes/sitestack.h"
-#include "module/layer.h"
+#include "classes/speciesinfo.h"
+#include "genericitems/list.h"
 #include "io/import/coordinates.h"
-#include "procedure/procedure.h"
+#include "math/data1d.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
-#include "math/data1d.h"
-#include "base/processpool.h"
-#include "genericitems/list.h"
-#include "base/version.h"
-#include "templates/vector3.h"
-#include "templates/objectstore.h"
-#include "templates/orderedlist.h"
+#include "module/layer.h"
+#include "procedure/procedure.h"
 #include "templates/array.h"
 #include "templates/dynamicarray.h"
+#include "templates/objectstore.h"
+#include "templates/orderedlist.h"
+#include "templates/vector3.h"
+#include <deque>
+#include <memory>
 
 // Forward Declarations
 class Box;
@@ -55,21 +55,20 @@ class Species;
 // Configuration
 class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
 {
-	public:
+      public:
 	// Constructor
 	Configuration();
 	// Destructor
 	~Configuration();
 	// Assignment operator
-	void operator=(Configuration& source);
+	void operator=(Configuration &source);
 	// Clear all data
 	void clear();
-
 
 	/*
 	 * Definition
 	 */
-	private:
+      private:
 	// Name of the Configuration
 	CharString name_;
 	// Nice name (generated from name_) used for output files
@@ -81,33 +80,32 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Temperature of this configuration (K)
 	double temperature_;
 
-	public:
+      public:
 	// Set name of the Configuration
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return name of the Configuration
-	const char* name() const;
+	const char *name() const;
 	// Return nice name of the Configuration
-	const char* niceName() const;
+	const char *niceName() const;
 	// Return the current generator
-	Procedure& generator();
+	Procedure &generator();
 	// Create the Configuration according to its generator Procedure
-	bool generate(ProcessPool& procPool, double pairPotentialRange);
+	bool generate(ProcessPool &procPool, double pairPotentialRange);
 	// Return import coordinates file / format
-	CoordinateImportFileFormat& inputCoordinates();
+	CoordinateImportFileFormat &inputCoordinates();
 	// Load coordinates from specified parser
-	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
+	bool loadCoordinates(LineParser &parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 	// Initialise (generate or load) the basic contents of the Configuration
-	bool initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent = false);
+	bool initialiseContent(ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent = false);
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
 	double temperature() const;
 
-
 	/*
 	 * Content
 	 */
-	private:
+      private:
 	// List of Species used by the Configuration and their populations
 	List<SpeciesInfo> usedSpecies_;
 	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
@@ -119,29 +117,29 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Array of Atoms
 	DynamicArray<Atom> atoms_;
 
-	public:
+      public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
 	// Initialise content array
 	void initialiseArrays(int nMolecules);
 	// Return specified used type
-	AtomType* usedAtomType(int index);
+	AtomType *usedAtomType(int index);
 	// Return specified used type data
-	AtomTypeData* usedAtomTypeData(int index);
+	AtomTypeData *usedAtomTypeData(int index);
 	// Return first AtomTypeData for this Configuration
-	AtomTypeData* usedAtomTypes();
+	AtomTypeData *usedAtomTypes();
 	// Return AtomTypeList for this Configuration
-	const AtomTypeList& usedAtomTypesList() const;
+	const AtomTypeList &usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes() const;
 	// Add Species to list of those used by the Configuration, setting/adding the population specified
-	SpeciesInfo* addUsedSpecies(Species* sp, int population);
+	SpeciesInfo *addUsedSpecies(Species *sp, int population);
 	// Return SpeciesInfo for specified Species
-	SpeciesInfo* usedSpeciesInfo(Species* sp);
+	SpeciesInfo *usedSpeciesInfo(Species *sp);
 	// Return list of SpeciesInfo for the Configuration
-	List<SpeciesInfo>& usedSpecies();
+	List<SpeciesInfo> &usedSpecies();
 	// Return if the specified Species is present in the usedSpecies list
-	bool hasUsedSpecies(Species* sp);
+	bool hasUsedSpecies(Species *sp);
 	// Return the total atomic mass present in the Configuration
 	double atomicMass() const;
 	// Return the atomic density of the Configuration
@@ -153,47 +151,46 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Increment version of current contents
 	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
-	std::shared_ptr<Molecule> addMolecule(Species* sp, CoordinateSet* sourceCoordinates = NULL);
+	std::shared_ptr<Molecule> addMolecule(Species *sp, CoordinateSet *sourceCoordinates = NULL);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return array of Molecules
-	std::deque<std::shared_ptr<Molecule>>& molecules();
+	std::deque<std::shared_ptr<Molecule>> &molecules();
 	// Return nth Molecule
 	std::shared_ptr<Molecule> molecule(int n);
 	// Add new Atom to Configuration
-	Atom* addAtom(const SpeciesAtom* sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r = Vec3<double>());
+	Atom *addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r = Vec3<double>());
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
-	DynamicArray<Atom>& atoms();
+	DynamicArray<Atom> &atoms();
 	// Return Atom array (const)
-	const DynamicArray<Atom>& constAtoms() const;
+	const DynamicArray<Atom> &constAtoms() const;
 	// Return nth Atom
-	Atom* atom(int n);
+	Atom *atom(int n);
 	// Scale geometric centres of molecules within box
 	void scaleMoleculeCentres(double factor);
-
 
 	/*
 	 * Periodic Box and Cells
 	 */
-	private:
+      private:
 	// Requested size factor for Box
 	double requestedSizeFactor_;
 	// Size factor currently applied to Box / Cells
 	double appliedSizeFactor_;
 	// Periodic Box definition for the Configuration
-	Box* box_;
+	Box *box_;
 	// Requested side length for individual Cell
 	double requestedCellDivisionLength_;
 	// Cell array
 	CellArray cells_;
 
-	public:
+      public:
 	// Create Box definition with specified lengths and angles
 	bool createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
 	// Return Box
-	const Box* box() const;
+	const Box *box() const;
 	// Scale Box (and associated Cells) by specified factor
 	void scaleBox(double factor);
 	// Set requested size factor for Box
@@ -207,85 +204,80 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Return requested side length for individual Cell
 	double requestedCellDivisionLength() const;
 	// Return cell array
-	CellArray& cells();
+	CellArray &cells();
 	// Return cell array
-	const CellArray& constCells() const;
+	const CellArray &constCells() const;
 	// Scale Box, Cells, and Molecule geometric centres according to current size factor
-	void applySizeFactor(const PotentialMap& potentialMap);
-
+	void applySizeFactor(const PotentialMap &potentialMap);
 
 	/*
 	 * Upkeep
 	 */
-	public:
+      public:
 	// Update Cell contents
 	void updateCellContents();
 	// Update Cell location of specified Atom
-	void updateCellLocation(Atom* i);
+	void updateCellLocation(Atom *i);
 	// Update Cell location of specified Molecule
 	void updateCellLocation(std::shared_ptr<Molecule> mol);
 	// Update Cell location of specified Atom indices (in array)
-	void updateCellLocation(int nIndices, int* atomIndices, int indexOffset);
-
+	void updateCellLocation(int nIndices, int *atomIndices, int indexOffset);
 
 	/*
 	 * Modules
 	 */
-	private:
+      private:
 	// Module layer associated to this Configuration
 	ModuleLayer moduleLayer_;
 	// Variables set by Modules
 	GenericList moduleData_;
 
-	public:
+      public:
 	// Associate Module to the Configuration
-	bool ownModule(Module* module);
+	bool ownModule(Module *module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
 	// Return Module layer for this Configuration
-	ModuleLayer& moduleLayer();
+	ModuleLayer &moduleLayer();
 	// Return list of Modules associated to this Configuration
-	ModuleList& modules();
+	ModuleList &modules();
 	// Return list of variables set by Modules
-	GenericList& moduleData();
-
+	GenericList &moduleData();
 
 	/*
 	 * Site Stacks
 	 */
-	private:
+      private:
 	// List of current SiteStacks
 	List<SiteStack> siteStacks_;
 
-	public:
+      public:
 	// Calculate / retrieve stack of sites for specified SpeciesSite
-	const SiteStack* siteStack(SpeciesSite* site);
-
+	const SiteStack *siteStack(SpeciesSite *site);
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write through specified LineParser
-	bool write(LineParser& parser) const;
+	bool write(LineParser &parser) const;
 	// Read through specified LineParser
-	bool read(LineParser& parser, const List<Species>& availableSpecies, double pairPotentialRange);
-
+	bool read(LineParser &parser, const List<Species> &availableSpecies, double pairPotentialRange);
 
 	/*
 	 * Parallel Comms
 	 */
-	private:
+      private:
 	// Process pool for this Configuration
 	ProcessPool processPool_;
 
-	public:
+      public:
 	// Set up process pool for this Configuration
 	bool setUpProcessPool(Array<int> worldRanks, int groupPopulation);
 	// Return process pool for this Configuration
-	ProcessPool& processPool();
+	ProcessPool &processPool();
 	// Broadcast coordinate from specified root process
-	bool broadcastCoordinates(ProcessPool& procPool, int rootRank);
+	bool broadcastCoordinates(ProcessPool &procPool, int rootRank);
 };
 
 #endif

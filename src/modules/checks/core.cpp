@@ -33,16 +33,11 @@ ChecksModule::ChecksModule() : Module()
 }
 
 // Destructor
-ChecksModule::~ChecksModule()
-{
-}
+ChecksModule::~ChecksModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* ChecksModule::createInstance() const
-{
-	return new ChecksModule;
-}
+Module *ChecksModule::createInstance() const { return new ChecksModule; }

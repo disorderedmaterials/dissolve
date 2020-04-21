@@ -22,60 +22,57 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_NODEREFLIST_H
 #define DISSOLVE_KEYWORDWIDGET_NODEREFLIST_H
 
-#include "gui/keywordwidgets/ui_nodereflist.h"
-#include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/ui_nodereflist.h"
 #include "keywords/nodereflist.h"
 #include <QWidget>
 
 // Forward Declarations
 /* none */
 
-class NodeRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
+class NodeRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	NodeRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	NodeRefListKeywordBase* keyword_;
-
+	NodeRefListKeywordBase *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::NodeRefListWidget ui_;
 
-	private slots:
-	void nodeItemChanged(QListWidgetItem* item);
+      private slots:
+	void nodeItemChanged(QListWidgetItem *item);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	private:
+      private:
 	// List widget row update function
-	void updateListRow(int row, ProcedureNode* node, bool createItem);
+	void updateListRow(int row, ProcedureNode *node, bool createItem);
 
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues(const CoreData& coreData);
+	void updateWidgetValues(const CoreData &coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 	// Update summary text

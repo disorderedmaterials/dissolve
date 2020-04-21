@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/molshake/molshake.h"
 #include "keywords/types.h"
+#include "modules/molshake/molshake.h"
 
 // Perform any necessary initialisation for the Module
 void MolShakeModule::initialise()
@@ -36,8 +36,8 @@ void MolShakeModule::initialise()
 	keywords_.add("Rotations", new DoubleKeyword(90.0), "RotationStepSizeMax", "Maximum step size for rotations (degrees)", "<stepsize>");
 
 	// Translations
-	keywords_.add("Translations", new DoubleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", KeywordBase::InRestartFileOption);
+	keywords_.add("Translations", new DoubleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>",
+		      KeywordBase::InRestartFileOption);
 	keywords_.add("Translations", new DoubleKeyword(0.001), "TranslationStepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
 	keywords_.add("Translations", new DoubleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
 }
-

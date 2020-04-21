@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_RDF_H
 #define DISSOLVE_MODULEWIDGET_RDF_H
 
-#include "modules/rdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/rdf/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class Configuration;
@@ -39,54 +39,51 @@ class RDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	RDFModuleWidget(QWidget* parent, RDFModule* module, Dissolve& dissolve);
+	RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
 	~RDFModuleWidget();
 
-	private:
+      private:
 	// Associated Module
-	RDFModule* module_;
+	RDFModule *module_;
 	// DataViewers contained within this widget
-	DataViewer* partialsGraph_, *totalsGraph_;
+	DataViewer *partialsGraph_, *totalsGraph_;
 	// Reference to Dissolve
-	Dissolve& dissolve_;
-
+	Dissolve &dissolve_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::RDFModuleWidget ui_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
 
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+      private:
 	// Current Configuration whose data is being displayed
-	Configuration* currentConfiguration_;
+	Configuration *currentConfiguration_;
 
-	private:
+      private:
 	// Set data targets in graphs
-	void setGraphDataTargets(RDFModule* module);
+	void setGraphDataTargets(RDFModule *module);
 
-	private slots:
+      private slots:
 	void on_TargetCombo_currentIndexChanged(int index);
 };
 

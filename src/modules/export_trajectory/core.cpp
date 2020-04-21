@@ -33,16 +33,11 @@ ExportTrajectoryModule::ExportTrajectoryModule() : Module()
 }
 
 // Destructor
-ExportTrajectoryModule::~ExportTrajectoryModule()
-{
-}
+ExportTrajectoryModule::~ExportTrajectoryModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* ExportTrajectoryModule::createInstance() const
-{
-	return new ExportTrajectoryModule;
-}
+Module *ExportTrajectoryModule::createInstance() const { return new ExportTrajectoryModule; }

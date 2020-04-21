@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/import/import.h"
 #include "keywords/types.h"
+#include "modules/import/import.h"
 
 // Perform any necessary initialisation for the Module
 void ImportModule::initialise()
@@ -29,4 +29,3 @@ void ImportModule::initialise()
 	keywords_.add("Trajectory", new BoolKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");
 	keywords_.add("Trajectory", new FileAndFormatKeyword(trajectoryFile_, "EndTrajectoryFile"), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
 }
-

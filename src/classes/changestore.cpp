@@ -19,46 +19,44 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <memory>
 #include "classes/changestore.h"
+#include "base/processpool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/molecule.h"
 #include "templates/orderedpointerlist.h"
-#include "base/processpool.h"
+#include <memory>
 
 // Constructor
-ChangeStore::ChangeStore(ProcessPool& procPool) : processPool_(procPool)
-{
-}
+ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 
 // Destructor
-ChangeStore::~ChangeStore()
-{
-}
+ChangeStore::~ChangeStore() {}
 
 /*
  * Watch Targets
  */
 
 // Add atom to watch
-void ChangeStore::add(Atom* i)
+void ChangeStore::add(Atom *i)
 {
-	ChangeData* item = targetAtoms_.add();
+	ChangeData *item = targetAtoms_.add();
 	item->setAtom(i);
 }
 
 // Add Molecule to watch
 void ChangeStore::add(std::shared_ptr<Molecule> mol)
 {
-	for (int n=0; n<mol->nAtoms(); ++n) add(mol->atom(n));
+	for (int n = 0; n < mol->nAtoms(); ++n)
+		add(mol->atom(n));
 }
 
 // Add Cell to watch
-void ChangeStore::add(Cell* cell)
+void ChangeStore::add(Cell *cell)
 {
-	for (auto* atom : cell->atoms()) add(atom);
+	for (auto *atom : cell->atoms())
+		add(atom);
 }
 
 /*
@@ -75,13 +73,14 @@ void ChangeStore::reset()
 // Update all Atom positions
 void ChangeStore::updateAll()
 {
-	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next()) item->updatePosition();
+	for (ChangeData *item = targetAtoms_.first(); item != NULL; item = item->next())
+		item->updatePosition();
 }
 
 // Update Atom positions using list indices
-void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
+void ChangeStore::updateAtomsLocal(int nAtoms, int *indices)
 {
-	for (int n=0; n<nAtoms; ++n)
+	for (int n = 0; n < nAtoms; ++n)
 	{
 #ifdef CHECKS
 		if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
@@ -90,7 +89,7 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 			continue;
 		}
 #endif
-		ChangeData* item = targetAtoms_[indices[n]];
+		ChangeData *item = targetAtoms_[indices[n]];
 		item->updatePosition();
 	}
 }
@@ -105,16 +104,17 @@ void ChangeStore::updateAtom(int id)
 		return;
 	}
 #endif
-	ChangeData* item = targetAtoms_[id];
+	ChangeData *item = targetAtoms_[id];
 	item->updatePosition();
 }
 
 // Revert all atoms to their previous positions
 void ChangeStore::revertAll()
 {
-// 	printf("In Revert...\n");
-	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next()) item->revertPosition();
-// 	printf("Done Revert.\n");
+	// 	printf("In Revert...\n");
+	for (ChangeData *item = targetAtoms_.first(); item != NULL; item = item->next())
+		item->revertPosition();
+	// 	printf("Done Revert.\n");
 }
 
 // Revert specified index to stored position
@@ -127,15 +127,15 @@ void ChangeStore::revert(int id)
 		return;
 	}
 #endif
-	ChangeData* item = targetAtoms_[id];
+	ChangeData *item = targetAtoms_[id];
 	item->revertPosition();
 }
 
 // Save Atom changes for broadcast, and reset arrays for new data
 void ChangeStore::storeAndReset()
 {
-	ChangeData* item = targetAtoms_.first();
-	ChangeData* nextItem;
+	ChangeData *item = targetAtoms_.first();
+	ChangeData *nextItem;
 	while (item != NULL)
 	{
 		// Grab pointer to next item
@@ -156,24 +156,26 @@ void ChangeStore::storeAndReset()
 }
 
 // Distribute and apply changes
-bool ChangeStore::distributeAndApply(Configuration* cfg)
+bool ChangeStore::distributeAndApply(Configuration *cfg)
 {
 #ifdef PARALLEL
 	// First, get total number of changes across all processes
 	int nTotalChanges = changes_.nItems();
-	if (!processPool_.allSum(&nTotalChanges, 1)) return false;
+	if (!processPool_.allSum(&nTotalChanges, 1))
+		return false;
 
 	Messenger::printVerbose("We think there are %i changes in total to distribute.\n", nTotalChanges);
 
 	// All processes now resize their arrays so they are large enough to hold the total number of changes
-	if (nTotalChanges == 0) return true;
+	if (nTotalChanges == 0)
+		return true;
 	x_.initialise(nTotalChanges);
 	y_.initialise(nTotalChanges);
 	z_.initialise(nTotalChanges);
 	indices_.initialise(nTotalChanges);
-	
+
 	// Copy local change data into arrays
-	for (int n=0; n<changes_.nItems(); ++n)
+	for (int n = 0; n < changes_.nItems(); ++n)
 	{
 		indices_[n] = changes_[n]->atomArrayIndex();
 		x_[n] = changes_[n]->r().x;
@@ -182,20 +184,28 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	}
 
 	// Now, assemble full array of the change data on the master...
-	if (!processPool_.assemble(indices_, changes_.nItems(), indices_, nTotalChanges)) return false;
-	if (!processPool_.assemble(x_, changes_.nItems(), x_, nTotalChanges)) return false;
-	if (!processPool_.assemble(y_, changes_.nItems(), y_, nTotalChanges)) return false;
-	if (!processPool_.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return false;
-	
+	if (!processPool_.assemble(indices_, changes_.nItems(), indices_, nTotalChanges))
+		return false;
+	if (!processPool_.assemble(x_, changes_.nItems(), x_, nTotalChanges))
+		return false;
+	if (!processPool_.assemble(y_, changes_.nItems(), y_, nTotalChanges))
+		return false;
+	if (!processPool_.assemble(z_, changes_.nItems(), z_, nTotalChanges))
+		return false;
+
 	// ... then broadcast it to the slaves
-	if (!processPool_.broadcast(indices_)) return false;
-	if (!processPool_.broadcast(x_)) return false;
-	if (!processPool_.broadcast(y_)) return false;
-	if (!processPool_.broadcast(z_)) return false;
+	if (!processPool_.broadcast(indices_))
+		return false;
+	if (!processPool_.broadcast(x_))
+		return false;
+	if (!processPool_.broadcast(y_))
+		return false;
+	if (!processPool_.broadcast(z_))
+		return false;
 
 	// Apply atom changes
-	Atom** atoms = cfg->atoms().array();
-	for (int n=0; n<nTotalChanges; ++n)
+	Atom **atoms = cfg->atoms().array();
+	for (int n = 0; n < nTotalChanges; ++n)
 	{
 #ifdef CHECKS
 		if ((indices_[n] < 0) || (indices_[n] >= cfg->nAtoms()))
@@ -210,7 +220,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	}
 #else
 	// Apply atom changes
-	for (ChangeData* data = changes_.first(); data != NULL; data = data->next())
+	for (ChangeData *data = changes_.first(); data != NULL; data = data->next())
 	{
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
 		data->revertPosition();

@@ -19,12 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/refine/refine.h"
 #include "modules/refine/gui/modulewidget.h"
+#include "modules/refine/refine.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* RefineModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new RefineModuleWidget(parent, this, dissolve);
-}
-
+ModuleWidget *RefineModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new RefineModuleWidget(parent, this, dissolve); }

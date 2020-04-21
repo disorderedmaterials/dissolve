@@ -20,11 +20,11 @@
 */
 
 #include "classes/isotopedata.h"
-#include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "data/elements.h"
 #include "base/processpool.h"
+#include "data/elements.h"
+#include "data/isotopes.h"
 
 // Constructor
 IsotopeData::IsotopeData() : ListItem<IsotopeData>()
@@ -35,13 +35,10 @@ IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 }
 
 // Copy Constructor
-IsotopeData::IsotopeData(const IsotopeData& source)
-{
-	(*this) = source;
-}
+IsotopeData::IsotopeData(const IsotopeData &source) { (*this) = source; }
 
 // Assignment Operator
-void IsotopeData::operator=(const IsotopeData& source)
+void IsotopeData::operator=(const IsotopeData &source)
 {
 	isotope_ = source.isotope_;
 	population_ = source.population_;
@@ -53,7 +50,7 @@ void IsotopeData::operator=(const IsotopeData& source)
  */
 
 // Initialise
-bool IsotopeData::initialise(Isotope* isotope)
+bool IsotopeData::initialise(Isotope *isotope)
 {
 	isotope_ = isotope;
 	if (isotope_ == NULL)
@@ -69,16 +66,10 @@ bool IsotopeData::initialise(Isotope* isotope)
 }
 
 // Add to population of Isotope
-void IsotopeData::add(double nAdd)
-{
-	population_ += nAdd;
-}
+void IsotopeData::add(double nAdd) { population_ += nAdd; }
 
 // Finalise, calculating local fractional population (e.g. within an IsotopeData)
-void IsotopeData::finalise(double totalAtoms)
-{
-	fraction_ = population_ / totalAtoms;
-}
+void IsotopeData::finalise(double totalAtoms) { fraction_ = population_ / totalAtoms; }
 
 // Zero populations
 void IsotopeData::zeroPopulation()
@@ -88,37 +79,26 @@ void IsotopeData::zeroPopulation()
 }
 
 // Return reference Isotope
-Isotope* IsotopeData::isotope() const
-{
-	return isotope_;
-}
+Isotope *IsotopeData::isotope() const { return isotope_; }
 
 // Return total population over all isotopes
-double IsotopeData::population() const
-{
-	return population_;
-}
+double IsotopeData::population() const { return population_; }
 
 // Return fractional population
-double IsotopeData::fraction() const
-{
-	return fraction_;
-}
+double IsotopeData::fraction() const { return fraction_; }
 
 /*
  * I/O
  */
 
 // Write data through specified LineParser
-bool IsotopeData::write(LineParser& parser)
-{
-	return parser.writeLineF("%i %i %i %f\n", isotope_->Z(), isotope_->A(), population_, fraction_);
-}
+bool IsotopeData::write(LineParser &parser) { return parser.writeLineF("%i %i %i %f\n", isotope_->Z(), isotope_->A(), population_, fraction_); }
 
 // Read data through specified LineParser
-bool IsotopeData::read(LineParser& parser, const CoreData& coreData)
+bool IsotopeData::read(LineParser &parser, const CoreData &coreData)
 {
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	isotope_ = Isotopes::isotope(parser.argi(0), parser.argi(1));
 	population_ = parser.argi(2);
 	fraction_ = parser.argd(3);
@@ -130,7 +110,7 @@ bool IsotopeData::read(LineParser& parser, const CoreData& coreData)
  */
 
 // Broadcast data from Master to all Slaves
-bool IsotopeData::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool IsotopeData::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
 	// For isotope_, need to broadcast element Z and isotope A
@@ -151,13 +131,17 @@ bool IsotopeData::broadcast(ProcessPool& procPool, const int root, const CoreDat
 }
 
 // Check item equality
-bool IsotopeData::equality(ProcessPool& procPool)
+bool IsotopeData::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(isotope_->element().Z())) return Messenger::error("IsotopeData element z is not equivalent (process %i has '%s').\n", procPool.poolRank(), isotope_->element().Z());
-	if (!procPool.equality(isotope_->A())) return Messenger::error("IsotopeData isotope A is not equivalent (process %i has %i).\n", procPool.poolRank(), isotope_->A());
-	if (!procPool.equality(population_)) return Messenger::error("IsotopeData population is not equivalent (process %i has %i).\n", procPool.poolRank(), population_);
-	if (!procPool.equality(fraction_)) return Messenger::error("IsotopeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(), fraction_);
+	if (!procPool.equality(isotope_->element().Z()))
+		return Messenger::error("IsotopeData element z is not equivalent (process %i has '%s').\n", procPool.poolRank(), isotope_->element().Z());
+	if (!procPool.equality(isotope_->A()))
+		return Messenger::error("IsotopeData isotope A is not equivalent (process %i has %i).\n", procPool.poolRank(), isotope_->A());
+	if (!procPool.equality(population_))
+		return Messenger::error("IsotopeData population is not equivalent (process %i has %i).\n", procPool.poolRank(), population_);
+	if (!procPool.equality(fraction_))
+		return Messenger::error("IsotopeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(), fraction_);
 #endif
 	return true;
 }

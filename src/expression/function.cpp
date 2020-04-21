@@ -20,11 +20,11 @@
 */
 
 #include "expression/function.h"
-#include "base/sysfunc.h"
-#include "base/messenger.h"
 #include "base/charstring.h"
-#include <string.h>
+#include "base/messenger.h"
+#include "base/sysfunc.h"
 #include <stdarg.h>
+#include <string.h>
 
 // Constructor
 ExpressionFunction::ExpressionFunction(ExpressionFunctions::Function func) : ExpressionNode(), function_(func)
@@ -33,44 +33,39 @@ ExpressionFunction::ExpressionFunction(ExpressionFunctions::Function func) : Exp
 	nodeType_ = ExpressionNode::FunctionNode;
 }
 
-ExpressionFunction::ExpressionFunction(ExpressionNode* source)
-{
-	copy(source);	
-}
+ExpressionFunction::ExpressionFunction(ExpressionNode *source) { copy(source); }
 
 // Destructor
-ExpressionFunction::~ExpressionFunction()
-{
-}
+ExpressionFunction::~ExpressionFunction() {}
 
 // Get function
-ExpressionFunctions::Function ExpressionFunction::function() const
-{
-	return function_;
-}
+ExpressionFunctions::Function ExpressionFunction::function() const { return function_; }
 
 // Execute command
-bool ExpressionFunction::execute(ExpressionValue& result)
+bool ExpressionFunction::execute(ExpressionValue &result)
 {
 	// Execute the command
-	//printf("Node function is %i (%s)\n", function_, commands.data[function_].keyword);
+	// printf("Node function is %i (%s)\n", function_, commands.data[function_].keyword);
 	return expressionFunctions.call(function_, this, result);
 }
 
 // Print node contents
-void ExpressionFunction::nodePrint(int offset, const char* prefix)
+void ExpressionFunction::nodePrint(int offset, const char *prefix)
 {
 	// Construct tabbed offset
 	CharString tab;
-	for (int n=0; n<offset-1; n++) tab += '\t';
-	if (offset > 1) tab += "   |--> ";
+	for (int n = 0; n < offset - 1; n++)
+		tab += '\t';
+	if (offset > 1)
+		tab += "   |--> ";
 	tab += prefix;
 
 	// Output node data
-// 	printf("Function id = %p\n", function_);
+	// 	printf("Function id = %p\n", function_);
 	printf("[CN]%s%s (Function) (%i arguments)\n", tab.get(), ExpressionFunctions::data[function_].keyword, args_.nItems());
 	// Output Argument data
-	for (RefListItem<ExpressionNode>* ri = args_.first(); ri != NULL; ri = ri->next()) ri->item()->nodePrint(offset+1);
+	for (RefListItem<ExpressionNode> *ri = args_.first(); ri != NULL; ri = ri->next())
+		ri->item()->nodePrint(offset + 1);
 }
 
 // Set from ExpressionValue

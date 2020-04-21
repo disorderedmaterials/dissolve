@@ -22,17 +22,16 @@
 #ifndef DISSOLVE_RENDER_AXES_H
 #define DISSOLVE_RENDER_AXES_H
 
+#include "base/charstring.h"
+#include "base/version.h"
+#include "gui/render/linestyle.h"
 #include "gui/render/numberformat.h"
 #include "gui/render/primitive.h"
 #include "gui/render/textprimitivelist.h"
-#include "gui/render/linestyle.h"
-#include "base/charstring.h"
-#include "base/version.h"
+#include "templates/array.h"
 #include "templates/objectstore.h"
 #include "templates/vector3.h"
 #include "templates/vector4.h"
-#include "templates/array.h"
-
 
 // Forward Declarations
 class View;
@@ -40,30 +39,35 @@ class View;
 // Axes
 class Axes
 {
-	private:
+      private:
 	// Parent rendering View in which these axes are displayed
-	View& parentView_;
+	View &parentView_;
 	// Associated FontInstance from parent viewer
-	FontInstance& fontInstance_;
+	FontInstance &fontInstance_;
 
-	public:
+      public:
 	// Constructor / Destructor
-	Axes(View& parent, FontInstance& fontInstance);
+	Axes(View &parent, FontInstance &fontInstance);
 	~Axes();
-
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Autoscaling for axes
-	enum AutoScaleMethod { NoAutoScale, ExpandingAutoScale, FullAutoScale, nAutoScaleMethods };
+	enum AutoScaleMethod
+	{
+		NoAutoScale,
+		ExpandingAutoScale,
+		FullAutoScale,
+		nAutoScaleMethods
+	};
 	// Convert text string to AutoScaleMethod
-	static AutoScaleMethod autoScaleMethod(const char* s);
+	static AutoScaleMethod autoScaleMethod(const char *s);
 	// Convert AutoScaleMethod to text string
-	static const char* autoScaleMethod(AutoScaleMethod scale);
+	static const char *autoScaleMethod(AutoScaleMethod scale);
 
-	private:
+      private:
 	// Data limits for surface generation
 	Vec3<double> min_, max_;
 	// Limiting values for axis limits (accounting for data, log scales etc.)
@@ -89,13 +93,13 @@ class Axes
 	// Autoscaling method employed for each axis
 	Axes::AutoScaleMethod autoScale_[3];
 
-	private:
+      private:
 	// Recalculate minimum, maximum, and centre coordinates of axes
 	void updateCoordinates();
 	// Clamp axis position and min/max to current limits
 	void clamp(int axis);
 
-	public:
+      public:
 	// Set minimum value for specified axis
 	void setMin(int axis, double value);
 	// Return minimum value for specified axis
@@ -109,7 +113,7 @@ class Axes
 	// Return real axis range (accounting for log axes)
 	double realRange(int axis) const;
 	// Ensure a sensible (non-zero) range, modifying the supplied values
-	static void ensureSensibleRange(double& minValue, double& maxValue, bool alwaysExpand = false, double expansionFactor = -1.0);
+	static void ensureSensibleRange(double &minValue, double &maxValue, bool alwaysExpand = false, double expansionFactor = -1.0);
 	// Return central value of axes
 	Vec3<double> centre() const;
 	// Return real axis minimum (accounting for log axes)
@@ -171,36 +175,33 @@ class Axes
 	// Return autoscaling method employed for specified axis
 	Axes::AutoScaleMethod autoScale(int axis) const;
 
-
 	/*
 	 * Data Transforms
 	 */
-	public:
+      public:
 	// Return supplied data x value in local axes coordinates
 	double transformX(double x) const;
 	// Transform entire array of values into local axes coordinates
-	void transformX(Array<double>& xArray) const;
+	void transformX(Array<double> &xArray) const;
 	// Return supplied data y value in local axes coordinates
 	double transformY(double y) const;
 	// Transform entire array of values into local axes coordinates
-	void transformY(Array<double>& yArray) const;
+	void transformY(Array<double> &yArray) const;
 	// Return supplied data z value in local axes coordinates
 	double transformZ(double z) const;
 	// Transform entire array of values into local axes coordinates
-	void transformZ(Array<double>& zArray) const;
+	void transformZ(Array<double> &zArray) const;
 	// Transform a 2D array of values into local axes coordinates
-	void transformX(Array2D<double>& xArray) const;
+	void transformX(Array2D<double> &xArray) const;
 	// Transform a 2D array of values into local axes coordinates
-	void transformY(Array2D<double>& yArray) const;
+	void transformY(Array2D<double> &yArray) const;
 	// Transform a 2D array of values into local axes coordinates
-	void transformZ(Array2D<double>& zArray) const;
-	
-
+	void transformZ(Array2D<double> &zArray) const;
 
 	/*
 	 * Ticks
 	 */
-	private:
+      private:
 	// Axis tick direction
 	Vec3<double> tickDirection_[3];
 	// Axis tick size (relative to font size)
@@ -214,11 +215,11 @@ class Axes
 	// Number of minor ticks in major tick intervals
 	Vec3<int> minorTicks_;
 
-	private:
+      private:
 	// Recalculate tick deltas for specified axis
 	void calculateTickDeltas(int axis);
 
-	public:
+      public:
 	// Set axis tick direction
 	void setTickDirection(int axis, int dir, double value);
 	// Return axis tick direction for specified axis
@@ -244,11 +245,10 @@ class Axes
 	// Return number of minor ticks in major tick intervals for specified axis
 	int minorTicks(int axis) const;
 
-
 	/*
 	 * Labels
 	 */
-	private:
+      private:
 	// Number formats for labels
 	NumberFormat numberFormat_[3];
 	// Whether to determine number formats automatically
@@ -268,15 +268,15 @@ class Axes
 	// Axis title text anchor positions
 	TextPrimitive::TextAnchor titleAnchor_[3];
 
-	private:
+      private:
 	// Determine suitable label format for the supplied axis
 	void determineLabelFormat(int axis);
 
-	public:
+      public:
 	// Return number format for specified axis
-	const NumberFormat& numberFormat(int axis) const;
+	const NumberFormat &numberFormat(int axis) const;
 	// Set number format for specified axis
-	void setNumberFormat(int axis, const NumberFormat& numberFormat);
+	void setNumberFormat(int axis, const NumberFormat &numberFormat);
 	// Return whether to determine number format automatically for the specified axis
 	bool autoNumberFormat(int axis) const;
 	// Set whether to determine number format automatically for the specified axis
@@ -290,9 +290,9 @@ class Axes
 	// Return axis label text anchor position for specified axis
 	TextPrimitive::TextAnchor labelAnchor(int axis) const;
 	// Set title for specified axis
-	void setTitle(int axis, const char* title);
+	void setTitle(int axis, const char *title);
 	// Return title for specified axis
-	const char* title(int axis) const;
+	const char *title(int axis) const;
 	// Set orientation of titles for specified axis
 	void setTitleOrientationNEW(int axis, int component, double value);
 	// Return orientation of titles for specified axis
@@ -310,17 +310,16 @@ class Axes
 	// Return axis title text anchor position for specified axis
 	TextPrimitive::TextAnchor titleAnchor(int axis) const;
 
-
 	/*
 	 * Style Helpers
 	 */
-	private:
+      private:
 	// Whether to use best tick/label orientation for flat views, or the user's definitions
 	bool useBestFlatView_;
 	// Whether to automatically place titles at a sensible position after label text
 	bool autoPositionTitles_;
 
-	public:
+      public:
 	// Set whether to use best tick/label orientation for view
 	void setUseBestFlatView(bool b);
 	// Return whether to use best tick/label orientation for view
@@ -330,11 +329,10 @@ class Axes
 	// Return whether to automatically place titles at a sensible position after label text
 	bool autoPositionTitles() const;
 
-
 	/*
 	 * GridLines
 	 */
-	private:
+      private:
 	// Whether gridlines cover entire volume or just at axis lines
 	Vec3<bool> gridLinesFull_;
 	// Whether gridLines at major tick intervals are active
@@ -342,7 +340,7 @@ class Axes
 	// Whether gridLines at minor tick intervals are active
 	Vec3<bool> gridLinesMinor_;
 
-	public:
+      public:
 	// Set whether gridlines cover entire volume or just at axis lines
 	void setGridLinesFull(int axis, bool b);
 	// Return whether gridlines cover entire volume or just at axis lines
@@ -356,23 +354,21 @@ class Axes
 	// Return whether gridLines at minor tick intervals are active for specified axis
 	bool gridLinesMinor(int axis) const;
 
-
 	/*
 	 * Versions
 	 */
-	private:
+      private:
 	// Version of axes definitions
 	VersionCounter version_;
 
-	public:
+      public:
 	// Return version of axes definitions
 	int version() const;
-
 
 	/*
 	 * GL
 	 */
-	private:
+      private:
 	// Clip plane coordinates
 	Vec3<double> clipMin_, clipMax_;
 	// Display primitives
@@ -388,11 +384,11 @@ class Axes
 	// Versions at which primitives were last generated
 	int primitiveVersion_;
 
-	private:
+      private:
 	// Update primitives for axis
 	void updateAxisPrimitives();
 
-	public:
+      public:
 	// Return clip plane lower Y value
 	Vec3<double> clipMin() const;
 	// Return clip plane upper Y value
@@ -400,23 +396,23 @@ class Axes
 	// Flag primitives as invalid
 	void setPrimitivesInvalid();
 	// Return axis primitive for axis specified
-	Primitive& axisPrimitive(int axis);
+	Primitive &axisPrimitive(int axis);
 	// Return axis label primitive list for axis specified
-	TextPrimitiveList& labelPrimitive(int axis);
+	TextPrimitiveList &labelPrimitive(int axis);
 	// Return axis title primitive list for axis specified
-	TextPrimitiveList& titlePrimitive(int axis);
+	TextPrimitiveList &titlePrimitive(int axis);
 	// Return minor gridline primitive for axis specified
-	Primitive& gridLineMajorPrimitive(int axis);
+	Primitive &gridLineMajorPrimitive(int axis);
 	// Return major gridline primitive for axis specified
-	Primitive& gridLineMinorPrimitive(int axis);
+	Primitive &gridLineMinorPrimitive(int axis);
 	// Set major gridline style
-	void setGridLineMajorStyle(int axis, const LineStyle& style);
+	void setGridLineMajorStyle(int axis, const LineStyle &style);
 	// Return major gridline style
-	const LineStyle& gridLineMajorStyle(int axis) const;
+	const LineStyle &gridLineMajorStyle(int axis) const;
 	// Set minor gridline style
-	void setGridLineMinorStyle(int axis, const LineStyle& style);
+	void setGridLineMinorStyle(int axis, const LineStyle &style);
 	// Return minor gridline style
-	const LineStyle& gridLineMinorStyle(int axis) const;
+	const LineStyle &gridLineMinorStyle(int axis) const;
 };
 
 #endif
