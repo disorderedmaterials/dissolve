@@ -47,11 +47,11 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, in
 	item->setText(0, data->name());
 
 	// Update child items
-	TreeWidgetRefDataListUpdater<SpeciesTab, AtomType, Isotope *> isotopeUpdater(item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
+	TreeWidgetRefDataListUpdater<SpeciesTab, AtomType, std::shared_ptr<Isotope>> isotopeUpdater(item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
 }
 
 // IsotopologuesTree item update function
-void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *atomType, Isotope *isotope, bool createItem)
+void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *atomType, std::shared_ptr<Isotope> isotope, bool createItem)
 {
 	QTreeWidgetItem *item;
 
@@ -60,7 +60,7 @@ void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, i
 	{
 		item = new QTreeWidgetItem;
 		item->setData(1, Qt::UserRole, VariantPointer<AtomType>(atomType));
-		item->setData(2, Qt::UserRole, VariantPointer<Isotope>(isotope));
+		item->setData(2, Qt::UserRole, QVariant::fromValue(isotope));
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 		parentItem->insertChild(childIndex, item);
 	}
@@ -155,7 +155,7 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int col
 	{
 		// Set neutron isotope - need to get AtomType from column 1...
 		AtomType *atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
-		Isotope *isotope = VariantPointer<Isotope>(item->data(2, Qt::UserRole));
+		std::shared_ptr<Isotope> isotope = item->data(2, Qt::UserRole).value<std::shared_ptr<Isotope>>();
 		if (isotope)
 			isotopologue->setAtomTypeIsotope(atomType, isotope);
 		dissolveWindow_->setModified();

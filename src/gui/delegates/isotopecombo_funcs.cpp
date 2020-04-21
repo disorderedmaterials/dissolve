@@ -35,18 +35,15 @@ QWidget *IsotopeComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox *editor = new QComboBox(parent);
 
-	// Get the data from the model index - it should be an Isotope*
-	Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
+	// Get the data from the model index - it should be an std::shared_ptr<Isotope>
+	std::shared_ptr<Isotope> isotope = index.data(Qt::UserRole).value<std::shared_ptr<Isotope>>();
 	if (isotope)
 	{
 		// Populate combo with all possible Isotopes for this Element
-		const Element &element = isotope->element();
-		ListIterator<Isotope> isotopeIterator(Isotopes::isotopes(element.Z()));
-		while (Isotope *tope = isotopeIterator.iterate())
-			editor->addItem(textForIsotope(tope));
-	}
-	else
-		Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
+		const Element& element = isotope->element();
+                for (auto tope : Isotopes::isotopes(element.Z())) editor->addItem(textForIsotope(tope));
+        }
+	else Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an std::shared_ptr<Isotope> in the associated QModelIndex.\n");
 
 	return editor;
 }
@@ -57,15 +54,14 @@ void IsotopeComboDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 	// Grab (cast) the QComboBox
 	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
-	// Get the data from the model index - it should be an Isotope*
-	Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
+	// Get the data from the model index - it should be an std::shared_ptr<Isotope>
+	std::shared_ptr<Isotope> isotope = index.data(Qt::UserRole).value<std::shared_ptr<Isotope>>();
 	if (isotope)
 	{
 		comboBox->setCurrentIndex(isotope->index());
 	}
-	else
-		Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
-	// 	QString value = index.model()->data(index, Qt::EditRole).toString();
+	else Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an std::shared_ptr<Isotope> in the associated QModelIndex.\n");
+// 	QString value = index.model()->data(index, Qt::EditRole).toString();
 }
 
 // Get value from editing widget, and set back in model
@@ -75,7 +71,7 @@ void IsotopeComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
 	// Get existing Isotope
-	Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
+	std::shared_ptr<Isotope> isotope = index.data(Qt::UserRole).value<std::shared_ptr<Isotope>>();
 	if (isotope)
 	{
 		// Get parent Element, and find index of new Isotope
@@ -83,7 +79,7 @@ void IsotopeComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 		isotope = Isotopes::isotopeAtIndex(element.Z(), comboBox->currentIndex());
 
 		// Set the Isotope pointer in the model
-		model->setData(index, VariantPointer<Isotope>(isotope), Qt::UserRole);
+		model->setData(index, QVariant::fromValue(isotope), Qt::UserRole);
 		model->setData(index, comboBox->currentText(), Qt::EditRole);
 	}
 }
@@ -96,7 +92,7 @@ void IsotopeComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpt
  */
 
 // Return text for Isotope specified
-QString IsotopeComboDelegate::textForIsotope(Isotope *isotope)
+QString IsotopeComboDelegate::textForIsotope(std::shared_ptr<Isotope> isotope)
 {
 	if (!isotope)
 		return "NULL";

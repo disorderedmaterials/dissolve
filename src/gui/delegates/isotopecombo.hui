@@ -28,6 +28,8 @@
 #include <QObject>
 #include <QComboBox>
 
+Q_DECLARE_METATYPE(std::shared_ptr<Isotope>)
+
 // Delegate class, providing list of Isotopes for one element in a QComboBox
 class IsotopeComboDelegate : public QItemDelegate
 {
@@ -53,7 +55,7 @@ class IsotopeComboDelegate : public QItemDelegate
 	 */
 	public:
 	// Return text for Isotope specified
-	static QString textForIsotope(Isotope* isotope);
+	static QString textForIsotope(std::shared_ptr<Isotope> isotope);
 };
 
 #endif
