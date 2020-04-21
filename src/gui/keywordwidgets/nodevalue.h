@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_NODEVALUE_H
 #define DISSOLVE_KEYWORDWIDGET_NODEVALUE_H
 
-#include "gui/keywordwidgets/ui_nodevalue.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_nodevalue.h"
 #include "keywords/nodevalue.h"
 #include <QWidget>
 
@@ -35,44 +35,41 @@ class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	NodeValueKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	NodeValueKeyword* keyword_;
-
+	NodeValueKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
-        // Main form declaration
-        Ui::NodeValueWidget ui_;
+      private:
+	// Main form declaration
+	Ui::NodeValueWidget ui_;
 
-	private slots:
+      private slots:
 	// Value edited
 	void on_ValueEdit_editingFinished();
 	void on_ValueEdit_returnPressed();
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	private:
+      private:
 	// Check validity of current value
 	void checkValueValidity();
 
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 };

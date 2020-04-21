@@ -20,9 +20,9 @@
 */
 
 #include "classes/braggreflection.h"
-#include "genericitems/array2ddouble.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
+#include "genericitems/array2ddouble.h"
 
 // Constructor
 BraggReflection::BraggReflection()
@@ -33,18 +33,13 @@ BraggReflection::BraggReflection()
 }
 
 // Destructor
-BraggReflection::~BraggReflection()
-{
-}
+BraggReflection::~BraggReflection() {}
 
 // Copy constructor
-BraggReflection::BraggReflection(const BraggReflection& source)
-{
-	(*this) = source;
-}
+BraggReflection::BraggReflection(const BraggReflection &source) { (*this) = source; }
 
 // Operator=
-void BraggReflection::operator=(const BraggReflection& source)
+void BraggReflection::operator=(const BraggReflection &source)
 {
 	q_ = source.q_;
 	index_ = source.index_;
@@ -53,11 +48,13 @@ void BraggReflection::operator=(const BraggReflection& source)
 }
 
 // Operator+= (intensity addition)
-void BraggReflection::operator+=(const BraggReflection& source)
+void BraggReflection::operator+=(const BraggReflection &source)
 {
 	// If we have no intensities array, just copy the source's array
-	if (intensities_.nRows() == 0) intensities_ = source.intensities_;
-	else intensities_ += source.intensities_;
+	if (intensities_.nRows() == 0)
+		intensities_ = source.intensities_;
+	else
+		intensities_ += source.intensities_;
 
 	// Copy other data to ensure completeness
 	q_ = source.q_;
@@ -66,10 +63,7 @@ void BraggReflection::operator+=(const BraggReflection& source)
 }
 
 // Operator*= (intensity scaling)
-void BraggReflection::operator*=(double scale)
-{
-	intensities_ *= scale;
-}
+void BraggReflection::operator*=(double scale) { intensities_ *= scale; }
 
 /*
  * Data
@@ -85,22 +79,13 @@ void BraggReflection::initialise(double q, int index, int nTypes)
 }
 
 // Return Q value
-double BraggReflection::q() const
-{
-	return q_;
-}
+double BraggReflection::q() const { return q_; }
 
-// Set index 
-void BraggReflection::setIndex(int index)
-{
-	index_ = index;
-}
+// Set index
+void BraggReflection::setIndex(int index) { index_ = index; }
 
 // Return index
-int BraggReflection::index() const
-{
-	return index_;
-}
+int BraggReflection::index() const { return index_; }
 
 // Reset stored intensities
 void BraggReflection::reset()
@@ -110,15 +95,13 @@ void BraggReflection::reset()
 }
 
 // Add intensity between specified atomtypes
-void BraggReflection::addIntensity(int typeI, int typeJ, double intensity)
-{
-	intensities_.at(typeI, typeJ) += intensity;
-}
+void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_.at(typeI, typeJ) += intensity; }
 
 // Scale intensities between all atom types by factor provided
 void BraggReflection::scaleIntensities(double factor)
 {
-	for (int n=0; n<intensities_.linearArraySize(); ++n) intensities_.linearArray()[n] *= factor;
+	for (int n = 0; n < intensities_.linearArraySize(); ++n)
+		intensities_.linearArray()[n] *= factor;
 }
 
 // Scale intensity between all specific atom types by factor provided
@@ -140,56 +123,48 @@ void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 }
 
 // Return intensity between specified atom types for this reflection
-double BraggReflection::intensity(int typeI, int typeJ) const
-{
-	return intensities_.constAt(typeI, typeJ);
-}
+double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_.constAt(typeI, typeJ); }
 
 // Increment number of contributing k-vectors
-void BraggReflection::addKVectors(int count)
-{
-	nKVectors_ += count;
-}
+void BraggReflection::addKVectors(int count) { nKVectors_ += count; }
 
 // Return number of k-vectors contributing to this reflection
-int BraggReflection::nKVectors() const
-{
-	return nKVectors_;
-}
+int BraggReflection::nKVectors() const { return nKVectors_; }
 
 /*
  * GenericItemBase Implementations
  */
 
 // Return class name
-const char* BraggReflection::itemClassName()
-{
-	return "BraggReflection";
-}
+const char *BraggReflection::itemClassName() { return "BraggReflection"; }
 
 // Read data through specified parser
-bool BraggReflection::read(LineParser& parser, const CoreData& coreData)
+bool BraggReflection::read(LineParser &parser, const CoreData &coreData)
 {
 	// Read index, Q centre, and number of contributing K-vectors
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	index_ = parser.argi(0);
 	q_ = parser.argd(1);
 	nKVectors_ = parser.argi(2);
 
 	// Read intensities array
-	if (!GenericItemContainer< Array2D<double> >::read(intensities_, parser)) return false;
+	if (!GenericItemContainer<Array2D<double>>::read(intensities_, parser))
+		return false;
 
 	return true;
 }
 
 // Write data through specified parser
-bool BraggReflection::write(LineParser& parser)
+bool BraggReflection::write(LineParser &parser)
 {
 	// Write index, Q centre, and number of contributing K-vectors
-	if (!parser.writeLineF("%i  %f  %i\n", index_, q_, nKVectors_)) return false;
+	if (!parser.writeLineF("%i  %f  %i\n", index_, q_, nKVectors_))
+		return false;
 
 	// Write intensities array
-	if (!GenericItemContainer< Array2D<double> >::write(intensities_, parser)) return false;
+	if (!GenericItemContainer<Array2D<double>>::write(intensities_, parser))
+		return false;
 
 	return true;
 }
@@ -199,25 +174,33 @@ bool BraggReflection::write(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool BraggReflection::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool BraggReflection::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(q_, root)) return false;
-	if (!procPool.broadcast(index_, root)) return false;
-	if (!procPool.broadcast(nKVectors_, root)) return false;
-	if (!procPool.broadcast(intensities_, root)) return false;
+	if (!procPool.broadcast(q_, root))
+		return false;
+	if (!procPool.broadcast(index_, root))
+		return false;
+	if (!procPool.broadcast(nKVectors_, root))
+		return false;
+	if (!procPool.broadcast(intensities_, root))
+		return false;
 #endif
 	return true;
 }
 
 // Check item equality
-bool BraggReflection::equality(ProcessPool& procPool)
+bool BraggReflection::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(q_)) return Messenger::error("BraggReflection Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
-	if (!procPool.equality(index_)) return Messenger::error("BraggReflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
-	if (!procPool.equality(nKVectors_)) return Messenger::error("BraggReflection nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(), nKVectors_);
-	if (!procPool.equality(intensities_)) return Messenger::error("BraggReflection intensities are not equivalent.\n");
+	if (!procPool.equality(q_))
+		return Messenger::error("BraggReflection Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
+	if (!procPool.equality(index_))
+		return Messenger::error("BraggReflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
+	if (!procPool.equality(nKVectors_))
+		return Messenger::error("BraggReflection nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(), nKVectors_);
+	if (!procPool.equality(intensities_))
+		return Messenger::error("BraggReflection intensities are not equivalent.\n");
 #endif
 	return true;
 }

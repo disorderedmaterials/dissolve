@@ -19,15 +19,15 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/geomopt/geomopt.h"
-#include "modules/energy/energy.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
+#include "modules/energy/energy.h"
+#include "modules/geomopt/geomopt.h"
 
 // Copy coordinates from supplied Configuration into reference arrays
-void GeometryOptimisationModule::setReferenceCoordinates(Configuration* cfg)
+void GeometryOptimisationModule::setReferenceCoordinates(Configuration *cfg)
 {
-	for (int n=0; n<cfg->nAtoms(); ++n)
+	for (int n = 0; n < cfg->nAtoms(); ++n)
 	{
 		Vec3<double> r = cfg->atom(n)->r();
 		xRef_[n] = r.x;
@@ -37,16 +37,18 @@ void GeometryOptimisationModule::setReferenceCoordinates(Configuration* cfg)
 }
 
 // Revert Configuration to reference coordinates
-void GeometryOptimisationModule::revertToReferenceCoordinates(Configuration* cfg)
+void GeometryOptimisationModule::revertToReferenceCoordinates(Configuration *cfg)
 {
-	for (int n=0; n<cfg->nAtoms(); ++n) cfg->atom(n)->setCoordinates(xRef_[n], yRef_[n], zRef_[n]);
+	for (int n = 0; n < cfg->nAtoms(); ++n)
+		cfg->atom(n)->setCoordinates(xRef_[n], yRef_[n], zRef_[n]);
 }
 
 // Return current RMS force
 double GeometryOptimisationModule::rmsForce() const
 {
 	double rmsf = 0.0;
-	for (int n=0; n<xForce_.nItems(); ++n) rmsf += xForce_.constAt(n)*xForce_.constAt(n) + yForce_.constAt(n)*yForce_.constAt(n) + zForce_.constAt(n)*zForce_.constAt(n);
+	for (int n = 0; n < xForce_.nItems(); ++n)
+		rmsf += xForce_.constAt(n) * xForce_.constAt(n) + yForce_.constAt(n) * yForce_.constAt(n) + zForce_.constAt(n) * zForce_.constAt(n);
 	rmsf /= xForce_.nItems();
 
 	return sqrt(rmsf);
@@ -57,16 +59,18 @@ double GeometryOptimisationModule::gradientStepSize()
 {
 	double fMax = xForce_.maxAbs();
 	double fTemp = yForce_.maxAbs();
-	if (fTemp > fMax) fMax = fTemp;
+	if (fTemp > fMax)
+		fMax = fTemp;
 	fTemp = zForce_.maxAbs();
-	if (fTemp > fMax) fMax = fTemp;
+	if (fTemp > fMax)
+		fMax = fTemp;
 
 	return 1.0e-5;
 	return 1.0 / fMax;
 }
 
 // Sort bounds / energies so that minimum energy is in the central position
-void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies)
+void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double> &bounds, Vec3<double> &energies)
 {
 	// Ensure that the energy minimum is the midpoint
 	int minVal = energies.minElement();
@@ -78,23 +82,26 @@ void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double>& bounds, Vec
 }
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
-double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double delta)
 {
-	Atom** atoms = cfg->atoms().array();
-	for (int n=0; n<cfg->nAtoms(); ++n) atoms[n]->setCoordinates(xRef_[n]+xForce_[n]*delta, yRef_[n]+yForce_[n]*delta, zRef_[n]+zForce_[n]*delta);
+	Atom **atoms = cfg->atoms().array();
+	for (int n = 0; n < cfg->nAtoms(); ++n)
+		atoms[n]->setCoordinates(xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
 	cfg->updateCellContents();
 
 	return EnergyModule::totalEnergy(procPool, cfg, potentialMap);
 }
 
 // Perform Golden Search within specified bounds
-double GeometryOptimisationModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted)
+double GeometryOptimisationModule::goldenSearch(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, const double tolerance, Vec3<double> &bounds, Vec3<double> &energies,
+						int &nPointsAccepted)
 {
 	// Ensure that the energy minimum is the midpoint
 	sortBoundsAndEnergies(bounds, energies);
 
 	// Check convergence, ready for early return
-	if (fabs(bounds.x-bounds.z) < tolerance) return energies.y;
+	if (fabs(bounds.x - bounds.z) < tolerance)
+		return energies.y;
 
 	// Calculate deltas between bound values
 	double dxy = bounds[0] - bounds[1];
@@ -113,7 +120,7 @@ double GeometryOptimisationModule::goldenSearch(ProcessPool& procPool, Configura
 	Vec3<int> order(1, xyLargest ? 0 : 2, xyLargest ? 2 : 0);
 
 	// Check each energy to see if our new energy is lower. If it is, overwrite it and recurse
-	for (int n=0; n<3; ++n)
+	for (int n = 0; n < 3; ++n)
 	{
 		if (eNew < energies[order[n]])
 		{
@@ -137,7 +144,7 @@ double GeometryOptimisationModule::goldenSearch(ProcessPool& procPool, Configura
 }
 
 // Line minimise supplied Configuration from the reference coordinates along the stored force vectors
-double GeometryOptimisationModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize)
+double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, const double tolerance, double &stepSize)
 {
 	// Brent-style line minimiser with parabolic interpolation and Golden Search backup
 
@@ -207,14 +214,15 @@ double GeometryOptimisationModule::lineMinimise(ProcessPool& procPool, Configura
 			// Try recursive Golden Search instead, into the largest of the two sections
 			int nPointsAccepted = 0;
 			goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies, nPointsAccepted);
-			if (nPointsAccepted == 0) break;
+			if (nPointsAccepted == 0)
+				break;
 		}
-// 		printf("DIFF = %f, 2tol = %f\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
-// 		++count;
-// 		if (count > 10) break;
-	} while (fabs(bounds[0]-bounds[2]) > (2.0 * tolerance));
-// 	printf("Final bounding values are %12.5e %12.5e %12.5e\n",bounds[0],bounds[1],bounds[2]);
-// 	printf("             energies are %12.5e %12.5e %12.5e\n",energies[0],energies[1],energies[2]);
+		// 		printf("DIFF = %f, 2tol = %f\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
+		// 		++count;
+		// 		if (count > 10) break;
+	} while (fabs(bounds[0] - bounds[2]) > (2.0 * tolerance));
+	// 	printf("Final bounding values are %12.5e %12.5e %12.5e\n",bounds[0],bounds[1],bounds[2]);
+	// 	printf("             energies are %12.5e %12.5e %12.5e\n",energies[0],energies[1],energies[2]);
 
 	// Sort w.r.t. energy so that the minimum is in the central point
 	sortBoundsAndEnergies(bounds, energies);

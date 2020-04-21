@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_SPECIESBOND_H
 #define DISSOLVE_SPECIESBOND_H
 
-#include "classes/speciesintra.h"
 #include "base/enumoptions.h"
+#include "classes/speciesintra.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -34,39 +34,37 @@ class ProcessPool;
 // SpeciesBond Definition
 class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 {
-	public:
+      public:
 	// Constructor
 	SpeciesBond();
 	// Destructor
 	~SpeciesBond();
 
-
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-	public:
+      public:
 	// Clear object, ready for re-use
 	void clear();
-
 
 	/*
 	 * SpeciesAtom Information
 	 */
-	private:
+      private:
 	// First SpeciesAtom in interaction
-	SpeciesAtom* i_;
+	SpeciesAtom *i_;
 	// Second SpeciesAtom in interaction
-	SpeciesAtom* j_;
+	SpeciesAtom *j_;
 
-	public:
+      public:
 	// Set SpeciesAtoms involved in interaction
-	void setAtoms(SpeciesAtom* i, SpeciesAtom* j);
+	void setAtoms(SpeciesAtom *i, SpeciesAtom *j);
 	// Return first SpeciesAtom
-	SpeciesAtom* i() const;
+	SpeciesAtom *i() const;
 	// Return second SpeciesAtom
-	SpeciesAtom* j() const;
+	SpeciesAtom *j() const;
 	// Return the 'other' SpeciesAtom
-	SpeciesAtom* partner(const SpeciesAtom* i) const;
+	SpeciesAtom *partner(const SpeciesAtom *i) const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom
@@ -74,29 +72,36 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	// Return index (in parent Species) of nth SpeciesAtom
 	int index(int n) const;
 	// Return whether SpeciesAtoms match those specified
-	bool matches(SpeciesAtom* i, SpeciesAtom* j) const;
+	bool matches(SpeciesAtom *i, SpeciesAtom *j) const;
 	// Return whether all atoms in the interaction are currently selected
 	bool isSelected() const;
-
 
 	/*
 	 * Bond Type
 	 */
-	public:
+      public:
 	// Bond Type enum
-	enum BondType { SingleBond, DoubleBond, TripleBond, QuadrupleBond, AromaticBond, nBondTypes };
+	enum BondType
+	{
+		SingleBond,
+		DoubleBond,
+		TripleBond,
+		QuadrupleBond,
+		AromaticBond,
+		nBondTypes
+	};
 	// Convert bond type string to functional form
-	static BondType bondType(const char* s);
+	static BondType bondType(const char *s);
 	// Return bond type functional form text
-	static const char* bondType(BondType bt);
+	static const char *bondType(BondType bt);
 	// Return bond order for specified bond type
 	static double bondOrder(BondType bt);
 
-	private:
+      private:
 	// Bond type
 	BondType bondType_;
 
-	public:
+      public:
 	// Set bond type
 	void setBondType(BondType type);
 	// Return bond type
@@ -104,11 +109,10 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	// Return bond order for current bond type
 	double bondOrder() const;
 
-
 	/*
 	 * Interaction Parameters
 	 */
-	public:
+      public:
 	// Bond functional forms
 	enum BondFunction
 	{
@@ -117,9 +121,9 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 		EPSRForm
 	};
 	// Return enum options for BondFunction
-	static EnumOptions<BondFunction> bondFunctions(); 
+	static EnumOptions<BondFunction> bondFunctions();
 
-	public:
+      public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -131,13 +135,12 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	// Return force multiplier for specified distance
 	double force(double distance) const;
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms);
+	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };
 
 #endif

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_NETA_ROOT_H
 #define DISSOLVE_NETA_ROOT_H
 
-#include <vector>
-#include "neta/node.h"
 #include "classes/speciesbond.h"
+#include "neta/node.h"
+#include <vector>
 
 // Forward Declarations
 class Element;
@@ -34,16 +34,15 @@ class NETADefinition;
 // NETA Root Node
 class NETARootNode : public NETANode
 {
-	public:
+      public:
 	// Constructor / Destructor
-	NETARootNode(NETADefinition* parent);
+	NETARootNode(NETADefinition *parent);
 	~NETARootNode();
-
 
 	/*
 	 * Modifiers
 	 */
-	private:
+      private:
 	// Number of bonds value
 	int nBondsValue_;
 	// Numbe of bonds value comparison operator
@@ -53,28 +52,27 @@ class NETARootNode : public NETANode
 	// Numbe of hydrogens value comparison operator
 	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
-	public:
+      public:
 	// Available modifiers
 	enum NETARootModifier
 	{
-		NBondsModifier,			/* 'nbonds' - Specifies number of bonds (default = -1) */
-		NHydrogensModifier,		/* 'nh' - Specifies number of hydrogens (default = -1) */
+		NBondsModifier,     /* 'nbonds' - Specifies number of bonds (default = -1) */
+		NHydrogensModifier, /* 'nh' - Specifies number of hydrogens (default = -1) */
 		nRootModifiers
 	};
 	// Return enum options for NETARootModifiers
 	static EnumOptions<NETARootNode::NETARootModifier> modifiers();
 	// Return whether the specified modifier is valid for this node
-	bool isValidModifier(const char* s) const;
+	bool isValidModifier(const char *s) const;
 	// Set value and comparator for specified modifier
-	bool setModifier(const char* modifier, ComparisonOperator op, int value);
-
+	bool setModifier(const char *modifier, ComparisonOperator op, int value);
 
 	/*
 	 * Scoring
 	 */
-	public:
+      public:
 	// Evaluate the node and return its score
-	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
+	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };
 
 #endif

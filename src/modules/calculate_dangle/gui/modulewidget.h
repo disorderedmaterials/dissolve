@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
 #define DISSOLVE_MODULEWIDGET_CALCULATEDANGLE_H
 
-#include "modules/calculate_dangle/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/calculate_dangle/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class CalculateDAngleModule;
@@ -35,47 +35,44 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	CalculateDAngleModule* module_;
+	CalculateDAngleModule *module_;
 
-	public:
+      public:
 	// Constructor
-	CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module);
-
+	CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::CalculateDAngleModuleWidget ui_;
 	// DataViewers contained within this widget
-	DataViewer* rdfGraph_, *angleGraph_, *dAngleGraph_;
+	DataViewer *rdfGraph_, *angleGraph_, *dAngleGraph_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
 
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+      private:
 	// Set data targets in graphs
-	void setGraphDataTargets(CalculateDAngleModule* module);
+	void setGraphDataTargets(CalculateDAngleModule *module);
 
-	private slots:
+      private slots:
 };
 
 #endif

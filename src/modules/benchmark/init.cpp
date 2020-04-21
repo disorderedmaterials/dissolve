@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/benchmark/benchmark.h"
 #include "keywords/types.h"
+#include "modules/benchmark/benchmark.h"
 
 // Perform any necessary initialisation for the Module
 void BenchmarkModule::initialise()

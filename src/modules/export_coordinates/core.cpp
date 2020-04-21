@@ -33,16 +33,11 @@ ExportCoordinatesModule::ExportCoordinatesModule() : Module()
 }
 
 // Destructor
-ExportCoordinatesModule::~ExportCoordinatesModule()
-{
-}
+ExportCoordinatesModule::~ExportCoordinatesModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* ExportCoordinatesModule::createInstance() const
-{
-	return new ExportCoordinatesModule;
-}
+Module *ExportCoordinatesModule::createInstance() const { return new ExportCoordinatesModule; }

@@ -28,13 +28,11 @@
 // Function Space
 namespace FunctionSpace
 {
-	enum SpaceType
-	{
-		RealSpace,
-		ReciprocalSpace
-	};
-
+enum SpaceType
+{
+	RealSpace,
+	ReciprocalSpace
+};
 };
 
 #endif
-

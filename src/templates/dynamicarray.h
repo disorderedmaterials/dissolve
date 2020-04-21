@@ -22,22 +22,22 @@
 #ifndef DISSOLVE_DYNAMICARRAY_H
 #define DISSOLVE_DYNAMICARRAY_H
 
-#include "templates/list.h"
 #include "base/messenger.h"
+#include "templates/list.h"
 #include <new>
 #include <stdint.h>
 
 using namespace std;
 
 // Array Chunk
-template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
+template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 {
 	/*
 	 * Chunk of objects, maintained by a DynamicArray
 	 */
-	public:
+      public:
 	// Constructor
-	ArrayChunk<T>(int nObjects = 512) : ListItem< ArrayChunk<T> >()
+	ArrayChunk<T>(int nObjects = 512) : ListItem<ArrayChunk<T>>()
 	{
 		nObjects_ = nObjects;
 		objectSize_ = 0;
@@ -49,41 +49,43 @@ template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 	// Destructor
 	~ArrayChunk()
 	{
-		if (objectArray_) delete[] objectArray_;
-		if (objectUsed_) delete[] objectUsed_;
+		if (objectArray_)
+			delete[] objectArray_;
+		if (objectUsed_)
+			delete[] objectUsed_;
 	}
-
 
 	/*
 	 * Chunk Data
 	 */
-	private:
+      private:
 	// Number of objects in chunk
 	int nObjects_;
 	// Size of individual object
 	int objectSize_;
 	// Object array
-	T* objectArray_;
+	T *objectArray_;
 	// Object usage flags
-	bool* objectUsed_;
+	bool *objectUsed_;
 	// Number of unused objects in chunk
 	int nUnusedObjects_;
 	// Index of next available object
 	int nextAvailableObject_;
 
-	private:
+      private:
 	// Determine array offset of object
-	int objectOffset(T* object)
+	int objectOffset(T *object)
 	{
-	// 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
+		// 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
 		intptr_t offset = intptr_t(object) - intptr_t(&objectArray_[0]);
-	// 	printf("Offset = %li\n", offset);
-		if (offset < 0) return -1;
+		// 	printf("Offset = %li\n", offset);
+		if (offset < 0)
+			return -1;
 		int index = offset / objectSize_;
 		return (index < nObjects_ ? index : -1);
 	}
 
-	public:
+      public:
 	// Initialise chunk
 	bool initialise()
 	{
@@ -92,7 +94,7 @@ template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 		{
 			objectArray_ = new T[nObjects_];
 		}
-		catch (bad_alloc& alloc)
+		catch (bad_alloc &alloc)
 		{
 			Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : %s\n", alloc.what());
 			return false;
@@ -103,14 +105,15 @@ template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 		{
 			objectUsed_ = new bool[nObjects_];
 		}
-		catch (bad_alloc& alloc)
+		catch (bad_alloc &alloc)
 		{
 			Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : %s\n", alloc.what());
 			return false;
 		}
 
 		objectSize_ = sizeof(T);
-		for (int n=0; n<nObjects_; ++n) objectUsed_[n] = false;
+		for (int n = 0; n < nObjects_; ++n)
+			objectUsed_[n] = false;
 		nextAvailableObject_ = 0;
 		nUnusedObjects_ = nObjects_;
 
@@ -119,7 +122,7 @@ template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 	// Clear entire chunk
 	void clear()
 	{
-		for (int n=0; n<nObjects_; ++n)
+		for (int n = 0; n < nObjects_; ++n)
 		{
 			objectArray_[n].clear();
 			objectUsed_[n] = false;
@@ -128,10 +131,11 @@ template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 		nUnusedObjects_ = nObjects_;
 	}
 	// Return next available object
-	T* nextAvailable()
+	T *nextAvailable()
 	{
-		if (nextAvailableObject_ == -1) return NULL;
-		T* object = &objectArray_[nextAvailableObject_];
+		if (nextAvailableObject_ == -1)
+			return NULL;
+		T *object = &objectArray_[nextAvailableObject_];
 		objectUsed_[nextAvailableObject_] = true;
 		--nUnusedObjects_;
 
@@ -171,70 +175,68 @@ template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 		return object;
 	}
 	// Return specified object to pool
-	bool returnObject(T* object)
+	bool returnObject(T *object)
 	{
 		// Get the item offset of the object
 		int offset = objectOffset(object);
-		if (offset == -1) return false;
-		
+		if (offset == -1)
+			return false;
+
 		// Mark the object as unused, clear it, and increase the unused counter
 		objectUsed_[offset] = false;
 		object->clear();
 
 		++nUnusedObjects_;
-		if (nextAvailableObject_ == -1) nextAvailableObject_ = offset;
+		if (nextAvailableObject_ == -1)
+			nextAvailableObject_ = offset;
 		return true;
 	}
 	// Return whether object is part of this chunk
-	bool ownsObject(T* object)
+	bool ownsObject(T *object)
 	{
 		// Calculate array offset of this object
 		return (objectOffset(object) != -1);
 	}
 	// Return whether there are unused objects in the chunk
-	bool hasUnusedObjects()
-	{
-		return (nUnusedObjects_ != 0);
-	}
+	bool hasUnusedObjects() { return (nUnusedObjects_ != 0); }
 };
 
 // Dynamic Array Class
 template <class T> class DynamicArray
 {
-	public:
+      public:
 	// Constructor
-	DynamicArray<T>()
-	{
-		currentChunk_ = NULL;
-	}
-
+	DynamicArray<T>() { currentChunk_ = NULL; }
 
 	/*
 	 * Storage
 	 */
-	private:
+      private:
 	// List of object chunks maintained by this factory
-	List< ArrayChunk<T> > arrayChunks_;
+	List<ArrayChunk<T>> arrayChunks_;
 	// Current chunk from which objects are being taken
-	ArrayChunk<T>* currentChunk_;
+	ArrayChunk<T> *currentChunk_;
 
-	private:
+      private:
 	// Produce a new object
-	T* produce()
+	T *produce()
 	{
 		if (currentChunk_ == NULL)
 		{
 			currentChunk_ = arrayChunks_.add();
-			if (!currentChunk_->initialise()) return NULL;
+			if (!currentChunk_->initialise())
+				return NULL;
 			return currentChunk_->nextAvailable();
 		}
-		else if (currentChunk_->hasUnusedObjects()) return currentChunk_->nextAvailable();
+		else if (currentChunk_->hasUnusedObjects())
+			return currentChunk_->nextAvailable();
 		else
 		{
 			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
-			for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
+			for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
 			{
-				if (chunk == currentChunk_) continue;
+				if (chunk == currentChunk_)
+					continue;
 				if (chunk->hasUnusedObjects())
 				{
 					currentChunk_ = chunk;
@@ -244,7 +246,8 @@ template <class T> class DynamicArray
 
 			// No dice - make a new chunk
 			currentChunk_ = arrayChunks_.add();
-			if (!currentChunk_->initialise()) return NULL;
+			if (!currentChunk_->initialise())
+				return NULL;
 			return currentChunk_->nextAvailable();
 		}
 
@@ -253,10 +256,10 @@ template <class T> class DynamicArray
 		return NULL;
 	}
 	// Return specified object to chunk stack
-	bool returnObject(T* object)
+	bool returnObject(T *object)
 	{
 		// Must find chunk which owns this object
-		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
+		for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
 		{
 			if (chunk->returnObject(object))
 			{
@@ -270,15 +273,14 @@ template <class T> class DynamicArray
 		return false;
 	}
 
-
 	/*
 	 * Array Creation / Initialisation
 	 */
-	private:
+      private:
 	// Array of pointers to our objects
-	Array<T*> array_;
+	Array<T *> array_;
 
-	public:
+      public:
 	// Clear array, returning all objects to the pool
 	void clear()
 	{
@@ -286,15 +288,16 @@ template <class T> class DynamicArray
 		array_.clear();
 
 		// Clear chunks
-		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next()) chunk->clear();
+		for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
+			chunk->clear();
 		currentChunk_ = arrayChunks_.first();
 	}
 	// Initialise array to specified size, creating objects from factory
 	void initialise(int nItems)
 	{
 		array_.initialise(nItems);
-		T* newItem;
-		for (int n=0; n<nItems; ++n)
+		T *newItem;
+		for (int n = 0; n < nItems; ++n)
 		{
 			newItem = produce();
 			newItem->setArrayIndex(n);
@@ -302,15 +305,14 @@ template <class T> class DynamicArray
 		}
 	}
 
-
 	/*
 	 * Set / Get
 	 */
-	public:
+      public:
 	// Add single item to end of array
-	T* add()
+	T *add()
 	{
-		T* newItem = produce();
+		T *newItem = produce();
 		newItem->setArrayIndex(array_.nItems());
 		array_.add(newItem);
 		return newItem;
@@ -318,8 +320,8 @@ template <class T> class DynamicArray
 	// Add multiple items to end of array
 	void add(int count)
 	{
-		T* newItem;
-		for (int n=0; n<count; ++n)
+		T *newItem;
+		for (int n = 0; n < count; ++n)
 		{
 			newItem = produce();
 			newItem->setArrayIndex(array_.nItems());
@@ -330,31 +332,26 @@ template <class T> class DynamicArray
 	void removeWithReorder(int index)
 	{
 		// Return the object at the specified index
-		if (!returnObject(array_[index])) return;
+		if (!returnObject(array_[index]))
+			return;
 
 		// Now, we will simply swap the last item in the array for this one, changing its index in the process (unless it is the last item in the list)
-		if (index != (array_.nItems()-1))
+		if (index != (array_.nItems() - 1))
 		{
-			array_[index] = array_[array_.nItems()-1];
+			array_[index] = array_[array_.nItems() - 1];
 			array_[index]->setArrayIndex(index);
-			array_[array_.nItems()-1] = NULL;
+			array_[array_.nItems() - 1] = NULL;
 		}
 
 		// Tell the array to drop the last item in the list
 		array_.removeLast();
 	}
 	// Return size of item array
-	int nItems() const
-	{
-		return array_.nItems();
-	}
+	int nItems() const { return array_.nItems(); }
 	// Return item array
-	T** array()
-	{
-		return array_.array();
-	}
+	T **array() { return array_.array(); }
 	// Element access operator
-	T* operator[](int index)
+	T *operator[](int index)
 	{
 #ifdef CHECKS
 		if ((index < 0) || (index >= array_.nItems()))
@@ -366,7 +363,7 @@ template <class T> class DynamicArray
 		return array_[index];
 	}
 	// Const element access
-	const T* constValue(int index) const
+	const T *constValue(int index) const
 	{
 		if ((index < 0) || (index >= array_.nItems()))
 		{
@@ -377,16 +374,20 @@ template <class T> class DynamicArray
 		return array_.constAt(index);
 	}
 	// Return whether the specified object pointer is in the array
-	bool contains(const T* object)
+	bool contains(const T *object)
 	{
-		for (int n=0; n<array_.nItems(); ++n) if (array_.constAt(n) == object) return true;
+		for (int n = 0; n < array_.nItems(); ++n)
+			if (array_.constAt(n) == object)
+				return true;
 
 		return false;
 	}
 	// Return index of the specified object pointer (if it exists in the array)
-	bool indexOf(const T* object)
+	bool indexOf(const T *object)
 	{
-		for (int n=0; n<array_.nItems(); ++n) if (array_.constAt(n) == object) return n;
+		for (int n = 0; n < array_.nItems(); ++n)
+			if (array_.constAt(n) == object)
+				return n;
 
 		return -1;
 	}
@@ -395,9 +396,9 @@ template <class T> class DynamicArray
 // Iterator
 template <class T> class DynamicArrayIterator
 {
-	public:
+      public:
 	// Constructor
-	DynamicArrayIterator<T>(DynamicArray<T>& target) : arrayTarget_(target)
+	DynamicArrayIterator<T>(DynamicArray<T> &target) : arrayTarget_(target)
 	{
 		if (arrayTarget_.nItems() == 0)
 		{
@@ -412,19 +413,19 @@ template <class T> class DynamicArrayIterator
 		}
 	}
 
-	private:
+      private:
 	// Target DynamicArray
-	DynamicArray<T>& arrayTarget_;
+	DynamicArray<T> &arrayTarget_;
 	// Current index for iterator
 	int index_;
 	// Pointer to current item
-	T** pointer_;
+	T **pointer_;
 	// Result to return
-	T* result_;
+	T *result_;
 
-	public:
+      public:
 	// Iterate
-	T* iterate()
+	T *iterate()
 	{
 		if (index_ < arrayTarget_.nItems())
 		{
@@ -432,8 +433,9 @@ template <class T> class DynamicArrayIterator
 			++pointer_;
 			++index_;
 		}
-		else return NULL;
-		
+		else
+			return NULL;
+
 		return result_;
 	}
 	// Return index of current item
@@ -447,33 +449,34 @@ template <class T> class DynamicArrayIterator
 // Const Iterator
 template <class T> class DynamicArrayConstIterator
 {
-	public:
+      public:
 	// Constructor
-	DynamicArrayConstIterator<T>(const DynamicArray<T>& target) : arrayTarget_(target)
+	DynamicArrayConstIterator<T>(const DynamicArray<T> &target) : arrayTarget_(target)
 	{
 		index_ = 0;
 		result_ = NULL;
 	}
 
-	private:
+      private:
 	// Target DynamicArray
-	const DynamicArray<T>& arrayTarget_;
+	const DynamicArray<T> &arrayTarget_;
 	// Current index for iterator
 	int index_;
 	// Result to return
-	const T* result_;
+	const T *result_;
 
-	public:
+      public:
 	// Iterate
-	const T* iterate()
+	const T *iterate()
 	{
 		if (index_ < arrayTarget_.nItems())
 		{
 			result_ = arrayTarget_.constValue(index_);
 			++index_;
 		}
-		else return NULL;
-		
+		else
+			return NULL;
+
 		return result_;
 	}
 };

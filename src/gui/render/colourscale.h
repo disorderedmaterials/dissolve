@@ -35,36 +35,36 @@
 // Colour Scale
 class ColourScale
 {
-	public:
+      public:
 	// Constructor
 	ColourScale();
 	// Copy constructor
-	ColourScale(const ColourScale&);
+	ColourScale(const ColourScale &);
 	// Assignment operator
-	void operator=(const ColourScale& source);
+	void operator=(const ColourScale &source);
 	// Clear ColourScale
 	void clear();
 
 	/*
 	 * Points
 	 */
-	private:
+      private:
 	// List of points in the ColourScale
 	Array<ColourScalePoint> points_;
 
-	public:
+      public:
 	// Add new point to ColourScale
 	void addPoint(double value, QColor colour);
 	// Return number of points in ColourScale
 	int nPoints() const;
 	// Return points in ColourScale
-	const Array<ColourScalePoint>& points() const;
+	const Array<ColourScalePoint> &points() const;
 	// Return first point in ColourScale
-	const ColourScalePoint& firstPoint() const;
+	const ColourScalePoint &firstPoint() const;
 	// Return last point in ColourScale
-	const ColourScalePoint& lastPoint() const;
+	const ColourScalePoint &lastPoint() const;
 	// Return specific point in ColourScale
-	const ColourScalePoint& point(int id) const;
+	const ColourScalePoint &point(int id) const;
 	// Set colour and value data for point
 	void setPoint(int position, double value, QColor colour);
 	// Set value for specified point
@@ -76,33 +76,31 @@ class ColourScale
 	// Get colour associated with value supplied
 	QColor colour(double value) const;
 	// Get colour associated with value supplied, setting as GLfloat[4]
-	void colour(double value, GLfloat* rgba) const;
+	void colour(double value, GLfloat *rgba) const;
 	// Set all alpha values to that specified
 	void setAllAlpha(double alpha);
-
 
 	/*
 	 * Deltas
 	 */
-	private:
+      private:
 	// List of colour deltas between points in the ColourScale
 	Array<ColourScaleDelta> deltas_;
 
-	private:
+      private:
 	// Calculate colour deltas for current list of points
 	void calculateDeltas();
-
 
 	/*
 	 * Style
 	 */
-	private:
+      private:
 	// Whether colours are interpolated between points in the scale
 	bool interpolated_;
 	// Whether interpolation should be performed with HSV instead of RGB
 	bool useHSV_;
 
-	public:
+      public:
 	// Set whether the ColourScale is interpolated
 	void setInterpolated(bool b);
 	// Return whether the ColourScale is interpolated

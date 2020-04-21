@@ -22,47 +22,42 @@
 #ifndef DISSOLVE_KEYWORD_GEOMETRYLIST_H
 #define DISSOLVE_KEYWORD_GEOMETRYLIST_H
 
-#include "keywords/data.h"
 #include "base/geometry.h"
+#include "keywords/data.h"
 #include "templates/list.h"
-
-
 
 // Forward Declarations
 /* none */
 
 // Keyword with Geometry Data
-class GeometryListKeyword : public KeywordData< List<Geometry>& >
+class GeometryListKeyword : public KeywordData<List<Geometry> &>
 {
-	public:
+      public:
 	// Constructor
-	GeometryListKeyword(List<Geometry>&, Geometry::GeometryType t);
-	
+	GeometryListKeyword(List<Geometry> &, Geometry::GeometryType t);
+
 	// Destructor
 	~GeometryListKeyword();
-	
+
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// enum variable
 	Geometry::GeometryType type_;
-	
+
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif
-

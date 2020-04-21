@@ -20,21 +20,21 @@
 */
 
 #include "procedure/nodes/integrate1d.h"
-#include "procedure/nodes/process1d.h"
-#include "procedure/nodes/select.h"
-#include "procedure/nodes/operatebase.h"
-#include "keywords/types.h"
-#include "modules/analyse/analyse.h"
-#include "math/integrator.h"
-#include "io/export/data1d.h"
-#include "classes/box.h"
-#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "classes/box.h"
+#include "classes/configuration.h"
 #include "genericitems/listhelper.h"
+#include "io/export/data1d.h"
+#include "keywords/types.h"
+#include "math/integrator.h"
+#include "modules/analyse/analyse.h"
+#include "procedure/nodes/operatebase.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/select.h"
 
 // Constructor
-Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode* target) : ProcedureNode(ProcedureNode::Integrate1DNode)
+Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::Integrate1DNode)
 {
 	keywords_.add("Target", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target), "SourceData", "Process1D node containing the data to integrate");
 	keywords_.add("Ranges", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA", "X range for first integration region");
@@ -43,46 +43,39 @@ Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode*
 }
 
 // Destructor
-Integrate1DProcedureNode::~Integrate1DProcedureNode()
-{
-}
+Integrate1DProcedureNode::~Integrate1DProcedureNode() {}
 
 /*
  * Identity
  */
 
 // Return whether specified context is relevant for this node type
-bool Integrate1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-	return (context == ProcedureNode::AnalysisContext);
-}
+bool Integrate1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
 
 /*
  * Data
  */
 
 // Return calculated integral
-const SampledDouble& Integrate1DProcedureNode::integral(int index) const
-{
-	return integral_[index];
-}
+const SampledDouble &Integrate1DProcedureNode::integral(int index) const { return integral_[index]; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool Integrate1DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool Integrate1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Retrieve the Process1D node target
-	processNode_ = keywords_.retrieve<const Process1DProcedureNode*>("SourceData");
-	if (!processNode_) return Messenger::error("No source Process1D node set in '%s'.\n", name());
+	processNode_ = keywords_.retrieve<const Process1DProcedureNode *>("SourceData");
+	if (!processNode_)
+		return Messenger::error("No source Process1D node set in '%s'.\n", name());
 
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Get ranges
 	Range rangeA = keywords_.retrieve<Range>("RangeA");
@@ -103,7 +96,4 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
 }
 
 // Finalise any necessary data after execution
-bool Integrate1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
-{
-	return true;
-}
+bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }

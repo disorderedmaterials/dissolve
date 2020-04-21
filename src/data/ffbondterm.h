@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_FORCEFIELD_BONDTERM_H
 #define DISSOLVE_FORCEFIELD_BONDTERM_H
 
-#include "classes/speciesbond.h"
 #include "base/charstring.h"
 #include "base/parameters.h"
+#include "classes/speciesbond.h"
 
 // Forward Declarations
 class Forcefield;
@@ -33,16 +33,16 @@ class ForcefieldAtomType;
 // Forcefield Bond Term
 class ForcefieldBondTerm
 {
-	public:
+      public:
 	// Constructor / Destructor
-	ForcefieldBondTerm(const char* typeI = NULL, const char* typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldBondTerm(const char *typeI = NULL, const char *typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
+			   double data3 = 0.0);
 	~ForcefieldBondTerm();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Type names involved in interaction
 	CharString typeI_, typeJ_;
 	// Functional form of interaction
@@ -50,13 +50,13 @@ class ForcefieldBondTerm
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-	public:
+      public:
 	// Return if this term matches the atom types supplied
-	bool isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
 	// Return functional form index of interaction
 	SpeciesBond::BondFunction form() const;
 	// Return array of parameters
-	const double* parameters() const;
+	const double *parameters() const;
 };
 
 #endif

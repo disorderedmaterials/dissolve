@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/dialog.h"
+#include "base/sysfunc.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "base/sysfunc.h"
+#include "gui/keywordwidgets/dialog.h"
 
 // Constructor
-KeywordsDialog::KeywordsDialog(QWidget* parent, const KeywordList& keywords, const CoreData& coreData) : coreData_(coreData)
+KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordList &keywords, const CoreData &coreData) : coreData_(coreData)
 {
 	ui_.setupUi(this);
 
@@ -39,9 +39,7 @@ KeywordsDialog::KeywordsDialog(QWidget* parent, const KeywordList& keywords, con
 }
 
 // Destructor
-KeywordsDialog::~KeywordsDialog()
-{
-}
+KeywordsDialog::~KeywordsDialog() {}
 
 // Run the dialog
 void KeywordsDialog::showOptions()
@@ -53,32 +51,17 @@ void KeywordsDialog::showOptions()
 }
 
 // Return whether any keywords have been modified in the current 'show'
-bool KeywordsDialog::keywordsModified() const
-{
-	return keywordsModified_;
-}
+bool KeywordsDialog::keywordsModified() const { return keywordsModified_; }
 
 // Return whether any set-up needs to be re-run following keyword modification
-bool KeywordsDialog::isSetUpRequired() const
-{
-	return setUpRequired_;
-}
+bool KeywordsDialog::isSetUpRequired() const { return setUpRequired_; }
 
 /*
  * Slots
  */
 
-void KeywordsDialog::keywordChanged()
-{
-	keywordsModified_ = true;
-}
+void KeywordsDialog::keywordChanged() { keywordsModified_ = true; }
 
-void KeywordsDialog::setUpRequired()
-{
-	setUpRequired_ = true;
-}
+void KeywordsDialog::setUpRequired() { setUpRequired_ = true; }
 
-void KeywordsDialog::on_OKButton_clicked(bool checked)
-{
-	accept();
-}
+void KeywordsDialog::on_OKButton_clicked(bool checked) { accept(); }

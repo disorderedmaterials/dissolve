@@ -19,32 +19,34 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "io/import/forces.h"
 #include "base/lineparser.h"
+#include "io/import/forces.h"
 
 // Read XYZ forces from specified file
-bool ForceImportFileFormat::importXYZ(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+bool ForceImportFileFormat::importXYZ(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
 	/*
 	 * Read force information through the specified line parser.
 	 * Assumed format is as follows:
-	 * 
+	 *
 	 * Line 1:    nAtoms
 	 * Line 2:    <atom id>    <fx>    <fy>    <fz>
 	 *   ...
 	 */
 
 	// Read in number of atoms and initiliase arrays
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	int nAtoms = parser.argi(0);
 	Messenger::print(" --> Expecting forces for %i atoms.\n", nAtoms);
 	fx.initialise(nAtoms);
 	fy.initialise(nAtoms);
 	fz.initialise(nAtoms);
 
-	for (int n=0; n<nAtoms; ++n)
+	for (int n = 0; n < nAtoms; ++n)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		fx[n] = parser.argd(0);
 		fy[n] = parser.argd(1);
 		fz[n] = parser.argd(2);

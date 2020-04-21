@@ -31,18 +31,23 @@ class ChartBlock;
 // Chart HotSpot - Definition of an area onto which a dragged object can be dropped
 class ChartHotSpot : public ListItem<ChartHotSpot>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	ChartHotSpot();
 	~ChartHotSpot();
 	// HotSpot type
-	enum HotSpotType { InsertionHotSpot, AppendHotSpot, DeleteHotSpot, nHotSpotTypes };
-
+	enum HotSpotType
+	{
+		InsertionHotSpot,
+		AppendHotSpot,
+		DeleteHotSpot,
+		nHotSpotTypes
+	};
 
 	/*
 	 * Definition
 	 */
-	private:
+      private:
 	// Hotspot type
 	HotSpotType type_;
 	// Row of the parent layout in which the hotspot exists
@@ -52,11 +57,11 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
 	// Hotspot geometry
 	QRect geometry_;
 	// ChartBlock immediately before the hot spot
-	ChartBlock* blockBefore_;
+	ChartBlock *blockBefore_;
 	// ChartBlock immediately after the hot spot
-	ChartBlock* blockAfter_;
+	ChartBlock *blockAfter_;
 
-	public:
+      public:
 	// Set type of the hotspot
 	void setType(HotSpotType type);
 	// Return the hotspot type
@@ -78,11 +83,11 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
 	// Return if the supplied point exists within the hotspot
 	bool contains(QPoint p) const;
 	// Set blocks urrounding the hotspot
-	void setSurroundingBlocks(ChartBlock* blockBefore, ChartBlock* blockAfter);
+	void setSurroundingBlocks(ChartBlock *blockBefore, ChartBlock *blockAfter);
 	// Return pointer to ChartBlock immediately before the hotspot
-	ChartBlock* blockBefore() const;
+	ChartBlock *blockBefore() const;
 	// Return pointer to ChartBlock immediately after the hotspot
-	ChartBlock* blockAfter() const;
+	ChartBlock *blockAfter() const;
 };
 
 #endif

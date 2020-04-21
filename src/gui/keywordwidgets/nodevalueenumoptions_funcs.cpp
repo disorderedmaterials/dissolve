@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/nodevalueenumoptions.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/nodevalueenumoptions.h"
 
 // Constructor
-NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -31,18 +31,20 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget* pa
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<NodeValueEnumOptionsBaseKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeValueEnumOptionsBaseKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<NodeValueEnumOptionsBaseKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into NodeValueEnumOptionsBaseKeyword.\n", keyword->name());
 	else
 	{
 		// Get the underlying EnumOptionsBase
-		const EnumOptionsBase& options = keyword_->baseOptions();
+		const EnumOptionsBase &options = keyword_->baseOptions();
 
 		// Populate the combo with the available keywords
-		for (int n=0; n<options.nOptions(); ++n)
+		for (int n = 0; n < options.nOptions(); ++n)
 		{
 			ui_.OptionsCombo->addItem(options.keywordByIndex(n));
-			if (options.currentOptionIndex() == n) ui_.OptionsCombo->setCurrentIndex(n);
+			if (options.currentOptionIndex() == n)
+				ui_.OptionsCombo->setCurrentIndex(n);
 		}
 
 		// Set event filtering on the combo so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
@@ -61,7 +63,8 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget* pa
 
 void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_editingFinished()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
 	ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
@@ -71,7 +74,8 @@ void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_editingFinished()
 
 void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_returnPressed()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
 	ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
@@ -81,7 +85,8 @@ void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_returnPressed()
 
 void NodeValueEnumOptionsKeywordWidget::on_OptionsCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setEnumerationByIndex(index);
 

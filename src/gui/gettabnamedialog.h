@@ -35,31 +35,30 @@ class GetTabNameDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	GetTabNameDialog(QWidget* parent, RefList<const MainTab> currentTabs);
+	GetTabNameDialog(QWidget *parent, RefList<const MainTab> currentTabs);
 	// Destructor
 	~GetTabNameDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::GetTabNameDialog ui_;
 	// RefList of current tabs
 	RefList<const MainTab> currentTabs_;
 	// Current tab that we are renaming
-	const MainTab* currentTab_;
+	const MainTab *currentTab_;
 
-	public:
+      public:
 	// Run the dialog
-	bool get(const MainTab* currentTab, const char* currentName);
+	bool get(const MainTab *currentTab, const char *currentName);
 	// Return the name string
 	QString newName() const;
-
 
 	/*
 	 * Slots
 	 */
-	private slots:
+      private slots:
 	void on_NameEdit_textChanged(const QString text);
 	void on_CancelButton_clicked(bool checked);
 	void on_OKButton_clicked(bool checked);

@@ -19,13 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
 #include "modules/analyse/gui/modulewidget.h"
-#include "main/dissolve.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* AnalyseModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new AnalyseModuleWidget(parent, this, dissolve.coreData());
-}
-
+ModuleWidget *AnalyseModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new AnalyseModuleWidget(parent, this, dissolve.coreData()); }

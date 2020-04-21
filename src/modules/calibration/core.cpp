@@ -33,16 +33,11 @@ CalibrationModule::CalibrationModule() : Module()
 }
 
 // Destructor
-CalibrationModule::~CalibrationModule()
-{
-}
+CalibrationModule::~CalibrationModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalibrationModule::createInstance() const
-{
-	return new CalibrationModule;
-}
+Module *CalibrationModule::createInstance() const { return new CalibrationModule; }

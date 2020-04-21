@@ -24,30 +24,26 @@
 #include "gui/render/view.h"
 
 // Constructor
-TextPrimitiveList::TextPrimitiveList()
-{
-}
+TextPrimitiveList::TextPrimitiveList() {}
 
 // Clear list
-void TextPrimitiveList::clear()
-{
-	textPrimitives_.clear();
-}
+void TextPrimitiveList::clear() { textPrimitives_.clear(); }
 
 // Set data from literal coordinates and text
-void TextPrimitiveList::add(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat)
+void TextPrimitiveList::add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &localRotation,
+			    double textSize, bool flat)
 {
-	TextPrimitive* primitive = textPrimitives_.add();
+	TextPrimitive *primitive = textPrimitives_.add();
 	primitive->set(fontInstance, text, anchorPoint, anchorPosition, adjustmentVector, localRotation, textSize, flat);
 }
 
 // Update global bounding cuboid for all text primitives in the list
-Cuboid TextPrimitiveList::boundingCuboid(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, Cuboid startingCuboid)
+Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize, Cuboid startingCuboid)
 {
 	Cuboid result = startingCuboid;
 	Matrix4 textMatrix;
 	Vec3<double> corners[4], local;
-	for (TextPrimitive* primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next())
+	for (TextPrimitive *primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next())
 	{
 		// Get transformation matrix and bounding box for text
 		textMatrix = primitive->transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize);
@@ -57,9 +53,9 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance& fontInstance, const Matri
 
 		// Transform the four corners of the bounding box with the text primitive's transformation matrix
 		// and determine the extreme x, y, and z coordinates of the primitives in the local frame
-		for (int m=0; m<4; ++m)
+		for (int m = 0; m < 4; ++m)
 		{
-			local = textMatrix*corners[m];
+			local = textMatrix * corners[m];
 			result.updateExtremes(local);
 		}
 	}
@@ -68,13 +64,13 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance& fontInstance, const Matri
 }
 
 // Render all primitives in list
-void TextPrimitiveList::renderAll(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize)
+void TextPrimitiveList::renderAll(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize)
 {
 	if (!fontInstance.fontOK())
 	{
 		printf("Can't send TextPrimtiveList for rendering - FontInstance is not valid.\n");
 		return;
 	}
-	for (TextPrimitive* primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next()) primitive->render(fontInstance, viewMatrix, viewMatrixInverse, baseFontSize);
+	for (TextPrimitive *primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next())
+		primitive->render(fontInstance, viewMatrix, viewMatrixInverse, baseFontSize);
 }
-

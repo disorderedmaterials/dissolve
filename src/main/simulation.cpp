@@ -19,38 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
-#include "base/sysfunc.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/species.h"
+#include "genericitems/listhelper.h"
+#include "main/dissolve.h"
 #include <cstdio>
 
 // Set random seed
-void Dissolve::setSeed(int seed)
-{
-	seed_ = seed;
-}
+void Dissolve::setSeed(int seed) { seed_ = seed; }
 
 // Return random seed
-int Dissolve::seed() const
-{
-	return seed_;
-}
+int Dissolve::seed() const { return seed_; }
 
 // Set frequency with which to write various iteration data
-void Dissolve::setRestartFileFrequency(int n)
-{
-	restartFileFrequency_ = n;
-}
+void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
 
 // Return frequency with which to write restart file
-int Dissolve::restartFileFrequency() const
-{
-	return restartFileFrequency_;
-}
+int Dissolve::restartFileFrequency() const { return restartFileFrequency_; }
 
 // Prepare for main simulation
 bool Dissolve::prepare()
@@ -58,18 +46,23 @@ bool Dissolve::prepare()
 	Messenger::banner("Preparing Simulation");
 
 	// Initialise random seed
-	if (seed_ == -1) srand( (unsigned)time( NULL ) );
-	else srand(seed_);
+	if (seed_ == -1)
+		srand((unsigned)time(NULL));
+	else
+		srand(seed_);
 
 	// Check Species
-	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp()) return false;
+	for (Species *sp = species().first(); sp != NULL; sp = sp->next())
+		if (!sp->checkSetUp())
+			return false;
 
 	// Reassign AtomType indices (in case one or more have been added / removed)
 	int count = 0;
-	for (AtomType* at = atomTypes().first(); at != NULL; at = at->next(), ++count) at->setIndex(count);
+	for (AtomType *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
+		at->setIndex(count);
 
 	// Check Configurations
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+	for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		// Check Box extent against pair potential range
 		double maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -84,33 +77,41 @@ bool Dissolve::prepare()
 		if (pairPotentialsIncludeCoulomb_)
 		{
 			ListIterator<AtomTypeData> atdIterator(cfg->usedAtomTypesList().types());
-			while (AtomTypeData* atd = atdIterator.iterate()) totalQ += atd->population() * atd->atomType()->parameters().charge();
+			while (AtomTypeData *atd = atdIterator.iterate())
+				totalQ += atd->population() * atd->atomType()->parameters().charge();
 		}
 		else
 		{
 			ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-			while (SpeciesInfo* spInfo = spInfoIterator.iterate()) totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
+			while (SpeciesInfo *spInfo = spInfoIterator.iterate())
+				totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
 		}
-		if (fabs(totalQ) > 1.0e-5) return Messenger::error("Total charge for Configuration '%s' is non-zero (%e). Refusing to proceed!\n", cfg->name(), totalQ);
+		if (fabs(totalQ) > 1.0e-5)
+			return Messenger::error("Total charge for Configuration '%s' is non-zero (%e). Refusing to proceed!\n", cfg->name(), totalQ);
 	}
 
 	// Make sure pair potentials are up-to-date
-	if (!generatePairPotentials()) return false;
+	if (!generatePairPotentials())
+		return false;
 
 	// Create PairPotential matrix
 	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
-	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
+	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_))
+		return false;
 
 	// Check Modules have suitable numbers of Configuration targets
-	for (Module* module : moduleInstances_)
+	for (Module *module : moduleInstances_)
 	{
-		if (module->isDisabled()) continue;
+		if (module->isDisabled())
+			continue;
 
-		if (!module->hasValidNTargetConfigurations(true)) return false;
+		if (!module->hasValidNTargetConfigurations(true))
+			return false;
 	}
 
 	// Set up parallel comms / limits etc.
-	if (!setUpMPIPools()) return Messenger::error("Failed to set up parallel communications.\n");
+	if (!setUpMPIPools())
+		return Messenger::error("Failed to set up parallel communications.\n");
 
 	return true;
 }
@@ -145,19 +146,21 @@ bool Dissolve::iterate(int nIterations)
 		double thisTime = 0.0;
 		int nEnabledModules = 0;
 
-		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+		for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
-			if (cfg->nModules() == 0) continue;
+			if (cfg->nModules() == 0)
+				continue;
 
 			Messenger::print("Configuration layer '%s'  (%s):\n\n", cfg->name(), cfg->moduleLayer().frequencyDetails(iteration_));
 
 			int layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
 			ListIterator<Module> modIterator(cfg->modules());
-			while (Module* module = modIterator.iterate())
+			while (Module *module = modIterator.iterate())
 			{
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
-				if (module->isEnabled()) ++nEnabledModules;
+				if (module->isEnabled())
+					++nEnabledModules;
 
 				// TODO This will estimate wrongly for anything other than Sequential Processing
 				thisTime += module->processTimes().value();
@@ -166,19 +169,21 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::print("\n");
 
 		ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
-		while (ModuleLayer* layer = processingLayerIterator.iterate())
+		while (ModuleLayer *layer = processingLayerIterator.iterate())
 		{
 			Messenger::print("Processing layer '%s'  (%s):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
-			if (!layer->enabled()) continue;
+			if (!layer->enabled())
+				continue;
 
 			int layerExecutionCount = iteration_ / layer->frequency();
 			ListIterator<Module> processingIterator(layer->modules());
-			while (Module* module= processingIterator.iterate())
+			while (Module *module = processingIterator.iterate())
 			{
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
-				if (module->isEnabled()) ++nEnabledModules;
+				if (module->isEnabled())
+					++nEnabledModules;
 
 				thisTime += module->processTimes().value();
 			}
@@ -186,7 +191,8 @@ bool Dissolve::iterate(int nIterations)
 		}
 
 		// If no modules are enabled, complain that we have nothing to do!
-		if (nEnabledModules == 0) return Messenger::error("No modules or layers enabled - nothing to do!\n");
+		if (nEnabledModules == 0)
+			return Messenger::error("No modules or layers enabled - nothing to do!\n");
 
 		// Write heartbeat file or display appropriate message
 		if (worldPool().isMaster() && (writeHeartBeat()))
@@ -202,7 +208,6 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::print("No Heartbeat file will be written.");
 		}
 
-
 		/*
 		 *  1)	Loop over Configurations and run their modules in the sequence in which they are defined.
 		 * 	If a process is not involved in the Configuration's ProcessPool, it can move on.
@@ -210,7 +215,7 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::banner("Configuration Processing");
 
 		bool result = true;
-		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+		for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
 			// Check for failure of one or more processes / processing tasks
 			if (!worldPool().allTrue(result))
@@ -234,59 +239,64 @@ bool Dissolve::iterate(int nIterations)
 
 			// Loop over Modules defined in the Configuration
 			ListIterator<Module> moduleIterator(cfg->modules());
-			while (Module* module = moduleIterator.iterate())
+			while (Module *module = moduleIterator.iterate())
 			{
-				if (!module->runThisIteration(iteration_)) continue;
+				if (!module->runThisIteration(iteration_))
+					continue;
 
 				Messenger::heading("%s (%s)", module->type(), module->uniqueName());
 
 				result = module->executeProcessing(*this, cfg->processPool());
 
-				if (!result) return false;
+				if (!result)
+					return false;
 			}
 		}
-		if (!result) return false;
+		if (!result)
+			return false;
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of Configuration processing...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
-
 
 		/*
 		 *  2)	Reassemble data on all nodes.
 		 */
 		Messenger::banner("Reassemble Data");
 		// Loop over Configurations
-		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+		for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
 			Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
-			if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank())) return false;
+			if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
+				return false;
 
 			Messenger::printVerbose("Broadcasting Module data for Configuration '%s'...\n", cfg->name());
-			if (!cfg->moduleData().broadcast(worldPool(), cfg->processPool().rootWorldRank(), coreData_)) return false;
+			if (!cfg->moduleData().broadcast(worldPool(), cfg->processPool().rootWorldRank(), coreData_))
+				return false;
 		}
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data reassembly...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
-
 		/*
 		 *  3)	Run processing Modules (using the world pool).
 		 */
 		processingLayerIterator.restart();
-		while (ModuleLayer* layer = processingLayerIterator.iterate())
+		while (ModuleLayer *layer = processingLayerIterator.iterate())
 		{
 			// Check if this layer is due to run
-			if (!layer->runThisIteration(iteration_)) continue;
+			if (!layer->runThisIteration(iteration_))
+				continue;
 
 			Messenger::banner("Layer '%s'", layer->name());
 			int layerExecutionCount = iteration_ / layer->frequency();
 
 			ListIterator<Module> processingIterator(layer->modules());
-			while (Module* module = processingIterator.iterate())
+			while (Module *module = processingIterator.iterate())
 			{
-				if (!module->runThisIteration(layerExecutionCount)) continue;
+				if (!module->runThisIteration(layerExecutionCount))
+					continue;
 
 				Messenger::heading("%s (%s)", module->type(), module->uniqueName());
 
@@ -304,25 +314,25 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
-
 		/*
 		 *  5)	Write restart file.
 		 */
-		if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
+		if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
 		{
 			Messenger::banner("Write Restart File");
 
 			/*
 			 * Flag other data for inclusion in restart file
 			 */
-			
+
 			// Iteration number
 			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
 
 			// Pair Potentials
-			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+			for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 			{
-				GenericListHelper<Data1D>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
+				GenericListHelper<Data1D>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
+								   GenericItem::InRestartFileFlag) = pot->uAdditional();
 			}
 
 			/*
@@ -330,7 +340,8 @@ bool Dissolve::iterate(int nIterations)
 			 */
 
 			// If a restart filename isn't currently set, generate one now.
-			if (restartFilename_.isEmpty()) restartFilename_ = CharString("%s.restart", inputFilename_.get());
+			if (restartFilename_.isEmpty())
+				restartFilename_ = CharString("%s.restart", inputFilename_.get());
 			CharString restartFileBackup("%s.prev", restartFilename_.get());
 
 			// Check and remove restart file backup
@@ -366,7 +377,8 @@ bool Dissolve::iterate(int nIterations)
 			// All good. Carry on!
 			worldPool().decideTrue();
 		}
-		else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0) && (!worldPool().decision())) return false;
+		else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0) && (!worldPool().decision()))
+			return false;
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
@@ -383,22 +395,13 @@ bool Dissolve::iterate(int nIterations)
 }
 
 // Reset current simulation step
-void Dissolve::resetIterationCounter()
-{
-	iteration_ = 0;
-}
+void Dissolve::resetIterationCounter() { iteration_ = 0; }
 
 // Return current simulation step
-int Dissolve::iteration() const
-{
-	return iteration_;
-}
+int Dissolve::iteration() const { return iteration_; }
 
 // Return per-iteration time in seconds
-double Dissolve::iterationTime() const
-{
-	return iterationTime_.value();
-}
+double Dissolve::iterationTime() const { return iterationTime_.value(); }
 
 // Print timing information
 void Dissolve::printTiming()
@@ -407,22 +410,24 @@ void Dissolve::printTiming()
 
 	// Determine format for timing information output, accounting for the longest Module name we have
 	int maxLength = 0, length;
-	for (Module* module : moduleInstances_)
+	for (Module *module : moduleInstances_)
 	{
 		length = strlen(module->uniqueName());
-		if (length > maxLength) maxLength = length;
+		if (length > maxLength)
+			maxLength = length;
 	}
-	CharString timingFormat("      --> %%20s  %%-%is  %%7.2f s/iteration (%%i iterations)\n", maxLength+2);
-	CharString restartFormat("      --> %%20s  %%-%is  %%7.2f s/write     (%%i writes)\n", maxLength+2);
+	CharString timingFormat("      --> %%20s  %%-%is  %%7.2f s/iteration (%%i iterations)\n", maxLength + 2);
+	CharString restartFormat("      --> %%20s  %%-%is  %%7.2f s/write     (%%i writes)\n", maxLength + 2);
 
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+	for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
-		if (cfg->nModules() == 0) continue;
+		if (cfg->nModules() == 0)
+			continue;
 
 		Messenger::print("Accumulated timing for Configuration '%s' processing:\n\n", cfg->name());
 
 		ListIterator<Module> modIterator(cfg->modules().modules());
-		while (Module* module = modIterator.iterate())
+		while (Module *module = modIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
 			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
@@ -432,11 +437,11 @@ void Dissolve::printTiming()
 	}
 
 	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
-	while (ModuleLayer* layer = processingLayerIterator.iterate())
+	while (ModuleLayer *layer = processingLayerIterator.iterate())
 	{
 		Messenger::print("Accumulated timing for layer '%s':\n\n", layer->name());
 		ListIterator<Module> processingIterator(layer->modules());
-		while (Module* module = processingIterator.iterate())
+		while (Module *module = processingIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
 			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
@@ -449,8 +454,10 @@ void Dissolve::printTiming()
 	Messenger::print(restartFormat.get(), "Restart File", "", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");
 
-	if (nIterationsPerformed_ == 0) Messenger::print("No iterations performed, so no per-iteration timing available.\n");
-	else Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, iterationTimer_.elapsedTimeString(), iterationTime_.value());
+	if (nIterationsPerformed_ == 0)
+		Messenger::print("No iterations performed, so no per-iteration timing available.\n");
+	else
+		Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, iterationTimer_.elapsedTimeString(), iterationTime_.value());
 
 	Messenger::print("\n");
 }

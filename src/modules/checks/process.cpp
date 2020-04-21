@@ -19,28 +19,29 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/checks/checks.h"
-#include "main/dissolve.h"
-#include "classes/box.h"
 #include "base/sysfunc.h"
+#include "classes/box.h"
+#include "main/dissolve.h"
+#include "modules/checks/checks.h"
 
 // Run main processing
-bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
 	 * Perform simple checks for the target Configuration(s)
-	 * 
+	 *
 	 * This is a serial routine, with each process calculating the same values and comparing for consistency.
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+	for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+		Configuration *cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -52,7 +53,7 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Checks: Threshold for distance checks is %f Angstroms\n", distanceThreshold);
 		Messenger::print("Checks: Threshold for angle checks is %f degrees\n", angleThreshold);
 
-		Atom** atoms = cfg->atoms().array();
+		Atom **atoms = cfg->atoms().array();
 
 		double actual, delta;
 		bool ok;
@@ -62,12 +63,13 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Loop over distances to check
-		for (Geometry* d = distances_.first(); d != NULL; d = d->next())
+		for (Geometry *d = distances_.first(); d != NULL; d = d->next())
 		{
 			actual = cfg->box()->minimumDistance(atoms[d->indices(0)], atoms[d->indices(1)]);
 			delta = fabs(actual - d->value());
 			ok = delta < distanceThreshold;
-			Messenger::print("Distance between Atoms %i and %i is %f Angstroms, and is %s (delta = %f, tolerance = %f).\n", d->indices(0)+1, d->indices(1)+1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold);
+			Messenger::print("Distance between Atoms %i and %i is %f Angstroms, and is %s (delta = %f, tolerance = %f).\n", d->indices(0) + 1, d->indices(1) + 1, actual,
+					 ok ? "OK" : "NOT OK", delta, distanceThreshold);
 
 			// Check consistency between processes
 			if (!procPool.allTrue(ok))
@@ -82,12 +84,13 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Loop over angles to check
-		for (Geometry* a = angles_.first(); a != NULL; a = a->next())
+		for (Geometry *a = angles_.first(); a != NULL; a = a->next())
 		{
 			actual = cfg->box()->angleInDegrees(atoms[a->indices(0)], atoms[a->indices(1)], atoms[a->indices(2)]);
 			delta = fabs(actual - a->value());
 			ok = delta < angleThreshold;
-			Messenger::print("Angle between Atoms %i, %i and %i is %f degrees, and is %s (delta = %f, tolerance = %f).\n", a->indices(0)+1, a->indices(1)+1, a->indices(2)+1, actual, ok ? "OK" : "NOT OK", delta, angleThreshold);
+			Messenger::print("Angle between Atoms %i, %i and %i is %f degrees, and is %s (delta = %f, tolerance = %f).\n", a->indices(0) + 1, a->indices(1) + 1, a->indices(2) + 1, actual,
+					 ok ? "OK" : "NOT OK", delta, angleThreshold);
 
 			// Check consistency between processes
 			if (!procPool.allTrue(ok))
@@ -100,4 +103,3 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	return true;
 }
-

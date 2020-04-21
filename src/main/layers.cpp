@@ -26,42 +26,45 @@
  */
 
 // Add new processing layer
-ModuleLayer* Dissolve::addProcessingLayer()
-{
-	return processingLayers_.add();
-}
+ModuleLayer *Dissolve::addProcessingLayer() { return processingLayers_.add(); }
 
 // Remove specified processing layer
-void Dissolve::removeProcessingLayer(ModuleLayer* layer)
+void Dissolve::removeProcessingLayer(ModuleLayer *layer)
 {
-	if (!layer) return;
+	if (!layer)
+		return;
 
 	// Remove any references to the Modules in the layer before we delete them
 	ListIterator<Module> moduleIterator(layer->modules());
-	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+	while (Module *module = moduleIterator.iterate())
+		removeReferencesTo(module);
 
 	// Delete the module instances themselves
 	moduleIterator.restart();
-	while (Module* module = moduleIterator.iterate()) moduleInstances_.remove(module);
+	while (Module *module = moduleIterator.iterate())
+		moduleInstances_.remove(module);
 
 	// Now safe to remove the layer
 	processingLayers_.remove(layer);
 }
 
 // Find named processing layer
-ModuleLayer* Dissolve::findProcessingLayer(const char* name) const
+ModuleLayer *Dissolve::findProcessingLayer(const char *name) const
 {
 	ListIterator<ModuleLayer> layerIterator(processingLayers_);
-	while (ModuleLayer* layer = layerIterator.iterate()) if (DissolveSys::sameString(layer->name(), name)) return layer;
+	while (ModuleLayer *layer = layerIterator.iterate())
+		if (DissolveSys::sameString(layer->name(), name))
+			return layer;
 
 	return NULL;
 }
 
 // Own the specified processing layer
-bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
+bool Dissolve::ownProcessingLayer(ModuleLayer *layer)
 {
 	// Sanity check - do we already own this Configuration?
-	if (processingLayers_.contains(layer)) return Messenger::error("Already own ModuleLayer '%s', so nothing to do.\n", layer->name());
+	if (processingLayers_.contains(layer))
+		return Messenger::error("Already own ModuleLayer '%s', so nothing to do.\n", layer->name());
 
 	processingLayers_.own(layer);
 
@@ -69,13 +72,10 @@ bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
 }
 
 // Return number of defined processing layers
-int Dissolve::nProcessingLayers() const
-{
-	return processingLayers_.nItems();
-}
+int Dissolve::nProcessingLayers() const { return processingLayers_.nItems(); }
 
 // Generate unique processing layer name with base name provided
-const char* Dissolve::uniqueProcessingLayerName(const char* base) const
+const char *Dissolve::uniqueProcessingLayerName(const char *base) const
 {
 	static CharString uniqueName;
 	CharString baseName = base;
@@ -83,7 +83,8 @@ const char* Dissolve::uniqueProcessingLayerName(const char* base) const
 	int suffix = 0;
 
 	// Must always have a baseName
-	if (baseName.isEmpty()) baseName = "Unnamed";
+	if (baseName.isEmpty())
+		baseName = "Unnamed";
 
 	// Find an unused name starting with the baseName provided
 	while (findProcessingLayer(uniqueName))
@@ -97,26 +98,21 @@ const char* Dissolve::uniqueProcessingLayerName(const char* base) const
 }
 
 // Return list of processing layers
-List<ModuleLayer>& Dissolve::processingLayers()
-{
-	return processingLayers_;
-}
+List<ModuleLayer> &Dissolve::processingLayers() { return processingLayers_; }
 
 // Return data associated with processing Modules
-GenericList& Dissolve::processingModuleData()
-{
-	return processingModuleData_;
-}
+GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
 
 // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-Module* Dissolve::createModuleInLayer(const char* moduleType, const char* layerName, Configuration* cfg)
+Module *Dissolve::createModuleInLayer(const char *moduleType, const char *layerName, Configuration *cfg)
 {
 	// First, attempt to create a new Module with the specified name
-	Module* module = createModuleInstance(moduleType);
-	if (!module) return NULL;
+	Module *module = createModuleInstance(moduleType);
+	if (!module)
+		return NULL;
 
 	// Find / create the specified layer
-	ModuleLayer* layer = findProcessingLayer(layerName);
+	ModuleLayer *layer = findProcessingLayer(layerName);
 	if (!layer)
 	{
 		layer = addProcessingLayer();
@@ -127,7 +123,8 @@ Module* Dissolve::createModuleInLayer(const char* moduleType, const char* layerN
 	layer->own(module);
 
 	// Set Configuration target in the Module if specified
-	if (cfg) module->addTargetConfiguration(cfg);
+	if (cfg)
+		module->addTargetConfiguration(cfg);
 
 	return module;
 }

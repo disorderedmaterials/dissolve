@@ -19,27 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/configuration.h"
 #include "gui/configurationviewer.hui"
 #include "gui/render/renderableconfiguration.h"
-#include "classes/configuration.h"
 
 /*
  * Private Functions
  */
 
 // Return atom at specified coordinates
-const Atom* ConfigurationViewer::atomAt(int x, int y)
+const Atom *ConfigurationViewer::atomAt(int x, int y)
 {
-	if (!configuration_) return NULL;
+	if (!configuration_)
+		return NULL;
 
 	double lengthScale;
 	Vec3<double> rScreen;
 
 	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point provided
-	const DynamicArray<Atom>& atoms = configuration_->constAtoms();
-	for (int n=0; n<atoms.nItems(); ++n)
+	const DynamicArray<Atom> &atoms = configuration_->constAtoms();
+	for (int n = 0; n < atoms.nItems(); ++n)
 	{
-		const Atom* i = atoms.constValue(n);
+		const Atom *i = atoms.constValue(n);
 
 		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with the atom's screen radius
 		lengthScale = 0.3;
@@ -48,7 +49,8 @@ const Atom* ConfigurationViewer::atomAt(int x, int y)
 		// Subtract the reference coordinates and test against the screen radius
 		rScreen.x -= x;
 		rScreen.y -= y;
-		if (sqrt(rScreen.x*rScreen.x + rScreen.y*rScreen.y) < lengthScale) return i;
+		if (sqrt(rScreen.x * rScreen.x + rScreen.y * rScreen.y) < lengthScale)
+			return i;
 	}
 
 	return NULL;
@@ -63,14 +65,16 @@ void ConfigurationViewer::startInteraction()
 {
 	switch (interactionMode())
 	{
-		// Default Interaction Mode
-		case (ConfigurationViewer::DefaultInteraction):
-			// This is the standard mode, giving access to view manipulation
-			if (buttonState_.testFlag(Qt::RightButton)) setInteractionMode(ConfigurationViewer::RotateViewInteraction);
-			else if (buttonState_.testFlag(Qt::MiddleButton)) setInteractionMode(ConfigurationViewer::TranslateViewInteraction);
-			break;
-		default:
-			break;
+	// Default Interaction Mode
+	case (ConfigurationViewer::DefaultInteraction):
+		// This is the standard mode, giving access to view manipulation
+		if (buttonState_.testFlag(Qt::RightButton))
+			setInteractionMode(ConfigurationViewer::RotateViewInteraction);
+		else if (buttonState_.testFlag(Qt::MiddleButton))
+			setInteractionMode(ConfigurationViewer::TranslateViewInteraction);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -80,19 +84,19 @@ void ConfigurationViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
-		case (ConfigurationViewer::DefaultInteraction):
-			break;
-		case (ConfigurationViewer::RotateViewInteraction):
-			// Rotation matrix has already been modified. Revert to default interaction mode
-			setInteractionMode(ConfigurationViewer::DefaultInteraction);
-			break;
-		case (ConfigurationViewer::TranslateViewInteraction):
-			// Translation has already been applied. Revert to default interaction mode
-			setInteractionMode(ConfigurationViewer::DefaultInteraction);
-			break;
-		default:
-			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
-			break;
+	case (ConfigurationViewer::DefaultInteraction):
+		break;
+	case (ConfigurationViewer::RotateViewInteraction):
+		// Rotation matrix has already been modified. Revert to default interaction mode
+		setInteractionMode(ConfigurationViewer::DefaultInteraction);
+		break;
+	case (ConfigurationViewer::TranslateViewInteraction):
+		// Translation has already been applied. Revert to default interaction mode
+		setInteractionMode(ConfigurationViewer::DefaultInteraction);
+		break;
+	default:
+		printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
+		break;
 	}
 }
 
@@ -102,8 +106,8 @@ void ConfigurationViewer::cancelInteraction()
 	// Perform any actions necessary to properly cancel the current interaction
 	switch (interactionMode())
 	{
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -112,17 +116,17 @@ void ConfigurationViewer::cancelInteraction()
  */
 
 // Return text describing current interaction mode
-const char* ConfigurationViewer::interactionModeText() const
+const char *ConfigurationViewer::interactionModeText() const
 {
 	switch (interactionMode())
 	{
-		case (ConfigurationViewer::DefaultInteraction):
-			return "<b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
-		case (ConfigurationViewer::RotateViewInteraction):
-			return "Rotate view";
-		case (ConfigurationViewer::TranslateViewInteraction):
-			return "Translate";
-		default:
-			return "Unknown ConfigurationViewerInteraction";
+	case (ConfigurationViewer::DefaultInteraction):
+		return "<b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
+	case (ConfigurationViewer::RotateViewInteraction):
+		return "Rotate view";
+	case (ConfigurationViewer::TranslateViewInteraction):
+		return "Translate";
+	default:
+		return "Unknown ConfigurationViewerInteraction";
 	}
 }

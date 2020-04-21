@@ -27,41 +27,31 @@
  */
 
 // Constructor
-Lock::Lock()
-{
-	lockCounter_ = 0;
-}
+Lock::Lock() { lockCounter_ = 0; }
 
 // Destructor
-Lock::~Lock()
-{
-}
+Lock::~Lock() {}
 
 // Increase lock count
-void Lock::addLockLevel()
-{
-	++lockCounter_;
-}
+void Lock::addLockLevel() { ++lockCounter_; }
 
 // Decrease lock count
 void Lock::removeLockLevel()
 {
 	--lockCounter_;
-	if (lockCounter_ < 0) printf("Warning - Lock count has been forced into negative numbers!\n");
+	if (lockCounter_ < 0)
+		printf("Warning - Lock count has been forced into negative numbers!\n");
 }
 
 // Return whether we are currently locked
-bool Lock::isLocked() const
-{
-	return (lockCounter_ > 0);
-}
+bool Lock::isLocked() const { return (lockCounter_ > 0); }
 
 /*
  * Locker
  */
 
 // Constructor
-Locker::Locker(Lock& lock) : lock_(lock)
+Locker::Locker(Lock &lock) : lock_(lock)
 {
 	lock.addLockLevel();
 
@@ -71,13 +61,15 @@ Locker::Locker(Lock& lock) : lock_(lock)
 // Destructor
 Locker::~Locker()
 {
-	if (!unlocked_) lock_.removeLockLevel();
+	if (!unlocked_)
+		lock_.removeLockLevel();
 }
 
 // Manually release the lock
 void Locker::unlock()
 {
-	if (!unlocked_) lock_.removeLockLevel();
+	if (!unlocked_)
+		lock_.removeLockLevel();
 
 	unlocked_ = true;
 }

@@ -20,20 +20,21 @@
 */
 
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/calculatebase.h"
-#include "procedure/nodes/sequence.h"
-#include "keywords/types.h"
-#include "math/data1d.h"
-#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "classes/configuration.h"
 #include "genericitems/listhelper.h"
+#include "keywords/types.h"
+#include "math/data1d.h"
+#include "procedure/nodes/calculatebase.h"
+#include "procedure/nodes/sequence.h"
 
 // Constructor
-Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase* observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
+Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
 {
 	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0), "QuantityX", "Calculated observable to collect");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeX", "Range of calculation for the specified observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeX",
+		      "Range of calculation for the specified observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantity was binned successfully");
 
 	// Initialise branch
@@ -41,26 +42,21 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase* obser
 }
 
 // Destructor
-Collect1DProcedureNode::~Collect1DProcedureNode()
-{
-}
+Collect1DProcedureNode::~Collect1DProcedureNode() {}
 
 /*
  * Identity
  */
 
 // Return whether specified context is relevant for this node type
-bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-	return (context == ProcedureNode::AnalysisContext);
-}
+bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
 
 /*
  * Data
  */
 
 // Return accumulated data
-const Data1D& Collect1DProcedureNode::accumulatedData() const
+const Data1D &Collect1DProcedureNode::accumulatedData() const
 {
 	if (!histogram_)
 	{
@@ -73,58 +69,44 @@ const Data1D& Collect1DProcedureNode::accumulatedData() const
 }
 
 // Return range minimum
-double Collect1DProcedureNode::minimum() const
-{
-	return keywords_.asVec3Double("RangeX").x;
-}
+double Collect1DProcedureNode::minimum() const { return keywords_.asVec3Double("RangeX").x; }
 
 // Return range maximum
-double Collect1DProcedureNode::maximum() const
-{
-	return keywords_.asVec3Double("RangeX").y;
-}
+double Collect1DProcedureNode::maximum() const { return keywords_.asVec3Double("RangeX").y; }
 
 // Return bin width
-double Collect1DProcedureNode::binWidth() const
-{
-	return keywords_.asVec3Double("RangeX").z;
-}
+double Collect1DProcedureNode::binWidth() const { return keywords_.asVec3Double("RangeX").z; }
 
 /*
  * Branches
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode* Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
+SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
-	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context, procedure());
+	if (!subCollectBranch_)
+		subCollectBranch_ = new SequenceProcedureNode(context, procedure());
 
 	return subCollectBranch_;
 }
 
 // Return whether this node has a branch
-bool Collect1DProcedureNode::hasBranch() const
-{
-	return (subCollectBranch_ != NULL);
-}
+bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != NULL); }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode* Collect1DProcedureNode::branch()
-{
-	return subCollectBranch_;
-}
+SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Construct our data name, and search for it in the supplied list
 	CharString dataName("%s_%s_Bins", name(), cfg->niceName());
 	bool created;
-	Histogram1D& target = GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
+	Histogram1D &target = GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
 	if (created)
 	{
 		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
@@ -138,19 +120,21 @@ bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	histogram_ = &target;
 
 	// Retrieve the observable
-	Pair<CalculateProcedureNodeBase*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityX");
+	Pair<CalculateProcedureNodeBase *, int> xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
 	xObservable_ = xObs.a();
 	xObservableIndex_ = xObs.b();
-	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
+	if (!xObservable_)
+		return Messenger::error("No valid x quantity set in '%s'.\n", name());
 
 	// Prepare any branches
-	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
+	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList)))
+		return false;
 
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	if (!xObservable_)
@@ -160,13 +144,14 @@ ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool& 
 	}
 #endif
 	// Bin the current value of the observable, and execute sub-collection branch on success
-	if (histogram_->bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
+	if (histogram_->bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
+		return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return ProcedureNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool Collect1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+bool Collect1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	if (!histogram_)
@@ -179,7 +164,8 @@ bool Collect1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	histogram_->accumulate();
 
 	// Finalise any branches
-	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
+	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList)))
+		return false;
 
 	return true;
 }

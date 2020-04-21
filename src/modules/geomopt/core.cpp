@@ -33,16 +33,11 @@ GeometryOptimisationModule::GeometryOptimisationModule() : Module()
 }
 
 // Destructor
-GeometryOptimisationModule::~GeometryOptimisationModule()
-{
-}
+GeometryOptimisationModule::~GeometryOptimisationModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* GeometryOptimisationModule::createInstance() const
-{
-	return new GeometryOptimisationModule;
-}
+Module *GeometryOptimisationModule::createInstance() const { return new GeometryOptimisationModule; }

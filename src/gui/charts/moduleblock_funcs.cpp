@@ -21,8 +21,8 @@
 
 #include "gui/charts/moduleblock.h"
 #include "gui/charts/modulelistmetrics.h"
-#include "gui/modulewidget.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/modulewidget.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include "templates/variantpointer.h"
@@ -30,7 +30,7 @@
 #include <QPainter>
 
 // Constructor
-ModuleBlock::ModuleBlock(QWidget* parent, Module* module, Dissolve& dissolve) : QWidget(parent), ChartBlock(), dissolve_(dissolve)
+ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve) : QWidget(parent), ChartBlock(), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -58,28 +58,24 @@ ModuleBlock::ModuleBlock(QWidget* parent, Module* module, Dissolve& dissolve) : 
 	updateGeometry();
 }
 
-ModuleBlock::~ModuleBlock()
-{
-}
+ModuleBlock::~ModuleBlock() {}
 
 /*
  * Module Target
  */
 
 // Return displayed Module
-Module* ModuleBlock::module() const
-{
-	return module_;
-}
+Module *ModuleBlock::module() const { return module_; }
 
 /*
  * Controls
  */
 
 // Return suitable QPixmap for supplied Module
-QPixmap ModuleBlock::modulePixmap(const Module* module)
+QPixmap ModuleBlock::modulePixmap(const Module *module)
 {
-	if (module) return modulePixmap(module->type());
+	if (module)
+		return modulePixmap(module->type());
 
 	return QPixmap(":/modules/icons/modules_generic.svg");
 }
@@ -89,22 +85,22 @@ QPixmap ModuleBlock::modulePixmap(QString moduleType)
 {
 	// Construct the name of the icon for this module in our resource file
 	QString iconName = QString(":/modules/icons/modules_%1.svg").arg(moduleType.toLower());
-	if (QFile::exists(iconName)) return QPixmap(iconName);
+	if (QFile::exists(iconName))
+		return QPixmap(iconName);
 
 	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
-void ModuleBlock::on_RemoveButton_clicked(bool checked)
-{
-	emit (remove(module_->uniqueName()));
-}
+void ModuleBlock::on_RemoveButton_clicked(bool checked) { emit(remove(module_->uniqueName())); }
 
 void ModuleBlock::on_NameEdit_editingFinished()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// If the name is the same, return now
-	if (ui_.NameEdit->text() == module_->uniqueName()) return;
+	if (ui_.NameEdit->text() == module_->uniqueName())
+		return;
 
 	// Check that the new name is unique
 	CharString uniqueName = dissolve_.uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
@@ -124,7 +120,8 @@ void ModuleBlock::on_NameEdit_returnPressed()
 
 void ModuleBlock::on_EnabledButton_clicked(bool checked)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	module_->setEnabled(checked);
 
@@ -135,7 +132,8 @@ void ModuleBlock::on_EnabledButton_clicked(bool checked)
 
 void ModuleBlock::on_FrequencySpin_valueChanged(int value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	module_->setFrequency(value);
 
@@ -147,22 +145,23 @@ void ModuleBlock::on_FrequencySpin_valueChanged(int value)
  */
 
 // Paint event
-void ModuleBlock::paintEvent(QPaintEvent* event)
+void ModuleBlock::paintEvent(QPaintEvent *event)
 {
-	if (!module_) return;
+	if (!module_)
+		return;
 
 	ModuleListChartMetrics metrics;
 
 	QPainter painter(this);
-	
+
 	QPen borderPen;
 	borderPen.setWidth(metrics.blockBorderWidth());
 	painter.setPen(borderPen);
 
 	QPainterPath borderPath;
-	const int blockDentLeft = width()*0.5 - metrics.blockDentRadius();
+	const int blockDentLeft = width() * 0.5 - metrics.blockDentRadius();
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint()-metrics.blockDentRadius(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 180, 180);
+	borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentRadius() * 2, metrics.blockDentRadius() * 2, 180, 180);
 	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
 	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
 	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
@@ -179,37 +178,26 @@ void ModuleBlock::paintEvent(QPaintEvent* event)
  */
 
 // Return type of this block
-const char* ModuleBlock::blockType()
-{
-	return "Module";
-}
+const char *ModuleBlock::blockType() { return "Module"; }
 
 /*
  * Widget (ChartBlock Reimplementations)
  */
 
 // Return underlying widget
-QWidget* ModuleBlock::widget()
-{
-	return this;
-}
+QWidget *ModuleBlock::widget() { return this; }
 
 // Return width of underlying widget
-int ModuleBlock::widgetWidth() const
-{
-	return sizeHint().width();
-}
+int ModuleBlock::widgetWidth() const { return sizeHint().width(); }
 
 // Return height of underlying widget
-int ModuleBlock::widgetHeight() const
-{
-	return sizeHint().height();
-}
+int ModuleBlock::widgetHeight() const { return sizeHint().height(); }
 
 // Return whether the supplied point (on the parent chart) allows a drag operation to begin
 bool ModuleBlock::isDragPoint(QPoint point) const
 {
-	if (dragHandleRect_.translated(geometry().left(), geometry().top()).contains(point)) return true;
+	if (dragHandleRect_.translated(geometry().left(), geometry().top()).contains(point))
+		return true;
 
 	return false;
 }
@@ -221,7 +209,8 @@ bool ModuleBlock::isDragPoint(QPoint point) const
 // Update controls within widget
 void ModuleBlock::updateControls()
 {
-	if (!module_) return;
+	if (!module_)
+		return;
 
 	refreshing_ = true;
 
@@ -246,14 +235,18 @@ void ModuleBlock::updateControls()
 		// Construct the tooltip
 		QString toolTip;
 
-		if (module_->nRequiredTargets() == Module::OneOrMoreTargets) toolTip = "This module may target any number of configurations.\n";
-		else toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nRequiredTargets()).arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
+		if (module_->nRequiredTargets() == Module::OneOrMoreTargets)
+			toolTip = "This module may target any number of configurations.\n";
+		else
+			toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nRequiredTargets()).arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
 
-		if (module_->nTargetConfigurations() == 0) toolTip += "No configuration targets set.";
+		if (module_->nTargetConfigurations() == 0)
+			toolTip += "No configuration targets set.";
 		else
 		{
 			toolTip += "Current configuration targets:\n";
-			for (Configuration* cfg : module_->targetConfigurations()) toolTip += QString("- %1\n").arg(cfg->name());
+			for (Configuration *cfg : module_->targetConfigurations())
+				toolTip += QString("- %1\n").arg(cfg->name());
 		}
 
 		ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));
@@ -279,5 +272,4 @@ void ModuleBlock::enableSensitiveControls()
 	ui_.NameEdit->setEnabled(true);
 	ui_.EnabledButton->setEnabled(true);
 	ui_.FrequencySpin->setEnabled(true);
-
 }

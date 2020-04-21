@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_KEYWORD_GROUP_H
 #define DISSOLVE_KEYWORD_GROUP_H
 
-#include "keywords/base.h"
 #include "base/charstring.h"
-#include "templates/reflist.h"
+#include "keywords/base.h"
 #include "templates/listitem.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class KeywordList;
@@ -33,46 +33,43 @@ class KeywordList;
 // Keyword Group
 class KeywordGroup : public ListItem<KeywordGroup>
 {
-	public:
+      public:
 	// Constructor
-	KeywordGroup(KeywordList& keywordList);
-
+	KeywordGroup(KeywordList &keywordList);
 
 	/*
 	 * Identity
 	 */
-	private:
+      private:
 	// Name of the group
 	CharString name_;
 
-	public:
+      public:
 	// Set name of group
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return name of group
-	const char* name() const;
-
+	const char *name() const;
 
 	/*
 	 * Keyword Group
 	 */
-	private:
+      private:
 	// Associated KeywordList
-	KeywordList& keywordList_;
+	KeywordList &keywordList_;
 	// List of keywords (in the referenced KeywordList) that are in this group
 	RefList<KeywordBase> keywords_;
 
-	private:
+      private:
 	// Add specified keyword to the group
-	void addKeywordToGroup(KeywordBase* object);
+	void addKeywordToGroup(KeywordBase *object);
 
-	public:
+      public:
 	// Add keyword (pass-thru to KeywordList)
-	bool add(KeywordBase* object, const char* keyword, const char* description, int optionMask = KeywordBase::NoOptions);
+	bool add(KeywordBase *object, const char *keyword, const char *description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword (pass-thru to KeywordList)
-	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
+	bool add(KeywordBase *object, const char *keyword, const char *description, const char *arguments, int optionMask = KeywordBase::NoOptions);
 	// Return reference list of keywords in group
-	RefList<KeywordBase>& keywords();
+	RefList<KeywordBase> &keywords();
 };
 
 #endif
-

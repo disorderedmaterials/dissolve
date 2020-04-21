@@ -29,7 +29,7 @@
 // Array3D
 template <class A> class Array3D
 {
-	public:
+      public:
 	// Constructor
 	Array3D(int nX = 0, int nY = 0, int nZ = 0)
 	{
@@ -39,18 +39,18 @@ template <class A> class Array3D
 		nX_ = 0;
 		nY_ = 0;
 		nZ_ = 0;
-		if ((nX > 0) && (nY > 0) && (nZ > 0)) resize(nX, nY, nZ);
+		if ((nX > 0) && (nY > 0) && (nZ > 0))
+			resize(nX, nY, nZ);
 	}
 	// Destructor
-	~Array3D()
-	{
-		clear();
-	}
+	~Array3D() { clear(); }
 	// Clear array data
 	void clear()
 	{
-		if (array_ != NULL) delete[] array_;
-		if (sliceOffsets_ != NULL) delete[] sliceOffsets_;
+		if (array_ != NULL)
+			delete[] array_;
+		if (sliceOffsets_ != NULL)
+			delete[] sliceOffsets_;
 		sliceOffsets_ = NULL;
 		array_ = NULL;
 		linearSize_ = 0;
@@ -59,7 +59,7 @@ template <class A> class Array3D
 		nZ_ = 0;
 	}
 	// Copy Constructor
-	Array3D(const Array3D<A>& source)
+	Array3D(const Array3D<A> &source)
 	{
 		array_ = NULL;
 		linearSize_ = 0;
@@ -73,34 +73,35 @@ template <class A> class Array3D
 	void operator=(const A value)
 	{
 		// Copy source data elements
-		for (int n=0; n<linearSize_; ++n) array_[n] = value;
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] = value;
 	}
 	// Assignment Operator
-	void operator=(const Array3D<A>& source)
+	void operator=(const Array3D<A> &source)
 	{
 		// Clear any existing data and reinitialise the array
 		clear();
 		initialise(source.nX_, source.nY_, source.nZ_);
 
-		for (int n=0; n<linearSize_; ++n) array_[n] = source.array_[n];
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] = source.array_[n];
 	}
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Linear array of objects
-	A* array_;
+	A *array_;
 	// Size of linear array
 	int linearSize_;
 	// Array dimensions
 	int nX_, nY_, nZ_;
 	// XY slice offsets
-	int* sliceOffsets_;
+	int *sliceOffsets_;
 
-	private:
-	// Resize array 
+      private:
+	// Resize array
 	void resize(int nX, int nY, int nZ)
 	{
 		// Clear old data
@@ -110,25 +111,27 @@ template <class A> class Array3D
 		nX_ = nX;
 		nY_ = nY;
 		nZ_ = nZ;
-		linearSize_ = nX_*nY_*nZ_;
+		linearSize_ = nX_ * nY_ * nZ_;
 		array_ = new A[linearSize_];
 
 		// Create slice offsets array
 		sliceOffsets_ = new int[nZ_];
-		for (int n=0; n<nZ_; ++n) sliceOffsets_[n] = n*nX_*nY_;
+		for (int n = 0; n < nZ_; ++n)
+			sliceOffsets_[n] = n * nX_ * nY_;
 	}
 
-	public:
+      public:
 	// Initialise array
 	void initialise(int nX, int nY, int nZ)
 	{
 		clear();
 
-		if ((nX > 0) && (nY > 0) && (nZ > 0)) resize(nX, nY, nZ);
-// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
+		if ((nX > 0) && (nY > 0) && (nZ > 0))
+			resize(nX, nY, nZ);
+		// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
 	// Return specified element as modifiable reference
-	A& at(int x, int y, int z)
+	A &at(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -148,10 +151,10 @@ template <class A> class Array3D
 			return dummy;
 		}
 #endif
-		return array_[sliceOffsets_[z] + y*nX_ + x];
+		return array_[sliceOffsets_[z] + y * nX_ + x];
 	}
 	// Return specified element as const-reference
-	A& constAt(int x, int y, int z) const
+	A &constAt(int x, int y, int z) const
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -171,10 +174,10 @@ template <class A> class Array3D
 			return dummy;
 		}
 #endif
-		return array_[sliceOffsets_[z] + y*nX_ + x];
+		return array_[sliceOffsets_[z] + y * nX_ + x];
 	}
 	// Return address of specified element
-	A* ptr(int x, int y, int z)
+	A *ptr(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -194,35 +197,20 @@ template <class A> class Array3D
 			return dummy;
 		}
 #endif
-		return &array_[sliceOffsets_[z] + y*nX_ + x];
+		return &array_[sliceOffsets_[z] + y * nX_ + x];
 	}
 	// Return array size in x
-	int nX() const
-	{
-		return nX_;
-	}
+	int nX() const { return nX_; }
 	// Return array size in yu
-	int nY() const
-	{
-		return nY_;
-	}
+	int nY() const { return nY_; }
 	// Return array size in z
-	int nZ() const
-	{
-		return nZ_;
-	}
+	int nZ() const { return nZ_; }
 	// Return linear array size
-	int linearArraySize() const
-	{
-		return linearSize_;
-	}
+	int linearArraySize() const { return linearSize_; }
 	// Return linear array
-	A* linearArray()
-	{
-		return array_;
-	}
+	A *linearArray() { return array_; }
 	// Return linear value
-	A& linearValue(int index)
+	A &linearValue(int index)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -235,7 +223,7 @@ template <class A> class Array3D
 		return array_[index];
 	}
 	// Return linear value (const)
-	A& constLinearValue(int index) const
+	A &constLinearValue(int index) const
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -248,25 +236,40 @@ template <class A> class Array3D
 		return array_[index];
 	}
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Operator+= (add to all)
-	void operator+=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] += value; }
+	void operator+=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] += value;
+	}
 	// Operator-= (subtract from all)
-	void operator-=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] -= value; }
+	void operator-=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] -= value;
+	}
 	// Operator*= (multiply all)
-	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
+	void operator*=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] *= value;
+	}
 	// Operator/= (divide all)
-	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
+	void operator/=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] /= value;
+	}
 };
 
 // OffsetArray3D
 template <class A> class OffsetArray3D
 {
-	public:
+      public:
 	// Constructor
 	OffsetArray3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
 	{
@@ -277,15 +280,14 @@ template <class A> class OffsetArray3D
 		initialise(xMin, xMax, yMin, yMax, zMin, zMax);
 	}
 	// Destructor
-	~OffsetArray3D()
-	{
-		clear();
-	}
+	~OffsetArray3D() { clear(); }
 	// Clear array data
 	void clear()
 	{
-		if (array_ != NULL) delete[] array_;
-		if (sliceOffsets_ != NULL) delete[] sliceOffsets_;
+		if (array_ != NULL)
+			delete[] array_;
+		if (sliceOffsets_ != NULL)
+			delete[] sliceOffsets_;
 		sliceOffsets_ = NULL;
 		array_ = NULL;
 		linearSize_ = 0;
@@ -300,7 +302,7 @@ template <class A> class OffsetArray3D
 		nZ_ = 0;
 	}
 	// Copy Constructor
-	OffsetArray3D(const OffsetArray3D<A>& source)
+	OffsetArray3D(const OffsetArray3D<A> &source)
 	{
 		array_ = NULL;
 		linearSize_ = 0;
@@ -320,25 +322,26 @@ template <class A> class OffsetArray3D
 	void operator=(const A value)
 	{
 		// Copy source data elements
-		for (int n=0; n<linearSize_; ++n) array_[n] = value;
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] = value;
 	}
 	// Assignment Operator
-	void operator=(const Array3D<A>& source)
+	void operator=(const Array3D<A> &source)
 	{
 		// Clear any existing data and reinitialise the array
 		clear();
 		initialise(source.nX_, source.nY_, source.nZ_);
 
-		for (int n=0; n<linearSize_; ++n) array_[n] = source.array_[n];
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] = source.array_[n];
 	}
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Linear array of objects
-	A* array_;
+	A *array_;
 	// Size of linear array
 	int linearSize_;
 	// Array limits
@@ -346,9 +349,9 @@ template <class A> class OffsetArray3D
 	// Array dimensions
 	int nX_, nY_, nZ_;
 	// XY slice offsets
-	int* sliceOffsets_;
+	int *sliceOffsets_;
 
-	public:
+      public:
 	// Initialise array
 	void initialise(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
 	{
@@ -360,10 +363,10 @@ template <class A> class OffsetArray3D
 		xMax_ = xMax;
 		yMax_ = yMax;
 		zMax_ = zMax;
-		nX_ = (xMax_ - xMin_)+1;
-		nY_ = (yMax_ - yMin_)+1;
-		nZ_ = (zMax_ - zMin_)+1;
-		linearSize_ = nX_*nY_*nZ_;
+		nX_ = (xMax_ - xMin_) + 1;
+		nY_ = (yMax_ - yMin_) + 1;
+		nZ_ = (zMax_ - zMin_) + 1;
+		linearSize_ = nX_ * nY_ * nZ_;
 
 		if ((nX_ > 0) && (nY_ > 0) && (nZ_ > 0))
 		{
@@ -371,12 +374,13 @@ template <class A> class OffsetArray3D
 
 			// Create slice offsets array
 			sliceOffsets_ = new int[nZ_];
-			for (int n=0; n<nZ_; ++n) sliceOffsets_[n] = n*nX_*nY_;
+			for (int n = 0; n < nZ_; ++n)
+				sliceOffsets_[n] = n * nX_ * nY_;
 		}
-// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
+		// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
 	// Return specified element as reference
-	A& at(int x, int y, int z)
+	A &at(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -396,10 +400,10 @@ template <class A> class OffsetArray3D
 			return dummy;
 		}
 #endif
-		return array_[sliceOffsets_[z-zMin_] + (y-yMin_)*nX_ + (x-xMin_)];
+		return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
 	}
 	// Return specified element as const reference
-	A& constAt(int x, int y, int z) const
+	A &constAt(int x, int y, int z) const
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -419,10 +423,10 @@ template <class A> class OffsetArray3D
 			return dummy;
 		}
 #endif
-		return array_[sliceOffsets_[z-zMin_] + (y-yMin_)*nX_ + (x-xMin_)];
+		return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
 	}
 	// Return address of specified element
-	A* pointerAt(int x, int y, int z)
+	A *pointerAt(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -442,35 +446,20 @@ template <class A> class OffsetArray3D
 			return dummy;
 		}
 #endif
-		return &array_[sliceOffsets_[z-zMin_] + (y-yMin_)*nX_ + (x-xMin_)];
+		return &array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
 	}
 	// Return array size in x
-	int nX() const
-	{
-		return nX_;
-	}
+	int nX() const { return nX_; }
 	// Return array size in yu
-	int nY() const
-	{
-		return nY_;
-	}
+	int nY() const { return nY_; }
 	// Return array size in z
-	int nZ() const
-	{
-		return nZ_;
-	}
+	int nZ() const { return nZ_; }
 	// Return linear array size
-	int linearArraySize() const
-	{
-		return linearSize_;
-	}
+	int linearArraySize() const { return linearSize_; }
 	// Return linear array
-	A* linearArray()
-	{
-		return array_;
-	}
+	A *linearArray() { return array_; }
 	// Return linear value
-	A& linearValue(int index)
+	A &linearValue(int index)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -483,7 +472,7 @@ template <class A> class OffsetArray3D
 		return array_[index];
 	}
 	// Return linear value (const)
-	A& constLinearValue(int index) const
+	A &constLinearValue(int index) const
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -496,19 +485,34 @@ template <class A> class OffsetArray3D
 		return array_[index];
 	}
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Operator+= (add to all)
-	void operator+=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] += value; }
+	void operator+=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] += value;
+	}
 	// Operator-= (subtract from all)
-	void operator-=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] -= value; }
+	void operator-=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] -= value;
+	}
 	// Operator*= (multiply all)
-	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
+	void operator*=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] *= value;
+	}
 	// Operator/= (divide all)
-	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
+	void operator/=(const A value)
+	{
+		for (int n = 0; n < linearSize_; ++n)
+			array_[n] /= value;
+	}
 };
 
 #endif

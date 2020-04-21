@@ -28,39 +28,37 @@
 // Character String List
 class CharStringList
 {
-	public:
+      public:
 	// Constructor / Destructor
 	CharStringList();
 	~CharStringList();
 	// Copy constructor
-	CharStringList(const CharStringList& source);
+	CharStringList(const CharStringList &source);
 	// Conversion from const char*
-	CharStringList(const char* text);
+	CharStringList(const char *text);
 	// Assignment operator
-	void operator=(const CharStringList& source);
-
-
+	void operator=(const CharStringList &source);
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Array of CharStrings
 	Array<CharString> strings_;
 
-	public:
+      public:
 	// Clear list
 	void clear();
 	// Add string to list
-	void add(const char* s);
+	void add(const char *s);
 	// Return number of strings in list
 	int nItems() const;
 	// Return nth string in list
-	const char* at(int index) const;
+	const char *at(int index) const;
 	// Return whether specified string is currently in the list
-	bool contains(const char* s, bool caseSensitive = false) const;
+	bool contains(const char *s, bool caseSensitive = false) const;
 	// Return list as comma-separated string
-	const char* asCommaSeparatedList() const;
+	const char *asCommaSeparatedList() const;
 };
 
 #endif

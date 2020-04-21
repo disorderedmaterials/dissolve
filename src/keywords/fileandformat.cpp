@@ -20,29 +20,24 @@
 */
 
 #include "keywords/fileandformat.h"
-#include "io/fileandformat.h"
 #include "base/lineparser.h"
+#include "io/fileandformat.h"
 
 // Constructor
-FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat& fileAndFormat, const char* endKeyword) : KeywordData<FileAndFormat&>(KeywordBase::FileAndFormatData, fileAndFormat)
+FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword) : KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat)
 {
 	endKeyword_ = endKeyword;
 }
 
 // Destructor
-FileAndFormatKeyword::~FileAndFormatKeyword()
-{
-}
+FileAndFormatKeyword::~FileAndFormatKeyword() {}
 
 /*
  * Keyword Options
  */
 
 // Return whether the underlying FileAndFormat has any options
-bool FileAndFormatKeyword::hasOptions() const
-{
-	return (data_.keywords().keywords().nItems() > 0);
-}
+bool FileAndFormatKeyword::hasOptions() const { return (data_.keywords().keywords().nItems() > 0); }
 
 /*
  * Arguments
@@ -63,9 +58,10 @@ int FileAndFormatKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool FileAndFormatKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	if (!data_.read(parser, startArg, endKeyword_, coreData)) return Messenger::error("Failed to read file/format.\n");
+	if (!data_.read(parser, startArg, endKeyword_, coreData))
+		return Messenger::error("Failed to read file/format.\n");
 
 	set_ = true;
 
@@ -73,11 +69,14 @@ bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool FileAndFormatKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool FileAndFormatKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	if (!data_.writeFilenameAndFormat(parser, CharString("%s%s  ", prefix, keywordName))) return false;
-	if (!data_.writeBlock(parser, prefix)) return false;
-	if (!parser.writeLineF("%sEnd%s\n", prefix, keywordName)) return false;
+	if (!data_.writeFilenameAndFormat(parser, CharString("%s%s  ", prefix, keywordName)))
+		return false;
+	if (!data_.writeBlock(parser, prefix))
+		return false;
+	if (!parser.writeLineF("%sEnd%s\n", prefix, keywordName))
+		return false;
 
 	return true;
 }

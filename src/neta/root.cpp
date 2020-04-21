@@ -20,13 +20,13 @@
 */
 
 #include "neta/root.h"
-#include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
+#include "data/ffatomtype.h"
 #include "templates/dynamicarray.h"
 #include "templates/refdatalist.h"
 
 // Constructor
-NETARootNode::NETARootNode(NETADefinition* parent) : NETANode(parent, NETANode::RootNode)
+NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::RootNode)
 {
 	nBondsValue_ = -1;
 	nBondsValueOperator_ = NETANode::EqualTo;
@@ -35,9 +35,7 @@ NETARootNode::NETARootNode(NETADefinition* parent) : NETANode(parent, NETANode::
 }
 
 // Destructor
-NETARootNode::~NETARootNode()
-{
-}
+NETARootNode::~NETARootNode() {}
 
 /*
  * Modifiers
@@ -46,39 +44,35 @@ NETARootNode::~NETARootNode()
 // Return enum options for NETARootModifiers
 EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() <<
-		EnumOption(NBondsModifier,			"nbonds") <<
-		EnumOption(NHydrogensModifier,			"nh");
-	
+	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh");
+
 	static EnumOptions<NETARootNode::NETARootModifier> options("RootModifier", ModifierOptions);
 
 	return options;
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(const char* s) const
-{
-	return (modifiers().isValid(s));
-}
+bool NETARootNode::isValidModifier(const char *s) const { return (modifiers().isValid(s)); }
 
 // Set value and comparator for specified modifier
-bool NETARootNode::setModifier(const char* modifier, ComparisonOperator op, int value)
+bool NETARootNode::setModifier(const char *modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETARootNode.\n", modifier);
+	if (!modifiers().isValid(modifier))
+		return Messenger::error("Invalid modifier '%s' passed to NETARootNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{
-		case (NETARootNode::NBondsModifier):
-			nBondsValue_ = value;
-			nBondsValueOperator_ = op;
-			break;
-		case (NETARootNode::NHydrogensModifier):
-			nHydrogensValue_ = value;
-			nHydrogensValueOperator_ = op;
-			break;
-		default:
-			return Messenger::error("Don't know how to handle modifier '%s' in root node.\n", modifier);
+	case (NETARootNode::NBondsModifier):
+		nBondsValue_ = value;
+		nBondsValueOperator_ = op;
+		break;
+	case (NETARootNode::NHydrogensModifier):
+		nHydrogensValue_ = value;
+		nHydrogensValueOperator_ = op;
+		break;
+	default:
+		return Messenger::error("Don't know how to handle modifier '%s' in root node.\n", modifier);
 	}
 
 	return true;
@@ -89,30 +83,36 @@ bool NETARootNode::setModifier(const char* modifier, ComparisonOperator op, int 
  */
 
 // Evaluate the node and return its score
-int NETARootNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
+int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
-// 	printf("I AM THE ROOT - matchPath size = %i:\n", matchPath.nItems());
-// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
-// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
+	// 	printf("I AM THE ROOT - matchPath size = %i:\n", matchPath.nItems());
+	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+	// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	int totalScore = 0;
 
 	// Check any specified modifier values
-	if (nBondsValue_ >= 0 && (!compareValues(i->nBonds(), nBondsValueOperator_, nBondsValue_))) return NETANode::NoMatch;
-	else ++totalScore;
+	if (nBondsValue_ >= 0 && (!compareValues(i->nBonds(), nBondsValueOperator_, nBondsValue_)))
+		return NETANode::NoMatch;
+	else
+		++totalScore;
 	if (nHydrogensValue_ >= 0)
 	{
 		// Count number of hydrogens attached to this atom
 		int nH = 0;
-		for (const auto* bond : i->bonds()) if (bond->partner(i)->element()->Z() == ELEMENT_H) ++nH;
-		if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
+		for (const auto *bond : i->bonds())
+			if (bond->partner(i)->element()->Z() == ELEMENT_H)
+				++nH;
+		if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
+			return NETANode::NoMatch;
 
 		++totalScore;
 	}
 
 	// Process branch definition via the base class
 	int branchScore = NETANode::score(i, matchPath);
-	if (branchScore == NETANode::NoMatch) return NETANode::NoMatch;
+	if (branchScore == NETANode::NoMatch)
+		return NETANode::NoMatch;
 
 	totalScore += branchScore;
 

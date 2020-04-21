@@ -19,24 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/gui.h"
-#include "gui/speciestab.h"
+#include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/editspeciesdialog.h"
+#include "gui/gui.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
-#include "classes/species.h"
+#include "gui/speciestab.h"
 #include <QFileDialog>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
 	// Raise an element selection dialog
 	static SelectElementDialog selectElementDialog(this);
-	Element* el = selectElementDialog.selectElement();
-	if (!el) return;
+	Element *el = selectElementDialog.selectElement();
+	if (!el)
+		return;
 
 	// Create the new Species, and add a single atom at {0,0,0}
-	Species* newSpecies = dissolve_.addSpecies();
+	Species *newSpecies = dissolve_.addSpecies();
 	newSpecies->addAtom(el, Vec3<double>());
 	newSpecies->setName(dissolve_.coreData().uniqueSpeciesName(el->symbol()));
 
@@ -47,7 +48,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 {
-	Species* newSpecies = dissolve_.addSpecies();
+	Species *newSpecies = dissolve_.addSpecies();
 
 	EditSpeciesDialog editSpeciesDialog(this, newSpecies);
 	if (editSpeciesDialog.editSpecies())
@@ -56,7 +57,8 @@ void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 		fullUpdate();
 		ui_.MainTabs->setCurrentTab(newSpecies);
 	}
-	else dissolve_.removeSpecies(newSpecies);
+	else
+		dissolve_.removeSpecies(newSpecies);
 }
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
@@ -67,7 +69,7 @@ void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 
 	if (importSpeciesDialog.exec() == QDialog::Accepted)
 	{
-		Species* sp = importSpeciesDialog.importSpecies(dissolve_);
+		Species *sp = importSpeciesDialog.importSpecies(dissolve_);
 
 		// Fully update GUI
 		setModified();
@@ -81,10 +83,11 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 {
 	// Request a new file to open
 	QString xyzFile = QFileDialog::getOpenFileName(this, "Choose XYZ file to open", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
-	if (xyzFile.isEmpty()) return;
+	if (xyzFile.isEmpty())
+		return;
 
 	// Add new species, load from the xyz, and create intramolecular terms
-	Species* sp = dissolve_.addSpecies();
+	Species *sp = dissolve_.addSpecies();
 	sp->loadFromXYZ(qPrintable(xyzFile));
 	sp->addMissingBonds();
 
@@ -106,16 +109,18 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a SpeciesTab, then call its rename() function
-	MainTab* tab = ui_.MainTabs->currentTab();
-	if ((!tab) || (tab->type() != MainTab::SpeciesTabType)) return;
+	MainTab *tab = ui_.MainTabs->currentTab();
+	if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
+		return;
 	tab->rename();
 }
 
 void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 {
 	// Get the current Species (if a SpeciesTab is selected)
-	Species* species = ui_.MainTabs->currentSpecies();
-	if (!species) return;
+	Species *species = ui_.MainTabs->currentSpecies();
+	if (!species)
+		return;
 
 	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
 
@@ -135,15 +140,18 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
 {
 	// Get the current tab - make sure it is a SpeciesTab
-	MainTab* tab = ui_.MainTabs->currentTab();
-	if ((!tab) || (tab->type() != MainTab::SpeciesTabType)) return;
+	MainTab *tab = ui_.MainTabs->currentTab();
+	if ((!tab) || (tab->type() != MainTab::SpeciesTabType))
+		return;
 
 	// Cast up the tab to a SpeciesTab
-	SpeciesTab* spTab = dynamic_cast<SpeciesTab*>(tab);
-	if (!spTab) return;
+	SpeciesTab *spTab = dynamic_cast<SpeciesTab *>(tab);
+	if (!spTab)
+		return;
 
 	// Check that we really want to delete the Species
-	if (!spTab->close()) return;
+	if (!spTab->close())
+		return;
 
 	// Update the GUI
 	ui_.MainTabs->removeByPage(spTab->page());

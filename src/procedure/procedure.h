@@ -34,55 +34,52 @@ class ProcessPool;
 // Procedure
 class Procedure
 {
-	public:
+      public:
 	// Constructor
-	Procedure(ProcedureNode::NodeContext context, const char* blockTerminationKeyword = "EndProcedure");
+	Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword = "EndProcedure");
 	// Destructor
 	~Procedure();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Context for the main Procedure
 	ProcedureNode::NodeContext context_;
 	// Sequence node from which the Procedure starts
 	SequenceProcedureNode rootSequence_;
 
-	public:
+      public:
 	// Clear all data
 	void clear();
 	// Add (own) specified node to root sequence
-	void addRootSequenceNode(ProcedureNode* node);
+	void addRootSequenceNode(ProcedureNode *node);
 	// Return root sequence
-	const SequenceProcedureNode& rootSequence() const;
+	const SequenceProcedureNode &rootSequence() const;
 	// Return the block termination keyword for the Procedure
-	const char* blockTerminationKeyword() const;
+	const char *blockTerminationKeyword() const;
 	// Return named node if present, and which matches the (optional) type given
-	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
-
+	ProcedureNode *node(const char *name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 
 	/*
 	 * Execute
 	 */
-	private:
+      private:
 	// List of Configurations and the coordinate indices at which they were last processed
-	RefDataList<Configuration,int> configurationPoints_;
+	RefDataList<Configuration, int> configurationPoints_;
 
-	public:
-	// Run procedure on specified Configuration, storing / retrieving generated data from supplied list 
-	bool execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
+      public:
+	// Run procedure on specified Configuration, storing / retrieving generated data from supplied list
+	bool execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 
 	/*
 	 * Read / Write
 	 */
-	public:
+      public:
 	// Read procedure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write procedure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser &parser, const char *prefix);
 };
 
 #endif

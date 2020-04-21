@@ -33,17 +33,11 @@ MDModule::MDModule() : Module()
 }
 
 // Destructor
-MDModule::~MDModule()
-{
-}
+MDModule::~MDModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* MDModule::createInstance() const
-{
-	return new MDModule;
-}
-
+Module *MDModule::createInstance() const { return new MDModule; }

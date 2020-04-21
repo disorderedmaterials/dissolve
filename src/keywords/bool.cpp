@@ -24,33 +24,23 @@
 #include "base/sysfunc.h"
 
 // Constructor
-BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value)
-{
-}
+BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value) {}
 
 // Destructor
-BoolKeyword::~BoolKeyword()
-{
-}
+BoolKeyword::~BoolKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int BoolKeyword::minArguments() const
-{
-	return 1;
-}
+int BoolKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int BoolKeyword::maxArguments() const
-{
-	return 1;
-}
+int BoolKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool BoolKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -62,35 +52,20 @@ bool BoolKeyword::read(LineParser& parser, int startArg, const CoreData& coreDat
 }
 
 // Write keyword data to specified LineParser
-bool BoolKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
-{
-	return parser.writeLineF("%s%s  %s\n", prefix, keywordName, DissolveSys::btoa(data_));
-}
+bool BoolKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %s\n", prefix, keywordName, DissolveSys::btoa(data_)); }
 
 /*
  * Conversion
  */
 
 // Return value (as bool)
-bool BoolKeyword::asBool()
-{
-	return data_;
-}
+bool BoolKeyword::asBool() { return data_; }
 
 // Return value (as int)
-int BoolKeyword::asInt()
-{
-	return data_ ? 1 : 0;
-}
+int BoolKeyword::asInt() { return data_ ? 1 : 0; }
 
 // Return value (as double)
-double BoolKeyword::asDouble()
-{
-	return data_ ? 1.0 : 0.0;
-}
+double BoolKeyword::asDouble() { return data_ ? 1.0 : 0.0; }
 
 // Return value (as string)
-const char* BoolKeyword::asString()
-{
-	return DissolveSys::btoa(data_);
-}
+const char *BoolKeyword::asString() { return DissolveSys::btoa(data_); }

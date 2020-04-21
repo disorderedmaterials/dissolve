@@ -22,25 +22,13 @@
 #include "modules/calculate_axisangle/axisangle.h"
 
 // Return type of module
-const char* CalculateAxisAngleModule::type() const	
-{
-	return "CalculateAxisAngle";
-}
+const char *CalculateAxisAngleModule::type() const { return "CalculateAxisAngle"; }
 
 // Return category for module
-const char* CalculateAxisAngleModule::category() const
-{
-	return "Analysis";
-}
+const char *CalculateAxisAngleModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char* CalculateAxisAngleModule::brief() const
-{
-	return "Calculate distance/angle map between site axes";
-}
+const char *CalculateAxisAngleModule::brief() const { return "Calculate distance/angle map between site axes"; }
 
 // Return the number of Configuration targets this Module requires
-int CalculateAxisAngleModule::nRequiredTargets() const
-{
-	return Module::ExactlyOneTarget;
-}
+int CalculateAxisAngleModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

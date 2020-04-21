@@ -22,14 +22,10 @@
 #include "gui/siteviewer.hui"
 
 // Perform post-initialisation operations
-void SiteViewer::postInitialiseGL()
-{
-}
+void SiteViewer::postInitialiseGL() {}
 
 // Perform post-resize operations
-void SiteViewer::postResizeGL()
-{
-}
+void SiteViewer::postResizeGL() {}
 
 // Render 2D overlay content
 void SiteViewer::render2DOverlay()
@@ -41,8 +37,9 @@ void SiteViewer::render2DOverlay()
 
 	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interacting()) switch (interactionMode())
-	{
+	if (interacting())
+		switch (interactionMode())
+		{
 		case (SiteViewer::SelectAreaInteraction):
 			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
 			selectionBoxStyle.sendToGL();
@@ -55,5 +52,5 @@ void SiteViewer::render2DOverlay()
 			break;
 		default:
 			break;
-	}
+		}
 }

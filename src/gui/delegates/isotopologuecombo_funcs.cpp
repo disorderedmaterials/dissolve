@@ -19,33 +19,29 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/species.h"
 #include "gui/delegates/isotopologuecombo.hui"
 #include "gui/helpers/combopopulator.h"
-#include "classes/species.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IsotopologueComboDelegate::IsotopologueComboDelegate(QObject* parent) : QItemDelegate(parent)
-{
-}
+IsotopologueComboDelegate::IsotopologueComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
 // Destructor
-IsotopologueComboDelegate::~IsotopologueComboDelegate()
-{
-}
+IsotopologueComboDelegate::~IsotopologueComboDelegate() {}
 
 // Create editor
-QWidget* IsotopologueComboDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget *IsotopologueComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
-	QComboBox* editor = new QComboBox(parent);
+	QComboBox *editor = new QComboBox(parent);
 
 	// Get the model UserData for the current index - it should be an Isotopologue
-	const Isotopologue* iso = VariantPointer<const Isotopologue>(index.data(Qt::UserRole));
+	const Isotopologue *iso = VariantPointer<const Isotopologue>(index.data(Qt::UserRole));
 	if (iso)
 	{
 		// Get the parent Species from the Isotopologue
-		Species* sp = iso->parent();
+		Species *sp = iso->parent();
 
 		// Add the natural Isotopologue
 		editor->addItem("Natural", VariantPointer<Isotopologue>(sp->naturalIsotopologue()));
@@ -53,21 +49,22 @@ QWidget* IsotopologueComboDelegate::createEditor(QWidget* parent, const QStyleOp
 		// Add user-defined Isotopologues
 		ComboNameListPopulator<Isotopologue>(editor, sp->isotopologues(), true);
 	}
-	else Messenger::error("Underlying model did not contain an Isotopologue*, so IsotopologueCombo cannot provide options.\n");
+	else
+		Messenger::error("Underlying model did not contain an Isotopologue*, so IsotopologueCombo cannot provide options.\n");
 
 	return editor;
 }
 
 // Set initial value in editor
-void IsotopologueComboDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+void IsotopologueComboDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
 	// Grab (cast) the QComboBox
-	QComboBox* comboBox = static_cast<QComboBox*>(editor);
+	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
 	// Get the current text and search for it in the combo
 	QString value = index.model()->data(index, Qt::EditRole).toString();
 
-	for (int n=0; n<comboBox->count(); ++n)
+	for (int n = 0; n < comboBox->count(); ++n)
 	{
 		if (comboBox->itemText(n) == value)
 		{
@@ -78,17 +75,14 @@ void IsotopologueComboDelegate::setEditorData(QWidget* editor, const QModelIndex
 }
 
 // Get value from editing widget, and set back in model
-void IsotopologueComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void IsotopologueComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
 	// Grab (cast) the QComboBox
-	QComboBox* comboBox = static_cast<QComboBox*>(editor);
+	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
 	// Set the current text in the model
 	model->setData(index, comboBox->currentText(), Qt::EditRole);
 }
 
 // Update widget geometry
-void IsotopologueComboDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-	editor->setGeometry(option.rect);
-}
+void IsotopologueComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }

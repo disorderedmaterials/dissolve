@@ -25,82 +25,69 @@
 #include "genericitems/container.h"
 
 // GenericItemContainer< Vec3<int> >
-template <> class GenericItemContainer< Vec3<int> > : public GenericItem
+template <> class GenericItemContainer<Vec3<int>> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer< Vec3<int> >(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<Vec3<int>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
 	Vec3<int> data_;
 
-	public:
+      public:
 	// Return data item
-	Vec3<int>& data()
-	{
-		return data_;
-	}
-
+	Vec3<int> &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Vec3<int> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<Vec3<int>>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "Vec3<int>";
-	}
-
+	const char *itemClassName() { return "Vec3<int>"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		return parser.writeLineF("%i  %i  %i\n", data_.x, data_.y, data_.z);
-	}
+	bool write(LineParser &parser) { return parser.writeLineF("%i  %i  %i\n", data_.x, data_.y, data_.z); }
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
+	bool read(LineParser &parser, const CoreData &coreData)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		data_ = parser.arg3i(0);
 		return true;
 	}
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-	{
-		return procPool.broadcast(data_, root);
-	}
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
 	// Check item equality
-	bool equality(ProcessPool& procPool)
+	bool equality(ProcessPool &procPool)
 	{
-		if (!procPool.equality(data_.x)) return false;
-		if (!procPool.equality(data_.y)) return false;
-		if (!procPool.equality(data_.z)) return false;
+		if (!procPool.equality(data_.x))
+			return false;
+		if (!procPool.equality(data_.y))
+			return false;
+		if (!procPool.equality(data_.z))
+			return false;
 		return true;
 	}
 };

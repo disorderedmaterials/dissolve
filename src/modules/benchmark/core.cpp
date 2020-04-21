@@ -37,16 +37,11 @@ BenchmarkModule::BenchmarkModule() : Module()
 }
 
 // Destructor
-BenchmarkModule::~BenchmarkModule()
-{
-}
+BenchmarkModule::~BenchmarkModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* BenchmarkModule::createInstance() const
-{
-	return new BenchmarkModule;
-}
+Module *BenchmarkModule::createInstance() const { return new BenchmarkModule; }

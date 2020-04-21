@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/siteviewer.hui"
-#include "gui/render/renderablespecies.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "gui/render/renderablespecies.h"
+#include "gui/siteviewer.hui"
 
 // Constructor
-SiteViewer::SiteViewer(QWidget* parent) : BaseViewer(parent)
+SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Source data
 	species_ = NULL;
@@ -48,16 +48,14 @@ SiteViewer::SiteViewer(QWidget* parent) : BaseViewer(parent)
 }
 
 // Destructor
-SiteViewer::~SiteViewer()
-{
-}
+SiteViewer::~SiteViewer() {}
 
 /*
  * Source Species and Site
  */
 
 // Set target Species
-void SiteViewer::setSpecies(Species* sp)
+void SiteViewer::setSpecies(Species *sp)
 {
 	species_ = sp;
 	speciesRenderable_ = NULL;
@@ -80,16 +78,14 @@ void SiteViewer::setSpecies(Species* sp)
 }
 
 // Return target Species
-Species* SiteViewer::species() const
-{
-	return species_;
-}
+Species *SiteViewer::species() const { return species_; }
 
 // Set target SpeciesSite
-void SiteViewer::setSite(SpeciesSite* site)
+void SiteViewer::setSite(SpeciesSite *site)
 {
 	site_ = site;
-	if (siteRenderable_ != NULL) removeRenderable(siteRenderable_);
+	if (siteRenderable_ != NULL)
+		removeRenderable(siteRenderable_);
 	siteRenderable_ = NULL;
 
 	// Create a new Renderable for the parent Species
@@ -102,10 +98,7 @@ void SiteViewer::setSite(SpeciesSite* site)
 }
 
 // Return target site
-SpeciesSite* SiteViewer::speciesSite() const
-{
-	return site_;
-}
+SpeciesSite *SiteViewer::speciesSite() const { return site_; }
 
 /*
  * Renderable
@@ -114,15 +107,17 @@ SpeciesSite* SiteViewer::speciesSite() const
 // Set Species renderable drawing style
 void SiteViewer::setSpeciesRenderableDrawStyle(RenderableSpecies::SpeciesDisplayStyle ds)
 {
-	if (speciesRenderable_) speciesRenderable_->setDisplayStyle(ds);
-// 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
+	if (speciesRenderable_)
+		speciesRenderable_->setDisplayStyle(ds);
+	// 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
 }
 
 // Return current renderable draw style
 RenderableSpecies::SpeciesDisplayStyle SiteViewer::speciesRenderableDrawStyle() const
 {
-	if (speciesRenderable_) return speciesRenderable_->displayStyle();
-// 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
+	if (speciesRenderable_)
+		return speciesRenderable_->displayStyle();
+	// 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
 
 	return RenderableSpecies::LinesStyle;
 }
@@ -130,5 +125,6 @@ RenderableSpecies::SpeciesDisplayStyle SiteViewer::speciesRenderableDrawStyle() 
 // Recreate selection primitive
 void SiteViewer::recreateSelectionPrimitive()
 {
-	if (speciesRenderable_) speciesRenderable_->recreateSelectionPrimitive();
+	if (speciesRenderable_)
+		speciesRenderable_->recreateSelectionPrimitive();
 }

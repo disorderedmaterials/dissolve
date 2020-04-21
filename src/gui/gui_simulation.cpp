@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
 #include "gui/gui.h"
+#include "main/dissolve.h"
 #include <QScrollBar>
 
 /*
@@ -28,25 +28,13 @@
  */
 
 // Return current state of Dissolve
-DissolveWindow::DissolveState DissolveWindow::dissolveState() const
-{
-	return dissolveState_;
-}
+DissolveWindow::DissolveState DissolveWindow::dissolveState() const { return dissolveState_; }
 
-void DissolveWindow::on_ControlRunButton_clicked(bool checked)
-{
-	ui_.SimulationRunAction->trigger();
-}
+void DissolveWindow::on_ControlRunButton_clicked(bool checked) { ui_.SimulationRunAction->trigger(); }
 
-void DissolveWindow::on_ControlStepButton_clicked(bool checked)
-{
-	ui_.SimulationStepAction->trigger();
-}
+void DissolveWindow::on_ControlStepButton_clicked(bool checked) { ui_.SimulationStepAction->trigger(); }
 
-void DissolveWindow::on_ControlPauseButton_clicked(bool checked)
-{
-	ui_.SimulationPauseAction->trigger();
-}
+void DissolveWindow::on_ControlPauseButton_clicked(bool checked) { ui_.SimulationPauseAction->trigger(); }
 
 void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
 {
@@ -122,10 +110,11 @@ void DissolveWindow::iterationsComplete()
 
 void DissolveWindow::on_MainTabs_currentChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets are derived
-	MainTab* currentTab = dynamic_cast<MainTab*>(ui_.MainTabs->widget(index));
+	MainTab *currentTab = dynamic_cast<MainTab *>(ui_.MainTabs->widget(index));
 	if (!currentTab)
 	{
 		Messenger::print("Can't cast this tab widget (index %i) into a MainTab.\n", index);
@@ -140,27 +129,26 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 }
 
 // Return list of all current tabs
-RefList<const MainTab> DissolveWindow::allTabs() const
-{
-	return ui_.MainTabs->allTabs();
-}
+RefList<const MainTab> DissolveWindow::allTabs() const { return ui_.MainTabs->allTabs(); }
 
 // Add or go to Module tab for the Module with the unique name provided
-void DissolveWindow::showModuleTab(const QString& uniqueName)
+void DissolveWindow::showModuleTab(const QString &uniqueName)
 {
 	// Find the Module
-	Module* module = dissolve_.findModuleInstance(qPrintable(uniqueName));
-	if (!module) return;
+	Module *module = dissolve_.findModuleInstance(qPrintable(uniqueName));
+	if (!module)
+		return;
 
 	ui_.MainTabs->addModuleTab(this, module);
 }
 
 // Remove the Module tab (if it exists) for the Module with the unique name provided
-void DissolveWindow::removeModuleTab(const QString& uniqueName)
+void DissolveWindow::removeModuleTab(const QString &uniqueName)
 {
 	// Find the Module
-	Module* module = dissolve_.findModuleInstance(qPrintable(uniqueName));
-	if (!module) return;
+	Module *module = dissolve_.findModuleInstance(qPrintable(uniqueName));
+	if (!module)
+		return;
 
 	ui_.MainTabs->removeModuleTab(module);
 }
@@ -183,12 +171,9 @@ void DissolveWindow::on_MessagesDecreaseFontSizeButton_clicked(bool checked)
 	ui_.MessagesEdit->setFont(font);
 }
 
-void DissolveWindow::clearMessages()
-{
-	ui_.MessagesEdit->clear();
-}
+void DissolveWindow::clearMessages() { ui_.MessagesEdit->clear(); }
 
-void DissolveWindow::appendMessage(const QString& msg)
+void DissolveWindow::appendMessage(const QString &msg)
 {
 	ui_.MessagesEdit->verticalScrollBar()->setSliderPosition(ui_.MessagesEdit->verticalScrollBar()->maximum());
 

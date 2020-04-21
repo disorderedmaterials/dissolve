@@ -23,7 +23,7 @@
 #include "procedure/nodes/node.h"
 
 // Constructor
-NodeAndIntegerKeywordBase::NodeAndIntegerKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
+NodeAndIntegerKeywordBase::NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
 {
 	parentNode_ = parentNode;
 	nodeType_ = nodeType;
@@ -31,32 +31,21 @@ NodeAndIntegerKeywordBase::NodeAndIntegerKeywordBase(ProcedureNode* parentNode, 
 }
 
 // Destructor
-NodeAndIntegerKeywordBase::~NodeAndIntegerKeywordBase()
-{
-}
+NodeAndIntegerKeywordBase::~NodeAndIntegerKeywordBase() {}
 
 /*
  * Parent Node
  */
 
 // Parent ProcedureNode
-ProcedureNode* NodeAndIntegerKeywordBase::parentNode() const
-{
-	return parentNode_;
-}
+ProcedureNode *NodeAndIntegerKeywordBase::parentNode() const { return parentNode_; }
 
 /*
  * Target Node Type
  */
 
 // Return target node type to allow
-ProcedureNode::NodeType NodeAndIntegerKeywordBase::nodeType() const
-{
-	return nodeType_;
-}
+ProcedureNode::NodeType NodeAndIntegerKeywordBase::nodeType() const { return nodeType_; }
 
 // Return whether to accept nodes within scope only
-bool NodeAndIntegerKeywordBase::onlyInScope() const
-{
-	return onlyInScope_;
-}
+bool NodeAndIntegerKeywordBase::onlyInScope() const { return onlyInScope_; }

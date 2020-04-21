@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_GIZMOS_INTEGRATOR1D_H
 #define DISSOLVE_GIZMOS_INTEGRATOR1D_H
 
-#include "gui/ui_integrator1dgizmo.h"
 #include "gui/gizmo.h"
+#include "gui/ui_integrator1dgizmo.h"
 #include "math/sampleddouble.h"
 
 // Forward Declarations
@@ -35,32 +35,30 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	Integrator1DGizmo(Dissolve& dissolve, const char* uniqueName);
+	Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName);
 	~Integrator1DGizmo();
-
 
 	/*
 	 * Core
 	 */
-	public:
+      public:
 	// Return string specifying Gizmo type
-	const char* type() const;
-
+	const char *type() const;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::Integrator1DGizmo ui_;
 
-	protected:
+      protected:
 	// Window close event
-	void closeEvent(QCloseEvent* event);
+	void closeEvent(QCloseEvent *event);
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget
@@ -68,40 +66,37 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data1D that we are integrating
-	Data1D* integrationTarget_;
+	Data1D *integrationTarget_;
 	// Calculated integrals
 	SampledDouble integrals_[3];
 
-	private:
+      private:
 	// Calculate integrals from current limits
 	void calculateIntegrals();
 	// Set data targets in graphs
 	void setGraphDataTargets();
 
-
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widget Signals / Slots
 	 */
-	private slots:
+      private slots:
 	void on_TargetSelectButton_clicked(bool checked);
 
-	signals:
+      signals:
 	void windowClosed(QString windowTitle);
 };
 

@@ -23,14 +23,14 @@
 #include "base/lineparser.h"
 
 // Constructors
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
 	minimumLimit_ = true;
@@ -38,7 +38,7 @@ Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, 
 	maximumLimit_ = false;
 }
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue, Vec3Labels::LabelType labelType) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
 	minimumLimit_ = true;
@@ -48,54 +48,40 @@ Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, 
 }
 
 // Destructor
-Vec3DoubleKeyword::~Vec3DoubleKeyword()
-{
-}
+Vec3DoubleKeyword::~Vec3DoubleKeyword() {}
 
 /*
  * Label Type
  */
 
 // Label type to display in GUI
-Vec3Labels::LabelType Vec3DoubleKeyword::labelType() const
-{
-	return labelType_;
-}
+Vec3Labels::LabelType Vec3DoubleKeyword::labelType() const { return labelType_; }
 
 /*
  * Data Validation
  */
 
 // Return whether a minimum validation limit has been set for supplied index
-bool Vec3DoubleKeyword::hasValidationMin(int index)
-{
-	return minimumLimit_[index];
-}
+bool Vec3DoubleKeyword::hasValidationMin(int index) { return minimumLimit_[index]; }
 
 // Return validation minimum limit for supplied index
-double Vec3DoubleKeyword::validationMin(int index)
-{
-	return min_[index];
-}
+double Vec3DoubleKeyword::validationMin(int index) { return min_[index]; }
 
 // Return whether a maximum validation limit has been set for supplied index
-bool Vec3DoubleKeyword::hasValidationMax(int index)
-{
-	return maximumLimit_[index];
-}
+bool Vec3DoubleKeyword::hasValidationMax(int index) { return maximumLimit_[index]; }
 
 // Return validation maximum limit for supplied index
-double Vec3DoubleKeyword::validationMax(int index)
-{
-	return max_[index];
-}
+double Vec3DoubleKeyword::validationMax(int index) { return max_[index]; }
 
 // Validate supplied value
 bool Vec3DoubleKeyword::isValid(Vec3<double> value)
 {
-	if (!isValid(0, value.x)) return false;
-	if (!isValid(1, value.y)) return false;
-	if (!isValid(2, value.z)) return false;
+	if (!isValid(0, value.x))
+		return false;
+	if (!isValid(1, value.y))
+		return false;
+	if (!isValid(2, value.z))
+		return false;
 
 	return true;
 }
@@ -106,13 +92,15 @@ bool Vec3DoubleKeyword::isValid(int index, double value)
 	// Check minimum limit
 	if (minimumLimit_[index])
 	{
-		if (value < min_[index]) return false;
+		if (value < min_[index])
+			return false;
 	}
 
 	// Check maximum limit
 	if (maximumLimit_[index])
 	{
-		if (value > max_[index]) return false;
+		if (value > max_[index])
+			return false;
 	}
 
 	return true;
@@ -123,36 +111,34 @@ bool Vec3DoubleKeyword::isValid(int index, double value)
  */
 
 // Return minimum number of arguments accepted
-int Vec3DoubleKeyword::minArguments() const
-{
-	return 3;
-}
+int Vec3DoubleKeyword::minArguments() const { return 3; }
 
 // Return maximum number of arguments accepted
-int Vec3DoubleKeyword::maxArguments() const
-{
-	return 3;
-}
+int Vec3DoubleKeyword::maxArguments() const { return 3; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	if (parser.hasArg(startArg+2))
+	if (parser.hasArg(startArg + 2))
 	{
 		// Check individual components of the vector
-		for (int n=0; n<3; ++n)
+		for (int n = 0; n < 3; ++n)
 		{
-			if (!isValid(n, parser.argd(startArg+n)))
+			if (!isValid(n, parser.argd(startArg + n)))
 			{
-				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is  <= n <= %12.6e.\n", data_[n], name(), min_[n], max_[n]);
-				else if (minimumLimit_[n]) Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is %12.6e <= n.\n", data_[n], name(), min_[n]);
-				else Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is n <= %12.6e.\n", data_[n], name(), max_[n]);
+				if (minimumLimit_[n] && maximumLimit_[n])
+					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is  <= n <= %12.6e.\n", data_[n], name(), min_[n], max_[n]);
+				else if (minimumLimit_[n])
+					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is %12.6e <= n.\n", data_[n], name(), min_[n]);
+				else
+					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is n <= %12.6e.\n", data_[n], name(), max_[n]);
 
 				return false;
 			}
 		}
 
-		if (!setData(parser.arg3d(startArg))) return false;
+		if (!setData(parser.arg3d(startArg)))
+			return false;
 
 		return true;
 	}
@@ -160,7 +146,7 @@ bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& c
 }
 
 // Write keyword data to specified LineParser
-bool Vec3DoubleKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool Vec3DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	return parser.writeLineF("%s%s  %12.6e  %12.6e  %12.6e\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
@@ -170,13 +156,7 @@ bool Vec3DoubleKeyword::write(LineParser& parser, const char* keywordName, const
  */
 
 // Return value (as Vec3<int>)
-Vec3<int> Vec3DoubleKeyword::asVec3Int()
-{
-	return Vec3<int>(data_.x, data_.y, data_.z);
-}
+Vec3<int> Vec3DoubleKeyword::asVec3Int() { return Vec3<int>(data_.x, data_.y, data_.z); }
 
 // Return value (as Vec3<double>)
-Vec3<double> Vec3DoubleKeyword::asVec3Double()
-{
-	return data_;
-}
+Vec3<double> Vec3DoubleKeyword::asVec3Double() { return data_; }

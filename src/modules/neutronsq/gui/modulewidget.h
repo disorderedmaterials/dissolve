@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
 #define DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
 
-#include "modules/neutronsq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/neutronsq/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class Dissolve;
@@ -37,48 +37,45 @@ class NeutronSQModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* module, Dissolve& dissolve);
+	NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve);
 	~NeutronSQModuleWidget();
 
-	private:
+      private:
 	// Associated Module
-	NeutronSQModule* module_;
+	NeutronSQModule *module_;
 	// Reference to Dissolve
-	Dissolve& dissolve_;
-
+	Dissolve &dissolve_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::NeutronSQModuleWidget ui_;
 	// DataViewers contained within this widget
-	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
+	DataViewer *partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
 
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+      private:
 	// Set data targets in graphs
-	void setGraphDataTargets(NeutronSQModule* module);
+	void setGraphDataTargets(NeutronSQModule *module);
 };
 
 #endif

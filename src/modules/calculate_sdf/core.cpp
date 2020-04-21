@@ -37,16 +37,11 @@ CalculateSDFModule::CalculateSDFModule() : Module(), analyser_(ProcedureNode::An
 }
 
 // Destructor
-CalculateSDFModule::~CalculateSDFModule()
-{
-}
+CalculateSDFModule::~CalculateSDFModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateSDFModule::createInstance() const
-{
-	return new CalculateSDFModule;
-}
+Module *CalculateSDFModule::createInstance() const { return new CalculateSDFModule; }

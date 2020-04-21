@@ -28,97 +28,57 @@
 // Value and Enumeration
 template <class V, class E> class Venum
 {
-	public:
+      public:
 	// Constructor
-	Venum(V value = V(), EnumOptions<E> enumOptions = EnumOptions<E>()) : enumOptions_(enumOptions)
-	{
-		value_ = value;
-	}
+	Venum(V value = V(), EnumOptions<E> enumOptions = EnumOptions<E>()) : enumOptions_(enumOptions) { value_ = value; }
 	// Destructor
-	~Venum()
-	{
-	}
+	~Venum() {}
 	// Copy Constructor
-	Venum(const Venum& source) : enumOptions_(source.enumOptions_)
-	{
-		value_ = source.value_;
-	}
+	Venum(const Venum &source) : enumOptions_(source.enumOptions_) { value_ = source.value_; }
 	// Assignment Operators
-	void operator=(const Venum& source)
+	void operator=(const Venum &source)
 	{
 		value_ = source.value_;
 		enumOptions_ = source.enumOptions_;
 	}
-	void operator=(const V& value)
-	{
-		value_ = value;
-	}
-	void operator=(const E enumeration)
-	{
-		enumOptions_ = enumeration;
-	}
-
+	void operator=(const V &value) { value_ = value; }
+	void operator=(const E enumeration) { enumOptions_ = enumeration; }
 
 	/*
 	 * Value Data
 	 */
-	private:
+      private:
 	// Value object
 	V value_;
 
-	public:
+      public:
 	// Return value
-	V& value()
-	{
-		return value_;
-	}
+	V &value() { return value_; }
 	// Return value (const)
-	const V& constValue() const
-	{
-		return value_;
-	}
+	const V &constValue() const { return value_; }
 	// Set value
-	void setValue(V value)
-	{
-		value_ = value;
-	}
-
+	void setValue(V value) { value_ = value; }
 
 	/*
 	 * Enumeration
 	 */
-	private:
+      private:
 	// Enumeration object
 	EnumOptions<E> enumOptions_;
 
-	public:
+      public:
 	// Return EnumOptionsBase
-	EnumOptionsBase& baseOptions()
-	{
-		return enumOptions_;
-	}
+	EnumOptionsBase &baseOptions() { return enumOptions_; }
 	// Return EnumOptionsBase (const)
-	const EnumOptionsBase& constBaseOptions() const
-	{
-		return enumOptions_;
-	}
+	const EnumOptionsBase &constBaseOptions() const { return enumOptions_; }
 	// Return enumeration
-	E enumeration() const
-	{
-		return enumOptions_.enumeration();
-	}
+	E enumeration() const { return enumOptions_.enumeration(); }
 	// Return enumeration as string
-	const char* enumerationAsString() const
-	{
-		return enumOptions_.currentOption().keyword();
-	}
+	const char *enumerationAsString() const { return enumOptions_.currentOption().keyword(); }
 	// Set enumeration by index
-	bool setEnumerationByIndex(int index)
-	{
-		return enumOptions_.setCurrentOptionIndex(index);
-	}
+	bool setEnumerationByIndex(int index) { return enumOptions_.setCurrentOptionIndex(index); }
 	// Set enumeration from string
-	bool setEnumeration(const char* option)
+	bool setEnumeration(const char *option)
 	{
 		if (enumOptions_.isValid(option))
 		{

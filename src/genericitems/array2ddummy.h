@@ -22,69 +22,50 @@
 #ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY2DDUMMY_H
 #define DISSOLVE_GENERICITEMCONTAINER_ARRAY2DDUMMY_H
 
-#include "genericitems/container.h"
 #include "base/dummyclass.h"
+#include "genericitems/container.h"
 #include "math/data1d.h"
 
 // GenericItemContainer< Array2D<DummyClass> >
-template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericItem
+template <> class GenericItemContainer<Array2D<DummyClass>> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer< Array2D<DummyClass> >(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<Array2D<DummyClass>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, "Array2D<Data1D>")) return new GenericItemContainer< Array2D<Data1D> >(name, flags);
+		if (DissolveSys::sameString(className, "Array2D<Data1D>"))
+			return new GenericItemContainer<Array2D<Data1D>>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "Array2D<DummyClass>";
-	}
-
+	const char *itemClassName() { return "Array2D<DummyClass>"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		return false;
-	}
+	bool write(LineParser &parser) { return false; }
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
-	{
-		return false;
-	}
-
+	bool read(LineParser &parser, const CoreData &coreData) { return false; }
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-	{
-		return false;
-	}
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return false; }
 	// Return equality between items
-	bool equality(ProcessPool& procPool)
-	{
-		return false;
-	}
+	bool equality(ProcessPool &procPool) { return false; }
 };
 
 #endif

@@ -20,52 +20,38 @@
 */
 
 #include "keywords/speciessite.h"
+#include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
 
 // Constructor
-SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite* site, bool axesRequired) : KeywordData<SpeciesSite*>(KeywordBase::SpeciesSiteData, site)
-{
-	axesRequired_ = axesRequired;
-}
+SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite *site, bool axesRequired) : KeywordData<SpeciesSite *>(KeywordBase::SpeciesSiteData, site) { axesRequired_ = axesRequired; }
 
 // Destructor
-SpeciesSiteKeyword::~SpeciesSiteKeyword()
-{
-}
+SpeciesSiteKeyword::~SpeciesSiteKeyword() {}
 
 /*
  * Specification
  */
 
 // Return whether axes are required for the site
-bool SpeciesSiteKeyword::axesRequired() const
-{
-	return axesRequired_;
-}
+bool SpeciesSiteKeyword::axesRequired() const { return axesRequired_; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int SpeciesSiteKeyword::minArguments() const
-{
-	return 2;
-}
+int SpeciesSiteKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteKeyword::maxArguments() const
-{
-	return 2;
-}
+int SpeciesSiteKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Find target Species (first argument)
-	Species* sp = coreData.findSpecies(parser.argc(startArg));
+	Species *sp = coreData.findSpecies(parser.argc(startArg));
 	if (!sp)
 	{
 		Messenger::error("Error setting SpeciesSite - no Species named '%s' exists.\n", parser.argc(startArg));
@@ -73,9 +59,11 @@ bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& 
 	}
 
 	// Find specified Site (second argument) in the Species
-	data_ = sp->findSite(parser.argc(startArg+1));
-	if (!data_) return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(startArg+1), sp->name());
-	if (axesRequired_ && (!data_->hasAxes())) return Messenger::error("Can't select site '%s' for keyword '%s', as the keyword requires axes specifications to be present.\n", data_->name(), name());
+	data_ = sp->findSite(parser.argc(startArg + 1));
+	if (!data_)
+		return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(startArg + 1), sp->name());
+	if (axesRequired_ && (!data_->hasAxes()))
+		return Messenger::error("Can't select site '%s' for keyword '%s', as the keyword requires axes specifications to be present.\n", data_->name(), name());
 
 	set_ = true;
 
@@ -83,13 +71,15 @@ bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool SpeciesSiteKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	if (data_)
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, data_->parent()->name(), data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, data_->parent()->name(), data_->name()))
+			return false;
 	}
-	else if (!parser.writeLineF("%s%s  '?_?'  '?_?'\n", prefix, name())) return false;
+	else if (!parser.writeLineF("%s%s  '?_?'  '?_?'\n", prefix, name()))
+		return false;
 
 	return true;
 }
@@ -99,13 +89,15 @@ bool SpeciesSiteKeyword::write(LineParser& parser, const char* keywordName, cons
  */
 
 // Prune any references to the supplied Species in the contained data
-void SpeciesSiteKeyword::removeReferencesTo(Species* sp)
+void SpeciesSiteKeyword::removeReferencesTo(Species *sp)
 {
-	if (data_ && (data_->parent() == sp)) data_ = NULL;
+	if (data_ && (data_->parent() == sp))
+		data_ = NULL;
 }
 
 // Prune any references to the supplied Site in the contained data
-void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite* spSite)
+void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
 {
-	if (data_ == spSite) data_ = NULL;
+	if (data_ == spSite)
+		data_ = NULL;
 }

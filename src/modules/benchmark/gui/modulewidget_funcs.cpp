@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/benchmark/gui/modulewidget.h"
 #include "modules/benchmark/benchmark.h"
+#include "modules/benchmark/gui/modulewidget.h"
 
 // Constructor
-BenchmarkModuleWidget::BenchmarkModuleWidget(QWidget* parent, BenchmarkModule* module) : ModuleWidget(parent), module_(module)
+BenchmarkModuleWidget::BenchmarkModuleWidget(QWidget *parent, BenchmarkModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-

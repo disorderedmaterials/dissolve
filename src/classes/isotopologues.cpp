@@ -20,11 +20,11 @@
 */
 
 #include "classes/isotopologues.h"
+#include "base/lineparser.h"
+#include "base/processpool.h"
+#include "base/sysfunc.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "base/processpool.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 
 // Constructor
 Isotopologues::Isotopologues() : ListItem<Isotopologues>()
@@ -34,38 +34,30 @@ Isotopologues::Isotopologues() : ListItem<Isotopologues>()
 }
 
 // Destructor
-Isotopologues::~Isotopologues()
-{
-}
+Isotopologues::~Isotopologues() {}
 
 /*
  * Isotopologue Mix
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(Species* sp, int population)
+void Isotopologues::setSpecies(Species *sp, int population)
 {
 	species_ = sp;
 	speciesPopulation_ = population;
 }
 
 // Return associated Species
-Species* Isotopologues::species() const
-{
-	return species_;
-}
+Species *Isotopologues::species() const { return species_; }
 
 // Return associated Species population
-int Isotopologues::speciesPopulation() const
-{
-	return speciesPopulation_;
-}
+int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
 // Update Isotopologue RefList
 void Isotopologues::update()
 {
 	// Go through list of Isotopologues present in this mix, removing any that no longer exist
-	IsotopologueWeight* isoWeight = mix_.first(), *next;
+	IsotopologueWeight *isoWeight = mix_.first(), *next;
 	while (isoWeight)
 	{
 		next = isoWeight->next();
@@ -90,44 +82,47 @@ bool Isotopologues::addNext()
 		Messenger::error("NULL_POINTER - NULL Species pointer in Isotopologues::addNextIsotopologue().\n");
 		return false;
 	}
-	
+
 	// Check to see if the are any Isotopologues available to add
 	if (mix_.nItems() == species_->nIsotopologues())
 	{
 		Messenger::warn("Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
 		return false;
 	}
-	
+
 	// Find unique (unused) Isotopologue
-	Isotopologue* iso;
-	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next()) if (!contains(iso)) break;
+	Isotopologue *iso;
+	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next())
+		if (!contains(iso))
+			break;
 
 	if (iso == NULL)
 	{
 		Messenger::error("Couldn't find an unused Isotopologue in Species '%s'.\n", species_->name());
 		return false;
 	}
-	
-	IsotopologueWeight* newWeight = mix_.add();
+
+	IsotopologueWeight *newWeight = mix_.add();
 	newWeight->set(iso, 1.0);
-	
+
 	return true;
 }
 
 // Add specific Isotopologue to list
-bool Isotopologues::add(const Isotopologue* iso, double relativeWeight)
+bool Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 {
 	// Search current list to see if the specified Isotopologue already exists
-	if (contains(iso)) Messenger::warn("Isotopologue '%s' (of Species '%s') already exists in Isotopologues, and it is being added again...\n", iso->name(), species_->name());
+	if (contains(iso))
+		Messenger::warn("Isotopologue '%s' (of Species '%s') already exists in Isotopologues, and it is being added again...\n", iso->name(), species_->name());
 
-	IsotopologueWeight* newWeight = mix_.add();
+	IsotopologueWeight *newWeight = mix_.add();
 	newWeight->set(iso, relativeWeight);
 
 	return true;
 }
 
 // Set Isotopologue component in list
-bool Isotopologues::set(const Isotopologue* iso, double relativeWeight)
+bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 {
 	// NULL Pointer?
 	if (iso == NULL)
@@ -135,10 +130,12 @@ bool Isotopologues::set(const Isotopologue* iso, double relativeWeight)
 		Messenger::error("NULL_POINTER - NULL Isotopologue passed to Isotopologues::setIsotopologue().\n");
 		return false;
 	}
-	
+
 	// Find this Isotopologue in the list
-	IsotopologueWeight* isoWeight = NULL;
-	for (isoWeight = mix_.first(); isoWeight != NULL; isoWeight = isoWeight->next()) if (isoWeight->isotopologue() == iso) break;
+	IsotopologueWeight *isoWeight = NULL;
+	for (isoWeight = mix_.first(); isoWeight != NULL; isoWeight = isoWeight->next())
+		if (isoWeight->isotopologue() == iso)
+			break;
 	if (isoWeight == NULL)
 	{
 		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n", iso->name());
@@ -151,45 +148,39 @@ bool Isotopologues::set(const Isotopologue* iso, double relativeWeight)
 }
 
 // Remove references to the specified Isotopologue
-void Isotopologues::remove(const Isotopologue* iso)
+void Isotopologues::remove(const Isotopologue *iso)
 {
 	// Search the mix for the specified Isotopologue - it may appear more than once...
-	IsotopologueWeight* isoWeight = mix_.first(), *nextWeight;
+	IsotopologueWeight *isoWeight = mix_.first(), *nextWeight;
 	while (isoWeight)
 	{
 		nextWeight = isoWeight->next();
 
-		if (isoWeight->isotopologue() == iso) mix_.remove(isoWeight);
+		if (isoWeight->isotopologue() == iso)
+			mix_.remove(isoWeight);
 
 		isoWeight = nextWeight;
 	}
 }
 
 // Remove the specified IsotopologueWeight
-void Isotopologues::remove(IsotopologueWeight* isoWeight)
-{
-	mix_.remove(isoWeight);
-}
+void Isotopologues::remove(IsotopologueWeight *isoWeight) { mix_.remove(isoWeight); }
 
 // Return whether the mix contains the specified Isotopologue
-const IsotopologueWeight* Isotopologues::contains(const Isotopologue* iso) const
+const IsotopologueWeight *Isotopologues::contains(const Isotopologue *iso) const
 {
-	for (IsotopologueWeight* isoWeight = mix_.first(); isoWeight != NULL; isoWeight = isoWeight->next()) if (isoWeight->isotopologue() == iso) return isoWeight;
+	for (IsotopologueWeight *isoWeight = mix_.first(); isoWeight != NULL; isoWeight = isoWeight->next())
+		if (isoWeight->isotopologue() == iso)
+			return isoWeight;
 
 	return NULL;
 }
 
 // Return Isotopologue mix
-const List<IsotopologueWeight>& Isotopologues::mix() const
-{
-	return mix_;
-}
+const List<IsotopologueWeight> &Isotopologues::mix() const { return mix_; }
 
 // Return number of Isotopologues in list
-int Isotopologues::nIsotopologues() const
-{
-	return mix_.nItems();
-}
+int Isotopologues::nIsotopologues() const { return mix_.nItems(); }
 
 // Return total relative population
 double Isotopologues::totalRelative() const
@@ -197,7 +188,8 @@ double Isotopologues::totalRelative() const
 	double total = 0.0;
 
 	ListIterator<IsotopologueWeight> weightIterator(mix_);
-	while (IsotopologueWeight* isoWeight = weightIterator.iterate()) total += isoWeight->weight();
+	while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+		total += isoWeight->weight();
 
 	return total;
 }
@@ -208,7 +200,8 @@ void Isotopologues::normalise()
 	double total = totalRelative();
 
 	ListIterator<IsotopologueWeight> weightIterator(mix_);
-	while (IsotopologueWeight* isoWeight = weightIterator.iterate()) isoWeight->setWeight(isoWeight->weight() / total);
+	while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+		isoWeight->setWeight(isoWeight->weight() / total);
 }
 
 /*
@@ -216,16 +209,14 @@ void Isotopologues::normalise()
  */
 
 // Return class name
-const char* Isotopologues::itemClassName()
-{
-	return "Isotopologues";
-}
+const char *Isotopologues::itemClassName() { return "Isotopologues"; }
 
 // Read data through specified LineParser
-bool Isotopologues::read(LineParser& parser, const CoreData& coreData)
+bool Isotopologues::read(LineParser &parser, const CoreData &coreData)
 {
 	// Read Species name
-	if (parser.getArgsDelim() != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success)
+		return false;
 	species_ = coreData.findSpecies(parser.argc(0));
 	if (species_ == NULL)
 	{
@@ -235,33 +226,38 @@ bool Isotopologues::read(LineParser& parser, const CoreData& coreData)
 	speciesPopulation_ = parser.argi(1);
 	int nIso = parser.argi(2);
 	mix_.clear();
-	for (int n=0; n<nIso; ++n)
+	for (int n = 0; n < nIso; ++n)
 	{
-		if (parser.getArgsDelim() != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success)
+			return false;
 
 		// Search for the named Isotopologue in the Species
-		Isotopologue* iso = species_->findIsotopologue(parser.argc(0));
+		Isotopologue *iso = species_->findIsotopologue(parser.argc(0));
 		if (!iso)
 		{
 			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading Isotopologues.\n", parser.argc(0), species_->name());
 			return false;
 		}
 
-		if (!add(iso, parser.argd(1))) return false;
+		if (!add(iso, parser.argd(1)))
+			return false;
 	}
 
 	return true;
 }
 
 // Write data through specified LineParser
-bool Isotopologues::write(LineParser& parser)
+bool Isotopologues::write(LineParser &parser)
 {
 	// Write Species name, integer population, and number of isotopologues in the mix
-	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
+	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems()))
+		return false;
 
 	// Write Isotopologues
 	ListIterator<IsotopologueWeight> weightIterator(mix_);
-	while (IsotopologueWeight* isoWeight = weightIterator.iterate()) if (!parser.writeLineF("%s  %f\n", isoWeight->isotopologue()->name(), isoWeight->weight())) return false;
+	while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+		if (!parser.writeLineF("%s  %f\n", isoWeight->isotopologue()->name(), isoWeight->weight()))
+			return false;
 
 	return true;
 }
@@ -271,44 +267,51 @@ bool Isotopologues::write(LineParser& parser)
  */
 
 // Broadcast data
-bool Isotopologues::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
 	CharString speciesName;
-	if (procPool.poolRank() == root) speciesName = species_->name();
+	if (procPool.poolRank() == root)
+		speciesName = species_->name();
 	procPool.broadcast(speciesName, root);
 	species_ = coreData.findSpecies(speciesName);
 
-	if (!procPool.broadcast(speciesPopulation_, root)) return false;
+	if (!procPool.broadcast(speciesPopulation_, root))
+		return false;
 
 	// Isotopologue list (mix_)
 	int nIso = mix_.nItems();
-	if (!procPool.broadcast(nIso, root)) return false;
+	if (!procPool.broadcast(nIso, root))
+		return false;
 	int topIndex;
 	double weight;
 	if (procPool.poolRank() == root)
 	{
-		for (int n=0; n<nIso; ++n)
+		for (int n = 0; n < nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
 			topIndex = species_->indexOfIsotopologue(mix_[n]->isotopologue());
-			if (!procPool.broadcast(topIndex, root)) return false;
+			if (!procPool.broadcast(topIndex, root))
+				return false;
 
 			// Broadcast relative population data
 			weight = mix_[n]->weight();
-			if (!procPool.broadcast(weight, root)) return false;
+			if (!procPool.broadcast(weight, root))
+				return false;
 		}
 	}
 	else
 	{
 		mix_.clear();
-		for (int n=0; n<nIso; ++n)
+		for (int n = 0; n < nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
-			if (!procPool.broadcast(topIndex, root)) return false;
+			if (!procPool.broadcast(topIndex, root))
+				return false;
 
 			// Broadcast relative population data
-			if (!procPool.broadcast(weight, root)) return false;
+			if (!procPool.broadcast(weight, root))
+				return false;
 
 			// Add mix data
 			mix_.add()->set(species_->isotopologue(topIndex), weight);
@@ -319,20 +322,25 @@ bool Isotopologues::broadcast(ProcessPool& procPool, const int root, const CoreD
 }
 
 // Check item equality
-bool Isotopologues::equality(ProcessPool& procPool)
+bool Isotopologues::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(species_->name())) return Messenger::error("Isotopologues species is not equivalent (process %i has '%s').\n", procPool.poolRank(), species_->name());
-	if (!procPool.equality(speciesPopulation_)) return Messenger::error("Isotopologues species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
+	if (!procPool.equality(species_->name()))
+		return Messenger::error("Isotopologues species is not equivalent (process %i has '%s').\n", procPool.poolRank(), species_->name());
+	if (!procPool.equality(speciesPopulation_))
+		return Messenger::error("Isotopologues species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
-	if (!procPool.equality(mix_.nItems())) return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
+	if (!procPool.equality(mix_.nItems()))
+		return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
 	ListIterator<IsotopologueWeight> mixIterator(mix_);
 	int count = 0;
-	while (const IsotopologueWeight* isoWeight = mixIterator.iterate())
+	while (const IsotopologueWeight *isoWeight = mixIterator.iterate())
 	{
 		// Just check the name and the relative population
-		if (!procPool.equality(isoWeight->isotopologue()->name())) return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->isotopologue()->name());
-		if (!procPool.equality(isoWeight->weight())) return Messenger::error("Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->weight());
+		if (!procPool.equality(isoWeight->isotopologue()->name()))
+			return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->isotopologue()->name());
+		if (!procPool.equality(isoWeight->weight()))
+			return Messenger::error("Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->weight());
 		++count;
 	}
 #endif

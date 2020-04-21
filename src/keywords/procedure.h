@@ -29,28 +29,26 @@
 /* none */
 
 // Keyword with Procedure data
-class ProcedureKeyword : public KeywordData<Procedure&>
+class ProcedureKeyword : public KeywordData<Procedure &>
 {
-	public:
+      public:
 	// Constructor
-	ProcedureKeyword(Procedure& procedure);
+	ProcedureKeyword(Procedure &procedure);
 	// Destructor
 	~ProcedureKeyword();
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif
-

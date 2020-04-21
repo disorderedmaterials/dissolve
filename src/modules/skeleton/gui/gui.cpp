@@ -19,12 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/skeleton/skeleton.h"
 #include "modules/skeleton/gui/modulewidget.h"
+#include "modules/skeleton/skeleton.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* SkeletonModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new SkeletonModuleWidget(parent, this);
-}
-
+ModuleWidget *SkeletonModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new SkeletonModuleWidget(parent, this); }

@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/lineparser.h"
 #include "io/import/data2d.h"
 #include "math/data2d.h"
 #include "math/filters.h"
-#include "base/lineparser.h"
 
 // Read cartesian data from specified file
-bool Data2DImportFileFormat::importCartesian(LineParser& parser, Data2D& data)
+bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
 {
 	/*
 	 * Cartesian coordinates assume that there are three values per line: x, y, and value.
@@ -33,7 +33,8 @@ bool Data2DImportFileFormat::importCartesian(LineParser& parser, Data2D& data)
 	 */
 
 	// Must have axis ranges - otherwise tricky to work out axis limits without reading the whole file in twice
-	if ((!keywords_.isSet("XRange")) || (!keywords_.isSet("YRange"))) return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
+	if ((!keywords_.isSet("XRange")) || (!keywords_.isSet("YRange")))
+		return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
 
 	// Set up our data
 	const Vec3<double> xRange = keywords_.asVec3Double("XRange");
@@ -50,7 +51,8 @@ bool Data2DImportFileFormat::importCartesian(LineParser& parser, Data2D& data)
 	while (!parser.eofOrBlank())
 	{
 		// Read line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success)
+			return false;
 
 		// Check number of arguments
 		if (parser.nArgs() != 3)

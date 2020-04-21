@@ -19,13 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_sdf/sdf.h"
-#include "modules/calculate_sdf/gui/modulewidget.h"
 #include "main/dissolve.h"
+#include "modules/calculate_sdf/gui/modulewidget.h"
+#include "modules/calculate_sdf/sdf.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateSDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new CalculateSDFModuleWidget(parent, this, dissolve.coreData());
-}
-
+ModuleWidget *CalculateSDFModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalculateSDFModuleWidget(parent, this, dissolve.coreData()); }

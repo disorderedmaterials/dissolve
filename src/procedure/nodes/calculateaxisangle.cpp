@@ -20,17 +20,18 @@
 */
 
 #include "procedure/nodes/calculateaxisangle.h"
-#include "procedure/nodes/select.h"
-#include "keywords/bool.h"
-#include "keywords/enumoptions.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "keywords/bool.h"
+#include "keywords/enumoptions.h"
+#include "procedure/nodes/select.h"
 
 // Constructor
-CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode* site0, OrientedSite::SiteAxis axis0, SelectProcedureNode* site1, OrientedSite::SiteAxis axis1) : CalculateProcedureNodeBase(ProcedureNode::CalculateAxisAngleNode, site0, site1)
+CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode *site0, OrientedSite::SiteAxis axis0, SelectProcedureNode *site1, OrientedSite::SiteAxis axis1)
+    : CalculateProcedureNodeBase(ProcedureNode::CalculateAxisAngleNode, site0, site1)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
@@ -42,35 +43,28 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedure
 }
 
 // Destructor
-CalculateAxisAngleProcedureNode::~CalculateAxisAngleProcedureNode()
-{
-}
+CalculateAxisAngleProcedureNode::~CalculateAxisAngleProcedureNode() {}
 
 /*
  * Observable Target
  */
 
 // Return number of sites required to calculate observable
-int CalculateAxisAngleProcedureNode::nSitesRequired() const
-{
-	return 2;
-}
+int CalculateAxisAngleProcedureNode::nSitesRequired() const { return 2; }
 
 // Return dimensionality of calculated observable
-int CalculateAxisAngleProcedureNode::dimensionality() const
-{
-	return 1;
-}
+int CalculateAxisAngleProcedureNode::dimensionality() const { return 1; }
 
-/* 
+/*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateAxisAngleProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Call the base class function
-	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList)) return false;
+	if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
+		return false;
 
 	// Get orientation flag
 	axisI_ = keywords_.enumeration<OrientedSite::SiteAxis>("AxisI");
@@ -80,10 +74,10 @@ bool CalculateAxisAngleProcedureNode::prepare(Configuration* cfg, const char* pr
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateAxisAngleProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult CalculateAxisAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
-	for (int n=0; n<nSitesRequired(); ++n)
+	for (int n = 0; n < nSitesRequired(); ++n)
 	{
 		if (sites_[n]->currentSite() == NULL)
 		{

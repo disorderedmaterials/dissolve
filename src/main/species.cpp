@@ -19,24 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
-#include "classes/atomtype.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
+#include "classes/atomtype.h"
+#include "main/dissolve.h"
 #include <string.h>
 
 // Add a new Species to the list
-Species* Dissolve::addSpecies()
+Species *Dissolve::addSpecies()
 {
-	Species* newSpecies = coreData_.addSpecies();
+	Species *newSpecies = coreData_.addSpecies();
 
 	return newSpecies;
 }
 
 // Remove the specified Species from the list
-void Dissolve::removeSpecies(Species* sp)
+void Dissolve::removeSpecies(Species *sp)
 {
-	if (!sp) return;
+	if (!sp)
+		return;
 
 	// Remove references to the Species itself
 	removeReferencesTo(sp);
@@ -46,31 +47,19 @@ void Dissolve::removeSpecies(Species* sp)
 }
 
 // Return number of defined Species
-int Dissolve::nSpecies() const
-{
-	return coreData_.nSpecies();
-}
+int Dissolve::nSpecies() const { return coreData_.nSpecies(); }
 
 // Return Species list
-List<Species>& Dissolve::species()
-{
-	return coreData_.species();
-}
+List<Species> &Dissolve::species() { return coreData_.species(); }
 
 // Return nth Species in the list
-Species* Dissolve::species(int n)
-{
-	return coreData_.species(n);
-}
+Species *Dissolve::species(int n) { return coreData_.species(n); }
 
 // Search for Species by name
-Species* Dissolve::findSpecies(const char* name) const
-{
-	return coreData_.findSpecies(name);
-}
+Species *Dissolve::findSpecies(const char *name) const { return coreData_.findSpecies(name); }
 
 // Copy AtomType, creating a new one if necessary
-void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
+void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom)
 {
 	// Check for no AtomType being set
 	if (!sourceAtom->atomType())
@@ -80,7 +69,7 @@ void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom
 	}
 
 	// Search for the existing atom's AtomType by name, and create it if it doesn't exist
-	AtomType* at = findAtomType(sourceAtom->atomType()->name());
+	AtomType *at = findAtomType(sourceAtom->atomType()->name());
 	if (!at)
 	{
 		at = addAtomType(sourceAtom->element());
@@ -93,16 +82,17 @@ void Dissolve::copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom
 }
 
 // Copy intramolecular interaction parameters, adding MasterIntra if necessary
-void Dissolve::copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra)
+void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *destIntra)
 {
 	// Remove any existing master parameters link from the destination object
-	if (destIntra->masterParameters()) destIntra->detachFromMasterIntra();
+	if (destIntra->masterParameters())
+		destIntra->detachFromMasterIntra();
 
 	// If sourceIntra references a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if necessary
 	if (sourceIntra->masterParameters())
 	{
 		// Search for MasterIntra by the same name in our main Dissolve instance
-		MasterIntra* master = NULL;
+		MasterIntra *master = NULL;
 		if (sourceIntra->type() == SpeciesIntra::BondInteraction)
 		{
 			master = coreData_.hasMasterBond(sourceIntra->masterParameters()->name());
@@ -155,10 +145,10 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* d
 }
 
 // Copy Species from supplied instance
-Species* Dissolve::copySpecies(const Species* species)
+Species *Dissolve::copySpecies(const Species *species)
 {
 	// Create our new Species
-	Species* newSpecies = addSpecies();
+	Species *newSpecies = addSpecies();
 	newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
 
 	// Turn off autoupdate of intramolecular terms, since we want an exact copy of the Species contents
@@ -166,11 +156,12 @@ Species* Dissolve::copySpecies(const Species* species)
 
 	// Duplicate atoms
 	ListIterator<SpeciesAtom> atomIterator(species->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate())
+	while (SpeciesAtom *i = atomIterator.iterate())
 	{
 		// Create the Atom in our new Species
-		SpeciesAtom* newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
-		if (i->isSelected()) newSpecies->selectAtom(newAtom);
+		SpeciesAtom *newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
+		if (i->isSelected())
+			newSpecies->selectAtom(newAtom);
 
 		// Search for the existing atom's AtomType by name, and create it if it doesn't exist
 		copyAtomType(i, newAtom);
@@ -178,10 +169,10 @@ Species* Dissolve::copySpecies(const Species* species)
 
 	// Duplicate bonds
 	DynamicArrayConstIterator<SpeciesBond> bondIterator(species->constBonds());
-	while (const SpeciesBond* b = bondIterator.iterate())
+	while (const SpeciesBond *b = bondIterator.iterate())
 	{
 		// Create the bond in the new Species
-		SpeciesBond* newBond = newSpecies->addBond(b->indexI(), b->indexJ());
+		SpeciesBond *newBond = newSpecies->addBond(b->indexI(), b->indexJ());
 
 		// Copy interaction parameters, including MasterIntra if necessary
 		copySpeciesIntra(b, newBond);
@@ -189,10 +180,10 @@ Species* Dissolve::copySpecies(const Species* species)
 
 	// Duplicate angles
 	DynamicArrayConstIterator<SpeciesAngle> angleIterator(species->constAngles());
-	while (const SpeciesAngle* a = angleIterator.iterate())
+	while (const SpeciesAngle *a = angleIterator.iterate())
 	{
 		// Create the angle in the new Species
-		SpeciesAngle* newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
+		SpeciesAngle *newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
 
 		// Copy interaction parameters, including MasterIntra if necessary
 		copySpeciesIntra(a, newAngle);
@@ -200,10 +191,10 @@ Species* Dissolve::copySpecies(const Species* species)
 
 	// Duplicate torsions
 	DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(species->constTorsions());
-	while (const SpeciesTorsion* t = torsionIterator.iterate())
+	while (const SpeciesTorsion *t = torsionIterator.iterate())
 	{
 		// Create the torsion in the new Species
-		SpeciesTorsion* newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+		SpeciesTorsion *newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
 
 		// Copy interaction parameters, including MasterIntra if necessary
 		copySpeciesIntra(t, newTorsion);
@@ -211,10 +202,10 @@ Species* Dissolve::copySpecies(const Species* species)
 
 	// Duplicate impropers
 	DynamicArrayConstIterator<SpeciesImproper> improperIterator(species->constImpropers());
-	while (const SpeciesImproper* t = improperIterator.iterate())
+	while (const SpeciesImproper *t = improperIterator.iterate())
 	{
 		// Create the improper in the new Species
-		SpeciesImproper* newImproper = newSpecies->addImproper(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+		SpeciesImproper *newImproper = newSpecies->addImproper(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
 
 		// Copy interaction parameters, including MasterIntra if necessary
 		copySpeciesIntra(t, newImproper);

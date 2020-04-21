@@ -22,12 +22,6 @@
 #include "gui/gui.h"
 #include <QDesktopServices>
 
-void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
-{
-	QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve"));
-}
+void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked) { QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve")); }
 
-void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
-{
-	QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve/examples"));
-}
+void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked) { QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve/examples")); }

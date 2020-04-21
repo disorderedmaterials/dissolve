@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/charstring.h"
 #include "gui/charts/chart.hui"
 #include "gui/widgets/mimestrings.h"
-#include "base/charstring.h"
 #include <QApplication>
 #include <QDrag>
 #include <QMimeData>
 #include <QMouseEvent>
 
 // Constructor
-ChartBase::ChartBase(QWidget* parent) : QWidget(parent)
+ChartBase::ChartBase(QWidget *parent) : QWidget(parent)
 {
 	refreshing_ = false;
 	selectedBlock_ = NULL;
@@ -42,19 +42,19 @@ ChartBase::ChartBase(QWidget* parent) : QWidget(parent)
 	currentHotSpot_ = NULL;
 }
 
-ChartBase::~ChartBase()
-{
-}
+ChartBase::~ChartBase() {}
 
 /*
  * Chart Display
  */
 
 // Return if a ChartBlock can be dragged from the supplied position
-ChartBlock* ChartBase::dragBlockAt(QPoint point)
+ChartBlock *ChartBase::dragBlockAt(QPoint point)
 {
 	// Check through all the defined ChartBlocks and see if we grab one
-	for (ChartBlock* block : chartBlocks_) if (block->isDragPoint(point)) return block;
+	for (ChartBlock *block : chartBlocks_)
+		if (block->isDragPoint(point))
+			return block;
 
 	return NULL;
 }
@@ -69,7 +69,8 @@ void ChartBase::updateControls()
 	// Ensure that blocks for display are up-to-date
 	updateContentBlocks();
 
-	for (ChartBlock* block : chartBlocks_) block->updateControls();
+	for (ChartBlock *block : chartBlocks_)
+		block->updateControls();
 
 	// Update the layout
 	layOutWidgets();
@@ -78,13 +79,15 @@ void ChartBase::updateControls()
 // Disable sensitive controls within widget
 void ChartBase::disableSensitiveControls()
 {
-	for (ChartBlock* block : chartBlocks_) block->disableSensitiveControls();
+	for (ChartBlock *block : chartBlocks_)
+		block->disableSensitiveControls();
 }
 
 // Enable sensitive controls within widget
 void ChartBase::enableSensitiveControls()
 {
-	for (ChartBlock* block : chartBlocks_) block->enableSensitiveControls();
+	for (ChartBlock *block : chartBlocks_)
+		block->enableSensitiveControls();
 }
 
 /*
@@ -92,7 +95,7 @@ void ChartBase::enableSensitiveControls()
  */
 
 // Geometry changed
-void ChartBase::resizeEvent(QResizeEvent* event)
+void ChartBase::resizeEvent(QResizeEvent *event)
 {
 	layOutWidgets();
 
@@ -100,41 +103,35 @@ void ChartBase::resizeEvent(QResizeEvent* event)
 }
 
 // Size hint
-QSize ChartBase::sizeHint() const
-{
-	return sizeHint_;
-}
+QSize ChartBase::sizeHint() const { return sizeHint_; }
 
 // Minimum size hint
-QSize ChartBase::minimumSizeHint() const
-{
-	return minimumSizeHint_;
-}
+QSize ChartBase::minimumSizeHint() const { return minimumSizeHint_; }
 
 // Mouse press event
-void ChartBase::mousePressEvent(QMouseEvent* event)
-{
-	mouseDownPosition_ = event->pos();
-}
+void ChartBase::mousePressEvent(QMouseEvent *event) { mouseDownPosition_ = event->pos(); }
 
 // Mouse move event
-void ChartBase::mouseMoveEvent(QMouseEvent* event)
+void ChartBase::mouseMoveEvent(QMouseEvent *event)
 {
 	// If the left button is not down, nothing to do here
-	if (!(event->buttons() & Qt::LeftButton)) return;
+	if (!(event->buttons() & Qt::LeftButton))
+		return;
 
 	// Check to see if we should begin a drag event based on the length of the click-drag so far
-	if ((event->pos() - mouseDownPosition_).manhattanLength() < QApplication::startDragDistance()) return;
+	if ((event->pos() - mouseDownPosition_).manhattanLength() < QApplication::startDragDistance())
+		return;
 
 	// If a ChartBlock header was clicked on at the original position, begin the drag
 	draggedBlock_ = dragBlockAt(mouseDownPosition_);
-	if (!draggedBlock_) return;
+	if (!draggedBlock_)
+		return;
 
 	// Generate mime data for the event
-	MimeStrings* mimeData = new MimeStrings(mimeInfo(draggedBlock_));
+	MimeStrings *mimeData = new MimeStrings(mimeInfo(draggedBlock_));
 
 	// Construct the drag object
-	QDrag* drag = new QDrag(this);
+	QDrag *drag = new QDrag(this);
 	drag->setMimeData(mimeData);
 	drag->setPixmap(draggedBlock_->widget()->grab());
 
@@ -145,8 +142,8 @@ void ChartBase::mouseMoveEvent(QMouseEvent* event)
 
 	// Begin the drag event
 	Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
-// 	if (dropAction 
-// 	...
+	// 	if (dropAction
+	// 	...
 
 	// Nullify the dragged block
 	draggedBlock_ = NULL;
@@ -156,9 +153,9 @@ void ChartBase::mouseMoveEvent(QMouseEvent* event)
 }
 
 // Mouse release event
-void ChartBase::mouseReleaseEvent(QMouseEvent* event)
+void ChartBase::mouseReleaseEvent(QMouseEvent *event)
 {
-	ChartBlock* newSelection = dragBlockAt(event->pos());
+	ChartBlock *newSelection = dragBlockAt(event->pos());
 
 	if (newSelection != selectedBlock_)
 	{
@@ -169,21 +166,23 @@ void ChartBase::mouseReleaseEvent(QMouseEvent* event)
 }
 
 // Mouse double-click event
-void ChartBase::mouseDoubleClickEvent(QMouseEvent* event)
+void ChartBase::mouseDoubleClickEvent(QMouseEvent *event)
 {
 	// If the left button is not down, nothing to do here
-	if (!(event->buttons() & Qt::LeftButton)) return;
+	if (!(event->buttons() & Qt::LeftButton))
+		return;
 
 	// Was a ChartBlock's header was under the mouse?
-	ChartBlock* chartBlock = dragBlockAt(event->pos());
-	if (!chartBlock) return;
+	ChartBlock *chartBlock = dragBlockAt(event->pos());
+	if (!chartBlock)
+		return;
 
 	// Perform the double-click action (if relevant)
 	blockDoubleClicked(chartBlock);
 }
 
 // Drag enter event
-void ChartBase::dragEnterEvent(QDragEnterEvent* event)
+void ChartBase::dragEnterEvent(QDragEnterEvent *event)
 {
 	// Is the correct data type being dragged over us?
 	if (!event->mimeData()->hasFormat("dissolve/mimestrings"))
@@ -193,7 +192,7 @@ void ChartBase::dragEnterEvent(QDragEnterEvent* event)
 	}
 
 	// Get the MimeStrings data
-	const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
+	const MimeStrings *mimeStrings = dynamic_cast<const MimeStrings *>(event->mimeData());
 	if (!mimeStrings)
 	{
 		event->ignore();
@@ -206,11 +205,12 @@ void ChartBase::dragEnterEvent(QDragEnterEvent* event)
 		event->ignore();
 		return;
 	}
-	else event->accept();
+	else
+		event->accept();
 }
 
 // Drag leave event
-void ChartBase::dragLeaveEvent(QDragLeaveEvent* event)
+void ChartBase::dragLeaveEvent(QDragLeaveEvent *event)
 {
 	// Always ignore the drag leave event
 	// This event triggers when moving the dragged item over another widget displayed in the same chart.
@@ -218,20 +218,22 @@ void ChartBase::dragLeaveEvent(QDragLeaveEvent* event)
 }
 
 // Draw move event
-void ChartBase::dragMoveEvent(QDragMoveEvent* event)
+void ChartBase::dragMoveEvent(QDragMoveEvent *event)
 {
 	// Check the current drag position - if the hotspot has changed, lay out the widgets again
-	ChartHotSpot* newHotSpot = hotSpotAt(event->pos());
-	if (currentHotSpot_ == newHotSpot) return;
+	ChartHotSpot *newHotSpot = hotSpotAt(event->pos());
+	if (currentHotSpot_ == newHotSpot)
+		return;
 
 	currentHotSpot_ = newHotSpot;
 
 	// Handle any actions arising from hovering over the hotspot
-	if (handleHotSpotHover(currentHotSpot_)) layOutWidgets(true);
+	if (handleHotSpotHover(currentHotSpot_))
+		layOutWidgets(true);
 }
 
 // Drop event
-void ChartBase::dropEvent(QDropEvent* event)
+void ChartBase::dropEvent(QDropEvent *event)
 {
 	// Is the correct data type being dragged over us?
 	if (!event->mimeData()->hasFormat("dissolve/mimestrings"))
@@ -241,7 +243,7 @@ void ChartBase::dropEvent(QDropEvent* event)
 	}
 
 	// Get the MimeStrings data
-	const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
+	const MimeStrings *mimeStrings = dynamic_cast<const MimeStrings *>(event->mimeData());
 	if (!mimeStrings)
 	{
 		event->ignore();
@@ -258,9 +260,9 @@ void ChartBase::dropEvent(QDropEvent* event)
 	currentHotSpot_ = NULL;
 	draggedBlock_ = NULL;
 
-// 	layOutWidgets(animate);
+	// 	layOutWidgets(animate);
 
-// 	repaint();
+	// 	repaint();
 }
 
 /*
@@ -268,32 +270,23 @@ void ChartBase::dropEvent(QDropEvent* event)
  */
 
 // Return whether to accept the dragged object (described by its mime info)
-bool ChartBase::acceptDraggedObject(const MimeStrings* strings)
-{
-	return false;
-}
+bool ChartBase::acceptDraggedObject(const MimeStrings *strings) { return false; }
 
 // Handle hover over specified hotspot
-bool ChartBase::handleHotSpotHover(const ChartHotSpot* hotSpot)
-{
-	return false;
-}
+bool ChartBase::handleHotSpotHover(const ChartHotSpot *hotSpot) { return false; }
 
 // Handle the drop of an object (described by its mime info)
-void ChartBase::handleDroppedObject(const MimeStrings* strings)
-{
-}
+void ChartBase::handleDroppedObject(const MimeStrings *strings) {}
 
 // Return mime info for specified block (owned by this chart)
-MimeStrings ChartBase::mimeInfo(ChartBlock* block)
-{
-	return MimeStrings();
-}
+MimeStrings ChartBase::mimeInfo(ChartBlock *block) { return MimeStrings(); }
 
 // Return hotspot, if any, under specified point
-ChartHotSpot* ChartBase::hotSpotAt(QPoint point)
+ChartHotSpot *ChartBase::hotSpotAt(QPoint point)
 {
-	for (ChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) if (hotSpot->contains(point)) return hotSpot;
+	for (ChartHotSpot *hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next())
+		if (hotSpot->contains(point))
+			return hotSpot;
 
 	return NULL;
 }
@@ -310,28 +303,25 @@ void ChartBase::resetAfterDrop(bool animate)
 }
 
 // Specified block has been double clicked
-void ChartBase::blockDoubleClicked(ChartBlock* block)
+void ChartBase::blockDoubleClicked(ChartBlock *block)
 {
 	// No default action
 }
 
 // Block selection has changed
-void ChartBase::blockSelectionChanged(ChartBlock* block)
+void ChartBase::blockSelectionChanged(ChartBlock *block)
 {
 	// No default action
 }
 
 // The chart has requested removal of one of its blocks
-void ChartBase::blockRemovalRequested(const QString& blockIdentifier)
+void ChartBase::blockRemovalRequested(const QString &blockIdentifier)
 {
 	// No default action
 }
 
 // Return selected ChartBlock
-ChartBlock* ChartBase::selectedBlock() const
-{
-	return selectedBlock_;
-}
+ChartBlock *ChartBase::selectedBlock() const { return selectedBlock_; }
 
 /*
  * Widget Layout
@@ -344,7 +334,8 @@ void ChartBase::layOutWidgets(bool animate)
 	QSize requiredSize = calculateNewWidgetGeometry(minimumSizeHint_);
 
 	// Commit new block geometries
-	for (ChartBlock* block : chartBlocks_) block->setNewGeometry(animate);
+	for (ChartBlock *block : chartBlocks_)
+		block->setNewGeometry(animate);
 
 	// Alter our minimum size hint if requested
 	if (resizeToWidgets_)
@@ -360,17 +351,11 @@ void ChartBase::layOutWidgets(bool animate)
 }
 
 // Recalculate layout (after widget size change etc.)
-void ChartBase::recalculateLayout()
-{
-	layOutWidgets(false);
-}
+void ChartBase::recalculateLayout() { layOutWidgets(false); }
 
 /*
  * Signals / Slots
  */
 
 // Displayed chart data has been modified in some way
-void ChartBase::chartDataModified()
-{
-	emit(dataModified());
-}
+void ChartBase::chartDataModified() { emit(dataModified()); }

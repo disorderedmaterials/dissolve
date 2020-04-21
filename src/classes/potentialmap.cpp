@@ -19,41 +19,34 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/atom.h"
 #include "classes/potentialmap.h"
-#include "classes/pairpotential.h"
-#include "classes/species.h"
-#include "classes/molecule.h"
-#include "classes/atomtype.h"
 #include "base/messenger.h"
 #include "base/parameters.h"
+#include "classes/atom.h"
+#include "classes/atomtype.h"
+#include "classes/molecule.h"
+#include "classes/pairpotential.h"
+#include "classes/species.h"
 #include "math/constants.h"
 #include <math.h>
 #include <new>
 using namespace std;
 
 // Constructor
-PotentialMap::PotentialMap()
-{
-}
+PotentialMap::PotentialMap() {}
 
 // Destructor
-PotentialMap::~PotentialMap()
-{
-}
+PotentialMap::~PotentialMap() {}
 
 // Clear all data
-void PotentialMap::clear()
-{
-	potentialMatrix_.clear();
-}
+void PotentialMap::clear() { potentialMatrix_.clear(); }
 
 /*
  * Source Parameters
  */
 
 // Initialise maps
-bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<PairPotential>& pairPotentials, double pairPotentialRange)
+bool PotentialMap::initialise(const List<AtomType> &masterAtomTypes, const List<PairPotential> &pairPotentials, double pairPotentialRange)
 {
 	// Clear old data first
 	clear();
@@ -64,7 +57,7 @@ bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<
 
 	// Loop over defined PairPotentials
 	int indexI, indexJ;
-	for (PairPotential* pot = pairPotentials.first(); pot != NULL; pot = pot->next())
+	for (PairPotential *pot = pairPotentials.first(); pot != NULL; pot = pot->next())
 	{
 		indexI = pot->atomTypeI()->index();
 		indexJ = pot->atomTypeJ()->index();
@@ -78,16 +71,17 @@ bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<
 			printf("INTERNAL_ERROR - Couldn't find AtomType '%s' in typeIndex.\n", pot->atomTypeJ()->name());
 			return false;
 		}
-		
+
 		// Store PairPotential pointer
 		if (indexI == indexJ)
 		{
 			Messenger::print("Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
-			potentialMatrix_.at(indexI,indexI) = pot;
+			potentialMatrix_.at(indexI, indexI) = pot;
 		}
 		else
 		{
-			Messenger::print("Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
+			Messenger::print("Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ,
+					 indexJ, indexI);
 			potentialMatrix_.at(indexI, indexJ) = pot;
 			potentialMatrix_.at(indexJ, indexI) = pot;
 		}
@@ -95,22 +89,19 @@ bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<
 
 	// Store potential range
 	range_ = pairPotentialRange;
-	
+
 	return true;
 }
 
 // Return PairPotential range
-double PotentialMap::range() const
-{
-	return range_;
-}
+double PotentialMap::range() const { return range_; }
 
 /*
  * Energy / Force
  */
 
 // Return energy between Atom types at squared distance specified
-double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
+double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -135,13 +126,15 @@ double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
 	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
-	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-	if (pp->includeCoulomb()) return pp->energy(r);
-	else return (pp->energy(r) + pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
+	if (pp->includeCoulomb())
+		return pp->energy(r);
+	else
+		return (pp->energy(r) + pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
 // Return analytic energy between Atom types at squared distance specified
-double PotentialMap::analyticEnergy(const Atom* i, const Atom* j, double r) const
+double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -161,13 +154,15 @@ double PotentialMap::analyticEnergy(const Atom* i, const Atom* j, double r) cons
 	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom types
-	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-	if (pp->includeCoulomb()) pp->analyticEnergy(r);
-	else return (pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
+	if (pp->includeCoulomb())
+		pp->analyticEnergy(r);
+	else
+		return (pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
 // Return force between Atom types at squared distance specified
-double PotentialMap::force(const Atom* i, const Atom* j, double r) const
+double PotentialMap::force(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -192,13 +187,15 @@ double PotentialMap::force(const Atom* i, const Atom* j, double r) const
 	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
-	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-	if (pp->includeCoulomb()) return pp->force(r);
-	else return (pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
+	if (pp->includeCoulomb())
+		return pp->force(r);
+	else
+		return (pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
 // Return analytic force between Atom types at squared distance specified
-double PotentialMap::analyticForce(const Atom* i, const Atom* j, double r) const
+double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -218,7 +215,9 @@ double PotentialMap::analyticForce(const Atom* i, const Atom* j, double r) const
 	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
-	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-	if (pp->includeCoulomb()) return pp->analyticForce(r);
-	else return (pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
+	if (pp->includeCoulomb())
+		return pp->analyticForce(r);
+	else
+		return (pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }

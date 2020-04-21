@@ -32,56 +32,62 @@ class Expression;
 // Expresison Node
 class ExpressionNode : public ListItem<ExpressionNode>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	ExpressionNode();
 	virtual ~ExpressionNode();
 	// List pointers (for argument list)
-	ExpressionNode* nextArgument, *prevArgument;
+	ExpressionNode *nextArgument, *prevArgument;
 	// Node Types
-	enum NodeType { BasicNode, FunctionNode, ValueNode, VariableNode, VariableValueNode, nNodeTypes };
+	enum NodeType
+	{
+		BasicNode,
+		FunctionNode,
+		ValueNode,
+		VariableNode,
+		VariableValueNode,
+		nNodeTypes
+	};
 	// Copy data
-	void copy(ExpressionNode* source);
-
+	void copy(ExpressionNode *source);
 
 	/*
 	 * Node Type
 	 */
-	protected:
+      protected:
 	// Type of node
 	NodeType nodeType_;
 	// Pointer to parent expression
-	Expression* parent_;
+	Expression *parent_;
 
-	public:
+      public:
 	// Retrieve node type
 	NodeType nodeType() const;
-	// Set parent 
-	void setParent(Expression* parent);
+	// Set parent
+	void setParent(Expression *parent);
 	// Retrieve parent
-	Expression* parent() const;
-
+	Expression *parent() const;
 
 	/*
 	 * Argument Data
 	 */
-	protected:
+      protected:
 	// Arguments (if any) to leaf node operation
 	RefList<ExpressionNode> args_;
 
-	public:
+      public:
 	// Return number of arguments currently assigned to node
 	int nArgs() const;
 	// Add list of arguments formas as a plain List<Node>, beginning from supplied list head
-	void addListArguments(ExpressionNode* leaf);
+	void addListArguments(ExpressionNode *leaf);
 	// Add list of arguments joined by parser, probably with list tail supplied
-	void addJoinedArguments(ExpressionNode* args);
+	void addJoinedArguments(ExpressionNode *args);
 	// Add multiple arguments to node
 	void addArguments(int nargs, ...);
 	// Add multiple arguments to node
-	void addArgument(ExpressionNode* arg);
+	void addArgument(ExpressionNode *arg);
 	// Return (execute) argument specified
-	bool arg(int i, ExpressionValue& result);
+	bool arg(int i, ExpressionValue &result);
 	// Return (execute) argument specified as a bool
 	bool argb(int i);
 	// Return (execute) argument specified as an integer
@@ -89,37 +95,35 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	// Return (execute) argument specified as a double
 	double argd(int i);
 	// Return the Node corresponding to the argument, rather than executing it
-	ExpressionNode* argNode(int i);
+	ExpressionNode *argNode(int i);
 	// Set argument specified
-	bool setArg(int i, ExpressionValue& result);
+	bool setArg(int i, ExpressionValue &result);
 	// Return whether argument i was given
 	bool hasArg(int i);
-
 
 	/*
 	 * Node Character
 	 */
-	protected:
+      protected:
 	// Whether node is read-only
 	bool readOnly_;
 
-	public:
+      public:
 	// Set the readonly status of the node to true
 	void setReadOnly();
 	// Return the readonly status of the node
 	bool readOnly() const;
 
-
 	/*
 	 * Node Data Set / Get / Execute
 	 */
-	public:
+      public:
 	// Set from value
 	virtual bool set(ExpressionValue value) = 0;
 	// Get reduced value of node
-	virtual bool execute(ExpressionValue& result) = 0;
+	virtual bool execute(ExpressionValue &result) = 0;
 	// Print layout of current node
-	virtual void nodePrint(int offset, const char* prefix = "") = 0;
+	virtual void nodePrint(int offset, const char *prefix = "") = 0;
 	// Reset node
 	virtual bool initialise() = 0;
 };

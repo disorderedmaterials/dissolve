@@ -20,20 +20,20 @@
 */
 
 #include "gui/datawidget.h"
-#include "gui/render/view.h"
-#include "gui/helpers/treewidgetupdater.h"
 #include "gui/graphgizmo.h"
+#include "gui/helpers/treewidgetupdater.h"
+#include "gui/render/view.h"
 #include <QButtonGroup>
 #include <QInputDialog>
 
 // Constructor
-DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
+DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
 	ui_.setupUi(this);
 
 	// Create button group for interaction tools
-	QButtonGroup* interactionToolsGroup = new QButtonGroup;
+	QButtonGroup *interactionToolsGroup = new QButtonGroup;
 	interactionToolsGroup->addButton(ui_.InteractionViewButton);
 
 	// Hide data group by default
@@ -54,25 +54,17 @@ DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-DataWidget::~DataWidget()
-{
-}
+DataWidget::~DataWidget() {}
 
 // Return contained DataViewer
-DataViewer* DataWidget::dataViewer()
-{
-	return ui_.DataView;
-}
+DataViewer *DataWidget::dataViewer() { return ui_.DataView; }
 
 /*
  * Tools
  */
 
 // Interaction
-void DataWidget::on_InteractionViewButton_clicked(bool checked)
-{
-	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
-}
+void DataWidget::on_InteractionViewButton_clicked(bool checked) { dataViewer()->setInteractionMode(DataViewer::DefaultInteraction); }
 
 // Graph
 void DataWidget::on_GraphResetButton_clicked(bool checked)
@@ -85,35 +77,42 @@ void DataWidget::on_GraphResetButton_clicked(bool checked)
 
 void DataWidget::on_GraphFollowAllButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	if (checked)
 	{
 		dataViewer()->view().setAutoFollowType(View::AllAutoFollow);
-		if (ui_.GraphFollowXButton->isChecked()) ui_.GraphFollowXButton->setChecked(false);
+		if (ui_.GraphFollowXButton->isChecked())
+			ui_.GraphFollowXButton->setChecked(false);
 	}
-	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
+	else
+		dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
 
 	dataViewer()->postRedisplay();
 }
 
 void DataWidget::on_GraphFollowXButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	if (checked)
 	{
 		dataViewer()->view().setAutoFollowType(View::XAutoFollow);
-		if (ui_.GraphFollowAllButton->isChecked()) ui_.GraphFollowAllButton->setChecked(false);
+		if (ui_.GraphFollowAllButton->isChecked())
+			ui_.GraphFollowAllButton->setChecked(false);
 	}
-	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
+	else
+		dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
 
 	dataViewer()->postRedisplay();
 }
 
 void DataWidget::on_GraphFollowXLengthSpin_valueChanged(double value)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	dataViewer()->view().setAutoFollowXLength(value);
 
@@ -123,24 +122,27 @@ void DataWidget::on_GraphFollowXLengthSpin_valueChanged(double value)
 // View
 void DataWidget::on_ViewTypeCombo_currentIndexChanged(int index)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
-	dataViewer()->view().setViewType( (View::ViewType) index );
+	dataViewer()->view().setViewType((View::ViewType)index);
 
 	dataViewer()->postRedisplay();
 }
 
 void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	// If the button has just been checked, request the target view
 	if (checked)
 	{
 		// Get possible target GraphGizmos, and construct list of associated DataViewers
 		RefList<GraphGizmo> graphGizmos = Gizmo::findAll<GraphGizmo>("Graph");
-		RefDataList<DataViewer,GraphGizmo*> targets;
-		for (GraphGizmo* gizmo : graphGizmos) targets.append(gizmo->dataViewer(), gizmo);
+		RefDataList<DataViewer, GraphGizmo *> targets;
+		for (GraphGizmo *gizmo : graphGizmos)
+			targets.append(gizmo->dataViewer(), gizmo);
 		targets.remove(dataViewer());
 		if (targets.nItems() == 0)
 		{
@@ -151,11 +153,12 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 		// Construct a list of targets as a QStringList
 		QStringList destinations;
 		int currentItem = -1, count = 0;
-		RefDataListIterator<DataViewer,GraphGizmo*> targetIterator(targets);
-		while (DataViewer* viewer = targetIterator.iterate())
+		RefDataListIterator<DataViewer, GraphGizmo *> targetIterator(targets);
+		while (DataViewer *viewer = targetIterator.iterate())
 		{
 			destinations << targetIterator.currentData()->uniqueName();
-			if (&viewer->view() == dataViewer()->view().linkedView()) currentItem = count;
+			if (&viewer->view() == dataViewer()->view().linkedView())
+				currentItem = count;
 			++count;
 		}
 
@@ -169,43 +172,44 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 
 		// The destination view from the
 		int viewIndex = destinations.indexOf(viewName);
-		DataViewer* viewParent = targets.item(viewIndex);
-		if (!viewParent) return;
-		
+		DataViewer *viewParent = targets.item(viewIndex);
+		if (!viewParent)
+			return;
+
 		dataViewer()->linkView(viewParent);
 	}
-	else dataViewer()->unlinkView();
+	else
+		dataViewer()->unlinkView();
 }
 
 void DataWidget::on_ViewToggleDataButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	ui_.DataGroup->setVisible(checked);
 }
 
 void DataWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	dataViewer()->setAxesVisible(checked);
 
 	dataViewer()->postRedisplay();
 }
 
-void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
-{
-	dataViewer()->copyViewToClipboard(checked);
-}
+void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { dataViewer()->copyViewToClipboard(checked); }
 
 /*
  * Update Functions
  */
 
 // Data tree top-level item update function
-void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int topLevelItemIndex, RenderableGroup* data, bool createItem)
+void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data, bool createItem)
 {
-	QTreeWidgetItem* item;
+	QTreeWidgetItem *item;
 	if (createItem)
 	{
 		item = new QTreeWidgetItem;
@@ -213,21 +217,22 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int top
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
 		treeWidget->insertTopLevelItem(topLevelItemIndex, item);
 	}
-	else item = treeWidget->topLevelItem(topLevelItemIndex);
+	else
+		item = treeWidget->topLevelItem(topLevelItemIndex);
 
 	// Set item data
 	item->setText(0, data->name());
-// 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
+	// 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
 	item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 
 	// Update child items
-	TreeWidgetRefListUpdater<DataWidget,Renderable> renderableUpdater(item, data->renderables(), this, &DataWidget::dataTreeItemUpdateFunction);
+	TreeWidgetRefListUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this, &DataWidget::dataTreeItemUpdateFunction);
 }
 
 // Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int childIndex, Renderable* data, bool createItem)
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, Renderable *data, bool createItem)
 {
-	QTreeWidgetItem* item;
+	QTreeWidgetItem *item;
 	if (createItem)
 	{
 		item = new QTreeWidgetItem;
@@ -235,30 +240,34 @@ void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int chi
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
 		parentItem->insertChild(childIndex, item);
 	}
-	else item = parentItem->child(childIndex);
+	else
+		item = parentItem->child(childIndex);
 
 	// Set item data
 	item->setText(0, data->name());
-// 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
+	// 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
 	item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 }
 
 // Data tree item changed
-void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem* item, int column)
+void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem *item, int column)
 {
-	if (refreshLock_.isLocked()) return;
+	if (refreshLock_.isLocked())
+		return;
 
 	// If this is a top-level item (parent() == NULL) then retrieve the Renderable Group. If not, get the associated Renderable.
 	if (item->parent())
 	{
-		Renderable* renderable= VariantPointer<Renderable>(item->data(0, Qt::UserRole));
-		if (!renderable) return;
+		Renderable *renderable = VariantPointer<Renderable>(item->data(0, Qt::UserRole));
+		if (!renderable)
+			return;
 		renderable->setVisible(item->checkState(0) == Qt::Checked);
 	}
 	else
 	{
-		RenderableGroup* group = VariantPointer<RenderableGroup>(item->data(0, Qt::UserRole));
-		if (!group) return;
+		RenderableGroup *group = VariantPointer<RenderableGroup>(item->data(0, Qt::UserRole));
+		if (!group)
+			return;
 		group->setVisible(item->checkState(0) == Qt::Checked);
 	}
 
@@ -284,12 +293,12 @@ void DataWidget::updateToolbar()
 	// Set current interaction mode
 	switch (dataViewer()->interactionMode())
 	{
-		case (DataViewer::DefaultInteraction):
-			ui_.InteractionViewButton->setChecked(true);
-			break;
-// 		case (DataViewer::ZoomInteraction):
-// 			ui_.InteractionZoomutton->setChecked(true);
-// 			break;
+	case (DataViewer::DefaultInteraction):
+		ui_.InteractionViewButton->setChecked(true);
+		break;
+		// 		case (DataViewer::ZoomInteraction):
+		// 			ui_.InteractionZoomutton->setChecked(true);
+		// 			break;
 	}
 
 	// Controls reflecting the state of options in the underlying DataViewer
@@ -316,23 +325,23 @@ void DataWidget::updateStatusBar()
 	ui_.ModeLabel->setText(dataViewer()->interactionModeText());
 
 	// Update coordinate information
-	View& view = dataViewer()->view();
+	View &view = dataViewer()->view();
 	Vec3<double> rLocal = dataViewer()->current2DAxesCoordinates();
 	QString text;
 	switch (view.viewType())
 	{
-		case (View::FlatXYView):
-			text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
-			break;
-		case (View::FlatXZView):
-			text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
-			break;
-		case (View::FlatZYView):
-			text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
-			break;
-		default:
-			text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
-			break;
+	case (View::FlatXYView):
+		text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
+		break;
+	case (View::FlatXZView):
+		text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
+		break;
+	case (View::FlatZYView):
+		text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
+		break;
+	default:
+		text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
+		break;
 	}
 
 	ui_.CoordinateLabel->setText(text);

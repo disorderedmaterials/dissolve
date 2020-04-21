@@ -19,16 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/lineparser.h"
 #include "io/import/data1d.h"
 #include "math/data1d.h"
 #include "math/filters.h"
-#include "base/lineparser.h"
 
 // Read Gudrun merged interference cross-section (mint) data using specified parser
-bool Data1DImportFileFormat::importGudrunMint(LineParser& parser, Data1D& data)
+bool Data1DImportFileFormat::importGudrunMint(LineParser &parser, Data1D &data)
 {
 	// Read in the data first (assuming simple XY format)
-	if (!importXY(parser, data)) return false;
+	if (!importXY(parser, data))
+		return false;
 
 	// Gudrun mint01 files are in histogram format, so convert bin boundaries to centre-bin values
 	Filters::convertBinBoundaries(data);

@@ -33,17 +33,11 @@ SQModule::SQModule() : Module()
 }
 
 // Destructor
-SQModule::~SQModule()
-{
-}
+SQModule::~SQModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* SQModule::createInstance() const
-{
-	return new SQModule;
-}
-
+Module *SQModule::createInstance() const { return new SQModule; }

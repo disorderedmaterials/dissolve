@@ -36,7 +36,7 @@ EnumOption::EnumOption()
 	minArgs_ = 0;
 	maxArgs_ = 0;
 }
-EnumOption::EnumOption(const int enumeration, const char* keyword, int minArgs, int maxArgs)
+EnumOption::EnumOption(const int enumeration, const char *keyword, int minArgs, int maxArgs)
 {
 	enumeration_ = enumeration;
 	keyword_ = keyword;
@@ -44,7 +44,7 @@ EnumOption::EnumOption(const int enumeration, const char* keyword, int minArgs, 
 	minArgs_ = minArgs;
 	maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
 }
-EnumOption::EnumOption(const int enumeration, const char* keyword, const char* description, int minArgs, int maxArgs)
+EnumOption::EnumOption(const int enumeration, const char *keyword, const char *description, int minArgs, int maxArgs)
 {
 	enumeration_ = enumeration;
 	keyword_ = keyword;
@@ -54,43 +54,22 @@ EnumOption::EnumOption(const int enumeration, const char* keyword, const char* d
 }
 
 // Return if the option is valid (true except in derived classes)
-bool EnumOption::isValid() const
-{
-	return true;
-}
+bool EnumOption::isValid() const { return true; }
 
 // Return option enumeration (i.e. from enum value)
-int EnumOption::enumeration() const
-{
-	return enumeration_;
-}
+int EnumOption::enumeration() const { return enumeration_; }
 
 // Return option keyword
-const char* EnumOption::keyword() const
-{
-	return keyword_;
-}
+const char *EnumOption::keyword() const { return keyword_; }
 
 // Return option description
-const char* EnumOption::description() const
-{
-	return description_;
-}
+const char *EnumOption::description() const { return description_; }
 
 // Return whether the option has any associated arguments
-bool EnumOption::hasArguments() const
-{
-	return (minArgs_ != 0);
-}
+bool EnumOption::hasArguments() const { return (minArgs_ != 0); }
 
 // Return minimum number of arguments the option takes
-int EnumOption::minArgs() const
-{
-	return minArgs_;
-}
+int EnumOption::minArgs() const { return minArgs_; }
 
 // Return maximum number of arguments the option takes
-int EnumOption::maxArgs() const
-{
-	return maxArgs_;
-}
+int EnumOption::maxArgs() const { return maxArgs_; }

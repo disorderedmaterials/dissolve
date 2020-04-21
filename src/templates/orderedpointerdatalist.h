@@ -23,8 +23,8 @@
 #define DISSOLVE_ORDEREDPOINTERDATALIST_H
 
 #include "templates/factory.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /*
  * OrderedPointerDataListItem Class
@@ -36,44 +36,31 @@ template <class T, class D> class OrderedPointerDataListItem
 	 * and an associated data item of thie second template class type. The objects in the list are ordered according to their address in memory.
 	 */
 
-	public:
+      public:
 	// Constructor
-	OrderedPointerDataListItem<T,D>(T* object = NULL, D data = D()) : object_(object), data_(data)
+	OrderedPointerDataListItem<T, D>(T *object = NULL, D data = D()) : object_(object), data_(data)
 	{
 		prev = NULL;
 		next = NULL;
 	}
 	// List pointers
-	OrderedPointerDataListItem<T,D>* prev, *next;
+	OrderedPointerDataListItem<T, D> *prev, *next;
 
-	private:
+      private:
 	// Pointer to object
-	T* object_;
+	T *object_;
 	// Associated data
 	D data_;
 
-	public:
+      public:
 	// Set pointer to object
-	void setObject(T* object)
-	{
-		object_ = object;
-	}
+	void setObject(T *object) { object_ = object; }
 	// Return pointer to object
-	T* object()
-	{
-		return object_;
-	}
+	T *object() { return object_; }
 	// Set data associated to object
-	void setData(D data)
-	{
-		data_ = data;
-	}
+	void setData(D data) { data_ = data; }
 	// Return data associated to object
-	D data()
-	{
-		return data_;
-	}
-
+	D data() { return data_; }
 };
 
 /*
@@ -84,10 +71,10 @@ template <class T, class D> class OrderedPointerDataList
 	/*
 	 * Ordered, linked list of pointers to objects which exist elsewhere.
 	 */
-	
-	public:
+
+      public:
 	// Constructor
-	OrderedPointerDataList<T,D>()
+	OrderedPointerDataList<T, D>()
 	{
 		listHead_ = NULL;
 		listTail_ = NULL;
@@ -100,58 +87,47 @@ template <class T, class D> class OrderedPointerDataList
 		objects_ = NULL;
 	}
 	// Destructor
-	~OrderedPointerDataList()
-	{
-		clear();
-	}
+	~OrderedPointerDataList() { clear(); }
 	// Copy constructor
-	OrderedPointerDataList<T,D>(const OrderedPointerDataList<T,D>& source)
-	{
-		(*this) = source;
-	}
-
+	OrderedPointerDataList<T, D>(const OrderedPointerDataList<T, D> &source) { (*this) = source; }
 
 	/*
 	 * Item List
 	 */
-	private:
+      private:
 	// Object factory
-	ObjectFactory< OrderedPointerDataListItem<T,D> > factory_;
+	ObjectFactory<OrderedPointerDataListItem<T, D>> factory_;
 	// Pointers to head and tail of list
-	OrderedPointerDataListItem<T,D>* listHead_, *listTail_;
+	OrderedPointerDataListItem<T, D> *listHead_, *listTail_;
 	// Number of items in list
 	int nItems_;
 	// Static array of items
-	OrderedPointerDataListItem<T,D>** items_;
+	OrderedPointerDataListItem<T, D> **items_;
 	// Static array of objects
-	T** objects_;
+	T **objects_;
 	// Array sizes (at last new)
 	int itemArraySize_, objectArraySize_;
 	// Array regeneration flags
 	bool regenerateItemArray_, regenerateObjectArray_;
 
-	public:
+      public:
 	// Set chunksize to use in ObjectFactory
-	void setChunkSize(int size)
-	{
-		factory_.setChunkSize(size);
-	}
-
+	void setChunkSize(int size) { factory_.setChunkSize(size); }
 
 	/*
 	 * Access / Manipulation
 	 */
-	private:
+      private:
 	// Insert item pointing to specified object, after specified item
-	OrderedPointerDataListItem<T,D>* insertAfter(T* object, OrderedPointerDataListItem<T,D>* afterThis)
+	OrderedPointerDataListItem<T, D> *insertAfter(T *object, OrderedPointerDataListItem<T, D> *afterThis)
 	{
 		// Create new list item (from the ObjectFactory)
-		OrderedPointerDataListItem<T,D>* newItem = factory_.produce();
+		OrderedPointerDataListItem<T, D> *newItem = factory_.produce();
 		newItem->setObject(object);
-		
+
 		// Get pointer to next item in list, after the list item 'afterThis'
 		// If 'afterThis' is NULL, then we insert at the start of the list (and make listHead_ point to the new item)
-		OrderedPointerDataListItem<T,D>* newNext;
+		OrderedPointerDataListItem<T, D> *newNext;
 		if (afterThis == NULL)
 		{
 			// First item in list will be the newItem, so 'newNext will be the current listHead_
@@ -168,8 +144,10 @@ template <class T, class D> class OrderedPointerDataList
 		newItem->prev = afterThis;
 
 		// Re-point previous pointer of newNext
-		if (newNext != NULL) newNext->prev = newItem;
-		else listTail_ = newItem;
+		if (newNext != NULL)
+			newNext->prev = newItem;
+		else
+			listTail_ = newItem;
 
 		// Re-point 'next' pointer of newItem;
 		newItem->next = newNext;
@@ -178,24 +156,24 @@ template <class T, class D> class OrderedPointerDataList
 		++nItems_;
 		regenerateItemArray_ = 1;
 		regenerateObjectArray_ = 1;
-		
+
 		return newItem;
 	}
 	// Insert item pointing to specified object, before specified item
-	OrderedPointerDataListItem<T,D>* insertBefore(T* object, OrderedPointerDataListItem<T,D>* beforeThis)
+	OrderedPointerDataListItem<T, D> *insertBefore(T *object, OrderedPointerDataListItem<T, D> *beforeThis)
 	{
 		// Create new list item (from the ObjectFactory)
-		OrderedPointerDataListItem<T,D>* newItem = factory_.produce();
+		OrderedPointerDataListItem<T, D> *newItem = factory_.produce();
 		newItem->setObject(object);
 		insertBefore(newItem, beforeThis);
 		return newItem;
 	}
 	// Insert specified item, before specified item
-	void insertBefore(OrderedPointerDataListItem<T,D>* item, OrderedPointerDataListItem<T,D>* beforeThis)
+	void insertBefore(OrderedPointerDataListItem<T, D> *item, OrderedPointerDataListItem<T, D> *beforeThis)
 	{
 		// Get pointer to prev item in list, after the list item 'beforeThis'
 		// If 'beforeThis' is NULL, then we insert at the end of the list (and make listTail_ point to the new item)
-		OrderedPointerDataListItem<T,D>* newPrev;
+		OrderedPointerDataListItem<T, D> *newPrev;
 		if (beforeThis == NULL)
 		{
 			// First item in list will be the item, so newPrev will be the current listTail_
@@ -212,8 +190,10 @@ template <class T, class D> class OrderedPointerDataList
 		item->next = beforeThis;
 
 		// Re-point nextious pointer of newPrev
-		if (newPrev != NULL) newPrev->next = item;
-		else listHead_ = item;
+		if (newPrev != NULL)
+			newPrev->next = item;
+		else
+			listHead_ = item;
 
 		// Re-point 'prev' pointer of item;
 		item->prev = newPrev;
@@ -224,7 +204,7 @@ template <class T, class D> class OrderedPointerDataList
 		regenerateObjectArray_ = 1;
 	}
 	// Remove an item from the list
-	void remove(OrderedPointerDataListItem<T,D>* xitem)
+	void remove(OrderedPointerDataListItem<T, D> *xitem)
 	{
 		if (xitem == NULL)
 		{
@@ -240,20 +220,22 @@ template <class T, class D> class OrderedPointerDataList
 		regenerateObjectArray_ = 1;
 	}
 	// Return whether the item is owned by the list
-	OrderedPointerDataListItem<T,D>* contains(T* object) const
+	OrderedPointerDataListItem<T, D> *contains(T *object) const
 	{
 		// TODO This can probably be made much faster - bisection?
-		OrderedPointerDataListItem<T,D>* item = listHead_;
+		OrderedPointerDataListItem<T, D> *item = listHead_;
 		while (item)
 		{
-			if (item > object) return NULL;
-			if (item == object) return item;
+			if (item > object)
+				return NULL;
+			if (item == object)
+				return item;
 			item = item->next;
 		}
 		return NULL;
 	}
 	// Cut item from list
-	void cut(OrderedPointerDataListItem<T,D>* item)
+	void cut(OrderedPointerDataListItem<T, D> *item)
 	{
 		if (item == NULL)
 		{
@@ -262,17 +244,21 @@ template <class T, class D> class OrderedPointerDataList
 		}
 
 		// Grab list pointers for specified item
-		OrderedPointerDataListItem<T,D>* prev, *next;
+		OrderedPointerDataListItem<T, D> *prev, *next;
 		prev = item->prev;
 		next = item->next;
 
 		// Adjust previous item
-		if (prev == NULL) listHead_ = next;
-		else prev->next = next;
+		if (prev == NULL)
+			listHead_ = next;
+		else
+			prev->next = next;
 
 		// Adjust next item
-		if (next == NULL) listTail_ = prev;
-		else next->prev = prev;
+		if (next == NULL)
+			listTail_ = prev;
+		else
+			next->prev = prev;
 
 		item->next = NULL;
 		item->prev = NULL;
@@ -282,42 +268,43 @@ template <class T, class D> class OrderedPointerDataList
 		regenerateObjectArray_ = 1;
 	}
 	// Find and return the item with the next highest pointer after the object specified
-	OrderedPointerDataListItem<T,D>* nextHighest(T* object)
+	OrderedPointerDataListItem<T, D> *nextHighest(T *object)
 	{
 		// TODO This can probably be made much faster - binary chop?
-		OrderedPointerDataListItem<T,D>* item = listHead_;
+		OrderedPointerDataListItem<T, D> *item = listHead_;
 		while (item)
 		{
-			if (item > object) return item;
+			if (item > object)
+				return item;
 			item = item->next;
 		}
 		return NULL;
 	}
 
-	public:
+      public:
 	// Clear the list
 	void clear()
 	{
-		for (OrderedPointerDataListItem<T,D>* item = listHead_; item != NULL; item = item->next) factory_.returnObject(item);
+		for (OrderedPointerDataListItem<T, D> *item = listHead_; item != NULL; item = item->next)
+			factory_.returnObject(item);
 		nItems_ = 0;
 		listHead_ = NULL;
 		listTail_ = NULL;
 
 		// Delete static item anb objects array if they exist
-		if (items_ != NULL) delete[] items_;
+		if (items_ != NULL)
+			delete[] items_;
 		items_ = NULL;
-		if (objects_ != NULL) delete[] objects_;
+		if (objects_ != NULL)
+			delete[] objects_;
 		objects_ = NULL;
 		regenerateItemArray_ = 1;
 		regenerateObjectArray_ = 1;
 	}
 	// Returns the number of items referenced in the list
-	int nItems() const
-	{
-		return nItems_;
-	}
+	int nItems() const { return nItems_; }
 	// Add a new item reference to the list
-	void add(T* object, D data = D())
+	void add(T *object, D data = D())
 	{
 #ifdef CHECKS
 		if (object == NULL)
@@ -327,11 +314,11 @@ template <class T, class D> class OrderedPointerDataList
 		}
 #endif
 		// Add it in the correct place in the list
-		OrderedPointerDataListItem<T,D>* nextLargest = nextHighest(object);
+		OrderedPointerDataListItem<T, D> *nextLargest = nextHighest(object);
 		insertBefore(object, nextLargest)->setData(data);
 	}
 	// Add a new item reference to the list, unless it is already there
-	void addExclusive(T* object, D data = D())
+	void addExclusive(T *object, D data = D())
 	{
 #ifdef CHECKS
 		if (object == NULL)
@@ -342,37 +329,42 @@ template <class T, class D> class OrderedPointerDataList
 #endif
 		// Seek the next highest object, checking to see if we find the specified index
 		// TODO This can be made much faster - binary chop?
-		OrderedPointerDataListItem<T,D>* nextLargest = listHead_;
+		OrderedPointerDataListItem<T, D> *nextLargest = listHead_;
 		while (nextLargest)
 		{
-			if (nextLargest->object() > object) break;
-			else if (nextLargest->object() == object) return;
+			if (nextLargest->object() > object)
+				break;
+			else if (nextLargest->object() == object)
+				return;
 			nextLargest = nextLargest->next;
 		}
 
 		insertBefore(object, nextLargest)->setData(data);
 	}
 	// Add a new item reference to the end of the list (with checks)
-	void addAtEnd(T* object, D data = D())
+	void addAtEnd(T *object, D data = D())
 	{
-	#ifdef CHECKS
+#ifdef CHECKS
 		if (object == NULL)
 		{
 			printf("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::addAtEnd().\n");
 			return;
 		}
-	#endif
+#endif
 		// Add it directly to the end of the list, provided this adheres to the current order
 		// Check object index of last item in list
-		if (listTail_ == NULL) insertAfter(object, NULL);
-		else if (listTail_->object() < object) insertAfter(object, listTail_)->setData(data);
-		else printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerDataList, but last item in list is %p\n", object, listTail_);
+		if (listTail_ == NULL)
+			insertAfter(object, NULL);
+		else if (listTail_->object() < object)
+			insertAfter(object, listTail_)->setData(data);
+		else
+			printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerDataList, but last item in list is %p\n", object, listTail_);
 	}
 	// Remove item reference from list
-	void remove(T* object)
+	void remove(T *object)
 	{
 		// Get item for specified objectIndex
-		OrderedPointerDataListItem<T,D>* item = contains(object);
+		OrderedPointerDataListItem<T, D> *item = contains(object);
 #ifdef CHECKS
 		if (item == NULL)
 		{
@@ -383,19 +375,20 @@ template <class T, class D> class OrderedPointerDataList
 		remove(item);
 	}
 	// Remove item reference from the list (but don't complain if it isn't there)
-	bool removeIfPresent(T* object)
+	bool removeIfPresent(T *object)
 	{
 		// Get item for specified objectIndex
-		OrderedPointerDataListItem<T,D>* item = contains(object);
-		if (item == NULL) return false;
+		OrderedPointerDataListItem<T, D> *item = contains(object);
+		if (item == NULL)
+			return false;
 		remove(item);
 		return true;
 	}
 	// Move specified item to target list
-	void move(T* object, OrderedPointerDataList<T,D>& targetList)
+	void move(T *object, OrderedPointerDataList<T, D> &targetList)
 	{
 		// Get item for specified objectIndex
-		OrderedPointerDataListItem<T,D>* item = contains(object);
+		OrderedPointerDataListItem<T, D> *item = contains(object);
 #ifdef CHECKS
 		if (item == NULL)
 		{
@@ -408,56 +401,56 @@ template <class T, class D> class OrderedPointerDataList
 		remove(item);
 	}
 	// Returns the list head
-	OrderedPointerDataListItem<T,D>* first() const
-	{
-		return listHead_;
-	}
+	OrderedPointerDataListItem<T, D> *first() const { return listHead_; }
 	// Returns the list tail
-	OrderedPointerDataListItem<T,D>* last() const
-	{
-		return listTail_;
-	}
+	OrderedPointerDataListItem<T, D> *last() const { return listTail_; }
 	// Generate (if necessary) and return item array
-	OrderedPointerDataListItem<T,D>** items()
+	OrderedPointerDataListItem<T, D> **items()
 	{
-		if (regenerateItemArray_ == 0) return items_;
-		
+		if (regenerateItemArray_ == 0)
+			return items_;
+
 		// Recreate item array if it is NULL or too small
 		if ((items_ == NULL) || (nItems_ > itemArraySize_))
 		{
 			// Delete old list if necessary
-			if (items_ != NULL) delete[] items_;
-			
+			if (items_ != NULL)
+				delete[] items_;
+
 			// Create new list
 			itemArraySize_ = nItems_;
-			items_ = new OrderedPointerDataListItem<T,D>*[itemArraySize_];
+			items_ = new OrderedPointerDataListItem<T, D> *[itemArraySize_];
 		}
 
 		// Fill in pointers
 		int count = 0;
-		for (OrderedPointerDataListItem<T,D>* item = listHead_; item != NULL; item = item->next) items_[count++] = item;
+		for (OrderedPointerDataListItem<T, D> *item = listHead_; item != NULL; item = item->next)
+			items_[count++] = item;
 		regenerateItemArray_ = 0;
 		return items_;
 	}
 	// Generate (if necessary) and return object array
-	T** objects()
+	T **objects()
 	{
-		if (regenerateObjectArray_ == 0) return objects_;
-		
+		if (regenerateObjectArray_ == 0)
+			return objects_;
+
 		// Recreate object array if it is NULL or too small
 		if ((objects_ == NULL) || (nItems_ > objectArraySize_))
 		{
 			// Delete old list if necessary
-			if (objects_ != NULL) delete[] objects_;
-			
+			if (objects_ != NULL)
+				delete[] objects_;
+
 			// Create new list
 			objectArraySize_ = nItems_;
-			objects_ = new T*[objectArraySize_];
+			objects_ = new T *[objectArraySize_];
 		}
 
 		// Fill in pointers
 		int count = 0;
-		for (OrderedPointerDataListItem<T,D>* item = listHead_; item != NULL; item = item->next) objects_[count++] = item->object();
+		for (OrderedPointerDataListItem<T, D> *item = listHead_; item != NULL; item = item->next)
+			objects_[count++] = item->object();
 		regenerateObjectArray_ = 0;
 		return objects_;
 	}
@@ -468,7 +461,7 @@ template <class T, class D> class OrderedPointerDataList
 		regenerateObjectArray_ = 1;
 	}
 	// Given a second list, generate new lists containing unique items to each list, and those that appear in both
-	void difference(OrderedPointerDataList<T,D>& listB, OrderedPointerDataList<T,D>& uniqueToA, OrderedPointerDataList<T,D>& uniqueToB, OrderedPointerDataList<T,D>& commonItems)
+	void difference(OrderedPointerDataList<T, D> &listB, OrderedPointerDataList<T, D> &uniqueToA, OrderedPointerDataList<T, D> &uniqueToB, OrderedPointerDataList<T, D> &commonItems)
 	{
 		// Clear supplied results lists
 		uniqueToA.clear();
@@ -491,7 +484,7 @@ template <class T, class D> class OrderedPointerDataList
 
 		// Traverse the lists simultaneously, comparing indices at each turn
 		int indexA = 0, indexB = 0;
-		T** itemsA = objects(), **itemsB = listB.objects();
+		T **itemsA = objects(), **itemsB = listB.objects();
 		int objectIndexA = itemsA[indexA]->objectIndex(), objectIndexB = itemsB[indexB]->objectIndex();
 		while ((indexA < nItems_) && (indexB < listB.nItems_))
 		{
@@ -522,23 +515,25 @@ template <class T, class D> class OrderedPointerDataList
 		}
 
 		// If we have not yet gone through all the items in either list, add them to the relevant unique results list
-		for (int n = indexA; n<nItems_; ++n) uniqueToA.addAtEnd(itemsA[n]);
-		for (int n = indexB; n<listB.nItems_; ++n) uniqueToB.addAtEnd(itemsB[n]);
+		for (int n = indexA; n < nItems_; ++n)
+			uniqueToA.addAtEnd(itemsA[n]);
+		for (int n = indexB; n < listB.nItems_; ++n)
+			uniqueToB.addAtEnd(itemsB[n]);
 	}
-
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment operator
-	void operator=(const OrderedPointerDataList<T,D>& other)
+	void operator=(const OrderedPointerDataList<T, D> &other)
 	{
 		clear();
-		for (OrderedPointerDataListItem<T,D>* item = other.listHead_; item != NULL; item = item->next) addAtEnd(item->object());
+		for (OrderedPointerDataListItem<T, D> *item = other.listHead_; item != NULL; item = item->next)
+			addAtEnd(item->object());
 	}
 	// Element access operator
-	OrderedPointerDataListItem<T,D>* operator[](int index)
+	OrderedPointerDataListItem<T, D> *operator[](int index)
 	{
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
@@ -556,49 +551,47 @@ template <class T, class D> class OrderedPointerDataList
  */
 template <class T, class D> class OrderedPointerDataListIterator
 {
-	public:
+      public:
 	// Constructor
-	OrderedPointerDataListIterator<T,D>(const OrderedPointerDataList<T,D>& source, bool reverse = false) : targetList_(source), reverse_(reverse)
+	OrderedPointerDataListIterator<T, D>(const OrderedPointerDataList<T, D> &source, bool reverse = false) : targetList_(source), reverse_(reverse)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
 	}
 
-	private:
+      private:
 	// Whether the iterator has reached the end of the list
 	bool finished_;
 	// Whether the iterator operates in reverse (iterating tail to head)
 	bool reverse_;
 	// Target list
-	const OrderedPointerDataList<T,D>& targetList_;
+	const OrderedPointerDataList<T, D> &targetList_;
 	// Current item
-	OrderedPointerDataListItem<T,D>* currentItem_;
+	OrderedPointerDataListItem<T, D> *currentItem_;
 
-	public:
+      public:
 	// Iterate
-	T* iterate()
+	T *iterate()
 	{
-		if (finished_) return NULL;
+		if (finished_)
+			return NULL;
 
 		// Go to initial / next item
-		if (currentItem_ == NULL) currentItem_ = reverse_ ? targetList_.last() : targetList_.first();
-		else currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
+		if (currentItem_ == NULL)
+			currentItem_ = reverse_ ? targetList_.last() : targetList_.first();
+		else
+			currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
 
 		// Check for end of list
-		if (currentItem_ == NULL) finished_ = true;
+		if (currentItem_ == NULL)
+			finished_ = true;
 
 		return (currentItem_ ? currentItem_->object() : NULL);
 	}
 	// Return current item index
-	int currentIndex()
-	{
-		return (currentItem_ ? currentItem_->object()->index() : 0);
-	}
+	int currentIndex() { return (currentItem_ ? currentItem_->object()->index() : 0); }
 	// Return current item data
-	D currentData()
-	{
-		return (currentItem_ ? currentItem_->data() : D());
-	}
+	D currentData() { return (currentItem_ ? currentItem_->data() : D()); }
 	// Restart iteration
 	void restart()
 	{

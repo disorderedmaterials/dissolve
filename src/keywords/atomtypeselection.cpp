@@ -20,31 +20,27 @@
 */
 
 #include "keywords/atomtypeselection.h"
+#include "base/lineparser.h"
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
-#include "base/lineparser.h"
 
 // Constructor
-AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList& selection, const RefList<Configuration>& sourceConfigurations) : KeywordData<AtomTypeList&>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection, const RefList<Configuration> &sourceConfigurations)
+    : KeywordData<AtomTypeList &>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
 // Destructor
-AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword()
-{
-}
+AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword() {}
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool AtomTypeSelectionKeyword::isDataEmpty() const
-{
-	return data_.nItems() == 0;
-}
+bool AtomTypeSelectionKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 // Check AtomType selection and make sure it is consistent based on the source Configurations
 void AtomTypeSelectionKeyword::checkSelection()
@@ -53,10 +49,10 @@ void AtomTypeSelectionKeyword::checkSelection()
 
 	// Loop over existing selection, checking for each AtomType existing in any source Configuration
 	ListIterator<AtomTypeData> typeIterator(data_.types());
-	while (AtomTypeData* atd = typeIterator.iterate())
+	while (AtomTypeData *atd = typeIterator.iterate())
 	{
 		bool found = false;
-		for(auto cfg : sourceConfigurations_)
+		for (auto cfg : sourceConfigurations_)
 		{
 			if (cfg->usedAtomTypesList().contains(atd->atomType()))
 			{
@@ -65,7 +61,8 @@ void AtomTypeSelectionKeyword::checkSelection()
 			}
 		}
 
-		if (found) newSelection.add(atd->atomType());
+		if (found)
+			newSelection.add(atd->atomType());
 	}
 
 	// Copy the new list over the old one
@@ -73,7 +70,7 @@ void AtomTypeSelectionKeyword::checkSelection()
 }
 
 // Return list of AtomTpe/bool references
-AtomTypeList& AtomTypeSelectionKeyword::selection()
+AtomTypeList &AtomTypeSelectionKeyword::selection()
 {
 	// Update the list first, in case a Configuration has changed
 	checkSelection();
@@ -86,19 +83,13 @@ AtomTypeList& AtomTypeSelectionKeyword::selection()
  */
 
 // Return minimum number of arguments accepted
-int AtomTypeSelectionKeyword::minArguments() const
-{
-	return 1;
-}
+int AtomTypeSelectionKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int AtomTypeSelectionKeyword::maxArguments() const
-{
-	return 999;
-}
+int AtomTypeSelectionKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Make sure our list is up-to-date
 	checkSelection();
@@ -107,13 +98,17 @@ bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const Core
 	for (int n = startArg; n < parser.nArgs(); ++n)
 	{
 		// Do we recognise the AtomType?
-		AtomType* atomType = NULL;
+		AtomType *atomType = NULL;
 		ListIterator<AtomType> typeIterator(coreData.constAtomTypes());
-		while ((atomType = typeIterator.iterate())) if (DissolveSys::sameString(atomType->name(), parser.argc(n))) break;
-		if (!atomType) return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
+		while ((atomType = typeIterator.iterate()))
+			if (DissolveSys::sameString(atomType->name(), parser.argc(n)))
+				break;
+		if (!atomType)
+			return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
 		// If the AtomType is in the list already, complain
-		if (data_.contains(atomType)) return Messenger::error("AtomType '%s' specified in selection list twice.\n", parser.argc(n));
+		if (data_.contains(atomType))
+			return Messenger::error("AtomType '%s' specified in selection list twice.\n", parser.argc(n));
 
 		// All OK - add it to our selection list
 		data_.add(atomType);
@@ -125,14 +120,16 @@ bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool AtomTypeSelectionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over the AtomType selection list
 	CharString selection;
 	ListIterator<AtomTypeData> typeIterator(data_.types());
-	while (AtomTypeData* atd = typeIterator.iterate()) selection.strcatf("  %s", atd->atomTypeName());
+	while (AtomTypeData *atd = typeIterator.iterate())
+		selection.strcatf("  %s", atd->atomTypeName());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, selection.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, selection.get()))
+		return false;
 
 	return true;
 }
@@ -142,7 +139,4 @@ bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* keywordName
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeSelectionKeyword::removeReferencesTo(AtomType* at)
-{
-	data_.remove(at);
-}
+void AtomTypeSelectionKeyword::removeReferencesTo(AtomType *at) { data_.remove(at); }

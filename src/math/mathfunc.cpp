@@ -36,17 +36,14 @@ double DissolveMath::erfc(double x)
 	//	National Bureau of Standards, Formula 7.1.26
 	static double a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
 	double t, tp, result;
-	t = 1.0 / ( 1.0 + p * x );
-	tp = t * ( a1 + t * ( a2 + t * ( a3 + t * ( a4 + t * a5 ) ) ) );
-	result = tp * exp(-(x*x));
+	t = 1.0 / (1.0 + p * x);
+	tp = t * (a1 + t * (a2 + t * (a3 + t * (a4 + t * a5))));
+	result = tp * exp(-(x * x));
 	return result;
 }
 
 // Complementary error function
-double DissolveMath::erf(double x)
-{
-	return (1.0 - erfc(x));
-}
+double DissolveMath::erf(double x) { return (1.0 - erfc(x)); }
 
 /*
  * Random Number Generation
@@ -62,10 +59,7 @@ double DissolveMath::random()
 }
 
 // Return random value between -1 and 1.0 inclusive
-double DissolveMath::randomPlusMinusOne()
-{
-	return (random()-0.5)*2.0;
-}
+double DissolveMath::randomPlusMinusOne() { return (random() - 0.5) * 2.0; }
 
 // Random number generator (0 - RAND_MAX)
 int DissolveMath::randomimax()
@@ -78,7 +72,7 @@ int DissolveMath::randomimax()
 int DissolveMath::randomi(int range)
 {
 	// Returns a random number from 0->(range-1) inclusive.
-	return int(range * (double(rand()-1) / RAND_MAX));
+	return int(range * (double(rand() - 1) / RAND_MAX));
 }
 
 /*
@@ -90,31 +84,22 @@ int DissolveMath::power(int i, int p)
 {
 	static int result, n;
 	result = i;
-	if (p == 0) result = 1;
-	else for (n=1; n<p; n++) result *= i;
+	if (p == 0)
+		result = 1;
+	else
+		for (n = 1; n < p; n++)
+			result *= i;
 	return result;
 }
 
 // Sign function
-int DissolveMath::sgn(int x)
-{
-	return (x < 0 ? -1 : (x == 0 ? 0 : 1));
-}
+int DissolveMath::sgn(int x) { return (x < 0 ? -1 : (x == 0 ? 0 : 1)); }
 
 // Sign function
-int DissolveMath::sgn(double x)
-{
-	return (x < 0.0 ? -1 : x > 0.0);
-}
+int DissolveMath::sgn(double x) { return (x < 0.0 ? -1 : x > 0.0); }
 
 // Apply sign of second argument to first
-double DissolveMath::sgn(double a, double signOf)
-{
-	return signOf >= 0.0 ? fabs(a) : -fabs(a);
-}
+double DissolveMath::sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a); }
 
 // Return the cyclic permutation of the integer 'i', span 3
-int DissolveMath::cp3(int i)
-{
-	return (i%3);
-}
+int DissolveMath::cp3(int i) { return (i % 3); }

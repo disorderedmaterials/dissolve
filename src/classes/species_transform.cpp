@@ -19,42 +19,45 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/species.h"
 #include "classes/box.h"
+#include "classes/species.h"
 
 // Calculate and return centre of geometry
-Vec3<double> Species::centreOfGeometry(const Box* box) const
+Vec3<double> Species::centreOfGeometry(const Box *box) const
 {
-	if (atoms_.nItems() == 0) return Vec3<double>();
-	
+	if (atoms_.nItems() == 0)
+		return Vec3<double>();
+
 	// Calculate center relative to first atom in molecule
 	Vec3<double> cog = atoms_.first()->r();
-	for (SpeciesAtom* i = atoms_.first()->next(); i != NULL; i = i->next()) cog += box->minimumImage(i->r(), cog);
+	for (SpeciesAtom *i = atoms_.first()->next(); i != NULL; i = i->next())
+		cog += box->minimumImage(i->r(), cog);
 
 	return (cog / atoms_.nItems());
 }
 
 // Set centre of geometry of species
-void Species::setCentre(const Box* box, const Vec3<double> newCentre)
+void Species::setCentre(const Box *box, const Vec3<double> newCentre)
 {
 	// Calculate Molecule centre of geometry
 	Vec3<double> newR, cog = centreOfGeometry(box);
 
 	// Apply transform
-	for (int n=0; n<atoms_.nItems(); ++n)
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
-	{
-		newR = box->minimumVector(i->r(), cog) + newCentre;
-		i->setCoordinates(newR);
-	}
+	for (int n = 0; n < atoms_.nItems(); ++n)
+		for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		{
+			newR = box->minimumVector(i->r(), cog) + newCentre;
+			i->setCoordinates(newR);
+		}
 }
 
 // Centre coordinates at origin
 void Species::centreAtOrigin()
 {
 	Vec3<double> centre;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) centre += i->r();
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		centre += i->r();
 	centre /= atoms_.nItems();
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->translateCoordinates(-centre);
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		i->translateCoordinates(-centre);
 }
-

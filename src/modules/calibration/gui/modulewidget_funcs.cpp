@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibration/gui/modulewidget.h"
+#include "classes/atomtype.h"
+#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/calibration/calibration.h"
-#include "classes/atomtype.h"
+#include "modules/calibration/gui/modulewidget.h"
 #include "templates/variantpointer.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, CalibrationModule* module) : ModuleWidget(parent), module_(module)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget *parent, CalibrationModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -38,7 +38,7 @@ CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, CalibrationMod
 	dataView_ = ui_.PlotWidget->dataViewer();
 
 	// Set up the view
-	View& view = dataView_->view();
+	View &view = dataView_->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	view.axes().setMax(0, 10.0);
@@ -49,39 +49,35 @@ CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, CalibrationMod
 	refreshing_ = false;
 }
 
-CalibrationModuleWidget::~CalibrationModuleWidget()
-{
-}
+CalibrationModuleWidget::~CalibrationModuleWidget() {}
 
 /*
  * UI
  */
 
 // Update controls within widget
-void CalibrationModuleWidget::updateControls(int flags)
-{
-	dataView_->postRedisplay();
-}
+void CalibrationModuleWidget::updateControls(int flags) { dataView_->postRedisplay(); }
 
 /*
  * State I/O
  */
 
 // Write widget state through specified LineParser
-bool CalibrationModuleWidget::writeState(LineParser& parser) const
+bool CalibrationModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer session
-	if (!dataView_->writeSession(parser)) return false;
+	if (!dataView_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool CalibrationModuleWidget::readState(LineParser& parser)
+bool CalibrationModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer session
-	if (!dataView_->readSession(parser)) return false;
-	
+	if (!dataView_->readSession(parser))
+		return false;
+
 	return true;
 }
-

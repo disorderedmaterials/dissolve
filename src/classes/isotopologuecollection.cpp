@@ -20,22 +20,17 @@
 */
 
 #include "classes/isotopologuecollection.h"
+#include "base/lineparser.h"
+#include "base/processpool.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
 
 // Constructor
-IsotopologueCollection::IsotopologueCollection()
-{
-	clear();
-}
+IsotopologueCollection::IsotopologueCollection() { clear(); }
 
 // Destructor
-IsotopologueCollection::~IsotopologueCollection()
-{
-}
+IsotopologueCollection::~IsotopologueCollection() {}
 
 /*
  * Sets
@@ -44,28 +39,28 @@ IsotopologueCollection::~IsotopologueCollection()
 // Remove any sets from the collection that are empty
 void IsotopologueCollection::pruneEmptySets()
 {
-	IsotopologueSet* set = isotopologueSets_.first();
+	IsotopologueSet *set = isotopologueSets_.first();
 	while (set != NULL)
 	{
-		IsotopologueSet* nextSet = set->next();
-		if (set->nIsotopologues() == 0) isotopologueSets_.remove(set);
+		IsotopologueSet *nextSet = set->next();
+		if (set->nIsotopologues() == 0)
+			isotopologueSets_.remove(set);
 
 		set = nextSet;
 	}
 }
 
 // Clear all existing data
-void IsotopologueCollection::clear()
-{
-	isotopologueSets_.clear();
-}
+void IsotopologueCollection::clear() { isotopologueSets_.clear(); }
 
 // Add Isotopologue weight for the specified Configuration / Species
-void IsotopologueCollection::add(Configuration* cfg, Isotopologue* iso, double relativeWeight)
+void IsotopologueCollection::add(Configuration *cfg, Isotopologue *iso, double relativeWeight)
 {
 	// Check if the set already exists
-	IsotopologueSet* set = NULL;
-	for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;
+	IsotopologueSet *set = NULL;
+	for (set = isotopologueSets_.first(); set != NULL; set = set->next())
+		if (set->configuration() == cfg)
+			break;
 	if (!set)
 	{
 		set = isotopologueSets_.add();
@@ -77,23 +72,21 @@ void IsotopologueCollection::add(Configuration* cfg, Isotopologue* iso, double r
 }
 
 // Remove the specified set from the collection
-void IsotopologueCollection::remove(IsotopologueSet* set)
-{
-	isotopologueSets_.remove(set);
-}
+void IsotopologueCollection::remove(IsotopologueSet *set) { isotopologueSets_.remove(set); }
 
 // Remove the Configuration from the collection
-void IsotopologueCollection::remove(Configuration* cfg)
+void IsotopologueCollection::remove(Configuration *cfg)
 {
-	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg)
-	{
-		isotopologueSets_.remove(set);
-		break;
-	}
+	for (IsotopologueSet *set = isotopologueSets_.first(); set != NULL; set = set->next())
+		if (set->configuration() == cfg)
+		{
+			isotopologueSets_.remove(set);
+			break;
+		}
 }
 
 // Remove the Species from the specified set
-void IsotopologueCollection::remove(IsotopologueSet* set, Species* sp)
+void IsotopologueCollection::remove(IsotopologueSet *set, Species *sp)
 {
 	set->remove(sp);
 
@@ -101,7 +94,7 @@ void IsotopologueCollection::remove(IsotopologueSet* set, Species* sp)
 }
 
 // Remove the IsotopologueWeight from the specified set
-void IsotopologueCollection::remove(IsotopologueSet* set, IsotopologueWeight* isoWeight)
+void IsotopologueCollection::remove(IsotopologueSet *set, IsotopologueWeight *isoWeight)
 {
 	set->remove(isoWeight);
 
@@ -109,71 +102,82 @@ void IsotopologueCollection::remove(IsotopologueSet* set, IsotopologueWeight* is
 }
 
 // Remove any occurrences of the specified Species from the collection
-void IsotopologueCollection::remove(Species* sp)
+void IsotopologueCollection::remove(Species *sp)
 {
-	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) set->remove(sp);
+	for (IsotopologueSet *set = isotopologueSets_.first(); set != NULL; set = set->next())
+		set->remove(sp);
 
 	pruneEmptySets();
 }
 
 // Remove any occurrences of the specified Isotopologue from the collection
-void IsotopologueCollection::remove(Isotopologue* iso)
+void IsotopologueCollection::remove(Isotopologue *iso)
 {
-	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) set->remove(iso);
+	for (IsotopologueSet *set = isotopologueSets_.first(); set != NULL; set = set->next())
+		set->remove(iso);
 
 	pruneEmptySets();
 }
 
 // Return defined sets
-List<IsotopologueSet>& IsotopologueCollection::isotopologueSets()
-{
-	return isotopologueSets_;
-}
+List<IsotopologueSet> &IsotopologueCollection::isotopologueSets() { return isotopologueSets_; }
 
 // Return whether a set exists for the supplied Configuration
-bool IsotopologueCollection::contains(const Configuration* cfg) const
+bool IsotopologueCollection::contains(const Configuration *cfg) const
 {
-	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) return true;
+	for (IsotopologueSet *set = isotopologueSets_.first(); set != NULL; set = set->next())
+		if (set->configuration() == cfg)
+			return true;
 
 	return false;
 }
 
 // Return IsotopologueSet for the specified Configuration
-const IsotopologueSet* IsotopologueCollection::isotopologueSet(const Configuration* cfg) const
+const IsotopologueSet *IsotopologueCollection::isotopologueSet(const Configuration *cfg) const
 {
-	for (IsotopologueSet* set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) return set;
+	for (IsotopologueSet *set = isotopologueSets_.first(); set != NULL; set = set->next())
+		if (set->configuration() == cfg)
+			return set;
 
 	return NULL;
 }
 
 // Return whether the Species has a defined set of isotopologues in the specified Configuration
-bool IsotopologueCollection::contains(const Configuration* cfg, const Species* sp) const
+bool IsotopologueCollection::contains(const Configuration *cfg, const Species *sp) const
 {
-	IsotopologueSet* set = NULL;
-	for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;
-	if (!set) return false;
+	IsotopologueSet *set = NULL;
+	for (set = isotopologueSets_.first(); set != NULL; set = set->next())
+		if (set->configuration() == cfg)
+			break;
+	if (!set)
+		return false;
 
 	return set->contains(sp);
 }
 
 // Return Isotopologues for the Species in the specified Configuration
-const Isotopologues* IsotopologueCollection::isotopologues(const Configuration* cfg, const Species* sp) const
+const Isotopologues *IsotopologueCollection::isotopologues(const Configuration *cfg, const Species *sp) const
 {
-	IsotopologueSet* set = NULL;
-	for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;
-	if (!set) return NULL;
+	IsotopologueSet *set = NULL;
+	for (set = isotopologueSets_.first(); set != NULL; set = set->next())
+		if (set->configuration() == cfg)
+			break;
+	if (!set)
+		return NULL;
 
 	return set->isotopologues(sp);
 }
 
 // Complete the collection by making sure it contains every Species in every Configuration in the supplied list
-void IsotopologueCollection::complete(const RefList<Configuration>& configurations)
+void IsotopologueCollection::complete(const RefList<Configuration> &configurations)
 {
-	for (Configuration* cfg : configurations)
+	for (Configuration *cfg : configurations)
 	{
 		// Retrieve / create a set for this Configuration
-		IsotopologueSet* set = NULL;
-		for (set = isotopologueSets_.first(); set != NULL; set = set->next()) if (set->configuration() == cfg) break;
+		IsotopologueSet *set = NULL;
+		for (set = isotopologueSets_.first(); set != NULL; set = set->next())
+			if (set->configuration() == cfg)
+				break;
 		if (!set)
 		{
 			set = isotopologueSets_.add();
@@ -183,10 +187,11 @@ void IsotopologueCollection::complete(const RefList<Configuration>& configuratio
 
 		// Loop over Species in the Configuration
 		ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-		while (SpeciesInfo* spInfo = spInfoIterator.iterate())
+		while (SpeciesInfo *spInfo = spInfoIterator.iterate())
 		{
 			// If the Species already exists in our set, nothing more to do...
-			if (set->contains(spInfo->species())) continue;
+			if (set->contains(spInfo->species()))
+				continue;
 
 			// Add the natural isotopologue for this Species
 			add(cfg, spInfo->species()->naturalIsotopologue(), 1.0);
@@ -199,39 +204,40 @@ void IsotopologueCollection::complete(const RefList<Configuration>& configuratio
  */
 
 // Return class name
-const char* IsotopologueCollection::itemClassName()
-{
-	return "IsotopologueCollection";
-}
+const char *IsotopologueCollection::itemClassName() { return "IsotopologueCollection"; }
 
 // Read data through specified LineParser
-bool IsotopologueCollection::read(LineParser& parser, const CoreData& coreData)
+bool IsotopologueCollection::read(LineParser &parser, const CoreData &coreData)
 {
 	clear();
 
 	// Read in number of Configurations in the collection
 	const int nConfigurations = parser.argi(0);
 
-	for (int n=0; n<nConfigurations; ++n)
+	for (int n = 0; n < nConfigurations; ++n)
 	{
 		// Add a new isotopologue set and read it
-		IsotopologueSet* set = isotopologueSets_.add();
+		IsotopologueSet *set = isotopologueSets_.add();
 		set->setParentCollection(this);
-		if (!set->read(parser, coreData)) return false;
+		if (!set->read(parser, coreData))
+			return false;
 	}
 
 	return true;
 }
 
 // Write data through specified LineParser
-bool IsotopologueCollection::write(LineParser& parser)
+bool IsotopologueCollection::write(LineParser &parser)
 {
 	// Write number of Configurations in the collection
-	if (!parser.writeLineF("%i\n", isotopologueSets_.nItems())) return false;
+	if (!parser.writeLineF("%i\n", isotopologueSets_.nItems()))
+		return false;
 
 	// Write details for each set of Isotopologues
 	ListIterator<IsotopologueSet> setIterator(isotopologueSets_);
-	while (IsotopologueSet* set = setIterator.iterate()) if (!set->write(parser)) return false;
+	while (IsotopologueSet *set = setIterator.iterate())
+		if (!set->write(parser))
+			return false;
 
 	return true;
 }

@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "io/import/coordinates.h"
 #include "base/lineparser.h"
+#include "io/import/coordinates.h"
 
 // Import DL_POLY coordinates through specified parser
-bool CoordinateImportFileFormat::importDLPOLY(LineParser& parser, Array< Vec3<double> >& r)
+bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, Array<Vec3<double>> &r)
 {
 	/*
 	 * Import DL_POLY force information through the specified line parser.
 	 * We assume CONFIG or REVCON format:
-	 * 
+	 *
 	 * Line 1:    Title
 	 * Line 2:    keytrj   imcon    natoms    []
 	 * Line 3-5:  cell matrix (if imcon > 0)
@@ -41,10 +41,12 @@ bool CoordinateImportFileFormat::importDLPOLY(LineParser& parser, Array< Vec3<do
 
 	Messenger::print(" --> Importing coordinates in DL_POLY (CONFIG/REVCON) format...\n");
 	// Skip title
-	if (parser.skipLines(1) != LineParser::Success) return false;
+	if (parser.skipLines(1) != LineParser::Success)
+		return false;
 
 	// Import in keytrj, imcon, and number of atoms, and initiliase arrays
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 
 	int keytrj = parser.argi(0);
 	int imcon = parser.argi(1);
@@ -53,19 +55,24 @@ bool CoordinateImportFileFormat::importDLPOLY(LineParser& parser, Array< Vec3<do
 	r.clear();
 
 	// Skip cell information if given
-	if (imcon > 0) parser.skipLines(3);
+	if (imcon > 0)
+		parser.skipLines(3);
 
 	// Loop over atoms (either a specified number, or until we reach the end of the file
 	int atomCount = 0;
 	while (!parser.eofOrBlank())
 	{
 		// Skip atomname line, get the positions, then skip velocity and force lines if necessary
-		if (parser.skipLines(1) != LineParser::Success) return false;
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.skipLines(1) != LineParser::Success)
+			return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		r.add(parser.arg3d(0));
-		if (parser.skipLines(keytrj) != LineParser::Success) return false;
+		if (parser.skipLines(keytrj) != LineParser::Success)
+			return false;
 		++atomCount;
-		if ((nAtoms > 0) && (atomCount == nAtoms)) break;
+		if ((nAtoms > 0) && (atomCount == nAtoms))
+			break;
 	}
 
 	return true;

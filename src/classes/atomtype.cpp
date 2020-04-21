@@ -20,8 +20,8 @@
 */
 
 #include "classes/atomtype.h"
-#include "data/elements.h"
 #include "base/processpool.h"
+#include "data/elements.h"
 #include <string.h>
 
 // Constructor
@@ -34,68 +34,39 @@ AtomType::AtomType() : ListItem<AtomType>()
 }
 
 // Destructor
-AtomType::~AtomType()
-{
-}
+AtomType::~AtomType() {}
 
 /*
  * Character
  */
 
 // Set name of AtomType
-void AtomType::setName(const char* name)
-{
-	name_ = name;
-}
+void AtomType::setName(const char *name) { name_ = name; }
 
 // Return name of AtomType
-const char* AtomType::name() const
-{
-	return name_.get();
-}
+const char *AtomType::name() const { return name_.get(); }
 
 // Set atomic element
-void AtomType::setElement(Element* el)
-{
-	element_ = el;
-}
+void AtomType::setElement(Element *el) { element_ = el; }
 
 // Return atomic element
-Element* AtomType::element() const
-{
-	return element_;
-}
+Element *AtomType::element() const { return element_; }
 
 /*
  * Interaction Parameters
  */
 
 // Set short-range interaction type
-void AtomType::setShortRangeType(Forcefield::ShortRangeType srType)
-{
-	shortRangeType_ = srType;
-}
+void AtomType::setShortRangeType(Forcefield::ShortRangeType srType) { shortRangeType_ = srType; }
 
 // Return short-range interaction type
-Forcefield::ShortRangeType AtomType::shortRangeType() const
-{
-	return shortRangeType_;
-}
+Forcefield::ShortRangeType AtomType::shortRangeType() const { return shortRangeType_; }
 
 // Return interatomic interaction interaction parameters
-InteractionParameters& AtomType::parameters()
-{
-	return parameters_;
-}
+InteractionParameters &AtomType::parameters() { return parameters_; }
 
 // Set index of this type in the main type index
-void AtomType::setIndex(int id)
-{
-	index_ = id;
-}
+void AtomType::setIndex(int id) { index_ = id; }
 
 // Return index of this type in the main type index
-int AtomType::index() const
-{
-	return index_;
-}
+int AtomType::index() const { return index_; }

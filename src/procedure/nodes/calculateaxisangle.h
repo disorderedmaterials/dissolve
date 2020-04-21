@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_PROCEDURENODE_CALCULATEAXISANGLE_H
 #define DISSOLVE_PROCEDURENODE_CALCULATEAXISANGLE_H
 
-#include "procedure/nodes/calculatebase.h"
 #include "classes/site.h"
+#include "procedure/nodes/calculatebase.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -32,41 +32,39 @@ class SelectProcedureNode;
 // Calculate AxisAngle Node
 class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
 {
-	public:
+      public:
 	// Constructor
-	CalculateAxisAngleProcedureNode(SelectProcedureNode* site0 = NULL, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis, SelectProcedureNode* site1 = NULL, OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
+	CalculateAxisAngleProcedureNode(SelectProcedureNode *site0 = NULL, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis, SelectProcedureNode *site1 = NULL,
+					OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
 	// Destructor
 	~CalculateAxisAngleProcedureNode();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Axis to use from site 'I' (retrieved from keyword)
 	int axisI_;
 	// Axis to use from site 'J' (retrieved from keyword)
 	int axisJ_;
 
-
 	/*
 	 * Observable Target (implements virtuals in CalculateProcedureNodeBase)
 	 */
-	public:
+      public:
 	// Return number of sites required to calculate observable
 	int nSitesRequired() const;
 	// Return dimensionality of calculated observable
 	int dimensionality() const;
 
-
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

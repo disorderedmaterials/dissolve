@@ -23,50 +23,41 @@
 #include "keywords/list.h"
 
 // Constructor
-KeywordGroup::KeywordGroup(KeywordList& keywordList) : ListItem<KeywordGroup>(), keywordList_(keywordList)
-{
-}
+KeywordGroup::KeywordGroup(KeywordList &keywordList) : ListItem<KeywordGroup>(), keywordList_(keywordList) {}
 
 /*
  * Identity
  */
 
 // Set name of group
-void KeywordGroup::setName(const char* name)
-{
-	name_ = name;
-}
+void KeywordGroup::setName(const char *name) { name_ = name; }
 
 // Return name of group
-const char* KeywordGroup::name() const
-{
-	return name_.get();
-}
+const char *KeywordGroup::name() const { return name_.get(); }
 
 /*
  * Keyword Group
  */
 
 // Add specified keyword to the group
-void KeywordGroup::addKeywordToGroup(KeywordBase* object)
-{
-	keywords_.append(object);
-}
+void KeywordGroup::addKeywordToGroup(KeywordBase *object) { keywords_.append(object); }
 
 // Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, int optionMask)
+bool KeywordGroup::add(KeywordBase *object, const char *keyword, const char *description, int optionMask)
 {
-	if (!keywordList_.add(object, keyword, description, "", optionMask)) return false;
-	
+	if (!keywordList_.add(object, keyword, description, "", optionMask))
+		return false;
+
 	addKeywordToGroup(object);
 
 	return false;
 }
 
 // Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int optionMask)
+bool KeywordGroup::add(KeywordBase *object, const char *keyword, const char *description, const char *arguments, int optionMask)
 {
-	if (!keywordList_.add(object, keyword, description, arguments, optionMask)) return false;
+	if (!keywordList_.add(object, keyword, description, arguments, optionMask))
+		return false;
 
 	addKeywordToGroup(object);
 
@@ -74,7 +65,4 @@ bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* des
 }
 
 // Return first keyword in list
-RefList<KeywordBase>& KeywordGroup::keywords()
-{
-	return keywords_;
-}
+RefList<KeywordBase> &KeywordGroup::keywords() { return keywords_; }

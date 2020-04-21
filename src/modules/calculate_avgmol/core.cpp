@@ -37,16 +37,11 @@ CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 }
 
 // Destructor
-CalculateAvgMolModule::~CalculateAvgMolModule()
-{
-}
+CalculateAvgMolModule::~CalculateAvgMolModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateAvgMolModule::createInstance() const
-{
-	return new CalculateAvgMolModule;
-}
+Module *CalculateAvgMolModule::createInstance() const { return new CalculateAvgMolModule; }

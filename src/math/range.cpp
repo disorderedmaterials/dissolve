@@ -40,32 +40,21 @@ void Range::set(double minimum, double maximum)
 }
 
 // Set minimum for range
-void Range::setMinimum(double minimum)
-{
-	minimum_ = minimum;
-}
+void Range::setMinimum(double minimum) { minimum_ = minimum; }
 
 // Return minimum for range
-double Range::minimum() const
-{
-	return minimum_;
-}
+double Range::minimum() const { return minimum_; }
 
 // Set maximum for range
-void Range::setMaximum(double maximum)
-{
-	maximum_ = maximum;
-}
+void Range::setMaximum(double maximum) { maximum_ = maximum; }
 
 // Return maximum for range
-double Range::maximum() const
-{
-	return maximum_;
-}
+double Range::maximum() const { return maximum_; }
 
 // Return whether the range contains the specified value
 bool Range::contains(double d) const
 {
-	if ((d < minimum_) || (d > maximum_)) return false;
+	if ((d < minimum_) || (d > maximum_))
+		return false;
 	return true;
 }

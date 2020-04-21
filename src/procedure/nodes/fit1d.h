@@ -22,11 +22,11 @@
 #ifndef DISSOLVE_PROCEDURENODE_FIT1D_H
 #define DISSOLVE_PROCEDURENODE_FIT1D_H
 
+#include "base/charstring.h"
+#include "expression/expression.h"
+#include "math/data1d.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/nodereference.h"
-#include "math/data1d.h"
-#include "expression/expression.h"
-#include "base/charstring.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -39,35 +39,42 @@ class NodeScopeStack;
 // Procedure Node - Fit1D
 class Fit1DProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	Fit1DProcedureNode(Collect1DProcedureNode* target = NULL);
+	Fit1DProcedureNode(Collect1DProcedureNode *target = NULL);
 	// Destructor
 	~Fit1DProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Node Keywords
 	 */
-	public:
+      public:
 	// Node Keywords
-	enum Fit1DNodeKeyword { ConstantKeyword, EndFit1DKeyword, EquationKeyword, FitKeyword, MethodKeyword, SaveKeyword, SourceDataKeyword, nFit1DNodeKeywords };
+	enum Fit1DNodeKeyword
+	{
+		ConstantKeyword,
+		EndFit1DKeyword,
+		EquationKeyword,
+		FitKeyword,
+		MethodKeyword,
+		SaveKeyword,
+		SourceDataKeyword,
+		nFit1DNodeKeywords
+	};
 	// Return enum option info for Fit1DNodeKeyword
 	static EnumOptions<Fit1DNodeKeyword> fit1DNodeKeywords();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Node containing source data to fit
 	ProcedureNodeReference dataNode_;
 	// Fit equation object
@@ -75,7 +82,7 @@ class Fit1DProcedureNode : public ProcedureNode
 	// Data against which to fit
 	Data1D referenceData_;
 	// X variable for equation
-	ExpressionVariable* xVariable_;
+	ExpressionVariable *xVariable_;
 	// List of variables that we use, but are not fitting
 	RefList<ExpressionVariable> constants_;
 	// List of variables which we are fitting
@@ -83,37 +90,35 @@ class Fit1DProcedureNode : public ProcedureNode
 	// Whether to save data after normalisation
 	bool saveData_;
 
-	private:
+      private:
 	// Fitting cost function
-	double equationCost(const Array<double>& alpha);
+	double equationCost(const Array<double> &alpha);
 
-	public:
+      public:
 	// Return fitted data
-	const Data1D& fittedData() const;
+	const Data1D &fittedData() const;
 	// Set whether to save processed data
 	void setSaveData(bool on);
-
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Finalise any necessary data after execution
-	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
+	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 
 	/*
 	 * Read / Write
 	 */
-	public:
+      public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser &parser, const char *prefix);
 };
 
 #endif

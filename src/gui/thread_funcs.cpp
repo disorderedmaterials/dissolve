@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/thread.hui"
 #include "gui/gui.h"
+#include "gui/thread.hui"
 #include "main/dissolve.h"
 
 /*
@@ -28,10 +28,7 @@
  */
 
 // Constructor
-DissolveThreadWorker::DissolveThreadWorker(Dissolve& dissolve) : dissolve_(dissolve)
-{
-	nIterationsToRun_ = 1;
-}
+DissolveThreadWorker::DissolveThreadWorker(Dissolve &dissolve) : dissolve_(dissolve) { nIterationsToRun_ = 1; }
 
 // Perform the specified number of iterations (or -1 to keep going)
 void DissolveThreadWorker::beginIterating(int nIterations)
@@ -43,9 +40,12 @@ void DissolveThreadWorker::beginIterating(int nIterations)
 		// Clear messages browser
 		emit(clearMessages());
 
-		if (!dissolve_.iterate(1)) keepIterating_ = false;
-		if (nIterationsToRun_ > 0) --nIterationsToRun_;
-		if (nIterationsToRun_ == 0) keepIterating_ = false;
+		if (!dissolve_.iterate(1))
+			keepIterating_ = false;
+		if (nIterationsToRun_ > 0)
+			--nIterationsToRun_;
+		if (nIterationsToRun_ == 0)
+			keepIterating_ = false;
 
 		emit(iterated(nIterationsToRun_));
 
@@ -56,19 +56,16 @@ void DissolveThreadWorker::beginIterating(int nIterations)
 }
 
 // Stop iterating as soon as possible
-void DissolveThreadWorker::stopIterating()
-{
-	keepIterating_ = false;
-}
+void DissolveThreadWorker::stopIterating() { keepIterating_ = false; }
 
 /*
  * Dissolve Thread Controller
  */
 
 // Constructor
-DissolveThreadController::DissolveThreadController(DissolveWindow* parentWindow, Dissolve& dissolve, int nIterations)
+DissolveThreadController::DissolveThreadController(DissolveWindow *parentWindow, Dissolve &dissolve, int nIterations)
 {
-	DissolveThreadWorker* worker = new DissolveThreadWorker(dissolve);
+	DissolveThreadWorker *worker = new DissolveThreadWorker(dissolve);
 	worker->moveToThread(&workerThread_);
 
 	// Connect signals / slots
@@ -90,13 +87,7 @@ DissolveThreadController::~DissolveThreadController()
 }
 
 // Perform the specified number of main loop iterations
-void DissolveThreadController::iterate(int nIterations)
-{
-	emit(workerIterate(nIterations));
-}
+void DissolveThreadController::iterate(int nIterations) { emit(workerIterate(nIterations)); }
 
 // Pause any current iterating
-void DissolveThreadController::stopIterating()
-{
-	emit(workerStop());
-}	
+void DissolveThreadController::stopIterating() { emit(workerStop()); }

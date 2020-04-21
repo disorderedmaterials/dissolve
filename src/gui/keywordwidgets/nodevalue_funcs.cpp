@@ -22,7 +22,7 @@
 #include "gui/keywordwidgets/nodevalue.h"
 
 // Constructor
-NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -30,8 +30,9 @@ NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget* parent, KeywordBase* key
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<NodeValueKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeValueKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<NodeValueKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into NodeValueKeyword.\n", keyword->name());
 	else
 	{
 		// Set expression text
@@ -48,7 +49,8 @@ NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget* parent, KeywordBase* key
 
 void NodeValueKeywordWidget::on_ValueEdit_editingFinished()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
 	checkValueValidity();
@@ -58,7 +60,8 @@ void NodeValueKeywordWidget::on_ValueEdit_editingFinished()
 
 void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
 	checkValueValidity();
@@ -71,10 +74,7 @@ void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
  */
 
 // Check validity of current value
-void NodeValueKeywordWidget::checkValueValidity()
-{
-	ui_.ValueValidIndicator->setOK(keyword_->data().isValid());
-}
+void NodeValueKeywordWidget::checkValueValidity() { ui_.ValueValidIndicator->setOK(keyword_->data().isValid()); }
 
 // Update value displayed in widget
 void NodeValueKeywordWidget::updateValue()

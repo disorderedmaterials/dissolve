@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_avgmol/avgmol.h"
 #include "keywords/types.h"
+#include "modules/calculate_avgmol/avgmol.h"
 
 // Perform any necessary initialisation for the Module
 void CalculateAvgMolModule::initialise()

@@ -19,39 +19,39 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iterator>
-#include "classes/configuration.h"
 #include "classes/forcekernel.h"
+#include "base/processpool.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/potentialmap.h"
+#include "classes/configuration.h"
 #include "classes/molecule.h"
+#include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "base/processpool.h"
 #include "templates/orderedvector.h"
+#include <iterator>
 
 // Constructor
-ForceKernel::ForceKernel(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance) : configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz), processPool_(procPool)
+ForceKernel::ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz, double cutoffDistance)
+    : configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz), processPool_(procPool)
 {
 	box_ = configuration_->box();
-	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.range()*potentialMap_.range() : cutoffDistance*cutoffDistance);
+	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
 }
 
 // Destructor
-ForceKernel::~ForceKernel()
-{
-}
+ForceKernel::~ForceKernel() {}
 
 /*
  * Internal Force Calculation
  */
 
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
+void ForceKernel::forcesWithoutMim(const Atom *i, const Atom *j, double scale)
 {
 	Vec3<double> force = j->r() - i->r();
 	double distanceSq = force.magnitudeSq();
-	if (distanceSq > cutoffDistanceSquared_) return;
+	if (distanceSq > cutoffDistanceSquared_)
+		return;
 	double r = sqrt(distanceSq);
 	force /= r;
 	force *= potentialMap_.force(i, j, r) * scale;
@@ -67,11 +67,12 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
+void ForceKernel::forcesWithMim(const Atom *i, const Atom *j, double scale)
 {
 	Vec3<double> force = box_->minimumVector(i, j);
 	double distanceSq = force.magnitudeSq();
-	if (distanceSq > cutoffDistanceSquared_) return;
+	if (distanceSq > cutoffDistanceSquared_)
+		return;
 	double r = sqrt(distanceSq);
 	force /= r;
 	force *= potentialMap_.force(i, j, r) * scale;
@@ -91,7 +92,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
  */
 
 // Calculate forces between atoms
-void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ)
+void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -108,19 +109,22 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 	// If Atoms are the same, we refuse to calculate
 	if (i == j)
 	{
-// 		printf("Warning: Refusing to calculate self-energy in ForceKernel::forces(Atom,Atom,bool,bool).\n");
+		// 		printf("Warning: Refusing to calculate self-energy in ForceKernel::forces(Atom,Atom,bool,bool).\n");
 		return;
 	}
 
 	// Check indices of Atoms if required
-	if (excludeIgeJ && (i >= j)) return;
+	if (excludeIgeJ && (i >= j))
+		return;
 
-	if (applyMim) forcesWithMim(i, j);
-	else forcesWithoutMim(i, j);
+	if (applyMim)
+		forcesWithMim(i, j);
+	else
+		forcesWithoutMim(i, j);
 }
 
 // Calculate forces between atoms in supplied cells
-void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -134,9 +138,9 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		return;
 	}
 #endif
-	OrderedVector<Atom*>& centralAtoms = centralCell->atoms();
-	OrderedVector<Atom*>& otherAtoms = otherCell->atoms();
-	Atom* ii, *jj;
+	OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
+	OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+	Atom *ii, *jj;
 	Vec3<double> rI;
 	std::shared_ptr<Molecule> molI;
 	int i, j, index;
@@ -149,52 +153,54 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		for (auto indexI = centralAtoms.begin()+start;
-		     indexI < centralAtoms.end();
-		     indexI += stride)
+		for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
 		{
 			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
-			for (auto* jj : otherAtoms)
+			for (auto *jj : otherAtoms)
 			{
 				// Check exclusion of I > J (pointer comparison)
-				if (excludeIgeJ && (ii >= jj)) continue;
+				if (excludeIgeJ && (ii >= jj))
+					continue;
 
 				// Check for atoms in the same Molecule
-				if (molI != jj->molecule()) forcesWithMim(ii, jj);
+				if (molI != jj->molecule())
+					forcesWithMim(ii, jj);
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forcesWithMim(ii, jj, scale);
+					if (scale > 1.0e-3)
+						forcesWithMim(ii, jj, scale);
 				}
 			}
 		}
 	}
 	else
 	{
-	  for (auto indexI = centralCell->atoms().begin()+start;
-	       indexI< centralCell->atoms().end();
-	       indexI+= stride)
+		for (auto indexI = centralCell->atoms().begin() + start; indexI < centralCell->atoms().end(); indexI += stride)
 		{
 			ii = *indexI;
 			molI = ii->molecule();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
-			for (auto* jj : otherAtoms)
+			for (auto *jj : otherAtoms)
 			{
 				// Check exclusion of I > J (pointer comparison)
-				if (excludeIgeJ && (ii >= jj)) continue;
+				if (excludeIgeJ && (ii >= jj))
+					continue;
 
 				// Check for atoms in the same molecule
-				if (molI != jj->molecule()) forcesWithoutMim(ii, jj);
+				if (molI != jj->molecule())
+					forcesWithoutMim(ii, jj);
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forcesWithoutMim(ii, jj, scale);
+					if (scale > 1.0e-3)
+						forcesWithoutMim(ii, jj, scale);
 				}
 			}
 		}
@@ -202,25 +208,25 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 }
 
 // Calculate forces between Cell and its neighbours
-void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
 	Vec3<double> rJ, v;
 
 	// Straight loop over Cells *not* requiring mim
-	for (auto* otherCell : cell->cellNeighbours())
+	for (auto *otherCell : cell->cellNeighbours())
 	{
 		forces(cell, otherCell, false, excludeIgeJ, strategy);
 	}
 
 	// Straight loop over Cells requiring mim
-	for (auto* otherCell : cell->mimCellNeighbours())
+	for (auto *otherCell : cell->mimCellNeighbours())
 	{
 		forces(cell, otherCell, true, excludeIgeJ, strategy);
 	}
 }
 
 // Calculate forces between Atom and Cell
-void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -229,7 +235,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 		return;
 	}
 #endif
-	Atom* jj;
+	Atom *jj;
 	int j, index;
 	double scale;
 
@@ -237,7 +243,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	std::shared_ptr<Molecule> moleculeI = i->molecule();
 
 	// Grab the array of Atoms in the supplied Cell
-	OrderedVector<Atom*>& otherAtoms = cell->atoms();
+	OrderedVector<Atom *> &otherAtoms = cell->atoms();
 	int nOtherAtoms = cell->nAtoms();
 
 	// Get start/stride for specified loop context
@@ -245,146 +251,170 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Loop over cell atoms
-	if (flags&KernelFlags::ApplyMinimumImageFlag)
+	if (flags & KernelFlags::ApplyMinimumImageFlag)
 	{
 		// Loop over atom neighbours
-		if (flags&KernelFlags::ExcludeSelfFlag) for (auto* jj : otherAtoms)
-		{
-			// Check for same atom
-			if (i == jj) continue;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
-			else
+		if (flags & KernelFlags::ExcludeSelfFlag)
+			for (auto *jj : otherAtoms)
 			{
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
-			}
-		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for (auto* jj : otherAtoms)
-		{
-			// Pointer comparison for i >= jj
-			if (i >= jj) continue;
+				// Check for same atom
+				if (i == jj)
+					continue;
 
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
-			else
-			{
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithMim(i, jj);
+				else
+				{
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithMim(i, jj, scale);
+				}
 			}
-		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) {
-                  for (auto indexJ = otherAtoms.begin()+start;
-		       indexJ < otherAtoms.end();
-		       indexJ += stride)
-		  {
-			// Grab other Atom pointer
-                        jj = *indexJ;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
-			else
+		else if (flags & KernelFlags::ExcludeIGEJFlag)
+			for (auto *jj : otherAtoms)
 			{
 				// Pointer comparison for i >= jj
-				if (i >= jj) continue;
+				if (i >= jj)
+					continue;
 
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithMim(i, jj);
+				else
+				{
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithMim(i, jj, scale);
+				}
 			}
-		  }
-		}
-		else {
-		    index = 0;
-                    auto indexJ = otherAtoms.begin();
-                    for (auto indexJ = otherAtoms.begin()+start;
-			 indexJ < otherAtoms.end();
-			 indexJ += stride)
-		    {
-			// Grab other Atom pointer
-                        jj = *indexJ;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
-			else
+		else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
+		{
+			for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
 			{
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
+				// Grab other Atom pointer
+				jj = *indexJ;
+
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithMim(i, jj);
+				else
+				{
+					// Pointer comparison for i >= jj
+					if (i >= jj)
+						continue;
+
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithMim(i, jj, scale);
+				}
 			}
-		    }
-		  }
+		}
+		else
+		{
+			index = 0;
+			auto indexJ = otherAtoms.begin();
+			for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+			{
+				// Grab other Atom pointer
+				jj = *indexJ;
+
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithMim(i, jj);
+				else
+				{
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithMim(i, jj, scale);
+				}
+			}
+		}
 	}
 	else
 	{
 		// Loop over atom neighbours
-		if (flags&KernelFlags::ExcludeSelfFlag) for (auto indexJ = otherAtoms.begin() + start;
-							     indexJ < otherAtoms.end();
-							     indexJ += stride)
-		{
-			// Grab other Atom pointer
-			jj = *indexJ;
-
-			// Check for same atom
-			if (i == jj) continue;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
-			else
+		if (flags & KernelFlags::ExcludeSelfFlag)
+			for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
 			{
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
+				// Grab other Atom pointer
+				jj = *indexJ;
+
+				// Check for same atom
+				if (i == jj)
+					continue;
+
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithoutMim(i, jj);
+				else
+				{
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithoutMim(i, jj, scale);
+				}
 			}
-		}
-		else if (flags&KernelFlags::ExcludeIGEJFlag) for(auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
-		{
-			// Grab other Atom pointer
-			jj = *indexJ;
-
-			// Pointer comparison for i >= jj
-			if (i >= jj) continue;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
-			else
+		else if (flags & KernelFlags::ExcludeIGEJFlag)
+			for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
 			{
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
-			}
-		}
-		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for(auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
-		{
-			// Grab other Atom pointer
-			jj = *indexJ;
+				// Grab other Atom pointer
+				jj = *indexJ;
 
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
-			else
-			{
 				// Pointer comparison for i >= jj
-				if (i >= jj) continue;
+				if (i >= jj)
+					continue;
 
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithoutMim(i, jj);
+				else
+				{
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithoutMim(i, jj, scale);
+				}
 			}
-		}
-		else for(auto indexJ = otherAtoms.begin()+start; indexJ < otherAtoms.end(); indexJ += stride)
-		{
-			// Grab other Atom pointer
-			jj = *indexJ;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
-			else
+		else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
+			for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
 			{
-				scale = i->scaling(jj);
-				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
+				// Grab other Atom pointer
+				jj = *indexJ;
+
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithoutMim(i, jj);
+				else
+				{
+					// Pointer comparison for i >= jj
+					if (i >= jj)
+						continue;
+
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithoutMim(i, jj, scale);
+				}
 			}
-		}
+		else
+			for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+			{
+				// Grab other Atom pointer
+				jj = *indexJ;
+
+				// Check for atoms in the same species
+				if (moleculeI != jj->molecule())
+					forcesWithoutMim(i, jj);
+				else
+				{
+					scale = i->scaling(jj);
+					if (scale > 1.0e-3)
+						forcesWithoutMim(i, jj, scale);
+				}
+			}
 	}
 }
 
 // Calculate forces between atom and world
-void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(const Atom *i, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -393,16 +423,18 @@ void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
 		return;
 	}
 #endif
-	Cell* cellI = i->cell();
+	Cell *cellI = i->cell();
 
 	// This Atom with other Atoms in the same Cell
 	forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy);
 
 	// This Atom with other Atoms in neighbour Cells
-	for (auto* neighbour : cellI->cellNeighbours()) forces(i, neighbour, KernelFlags::NoFlags, strategy);
+	for (auto *neighbour : cellI->cellNeighbours())
+		forces(i, neighbour, KernelFlags::NoFlags, strategy);
 
 	// This Atom with other Atoms in neighbour Cells which require minimum image
-	for (auto* neighbour : cellI->mimCellNeighbours()) forces(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy);
+	for (auto *neighbour : cellI->mimCellNeighbours())
+		forces(i, neighbour, KernelFlags::ApplyMinimumImageFlag, strategy);
 }
 
 /*
@@ -410,18 +442,21 @@ void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
  */
 
 // Calculate Bond forces
-void ForceKernel::forces(const SpeciesBond* b, const Atom* i, const Atom* j)
+void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
 {
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
-	if (i->cell()->mimRequired(j->cell())) vecji = box_->minimumVector(i, j);
-	else vecji = j->r() - i->r();
+	if (i->cell()->mimRequired(j->cell()))
+		vecji = box_->minimumVector(i, j);
+	else
+		vecji = j->r() - i->r();
 
 	// Get distance and normalise vector ready for force calculation
 	double distance = vecji.magAndNormalise();
 
 #ifdef CHECKS
-	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+	if (distance > 5.0)
+		printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
 
 	// Determine final forces
@@ -439,7 +474,7 @@ void ForceKernel::forces(const SpeciesBond* b, const Atom* i, const Atom* j)
 }
 
 // Calculate Bond forces for specified Atom only
-void ForceKernel::forces(const Atom* onlyThis, const SpeciesBond* b, const Atom* i, const Atom* j)
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom *i, const Atom *j)
 {
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis))
@@ -451,14 +486,17 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesBond* b, const Atom*
 
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
-	if (i->cell()->mimRequired(j->cell())) vecji = box_->minimumVector(i, j);
-	else vecji = j->r() - i->r();
+	if (i->cell()->mimRequired(j->cell()))
+		vecji = box_->minimumVector(i, j);
+	else
+		vecji = j->r() - i->r();
 
 	// Get distance and normalise vector ready for force calculation
 	double distance = vecji.magAndNormalise();
 
 #ifdef CHECKS
-	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+	if (distance > 5.0)
+		printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
 
 	// Determine final forces
@@ -481,15 +519,19 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesBond* b, const Atom*
 }
 
 // Calculate Angle forces
-void ForceKernel::forces(const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
+void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
 {
 	Vec3<double> vecji, vecjk;
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
-	else vecji = i->r() - j->r();
-	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
-	else vecjk = k->r() - j->r();
+	if (j->cell()->mimRequired(i->cell()))
+		vecji = box_->minimumVector(j, i);
+	else
+		vecji = i->r() - j->r();
+	if (j->cell()->mimRequired(k->cell()))
+		vecjk = box_->minimumVector(j, k);
+	else
+		vecjk = k->r() - j->r();
 
 	// Calculate angle
 	const double magji = vecji.magAndNormalise();
@@ -518,7 +560,7 @@ void ForceKernel::forces(const SpeciesAngle* a, const Atom* i, const Atom* j, co
 }
 
 // Calculate Angle forces for specified Atom only
-void ForceKernel::forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom* i, const Atom* j, const Atom* k)
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
 {
 	Vec3<double> vecji, vecjk;
 
@@ -531,10 +573,14 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom
 #endif
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
-	else vecji = i->r() - j->r();
-	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
-	else vecjk = k->r() - j->r();
+	if (j->cell()->mimRequired(i->cell()))
+		vecji = box_->minimumVector(j, i);
+	else
+		vecji = i->r() - j->r();
+	if (j->cell()->mimRequired(k->cell()))
+		vecjk = box_->minimumVector(j, k);
+	else
+		vecjk = k->r() - j->r();
 
 	// Calculate angle
 	const double magji = vecji.magAndNormalise();
@@ -570,16 +616,22 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesAngle* a, const Atom
 }
 
 // Return Torsion force
-void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
+void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
-	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
-	else vecji = i->r() - j->r();
-	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
-	else vecjk = k->r() - j->r();
-	if (k->cell()->mimRequired(l->cell())) veckl = box_->minimumVector(k, l);
-	else veckl = l->r() - k->r();
+	if (j->cell()->mimRequired(i->cell()))
+		vecji = box_->minimumVector(j, i);
+	else
+		vecji = i->r() - j->r();
+	if (j->cell()->mimRequired(k->cell()))
+		vecjk = box_->minimumVector(j, k);
+	else
+		vecjk = k->r() - j->r();
+	if (k->cell()->mimRequired(l->cell()))
+		veckl = box_->minimumVector(k, l);
+	else
+		veckl = l->r() - k->r();
 
 	// Calculate cross products and torsion angle formed (in radians)
 	Vec3<double> xpj = vecji * vecjk;
@@ -587,23 +639,25 @@ void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, 
 	const double magxpj = xpj.magAndNormalise();
 	const double magxpk = xpk.magAndNormalise();
 	double dp = xpj.dp(xpk);
-	if (dp < -1.0) dp = -1.0;
-	else if (dp > 1.0) dp = 1.0;
+	if (dp < -1.0)
+		dp = -1.0;
+	else if (dp > 1.0)
+		dp = 1.0;
 	const double phi = acos(dp);
-	const double du_dphi = t->force(phi*DEGRAD);
+	const double du_dphi = t->force(phi * DEGRAD);
 
 	/*
 	 * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
 	 * E.g.
-	 *	d (rij x rkj) 
+	 *	d (rij x rkj)
 	 *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
-	 *	d rkj[n]  
+	 *	d rkj[n]
 	 *
 	 * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
 	 * So,
-	 *	d (rij x rkj) 
+	 *	d (rij x rkj)
 	 *	------------- = rij[2] * U[1] - rij[1] * U[2]
-	 *	d rkj[0]  
+	 *	d rkj[0]
 	 *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
 	 *
 	 *			= (0,rij[z],0) - (0,0,rij[y])
@@ -623,7 +677,7 @@ void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, 
 	const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
 	const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
-// 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
+	// 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
 	// Calculate forces on atom i
 	int index = i->arrayIndex();
 	fx_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
@@ -631,14 +685,14 @@ void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, 
 	fz_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
 
 	index = j->arrayIndex();
-	fx_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)) );
-	fy_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)) );
-	fz_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)) );
+	fx_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
+	fy_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
+	fz_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
 
 	index = k->arrayIndex();
-	fx_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)) );
-	fy_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)) );
-	fz_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)) );
+	fx_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
+	fy_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
+	fz_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
 
 	index = l->arrayIndex();
 	fx_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
@@ -647,16 +701,22 @@ void ForceKernel::forces(const SpeciesTorsion* t, const Atom* i, const Atom* j, 
 }
 
 // Calculate Torsion forces for specified Atom only
-void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const Atom* i, const Atom* j, const Atom* k, const Atom* l)
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
-	if (j->cell()->mimRequired(i->cell())) vecji = box_->minimumVector(j, i);
-	else vecji = i->r() - j->r();
-	if (j->cell()->mimRequired(k->cell())) vecjk = box_->minimumVector(j, k);
-	else vecjk = k->r() - j->r();
-	if (k->cell()->mimRequired(l->cell())) veckl = box_->minimumVector(k, l);
-	else veckl = l->r() - k->r();
+	if (j->cell()->mimRequired(i->cell()))
+		vecji = box_->minimumVector(j, i);
+	else
+		vecji = i->r() - j->r();
+	if (j->cell()->mimRequired(k->cell()))
+		vecjk = box_->minimumVector(j, k);
+	else
+		vecjk = k->r() - j->r();
+	if (k->cell()->mimRequired(l->cell()))
+		veckl = box_->minimumVector(k, l);
+	else
+		veckl = l->r() - k->r();
 
 	// Calculate cross products and torsion angle formed (in radians)
 	Vec3<double> xpj = vecji * vecjk;
@@ -664,23 +724,25 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const At
 	const double magxpj = xpj.magAndNormalise();
 	const double magxpk = xpk.magAndNormalise();
 	double dp = xpj.dp(xpk);
-	if (dp < -1.0) dp = -1.0;
-	else if (dp > 1.0) dp = 1.0;
+	if (dp < -1.0)
+		dp = -1.0;
+	else if (dp > 1.0)
+		dp = 1.0;
 	const double phi = acos(dp);
-	const double du_dphi = t->force(phi*DEGRAD);
+	const double du_dphi = t->force(phi * DEGRAD);
 
 	/*
 	 * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
 	 * E.g.
-	 *	d (rij x rkj) 
+	 *	d (rij x rkj)
 	 *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
-	 *	d rkj[n]  
+	 *	d rkj[n]
 	 *
 	 * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
 	 * So,
-	 *	d (rij x rkj) 
+	 *	d (rij x rkj)
 	 *	------------- = rij[2] * U[1] - rij[1] * U[2]
-	 *	d rkj[0]  
+	 *	d rkj[0]
 	 *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
 	 *
 	 *			= (0,rij[z],0) - (0,0,rij[y])
@@ -700,7 +762,7 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const At
 	const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
 	const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
-// 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
+	// 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
 	// Calculate forces for specified atom
 	int index = onlyThis->arrayIndex();
 	if (onlyThis == i)
@@ -711,15 +773,15 @@ void ForceKernel::forces(const Atom* onlyThis, const SpeciesTorsion* t, const At
 	}
 	else if (onlyThis == j)
 	{
-		fx_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)) );
-		fy_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)) );
-		fz_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)) );
+		fx_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
+		fy_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
+		fz_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
 	}
 	else if (onlyThis == k)
 	{
-		fx_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)) );
-		fy_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)) );
-		fz_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)) );
+		fx_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
+		fy_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
+		fz_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
 	}
 	else
 	{

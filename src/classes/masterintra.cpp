@@ -20,52 +20,40 @@
 */
 
 #include "classes/masterintra.h"
-#include "classes/atom.h"
 #include "base/messenger.h"
+#include "classes/atom.h"
 
 // Constructor
 MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
 {
 	parent_ = NULL;
 	masterParameters_ = NULL;
-	for (int n=0; n<MAXINTRAPARAMS; ++n) parameters_[n] = 0.0;
+	for (int n = 0; n < MAXINTRAPARAMS; ++n)
+		parameters_[n] = 0.0;
 }
 
 // Destructor
-MasterIntra::~MasterIntra()
-{
-}
+MasterIntra::~MasterIntra() {}
 
 /*
  * Basic Data
  */
 
 // Set name for interaction (if relevant)
-void MasterIntra::setName(const char* name)
-{
-	name_ = name;
-}
+void MasterIntra::setName(const char *name) { name_ = name; }
 
 // Return name for interaction
-const char* MasterIntra::name() const
-{
-	return name_.get();
-}
+const char *MasterIntra::name() const { return name_.get(); }
 
 // Set type of interaction
-void MasterIntra::setType(SpeciesIntra::InteractionType type)
-{
-	type_ = type;
-}
+void MasterIntra::setType(SpeciesIntra::InteractionType type) { type_ = type; }
 
 /*
  * Interaction Parameters
  */
 
 // Set up any necessary parameters
-void MasterIntra::setUp()
-{
-}
+void MasterIntra::setUp() {}
 
 // Calculate and return fundamental frequency for the interaction
 double MasterIntra::fundamentalFrequency(double reducedMass) const
@@ -75,7 +63,4 @@ double MasterIntra::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType MasterIntra::type() const
-{
-	return type_;
-}
+SpeciesIntra::InteractionType MasterIntra::type() const { return type_; }

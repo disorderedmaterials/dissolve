@@ -48,30 +48,29 @@ ExpressionValue::ExpressionValue(double value)
 }
 
 // Destructor
-ExpressionValue::~ExpressionValue()
-{
-}
+ExpressionValue::~ExpressionValue() {}
 
 // Copy constructor
-ExpressionValue::ExpressionValue(const ExpressionValue& source)
-{
-	(*this) = source;
-}
+ExpressionValue::ExpressionValue(const ExpressionValue &source) { (*this) = source; }
 
 // Assignment operator
-void ExpressionValue::operator=(const ExpressionValue& source)
+void ExpressionValue::operator=(const ExpressionValue &source)
 {
 	if (typeFixed_)
 	{
 		if (type_ == IntegerType)
 		{
-			if (source.type_ == IntegerType) valueI_ = source.valueI_;
-			else valueI_ = int(source.valueD_);
+			if (source.type_ == IntegerType)
+				valueI_ = source.valueI_;
+			else
+				valueI_ = int(source.valueD_);
 		}
 		else
 		{
-			if (source.type_ == IntegerType) valueD_ = source.valueI_;
-			else valueD_ = source.valueD_;
+			if (source.type_ == IntegerType)
+				valueD_ = source.valueI_;
+			else
+				valueD_ = source.valueD_;
 		}
 	}
 	else
@@ -88,17 +87,15 @@ void ExpressionValue::operator=(const ExpressionValue& source)
  */
 
 // Return the current result type
-ExpressionValue::ValueType ExpressionValue::type() const
-{
-	return type_;
-}
+ExpressionValue::ValueType ExpressionValue::type() const { return type_; }
 
 // Assignment operator (integer)
 void ExpressionValue::operator=(int i)
 {
 	valueI_ = i;
 	valueD_ = i;
-	if (!typeFixed_) type_ = IntegerType;
+	if (!typeFixed_)
+		type_ = IntegerType;
 }
 
 // Assignment operator (double)
@@ -106,68 +103,47 @@ void ExpressionValue::operator=(double d)
 {
 	valueI_ = int(d);
 	valueD_ = d;
-	if (!typeFixed_) type_ = DoubleType;
+	if (!typeFixed_)
+		type_ = DoubleType;
 }
 
 // Return result as integer (regardless of current type)
-int ExpressionValue::asInteger() const
-{
-	return (type_ == IntegerType ? valueI_ : int(valueD_));
-}
+int ExpressionValue::asInteger() const { return (type_ == IntegerType ? valueI_ : int(valueD_)); }
 
 // Return result as double (regardless of current type)
-double ExpressionValue::asDouble() const
-{
-	return (type_ == IntegerType ? double(valueI_) : valueD_);
-}
+double ExpressionValue::asDouble() const { return (type_ == IntegerType ? double(valueI_) : valueD_); }
 
 // Return result as a string
-const char* ExpressionValue::asString() const
+const char *ExpressionValue::asString() const
 {
 	static CharString result;
 
-	if (type_ == IntegerType) result.sprintf("%i",valueI_);
-	else result.sprintf("%12.6e", valueD_);
+	if (type_ == IntegerType)
+		result.sprintf("%i", valueI_);
+	else
+		result.sprintf("%12.6e", valueD_);
 
 	return result.get();
 }
 
 // Return pointer to integer value
-int* ExpressionValue::integerPointer()
-{
-	return &valueI_;
-}
+int *ExpressionValue::integerPointer() { return &valueI_; }
 
 // Return pointer to double value
-double* ExpressionValue::doublePointer()
-{
-	return &valueD_;
-}
+double *ExpressionValue::doublePointer() { return &valueD_; }
 
 /*
  * Tests
  */
 
 // Return whether the contained type is an integer
-bool ExpressionValue::isInteger() const
-{
-	return (type_ == IntegerType);
-}
+bool ExpressionValue::isInteger() const { return (type_ == IntegerType); }
 
 // Return whether the contained type is an double
-bool ExpressionValue::isDouble() const
-{
-	return (type_ == DoubleType);
-}
+bool ExpressionValue::isDouble() const { return (type_ == DoubleType); }
 
 // Return the supplied ExpressionValues both contain integer types
-bool ExpressionValue::bothIntegers(const ExpressionValue& a, const ExpressionValue& b)
-{
-	return ((a.type_ == IntegerType) && (b.type_ == IntegerType));
-}
+bool ExpressionValue::bothIntegers(const ExpressionValue &a, const ExpressionValue &b) { return ((a.type_ == IntegerType) && (b.type_ == IntegerType)); }
 
 // Return the supplied ExpressionValues both contain double types
-bool ExpressionValue::bothDoubles(const ExpressionValue& a, const ExpressionValue& b)
-{
-	return ((a.type_ == DoubleType) && (b.type_ == DoubleType));
-}
+bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValue &b) { return ((a.type_ == DoubleType) && (b.type_ == DoubleType)); }

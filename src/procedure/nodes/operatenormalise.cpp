@@ -20,11 +20,11 @@
 */
 
 #include "procedure/nodes/operatenormalise.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "keywords/types.h"
 #include "math/data1d.h"
 #include "math/integrator.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 
 // Constructors
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value) : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
@@ -39,16 +39,14 @@ OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value) : Operat
 }
 
 // Destructor
-OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode()
-{
-}
+OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */
 
 // Operate on Data1D target
-bool OperateNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
+bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the value
 	const double value = keywords_.asDouble("Value");
@@ -63,7 +61,7 @@ bool OperateNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configu
 }
 
 // Operate on Data2D target
-bool OperateNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
+bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the value
 	const double value = keywords_.asDouble("Value");
@@ -78,7 +76,7 @@ bool OperateNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configu
 }
 
 // Operate on Data3D target
-bool OperateNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
+bool OperateNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the value
 	const double value = keywords_.asDouble("Value");

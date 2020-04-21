@@ -20,8 +20,8 @@
 */
 
 #include "gui/render/vertexchunk.h"
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
 // Constructor
 VertexChunk::VertexChunk()
@@ -29,7 +29,7 @@ VertexChunk::VertexChunk()
 	// Public variables
 	next = NULL;
 	prev = NULL;
-	
+
 	// Private variables
 	vertexData_ = NULL;
 	centroids_ = NULL;
@@ -44,24 +44,26 @@ VertexChunk::VertexChunk()
 // Destructor
 VertexChunk::~VertexChunk()
 {
-	if (vertexData_ != NULL) delete[] vertexData_;
-	if (centroids_ != NULL) delete[] centroids_;
+	if (vertexData_ != NULL)
+		delete[] vertexData_;
+	if (centroids_ != NULL)
+		delete[] centroids_;
 }
 
 // Update (or finalise) centroid for current primitive type
 void VertexChunk::updateCentroid(GLfloat x, GLfloat y, GLfloat z, bool finalise)
 {
 	// Accumulate centroid
-	int coff = nDefinedTypes_*3;
+	int coff = nDefinedTypes_ * 3;
 	centroids_[coff] += x;
-	centroids_[coff+1] += y;
-	centroids_[coff+2] += z;
+	centroids_[coff + 1] += y;
+	centroids_[coff + 2] += z;
 	// Finalise centroid?
 	if (finalise)
 	{
 		centroids_[coff] /= verticesPerType_;
-		centroids_[coff+1] /= verticesPerType_;
-		centroids_[coff+2] /= verticesPerType_;	
+		centroids_[coff + 1] /= verticesPerType_;
+		centroids_[coff + 2] /= verticesPerType_;
 	}
 }
 
@@ -70,23 +72,29 @@ void VertexChunk::initialise(GLenum type, bool colourData)
 {
 	type_ = type;
 	dataPerVertex_ = (colourData ? 10 : 6);
-	if (type_ == GL_TRIANGLES) verticesPerType_ = 3;
-	else if (type_ == GL_LINES) verticesPerType_ = 2;
-	else if (type_ == GL_POINTS) verticesPerType_ = 1;
-	else printf("Warning - Invalid GLenum type given to VertexChunk::initialise (%i)\n", type_);
-	maxVertices_ = VERTEXCHUNKSIZE*verticesPerType_;
+	if (type_ == GL_TRIANGLES)
+		verticesPerType_ = 3;
+	else if (type_ == GL_LINES)
+		verticesPerType_ = 2;
+	else if (type_ == GL_POINTS)
+		verticesPerType_ = 1;
+	else
+		printf("Warning - Invalid GLenum type given to VertexChunk::initialise (%i)\n", type_);
+	maxVertices_ = VERTEXCHUNKSIZE * verticesPerType_;
 	nDefinedVertices_ = 0;
 	nDefinedTypes_ = 0;
-	vertexData_ = new GLfloat[maxVertices_*dataPerVertex_];
-	centroids_ = new GLfloat[VERTEXCHUNKSIZE*3];
-	for (int n=0; n<VERTEXCHUNKSIZE*3; ++n) centroids_[n] = 0.0f;
+	vertexData_ = new GLfloat[maxVertices_ * dataPerVertex_];
+	centroids_ = new GLfloat[VERTEXCHUNKSIZE * 3];
+	for (int n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
+		centroids_[n] = 0.0f;
 }
 
 // Define next vertex and normal
 void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, bool calcCentroid)
 {
-	if (nDefinedVertices_ == maxVertices_) printf("Internal Error: Vertex limit for VertexChunk reached.\n");
-	int index = nDefinedVertices_*dataPerVertex_;
+	if (nDefinedVertices_ == maxVertices_)
+		printf("Internal Error: Vertex limit for VertexChunk reached.\n");
+	int index = nDefinedVertices_ * dataPerVertex_;
 	if (dataPerVertex_ == 10)
 	{
 		printf("Internal Error: No colour specified in vertex creation, but the primitive requires one.\n");
@@ -103,18 +111,22 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 	// Increase vertex counter
 	++nDefinedVertices_;
 	// Update centroid
-	bool finalise = (nDefinedVertices_%verticesPerType_) == 0;
-	if (calcCentroid) updateCentroid(x, y, z, finalise);
-	if (finalise) ++nDefinedTypes_;
+	bool finalise = (nDefinedVertices_ % verticesPerType_) == 0;
+	if (calcCentroid)
+		updateCentroid(x, y, z, finalise);
+	if (finalise)
+		++nDefinedTypes_;
 }
 
 // Define next vertex and normal with specific colour (as array)
-void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat* colour, bool calcCentroid)
+void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat *colour, bool calcCentroid)
 {
-	if (nDefinedVertices_ == maxVertices_) printf("Internal Error: Vertex limit for VertexChunk reached.\n");
-	int index = nDefinedVertices_*dataPerVertex_;
+	if (nDefinedVertices_ == maxVertices_)
+		printf("Internal Error: Vertex limit for VertexChunk reached.\n");
+	int index = nDefinedVertices_ * dataPerVertex_;
 	// Store colour
-	if (dataPerVertex_ != 10) printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");
+	if (dataPerVertex_ != 10)
+		printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");
 	else
 	{
 		vertexData_[index++] = colour[0];
@@ -133,18 +145,22 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 	// Increase vertex counter
 	++nDefinedVertices_;
 	// Update centroid
-	bool finalise = (nDefinedVertices_%verticesPerType_) == 0;
-	if (calcCentroid) updateCentroid(x, y, z, finalise);
-	if (finalise) ++nDefinedTypes_;
+	bool finalise = (nDefinedVertices_ % verticesPerType_) == 0;
+	if (calcCentroid)
+		updateCentroid(x, y, z, finalise);
+	if (finalise)
+		++nDefinedTypes_;
 }
 
 // Define next vertex and normal with specific colour
 void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a, bool calcCentroid)
 {
-	if (nDefinedVertices_ == maxVertices_) printf("Internal Error: Vertex limit for VertexChunk reached.\n");
-	int index = nDefinedVertices_*dataPerVertex_;
+	if (nDefinedVertices_ == maxVertices_)
+		printf("Internal Error: Vertex limit for VertexChunk reached.\n");
+	int index = nDefinedVertices_ * dataPerVertex_;
 	// Store colour
-	if (dataPerVertex_ != 10) printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");
+	if (dataPerVertex_ != 10)
+		printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");
 	else
 	{
 		vertexData_[index++] = r;
@@ -163,55 +179,43 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 	// Increase vertex counter
 	++nDefinedVertices_;
 	// Update centroid
-	bool finalise = (nDefinedVertices_%verticesPerType_) == 0;
-	if (calcCentroid) updateCentroid(x, y, z, finalise);
-	if (finalise) ++nDefinedTypes_;
+	bool finalise = (nDefinedVertices_ % verticesPerType_) == 0;
+	if (calcCentroid)
+		updateCentroid(x, y, z, finalise);
+	if (finalise)
+		++nDefinedTypes_;
 }
 
 // Return whether current array is full
-bool VertexChunk::full()
-{
-	return (nDefinedVertices_ == maxVertices_);
-}
+bool VertexChunk::full() { return (nDefinedVertices_ == maxVertices_); }
 
 // Forget all vertex data currently stored in array (but retain array)
 void VertexChunk::forgetAll()
 {
 	nDefinedTypes_ = 0;
 	nDefinedVertices_ = 0;
-	for (int n=0; n<VERTEXCHUNKSIZE*3; ++n) centroids_[n] = 0.0f;
+	for (int n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
+		centroids_[n] = 0.0f;
 }
 
 // Return number of defined primitive (GL) types
-int VertexChunk::nDefinedTypes()
-{
-	return nDefinedTypes_;
-}
+int VertexChunk::nDefinedTypes() { return nDefinedTypes_; }
 
 // Return vertex array
-GLfloat *VertexChunk::vertexData()
-{
-	return vertexData_;
-}
+GLfloat *VertexChunk::vertexData() { return vertexData_; }
 
 // Return centroid array
-GLfloat *VertexChunk::centroids()
-{
-	return centroids_;
-}
+GLfloat *VertexChunk::centroids() { return centroids_; }
 
 // Return number of defined vertices in chunk
-int VertexChunk::nDefinedVertices()
-{
-	return nDefinedVertices_;
-}
+int VertexChunk::nDefinedVertices() { return nDefinedVertices_; }
 
 // Send to OpenGL (i.e. render)
 void VertexChunk::sendToGL()
 {
-	if (nDefinedVertices_ == 0) return;
+	if (nDefinedVertices_ == 0)
+		return;
 	// Does the vertex data contain colour-per-vertex information?
 	glInterleavedArrays(dataPerVertex_ == 10 ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, vertexData_);
 	glDrawArrays(type_, 0, nDefinedVertices_);
 }
-

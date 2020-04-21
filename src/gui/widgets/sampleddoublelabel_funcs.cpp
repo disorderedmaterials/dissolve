@@ -23,15 +23,10 @@
 #include "math/sampleddouble.h"
 
 // Constructor
-SampledDoubleLabel::SampledDoubleLabel(QWidget* parent) : QLabel(parent)
-{
-	ui_.setupUi(this);
-}
+SampledDoubleLabel::SampledDoubleLabel(QWidget *parent) : QLabel(parent) { ui_.setupUi(this); }
 
 // Destructor
-SampledDoubleLabel::~SampledDoubleLabel()
-{
-}
+SampledDoubleLabel::~SampledDoubleLabel() {}
 
 /*
  * UI
@@ -45,13 +40,13 @@ void SampledDoubleLabel::setLabelFonts(int basePointSize)
 	newFont.setPointSize(basePointSize);
 	ui_.ValueLabel->setFont(newFont);
 
-	newFont.setPointSizeF(0.8*basePointSize);
+	newFont.setPointSizeF(0.8 * basePointSize);
 	ui_.SeparatorLabel->setFont(newFont);
 	ui_.StDevLabel->setFont(newFont);
 }
 
 // Set label values
-void SampledDoubleLabel::setText(const SampledDouble& sampledDouble)
+void SampledDoubleLabel::setText(const SampledDouble &sampledDouble)
 {
 	ui_.ValueLabel->setText(QString::number(sampledDouble.mean()));
 	ui_.StDevLabel->setText(QString::number(sampledDouble.stDev()));

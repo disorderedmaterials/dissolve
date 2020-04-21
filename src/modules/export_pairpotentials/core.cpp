@@ -33,16 +33,11 @@ ExportPairPotentialsModule::ExportPairPotentialsModule() : Module()
 }
 
 // Destructor
-ExportPairPotentialsModule::~ExportPairPotentialsModule()
-{
-}
+ExportPairPotentialsModule::~ExportPairPotentialsModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* ExportPairPotentialsModule::createInstance() const
-{
-	return new ExportPairPotentialsModule;
-}
+Module *ExportPairPotentialsModule::createInstance() const { return new ExportPairPotentialsModule; }

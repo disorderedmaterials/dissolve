@@ -19,52 +19,41 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "data/ff.h"
 #include "gui/selectforcefielddialog.h"
 #include "gui/selectforcefieldwidget.h"
-#include "data/ff.h"
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
 // Constructor
-SelectForcefieldDialog::SelectForcefieldDialog(QWidget* parent, const List<Forcefield>& forcefields)
-{
-	ui_.setupUi(this);
-}
+SelectForcefieldDialog::SelectForcefieldDialog(QWidget *parent, const List<Forcefield> &forcefields) { ui_.setupUi(this); }
 
 // Destructor
-SelectForcefieldDialog::~SelectForcefieldDialog()
-{
-}
+SelectForcefieldDialog::~SelectForcefieldDialog() {}
 
-void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid)
-{
-	ui_.SelectButton->setEnabled(isValid);
-}
+void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }
 
 void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldDoubleClicked()
 {
-	if (!ui_.ForcefieldWidget->currentForcefield()) return;
+	if (!ui_.ForcefieldWidget->currentForcefield())
+		return;
 
 	accept();
 }
 
-void SelectForcefieldDialog::on_SelectButton_clicked(bool checked)
-{
-	accept();
-}
+void SelectForcefieldDialog::on_SelectButton_clicked(bool checked) { accept(); }
 
-void SelectForcefieldDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void SelectForcefieldDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning the selected Forcefield
-Forcefield* SelectForcefieldDialog::selectForcefield(Forcefield* currentFF)
+Forcefield *SelectForcefieldDialog::selectForcefield(Forcefield *currentFF)
 {
 	ui_.ForcefieldWidget->setCurrentForcefield(currentFF);
 
 	show();
 
-	if (exec() == QDialog::Accepted) return ui_.ForcefieldWidget->currentForcefield();
-	else return NULL;
+	if (exec() == QDialog::Accepted)
+		return ui_.ForcefieldWidget->currentForcefield();
+	else
+		return NULL;
 }

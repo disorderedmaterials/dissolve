@@ -22,25 +22,13 @@
 #include "modules/sq/sq.h"
 
 // Return type of module
-const char* SQModule::type() const
-{
-	return "SQ";
-}
+const char *SQModule::type() const { return "SQ"; }
 
 // Return category for module
-const char* SQModule::category() const
-{
-	return "Correlation Functions";
-}
+const char *SQModule::category() const { return "Correlation Functions"; }
 
 // Return brief description of module
-const char* SQModule::brief() const
-{
-	return "Transform g(r) into unweighted S(Q)";
-}
+const char *SQModule::brief() const { return "Transform g(r) into unweighted S(Q)"; }
 
 // Return the number of Configuration targets this Module requires
-int SQModule::nRequiredTargets() const
-{
-	return Module::OneOrMoreTargets;
-}
+int SQModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

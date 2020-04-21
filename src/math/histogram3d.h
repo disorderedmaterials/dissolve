@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_HISTOGRAM3D_H
 #define DISSOLVE_HISTOGRAM3D_H
 
+#include "genericitems/base.h"
 #include "math/data3d.h"
 #include "math/sampleddouble.h"
-#include "genericitems/base.h"
 #include "templates/array3d.h"
 #include "templates/objectstore.h"
 
@@ -34,21 +34,20 @@ class ProcessPool;
 // One-Dimensional Histogram
 class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Histogram3D();
 	// Destructor
 	~Histogram3D();
 	// Copy Constructor
-	Histogram3D(const Histogram3D& source);
+	Histogram3D(const Histogram3D &source);
 	// Clear data
 	void clear();
-	
 
 	/*
 	 * Histogram Data
 	 */
-	private:
+      private:
 	// Minimum value for x data (hard left-edge of first bin)
 	double xMinimum_;
 	// Maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -90,11 +89,11 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	// Accumulated data
 	Data3D accumulatedData_;
 
-	private:
+      private:
 	// Update accumulated data
 	void updateAccumulatedData();
 
-	public:
+      public:
 	// Initialise with specified bin range
 	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth, double zMinimum, double zMaximum, double zBinWidth);
 	// Zero histogram bins
@@ -132,49 +131,46 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values
-	const Array<double>& xBinCentres() const;
+	const Array<double> &xBinCentres() const;
 	// Return Array of y centre-bin values
-	const Array<double>& yBinCentres() const;
+	const Array<double> &yBinCentres() const;
 	// Return Array of z centre-bin values
-	const Array<double>& zBinCentres() const;
+	const Array<double> &zBinCentres() const;
 	// Return histogram data
-	Array3D<long int>& bins();
+	Array3D<long int> &bins();
 	// Add source histogram data into local array
-	void add(Histogram3D& other, int factor = 1);
+	void add(Histogram3D &other, int factor = 1);
 	// Return accumulated (averaged) data
-	const Data3D& accumulatedData() const;
-
+	const Data3D &accumulatedData() const;
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment Operator
-	void operator=(const Histogram3D& source);
-
+	void operator=(const Histogram3D &source);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Sum histogram data onto all processes
-	bool allSum(ProcessPool& procPool);
+	bool allSum(ProcessPool &procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

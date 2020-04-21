@@ -20,22 +20,17 @@
 */
 
 #include "classes/speciesbond.h"
-#include "classes/speciesatom.h"
-#include "data/atomicmass.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
+#include "data/atomicmass.h"
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>()
-{
-	clear();
-}
+SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>() { clear(); }
 
 // Destructor
-SpeciesBond::~SpeciesBond()
-{
-}
+SpeciesBond::~SpeciesBond() {}
 
 /*
  * DynamicArrayObject Virtuals
@@ -56,35 +51,30 @@ void SpeciesBond::clear()
  */
 
 // Set SpeciesAtoms involved in SpeciesBond
-void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
+void SpeciesBond::setAtoms(SpeciesAtom *i, SpeciesAtom *j)
 {
 	i_ = i;
 	j_ = j;
 #ifdef CHECKS
-	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
-	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
+	if (i_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
+	if (j_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
 #endif
-	if (i_) i_->addBond(this);
-	if (j_) j_->addBond(this);
+	if (i_)
+		i_->addBond(this);
+	if (j_)
+		j_->addBond(this);
 }
 
 // Return first SpeciesAtom involved in interaction
-SpeciesAtom* SpeciesBond::i() const
-{
-	return i_;
-}
+SpeciesAtom *SpeciesBond::i() const { return i_; }
 
 // Return second SpeciesAtom involved in SpeciesBond
-SpeciesAtom* SpeciesBond::j() const
-{
-	return j_;
-}
+SpeciesAtom *SpeciesBond::j() const { return j_; }
 
 // Return the 'other' SpeciesAtom in the SpeciesBond
-SpeciesAtom* SpeciesBond::partner(const SpeciesAtom* i) const
-{
-	return (i == i_ ? j_ : i_);
-}
+SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ ? j_ : i_); }
 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesBond::indexI() const
@@ -115,18 +105,22 @@ int SpeciesBond::indexJ() const
 // Return index (in parent Species) of nth SpeciesAtom in interaction
 int SpeciesBond::index(int n) const
 {
-	if (n == 0) return indexI();
-	else if (n == 1) return indexJ();
+	if (n == 0)
+		return indexI();
+	else if (n == 1)
+		return indexJ();
 
 	Messenger::error("SpeciesAtom index %i is out of range in SpeciesBond::index(int). Returning 0...\n");
 	return 0;
 }
 
 // Return whether SpeciesAtoms in Angle match those specified
-bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
+bool SpeciesBond::matches(SpeciesAtom *i, SpeciesAtom *j) const
 {
-	if ((i_ == i) && (j_ == j)) return true;
-	if ((i_ == j) && (j_ == i)) return true;
+	if ((i_ == i) && (j_ == j))
+		return true;
+	if ((i_ == j) && (j_ == i))
+		return true;
 	return false;
 }
 
@@ -148,45 +142,32 @@ bool SpeciesBond::isSelected() const
  */
 
 // Bond type keywords
-const char* BondTypeKeywords[] = { "Single", "Double", "Triple", "Quadruple", "Aromatic" };
-double BondTypeOrders[] = { 1.0, 2.0, 3.0, 4.0, 1.5 };
+const char *BondTypeKeywords[] = {"Single", "Double", "Triple", "Quadruple", "Aromatic"};
+double BondTypeOrders[] = {1.0, 2.0, 3.0, 4.0, 1.5};
 
 // Convert bond type string to functional form
-SpeciesBond::BondType SpeciesBond::bondType(const char* s)
+SpeciesBond::BondType SpeciesBond::bondType(const char *s)
 {
-	for (int n=0; n<SpeciesBond::nBondTypes; ++n) if (DissolveSys::sameString(s, BondTypeKeywords[n])) return (SpeciesBond::BondType) n;
+	for (int n = 0; n < SpeciesBond::nBondTypes; ++n)
+		if (DissolveSys::sameString(s, BondTypeKeywords[n]))
+			return (SpeciesBond::BondType)n;
 	return SpeciesBond::nBondTypes;
 }
 
 // Return bond type functional form text
-const char* SpeciesBond::bondType(SpeciesBond::BondType bt)
-{
-	return BondTypeKeywords[bt];
-}
+const char *SpeciesBond::bondType(SpeciesBond::BondType bt) { return BondTypeKeywords[bt]; }
 
 // Return bond order for specified bond type
-double SpeciesBond::bondOrder(SpeciesBond::BondType bt)
-{
-	return BondTypeOrders[bt];
-}
+double SpeciesBond::bondOrder(SpeciesBond::BondType bt) { return BondTypeOrders[bt]; }
 
 // Set bond type
-void SpeciesBond::setBondType(BondType type)
-{
-	bondType_ = type;
-}
+void SpeciesBond::setBondType(BondType type) { bondType_ = type; }
 
 // Return bond type
-SpeciesBond::BondType SpeciesBond::bondType() const
-{
-	return bondType_;
-}
+SpeciesBond::BondType SpeciesBond::bondType() const { return bondType_; }
 
 // Return bond order for current bond type
-double SpeciesBond::bondOrder() const
-{
-	return SpeciesBond::bondOrder(bondType_);
-}
+double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_); }
 
 /*
  * Interaction Parameters
@@ -195,10 +176,8 @@ double SpeciesBond::bondOrder() const
 // Return enum options for BondFunction
 EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-	static EnumOptionsList BondFunctionOptions = EnumOptionsList() <<
-		EnumOption(SpeciesBond::NoForm, 		"None",		0,0) <<
-		EnumOption(SpeciesBond::HarmonicForm, 		"Harmonic",	2,2) <<
-		EnumOption(SpeciesBond::EPSRForm, 		"EPSR",		2,2);
+	static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None", 0, 0) << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2, 2)
+								       << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2, 2);
 
 	static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
@@ -209,7 +188,7 @@ EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 void SpeciesBond::setUp()
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
 	/*
 	 * Depending on the form, we may have other dependent parameters to set up
@@ -229,11 +208,13 @@ void SpeciesBond::setUp()
 double SpeciesBond::fundamentalFrequency(double reducedMass) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
 	double k = 0.0;
-	if (form() == SpeciesBond::HarmonicForm) k = params[0];
-	else if (form() == SpeciesBond::EPSRForm) k = params[0];
+	if (form() == SpeciesBond::HarmonicForm)
+		k = params[0];
+	else if (form() == SpeciesBond::EPSRForm)
+		k = params[0];
 	else
 	{
 		Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't determine fundamental frequency.\n");
@@ -253,18 +234,16 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesBond::type() const
-{
-	return SpeciesIntra::BondInteraction;
-}
+SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::BondInteraction; }
 
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
-	if (form() == SpeciesBond::NoForm) return 0.0;
+	if (form() == SpeciesBond::NoForm)
+		return 0.0;
 	else if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
@@ -273,20 +252,20 @@ double SpeciesBond::energy(double distance) const
 		 * 1 : equilibrium distance
 		 */
 		double delta = distance - params[1];
-		return 0.5*params[0]*delta*delta;
+		return 0.5 * params[0] * delta * delta;
 	}
 	else if (form() == SpeciesBond::EPSRForm)
 	{
 		/*
 		 * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
-		 * 
+		 *
 		 * Parameters:
 		 * 0 : general force constant C / 2.0
 		 * 1 : equilibrium distance
 		 * 2 : omega squared (LOCAL parameter)
 		 */
 		double delta = distance - params[1];
-		return params[0] * (delta*delta) / parameters_[2];
+		return params[0] * (delta * delta) / parameters_[2];
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate energy.\n");
@@ -297,9 +276,10 @@ double SpeciesBond::energy(double distance) const
 double SpeciesBond::force(double distance) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
-	if (form() == SpeciesBond::NoForm) return 0.0;
+	if (form() == SpeciesBond::NoForm)
+		return 0.0;
 	else if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
@@ -307,13 +287,13 @@ double SpeciesBond::force(double distance) const
 		 * 0 : force constant
 		 * 1 : equilibrium distance
 		 */
-		return -params[0]*(distance-params[1]);
+		return -params[0] * (distance - params[1]);
 	}
 	else if (form() == SpeciesBond::EPSRForm)
 	{
 		/*
 		 * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
-		 * 
+		 *
 		 * Parameters:
 		 * 0 : general force constant C / 2.0
 		 * 1 : equilibrium distance
@@ -331,7 +311,7 @@ double SpeciesBond::force(double distance) const
  */
 
 // Broadcast data from Master to all Slaves
-bool SpeciesBond::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms)
+bool SpeciesBond::broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms)
 {
 #ifdef PARALLEL
 	int buffer[2];
@@ -342,19 +322,24 @@ bool SpeciesBond::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atom
 		buffer[0] = indexI();
 		buffer[1] = indexJ();
 	}
-	if (!procPool.broadcast(buffer, 2)) return false;
-	
+	if (!procPool.broadcast(buffer, 2))
+		return false;
+
 	// Slaves now take SpeciesAtom pointers from supplied List
 	if (procPool.isSlave())
 	{
 		setAtoms(atoms.item(buffer[0]), atoms.item(buffer[1]));
-		if (i_ != NULL) i_->addBond(this);
-		if (j_ != NULL) j_->addBond(this);
+		if (i_ != NULL)
+			i_->addBond(this);
+		if (j_ != NULL)
+			j_->addBond(this);
 	}
-	
+
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
-	if (!procPool.broadcast(form_)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS))
+		return false;
+	if (!procPool.broadcast(form_))
+		return false;
 #endif
 	return true;
 }

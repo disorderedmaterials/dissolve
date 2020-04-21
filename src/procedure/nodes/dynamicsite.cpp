@@ -20,22 +20,22 @@
 */
 
 #include "procedure/nodes/dynamicsite.h"
-#include "procedure/nodes/select.h"
-#include "keywords/types.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/atom.h"
+#include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "classes/atomtype.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "keywords/types.h"
+#include "procedure/nodes/select.h"
 #include "templates/dynamicarray.h"
 
 // Constructor
-DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode* parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
+DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
 {
 	parent_ = parent;
 
@@ -44,25 +44,17 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode* parent) 
 }
 
 // Destructor
-DynamicSiteProcedureNode::~DynamicSiteProcedureNode()
-{
-}
+DynamicSiteProcedureNode::~DynamicSiteProcedureNode() {}
 
 /*
  * Identity
  */
 
 // Return whether specified context is relevant for this node type
-bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-	return (context == ProcedureNode::AnalysisContext);
-}
+bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
 
 // Return whether a name for the node must be provided
-bool DynamicSiteProcedureNode::mustBeNamed() const
-{
-	return false;
-}
+bool DynamicSiteProcedureNode::mustBeNamed() const { return false; }
 
 /*
  * Site Generation
@@ -72,7 +64,7 @@ bool DynamicSiteProcedureNode::mustBeNamed() const
 void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> molecule)
 {
 	// Loop over Atoms in the Molecule
-	for (int n=0; n<molecule->nAtoms(); ++n)
+	for (int n = 0; n < molecule->nAtoms(); ++n)
 	{
 		// If the element is listed in our target elements list, add this atom as a site
 		if (elements_.contains(molecule->atom(n)->speciesAtom()->element()))
@@ -91,23 +83,20 @@ void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> mol
 }
 
 // Return Array of generated sites
-const Array<Site>& DynamicSiteProcedureNode::generatedSites() const
-{
-	return generatedSites_;
-}
+const Array<Site> &DynamicSiteProcedureNode::generatedSites() const { return generatedSites_; }
 
 /*
  * Execute
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Clear our current list of sites
 	generatedSites_.clear();
 
 	// Grab exclusion lists and any specific Molecule parent
-	const auto& excludedMolecules = parent_->excludedMolecules();
+	const auto &excludedMolecules = parent_->excludedMolecules();
 	std::shared_ptr<const Molecule> moleculeParent = parent_->sameMoleculeMolecule();
 
 	/*
@@ -116,17 +105,17 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 	 * Both use the local function generateSites(std::shared_ptr<Molecule>) in order to extract site information.
 	 */
 
-	if (moleculeParent) generateSites(moleculeParent);
+	if (moleculeParent)
+		generateSites(moleculeParent);
 	else
 	{
 		// Loop over Molecules in the target Configuration
-		std::deque<std::shared_ptr<Molecule>>& molecules = cfg->molecules();
+		std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
 		for (auto molecule : molecules)
 		{
 			// Check Molecule exclusions
-			if (find(excludedMolecules.begin(),
-				 excludedMolecules.end(),
-				 molecule) != excludedMolecules.end()) continue;
+			if (find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())
+				continue;
 
 			// All OK, so generate sites
 			generateSites(molecule);

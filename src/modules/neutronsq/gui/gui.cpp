@@ -19,12 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/neutronsq/neutronsq.h"
 #include "modules/neutronsq/gui/modulewidget.h"
+#include "modules/neutronsq/neutronsq.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* NeutronSQModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new NeutronSQModuleWidget(parent, this, dissolve);
-}
-
+ModuleWidget *NeutronSQModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new NeutronSQModuleWidget(parent, this, dissolve); }

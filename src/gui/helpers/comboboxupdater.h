@@ -20,9 +20,10 @@
 */
 
 #include "base/charstring.h"
-#include "templates/variantpointer.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
+#include "templates/reflist.h"
+#include "templates/variantpointer.h"
 #include <QComboBox>
 
 #ifndef DISSOLVE_COMBOBOXUPDATER_H
@@ -31,63 +32,72 @@
 // ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as possible
 template <class I> class ComboBoxUpdater
 {
-	public:
+      public:
 	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
-	ComboBoxUpdater(QComboBox* comboBox, const List<I>& data, const I* currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
+	ComboBoxUpdater(QComboBox *comboBox, const List<I> &data, const I *currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
 		currentIndex_ = startIndex;
 
 		ListIterator<I> dataIterator(data);
-		while (I* dataItem = dataIterator.iterate()) updateItem(dataItem->name(), dataItem, dataItem == currentItem);
+		while (I *dataItem = dataIterator.iterate())
+			updateItem(dataItem->name(), dataItem, dataItem == currentItem);
 
 		// If there are still rows remaining in the widget, delete them now
-		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
+		while (currentIndex_ < comboBox_->count())
+			comboBox_->removeItem(currentIndex_);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(indexIfNoCurrentItem);
+		if (currentItem == NULL)
+			comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
 	// Update QComboBox from supplied RefList, assuming that class I implements a name() function for the item
-	ComboBoxUpdater(QComboBox* comboBox, const RefList<I>& data, const I* currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
+	ComboBoxUpdater(QComboBox *comboBox, const RefList<I> &data, const I *currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
 		currentIndex_ = startIndex;
 
-		for (I* dataItem : data) updateItem(dataItem->name(), dataItem, dataItem == currentItem);
+		for (I *dataItem : data)
+			updateItem(dataItem->name(), dataItem, dataItem == currentItem);
 
 		// If there are still rows remaining in the widget, delete them now
-		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
+		while (currentIndex_ < comboBox_->count())
+			comboBox_->removeItem(currentIndex_);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(indexIfNoCurrentItem);
+		if (currentItem == NULL)
+			comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
 	// Update QComboBox from supplied RefDataList, using the CharString data as the item's name
-	ComboBoxUpdater(QComboBox* comboBox, const RefDataList<I,CharString>& data, const I* currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
+	ComboBoxUpdater(QComboBox *comboBox, const RefDataList<I, CharString> &data, const I *currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
 		currentIndex_ = startIndex;
 
-		RefDataListIterator<I,CharString> dataIterator(data);
-		while (I* dataItem = dataIterator.iterate()) updateItem(dataIterator.currentData(), dataItem, dataItem == currentItem);
+		RefDataListIterator<I, CharString> dataIterator(data);
+		while (I *dataItem = dataIterator.iterate())
+			updateItem(dataIterator.currentData(), dataItem, dataItem == currentItem);
 
 		// If there are still rows remaining in the widget, delete them now
-		while (currentIndex_ < comboBox_->count()) comboBox_->removeItem(currentIndex_);
+		while (currentIndex_ < comboBox_->count())
+			comboBox_->removeItem(currentIndex_);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(indexIfNoCurrentItem);
+		if (currentItem == NULL)
+			comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
-	private:
+      private:
 	// Target combo box
-	QComboBox* comboBox_;
+	QComboBox *comboBox_;
 	// Item index
 	int currentIndex_;
 
-	private:
+      private:
 	// Update item at specified position in combo box (if it exists)
-	void updateItem(const char* itemText, I* itemData, bool isCurrent)
+	void updateItem(const char *itemText, I *itemData, bool isCurrent)
 	{
 		/*
 		 * If there is an entry already at this index, check it:
@@ -98,7 +108,7 @@ template <class I> class ComboBoxUpdater
 		 */
 		while (currentIndex_ < comboBox_->count())
 		{
-			I* oldData = VariantPointer<I>(comboBox_->itemData(currentIndex_, Qt::UserRole));
+			I *oldData = VariantPointer<I>(comboBox_->itemData(currentIndex_, Qt::UserRole));
 			if (oldData == itemData)
 			{
 				// Data pointer matches - make sure the text is up to date
@@ -121,7 +131,8 @@ template <class I> class ComboBoxUpdater
 		}
 
 		// Select this item if it is the current one
-		if (isCurrent) comboBox_->setCurrentIndex(currentIndex_);
+		if (isCurrent)
+			comboBox_->setCurrentIndex(currentIndex_);
 
 		// Increase index
 		++currentIndex_;
@@ -132,15 +143,15 @@ template <class I> class ComboBoxUpdater
 template <class T, class I> class ComboBoxTextUpdater
 {
 	// Typedefs for passed functions
-	typedef const char* (T::*ComboBoxItemTextFunction)(const I* item);
+	typedef const char *(T::*ComboBoxItemTextFunction)(const I *item);
 
-	public:
+      public:
 	// Update QComboBox from supplied RefList, using provided function to acquire text to display for item
-	ComboBoxTextUpdater(QComboBox* comboBox, const RefList<I>& data, const I* currentItem, T* functionParent, ComboBoxItemTextFunction textForItem)
+	ComboBoxTextUpdater(QComboBox *comboBox, const RefList<I> &data, const I *currentItem, T *functionParent, ComboBoxItemTextFunction textForItem)
 	{
 		int currentIndex = 0;
 
-		for (I* dataItem : data)
+		for (I *dataItem : data)
 		{
 			/*
 			 * If there is an item already on this row, check it
@@ -149,7 +160,7 @@ template <class T, class I> class ComboBoxTextUpdater
 			 */
 			while (currentIndex < comboBox->count())
 			{
-				I* oldData = VariantPointer<I>(comboBox->itemData(currentIndex, Qt::UserRole));
+				I *oldData = VariantPointer<I>(comboBox->itemData(currentIndex, Qt::UserRole));
 				if (oldData == dataItem)
 				{
 					// Data pointer matches - make sure the text is up to date
@@ -172,16 +183,19 @@ template <class T, class I> class ComboBoxTextUpdater
 			}
 
 			// Select this item if it is the current one
-			if (currentItem == dataItem) comboBox->setCurrentIndex(currentIndex);
+			if (currentItem == dataItem)
+				comboBox->setCurrentIndex(currentIndex);
 
 			++currentIndex;
 		}
 
 		// If there are still rows remaining in the widget, delete them now
-		while (currentIndex < comboBox->count()) comboBox->removeItem(currentIndex);
+		while (currentIndex < comboBox->count())
+			comboBox->removeItem(currentIndex);
 
 		// If there is no valid current item, make sure this is reflected in the combobox
-		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
+		if (currentItem == NULL)
+			comboBox->setCurrentIndex(-1);
 	}
 };
 

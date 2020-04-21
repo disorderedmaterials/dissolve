@@ -22,13 +22,12 @@
 #ifndef DISSOLVE_MODULE_DATATEST_H
 #define DISSOLVE_MODULE_DATATEST_H
 
-#include "module/module.h"
+#include "classes/configuration.h"
 #include "classes/data1dstore.h"
 #include "classes/data2dstore.h"
 #include "classes/data3dstore.h"
-#include "classes/configuration.h"
 #include "genericitems/listhelper.h"
-
+#include "module/module.h"
 
 // Forward Declarations
 /* none */
@@ -36,54 +35,50 @@
 // DataTest Module
 class DataTestModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	DataTestModule();
 	// Destructor
 	~DataTestModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-	private:
+      private:
 	// Target module containing / owning data to test
 	RefList<Module> targetModule_;
 	// Test 1D datasets
@@ -93,9 +88,9 @@ class DataTestModule : public Module
 	// Test 3D datasets
 	Data3DStore test3DData_;
 
-	private:
+      private:
 	// Find reference Data
-	template <class T> const T& findReferenceData(const char* dataIdentifier, Module* targetModule, GenericList& processingModuleData, bool& found)
+	template <class T> const T &findReferenceData(const char *dataIdentifier, Module *targetModule, GenericList &processingModuleData, bool &found)
 	{
 		static T dummy;
 
@@ -105,34 +100,38 @@ class DataTestModule : public Module
 		if (targetModule)
 		{
 			// Get target module data list
-			GenericList& moduleData = targetModule->configurationLocal() ? targetModule->targetConfigurations().firstItem()->moduleData() : processingModuleData;
+			GenericList &moduleData = targetModule->configurationLocal() ? targetModule->targetConfigurations().firstItem()->moduleData() : processingModuleData;
 
 			// The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in the target list?
 			if (moduleData.contains(dataIdentifier, targetModule->uniqueName()))
 			{
 				// Try to retrieve the data as the current type
 				found = false;
-				const T& data = GenericListHelper<T>::value(moduleData, dataIdentifier, targetModule->uniqueName(), T(), &found);
+				const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier, targetModule->uniqueName(), T(), &found);
 
 				if (!found)
 				{
-					Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than %s).\n", targetModule->uniqueName(), dataIdentifier, moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
+					Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than %s).\n", targetModule->uniqueName(), dataIdentifier,
+							 moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
 					return dummy;
 				}
-				else return data;
+				else
+					return data;
 			}
 			else if (moduleData.contains(dataIdentifier))
 			{
 				// Try to retrieve the data as the current type
 				found = false;
-				const T& data = GenericListHelper<T>::value(moduleData, dataIdentifier, NULL, T(), &found);
+				const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier, NULL, T(), &found);
 
 				if (!found)
 				{
-					Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than %s).\n", dataIdentifier, moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
+					Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than %s).\n", dataIdentifier,
+							 moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
 					return dummy;
 				}
-				else return data;
+				else
+					return data;
 			}
 		}
 
@@ -140,7 +139,7 @@ class DataTestModule : public Module
 		if ((!found) && T::findObject(dataIdentifier))
 		{
 			// The tagged data exists...
-			const T& data = *T::findObject(dataIdentifier);
+			const T &data = *T::findObject(dataIdentifier);
 			found = true;
 			return data;
 		}
@@ -150,13 +149,12 @@ class DataTestModule : public Module
 		return dummy;
 	}
 
-
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif

@@ -19,9 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "templates/variantpointer.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
+#include "templates/variantpointer.h"
 #include <QTreeWidget>
 
 #ifndef DISSOLVE_TREEWIDGETUPDATER_H
@@ -31,17 +31,17 @@
 template <class T, class I> class TreeWidgetUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*TreeWidgetTopLevelUpdateFunction)(QTreeWidget* treeWidget, int topLevelItemIndex, I* data, bool createItem);
-	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem* parentItem, int childIndex, I* data, bool createItem);
+	typedef void (T::*TreeWidgetTopLevelUpdateFunction)(QTreeWidget *treeWidget, int topLevelItemIndex, I *data, bool createItem);
+	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *data, bool createItem);
 
-	public:
+      public:
 	// Update the top-level items of the specified parent QTreeWidget
-	TreeWidgetUpdater(QTreeWidget* treeWidget, const List<I>& data, T* functionParent, TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
+	TreeWidgetUpdater(QTreeWidget *treeWidget, const List<I> &data, T *functionParent, TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
 	{
 		int count = 0;
 
 		ListIterator<I> dataIterator(data);
-		while (I* dataItem = dataIterator.iterate())
+		while (I *dataItem = dataIterator.iterate())
 		{
 			// Our QTreeWidget may or may not be populated, and with different items to those in the list.
 
@@ -49,8 +49,8 @@ template <class T, class I> class TreeWidgetUpdater
 			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
 			while (count < treeWidget->topLevelItemCount())
 			{
-				QTreeWidgetItem* treeItem = treeWidget->topLevelItem(count);
-				I* rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
+				QTreeWidgetItem *treeItem = treeWidget->topLevelItem(count);
+				I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -78,18 +78,18 @@ template <class T, class I> class TreeWidgetUpdater
 		// If there are still items remaining in the widget, delete them now
 		while (count < treeWidget->topLevelItemCount())
 		{
-			QTreeWidgetItem* item = treeWidget->takeTopLevelItem(count);
+			QTreeWidgetItem *item = treeWidget->takeTopLevelItem(count);
 			delete item;
 		}
 	}
 
 	// Update the children of the specified parent QTreeWidgetItem
-	TreeWidgetUpdater(QTreeWidgetItem* parentItem, const List<I>& data, T* functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
+	TreeWidgetUpdater(QTreeWidgetItem *parentItem, const List<I> &data, T *functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
 	{
 		int count = 0;
 
 		ListIterator<I> dataIterator(data);
-		while (I* dataItem = dataIterator.iterate())
+		while (I *dataItem = dataIterator.iterate())
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -97,8 +97,8 @@ template <class T, class I> class TreeWidgetUpdater
 			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
 			while (count < parentItem->childCount())
 			{
-				QTreeWidgetItem* treeItem = parentItem->child(count);
-				I* rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
+				QTreeWidgetItem *treeItem = parentItem->child(count);
+				I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -124,7 +124,8 @@ template <class T, class I> class TreeWidgetUpdater
 		}
 
 		// If there are still items remaining in the widget, delete them now
-		while (count < parentItem->childCount()) parentItem->removeChild(parentItem->child(count));
+		while (count < parentItem->childCount())
+			parentItem->removeChild(parentItem->child(count));
 	}
 };
 
@@ -132,16 +133,16 @@ template <class T, class I> class TreeWidgetUpdater
 template <class T, class I> class TreeWidgetRefListUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*TreeWidgetTopLevelUpdateFunction)(QTreeWidget* treeWidget, int topLevelItemIndex, I* data, bool createItem);
-	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem* parentItem, int childIndex, I* item, bool createItem);
+	typedef void (T::*TreeWidgetTopLevelUpdateFunction)(QTreeWidget *treeWidget, int topLevelItemIndex, I *data, bool createItem);
+	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *item, bool createItem);
 
-	public:
+      public:
 	// Update the top-level items of the specified parent QTreeWidget
-	TreeWidgetRefListUpdater(QTreeWidget* treeWidget, const RefList<I>& data, T* functionParent, TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
+	TreeWidgetRefListUpdater(QTreeWidget *treeWidget, const RefList<I> &data, T *functionParent, TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
 	{
 		int count = 0;
 
-		for (I* dataItem : data)
+		for (I *dataItem : data)
 		{
 			// Our QTreeWidget may or may not be populated, and with different items to those in the list.
 
@@ -149,8 +150,8 @@ template <class T, class I> class TreeWidgetRefListUpdater
 			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
 			while (count < treeWidget->topLevelItemCount())
 			{
-				QTreeWidgetItem* treeItem = treeWidget->topLevelItem(count);
-				I* rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
+				QTreeWidgetItem *treeItem = treeWidget->topLevelItem(count);
+				I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -178,19 +179,19 @@ template <class T, class I> class TreeWidgetRefListUpdater
 		// If there are still items remaining in the widget, delete them now
 		while (count < treeWidget->topLevelItemCount())
 		{
-			QTreeWidgetItem* item = treeWidget->takeTopLevelItem(count);
+			QTreeWidgetItem *item = treeWidget->takeTopLevelItem(count);
 			delete item;
 		}
 	}
 
 	// Constructor
-	TreeWidgetRefListUpdater(QTreeWidgetItem* parentItem, const RefList<I>& list, T* functionParent, TreeWidgetChildUpdateFunction updateChild)
+	TreeWidgetRefListUpdater(QTreeWidgetItem *parentItem, const RefList<I> &list, T *functionParent, TreeWidgetChildUpdateFunction updateChild)
 	{
-		QTreeWidgetItem* treeItem;
+		QTreeWidgetItem *treeItem;
 
 		int count = 0;
 
-		for (I* dataItem : list)
+		for (I *dataItem : list)
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -199,7 +200,7 @@ template <class T, class I> class TreeWidgetRefListUpdater
 			while (count < parentItem->childCount())
 			{
 				treeItem = parentItem->child(count);
-				I* rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
+				I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -207,7 +208,8 @@ template <class T, class I> class TreeWidgetRefListUpdater
 
 					break;
 				}
-				else parentItem->removeChild(parentItem->child(count));
+				else
+					parentItem->removeChild(parentItem->child(count));
 			}
 
 			// If the current child index is (now) out of range, add a new item to the parent
@@ -221,7 +223,8 @@ template <class T, class I> class TreeWidgetRefListUpdater
 		}
 
 		// If there are still items remaining in the widget, delete them now
-		while (count < parentItem->childCount()) parentItem->removeChild(parentItem->child(count));
+		while (count < parentItem->childCount())
+			parentItem->removeChild(parentItem->child(count));
 	}
 };
 
@@ -229,18 +232,18 @@ template <class T, class I> class TreeWidgetRefListUpdater
 template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem* parentItem, int childIndex, I* item, D data, bool createItem);
+	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *item, D data, bool createItem);
 
-	public:
+      public:
 	// Constructor
-	TreeWidgetRefDataListUpdater(QTreeWidgetItem* parentItem, const RefDataList<I,D>& list, T* functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
+	TreeWidgetRefDataListUpdater(QTreeWidgetItem *parentItem, const RefDataList<I, D> &list, T *functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
 	{
-		QTreeWidgetItem* treeItem;
+		QTreeWidgetItem *treeItem;
 
 		int count = 0;
 
-		RefDataListIterator<I,D> itemIterator(list);
-		while (I* dataItem = itemIterator.iterate())
+		RefDataListIterator<I, D> itemIterator(list);
+		while (I *dataItem = itemIterator.iterate())
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -249,7 +252,7 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 			while (count < parentItem->childCount())
 			{
 				treeItem = parentItem->child(count);
-				I* rowData = (treeItem ? VariantPointer<I>(treeItem->data(1, Qt::UserRole)) : NULL);
+				I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(1, Qt::UserRole)) : NULL);
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
@@ -257,7 +260,8 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 
 					break;
 				}
-				else parentItem->removeChild(parentItem->child(count));
+				else
+					parentItem->removeChild(parentItem->child(count));
 			}
 
 			// If the current child index is (now) out of range, add a new item to the parent
@@ -271,7 +275,8 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 		}
 
 		// If there are still items remaining in the widget, delete them now
-		while (count < parentItem->childCount()) parentItem->removeChild(parentItem->child(count));
+		while (count < parentItem->childCount())
+			parentItem->removeChild(parentItem->child(count));
 	}
 };
 

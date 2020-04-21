@@ -34,30 +34,19 @@ Site::Site(std::shared_ptr<const Molecule> molecule, Vec3<double> origin)
 }
 
 // Destructor
-Site::~Site()
-{
-}
+Site::~Site() {}
 
 // Return site origin
-const Vec3<double>& Site::origin() const
-{
-	return origin_;
-}
+const Vec3<double> &Site::origin() const { return origin_; }
 
 // Return Molecule to which site is related (if relevant)
-std::shared_ptr<const Molecule> Site::molecule() const
-{
-	return molecule_;
-}
+std::shared_ptr<const Molecule> Site::molecule() const { return molecule_; }
 
 // Return whether local axes are present
-bool Site::hasAxes() const
-{
-	return false;
-}
+bool Site::hasAxes() const { return false; }
 
 // Return local axes
-const Matrix3& Site::axes() const
+const Matrix3 &Site::axes() const
 {
 	static Matrix3 dummy;
 	Messenger::warn("Returning empty axes for this Site, since it doesn't have any.\n");
@@ -77,23 +66,15 @@ OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double
 }
 
 // Destructor
-OrientedSite::~OrientedSite()
-{
-}
+OrientedSite::~OrientedSite() {}
 
 // Return whether local axes are present
-bool OrientedSite::hasAxes() const
-{
-	return true;
-}
+bool OrientedSite::hasAxes() const { return true; }
 
 // Return enum options for SiteAxis
 EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
 {
-	static EnumOptionsList SiteAxisOptions = EnumOptionsList() <<
-		EnumOption(OrientedSite::XAxis, 	"XAxis") <<
-		EnumOption(OrientedSite::YAxis, 	"YAxis") <<
-		EnumOption(OrientedSite::ZAxis, 	"ZAxis");
+	static EnumOptionsList SiteAxisOptions = EnumOptionsList() << EnumOption(OrientedSite::XAxis, "XAxis") << EnumOption(OrientedSite::YAxis, "YAxis") << EnumOption(OrientedSite::ZAxis, "ZAxis");
 
 	static EnumOptions<OrientedSite::SiteAxis> options("SiteAxis", SiteAxisOptions);
 
@@ -101,7 +82,4 @@ EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
 }
 
 // Return local axes
-const Matrix3& OrientedSite::axes() const
-{
-	return axes_;
-}
+const Matrix3 &OrientedSite::axes() const { return axes_; }

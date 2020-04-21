@@ -30,13 +30,10 @@ ColourScale::ColourScale()
 }
 
 // Copy Constructor
-ColourScale::ColourScale(const ColourScale& source)
-{
-	(*this) = source;
-}
+ColourScale::ColourScale(const ColourScale &source) { (*this) = source; }
 
 // Assignment operator
-void ColourScale::operator=(const ColourScale& source)
+void ColourScale::operator=(const ColourScale &source)
 {
 	clear();
 
@@ -58,7 +55,6 @@ void ColourScale::clear()
  * Points
  */
 
-
 // Add point to scale
 void ColourScale::addPoint(double value, QColor colour)
 {
@@ -67,11 +63,12 @@ void ColourScale::addPoint(double value, QColor colour)
 	 * If larget than the one at the end, then append it to the end of the list.
 	 * If neither of these, find the first existing value which is larger, and add it before that one.
 	 */
-	if ((points_.nItems() == 0) || (value > points_.last().value())) points_.add(ColourScalePoint(value, colour));
+	if ((points_.nItems() == 0) || (value > points_.last().value()))
+		points_.add(ColourScalePoint(value, colour));
 	else
 	{
 		// Find a suitable insertion point now, so we don't have to reorder
-		for (int n = 0; n<points_.nItems(); ++n)
+		for (int n = 0; n < points_.nItems(); ++n)
 		{
 			if (points_[n].value() > value)
 			{
@@ -86,34 +83,19 @@ void ColourScale::addPoint(double value, QColor colour)
 }
 
 // Return number of points in ColourScale
-int ColourScale::nPoints() const
-{
-	return points_.nItems();
-}
+int ColourScale::nPoints() const { return points_.nItems(); }
 
 // Return points in ColourScale
-const Array<ColourScalePoint>& ColourScale::points() const
-{
-	return points_;
-}
+const Array<ColourScalePoint> &ColourScale::points() const { return points_; }
 
 // Return first point in ColourScale
-const ColourScalePoint& ColourScale::firstPoint() const
-{
-	return points_.constAt(0);
-}
+const ColourScalePoint &ColourScale::firstPoint() const { return points_.constAt(0); }
 
 // Return last point in ColourScale
-const ColourScalePoint& ColourScale::lastPoint() const
-{
-	return points_.constAt(points_.nItems()-1);
-}
+const ColourScalePoint &ColourScale::lastPoint() const { return points_.constAt(points_.nItems() - 1); }
 
 // Return specific point in ColourScale
-const ColourScalePoint& ColourScale::point(int id) const
-{
-	return points_.constAt(id);
-}
+const ColourScalePoint &ColourScale::point(int id) const { return points_.constAt(id); }
 
 // Set colour and value data for point
 void ColourScale::setPoint(int position, double value, QColor colour)
@@ -126,7 +108,7 @@ void ColourScale::setPoint(int position, double value, QColor colour)
 	}
 
 	points_[position].setColour(colour);
-	
+
 	// Set the new value - this will also update the position of the point if necessary
 	setValue(position, value);
 }
@@ -143,11 +125,13 @@ void ColourScale::setValue(int position, double value)
 	// Position in list may have changed - check...
 	if (newValueHigher)
 	{
-		while ((position != (nPoints()-1)) && value > points_[position+1].value()) points_.shiftUp(position++);
+		while ((position != (nPoints() - 1)) && value > points_[position + 1].value())
+			points_.shiftUp(position++);
 	}
 	else
 	{
-		while ((position != 0) && value < points_[position-1].value()) points_.shiftDown(position--);
+		while ((position != 0) && value < points_[position - 1].value())
+			points_.shiftDown(position--);
 	}
 
 	// Recalculate colour deltas
@@ -183,28 +167,33 @@ void ColourScale::removePoint(int position)
 QColor ColourScale::colour(double value) const
 {
 	// Check for no points being defined
-	if (points_.nItems() == 0) return QColor(0,0,0);
+	if (points_.nItems() == 0)
+		return QColor(0, 0, 0);
 
 	// Is supplied value less than the value at the first point?
-	if (value < points_.constAt(0).value()) return points_.constAt(0).colour();
-	else if (value > points_.constAt(nPoints()-1).value()) return points_.constAt(nPoints()-1).colour();
+	if (value < points_.constAt(0).value())
+		return points_.constAt(0).colour();
+	else if (value > points_.constAt(nPoints() - 1).value())
+		return points_.constAt(nPoints() - 1).colour();
 
 	// Find the correct delta to use
-	for (int n=0; n<deltas_.nItems(); ++n)
+	for (int n = 0; n < deltas_.nItems(); ++n)
 	{
 		if (deltas_.constAt(n).containsValue(value))
 		{
-			if (interpolated_) return deltas_.constAt(n).colour(value);
-			else return deltas_.constAt(n).startColour();
+			if (interpolated_)
+				return deltas_.constAt(n).colour(value);
+			else
+				return deltas_.constAt(n).startColour();
 		}
 	}
 
 	// Should never get here - all cases accounted for
-	return QColor(0,0,0,255);
+	return QColor(0, 0, 0, 255);
 }
 
 // Get colour associated with value supplied, setting as GLfloat[4]
-void ColourScale::colour(double value, GLfloat* rgba) const
+void ColourScale::colour(double value, GLfloat *rgba) const
 {
 	// Check for no points being defined
 	if (points_.nItems() == 0)
@@ -216,26 +205,27 @@ void ColourScale::colour(double value, GLfloat* rgba) const
 		return;
 	}
 
-	
 	// Is supplied value less than the value at the first point?
 	if (value < points_.constAt(0).value())
 	{
 		points_.constAt(0).colour(rgba);
 		return;
 	}
-	else if (value > points_.constAt(nPoints()-1).value())
+	else if (value > points_.constAt(nPoints() - 1).value())
 	{
-		points_.constAt(nPoints()-1).colour(rgba);
+		points_.constAt(nPoints() - 1).colour(rgba);
 		return;
 	}
-	
+
 	// Find the correct delta to use
-	for (int n=0; n<deltas_.nItems(); ++n)
+	for (int n = 0; n < deltas_.nItems(); ++n)
 	{
 		if (deltas_.constAt(n).containsValue(value))
 		{
-			if (interpolated_) return deltas_.constAt(n).colour(value, rgba);
-			else return deltas_.constAt(n).startColour(rgba);
+			if (interpolated_)
+				return deltas_.constAt(n).colour(value, rgba);
+			else
+				return deltas_.constAt(n).startColour(rgba);
 			return;
 		}
 	}
@@ -251,11 +241,14 @@ void ColourScale::colour(double value, GLfloat* rgba) const
 // Set all alpha values to that specified
 void ColourScale::setAllAlpha(double alpha)
 {
-	int alphai = alpha*255;
-	if (alphai < 0) alphai = 0;
-	else if (alphai > 255) alphai = 255;
+	int alphai = alpha * 255;
+	if (alphai < 0)
+		alphai = 0;
+	else if (alphai > 255)
+		alphai = 255;
 
-	for (int n = 0; n<points_.nItems(); ++n) points_[n].setAlpha(alphai);
+	for (int n = 0; n < points_.nItems(); ++n)
+		points_[n].setAlpha(alphai);
 
 	calculateDeltas();
 }
@@ -269,7 +262,8 @@ void ColourScale::calculateDeltas()
 {
 	// Reinitialise deltas array
 	deltas_.clear();
-	for (int n=0; n<points_.nItems()-1; ++n) deltas_.add(ColourScaleDelta(points_[n], points_[n+1], useHSV_));
+	for (int n = 0; n < points_.nItems() - 1; ++n)
+		deltas_.add(ColourScaleDelta(points_[n], points_[n + 1], useHSV_));
 }
 
 /*
@@ -277,16 +271,10 @@ void ColourScale::calculateDeltas()
  */
 
 // Set whether the ColourScale is interpolated
-void ColourScale::setInterpolated(bool b)
-{
-	interpolated_ = b;
-}
+void ColourScale::setInterpolated(bool b) { interpolated_ = b; }
 
 // Return whether the ColourScale is interpolated
-bool ColourScale::interpolated() const
-{
-	return interpolated_;
-}
+bool ColourScale::interpolated() const { return interpolated_; }
 
 // Set whether or not to use HSV interpolation
 void ColourScale::setUseHSV(bool b)
@@ -297,7 +285,4 @@ void ColourScale::setUseHSV(bool b)
 }
 
 // Return whether or not to use HSV interpolation
-bool ColourScale::useHSV() const
-{
-	return useHSV_;
-}
+bool ColourScale::useHSV() const { return useHSV_; }

@@ -22,7 +22,7 @@
 #include "neta/logic.h"
 
 // Constructor
-NETALogicNode::NETALogicNode(NETADefinition* parent, NETALogicNode::LogicType logic, NETANode* arg1, NETANode* arg2) : NETANode(parent, NETANode::LogicNode)
+NETALogicNode::NETALogicNode(NETADefinition *parent, NETALogicNode::LogicType logic, NETANode *arg1, NETANode *arg2) : NETANode(parent, NETANode::LogicNode)
 {
 	// Private variables
 	logic_ = logic;
@@ -31,57 +31,61 @@ NETALogicNode::NETALogicNode(NETADefinition* parent, NETALogicNode::LogicType lo
 };
 
 // Destructor
-NETALogicNode::~NETALogicNode()
-{
-}
+NETALogicNode::~NETALogicNode() {}
 
 /*
  * Scoring
  */
 
 // Evaluate the node and return its score
-int NETALogicNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const
+int NETALogicNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
-// 	printf("I AM THE LOGIC\n");
+	// 	printf("I AM THE LOGIC\n");
 	int score1 = NETANode::NoMatch, score2 = NETANode::NoMatch, totalscore = NETANode::NoMatch;
 	switch (logic_)
 	{
-		case (NETALogicNode::AndLogic):
-			// Evaluate first argument
-			score1 = argument1_->score(i, matchPath);
-			if (score1 == NETANode::NoMatch) break;
+	case (NETALogicNode::AndLogic):
+		// Evaluate first argument
+		score1 = argument1_->score(i, matchPath);
+		if (score1 == NETANode::NoMatch)
+			break;
 
-			// Evaluate second argument
+		// Evaluate second argument
+		score2 = argument2_->score(i, matchPath);
+		if (score2 == NETANode::NoMatch)
+			break;
+
+		// Generate final score
+		totalscore = score1 + score2;
+		break;
+	case (NETALogicNode::OrLogic):
+		score1 = argument1_->score(i, matchPath);
+		if (score1 != NETANode::NoMatch)
+			totalscore = score1;
+		else
+		{
 			score2 = argument2_->score(i, matchPath);
-			if (score2 == NETANode::NoMatch) break;
-
-			// Generate final score
-			totalscore = score1 + score2;
-			break;
-		case (NETALogicNode::OrLogic):
-			score1 = argument1_->score(i, matchPath);
-			if (score1 != NETANode::NoMatch) totalscore = score1;
-			else
-			{
-				score2 = argument2_->score(i, matchPath);
-				if (score2 != NETANode::NoMatch) totalscore = score2;
-			}
-			break;
-		case (NETALogicNode::AndNotLogic):
-			score1 = argument1_->score(i, matchPath);
-			if (score1 != NETANode::NoMatch)
-			{
-				score2 = argument2_->score(i, matchPath);
-				if (score2 == NETANode::NoMatch) totalscore = score1;
-			}
-			break;
-		default:
-			printf("Internal Error: Unrecognised logic in NETA::score.\n");
-			break;
+			if (score2 != NETANode::NoMatch)
+				totalscore = score2;
+		}
+		break;
+	case (NETALogicNode::AndNotLogic):
+		score1 = argument1_->score(i, matchPath);
+		if (score1 != NETANode::NoMatch)
+		{
+			score2 = argument2_->score(i, matchPath);
+			if (score2 == NETANode::NoMatch)
+				totalscore = score1;
+		}
+		break;
+	default:
+		printf("Internal Error: Unrecognised logic in NETA::score.\n");
+		break;
 	}
 
 	// Check for reverse logic
-	if (reverseLogic_) totalscore = (totalscore == NETANode::NoMatch ? 1 : NETANode::NoMatch);
+	if (reverseLogic_)
+		totalscore = (totalscore == NETANode::NoMatch ? 1 : NETANode::NoMatch);
 
 	return totalscore;
 }

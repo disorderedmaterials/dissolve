@@ -27,9 +27,13 @@
 // Units
 class Units
 {
-	public:
+      public:
 	// Density Units
-	enum DensityUnits { AtomsPerAngstromUnits, GramsPerCentimetreCubedUnits };
+	enum DensityUnits
+	{
+		AtomsPerAngstromUnits,
+		GramsPerCentimetreCubedUnits
+	};
 	// Return enum options for DensityUnits
 	static EnumOptions<Units::DensityUnits> densityUnits();
 };

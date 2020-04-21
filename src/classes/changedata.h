@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_CHANGEDATA_H
 #define DISSOLVE_CHANGEDATA_H
 
-#include "templates/vector3.h"
 #include "templates/list.h"
+#include "templates/vector3.h"
 
 // Forward Declarations
 class Atom;
@@ -32,31 +32,30 @@ class Cell;
 // Change Data
 class ChangeData : public ListItem<ChangeData>
 {
-	public:
+      public:
 	// Constructor
 	ChangeData();
 	// Destructor
 	~ChangeData();
 
-
 	/*
 	 * Target Data
 	 */
-	private:
+      private:
 	// Atom
-	Atom* atom_;
+	Atom *atom_;
 	// Flag indicating whether Atom has moved
 	bool moved_;
 	// Stored coordinates of Atom
 	Vec3<double> r_;
 	// Stored Cell of Atom
-	Cell* cell_;
+	Cell *cell_;
 
-	public:
+      public:
 	// Set target Atom
-	void setAtom(Atom* i);
+	void setAtom(Atom *i);
 	// Return target Atom
-	Atom* atom();
+	Atom *atom();
 	// Return array index of stored Atom
 	int atomArrayIndex() const;
 	// Update stored position, and flag as moved

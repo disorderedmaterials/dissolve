@@ -31,20 +31,19 @@ class SpeciesAtom;
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
 {
-	public:
+      public:
 	// Constructor / Destructor
 	Forcefield_SPCFw();
 	~Forcefield_SPCFw();
 
-
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return name of Forcefield
-	const char* name() const;
+	const char *name() const;
 	// Return description for Forcefield
-	const char* description() const;
+	const char *description() const;
 	// Return short-range interaction style for AtomTypes
 	Forcefield::ShortRangeType shortRangeType() const;
 };

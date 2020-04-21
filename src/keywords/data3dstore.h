@@ -22,34 +22,33 @@
 #ifndef DISSOLVE_KEYWORD_DATA3DSTORE_H
 #define DISSOLVE_KEYWORD_DATA3DSTORE_H
 
-#include "keywords/data.h"
 #include "classes/data3dstore.h"
+#include "keywords/data.h"
 
 // Forward Declarations
 /* none */
 
 // Keyword with a store of Data3D
-class Data3DStoreKeyword : public KeywordData<Data3DStore&>
+class Data3DStoreKeyword : public KeywordData<Data3DStore &>
 {
-	public:
+      public:
 	// Constructor
-	Data3DStoreKeyword(Data3DStore& dataStore);
+	Data3DStoreKeyword(Data3DStore &dataStore);
 	// Destructor
 	~Data3DStoreKeyword();
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif

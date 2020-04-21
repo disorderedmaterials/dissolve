@@ -30,61 +30,57 @@
 // Renderable Group Manager
 class RenderableGroupManager
 {
-	public:
+      public:
 	// Constructor
 	RenderableGroupManager();
 	// Clear all groups
 	void clear();
 
-
 	/*
 	 * Group Management
 	 */
-	private:
+      private:
 	// List of current RenderableGroups in use
 	List<RenderableGroup> groups_;
 	// Usage counters for stock colours
 	Array<int> stockColourUsageCount_;
 
-	public:
+      public:
 	// Create named group, or return existing group by the same name
-	RenderableGroup* createGroup(const char* name);
+	RenderableGroup *createGroup(const char *name);
 	// Add Renderable to its specified group, creating / associating as necessary
-	RenderableGroup* addToGroup(Renderable* renderable, const char* groupName);
+	RenderableGroup *addToGroup(Renderable *renderable, const char *groupName);
 	// Return named group, if it exists
-	RenderableGroup* group(const char* name);
+	RenderableGroup *group(const char *name);
 	// Return group for specified Renderable, if one has been assigned
-	RenderableGroup* group(Renderable* renderable);
+	RenderableGroup *group(Renderable *renderable);
 	// Return current RenderableGroups in use
-	const List<RenderableGroup>& groups() const;
+	const List<RenderableGroup> &groups() const;
 	// Remove Renderable from its specified group
-	void removeFromGroup(Renderable* renderable);
+	void removeFromGroup(Renderable *renderable);
 	// Empty all groups of Renderables
 	void emptyGroups();
-
 
 	/*
 	 * Colouring
 	 */
-	public:
+      public:
 	// Set colouring style for named group
-	void setGroupColouring(const char* groupName, RenderableGroup::GroupColouring colouringStyle);
+	void setGroupColouring(const char *groupName, RenderableGroup::GroupColouring colouringStyle);
 	// Set fixed colour for named group
-	void setGroupFixedColour(const char* groupName, StockColours::StockColour stockColour);
-
+	void setGroupFixedColour(const char *groupName, StockColours::StockColour stockColour);
 
 	/*
 	 * Line Styling
 	 */
-	public:
+      public:
 	// Line stipple to use for group
-	void setGroupStipple(const char* groupName, LineStipple::StippleType stipple);
-
+	void setGroupStipple(const char *groupName, LineStipple::StippleType stipple);
 
 	/*
 	 * Vertical Shifting
 	 */
-	public:
+      public:
 	// Vertical Shift Amounts
 	enum VerticalShiftAmount
 	{
@@ -95,17 +91,17 @@ class RenderableGroupManager
 		nVerticalShifts
 	};
 
-	private:
+      private:
 	// Current vertical shift delta index being applied to groups
 	VerticalShiftAmount verticalShiftAmount_;
 
-	private:
+      private:
 	// Set vertical shifts for current RenderableGroups
 	void setRenderableGroupShifts();
 
-	public:
+      public:
 	// Set vertical shifting style for named group
-	void setGroupVerticalShifting(const char* groupName, RenderableGroup::VerticalShiftStyle shiftStyle);
+	void setGroupVerticalShifting(const char *groupName, RenderableGroup::VerticalShiftStyle shiftStyle);
 	// Cycle vertical shift amount applied to RenderableGroups
 	void cycleVerticalShiftAmount();
 	// Set vertical shift amount applied to RenderableGroups

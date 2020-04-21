@@ -31,21 +31,21 @@ class SiteStack;
 // Site Reference
 class SiteReference : public ListItem<SiteReference>
 {
-	public:
+      public:
 	// Constructor
-	SiteReference(SiteStack& siteStack, const char* name);
+	SiteReference(SiteStack &siteStack, const char *name);
 
-	private:
+      private:
 	// Referenced stack of sites
-	SiteStack& siteStack_;
+	SiteStack &siteStack_;
 	// Name of this site stack (in the context of an Analyser)
 	CharString name_;
 
-	public:
+      public:
 	// Return referenced stack of sites
-	SiteStack& siteStack() const;
+	SiteStack &siteStack() const;
 	// Return name of this site stack (in the context of an Analyser)
-	const char* name() const;
+	const char *name() const;
 };
 
 #endif

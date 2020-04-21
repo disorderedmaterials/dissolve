@@ -33,54 +33,32 @@ class ProcedureChartMetrics
 	/*
 	 * Module Chart Block
 	 */
-	public:
+      public:
 	// Border line width
-	static int blockBorderWidth()
-	{
-		return 2;
-	}
+	static int blockBorderWidth() { return 2; }
 	// Border mid-point
-	static double blockBorderMidPoint()
-	{
-		return (blockBorderWidth() / 2.0);
-	}
+	static double blockBorderMidPoint() { return (blockBorderWidth() / 2.0); }
 	// Widget margins (to contain border line)
 	static QMargins blockMargins()
 	{
 		int innerGap = 4;
-		return QMargins(blockBorderWidth()+innerGap+dragHandleWidth(), blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap);
+		return QMargins(blockBorderWidth() + innerGap + dragHandleWidth(), blockBorderWidth() + innerGap, blockBorderWidth() + innerGap, blockBorderWidth() + innerGap);
 	}
 	// Vertical spacing between blocks
-	static int blockVerticalSpacing()
-	{
-		return 2;
-	}
+	static int blockVerticalSpacing() { return 2; }
 	// Indent width
-	static int indentWidth()
-	{
-		return 30;
-	}
+	static int indentWidth() { return 30; }
 	// Drag handle width
-	static int dragHandleWidth()
-	{
-		return 10;
-	}
-
+	static int dragHandleWidth() { return 10; }
 
 	/*
 	 * Procedure Chart
 	 */
-	public:
+      public:
 	// Inner margin around widgets
-	static int chartMargin()
-	{
-		return 0;
-	}
+	static int chartMargin() { return 0; }
 	// Spacing between rows
-	static int chartRowSpacing()
-	{
-		return 0;
-	}
+	static int chartRowSpacing() { return 0; }
 };
 
 #endif

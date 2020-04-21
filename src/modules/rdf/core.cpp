@@ -33,17 +33,11 @@ RDFModule::RDFModule() : Module()
 }
 
 // Destructor
-RDFModule::~RDFModule()
-{
-}
+RDFModule::~RDFModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* RDFModule::createInstance() const
-{
-	return new RDFModule;
-}
-
+Module *RDFModule::createInstance() const { return new RDFModule; }

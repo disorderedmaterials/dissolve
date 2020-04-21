@@ -22,7 +22,7 @@
 #include "gui/importspeciesdialog.h"
 
 // Constructor
-ImportSpeciesDialog::ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance)
+ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
 
@@ -34,18 +34,10 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDi
 }
 
 // Destructor
-ImportSpeciesDialog::~ImportSpeciesDialog()
-{
-}
+ImportSpeciesDialog::~ImportSpeciesDialog() {}
 
 // Reset, ready for adding a new Species
-void ImportSpeciesDialog::reset()
-{
-	ui_.ImportSpeciesWidget->reset();
-}
+void ImportSpeciesDialog::reset() { ui_.ImportSpeciesWidget->reset(); }
 
 // Copy imported Species over to the specified Dissolve object
-Species* ImportSpeciesDialog::importSpecies(Dissolve& dissolve)
-{
-	return ui_.ImportSpeciesWidget->importSpecies(dissolve);
-}
+Species *ImportSpeciesDialog::importSpecies(Dissolve &dissolve) { return ui_.ImportSpeciesWidget->importSpecies(dissolve); }

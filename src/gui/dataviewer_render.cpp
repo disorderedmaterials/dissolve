@@ -22,14 +22,10 @@
 #include "gui/dataviewer.hui"
 
 // Perform post-initialisation operations
-void DataViewer::postInitialiseGL()
-{
-}
+void DataViewer::postInitialiseGL() {}
 
 // Perform post-resize operations
-void DataViewer::postResizeGL()
-{
-}
+void DataViewer::postResizeGL() {}
 
 // Render 2D overlay content
 void DataViewer::render2DOverlay()
@@ -50,30 +46,37 @@ void DataViewer::render2DOverlay()
 	 */
 
 	CharString indicatorText;
-	if (view_.autoFollowType() == View::AllAutoFollow) indicatorText += "|A| ";
-	else if (view_.autoFollowType() == View::XAutoFollow) indicatorText += "A\\sub{X} ";
-	if (groupManager_.verticalShiftAmount() > 0) indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
+	if (view_.autoFollowType() == View::AllAutoFollow)
+		indicatorText += "|A| ";
+	else if (view_.autoFollowType() == View::XAutoFollow)
+		indicatorText += "A\\sub{X} ";
+	if (groupManager_.verticalShiftAmount() > 0)
+		indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
 	TextPrimitive indicatorPrimitive;
-	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing,0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
+	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(),
+			       Matrix4(), overlayTextSize, false);
 	glColor3d(0.0, 0.0, 0.0);
 	Matrix4 identity;
-	if (fontInstance_.fontOK()) indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
+	if (fontInstance_.fontOK())
+		indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
 
 	/*
 	 * Draw legend in top-right corner
 	 */
 
 	// Create RefList of legend entries
-	RefDataList<Renderable,double> legendEntries;
+	RefDataList<Renderable, double> legendEntries;
 
 	double maxTextWidth = -1.0;
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
+	for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
-		if (!rend->isVisible()) continue;
+		if (!rend->isVisible())
+			continue;
 
 		double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
 		legendEntries.append(rend, textWidth);
-		if (textWidth > maxTextWidth) maxTextWidth = textWidth;
+		if (textWidth > maxTextWidth)
+			maxTextWidth = textWidth;
 	}
 
 	// Simple column layout - set the render position to be the left-hand edge of the longest text item
@@ -83,22 +86,22 @@ void DataViewer::render2DOverlay()
 
 	// Loop over legend entries
 	GLfloat colour[4];
-	RefDataListIterator<Renderable,double> legendEntryIterator(legendEntries);
-	while (Renderable* rend = legendEntryIterator.iterate())
+	RefDataListIterator<Renderable, double> legendEntryIterator(legendEntries);
+	while (Renderable *rend = legendEntryIterator.iterate())
 	{
 		// Grab copy of the relevant colour definition for this Renderable
-		const ColourDefinition& colourDefinition = rend->colour();
+		const ColourDefinition &colourDefinition = rend->colour();
 
 		// Draw line indicator
 		glPushMatrix();
-		glTranslated(-overlaySpacing, (overlayTextSize/2.0) - (rend->lineStyle().width()/2.0), 0.0);
+		glTranslated(-overlaySpacing, (overlayTextSize / 2.0) - (rend->lineStyle().width() / 2.0), 0.0);
 		// -- What are we drawing for the line indicator?
 		if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 		{
 			rend->lineStyle().sendToGL(pixelScaling_);
 			GLfloat lineWidth;
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-			glLineWidth(lineWidth*2.0);
+			glLineWidth(lineWidth * 2.0);
 			colourDefinition.colour(0.0, colour);
 			glColor4f(colour[0], colour[1], colour[2], colour[3]);
 			glBegin(GL_LINES);
@@ -126,8 +129,9 @@ void DataViewer::render2DOverlay()
 
 	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interacting()) switch (interactionMode())
-	{
+	if (interacting())
+		switch (interactionMode())
+		{
 		case (DataViewer::ZoomToAreaInteraction):
 			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
 			selectionBoxStyle.sendToGL();
@@ -140,7 +144,7 @@ void DataViewer::render2DOverlay()
 			break;
 		default:
 			break;
-	}
+		}
 }
 
 // // Grab axes, and knock out values in the supplied vectors which correspond to the activated axis

@@ -37,16 +37,11 @@ CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::An
 }
 
 // Destructor
-CalculateRDFModule::~CalculateRDFModule()
-{
-}
+CalculateRDFModule::~CalculateRDFModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateRDFModule::createInstance() const
-{
-	return new CalculateRDFModule;
-}
+Module *CalculateRDFModule::createInstance() const { return new CalculateRDFModule; }

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_MIMETREEWIDGETITEM_H
 #define DISSOLVE_MIMETREEWIDGETITEM_H
 
-#include <QTreeWidgetItem>
 #include "gui/widgets/mimestrings.h"
 #include "templates/list.h"
+#include <QTreeWidgetItem>
 
 // Forward declarations
 /* none */
@@ -32,25 +32,23 @@
 // Mime Tree Widget Item
 class MimeTreeWidgetItem : public QTreeWidgetItem
 {
-	public:
+      public:
 	// Constructors
-	MimeTreeWidgetItem(QTreeWidget* parent, int type);
-	MimeTreeWidgetItem(QTreeWidgetItem* parent, int type);
-
+	MimeTreeWidgetItem(QTreeWidget *parent, int type);
+	MimeTreeWidgetItem(QTreeWidgetItem *parent, int type);
 
 	/*
 	 * Mime Data
 	 */
-	private:
+      private:
 	// Mime string data
 	MimeStrings mimeStrings_;
 
-	public:
+      public:
 	// Add mime data of specified type
 	void addMimeString(MimeString::MimeStringType type, QString data);
 	// Return mime strings
-	MimeStrings& mimeStrings();
+	MimeStrings &mimeStrings();
 };
 
 #endif
-

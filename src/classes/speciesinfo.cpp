@@ -30,40 +30,23 @@ SpeciesInfo::SpeciesInfo() : ListItem<SpeciesInfo>()
 }
 
 // Destructor
-SpeciesInfo::~SpeciesInfo()
-{
-}
+SpeciesInfo::~SpeciesInfo() {}
 
 /*
  * Species Target
  */
 
 // Set target Species
-void SpeciesInfo::setSpecies(Species* sp)
-{
-	species_ = sp;
-}
+void SpeciesInfo::setSpecies(Species *sp) { species_ = sp; }
 
 // Return target Species
-Species* SpeciesInfo::species()
-{
-	return species_;
-}
+Species *SpeciesInfo::species() { return species_; }
 
 // Zero the population of the Species
-void SpeciesInfo::zeroPopulation()
-{
-	population_ = 0;
-}
+void SpeciesInfo::zeroPopulation() { population_ = 0; }
 
 // Add to the population of the Species
-void SpeciesInfo::addPopulation(int pop)
-{
-	population_ += pop;
-}
+void SpeciesInfo::addPopulation(int pop) { population_ += pop; }
 
 // Return relative population of the Species
-int SpeciesInfo::population() const
-{
-	return population_;
-}
+int SpeciesInfo::population() const { return population_; }

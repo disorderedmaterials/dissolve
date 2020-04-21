@@ -33,16 +33,11 @@ EnergyModule::EnergyModule() : Module()
 }
 
 // Destructor
-EnergyModule::~EnergyModule()
-{
-}
+EnergyModule::~EnergyModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* EnergyModule::createInstance() const
-{
-	return new EnergyModule;
-}
+Module *EnergyModule::createInstance() const { return new EnergyModule; }

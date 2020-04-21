@@ -19,18 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
-#include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "classes/masterintra.h"
+#include "classes/partialset.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/speciesbond.h"
-#include "classes/partialset.h"
-#include "math/praxis.h"
 #include "genericitems/listhelper.h"
+#include "main/dissolve.h"
+#include "math/praxis.h"
+#include "modules/refine/refine.h"
 
 // Calculate c(r) from supplied S(Q)
-Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
+Data1D RefineModule::calculateCR(const Data1D &sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
 {
 	// Create working array
 	Data1D cr;
@@ -42,7 +42,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 	windowFunction.setUp(sq);
 
 	// Get delta0
-	//const double delta0 = PI / sq.xLast();
+	// const double delta0 = PI / sq.xLast();
 
 	int nQ = sq.nValues();
 
@@ -52,7 +52,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 	while (omega <= rMax)
 	{
 		ft = 0.0;
-		for (int m=0; m<nQ; ++m)
+		for (int m = 0; m < nQ; ++m)
 		{
 			// Get window value at this point in the function
 			window = windowFunction.y(sq.constXAxis(m), omega);
@@ -60,13 +60,14 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 			// Calculate broadening
 			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.constXAxis(m), omega) : broadening.yFT(sq.constXAxis(m), omega));
 
-			ft += broaden * window * sq.constValue(m) * deltaQ * ((sin(sq.constXAxis(m)*omega) * sq.constXAxis(m)) / (sq.constValue(m)+1.0));
+			ft += broaden * window * sq.constValue(m) * deltaQ * ((sin(sq.constXAxis(m) * omega) * sq.constXAxis(m)) / (sq.constValue(m) + 1.0));
 		}
 
 		// Normalise
-		if (omega > 0.0) ft /= omega;
+		if (omega > 0.0)
+			ft /= omega;
 		cr.addPoint(omega, ft);
-		
+
 		omega += rStep;
 	}
 
@@ -77,7 +78,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 }
 
 // Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
-bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond)
+bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, AtomType *typeI, AtomType *typeJ, Data1D &deltaBond)
 {
 	// TODO - this function is out-of-date and no longer works
 	return false;
@@ -87,7 +88,7 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 	const int idI = typeI->index();
 	const int idJ = typeJ->index();
 	RefList<MasterIntra> masterBonds;
-// 	for (MasterIntra* b = coreData.masterBonds().first(); b != NULL; b = b->next()) if (b->usageCount(idI, idJ) > 0) masterBonds.append(b);
+	// 	for (MasterIntra* b = coreData.masterBonds().first(); b != NULL; b = b->next()) if (b->usageCount(idI, idJ) > 0) masterBonds.append(b);
 
 	/*
 	 * We now have a reference list of MasterIntra bond terms that involve these two AtomTypes.
@@ -95,9 +96,9 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 	 * of the MasterIntra term.
 	 * XXX
 	 * We will impose some restrictions on the fitting, so as to limit the fitting area close to the current value of
-	 * the masterBond's equilibrium value.  Our fitFunction() will impose a quadractic penalty function about the 
+	 * the masterBond's equilibrium value.  Our fitFunction() will impose a quadractic penalty function about the
 	 */
-	
+
 	// Create a minimiser, and add our target variables - the order here is important, as the costFunction() is just
 	// provided with an array of doubles in the same order.
 	double xCentre, delta, width, AL, AC, AR;
@@ -126,10 +127,11 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 	deltaBond.values() = 0.0;
 
 	// Loop over reference list of MasterIntra
-	for (MasterIntra* masterIntra : masterBonds)
+	for (MasterIntra *masterIntra : masterBonds)
 	{
 		// Set our variables ready for the fit
-		if (masterIntra->form() == SpeciesBond::HarmonicForm) xCentre = masterIntra->parameter(1);
+		if (masterIntra->form() == SpeciesBond::HarmonicForm)
+			xCentre = masterIntra->parameter(1);
 		else
 		{
 			Messenger::error("Functional form of MasterIntra '%s' not recognised, so can't extract equilibrium value.\n", masterIntra->name());
@@ -154,14 +156,16 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 			{
 				// AL and AR have opposite signs which probably means a sine-like curve indicating a mismatch of peak positions
 				// Check the magnitude of AC - if it is sufficiently small we will assume this is the case
-				if (fabs(AC) < 0.05*fabs(AL))
+				if (fabs(AC) < 0.05 * fabs(AL))
 				{
 					// Adjust the equilibrium bond length...
-					double newEq = xCentreStart_ + 0.1 * (xCentre-xCentreStart_);
-					Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);				
-					if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(1, newEq);
+					double newEq = xCentreStart_ + 0.1 * (xCentre - xCentreStart_);
+					Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);
+					if (masterIntra->form() == SpeciesBond::HarmonicForm)
+						masterIntra->setParameter(1, newEq);
 				}
-				else continue;
+				else
+					continue;
 
 				Messenger::print("Resulting magnitude of fit is below threshold (A = %f), so no modification will be performed.\n", AL);
 				continue;
@@ -173,11 +177,14 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 				{
 					// Adjust the bond force constant...
 					double newK;
-					if (masterIntra->form() == SpeciesBond::HarmonicForm) newK = masterIntra->parameter(0)* 0.9;
-					Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);				
-					if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(0, newK);
+					if (masterIntra->form() == SpeciesBond::HarmonicForm)
+						newK = masterIntra->parameter(0) * 0.9;
+					Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);
+					if (masterIntra->form() == SpeciesBond::HarmonicForm)
+						masterIntra->setParameter(0, newK);
 				}
-				else continue;
+				else
+					continue;
 			}
 		}
 		else
@@ -185,7 +192,8 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 			// Try again, but with a two-exponential fit
 
 			// Set our variables ready for the fit
-			if (masterIntra->form() == SpeciesBond::HarmonicForm) xCentre = masterIntra->parameter(1);
+			if (masterIntra->form() == SpeciesBond::HarmonicForm)
+				xCentre = masterIntra->parameter(1);
 			else
 			{
 				Messenger::error("Functional form of MasterIntra '%s' not recognised, so can't extract equilibrium value.\n", masterIntra->name());
@@ -205,9 +213,10 @@ bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, At
 			}
 
 			// Adjust the equilibrium bond length...
-			double newEq = xCentreStart_ + 0.1 * (xCentre-xCentreStart_);
-			Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);				
-			if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(1, newEq);
+			double newEq = xCentreStart_ + 0.1 * (xCentre - xCentreStart_);
+			Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);
+			if (masterIntra->form() == SpeciesBond::HarmonicForm)
+				masterIntra->setParameter(1, newEq);
 		}
 
 		// One of our masterbonds has provided a good fit to the data - we may as well stop here
@@ -225,20 +234,20 @@ double RefineModule::fitEquation(double x, double xCentre, double delta, double 
 {
 	/*
 	 * Fit equation the of sum of two offset Gaussians around a central Gaussian:
-	 * 
+	 *
 	 * 		   -((x - xI) - delta)**2	     -(x - xI)**2	     -((x - xI) + delta)**2
 	 * f(x) = AL * exp ---------------------- + AC * exp ------------ + AR * exp ----------------------
 	 * 	     		  width**2		       width**2			    width**2
-	 * 
+	 *
 	 */
 
 	const double dx = x - xCentre;
 	const double widthSquared = width * width;
-	return AL*exp(-((dx-delta)*(dx-delta))/widthSquared) + AC*exp(-(dx*dx)/widthSquared) + AR*exp(-((dx+delta)*(dx+delta))/widthSquared);
+	return AL * exp(-((dx - delta) * (dx - delta)) / widthSquared) + AC * exp(-(dx * dx) / widthSquared) + AR * exp(-((dx + delta) * (dx + delta)) / widthSquared);
 }
 
 // Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
-double RefineModule::costFunction3Exp(const Array<double>& alpha)
+double RefineModule::costFunction3Exp(const Array<double> &alpha)
 {
 	/*
 	 * alpha[] are as follows:
@@ -266,17 +275,19 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xAxis().lastValue()) break;
+		else if (x > fitData_.xAxis().lastValue())
+			break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
 		delta = interpolatedFitData_.y(x) - func;
-		sos += delta*delta;
+		sos += delta * delta;
 		++nPoints;
 
 		// Add on penalty for alpha.constAt(0] (the x intercept) straying too far from the starting value
 		delta = fabs(xCentreStart_ - alpha.constAt(0)) - xCentreDeltaLimit_;
-		if (delta > 0.0) sos += (delta * 10000.0)*(delta * 10000.0);
+		if (delta > 0.0)
+			sos += (delta * 10000.0) * (delta * 10000.0);
 
 		x += windowDelta;
 	}
@@ -285,7 +296,7 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 }
 
 // Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
-double RefineModule::costFunction2Exp(const Array<double>& alpha)
+double RefineModule::costFunction2Exp(const Array<double> &alpha)
 {
 	/*
 	 * alpha[] are as follows:
@@ -295,7 +306,7 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	 * alpha[2] = width-squared of function lobes
 	 * alpha[3] = amplitude of left function lobe
 	 * alpha[4] = amplitude of right function lobe
-	 * 
+	 *
 	 * Amplitude of central obe is zero
 	 */
 
@@ -314,17 +325,19 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xAxis().lastValue()) break;
+		else if (x > fitData_.xAxis().lastValue())
+			break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));
 		delta = interpolatedFitData_.y(x) - func;
-		sos += delta*delta;
+		sos += delta * delta;
 		++nPoints;
 
 		// Add on penalty for alpha[0] (the x intercept) straying too far from the starting value
 		delta = fabs(xCentreStart_ - alpha.constAt(0)) - xCentreDeltaLimit_;
-		if (delta > 0.0) sos += (delta * 10000.0)*(delta * 10000.0);
+		if (delta > 0.0)
+			sos += (delta * 10000.0) * (delta * 10000.0);
 
 		x += windowDelta;
 	}
@@ -333,19 +346,14 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 }
 
 // Sum fitting equation with the specified parameters into the specified Data1D
-void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, double width, double AL, double AC, double AR)
+void RefineModule::sumFitEquation(Data1D &target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
-	for (int n=0; n<target.nValues(); ++n) target.value(n) += fitEquation(target.xAxis(n), xCentre, delta, width, AL, AC, AR);
+	for (int n = 0; n < target.nValues(); ++n)
+		target.value(n) += fitEquation(target.xAxis(n), xCentre, delta, width, AL, AC, AR);
 }
 
 // Return list of target Modules / data for fitting process
-const RefDataList<Module,ModuleGroup*>& RefineModule::allTargets() const
-{
-	return groupedTargets_.modules();
-}
+const RefDataList<Module, ModuleGroup *> &RefineModule::allTargets() const { return groupedTargets_.modules(); }
 
 // Return list of target groups defined
-const ModuleGroups& RefineModule::groupedTargets() const
-{
-	return groupedTargets_;
-}
+const ModuleGroups &RefineModule::groupedTargets() const { return groupedTargets_; }

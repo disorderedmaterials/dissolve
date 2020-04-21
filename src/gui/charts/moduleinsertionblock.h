@@ -35,34 +35,31 @@ class ModuleInsertionBlock : public QWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ModuleInsertionBlock(QWidget* parent);
+	ModuleInsertionBlock(QWidget *parent);
 	~ModuleInsertionBlock();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ModuleInsertionWidget ui_;
-
 
 	/*
 	 * QWidget Reimplementations
 	 */
-	protected:
+      protected:
 	// Paint event
-	void paintEvent(QPaintEvent* event);
-
+	void paintEvent(QPaintEvent *event);
 
 	/*
 	 * Widget Functions
 	 */
-	public:
+      public:
 	// Return underlying widget
-	QWidget* widget();
+	QWidget *widget();
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls
@@ -70,11 +67,10 @@ class ModuleInsertionBlock : public QWidget
 	// Enable sensitive controls
 	void enableSensitiveControls();
 
-
 	/*
 	 * Geometry
 	 */
-	public:
+      public:
 	// Return width of underlying widget
 	int widgetWidth() const;
 	// Return height of underlying widget
@@ -82,11 +78,10 @@ class ModuleInsertionBlock : public QWidget
 	// Set underlying widget geometry
 	void setWidgetGeometry(int left, int top, int width, int height);
 
-
 	/*
 	 * Icons
 	 */
-	public:
+      public:
 	// Set icons to reflect insertion of specified Module
 	void setDisplayModuleInsertion(QString moduleType);
 	// Set icons to reflect moving existing Module to new position

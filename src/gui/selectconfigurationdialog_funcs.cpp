@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "data/ff.h"
 #include "gui/selectconfigurationdialog.h"
 #include "gui/selectconfigurationwidget.h"
-#include "data/ff.h"
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
 // Constructor
-SelectConfigurationDialog::SelectConfigurationDialog(QWidget* parent, const CoreData& coreData, QString dialogTitle)
+SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
 {
 	ui_.setupUi(this);
 
@@ -36,42 +36,34 @@ SelectConfigurationDialog::SelectConfigurationDialog(QWidget* parent, const Core
 }
 
 // Destructor
-SelectConfigurationDialog::~SelectConfigurationDialog()
-{
-}
+SelectConfigurationDialog::~SelectConfigurationDialog() {}
 
-void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(bool isValid)
-{
-	ui_.SelectButton->setEnabled(isValid);
-}
+void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }
 
 void SelectConfigurationDialog::on_ConfigurationWidget_speciesDoubleClicked()
 {
 	// Check current selection size for validity
-	if (ui_.ConfigurationWidget->currentConfiguration().nItems() != 1) return;
+	if (ui_.ConfigurationWidget->currentConfiguration().nItems() != 1)
+		return;
 
 	accept();
 }
 
-void SelectConfigurationDialog::on_SelectButton_clicked(bool checked)
-{
-	accept();
-}
+void SelectConfigurationDialog::on_SelectButton_clicked(bool checked) { accept(); }
 
-void SelectConfigurationDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void SelectConfigurationDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning a single selected Configuration
-Configuration* SelectConfigurationDialog::selectConfiguration()
+Configuration *SelectConfigurationDialog::selectConfiguration()
 {
 	ui_.ConfigurationWidget->reset(1, 1);
 
 	show();
 
-	if (exec() == QDialog::Accepted) return ui_.ConfigurationWidget->currentConfiguration().firstItem();
-	else return NULL;
+	if (exec() == QDialog::Accepted)
+		return ui_.ConfigurationWidget->currentConfiguration().firstItem();
+	else
+		return NULL;
 }
 
 // Run the dialog, returning a list of selected Configuration
@@ -81,6 +73,8 @@ RefList<Configuration> SelectConfigurationDialog::selectConfiguration(int minCon
 
 	show();
 
-	if (exec() == QDialog::Accepted) return ui_.ConfigurationWidget->currentConfiguration();
-	else return RefList<Configuration>();
+	if (exec() == QDialog::Accepted)
+		return ui_.ConfigurationWidget->currentConfiguration();
+	else
+		return RefList<Configuration>();
 }

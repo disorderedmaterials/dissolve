@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_PROCEDURENODE_PROCESS3D_H
 #define DISSOLVE_PROCEDURENODE_PROCESS3D_H
 
+#include "base/charstring.h"
+#include "io/export/data3d.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/nodereference.h"
-#include "io/export/data3d.h"
-#include "base/charstring.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -37,71 +37,67 @@ class NodeScopeStack;
 // Procedure Node - Process3D
 class Process3DProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	Process3DProcedureNode(const Collect3DProcedureNode* target = NULL);
+	Process3DProcedureNode(const Collect3DProcedureNode *target = NULL);
 	// Destructor
 	~Process3DProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Collect3D node that we are processing
-	const Collect3DProcedureNode* collectNode_;
+	const Collect3DProcedureNode *collectNode_;
 	// Pointer to processed data (stored in processing data list)
-	Data3D* processedData_;
+	Data3D *processedData_;
 	// Export file and format
 	Data3DExportFileFormat exportFileAndFormat_;
 
-	public:
+      public:
 	// Return processed data
-	const Data3D& processedData() const;
+	const Data3D &processedData() const;
 	// Return value label
-	const char* valueLabel() const;
+	const char *valueLabel() const;
 	// Return x axis label
-	const char* xAxisLabel() const;
+	const char *xAxisLabel() const;
 	// Return y axis label
-	const char* yAxisLabel() const;
+	const char *yAxisLabel() const;
 	// Return z axis label
-	const char* zAxisLabel() const;
-
+	const char *zAxisLabel() const;
 
 	/*
 	 * Branches
 	 */
-	private:
+      private:
 	// Branch for normalisation of data (if defined)
-	SequenceProcedureNode* normalisationBranch_;
+	SequenceProcedureNode *normalisationBranch_;
 
-	public:
+      public:
 	// Add and return normalisation sequence branch
-	SequenceProcedureNode* addNormalisationBranch();
+	SequenceProcedureNode *addNormalisationBranch();
 	// Return whether this node has a branch
 	bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
-	SequenceProcedureNode* branch();
-
+	SequenceProcedureNode *branch();
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Finalise any necessary data after execution
-	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

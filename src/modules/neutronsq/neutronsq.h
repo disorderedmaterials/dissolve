@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_MODULE_NEUTRONSQ_H
 #define DISSOLVE_MODULE_NEUTRONSQ_H
 
-#include "module/module.h"
-#include "io/import/data1d.h"
-#include "classes/partialset.h"
 #include "classes/data1dstore.h"
+#include "classes/partialset.h"
+#include "io/import/data1d.h"
+#include "module/module.h"
 
 // Forward Declarations
 class PartialSet;
@@ -34,39 +34,36 @@ class Weights;
 // SQ Module
 class NeutronSQModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	NeutronSQModule();
 	// Destructor
 	~NeutronSQModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	private:
+      private:
 	// Isotopologue information
 	IsotopologueCollection isotopologues_;
 	// Exchangeable AtomTypes
@@ -74,53 +71,56 @@ class NeutronSQModule : public Module
 	// Reference F(Q) file and format
 	Data1DImportFileFormat referenceFQ_;
 
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
-	public:
+      public:
 	// Normalisation Type enum
-	enum NormalisationType { NoNormalisation, AverageOfSquaresNormalisation, SquareOfAverageNormalisation, nNormalisationTypes };
+	enum NormalisationType
+	{
+		NoNormalisation,
+		AverageOfSquaresNormalisation,
+		SquareOfAverageNormalisation,
+		nNormalisationTypes
+	};
 	// Return enum option info for NormalisationType
 	EnumOptions<NeutronSQModule::NormalisationType> normalisationTypes();
 	// Return file and format for reference total F(Q)
-	const Data1DImportFileFormat& referenceFQFileAndFormat();
+	const Data1DImportFileFormat &referenceFQFileAndFormat();
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
-	public:
+      public:
 	// Run set-up stage
-	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Members / Functions
 	 */
-	private:
+      private:
 	// Test data
 	Data1DStore testData_;
 
-	public:
+      public:
 	// Calculate weighted g(r) from supplied unweighted g(r) and Weights
-	bool calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights, NeutronSQModule::NormalisationType normalisation);
+	bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights, NeutronSQModule::NormalisationType normalisation);
 	// Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, NeutronSQModule::NormalisationType normalisation);
+	bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights, NeutronSQModule::NormalisationType normalisation);
 	// Calculate Weights matrix summed over target Configurations
-	bool calculateSummedWeights(Weights& summedWeights) const;
-
+	bool calculateSummedWeights(Weights &summedWeights) const;
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

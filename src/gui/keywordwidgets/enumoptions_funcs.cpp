@@ -19,26 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/enumoptions.hui"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/enumoptions.hui"
 
 // Constructor
-EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<EnumOptionsBaseKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<EnumOptionsBaseKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->name());
 	else
 	{
 		// Get the underlying EnumOptionsBase
-		const EnumOptionsBase& options = keyword_->baseOptions();
+		const EnumOptionsBase &options = keyword_->baseOptions();
 
 		// Populate the combo with the available keywords
-		for (int n=0; n<options.nOptions(); ++n)
+		for (int n = 0; n < options.nOptions(); ++n)
 		{
 			addItem(options.keywordByIndex(n));
-			if (options.currentOptionIndex() == n) setCurrentIndex(n);
+			if (options.currentOptionIndex() == n)
+				setCurrentIndex(n);
 		}
 
 		// Turn off editability
@@ -59,7 +61,8 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase*
 // Combo box index changed
 void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// Use the virtual EnumOptionsBaseKeyword::setEnumerationByIndex() to set the new option and inform the underlying keyword structure that it has been modified
 	keyword_->setEnumerationByIndex(index);

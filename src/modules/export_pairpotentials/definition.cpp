@@ -22,25 +22,13 @@
 #include "modules/export_pairpotentials/exportpp.h"
 
 // Return type of module
-const char* ExportPairPotentialsModule::type() const
-{
-	return "ExportPairPotentials";
-}
+const char *ExportPairPotentialsModule::type() const { return "ExportPairPotentials"; }
 
 // Return category for module
-const char* ExportPairPotentialsModule::category() const
-{
-	return "Input / Output";
-}
+const char *ExportPairPotentialsModule::category() const { return "Input / Output"; }
 
 // Return brief description of module
-const char* ExportPairPotentialsModule::brief() const
-{
-	return "Export pair potentials";
-}
+const char *ExportPairPotentialsModule::brief() const { return "Export pair potentials"; }
 
 // Return the number of Configuration targets this Module requires
-int ExportPairPotentialsModule::nRequiredTargets() const
-{
-	return Module::ZeroTargets;
-}
+int ExportPairPotentialsModule::nRequiredTargets() const { return Module::ZeroTargets; }

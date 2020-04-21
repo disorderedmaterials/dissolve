@@ -22,56 +22,53 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_SPECIESSITEREFLIST_H
 #define DISSOLVE_KEYWORDWIDGET_SPECIESSITEREFLIST_H
 
-#include "gui/keywordwidgets/ui_speciessitereflist.h"
-#include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/ui_speciessitereflist.h"
 #include "keywords/speciessitereflist.h"
 #include <QWidget>
 
 // Forward Declarations
 class Species;
 
-class SpeciesSiteRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
+class SpeciesSiteRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	SpeciesSiteRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	SpeciesSiteRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	SpeciesSiteRefListKeyword* keyword_;
-
+	SpeciesSiteRefListKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::SpeciesSiteRefListWidget ui_;
 
-	private slots:
+      private slots:
 	void siteCheckBox_clicked(bool checked);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues(const CoreData& coreData);
+	void updateWidgetValues(const CoreData &coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 	// Update summary text

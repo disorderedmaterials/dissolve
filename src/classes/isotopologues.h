@@ -35,29 +35,28 @@ class LineParser;
 // Isotopologues
 class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Isotopologues();
 	// Destructor
 	~Isotopologues();
 
-
 	/*
 	 * Isotopologue Mixture Data
 	 */
-	private:
+      private:
 	// Associated Species
-	Species* species_;
+	Species *species_;
 	// Integer population of associated Species
 	int speciesPopulation_;
 	// Weighted Isotopologue mixture
 	List<IsotopologueWeight> mix_;
 
-	public:
+      public:
 	// Set associated Species and population
-	void setSpecies(Species* sp, int population);
+	void setSpecies(Species *sp, int population);
 	// Return associated Species
-	Species* species() const;
+	Species *species() const;
 	// Return associated Species population
 	int speciesPopulation() const;
 	// Update Isotopologue RefList
@@ -65,17 +64,17 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	// Add next available Isotopologue to list
 	bool addNext();
 	// Add specific Isotopologue to list
-	bool add(const Isotopologue* iso, double relativeWeight);
+	bool add(const Isotopologue *iso, double relativeWeight);
 	// Set Isotopologue component in list
-	bool set(const Isotopologue* iso, double relativeWeight);
+	bool set(const Isotopologue *iso, double relativeWeight);
 	// Remove references to the specified Isotopologue
-	void remove(const Isotopologue* iso);
+	void remove(const Isotopologue *iso);
 	// Remove the specified IsotopologueWeight
-	void remove(IsotopologueWeight* isoWeight);
+	void remove(IsotopologueWeight *isoWeight);
 	// Return whether the mix contains the specified Isotopologue
-	const IsotopologueWeight* contains(const Isotopologue* iso) const;
+	const IsotopologueWeight *contains(const Isotopologue *iso) const;
 	// Return Isotopologue mix
-	const List<IsotopologueWeight>& mix() const;
+	const List<IsotopologueWeight> &mix() const;
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
 	// Return total relative population
@@ -83,27 +82,25 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	// Normalise total relative population to 1.0
 	void normalise();
 
-
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

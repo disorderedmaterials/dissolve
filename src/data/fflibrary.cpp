@@ -20,6 +20,10 @@
 */
 
 #include "data/fflibrary.h"
+#include "base/sysfunc.h"
+#include "data/ff/ludwig/ntf2.h"
+#include "data/ff/ludwig/py4oh.h"
+#include "data/ff/ludwig/py5.h"
 #include "data/ff/oplsaa2005/alcohols.h"
 #include "data/ff/oplsaa2005/alkanes.h"
 #include "data/ff/oplsaa2005/alkenes.h"
@@ -27,12 +31,8 @@
 #include "data/ff/oplsaa2005/diols.h"
 #include "data/ff/oplsaa2005/noblegases.h"
 #include "data/ff/oplsaa2005/triols.h"
-#include "data/ff/ludwig/ntf2.h"
-#include "data/ff/ludwig/py5.h"
-#include "data/ff/ludwig/py4oh.h"
 #include "data/ff/spcfw.h"
 #include "data/ff/uff.h"
-#include "base/sysfunc.h"
 
 // Static Members
 List<Forcefield> ForcefieldLibrary::forcefields_;
@@ -63,19 +63,22 @@ void ForcefieldLibrary::registerForcefields()
  */
 
 // Return list of available Forcefields
-List<Forcefield>& ForcefieldLibrary::forcefields()
+List<Forcefield> &ForcefieldLibrary::forcefields()
 {
 	// If the list is empty, we haven't yet constructed the list...
-	if (forcefields_.nItems() == 0) registerForcefields();
+	if (forcefields_.nItems() == 0)
+		registerForcefields();
 
 	return forcefields_;
 }
 
 // Return named Forcefield, if it exists
-Forcefield* ForcefieldLibrary::forcefield(const char* name)
+Forcefield *ForcefieldLibrary::forcefield(const char *name)
 {
 	ListIterator<Forcefield> ffIterator(forcefields());
-	while (Forcefield* ff = ffIterator.iterate()) if (DissolveSys::sameString(ff->name(), name)) return ff;
+	while (Forcefield *ff = ffIterator.iterate())
+		if (DissolveSys::sameString(ff->name(), name))
+			return ff;
 
 	return NULL;
 }

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_CONFIGURATIONTAB_H
 #define DISSOLVE_CONFIGURATIONTAB_H
 
-#include "gui/ui_configurationtab.h"
-#include "gui/maintab.h"
 #include "base/units.h"
+#include "gui/maintab.h"
+#include "gui/ui_configurationtab.h"
 
 // Forward Declarations
 class Configuration;
@@ -36,56 +36,52 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Configuration* cfg);
+	ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Configuration *cfg);
 	~ConfigurationTab();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ConfigurationTab ui_;
-
 
 	/*
 	 * MainTab Reimplementations
 	 */
-	public:
+      public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
-	QString getNewTitle(bool& ok);
+	QString getNewTitle(bool &ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
 	// Return whether the tab can be closed (after any necessary user querying, etc.)
 	bool canClose() const;
 
-
 	/*
 	 * Configuration Target
 	 */
-	private:
+      private:
 	// Configuration data to display
-	Configuration* configuration_;
+	Configuration *configuration_;
 
-	public:
+      public:
 	// Return displayed Configuration
-	Configuration* configuration() const;
-
+	Configuration *configuration() const;
 
 	/*
 	 * Update
 	 */
-	private:
+      private:
 	// Row update function for BondsTable
-	void updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesInfo, bool createItems);
+	void updateSpeciesInfoTableRow(int row, SpeciesInfo *speciesInfo, bool createItems);
 	// Update density label
 	void updateDensityLabel();
 
-	protected:
+      protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -93,11 +89,10 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// Enable sensitive controls within tab
 	void enableSensitiveControls();
 
-
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
+      private slots:
 	// Content
 	void on_GeneratorRegenerateButton_clicked(bool checked);
 	// Definition
@@ -110,15 +105,14 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// Size Factor Scaling
 	void on_RequestedSizeFactorSpin_valueChanged(double value);
 
-
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser, const CoreData& coreData);
+	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 };
 
 #endif

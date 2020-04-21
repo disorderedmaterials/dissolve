@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/gui.h"
 #include "gui/datamanagerdialog.h"
+#include "gui/gui.h"
 #include "main/dissolve.h"
 #include <QFileDialog>
 #include <QInputDialog>
@@ -29,7 +29,8 @@
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
 	// Prepare the simulation
-	if (!dissolve_.prepare()) return;
+	if (!dissolve_.prepare())
+		return;
 
 	// Prepare the GUI
 	disableSensitiveControls();
@@ -47,10 +48,12 @@ void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
 	// Get the number of iterations to run
 	bool ok;
 	int nIterations = QInputDialog::getInt(this, "Iterate Simulation...", "Enter the number of iterations to run", 10, 1, 1000000, 10, &ok);
-	if (!ok) return;
+	if (!ok)
+		return;
 
 	// Prepare the simulation
-	if (!dissolve_.prepare()) return;
+	if (!dissolve_.prepare())
+		return;
 
 	// Prepare the GUI
 	disableSensitiveControls();
@@ -66,7 +69,8 @@ void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
 void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 {
 	// Prepare the simulation
-	if (!dissolve_.prepare()) return;
+	if (!dissolve_.prepare())
+		return;
 
 	// Prepare the GUI
 	disableSensitiveControls();
@@ -82,7 +86,8 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 {
 	// Prepare the simulation
-	if (!dissolve_.prepare()) return;
+	if (!dissolve_.prepare())
+		return;
 
 	// Prepare the GUI
 	disableSensitiveControls();
@@ -112,10 +117,13 @@ void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 {
 	// Get filename for restart point
 	QString filename = QFileDialog::getSaveFileName(this, "Select Output File", QDir::currentPath(), "Restart Files (*.restart)");
-	if (filename.isEmpty()) return;
+	if (filename.isEmpty())
+		return;
 
-	if (dissolve_.saveRestart(qPrintable(filename))) Messenger::print("Saved restart point to '%s'.\n", qPrintable(filename));
-	else Messenger::error("Failed to save restart point to '%s'.\n", qPrintable(filename));
+	if (dissolve_.saveRestart(qPrintable(filename)))
+		Messenger::print("Saved restart point to '%s'.\n", qPrintable(filename));
+	else
+		Messenger::error("Failed to save restart point to '%s'.\n", qPrintable(filename));
 }
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
@@ -143,7 +151,8 @@ void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked)
 
 		// Clear local processing data in configurations
 		ListIterator<Configuration> configIterator(dissolve_.configurations());
-		while (Configuration* cfg = configIterator.iterate()) cfg->moduleData().clear();
+		while (Configuration *cfg = configIterator.iterate())
+			cfg->moduleData().clear();
 
 		// Set iteration counter to zero
 		dissolve_.resetIterationCounter();
@@ -162,11 +171,14 @@ void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
 	dissolve_.seed();
 	int newSeed = QInputDialog::getInt(this, "Set random seed", "Enter the new value of the random seed, or -1 to remove set value", dissolve_.seed(), -1, 2147483647, 1, &ok);
 
-	if (!ok) return;
+	if (!ok)
+		return;
 
 	// Set and initialise random seed
 	dissolve_.setSeed(newSeed);
 
-	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dissolve_.seed());
+	if (dissolve_.seed() == -1)
+		srand((unsigned)time(NULL));
+	else
+		srand(dissolve_.seed());
 }

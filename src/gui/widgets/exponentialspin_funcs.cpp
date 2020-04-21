@@ -24,7 +24,7 @@
 #include <QLineEdit>
 
 // Constructor
-ExponentialSpin::ExponentialSpin(QWidget* parent) : QDoubleSpinBox(parent)
+ExponentialSpin::ExponentialSpin(QWidget *parent) : QDoubleSpinBox(parent)
 {
 	// Set up validator
 	validator_.setNotation(QDoubleValidator::ScientificNotation);
@@ -75,13 +75,13 @@ void ExponentialSpin::removeLimits()
 QString ExponentialSpin::textFromValue(double value) const
 {
 	const int exponentFormatThreshold = 3;
-// 	printf("Here we are in updateText, setting [%s].\n", qPrintable(value_.text(precision)));
+	// 	printf("Here we are in updateText, setting [%s].\n", qPrintable(value_.text(precision)));
 	DoubleExp de(value);
 	return de.asString(exponentFormatThreshold, decimals()).get();
 }
 
 // Validate supplied text
-QValidator::State ExponentialSpin::validate(QString& text, int& pos) const
+QValidator::State ExponentialSpin::validate(QString &text, int &pos) const
 {
 	// Set validator
 	static QRegExp regExp("[-+]?[0-9]*[.]?[0-9]+([eE][-+]?[0-9]+)?");
@@ -89,16 +89,13 @@ QValidator::State ExponentialSpin::validate(QString& text, int& pos) const
 }
 
 // Interpret text into value
-double ExponentialSpin::valueFromText(const QString& text) const
-{
-	return text.toDouble();
-}
+double ExponentialSpin::valueFromText(const QString &text) const { return text.toDouble(); }
 
 // Step value by specified amount
 // void ExponentialSpin::stepBy(int nSteps)
 // {
 // 	value_ = value_.value() + valueStep_*nSteps;
-// 
+//
 // 	// Check new value and update text
 // 	clamp();
 // 	updateTextFromValue();
@@ -111,7 +108,7 @@ double ExponentialSpin::valueFromText(const QString& text) const
 // {
 // 	bool up = (value_.value() < valueMax_) || (!limitMaxValue_);
 // 	bool down = (value_.value() > valueMin_) || (!limitMinValue_);
-// 
+//
 // 	if (up && down) return (QAbstractSpinBox::StepUpEnabled | QAbstractSpinBox::StepDownEnabled);
 // 	else if (up) return QAbstractSpinBox::StepUpEnabled;
 // 	else if (down) return QAbstractSpinBox::StepDownEnabled;

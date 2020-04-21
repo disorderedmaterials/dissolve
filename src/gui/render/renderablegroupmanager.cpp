@@ -20,8 +20,8 @@
 */
 
 #include "gui/render/renderablegroupmanager.h"
-#include "gui/render/renderable.h"
 #include "base/sysfunc.h"
+#include "gui/render/renderable.h"
 
 // Constructor
 RenderableGroupManager::RenderableGroupManager()
@@ -47,10 +47,10 @@ void RenderableGroupManager::clear()
  */
 
 // Create named group, or return existing group by the same name
-RenderableGroup* RenderableGroupManager::createGroup(const char* name)
+RenderableGroup *RenderableGroupManager::createGroup(const char *name)
 {
 	// Does a group with this name already exist?
-	RenderableGroup* renderableGroup = group(name);
+	RenderableGroup *renderableGroup = group(name);
 	if (!renderableGroup)
 	{
 		// No existing group, so must add a new one
@@ -58,10 +58,11 @@ RenderableGroup* RenderableGroupManager::createGroup(const char* name)
 		int lowestId = 0;
 		for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
 		{
-			if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId]) lowestId = colourId;
+			if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId])
+				lowestId = colourId;
 		}
 
-		renderableGroup = new RenderableGroup(name, (StockColours::StockColour) lowestId);
+		renderableGroup = new RenderableGroup(name, (StockColours::StockColour)lowestId);
 		groups_.own(renderableGroup);
 		++stockColourUsageCount_[lowestId];
 
@@ -73,7 +74,7 @@ RenderableGroup* RenderableGroupManager::createGroup(const char* name)
 }
 
 // Add Renderable to its specified group, creating / associating as necessary
-RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, const char* groupName)
+RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, const char *groupName)
 {
 	// Check to see if the Renderable is already associated to a group...
 	if (renderable->group())
@@ -89,7 +90,7 @@ RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, cons
 	}
 
 	// Create / retrieve the group
-	RenderableGroup* renderableGroup = createGroup(groupName);
+	RenderableGroup *renderableGroup = createGroup(groupName);
 
 	// Add unique Renderable reference to the group
 	renderableGroup->associateRenderable(renderable);
@@ -99,31 +100,33 @@ RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, cons
 }
 
 // Return named group, if it exists
-RenderableGroup* RenderableGroupManager::group(const char* name)
+RenderableGroup *RenderableGroupManager::group(const char *name)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) if (DissolveSys::sameString(group->name(), name)) return group;
+	for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+		if (DissolveSys::sameString(group->name(), name))
+			return group;
 	return NULL;
 }
 
 // Return group for specified Renderable, if one has been assigned
-RenderableGroup* RenderableGroupManager::group(Renderable* renderable)
+RenderableGroup *RenderableGroupManager::group(Renderable *renderable)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) if (group->usedByRenderable(renderable)) return group;
+	for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+		if (group->usedByRenderable(renderable))
+			return group;
 	return NULL;
 }
 
 // Return current RenderableGroups in use
-const List<RenderableGroup>& RenderableGroupManager::groups() const
-{
-	return groups_;
-}
+const List<RenderableGroup> &RenderableGroupManager::groups() const { return groups_; }
 
 // Remove Renderable from its specified group
-void RenderableGroupManager::removeFromGroup(Renderable* renderable)
+void RenderableGroupManager::removeFromGroup(Renderable *renderable)
 {
 	// If no group is currently set in the Renderable, nothing more to do here
-	RenderableGroup* renderableGroup = renderable->group();
-	if (!renderableGroup) return;
+	RenderableGroup *renderableGroup = renderable->group();
+	if (!renderableGroup)
+		return;
 
 	// Remove the Renderable from the group and nullify its pointer
 	renderableGroup->removeRenderable(renderable);
@@ -131,7 +134,8 @@ void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 	// If the group is now empty, we can delete it
 	if (renderableGroup->isEmpty())
 	{
-		if (renderableGroup->colouringStyle() == RenderableGroup::FixedGroupColouring) --stockColourUsageCount_[renderableGroup->fixedStockColour()];
+		if (renderableGroup->colouringStyle() == RenderableGroup::FixedGroupColouring)
+			--stockColourUsageCount_[renderableGroup->fixedStockColour()];
 		groups_.remove(renderableGroup);
 	}
 }
@@ -139,7 +143,8 @@ void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) group->empty();
+	for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+		group->empty();
 }
 
 /*
@@ -147,9 +152,9 @@ void RenderableGroupManager::emptyGroups()
  */
 
 // Set colouring style for named group
-void RenderableGroupManager::setGroupColouring(const char* groupName, RenderableGroup::GroupColouring colouringStyle)
+void RenderableGroupManager::setGroupColouring(const char *groupName, RenderableGroup::GroupColouring colouringStyle)
 {
-	RenderableGroup* g = group(groupName);
+	RenderableGroup *g = group(groupName);
 	if (!g)
 	{
 		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its colouring style...\n", groupName);
@@ -160,9 +165,9 @@ void RenderableGroupManager::setGroupColouring(const char* groupName, Renderable
 }
 
 // Set fixed colour for named group
-void RenderableGroupManager::setGroupFixedColour(const char* groupName, StockColours::StockColour stockColour)
+void RenderableGroupManager::setGroupFixedColour(const char *groupName, StockColours::StockColour stockColour)
 {
-	RenderableGroup* g = group(groupName);
+	RenderableGroup *g = group(groupName);
 	if (!g)
 	{
 		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its fixed colour...\n", groupName);
@@ -177,9 +182,9 @@ void RenderableGroupManager::setGroupFixedColour(const char* groupName, StockCol
  */
 
 // Line stipple to use for group
-void RenderableGroupManager::setGroupStipple(const char* groupName, LineStipple::StippleType stipple)
+void RenderableGroupManager::setGroupStipple(const char *groupName, LineStipple::StippleType stipple)
 {
-	RenderableGroup* g = group(groupName);
+	RenderableGroup *g = group(groupName);
 	if (!g)
 	{
 		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its stipple...\n", groupName);
@@ -194,23 +199,23 @@ void RenderableGroupManager::setGroupStipple(const char* groupName, LineStipple:
  */
 
 // Vertical shifts
-double VerticalShiftAmounts[] = { 0.0, 0.5, 1.0, 2.0 };
+double VerticalShiftAmounts[] = {0.0, 0.5, 1.0, 2.0};
 
 // Set vertical shifts for current RenderableGroups
 void RenderableGroupManager::setRenderableGroupShifts()
 {
 	// Loop over RenderableGroups
 	int groupIndex = 0;
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next())
+	for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
 	{
 		group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
 	}
 }
 
 // Set vertical shifting style for named group
-void RenderableGroupManager::setGroupVerticalShifting(const char* groupName, RenderableGroup::VerticalShiftStyle shiftStyle)
+void RenderableGroupManager::setGroupVerticalShifting(const char *groupName, RenderableGroup::VerticalShiftStyle shiftStyle)
 {
-	RenderableGroup* g = group(groupName);
+	RenderableGroup *g = group(groupName);
 	if (!g)
 	{
 		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its vertical shifting...\n", groupName);
@@ -223,7 +228,7 @@ void RenderableGroupManager::setGroupVerticalShifting(const char* groupName, Ren
 // Cycle vertical shift amount applied to RenderableGroups
 void RenderableGroupManager::cycleVerticalShiftAmount()
 {
-	verticalShiftAmount_ = (RenderableGroupManager::VerticalShiftAmount) ((verticalShiftAmount_+1)%nVerticalShifts);
+	verticalShiftAmount_ = (RenderableGroupManager::VerticalShiftAmount)((verticalShiftAmount_ + 1) % nVerticalShifts);
 
 	setRenderableGroupShifts();
 }
@@ -237,10 +242,7 @@ void RenderableGroupManager::setVerticalShiftAmount(VerticalShiftAmount shiftTyp
 }
 
 // Return current vertical shift amount
-RenderableGroupManager::VerticalShiftAmount RenderableGroupManager::verticalShiftAmount() const
-{
-	return verticalShiftAmount_;
-}
+RenderableGroupManager::VerticalShiftAmount RenderableGroupManager::verticalShiftAmount() const { return verticalShiftAmount_; }
 
 // Remove all vertical shifts from RenderableGroups
 void RenderableGroupManager::removeVerticalShifts()

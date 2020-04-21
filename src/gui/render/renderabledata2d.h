@@ -31,97 +31,96 @@ class Axes;
 // Renderable for Data2D
 class RenderableData2D : public Renderable
 {
-	public:
+      public:
 	// Constructor / Destructor
-	RenderableData2D(const Data2D* source, const char* objectTag);
+	RenderableData2D(const Data2D *source, const char *objectTag);
 	~RenderableData2D();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source data
-	const Data2D* source_;
+	const Data2D *source_;
 
-	private:
+      private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-	public:
+      public:
 	// Return version of data
 	int dataVersion();
-	
-	
+
 	/*
 	 * Transform / Limits
 	 */
-	private:
+      private:
 	// Transformed data
 	Data2D transformedData_;
 
-	protected:
+      protected:
 	// Transform data according to current settings
 	void transformValues();
 	// Return reference to transformed data
-	const Data2D& transformedData();
-
+	const Data2D &transformedData();
 
 	/*
 	 * Rendering Primitives
 	 */
 
-	
-	private:
+      private:
 	// Create line strip primitive
-	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array2D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
+	void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array2D<double> &displayValues, const Axes &axes,
+			   const ColourDefinition &colourDefinition);
 
-	protected:
+      protected:
 	// Recreate necessary primitives / primitive assemblies for the data
-	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
-
 
 	/*
 	 * Style
 	 */
-	public:
+      public:
 	// Display Styles enum
-	enum Data2DDisplayStyle { LinesStyle, nData2DDisplayStyles };
+	enum Data2DDisplayStyle
+	{
+		LinesStyle,
+		nData2DDisplayStyles
+	};
 	// Return EnumOptions for Data2DDisplayStyle
 	static EnumOptions<Data2DDisplayStyle> data2DDisplayStyles();
 
-	private:
+      private:
 	// Display style for the renderable
 	Data2DDisplayStyle displayStyle_;
 
-	public:
+      public:
 	// Set display style for renderable
 	void setDisplayStyle(Data2DDisplayStyle displayStyle);
 	// Return display style for the renderable
 	Data2DDisplayStyle displayStyle() const;
 
-
 	/*
 	 * Style I/O
 	 */
-	public:
+      public:
 	// Data2DStyle Keywords Enum
 	enum Data2DStyleKeyword
 	{
-		DisplayKeyword,			/* 'Display' - General display style for renderable */
-		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		DisplayKeyword,  /* 'Display' - General display style for renderable */
+		EndStyleKeyword, /* 'EndStyle' - End of Style block */
 		nData2DStyleKeywords
 	};
 	// Return enum option info for RenderableKeyword
 	static EnumOptions<RenderableData2D::Data2DStyleKeyword> data2DStyleKeywords();
 	// Write style information
-	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
 	// Read style information
-	bool readStyleBlock(LineParser& parser);
+	bool readStyleBlock(LineParser &parser);
 };
 
 #endif

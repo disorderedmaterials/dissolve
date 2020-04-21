@@ -10,8 +10,7 @@ pr:
       - '*'
 
 stages:
-  # Perform Code Quality Checks
-  # - template: templates/code_quality_checks.yml
+  - template: templates/code-quality-checks.yml
 
   # Build Executables
   - stage: 'build'

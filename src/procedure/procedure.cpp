@@ -20,68 +20,51 @@
 */
 
 #include "procedure/procedure.h"
-#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "classes/configuration.h"
 
 // Constructor
-Procedure::Procedure(ProcedureNode::NodeContext context, const char* blockTerminationKeyword) : rootSequence_(context, this, NULL, blockTerminationKeyword)
-{
-	context_ = context;
-}
+Procedure::Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword) : rootSequence_(context, this, NULL, blockTerminationKeyword) { context_ = context; }
 
 // Destructor
-Procedure::~Procedure()
-{
-}
+Procedure::~Procedure() {}
 
 /*
  * Data
  */
 
 // Clear all data
-void Procedure::clear()
-{
-	rootSequence_.clear();
-}
+void Procedure::clear() { rootSequence_.clear(); }
 
 // Add (own) specified node to root sequence
-void Procedure::addRootSequenceNode(ProcedureNode* node)
+void Procedure::addRootSequenceNode(ProcedureNode *node)
 {
 	rootSequence_.addNode(node);
 	node->setScope(&rootSequence_);
 }
 
 // Return root sequence
-const SequenceProcedureNode& Procedure::rootSequence() const
-{
-	return rootSequence_;
-}
+const SequenceProcedureNode &Procedure::rootSequence() const { return rootSequence_; }
 
 // Return the block termination keyword for the Procedure
-const char* Procedure::blockTerminationKeyword() const
-{
-	return rootSequence_.blockTerminationKeyword();
-}
+const char *Procedure::blockTerminationKeyword() const { return rootSequence_.blockTerminationKeyword(); }
 
 // Return named node if present, and which matches the (optional) type given
-ProcedureNode* Procedure::node(const char* name, ProcedureNode::NodeType nt) const
-{
-	return rootSequence_.node(name, nt);
-}
+ProcedureNode *Procedure::node(const char *name, ProcedureNode::NodeType nt) const { return rootSequence_.node(name, nt); }
 
 /*
  * Execute
  */
 
 // Run procedure for specified Configuration, storing / retrieving generated data from supplied list
-bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Depending on context, we may or may not operate on the supplied Configuration
 	if (context_ == ProcedureNode::AnalysisContext)
 	{
 		// Check that the Configuration has changed before we do any more analysis on it
-		RefDataItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
+		RefDataItem<Configuration, int> *ri = configurationPoints_.contains(cfg);
 		if (ri)
 		{
 			// A Configuration we've processed before - check the index
@@ -90,19 +73,24 @@ bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* p
 				Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
 				return true;
 			}
-			else ri->data() = cfg->contentsVersion();
+			else
+				ri->data() = cfg->contentsVersion();
 		}
-		else configurationPoints_.append(cfg, cfg->contentsVersion());
+		else
+			configurationPoints_.append(cfg, cfg->contentsVersion());
 	}
 
 	// Prepare the nodes
-	if (!rootSequence_.prepare(cfg, prefix, targetList)) return Messenger::error("Failed to prepare procedure for execution.\n");
+	if (!rootSequence_.prepare(cfg, prefix, targetList))
+		return Messenger::error("Failed to prepare procedure for execution.\n");
 
 	// Execute the root sequence
-	if (!rootSequence_.execute(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to execute procedure.\n");
+	if (!rootSequence_.execute(procPool, cfg, prefix, targetList))
+		return Messenger::error("Failed to execute procedure.\n");
 
 	// Finalise any nodes that need it
-	if (!rootSequence_.finalise(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to finalise procedure after execution.\n");
+	if (!rootSequence_.finalise(procPool, cfg, prefix, targetList))
+		return Messenger::error("Failed to finalise procedure after execution.\n");
 
 	return true;
 }
@@ -112,7 +100,7 @@ bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* p
  */
 
 // Read structure from specified LineParser
-bool Procedure::read(LineParser& parser, const CoreData& coreData)
+bool Procedure::read(LineParser &parser, const CoreData &coreData)
 {
 	clear();
 
@@ -120,7 +108,4 @@ bool Procedure::read(LineParser& parser, const CoreData& coreData)
 }
 
 // Write structure to specified LineParser
-bool Procedure::write(LineParser& parser, const char* prefix)
-{
-	return rootSequence_.write(parser, prefix);
-}
+bool Procedure::write(LineParser &parser, const char *prefix) { return rootSequence_.write(parser, prefix); }

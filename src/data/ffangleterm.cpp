@@ -20,11 +20,11 @@
 */
 
 #include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
 #include "data/ff.h"
+#include "data/ffatomtype.h"
 
 // Constructor
-ForcefieldAngleTerm::ForcefieldAngleTerm(const char* typeI, const char* typeJ, const char* typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
+ForcefieldAngleTerm::ForcefieldAngleTerm(const char *typeI, const char *typeJ, const char *typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -37,32 +37,27 @@ ForcefieldAngleTerm::ForcefieldAngleTerm(const char* typeI, const char* typeJ, c
 }
 
 // Destructor
-ForcefieldAngleTerm::~ForcefieldAngleTerm()
-{
-}
+ForcefieldAngleTerm::~ForcefieldAngleTerm() {}
 
 /*
  * Data
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
+bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const
 {
-	if (!DissolveSys::sameWildString(typeJ_, j->equivalentName())) return false;
-	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName())) return true;
-	if (DissolveSys::sameWildString(typeK_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, k->equivalentName())) return true;
+	if (!DissolveSys::sameWildString(typeJ_, j->equivalentName()))
+		return false;
+	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName()))
+		return true;
+	if (DissolveSys::sameWildString(typeK_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, k->equivalentName()))
+		return true;
 
 	return false;
 }
 
 // Return functional form index of interaction
-SpeciesAngle::AngleFunction ForcefieldAngleTerm::form() const
-{
-	return form_;
-}
+SpeciesAngle::AngleFunction ForcefieldAngleTerm::form() const { return form_; }
 
 // Return array of parameters
-const double* ForcefieldAngleTerm::parameters() const
-{
-	return parameters_;
-}
+const double *ForcefieldAngleTerm::parameters() const { return parameters_; }

@@ -23,10 +23,10 @@
 #define DISSOLVE_SCATTERINGMATRIX_H
 
 #include "math/data1d.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
-#include "templates/pair.h"
 #include "templates/array2d.h"
+#include "templates/list.h"
+#include "templates/pair.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class AtomType;
@@ -35,23 +35,22 @@ class Weights;
 // Scattering Matrix Container
 class ScatteringMatrix
 {
-	public:
+      public:
 	// Constructor
 	ScatteringMatrix();
 
-
 	/*
 	 * Data
-	 * 
+	 *
 	 * Representing: AX = B
-	 * 
+	 *
 	 * 	[  1,1 ... 1,n ] [ x1 ]   [ B2 ]
 	 * 	[  2,1     2,n ] [ x2 ] = [ B2 ]
 	 * 	[  n,1     n,n ] [ xn ]   [ Bn ]
 	 */
-	private:
+      private:
 	// Reference pairs of AtomTypes
-	List< Pair<AtomType*,AtomType*> > typePairs_;	
+	List<Pair<AtomType *, AtomType *>> typePairs_;
 	// Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
 	Array2D<double> A_;
 	// Inverse of coefficients matrix
@@ -59,19 +58,19 @@ class ScatteringMatrix
 	// Reference data (B) (n * 1)
 	Array<Data1D> data_;
 
-	public:
+      public:
 	// Return number of reference AtomType pairs
 	int nPairs() const;
 	// Return index of specified AtomType pair
-	int pairIndex(AtomType* typeI, AtomType* typeJ) const;
+	int pairIndex(AtomType *typeI, AtomType *typeJ) const;
 	// Return weight of the specified AtomType pair in the inverse matrix
-	double pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const;
+	double pairWeightInverse(AtomType *typeI, AtomType *typeJ, int dataIndex) const;
 	// Print the matrix
 	void print() const;
 	// Print the inverse matrix
 	void printInverse() const;
 	// Generate partials from reference data using inverse matrix
-	void generatePartials(Array2D<Data1D>& estimatedSQ);
+	void generatePartials(Array2D<Data1D> &estimatedSQ);
 	// Return if the scattering matrix is underdetermined
 	bool underDetermined() const;
 	// Return the product of inverseA_ and A_ (which should be the identity matrix)
@@ -80,15 +79,15 @@ class ScatteringMatrix
 	/*
 	 * Construction
 	 */
-	public:
+      public:
 	// Initialise from supplied list of AtomTypes
-	void initialise(const List<AtomType>& types, Array2D<Data1D>& estimatedSQ, const char* objectNamePrefix, const char* groupName);
+	void initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix, const char *groupName);
 	// Finalise
 	bool finalise();
 	// Add reference data with its associated Weights, applying optional factor to those weights and the data itself
-	bool addReferenceData(const Data1D& weightedData, Weights& dataWeights, double factor = 1.0);
+	bool addReferenceData(const Data1D &weightedData, Weights &dataWeights, double factor = 1.0);
 	// Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-	bool addPartialReferenceData(Data1D& weightedData, AtomType* at1, AtomType* at2, double dataWeight, double factor = 1.0);
+	bool addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight, double factor = 1.0);
 };
 
 #endif

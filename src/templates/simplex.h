@@ -26,19 +26,27 @@
 #include "templates/list.h"
 
 // Simplex Algorithm
-template<class T> class Simplex
+template <class T> class Simplex
 {
-	public:
+      public:
 	// Simplex move types
-	enum SimplexMove { ReflectionMove, ExpansionMove, OuterContractionMove, InnerContractionMove, ShrinkMove, AllMoves, nSimplexMoves };
+	enum SimplexMove
+	{
+		ReflectionMove,
+		ExpansionMove,
+		OuterContractionMove,
+		InnerContractionMove,
+		ShrinkMove,
+		AllMoves,
+		nSimplexMoves
+	};
 	// Command pointer typedef
-	typedef double (T::*SimplexCostFunction)(const Array<double>& alpha);
-
+	typedef double (T::*SimplexCostFunction)(const Array<double> &alpha);
 
 	/*
 	 * Basic Data
 	 */
-	private:
+      private:
 	// Simplex move parameters
 	double rho_, chi_, gamma_, sigma_;
 	// Number of alpha values per vertex in Simplex
@@ -50,11 +58,11 @@ template<class T> class Simplex
 	// Maximum fraction by which to randomise when generating initial vertices
 	double initVariation_;
 	// Object (used to call costFunction_)
-	T& object_;
+	T &object_;
 	// Cost function pointer
 	SimplexCostFunction costFunction_;
 	// Vertex array
-	Array< Array<double> > vertices_;
+	Array<Array<double>> vertices_;
 	// Cost array
 	Array<double> costs_;
 	// Best alpha encountered during Simplex minimisation
@@ -73,17 +81,17 @@ template<class T> class Simplex
 	int moveCount_[nSimplexMoves];
 	// Integer count of number of better points found by the Simplex (after minimisation)
 	int betterPointsFound_;
-	
-	private:
+
+      private:
 	// Return (calculating if necessary) cost of supplied vertex
-	double cost(Array<double>& vertex)
+	double cost(Array<double> &vertex)
 	{
 		// Compute cold cost of vertex first, to compare against bestAlpha
 		vertex -= parameterOffset_;
 		double coldCost = (object_.*(costFunction_))(vertex);
 		vertex += parameterOffset_;
-		
-		// Check against best point found so far 
+
+		// Check against best point found so far
 		if (coldCost < bestAlphaCost_)
 		{
 			bestAlpha_ = vertex;
@@ -101,12 +109,14 @@ template<class T> class Simplex
 		double comparisonCost = costs_[vertexId];
 
 		// If supplied cost is lower, then accept it regardless
-		if (trialCost < comparisonCost) return true;
+		if (trialCost < comparisonCost)
+			return true;
 		else
 		{
 			// Accept with some probability...
 			double deltaCost = trialCost - comparisonCost;
-			if (DissolveMath::random() < exp(-deltaCost/temperature)) return true;
+			if (DissolveMath::random() < exp(-deltaCost / temperature))
+				return true;
 		}
 		return false;
 	}
@@ -117,59 +127,66 @@ template<class T> class Simplex
 		// Set initial values
 		vBest_ = 0;
 		vWorst_ = 1;
-		vNextWorst_ = nVertices_-1;
+		vNextWorst_ = nVertices_ - 1;
 		int n;
 
 		// Make sure costs are up to date...
-		for (n=0; n<nVertices_; ++n) costs_[n] = cost(vertices_[n]);
+		for (n = 0; n < nVertices_; ++n)
+			costs_[n] = cost(vertices_[n]);
 
 		// Find best, worst, and nextWorst vertices as normal...
-		for (n=0; n<nVertices_; ++n)
+		for (n = 0; n < nVertices_; ++n)
 		{
-			if (costs_[n] < costs_[vBest_]) vBest_ = n;
+			if (costs_[n] < costs_[vBest_])
+				vBest_ = n;
 			else if (costs_[n] > costs_[vWorst_])
 			{
 				vNextWorst_ = vWorst_;
 				vWorst_ = n;
 			}
-			else if ((costs_[n] > costs_[vNextWorst_]) && n != vBest_) vNextWorst_ = n;
+			else if ((costs_[n] > costs_[vNextWorst_]) && n != vBest_)
+				vNextWorst_ = n;
 		}
-		
+
 		// ...and then randomly select points in the Simplex which we will trial as new best, worst, and nextworst points
 		do
 		{
-			n = int(DissolveMath::random()*nVertices_);
+			n = int(DissolveMath::random() * nVertices_);
 		} while (n == vWorst_);
-		if (DissolveMath::random() < exp(-fabs(costs_[vBest_]-costs_[n])/temperature))
+		if (DissolveMath::random() < exp(-fabs(costs_[vBest_] - costs_[n]) / temperature))
 		{
 			// Swap points if necessary
-			if (vNextWorst_ == n) vNextWorst_ = vBest_;
+			if (vNextWorst_ == n)
+				vNextWorst_ = vBest_;
 			// else if (vWorst_ == n) vWorst_ = vBest_;
 			vBest_ = n;
 		}
-		n = int(DissolveMath::random()*nVertices_);
-		if (DissolveMath::random() < exp(-fabs(costs_[vWorst_]-costs_[n])/temperature))
+		n = int(DissolveMath::random() * nVertices_);
+		if (DissolveMath::random() < exp(-fabs(costs_[vWorst_] - costs_[n]) / temperature))
 		{
 			// Swap points if necessary
-			if (vNextWorst_ == n) vNextWorst_ = vWorst_;
-			else if (vBest_ == n) vBest_ = vWorst_;
+			if (vNextWorst_ == n)
+				vNextWorst_ = vWorst_;
+			else if (vBest_ == n)
+				vBest_ = vWorst_;
 			vWorst_ = n;
 		}
 		do
 		{
-			n = int(DissolveMath::random()*nVertices_);
+			n = int(DissolveMath::random() * nVertices_);
 		} while (n == vWorst_);
-		if (DissolveMath::random() < exp(-fabs(costs_[vNextWorst_]-costs_[n])/temperature))
+		if (DissolveMath::random() < exp(-fabs(costs_[vNextWorst_] - costs_[n]) / temperature))
 		{
 			// Swap points if necessary
-			if (vBest_ == n) vBest_ = vNextWorst_;
+			if (vBest_ == n)
+				vBest_ = vNextWorst_;
 			// else if (vWorst_ == n) vWorst_ = vNextWorst_;
 			vNextWorst_ = n;
 		}
 	}
 
 	// Reflect specified vertex through specified centroid
-	Array<double> reflect(Array<double>& centroid)
+	Array<double> reflect(Array<double> &centroid)
 	{
 		// Reflect specified point : x(new) = (1 + rho) * y - rho * x(worst)    where y = sum x(i) / n, i != worst
 		Array<double> newVertex(centroid);
@@ -178,7 +195,7 @@ template<class T> class Simplex
 	}
 
 	// Expand Simplex about worst point
-	Array<double> expand(Array<double>& centroid)
+	Array<double> expand(Array<double> &centroid)
 	{
 		// Expand around highest point : x(new) = (1 + rho * chi) * xbar - rho * chi * x(n+1)    where xbar = sum(i=1,n) x(i) / n
 		Array<double> newVertex(centroid);
@@ -187,7 +204,7 @@ template<class T> class Simplex
 	}
 
 	// Contract Simplex, giving new vertex outside current polytope
-	Array<double> contractOutside(Array<double>& centroid)
+	Array<double> contractOutside(Array<double> &centroid)
 	{
 		// Contract simplex (new point outside current polytope) : x(new) = (1 + rho * gamma) * xbar - rho * gamma * vertex(nalpha+1)
 		Array<double> newVertex(centroid);
@@ -196,7 +213,7 @@ template<class T> class Simplex
 	}
 
 	// Contract Simplex, giving new vertex inside current polytope
-	Array<double> contractInside(Array<double>& centroid)
+	Array<double> contractInside(Array<double> &centroid)
 	{
 		// Contract simplex (new point inside current polytope) : x(new) = (1 - gamma) * xbar + gamma * vertex(nalpha+1)
 		Array<double> newVertex(centroid);
@@ -208,20 +225,21 @@ template<class T> class Simplex
 	void shrink()
 	{
 		// Shrink vertices of current simplex, leaving only the first (x(1)) as-is: x(n) = x(1) + sigma(x(n) - x(1)),   n=2,nalpha+1
-		for (int n=0; n<nVertices_; ++n)
+		for (int n = 0; n < nVertices_; ++n)
 		{
-			if (n == vBest_) continue;
+			if (n == vBest_)
+				continue;
 			vertices_[n] = (vertices_[n] - vertices_[vBest_]) * sigma_ + vertices_[vBest_];
 		}
 	}
 
-	public:
+      public:
 	// Constructor
-	Simplex(T& object, SimplexCostFunction costFunc) : object_(object)
+	Simplex(T &object, SimplexCostFunction costFunc) : object_(object)
 	{
 		// Private variables
 		nAlpha_ = 0;
-		nVertices_= 0;
+		nVertices_ = 0;
 		betterPointsFound_ = 0;
 		costFunction_ = costFunc;
 
@@ -233,7 +251,7 @@ template<class T> class Simplex
 	}
 
 	// Initialise starting Simplex
-	void initialise(Array<double>& initVertex, double paramOffset, double fracVariation = 0.1)
+	void initialise(Array<double> &initVertex, double paramOffset, double fracVariation = 0.1)
 	{
 		nAlpha_ = initVertex.nItems();
 		nVertices_ = nAlpha_ + 1;
@@ -244,7 +262,7 @@ template<class T> class Simplex
 
 		vertices_.initialise(nVertices_);
 		costs_.initialise(nVertices_);
-		
+
 		// Set initial vertex and starting best cost
 		vertices_[0] = initVertex;
 		vertices_[0] += parameterOffset_;
@@ -257,31 +275,33 @@ template<class T> class Simplex
 	{
 		// Get average cost of all vertices
 		double average = 0.0;
-		for (int n=0; n<nVertices_; ++n) average += costs_[n];
+		for (int n = 0; n < nVertices_; ++n)
+			average += costs_[n];
 		average /= nVertices_;
-		
+
 		// Now calculate SD of individual costs with mean value
 		double serror = 0.0;
-		for (int n=0; n<nVertices_; ++n) serror += (costs_[n] - average)*(costs_[n] - average);
-		return sqrt(serror/nVertices_);
+		for (int n = 0; n < nVertices_; ++n)
+			serror += (costs_[n] - average) * (costs_[n] - average);
+		return sqrt(serror / nVertices_);
 	}
 
 	// Return whether Simplex has converged
-	bool converged()
-	{
-		return (costMSD() < tolerance_);
-	}
+	bool converged() { return (costMSD() < tolerance_); }
 
 	// Print vertex information
 	void printVertexInformation()
 	{
-		for (int n=0; n<nVertices_; ++n) printf("[SMPLX]\t\tVertex %i has cold cost value = %12.6e\n", n, costs_[n]);
+		for (int n = 0; n < nVertices_; ++n)
+			printf("[SMPLX]\t\tVertex %i has cold cost value = %12.6e\n", n, costs_[n]);
 	}
 
 	// Print Simplex move information
 	void printMoveInformation()
 	{
-		printf("[SMPLX]\tIn %i moves %i reflections, %i expansions, %i contractions (%i inner, %i outer) and %i shrinks were performed.\n", moveCount_[Simplex::AllMoves], moveCount_[Simplex::ReflectionMove], moveCount_[Simplex::ExpansionMove], moveCount_[Simplex::OuterContractionMove]+moveCount_[Simplex::InnerContractionMove], moveCount_[Simplex::InnerContractionMove], moveCount_[Simplex::OuterContractionMove], moveCount_[Simplex::ShrinkMove]);
+		printf("[SMPLX]\tIn %i moves %i reflections, %i expansions, %i contractions (%i inner, %i outer) and %i shrinks were performed.\n", moveCount_[Simplex::AllMoves],
+		       moveCount_[Simplex::ReflectionMove], moveCount_[Simplex::ExpansionMove], moveCount_[Simplex::OuterContractionMove] + moveCount_[Simplex::InnerContractionMove],
+		       moveCount_[Simplex::InnerContractionMove], moveCount_[Simplex::OuterContractionMove], moveCount_[Simplex::ShrinkMove]);
 	}
 
 	// Perform standard Simplex minimisation (at temperature specified)
@@ -309,8 +329,9 @@ template<class T> class Simplex
 		betterPointsFound_ = 0;
 
 		// Reset move counters
-		for (n=0; n<Simplex::nSimplexMoves; ++n) moveCount_[n] = 0;
-		
+		for (n = 0; n < Simplex::nSimplexMoves; ++n)
+			moveCount_[n] = 0;
+
 		// Begin Simplex Minimisation
 		int cycle = 0;
 		while (cycle < nCycles)
@@ -318,37 +339,41 @@ template<class T> class Simplex
 			// Generate new starting vertices
 			vertices_[0] = bestAlpha_;
 			costs_[0] = bestAlphaCost_;
-			
+
 			double r;
-// 			Messenger::print("Generating initial vertices.\n");
-			for (n=1; n<nVertices_; ++n)
+			// 			Messenger::print("Generating initial vertices.\n");
+			for (n = 1; n < nVertices_; ++n)
 			{
 				vertices_[n] = vertices_[0];
-				r = (2.0*DissolveMath::random()) - 1.0;
-				vertices_[n][n-1] = (vertices_[n][n-1] - parameterOffset_) * 1.0+initVariation_*r;
+				r = (2.0 * DissolveMath::random()) - 1.0;
+				vertices_[n][n - 1] = (vertices_[n][n - 1] - parameterOffset_) * 1.0 + initVariation_ * r;
 				costs_[n] = cost(vertices_[n]);
 			}
-			
-// 			for (n=0; n<nVertices_; ++n) Messenger::printVerbose("Vertex %i : %f %f %f ... = %15.8e\n", n, vertices_[n][0], vertices_[n][1], vertices_[n][2], costs_[n]);
-			
-			for (move=1; move<=nMoves_; ++move)
+
+			// 			for (n=0; n<nVertices_; ++n) Messenger::printVerbose("Vertex %i : %f %f %f ... = %15.8e\n", n, vertices_[n][0], vertices_[n][1], vertices_[n][2],
+			// costs_[n]);
+
+			for (move = 1; move <= nMoves_; ++move)
 			{
-// 				Messenger::print("Move = %i : best = %f %f %f\n", move, bestAlpha_[0], bestAlpha_[1], bestAlpha_[2]);
+				// 				Messenger::print("Move = %i : best = %f %f %f\n", move, bestAlpha_[0], bestAlpha_[1], bestAlpha_[2]);
 				++moveCount_[Simplex::AllMoves];
 
-		// 		printf("Simplex Move no. %i\n", move);
+				// 		printf("Simplex Move no. %i\n", move);
 				// Find best, worst, and next-worst points of Simplex
 				findExtremes(simplexTemperature);
-				// printf("SIMPLEX : "); for (n=0; n<nVertices_; ++n) printf("%c%12.5e ", vBest_ == n ? 'B' : (vWorst_ == n ? 'W' : (vNextWorst_ == n ? 'N' : ' ')), vertices_[n].cost(targetSystem_, forcefield_)); printf("\n");
+				// printf("SIMPLEX : "); for (n=0; n<nVertices_; ++n) printf("%c%12.5e ", vBest_ == n ? 'B' : (vWorst_ == n ? 'W' : (vNextWorst_ == n ? 'N' : ' ')),
+				// vertices_[n].cost(targetSystem_, forcefield_)); printf("\n");
 
 				// Calculate centroid for use in simplex move routines
 				centroid = 0.0;
-				for (n=0; n<nVertices_; ++n) if (n != vWorst_) centroid += vertices_[n];
+				for (n = 0; n < nVertices_; ++n)
+					if (n != vWorst_)
+						centroid += vertices_[n];
 				centroid /= nAlpha_;
 
 				// First move attempt - Calculate reflection vertex
 				reflectedVertex = reflect(centroid);
-		// 		printf("Reflected vertex = %f\n", reflectedVertex[0]);
+				// 		printf("Reflected vertex = %f\n", reflectedVertex[0]);
 				reflectedCost = cost(reflectedVertex);
 
 				// ... If this point is lower in cost than the next-highest vertex, but higher than the best point, accept it and terminate iteration
@@ -356,37 +381,40 @@ template<class T> class Simplex
 				{
 					vertices_[vWorst_] = reflectedVertex;
 					++moveCount_[Simplex::ReflectionMove];
-					if (converged()) break;
+					if (converged())
+						break;
 					continue;
 				}
-			
+
 				// Stage 3a) - Calculate expansion point (if reflected point is lower than the best point already found)
 				// Stage 3b) - Calculate contraction point (if reflected point is worse than the next worst (n-1'th) point)
 				if (accept(reflectedCost, vBest_, simplexTemperature))
 				{
 					// Calculate expansion point
 					newVertex = expand(centroid);
-		// 			printf("Expansion point = %f\n", newVertex[0]);
+					// 			printf("Expansion point = %f\n", newVertex[0]);
 					newCost = cost(newVertex);
-					
+
 					// ... If expanded point is better than reflected point, accept expanded point and terminate iteration.
 					// ... If reflected point is better (or equal to) expanded point, accept reflected point and terminate iteration
 					if (newCost < reflectedCost)
 					{
-				// 	        write(0,*) "Expansion is better than reflection, so accepting expansion."
+						// 	        write(0,*) "Expansion is better than reflection, so accepting expansion."
 						vertices_[vWorst_] = newVertex;
 						costs_[vWorst_] = newCost;
 						++moveCount_[Simplex::ExpansionMove];
-						if (converged()) break;
+						if (converged())
+							break;
 						continue;
 					}
 					else
 					{
-				// 	        write(0,*) "Expansion is worse than reflection, so accepting reflection."
+						// 	        write(0,*) "Expansion is worse than reflection, so accepting reflection."
 						vertices_[vWorst_] = reflectedVertex;
 						costs_[vWorst_] = reflectedCost;
 						++moveCount_[Simplex::ReflectionMove];
-						if (converged()) break;
+						if (converged())
+							break;
 						continue;
 					}
 				}
@@ -397,24 +425,28 @@ template<class T> class Simplex
 					if (!accept(reflectedCost, vNextWorst_, simplexTemperature) && accept(reflectedCost, vWorst_, simplexTemperature))
 					{
 						newVertex = contractOutside(centroid);
-		// 				printf("Outside contraction point = %f\n", newVertex[0]);
+						// 				printf("Outside contraction point = %f\n", newVertex[0]);
 						newCost = cost(newVertex);
 						if (newCost <= reflectedCost)
 						{
-					// 	  	write(0,*) "Contraction(outside) is better than reflection, so accepting contraction."
+							// 	  	write(0,*) "Contraction(outside) is better than reflection, so accepting contraction."
 							vertices_[vWorst_] = newVertex;
 							costs_[vWorst_] = newCost;
 							++moveCount_[Simplex::OuterContractionMove];
-							if (converged()) break;
+							if (converged())
+								break;
 							continue;
 						}
 						else
 						{
 							// Perform shrink and recalculate costs
 							shrink();
-							for (n=0; n<nVertices_; ++n) if (n != vBest_) costs_[n] = cost(vertices_[n]);
+							for (n = 0; n < nVertices_; ++n)
+								if (n != vBest_)
+									costs_[n] = cost(vertices_[n]);
 							++moveCount_[Simplex::ShrinkMove];
-							if (converged()) break;
+							if (converged())
+								break;
 							continue;
 						}
 					}
@@ -422,7 +454,7 @@ template<class T> class Simplex
 					{
 						// ...otherwise do an inside contraction
 						newVertex = contractInside(centroid);
-		// 				printf("Inside contraction point = %f\n", newVertex[0]);
+						// 				printf("Inside contraction point = %f\n", newVertex[0]);
 						newCost = cost(newVertex);
 						// !write(0,"('Ci ',e10.2,40f6.2)") cost_c,vert_c
 						if (accept(newCost, vWorst_, simplexTemperature))
@@ -430,34 +462,36 @@ template<class T> class Simplex
 							vertices_[vWorst_] = newVertex;
 							costs_[vWorst_] = newCost;
 							++moveCount_[Simplex::InnerContractionMove];
-							if (converged()) break;
+							if (converged())
+								break;
 							continue;
 						}
 						else
 						{
 							// Perform shrink and recalculate costs
 							shrink();
-							for (n=0; n<nVertices_; ++n) if (n != vBest_) costs_[n] = cost(vertices_[n]);
+							for (n = 0; n < nVertices_; ++n)
+								if (n != vBest_)
+									costs_[n] = cost(vertices_[n]);
 							++moveCount_[Simplex::ShrinkMove];
-							if (converged()) break;
+							if (converged())
+								break;
 							continue;
 						}
 					}
 				}
 			}
-			
+
 			// Check for convergence in this cycle
-			if (converged()) break;
+			if (converged())
+				break;
 			++cycle;
 		}
 
 		return bestAlpha_;
 	}
 	// Return whether a better point was found by the Simplex
-	bool betterPointFound()
-	{
-		return (betterPointsFound_ > 0);
-	}
+	bool betterPointFound() { return (betterPointsFound_ > 0); }
 };
 
 #endif

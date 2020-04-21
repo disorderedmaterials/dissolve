@@ -31,9 +31,7 @@ EmpiricalFormula::EmpiricalFormula()
 }
 
 // Destructor
-EmpiricalFormula::~EmpiricalFormula()
-{
-}
+EmpiricalFormula::~EmpiricalFormula() {}
 
 /*
  * Construction
@@ -42,11 +40,12 @@ EmpiricalFormula::~EmpiricalFormula()
 // Clear counts array
 void EmpiricalFormula::reset()
 {
-	for (int n=0; n<Elements::nElements(); ++n) elementCounts_[n] = 0;
+	for (int n = 0; n < Elements::nElements(); ++n)
+		elementCounts_[n] = 0;
 }
 
 // Add to empirical formula
-void EmpiricalFormula::add(Element* element, int count)
+void EmpiricalFormula::add(Element *element, int count)
 {
 #ifdef CHECKS
 	if (element == NULL)
@@ -59,32 +58,38 @@ void EmpiricalFormula::add(Element* element, int count)
 }
 
 // Return current empirical formula
-const char* EmpiricalFormula::formula()
+const char *EmpiricalFormula::formula()
 {
 	formula_.clear();
 
 	// Loop over elements in descending order
-	for (int n=Elements::nElements()-1; n>=0; --n)
+	for (int n = Elements::nElements() - 1; n >= 0; --n)
 	{
-		if (elementCounts_[n] == 0) continue;
-		else if (elementCounts_[n] > 1) formula_.strcatf("%s%i", Elements::symbol(n), elementCounts_[n]);
-		else formula_.strcatf("%s", Elements::symbol(n));
+		if (elementCounts_[n] == 0)
+			continue;
+		else if (elementCounts_[n] > 1)
+			formula_.strcatf("%s%i", Elements::symbol(n), elementCounts_[n]);
+		else
+			formula_.strcatf("%s", Elements::symbol(n));
 	}
 
 	return formula_.get();
 }
 
 // Return rich text of current empirical formula
-const char* EmpiricalFormula::richTextFormula()
+const char *EmpiricalFormula::richTextFormula()
 {
 	formula_.clear();
 
 	// Loop over elements in descending order
-	for (int n=Elements::nElements()-1; n>=0; --n)
+	for (int n = Elements::nElements() - 1; n >= 0; --n)
 	{
-		if (elementCounts_[n] == 0) continue;
-		else if (elementCounts_[n] > 1) formula_.strcatf("%s<sub>%i</sub>", Elements::symbol(n), elementCounts_[n]);
-		else formula_.strcatf("%s", Elements::symbol(n));
+		if (elementCounts_[n] == 0)
+			continue;
+		else if (elementCounts_[n] > 1)
+			formula_.strcatf("%s<sub>%i</sub>", Elements::symbol(n), elementCounts_[n]);
+		else
+			formula_.strcatf("%s", Elements::symbol(n));
 	}
 
 	return formula_.get();
@@ -95,26 +100,28 @@ const char* EmpiricalFormula::richTextFormula()
  */
 
 // Return empirical formula for supplied Species
-const char* EmpiricalFormula::formula(const Species* species, bool richText)
+const char *EmpiricalFormula::formula(const Species *species, bool richText)
 {
 	static EmpiricalFormula formula;
 
 	formula.reset();
 
 	ListIterator<SpeciesAtom> atomIterator(species->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate()) formula.add(i->element());
+	while (SpeciesAtom *i = atomIterator.iterate())
+		formula.add(i->element());
 
 	return (richText ? formula.richTextFormula() : formula.formula());
 }
 
 // Return empirical formula for supplied SpeciesAtom reflist
-const char* EmpiricalFormula::formula(const RefList<SpeciesAtom>& atoms, bool richText)
+const char *EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool richText)
 {
 	static EmpiricalFormula formula;
 
 	formula.reset();
 
-	for (SpeciesAtom* i : atoms) formula.add(i->element());
+	for (SpeciesAtom *i : atoms)
+		formula.add(i->element());
 
 	return (richText ? formula.richTextFormula() : formula.formula());
 }

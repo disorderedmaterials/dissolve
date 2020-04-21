@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export_trajectory/exporttraj.h"
 #include "keywords/types.h"
+#include "modules/export_trajectory/exporttraj.h"
 
 // Perform any necessary initialisation for the Module
 void ExportTrajectoryModule::initialise()
@@ -28,4 +28,3 @@ void ExportTrajectoryModule::initialise()
 	// Format
 	keywords_.add("Format", new FileAndFormatKeyword(trajectoryFormat_, "EndFormat"), "Format", "File / format for trajectory");
 }
-

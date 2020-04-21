@@ -22,7 +22,4 @@
 #include "modules/analyse/analyse.h"
 
 // Return the analyser
-Procedure& AnalyseModule::analyser()
-{
-	return analyser_;
-}
+Procedure &AnalyseModule::analyser() { return analyser_; }

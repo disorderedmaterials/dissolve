@@ -20,10 +20,10 @@
 */
 
 #include "procedure/nodes/operatedivide.h"
-#include "math/data1d.h"
-#include "keywords/types.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/types.h"
+#include "math/data1d.h"
 
 // Constructor
 OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateDivideNode)
@@ -32,16 +32,14 @@ OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeB
 }
 
 // Destructor
-OperateDivideProcedureNode::~OperateDivideProcedureNode()
-{
-}
+OperateDivideProcedureNode::~OperateDivideProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */
 
 // Operate on Data1D target
-bool OperateDivideProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
+bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the divisor
 	const double divisor = keywords_.asDouble("Value");
@@ -51,7 +49,7 @@ bool OperateDivideProcedureNode::operateData1D(ProcessPool& procPool, Configurat
 }
 
 // Operate on Data2D target
-bool OperateDivideProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
+bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the divisor
 	const double divisor = keywords_.asDouble("Value");
@@ -61,7 +59,7 @@ bool OperateDivideProcedureNode::operateData2D(ProcessPool& procPool, Configurat
 }
 
 // Operate on Data3D target
-bool OperateDivideProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
+bool OperateDivideProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the divisor
 	const double divisor = keywords_.asDouble("Value");

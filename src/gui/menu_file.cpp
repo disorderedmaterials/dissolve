@@ -38,20 +38,23 @@ bool DissolveWindow::checkSaveCurrentInput()
 		queryBox.setDefaultButton(QMessageBox::Cancel);
 		int ret = queryBox.exec();
 
-		if (ret == QMessageBox::Cancel) return false;
+		if (ret == QMessageBox::Cancel)
+			return false;
 		else if (ret == QMessageBox::Yes)
 		{
 			// If an input filename has been set, just overwrite it. If not, request a name first
 			if (!dissolve_.hasInputFilename())
 			{
 				QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
-				if (newFile.isEmpty()) return false;
+				if (newFile.isEmpty())
+					return false;
 
 				dissolve_.setInputFilename(qPrintable(newFile));
 			}
 
 			// Save the file
-			if (!dissolve_.saveInput(dissolve_.inputFilename())) return false;
+			if (!dissolve_.saveInput(dissolve_.inputFilename()))
+				return false;
 
 			modified_ = false;
 		}
@@ -83,7 +86,8 @@ void DissolveWindow::startNew()
 
 void DissolveWindow::on_FileNewAction_triggered(bool checked)
 {
-	if (!checkSaveCurrentInput()) return;
+	if (!checkSaveCurrentInput())
+		return;
 
 	startNew();
 }
@@ -91,12 +95,14 @@ void DissolveWindow::on_FileNewAction_triggered(bool checked)
 void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
 {
 	// Make sure there is nothing to save before we try to start afresh
-	if (!checkSaveCurrentInput()) return;
+	if (!checkSaveCurrentInput())
+		return;
 
 	// Select the desired system template
 	static SelectSystemTemplateDialog selectTemplateDialog(this, systemTemplates_);
-	SystemTemplate* sysTemp = selectTemplateDialog.selectTemplate();
-	if (!sysTemp) return;
+	SystemTemplate *sysTemp = selectTemplateDialog.selectTemplate();
+	if (!sysTemp)
+		return;
 
 	// Clear any data-related tabs from the UI
 	ui_.MainTabs->clearTabs();
@@ -119,11 +125,13 @@ void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
 
 void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
 {
-	if (!checkSaveCurrentInput()) return;
+	if (!checkSaveCurrentInput())
+		return;
 
 	// Request a new file to open
 	QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(), "Dissolve input files (*.txt)");
-	if (inputFile.isEmpty()) return;
+	if (inputFile.isEmpty())
+		return;
 
 	openLocalFile(qPrintable(inputFile), "", false, false);
 }
@@ -140,7 +148,8 @@ void DissolveWindow::on_FileOpenRecentAction_triggered(bool checked)
 
 void DissolveWindow::on_FileCloseAction_triggered(bool checked)
 {
-	if (!checkSaveCurrentInput()) return;
+	if (!checkSaveCurrentInput())
+		return;
 
 	// Make sure we are now on the Start stack page
 	showMainStackPage(DissolveWindow::StartStackPage);
@@ -149,19 +158,22 @@ void DissolveWindow::on_FileCloseAction_triggered(bool checked)
 void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 {
 	// If the file is not modified, nothing to do.
-	if (!modified_) return;
+	if (!modified_)
+		return;
 
 	// If an input file name has not been set, get one now
 	if (!dissolve_.hasInputFilename())
 	{
 		QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
-		if (newFile.isEmpty()) return;
+		if (newFile.isEmpty())
+			return;
 
 		dissolve_.setInputFilename(qPrintable(newFile));
 	}
 
 	// Attempt to save the file
-	if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
+	if (!dissolve_.saveInput(dissolve_.inputFilename()))
+		return;
 
 	modified_ = false;
 
@@ -174,12 +186,14 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
 {
 	// Get a suitable input file name
 	QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
-	if (newFile.isEmpty()) return;
+	if (newFile.isEmpty())
+		return;
 
 	dissolve_.setInputFilename(qPrintable(newFile));
 
 	// Attempt to save the file
-	if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
+	if (!dissolve_.saveInput(dissolve_.inputFilename()))
+		return;
 
 	modified_ = false;
 
@@ -194,7 +208,8 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
 
 void DissolveWindow::on_FileQuitAction_triggered(bool checked)
 {
-	if (!checkSaveCurrentInput()) return;
+	if (!checkSaveCurrentInput())
+		return;
 
 	QCoreApplication::quit();
 }

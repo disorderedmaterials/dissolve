@@ -22,62 +22,59 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_MODULEGROUPS_H
 #define DISSOLVE_KEYWORDWIDGET_MODULEGROUPS_H
 
-#include "gui/keywordwidgets/ui_modulegroups.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "keywords/modulegroups.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/ui_modulegroups.h"
+#include "keywords/modulegroups.h"
 #include <QWidget>
 
 // Forward Declarations
 class Module;
 class ModuleGroup;
 
-class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
+class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	ModuleGroupsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	ModuleGroupsKeyword* keyword_;
-
+	ModuleGroupsKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ModuleGroupsWidget ui_;
 
-	private:
+      private:
 	// Selection table update function
-	void updateSelectionRow(int row, Module* module, bool create);
+	void updateSelectionRow(int row, Module *module, bool create);
 
-	private slots:
+      private slots:
 	// Table item changed
-	void itemChanged(QTableWidgetItem* item);
+	void itemChanged(QTableWidgetItem *item);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues(const CoreData& coreData);
+	void updateWidgetValues(const CoreData &coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 	// Update summary text

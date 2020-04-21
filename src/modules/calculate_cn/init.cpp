@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "keywords/types.h"
 #include "modules/calculate_cn/cn.h"
 #include "modules/calculate_rdf/rdf.h"
-#include "procedure/nodes/sum1d.h"
-#include "procedure/nodes/process1d.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
-#include "keywords/types.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/sum1d.h"
 
 // Perform any necessary initialisation for the Module
 void CalculateCNModule::initialise()
@@ -45,7 +45,7 @@ void CalculateCNModule::initialise()
 	// Process1D - targets Collect1D in source RDF module
 	process1D_ = new Process1DProcedureNode;
 	process1D_->setName("HistogramNorm");
-	SequenceProcedureNode* rdfNormalisation = process1D_->addNormalisationBranch();
+	SequenceProcedureNode *rdfNormalisation = process1D_->addNormalisationBranch();
 	siteNormaliser_ = new OperateSitePopulationNormaliseProcedureNode;
 	rdfNormalisation->addNode(siteNormaliser_);
 	analyser_.addRootSequenceNode(process1D_);

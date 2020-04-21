@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_RENDER_RENDERABLECONFIGURATION_H
 #define DISSOLVE_RENDER_RENDERABLECONFIGURATION_H
 
-#include "gui/render/renderable.h"
 #include "classes/configuration.h"
+#include "gui/render/renderable.h"
 
 // Forward Declarations
 class Axes;
@@ -31,70 +31,71 @@ class Axes;
 // Renderable for Configuration
 class RenderableConfiguration : public Renderable
 {
-	public:
+      public:
 	// Constructor / Destructor
-	RenderableConfiguration(const Configuration* source, const char* objectTag);
+	RenderableConfiguration(const Configuration *source, const char *objectTag);
 	~RenderableConfiguration();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source data
-	const Configuration* source_;
+	const Configuration *source_;
 
-	private:
+      private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-	public:
+      public:
 	// Return version of data
 	int dataVersion();
-
 
 	/*
 	 * Transform / Limits
 	 */
-	protected:
+      protected:
 	// Transform data according to current settings
 	void transformValues();
-
 
 	/*
 	 * Rendering Primitives
 	 */
-	private:
+      private:
 	// Basic primitives
-	Primitive* atomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
+	Primitive *atomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
 	// Main primitives
-	Primitive* lineConfigurationPrimitive_, *lineInteractionPrimitive_;
+	Primitive *lineConfigurationPrimitive_, *lineInteractionPrimitive_;
 	// Main assemblies
 	PrimitiveAssembly configurationAssembly_, interactionAssembly_, unitCellAssembly_;
 
-	private:
+      private:
 	// Create cylinder bond between supplied atoms in specified assembly
-	void createCylinderBond(PrimitiveAssembly& assembly, const Atom* i, const Atom* j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling);
+	void createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling);
 
-	protected:
+      protected:
 	// Recreate necessary primitives / primitive assemblies for the data
-	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
-
 
 	/*
 	 * Style
 	 */
-	public:
+      public:
 	// Display Styles enum
-	enum ConfigurationDisplayStyle { LinesStyle, SpheresStyle, nConfigurationDisplayStyles };
+	enum ConfigurationDisplayStyle
+	{
+		LinesStyle,
+		SpheresStyle,
+		nConfigurationDisplayStyles
+	};
 	// Return EnumOptions for ConfigurationDisplayStyle
 	static EnumOptions<ConfigurationDisplayStyle> configurationDisplayStyles();
 
-	private:
+      private:
 	// Display style for the renderable
 	ConfigurationDisplayStyle displayStyle_;
 	// Radius of free (unbound) atoms when drawing with lines
@@ -104,30 +105,29 @@ class RenderableConfiguration : public Renderable
 	// Radius of bonds when drawing with spheres
 	double spheresBondRadius_;
 
-	public:
+      public:
 	// Set display style for renderable
 	void setDisplayStyle(ConfigurationDisplayStyle displayStyle);
 	// Return display style for the renderable
 	ConfigurationDisplayStyle displayStyle() const;
 
-
 	/*
 	 * Style I/O
 	 */
-	public:
+      public:
 	// ConfigurationStyle Keywords Enum
 	enum ConfigurationStyleKeyword
 	{
-		DisplayKeyword,			/* 'Display' - General display style for renderable */
-		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		DisplayKeyword,  /* 'Display' - General display style for renderable */
+		EndStyleKeyword, /* 'EndStyle' - End of Style block */
 		nConfigurationStyleKeywords
 	};
 	// Return enum option info for RenderableKeyword
 	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> configurationStyleKeywords();
 	// Write style information
-	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
 	// Read style information
-	bool readStyleBlock(LineParser& parser);
+	bool readStyleBlock(LineParser &parser);
 };
 
 #endif

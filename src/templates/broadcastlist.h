@@ -31,13 +31,13 @@ template <class T> class BroadcastList
 	 * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
 	 * to slave processes. The List must contain items which provide the 'broadcast()' virtual.
 	 */
-	private:
+      private:
 	// Result of broadcast
 	bool result_;
 
-	public:
+      public:
 	// Constructor
-	BroadcastList(ProcessPool& procPool, int root, List<T>& items, const CoreData& coreData)
+	BroadcastList(ProcessPool &procPool, int root, List<T> &items, const CoreData &coreData)
 	{
 		result_ = false;
 		int count;
@@ -45,22 +45,27 @@ template <class T> class BroadcastList
 		{
 			// Broadcast number of items in list, then list items...
 			count = items.nItems();
-			if (!procPool.broadcast(count, root)) return;
+			if (!procPool.broadcast(count, root))
+				return;
 			ListIterator<T> itemIterator(items);
-			while (T* item = itemIterator.iterate()) if (!item->broadcast(procPool, root, coreData)) return;
+			while (T *item = itemIterator.iterate())
+				if (!item->broadcast(procPool, root, coreData))
+					return;
 		}
 		else
 		{
 			// Get number of list items to expect
-			if (!procPool.broadcast(count, root)) return;
+			if (!procPool.broadcast(count, root))
+				return;
 
 			// Clear list and reconstruct
 			items.clear();
-			for (int n=0; n<count; ++n)
+			for (int n = 0; n < count; ++n)
 			{
 				// Slaves must create a suitable structure first, and then join the broadcast
-				T* item = items.add();
-				if (!item->broadcast(procPool, root, coreData)) return;
+				T *item = items.add();
+				if (!item->broadcast(procPool, root, coreData))
+					return;
 			}
 		}
 
@@ -68,15 +73,9 @@ template <class T> class BroadcastList
 		result_ = true;
 	}
 	// Return whether broadcast was successful
-	bool success()
-	{
-		return result_;
-	}
+	bool success() { return result_; }
 	// Return whether broadcast failed
-	bool failed()
-	{
-		return (!result_);
-	}
+	bool failed() { return (!result_); }
 };
 
 #endif

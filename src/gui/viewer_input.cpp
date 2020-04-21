@@ -20,15 +20,15 @@
 */
 
 #include "gui/viewer.hui"
-#include <QMouseEvent>
 #include <QMenu>
+#include <QMouseEvent>
 
 /*
  * Private Functions
  */
 
 // Mouse press event
-void BaseViewer::mousePressEvent(QMouseEvent* event)
+void BaseViewer::mousePressEvent(QMouseEvent *event)
 {
 	// Store the current button state and mouse position (with inverted y coordinate)
 	buttonState_ = event->buttons();
@@ -38,7 +38,8 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	mouseReleaseTimer_.start();
 
 	// If a 2D view, store the clicked local coordinate
-	if (view().isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
+	if (view().isFlatView())
+		clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
 
 	interacting_ = true;
 
@@ -47,7 +48,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 }
 
 // Mouse release event
-void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
+void BaseViewer::mouseReleaseEvent(QMouseEvent *event)
 {
 	// Detect right-click intended to call a context menu
 	if (buttonState_.testFlag(Qt::RightButton) && (((rMouseLast_ - rMouseDown_).magnitude() <= 1) || mouseReleaseTimer_.isActive()))
@@ -71,7 +72,7 @@ void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 }
 
 // Mouse move event
-void BaseViewer::mouseMoveEvent(QMouseEvent* event)
+void BaseViewer::mouseMoveEvent(QMouseEvent *event)
 {
 	const int dx = event->x() - rMouseLast_.x;
 	const int dy = (contextHeight_ - event->y()) - rMouseLast_.y;
@@ -80,7 +81,8 @@ void BaseViewer::mouseMoveEvent(QMouseEvent* event)
 	rMouseLast_.set(event->x(), contextHeight_ - event->y(), 0.0);
 
 	// If a 2D view, store the current local Axes coordinate
-	if (view().isFlatView()) current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
+	if (view().isFlatView())
+		current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
 
 	// Handle the event, passing the delta position
 	mouseMoved(dx, dy);
@@ -89,7 +91,7 @@ void BaseViewer::mouseMoveEvent(QMouseEvent* event)
 }
 
 // Mouse wheel event
-void BaseViewer::wheelEvent(QWheelEvent* event)
+void BaseViewer::wheelEvent(QWheelEvent *event)
 {
 	// Handle the event
 	mouseWheeled(event->delta());
@@ -98,7 +100,7 @@ void BaseViewer::wheelEvent(QWheelEvent* event)
 }
 
 // Mouse double click event
-void BaseViewer::mouseDoubleClickEvent(QMouseEvent* event)
+void BaseViewer::mouseDoubleClickEvent(QMouseEvent *event)
 {
 	// Handle the event
 	mouseDoubleClicked();
@@ -112,16 +114,20 @@ void BaseViewer::mouseDoubleClickEvent(QMouseEvent* event)
 void BaseViewer::keyPressEvent(QKeyEvent *event)
 {
 	// Handle the event
-	if (keyPressed(event->key())) event->accept();
-	else event->ignore();
+	if (keyPressed(event->key()))
+		event->accept();
+	else
+		event->ignore();
 }
 
 // Key release event
 void BaseViewer::keyReleaseEvent(QKeyEvent *event)
 {
 	// Handle the event
-	if (keyReleased(event->key())) event->accept();
-	else event->ignore();
+	if (keyReleased(event->key()))
+		event->accept();
+	else
+		event->ignore();
 }
 
 /*
@@ -129,9 +135,7 @@ void BaseViewer::keyReleaseEvent(QKeyEvent *event)
  */
 
 // Mouse moved
-void BaseViewer::mouseMoved(int dx, int dy)
-{
-}
+void BaseViewer::mouseMoved(int dx, int dy) {}
 
 // Mouse 'wheeled'
 void BaseViewer::mouseWheeled(int delta)
@@ -140,35 +144,27 @@ void BaseViewer::mouseWheeled(int delta)
 
 	// Perform camera zoom
 	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
-	if (zrange < 1.0) zrange = 1.0;
-	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
+	if (zrange < 1.0)
+		zrange = 1.0;
+	view_.translateView(0.0, 0.0, 0.5 * zrange * (scrollup ? -1.0 : 1.0));
 
 	// Never let camera z go above z = 1.0...
 	Vec3<double> trans = view_.viewTranslation();
-	if (trans.z > 1.0) trans.z = 1.0;
+	if (trans.z > 1.0)
+		trans.z = 1.0;
 	view_.setViewTranslation(trans.x, trans.y, trans.z);
 
 	postRedisplay();
 }
 
 // Mouse double clicked
-void BaseViewer::mouseDoubleClicked()
-{
-}
+void BaseViewer::mouseDoubleClicked() {}
 
 // Context menu requested
-void BaseViewer::contextMenuRequested(QPoint pos)
-{
-}
+void BaseViewer::contextMenuRequested(QPoint pos) {}
 
 // Key pressed
-bool BaseViewer::keyPressed(int key)
-{
-	return false;
-}
+bool BaseViewer::keyPressed(int key) { return false; }
 
 // Key released
-bool BaseViewer::keyReleased(int key)
-{
-	return false;
-}
+bool BaseViewer::keyReleased(int key) { return false; }

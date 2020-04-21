@@ -24,18 +24,13 @@
 #include "base/sysfunc.h"
 
 // Constructor
-GetGizmoNameDialog::GetGizmoNameDialog(QWidget* parent)
-{
-	ui_.setupUi(this);
-}
+GetGizmoNameDialog::GetGizmoNameDialog(QWidget *parent) { ui_.setupUi(this); }
 
 // Destructor
-GetGizmoNameDialog::~GetGizmoNameDialog()
-{
-}
+GetGizmoNameDialog::~GetGizmoNameDialog() {}
 
 // Run the dialog
-bool GetGizmoNameDialog::get(const Gizmo* currentGizmo, const char* currentName)
+bool GetGizmoNameDialog::get(const Gizmo *currentGizmo, const char *currentName)
 {
 	currentGizmo_ = currentGizmo;
 
@@ -48,10 +43,7 @@ bool GetGizmoNameDialog::get(const Gizmo* currentGizmo, const char* currentName)
 }
 
 // Return the name string
-QString GetGizmoNameDialog::newName() const
-{
-	return ui_.NameEdit->text();
-}
+QString GetGizmoNameDialog::newName() const { return ui_.NameEdit->text(); }
 
 /*
  * Slots
@@ -62,8 +54,9 @@ void GetGizmoNameDialog::on_NameEdit_textChanged(const QString text)
 {
 	// Make sure the name is valid
 	bool nameValid = true;
-	if (text.isEmpty()) nameValid = false;
-// 	else if (WorkspaceTab::findGizmo(qPrintable(text), currentGizmo_)) nameValid = false;
+	if (text.isEmpty())
+		nameValid = false;
+	// 	else if (WorkspaceTab::findGizmo(qPrintable(text), currentGizmo_)) nameValid = false;
 
 	// Update indicator
 	ui_.NameIndicator->setOK(nameValid);
@@ -72,12 +65,6 @@ void GetGizmoNameDialog::on_NameEdit_textChanged(const QString text)
 	ui_.OKButton->setEnabled(nameValid);
 }
 
-void GetGizmoNameDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void GetGizmoNameDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
-void GetGizmoNameDialog::on_OKButton_clicked(bool checked)
-{
-	accept();
-}
+void GetGizmoNameDialog::on_OKButton_clicked(bool checked) { accept(); }

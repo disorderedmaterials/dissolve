@@ -23,14 +23,10 @@
 #include "base/lineparser.h"
 
 // Constructor
-Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore& data3DStore) : KeywordData<Data3DStore&>(KeywordBase::Data3DStoreData, data3DStore)
-{
-}
+Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data3DStore) : KeywordData<Data3DStore &>(KeywordBase::Data3DStoreData, data3DStore) {}
 
 // Destructor
-Data3DStoreKeyword::~Data3DStoreKeyword()
-{
-}
+Data3DStoreKeyword::~Data3DStoreKeyword() {}
 
 /*
  * Arguments
@@ -51,11 +47,12 @@ int Data3DStoreKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool Data3DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
+	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2), parser.argc(startArg + 1));
 
-	if (!data_.addData(parser.argc(startArg), parser, startArg+1, CharString("End%s", name()), coreData)) return Messenger::error("Failed to add data.\n");
+	if (!data_.addData(parser.argc(startArg), parser, startArg + 1, CharString("End%s", name()), coreData))
+		return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 
@@ -63,17 +60,19 @@ bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool Data3DStoreKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool Data3DStoreKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over list of one-dimensional data
-	RefDataListIterator<Data3D,Data3DImportFileFormat> dataIterator(data_.dataReferences());
-	while (Data3D* data = dataIterator.iterate())
+	RefDataListIterator<Data3D, Data3DImportFileFormat> dataIterator(data_.dataReferences());
+	while (Data3D *data = dataIterator.iterate())
 	{
-		Data3DImportFileFormat& ff = dataIterator.currentData();
-		if (!ff.writeFilenameAndFormat(parser, CharString("%s%s  '%s'  ", prefix, keywordName, data->name()))) return false;
-		if (!ff.writeBlock(parser, CharString("%s  ", prefix))) return false;
-		if (!parser.writeLineF("%sEnd%s\n", prefix, name())) return false;
-
+		Data3DImportFileFormat &ff = dataIterator.currentData();
+		if (!ff.writeFilenameAndFormat(parser, CharString("%s%s  '%s'  ", prefix, keywordName, data->name())))
+			return false;
+		if (!ff.writeBlock(parser, CharString("%s  ", prefix)))
+			return false;
+		if (!parser.writeLineF("%sEnd%s\n", prefix, name()))
+			return false;
 	}
 
 	return true;

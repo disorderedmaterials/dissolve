@@ -33,16 +33,11 @@ EPSRModule::EPSRModule() : Module()
 }
 
 // Destructor
-EPSRModule::~EPSRModule()
-{
-}
+EPSRModule::~EPSRModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* EPSRModule::createInstance() const
-{
-	return new EPSRModule;
-}
+Module *EPSRModule::createInstance() const { return new EPSRModule; }

@@ -30,31 +30,29 @@
 // Keyword with CharString Data
 class CharStringKeyword : public KeywordData<CharString>
 {
-	public:
+      public:
 	// Constructor
 	CharStringKeyword(CharString value = CharString());
 	// Destructor
 	~CharStringKeyword();
 
-
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Conversion
 	 */
-	public:
+      public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)
@@ -62,8 +60,7 @@ class CharStringKeyword : public KeywordData<CharString>
 	// Return value (as double)
 	double asDouble();
 	// Return value (as string)
-	const char* asString();
+	const char *asString();
 };
 
 #endif
-

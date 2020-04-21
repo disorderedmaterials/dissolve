@@ -22,44 +22,41 @@
 #ifndef DISSOLVE_KEYWORD_ATOMTYPEREFLIST_H
 #define DISSOLVE_KEYWORD_ATOMTYPEREFLIST_H
 
-#include "keywords/data.h"
 #include "classes/atomtype.h"
+#include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Configuration;
 
 // Keyword with AtomType RefList Data
-class AtomTypeRefListKeyword : public KeywordData< RefList<AtomType>& >
+class AtomTypeRefListKeyword : public KeywordData<RefList<AtomType> &>
 {
-	public:
+      public:
 	// Constructor
-	AtomTypeRefListKeyword(RefList<AtomType>& targetRefList);
+	AtomTypeRefListKeyword(RefList<AtomType> &targetRefList);
 	// Destructor
 	~AtomTypeRefListKeyword();
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied AtomType in the contained data
-	void removeReferencesTo(AtomType* at);
+	void removeReferencesTo(AtomType *at);
 };
 
 #endif
-

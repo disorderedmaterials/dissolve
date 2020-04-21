@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export_coordinates/exportcoords.h"
 #include "keywords/types.h"
+#include "modules/export_coordinates/exportcoords.h"
 
 // Perform any necessary initialisation for the Module
 void ExportCoordinatesModule::initialise()
@@ -29,4 +29,3 @@ void ExportCoordinatesModule::initialise()
 	keywords_.add("Format", new FileAndFormatKeyword(coordinatesFormat_, "EndFormat"), "Format", "File / format for coordinates");
 	keywords_.add("Format", new BoolKeyword(false), "TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index");
 }
-

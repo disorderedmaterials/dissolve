@@ -30,7 +30,7 @@
 // Keyword with Double Data
 class DoubleKeyword : public KeywordData<double>
 {
-	public:
+      public:
 	// Constructors
 	DoubleKeyword(double value);
 	DoubleKeyword(double value, double minValue);
@@ -38,17 +38,16 @@ class DoubleKeyword : public KeywordData<double>
 	// Destructor
 	~DoubleKeyword();
 
-
 	/*
 	 * Data Validation
 	 */
-	private:
+      private:
 	// Validation limits to apply (if any)
 	bool minimumLimit_, maximumLimit_;
 	// Validation range (if appropriate)
 	double min_, max_;
 
-	public:
+      public:
 	// Return whether a minimum validation limit has been set
 	bool hasValidationMin();
 	// Return validation minimum limit
@@ -60,25 +59,23 @@ class DoubleKeyword : public KeywordData<double>
 	// Validate supplied value
 	bool isValid(double value);
 
-
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Conversion
 	 */
-	public:
+      public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)
@@ -86,8 +83,7 @@ class DoubleKeyword : public KeywordData<double>
 	// Return value (as double)
 	double asDouble();
 	// Return value (as string)
-	const char* asString();
+	const char *asString();
 };
 
 #endif
-

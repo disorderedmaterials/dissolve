@@ -20,19 +20,19 @@
 */
 
 #include "data/ff/spcfw.h"
+#include "base/sysfunc.h"
+#include "classes/atomtype.h"
+#include "classes/speciesatom.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "base/sysfunc.h"
 
 /*
  * Implements "Flexible simple point-charge water model with improved liquid-state properties"
  * Yujie Wu, Harald L. Tepper and Gregory A. Voth
  * Journal of Chemical Physics 124 024503 (2006)
  * http://dx.doi.org/10.1063/1.2136877
- * 
+ *
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
  * All energy values are in kJ/mol.
@@ -53,28 +53,22 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 }
 
 // Destructor
-Forcefield_SPCFw::~Forcefield_SPCFw()
-{
-}
+Forcefield_SPCFw::~Forcefield_SPCFw() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_SPCFw::name() const
-{
-	return "SPC/Fw";
-}
+const char *Forcefield_SPCFw::name() const { return "SPC/Fw"; }
 
 // Return description for Forcefield
-const char* Forcefield_SPCFw::description() const
+const char *Forcefield_SPCFw::description() const
 {
-	return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with improved liquid-state properties', <i>Journal of Chemical Physics</i> <b>124</b> 024503 (2006), http://dx.doi.org/10.1063/1.2136877";
+	return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with improved liquid-state properties', <i>Journal of Chemical Physics</i> "
+	       "<b>124</b> "
+	       "024503 (2006), http://dx.doi.org/10.1063/1.2136877";
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const
-{
-	return Forcefield::LennardJonesType;
-}
+Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const { return Forcefield::LennardJonesType; }

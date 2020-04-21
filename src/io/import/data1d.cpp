@@ -20,24 +20,16 @@
 */
 
 #include "io/import/data1d.h"
-#include "math/filters.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "math/filters.h"
 
 // Constructors
-Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format)
-{
-	setUpKeywords();
-}
-Data1DImportFileFormat::Data1DImportFileFormat(const char* filename, Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(filename, format)
-{
-	setUpKeywords();
-}
+Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
+Data1DImportFileFormat::Data1DImportFileFormat(const char *filename, Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
 // Destructor
-Data1DImportFileFormat::~Data1DImportFileFormat()
-{
-}
+Data1DImportFileFormat::~Data1DImportFileFormat() {}
 
 /*
  * Keyword Options
@@ -59,10 +51,9 @@ void Data1DImportFileFormat::setUpKeywords()
 // Return enum options for Data1DImportFormat
 EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
 {
-	static EnumOptionsList Data1DImportFormats = EnumOptionsList() <<
-		EnumOption(Data1DImportFileFormat::XYData1D, 		"xy",		"Simple XY data (x = bin centres)") <<
-		EnumOption(Data1DImportFileFormat::HistogramData1D, 	"histogram",	"Histogrammed Data (x = bin left-boundaries)") <<
-		EnumOption(Data1DImportFileFormat::GudrunMintData1D, 	"mint",		"Gudrun output (mint01)");
+	static EnumOptionsList Data1DImportFormats = EnumOptionsList() << EnumOption(Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)")
+								       << EnumOption(Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)")
+								       << EnumOption(Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)");
 
 	static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> options("Data1DImportFileFormat", Data1DImportFormats);
 
@@ -70,39 +61,28 @@ EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::
 }
 
 // Return number of available formats
-int Data1DImportFileFormat::nFormats() const
-{
-	return Data1DImportFileFormat::nData1DImportFormats;
-}
+int Data1DImportFileFormat::nFormats() const { return Data1DImportFileFormat::nData1DImportFormats; }
 
 // Return format keyword for supplied index
-const char* Data1DImportFileFormat::formatKeyword(int id) const
-{
-	return data1DImportFormats().keywordByIndex(id);
-}
+const char *Data1DImportFileFormat::formatKeyword(int id) const { return data1DImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char* Data1DImportFileFormat::formatDescription(int id) const
-{
-	return data1DImportFormats().descriptionByIndex(id);
-}
+const char *Data1DImportFileFormat::formatDescription(int id) const { return data1DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data1DImportFormat
-Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const
-{
-	return (Data1DImportFileFormat::Data1DImportFormat) format_;
-}
+Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const { return (Data1DImportFileFormat::Data1DImportFormat)format_; }
 
 /*
  * Import Functions
  */
 
 // Import Data1D using current filename and format
-bool Data1DImportFileFormat::importData(Data1D& data, ProcessPool* procPool)
+bool Data1DImportFileFormat::importData(Data1D &data, ProcessPool *procPool)
 {
 	// Open file and check that we're OK to proceed importing from it
 	LineParser parser(procPool);
-	if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open file '%s' for loading Data1D data.\n", filename_.get());
+	if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
+		return Messenger::error("Couldn't open file '%s' for loading Data1D data.\n", filename_.get());
 
 	// Import the data
 	bool result = importData(parser, data);
@@ -113,17 +93,22 @@ bool Data1DImportFileFormat::importData(Data1D& data, ProcessPool* procPool)
 }
 
 // Import Data1D using supplied parser and current format
-bool Data1DImportFileFormat::importData(LineParser& parser, Data1D& data)
+bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 {
 	// Import the data
 	bool result = false;
-	if (data1DFormat() == Data1DImportFileFormat::XYData1D) result = importXY(parser, data);
-	else if (data1DFormat() == Data1DImportFileFormat::HistogramData1D) result = importHistogram(parser, data);
-	else if (data1DFormat() == Data1DImportFileFormat::GudrunMintData1D) result = importGudrunMint(parser, data);
-	else Messenger::error("Don't know how to load Data1D of format '%s'.\n", formatKeyword(data1DFormat()));
+	if (data1DFormat() == Data1DImportFileFormat::XYData1D)
+		result = importXY(parser, data);
+	else if (data1DFormat() == Data1DImportFileFormat::HistogramData1D)
+		result = importHistogram(parser, data);
+	else if (data1DFormat() == Data1DImportFileFormat::GudrunMintData1D)
+		result = importGudrunMint(parser, data);
+	else
+		Messenger::error("Don't know how to load Data1D of format '%s'.\n", formatKeyword(data1DFormat()));
 
 	// If we failed, may as well return now
-	if (!result) return false;
+	if (!result)
+		return false;
 
 	// Handle any additional options
 	// --Subtract average level from data?

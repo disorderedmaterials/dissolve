@@ -19,20 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "genericitems/listhelper.h"
 #include "gui/keywordwidgets/broadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "genericitems/listhelper.h"
-#include <QHBoxLayout>
 #include <QComboBox>
+#include <QHBoxLayout>
 
 // Constructor
-BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
 
 	// Add BroadeningFunction types to Combo
-	for (int n=0; n<BroadeningFunction::nFunctionTypes; ++n) ui_.FunctionCombo->addItem(BroadeningFunction::functionType( (BroadeningFunction::FunctionType) n));
+	for (int n = 0; n < BroadeningFunction::nFunctionTypes; ++n)
+		ui_.FunctionCombo->addItem(BroadeningFunction::functionType((BroadeningFunction::FunctionType)n));
 
 	// Set deltas on spinboxes
 	ui_.Parameter0Spin->setSingleStep(0.01);
@@ -52,8 +53,9 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 	connect(ui_.Parameter5Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<BroadeningFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into BroadeningFunctionKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<BroadeningFunctionKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into BroadeningFunctionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -68,7 +70,8 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 // Function type combo changed
 void BroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -80,7 +83,8 @@ void BroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int inde
 // Parameter value changed
 void BroadeningFunctionKeywordWidget::parameterSpin_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -92,18 +96,15 @@ void BroadeningFunctionKeywordWidget::parameterSpin_valueChanged(double value)
  */
 
 // Update value displayed in widget
-void BroadeningFunctionKeywordWidget::updateValue()
-{
-	updateWidgetValues(coreData_);
-}
+void BroadeningFunctionKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
 	refreshing_ = true;
 
 	// Grab the target BroadeningFunction
-	BroadeningFunction& broadeningFunction = keyword_->data();
+	BroadeningFunction &broadeningFunction = keyword_->data();
 
 	// Summary text on KeywordDropDown button
 	setSummaryText(BroadeningFunction::functionType(broadeningFunction.function()));
@@ -146,8 +147,9 @@ void BroadeningFunctionKeywordWidget::updateKeywordData()
 {
 	// Get widget data
 	BroadeningFunction broadeningFunction;
-	BroadeningFunction::FunctionType func = (BroadeningFunction::FunctionType) ui_.FunctionCombo->currentIndex();
-	broadeningFunction.set(func, ui_.Parameter0Spin->value(), ui_.Parameter1Spin->value(), ui_.Parameter2Spin->value(), ui_.Parameter3Spin->value(), ui_.Parameter4Spin->value(), ui_.Parameter5Spin->value());
+	BroadeningFunction::FunctionType func = (BroadeningFunction::FunctionType)ui_.FunctionCombo->currentIndex();
+	broadeningFunction.set(func, ui_.Parameter0Spin->value(), ui_.Parameter1Spin->value(), ui_.Parameter2Spin->value(), ui_.Parameter3Spin->value(), ui_.Parameter4Spin->value(),
+			       ui_.Parameter5Spin->value());
 
 	keyword_->setData(broadeningFunction);
 }

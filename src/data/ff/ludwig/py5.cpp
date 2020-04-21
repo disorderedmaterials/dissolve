@@ -1,39 +1,39 @@
 /*
-        *** Py5 cation Forcefield
-        *** src/data/ff/ludwig/py5.cpp
-        Copyright T. Youngs 2019-2020
+	*** Py5 cation Forcefield
+	*** src/data/ff/ludwig/py5.cpp
+	Copyright T. Youngs 2019-2020
 
-        This file is part of Dissolve.
+	This file is part of Dissolve.
 
-        Dissolve is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-        Dissolve is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-        You should have received a copy of the GNU General Public License
-        along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "data/ff/ludwig/py5.h"
+#include "base/sysfunc.h"
+#include "classes/atomtype.h"
+#include "classes/speciesatom.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
+#include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
-#include "data/ffimproperterm.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "base/sysfunc.h"
 
 /*
  * Implements "1-pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
  * W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives
- * J. Am. Chem. Soc. 118, 11225-11236 (1996). 
+ * J. Am. Chem. Soc. 118, 11225-11236 (1996).
  * W. L. Jorgensen and N. A. McDonald, Theochem 424, 145-155 (1998).
  * W. L. Jorgensen and N. A. McDonald, J. Phys. Chem. B 102, 8049-8059 (1998).
  * Notes:
@@ -60,15 +60,15 @@ Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
 	addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)", "Carbon in aromatic ring, para", 0.1706, "ca");
 	addAtomType(ELEMENT_H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1751, "ha");
 	addAtomType(ELEMENT_H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1760, "ha");
-	addAtomType(ELEMENT_H, 7, "ha_p", "nbonds=1,-&4" , "Hydrogen bound to carbon in aromatic ring, para", 0.1293, "ha");
+	addAtomType(ELEMENT_H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1293, "ha");
 	addAtomType(ELEMENT_C, 8, "ct_1", "nbonds=4,nh=2,-C,-&1", "Alkane Carbon of Tail, adjacent to N", -0.1745, "ct");
 	addAtomType(ELEMENT_C, 9, "ct_2", "nbonds=4,nh=2,-C(-N)", "Alkane Carbon of Tail, 2nd", 0.1349, "ct");
 	addAtomType(ELEMENT_C, 10, "ct_3", "nbonds=4,nh=2,-C(-C(-N))", "Alkane Carbon of Tail, 3rd", 0.0170, "ct");
 	addAtomType(ELEMENT_C, 11, "ct_4", "nbonds=4,nh=2,-C(-C(-C(-N)))", "Alkane Carbon of Tail, 4th", 0.1023, "ct");
 	addAtomType(ELEMENT_H, 12, "hc_1", "nbonds=1,-&8", "Hydrogen of Tail, next to N", 0.1070, "hc");
-	addAtomType(ELEMENT_H, 13, "hc_2", "nbonds=1,-&9" , "Hydrogen of Tail, 2nd", -0.0208, "hc");
-	addAtomType(ELEMENT_H, 14, "hc_3", "nbonds=1,-&10" , "Hydrogen of Tail, 3rd", 0.0097, "hc");
-	addAtomType(ELEMENT_H, 15, "hc_4", "nbonds=1,-&11"  , "Hydrogen of Tail, 4th", -0.0107, "hc");
+	addAtomType(ELEMENT_H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, 2nd", -0.0208, "hc");
+	addAtomType(ELEMENT_H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, 3rd", 0.0097, "hc");
+	addAtomType(ELEMENT_H, 15, "hc_4", "nbonds=1,-&11", "Hydrogen of Tail, 4th", -0.0107, "hc");
 	addAtomType(ELEMENT_C, 16, "cm", "nbonds=4,nh=3,-&11", "Carbon of Tail End", -0.1671, "cm");
 	addAtomType(ELEMENT_H, 17, "hm", "nbonds=1,-&16", "Hydrogen of Tail End", 0.0480, "hm");
 
@@ -128,28 +128,22 @@ Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
 	addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
 }
 
-Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig()
-{
-}
+Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_Py5_Ludwig::name() const
-{
-	return "1-pentylpyridinium cation (Py5)";
-}
+const char *Forcefield_Py5_Ludwig::name() const { return "1-pentylpyridinium cation (Py5)"; }
 
 // Return description for Forcefield
-const char* Forcefield_Py5_Ludwig::description() const
+const char *Forcefield_Py5_Ludwig::description() const
 {
-	return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American Chemical Society</i>, <b>118</b>, 11225 (1996).";
+	return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American "
+	       "Chemical "
+	       "Society</i>, <b>118</b>, 11225 (1996).";
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Py5_Ludwig::shortRangeType() const
-{
-	return Forcefield::LennardJonesType;
-}
+Forcefield::ShortRangeType Forcefield_Py5_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }

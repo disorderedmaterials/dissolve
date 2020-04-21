@@ -33,46 +33,43 @@ class ProcessPool;
 // ModuleList
 class ModuleList
 {
-	public:
+      public:
 	// Constructor
 	ModuleList();
 	// Destructor
 	~ModuleList();
 	// Conversion operator (List<Module>&)
-	operator List<Module>&();
-
+	operator List<Module> &();
 
 	/*
 	 * Module List
 	 */
-	private:
+      private:
 	// List of Modules
 	List<Module> modules_;
 
-	public:
+      public:
 	// Clear list
 	void clear();
 	// Associate Module to the list
-	bool own(Module* module, Module* addBeforeThis = NULL);
+	bool own(Module *module, Module *addBeforeThis = NULL);
 	// Remove specified Module from list (but don't delete it)
-	void cut(Module* module);
+	void cut(Module *module);
 	// Find associated Module by unique name
-	Module* find(const char* uniqueName) const;
+	Module *find(const char *uniqueName) const;
 	// Return whether specified Module is present in the list
-	bool contains(Module* searchModule) const;
+	bool contains(Module *searchModule) const;
 	// Return number of Modules in the list
 	int nModules() const;
 	// Return list of Modules
-	List<Module>& modules();
-
+	List<Module> &modules();
 
 	/*
 	 * General Actions
 	 */
-	public:
+      public:
 	// Run set-up stages for all modules
-	bool setUpAll(Dissolve& dissolve, ProcessPool& procPool);
+	bool setUpAll(Dissolve &dissolve, ProcessPool &procPool);
 };
 
 #endif
-
