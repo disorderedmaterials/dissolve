@@ -236,16 +236,17 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 
       public:
 	// Constructor
-	TreeWidgetRefDataListUpdater(QTreeWidgetItem *parentItem, const RefDataList<I, D> &list, T *functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
+	TreeWidgetRefDataListUpdater(QTreeWidgetItem *parentItem, const std::vector<std::tuple<I *, D>> &list, T *functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
 	{
 		QTreeWidgetItem *treeItem;
 
 		int count = 0;
 
-		RefDataListIterator<I, D> itemIterator(list);
-		while (I *dataItem = itemIterator.iterate())
+		for (auto &dataTuple : list)
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
+			auto dataItem = std::get<0>(dataTuple);
+			auto dataData = std::get<1>(dataTuple);
 
 			// If there is an item already at this child position, check it
 			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
@@ -256,7 +257,7 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 				if (rowData == dataItem)
 				{
 					// Update the current row and quit the loop
-					(functionParent->*updateChildFunction)(parentItem, count, dataItem, itemIterator.currentData(), false);
+					(functionParent->*updateChildFunction)(parentItem, count, dataItem, dataData, false);
 
 					break;
 				}
@@ -268,7 +269,7 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 			if (count == parentItem->childCount())
 			{
 				// Create new item
-				(functionParent->*updateChildFunction)(parentItem, count, dataItem, itemIterator.currentData(), true);
+				(functionParent->*updateChildFunction)(parentItem, count, dataItem, dataData, true);
 			}
 
 			++count;
