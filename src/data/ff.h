@@ -81,7 +81,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
       protected:
 	// Short-range parameter sets
-	List<ForcefieldParameters> shortRangeParameters_;
+	std::vector<ForcefieldParameters> shortRangeParameters_;
 	// Atom type data
 	std::vector<ForcefieldAtomType> atomTypes_;
 	// Atom type data, grouped by element
@@ -103,7 +103,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 
       public:
 	// Return named short-range parameters (if they exist)
-	ForcefieldParameters *shortRangeParameters(const char *name) const;
+	const ForcefieldParameters* shortRangeParameters(const char* name) const;
 	// Return the named ForcefieldAtomType (if it exists)
 	virtual ForcefieldAtomType *atomTypeByName(const char *name, Element *element = NULL) const;
 	// Return the ForcefieldAtomType with specified id (if it exists)
