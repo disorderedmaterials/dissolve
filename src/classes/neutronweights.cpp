@@ -403,8 +403,6 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 		return false;
 	if (!GenericItemContainer<Array2D<double>>::read(weights_, parser))
 		return false;
-	if (!GenericItemContainer<Array2D<double>>::read(boundWeights_, parser))
-		return false;
 	if (!GenericItemContainer<Array2D<double>>::read(intramolecularWeights_, parser))
 		return false;
 
