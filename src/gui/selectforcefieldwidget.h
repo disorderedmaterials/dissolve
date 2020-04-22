@@ -27,6 +27,9 @@
 #include "templates/list.h"
 #include <QWidget>
 
+Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
+Q_DECLARE_METATYPE(std::shared_ptr<Forcefield>)
+
 // Forward Declarations
 class Dissolve;
 class Forcefield;
@@ -38,7 +41,7 @@ class SelectForcefieldWidget : public QWidget
 
       public:
 	// Constructor
-	SelectForcefieldWidget(QWidget *parent, const List<Forcefield> &forcefields = ForcefieldLibrary::forcefields());
+	SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields = ForcefieldLibrary::forcefields());
 	// Destructor
 	~SelectForcefieldWidget();
 
@@ -46,13 +49,13 @@ class SelectForcefieldWidget : public QWidget
 	// Main form declaration
 	Ui::SelectForcefieldWidget ui_;
 	// Available forcefields
-	const List<Forcefield> &forcefields_;
+	const std::vector<std::shared_ptr<Forcefield>> &forcefields_;
 	// Whether the widget is refreshing
 	bool refreshing_;
 
       private:
 	// Update the list of Forcefields, optionally filtering them by name and description
-	void updateForcefieldsList(Forcefield *current = NULL, QString filter = QString());
+	void updateForcefieldsList(std::shared_ptr<Forcefield> current = NULL, QString filter = QString());
 
       private slots:
 	void on_FilterEdit_textChanged(const QString &text);
@@ -65,9 +68,9 @@ class SelectForcefieldWidget : public QWidget
 
       public:
 	// Set the current forcefield
-	void setCurrentForcefield(Forcefield *currentFF);
+	void setCurrentForcefield(std::shared_ptr<Forcefield> currentFF);
 	// Return the currently-selected Forcefield
-	Forcefield *currentForcefield() const;
+	std::shared_ptr<Forcefield> currentForcefield() const;
 };
 
 #endif

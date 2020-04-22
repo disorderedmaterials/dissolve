@@ -47,7 +47,7 @@ class Species;
 class SpeciesAtom;
 
 // Forcefield Base Class
-class Forcefield : public Elements, public ListItem<Forcefield>
+class Forcefield : public Elements
 {
       public:
 	// Constructor / Destructor

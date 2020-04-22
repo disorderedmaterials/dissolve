@@ -35,7 +35,7 @@
 #include "data/ff/uff.h"
 
 // Static Members
-List<Forcefield> ForcefieldLibrary::forcefields_;
+std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;
 
 /*
  * Private Functions
@@ -44,18 +44,18 @@ List<Forcefield> ForcefieldLibrary::forcefields_;
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
-	forcefields_.own(new Forcefield_OPLSAA2005_Alcohols);
-	forcefields_.own(new Forcefield_OPLSAA2005_Alkanes);
-	forcefields_.own(new Forcefield_OPLSAA2005_Alkenes);
-	forcefields_.own(new Forcefield_OPLSAA2005_Aromatics);
-	forcefields_.own(new Forcefield_OPLSAA2005_Diols);
-	forcefields_.own(new Forcefield_OPLSAA2005_NobleGases);
-	forcefields_.own(new Forcefield_OPLSAA2005_Triols);
-	forcefields_.own(new Forcefield_SPCFw);
-	forcefields_.own(new Forcefield_UFF);
-	forcefields_.own(new Forcefield_NTf2_Ludwig);
-	forcefields_.own(new Forcefield_Py5_Ludwig);
-	forcefields_.own(new Forcefield_Py4OH_Ludwig);
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Diols>());
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
+	forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Triols>());
+	forcefields_.push_back(std::make_shared<Forcefield_SPCFw>());
+	forcefields_.push_back(std::make_shared<Forcefield_UFF>());
+	forcefields_.push_back(std::make_shared<Forcefield_NTf2_Ludwig>());
+	forcefields_.push_back(std::make_shared<Forcefield_Py5_Ludwig>());
+	forcefields_.push_back(std::make_shared<Forcefield_Py4OH_Ludwig>());
 }
 
 /*
@@ -63,22 +63,23 @@ void ForcefieldLibrary::registerForcefields()
  */
 
 // Return list of available Forcefields
-List<Forcefield> &ForcefieldLibrary::forcefields()
+std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 {
 	// If the list is empty, we haven't yet constructed the list...
-	if (forcefields_.nItems() == 0)
+	if (forcefields_.empty())
 		registerForcefields();
 
 	return forcefields_;
 }
 
 // Return named Forcefield, if it exists
-Forcefield *ForcefieldLibrary::forcefield(const char *name)
+std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const char *name)
 {
-	ListIterator<Forcefield> ffIterator(forcefields());
-	while (Forcefield *ff = ffIterator.iterate())
+	for (auto &ff : forcefields())
+	{
 		if (DissolveSys::sameString(ff->name(), name))
 			return ff;
+	}
 
-	return NULL;
+	return nullptr;
 }

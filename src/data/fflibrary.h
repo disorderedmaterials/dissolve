@@ -23,6 +23,7 @@
 #define DISSOLVE_FORCEFIELD_LIBRARY_H
 
 #include "data/ff.h"
+#include <memory>
 
 // Forward Declarations
 /* none */
@@ -32,7 +33,7 @@ class ForcefieldLibrary
 {
       private:
 	// List of all available forcefields
-	static List<Forcefield> forcefields_;
+	static std::vector<std::shared_ptr<Forcefield>> forcefields_;
 
       private:
 	// Register Forcefields for use
@@ -40,9 +41,9 @@ class ForcefieldLibrary
 
       public:
 	// Return list of available Forcefields
-	static List<Forcefield> &forcefields();
+	static std::vector<std::shared_ptr<Forcefield>> &forcefields();
 	// Return named Forcefield, if it exists
-	static Forcefield *forcefield(const char *name);
+	static std::shared_ptr<Forcefield> forcefield(const char *name);
 };
 
 #endif

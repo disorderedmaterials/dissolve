@@ -54,7 +54,7 @@ class SelectForcefieldDialog : public QDialog
 
       public:
 	// Run the dialog, returning the selected Forcefield
-	Forcefield *selectForcefield(Forcefield *currentFF);
+	std::shared_ptr<Forcefield> selectForcefield(std::shared_ptr<Forcefield> currentFF);
 };
 
 #endif

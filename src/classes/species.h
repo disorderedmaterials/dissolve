@@ -22,8 +22,6 @@
 #ifndef DISSOLVE_SPECIES_H
 #define DISSOLVE_SPECIES_H
 
-#include "base/charstring.h"
-#include "base/version.h"
 #include "classes/atomtypelist.h"
 #include "classes/coordinateset.h"
 #include "classes/isotopologue.h"
@@ -36,6 +34,7 @@
 #include "io/import/coordinates.h"
 #include "templates/dynamicarray.h"
 #include "templates/objectstore.h"
+#include <memory>
 
 // Forward Declarations
 class Box;
@@ -247,15 +246,15 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	 */
       private:
 	// Forcefield to source terms from
-	Forcefield *forcefield_;
+	std::shared_ptr<Forcefield> forcefield_;
 	// Auto-generate missing intramolecular terms, and remove invalid ones
 	bool autoUpdateIntramolecularTerms_;
 
       public:
 	// Set Forcefield to source terms from
-	void setForcefield(Forcefield *ff);
+	void setForcefield(std::shared_ptr<Forcefield> ff);
 	// Return Forcefield to source terms from
-	Forcefield *forcefield() const;
+	std::shared_ptr<Forcefield> forcefield() const;
 	// Set whether to auto-generate missing intramolecular terms, and remove invalid ones
 	void setAutoUpdateIntramolecularTerms(bool b);
 	// Return whether to auto-generate missing intramolecular terms, and remove invalid ones

@@ -35,7 +35,7 @@
 #include "data/fftorsionterm.h"
 
 // Constructor / Destructor
-Forcefield::Forcefield() : ListItem<Forcefield>() {}
+Forcefield::Forcefield() {}
 
 Forcefield::~Forcefield() {}
 
