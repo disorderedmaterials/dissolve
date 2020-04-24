@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 8
 ---
-# Liquid Water
 
 ## 6. Fix the Water Molecule Geometry
 

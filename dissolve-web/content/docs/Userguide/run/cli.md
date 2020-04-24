@@ -4,7 +4,6 @@ grand_parent: User Guide
 parent: Running Dissolve
 weight: 20
 ---
-# CLI Options
 
 | Switch (&lt;arg&gt;)		| CLI?	 | GUI?	  | Description |
 |:------------------------------|:-------|:-------|:------------|

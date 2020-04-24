@@ -4,7 +4,6 @@ grand_parent: Examples
 parent: Liquid Argon
 weight: 3
 ---
-# Liquid Argon
 
 ## 3. Add a Configuration
 

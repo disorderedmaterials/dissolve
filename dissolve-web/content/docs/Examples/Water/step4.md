@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 6
 ---
-# Liquid Water
 
 ## 4. Equilibrate the System
 

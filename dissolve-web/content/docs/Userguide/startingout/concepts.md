@@ -4,7 +4,6 @@ parent: Starting Out
 grand_parent: User Guide
 weight: 1
 ---
-# The Basic Concepts of Dissolve
 
 5 minute read
 {: .label .label-blue }

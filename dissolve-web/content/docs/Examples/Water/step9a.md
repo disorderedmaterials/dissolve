@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 12
 ---
-# Liquid Water
 
 ## 9a. Centre-of-Mass RDF
 

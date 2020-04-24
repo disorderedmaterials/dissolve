@@ -4,7 +4,6 @@ has_children: true
 weight: 50
 has_toc: true
 ---
-# Examples
 
 Here you can find various usage examples, tutorials, and step-by-step walkthroughs for Dissolve. Important things are highlighted in the following manner:
 

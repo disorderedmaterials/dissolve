@@ -3,7 +3,6 @@ title: Step 3 - Set up Processing
 parent: Bulk Silica
 grand_parent: Examples
 ---
-# Bulk Silica
 
 ## 3. Set up Processing
 

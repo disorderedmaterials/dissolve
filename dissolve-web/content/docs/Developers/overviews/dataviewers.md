@@ -2,7 +2,6 @@
 parent: Overviews
 grand_parent: Developer Documentation
 ---
-# Data Viewers
 
 ## Introduction
 

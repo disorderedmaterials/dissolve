@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 10
 ---
-# Liquid Water
 
 ## 8. Managing the Refinement
 

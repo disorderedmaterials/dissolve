@@ -4,7 +4,6 @@ parent: Starting Out
 grand_parent: User Guide
 weight: 2
 ---
-# Dissolve's GUI
 
 2 minute read
 {: .label .label-blue }

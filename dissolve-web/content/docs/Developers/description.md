@@ -3,7 +3,6 @@ title: Description
 parent: Developer Documentation
 weight: 1
 ---
-# Description
 
 ## Introduction
 

@@ -4,7 +4,6 @@ grand_parent: Examples
 parent: Liquid Argon
 weight: 1
 ---
-# Liquid Argon
 
 ## 1. Creating a Species
 

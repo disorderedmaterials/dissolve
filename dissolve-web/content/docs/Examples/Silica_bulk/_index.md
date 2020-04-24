@@ -4,7 +4,6 @@ parent: Examples
 has_children: true
 weight: 2
 ---
-# Bulk Silica
 
 30 minute read
 {: .label .label-blue }

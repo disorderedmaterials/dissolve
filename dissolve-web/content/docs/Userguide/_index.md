@@ -4,7 +4,6 @@ has_children: true
 weight: 10
 has_toc: false
 ---
-# User Guide
 
 ## 1) Introduction
 

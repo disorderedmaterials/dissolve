@@ -4,7 +4,6 @@ parent: User Guide
 has_children: true
 weight: 80
 ---
-# Procedures
 
 ## Overview
 

@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 13
 ---
-# Liquid Water
 
 ## 9b. Hydrogen Bond Geometry
 

@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 2
 ---
-# Liquid Water
 
 ## 1a. Draw the Molecule
 

@@ -4,7 +4,6 @@ parent: Starting Out
 grand_parent: User Guide
 weight: 3
 ---
-# Input, Output, and Workflow
 
 5 minute read
 {: .label .label-blue }

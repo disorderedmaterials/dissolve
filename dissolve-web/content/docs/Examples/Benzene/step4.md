@@ -3,7 +3,6 @@ title: Step 4 - Set up Analysis
 parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 4. Set up Analysis
 

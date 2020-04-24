@@ -4,7 +4,6 @@ grand_parent: Examples
 parent: Liquid Argon
 weight: 4
 ---
-# Liquid Argon
 
 ## 4) Set up the Simulation
 

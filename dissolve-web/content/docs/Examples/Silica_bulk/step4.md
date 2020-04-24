@@ -3,7 +3,6 @@ title: Step 4 - Equilibrate the Box
 parent: Bulk Silica
 grand_parent: Examples
 ---
-# Bulk Silica
 
 ## 4. Equilibrate the Box
 

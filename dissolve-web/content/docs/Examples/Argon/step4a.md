@@ -4,7 +4,6 @@ grand_parent: Examples
 parent: Liquid Argon
 weight: 5
 ---
-# Liquid Argon
 
 ## 4a) Evolving the System
 

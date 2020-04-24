@@ -3,7 +3,6 @@ title: Step 6 - Set up Refinement
 parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Liquid Water
 
 ## 6. Set up Refinement
 

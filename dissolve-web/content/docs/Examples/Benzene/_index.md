@@ -4,7 +4,6 @@ parent: Examples
 has_children: true
 weight: 4
 ---
-# Comparing Benzene Structure
 
 70 - 90 minutes
 {: .label .label-blue }

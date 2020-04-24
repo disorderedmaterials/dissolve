@@ -4,7 +4,6 @@ parent: Liquid Water
 grand_parent: Examples
 weight: 15
 ---
-# Liquid Water
 
 ## 10. Running the Analysis
 

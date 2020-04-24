@@ -3,7 +3,6 @@ title: Step 5 - Set up Potential Refinement
 parent: Bulk Silica
 grand_parent: Examples
 ---
-# Bulk Silica
 
 ## 5. Refine the Structure
 

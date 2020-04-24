@@ -7,7 +7,6 @@ menu:
     weight: 3
 ---
 
-# Dissolve
 
 **Structure Refinement for Scattering Data**
 

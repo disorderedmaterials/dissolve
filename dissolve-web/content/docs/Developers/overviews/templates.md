@@ -3,7 +3,6 @@ title: Templates
 parent: Overviews
 grand_parent: Developer Documentation
 ---
-# GUI
 
 ## Introduction
 
