@@ -1,7 +1,7 @@
 ---
 title: Coding Standards
 parent: Developer Documentation
-weight: 3
+weight: 4
 ---
 # Coding Standards
 

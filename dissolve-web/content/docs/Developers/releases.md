@@ -1,7 +1,7 @@
 ---
 title: Releases
 parent: Developer Documentation
-weight: 1
+weight: 2
 mermaid: true
 ---
 # Release Cycle

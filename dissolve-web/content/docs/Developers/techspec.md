@@ -1,7 +1,7 @@
 ---
 title: Technical Specifications
 parent: Developer Documentation
-weight: 4
+weight: 5
 ---
 # Technical Specification
 

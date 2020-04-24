@@ -1,132 +1,12 @@
 /*
-
-Nothing defined here. The Hugo project that uses this theme can override theme variables by adding a file to:
-
-assets/scss/_variables_project.scss
-
+Add styles or override variables from the theme here.
 */
-@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i");
-.btn.right {
-  float: right; }
-
-/*
- * Blockquote Basic Style
- */
-blockquote {
-  width: 60%;
-  margin: 50px auto;
-  color: #555555;
-  padding-left: 50px;
-  padding-top: 15px;
-  padding-bottom: 1px;
-  padding-right: 10px;
-  border-left: 8px solid #ddd;
-  line-height: 1.6;
-  position: relative;
-  background: #f9f9f9; }
-
-blockquote::before {
-  content: '';
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  color: #ddd;
-  left: 15px;
-  top: 12px;
-  background-repeat: no-repeat; }
-
-blockquote::after {
-  content: ''; }
-
-/*
- * Blockquote-Specific Stylings
- */
-blockquote.tip {
-  border-left: 8px solid #78C0A8; }
-
-blockquote.tip::before {
-  background-image: url(blocktip.svg); }
-
-blockquote.warn {
-  border-left: 8px solid #fb9a49; }
-
-blockquote.warn::before {
-  background-image: url(blockwarn.svg); }
-
-blockquote.question {
-  border-left: 8px solid #329819; }
-
-blockquote.question::before {
-  background-image: url(blockquestion.svg); }
-
-blockquote.actionquote {
-  border-left: 8px solid #478cc6; }
-
-blockquote.action {
-  width: 85%;
-  margin-bottom: 10px;
-  line-height: 1.0;
-  border-left: 8px solid #478cc6; }
-
-blockquote.step {
-  width: 85%;
-  margin-bottom: 10px;
-  line-height: 1.0;
-  border-left: 16px solid #aebfcd; }
-
-blockquote.step::before {
-  left: 5px;
-  top: 10px;
-  background-image: url(action-general.svg); }
-
-blockquote.action_menu {
-  font-weight: bold;
-  border-left: 8px solid #478cc6; }
-
-blockquote.action_dissolve::before {
-  background-image: url(action-dissolve.png); }
-
-blockquote.action_tabs::before {
-  left: 8px;
-  top: 8px;
-  background-image: url(action-tabs.svg); }
-
-blockquote.action_groups::before {
-  left: 8px;
-  top: 8px;
-  background-image: url(action-groups.svg); }
-
-blockquote.action_menu {
-  font-weight: bold; }
-
-blockquote.action_menu::before {
-  left: 8px;
-  background-image: url(action-menu.svg); }
-
-blockquote.action_mouse::before {
-  left: 10px;
-  top: 8px;
-  background-image: url(action-mouse.svg); }
-
-blockquote.action_key {
-  font-weight: bold; }
-
-blockquote.action_key::before {
-  left: 10px;
-  top: 8px;
-  background-image: url(action-key.svg); }
-
-blockquote.action_edit::before {
-  background-image: url(action-edit.svg); }
-
-blockquote.action_settings::before {
-  background-image: url(action-settings.svg); }
-
 /*
 
 Bootstrap variables overrides for theme.
 See https://github.com/twbs/bootstrap/pull/23260
 */
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i");
 @fa-font-path :        "../webfonts";
 /*!
  * Bootstrap v4.1.3 (https://getbootstrap.com/)
@@ -521,7 +401,7 @@ mark,
   .blockquote-footer::before {
     content: "\2014 \00A0"; }
 
-.img-fluid, .td-content img {
+.img-fluid {
   max-width: 100%;
   height: auto; }
 
@@ -1165,23 +1045,22 @@ pre {
   .offset-xl-11 {
     margin-left: 91.66666667%; } }
 
-.table, .td-content > table, .td-box .row.section > table {
+.table, .td-box .row.section > table {
   width: 100%;
   margin-bottom: 1rem;
   background-color: transparent; }
-  .table th, .td-content > table th, .td-box .row.section > table th,
+  .table th, .td-box .row.section > table th,
   .table td,
-  .td-content > table td,
   .td-box .row.section > table td {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6; }
-  .table thead th, .td-content > table thead th, .td-box .row.section > table thead th {
+  .table thead th, .td-box .row.section > table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6; }
-  .table tbody + tbody, .td-content > table tbody + tbody, .td-box .row.section > table tbody + tbody {
+  .table tbody + tbody, .td-box .row.section > table tbody + tbody {
     border-top: 2px solid #dee2e6; }
-  .table .table, .td-content > table .table, .table .td-content > table, .td-content > table .td-content > table, .td-box .row.section > table .table, .td-box .row.section > table .td-content > table, .table .td-box .row.section > table, .td-content > table .td-box .row.section > table, .td-box .table .row.section > table, .td-box .td-content > table .row.section > table, .td-box .row.section > table .row.section > table {
+  .table .table, .td-box .row.section > table .table, .table .td-box .row.section > table, .td-box .table .row.section > table, .td-box .row.section > table .row.section > table {
     background-color: #fff; }
 
 .table-sm th,
@@ -1203,7 +1082,7 @@ pre {
 .table-borderless tbody + tbody {
   border: 0; }
 
-.table-striped tbody tr:nth-of-type(odd), .td-content > table tbody tr:nth-of-type(odd), .td-box .row.section > table tbody tr:nth-of-type(odd) {
+.table-striped tbody tr:nth-of-type(odd), .td-box .row.section > table tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05); }
 
 .table-hover tbody tr:hover {
@@ -1308,12 +1187,12 @@ pre {
   .table-hover .table-active:hover > th {
     background-color: rgba(0, 0, 0, 0.075); }
 
-.table .thead-dark th, .td-content > table .thead-dark th, .td-box .row.section > table .thead-dark th {
+.table .thead-dark th, .td-box .row.section > table .thead-dark th {
   color: #fff;
   background-color: #222;
   border-color: #353535; }
 
-.table .thead-light th, .td-content > table .thead-light th, .td-box .row.section > table .thead-light th {
+.table .thead-light th, .td-box .row.section > table .thead-light th {
   color: #495057;
   background-color: #eee;
   border-color: #dee2e6; }
@@ -1327,7 +1206,7 @@ pre {
     border-color: #353535; }
   .table-dark.table-bordered {
     border: 0; }
-  .table-dark.table-striped tbody tr:nth-of-type(odd), .td-content > table.table-dark tbody tr:nth-of-type(odd), .td-box .row.section > table.table-dark tbody tr:nth-of-type(odd) {
+  .table-dark.table-striped tbody tr:nth-of-type(odd), .td-box .row.section > table.table-dark tbody tr:nth-of-type(odd) {
     background-color: rgba(255, 255, 255, 0.05); }
   .table-dark.table-hover tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.075); }
@@ -1372,13 +1251,13 @@ pre {
     .table-responsive-xl > .table-bordered {
       border: 0; } }
 
-.table-responsive, .td-content > table, .td-box .row.section > table {
+.table-responsive, .td-box .row.section > table {
   display: block;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: -ms-autohiding-scrollbar; }
-  .table-responsive > .table-bordered, .td-content > table > .table-bordered, .td-box .row.section > table > .table-bordered {
+  .table-responsive > .table-bordered, .td-box .row.section > table > .table-bordered {
     border: 0; }
 
 .form-control {
@@ -6449,11 +6328,10 @@ a.text-dark:hover, a.text-dark:focus {
     display: none; }
   .badge {
     border: 1px solid #000; }
-  .table, .td-content > table, .td-box .row.section > table {
+  .table, .td-box .row.section > table {
     border-collapse: collapse !important; }
-    .table td, .td-content > table td, .td-box .row.section > table td,
+    .table td, .td-box .row.section > table td,
     .table th,
-    .td-content > table th,
     .td-box .row.section > table th {
       background-color: #fff !important; }
   .table-bordered th,
@@ -6466,7 +6344,7 @@ a.text-dark:hover, a.text-dark:focus {
     .table-dark thead th,
     .table-dark tbody + tbody {
       border-color: #dee2e6; }
-  .table .thead-dark th, .td-content > table .thead-dark th, .td-box .row.section > table .thead-dark th {
+  .table .thead-dark th, .td-box .row.section > table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
 
@@ -10879,7 +10757,7 @@ readers do not read off random characters that represent icons */
     z-index: 1; }
 
 @media (min-width: 992px) {
-  .td-max-width-on-larger-screens, .td-content > pre, .td-content > .highlight, .td-content > .lead, .td-content > h1, .td-content > h2, .td-content > ul, .td-content > ol, .td-content > p, .td-content > blockquote, .td-content > dl dd, .td-content .footnotes, .td-content > .alert {
+  .td-max-width-on-larger-screens {
     max-width: 80%; } }
 
 .-bg-blue {
@@ -12514,43 +12392,157 @@ readers do not read off random characters that represent icons */
     .alert-dark .alert-heading {
       color: #403F4C; }
 
-.td-content {
-  order: 1; }
-  .td-content p, .td-content li, .td-content td {
-    font-weight: 400; }
-  .td-content > h1 {
-    font-weight: 700;
-    margin-bottom: 1rem; }
-  .td-content > h2 {
-    margin-bottom: 1rem; }
-  .td-content > h2:not(:first-child) {
-    margin-top: 3rem; }
-  .td-content > h2 + h3 {
-    margin-top: 1rem; }
-  .td-content > h3, .td-content > h4, .td-content > h5, .td-content > h6 {
-    margin-bottom: 1rem;
-    margin-top: 2rem; }
-  .td-content > blockquote {
-    padding: 0 0 0 1rem;
-    margin-bottom: 1rem;
-    color: #888;
-    border-left: 6px solid #FFA630; }
-  .td-content > ul li, .td-content > ol li {
-    margin-bottom: .25rem; }
-  .td-content strong {
-    font-weight: 700; }
-  .td-content .alert:not(:first-child) {
-    margin-top: 2rem;
-    margin-bottom: 2rem; }
-  .td-content .lead {
-    margin-bottom: 1.5rem; }
+.td-navbar .navbar-brand svg {
+  margin: 5px 10px;
+  height: 35px; }
 
-.td-title {
-  margin-top: 1rem;
-  margin-bottom: .5rem; }
-  @media (min-width: 576px) {
-    .td-title {
-      font-size: 3rem; } }
+.label {
+  border-radius: 5px;
+  width: 20%;
+  margin: 5px auto 5px 0;
+  color: white;
+  padding: 0px 10px 0px 25px;
+  font-size: 14px; }
+
+.label-blue {
+  background-color: #3176d9; }
+
+.label-red {
+  background-color: red; }
+
+.btn.left {
+  border-radius: 5px;
+  width: inherit;
+  margin: 5px auto 5px 0;
+  background-color: #3176d9;
+  color: white;
+  padding: auto; }
+
+.btn.right {
+  border-radius: 5px;
+  width: inherit;
+  margin: 5px auto 5px 0;
+  background-color: #3176d9;
+  color: white;
+  padding: auto;
+  float: right; }
+
+.btn.left:hover, .btn.right:hover {
+  background: #1e53a0 linear-gradient(180deg, #3176d9, #1e53a0) repeat-x; }
+
+/*
+ * Blockquote Basic Style
+ */
+blockquote {
+  width: 60%;
+  margin: 50px auto;
+  color: #555555;
+  padding-left: 50px;
+  padding-top: 15px;
+  padding-bottom: 1px;
+  padding-right: 10px;
+  border-left: 8px solid #ddd;
+  line-height: 1.6;
+  position: relative;
+  background: #f9f9f9; }
+
+blockquote::before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  color: #ddd;
+  left: 15px;
+  top: 12px;
+  background-repeat: no-repeat; }
+
+blockquote::after {
+  content: ''; }
+
+/*
+ * Blockquote-Specific Stylings
+ */
+blockquote.tip {
+  border-left: 8px solid #78C0A8; }
+
+blockquote.tip::before {
+  background-image: url(/img/blocktip.svg); }
+
+blockquote.warn {
+  border-left: 8px solid #fb9a49; }
+
+blockquote.warn::before {
+  background-image: url(/img/blockwarn.svg); }
+
+blockquote.question {
+  border-left: 8px solid #329819; }
+
+blockquote.question::before {
+  background-image: url(/img/blockquestion.svg); }
+
+blockquote.actionquote {
+  border-left: 8px solid #478cc6; }
+
+blockquote.action {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 8px solid #478cc6; }
+
+blockquote.step {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 16px solid #aebfcd; }
+
+blockquote.step::before {
+  left: 5px;
+  top: 10px;
+  background-image: url(/img/action-general.svg); }
+
+blockquote.action-menu {
+  font-weight: bold;
+  border-left: 8px solid #478cc6; }
+
+blockquote.action-dissolve::before {
+  background-image: url(/img/action-dissolve.png); }
+
+blockquote.action-tabs::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(/img/action-tabs.svg); }
+
+blockquote.action-groups::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(/img/action-groups.svg); }
+
+blockquote.action-menu {
+  font-weight: bold; }
+
+blockquote.action-menu::before {
+  left: 8px;
+  background-image: url(/img/action-menu.svg); }
+
+blockquote.action-mouse::before {
+  left: 10px;
+  top: 8px;
+  background-image: url(/img/action-mouse.svg); }
+
+blockquote.action-key {
+  font-weight: bold; }
+
+blockquote.action-key::before {
+  left: 10px;
+  top: 8px;
+  background-image: url(/img/action-key.svg); }
+
+blockquote.action-edit::before {
+  background-image: url(/img/action-edit.svg); }
+
+blockquote.action-settings::before {
+  background-image: url(/img/action-settings.svg); }
+
 .td-search-input {
   background: transparent;
   border-radius: 1rem;

@@ -6,8 +6,7 @@ weight: 1
 ---
 # Liquid Argon
 
-20 minute read
-{: .label .label-blue }
+{{< label color="blue" text="20 minute read" >}}
 
 ## Summary
 
@@ -17,18 +16,14 @@ Liquid argon isn't a particularly exciting system, but it has been measured expe
 
 Download the example data `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub and unpack it if you haven't done so already.
 
-> Open the Dissolve GUI
-{: .action .action_dissolve}
-> Choose **Empty Simulation** from the _Create_ section
-{: .step}
-> Save As...
-{: .action .action_menu}
-> Save your own input file under a sensible name in the `argon` directory of the example data
-{: .step}
+{{< action type="dissolve" text="Open the Dissolve GUI" >}}
+{{< step text="Choose **Empty Simulation** from the _Create_ section" >}} 
+{{< action type="menu" text="Save As..." >}}
+{{< step text="Save your own input file under a sensible name in the `argon` directory of the example data" >}}
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 
 - Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/argon/data/yarnell.sq)
 
-[Let's begin!](/step1){: .btn}
+<a class="btn left" href ="/docs/examples/argon/step1">Let's begin!</a>
 

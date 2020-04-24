@@ -25,4 +25,6 @@ Note also the presence of the _Isotopologues_{: .text-green-100} section which a
 > Isotopologue definitions depend on atom types, so all atom types should be defined before setting up isotopologues.
 {: .tip }
 
-[Back to Overview](/docs/examples/argon/){: .btn }   [Next Step](/docs/examples/argon/step2/){: .btn .right}
+<a class="btn left" href ="/docs/examples/argon/">Back to Overview</a>
+<a class="btn right" href ="/docs/examples/argon/step2/">Next Step</a>
+

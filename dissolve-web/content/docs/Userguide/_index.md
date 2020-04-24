@@ -76,7 +76,7 @@ has_toc: false
 
 ## 7) Modules
 
-[Overview](docs/userguide/modules/index) - Modules main index.
+[Overview](docs/userguide/modules/) - Modules main index.
 
 ### Analysis - Calculation of properties of interest from configurations.
 

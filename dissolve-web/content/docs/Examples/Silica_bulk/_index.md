@@ -30,5 +30,5 @@ Alternatively, download the data files listed below and save them to a location 
 
 - Neutron data file: [SiO2_NIMROD.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/silica_bulk/data/SiO2_NIMROD.mint01)
 
-[Let's begin!](/docs/examples/silica_bulk/step1/){: .btn}
+<a class="btn left" href ="/docs/examples/silica_bulk/step1/">Let's begin!</a>
 

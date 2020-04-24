@@ -1,7 +1,7 @@
 ---
 title: Compilation
 parent: Developer Documentation
-weight: 5
+weight: 6
 ---
 # Compiling Dissolve
 

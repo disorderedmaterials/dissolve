@@ -1,7 +1,7 @@
 ---
 title: Contributing
 parent: Developer Documentation
-weight: 6
+weight: 7
 ---
 # Contributing
 
