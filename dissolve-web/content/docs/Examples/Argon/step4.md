@@ -1,7 +1,6 @@
 ---
 title: Step 4 - Set up the Simulation
 grand_parent: Examples
-parent: Liquid Argon
 weight: 4
 ---
 

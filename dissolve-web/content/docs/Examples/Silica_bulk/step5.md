@@ -1,6 +1,5 @@
 ---
 title: Step 5 - Set up Potential Refinement
-parent: Bulk Silica
 grand_parent: Examples
 ---
 

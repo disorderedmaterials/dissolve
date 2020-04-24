@@ -1,6 +1,5 @@
 ---
 title: Step 1b - Add Isotopologues
-parent: Liquid Water
 grand_parent: Examples
 weight: 3
 ---

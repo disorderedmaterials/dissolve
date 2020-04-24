@@ -1,7 +1,5 @@
 ---
 title: Procedures
-parent: User Guide
-has_children: true
 weight: 80
 ---
 

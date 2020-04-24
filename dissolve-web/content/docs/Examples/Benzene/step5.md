@@ -1,6 +1,5 @@
 ---
 title: Step 5 - Calculate Baseline Properties
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
 

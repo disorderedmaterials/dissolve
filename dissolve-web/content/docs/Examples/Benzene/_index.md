@@ -1,7 +1,5 @@
 ---
 title: Comparing Benzene Structure
-parent: Examples
-has_children: true
 weight: 4
 ---
 

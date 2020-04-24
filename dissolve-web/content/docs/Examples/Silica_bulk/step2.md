@@ -1,6 +1,5 @@
 ---
 title: Step 2 - Set up a Configuration
-parent: Bulk Silica
 grand_parent: Examples
 ---
 

@@ -1,7 +1,6 @@
 ---
 title: Step 1 - Set up Atomic Species
 grand_parent: Examples
-parent: Bulk Silica
 ---
 
 ## 1. Set up Atomic Species

@@ -1,6 +1,5 @@
 ---
 title: Step 9c - Centre-of-Mass Spatial Density
-parent: Liquid Water
 grand_parent: Examples
 weight: 14
 ---

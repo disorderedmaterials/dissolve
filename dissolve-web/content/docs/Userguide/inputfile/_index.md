@@ -1,6 +1,5 @@
 ---
 title: Main Input File
-parent: User Guide
 weight: 30
 ---
 

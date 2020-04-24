@@ -1,6 +1,5 @@
 ---
 title: SQ
-parent: Modules
 grand_parent: User Guide
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: Step 2 - Set up a Configuration
-parent: Liquid Water
 grand_parent: Examples
 weight: 4
 ---

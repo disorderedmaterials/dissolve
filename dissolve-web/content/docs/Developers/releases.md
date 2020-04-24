@@ -1,6 +1,5 @@
 ---
 title: Releases
-parent: Developer Documentation
 weight: 2
 mermaid: true
 ---

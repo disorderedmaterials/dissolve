@@ -1,6 +1,5 @@
 ---
 title: Dissolve's GUI
-parent: Starting Out
 grand_parent: User Guide
 weight: 2
 ---

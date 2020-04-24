@@ -1,6 +1,5 @@
 ---
 title: Modules
-parent: Overviews
 grand_parent: Developer Documentation
 mermaid: true
 ---

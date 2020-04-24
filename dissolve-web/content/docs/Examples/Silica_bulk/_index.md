@@ -1,7 +1,5 @@
 ---
 title: Bulk Silica
-parent: Examples
-has_children: true
 weight: 2
 ---
 

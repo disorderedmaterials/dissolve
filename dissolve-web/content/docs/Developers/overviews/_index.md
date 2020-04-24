@@ -1,7 +1,5 @@
 ---
 title: Overviews
-parent: Developer Documentation
-has_children: true
 weight: 10
 ---
 

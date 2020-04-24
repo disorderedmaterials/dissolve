@@ -1,6 +1,5 @@
 ---
 title: Step 4 - Equilibrate the System
-parent: Liquid Water
 grand_parent: Examples
 weight: 6
 ---

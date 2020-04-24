@@ -1,6 +1,5 @@
 ---
 title: SanityCheck
-parent: Modules
 grand_parent: User Guide
 ---
 

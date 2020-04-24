@@ -1,6 +1,5 @@
 ---
 title: Compilation
-parent: Developer Documentation
 weight: 6
 ---
 

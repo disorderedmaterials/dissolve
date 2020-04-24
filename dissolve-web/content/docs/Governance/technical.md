@@ -1,6 +1,5 @@
 ---
 title: Technical Steering Committee
-parent: Project Governance
 ---
 
 Technical Steering Committee

@@ -1,6 +1,5 @@
 ---
 title: Developer Documentation
-has_children: true
 weight: 100
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: Step 9b - Hydrogen Bond Geometry
-parent: Liquid Water
 grand_parent: Examples
 weight: 13
 ---

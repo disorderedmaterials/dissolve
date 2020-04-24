@@ -1,6 +1,5 @@
 ---
 title: User Guide
-has_children: true
 weight: 10
 has_toc: false
 ---

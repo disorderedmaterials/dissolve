@@ -1,6 +1,5 @@
 ---
 title: CalculateAngle
-parent: Modules
 grand_parent: User Guide
 ---
 

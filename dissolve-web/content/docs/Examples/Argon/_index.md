@@ -1,7 +1,5 @@
 ---
 title: Liquid Argon
-parent: Examples
-has_children: true
 weight: 1
 ---
 

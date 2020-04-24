@@ -1,7 +1,5 @@
 ---
 title: Running Dissolve
-parent: User Guide
-has_children: true
 weight: 50
 ---
 

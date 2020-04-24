@@ -1,6 +1,5 @@
 ---
 title: Step 3 - Set up Equilibration
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
 

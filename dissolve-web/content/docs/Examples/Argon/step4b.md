@@ -1,7 +1,6 @@
 ---
 title: Step 4b - Calculate g(r) and S(Q)
 grand_parent: Examples
-parent: Liquid Argon
 weight: 6
 ---
 

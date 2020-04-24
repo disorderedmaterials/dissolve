@@ -1,6 +1,5 @@
 ---
 title: CalculateCoordinationNumber
-parent: Modules
 grand_parent: User Guide
 ---
 

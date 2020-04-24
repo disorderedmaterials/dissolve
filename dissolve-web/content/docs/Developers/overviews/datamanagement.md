@@ -1,6 +1,5 @@
  ---
 title: Data Management
-parent: Overviews
 grand_parent: Developer Documentation
 mermaid: true
 ---

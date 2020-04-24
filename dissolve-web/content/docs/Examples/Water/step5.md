@@ -1,6 +1,5 @@
 ---
 title: Step 5 - Assessing the Reference Potential
-parent: Liquid Water
 grand_parent: Examples
 weight: 7
 ---

@@ -1,6 +1,5 @@
 ---
 title: GeometryOptimisation
-parent: Modules
 grand_parent: User Guide
 ---
 

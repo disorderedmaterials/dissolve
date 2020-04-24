@@ -1,6 +1,5 @@
 ---
 title: GUI
-parent: Overviews
 grand_parent: Developer Documentation
 ---
 

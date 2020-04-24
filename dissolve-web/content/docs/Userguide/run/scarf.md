@@ -1,6 +1,5 @@
 ---
 title: Getting Dissolve
-parent: Getting Started
 grand_parent: User Guide
 weight: 20
 ---

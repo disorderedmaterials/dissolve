@@ -1,6 +1,5 @@
 ---
 title: Step 8 - Managing the Refinement
-parent: Liquid Water
 grand_parent: Examples
 weight: 10
 ---

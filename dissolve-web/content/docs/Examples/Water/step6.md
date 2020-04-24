@@ -1,6 +1,5 @@
 ---
 title: Step 6 - Fix the Water Molecule Geometry
-parent: Liquid Water
 grand_parent: Examples
 weight: 8
 ---

@@ -1,7 +1,6 @@
 ---
 title: Step 1 - Creating a Species
 grand_parent: Examples
-parent: Liquid Argon
 weight: 1
 ---
 

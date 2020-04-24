@@ -1,6 +1,5 @@
 ---
 title: Architecture
-parent: Developer Documentation
 weight: 8
 ---
 

@@ -1,7 +1,5 @@
 ---
 title: Procedure Nodes
-parent: User Guide
-has_children: true
 weight: 90
 ---
 

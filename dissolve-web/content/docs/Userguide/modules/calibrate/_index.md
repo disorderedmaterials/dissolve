@@ -1,6 +1,5 @@
 ---
 title: Calibrate
-parent: Modules
 grand_parent: User Guide
 ---
 

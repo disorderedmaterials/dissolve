@@ -1,7 +1,6 @@
 ---
 title: Step 3 - Add a Configuration
 grand_parent: Examples
-parent: Liquid Argon
 weight: 3
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: Step 3 - Set up Basic Processing
-parent: Liquid Water
 grand_parent: Examples
 weight: 5
 ---

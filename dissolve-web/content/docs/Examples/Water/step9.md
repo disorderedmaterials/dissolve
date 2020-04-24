@@ -1,6 +1,5 @@
 ---
 title: Step 9 - Setting up Analysis
-parent: Liquid Water
 grand_parent: Examples
 weight: 11
 ---

@@ -1,7 +1,5 @@
 ---
 title: Liquid Water
-parent: Examples
-has_children: true
 weight: 3
 ---
 

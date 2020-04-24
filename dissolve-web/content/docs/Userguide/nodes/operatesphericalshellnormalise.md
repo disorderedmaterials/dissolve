@@ -1,8 +1,6 @@
 ---
 title: OperateSphericalShellNormalise
-parent: Procedure Nodes
 grand_parent: User Guide
-has_children: true
 weight: 80
 ---
 

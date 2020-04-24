@@ -1,6 +1,5 @@
 ---
 title: DataTest
-parent: Modules
 grand_parent: User Guide
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: The Basic Concepts of Dissolve
-parent: Starting Out
 grand_parent: User Guide
 weight: 1
 ---

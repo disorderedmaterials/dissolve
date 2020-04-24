@@ -1,6 +1,5 @@
 ---
 title: Step 3 - Set up Processing
-parent: Bulk Silica
 grand_parent: Examples
 ---
 

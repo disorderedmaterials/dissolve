@@ -1,6 +1,5 @@
 ---
 title: Project Governance
-has_children: true
 weight: 110
 ---
 

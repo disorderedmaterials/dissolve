@@ -1,6 +1,5 @@
 ---
 title: What is Dissolve?
-parent: User Guide
 weight: 10
 ---
 

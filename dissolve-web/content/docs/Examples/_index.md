@@ -1,6 +1,5 @@
 ---
 title: Examples
-has_children: true
 weight: 50
 has_toc: true
 ---

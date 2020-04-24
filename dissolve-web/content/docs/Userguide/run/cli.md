@@ -1,7 +1,6 @@
 ---
 title: CLI Options
 grand_parent: User Guide
-parent: Running Dissolve
 weight: 20
 ---
 

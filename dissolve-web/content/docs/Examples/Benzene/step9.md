@@ -1,6 +1,5 @@
 ---
 title: Step 9 - Compare Data
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
 

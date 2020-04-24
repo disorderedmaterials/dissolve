@@ -1,6 +1,5 @@
 ---
 title: Step 6 - Set up Refinement
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
 
