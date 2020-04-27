@@ -24,6 +24,7 @@
 
 #include "data/ff.h"
 #include <memory>
+#include <string>
 
 // Forward Declarations
 /* none */
