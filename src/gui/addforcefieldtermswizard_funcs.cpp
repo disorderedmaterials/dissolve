@@ -224,7 +224,7 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 	switch (index)
 	{
 	case (AddForcefieldTermsWizard::SelectForcefieldPage):
-		return (ui_.ForcefieldWidget->currentForcefield());
+		return (!ui_.ForcefieldWidget->currentForcefield());
 	default:
 		break;
 	}
@@ -235,7 +235,7 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 {
-	Forcefield *ff = ui_.ForcefieldWidget->currentForcefield();
+	auto ff = ui_.ForcefieldWidget->currentForcefield();
 	switch (currentIndex)
 	{
 	case (AddForcefieldTermsWizard::SelectForcefieldPage):

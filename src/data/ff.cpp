@@ -20,7 +20,6 @@
 */
 
 #include "data/ff.h"
-#include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/coredata.h"
@@ -33,11 +32,6 @@
 #include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
-
-// Constructor / Destructor
-Forcefield::Forcefield() : ListItem<Forcefield>() {}
-
-Forcefield::~Forcefield() {}
 
 /*
  * Definition
@@ -105,22 +99,16 @@ ForcefieldAtomType *Forcefield::determineAtomType(SpeciesAtom *i, const std::vec
 ForcefieldAtomType *Forcefield::determineAtomType(SpeciesAtom *i) const { return determineAtomType(i, atomTypesByElementPrivate_); }
 
 // Ass short-range parameters
-void Forcefield::addParameters(const char *name, double data0, double data1, double data2, double data3)
-{
-	ForcefieldParameters *params = new ForcefieldParameters(name, data0, data1, data2, data3);
-
-	shortRangeParameters_.own(params);
-}
+void Forcefield::addParameters(const char *name, double data0, double data1, double data2, double data3) { shortRangeParameters_.emplace_back(name, data0, data1, data2, data3); }
 
 // Return named short-range parameters (if they exist)
-ForcefieldParameters *Forcefield::shortRangeParameters(const char *name) const
+const ForcefieldParameters *Forcefield::shortRangeParameters(const char *name) const
 {
-	ListIterator<ForcefieldParameters> paramsIterator(shortRangeParameters_);
-	while (ForcefieldParameters *params = paramsIterator.iterate())
-		if (DissolveSys::sameString(name, params->name()))
-			return params;
+	auto it = std::find_if(shortRangeParameters_.begin(), shortRangeParameters_.end(), [&name](const ForcefieldParameters &params) { return DissolveSys::sameString(name, params.name()); });
+	if (it != shortRangeParameters_.end())
+		return &*it;
 
-	return NULL;
+	return nullptr;
 }
 
 // Return the named ForcefieldAtomType (if it exists)

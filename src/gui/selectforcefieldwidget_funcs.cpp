@@ -25,18 +25,17 @@
 #include <QRegExp>
 
 // Constructor
-SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const List<Forcefield> &forcefields) : QWidget(parent), forcefields_(forcefields)
+SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields) : QWidget(parent), forcefields_(forcefields)
 {
 	ui_.setupUi(this);
 
 	refreshing_ = true;
 
 	// Populate the list with available forcefields
-	ListIterator<Forcefield> forcefieldIterator(forcefields_);
-	while (Forcefield *ff = forcefieldIterator.iterate())
+	for (std::shared_ptr<Forcefield> ff : forcefields_)
 	{
 		QListWidgetItem *item = new QListWidgetItem(ff->name(), ui_.ForcefieldsList);
-		item->setData(Qt::UserRole, VariantPointer<Forcefield>(ff));
+		item->setData(Qt::UserRole, QVariant::fromValue(ff));
 	}
 
 	refreshing_ = false;
@@ -46,7 +45,7 @@ SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const List<Force
 SelectForcefieldWidget::~SelectForcefieldWidget() {}
 
 // Update the list of Forcefields, optionally filtering them by name and description
-void SelectForcefieldWidget::updateForcefieldsList(Forcefield *current, QString filter)
+void SelectForcefieldWidget::updateForcefieldsList(std::shared_ptr<Forcefield> current, QString filter)
 {
 	// Loop over items in the list
 	for (int n = 0; n < ui_.ForcefieldsList->count(); ++n)
@@ -54,7 +53,7 @@ void SelectForcefieldWidget::updateForcefieldsList(Forcefield *current, QString 
 		QListWidgetItem *item = ui_.ForcefieldsList->item(n);
 		if (!item)
 			continue;
-		Forcefield *ff = VariantPointer<Forcefield>(item->data(Qt::UserRole));
+		std::shared_ptr<Forcefield> ff = item->data(Qt::UserRole).value<std::shared_ptr<Forcefield>>();
 		if (ff == current)
 		{
 			ui_.ForcefieldsList->setCurrentRow(n);
@@ -100,7 +99,7 @@ void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetIt
 	}
 
 	// Get the selected forcefield
-	Forcefield *ff = VariantPointer<Forcefield>(current->data(Qt::UserRole));
+	std::shared_ptr<Forcefield> ff = current->data(Qt::UserRole).value<std::shared_ptr<Forcefield>>();
 
 	// Update the informational text
 	ui_.ForcefieldDetailsTextEdit->setText(ff->description());
@@ -117,14 +116,14 @@ void SelectForcefieldWidget::on_ForcefieldsList_itemDoubleClicked(QListWidgetIte
 }
 
 // Set the current forcefield
-void SelectForcefieldWidget::setCurrentForcefield(Forcefield *currentFF) { updateForcefieldsList(currentFF, ui_.FilterEdit->text()); }
+void SelectForcefieldWidget::setCurrentForcefield(std::shared_ptr<Forcefield> currentFF) { updateForcefieldsList(currentFF, ui_.FilterEdit->text()); }
 
 // Return the currently-selected Forcefield
-Forcefield *SelectForcefieldWidget::currentForcefield() const
+std::shared_ptr<Forcefield> SelectForcefieldWidget::currentForcefield() const
 {
 	QListWidgetItem *item = ui_.ForcefieldsList->currentItem();
 	if (item == NULL)
 		return NULL;
 
-	return VariantPointer<Forcefield>(item->data(Qt::UserRole));
+	return item->data(Qt::UserRole).value<std::shared_ptr<Forcefield>>();
 }

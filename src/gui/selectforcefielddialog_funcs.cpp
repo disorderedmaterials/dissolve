@@ -46,7 +46,7 @@ void SelectForcefieldDialog::on_SelectButton_clicked(bool checked) { accept(); }
 void SelectForcefieldDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning the selected Forcefield
-Forcefield *SelectForcefieldDialog::selectForcefield(Forcefield *currentFF)
+std::shared_ptr<Forcefield> SelectForcefieldDialog::selectForcefield(std::shared_ptr<Forcefield> currentFF)
 {
 	ui_.ForcefieldWidget->setCurrentForcefield(currentFF);
 

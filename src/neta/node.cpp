@@ -39,7 +39,6 @@ EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 }
 
 // Constructors
-
 NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type) : ListItem<NETANode>()
 {
 	reverseLogic_ = false;

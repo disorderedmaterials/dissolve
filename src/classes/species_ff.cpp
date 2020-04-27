@@ -29,10 +29,10 @@
  */
 
 // Set Forcefield to source terms from
-void Species::setForcefield(Forcefield *ff) { forcefield_ = ff; }
+void Species::setForcefield(std::shared_ptr<Forcefield> ff) { forcefield_ = ff; }
 
 // Return Forcefield to source terms from
-Forcefield *Species::forcefield() const { return forcefield_; }
+std::shared_ptr<Forcefield> Species::forcefield() const { return forcefield_; }
 
 // Set whether to auto-generate missing intramolecular terms, and remove invalid ones
 void Species::setAutoUpdateIntramolecularTerms(bool b)
