@@ -95,7 +95,7 @@ class Isotopes : public Elements
 
       public:
 	// Register specified Isotope to given Element
-	static void registerIsotope(Isotope *isotope, int Z);
+	static void registerIsotope(std::shared_ptr<Isotope> isotope, int Z);
 	// Return Isotope with specified A (if it exists) for given Z
 	static std::shared_ptr<Isotope> isotope(int Z, int A);
 	// Return Isotope with specified A (if it exists) for given Element

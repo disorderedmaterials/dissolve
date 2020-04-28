@@ -44,9 +44,6 @@ Isotope::Isotope(int z, int A, const char *spin, double mass, double bc, double 
 	boundIncoherentXS_ = si;
 	totalXS_ = totalxs;
 	absorptionXS_ = absxs;
-
-	// Add this isotope to its parent element's list
-	Isotopes::registerIsotope(this, z);
 }
 
 Isotope::Isotope(const Isotope *source) : ElementReference(source->Z()) { *this = *source; }
@@ -510,7 +507,7 @@ std::vector<std::shared_ptr<Isotope>> &Isotopes::isotopesByElement(int Z)
 		};
 		for (auto iso : sears91Data)
 		{
-		  registerIsotope(new Isotope(&iso), iso.Z());
+		  registerIsotope(std::make_shared<Isotope>(&iso), iso.Z());
 		}
 	}
 
@@ -524,7 +521,7 @@ std::vector<std::shared_ptr<Isotope>> &Isotopes::isotopesByElement(int Z)
 }
 
 // Register specified Isotope to given Element
-void Isotopes::registerIsotope(Isotope *isotope, int Z) { isotopesByElementPrivate_[Z].emplace_back(isotope); }
+void Isotopes::registerIsotope(std::shared_ptr<Isotope> isotope, int Z) { isotopesByElementPrivate_[Z].emplace_back(isotope); }
 
 // Return Isotope with specified A for given Element (if it exists)
 std::shared_ptr<Isotope> Isotopes::isotope(int Z, int A)
