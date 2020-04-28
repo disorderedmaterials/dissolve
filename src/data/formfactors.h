@@ -35,8 +35,8 @@ namespace XRayFormFactors
 // X-Ray Form Factor Data Sets
 enum XRayFormFactorData
 {
-	NoFormFactorData,		/* No form factor data */
-	WaasmaierKirfel1995,		/* Waasmaier & Kirfel 1995 */
+	NoFormFactorData,    /* No form factor data */
+	WaasmaierKirfel1995, /* Waasmaier & Kirfel 1995 */
 	nXRayFormFactorData
 };
 
