@@ -62,7 +62,7 @@ void Isotopologue::update()
 	 */
 
 	// Check for valid parent_
-	if (parent_ == NULL)
+	if (parent_ == nullptr)
 	{
 		Messenger::error("NULL_POINTER - Found NULL parent_ pointer in Isotopologue::update().\n");
 		return;
@@ -78,7 +78,7 @@ void Isotopologue::update()
 	for (SpeciesAtom *i = parent_->firstAtom(); i != NULL; i = i->next())
 	{
 		AtomType *at = i->atomType();
-		if (at == NULL)
+		if (at == nullptr)
 		{
 			Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n", i->userIndex());
 			continue;
@@ -97,7 +97,7 @@ void Isotopologue::update()
 				    return at == std::get<0>(item);
 				  });
 		// If we found the existing item, append it to the local list. Otherwise, make a new entry
-		if (it != isotopes_.end())
+		if (it != oldItems.end())
 		{
 			oldItems.erase(it);
 			isotopes_.push_back(*it);
