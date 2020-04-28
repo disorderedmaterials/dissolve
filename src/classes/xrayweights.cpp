@@ -182,16 +182,13 @@ void XRayWeights::setUpMatrices()
 }
 
 // Return concentration product for type i
-double XRayWeights::concentration(int typeIndexI) const
-{
-	return concentrations_.constAt(typeIndexI);
-}
+double XRayWeights::concentration(int typeIndexI) const { return concentrations_.constAt(typeIndexI); }
 
 // Return concentration product for types i and j
 double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const { return concentrationProducts_.constAt(typeIndexI, typeIndexJ); }
 
 // Return form factor for type i over supplied Q values
-Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double>& Q) const
+Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) const
 {
 #ifdef CHECKS
 	if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
@@ -204,9 +201,10 @@ Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double>& Q) co
 	// Initialise results array
 	Array<double> fiq(Q.nItems());
 
-	auto& fi = formFactorData_[typeIndexI].get();
+	auto &fi = formFactorData_[typeIndexI].get();
 
-	for (int n=0; n<Q.nItems(); ++n) fiq[n] = fi.magnitude(Q.constAt(n));
+	for (int n = 0; n < Q.nItems(); ++n)
+		fiq[n] = fi.magnitude(Q.constAt(n));
 
 	return fiq;
 }
@@ -233,7 +231,7 @@ double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) 
 double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const { return preFactors_.constAt(typeIndexI, typeIndexJ) * formFactorProduct(typeIndexI, typeIndexJ, Q); }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<double>& Q) const
+Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const
 {
 	// Get form factor data for involved types
 #ifdef CHECKS
@@ -252,8 +250,8 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
 	// Initialise results array
 	Array<double> fijq(Q.nItems());
 
-	auto& fi = formFactorData_[typeIndexI].get();
-	auto& fj = formFactorData_[typeIndexJ].get();
+	auto &fi = formFactorData_[typeIndexI].get();
+	auto &fj = formFactorData_[typeIndexJ].get();
 	auto preFactor = preFactors_.constAt(typeIndexI, typeIndexJ);
 
 	for (int n = 0; n < Q.nItems(); ++n)
