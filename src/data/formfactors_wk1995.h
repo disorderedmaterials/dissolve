@@ -27,29 +27,28 @@
 // Waasmaier & Kirfel '95 Form Factor Data
 class FormFactorData_WK1995 : public FormFactorData
 {
-	public:
+      public:
 	// Constructor
-	FormFactorData_WK1995(int z = 0, int formalCharge = 0, double a1 = 0.0, double b1 = 0.0, double a2 = 0.0, double b2 = 0.0, double a3 = 0.0, double b3 = 0.0, double a4 = 0.0, double b4 = 0.0, double a5 = 0.0, double b5 = 0.0, double c = 0.0);
+	FormFactorData_WK1995(int z = 0, int formalCharge = 0, double a1 = 0.0, double b1 = 0.0, double a2 = 0.0, double b2 = 0.0, double a3 = 0.0, double b3 = 0.0, double a4 = 0.0, double b4 = 0.0,
+			      double a5 = 0.0, double b5 = 0.0, double c = 0.0);
 	// Assignment Operator
-	FormFactorData_WK1995& operator=(const FormFactorData_WK1995& source);
-
+	FormFactorData_WK1995 &operator=(const FormFactorData_WK1995 &source);
 
 	/*
 	 * Form Factor Data
 	 */
-	private:
+      private:
 	// Function parameters
 	double a_[5], b_[5], c_;
 
-	public:
+      public:
 	// Return index of isotope in it's Element parent's list
 	int index() const;
-
 
 	/*
 	 * Form Factor Generation
 	 */
-	public:
+      public:
 	// Return magnitude of form factor at specified Q value
 	double magnitude(double Q = 0.0) const;
 };

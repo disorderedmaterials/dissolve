@@ -22,33 +22,33 @@
 #ifndef DISSOLVE_DATA_FORMFACTORS_H
 #define DISSOLVE_DATA_FORMFACTORS_H
 
-#include <tuple>
+#include "base/enumoptions.h"
 #include "data/elements.h"
 #include "data/formfactor.h"
-#include "base/enumoptions.h"
+#include <tuple>
 
 template <class T> using optional = std::tuple<T, bool>;
 
 // X-Ray Form Factors
 namespace XRayFormFactors
 {
-	// X-Ray Form Factor Data Sets
-	enum XRayFormFactorData
-	{
-		WaasmaierKirfel1995
-	};
-
-	// Return EnumOptions for XRayFormFactorData
-	EnumOptions<XRayFormFactorData> xRayFormFactorData();
-
-	// Return form factor data from specified dataset for given element and formal charge (if it exists)
-	optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge = 0);
-
-	// Return form factor data from specified dataset for given element and formal charge (if it exists)
-	optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, Element* el, int formalCharge = 0);
-
-	// Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
-	optional<const FormFactorData&> wk1995Data(int Z, int formalCharge = 0);
+// X-Ray Form Factor Data Sets
+enum XRayFormFactorData
+{
+	WaasmaierKirfel1995
 };
+
+// Return EnumOptions for XRayFormFactorData
+EnumOptions<XRayFormFactorData> xRayFormFactorData();
+
+// Return form factor data from specified dataset for given element and formal charge (if it exists)
+optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge = 0);
+
+// Return form factor data from specified dataset for given element and formal charge (if it exists)
+optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge = 0);
+
+// Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
+optional<const FormFactorData &> wk1995Data(int Z, int formalCharge = 0);
+}; // namespace XRayFormFactors
 
 #endif

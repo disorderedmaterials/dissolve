@@ -33,24 +33,14 @@ FormFactorData::FormFactorData(int Z, int formalCharge)
  */
 
 // Return element to which the data relates
-int FormFactorData::Z() const
-{
-	return Z_;
-}
+int FormFactorData::Z() const { return Z_; }
 
 // Return formal charge of element to which the data relates
-int FormFactorData::formalCharge() const
-{
-	return formalCharge_;
-}
-
+int FormFactorData::formalCharge() const { return formalCharge_; }
 
 /*
  * Form Factor Generation
  */
 
 // Return magnitude of form factor at specified Q value
-double FormFactorData::magnitude(double Q) const
-{
-	return 0.0;
-}
+double FormFactorData::magnitude(double Q) const { return 0.0; }

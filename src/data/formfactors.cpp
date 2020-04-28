@@ -21,13 +21,13 @@
 
 #include "data/formfactors.h"
 
-namespace XRayFormFactors {
+namespace XRayFormFactors
+{
 
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 {
-	static EnumOptionsList XRayFormFactorDataSets = EnumOptionsList() <<
-		EnumOption(XRayFormFactors::WaasmaierKirfel1995,	"WK1995");
+	static EnumOptionsList XRayFormFactorDataSets = EnumOptionsList() << EnumOption(XRayFormFactors::WaasmaierKirfel1995, "WK1995");
 
 	static EnumOptions<XRayFormFactors::XRayFormFactorData> options("XRayFormFactors", XRayFormFactorDataSets);
 
@@ -35,9 +35,10 @@ EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
+optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
 {
-	if (dataSet == XRayFormFactors::WaasmaierKirfel1995) return wk1995Data(Z, formalCharge);
+	if (dataSet == XRayFormFactors::WaasmaierKirfel1995)
+		return wk1995Data(Z, formalCharge);
 	// else if (dataSet == XRayFormFactors::XXX) return ...
 
 	static FormFactorData dummyData;
@@ -45,9 +46,6 @@ optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, int Z
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData&> formFactorData(XRayFormFactorData dataSet, Element* el, int formalCharge)
-{
-	return formFactorData(dataSet, el->Z(), formalCharge);
-}
+optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge) { return formFactorData(dataSet, el->Z(), formalCharge); }
 
-}
+} // namespace XRayFormFactors
