@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/formfactors.h"
 #include "data/formfactors_wk1995.h"
+#include "data/formfactors.h"
 #include <algorithm>
 #include <functional>
 #include <vector>
