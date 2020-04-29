@@ -24,12 +24,11 @@
 
 #include "data/elements.h"
 #include "templates/array.h"
-#include "templates/list.h"
 #include <memory>
 #include <vector>
 
 // Isotopic Neutron Scattering Data
-class Isotope : public ElementReference, public ListItem<Isotope>
+class Isotope : public ElementReference
 {
       public:
 	// Constructor

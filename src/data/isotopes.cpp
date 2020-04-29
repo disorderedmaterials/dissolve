@@ -32,7 +32,7 @@ std::vector<std::vector<std::shared_ptr<Isotope>>> Isotopes::isotopesByElementPr
  */
 
 // Constructor
-Isotope::Isotope(int z, int A, const char *spin, double mass, double bc, double bi, double sc, double si, double totalxs, double absxs) : ElementReference(z), ListItem<Isotope>()
+Isotope::Isotope(int z, int A, const char *spin, double mass, double bc, double bi, double sc, double si, double totalxs, double absxs) : ElementReference(z)
 {
 	// Set the isotope's data
 	A_ = A;
