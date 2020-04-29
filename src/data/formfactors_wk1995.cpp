@@ -104,7 +104,7 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
 	 * (International Tables for Crystallography, Vol. C, 1992).
 	 */
 
-	static std::vector<FormFactorData_WK1995> wk1995 = {
+	static const std::vector<FormFactorData_WK1995> wk1995 = {
 	    // El		Q	a1		b1		a2		b2		a3		b3		a4		b4		a5		b5 c
 	    {ELEMENT_H, 0, 0.413048, 15.569946, 0.294953, 32.398468, 0.187491, 5.711404, 0.080701, 61.889874, 0.023736, 1.334118, 0.000049},
 	    {ELEMENT_H, 1, 0.206524, 15.569946, 0.147477, 32.398468, 0.093746, 5.711404, 0.040351, 61.889874, 0.011868, 1.334118, 0.000025},
