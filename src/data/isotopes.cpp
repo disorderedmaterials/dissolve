@@ -507,7 +507,7 @@ std::vector<std::shared_ptr<Isotope>> &Isotopes::isotopesByElement(int Z)
 		};
 		for (auto iso : sears91Data)
 		{
-		  registerIsotope(std::make_shared<Isotope>(&iso), iso.Z());
+			registerIsotope(std::make_shared<Isotope>(&iso), iso.Z());
 		}
 	}
 
