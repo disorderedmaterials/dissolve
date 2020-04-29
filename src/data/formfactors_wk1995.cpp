@@ -325,7 +325,7 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
 	    {ELEMENT_BK, 0, 15.889072, 0.055503, 33.625286, 0.569571, 24.710381, 3.615472, 3.707139, 97.694786, 15.839268, 14.754303, 3.213169},
 	    {ELEMENT_CF, 0, 33.794075, 0.550447, 25.467693, 3.581973, 16.048487, 14.357388, 3.657525, 96.064972, 16.008982, 0.052450, 3.005326}};
 
-	auto it = std::find_if(wk1995.begin(), wk1995.end(), [&](FormFactorData_WK1995 &data) { return data.Z() == Z && data.formalCharge() == formalCharge; });
+	auto it = std::find_if(wk1995.cbegin(), wk1995.cend(), [&](const auto &data) { return data.Z() == Z && data.formalCharge() == formalCharge; });
 	return std::make_tuple(std::ref(*it), it == wk1995.end());
 }
 
