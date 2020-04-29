@@ -733,9 +733,7 @@ bool Species::write(LineParser &parser, const char *prefix)
 		{
 			if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword), iso->name()))
 				return false;
-			// RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 			for (const auto &items : iso->isotopes())
-			// while (AtomType* atomType = isotopeIterator.iterate())
 			{
 				const auto atomType = std::get<0>(items);
 				const auto data = std::get<1>(items);

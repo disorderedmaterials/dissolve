@@ -126,9 +126,7 @@ bool Species::checkSetUp()
 	 */
 	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
-		// RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		for (auto items : iso->isotopes())
-		// while (AtomType* atomType = isotopeIterator.iterate())
 		{
 			auto atomType = std::get<0>(items);
 			auto isotope = std::get<1>(items);
