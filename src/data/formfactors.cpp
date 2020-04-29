@@ -41,7 +41,7 @@ optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int 
 		return wk1995Data(Z, formalCharge);
 	// else if (dataSet == XRayFormFactors::XXX) return ...
 
-	static FormFactorData dummyData;
+	static const FormFactorData dummyData;
 	return std::make_tuple(dummyData, true);
 }
 
