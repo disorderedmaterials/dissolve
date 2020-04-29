@@ -110,32 +110,32 @@ std::vector<std::shared_ptr<Isotope>> &Isotopes::isotopesByElement(int Z)
 	if (isotopesByElementPrivate_.empty())
 	{
 		isotopesByElementPrivate_.resize(Elements::nElements());
-	/*
-	 * Neutron Scattering Lengths and Cross Sections
-	 *
-	 * Varley F. Sears
-	 * AECL Research, Chalk River Laboratories
-	 * Chalk River, Ontario, Canada K0J 1J0
-	 * 1991 November 11
-	 *
-	 * DRAFT
-	 *
-	 *	Symbol  Unit    Quantity
-	 *	--------------------------------------------------------------
-	 *	Z		atomic number
-	 *	A		mass number
-	 *	I(p)		spin (parity) of the nuclear ground state
-	 *	Atwt		Atomic weight (C=12)
-	 *	bc	fm	bound coherent scattering length
-	 *	bi	fm	bound incoherent scattering length
-	 *	sc	barn[1]	bound coherent scattering cross section
-	 *	si	barn	bound incoherent scattering cross section
-	 *	ss	barn	total bound scattering cross section
-	 *	sa	barn	absorption cross section for 2200 m/s neutrons[2]
-	 *
-	 *	[1] 1 barn = 100 fm**2
-	 *	[2] E = 25.30 meV, k = 3.494 Angstroms**-1, lambda = 1.798 Angstroms
-	 */
+		/*
+		 * Neutron Scattering Lengths and Cross Sections
+		 *
+		 * Varley F. Sears
+		 * AECL Research, Chalk River Laboratories
+		 * Chalk River, Ontario, Canada K0J 1J0
+		 * 1991 November 11
+		 *
+		 * DRAFT
+		 *
+		 *	Symbol  Unit    Quantity
+		 *	--------------------------------------------------------------
+		 *	Z		atomic number
+		 *	A		mass number
+		 *	I(p)		spin (parity) of the nuclear ground state
+		 *	Atwt		Atomic weight (C=12)
+		 *	bc	fm	bound coherent scattering length
+		 *	bi	fm	bound incoherent scattering length
+		 *	sc	barn[1]	bound coherent scattering cross section
+		 *	si	barn	bound incoherent scattering cross section
+		 *	ss	barn	total bound scattering cross section
+		 *	sa	barn	absorption cross section for 2200 m/s neutrons[2]
+		 *
+		 *	[1] 1 barn = 100 fm**2
+		 *	[2] E = 25.30 meV, k = 3.494 Angstroms**-1, lambda = 1.798 Angstroms
+		 */
 
 		static Isotope sears91Data[] = {
 		    //	Z	El	A	I(p)		Mass		bc	bi	sc	si	ss	sa

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_ATOMTYPEDATA_H
 #define DISSOLVE_ATOMTYPEDATA_H
 
-#include <memory>
 #include "templates/list.h"
 #include "templates/listitem.h"
+#include <memory>
 
 // Forward Declarations
 class AtomType;
