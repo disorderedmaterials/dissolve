@@ -1,6 +1,6 @@
 /*
 	*** Waasmaier & Kirfel '95 X-Ray Form Factors
-	*** src/data/formfactors_wk1995.h
+	*** src/data/formfactors_wk1995.cpp
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/formfactors_wk1995.h"
 #include "data/formfactors.h"
+#include "data/formfactors_wk1995.h"
 #include <algorithm>
 #include <functional>
 #include <vector>
@@ -92,7 +92,7 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
 	 * D. Waasmaier & A. Kirfel
 	 * Acta Cryst. (1995). A51, 416-413
 	 *
-	 * Fit parameters of all atoms/ions (with the excepetion of O1-)
+	 * Fit parameters of all atoms/ions (with the exception of O1-)
 	 * from publication "New Analytical Scattering Factor Functions for
 	 * Free Atoms and Ions", D. Waasmaier & A. Kirfel, Acta Cryst. A 95
 	 *
@@ -104,8 +104,16 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
 	 * (International Tables for Crystallography, Vol. C, 1992).
 	 */
 
+	/*
+	 * Some elements are tagged with a formal charge equal to "val" (-ence?) type.
+	 * These have been removed from the list, but are reproduced here for completeness.
+	 *
+	 * {ELEMENT_C, Val?, 1.258489, 10.683769, 0.728215, 0.208177, 1.119856, 0.836097, 2.168133, 24.603704, 0.705239, 58.954273, 0.019722},
+	 * {ELEMENT_SI, Val?, 2.879033, 1.239713, 3.072960, 38.706276, 1.515981, 0.081481, 1.390030, 93.616333, 4.995051, 2.770293, 0.146030},
+	 */
+
 	static const std::vector<FormFactorData_WK1995> wk1995 = {
-	    // El		Q	a1		b1		a2		b2		a3		b3		a4		b4		a5		b5 c
+	    // El  Q  a1  b1  a2  b2  a3  b3  a4  b4  a5  b5  c
 	    {ELEMENT_H, 0, 0.413048, 15.569946, 0.294953, 32.398468, 0.187491, 5.711404, 0.080701, 61.889874, 0.023736, 1.334118, 0.000049},
 	    {ELEMENT_H, 1, 0.206524, 15.569946, 0.147477, 32.398468, 0.093746, 5.711404, 0.040351, 61.889874, 0.011868, 1.334118, 0.000025},
 	    {ELEMENT_H, -1, 0.702260, 23.945604, 0.763666, 74.897919, 0.248678, 6.773289, 0.261323, 233.583450, 0.023017, 1.337531, 0.000425},
@@ -116,10 +124,6 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
 	    {ELEMENT_BE, 2, 3.055430, 0.001226, -2.372617, 0.001227, 1.044914, 1.542106, 0.544233, 0.456279, 0.381737, 4.047479, -0.653773},
 	    {ELEMENT_B, 0, 2.085185, 23.494068, 1.064580, 1.137894, 1.062788, 61.238976, 0.140515, 0.114886, 0.641784, 0.399036, 0.003823},
 	    {ELEMENT_C, 0, 2.657506, 14.780758, 1.078079, 0.776775, 1.490909, 42.086842, -4.241070, -0.000294, 0.713791, 0.239535, 4.297983},
-	    // 		{ ELEMENT_C,	Val?,	1.258489,	10.683769,	0.728215,	0.208177,	1.119856,	0.836097,	2.168133,	24.603704,
-	    // 0.705239,	58.954273,
-	    // 0.019722
-	    // },
 	    {ELEMENT_N, 0, 11.893780, 0.000158, 3.277479, 10.232723, 1.858092, 30.344690, 0.858927, 0.656065, 0.912985, 0.217287, -11.804902},
 	    {ELEMENT_O, 0, 2.960427, 14.182259, 2.508818, 5.936858, 0.637853, 0.112726, 0.722838, 34.958481, 1.142756, 0.390240, 0.027014},
 	    {ELEMENT_O, -1, 3.106934, 19.868080, 3.235142, 6.960252, 1.148886, 0.170043, 0.783981, 65.693512, 0.676953, 0.630757, 0.046136},
@@ -134,10 +138,6 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
 	    {ELEMENT_AL, 0, 4.730796, 3.628931, 2.313951, 43.051167, 1.541980, 0.095960, 1.117564, 108.932388, 3.154754, 1.555918, 0.139509},
 	    {ELEMENT_AL, 3, 4.132015, 3.528641, 0.912049, 7.378344, 1.102425, 0.133708, 0.614876, 0.039065, 3.219136, 1.644728, 0.019397},
 	    {ELEMENT_SI, 0, 5.275329, 2.631338, 3.191038, 33.730728, 1.511514, 0.081119, 1.356849, 86.288643, 2.519114, 1.170087, 0.145073},
-	    // 		{ ELEMENT_SI,	Val?,	2.879033,	1.239713,	3.072960,	38.706276,	1.515981,	0.081481,	1.390030,	93.616333,
-	    // 4.995051,	2.770293,
-	    // 0.146030
-	    // },
 	    {ELEMENT_SI, 4, 3.676722, 1.446851, 3.828496, 3.013144, 1.258033, 0.064397, 0.419024, 0.206254, 0.720421, 5.970222, 0.097266},
 	    {ELEMENT_P, 0, 1.950541, 0.908139, 4.146930, 27.044952, 1.494560, 0.071280, 1.522042, 67.520187, 5.729711, 1.981173, 0.155233},
 	    {ELEMENT_S, 0, 6.372157, 1.514347, 5.154568, 22.092527, 1.473732, 0.061373, 1.635073, 55.445175, 1.209372, 0.646925, 0.154722},
