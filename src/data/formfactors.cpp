@@ -37,9 +37,13 @@ EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
 optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
 {
-	if (dataSet == XRayFormFactors::WaasmaierKirfel1995)
+	switch (dataSet)
+	{
+	case (XRayFormFactors::WaasmaierKirfel1995):
 		return wk1995Data(Z, formalCharge);
-	// else if (dataSet == XRayFormFactors::XXX) return ...
+	default:
+		Messenger::error("Form factor data set type %i not recognised.\n");
+	}
 
 	static const FormFactorData dummyData;
 	return std::make_tuple(dummyData, true);
