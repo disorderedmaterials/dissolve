@@ -22,11 +22,7 @@
 #include "data/formfactor.h"
 
 // Constructor
-FormFactorData::FormFactorData(int Z, int formalCharge)
-{
-	Z_ = Z;
-	formalCharge_ = formalCharge;
-}
+FormFactorData::FormFactorData(int Z, int formalCharge) : Z_(Z), formalCharge_(formalCharge) {}
 
 /*
  * Element State
