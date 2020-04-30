@@ -23,14 +23,14 @@
 #define DISSOLVE_DATA_FORMFACTORS_WK1995_H
 
 #include "data/formfactor.h"
+#include <vector>
 
 // Waasmaier & Kirfel '95 Form Factor Data
 class FormFactorData_WK1995 : public FormFactorData
 {
       public:
 	// Constructor
-	FormFactorData_WK1995(int z = 0, int formalCharge = 0, double a1 = 0.0, double b1 = 0.0, double a2 = 0.0, double b2 = 0.0, double a3 = 0.0, double b3 = 0.0, double a4 = 0.0, double b4 = 0.0,
-			      double a5 = 0.0, double b5 = 0.0, double c = 0.0);
+	FormFactorData_WK1995(int z = 0, int formalCharge = 0, std::vector<double> a = {}, std::vector<double> b = {}, double c = 0.0);
 	// Assignment Operator
 	FormFactorData_WK1995 &operator=(const FormFactorData_WK1995 &source);
 
@@ -38,8 +38,12 @@ class FormFactorData_WK1995 : public FormFactorData
 	 * Form Factor Data
 	 */
       private:
-	// Function parameters
-	double a_[5], b_[5], c_;
+	// Exponential pre-factors
+	std::vector<double> a_;
+	// Exponential factors
+	std::vector<double> b_;
+	// Constant offset
+	double c_;
 
       public:
 	// Return index of isotope in it's Element parent's list
