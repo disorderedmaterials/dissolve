@@ -132,7 +132,9 @@ void BraggModuleWidget::setGraphDataTargets()
 	for (Configuration *cfg : module_->targetConfigurations())
 	{
 		// Original F(Q)
-		Renderable *originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), "Totals");
+		Renderable *originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable,
+									CharString("%s//OriginalBragg//Total", cfg->niceName()),
+									cfg->niceName(), "Totals");
 	}
 }
 
@@ -157,8 +159,10 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", atd1->atomTypeName(), atd2->atomTypeName());
 
 			// Original S(Q)
-			Renderable *originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()),
-										     CharString("Full//%s", id.get()), "Full");
+			Renderable *originalSQ = reflectionsGraph_->createRenderable(
+				Renderable::Data1DRenderable,
+				CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()),
+				CharString("Full//%s", id.get()), "Full");
 		}
 	}
 	reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);

@@ -34,8 +34,11 @@
 // Return enum options for InputBlock
 EnumOptions<BaseViewer::InputBlock> BaseViewer::inputBlockKeywords()
 {
-	static EnumOptionsList BaseViewerInputBlockOptions = EnumOptionsList() << EnumOption(BaseViewer::EndSessionBlock, "EndSession") << EnumOption(BaseViewer::RenderableBlock, "Renderable", 3)
-									       << EnumOption(BaseViewer::RenderableGroupBlock, "RenderableGroup", 1) << EnumOption(BaseViewer::ViewBlock, "View");
+	static EnumOptionsList BaseViewerInputBlockOptions =
+		EnumOptionsList() << EnumOption(BaseViewer::EndSessionBlock, "EndSession")
+				  << EnumOption(BaseViewer::RenderableBlock, "Renderable", 3)
+				  << EnumOption(BaseViewer::RenderableGroupBlock, "RenderableGroup", 1)
+				  << EnumOption(BaseViewer::ViewBlock, "View");
 
 	static EnumOptions<BaseViewer::InputBlock> options("InputBlock", BaseViewerInputBlockOptions);
 
@@ -73,7 +76,8 @@ bool BaseViewer::parseInputBlocks(LineParser &parser)
 			if (!Renderable::renderableTypes().isValid(parser.argc(1)))
 				return Renderable::renderableTypes().errorAndPrintValid(parser.argc(1));
 
-			renderable = createRenderable(Renderable::renderableTypes().enumeration(parser.argc(1)), parser.argc(2), parser.argc(3));
+			renderable = createRenderable(Renderable::renderableTypes().enumeration(parser.argc(1)), parser.argc(2),
+						      parser.argc(3));
 			if (!renderable)
 				return false;
 
@@ -117,18 +121,30 @@ bool BaseViewer::parseInputBlocks(LineParser &parser)
 EnumOptions<BaseViewer::AxisKeyword> BaseViewer::axisKeywords()
 {
 	static EnumOptionsList BaseViewerAxisBlockOptions =
-	    EnumOptionsList() << EnumOption(BaseViewer::AutoScaleKeyword, "AutoScale", 1) << EnumOption(BaseViewer::AutoTicksKeyword, "AutoTicks", 1)
-			      << EnumOption(BaseViewer::EndAxisKeyword, "EndAxis") << EnumOption(BaseViewer::FirstTickKeyword, "FirstTick", 1)
-			      << EnumOption(BaseViewer::FractionalPositioningKeyword, "FractionalPositioning", 1) << EnumOption(BaseViewer::GridLinesKeyword, "GridLines", 3)
-			      << EnumOption(BaseViewer::GridLineMajorStyleKeyword, "GridLineMajorStyle", 6) << EnumOption(BaseViewer::GridLineMinorStyleKeyword, "GridLineMinorStyle", 6)
-			      << EnumOption(BaseViewer::InvertKeyword, "Invert", 1) << EnumOption(BaseViewer::LabelAnchorKeyword, "LabelAnchor", 1)
-			      << EnumOption(BaseViewer::LabelOrientationKeyword, "LabelOrientation", 3) << EnumOption(BaseViewer::LimitsKeyword, "Limits", 2)
-			      << EnumOption(BaseViewer::LogarithmicKeyword, "Logarithmic", 1) << EnumOption(BaseViewer::MinorTicksKeyword, "MinorTicks", 1)
-			      << EnumOption(BaseViewer::NumberFormatKeyword, "NumberFormat", 4) << EnumOption(BaseViewer::PositionFractionalKeyword, "PositionFractional", 3)
-			      << EnumOption(BaseViewer::PositionRealKeyword, "PositionReal", 3) << EnumOption(BaseViewer::StretchKeyword, "Stretch", 1)
-			      << EnumOption(BaseViewer::TickDeltaKeyword, "TickDelta", 1) << EnumOption(BaseViewer::TickDirectionKeyword, "TickDirection", 3)
-			      << EnumOption(BaseViewer::TitleKeyword, "Title", 1) << EnumOption(BaseViewer::TitleAnchorKeyword, "TitleAnchor", 1)
-			      << EnumOption(BaseViewer::TitleOrientationKeyword, "TitleOrientation", 5) << EnumOption(BaseViewer::VisibleAxisKeyword, "Visible", 1);
+		EnumOptionsList() << EnumOption(BaseViewer::AutoScaleKeyword, "AutoScale", 1)
+				  << EnumOption(BaseViewer::AutoTicksKeyword, "AutoTicks", 1)
+				  << EnumOption(BaseViewer::EndAxisKeyword, "EndAxis")
+				  << EnumOption(BaseViewer::FirstTickKeyword, "FirstTick", 1)
+				  << EnumOption(BaseViewer::FractionalPositioningKeyword, "FractionalPositioning", 1)
+				  << EnumOption(BaseViewer::GridLinesKeyword, "GridLines", 3)
+				  << EnumOption(BaseViewer::GridLineMajorStyleKeyword, "GridLineMajorStyle", 6)
+				  << EnumOption(BaseViewer::GridLineMinorStyleKeyword, "GridLineMinorStyle", 6)
+				  << EnumOption(BaseViewer::InvertKeyword, "Invert", 1)
+				  << EnumOption(BaseViewer::LabelAnchorKeyword, "LabelAnchor", 1)
+				  << EnumOption(BaseViewer::LabelOrientationKeyword, "LabelOrientation", 3)
+				  << EnumOption(BaseViewer::LimitsKeyword, "Limits", 2)
+				  << EnumOption(BaseViewer::LogarithmicKeyword, "Logarithmic", 1)
+				  << EnumOption(BaseViewer::MinorTicksKeyword, "MinorTicks", 1)
+				  << EnumOption(BaseViewer::NumberFormatKeyword, "NumberFormat", 4)
+				  << EnumOption(BaseViewer::PositionFractionalKeyword, "PositionFractional", 3)
+				  << EnumOption(BaseViewer::PositionRealKeyword, "PositionReal", 3)
+				  << EnumOption(BaseViewer::StretchKeyword, "Stretch", 1)
+				  << EnumOption(BaseViewer::TickDeltaKeyword, "TickDelta", 1)
+				  << EnumOption(BaseViewer::TickDirectionKeyword, "TickDirection", 3)
+				  << EnumOption(BaseViewer::TitleKeyword, "Title", 1)
+				  << EnumOption(BaseViewer::TitleAnchorKeyword, "TitleAnchor", 1)
+				  << EnumOption(BaseViewer::TitleOrientationKeyword, "TitleOrientation", 5)
+				  << EnumOption(BaseViewer::VisibleAxisKeyword, "Visible", 1);
 
 	static EnumOptions<BaseViewer::AxisKeyword> options("AxisKeyword", BaseViewerAxisBlockOptions);
 
@@ -166,7 +182,8 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
 			as = Axes::autoScaleMethod(parser.argc(1));
 			if (as == Axes::nAutoScaleMethods)
 			{
-				Messenger::warn("Unrecognised autoscale method '%s'. Defaulting to '%s'.\n", parser.argc(1), Axes::autoScaleMethod(Axes::NoAutoScale));
+				Messenger::warn("Unrecognised autoscale method '%s'. Defaulting to '%s'.\n", parser.argc(1),
+						Axes::autoScaleMethod(Axes::NoAutoScale));
 				as = Axes::NoAutoScale;
 				return false;
 			}
@@ -200,7 +217,8 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
 			stipple = LineStipple::stippleType(parser.argc(2));
 			if (stipple == LineStipple::nStippleTypes)
 			{
-				Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
+				Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n",
+						parser.argc(2));
 				stipple = LineStipple::NoStipple;
 				return false;
 			}
@@ -214,7 +232,8 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
 			stipple = LineStipple::stippleType(parser.argc(2));
 			if (stipple == LineStipple::nStippleTypes)
 			{
-				Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
+				Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n",
+						parser.argc(2));
 				stipple = LineStipple::NoStipple;
 				return false;
 			}
@@ -231,7 +250,8 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
 			anchor = TextPrimitive::textAnchor(parser.argc(1));
 			if (anchor == TextPrimitive::nTextAnchors)
 			{
-				Messenger::warn("Unrecognised text anchor '%s'. Defaulting to '%s'.\n", parser.argc(1), TextPrimitive::textAnchor(TextPrimitive::TopMiddleAnchor));
+				Messenger::warn("Unrecognised text anchor '%s'. Defaulting to '%s'.\n", parser.argc(1),
+						TextPrimitive::textAnchor(TextPrimitive::TopMiddleAnchor));
 				anchor = TextPrimitive::TopMiddleAnchor;
 				return false;
 			}
@@ -261,7 +281,8 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
 			ft = NumberFormat::formatType(parser.argc(1));
 			if (ft == NumberFormat::nNumberFormats)
 			{
-				Messenger::warn("Unrecognised number format '%s'. Defaulting to '%s'.\n", parser.argc(1), NumberFormat::formatType(NumberFormat::DecimalFormat));
+				Messenger::warn("Unrecognised number format '%s'. Defaulting to '%s'.\n", parser.argc(1),
+						NumberFormat::formatType(NumberFormat::DecimalFormat));
 				ft = NumberFormat::DecimalFormat;
 				return false;
 			}
@@ -346,63 +367,86 @@ bool BaseViewer::writeAxisBlock(LineParser &parser, const Axes &axes, int axis) 
 {
 	if (!parser.writeLineF("  %s  %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::AxisBlockKeyword), axis))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoScaleKeyword), Axes::autoScaleMethod(axes.autoScale(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoScaleKeyword),
+			       Axes::autoScaleMethod(axes.autoScale(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoTicksKeyword), DissolveSys::btoa(axes.autoTicks(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoTicksKeyword),
+			       DissolveSys::btoa(axes.autoTicks(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::FirstTickKeyword), axes.tickFirst(axis)))
+	if (!parser.writeLineF("    %s  %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::FirstTickKeyword),
+			       axes.tickFirst(axis)))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::FractionalPositioningKeyword),
+			       DissolveSys::btoa(axes.positionIsFractional(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  %s %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)),
-			       DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis))))
+	if (!parser.writeLineF("    %s  %s %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLinesKeyword),
+			       DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)),
+			       DissolveSys::btoa(axes.gridLinesFull(axis))))
 		return false;
 	LineStyle style = axes.gridLineMajorStyle(axis);
-	if (!parser.writeLineF("    %s  %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name,
-			       style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]))
+	if (!parser.writeLineF("    %s  %f '%s' %f %f %f %f\n",
+			       BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMajorStyleKeyword), style.width(),
+			       LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1],
+			       style.colour()[2], style.colour()[3]))
 		return false;
 	style = axes.gridLineMinorStyle(axis);
-	if (!parser.writeLineF("    %s  %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name,
-			       style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]))
+	if (!parser.writeLineF("    %s  %f '%s' %f %f %f %f\n",
+			       BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMinorStyleKeyword), style.width(),
+			       LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1],
+			       style.colour()[2], style.colour()[3]))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::InvertKeyword),
+			       DissolveSys::btoa(axes.inverted(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelAnchorKeyword),
+			       TextPrimitive::textAnchor(axes.labelAnchor(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y,
-			       axes.labelOrientation(axis).z))
+	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelOrientationKeyword),
+			       axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z))
 		return false;
-	if (!parser.writeLineF("    %s  %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LimitsKeyword), axes.min(axis), axes.max(axis)))
+	if (!parser.writeLineF("    %s  %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LimitsKeyword), axes.min(axis),
+			       axes.max(axis)))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LogarithmicKeyword), DissolveSys::btoa(axes.logarithmic(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LogarithmicKeyword),
+			       DissolveSys::btoa(axes.logarithmic(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  %i\n", BaseViewer::axisKeywords().keyword(BaseViewer::MinorTicksKeyword), axes.minorTicks(axis)))
+	if (!parser.writeLineF("    %s  %i\n", BaseViewer::axisKeywords().keyword(BaseViewer::MinorTicksKeyword),
+			       axes.minorTicks(axis)))
 		return false;
 	NumberFormat fmt = axes.numberFormat(axis);
-	if (!parser.writeLineF("    %s  '%s' %i %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(),
+	if (!parser.writeLineF("    %s  '%s' %i %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::NumberFormatKeyword),
+			       NumberFormat::formatType(fmt.type()), fmt.nDecimals(),
 			       DissolveSys::btoa(fmt.useUpperCaseExponent()), DissolveSys::btoa(fmt.forcePrecedingPlus())))
 		return false;
-	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionFractionalKeyword), axes.positionFractional(axis).x, axes.positionFractional(axis).y,
+	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionFractionalKeyword),
+			       axes.positionFractional(axis).x, axes.positionFractional(axis).y,
 			       axes.positionFractional(axis).z))
 		return false;
-	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionRealKeyword), axes.positionReal(axis).x, axes.positionReal(axis).y,
-			       axes.positionReal(axis).z))
+	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionRealKeyword),
+			       axes.positionReal(axis).x, axes.positionReal(axis).y, axes.positionReal(axis).z))
 		return false;
-	if (!parser.writeLineF("    %s  %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::StretchKeyword), axes.stretch(axis)))
+	if (!parser.writeLineF("    %s  %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::StretchKeyword),
+			       axes.stretch(axis)))
 		return false;
-	if (!parser.writeLineF("    %s  %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDeltaKeyword), axes.tickDelta(axis)))
+	if (!parser.writeLineF("    %s  %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDeltaKeyword),
+			       axes.tickDelta(axis)))
 		return false;
-	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDirectionKeyword), axes.tickDirection(axis).x, axes.tickDirection(axis).y,
-			       axes.tickDirection(axis).z))
+	if (!parser.writeLineF("    %s  %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDirectionKeyword),
+			       axes.tickDirection(axis).x, axes.tickDirection(axis).y, axes.tickDirection(axis).z))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleAnchorKeyword),
+			       TextPrimitive::textAnchor(axes.titleAnchor(axis))))
 		return false;
-	if (!parser.writeLineF("    %s  '%s'\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleKeyword), axes.title(axis)))
+	if (!parser.writeLineF("    %s  '%s'\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleKeyword),
+			       axes.title(axis)))
 		return false;
-	if (!parser.writeLineF("    %s  %f %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y,
-			       axes.titleOrientation(axis).z, axes.titleDistance(axis), axes.titleHorizontalOffset(axis)))
+	if (!parser.writeLineF("    %s  %f %f %f %f %f\n",
+			       BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword),
+			       axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z,
+			       axes.titleDistance(axis), axes.titleHorizontalOffset(axis)))
 		return false;
-	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis))))
+	if (!parser.writeLineF("    %s  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::VisibleAxisKeyword),
+			       DissolveSys::btoa(axes.visible(axis))))
 		return false;
 	if (!parser.writeLineF("  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::EndAxisKeyword)))
 		return false;
@@ -418,14 +462,22 @@ bool BaseViewer::writeAxisBlock(LineParser &parser, const Axes &axes, int axis) 
 EnumOptions<BaseViewer::RenderableKeyword> BaseViewer::renderableKeywords()
 {
 	static EnumOptionsList BaseViewerRenderableBlockOptions =
-	    EnumOptionsList() << EnumOption(BaseViewer::ColourAlphaIsGlobalKeyword, "ColourAlphaIsGlobal", 1) << EnumOption(BaseViewer::ColourCustomGradientKeyword, "ColourCustom", 5)
-			      << EnumOption(BaseViewer::ColourGlobalAlphaKeyword, "ColourGlobalAlpha", 1) << EnumOption(BaseViewer::ColourHSVGradientEndKeyword, "ColourHSVEnd", 5)
-			      << EnumOption(BaseViewer::ColourHSVGradientStartKeyword, "ColourHSVStart", 5) << EnumOption(BaseViewer::ColourRGBGradientEndKeyword, "ColourRGBEnd", 5)
-			      << EnumOption(BaseViewer::ColourRGBGradientStartKeyword, "ColourRGBStart", 5) << EnumOption(BaseViewer::ColourSingleKeyword, "ColourSingle", 4)
-			      << EnumOption(BaseViewer::ColourStyleKeyword, "ColourStyle", 1) << EnumOption(BaseViewer::EndRenderableKeyword, "EndRenderable")
-			      << EnumOption(BaseViewer::EndStyleKeyword, "EndStyle") << EnumOption(BaseViewer::GroupKeyword, "Group", 1) << EnumOption(BaseViewer::LineStyleKeyword, "LineStyle", 2)
-			      << EnumOption(BaseViewer::StyleKeyword, "Style") << EnumOption(BaseViewer::TransformValuesKeyword, "TransformValues", 2)
-			      << EnumOption(BaseViewer::VisibleKeyword, "Visible", 1);
+		EnumOptionsList() << EnumOption(BaseViewer::ColourAlphaIsGlobalKeyword, "ColourAlphaIsGlobal", 1)
+				  << EnumOption(BaseViewer::ColourCustomGradientKeyword, "ColourCustom", 5)
+				  << EnumOption(BaseViewer::ColourGlobalAlphaKeyword, "ColourGlobalAlpha", 1)
+				  << EnumOption(BaseViewer::ColourHSVGradientEndKeyword, "ColourHSVEnd", 5)
+				  << EnumOption(BaseViewer::ColourHSVGradientStartKeyword, "ColourHSVStart", 5)
+				  << EnumOption(BaseViewer::ColourRGBGradientEndKeyword, "ColourRGBEnd", 5)
+				  << EnumOption(BaseViewer::ColourRGBGradientStartKeyword, "ColourRGBStart", 5)
+				  << EnumOption(BaseViewer::ColourSingleKeyword, "ColourSingle", 4)
+				  << EnumOption(BaseViewer::ColourStyleKeyword, "ColourStyle", 1)
+				  << EnumOption(BaseViewer::EndRenderableKeyword, "EndRenderable")
+				  << EnumOption(BaseViewer::EndStyleKeyword, "EndStyle")
+				  << EnumOption(BaseViewer::GroupKeyword, "Group", 1)
+				  << EnumOption(BaseViewer::LineStyleKeyword, "LineStyle", 2)
+				  << EnumOption(BaseViewer::StyleKeyword, "Style")
+				  << EnumOption(BaseViewer::TransformValuesKeyword, "TransformValues", 2)
+				  << EnumOption(BaseViewer::VisibleKeyword, "Visible", 1);
 
 	static EnumOptions<BaseViewer::RenderableKeyword> options("RenderableKeyword", BaseViewerRenderableBlockOptions);
 
@@ -464,14 +516,16 @@ bool BaseViewer::readRenderableBlock(LineParser &parser, Renderable *renderable,
 			break;
 		// Colour Custom Gradient point definition
 		case (BaseViewer::ColourCustomGradientKeyword):
-			colourDefinition.addCustomGradientPoint(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+			colourDefinition.addCustomGradientPoint(
+				parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 			break;
 		// Colour alpha fixed value
 		case (BaseViewer::ColourGlobalAlphaKeyword):
 			alpha = parser.argd(1);
 			if ((alpha < 0.0) || (alpha > 1.0))
 			{
-				Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, renderableKeywords().keyword(kwd));
+				Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n",
+						alpha, renderableKeywords().keyword(kwd));
 				alpha = 1.0;
 			}
 			colourDefinition.setGlobalAlpha(alpha);
@@ -488,22 +542,26 @@ bool BaseViewer::readRenderableBlock(LineParser &parser, Renderable *renderable,
 			break;
 		// Colour RGB Gradient end point definition
 		case (BaseViewer::ColourRGBGradientEndKeyword):
-			colourDefinition.setRGBGradientEnd(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+			colourDefinition.setRGBGradientEnd(
+				parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 			break;
 		// Colour RGB Gradient start point definition
 		case (BaseViewer::ColourRGBGradientStartKeyword):
-			colourDefinition.setRGBGradientStart(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+			colourDefinition.setRGBGradientStart(
+				parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 			break;
 		// Colour single colour definition
 		case (BaseViewer::ColourSingleKeyword):
-			colourDefinition.setSingleColour(QColor(parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4)));
+			colourDefinition.setSingleColour(
+				QColor(parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4)));
 			break;
 		// Colour style
 		case (BaseViewer::ColourStyleKeyword):
 			cs = ColourDefinition::colourStyle(parser.argc(1));
 			if (cs == ColourDefinition::nColourStyles)
 			{
-				Messenger::warn("Unrecognised colour style '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::colourStyle(ColourDefinition::SingleColourStyle));
+				Messenger::warn("Unrecognised colour style '%s'. Defaulting to '%s'.\n", parser.argc(1),
+						ColourDefinition::colourStyle(ColourDefinition::SingleColourStyle));
 				cs = ColourDefinition::SingleColourStyle;
 			}
 			colourDefinition.setStyle(cs);
@@ -522,7 +580,8 @@ bool BaseViewer::readRenderableBlock(LineParser &parser, Renderable *renderable,
 			stipple = LineStipple::stippleType(parser.argc(2));
 			if (stipple == LineStipple::nStippleTypes)
 			{
-				Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
+				Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n",
+						parser.argc(2));
 				stipple = LineStipple::NoStipple;
 			}
 			renderable->lineStyle().setStipple(stipple);
@@ -567,65 +626,82 @@ bool BaseViewer::writeRenderableBlock(LineParser &parser, Renderable *renderable
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s  '%s'  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock), Renderable::renderableTypes().keyword(renderable->type()),
-			       renderable->objectTag(), renderable->name()))
+	if (!parser.writeLineF(
+		    "%s%s  %s  '%s'  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock),
+		    Renderable::renderableTypes().keyword(renderable->type()), renderable->objectTag(), renderable->name()))
 		return false;
 
 	// -- Valus Transform
-	if (!parser.writeLineF("%s  %s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformValuesKeyword), DissolveSys::btoa(renderable->valuesTransformEnabled()),
-			       renderable->valuesTransformEquation()))
+	if (!parser.writeLineF("%s  %s  %s %s\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::TransformValuesKeyword),
+			       DissolveSys::btoa(renderable->valuesTransformEnabled()), renderable->valuesTransformEquation()))
 		return false;
 
 	// Colour Setup
 	const ColourDefinition &colourDef = renderable->colour();
-	if (!parser.writeLineF("%s  %s  '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourStyleKeyword), ColourDefinition::colourStyle(colourDef.style())))
+	if (!parser.writeLineF("%s  %s  '%s'\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourStyleKeyword),
+			       ColourDefinition::colourStyle(colourDef.style())))
 		return false;
 	QColor colour;
 	double value;
 	// -- Single Colour
 	colour = colourDef.singleColour();
-	if (!parser.writeLineF("%s  %s  %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha()))
+	if (!parser.writeLineF("%s  %s  %i %i %i %i\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourSingleKeyword), colour.red(),
+			       colour.green(), colour.blue(), colour.alpha()))
 		return false;
 	// -- RGB Gradient
 	colour = colourDef.rgbGradientStartColour();
 	value = colourDef.rgbGradientStartValue();
-	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourRGBGradientStartKeyword), value, colour.red(), colour.green(),
-			       colour.blue(), colour.alpha()))
+	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourRGBGradientStartKeyword), value,
+			       colour.red(), colour.green(), colour.blue(), colour.alpha()))
 		return false;
 	colour = colourDef.rgbGradientEndColour();
 	value = colourDef.rgbGradientEndValue();
-	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourRGBGradientEndKeyword), value, colour.red(), colour.green(),
-			       colour.blue(), colour.alpha()))
+	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourRGBGradientEndKeyword), value,
+			       colour.red(), colour.green(), colour.blue(), colour.alpha()))
 		return false;
 	// -- HSV Gradient
 	colour = colourDef.hsvGradientStartColour();
 	value = colourDef.hsvGradientStartValue();
-	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourHSVGradientStartKeyword), value, colour.hue(), colour.saturation(),
-			       colour.value(), colour.alpha()))
+	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourHSVGradientStartKeyword), value,
+			       colour.hue(), colour.saturation(), colour.value(), colour.alpha()))
 		return false;
 	colour = colourDef.hsvGradientEndColour();
 	value = colourDef.hsvGradientEndValue();
-	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourHSVGradientEndKeyword), value, colour.hue(), colour.saturation(),
-			       colour.value(), colour.alpha()))
+	if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourHSVGradientEndKeyword), value,
+			       colour.hue(), colour.saturation(), colour.value(), colour.alpha()))
 		return false;
 	// -- Custom Gradient
 	const Array<ColourScalePoint> customGradient = colourDef.customGradientPoints();
 	for (int n = 0; n < customGradient.nItems(); ++n)
 	{
 		const ColourScalePoint &point = customGradient.constAt(n);
-		if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourCustomGradientKeyword), point.value(), point.colour().red(),
-				       point.colour().green(), point.colour().blue(), point.colour().alpha()))
+		if (!parser.writeLineF("%s  %s  %f %i %i %i %i\n", indent,
+				       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourCustomGradientKeyword),
+				       point.value(), point.colour().red(), point.colour().green(), point.colour().blue(),
+				       point.colour().alpha()))
 			return false;
 	}
 	// -- Alpha control
-	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourAlphaIsGlobalKeyword), DissolveSys::btoa(colourDef.useGlobalAlpha())))
+	if (!parser.writeLineF("%s  %s  %s\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourAlphaIsGlobalKeyword),
+			       DissolveSys::btoa(colourDef.useGlobalAlpha())))
 		return false;
-	if (!parser.writeLineF("%s  %s  %f\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourGlobalAlphaKeyword), colourDef.globalAlpha()))
+	if (!parser.writeLineF("%s  %s  %f\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::ColourGlobalAlphaKeyword),
+			       colourDef.globalAlpha()))
 		return false;
 
 	// Display
-	if (!parser.writeLineF("%s  %s  %f '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(),
-			       LineStipple::stipple[renderable->lineStyle().stipple()].name))
+	if (!parser.writeLineF("%s  %s  %f '%s'\n", indent,
+			       BaseViewer::renderableKeywords().keyword(BaseViewer::LineStyleKeyword),
+			       renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name))
 		return false;
 	if (!parser.writeLineF("%s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword)))
 		return false;
@@ -633,12 +709,14 @@ bool BaseViewer::writeRenderableBlock(LineParser &parser, Renderable *renderable
 		return false;
 	if (!parser.writeLineF("%s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::EndStyleKeyword)))
 		return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible())))
+	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::VisibleKeyword),
+			       DissolveSys::btoa(renderable->isVisible())))
 		return false;
 
 	// Write Group if set
 	if (renderable->group())
-		parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::GroupKeyword), renderable->group()->name());
+		parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::GroupKeyword),
+				  renderable->group()->name());
 
 	if (!parser.writeLineF("%s%s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::EndRenderableKeyword)))
 		return false;
@@ -654,11 +732,15 @@ bool BaseViewer::writeRenderableBlock(LineParser &parser, Renderable *renderable
 EnumOptions<BaseViewer::RenderableGroupKeyword> BaseViewer::renderableGroupKeywords()
 {
 	static EnumOptionsList BaseViewerRenderableGroupBlockOptions =
-	    EnumOptionsList() << EnumOption(BaseViewer::ColouringStyleKeyword, "ColouringStyle", 1) << EnumOption(BaseViewer::EndRenderableGroupKeyword, "EndRenderableGroup")
-			      << EnumOption(BaseViewer::FixedStockColourKeyword, "FixedStockColour", 1) << EnumOption(BaseViewer::GroupVisibleKeyword, "Visible", 1)
-			      << EnumOption(BaseViewer::StippleKeyword, "Stipple", 1) << EnumOption(BaseViewer::VerticalShiftingKeyword, "VerticalShifting", 1);
+		EnumOptionsList() << EnumOption(BaseViewer::ColouringStyleKeyword, "ColouringStyle", 1)
+				  << EnumOption(BaseViewer::EndRenderableGroupKeyword, "EndRenderableGroup")
+				  << EnumOption(BaseViewer::FixedStockColourKeyword, "FixedStockColour", 1)
+				  << EnumOption(BaseViewer::GroupVisibleKeyword, "Visible", 1)
+				  << EnumOption(BaseViewer::StippleKeyword, "Stipple", 1)
+				  << EnumOption(BaseViewer::VerticalShiftingKeyword, "VerticalShifting", 1);
 
-	static EnumOptions<BaseViewer::RenderableGroupKeyword> options("RenderableGroupKeyword", BaseViewerRenderableGroupBlockOptions);
+	static EnumOptions<BaseViewer::RenderableGroupKeyword> options("RenderableGroupKeyword",
+								       BaseViewerRenderableGroupBlockOptions);
 
 	return options;
 }
@@ -718,7 +800,8 @@ bool BaseViewer::readRenderableGroupBlock(LineParser &parser, RenderableGroup *g
 			break;
 		// Unrecognised Keyword
 		default:
-			Messenger::error("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock),
+			Messenger::error("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+					 BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock),
 					 renderableGroupKeywords().keyword(kwd));
 			return false;
 			break;
@@ -743,19 +826,24 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser &parser, RenderableGroup *
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableGroupBlock), group->name()))
+	if (!parser.writeLineF("%s%s  '%s'\n", indent,
+			       BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableGroupBlock), group->name()))
 		return false;
 
-	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::ColouringStyleKeyword), RenderableGroup::groupColourings().keyword(group->colouringStyle())))
+	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::ColouringStyleKeyword),
+			       RenderableGroup::groupColourings().keyword(group->colouringStyle())))
 		return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::FixedStockColourKeyword), StockColours::stockColours().keyword(group->fixedStockColour())))
+	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::FixedStockColourKeyword),
+			       StockColours::stockColours().keyword(group->fixedStockColour())))
 		return false;
-	if (!parser.writeLineF("%s  %s  '%s'\n", indent, renderableGroupKeywords().keyword(BaseViewer::StippleKeyword), LineStipple::stippleType(group->lineStipple())))
+	if (!parser.writeLineF("%s  %s  '%s'\n", indent, renderableGroupKeywords().keyword(BaseViewer::StippleKeyword),
+			       LineStipple::stippleType(group->lineStipple())))
 		return false;
 	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::VerticalShiftingKeyword),
 			       RenderableGroup::verticalShiftStyles().keyword(group->verticalShiftStyle())))
 		return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::GroupVisibleKeyword), DissolveSys::btoa(group->isVisible())))
+	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::GroupVisibleKeyword),
+			       DissolveSys::btoa(group->isVisible())))
 		return false;
 
 	if (!parser.writeLineF("%s%s\n", indent, renderableGroupKeywords().keyword(BaseViewer::EndRenderableGroupKeyword)))
@@ -771,16 +859,24 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser &parser, RenderableGroup *
 // Return enum options for ViewKeyword
 EnumOptions<BaseViewer::ViewKeyword> BaseViewer::viewKeywords()
 {
-	static EnumOptionsList ViewKeywords = EnumOptionsList() << EnumOption(BaseViewer::AutoFollowTypeKeyword, "AutoFollowType", 1)
-								<< EnumOption(BaseViewer::AutoPositionTitlesKeyword, "AutoPositionTitles", 1) << EnumOption(BaseViewer::AxisBlockKeyword, "Axis", 1)
-								<< EnumOption(BaseViewer::BoundingBoxKeyword, "BoundingBox", 1)
-								<< EnumOption(BaseViewer::BoundingBoxPlaneYKeyword, "BoundingBoxPlaneY", 1) << EnumOption(BaseViewer::EndViewKeyword, "EndView")
-								<< EnumOption(BaseViewer::FlatLabelsKeyword, "FlatLabels", 1) << EnumOption(BaseViewer::LabelPointSizeKeyword, "LabelPointSize", 1)
-								<< EnumOption(BaseViewer::PerspectiveKeyword, "Perspective", 1) << EnumOption(BaseViewer::RotationXKeyword, "RotationX", 3)
-								<< EnumOption(BaseViewer::RotationYKeyword, "RotationY", 3) << EnumOption(BaseViewer::RotationZKeyword, "RotationZ", 3)
-								<< EnumOption(BaseViewer::TitlePointSizeKeyword, "TitlePointSize", 1) << EnumOption(BaseViewer::TranslationKeyword, "Translation", 3)
-								<< EnumOption(BaseViewer::UseBestFlatViewKeyword, "UseBestFlatView", 1)
-								<< EnumOption(BaseViewer::VerticalShiftKeyword, "VerticalShift", 1) << EnumOption(BaseViewer::ViewTypeKeyword, "ViewType", 1);
+	static EnumOptionsList ViewKeywords = EnumOptionsList()
+					      << EnumOption(BaseViewer::AutoFollowTypeKeyword, "AutoFollowType", 1)
+					      << EnumOption(BaseViewer::AutoPositionTitlesKeyword, "AutoPositionTitles", 1)
+					      << EnumOption(BaseViewer::AxisBlockKeyword, "Axis", 1)
+					      << EnumOption(BaseViewer::BoundingBoxKeyword, "BoundingBox", 1)
+					      << EnumOption(BaseViewer::BoundingBoxPlaneYKeyword, "BoundingBoxPlaneY", 1)
+					      << EnumOption(BaseViewer::EndViewKeyword, "EndView")
+					      << EnumOption(BaseViewer::FlatLabelsKeyword, "FlatLabels", 1)
+					      << EnumOption(BaseViewer::LabelPointSizeKeyword, "LabelPointSize", 1)
+					      << EnumOption(BaseViewer::PerspectiveKeyword, "Perspective", 1)
+					      << EnumOption(BaseViewer::RotationXKeyword, "RotationX", 3)
+					      << EnumOption(BaseViewer::RotationYKeyword, "RotationY", 3)
+					      << EnumOption(BaseViewer::RotationZKeyword, "RotationZ", 3)
+					      << EnumOption(BaseViewer::TitlePointSizeKeyword, "TitlePointSize", 1)
+					      << EnumOption(BaseViewer::TranslationKeyword, "Translation", 3)
+					      << EnumOption(BaseViewer::UseBestFlatViewKeyword, "UseBestFlatView", 1)
+					      << EnumOption(BaseViewer::VerticalShiftKeyword, "VerticalShift", 1)
+					      << EnumOption(BaseViewer::ViewTypeKeyword, "ViewType", 1);
 
 	static EnumOptions<BaseViewer::ViewKeyword> options("ViewKeyword", ViewKeywords);
 
@@ -879,7 +975,8 @@ bool BaseViewer::readViewBlock(LineParser &parser, bool strictBlockEnd)
 			vt = View::viewType(parser.argc(1));
 			if (vt == View::nViewTypes)
 			{
-				Messenger::warn("Unrecognised view type '%s'. Defaulting to '%s'.\n", parser.argc(1), View::viewType(View::NormalView));
+				Messenger::warn("Unrecognised view type '%s'. Defaulting to '%s'.\n", parser.argc(1),
+						View::viewType(View::NormalView));
 				vt = View::NormalView;
 				return false;
 			}
@@ -907,35 +1004,48 @@ bool BaseViewer::writeViewBlock(LineParser &parser) const
 {
 	if (!parser.writeLineF("%s\n", BaseViewer::inputBlockKeywords().keyword(BaseViewer::ViewBlock)))
 		return false;
-	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType())))
+	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoFollowTypeKeyword),
+			       View::autoFollowType(view_.autoFollowType())))
 		return false;
-	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.constAxes().autoPositionTitles())))
+	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword),
+			       DissolveSys::btoa(view_.constAxes().autoPositionTitles())))
 		return false;
 	for (int axis = 0; axis < 3; ++axis)
 		writeAxisBlock(parser, view_.constAxes(), axis);
-	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D())))
+	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword),
+			       DissolveSys::btoa(view_.flatLabelsIn3D())))
 		return false;
-	if (!parser.writeLineF("  %s  %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::LabelPointSizeKeyword), view_.labelPointSize()))
+	if (!parser.writeLineF("  %s  %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::LabelPointSizeKeyword),
+			       view_.labelPointSize()))
 		return false;
-	if (!parser.writeLineF("  %s  %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TitlePointSizeKeyword), view_.titlePointSize()))
+	if (!parser.writeLineF("  %s  %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TitlePointSizeKeyword),
+			       view_.titlePointSize()))
 		return false;
 	Matrix4 mat = view_.viewRotation();
 	Vec3<double> trans = view_.viewTranslation();
-	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationXKeyword), mat[0], mat[1], mat[2]))
+	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationXKeyword), mat[0],
+			       mat[1], mat[2]))
 		return false;
-	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationYKeyword), mat[4], mat[5], mat[6]))
+	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationYKeyword), mat[4],
+			       mat[5], mat[6]))
 		return false;
-	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationZKeyword), mat[8], mat[9], mat[10]))
+	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationZKeyword), mat[8],
+			       mat[9], mat[10]))
 		return false;
-	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TranslationKeyword), trans.x, trans.y, trans.z))
+	if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TranslationKeyword), trans.x,
+			       trans.y, trans.z))
 		return false;
-	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective())))
+	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::PerspectiveKeyword),
+			       DissolveSys::btoa(view_.hasPerspective())))
 		return false;
-	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.constAxes().useBestFlatView())))
+	if (!parser.writeLineF("  %s  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::UseBestFlatViewKeyword),
+			       DissolveSys::btoa(view_.constAxes().useBestFlatView())))
 		return false;
-	if (!parser.writeLineF("  %s  %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShiftAmount()))
+	if (!parser.writeLineF("  %s  %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::VerticalShiftKeyword),
+			       groupManager_.verticalShiftAmount()))
 		return false;
-	if (!parser.writeLineF("  %s  '%s'\n", BaseViewer::viewKeywords().keyword(BaseViewer::ViewTypeKeyword), View::viewType(view_.viewType())))
+	if (!parser.writeLineF("  %s  '%s'\n", BaseViewer::viewKeywords().keyword(BaseViewer::ViewTypeKeyword),
+			       View::viewType(view_.viewType())))
 		return false;
 	if (!parser.writeLineF("%s\n", BaseViewer::viewKeywords().keyword(BaseViewer::EndViewKeyword)))
 		return false;

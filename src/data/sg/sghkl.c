@@ -117,7 +117,8 @@ int BuildEq_hkl(const T_SgInfo *SgInfo, T_Eq_hkl *Eq_hkl, int h, int k, int l)
 
 		for (i = 0; i < Eq_hkl->N; i++)
 		{
-			if ((hm == Eq_hkl->h[i] && km == Eq_hkl->k[i] && lm == Eq_hkl->l[i]) || (-hm == Eq_hkl->h[i] && -km == Eq_hkl->k[i] && -lm == Eq_hkl->l[i]))
+			if ((hm == Eq_hkl->h[i] && km == Eq_hkl->k[i] && lm == Eq_hkl->l[i]) ||
+			    (-hm == Eq_hkl->h[i] && -km == Eq_hkl->k[i] && -lm == Eq_hkl->l[i]))
 				break;
 		}
 
@@ -259,7 +260,7 @@ int IsSuppressed_hkl(const T_SgInfo *SgInfo, int Minh, int Mink, int Minl, int M
 				if (hm < h)
 					return (mate ? -(iList + 1) : iList + 1);
 				else /* if (hm == h) */
-				    if (km < k)
+					if (km < k)
 					return (mate ? -(iList + 1) : iList + 1);
 				else if (km == k)
 					if (lm < l)

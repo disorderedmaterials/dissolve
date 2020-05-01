@@ -30,28 +30,28 @@ class FileAndFormat;
 // Keyword with a file format
 class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
 {
-      public:
+	public:
 	FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword);
 	~FileAndFormatKeyword();
 
 	/*
 	 * End Keyword
 	 */
-      private:
+	private:
 	// Keyword that signals the end of 'block' for the data
 	CharString endKeyword_;
 
 	/*
 	 * Keyword Options
 	 */
-      public:
+	public:
 	// Return whether the underlying FileAndFormat has any options
 	bool hasOptions() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

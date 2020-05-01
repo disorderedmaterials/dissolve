@@ -27,7 +27,7 @@
 // Character String
 class CharString : public ListItem<CharString>
 {
-      public:
+	public:
 	CharString();
 	CharString(int size);
 	CharString(const char *fmt, ...);
@@ -37,7 +37,7 @@ class CharString : public ListItem<CharString>
 	/*
 	 * Data / Access
 	 */
-      private:
+	private:
 	// Current size
 	int size_;
 	// Position of '\0' character
@@ -45,7 +45,7 @@ class CharString : public ListItem<CharString>
 	// Pointer to character array
 	char *data_;
 
-      public:
+	public:
 	// Print string info
 	void info() const;
 	// Clear string but don't free
@@ -72,7 +72,7 @@ class CharString : public ListItem<CharString>
 	/*
 	 * Erase / Cut
 	 */
-      public:
+	public:
 	// Erase range of characters from the string
 	void erase(int, int);
 	// Erase 'n' characters from start of string
@@ -91,7 +91,7 @@ class CharString : public ListItem<CharString>
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator=(const char *);
 	void operator=(const CharString &);
 	bool operator==(const char *) const;
@@ -106,7 +106,7 @@ class CharString : public ListItem<CharString>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Returns contents as double
 	double asDouble() const;
 	// Returns contents as integer
@@ -125,7 +125,7 @@ class CharString : public ListItem<CharString>
 	/*
 	 * Search (Returning integer index)
 	 */
-      public:
+	public:
 	// Find position of first occurrence of character 'c'
 	int find(char c) const;
 	// Find position of last occurrence of character 'c'
@@ -134,7 +134,7 @@ class CharString : public ListItem<CharString>
 	/*
 	 * C-String Routines
 	 */
-      public:
+	public:
 	// Concatenate supplied string on to end of this string
 	void strcat(const char *s, int charcount = -1);
 	// Append formatted string (not actually a C string function, but would be useful!)

@@ -49,7 +49,10 @@ Fit1DProcedureNode::~Fit1DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Node Keywords
@@ -59,10 +62,14 @@ bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) {
 EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {
 	static EnumOptionsList Fit1DNodeTypeKeywords = EnumOptionsList()
-						       << EnumOption(Fit1DProcedureNode::ConstantKeyword, "Constant", 1) << EnumOption(Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D")
-						       << EnumOption(Fit1DProcedureNode::EquationKeyword, "Equation", 1) << EnumOption(Fit1DProcedureNode::FitKeyword, "Fit", 1)
-						       << EnumOption(Fit1DProcedureNode::MethodKeyword, "Method") << EnumOption(Fit1DProcedureNode::SaveKeyword, "Save", 1)
-						       << EnumOption(Fit1DProcedureNode::SourceDataKeyword, "SourceData", EnumOption::OptionalSecondArgument);
+						       << EnumOption(Fit1DProcedureNode::ConstantKeyword, "Constant", 1)
+						       << EnumOption(Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D")
+						       << EnumOption(Fit1DProcedureNode::EquationKeyword, "Equation", 1)
+						       << EnumOption(Fit1DProcedureNode::FitKeyword, "Fit", 1)
+						       << EnumOption(Fit1DProcedureNode::MethodKeyword, "Method")
+						       << EnumOption(Fit1DProcedureNode::SaveKeyword, "Save", 1)
+						       << EnumOption(Fit1DProcedureNode::SourceDataKeyword, "SourceData",
+								     EnumOption::OptionalSecondArgument);
 
 	static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
 
@@ -76,7 +83,8 @@ EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeK
 // Fitting cost function
 double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
 {
-	// We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new test values.
+	// We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new test
+	// values.
 	double cost = 0.0;
 	const Array<double> &x = referenceData_.xAxis();
 	const Array<double> &y = referenceData_.values();
@@ -95,7 +103,8 @@ double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
 
 	cost /= referenceData_.nValues();
 
-	// 	printf("For A = %f c = %f, cost = %f\n", fitTargets_.first()->item->value(), fitTargets_.first()->next->item->value(), sqrt(cost));
+	// 	printf("For A = %f c = %f, cost = %f\n", fitTargets_.first()->item->value(),
+	// fitTargets_.first()->next->item->value(), sqrt(cost));
 
 	return sqrt(cost);
 }
@@ -111,7 +120,11 @@ void Fit1DProcedureNode::setSaveData(bool on) { saveData_ = on; }
 bool Fit1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return ProcedureNode::Success; }
+ProcedureNode::NodeExecutionResult Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+							       GenericList &targetList)
+{
+	return ProcedureNode::Success;
+}
 
 // Finalise any necessary data after execution
 bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
@@ -137,7 +150,8 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
 		return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
 		break;
 	default:
-		return Messenger::error("No suitable data to extract from a node of type '%s'.\n", ProcedureNode::nodeTypes().keyword(dataNode_.type()));
+		return Messenger::error("No suitable data to extract from a node of type '%s'.\n",
+					ProcedureNode::nodeTypes().keyword(dataNode_.type()));
 	}
 
 	// Print equation info
@@ -173,7 +187,8 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
 
 	// Generate final fit data
 	// Retrieve / realise the data from the supplied list
-	Data1D &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
+	Data1D &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+							  GenericItem::InRestartFileFlag);
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Fit1D//%s//%s", prefix, cfg->name(), name()));
@@ -292,7 +307,9 @@ bool Fit1DProcedureNode::read(LineParser &parser, const CoreData &coreData)
 			return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));
 			break;
 		default:
-			return Messenger::error("Epic Developer Fail - Don't know how to deal with the Fit1D node keyword '%s'.\n", parser.argc(0));
+			return Messenger::error(
+				"Epic Developer Fail - Don't know how to deal with the Fit1D node keyword '%s'.\n",
+				parser.argc(0));
 		}
 	}
 
@@ -308,24 +325,31 @@ bool Fit1DProcedureNode::write(LineParser &parser, const char *prefix)
 
 	// Constants
 	for (ExpressionVariable *var : constants_)
-		if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(), var->value().asDouble()))
+		if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix,
+				       fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(),
+				       var->value().asDouble()))
 			return false;
 
 	// Constants
 	for (ExpressionVariable *var : fitTargets_)
-		if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword), var->name(), var->value().asDouble()))
+		if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix,
+				       fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword), var->name(),
+				       var->value().asDouble()))
 			return false;
 
 	// Equation
-	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword), equation_.expressionString()))
+	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword),
+			       equation_.expressionString()))
 		return false;
 
 	// Source data
-	if (!dataNode_.write(parser, CharString("%s  %s", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SourceDataKeyword))))
+	if (!dataNode_.write(parser,
+			     CharString("%s  %s", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SourceDataKeyword))))
 		return false;
 
 	// Control
-	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword)))
+	if (saveData_ &&
+	    !parser.writeLineF("%s  %s  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword)))
 		return false;
 
 	// Block End

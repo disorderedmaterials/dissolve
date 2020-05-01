@@ -172,7 +172,8 @@ void Histogram1D::add(Histogram1D &other, int factor)
 {
 	if (nBins_ != other.nBins_)
 	{
-		Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n", nBins_, other.nBins_);
+		Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n",
+				 nBins_, other.nBins_);
 		return;
 	}
 	for (int n = 0; n < nBins_; ++n)
@@ -297,21 +298,27 @@ bool Histogram1D::equality(ProcessPool &procPool)
 #ifdef PARALLEL
 	// Check number of items in arrays first
 	if (!procPool.equality(minimum_))
-		return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n", procPool.poolRank(), minimum_);
+		return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), minimum_);
 	if (!procPool.equality(maximum_))
-		return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n", procPool.poolRank(), maximum_);
+		return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), maximum_);
 	if (!procPool.equality(binWidth_))
-		return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(), binWidth_);
+		return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					binWidth_);
 	if (!procPool.equality(nBins_))
-		return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nBins_);
+		return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), nBins_);
 	if (!procPool.equality(binCentres_))
 		return Messenger::error("Histogram1D bin centre values not equivalent.\n");
 	if (!procPool.equality(bins_))
 		return Messenger::error("Histogram1D bin values not equivalent.\n");
 	if (!procPool.equality(nBinned_))
-		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n",
+					procPool.poolRank(), nBinned_);
 	if (!procPool.equality(nMissed_))
-		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n",
+					procPool.poolRank(), nBinned_);
 	for (int n = 0; n < averages_.nItems(); ++n)
 		if (!averages_[n].equality(procPool))
 			return Messenger::error("Histogram1D average values not equivalent.\n");

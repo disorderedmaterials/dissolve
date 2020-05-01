@@ -31,21 +31,21 @@
 // Keyword with PairBroadeningFunction Data
 class PairBroadeningFunctionKeyword : public KeywordData<PairBroadeningFunction>
 {
-      public:
+	public:
 	PairBroadeningFunctionKeyword(PairBroadeningFunction value);
 	~PairBroadeningFunctionKeyword();
 
 	/*
 	 * Data Validation
 	 */
-      public:
+	public:
 	// Validate supplied value
 	bool isValid(PairBroadeningFunction value);
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

@@ -26,15 +26,20 @@
 void CalibrationModule::initialise()
 {
 	// Calculation
-	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
+	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
+		      "Only perform calibrations when all related Configuration energies are stable");
 
 	// RDF Calibration
-	keywords_.add("RDF Calibration", new ModuleRefListKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment",
-		      "<RDFModule>");
+	keywords_.add("RDF Calibration", new ModuleRefListKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening",
+		      "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
 
 	// NeutronSQ Calibration
-	keywords_.add("NeutronSQ Calibration", new ModuleRefListKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference",
-		      "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
-	keywords_.add("NeutronSQ Calibration", new ModuleRefListKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference",
-		      "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
+	keywords_.add("NeutronSQ Calibration", new ModuleRefListKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"),
+		      "IntraBroadeningNeutronGRReference",
+		      "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment",
+		      "<NeutronSQModule>");
+	keywords_.add("NeutronSQ Calibration", new ModuleRefListKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"),
+		      "IntraBroadeningNeutronSQReference",
+		      "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment",
+		      "<NeutronSQModule>");
 }

@@ -29,7 +29,8 @@
 #include "modules/calculate_sdf/gui/modulewidget.h"
 #include "modules/calculate_sdf/sdf.h"
 
-CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData) : ModuleWidget(parent), module_(module), coreData_(coreData)
+CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData)
+	: ModuleWidget(parent), module_(module), coreData_(coreData)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -152,7 +153,9 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 	{
 		// Calculated SDF
 		sdfRenderable_ = dynamic_cast<RenderableData3D *>(sdfGraph_->createRenderable(
-		    Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName()));
+			Renderable::Data3DRenderable,
+			CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()),
+			CharString("SDF//%s", cfg->niceName()), cfg->niceName()));
 
 		if (sdfRenderable_)
 		{
@@ -171,8 +174,8 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 
 		// Reference molecule
 		if (referenceMolecule_)
-			referenceMoleculeRenderable_ =
-			    dynamic_cast<RenderableSpecies *>(sdfGraph_->createRenderable(Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
+			referenceMoleculeRenderable_ = dynamic_cast<RenderableSpecies *>(sdfGraph_->createRenderable(
+				Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
 	}
 }
 

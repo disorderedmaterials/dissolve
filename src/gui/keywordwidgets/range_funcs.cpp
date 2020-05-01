@@ -24,7 +24,8 @@
 #include "gui/keywordwidgets/range.h"
 #include "vec3labels.h"
 
-RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -42,7 +43,8 @@ RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, co
 		ui_.Spin2->setValue(keyword_->data().maximum());
 	}
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	ui_.Spin1->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin1));
 	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
 

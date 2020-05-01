@@ -31,10 +31,9 @@
 #include "data/fftorsionterm.h"
 
 /*
- * Implements "Revisiting imidazolium based ionic liquids: Effect of the conformation bias of the [NTf2] anion studied by molecular dynamics simulations"
- * J. Neumann, B. Golub, LM. Odebrecht, R. Ludwig, D. Paschek
- * Journal of Chemical Physics 148 193828 (2018)
- * http://doi.org/10.1063/1.5013096
+ * Implements "Revisiting imidazolium based ionic liquids: Effect of the conformation bias of the [NTf2] anion studied by
+ * molecular dynamics simulations" J. Neumann, B. Golub, LM. Odebrecht, R. Ludwig, D. Paschek Journal of Chemical Physics 148
+ * 193828 (2018) http://doi.org/10.1063/1.5013096
  *
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of JB.
@@ -98,7 +97,8 @@ const char *Forcefield_NTf2_Ludwig::name() const { return "bis(trifluoromethylsu
 // Return description for Forcefield
 const char *Forcefield_NTf2_Ludwig::description() const
 {
-	return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
+	return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by "
+	       "Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
 }
 
 // Return short-range interaction style for AtomTypes

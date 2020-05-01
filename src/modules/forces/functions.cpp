@@ -29,7 +29,8 @@
  */
 
 // Calculate total intramolecular forces
-void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+					Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
 	/*
 	 * Calculate the total intramolecular forces within the supplied Configuration, arising from Bond, Angle, and Torsion
@@ -69,12 +70,14 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
 		// Loop over Torsions
 		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
 		while (const SpeciesTorsion *t = torsionIterator.iterate())
-			kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+			kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()),
+				      mol->atom(t->indexL()));
 	}
 }
 
 // Calculate interatomic forces within the supplied Configuration
-void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+				     Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
 	/*
 	 * Calculates the interatomic forces in the supplied Configuration arising from contributions from PairPotential
@@ -118,7 +121,8 @@ void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, 
 }
 
 // Calculate total forces within the supplied Configuration
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
+			       Array<double> &fy, Array<double> &fz)
 {
 	/*
 	 * Calculates the total forces within the supplied Configuration, arising from PairPotential interactions
@@ -156,7 +160,8 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
  */
 
 // Calculate total intramolecular forces acting on specific atoms
-void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
+void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+					const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
 					Array<double> &fz)
 {
 	/*
@@ -193,20 +198,22 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
 		// Add energy from SpeciesAngle terms
 		for (const auto *angle : spAtom->angles())
 		{
-			kernel.forces(i, angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
+			kernel.forces(i, angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()),
+				      mol->atom(angle->indexK()));
 		}
 
 		// Add energy from SpeciesTorsion terms
 		for (const auto *torsion : spAtom->torsions())
 		{
-			kernel.forces(i, torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
+			kernel.forces(i, torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()),
+				      mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
 		}
 	}
 }
 
 // Calculate interatomic forces on specified atoms within the specified Configuration
-void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
-				     Array<double> &fz)
+void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+				     const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
 	/*
 	 * Calculates the interatomic forces in the specified Configuration arising from contributions from PairPotential
@@ -235,11 +242,12 @@ void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, 
 }
 
 // Calculate forces acting on specific atoms within the specified Configuration (arising from all atoms)
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+			       const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
 	/*
-	 * Calculates the total forces acting on the atom indices in the supplied Configuration, arising from PairPotential interactions
-	 * and intramolecular contributions from *all other atoms* in the Configuration.
+	 * Calculates the total forces acting on the atom indices in the supplied Configuration, arising from PairPotential
+	 * interactions and intramolecular contributions from *all other atoms* in the Configuration.
 	 *
 	 * The supplied force arrays (fx, fy, and fz) should be initialised to the total number of atoms in the Configuration,
 	 * rather than the number of atoms in the targetIndices list.
@@ -272,8 +280,9 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const Array<std::shared_ptr<Molecule>> &targetMolecules, const PotentialMap &potentialMap, Array<double> &fx,
-			       Array<double> &fy, Array<double> &fz)
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
+			       const Array<std::shared_ptr<Molecule>> &targetMolecules, const PotentialMap &potentialMap,
+			       Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
 	/*
 	 * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions

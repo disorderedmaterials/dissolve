@@ -38,21 +38,21 @@ class SpeciesAtom;
 // Atom Definition
 class Atom : public DynamicArrayObject<Atom>
 {
-      public:
+	public:
 	Atom();
 	~Atom();
 
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-      public:
+	public:
 	// Clear object, ready for re-use
 	void clear();
 
 	/*
 	 * Properties
 	 */
-      private:
+	private:
 	// Coordinates
 	Vec3<double> r_;
 	// Assigned AtomType index, local to Configuration (for partial indexing etc.)
@@ -60,7 +60,7 @@ class Atom : public DynamicArrayObject<Atom>
 	// Assigned master AtomType index (for pair potential indexing)
 	int masterTypeIndex_;
 
-      public:
+	public:
 	// Set coordinates
 	void set(const Vec3<double> r);
 	// Set coordinates
@@ -85,7 +85,7 @@ class Atom : public DynamicArrayObject<Atom>
 	/*
 	 * Location
 	 */
-      private:
+	private:
 	// SpeciesAtom that this Atom represents
 	const SpeciesAtom *speciesAtom_;
 	// Molecule in which this Atom exists
@@ -93,7 +93,7 @@ class Atom : public DynamicArrayObject<Atom>
 	// Cell in which the atom exists
 	Cell *cell_;
 
-      public:
+	public:
 	// Set SpeciesAtom that this Atom represents
 	void setSpeciesAtom(const SpeciesAtom *spAtom);
 	// Return SpeciesAtom that this Atom represents
@@ -110,7 +110,7 @@ class Atom : public DynamicArrayObject<Atom>
 	/*
 	 * Coordinate Manipulation
 	 */
-      public:
+	public:
 	// Set coordinates
 	void setCoordinates(const Vec3<double> &newr);
 	// Set coordinates
@@ -123,7 +123,7 @@ class Atom : public DynamicArrayObject<Atom>
 	/*
 	 * Intramolecular Information
 	 */
-      public:
+	public:
 	// Return scaling factor to employ with specified Atom
 	double scaling(Atom *j) const;
 };

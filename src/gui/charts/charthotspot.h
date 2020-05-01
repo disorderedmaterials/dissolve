@@ -31,7 +31,7 @@ class ChartBlock;
 // Chart HotSpot - Definition of an area onto which a dragged object can be dropped
 class ChartHotSpot : public ListItem<ChartHotSpot>
 {
-      public:
+	public:
 	ChartHotSpot();
 	~ChartHotSpot();
 	// HotSpot type
@@ -46,7 +46,7 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// Hotspot type
 	HotSpotType type_;
 	// Row of the parent layout in which the hotspot exists
@@ -60,7 +60,7 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
 	// ChartBlock immediately after the hot spot
 	ChartBlock *blockAfter_;
 
-      public:
+	public:
 	// Set type of the hotspot
 	void setType(HotSpotType type);
 	// Return the hotspot type

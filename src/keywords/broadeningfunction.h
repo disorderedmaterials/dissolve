@@ -31,14 +31,14 @@
 // Keyword with BroadeningFunction Data
 class BroadeningFunctionKeyword : public KeywordData<BroadeningFunction>
 {
-      public:
+	public:
 	BroadeningFunctionKeyword(BroadeningFunction value);
 	~BroadeningFunctionKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

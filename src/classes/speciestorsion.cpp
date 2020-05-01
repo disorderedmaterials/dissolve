@@ -93,7 +93,8 @@ int SpeciesTorsion::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesTorsion::indexI(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesTorsion::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -106,7 +107,8 @@ int SpeciesTorsion::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesTorsion::indexJ(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesTorsion::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -119,7 +121,8 @@ int SpeciesTorsion::indexK() const
 #ifdef CHECKS
 	if (k_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesTorsion::indexK(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesTorsion::indexK(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -132,7 +135,8 @@ int SpeciesTorsion::indexL() const
 #ifdef CHECKS
 	if (l_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesTorsion::indexL(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesTorsion::indexL(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -186,7 +190,8 @@ bool SpeciesTorsion::isSelected() const
 #ifdef CHECKS
 	if (i_ == NULL || j_ == NULL || k_ == NULL || l_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesTorsion::isSelected(). Returning false...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesTorsion::isSelected(). Returning false...\n");
 		return false;
 	}
 #endif
@@ -200,9 +205,13 @@ bool SpeciesTorsion::isSelected() const
 // Return enum options for TorsionFunction
 EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
-	static EnumOptionsList TorsionFunctionOptions = EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None", 0, 0) << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
-									  << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3) << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
-									  << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4) << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
+	static EnumOptionsList TorsionFunctionOptions = EnumOptionsList()
+							<< EnumOption(SpeciesTorsion::NoForm, "None", 0, 0)
+							<< EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
+							<< EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
+							<< EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
+							<< EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
+							<< EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
 
 	static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
 
@@ -256,7 +265,8 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 1 : force constant k2
 		 * 2 : force constant k3
 		 */
-		return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)));
+		return 0.5 *
+		       (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)));
 	}
 	else if (form() == SpeciesTorsion::Cos4Form)
 	{
@@ -269,7 +279,8 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 2 : force constant k3
 		 * 3 : force constant k4
 		 */
-		return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) + params[3] * (1.0 - cos(4.0 * phi)));
+		return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) +
+			      params[2] * (1.0 + cos(3.0 * phi)) + params[3] * (1.0 - cos(4.0 * phi)));
 	}
 	else if (form() == SpeciesTorsion::Cos3CForm)
 	{
@@ -282,7 +293,8 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 2 : force constant k2
 		 * 3 : force constant k3
 		 */
-		return params[0] + 0.5 * (params[1] * (1.0 + cos(phi)) + params[2] * (1.0 - cos(2.0 * phi)) + params[3] * (1.0 + cos(3.0 * phi)));
+		return params[0] + 0.5 * (params[1] * (1.0 + cos(phi)) + params[2] * (1.0 - cos(2.0 * phi)) +
+					  params[3] * (1.0 + cos(3.0 * phi)));
 	}
 	else if (form() == SpeciesTorsion::UFFCosineForm)
 	{
@@ -336,7 +348,8 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 1 : force constant k2
 		 * 2 : force constant k3
 		 */
-		return dphi_dcosphi * 0.5 * (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi));
+		return dphi_dcosphi * 0.5 *
+		       (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi));
 	}
 	else if (form() == SpeciesTorsion::Cos4Form)
 	{
@@ -349,7 +362,9 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 2 : force constant k3
 		 * 3 : force constant k4
 		 */
-		return dphi_dcosphi * 0.5 * (params[0] * sin(phi) + params[1] * sin(2.0 * phi) + params[2] * sin(3.0 * phi) + params[3] * sin(4.0 * phi));
+		return dphi_dcosphi * 0.5 *
+		       (params[0] * sin(phi) + params[1] * sin(2.0 * phi) + params[2] * sin(3.0 * phi) +
+			params[3] * sin(4.0 * phi));
 	}
 	else if (form() == SpeciesTorsion::Cos3CForm)
 	{
@@ -362,7 +377,8 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 2 : force constant k2
 		 * 3 : force constant k3
 		 */
-		return dphi_dcosphi * 0.5 * (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi));
+		return dphi_dcosphi * 0.5 *
+		       (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi));
 	}
 	else if (form() == SpeciesTorsion::UFFCosineForm)
 	{

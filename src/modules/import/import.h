@@ -33,21 +33,21 @@ class Data3D;
 // Import Module
 class ImportModule : public Module
 {
-      public:
+	public:
 	ImportModule();
 	~ImportModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -60,21 +60,21 @@ class ImportModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Trajectory file source
 	TrajectoryImportFileFormat trajectoryFile_;
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 };

@@ -30,18 +30,18 @@ class LineParser;
 // ModuleWidget, base class for any Module-specific control widget
 class ModuleWidget : public QWidget
 {
-      public:
+	public:
 	ModuleWidget(QWidget *parent);
 	virtual ~ModuleWidget();
 
 	/*
 	 * UI
 	 */
-      protected:
+	protected:
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
-      public:
+	public:
 	// Update flags
 	enum UpdateFlags
 	{
@@ -58,7 +58,7 @@ class ModuleWidget : public QWidget
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	virtual bool readState(LineParser &parser);
 	// Write widget state through specified LineParser

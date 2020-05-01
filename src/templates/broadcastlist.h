@@ -31,11 +31,11 @@ template <class T> class BroadcastList
 	 * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
 	 * to slave processes. The List must contain items which provide the 'broadcast()' virtual.
 	 */
-      private:
+	private:
 	// Result of broadcast
 	bool result_;
 
-      public:
+	public:
 	BroadcastList(ProcessPool &procPool, int root, List<T> &items, const CoreData &coreData)
 	{
 		result_ = false;

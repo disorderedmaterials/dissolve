@@ -31,38 +31,38 @@ class Axes;
 // Renderable for Species
 class RenderableSpecies : public Renderable
 {
-      public:
+	public:
 	RenderableSpecies(const Species *source, const char *objectTag);
 	~RenderableSpecies();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source data
 	const Species *source_;
 
-      private:
+	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-      public:
+	public:
 	// Return version of data
 	int dataVersion();
 
 	/*
 	 * Transform / Limits
 	 */
-      protected:
+	protected:
 	// Transform data according to current settings
 	void transformValues();
 
 	/*
 	 * Rendering Primitives
 	 */
-      private:
+	private:
 	// Basic primitives
 	Primitive *atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
 	// Main primitives
@@ -72,17 +72,17 @@ class RenderableSpecies : public Renderable
 	// Version at which selection primitive was created, relative to selection version
 	int selectionPrimitiveVersion_;
 
-      private:
+	private:
 	// Create cylinder bond between supplied atoms in specified assembly
 	void createCylinderBond(PrimitiveAssembly &assembly, const SpeciesAtom *i, const SpeciesAtom *j, double radialScaling);
 
-      protected:
+	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
 
-      public:
+	public:
 	// Recreate selection Primitive
 	void recreateSelectionPrimitive();
 	// Clear interaction Primitive
@@ -92,12 +92,13 @@ class RenderableSpecies : public Renderable
 	// Recreate interaction Primitive to display drawing interaction (from existing atom to point)
 	void recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Element *toElement);
 	// Recreate interaction Primitive to display drawing interaction (from point to point)
-	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint, Element *toElement);
+	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint,
+					      Element *toElement);
 
 	/*
 	 * Style
 	 */
-      public:
+	public:
 	// Display Styles enum
 	enum SpeciesDisplayStyle
 	{
@@ -108,7 +109,7 @@ class RenderableSpecies : public Renderable
 	// Return EnumOptions for SpeciesDisplayStyle
 	static EnumOptions<SpeciesDisplayStyle> speciesDisplayStyles();
 
-      private:
+	private:
 	// Display style for the renderable
 	SpeciesDisplayStyle displayStyle_;
 	// Radius of free (unbound) atoms when drawing with lines
@@ -118,7 +119,7 @@ class RenderableSpecies : public Renderable
 	// Radius of bonds when drawing with spheres
 	double spheresBondRadius_;
 
-      public:
+	public:
 	// Set display style for renderable
 	void setDisplayStyle(SpeciesDisplayStyle displayStyle);
 	// Return display style for the renderable
@@ -127,7 +128,7 @@ class RenderableSpecies : public Renderable
 	/*
 	 * Style I/O
 	 */
-      public:
+	public:
 	// SpeciesStyle Keywords Enum
 	enum SpeciesStyleKeyword
 	{

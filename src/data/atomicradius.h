@@ -27,14 +27,14 @@
 // Elemental atomic radius
 class AtomicRadiusData : public ElementReference
 {
-      public:
+	public:
 	AtomicRadiusData(int z, double radius);
 
-      private:
+	private:
 	// Radius of element
 	double radius_;
 
-      public:
+	public:
 	// Return radius of element
 	double radius() const;
 };
@@ -42,11 +42,11 @@ class AtomicRadiusData : public ElementReference
 // Atomic Radius Helper Class
 class AtomicRadius : public Elements
 {
-      private:
+	private:
 	// Return radius data for specified Z
 	static const AtomicRadiusData &radiusData(int Z);
 
-      public:
+	public:
 	// Return atomic radius for specified Z
 	static double radius(int Z);
 	// Return atomic radius for specified Element

@@ -68,7 +68,8 @@ void GaussFit::addFunction(Data1D &data, FunctionSpace::SpaceType space, double 
 double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 {
 	/*
-	 * Normalisation term omits factor of rho in the denominator, and which should be applied to coefficients or the preFactor argument of approximation().
+	 * Normalisation term omits factor of rho in the denominator, and which should be applied to coefficients or the
+	 * preFactor argument of approximation().
 	 */
 
 	double c = FWHM / TWOSQRT2LN2;
@@ -175,7 +176,8 @@ bool GaussFit::saveFTGaussians(const char *filenamePrefix, double xStep) const
 const Data1D &GaussFit::approximation() const { return approximateData_; }
 
 // Calculate and return approximate function in requested space
-Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor) const
+Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax,
+			       double fwhmFactor) const
 {
 	Data1D approx;
 	double x = xMin;
@@ -195,7 +197,8 @@ Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double factor, do
 }
 
 // Calculate and return single function in requested space
-Data1D GaussFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor) const
+Data1D GaussFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep,
+				double xMax, double fwhmFactor) const
 {
 	Data1D func;
 	double x = xMin;
@@ -316,7 +319,8 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 			currentError_ = gaussMinimiser.minimise();
 			Messenger::printVerbose("GaussFit::reFitA() - G = %i, error = %f\n", g, currentError_);
 
-			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
+			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a
+			// little with this one
 			if (g < nGaussians_)
 				g -= overlap;
 		}
@@ -358,15 +362,18 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 		int nAdded = 0;
 		lastX = -1.0;
 
-		// Go over points in the delta, calculating the gradient as we go, and seeking gradient minima (actually, crossovers between -ve and +ve gradients)
+		// Go over points in the delta, calculating the gradient as we go, and seeking gradient minima (actually,
+		// crossovers between -ve and +ve gradients)
 		for (int n = regionDelta; n < referenceData_.nValues() - regionDelta; ++n)
 		{
 			// Calculate gradient at this point
 			gradient = 0.0;
 			for (int m = -regionDelta; m < regionDelta; ++m)
-				gradient += (referenceDelta.value(n + m + 1) - referenceDelta.value(n + m)) / (referenceDelta.xAxis(n + m + 1) - referenceDelta.xAxis(n + m));
+				gradient += (referenceDelta.value(n + m + 1) - referenceDelta.value(n + m)) /
+					    (referenceDelta.xAxis(n + m + 1) - referenceDelta.xAxis(n + m));
 
-			// If the x value of the current point is less than the last accepted Gaussian in this cycle, don't attempt any function addition
+			// If the x value of the current point is less than the last accepted Gaussian in this cycle, don't
+			// attempt any function addition
 			if (referenceDelta.xAxis(n) < lastX)
 				continue;
 
@@ -377,7 +384,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 				trialA = referenceDelta.value(n);
 				trialFWHM = 0.25;
 
-				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
+				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n",
+							trialX);
 
 				// Set up minimiser, minimising test Gaussian only
 				PrAxisMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
@@ -392,19 +400,27 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 				// Sanity check fitted parameters before we (potentially) accept the new function
 				if (fabs(trialA) < 1.0e-4)
 				{
-					Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - amplitude is too small\n", trialX, trialA, fabs(trialFWHM));
+					Messenger::printVerbose(
+						"Rejecting new Gaussian x = %f, A = %f, FWHM = %f - amplitude is too small\n",
+						trialX, trialA, fabs(trialFWHM));
 				}
 				else if (fabs(trialFWHM) < 1.0e-2)
 				{
-					Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - FWHM is too small\n", trialX, trialA, fabs(trialFWHM));
+					Messenger::printVerbose(
+						"Rejecting new Gaussian x = %f, A = %f, FWHM = %f - FWHM is too small\n",
+						trialX, trialA, fabs(trialFWHM));
 				}
 				else if ((trialError < currentError_) || (nGaussians_ == 0))
 				{
 					if (nGaussians_ == 0)
-						Messenger::printVerbose("Accepting first Gaussian at x = %f, A = %f, FWHM = %f - error is %f\n", trialX, trialA, fabs(trialFWHM), trialError);
+						Messenger::printVerbose(
+							"Accepting first Gaussian at x = %f, A = %f, FWHM = %f - error is %f\n",
+							trialX, trialA, fabs(trialFWHM), trialError);
 					else
-						Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, FWHM = %f - error reduced from %f to %f\n", trialX, trialA, fabs(trialFWHM),
-									currentError_, trialError);
+						Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, FWHM = %f - "
+									"error reduced from %f to %f\n",
+									trialX, trialA, fabs(trialFWHM), currentError_,
+									trialError);
 					currentError_ = trialError;
 
 					A_.add(trialA);
@@ -414,7 +430,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 					++nAdded;
 					lastX = trialX;
 
-					// Add the accepted Gaussian in to the approximate data, and remove it from the reference delta
+					// Add the accepted Gaussian in to the approximate data, and remove it from the
+					// reference delta
 					double x, y;
 					for (int m = 0; m < referenceData_.nValues(); ++m)
 					{
@@ -431,8 +448,9 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 						break;
 				}
 				else
-					Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - error increased from %f to %f\n", trialX, trialA, fabs(trialFWHM), currentError_,
-								trialError);
+					Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - error "
+								"increased from %f to %f\n",
+								trialX, trialA, fabs(trialFWHM), currentError_, trialError);
 			}
 
 			// Store current sign of gradient
@@ -446,14 +464,17 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 		// Check on error
 		if (currentError_ <= requiredError)
 		{
-			Messenger::printVerbose("Required error threshold (%f) achieved - current error is %f, nGaussians = %i\n", requiredError, currentError_, nGaussians_);
+			Messenger::printVerbose(
+				"Required error threshold (%f) achieved - current error is %f, nGaussians = %i\n",
+				requiredError, currentError_, nGaussians_);
 			break;
 		}
 
 		// Check on nGaussians
 		if (nGaussians_ == maxGaussians)
 		{
-			Messenger::printVerbose("Maximum number of Gaussians (%i) reached - current error is %f\n", nGaussians_, currentError_);
+			Messenger::printVerbose("Maximum number of Gaussians (%i) reached - current error is %f\n", nGaussians_,
+						currentError_);
 			break;
 		}
 
@@ -468,8 +489,10 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 	return currentError_;
 }
 
-// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax (those below rMin will be ignored)
-double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
+// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax (those below
+// rMin will be ignored)
+double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations,
+				     double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
 				     bool reFitAtEnd)
 {
 	// Clear any existing data
@@ -522,7 +545,8 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 }
 
 // Construct function representation in reciprocal space using specified parameters as starting point
-double GaussFit::constructReciprocal(double rMin, double rMax, const Array<double> &A, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
+double GaussFit::constructReciprocal(double rMin, double rMax, const Array<double> &A, double sigmaQ, int nIterations,
+				     double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
 				     bool reFitAtEnd)
 {
 	// Create the fitting functions
@@ -609,7 +633,8 @@ double GaussFit::costAnalyticA(const Array<double> &alpha)
 	return sose * multiplier;
 }
 
-// Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current approximate data into sum
+// Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current approximate
+// data into sum
 double GaussFit::costAnalyticAF(const Array<double> &alpha)
 {
 	const int nGauss = alpha.nItems() / 2;
@@ -648,7 +673,8 @@ double GaussFit::costAnalyticAF(const Array<double> &alpha)
 	return sose * multiplier;
 }
 
-// Two-parameter cost function (amplitude and xCentre) with alpha array containing A and FWHM values, including current approximate data into sum
+// Two-parameter cost function (amplitude and xCentre) with alpha array containing A and FWHM values, including current
+// approximate data into sum
 double GaussFit::costAnalyticAX(const Array<double> &alpha)
 {
 	const int nGauss = alpha.nItems() / 2;
@@ -687,7 +713,8 @@ double GaussFit::costAnalyticAX(const Array<double> &alpha)
 	return sose * multiplier;
 }
 
-// Three-parameter cost function (amplitude, FWHM, and xCentre) with alpha array containing A and FWHM values, including current approximate data into sum
+// Three-parameter cost function (amplitude, FWHM, and xCentre) with alpha array containing A and FWHM values, including current
+// approximate data into sum
 double GaussFit::costAnalyticAFX(const Array<double> &alpha)
 {
 	const int nGauss = alpha.nItems() / 2;

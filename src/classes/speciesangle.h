@@ -34,21 +34,21 @@ class ProcessPool;
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle>
 {
-      public:
+	public:
 	SpeciesAngle();
 	~SpeciesAngle();
 
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-      public:
+	public:
 	// Clear object, ready for re-use
 	void clear();
 
 	/*
 	 * SpeciesAtom Information
 	 */
-      private:
+	private:
 	// First SpeciesAtom in interaction
 	SpeciesAtom *i_;
 	// Second (central) SpeciesAtom in interaction
@@ -56,7 +56,7 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	// Third SpeciesAtom in interaction
 	SpeciesAtom *k_;
 
-      public:
+	public:
 	// Set SpeciesAtoms involved in interaction
 	void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
 	// Return first SpeciesAtom
@@ -81,7 +81,7 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	/*
 	 * Interaction Parameters
 	 */
-      public:
+	public:
 	// Angle functional forms
 	enum AngleFunction
 	{
@@ -93,7 +93,7 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	// Return enum options for AngleFunction
 	static EnumOptions<AngleFunction> angleFunctions();
 
-      public:
+	public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -108,7 +108,7 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

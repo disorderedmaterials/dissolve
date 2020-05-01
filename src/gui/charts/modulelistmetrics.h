@@ -31,7 +31,7 @@ class ModuleListChartMetrics
 	/*
 	 * Module Chart Block
 	 */
-      public:
+	public:
 	// Border line width
 	static int blockBorderWidth() { return 2; }
 	// Border external radius
@@ -42,7 +42,8 @@ class ModuleListChartMetrics
 	static QMargins blockMargins()
 	{
 		int innerGap = 4;
-		return QMargins(blockBorderWidth() + innerGap + blockDentRadius(), blockBorderWidth() + innerGap, blockBorderWidth() + innerGap, blockBorderWidth() + innerGap);
+		return QMargins(blockBorderWidth() + innerGap + blockDentRadius(), blockBorderWidth() + innerGap,
+				blockBorderWidth() + innerGap, blockBorderWidth() + innerGap);
 	}
 	// Vertical offset at which dent begins on left-hand side
 	static int blockDentOffset() { return 16; }
@@ -52,7 +53,7 @@ class ModuleListChartMetrics
 	/*
 	 * Module Chart
 	 */
-      public:
+	public:
 	// Inner margin around widgets
 	static int chartMargin() { return 32; }
 	// Horizontal spacing between modules in list

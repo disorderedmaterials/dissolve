@@ -32,32 +32,33 @@ class ProcedureNode;
 // Keyword with NodeValue Triplet Data
 class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
 {
-      public:
-	Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	public:
+	Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value,
+			     Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	~Vec3NodeValueKeyword();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
 	/*
 	 * Label Type
 	 */
-      private:
+	private:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType_;
 
-      public:
+	public:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -70,14 +71,14 @@ class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
 	/*
 	 * Set
 	 */
-      public:
+	public:
 	// Set the specified value from supplied expression text
 	bool setValue(int index, const char *expressionText);
 
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as Vec3<int>)
 	Vec3<int> asVec3Int();
 	// Return value (as Vec3<double>)

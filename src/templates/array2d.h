@@ -30,7 +30,7 @@
 // Array2D
 template <class A> class Array2D
 {
-      public:
+	public:
 	Array2D(int nrows = 0, int ncolumns = 0, bool half = false)
 	{
 		array_ = NULL;
@@ -90,7 +90,8 @@ template <class A> class Array2D
 		{
 			if (half_)
 				for (int column = row; column < nColumns_; ++column)
-					array_[rowOffsets_[row] + column - row] = source.array_[rowOffsets_[row] + column - row];
+					array_[rowOffsets_[row] + column - row] =
+						source.array_[rowOffsets_[row] + column - row];
 			else
 				for (int column = 0; column < nColumns_; ++column)
 					array_[rowOffsets_[row] + column] = source.array_[rowOffsets_[row] + column];
@@ -100,7 +101,7 @@ template <class A> class Array2D
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Linear array of objects
 	A *array_;
 	// Size of linear array
@@ -112,7 +113,7 @@ template <class A> class Array2D
 	// Row offsets
 	int *rowOffsets_;
 
-      private:
+	private:
 	// Resize array
 	void resize(int nrows, int ncolumns)
 	{
@@ -122,7 +123,8 @@ template <class A> class Array2D
 		// If we're only interested in half the matrix then it must be square
 		if (half_ && (nrows != ncolumns))
 		{
-			Messenger::print("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
+			Messenger::print(
+				"BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
 		}
 
 		// Create new array
@@ -150,7 +152,7 @@ template <class A> class Array2D
 		}
 	}
 
-      public:
+	public:
 	// Initialise array
 	void initialise(int nrows, int ncolumns, bool half = false)
 	{
@@ -159,7 +161,8 @@ template <class A> class Array2D
 		half_ = half;
 		if ((nrows > 0) && (ncolumns > 0))
 			resize(nrows, ncolumns);
-		// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
+		// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise()
+		// (r=%i, c=%i)\n", nrows, ncolumns);
 	}
 	// Add empty row to array
 	void addRow(int nCols = -1)
@@ -173,7 +176,8 @@ template <class A> class Array2D
 			// Must have been supplied the column size if we currently have no data
 			if (nCols == -1)
 			{
-				Messenger::error("Array2D<A>::addRow() - Array is currently empty, so column size must be provided.\n");
+				Messenger::error(
+					"Array2D<A>::addRow() - Array is currently empty, so column size must be provided.\n");
 				return;
 			}
 		}
@@ -183,7 +187,8 @@ template <class A> class Array2D
 		// Reinitialise the present matrix to the new size
 		if (half_ && (nRows_ == nCols))
 		{
-			Messenger::warn("Adding a row to this Array2D<A> will force it to be rectangular, so it will no longer be halved.\n");
+			Messenger::warn("Adding a row to this Array2D<A> will force it to be rectangular, so it will no longer "
+					"be halved.\n");
 			initialise(nRows_ + 1, nCols, false);
 		}
 		else
@@ -209,12 +214,15 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::at() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::at() (nRows = %i).\n", row,
+					 nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::at() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print(
+				"OUT_OF_RANGE - Column number (%i) is out of range in Array2D::at() (nColumns = %i).\n", column,
+				nColumns_);
 			return dummy;
 		}
 #endif
@@ -235,12 +243,15 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::constAt() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::constAt() (nRows = %i).\n",
+					 row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::constAt() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print(
+				"OUT_OF_RANGE - Column number (%i) is out of range in Array2D::constAt() (nColumns = %i).\n",
+				column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -261,12 +272,16 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::pointerAt() (nRows = %i).\n", row, nRows_);
+			Messenger::print(
+				"OUT_OF_RANGE - Row number (%i) is out of range in Array2D::pointerAt() (nRows = %i).\n", row,
+				nRows_);
 			return &dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::pointerAt() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print(
+				"OUT_OF_RANGE - Column number (%i) is out of range in Array2D::pointerAt() (nColumns = %i).\n",
+				column, nColumns_);
 			return &dummy;
 		}
 #endif
@@ -301,7 +316,9 @@ template <class A> class Array2D
 		static A dummy;
 		if ((index < 0) || (index >= linearSize_))
 		{
-			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::linearValue() (linearSize = %i).\n", index, linearSize_);
+			Messenger::print(
+				"OUT_OF_RANGE - Index (%i) is out of range in Array2D::linearValue() (linearSize = %i).\n",
+				index, linearSize_);
 			return dummy;
 		}
 #endif
@@ -314,7 +331,9 @@ template <class A> class Array2D
 		static A dummy;
 		if ((index < 0) || (index >= linearSize_))
 		{
-			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::constLinearValue() (linearSize = %i).\n", index, linearSize_);
+			Messenger::print(
+				"OUT_OF_RANGE - Index (%i) is out of range in Array2D::constLinearValue() (linearSize = %i).\n",
+				index, linearSize_);
 			return dummy;
 		}
 #endif
@@ -324,7 +343,7 @@ template <class A> class Array2D
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	// Operator+= (add to all)
 	void operator+=(const A value)
 	{
@@ -355,7 +374,9 @@ template <class A> class Array2D
 		// Check array sizes are compatible
 		if (nColumns_ != B.nRows_)
 		{
-			Messenger::error("Can't add matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
+			Messenger::error(
+				"Can't add matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_,
+				nColumns_, B.nRows_, B.nColumns_);
 			return;
 		}
 		for (int n = 0; n < linearSize_; ++n)
@@ -367,7 +388,8 @@ template <class A> class Array2D
 		// Check array sizes are compatible
 		if (nColumns_ != B.nRows_)
 		{
-			Messenger::error("Can't subtract matrices, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
+			Messenger::error("Can't subtract matrices, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n",
+					 nRows_, nColumns_, B.nRows_, B.nColumns_);
 			return;
 		}
 		for (int n = 0; n < linearSize_; ++n)
@@ -379,7 +401,9 @@ template <class A> class Array2D
 		// Check array sizes are compatible
 		if (nColumns_ != B.nRows_)
 		{
-			Messenger::error("Can't multiply matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
+			Messenger::error(
+				"Can't multiply matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n",
+				nRows_, nColumns_, B.nRows_, B.nColumns_);
 			return Array2D<A>();
 		}
 
@@ -405,7 +429,7 @@ template <class A> class Array2D
 	/*
 	 * Functions
 	 */
-      public:
+	public:
 	// Print matrix
 	void print(const char *title = "Array2D<A>") const
 	{

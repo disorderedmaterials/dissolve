@@ -31,7 +31,7 @@
 // Function Node
 class ExpressionFunction : public ExpressionNode
 {
-      public:
+	public:
 	ExpressionFunction(ExpressionFunctions::Function func = ExpressionFunctions::NoFunction);
 	ExpressionFunction(ExpressionNode *source);
 	~ExpressionFunction();
@@ -39,11 +39,11 @@ class ExpressionFunction : public ExpressionNode
 	/*
 	 * Function Data
 	 */
-      protected:
+	protected:
 	// Function that this node performs
 	ExpressionFunctions::Function function_;
 
-      public:
+	public:
 	// Get command function
 	ExpressionFunctions::Function function() const;
 	// Execute command

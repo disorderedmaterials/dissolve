@@ -23,8 +23,9 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
-NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
-    : NETANode(parent, NETANode::PresenceNode)
+NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
+				   std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+	: NETANode(parent, NETANode::PresenceNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;
@@ -46,7 +47,9 @@ NETAPresenceNode::~NETAPresenceNode() {}
 // Return enum options for NETACharacterModifiers
 EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh") << EnumOption(RepeatCharacterModifier, "n");
+	static EnumOptionsList ModifierOptions = EnumOptionsList()
+						 << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh")
+						 << EnumOption(RepeatCharacterModifier, "n");
 
 	static EnumOptions<NETAPresenceNode::NETACharacterModifier> options("CharacterModifier", ModifierOptions);
 
@@ -92,9 +95,11 @@ bool NETAPresenceNode::setModifier(const char *modifier, ComparisonOperator op, 
 int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const
 {
 	// 	printf("I AM THE PRESENCE - availableAtoms size = %i:\n", availableAtoms.nItems());
-	// 	for (const SpeciesAtom* iii : availableAtoms) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+	// 	for (const SpeciesAtom* iii : availableAtoms) printf("   -- %p %i %s\n", iii, iii->userIndex(),
+	// iii->element()->symbol());
 
-	// We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will modify as appropriate)
+	// We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will
+	// modify as appropriate)
 	if (i != NULL)
 		printf("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
 

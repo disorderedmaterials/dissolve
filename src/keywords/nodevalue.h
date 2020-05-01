@@ -32,21 +32,21 @@ class ProcedureNode;
 // Keyword with NodeValue
 class NodeValueKeyword : public KeywordData<NodeValue>
 {
-      public:
+	public:
 	NodeValueKeyword(ProcedureNode *parentNode, NodeValue value);
 	~NodeValueKeyword();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -59,14 +59,14 @@ class NodeValueKeyword : public KeywordData<NodeValue>
 	/*
 	 * Set
 	 */
-      public:
+	public:
 	// Set the value from supplied expression text
 	bool setValue(const char *expressionText);
 
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as int)
 	int asInt();
 	// Return value (as double)
@@ -75,7 +75,7 @@ class NodeValueKeyword : public KeywordData<NodeValue>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 };
 
 #endif

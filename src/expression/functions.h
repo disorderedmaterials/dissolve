@@ -34,7 +34,7 @@ typedef bool (*FunctionFunction)(ExpressionFunction *c, ExpressionValue &result)
 // Function Data
 class ExpressionFunctionData
 {
-      public:
+	public:
 	// Function keyword
 	const char *keyword;
 	// Number of arguments required by the function
@@ -48,18 +48,18 @@ class ExpressionFunctionData
 // Expression Functions
 class ExpressionFunctions
 {
-      public:
+	public:
 	ExpressionFunctions();
 	~ExpressionFunctions();
 
 	/*
 	 * Settings
 	 */
-      private:
+	private:
 	// Whether to assume values used in trig functions are degrees, and need to be converted to radians
 	static bool assumeDegrees_;
 
-      public:
+	public:
 	// Set whether to assume values used in trig functions are degrees
 	static void setAssumeDegrees(bool b);
 	// Return whether to assume values used in trig functions are degrees
@@ -115,7 +115,7 @@ class ExpressionFunctions
 	/*
 	 * Function declarations
 	 */
-      private:
+	private:
 	// AST-specific functions
 	static bool function_NoFunction(ExpressionFunction *c, ExpressionValue &result);
 	static bool function_Joiner(ExpressionFunction *c, ExpressionValue &result);
@@ -157,11 +157,11 @@ class ExpressionFunctions
 	/*
 	 * Function descriptions / syntax etc.
 	 */
-      private:
+	private:
 	// Function pointers
 	FunctionFunction pointers_[ExpressionFunctions::nFunctions];
 
-      public:
+	public:
 	// Function data
 	static ExpressionFunctionData data[ExpressionFunctions::nFunctions];
 	// Initialise function pointers

@@ -32,35 +32,36 @@ class SequenceProcedureNode;
 // Keyword with NodeValue
 class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
 {
-      public:
-	NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer, ProcedureNode::NodeContext branchContext);
+	public:
+	NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
+			  ProcedureNode::NodeContext branchContext);
 	~NodeBranchKeyword();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
 	/*
 	 * Data
 	 */
-      protected:
+	protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 
 	/*
 	 * Branch Specification
 	 */
-      private:
+	private:
 	// Context for the target branch
 	ProcedureNode::NodeContext branchContext_;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

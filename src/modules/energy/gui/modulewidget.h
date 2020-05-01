@@ -39,11 +39,11 @@ class EnergyModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	EnergyModuleWidget(QWidget *parent, EnergyModule *module);
 	~EnergyModuleWidget();
 
-      private:
+	private:
 	// Associated Module
 	EnergyModule *module_;
 	// DataViewer contained within this widget
@@ -52,18 +52,18 @@ class EnergyModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::EnergyModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -72,15 +72,15 @@ class EnergyModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Current Configuration whose data is being displayed
 	Configuration *currentConfiguration_;
 
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(EnergyModule *module);
 
-      private slots:
+	private slots:
 	void on_TargetCombo_currentIndexChanged(int index);
 };
 

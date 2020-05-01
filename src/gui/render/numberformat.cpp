@@ -110,7 +110,8 @@ QString NumberFormat::format(double number)
 		break;
 	case (NumberFormat::ScientificFormat):
 		if (!useENotation_)
-			result += QString::number(x.mantissa(), 'f', nDecimals_) + QChar(0x00D7) + "10\\sup{" + QString::number(x.exponent()) + "}";
+			result += QString::number(x.mantissa(), 'f', nDecimals_) + QChar(0x00D7) + "10\\sup{" +
+				  QString::number(x.exponent()) + "}";
 		else if (useUpperCaseExponent_)
 			result += QString::number(x.mantissa(), 'f', nDecimals_) + "E" + QString::number(x.exponent());
 		else

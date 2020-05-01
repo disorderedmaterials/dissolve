@@ -34,7 +34,7 @@ class Histogram2D;
 // One-Dimensional Data
 class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
-      public:
+	public:
 	Data2D();
 	~Data2D();
 	Data2D(const Data2D &source);
@@ -44,7 +44,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// X axis array
 	Array<double> x_;
 	// Y axis array
@@ -58,7 +58,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	// Data version
 	VersionCounter version_;
 
-      public:
+	public:
 	// Initialise arrays to specified size
 	void initialise(int xSize, int ySize, bool withError = false);
 	// Initialise to be consistent in size and axes with supplied object
@@ -121,7 +121,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator=(const Data2D &source);
 	void operator+=(const double delta);
 	void operator-=(const double delta);
@@ -131,7 +131,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -142,7 +142,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

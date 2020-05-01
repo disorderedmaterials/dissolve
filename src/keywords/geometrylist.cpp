@@ -23,7 +23,10 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(List<Geometry> &data, Geometry::GeometryType type) : KeywordData<List<Geometry> &>(KeywordBase::GeometryListData, data), type_(type) {}
+GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(List<Geometry> &data, Geometry::GeometryType type)
+	: KeywordData<List<Geometry> &>(KeywordBase::GeometryListData, data), type_(type)
+{
+}
 
 GeometryListKeyword::~GeometryListKeyword() {}
 
@@ -62,9 +65,11 @@ bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData 
 	if (maxArguments() == 3)
 		g->set(parser.argd(2 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1);
 	else if (maxArguments() == 4)
-		g->set(parser.argd(3 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1, parser.argi(2 + startArg) - 1);
+		g->set(parser.argd(3 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
+		       parser.argi(2 + startArg) - 1);
 	else
-		g->set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1, parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
+		g->set(parser.argd(4 + startArg), parser.argi(startArg) - 1, parser.argi(1 + startArg) - 1,
+		       parser.argi(2 + startArg) - 1, parser.argi(3 + startArg) - 1);
 
 	hasBeenSet();
 

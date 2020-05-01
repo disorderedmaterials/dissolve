@@ -32,35 +32,36 @@ class SelectProcedureNode;
 // Calculate Node Base
 class CalculateProcedureNodeBase : public ProcedureNode
 {
-      public:
-	CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL, SelectProcedureNode *site2 = NULL,
+	public:
+	CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0 = NULL,
+				   SelectProcedureNode *site1 = NULL, SelectProcedureNode *site2 = NULL,
 				   SelectProcedureNode *site3 = NULL);
 	virtual ~CalculateProcedureNodeBase();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 	/*
 	 * Keywords
 	 */
-      protected:
+	protected:
 	// Pointers to available site node keywords
 	NodeKeyword<SelectProcedureNode> *siteKeywords_[4];
 
 	/*
 	 * Observable Target
 	 */
-      protected:
+	protected:
 	// Sites (SelectProcedureNodes) to use for calculation of observable (retrieved from keywords)
 	SelectProcedureNode *sites_[4];
 	// Last calculate value(s) of observable (as Vec3)
 	Vec3<double> value_;
 
-      public:
+	public:
 	// Return last calculated value of observable
 	double value(int id) const;
 	// Return last calculated value as vector
@@ -73,7 +74,7 @@ class CalculateProcedureNodeBase : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 };

@@ -34,17 +34,17 @@ class TestModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	TestModule *module_;
 
-      public:
+	public:
 	TestModuleWidget(QWidget *parent, TestModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::TestModuleWidget ui_;
 };

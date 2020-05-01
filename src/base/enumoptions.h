@@ -28,15 +28,18 @@
 // Enum Options
 template <class T> class EnumOptions : public EnumOptionsBase
 {
-      public:
+	public:
 	EnumOptions() : EnumOptionsBase() {}
 	EnumOptions(const char *name, const EnumOptionsList &options) : EnumOptionsBase(name, options) {}
-	EnumOptions(const char *name, const EnumOptionsList &options, T defaultEnumeration) : EnumOptionsBase(name, options, defaultEnumeration) {}
+	EnumOptions(const char *name, const EnumOptionsList &options, T defaultEnumeration)
+		: EnumOptionsBase(name, options, defaultEnumeration)
+	{
+	}
 
 	/*
 	 * Enum Conversion
 	 */
-      public:
+	public:
 	// Return enumeration in T
 	T enumeration(const char *keyword) const
 	{
@@ -112,27 +115,32 @@ template <class T> class EnumOptions : public EnumOptionsBase
 			if (nArgsProvided == 0)
 				return true;
 			else
-				return Messenger::error("'%s' keyword '%s' does not take any arguments.\n", name(), opt.keyword());
+				return Messenger::error("'%s' keyword '%s' does not take any arguments.\n", name(),
+							opt.keyword());
 			break;
 		case (EnumOption::OneOrMoreArguments):
 			if (nArgsProvided > 0)
 				return true;
 			else
-				return Messenger::error("'%s' keyword '%s' requires one or more arguments, but none were provided.\n", name(), opt.keyword());
+				return Messenger::error(
+					"'%s' keyword '%s' requires one or more arguments, but none were provided.\n", name(),
+					opt.keyword());
 			break;
 		case (EnumOption::EnumOption::OptionalSecondArgument):
 			if ((nArgsProvided == 1) || (nArgsProvided == 2))
 				return true;
 			else
-				return Messenger::error("'%s' keyword '%s' requires one or two arguments, but %i %s provided.\n", name(), opt.keyword(), nArgsProvided,
-							nArgsProvided == 1 ? "was" : "were");
+				return Messenger::error(
+					"'%s' keyword '%s' requires one or two arguments, but %i %s provided.\n", name(),
+					opt.keyword(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
 			break;
 		default:
 			// Specific number of arguments required
 			if ((nArgsProvided >= opt.minArgs()) && (nArgsProvided <= opt.maxArgs()))
 				return true;
 			else
-				return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.minArgs(), nArgsProvided,
+				return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n",
+							name(), opt.keyword(), opt.minArgs(), nArgsProvided,
 							nArgsProvided == 1 ? "was" : "were");
 			break;
 		}
@@ -143,7 +151,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	EnumOptions<T> &operator=(T value)
 	{
 		currentOptionIndex_ = value;

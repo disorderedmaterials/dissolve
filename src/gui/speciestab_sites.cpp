@@ -57,7 +57,8 @@ void SpeciesTab::setCurrentSiteFromViewer()
 		return;
 
 	// Update the site list
-	ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(), Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable, displayedSite);
+	ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(
+		ui_.SiteList, species_->sites(), Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable, displayedSite);
 
 	refreshLocker.unlock();
 
@@ -153,7 +154,8 @@ void SpeciesTab::updateSitesTab()
 	SpeciesSite *current = currentSite();
 
 	// Update the site list
-	ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(), Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+	ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(),
+							       Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 	if ((current == NULL) && (species_->nSites() != 0))
 		ui_.SiteList->setCurrentRow(0);
 

@@ -28,7 +28,7 @@
 // Character String List
 class CharStringList
 {
-      public:
+	public:
 	CharStringList();
 	~CharStringList();
 	CharStringList(const CharStringList &source);
@@ -39,11 +39,11 @@ class CharStringList
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Array of CharStrings
 	Array<CharString> strings_;
 
-      public:
+	public:
 	// Clear list
 	void clear();
 	// Add string to list

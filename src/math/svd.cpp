@@ -41,7 +41,8 @@ double pythag(double a, double b)
 		return (absb == 0.0 ? 0.0 : absb * sqrt(1.0 + SQR(absa / absb)));
 }
 
-// Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and right-orthogonal (V transpose) matrices into the supplied Arrays
+// Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and
+// right-orthogonal (V transpose) matrices into the supplied Arrays
 bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S, Array2D<double> &Vt)
 {
 	int flag, i, its, j, jj, k, l, nm;

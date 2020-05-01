@@ -41,7 +41,8 @@ KeywordsWidget::~KeywordsWidget() {}
  */
 
 // Create widget for specified keyword
-QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keywordWidgets, KeywordBase *keyword, const CoreData &coreData)
+QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keywordWidgets, KeywordBase *keyword,
+					     const CoreData &coreData)
 {
 	QWidget *widget = NULL;
 	KeywordWidgetBase *base = NULL;
@@ -53,7 +54,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	// Try to create a suitable widget
 	if (type == KeywordBase::AtomTypeSelectionData)
 	{
-		AtomTypeSelectionKeywordWidget *atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keywordBase, coreData);
+		AtomTypeSelectionKeywordWidget *atomTypeSelectionWidget =
+			new AtomTypeSelectionKeywordWidget(NULL, keywordBase, coreData);
 		connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = atomTypeSelectionWidget;
 		base = atomTypeSelectionWidget;
@@ -67,7 +69,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::BroadeningFunctionData)
 	{
-		BroadeningFunctionKeywordWidget *broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keywordBase, coreData);
+		BroadeningFunctionKeywordWidget *broadeningFunctionWidget =
+			new BroadeningFunctionKeywordWidget(NULL, keywordBase, coreData);
 		connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = broadeningFunctionWidget;
 		base = broadeningFunctionWidget;
@@ -95,7 +98,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::ExpressionVariableListData)
 	{
-		ExpressionVariableListKeywordWidget *expressionVariableListWidget = new ExpressionVariableListKeywordWidget(NULL, keywordBase, coreData);
+		ExpressionVariableListKeywordWidget *expressionVariableListWidget =
+			new ExpressionVariableListKeywordWidget(NULL, keywordBase, coreData);
 		connect(expressionVariableListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = expressionVariableListWidget;
 		base = expressionVariableListWidget;
@@ -116,7 +120,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::IsotopologueCollectionData)
 	{
-		IsotopologueCollectionKeywordWidget *isotopologueCollectionWidget = new IsotopologueCollectionKeywordWidget(NULL, keywordBase, coreData);
+		IsotopologueCollectionKeywordWidget *isotopologueCollectionWidget =
+			new IsotopologueCollectionKeywordWidget(NULL, keywordBase, coreData);
 		connect(isotopologueCollectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = isotopologueCollectionWidget;
 		base = isotopologueCollectionWidget;
@@ -151,7 +156,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::NodeAndIntegerData)
 	{
-		NodeAndIntegerKeywordWidget *nodeAndIntegerWidget = new NodeAndIntegerKeywordWidget(NULL, keywordBase, coreData);
+		NodeAndIntegerKeywordWidget *nodeAndIntegerWidget =
+			new NodeAndIntegerKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeAndIntegerWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = nodeAndIntegerWidget;
 		base = nodeAndIntegerWidget;
@@ -172,14 +178,16 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::NodeValueEnumOptionsData)
 	{
-		NodeValueEnumOptionsKeywordWidget *nodeValueEnumOptionsWidget = new NodeValueEnumOptionsKeywordWidget(NULL, keywordBase, coreData);
+		NodeValueEnumOptionsKeywordWidget *nodeValueEnumOptionsWidget =
+			new NodeValueEnumOptionsKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeValueEnumOptionsWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = nodeValueEnumOptionsWidget;
 		base = nodeValueEnumOptionsWidget;
 	}
 	else if (type == KeywordBase::PairBroadeningFunctionData)
 	{
-		PairBroadeningFunctionKeywordWidget *pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keywordBase, coreData);
+		PairBroadeningFunctionKeywordWidget *pairBroadeningFunctionWidget =
+			new PairBroadeningFunctionKeywordWidget(NULL, keywordBase, coreData);
 		connect(pairBroadeningFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
@@ -200,7 +208,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::SpeciesRefListData)
 	{
-		SpeciesRefListKeywordWidget *speciesRefListWidget = new SpeciesRefListKeywordWidget(NULL, keywordBase, coreData);
+		SpeciesRefListKeywordWidget *speciesRefListWidget =
+			new SpeciesRefListKeywordWidget(NULL, keywordBase, coreData);
 		connect(speciesRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = speciesRefListWidget;
 		base = speciesRefListWidget;
@@ -214,14 +223,16 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 	}
 	else if (type == KeywordBase::SpeciesSiteRefListData)
 	{
-		SpeciesSiteRefListKeywordWidget *speciesSiteRefListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keywordBase, coreData);
+		SpeciesSiteRefListKeywordWidget *speciesSiteRefListWidget =
+			new SpeciesSiteRefListKeywordWidget(NULL, keywordBase, coreData);
 		connect(speciesSiteRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = speciesSiteRefListWidget;
 		base = speciesSiteRefListWidget;
 	}
 	else if (type == KeywordBase::WindowFunctionData)
 	{
-		WindowFunctionKeywordWidget *windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keywordBase, coreData);
+		WindowFunctionKeywordWidget *windowFunctionWidget =
+			new WindowFunctionKeywordWidget(NULL, keywordBase, coreData);
 		connect(windowFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
 		widget = windowFunctionWidget;
 		base = windowFunctionWidget;
@@ -248,7 +259,8 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
 		base = vec3NodeValueWidget;
 	}
 
-	// Set tooltip on widget (using the description from the keyword pointer passed, rather than its base) and add to the list of widgets
+	// Set tooltip on widget (using the description from the keyword pointer passed, rather than its base) and add to the
+	// list of widgets
 	if (widget)
 	{
 		widget->setToolTip(keyword->description());
@@ -266,7 +278,8 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
 		removeItem(0);
 	keywordWidgets_.clear();
 
-	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
+	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other'
+	// tab at the end
 	RefList<KeywordBase> remainingKeywords;
 	ListIterator<KeywordBase> keywordIterator(keywords.keywords());
 	while (KeywordBase *keyword = keywordIterator.iterate())
@@ -301,10 +314,13 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
 			if (!widget)
 			{
 				// WORKAROUND - Don't raise errors for datastore types (issue #36)
-				if ((keyword->type() == KeywordBase::Data1DStoreData) || (keyword->type() == KeywordBase::Data2DStoreData) || (keyword->type() == KeywordBase::Data3DStoreData))
+				if ((keyword->type() == KeywordBase::Data1DStoreData) ||
+				    (keyword->type() == KeywordBase::Data2DStoreData) ||
+				    (keyword->type() == KeywordBase::Data3DStoreData))
 					continue;
 
-				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(), KeywordBase::keywordDataType(keyword->type()));
+				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(),
+						 KeywordBase::keywordDataType(keyword->type()));
 				continue;
 			}
 

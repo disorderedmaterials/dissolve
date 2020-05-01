@@ -135,7 +135,8 @@ MasterIntra *CoreData::addMasterBond(const char *name)
 	// Check for existence of master Bond already
 	if (hasMasterBond(name))
 	{
-		Messenger::error("Refused to add a new master Bond named '%s' since one with the same name already exists.\n", name);
+		Messenger::error("Refused to add a new master Bond named '%s' since one with the same name already exists.\n",
+				 name);
 		return NULL;
 	}
 
@@ -174,7 +175,8 @@ MasterIntra *CoreData::addMasterAngle(const char *name)
 	// Check for existence of master Angle already
 	if (hasMasterAngle(name))
 	{
-		Messenger::error("Refused to add a new master Angle named '%s' since one with the same name already exists.\n", name);
+		Messenger::error("Refused to add a new master Angle named '%s' since one with the same name already exists.\n",
+				 name);
 		return NULL;
 	}
 
@@ -213,7 +215,8 @@ MasterIntra *CoreData::addMasterTorsion(const char *name)
 	// Check for existence of master Torsion already
 	if (hasMasterTorsion(name))
 	{
-		Messenger::error("Refused to add a new master Torsion named '%s' since one with the same name already exists.\n", name);
+		Messenger::error(
+			"Refused to add a new master Torsion named '%s' since one with the same name already exists.\n", name);
 		return NULL;
 	}
 
@@ -252,7 +255,8 @@ MasterIntra *CoreData::addMasterImproper(const char *name)
 	// Check for existence of master Improper already
 	if (hasMasterImproper(name))
 	{
-		Messenger::error("Refused to add a new master Improper named '%s' since one with the same name already exists.\n", name);
+		Messenger::error(
+			"Refused to add a new master Improper named '%s' since one with the same name already exists.\n", name);
 		return NULL;
 	}
 

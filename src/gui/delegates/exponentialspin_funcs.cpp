@@ -22,7 +22,8 @@
 #include "gui/delegates/exponentialspin.hui"
 #include <stdio.h>
 
-ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals) : QItemDelegate(parent)
+ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals)
+	: QItemDelegate(parent)
 {
 	// Private variables
 	min_ = vmin;
@@ -32,7 +33,8 @@ ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, d
 }
 
 // Create editor
-QWidget *ExponentialSpinDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *ExponentialSpinDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+					       const QModelIndex &index) const
 {
 	// Create editor widget (in this case a double spin box) and set some properties
 	ExponentialSpin *editor = new ExponentialSpin(parent);
@@ -65,4 +67,8 @@ void ExponentialSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *
 }
 
 // Update widget geometry
-void ExponentialSpinDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void ExponentialSpinDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+						   const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}

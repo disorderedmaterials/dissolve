@@ -96,7 +96,8 @@ void ConfigurationWidget::on_ViewResetButton_clicked(bool checked)
 
 void ConfigurationWidget::on_ViewSpheresButton_clicked(bool checked)
 {
-	configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle : RenderableConfiguration::LinesStyle);
+	configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle
+							      : RenderableConfiguration::LinesStyle);
 
 	configurationViewer()->notifyStyleModified();
 
@@ -110,4 +111,7 @@ void ConfigurationWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 	configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { configurationViewer()->copyViewToClipboard(checked); }
+void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+{
+	configurationViewer()->copyViewToClipboard(checked);
+}

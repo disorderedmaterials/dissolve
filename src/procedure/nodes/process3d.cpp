@@ -30,15 +30,20 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *target) : ProcedureNode(ProcedureNode::Process3DNode)
+Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *target)
+	: ProcedureNode(ProcedureNode::Process3DNode)
 {
-	keywords_.add("Target", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target), "SourceData", "Collect3D node containing the data to process");
+	keywords_.add("Target",
+		      new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target),
+		      "SourceData", "Collect3D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
 	keywords_.add("Target", new CharStringKeyword("Z"), "LabelZ", "Label for the z axis");
-	keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save", "Save processed data to disk");
-	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation", "Branch providing normalisation operations for the data");
+	keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save",
+		      "Save processed data to disk");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext),
+		      "Normalisation", "Branch providing normalisation operations for the data");
 
 	// Initialise branch
 	normalisationBranch_ = NULL;
@@ -54,7 +59,10 @@ Process3DProcedureNode::~Process3DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Process3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Process3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Data
@@ -123,11 +131,13 @@ bool Process3DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								   const char *prefix, GenericList &targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data3D &data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	Data3D &data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+							  GenericItem::InRestartFileFlag, &created);
 	processedData_ = &data;
 
 	data.setName(name());
@@ -177,4 +187,7 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+{
+	return true;
+}

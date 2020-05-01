@@ -32,7 +32,7 @@
 // -- Object type_ should be set from a local enum, for instance, containing all object types relevant in the use case.
 class ObjectInfo
 {
-      public:
+	public:
 	ObjectInfo()
 	{
 		type_ = 0;
@@ -53,7 +53,7 @@ class ObjectInfo
 		nObjectTypes
 	};
 
-      private:
+	private:
 	// Object target type
 	int type_;
 	// Target object id
@@ -61,7 +61,7 @@ class ObjectInfo
 	// Target object tag
 	CharString tag_;
 
-      public:
+	public:
 	// Set object target type and id
 	void set(int type, int id)
 	{
@@ -80,13 +80,13 @@ class ObjectInfo
 	/*
 	 * Tag Control
 	 */
-      private:
+	private:
 	// Whether automatic suffixing of tags is enabled
 	static bool autoSuffixing_;
 	// Suffix to append (if autoSuffixing_)
 	static CharString autoSuffix_;
 
-      public:
+	public:
 	// Enable automatic suffixing of tags
 	static void enableAutoSuffixing(const char *suffix)
 	{
@@ -104,10 +104,11 @@ class ObjectInfo
 // Object Store
 template <class T> class ObjectStore
 {
-      public:
+	public:
 	ObjectStore<T>(T *object)
 	{
-		// If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy constructor)
+		// If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy
+		// constructor)
 		if (object == NULL)
 		{
 			Messenger::error("ObjectStore was passed a NULL pointer...\n");
@@ -143,13 +144,13 @@ template <class T> class ObjectStore
 	/*
 	 * Object Data
 	 */
-      private:
+	private:
 	// Pointer to object that this ObjectStore was created with
 	T *object_;
 	// Object info
 	ObjectInfo objectInfo_;
 
-      public:
+	public:
 	// Return object type
 	int objectType() { return objectInfo_.type(); }
 	// Return object ID
@@ -168,8 +169,9 @@ template <class T> class ObjectStore
 
 			// Do a sanity check on the type prefix...
 			if (!DissolveSys::sameString(typePrefix, objectTypeName_))
-				Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", tag, typePrefix.get(),
-						 objectTypeName_);
+				Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix "
+						 "('%s', while this class is '%s').\n",
+						 tag, typePrefix.get(), objectTypeName_);
 		}
 		else
 			objectTag = tag;
@@ -185,8 +187,9 @@ template <class T> class ObjectStore
 			T *object = findObject(CharString("%s%%%s", objectTypeName_, objectTag.get()));
 			if (object && (object != this))
 			{
-				Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s%%%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_,
-						objectTypeName_, objectTag.get());
+				Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s%%%s' already exists in the "
+						"ObjectStore. Behaviour will be undefined...\n",
+						objectTypeName_, objectTypeName_, objectTag.get());
 			}
 		}
 #endif
@@ -200,13 +203,13 @@ template <class T> class ObjectStore
 	/*
 	 * Object List
 	 */
-      private:
+	private:
 	// Master list of available objects
 	static RefDataList<T, int> objects_;
 	// Integer count for object IDs
 	static int objectCount_;
 
-      public:
+	public:
 	// Return whether specified object still exists
 	static bool objectValid(T *object)
 	{
@@ -224,7 +227,8 @@ template <class T> class ObjectStore
 		}
 		else if (!objects_.contains(object))
 		{
-			Messenger::printVerbose("Invalid Object: Specified %s no longer exists (original pointer was %p).\n", objectDescription, object);
+			Messenger::printVerbose("Invalid Object: Specified %s no longer exists (original pointer was %p).\n",
+						objectDescription, object);
 			return false;
 		}
 		return true;
@@ -254,7 +258,9 @@ template <class T> class ObjectStore
 		RefDataItem<T, int> *rj = objects_.containsData(id);
 		if ((rj != NULL) && (rj != targetRefItem))
 		{
-			printf("Internal Error: Another object with id %i already exists in the ObjectStore, so refusing to duplicate it.\n", id);
+			printf("Internal Error: Another object with id %i already exists in the ObjectStore, so refusing to "
+			       "duplicate it.\n",
+			       id);
 			return false;
 		}
 
@@ -296,7 +302,8 @@ template <class T> class ObjectStore
 			// Check the type prefix
 			if (!DissolveSys::sameString(typePrefix, objectTypeName_))
 			{
-				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(), objectTypeName_);
+				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n",
+						 typePrefix.get(), objectTypeName_);
 				return NULL;
 			}
 			for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())

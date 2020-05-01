@@ -27,12 +27,16 @@ void ForcesModule::initialise()
 {
 	// Test
 	keywords_.add("Test", new BoolKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");
-	keywords_.add("Test", new BoolKeyword(false), "TestAnalytic", "Compare parallel force routines against exact (analytic) force rather than tabulated values");
+	keywords_.add("Test", new BoolKeyword(false), "TestAnalytic",
+		      "Compare parallel force routines against exact (analytic) force rather than tabulated values");
 	keywords_.add("Test", new BoolKeyword(true), "TestInter", "Include interatomic forces in test");
 	keywords_.add("Test", new BoolKeyword(true), "TestIntra", "Include intramolecular forces in test");
-	keywords_.add("Test", new FileAndFormatKeyword(referenceForces_, "EndTestReference"), "TestReference", "Reference forces for test");
-	keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold of force (%%) at which test comparison will fail");
+	keywords_.add("Test", new FileAndFormatKeyword(referenceForces_, "EndTestReference"), "TestReference",
+		      "Reference forces for test");
+	keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold",
+		      "Threshold of force (%%) at which test comparison will fail");
 
 	// Export
-	keywords_.add("Export", new BoolKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
+	keywords_.add("Export", new BoolKeyword(false), "Save",
+		      "Save forces for the Configuration to the file '<name>.forces.txt'");
 }

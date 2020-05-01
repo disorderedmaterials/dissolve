@@ -37,11 +37,13 @@ SpeciesAtom *SiteViewer::atomAt(int x, int y)
 	double lengthScale;
 	Vec3<double> rScreen;
 
-	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point provided
+	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
+	// provided
 	ListIterator<SpeciesAtom> atomIterator(species_->atoms());
 	while (SpeciesAtom *i = atomIterator.iterate())
 	{
-		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with the atom's screen radius
+		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with
+		// the atom's screen radius
 		lengthScale = 0.3;
 		rScreen = view_.dataToScreen(i->r(), lengthScale);
 
@@ -90,13 +92,15 @@ void SiteViewer::endInteraction()
 	case (SiteViewer::DefaultInteraction):
 		break;
 	case (SiteViewer::SelectAreaInteraction):
-		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
+		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather
+		// than an area select
 		if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 		{
 			// Single, targetted click - atom under mouse?
 			SpeciesAtom *i = atomAt(rMouseLast_.x, rMouseLast_.y);
 
-			// If there is an atom at the current position, (de)select it, maintaining the current selection if Shift was pressed
+			// If there is an atom at the current position, (de)select it, maintaining the current selection if
+			// Shift was pressed
 			if (i)
 			{
 				if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
@@ -178,7 +182,8 @@ const char *SiteViewer::interactionModeText() const
 	case (SiteViewer::DefaultInteraction):
 		return "View: <b>Left</b> Select; <b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
 	case (SiteViewer::SelectAreaInteraction):
-		return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; <i>+Shift</i> Toggle";
+		return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; "
+		       "<i>+Shift</i> Toggle";
 	case (SiteViewer::RotateViewInteraction):
 		return "Rotate view";
 	case (SiteViewer::TranslateViewInteraction):

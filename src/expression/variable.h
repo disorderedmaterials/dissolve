@@ -28,14 +28,14 @@
 // Variable
 class ExpressionVariable : public ExpressionNode
 {
-      public:
+	public:
 	ExpressionVariable(ExpressionValue value = ExpressionValue(), bool readOnly = false);
 	~ExpressionVariable();
 
 	/*
 	 * Variable Data
 	 */
-      protected:
+	protected:
 	// Name of the variable
 	CharString name_;
 	// Value of variable
@@ -43,7 +43,7 @@ class ExpressionVariable : public ExpressionNode
 	// Initial value of new variable
 	ExpressionNode *initialValue_;
 
-      public:
+	public:
 	// Set name of variable
 	void setName(const char *s);
 	// Get name of variable
@@ -56,7 +56,7 @@ class ExpressionVariable : public ExpressionNode
 	/*
 	 * Set / Get
 	 */
-      public:
+	public:
 	// Return value of node
 	bool execute(ExpressionValue &value);
 	// Set value of node
@@ -69,7 +69,7 @@ class ExpressionVariable : public ExpressionNode
 	/*
 	 * Inherited Virtuals
 	 */
-      public:
+	public:
 	// Print node contents
 	void nodePrint(int offset, const char *prefix = "");
 	// Initialise node

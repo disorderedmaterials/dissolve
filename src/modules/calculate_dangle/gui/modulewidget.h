@@ -35,30 +35,30 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	CalculateDAngleModule *module_;
 
-      public:
+	public:
 	CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::CalculateDAngleModuleWidget ui_;
 	// DataViewers contained within this widget
 	DataViewer *rdfGraph_, *angleGraph_, *dAngleGraph_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -67,11 +67,11 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(CalculateDAngleModule *module);
 
-      private slots:
+	private slots:
 };
 
 #endif

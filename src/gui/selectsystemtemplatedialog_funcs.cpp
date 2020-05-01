@@ -24,7 +24,8 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates) : systemTemplates_(systemTemplates)
+SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates)
+	: systemTemplates_(systemTemplates)
 {
 	ui_.setupUi(this);
 
@@ -32,7 +33,8 @@ SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const Li
 	ListIterator<SystemTemplate> templateIterator(systemTemplates_);
 	while (SystemTemplate *sysTemp = templateIterator.iterate())
 	{
-		QListWidgetItem *item = new QListWidgetItem(QPixmap(sysTemp->iconResource()), sysTemp->name(), ui_.TemplatesList);
+		QListWidgetItem *item =
+			new QListWidgetItem(QPixmap(sysTemp->iconResource()), sysTemp->name(), ui_.TemplatesList);
 		item->setData(Qt::UserRole, VariantPointer<SystemTemplate>(sysTemp));
 	}
 }
@@ -59,7 +61,8 @@ void SelectSystemTemplateDialog::updateTemplatesList(QString filter)
 			bool inName = sysTemp->name().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
 			// Check description
-			bool inDescription = sysTemp->description().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+			bool inDescription =
+				sysTemp->description().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
 			// Hide the item?
 			bool hide = (!inName) && (!inDescription);

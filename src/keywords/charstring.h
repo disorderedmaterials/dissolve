@@ -30,14 +30,14 @@
 // Keyword with CharString Data
 class CharStringKeyword : public KeywordData<CharString>
 {
-      public:
+	public:
 	CharStringKeyword(CharString value = CharString());
 	~CharStringKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -50,7 +50,7 @@ class CharStringKeyword : public KeywordData<CharString>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)

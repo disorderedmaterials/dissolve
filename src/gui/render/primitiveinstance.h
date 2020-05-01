@@ -32,7 +32,7 @@ class GLExtensions;
 // Primitive Instance
 class PrimitiveInstance : public ListItem<PrimitiveInstance>
 {
-      public:
+	public:
 	PrimitiveInstance();
 	// Instance Type
 	enum InstanceType
@@ -42,7 +42,7 @@ class PrimitiveInstance : public ListItem<PrimitiveInstance>
 		VBOInstance
 	};
 
-      private:
+	private:
 	// Global instance type to use
 	static PrimitiveInstance::InstanceType globalInstanceType_;
 	// Context to which primitive instance is associated
@@ -58,7 +58,7 @@ class PrimitiveInstance : public ListItem<PrimitiveInstance>
 	// VBO ID of index array (if using indexed VBOs)
 	GLuint vboIndexObject_;
 
-      public:
+	public:
 	// Return global instance type to use
 	static PrimitiveInstance::InstanceType globalInstanceType();
 	// Set global instance type to use

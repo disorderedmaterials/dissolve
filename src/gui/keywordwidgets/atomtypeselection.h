@@ -36,7 +36,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 	// Main form declaration
 	Ui::AtomTypeSelectionWidget ui;
@@ -44,29 +44,29 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	AtomTypeSelectionKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
 	 */
-      private:
+	private:
 	// Selection list update function
 	void updateSelectionRow(int row, AtomType *atomType, bool createItem);
 
-      private slots:
+	private slots:
 	// List item changed
 	void itemChanged(QListWidgetItem *item);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

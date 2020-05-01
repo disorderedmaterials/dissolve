@@ -22,7 +22,10 @@
 #include "keywords/pairbroadeningfunction.h"
 #include "base/lineparser.h"
 
-PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value) : KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value) {}
+PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value)
+	: KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value)
+{
+}
 
 PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword() {}
 

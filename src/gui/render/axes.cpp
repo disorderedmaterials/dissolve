@@ -142,7 +142,9 @@ void Axes::updateCoordinates()
 	{
 		// Determine central coordinate component
 		if (logarithmic_[axis])
-			coordCentre_[axis] = (inverted_[axis] ? log10(max_[axis] / min_[axis]) : log10(max_[axis] * min_[axis])) * 0.5 * stretch_[axis];
+			coordCentre_[axis] =
+				(inverted_[axis] ? log10(max_[axis] / min_[axis]) : log10(max_[axis] * min_[axis])) * 0.5 *
+				stretch_[axis];
 		else
 			coordCentre_[axis] = (max_[axis] + min_[axis]) * 0.5 * stretch_[axis];
 
@@ -150,9 +152,12 @@ void Axes::updateCoordinates()
 		for (int n = 0; n < 3; ++n)
 		{
 			// Get axis position
-			double position = (positionIsFractional_[axis] ? positionFractional_[axis][n] * (max_[n] - min_[n]) + min_[n] : positionReal_[axis][n]);
+			double position =
+				(positionIsFractional_[axis] ? positionFractional_[axis][n] * (max_[n] - min_[n]) + min_[n]
+							     : positionReal_[axis][n]);
 			if (logarithmic_[n])
-				coordMin_[axis].set(n, (inverted_[n] ? log10(max_[n] / position) : log10(position)) * stretch_[n]);
+				coordMin_[axis].set(n,
+						    (inverted_[n] ? log10(max_[n] / position) : log10(position)) * stretch_[n]);
 			else
 				coordMin_[axis].set(n, (inverted_[n] ? max_[n] - position + min_[n] : position) * stretch_[n]);
 		}
@@ -161,8 +166,10 @@ void Axes::updateCoordinates()
 		// Set axis min/max coordinates
 		if (logarithmic_[axis])
 		{
-			coordMin_[axis].set(axis, (inverted_[axis] ? log10(max_[axis] / min_[axis]) : log10(min_[axis])) * stretch_[axis]);
-			coordMax_[axis].set(axis, (inverted_[axis] ? log10(max_[axis] / max_[axis]) : log10(max_[axis])) * stretch_[axis]);
+			coordMin_[axis].set(axis, (inverted_[axis] ? log10(max_[axis] / min_[axis]) : log10(min_[axis])) *
+							  stretch_[axis]);
+			coordMax_[axis].set(axis, (inverted_[axis] ? log10(max_[axis] / max_[axis]) : log10(max_[axis])) *
+							  stretch_[axis]);
 		}
 		else
 		{
@@ -255,11 +262,12 @@ void Axes::ensureSensibleRange(double &minValue, double &maxValue, bool alwaysEx
 	/*
 	 * If exponents are different or the difference in the significands is large enough, we consider the range to be
 	 * acceptable, and only expand the range if 'alwaysExpand' is true. The degree to which we expand the range is governed
-	 * by the 'expansionFactor'. If positive this represents a fractional amount of the total range that we will increase by.
-	 * If negative, this represents an absolute value by which we will increase the range.
+	 * by the 'expansionFactor'. If positive this represents a fractional amount of the total range that we will increase
+	 * by. If negative, this represents an absolute value by which we will increase the range.
 	 */
 	DoubleExp minimum(minValue), maximum(maxValue);
-	if (alwaysExpand || ((minimum.exponent() == maximum.exponent()) && (fabs(minimum.mantissa() - maximum.mantissa()) < 1.0e-4)))
+	if (alwaysExpand ||
+	    ((minimum.exponent() == maximum.exponent()) && (fabs(minimum.mantissa() - maximum.mantissa()) < 1.0e-4)))
 	{
 		if (expansionFactor > 0.0)
 		{
@@ -620,7 +628,8 @@ void Axes::transformZ(Array2D<double> &zArray) const
 void Axes::calculateTickDeltas(int axis)
 {
 	const int nBaseValues = 5, maxIterations = 10, maxTicks = 10;
-	int power = 1, baseValues[nBaseValues] = {1, 2, 3, 4, 5}, baseValueIndex = 0, nTicks, iteration, minTicks = maxTicks / 2;
+	int power = 1, baseValues[nBaseValues] = {1, 2, 3, 4, 5}, baseValueIndex = 0, nTicks, iteration,
+	    minTicks = maxTicks / 2;
 
 	baseValueIndex = 0;
 	power = int(log10((max_[axis] - min_[axis]) / maxTicks) - 1);
@@ -687,11 +696,14 @@ Vec3<double> Axes::tickDirection(int axis) const
 		switch (parentView_.viewType())
 		{
 		case (View::FlatXYView):
-			return (axis == 0 ? Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0) : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
+			return (axis == 0 ? Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0)
+					  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
 		case (View::FlatXZView):
-			return (axis == 0 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0) : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
+			return (axis == 0 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
+					  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
 		case (View::FlatZYView):
-			return (axis == 1 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0) : Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0));
+			return (axis == 1 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
+					  : Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0));
 		default:
 			break;
 		}
@@ -1089,7 +1101,9 @@ void Axes::updateAxisPrimitives()
 		if (logarithmic_[axis])
 		{
 			clipMin_[axis] = (inverted_[axis] ? 0.0 : log10(min_[axis])) * stretch_[axis] - clipPlaneDelta;
-			clipMax_[axis] = (inverted_[axis] ? log10(max_[axis] / min_[axis]) : log10(max_[axis])) * stretch_[axis] + clipPlaneDelta;
+			clipMax_[axis] =
+				(inverted_[axis] ? log10(max_[axis] / min_[axis]) : log10(max_[axis])) * stretch_[axis] +
+				clipPlaneDelta;
 		}
 		else
 		{
@@ -1128,12 +1142,14 @@ void Axes::updateAxisPrimitives()
 		// Create axis title transformation matrix
 		titleTransform.setIdentity();
 		// 		// -- 1) Apply axial rotation along label left-to-right direction
-		// 		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationY(titleOrientation(axis).x);
-		// 		else titleTransform.applyPreRotationX(titleOrientation(axis).x);
+		// 		if (parentView_.viewType() == View::FlatZYView)
+		// titleTransform.applyPreRotationY(titleOrientation(axis).x); 		else
+		// titleTransform.applyPreRotationX(titleOrientation(axis).x);
 		// 		// -- 2) Perform in-plane rotation
-		// 		if (parentView_.viewType() == View::FlatZYView) titleTransform.applyPreRotationX(titleOrientation(axis).y);
-		// 		else if (inPlaneAxis == 1) titleTransform.applyPreRotationY(titleOrientation(axis).y);
-		// 		else titleTransform.applyPreRotationZ(titleOrientation(axis).y);
+		// 		if (parentView_.viewType() == View::FlatZYView)
+		// titleTransform.applyPreRotationX(titleOrientation(axis).y); 		else if (inPlaneAxis == 1)
+		// titleTransform.applyPreRotationY(titleOrientation(axis).y); 		else
+		// titleTransform.applyPreRotationZ(titleOrientation(axis).y);
 		titleTransform.applyPreRotationX(titleOrientation(axis).x);
 		titleTransform.applyPreRotationY(titleOrientation(axis).y);
 		titleTransform.applyPreRotationZ(titleOrientation(axis).z);
@@ -1144,7 +1160,9 @@ void Axes::updateAxisPrimitives()
 			// For the log axis, the associated surface data coordinate will already be in log form
 			if (max_[axis] < 0.0)
 			{
-				Messenger::print("Axis range is inappropriate for a log scale (%f < x < %f). Axis will not be drawn.\n", min_[axis], max_[axis]);
+				Messenger::print(
+					"Axis range is inappropriate for a log scale (%f < x < %f). Axis will not be drawn.\n",
+					min_[axis], max_[axis]);
 				return;
 			}
 
@@ -1180,8 +1198,11 @@ void Axes::updateAxisPrimitives()
 						// Get formatted value text
 						s = numberFormat_[axis].format(value);
 
-						labelPrimitives_[axis].add(fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform,
-									   parentView_.labelPointSize(), parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
+						labelPrimitives_[axis].add(
+							fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
+							tickDir * labelOrientation(axis).z, labelTransform,
+							parentView_.labelPointSize(),
+							parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
 					}
 				}
 
@@ -1219,7 +1240,8 @@ void Axes::updateAxisPrimitives()
 			delta = tickDelta_[axis] / (minorTicks_[axis] + 1);
 			value = tickFirst_[axis];
 			u = coordMin_[axis];
-			u.set(axis, (inverted_[axis] ? (max_[axis] - tickFirst_[axis]) + min_[axis] : tickFirst_[axis]) * stretch_[axis]);
+			u.set(axis, (inverted_[axis] ? (max_[axis] - tickFirst_[axis]) + min_[axis] : tickFirst_[axis]) *
+					    stretch_[axis]);
 			while (value <= max_[axis])
 			{
 				// Draw tick here, only if value >= min_
@@ -1234,8 +1256,11 @@ void Axes::updateAxisPrimitives()
 						// Get formatted label text
 						s = numberFormat_[axis].format(value);
 
-						labelPrimitives_[axis].add(fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform,
-									   parentView_.labelPointSize(), parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
+						labelPrimitives_[axis].add(
+							fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
+							tickDir * labelOrientation(axis).z, labelTransform,
+							parentView_.labelPointSize(),
+							parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
 
 						tickIsMajor[axis].add(true);
 
@@ -1254,7 +1279,8 @@ void Axes::updateAxisPrimitives()
 		}
 
 		// Add axis title
-		// -- Set basic position (corresponding to offset position of tick labels combined with title label axis position to start with...)
+		// -- Set basic position (corresponding to offset position of tick labels combined with title label axis
+		// position to start with...)
 		u = coordMin_[axis];
 		if (logarithmic_[axis])
 		{
@@ -1269,26 +1295,32 @@ void Axes::updateAxisPrimitives()
 		// -- Next step depends on whether we are automatically adjusting label positions
 		if ((useBestFlatView_ && parentView_.isFlatView()) || autoPositionTitles_)
 		{
-			Cuboid cuboid = labelPrimitives_[axis].boundingCuboid(fontInstance_, viewRotationInverse, parentView_.textZScale());
+			Cuboid cuboid = labelPrimitives_[axis].boundingCuboid(fontInstance_, viewRotationInverse,
+									      parentView_.textZScale());
 			// Project tick direction onto cuboid width/height
-			// TODO This does not account for the fact that the bounding cuboid may only partly extend over the end of ths axis tick mark (e.g. as with in-plane rotations/TopMiddle
-			// anchors)...
+			// TODO This does not account for the fact that the bounding cuboid may only partly extend over the end
+			// of ths axis tick mark (e.g. as with in-plane rotations/TopMiddle anchors)...
 			Vec3<double> extent = cuboid.maxima() - cuboid.minima();
 			extent.multiply(tickDir.x, tickDir.y, tickDir.z);
 			// -- Add on extra distance from tick mark
 			u += tickDir * (tickSize_[axis]);
 			// -- Create adjustment vector. Start by adding space between tickmark, label text, and title text
 			adjustment = tickDir * (labelOrientation(axis).z + 0.2);
-			// -- Add on label extent in the tickmark direction - we must undo the scaling on the bounding box arising from display scales etc.
-			adjustment += (tickDir * extent.magnitude()) / (fontInstance_.fontBaseHeight() * parentView_.labelPointSize() / parentView_.textZScale());
-			// -- Scaling will be done by the title point size in TextPrimitive, but all our adjustments were done with label point size, so scale it...
+			// -- Add on label extent in the tickmark direction - we must undo the scaling on the bounding box
+			// arising from display scales etc.
+			adjustment +=
+				(tickDir * extent.magnitude()) /
+				(fontInstance_.fontBaseHeight() * parentView_.labelPointSize() / parentView_.textZScale());
+			// -- Scaling will be done by the title point size in TextPrimitive, but all our adjustments were done
+			// with label point size, so scale it...
 			adjustment *= parentView_.labelPointSize() / parentView_.titlePointSize();
 		}
 		else
 			adjustment = tickDir * titleDistances_[axis];
 
 		// -- Add primitive
-		titlePrimitives_[axis].add(fontInstance_, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parentView_.titlePointSize(),
+		titlePrimitives_[axis].add(fontInstance_, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform,
+					   parentView_.titlePointSize(),
 					   parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
 	}
 
@@ -1317,25 +1349,29 @@ void Axes::updateAxisPrimitives()
 			for (int i2 = 0; i2 < tickPositions[ortho2].nItems(); ++i2)
 			{
 				// Set basic vector info
-				// The 'axis' will define its own component, with the other two coming from the tickmark positions of the other axes
+				// The 'axis' will define its own component, with the other two coming from the tickmark
+				// positions of the other axes
 				v1[axis] = coordMin_[axis][axis];
 				v1[ortho1] = tickPositions[ortho1][i1];
 				v1[ortho2] = tickPositions[ortho2][i2];
 				v2[axis] = coordMax_[axis][axis];
 				v2[ortho1] = tickPositions[ortho1][i1];
 				v2[ortho2] = tickPositions[ortho2][i2];
-				// 				v1.set(coordMin_[0][0], tickPositions[1][j], tickPositions[2][k]);
-				// 				v2.set(coordMax_[0][0], tickPositions[1][j], tickPositions[2][k]);
+				// 				v1.set(coordMin_[0][0], tickPositions[1][j],
+				// tickPositions[2][k]); 				v2.set(coordMax_[0][0], tickPositions[1][j],
+				// tickPositions[2][k]);
 
-				// If we are only drawing lines in the planes orthogonal to the axis, break if we have moved away from it...
-				// Otherwise, we change either the i1 or i2 components of v1 and v2 to position the gridline with the axis line itself
+				// If we are only drawing lines in the planes orthogonal to the axis, break if we have moved
+				// away from it... Otherwise, we change either the i1 or i2 components of v1 and v2 to position
+				// the gridline with the axis line itself
 				if (!gridLinesFull_[axis])
 				{
 					// If both values are non-zero, we are done so we can break out of the loop
 					if ((i1 != 0) && (i2 != 0))
 						break;
 
-					// If the i1 counter is zero, change the values of the ortho1 axis to that of the 'axis' axis, and vice versa
+					// If the i1 counter is zero, change the values of the ortho1 axis to that of the 'axis'
+					// axis, and vice versa
 					if (i1 == 0)
 					{
 						v1[ortho1] = coordMin_[axis][ortho1];

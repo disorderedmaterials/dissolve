@@ -25,8 +25,9 @@
 #include "templates/dynamicarray.h"
 #include "templates/refdatalist.h"
 
-NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
-    : NETANode(parent, NETANode::ConnectionNode)
+NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements,
+				       std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+	: NETANode(parent, NETANode::ConnectionNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;
@@ -53,7 +54,9 @@ NETAConnectionNode::~NETAConnectionNode() {}
 // Return enum options for NETAConnectionModifiers
 EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh") << EnumOption(RepeatConnectionModifier, "n");
+	static EnumOptionsList ModifierOptions = EnumOptionsList()
+						 << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh")
+						 << EnumOption(RepeatConnectionModifier, "n");
 
 	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> options("ConnectionModifier", ModifierOptions);
 
@@ -135,8 +138,8 @@ bool NETAConnectionNode::setFlag(const char *flag, bool state)
 int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
 	// 	printf("I AM THE CONNECTION - matchPath size = %i:\n", matchPath.nItems());
-	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
-	// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
+	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
+	// iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	// Get directly connected atoms about 'i', excluding any that have already been matched
 	RefDataList<const SpeciesAtom, int> neighbours;

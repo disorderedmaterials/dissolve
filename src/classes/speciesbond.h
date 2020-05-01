@@ -34,27 +34,27 @@ class ProcessPool;
 // SpeciesBond Definition
 class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 {
-      public:
+	public:
 	SpeciesBond();
 	~SpeciesBond();
 
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-      public:
+	public:
 	// Clear object, ready for re-use
 	void clear();
 
 	/*
 	 * SpeciesAtom Information
 	 */
-      private:
+	private:
 	// First SpeciesAtom in interaction
 	SpeciesAtom *i_;
 	// Second SpeciesAtom in interaction
 	SpeciesAtom *j_;
 
-      public:
+	public:
 	// Set SpeciesAtoms involved in interaction
 	void setAtoms(SpeciesAtom *i, SpeciesAtom *j);
 	// Return first SpeciesAtom
@@ -77,7 +77,7 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	/*
 	 * Bond Type
 	 */
-      public:
+	public:
 	// Bond Type enum
 	enum BondType
 	{
@@ -95,11 +95,11 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	// Return bond order for specified bond type
 	static double bondOrder(BondType bt);
 
-      private:
+	private:
 	// Bond type
 	BondType bondType_;
 
-      public:
+	public:
 	// Set bond type
 	void setBondType(BondType type);
 	// Return bond type
@@ -110,7 +110,7 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	/*
 	 * Interaction Parameters
 	 */
-      public:
+	public:
 	// Bond functional forms
 	enum BondFunction
 	{
@@ -121,7 +121,7 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	// Return enum options for BondFunction
 	static EnumOptions<BondFunction> bondFunctions();
 
-      public:
+	public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -136,7 +136,7 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

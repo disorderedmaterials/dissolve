@@ -28,7 +28,10 @@ const char *RefineModule::type() const { return "Refine"; }
 const char *RefineModule::category() const { return "Forcefield"; }
 
 // Return brief description of module
-const char *RefineModule::brief() const { return "Refine interatomic potentials based on differences between calculated and reference data"; }
+const char *RefineModule::brief() const
+{
+	return "Refine interatomic potentials based on differences between calculated and reference data";
+}
 
 // Return the number of Configuration targets this Module requires
 int RefineModule::nRequiredTargets() const { return Module::ZeroTargets; }

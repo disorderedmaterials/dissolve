@@ -33,15 +33,16 @@ class ForcefieldAtomType;
 // Forcefield Bond Term
 class ForcefieldBondTerm
 {
-      public:
-	ForcefieldBondTerm(const char *typeI = NULL, const char *typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
-			   double data3 = 0.0);
+	public:
+	ForcefieldBondTerm(const char *typeI = NULL, const char *typeJ = NULL,
+			   SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0,
+			   double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldBondTerm();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Type names involved in interaction
 	CharString typeI_, typeJ_;
 	// Functional form of interaction
@@ -49,7 +50,7 @@ class ForcefieldBondTerm
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-      public:
+	public:
 	// Return if this term matches the atom types supplied
 	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
 	// Return functional form index of interaction

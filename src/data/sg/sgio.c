@@ -19,21 +19,21 @@ typedef struct
 } T_ExtInfo;
 
 static const char *Ext_BT_or_UA[] = {
-    /*  0 */ "abc",
-    /*  1 */ "ba-c",
-    /*  2 */ "cab",
-    /*  3 */ "-cba",
-    /*  4 */ "bca",
-    /*  5 */ "a-cb",
-    /*  6 */ "bac",		       /* 6 -> 1 */
-    /*  7 */ "cba",		       /* 7 -> 3 */
-    /*  8 */ "acb",		       /* 8 -> 5 */
-    /*  9 */ "-b",   "b-", "bb", "bb", /* 10, 11, 12 ->  9 */
-    /* 13 */ "-c",   "c-", "bc", "cb", /* 14, 15, 16 -> 13 */
-    /* 17 */ "-a",   "a-", "ba", "ab", /* 18, 19, 20 -> 17 */
-    /* 21 */ "b",
-    /* 22 */ "c",
-    /* 23 */ "a",    NULL};
+	/*  0 */ "abc",
+	/*  1 */ "ba-c",
+	/*  2 */ "cab",
+	/*  3 */ "-cba",
+	/*  4 */ "bca",
+	/*  5 */ "a-cb",
+	/*  6 */ "bac",			   /* 6 -> 1 */
+	/*  7 */ "cba",			   /* 7 -> 3 */
+	/*  8 */ "acb",			   /* 8 -> 5 */
+	/*  9 */ "-b",   "b-", "bb", "bb", /* 10, 11, 12 ->  9 */
+	/* 13 */ "-c",   "c-", "bc", "cb", /* 14, 15, 16 -> 13 */
+	/* 17 */ "-a",   "a-", "ba", "ab", /* 18, 19, 20 -> 17 */
+	/* 21 */ "b",
+	/* 22 */ "c",
+	/* 23 */ "a",    NULL};
 
 typedef struct
 {
@@ -41,8 +41,8 @@ typedef struct
 	T_RTMx SeitzMx;
 } T_HallGenerator;
 
-#define SkipWhite(cp)                                                                                                                                                                                  \
-	while (*(cp) && (*(cp) == '_' || isspace(*(cp))))                                                                                                                                              \
+#define SkipWhite(cp)                                                                                                          \
+	while (*(cp) && (*(cp) == '_' || isspace(*(cp))))                                                                      \
 	(cp)++
 
 static const char *IErr_Corrupt_TabSgName = "Internal Error: Corrupt TabSgName";
@@ -466,7 +466,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 			{
 				if (tsgn->SgNumber >= 3 && tsgn->SgNumber < 16)
 				{
-					if (WtdLblOriginChoice != ' ' || WtdExtInfo.BasisChoice != ' ' || (int)strlen(WtdExtInfo.BT_or_UA) > 2)
+					if (WtdLblOriginChoice != ' ' || WtdExtInfo.BasisChoice != ' ' ||
+					    (int)strlen(WtdExtInfo.BT_or_UA) > 2)
 						continue; /* next tsgn */
 
 					if (WtdSgNumber == tsgn->SgNumber)
@@ -478,7 +479,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 							if (ExtInfo.BT_or_UA[0] != 'c' && ExtInfo.BT_or_UA[1] != 'c')
 								continue; /* next tsgn */
 
-							if (ExtInfo.CellChoice == ' ' && (WtdExtInfo.CellChoice == ' ' || WtdExtInfo.CellChoice == '1'))
+							if (ExtInfo.CellChoice == ' ' &&
+							    (WtdExtInfo.CellChoice == ' ' || WtdExtInfo.CellChoice == '1'))
 								return tsgn;
 
 							i = 0;
@@ -486,7 +488,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 								if (*sgl == '=')
 									i++;
 
-							if (i == 2 && (WtdExtInfo.CellChoice == ' ' || WtdExtInfo.CellChoice == ExtInfo.CellChoice))
+							if (i == 2 && (WtdExtInfo.CellChoice == ' ' ||
+								       WtdExtInfo.CellChoice == ExtInfo.CellChoice))
 								return tsgn;
 
 							continue; /* next tsgn */
@@ -527,7 +530,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 				}
 				else if (ExtInfo.BasisChoice != ' ')
 				{
-					if (WtdExtInfo.OriginChoice != ' ' || WtdExtInfo.CellChoice != ' ' || WtdExtInfo.BT_or_UA[0] != '\0')
+					if (WtdExtInfo.OriginChoice != ' ' || WtdExtInfo.CellChoice != ' ' ||
+					    WtdExtInfo.BT_or_UA[0] != '\0')
 						continue; /* next tsgn */
 
 					if (ExtInfo.BasisChoice == WtdExtInfo.BasisChoice)
@@ -543,14 +547,16 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 				}
 				else if (WtdExtInfo.BasisChoice == ' ')
 				{
-					if ((WtdExtInfo.OriginChoice == ' ' && ExtInfo.OriginChoice == '1') || (WtdExtInfo.OriginChoice == '1' && ExtInfo.OriginChoice == ' ') ||
+					if ((WtdExtInfo.OriginChoice == ' ' && ExtInfo.OriginChoice == '1') ||
+					    (WtdExtInfo.OriginChoice == '1' && ExtInfo.OriginChoice == ' ') ||
 					    WtdExtInfo.OriginChoice == ExtInfo.OriginChoice)
 					{
 						if (WtdExtInfo.BT_or_UA[0])
 						{
 							if (WtdExtInfo.BT_or_UA == ExtInfo.BT_or_UA)
 								return tsgn;
-							if (WtdExtInfo.BT_or_UA == Ext_BT_or_UA[0] && ExtInfo.BT_or_UA[0] == '\0')
+							if (WtdExtInfo.BT_or_UA == Ext_BT_or_UA[0] &&
+							    ExtInfo.BT_or_UA[0] == '\0')
 								return tsgn;
 						}
 						else
@@ -1192,7 +1198,9 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 				}
 			}
 
-			if (ClearHG == 0 && (FieldType == FT_Delimiter || FieldType == FT_OriginShift || FieldType < PreviousFT || (FieldType == PreviousFT && FieldType != FT_Translation)) &&
+			if (ClearHG == 0 &&
+			    (FieldType == FT_Delimiter || FieldType == FT_OriginShift || FieldType < PreviousFT ||
+			     (FieldType == PreviousFT && FieldType != FT_Translation)) &&
 			    !(FieldType == FT_RefAxis && HG.RefAxis == 0 && PreviousFT == FT_DirCode))
 			{
 				if (HG.RefAxis == 0)
@@ -1653,7 +1661,8 @@ const char *FormatFraction(int nume, int deno, int Decimal, char *Buffer, int Si
 	return Buffer;
 }
 
-const char *RTMx2XYZ(const T_RTMx *RTMx, int FacRo, int FacTr, int Decimal, int TrFirst, int Low, const char *Seperator, char *BufferXYZ, int SizeBufferXYZ)
+const char *RTMx2XYZ(const T_RTMx *RTMx, int FacRo, int FacTr, int Decimal, int TrFirst, int Low, const char *Seperator,
+		     char *BufferXYZ, int SizeBufferXYZ)
 {
 	static const char *UpperXYZ = "XYZ";
 	static const char *LowerXYZ = "xyz";
@@ -1866,7 +1875,9 @@ void ListSgInfo(const T_SgInfo *SgInfo, int F_XYZ, int F_Verbose, FILE *fpout)
 	{
 		fprintf(fpout, "s.i.Vector  Modulus\n");
 		for (i_si_v = 0; i_si_v < SgInfo->n_si_Vector; i_si_v++)
-			fprintf(fpout, " %2d %2d %2d   %d\n", SgInfo->si_Vector[i_si_v * 3 + 0], SgInfo->si_Vector[i_si_v * 3 + 1], SgInfo->si_Vector[i_si_v * 3 + 2], SgInfo->si_Modulus[i_si_v]);
+			fprintf(fpout, " %2d %2d %2d   %d\n", SgInfo->si_Vector[i_si_v * 3 + 0],
+				SgInfo->si_Vector[i_si_v * 3 + 1], SgInfo->si_Vector[i_si_v * 3 + 2],
+				SgInfo->si_Modulus[i_si_v]);
 		putc('\n', fpout);
 	}
 
@@ -1903,7 +1914,8 @@ void ListSgInfo(const T_SgInfo *SgInfo, int F_XYZ, int F_Verbose, FILE *fpout)
 				else
 					fprintf(fpout, "   ");
 
-				fprintf(fpout, " [%2d %2d %2d]", rmxi->EigenVector[0], rmxi->EigenVector[1], rmxi->EigenVector[2]);
+				fprintf(fpout, " [%2d %2d %2d]", rmxi->EigenVector[0], rmxi->EigenVector[1],
+					rmxi->EigenVector[2]);
 
 				if (rmxi->RefAxis)
 					fprintf(fpout, " '%c'", rmxi->RefAxis);

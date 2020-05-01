@@ -35,7 +35,7 @@ class Integrator
 	/*
 	 * Static Functions
 	 */
-      public:
+	public:
 	// Compute integral of supplied data via trapezoid rule
 	static double trapezoid(const Data1D &data);
 	// Compute integral of supplied data via trapezoid rule between the specified limits

@@ -48,14 +48,14 @@ class SpeciesAtom;
 // Forcefield Base Class
 class Forcefield : public Elements
 {
-      public:
+	public:
 	Forcefield() = default;
 	virtual ~Forcefield() = default;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// ShortRange Interaction Type
 	enum ShortRangeType
 	{
@@ -77,7 +77,7 @@ class Forcefield : public Elements
 	/*
 	 * Atom Type Data
 	 */
-      protected:
+	protected:
 	// Short-range parameter sets
 	std::vector<ForcefieldParameters> shortRangeParameters_;
 	// Atom type data
@@ -85,21 +85,26 @@ class Forcefield : public Elements
 	// Atom type data, grouped by element
 	std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> atomTypesByElementPrivate_;
 
-      protected:
+	protected:
 	// Add short-range parameters
 	void addParameters(const char *name, double data0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	// Add new atom type with its own parameters
-	void addAtomType(int Z, int index, const char *name, const char *netaDefinition, const char *description, double q, double data0, double data1, double data2 = 0.0, double data3 = 0.0);
+	void addAtomType(int Z, int index, const char *name, const char *netaDefinition, const char *description, double q,
+			 double data0, double data1, double data2 = 0.0, double data3 = 0.0);
 	// Add new atom type referencing existing parameters by name
-	void addAtomType(int Z, int index, const char *name, const char *netaDefinition, const char *description, double q, const char *parameterReference);
+	void addAtomType(int Z, int index, const char *name, const char *netaDefinition, const char *description, double q,
+			 const char *parameterReference);
 	// Copy existing atom type
-	void copyAtomType(const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition = NULL, const char *equivalentName = NULL);
+	void copyAtomType(const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition = NULL,
+			  const char *equivalentName = NULL);
 	// Determine and return atom type for specified SpeciesAtom from supplied Array of types
-	static ForcefieldAtomType *determineAtomType(SpeciesAtom *i, const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes);
+	static ForcefieldAtomType *
+	determineAtomType(SpeciesAtom *i,
+			  const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes);
 	// Determine and return atom type for specified SpeciesAtom
 	virtual ForcefieldAtomType *determineAtomType(SpeciesAtom *i) const;
 
-      public:
+	public:
 	// Return named short-range parameters (if they exist)
 	const ForcefieldParameters *shortRangeParameters(const char *name) const;
 	// Return the named ForcefieldAtomType (if it exists)
@@ -110,7 +115,7 @@ class Forcefield : public Elements
 	/*
 	 * Term Data
 	 */
-      private:
+	private:
 	// Bond terms of the Forcefield
 	std::vector<ForcefieldBondTerm> bondTerms_;
 	// Angle terms of the Forcefield
@@ -120,49 +125,62 @@ class Forcefield : public Elements
 	// Improper terms of the Forcefield
 	std::vector<ForcefieldImproperTerm> improperTerms_;
 
-      protected:
+	protected:
 	// Add bond term
-	void addBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	void addBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0 = 0.0,
+			 double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	// Add angle term
-	void addAngleTerm(const char *typeI, const char *typeJ, const char *typeK, SpeciesAngle::AngleFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	void addAngleTerm(const char *typeI, const char *typeJ, const char *typeK, SpeciesAngle::AngleFunction form,
+			  double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	// Add torsion term
-	void addTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL, SpeciesTorsion::TorsionFunction form, double data0 = 0.0, double data1 = 0.0,
-			    double data2 = 0.0, double data3 = 0.0);
+	void addTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
+			    SpeciesTorsion::TorsionFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
+			    double data3 = 0.0);
 	// Add improper term
-	void addImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL, SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0,
-			     double data2 = 0.0, double data3 = 0.0);
+	void addImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
+			     SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
+			     double data3 = 0.0);
 	// Match any kind of term
 	template <class T, typename... Args> static optional<const T &> termMatch_(std::vector<T>, Args...);
 
-      public:
+	public:
 	// Return bond term for the supplied atom type pair (if it exists)
-	virtual optional<const ForcefieldBondTerm &> getBondTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
+	virtual optional<const ForcefieldBondTerm &> getBondTerm(const ForcefieldAtomType *i,
+								 const ForcefieldAtomType *j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
-	virtual optional<const ForcefieldAngleTerm &> getAngleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
+	virtual optional<const ForcefieldAngleTerm &> getAngleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
+								   const ForcefieldAtomType *k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)
-	virtual optional<const ForcefieldTorsionTerm &> getTorsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+	virtual optional<const ForcefieldTorsionTerm &> getTorsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
+								       const ForcefieldAtomType *k,
+								       const ForcefieldAtomType *l) const;
 	// Return improper term for the supplied atom type quartet (if it exists)
-	virtual optional<const ForcefieldImproperTerm &> getImproperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+	virtual optional<const ForcefieldImproperTerm &> getImproperTerm(const ForcefieldAtomType *i,
+									 const ForcefieldAtomType *j,
+									 const ForcefieldAtomType *k,
+									 const ForcefieldAtomType *l) const;
 
 	/*
 	 * Term Assignment
 	 */
-      protected:
+	protected:
 	// Assign suitable AtomType to the supplied atom
 	virtual bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
 
-      public:
+	public:
 	// AtomType Assignment Strategy
 	enum AtomTypeAssignmentStrategy
 	{
 		TypeAll,      /* Assign atom types to all atoms, overwriting any that exist */
 		TypeMissing,  /* Assign atom types to all atoms that do not currently have a type assigned */
-		TypeSelection /* Assign atom types to the current selection, overwriting any types on the atoms that already exist */
+		TypeSelection /* Assign atom types to the current selection, overwriting any types on the atoms that already
+				 exist */
 	};
 	// Intramolecular Term Assignment Flags
 	enum IntramolecularTermAssignmentFlags
 	{
-		DetermineTypesFlag = 1,    /* Attempt to determine atom types on-the-fly, rather than use those existing on the atoms */
+		DetermineTypesFlag =
+			1, /* Attempt to determine atom types on-the-fly, rather than use those existing on the atoms */
 		GenerateImpropersFlag = 2, /* Generate improper terms where available */
 		SelectionOnlyFlag = 4      /* Only assign terms where all atoms are in the current selection */
 	};
@@ -174,7 +192,7 @@ class Forcefield : public Elements
 	/*
 	 * Atom Environment Helpers
 	 */
-      public:
+	public:
 	// Atom Geometry enum
 	enum AtomGeometry
 	{
@@ -190,13 +208,14 @@ class Forcefield : public Elements
 		nAtomGeometries
 	};
 
-      protected:
+	protected:
 	// Calculate and return the geometry of the specified SpeciesAtom
 	AtomGeometry geometryOfAtom(SpeciesAtom *i) const;
 	// Return whether the specified SpeciesAtom exists in the specified geometry
 	bool isAtomGeometry(SpeciesAtom *i, AtomGeometry geom) const;
 	// Return whether supplied bonding pattern around the SpeciesAtom matches *exactly*
-	bool isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble = 0, const int nTriple = 0, const int nQuadruple = 0, const int nAromatic = 0) const;
+	bool isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble = 0, const int nTriple = 0,
+			   const int nQuadruple = 0, const int nAromatic = 0) const;
 	// Return whether the specified atom is bound to a specific element (and count thereof)
 	bool isBoundTo(const SpeciesAtom *i, Element *element, const int count = 1, bool allowMoreThanCount = true) const;
 	// Guess and return oxidation state for the specified SpeciesAtom

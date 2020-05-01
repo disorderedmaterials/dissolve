@@ -31,21 +31,21 @@
 // Analyse Module
 class AnalyseModule : public Module
 {
-      public:
+	public:
 	AnalyseModule();
 	~AnalyseModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -58,32 +58,32 @@ class AnalyseModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Function Data
 	 */
-      private:
+	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 
-      public:
+	public:
 	// Return the analyser
 	Procedure &analyser();
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

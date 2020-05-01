@@ -35,7 +35,7 @@
  */
 template <class T> class List
 {
-      public:
+	public:
 	List<T>()
 	{
 		listHead_ = NULL;
@@ -72,7 +72,8 @@ template <class T> class List
 		T *newitem, *olditem;
 		for (olditem = source.first(); olditem != NULL; olditem = olditem->next_)
 		{
-			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own it
+			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own
+			// it
 			newitem = new T(*olditem);
 			newitem->prev_ = NULL;
 			newitem->next_ = NULL;
@@ -87,7 +88,8 @@ template <class T> class List
 	{
 		if ((index < 0) || (index >= nItems_))
 		{
-			Messenger::error("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List).\n", index, nItems_);
+			Messenger::error("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List).\n", index,
+					 nItems_);
 			return NULL;
 		}
 		return array()[index];
@@ -96,7 +98,7 @@ template <class T> class List
 	/*
 	 * Basic Data
 	 */
-      protected:
+	protected:
 	// Pointers to head and tail of list
 	T *listHead_, *listTail_;
 	// Number of items in list
@@ -108,7 +110,7 @@ template <class T> class List
 	// Whether to only disown items on destruction, rather than delete them
 	bool disownOnDestruction_;
 
-      public:
+	public:
 	// Clear the list
 	void clear()
 	{
@@ -146,7 +148,7 @@ template <class T> class List
 	/*
 	 * Item Addition
 	 */
-      public:
+	public:
 	// Append an item to the list
 	template <typename... Args> T *add(Args... args)
 	{
@@ -291,7 +293,7 @@ template <class T> class List
 	/*
 	 * Item Removal
 	 */
-      public:
+	public:
 	// Disown the item, but do not delete it
 	void disown(T *item)
 	{
@@ -350,7 +352,9 @@ template <class T> class List
 	{
 		if ((pos < 0) || (pos >= nItems_))
 		{
-			Messenger::error("Internal Error: Invalid position %i passed to List<T>::remove(int pos) (nItems_ = %i)\n", pos, nItems_);
+			Messenger::error(
+				"Internal Error: Invalid position %i passed to List<T>::remove(int pos) (nItems_ = %i)\n", pos,
+				nItems_);
 			return;
 		}
 		remove(array()[pos]);
@@ -432,7 +436,7 @@ template <class T> class List
 	/*
 	 * Array / Indexing
 	 */
-      public:
+	public:
 	// Find list index of supplied item
 	int indexOf(const T *item) const
 	{
@@ -473,7 +477,8 @@ template <class T> class List
 				break;
 			i = i->next_;
 			if (i == NULL)
-				Messenger::error("List::fillArray <<<< Not enough items in list - requested %i, had %i >>>>\n", nItems, nItems_);
+				Messenger::error("List::fillArray <<<< Not enough items in list - requested %i, had %i >>>>\n",
+						 nItems, nItems_);
 		}
 	}
 	// Generate (if necessary) and return item array
@@ -504,7 +509,7 @@ template <class T> class List
 	/*
 	 * Search
 	 */
-      public:
+	public:
 	// Return whether the item is owned by the list
 	bool contains(const T *searchItem) const
 	{
@@ -518,7 +523,7 @@ template <class T> class List
 	/*
 	 * Item Moves
 	 */
-      private:
+	private:
 	// Swap two items in list (by pointer)
 	void swap(T *item1, T *item2)
 	{
@@ -594,7 +599,7 @@ template <class T> class List
 		regenerate_ = true;
 	}
 
-      public:
+	public:
 	// Shift item up (towards head)
 	void shiftUp(T *item)
 	{
@@ -630,13 +635,15 @@ template <class T> class List
 		// Check positions
 		if ((target < 0) || (target >= nItems_))
 		{
-			Messenger::error("Internal Error: Old position (%i) is out of range (0 - %i) in List<T>::move\n", target, nItems_ - 1);
+			Messenger::error("Internal Error: Old position (%i) is out of range (0 - %i) in List<T>::move\n",
+					 target, nItems_ - 1);
 			return;
 		}
 		int newpos = target + delta;
 		if ((newpos < 0) || (newpos >= nItems_))
 		{
-			Messenger::error("Internal Error: New position (%i) is out of range (0 - %i) in List<T>::move\n", newpos, nItems_ - 1);
+			Messenger::error("Internal Error: New position (%i) is out of range (0 - %i) in List<T>::move\n",
+					 newpos, nItems_ - 1);
 			return;
 		}
 		// Get pointer to item that we're moving and shift it
@@ -773,12 +780,14 @@ template <class T> class List
 		// Check positions
 		if ((id1 < 0) || (id1 >= nItems_))
 		{
-			Messenger::error("Internal Error: First index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id1, nItems_ - 1);
+			Messenger::error("Internal Error: First index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n",
+					 id1, nItems_ - 1);
 			return;
 		}
 		if ((id2 < 0) || (id2 >= nItems_))
 		{
-			Messenger::error("Internal Error: Second index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id2, nItems_ - 1);
+			Messenger::error("Internal Error: Second index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n",
+					 id2, nItems_ - 1);
 			return;
 		}
 
@@ -795,7 +804,7 @@ template <class T> class List
  */
 template <class T, class P> class ParentList : public List<T>
 {
-      public:
+	public:
 	// Override the add() member function
 	T *add(P &parent)
 	{
@@ -811,7 +820,8 @@ template <class T, class P> class ParentList : public List<T>
 		T *newitem, *olditem;
 		for (olditem = source.first(); olditem != NULL; olditem = olditem->next_)
 		{
-			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own it
+			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own
+			// it
 			newitem = new T(olditem->parent());
 			*newitem = *olditem;
 			newitem->prev_ = NULL;
@@ -828,14 +838,14 @@ template <class T, class P> class ParentList : public List<T>
  */
 template <class T> class ListIterator
 {
-      public:
+	public:
 	ListIterator<T>(const List<T> &source, bool reverse = false) : reverse_(reverse), targetList_(source)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
 	}
 
-      private:
+	private:
 	// Whether the iterator has reached the end of the list
 	bool finished_;
 	// Whether the iterator operates in reverse (iterating tail to head)
@@ -845,7 +855,7 @@ template <class T> class ListIterator
 	// Current item
 	T *currentItem_;
 
-      public:
+	public:
 	// Iterate
 	T *iterate()
 	{

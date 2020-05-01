@@ -31,35 +31,35 @@ class Axes;
 // Renderable for Data3D
 class RenderableData3D : public Renderable
 {
-      public:
+	public:
 	RenderableData3D(const Data3D *source, const char *objectTag);
 	~RenderableData3D();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source data
 	const Data3D *source_;
 
-      private:
+	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-      public:
+	public:
 	// Return version of data
 	int dataVersion();
 
 	/*
 	 * Transform / Limits
 	 */
-      private:
+	private:
 	// Transformed data
 	Data3D transformedData_;
 
-      protected:
+	protected:
 	// Transform data according to current settings
 	void transformValues();
 	// Return reference to transformed data
@@ -68,18 +68,21 @@ class RenderableData3D : public Renderable
 	/*
 	 * Rendering Primitives
 	 */
-      private:
+	private:
 	// Primitive to represent data
 	Primitive *dataPrimitive_;
 
-      private:
+	private:
 	// Create line strip primitive
-	void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array<double> &displayAbscissa, const Array3D<double> &displayValues, const Axes &axes,
+	void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
+			   const Array<double> &displayAbscissa, const Array3D<double> &displayValues, const Axes &axes,
 			   const ColourDefinition &colourDefinition);
-	void marchingCubesOriginal(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array<double> &displayZAbscissa, const Array3D<double> &displayValues,
-				   double lowerCutoff, double upperCutoff, const ColourDefinition &colourDefinition, const Axes &axes, Primitive *primitive);
+	void marchingCubesOriginal(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
+				   const Array<double> &displayZAbscissa, const Array3D<double> &displayValues,
+				   double lowerCutoff, double upperCutoff, const ColourDefinition &colourDefinition,
+				   const Axes &axes, Primitive *primitive);
 
-      protected:
+	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
@@ -88,7 +91,7 @@ class RenderableData3D : public Renderable
 	/*
 	 * Style
 	 */
-      public:
+	public:
 	// Display Styles enum
 	enum Data3DDisplayStyle
 	{
@@ -98,7 +101,7 @@ class RenderableData3D : public Renderable
 	// Return EnumOptions for Data3DDisplayStyle
 	static EnumOptions<Data3DDisplayStyle> data3DDisplayStyles();
 
-      private:
+	private:
 	// Display style for the renderable
 	Data3DDisplayStyle displayStyle_;
 	// Lower cutoff for surface generation
@@ -108,7 +111,7 @@ class RenderableData3D : public Renderable
 	// Surface shininess for SolidSurface style
 	double surfaceShininess_;
 
-      public:
+	public:
 	// Set display style for renderable
 	void setDisplayStyle(Data3DDisplayStyle displayStyle);
 	// Return display style for the renderable
@@ -125,7 +128,7 @@ class RenderableData3D : public Renderable
 	/*
 	 * Style I/O
 	 */
-      public:
+	public:
 	// Data3DStyle Keywords Enum
 	enum Data3DStyleKeyword
 	{

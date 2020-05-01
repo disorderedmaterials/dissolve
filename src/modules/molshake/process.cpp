@@ -71,9 +71,12 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Print argument/parameter summary
 		Messenger::print("MolShake: Cutoff distance is %f.\n", cutoffDistance);
 		Messenger::print("MolShake: Performing %i shake(s) per Molecule.\n", nShakesPerMolecule);
-		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin,
-				 translationStepSizeMax);
-		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
+		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= "
+				 "delta <= %f).\n",
+				 translationStepSize, translationStepSizeMin, translationStepSizeMax);
+		Messenger::print(
+			"MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n",
+			rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
 		Messenger::print("\n");
 
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -89,7 +92,8 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
-		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0, nGeneralAttempts = 0;
+		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
+			   nGeneralAttempts = 0;
 		bool accept;
 		double currentEnergy, newEnergy, delta, totalDelta = 0.0;
 		Matrix3 transform;
@@ -97,8 +101,8 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		const Box *box = cfg->box();
 
 		/*
-		 * In order to be able to adjust translation and rotational steps independently, we will perform 80% of moves including both a translation
-		 * a rotation, 10% using only translations, and 10% using only rotations.
+		 * In order to be able to adjust translation and rotational steps independently, we will perform 80% of moves
+		 * including both a translation a rotation, 10% using only translations, and 10% using only rotations.
 		 */
 
 		// Set initial random offset for our counter determining whether to perform R+T, R, or T.
@@ -161,7 +165,8 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 					// Create a random translation vector and apply it to the Molecule's centre
 					if (translate)
 					{
-						rDelta.set(procPool.randomPlusMinusOne() * translationStepSize, procPool.randomPlusMinusOne() * translationStepSize,
+						rDelta.set(procPool.randomPlusMinusOne() * translationStepSize,
+							   procPool.randomPlusMinusOne() * translationStepSize,
 							   procPool.randomPlusMinusOne() * translationStepSize);
 						mol->translate(rDelta);
 					}
@@ -169,7 +174,8 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 					// Create a random rotation matrix and apply it to the Molecule
 					if (rotate)
 					{
-						transform.createRotationXY(procPool.randomPlusMinusOne() * rotationStepSize, procPool.randomPlusMinusOne() * rotationStepSize);
+						transform.createRotationXY(procPool.randomPlusMinusOne() * rotationStepSize,
+									   procPool.randomPlusMinusOne() * rotationStepSize);
 						mol->transform(box, transform);
 					}
 
@@ -193,7 +199,8 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 						changeStore.revertAll();
 
 					// Increase attempt counters
-					// The strategy in force at any one time may vary, so use the distributor's helper functions.
+					// The strategy in force at any one time may vary, so use the distributor's helper
+					// functions.
 					if (distributor.collectStatistics())
 					{
 						if (accept)
@@ -253,9 +260,12 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Calculate and print acceptance rates
 		double transRate = double(nTranslationsAccepted) / nTranslationAttempts;
 		double rotRate = double(nRotationsAccepted) / nRotationAttempts;
-		Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
-		Messenger::print("Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * transRate, nTranslationsAccepted, nTranslationAttempts);
-		Messenger::print("Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * rotRate, nRotationsAccepted, nRotationAttempts);
+		Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts,
+				 timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n",
+				 100.0 * transRate, nTranslationsAccepted, nTranslationAttempts);
+		Messenger::print("Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * rotRate,
+				 nRotationsAccepted, nRotationAttempts);
 
 		// Update and set translation step size
 		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : transRate / targetAcceptanceRate;

@@ -27,7 +27,10 @@
 #include "module/groups.h"
 #include "module/module.h"
 
-ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups) : KeywordData<ModuleGroups &>(KeywordBase::ModuleGroupsData, groups) {}
+ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups)
+	: KeywordData<ModuleGroups &>(KeywordBase::ModuleGroupsData, groups)
+{
+}
 
 ModuleGroupsKeyword::~ModuleGroupsKeyword() {}
 
@@ -59,8 +62,8 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData 
 	// Check the module's type
 	if (!data_.moduleTypeIsAllowed(module->type()))
 	{
-		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n", parser.argc(startArg), module->type(),
-				 data_.allowedModuleTypes().asCommaSeparatedList());
+		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n",
+				 parser.argc(startArg), module->type(), data_.allowedModuleTypes().asCommaSeparatedList());
 		return false;
 	}
 

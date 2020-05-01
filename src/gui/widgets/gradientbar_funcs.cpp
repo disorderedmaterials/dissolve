@@ -34,7 +34,8 @@ GradientBar::GradientBar(QWidget *parent) : QWidget(parent)
 // Set local colourscale
 void GradientBar::setColourScale(const ColourScale &colourScale)
 {
-	// If the source colourscale uses deltaHSV_, we must construct an interpolated gradient manually since QGradient doesn't support HSV interpolation
+	// If the source colourscale uses deltaHSV_, we must construct an interpolated gradient manually since QGradient doesn't
+	// support HSV interpolation
 	if (colourScale.useHSV())
 	{
 		colourScale_.clear();

@@ -30,7 +30,8 @@
  */
 
 // IsotopologuesTree top-level update function
-void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data, bool createItem)
+void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data,
+						     bool createItem)
 {
 	QTreeWidgetItem *item;
 	if (createItem)
@@ -47,11 +48,13 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, in
 	item->setText(0, data->name());
 
 	// Update child items
-	TreeWidgetRefDataListUpdater<SpeciesTab, AtomType, Isotope *> isotopeUpdater(item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
+	TreeWidgetRefDataListUpdater<SpeciesTab, AtomType, Isotope *> isotopeUpdater(
+		item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
 }
 
 // IsotopologuesTree item update function
-void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *atomType, Isotope *isotope, bool createItem)
+void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *atomType,
+						  Isotope *isotope, bool createItem)
 {
 	QTreeWidgetItem *item;
 
@@ -176,7 +179,9 @@ void SpeciesTab::updateIsotopologuesTab()
 		ui_.IsotopologuesTree->clear();
 	else
 	{
-		TreeWidgetUpdater<SpeciesTab, Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
+		TreeWidgetUpdater<SpeciesTab, Isotopologue> isotopologueUpdater(
+			ui_.IsotopologuesTree, species_->isotopologues(), this,
+			&SpeciesTab::updateIsotopologuesTreeTopLevelItem);
 
 		// If there is no current isotopologue selected, try to select the first
 		if (!currentIsotopologue())

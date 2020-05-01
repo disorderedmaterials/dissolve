@@ -26,12 +26,17 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms) { items_ = items; }
+IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms)
+	: QItemDelegate(parent), masterTerms_(masterTerms)
+{
+	items_ = items;
+}
 
 IntraFormComboDelegate::~IntraFormComboDelegate() {}
 
 // Create editor
-QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+					      const QModelIndex &index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox *editor = new QComboBox(parent);
@@ -78,4 +83,8 @@ void IntraFormComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 }
 
 // Update widget geometry
-void IntraFormComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void IntraFormComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+						  const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}

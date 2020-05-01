@@ -55,25 +55,25 @@ static int PrimitiveRotMx(const int *CCMx_LP, int *RotMx, const int *CCMx_PL, in
 static int Find_si(T_SgInfo *SgInfo)
 {
 	static const int Tab_si_Vector[] = {
-	    1,  0,  0,  0, /*  h      */
-	    0,  1,  0,  1, /*  k      */
-	    0,  0,  1,  2, /*  l      */
-	    1,  1,  0,  0, /*  h+k    */
-	    1,  -1, 0,  0, /*  h-k    */
-	    0,  1,  1,  1, /*  k+l    */
-	    0,  1,  -1, 1, /*  k-l    */
-	    1,  0,  1,  1, /*  h+l    */
-	    1,  0,  -1, 1, /*  h-l    */
-	    1,  1,  1,  0, /*  h+k+l  */
-	    1,  1,  -1, 0, /*  h+k-l  */
-	    1,  -1, 1,  0, /*  h-k+l  */
-	    -1, 1,  1,  0, /* -h+k+l  */
-	    2,  1,  -1, 0, /*  2h+k-l */
-	    2,  -1, 1,  0, /*  2h-k+l */
-	    -1, 2,  1,  0, /* -h+2k+l */
-	    1,  2,  -1, 0, /*  h+2k-l */
-	    -1, 1,  2,  0, /* -h+k+2l */
-	    1,  -1, 2,  0  /*  h-k+2l */
+		1,  0,  0,  0, /*  h      */
+		0,  1,  0,  1, /*  k      */
+		0,  0,  1,  2, /*  l      */
+		1,  1,  0,  0, /*  h+k    */
+		1,  -1, 0,  0, /*  h-k    */
+		0,  1,  1,  1, /*  k+l    */
+		0,  1,  -1, 1, /*  k-l    */
+		1,  0,  1,  1, /*  h+l    */
+		1,  0,  -1, 1, /*  h-l    */
+		1,  1,  1,  0, /*  h+k+l  */
+		1,  1,  -1, 0, /*  h+k-l  */
+		1,  -1, 1,  0, /*  h-k+l  */
+		-1, 1,  1,  0, /* -h+k+l  */
+		2,  1,  -1, 0, /*  2h+k-l */
+		2,  -1, 1,  0, /*  2h-k+l */
+		-1, 2,  1,  0, /* -h+2k+l */
+		1,  2,  -1, 0, /*  h+2k-l */
+		-1, 1,  2,  0, /* -h+k+2l */
+		1,  -1, 2,  0  /*  h-k+2l */
 	};
 
 	static int nTab_si_Vector = sizeof Tab_si_Vector / sizeof(*Tab_si_Vector) / 4;
@@ -218,7 +218,8 @@ static int Find_si(T_SgInfo *SgInfo)
 	{
 #if DEBUG_Find_si
 		for (i = 0; i < n_si_v; i++)
-			fprintf(stdout, "H-Kp %2d %2d %2d   %d\n", SgInfo->si_Vector[i * 3 + 0], SgInfo->si_Vector[i * 3 + 1], SgInfo->si_Vector[i * 3 + 2], SgInfo->si_Modulus[i]);
+			fprintf(stdout, "H-Kp %2d %2d %2d   %d\n", SgInfo->si_Vector[i * 3 + 0], SgInfo->si_Vector[i * 3 + 1],
+				SgInfo->si_Vector[i * 3 + 2], SgInfo->si_Modulus[i]);
 		fprintf(stdout, "H-Kp\n");
 #endif
 
@@ -226,7 +227,8 @@ static int Find_si(T_SgInfo *SgInfo)
 		{
 			for (i = 0; i < 3; i++)
 			{
-				si_Buf[i_si_v * 3 + i] = SgInfo->si_Vector[i_si_v * 3 + 0] * CCMx_PL[i * 3 + 0] + SgInfo->si_Vector[i_si_v * 3 + 1] * CCMx_PL[i * 3 + 1] +
+				si_Buf[i_si_v * 3 + i] = SgInfo->si_Vector[i_si_v * 3 + 0] * CCMx_PL[i * 3 + 0] +
+							 SgInfo->si_Vector[i_si_v * 3 + 1] * CCMx_PL[i * 3 + 1] +
 							 SgInfo->si_Vector[i_si_v * 3 + 2] * CCMx_PL[i * 3 + 2];
 			}
 		}
@@ -404,29 +406,29 @@ static int str_ibegin(const char *s1, const char *s2) /* string ignore-case */
 }
 
 static const char *LegendTabSgName[] = {
-    "",
-    "  Extensions",
-    "  ----------",
-    "    Monoclinic             unique axis b   unique axis c   unique axis a",
-    "                             abc   c-ba      abc   ba-c      abc   -acb",
-    "                            ------------    ------------    ------------",
-    "             cell choice 1   :b1   :-b1      :c1   :-c1      :a1   :-a1",
-    "                         2   :b2   :-b2      :c2   :-c2      :a2   :-a2",
-    "                         3   :b3   :-b3      :c3   :-c3      :a3   :-a3",
-    "",
-    "    Orthorhombic   :ba-c    change of basis abc -> ba-c",
-    "                   :1       origin choice 1",
-    "                   :2ba-c   origin choice 2, change of basis abc -> ba-c",
-    "",
-    "    Tetragonal     :1       origin choice 1",
-    "           Cubic   :2       origin choice 2",
-    "",
-    "    Trigonal       :H       hexagonal    axes",
-    "                   :R       rhombohedral axes",
-    "",
-    "  Number   Schoenflies   Hermann-Mauguin             Hall",
-    "  ------   -----------   ---------------             ----",
-    NULL,
+	"",
+	"  Extensions",
+	"  ----------",
+	"    Monoclinic             unique axis b   unique axis c   unique axis a",
+	"                             abc   c-ba      abc   ba-c      abc   -acb",
+	"                            ------------    ------------    ------------",
+	"             cell choice 1   :b1   :-b1      :c1   :-c1      :a1   :-a1",
+	"                         2   :b2   :-b2      :c2   :-c2      :a2   :-a2",
+	"                         3   :b3   :-b3      :c3   :-c3      :a3   :-a3",
+	"",
+	"    Orthorhombic   :ba-c    change of basis abc -> ba-c",
+	"                   :1       origin choice 1",
+	"                   :2ba-c   origin choice 2, change of basis abc -> ba-c",
+	"",
+	"    Tetragonal     :1       origin choice 1",
+	"           Cubic   :2       origin choice 2",
+	"",
+	"    Trigonal       :H       hexagonal    axes",
+	"                   :R       rhombohedral axes",
+	"",
+	"  Number   Schoenflies   Hermann-Mauguin             Hall",
+	"  ------   -----------   ---------------             ----",
+	NULL,
 };
 
 static void ListTabSgName(int WantedSgNumber, int VolLetter, FILE *fpout)
@@ -458,7 +460,8 @@ static void ListTabSgName(int WantedSgNumber, int VolLetter, FILE *fpout)
 					if (*ext == '-')
 						ext++;
 
-					if (tsgn->Extension[0] == 'b' && (tsgn->Extension[1] == '\0' || tsgn->Extension[1] == '1'))
+					if (tsgn->Extension[0] == 'b' &&
+					    (tsgn->Extension[1] == '\0' || tsgn->Extension[1] == '1'))
 						show_later = tsgn;
 					else if (ext[0] == 'c')
 					{
@@ -519,39 +522,42 @@ static void ListCIF(FILE *fpout)
 	const char **loop, *lbl;
 	const T_TabSgName *tsgn;
 
-	static const char *loop_monoclinic_extensions[] = {"_monoclinic_extension   # cf. _symmetry_space_group_id",
-							   "_monoclinic_axis        # cf. IT Vol. A 1983 sec. 2.16.",
-							   "_monoclinic_setting     # cf. IT Vol. A 1983 tab. 2.16.1.",
-							   "_monoclinic_cellchoice  # cf. IT Vol. A 1983 sec. 2.16.(i) & fig. 2.6.4.",
-							   "",
-							   " b   b  abc   1",
-							   " b1  b  abc   1",
-							   " b2  b  abc   2",
-							   " b3  b  abc   3",
-							   "-b   b  c-ba  1",
-							   "-b1  b  c-ba  1",
-							   "-b2  b  c-ba  2",
-							   "-b3  b  c-ba  3",
-							   " c   c  abc   1",
-							   " c1  c  abc   1",
-							   " c2  c  abc   2",
-							   " c3  c  abc   3",
-							   "-c   c  ba-c  1",
-							   "-c1  c  ba-c  1",
-							   "-c2  c  ba-c  2",
-							   "-c3  c  ba-c  3",
-							   " a   a  abc   1",
-							   " a1  a  abc   1",
-							   " a2  a  abc   2",
-							   " a3  a  abc   3",
-							   "-a   a  -acb  1",
-							   "-a1  a  -acb  1",
-							   "-a2  a  -acb  2",
-							   "-a3  a  -acb  3",
-							   NULL};
+	static const char *loop_monoclinic_extensions[] = {
+		"_monoclinic_extension   # cf. _symmetry_space_group_id",
+		"_monoclinic_axis        # cf. IT Vol. A 1983 sec. 2.16.",
+		"_monoclinic_setting     # cf. IT Vol. A 1983 tab. 2.16.1.",
+		"_monoclinic_cellchoice  # cf. IT Vol. A 1983 sec. 2.16.(i) & fig. 2.6.4.",
+		"",
+		" b   b  abc   1",
+		" b1  b  abc   1",
+		" b2  b  abc   2",
+		" b3  b  abc   3",
+		"-b   b  c-ba  1",
+		"-b1  b  c-ba  1",
+		"-b2  b  c-ba  2",
+		"-b3  b  c-ba  3",
+		" c   c  abc   1",
+		" c1  c  abc   1",
+		" c2  c  abc   2",
+		" c3  c  abc   3",
+		"-c   c  ba-c  1",
+		"-c1  c  ba-c  1",
+		"-c2  c  ba-c  2",
+		"-c3  c  ba-c  3",
+		" a   a  abc   1",
+		" a1  a  abc   1",
+		" a2  a  abc   2",
+		" a3  a  abc   3",
+		"-a   a  -acb  1",
+		"-a1  a  -acb  1",
+		"-a2  a  -acb  2",
+		"-a3  a  -acb  3",
+		NULL};
 
-	static const char *loop_symmetry_space_group[] = {"_symmetry_space_group_id", "_symmetry_space_group_name_sch", "_symmetry_space_group_name_h-m   # recognised IUCr CIF data names",
-							  "_symmetry_space_group_name_hall  # recognised IUCr CIF data names", NULL};
+	static const char *loop_symmetry_space_group[] = {"_symmetry_space_group_id", "_symmetry_space_group_name_sch",
+							  "_symmetry_space_group_name_h-m   # recognised IUCr CIF data names",
+							  "_symmetry_space_group_name_hall  # recognised IUCr CIF data names",
+							  NULL};
 
 	fprintf(fpout, "data_ notation\n\n");
 
@@ -660,7 +666,9 @@ static void PutAllXYZ(const T_SgInfo *SgInfo, FILE *fpout)
 				putc('#', fpout);
 
 			if (nTrV > 1)
-				fprintf(fpout, " +(%s %s %s)", FormatFraction(TrV[0], STBF, 0, buf0, sizeof buf0 / sizeof(*buf0)), FormatFraction(TrV[1], STBF, 0, buf1, sizeof buf1 / sizeof(*buf1)),
+				fprintf(fpout, " +(%s %s %s)",
+					FormatFraction(TrV[0], STBF, 0, buf0, sizeof buf0 / sizeof(*buf0)),
+					FormatFraction(TrV[1], STBF, 0, buf1, sizeof buf1 / sizeof(*buf1)),
 					FormatFraction(TrV[2], STBF, 0, buf2, sizeof buf2 / sizeof(*buf2)));
 
 			if (nLoopInv > 1)
@@ -724,7 +732,9 @@ static void PutMaple(const T_SgInfo *SgInfo, FILE *fpout)
 				putc('#', fpout);
 
 			if (nTrV > 1)
-				fprintf(fpout, " +(%s %s %s)", FormatFraction(TrV[0], STBF, 0, buf0, sizeof buf0 / sizeof(*buf0)), FormatFraction(TrV[1], STBF, 0, buf1, sizeof buf1 / sizeof(*buf1)),
+				fprintf(fpout, " +(%s %s %s)",
+					FormatFraction(TrV[0], STBF, 0, buf0, sizeof buf0 / sizeof(*buf0)),
+					FormatFraction(TrV[1], STBF, 0, buf1, sizeof buf1 / sizeof(*buf1)),
 					FormatFraction(TrV[2], STBF, 0, buf2, sizeof buf2 / sizeof(*buf2)));
 
 			if (nLoopInv > 1)
@@ -812,7 +822,9 @@ static void PutSpaceSymFile(const T_SgInfo *SgInfo, FILE *fpout)
 				if (SuppressMx == 0)
 				{
 					for (i = 0; i < 3; i++)
-						fprintf(fpout, " %12.8f %12.8f %12.8f %12.8f\n", (double)f * lsmx->s.R[3 * i + 0], (double)f * lsmx->s.R[3 * i + 1], (double)f * lsmx->s.R[3 * i + 2],
+						fprintf(fpout, " %12.8f %12.8f %12.8f %12.8f\n",
+							(double)f * lsmx->s.R[3 * i + 0], (double)f * lsmx->s.R[3 * i + 1],
+							(double)f * lsmx->s.R[3 * i + 2],
 							(double)iModPositive(f * lsmx->s.T[i] + TrV[i], STBF) / STBF);
 
 					putc(':', fpout);
@@ -1343,7 +1355,8 @@ static void MxMultiply(double *ab, double *a, double *b, int ma, int na, int nb)
 	}
 }
 
-static int TransformLatticeConstants(T_LatticeConstants *LatConA, int np, T_LatticeConstants *LatConB, T_SgInfo *SgInfo, int *InvCBMxR)
+static int TransformLatticeConstants(T_LatticeConstants *LatConA, int np, T_LatticeConstants *LatConB, T_SgInfo *SgInfo,
+				     int *InvCBMxR)
 {
 	int i, j;
 	double GA[9], GB[9], GAR[9], R[9], Rt[9];
@@ -1385,7 +1398,8 @@ static int TransformLatticeConstants(T_LatticeConstants *LatConA, int np, T_Latt
 	LatConB->beta = GB[2] / LatConB->c / LatConB->a;
 	LatConB->gamma = GB[1] / LatConB->a / LatConB->b;
 
-	if (LatConB->alpha < -1. || LatConB->alpha > 1. || LatConB->beta < -1. || LatConB->beta > 1. || LatConB->gamma < -1. || LatConB->gamma > 1.)
+	if (LatConB->alpha < -1. || LatConB->alpha > 1. || LatConB->beta < -1. || LatConB->beta > 1. || LatConB->gamma < -1. ||
+	    LatConB->gamma > 1.)
 		goto ReturnError;
 
 	LatConB->alpha = acos(LatConB->alpha);
@@ -1584,7 +1598,8 @@ int main(int argc, char *argv[])
 
 		else if (str_ibegin(argv[i], "-UnitCell=") == 0)
 		{
-			F_UnitCell = sscanf(&argv[i][10], "%lf%lf%lf%lf%lf%lf", &LatConA.a, &LatConA.b, &LatConA.c, &LatConA.alpha, &LatConA.beta, &LatConA.gamma);
+			F_UnitCell = sscanf(&argv[i][10], "%lf%lf%lf%lf%lf%lf", &LatConA.a, &LatConA.b, &LatConA.c,
+					    &LatConA.alpha, &LatConA.beta, &LatConA.gamma);
 
 			if (F_UnitCell < 1)
 				usage();
@@ -1854,11 +1869,13 @@ int main(int argc, char *argv[])
 					{
 						BC_SgInfo.MaxList = 192;
 
-						BC_SgInfo.ListSeitzMx = malloc(BC_SgInfo.MaxList * sizeof(*BC_SgInfo.ListSeitzMx));
+						BC_SgInfo.ListSeitzMx =
+							malloc(BC_SgInfo.MaxList * sizeof(*BC_SgInfo.ListSeitzMx));
 						if (BC_SgInfo.ListSeitzMx == NULL)
 							NotEnoughCore();
 
-						BC_SgInfo.ListRotMxInfo = malloc(BC_SgInfo.MaxList * sizeof(*BC_SgInfo.ListRotMxInfo));
+						BC_SgInfo.ListRotMxInfo =
+							malloc(BC_SgInfo.MaxList * sizeof(*BC_SgInfo.ListRotMxInfo));
 						if (BC_SgInfo.ListRotMxInfo == NULL)
 							NotEnoughCore();
 					}
@@ -1902,7 +1919,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (nSgList == 2 && SgList[0].RefTSgN && SgList[1].RefTSgN && SgList[0].RefTSgN->SgNumber == SgList[1].RefTSgN->SgNumber)
+	if (nSgList == 2 && SgList[0].RefTSgN && SgList[1].RefTSgN &&
+	    SgList[0].RefTSgN->SgNumber == SgList[1].RefTSgN->SgNumber)
 	{
 		putc('\n', stdout);
 		fprintf(stdout, "Change of Basis Setting A -> Setting B:\n");
@@ -1959,10 +1977,12 @@ int main(int argc, char *argv[])
 				if (TransformLatticeConstants(&LatConA, F_UnitCell, &LatConB, &SpgrInfo[0], CInvCBMx.s.R) != 0)
 					PrintClearSgError(0, 1);
 
-				fprintf(stdout, "Setting A UnitCell  %.6g %.6g %.6g %.6g %.6g %.6g\n", LatConA.a, LatConA.b, LatConA.c, LatConA.alpha / PIover180, LatConA.beta / PIover180,
+				fprintf(stdout, "Setting A UnitCell  %.6g %.6g %.6g %.6g %.6g %.6g\n", LatConA.a, LatConA.b,
+					LatConA.c, LatConA.alpha / PIover180, LatConA.beta / PIover180,
 					LatConA.gamma / PIover180);
 
-				fprintf(stdout, "Setting B UnitCell  %.6g %.6g %.6g %.6g %.6g %.6g\n", LatConB.a, LatConB.b, LatConB.c, LatConB.alpha / PIover180, LatConB.beta / PIover180,
+				fprintf(stdout, "Setting B UnitCell  %.6g %.6g %.6g %.6g %.6g %.6g\n", LatConB.a, LatConB.b,
+					LatConB.c, LatConB.alpha / PIover180, LatConB.beta / PIover180,
 					LatConB.gamma / PIover180);
 			}
 		}

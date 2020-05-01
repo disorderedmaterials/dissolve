@@ -36,7 +36,7 @@ template <class T, class D> class RefDataListIterator;
 // Reference Item With Data
 template <class T, class D> class RefDataItem
 {
-      public:
+	public:
 	RefDataItem<T, D>()
 	{
 		item_ = NULL;
@@ -47,13 +47,13 @@ template <class T, class D> class RefDataItem
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Pointer to item
 	T *item_;
 	// Associated data
 	D data_;
 
-      public:
+	public:
 	// Return item
 	T *item() { return item_; }
 	// Return associated data
@@ -62,11 +62,11 @@ template <class T, class D> class RefDataItem
 	/*
 	 * List Pointers
 	 */
-      private:
+	private:
 	// List pointers
 	RefDataItem<T, D> *prev_, *next_;
 
-      public:
+	public:
 	// Return item after this one
 	RefDataItem<T, D> *next() const { return next_; }
 	// Declare the list and iterator as friends
@@ -80,7 +80,7 @@ template <class T, class D> class RefDataItem
 
 template <class T, class D> class RefDataList
 {
-      public:
+	public:
 	RefDataList<T, D>()
 	{
 		listHead_ = NULL;
@@ -124,7 +124,7 @@ template <class T, class D> class RefDataList
 	/*
 	 * Items
 	 */
-      private:
+	private:
 	// Head and tail of reference items
 	RefDataItem<T, D> *listHead_, *listTail_;
 	// Number of items in list
@@ -134,7 +134,7 @@ template <class T, class D> class RefDataList
 	// Array regeneration flag
 	bool regenerate_;
 
-      public:
+	public:
 	// Clear the list of all references
 	void clear()
 	{
@@ -436,7 +436,9 @@ template <class T, class D> class RefDataList
 				break;
 			ri = ri->next_;
 			if (ri == NULL)
-				printf("Internal Error: Not enough items in list (requested %i, had %i) in RefDataList::fillArray()\n", n, nItems_);
+				printf("Internal Error: Not enough items in list (requested %i, had %i) in "
+				       "RefDataList::fillArray()\n",
+				       n, nItems_);
 		}
 		regenerate_ = true;
 	}
@@ -500,7 +502,7 @@ template <class T, class D> class RefDataList
 	/*
 	 * Search
 	 */
-      public:
+	public:
 	// Search references for item
 	RefDataItem<T, D> *contains(T *item) const
 	{
@@ -540,14 +542,15 @@ template <class T, class D> class RefDataList
 // Reference List Data Iterator
 template <class T, class D> class RefDataListIterator
 {
-      public:
-	RefDataListIterator<T, D>(const RefDataList<T, D> &source, bool reverse = false) : reverse_(reverse), targetRefList_(source)
+	public:
+	RefDataListIterator<T, D>(const RefDataList<T, D> &source, bool reverse = false)
+		: reverse_(reverse), targetRefList_(source)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
 	}
 
-      private:
+	private:
 	// Whether the iterator has reached the end of the list
 	bool finished_;
 	// Whether the iterator operates in reverse (iterating tail to head)
@@ -557,7 +560,7 @@ template <class T, class D> class RefDataListIterator
 	// Current item
 	RefDataItem<T, D> *currentItem_;
 
-      public:
+	public:
 	// Iterate
 	T *iterate()
 	{

@@ -32,7 +32,7 @@ class LineParser;
 // Node Value
 class NodeValue
 {
-      public:
+	public:
 	NodeValue();
 	NodeValue(const int i);
 	NodeValue(const double d);
@@ -48,7 +48,7 @@ class NodeValue
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Value Types
 	enum NodeValueType
 	{
@@ -65,7 +65,7 @@ class NodeValue
 	// Expression, if defined
 	Expression expression_;
 
-      public:
+	public:
 	// Set integer value
 	bool set(int value);
 	// Set double value
@@ -78,7 +78,7 @@ class NodeValue
 	/*
 	 * Value Retrieval
 	 */
-      public:
+	public:
 	// Return contained value as integer
 	int asInteger();
 	// Return contained value as double

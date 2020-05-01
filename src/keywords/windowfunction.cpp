@@ -22,7 +22,10 @@
 #include "keywords/windowfunction.h"
 #include "base/lineparser.h"
 
-WindowFunctionKeyword::WindowFunctionKeyword(WindowFunction value) : KeywordData<WindowFunction>(KeywordBase::WindowFunctionData, value) {}
+WindowFunctionKeyword::WindowFunctionKeyword(WindowFunction value)
+	: KeywordData<WindowFunction>(KeywordBase::WindowFunctionData, value)
+{
+}
 
 WindowFunctionKeyword::~WindowFunctionKeyword() {}
 
@@ -52,5 +55,6 @@ bool WindowFunctionKeyword::write(LineParser &parser, const char *keywordName, c
 	CharString params;
 	for (int n = 0; n < WindowFunction::nFunctionParameters(data_.function()); ++n)
 		params.strcatf("  %f", data_.parameter(n));
-	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, WindowFunction::functionType(data_.function()), params.get());
+	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, WindowFunction::functionType(data_.function()),
+				 params.get());
 }

@@ -38,18 +38,18 @@ class ProcessPool;
 // ChangeStore
 class ChangeStore
 {
-      public:
+	public:
 	ChangeStore(ProcessPool &procPool);
 	~ChangeStore();
 
 	/*
 	 * Watch Targets
 	 */
-      private:
+	private:
 	// List of target atoms (and modification data)
 	List<ChangeData> targetAtoms_;
 
-      public:
+	public:
 	// Add atom to watch
 	void add(Atom *i);
 	// Add molecule to watch
@@ -60,7 +60,7 @@ class ChangeStore
 	/*
 	 * Change Data
 	 */
-      private:
+	private:
 	// List of local changes
 	List<ChangeData> changes_;
 	// Coordinate broadcast arrays
@@ -68,7 +68,7 @@ class ChangeStore
 	// Index broadcast array
 	Array<int> indices_;
 
-      public:
+	public:
 	// Reset ChangeStore, forgetting all changes
 	void reset();
 	// Update all Atom positions
@@ -87,11 +87,11 @@ class ChangeStore
 	/*
 	 * Parallel Comms
 	 */
-      private:
+	private:
 	// ProcessPool over which this ChangeStore should broadcast
 	ProcessPool &processPool_;
 
-      public:
+	public:
 	// Distribute and apply change data to all processes
 	bool distributeAndApply(Configuration *cfg);
 };

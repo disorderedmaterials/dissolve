@@ -32,7 +32,7 @@
 // Keyword with Geometry Data
 class GeometryListKeyword : public KeywordData<List<Geometry> &>
 {
-      public:
+	public:
 	GeometryListKeyword(List<Geometry> &, Geometry::GeometryType t);
 
 	~GeometryListKeyword();
@@ -40,14 +40,14 @@ class GeometryListKeyword : public KeywordData<List<Geometry> &>
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// enum variable
 	Geometry::GeometryType type_;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

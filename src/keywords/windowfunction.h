@@ -31,14 +31,14 @@
 // Keyword with WindowFunction Data
 class WindowFunctionKeyword : public KeywordData<WindowFunction>
 {
-      public:
+	public:
 	WindowFunctionKeyword(WindowFunction value);
 	~WindowFunctionKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

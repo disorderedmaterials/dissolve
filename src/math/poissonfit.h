@@ -30,13 +30,13 @@
 // Poisson Function Approximation to Q-Space Data (replicating EPSR's methodology)
 class PoissonFit
 {
-      public:
+	public:
 	PoissonFit(const Data1D &referenceData);
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Reference Data1D to which we are performing the fit
 	Data1D referenceData_;
 	// Approximate (fitted) data
@@ -64,7 +64,7 @@ class PoissonFit
 	// Maximum value of exponential
 	const double expMax_;
 
-      private:
+	private:
 	// Generate full approximation from current parameters
 	void generateApproximation(FunctionSpace::SpaceType space);
 	// Add contribution to specified Data1D
@@ -74,15 +74,17 @@ class PoissonFit
 	// Return Fourier transform of Poisson function at Q index given specified power index
 	double poissonFT(const int qIndex, const int nIndex) const;
 
-      public:
+	public:
 	// Return approximate function
 	const Data1D &approximation() const;
 	// Calculate and return approximate function in requested space
 	Data1D approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const;
 	// Calculate and return single function in requested space
-	Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const;
+	Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep,
+			      double xMax) const;
 	// Set coefficients from supplied values
-	void set(FunctionSpace::SpaceType space, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08);
+	void set(FunctionSpace::SpaceType space, double rMax, Array<double> coefficients, double sigmaQ = 0.02,
+		 double sigmaR = 0.08);
 	// Return number of Poisson functions in fit
 	int nPoissons() const;
 	// Set whether the first coefficient should be ignored (set to zero)
@@ -97,7 +99,7 @@ class PoissonFit
 	/*
 	 * Fitting
 	 */
-      private:
+	private:
 	// Current error
 	double currentError_;
 	// Function space in which current alpha are being fit
@@ -111,7 +113,7 @@ class PoissonFit
 	// Indices of Gaussians being fit
 	Array<int> alphaIndex_;
 
-      private:
+	private:
 	// Precalculate necessary terms
 	void preCalculateTerms();
 	// Update precalculated function data using specified C
@@ -119,21 +121,26 @@ class PoissonFit
 	// Sweep-fit coefficients in specified space, starting from current parameters
 	double sweepFitC(FunctionSpace::SpaceType space, double xMin, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
-      public:
-	// Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin will be ignored)
-	double constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
-				   int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
+	public:
+	// Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to
+	// rMax (those below rMin will be ignored)
+	double constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08,
+				   int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
+				   int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 	// Construct suitable reciprocal-space representation using provided coefficients as a starting point
-	double constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
+	double constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ = 0.02,
+				   double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
 				   int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 
 	/*
 	 * Cost Functions
 	 */
-      private:
-	// One-parameter cost function (coefficient) with alpha array containing C values, including current approximate data into sum
+	private:
+	// One-parameter cost function (coefficient) with alpha array containing C values, including current approximate data
+	// into sum
 	double costAnalyticC(const Array<double> &alpha);
-	// One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in sum
+	// One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in
+	// sum
 	double costTabulatedC(const Array<double> &alpha);
 };
 

@@ -31,7 +31,7 @@
 // Vec3 Widget Labels
 class Vec3WidgetLabels
 {
-      public:
+	public:
 	// Set/hide/show label according to labelling type
 	static void set(QLabel *label, Vec3Labels::LabelType labelType, int index);
 };

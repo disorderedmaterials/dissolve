@@ -33,32 +33,32 @@ class SpeciesWidget : public QWidget
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	SpeciesWidget(QWidget *parent = 0);
 	~SpeciesWidget();
 
-      private:
+	private:
 	// Main CoreData
 	CoreData *coreData_;
 
-      public:
+	public:
 	// Set main CoreData pointer
 	void setCoreData(CoreData *coreData);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SpeciesWidget ui_;
 
-      private slots:
+	private slots:
 	// Notify that the style of displayed data in the underlying viewer has changed
 	void notifyStyleModified();
 	// Notify that the displayed data in the underlying viewer has changed
 	void notifyDataModified();
 
-      public slots:
+	public slots:
 	// Post redisplay in the underlying view
 	void postRedisplay();
 	// Update toolbar to reflect current viewer state
@@ -66,7 +66,7 @@ class SpeciesWidget : public QWidget
 	// Update status bar
 	void updateStatusBar();
 
-      signals:
+	signals:
 	// Style of displayed data has been modified
 	void styleModified();
 	// Displayed data has been modified
@@ -75,7 +75,7 @@ class SpeciesWidget : public QWidget
 	/*
 	 * Species Viewer
 	 */
-      public:
+	public:
 	// Set target Species, updating widget as necessary
 	void setSpecies(Species *sp);
 	// Return contained SpeciesViewer
@@ -84,7 +84,7 @@ class SpeciesWidget : public QWidget
 	/*
 	 * ToolBar
 	 */
-      private slots:
+	private slots:
 	// View
 	void on_ViewResetButton_clicked(bool checked);
 	void on_ViewSpheresButton_clicked(bool checked);

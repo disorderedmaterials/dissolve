@@ -29,7 +29,8 @@
 #include "modules/epsr/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve) : ModuleWidget(parent), dissolve_(dissolve), module_(module)
+EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve)
+	: ModuleWidget(parent), dissolve_(dissolve), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -301,7 +302,8 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
 	CharString blockData;
 
 	// Add total R-Factor before any dataset R-Factors
-	Renderable *rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor", module->uniqueName()), "Total", "Total");
+	Renderable *rFacTot = rFactorGraph_->createRenderable(
+		Renderable::Data1DRenderable, CharString("%s//RFactor", module->uniqueName()), "Total", "Total");
 	rFacTot->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
 	// Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
@@ -309,38 +311,51 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
 	while (Module *targetModule = targetIterator.iterate())
 	{
 		// Reference data
-		FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("%s (Exp)", targetModule->uniqueName()), "Exp");
+		FQGraph_->createRenderable(Renderable::Data1DRenderable,
+					   CharString("%s//ReferenceData", targetModule->uniqueName()),
+					   CharString("%s (Exp)", targetModule->uniqueName()), "Exp");
 
 		// Calculated data from associated module
 		if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
 		{
 			// F(Q)
-			FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("%s (Calc)", targetModule->uniqueName()),
-						   "Calc");
+			FQGraph_->createRenderable(Renderable::Data1DRenderable,
+						   CharString("%s//WeightedSQ//Total", targetModule->uniqueName()),
+						   CharString("%s (Calc)", targetModule->uniqueName()), "Calc");
 
 			// F(Q) diff w.r.t. reference
-			FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()),
-						   CharString("%s (Delta)", targetModule->uniqueName()), "Delta");
+			FQGraph_->createRenderable(
+				Renderable::Data1DRenderable,
+				CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()),
+				CharString("%s (Delta)", targetModule->uniqueName()), "Delta");
 
 			// R-Factor between F(Q) and reference
-			rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName(),
-							"RFactor");
+			rFactorGraph_->createRenderable(
+				Renderable::Data1DRenderable,
+				CharString("%s//RFactor//%s", module->uniqueName(), targetModule->uniqueName()),
+				targetModule->uniqueName(), "RFactor");
 
 			// Reference F(r) (from direct FT of input data)
-			totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", targetModule->uniqueName()), CharString("%s (Exp)", targetModule->uniqueName()),
-							"Exp");
+			totalGRGraph_->createRenderable(Renderable::Data1DRenderable,
+							CharString("%s//ReferenceDataFT", targetModule->uniqueName()),
+							CharString("%s (Exp)", targetModule->uniqueName()), "Exp");
 
 			// Simulated F(r) (from FT of the calculated F(Q))
-			totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()),
-							CharString("%s (Calc)", targetModule->uniqueName()), "Calc");
+			totalGRGraph_->createRenderable(
+				Renderable::Data1DRenderable,
+				CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()),
+				CharString("%s (Calc)", targetModule->uniqueName()), "Calc");
 		}
 
 		// Delta F(Q) and fit
-		FQFitGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaFQ//%s", module->uniqueName(), targetModule->uniqueName()),
+		FQFitGraph_->createRenderable(Renderable::Data1DRenderable,
+					      CharString("%s//DeltaFQ//%s", module->uniqueName(), targetModule->uniqueName()),
 					      CharString("%s (Delta)", targetModule->uniqueName()), "Delta");
 
-		FQFitGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaFQFit//%s", module->uniqueName(), targetModule->uniqueName()),
-					      CharString("%s (Fit)", targetModule->uniqueName()), "Fit");
+		FQFitGraph_->createRenderable(
+			Renderable::Data1DRenderable,
+			CharString("%s//DeltaFQFit//%s", module->uniqueName(), targetModule->uniqueName()),
+			CharString("%s (Fit)", targetModule->uniqueName()), "Fit");
 	}
 
 	// Loop over groups
@@ -362,16 +377,22 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
 
 				// Unweighted estimated partial
 				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
-								    CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+								    CharString("%s//EstimatedSQ//%s//%s-%s",
+									       module_->uniqueName(), group->name(),
+									       at1->name(), at2->name()),
 								    CharString("%s (Estimated)", id.get()), "Estimated");
 
 				// Calculated / summed partial
 				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
-								    CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+								    CharString("%s//UnweightedSQ//%s//%s-%s",
+									       module_->uniqueName(), group->name(),
+									       at1->name(), at2->name()),
 								    CharString("%s (Calc)", id.get()), "Calc");
 
 				// Deltas
-				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+				estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+								    CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(),
+									       group->name(), at1->name(), at2->name()),
 								    CharString("%s (Delta)", id.get()), "Delta");
 
 				/*
@@ -380,12 +401,16 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
 
 				// Experimentally-determined unweighted partial
 				estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
-								    CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+								    CharString("%s//EstimatedGR//%s//%s-%s",
+									       module_->uniqueName(), group->name(),
+									       at1->name(), at2->name()),
 								    CharString("%s (Estimated)", id.get()), "Estimated");
 
 				// Calculated / summed partial
 				estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
-								    CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+								    CharString("%s//UnweightedGR//%s//%s-%s//Full",
+									       module_->uniqueName(), group->name(),
+									       at1->name(), at2->name()),
 								    CharString("%s (Calc)", id.get()), "Calc");
 			}
 		}
@@ -400,12 +425,14 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Generated potential
-			phiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), id.get(), "Phi");
+			phiRGraph_->createRenderable(Renderable::Data1DRenderable,
+						     CharString("PairPotential//%s//Additional", id.get()), id.get(), "Phi");
 		}
 	}
 
 	// Add phi magnitude data
-	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EPMag", module_->uniqueName()), "EReq", "EReq");
+	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EPMag", module_->uniqueName()), "EReq",
+				       "EReq");
 }
 
 /*
@@ -431,7 +458,9 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Add generate potential to graph
-			Renderable *phi = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), id.get(), id.get());
+			Renderable *phi = viewer->createRenderable(Renderable::Data1DRenderable,
+								   CharString("PairPotential//%s//Additional", id.get()),
+								   id.get(), id.get());
 			viewer->addRenderableToGroup(phi, id.get());
 
 			// Generate data for function range specified
@@ -440,14 +469,22 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
 				Data1D *data = debugFunctionData_.add();
 				(*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
 				data->setObjectTag(CharString("PairPotential//%s//Function//%i", id.get(), n));
-				Renderable *rend = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Function//%i", id.get(), n), DissolveSys::itoa(n),
-									    CharString("%s/%i", id.get(), n));
+				Renderable *rend =
+					viewer->createRenderable(Renderable::Data1DRenderable,
+								 CharString("PairPotential//%s//Function//%i", id.get(), n),
+								 DissolveSys::itoa(n), CharString("%s/%i", id.get(), n));
 				viewer->addRenderableToGroup(rend, id.get());
 			}
 		}
 	}
 }
 
-void EPSRModuleWidget::on_DebugFromSpin_valueChanged(int value) { updateDebugEPFunctionsGraph(value, ui_.DebugToSpin->value()); }
+void EPSRModuleWidget::on_DebugFromSpin_valueChanged(int value)
+{
+	updateDebugEPFunctionsGraph(value, ui_.DebugToSpin->value());
+}
 
-void EPSRModuleWidget::on_DebugToSpin_valueChanged(int value) { updateDebugEPFunctionsGraph(ui_.DebugFromSpin->value(), value); }
+void EPSRModuleWidget::on_DebugToSpin_valueChanged(int value)
+{
+	updateDebugEPFunctionsGraph(ui_.DebugFromSpin->value(), value);
+}

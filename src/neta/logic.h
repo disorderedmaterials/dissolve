@@ -30,7 +30,7 @@ class NETADefinition;
 // NETA Logic Node
 class NETALogicNode : public NETANode
 {
-      public:
+	public:
 	// Node logic types
 	enum LogicType
 	{
@@ -41,7 +41,7 @@ class NETALogicNode : public NETANode
 	NETALogicNode(NETADefinition *parent, LogicType logic, NETANode *arg1, NETANode *arg2);
 	~NETALogicNode();
 
-      private:
+	private:
 	// Logic type
 	LogicType logic_;
 	// Node targets
@@ -50,7 +50,7 @@ class NETALogicNode : public NETANode
 	/*
 	 * Scoring
 	 */
-      public:
+	public:
 	// Evaluate the node and return its score
 	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };

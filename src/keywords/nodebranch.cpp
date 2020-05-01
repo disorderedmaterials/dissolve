@@ -24,8 +24,9 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
-NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer, ProcedureNode::NodeContext branchContext)
-    : KeywordData<SequenceProcedureNode **>(KeywordData::NodeBranchData, branchPointer)
+NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer,
+				     ProcedureNode::NodeContext branchContext)
+	: KeywordData<SequenceProcedureNode **>(KeywordData::NodeBranchData, branchPointer)
 {
 	parentNode_ = parentNode;
 	branchContext_ = branchContext;
@@ -55,10 +56,12 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &c
 {
 	// Check that a branch hasn't already been defined
 	if (*data_)
-		return Messenger::error("Only one %s branch may be defined in a %s node.\n", name(), ProcedureNode::nodeTypes().keyword(parentNode_->type()));
+		return Messenger::error("Only one %s branch may be defined in a %s node.\n", name(),
+					ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
 	// Create and parse a new branch
-	(*data_) = new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, CharString("End%s", name()));
+	(*data_) = new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_,
+					     CharString("End%s", name()));
 	if (!(*data_)->read(parser, coreData))
 		return false;
 

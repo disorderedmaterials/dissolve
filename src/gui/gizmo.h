@@ -36,14 +36,14 @@ class QMdiSubWindow;
 // Gizmo - Base class for any widget to be displayed in a QMdiSubWindow
 class Gizmo : public ListItem<Gizmo>
 {
-      public:
+	public:
 	Gizmo(Dissolve &dissolve, const char *uniqueName);
 	virtual ~Gizmo();
 
 	/*
 	 * Core
 	 */
-      protected:
+	protected:
 	// Unique name of gizmo
 	CharString uniqueName_;
 	// Reference to Dissolve
@@ -53,7 +53,7 @@ class Gizmo : public ListItem<Gizmo>
 	// Reference list of all Gizmos
 	static RefList<Gizmo> allGizmos_;
 
-      public:
+	public:
 	// Return string specifying Gizmo type
 	virtual const char *type() const = 0;
 	// Set unique name of gizmo
@@ -83,15 +83,15 @@ class Gizmo : public ListItem<Gizmo>
 	/*
 	 * UI
 	 */
-      protected:
+	protected:
 	// Whether the gizmo is currently refreshing
 	bool refreshing_;
 
-      protected:
+	protected:
 	// Window close event
 	virtual void closeEvent(QCloseEvent *event) = 0;
 
-      public:
+	public:
 	// Update controls within widget
 	virtual void updateControls() = 0;
 	// Disable sensitive controls within widget
@@ -102,7 +102,7 @@ class Gizmo : public ListItem<Gizmo>
 	/*
 	 * Data Handling
 	 */
-      public:
+	public:
 	// Return whether this Gizmo accepts data of the specified type
 	virtual bool acceptsData(const char *dataType);
 	// Return all Gizmos that accept data of the specified type
@@ -113,7 +113,7 @@ class Gizmo : public ListItem<Gizmo>
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser &parser) const = 0;
 	// Read widget state through specified LineParser

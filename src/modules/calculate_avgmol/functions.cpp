@@ -33,9 +33,12 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
 	int requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
 	// Retrieve / create the three data arrays, and size accordingly
-	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "X", uniqueName(), GenericItem::InRestartFileFlag);
-	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Y", uniqueName(), GenericItem::InRestartFileFlag);
-	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Z", uniqueName(), GenericItem::InRestartFileFlag);
+	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::realise(
+		dissolve.processingModuleData(), "X", uniqueName(), GenericItem::InRestartFileFlag);
+	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::realise(
+		dissolve.processingModuleData(), "Y", uniqueName(), GenericItem::InRestartFileFlag);
+	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::realise(
+		dissolve.processingModuleData(), "Z", uniqueName(), GenericItem::InRestartFileFlag);
 
 	if (requiredSize > 0)
 	{
@@ -58,7 +61,8 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
 }
 
 // Update the local species with the coordinates from the supplied arrays
-void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y, const Array<SampledDouble> &z)
+void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y,
+					  const Array<SampledDouble> &z)
 {
 	// Loop over atoms in our species
 	for (int n = 0; n < averageSpecies_.nAtoms(); ++n)

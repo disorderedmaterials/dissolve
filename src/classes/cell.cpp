@@ -92,7 +92,8 @@ bool Cell::addAtom(Atom *i)
 	indexOrderedAtoms_.insert(i);
 
 	if (i->cell())
-		Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
+		Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n",
+				i->arrayIndex());
 	i->setCell(this);
 
 	return true;

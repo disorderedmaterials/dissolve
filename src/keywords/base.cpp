@@ -160,42 +160,49 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 // Return value (as bool)
 bool KeywordBase::asBool()
 {
-	Messenger::warn("No suitable conversion to bool from KeywordDataType %i (%s) exists. Returning 'false'.\n", type_, KeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to bool from KeywordDataType %i (%s) exists. Returning 'false'.\n", type_,
+			KeywordBase::keywordDataType(type_));
 	return false;
 }
 
 // Return value (as int)
 int KeywordBase::asInt()
 {
-	Messenger::warn("No suitable conversion to int from KeywordDataType %i (%s) exists. Returning '0'.\n", type_, KeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to int from KeywordDataType %i (%s) exists. Returning '0'.\n", type_,
+			KeywordBase::keywordDataType(type_));
 	return 0;
 }
 
 // Return value (as double)
 double KeywordBase::asDouble()
 {
-	Messenger::warn("No suitable conversion to double from KeywordDataType %i (%s) exists. Returning '0.0'.\n", type_, KeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to double from KeywordDataType %i (%s) exists. Returning '0.0'.\n", type_,
+			KeywordBase::keywordDataType(type_));
 	return 0.0;
 }
 
 // Return value (as string)
 const char *KeywordBase::asString()
 {
-	Messenger::warn("No suitable conversion to string from KeywordDataType %i (%s) exists. Returning 'NULL'.\n", type_, KeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to string from KeywordDataType %i (%s) exists. Returning 'NULL'.\n", type_,
+			KeywordBase::keywordDataType(type_));
 	return "NULL";
 }
 
 // Return value as Vec3<int>
 Vec3<int> KeywordBase::asVec3Int()
 {
-	Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType %i (%s) exists. Returning '(0,0,0)'.\n", type_, KeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType %i (%s) exists. Returning '(0,0,0)'.\n",
+			type_, KeywordBase::keywordDataType(type_));
 	return Vec3<int>(0, 0, 0);
 }
 
 // Return value as Vec3<double>
 Vec3<double> KeywordBase::asVec3Double()
 {
-	Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType %i (%s) exists. Returning '(0.0,0.0,0.0)'.\n", type_, KeywordBase::keywordDataType(type_));
+	Messenger::warn(
+		"No suitable conversion to Vec3<double> from KeywordDataType %i (%s) exists. Returning '(0.0,0.0,0.0)'.\n",
+		type_, KeywordBase::keywordDataType(type_));
 	return Vec3<double>(0.0, 0.0, 0.0);
 }
 

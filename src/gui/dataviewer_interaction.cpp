@@ -56,13 +56,14 @@ void DataViewer::endInteraction()
 	case (DataViewer::DefaultInteraction):
 		break;
 	case (DataViewer::ZoomToAreaInteraction):
-		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
+		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather
+		// than an area select
 		if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 		{
 			// Single, targetted click - get the clicked object
-			// TODO What action are we performing here? Would this be better as a right-click action, raising a context menu?
-			// 				ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
-			// 				printf("Object Type = %s, info = [%s]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
+			// TODO What action are we performing here? Would this be better as a right-click action, raising a
+			// context menu? 				ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
+			// printf("Object Type = %s, info = [%s]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
 		}
 		else
 		{
@@ -150,8 +151,9 @@ const char *DataViewer::interactionModeText() const
 // 	if (interactionAxis_ == -1) return 0.0;
 //
 // 	Axes& axes = view_.axes();
-// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_));
-// 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
+// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ?
+// log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_)); 	else return
+// (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
 // }
 //
 // // Return current interaction coordinate on axis
@@ -161,6 +163,7 @@ const char *DataViewer::interactionModeText() const
 // 	if (interactionAxis_ == -1) return 0.0;
 //
 // 	Axes& axes = view_.axes();
-// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_));
-// 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
+// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ?
+// log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_)); 	else return
+// (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
 // }

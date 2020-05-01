@@ -103,8 +103,8 @@ void ExpressionNode::addListArguments(ExpressionNode *leaf)
 void ExpressionNode::addJoinedArguments(ExpressionNode *lastleaf)
 {
 	/*
-	 * The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case if Joined by the parser)
-	 * Therefore, must walk backwards through the list first to get to the head...
+	 * The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case
+	 * if Joined by the parser) Therefore, must walk backwards through the list first to get to the head...
 	 */
 	ExpressionNode *first;
 	for (first = lastleaf; first != NULL; first = first->prevArgument)
@@ -194,7 +194,9 @@ ExpressionNode *ExpressionNode::argNode(int i)
 {
 	if ((i < 0) || (i > args_.nItems()))
 	{
-		Messenger::printVerbose("ExpressionNode::argNode : Argument index %i is out of range for returning the argument node (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::argNode : Argument index %i is out of range for returning the "
+					"argument node (node = %p).\n",
+					i, this);
 		return NULL;
 	}
 	return args_[i]->item();

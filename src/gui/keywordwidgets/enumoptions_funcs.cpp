@@ -23,7 +23,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/enumoptions.hui"
 
-EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<EnumOptionsBaseKeyword *>(keyword);
@@ -49,7 +50,8 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase 
 	// Connect the currentTextChanged signal to our own slot
 	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
 }
 
@@ -63,7 +65,8 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 	if (refreshing_)
 		return;
 
-	// Use the virtual EnumOptionsBaseKeyword::setEnumerationByIndex() to set the new option and inform the underlying keyword structure that it has been modified
+	// Use the virtual EnumOptionsBaseKeyword::setEnumerationByIndex() to set the new option and inform the underlying
+	// keyword structure that it has been modified
 	keyword_->setEnumerationByIndex(index);
 
 	emit(keywordValueChanged(keyword_->optionMask()));

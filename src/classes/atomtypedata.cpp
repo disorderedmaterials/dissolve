@@ -68,7 +68,8 @@ bool AtomTypeData::initialise(int listIndex, AtomType *atomType, double populati
 	fraction_ = 0.0;
 	boundCoherent_ = 0.0;
 
-	// 	Messenger::print("Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
+	// 	Messenger::print("Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n",
+	// atomType->name(), tope->A(), tope->boundCoherent());
 	return true;
 }
 
@@ -217,7 +218,8 @@ bool AtomTypeData::read(LineParser &parser, const CoreData &coreData)
 bool AtomTypeData::write(LineParser &parser)
 {
 	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-	if (!parser.writeLineF("%s %f %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
+	if (!parser.writeLineF("%s %f %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_,
+			       isotopes_.nItems()))
 		return false;
 	ListIterator<IsotopeData> isotopeIterator(isotopes_);
 	while (IsotopeData *topeData = isotopeIterator.iterate())
@@ -258,17 +260,22 @@ bool AtomTypeData::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(atomTypeName()))
-		return Messenger::error("AtomTypeData atom type name is not equivalent (process %i has '%s').\n", procPool.poolRank(), atomTypeName());
+		return Messenger::error("AtomTypeData atom type name is not equivalent (process %i has '%s').\n",
+					procPool.poolRank(), atomTypeName());
 	if (!procPool.equality(population_))
-		return Messenger::error("AtomTypeData population is not equivalent (process %i has %i).\n", procPool.poolRank(), population_);
+		return Messenger::error("AtomTypeData population is not equivalent (process %i has %i).\n", procPool.poolRank(),
+					population_);
 	if (!procPool.equality(fraction_))
-		return Messenger::error("AtomTypeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(), fraction_);
+		return Messenger::error("AtomTypeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					fraction_);
 	if (!procPool.equality(boundCoherent_))
-		return Messenger::error("AtomTypeData bound coherent is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherent_);
+		return Messenger::error("AtomTypeData bound coherent is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), boundCoherent_);
 
 	// Number of isotopes
 	if (!procPool.equality(isotopes_.nItems()))
-		return Messenger::error("AtomTypeData number of isotopes is not equivalent (process %i has %i).\n", procPool.poolRank(), isotopes_.nItems());
+		return Messenger::error("AtomTypeData number of isotopes is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), isotopes_.nItems());
 	ListIterator<IsotopeData> isotopeIterator(isotopes_);
 	int count = 0;
 	while (IsotopeData *topeData = isotopeIterator.iterate())

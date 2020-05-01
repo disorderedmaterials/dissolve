@@ -135,7 +135,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 		ri = r[typeI];
 		for (typeJ = 0; typeJ < nTypes; ++typeJ)
 		{
-			// Skip if typeI == typeJ, or if the number of atoms in typeI is greater than typeJ (since it is less efficient)
+			// Skip if typeI == typeJ, or if the number of atoms in typeI is greater than typeJ (since it is less
+			// efficient)
 			if (typeI == typeJ)
 				continue;
 			if (nr[typeI] > nr[typeJ])
@@ -217,7 +218,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
 
 			OrderedVector<Atom *> &atomsJ = cellJ->atoms();
 
-			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the absence of a 2D look-up array
+			// Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the
+			// absence of a 2D look-up array
 			for (auto *i : atomsI)
 			{
 				typeI = i->localTypeIndex();
@@ -241,7 +243,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
 			// 					{
 			// 						j = atomsJ[jj];
 			// 						distance = (rI - j->r()).magnitude();
-			// 						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
+			// 						partialSet.fullHistogram(typeI,
+			// j->localTypeIndex()).bin(distance);
 			// 					}
 			// 				}
 			// 			}
@@ -256,18 +259,22 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
  */
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate)
+bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
+			    const double rdfBinWidth, bool &alreadyUpToDate)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialSet &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "", GenericItem::InRestartFileFlag, &wasCreated);
+	PartialSet &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
+									GenericItem::InRestartFileFlag, &wasCreated);
 	if (wasCreated)
-		originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
+		originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf",
+				 "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
 	alreadyUpToDate = false;
-	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->contentsVersion())) && (method != RDFModule::TestMethod))
+	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->contentsVersion())) &&
+	    (method != RDFModule::TestMethod))
 	{
 		Messenger::print("Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		alreadyUpToDate = true;
@@ -298,10 +305,12 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 		calculateGRCells(procPool, cfg, originalgr, rdfRange);
 	else if (method == RDFModule::AutoMethod)
 	{
-		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange) : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
+		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange)
+				      : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
 	}
 	timer.stop();
-	Messenger::print("Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(),
+			 procPool.accumulatedTimeString());
 
 	/*
 	 * Calculate intramolecular partials
@@ -341,12 +350,13 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 	}
 
 	timer.stop();
-	Messenger::print("Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(),
+			 procPool.accumulatedTimeString());
 
 	/*
 	 * Sum histogram data
-	 * Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
-	 * that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
+	 * Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix
+	 * knows that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
 	 */
 
 	int typeI, typeJ;
@@ -356,7 +366,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 	{
 		for (typeJ = typeI; typeJ < originalgr.nAtomTypes(); ++typeJ)
 		{
-			// Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes have all data already)
+			// Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
+			// have all data already)
 			if (method != RDFModule::TestMethod)
 			{
 				if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
@@ -377,7 +388,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 	// Sum total functions
 	originalgr.formTotal(true);
 	timer.stop();
-	Messenger::print("Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n",
+			 timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Partials are now up-to-date
@@ -389,9 +401,11 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr, PartialSet &unweightedgr, PairBroadeningFunction &intraBroadening, int smoothing)
+bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
+				      PartialSet &unweightedgr, PairBroadeningFunction &intraBroadening, int smoothing)
 {
-	// If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to maintain the incremental versioning of the data)
+	// If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
+	// maintain the incremental versioning of the data)
 	if (unweightedgr.nAtomTypes() == 0)
 		unweightedgr = originalgr;
 	else
@@ -418,7 +432,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 	}
 
 	// Broaden the bound partials according to the supplied PairBroadeningFunction
-	if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) || (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
+	if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) ||
+	    (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
 	{
 		typeI = unweightedgr.atomTypes().first();
 		for (int i = 0; i < unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
@@ -427,7 +442,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 			for (int j = i; j < unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next())
 			{
 				// Set up the broadening function for these AtomTypes
-				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
+				BroadeningFunction function =
+					intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
 
 				// Convolute the bound partial with the broadening function
 				Filters::convolve(unweightedgr.boundPartial(i, j), function);
@@ -439,10 +455,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		/*
 		 * Reassemble the bound partial as follows:
 		 *
-		 * 1) Recalculate individual bond / angle g(r), grouping by the original SpeciesIntra parameters (which contains our force constant)
-		 * 2) Subtract this from its related bound partial in 'unweightedgr'.
-		 * 3) Broaden it according to the PairBroadeningFunction
-		 * 4) Sum the broadened version back into the bound partial in 'unweightedgr'
+		 * 1) Recalculate individual bond / angle g(r), grouping by the original SpeciesIntra parameters (which contains
+		 * our force constant) 2) Subtract this from its related bound partial in 'unweightedgr'. 3) Broaden it
+		 * according to the PairBroadeningFunction 4) Sum the broadened version back into the bound partial in
+		 * 'unweightedgr'
 		 */
 
 		Atom *i, *j, *k;
@@ -453,7 +469,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 
 		// Set up working PartialSets to use when calculating our g(r)
 		PartialSet tempgr, broadgr = unweightedgr;
-		tempgr.setUp(cfg->usedAtomTypesList(), unweightedgr.rdfRange(), unweightedgr.rdfBinWidth(), "Working", "TemporaryGR", "Dummy", "r, Angstroms");
+		tempgr.setUp(cfg->usedAtomTypesList(), unweightedgr.rdfRange(), unweightedgr.rdfBinWidth(), "Working",
+			     "TemporaryGR", "Dummy", "r, Angstroms");
 		tempgr.setUpHistograms(unweightedgr.rdfRange(), unweightedgr.rdfBinWidth());
 
 		// Make sure bound g(r) are zeroed
@@ -473,9 +490,11 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
 		// 		{
 		// 			Species* sp = spInfo->species();
-		// 			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next()) bondIntra.addUnique(b->parameterSource(), b);
-		// 			for (const SpeciesAngle* a = sp->angles().first(); a != NULL; a = a->next()) angleIntra.addUnique(a->parameterSource(), a);
-		// 			for (const SpeciesTorsion* t = sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
+		// 			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next())
+		// bondIntra.addUnique(b->parameterSource(), b); 			for (const SpeciesAngle* a =
+		// sp->angles().first(); a != NULL; a
+		// = a->next()) angleIntra.addUnique(a->parameterSource(), a); 			for (const SpeciesTorsion* t =
+		// sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
 		// 		}
 
 		return Messenger::error("Frequency broadening not reimplemented yet.\n");
@@ -506,19 +525,21 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 					j = b->j();
 		// 					if (i->mimRequired(j)) distance = box->minimumDistance(i, j);
 		// 					else distance = (i->r() - j->r()).magnitude();
-		// 					tempgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+		// 					tempgr.boundHistogram(i->localTypeIndex(),
+		// j->localTypeIndex()).bin(distance);
 		//
-		// 					// Won't need this Bond pointer again, so remove it from our pointer array
-		// 					bondPointers.remove(n);
+		// 					// Won't need this Bond pointer again, so remove it from our pointer
+		// array 					bondPointers.remove(n);
 		// 				}
 		// 			}
 		//
 		// 			// Normalise our bond's histogram data into the g(r)
 		// 			tempgr.formPartials(box->volume());
 		//
-		// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
-		// 			typeI = tempgr.atomTypes().first();
-		// 			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
+		// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into
+		// our
+		// broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int i=0;
+		// i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
 		// 			{
 		// 				typeJ = typeI;
 		// 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
@@ -529,7 +550,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
 		//
 		// 					// Set up the broadening function for these AtomTypes
-		// 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
+		// 					BroadeningFunction function =
+		// intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
 		//
 		// 					// Convolute the bound partial with the broadening function
 		// 					Filters::convolve(tempgr.boundPartial(i, j), function);
@@ -550,9 +572,9 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 		Angle** angles = cfg->angles().array();
 		// 		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
 		//
-		// 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
-		// 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
-		// 		for (int n=0; n<cfg->nAngles(); ++n)
+		// 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by
+		// their associated SpeciesBond 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra; 		for (int
+		// n=0; n<cfg->nAngles(); ++n)
 		// 		{
 		// 			SpeciesAngle* sa = angles[n]->speciesAngle();
 		// 			angleIntra.addUnique(sa->parameterSource(), sa);
@@ -576,9 +598,9 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 				k = a->k();
 		//
 		// 				// Determine whether we need to apply minimum image between atoms 'i' and 'k'
-		// 				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
-		// 				else distance = (i->r() - k->r()).magnitude();
-		// 				tempgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
+		// 				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i,
+		// k); 				else distance = (i->r() - k->r()).magnitude();
+		// tempgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
 		//
 		// 				// Won't need this Angle pointer again, so remove it from our pointer array
 		// 				anglePointers.remove(n);
@@ -587,9 +609,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 			// Normalise our bond's histogram data into the g(r)
 		// 			tempgr.formPartials(box->volume());
 		//
-		// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
-		// 			typeI = tempgr.atomTypes().first();
-		// 			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
+		// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into
+		// our
+		// broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int i=0;
+		// i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
 		// 			{
 		// 				typeJ = typeI;
 		// 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
@@ -600,7 +623,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
 		//
 		// 					// Set up the broadening function for these AtomTypes
-		// 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
+		// 					BroadeningFunction function =
+		// intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
 		//
 		// 					// Convolute the bound partial with the broadening function
 		// 					Filters::convolve(tempgr.boundPartial(i, j), function);
@@ -615,7 +639,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		 * Copy Data
 		 */
 
-		// TODO FIXME There is serious limitation for Frequency-broadening which means that it cannot be used with RDF averaging (as we are calculating the intramolecular RDFs afresh).
+		// TODO FIXME There is serious limitation for Frequency-broadening which means that it cannot be used with RDF
+		// averaging (as we are calculating the intramolecular RDFs afresh).
 
 		typeI = broadgr.atomTypes().first();
 		for (int i = 0; i < broadgr.nAtomTypes(); ++i, typeI = typeI->next())
@@ -663,7 +688,8 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
 	double rho0 = 0.0, totalWeight = 0.0;
 	for (Configuration *cfg : module->targetConfigurations())
 	{
-		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(
+			processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
 
 		rho0 += weight / cfg->atomicDensity();
@@ -675,7 +701,8 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericList &processingModuleData, PartialSet &summedUnweightedGR)
+bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericList &processingModuleData,
+				PartialSet &summedUnweightedGR)
 {
 	// Create an AtomTypeList containing the sum of atom types over all target configurations
 	AtomTypeList combinedAtomTypes;
@@ -689,13 +716,15 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
 	summedUnweightedGR.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "gr", "r, Angstroms");
 	summedUnweightedGR.setObjectTags(CharString("%s//UnweightedGR", module->uniqueName()));
 
-	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight RefList for simplicity
+	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
+	// RefList for simplicity
 	RefDataList<Configuration, double> configWeights;
 	double totalWeight = 0.0;
 	for (Configuration *cfg : module->targetConfigurations())
 	{
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(
+			processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 
 		// Add our Configuration target
@@ -716,7 +745,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
 	while (Configuration *cfg = weightsIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion())
+						     : CharString("_%i", cfg->contentsVersion());
 
 		// Calculate weighting factor
 		double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
@@ -730,13 +760,15 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
 	summedUnweightedGR.setFingerprint(fingerprint);
 
 	// Store the overall density of our partials
-	GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", module->uniqueName(), GenericItem::InRestartFileFlag) = rho0;
+	GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", module->uniqueName(),
+					   GenericItem::InRestartFileFlag) = rho0;
 
 	return true;
 }
 
 // Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
-bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, ModuleGroup *moduleGroup, GenericList &processingModuleData, PartialSet &summedUnweightedGR)
+bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, ModuleGroup *moduleGroup,
+				GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
 	// Determine total weighting factor over all Configurations, and set up a Configuration/weight RefList for simplicity
 	RefDataList<Configuration, double> configWeights;
@@ -747,7 +779,9 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
 		for (Configuration *cfg : module->targetConfigurations())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+			double weight = GenericListHelper<double>::value(processingModuleData,
+									 CharString("ConfigurationWeight_%s", cfg->niceName()),
+									 module->uniqueName(), 1.0);
 			Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 
 			// Add our Configuration target
@@ -755,9 +789,11 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
 			totalWeight += weight;
 		}
 	}
-	Messenger::print("Total weight over all Configurations for summed unweighted g(r) is %f (%i Configurations)\n", totalWeight, configWeights.nItems());
+	Messenger::print("Total weight over all Configurations for summed unweighted g(r) is %f (%i Configurations)\n",
+			 totalWeight, configWeights.nItems());
 
-	// Calculate overall density of combined system, normalising the Configuration weights as we go, and create an AtomTypeList to cover all used types
+	// Calculate overall density of combined system, normalising the Configuration weights as we go, and create an
+	// AtomTypeList to cover all used types
 	double rho0 = 0.0;
 	AtomTypeList combinedAtomTypes;
 	RefDataListIterator<Configuration, double> weightsIterator(configWeights);
@@ -784,7 +820,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
 	while (Configuration *cfg = weightsIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion())
+						     : CharString("_%i", cfg->contentsVersion());
 
 		// Calculate weighting factor
 		double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
@@ -800,7 +837,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
 	summedUnweightedGR += 1.0;
 
 	// Store the overall density of our partials
-	// 	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(), GenericItem::InRestartFileFlag) = rho0;
+	// 	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(),
+	// GenericItem::InRestartFileFlag) = rho0;
 
 	return true;
 }
@@ -819,22 +857,28 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 		{
 			// Full partial
 			error = Error::percent(setA.partial(n, m), setB.partial(n, m));
-			Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(),
-					 typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is "
+					 "%s (threshold is %6.3f%%)\n\n",
+					 typeI->atomTypeName(), typeJ->atomTypeName(), error,
+					 error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold)
 				return false;
 
 			// Bound partial
 			error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-			Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(),
-					 typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and "
+					 "is %s (threshold is %6.3f%%)\n\n",
+					 typeI->atomTypeName(), typeJ->atomTypeName(), error,
+					 error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold)
 				return false;
 
 			// Unbound reference
 			error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-			Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(),
-					 typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and "
+					 "is %s (threshold is %6.3f%%)\n\n",
+					 typeI->atomTypeName(), typeJ->atomTypeName(), error,
+					 error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold)
 				return false;
 		}
@@ -842,7 +886,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
 	// Total reference data supplied?
 	error = Error::percent(setA.total(), setB.total());
-	Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+	Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n",
+			 error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 	if (error > testThreshold)
 		return false;
 
@@ -850,7 +895,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 }
 
 // Test calculated partial against supplied reference data
-bool RDFModule::testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData, const char *typeIorTotal, const char *typeJ, const char *target)
+bool RDFModule::testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
+				     const char *typeIorTotal, const char *typeJ, const char *target)
 {
 	// We either expect two AtomType names and a target next, or the target 'total'
 	bool testResult = false;
@@ -858,8 +904,9 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 	{
 		double error = Error::percent(partials.constTotal(), testData);
 		testResult = (error <= testThreshold);
-		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData.name(), error, testResult ? "OK" : "NOT OK",
-				 testThreshold);
+		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is "
+				 "%6.3f%%)\n\n",
+				 testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
 	}
 	else
 	{
@@ -881,15 +928,17 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 			return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
 
 		testResult = (error <= testThreshold);
-		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData.name(), error, testResult ? "OK" : "NOT OK",
-				 testThreshold);
+		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is "
+				 "%6.3f%%)\n\n",
+				 testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
 	}
 
 	return testResult;
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials, const char *prefix)
+bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
+				      const char *prefix)
 {
 	LineParser parser;
 
@@ -910,7 +959,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 		if (!DissolveSys::sameString(prefix, parser.argc(0)))
 			return Messenger::error("Unrecognised test data name '%s'.\n", data->name());
 
-		if (!testReferencePartial(partials, testThreshold, *data, parser.argc(1), parser.hasArg(2) ? parser.argc(2) : NULL, parser.hasArg(3) ? parser.argc(3) : NULL))
+		if (!testReferencePartial(partials, testThreshold, *data, parser.argc(1),
+					  parser.hasArg(2) ? parser.argc(2) : NULL, parser.hasArg(3) ? parser.argc(3) : NULL))
 			return false;
 	}
 
@@ -918,7 +968,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA, const char *prefixA, const PartialSet &partialsB, const char *prefixB)
+bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
+				      const char *prefixA, const PartialSet &partialsB, const char *prefixB)
 {
 	LineParser parser;
 
@@ -945,7 +996,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 			return Messenger::error("Unrecognised test data name '%s'.\n", data->name());
 		const PartialSet &targetSet = (setA ? partialsA : partialsB);
 
-		if (!testReferencePartial(targetSet, testThreshold, *data, parser.argc(1), parser.hasArg(2) ? parser.argc(2) : NULL, parser.hasArg(3) ? parser.argc(3) : NULL))
+		if (!testReferencePartial(targetSet, testThreshold, *data, parser.argc(1),
+					  parser.hasArg(2) ? parser.argc(2) : NULL, parser.hasArg(3) ? parser.argc(3) : NULL))
 			return false;
 	}
 

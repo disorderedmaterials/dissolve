@@ -93,13 +93,19 @@ bool Species::loadFromXYZ(const char *filename)
 // Return enum option info for SpeciesKeyword
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
-	static EnumOptionsList SpeciesKeywords = EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, 6) << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
-								   << EnumOption(Species::BondKeyword, "Bond", 2, 5) << EnumOption(Species::BondTypeKeyword, "BondType", 3)
-								   << EnumOption(Species::ChargeKeyword, "Charge", 2) << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, 99)
-								   << EnumOption(Species::EndSpeciesKeyword, "EndSpecies") << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1)
-								   << EnumOption(Species::ImproperKeyword, "Improper", 5, 9)
-								   << EnumOption(Species::IsotopologueKeyword, "Isotopologue", EnumOption::OneOrMoreArguments)
-								   << EnumOption(Species::SiteKeyword, "Site", 1) << EnumOption(Species::TorsionKeyword, "Torsion", 4, 9);
+	static EnumOptionsList SpeciesKeywords =
+		EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, 6)
+				  << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
+				  << EnumOption(Species::BondKeyword, "Bond", 2, 5)
+				  << EnumOption(Species::BondTypeKeyword, "BondType", 3)
+				  << EnumOption(Species::ChargeKeyword, "Charge", 2)
+				  << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, 99)
+				  << EnumOption(Species::EndSpeciesKeyword, "EndSpecies")
+				  << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1)
+				  << EnumOption(Species::ImproperKeyword, "Improper", 5, 9)
+				  << EnumOption(Species::IsotopologueKeyword, "Isotopologue", EnumOption::OneOrMoreArguments)
+				  << EnumOption(Species::SiteKeyword, "Site", 1)
+				  << EnumOption(Species::TorsionKeyword, "Torsion", 4, 9);
 
 	static EnumOptions<Species::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
 
@@ -158,8 +164,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			}
 
 			/*
-			 * If only the indices were given, create an angle without a specified functional form (a Forcefield is presumably going to be specified).
-			 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+			 * If only the indices were given, create an angle without a specified functional form (a Forcefield is
+			 * presumably going to be specified). Otherwise, check the functional form specified - if it starts with
+			 * '@' it is a reference to master parameters
 			 */
 			if (parser.nArgs() == 4)
 				a->setForm(SpeciesAngle::NoForm);
@@ -191,7 +198,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				{
 					if (!parser.hasArg(n + 5))
 					{
-						Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunctions().keyword(af),
+						Messenger::error("Angle function type '%s' requires %i parameters\n",
+								 SpeciesAngle::angleFunctions().keyword(af),
 								 SpeciesAngle::angleFunctions().minArgs(af));
 						error = true;
 						break;
@@ -207,7 +215,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			el = Elements::elementPointer(parser.argc(2));
 			if (el->Z() == 0)
 			{
-				Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Species::keywords().keyword(Species::AtomKeyword));
+				Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2),
+						 Species::keywords().keyword(Species::AtomKeyword));
 				el = NULL;
 				error = true;
 				break;
@@ -243,8 +252,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			}
 
 			/*
-			 * If only the indices were given, create a bond without a specified functional form (a Forcefield is presumably going to be specified).
-			 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+			 * If only the indices were given, create a bond without a specified functional form (a Forcefield is
+			 * presumably going to be specified). Otherwise, check the functional form specified - if it starts with
+			 * '@' it is a reference to master parameters
 			 */
 			if (parser.nArgs() == 3)
 				b->setForm(SpeciesBond::NoForm);
@@ -277,7 +287,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				{
 					if (!parser.hasArg(4 + n))
 					{
-						Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunctions().keyword(bf),
+						Messenger::error("Bond function type '%s' requires %i parameters\n",
+								 SpeciesBond::bondFunctions().keyword(bf),
 								 SpeciesBond::bondFunctions().minArgs(bf));
 						error = true;
 						break;
@@ -294,7 +305,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			b = bond(parser.argi(1) - 1, parser.argi(2) - 1);
 			if (!b)
 			{
-				Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond does not exist.\n", parser.argi(1), parser.argi(2));
+				Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond "
+						 "does not exist.\n",
+						 parser.argi(1), parser.argi(2));
 				error = true;
 				break;
 			}
@@ -315,12 +328,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				i->setCharge(parser.argd(2));
 			else
 			{
-				Messenger::error("Specified Atom index (%i) for Charge keyword is out of range.\n", parser.argi(1));
+				Messenger::error("Specified Atom index (%i) for Charge keyword is out of range.\n",
+						 parser.argi(1));
 				error = true;
 			}
 			break;
 		case (Species::CoordinateSetsKeyword):
-			if (!coordinateSetInputCoordinates_.read(parser, 1, CharString("End%s", keywords().keyword(Species::CoordinateSetsKeyword)), coreData))
+			if (!coordinateSetInputCoordinates_.read(
+				    parser, 1, CharString("End%s", keywords().keyword(Species::CoordinateSetsKeyword)),
+				    coreData))
 			{
 				Messenger::error("Failed to set coordinate sets file / format.\n");
 				error = true;
@@ -329,9 +345,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			{
 				// Open the specified file
 				LineParser coordinateSetParser(parser.processPool());
-				if ((!coordinateSetParser.openInput(coordinateSetInputCoordinates_.filename())) || (!coordinateSetParser.isFileGoodForReading()))
+				if ((!coordinateSetParser.openInput(coordinateSetInputCoordinates_.filename())) ||
+				    (!coordinateSetParser.isFileGoodForReading()))
 				{
-					Messenger::error("Couldn't open coordinate sets file '%s'.\n", coordinateSetInputCoordinates_.filename());
+					Messenger::error("Couldn't open coordinate sets file '%s'.\n",
+							 coordinateSetInputCoordinates_.filename());
 					error = true;
 					break;
 				}
@@ -339,9 +357,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				while (!coordinateSetParser.eofOrBlank())
 				{
 					CoordinateSet *coordSet = addCoordinateSet();
-					if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet->coordinates()))
+					if (!coordinateSetInputCoordinates_.importData(coordinateSetParser,
+										       coordSet->coordinates()))
 					{
-						Messenger::error("Failed to read coordinate set %i from file.\n", nCoordinateSets());
+						Messenger::error("Failed to read coordinate set %i from file.\n",
+								 nCoordinateSets());
 						error = true;
 						coordinateSets_.remove(coordSet);
 						break;
@@ -368,13 +388,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				MasterIntra *master = coreData.hasMasterImproper(parser.argc(5));
 				if (!master)
 				{
-					Messenger::error("No master Improper parameters named '%s' exist.\n", &parser.argc(5)[1]);
+					Messenger::error("No master Improper parameters named '%s' exist.\n",
+							 &parser.argc(5)[1]);
 					error = true;
 					break;
 				}
 
 				// Create a new improper definition
-				imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+				imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1,
+						  parser.argi(4) - 1);
 				if (!imp)
 				{
 					error = true;
@@ -394,7 +416,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				impf = SpeciesImproper::improperFunctions().enumeration(parser.argc(5));
 
 				// Create a new improper definition
-				imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+				imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1,
+						  parser.argi(4) - 1);
 				if (!imp)
 				{
 					error = true;
@@ -405,7 +428,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				{
 					if (!parser.hasArg(n + 6))
 					{
-						Messenger::error("Improper function type '%s' requires %i parameters\n", SpeciesImproper::improperFunctions().keyword(impf),
+						Messenger::error("Improper function type '%s' requires %i parameters\n",
+								 SpeciesImproper::improperFunctions().keyword(impf),
 								 SpeciesImproper::improperFunctions().minArgs(impf));
 						error = true;
 						break;
@@ -430,7 +454,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				at = coreData.findAtomType(arg1.get());
 				if (at == NULL)
 				{
-					Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', Species '%s'\n", arg1.get(), iso->name(), name());
+					Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', "
+							 "Species '%s'\n",
+							 arg1.get(), iso->name(), name());
 					error = true;
 					break;
 				}
@@ -440,8 +466,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				tope = Isotopes::isotope(el, arg2.asInteger());
 				if (tope == NULL)
 				{
-					Messenger::error("No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue '%s', Species '%s'\n", arg2.asInteger(), el->symbol(), at->name(),
-							 iso->name(), name());
+					Messenger::error("No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue "
+							 "'%s', Species '%s'\n",
+							 arg2.asInteger(), el->symbol(), at->name(), iso->name(), name());
 					error = true;
 					break;
 				}
@@ -459,7 +486,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			site = findSite(parser.argc(1));
 			if (site)
 			{
-				Messenger::error("The site '%s' already exists on Species '%s', and cannot be redefined.\n", parser.argc(1), name());
+				Messenger::error("The site '%s' already exists on Species '%s', and cannot be redefined.\n",
+						 parser.argc(1), name());
 				error = true;
 				break;
 			}
@@ -478,8 +506,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 			}
 
 			/*
-			 * If only the indices were given, create an angle without a specified functional form (a Forcefield is presumably going to be specified).
-			 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+			 * If only the indices were given, create an angle without a specified functional form (a Forcefield is
+			 * presumably going to be specified). Otherwise, check the functional form specified - if it starts with
+			 * '@' it is a reference to master parameters
 			 */
 			if (parser.nArgs() == 5)
 				t->setForm(SpeciesTorsion::NoForm);
@@ -489,7 +518,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				MasterIntra *master = coreData.hasMasterTorsion(parser.argc(5));
 				if (!master)
 				{
-					Messenger::error("No master Torsion parameters named '%s' exist.\n", &parser.argc(5)[1]);
+					Messenger::error("No master Torsion parameters named '%s' exist.\n",
+							 &parser.argc(5)[1]);
 					error = true;
 					break;
 				}
@@ -512,7 +542,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 				{
 					if (!parser.hasArg(n + 6))
 					{
-						Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunctions().keyword(tf),
+						Messenger::error("Torsion function type '%s' requires %i parameters\n",
+								 SpeciesTorsion::torsionFunctions().keyword(tf),
 								 SpeciesTorsion::torsionFunctions().minArgs(tf));
 						error = true;
 						break;
@@ -566,7 +597,8 @@ bool Species::write(LineParser &parser, const char *prefix)
 	int count = 0;
 	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
 	{
-		if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x,
+		if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(),
+				       keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x,
 				       i->r().y, i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge()))
 			return false;
 	}
@@ -582,26 +614,32 @@ bool Species::write(LineParser &parser, const char *prefix)
 		{
 			if (b->form() == SpeciesBond::NoForm)
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI() + 1, b->indexJ() + 1))
+				if (!parser.writeLineF("%s%s  %3i  %3i\n", newPrefix.get(),
+						       keywords().keyword(Species::BondKeyword), b->indexI() + 1,
+						       b->indexJ() + 1))
 					return false;
 			}
 			else if (b->masterParameters())
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI() + 1, b->indexJ() + 1,
-						       b->masterParameters()->name()))
+				if (!parser.writeLineF("%s%s  %3i  %3i  @%s\n", newPrefix.get(),
+						       keywords().keyword(Species::BondKeyword), b->indexI() + 1,
+						       b->indexJ() + 1, b->masterParameters()->name()))
 					return false;
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI() + 1, b->indexJ() + 1,
+				CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword),
+					     b->indexI() + 1, b->indexJ() + 1,
 					     SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-				for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)b->form()); ++n)
+				for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)b->form());
+				     ++n)
 					s.strcatf("  %8.3f", b->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get()))
 					return false;
 			}
 
-			// Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond, which we will ignore as this is the default)
+			// Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond,
+			// which we will ignore as this is the default)
 			if (b->bondType() != SpeciesBond::SingleBond)
 				bondTypes[b->bondType()].append(b);
 		}
@@ -619,7 +657,9 @@ bool Species::write(LineParser &parser, const char *prefix)
 					bondTypeHeaderWritten = true;
 				}
 				for (const SpeciesBond *bond : bondTypes[bt])
-					if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(), keywords().keyword(Species::BondTypeKeyword), bond->indexI() + 1, bond->indexJ() + 1,
+					if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(),
+							       keywords().keyword(Species::BondTypeKeyword), bond->indexI() + 1,
+							       bond->indexJ() + 1,
 							       SpeciesBond::bondType((SpeciesBond::BondType)bt)))
 						return false;
 			}
@@ -635,20 +675,25 @@ bool Species::write(LineParser &parser, const char *prefix)
 		{
 			if (a->form() == SpeciesAngle::NoForm)
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1))
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i\n", newPrefix.get(),
+						       keywords().keyword(Species::AngleKeyword), a->indexI() + 1,
+						       a->indexJ() + 1, a->indexK() + 1))
 					return false;
 			}
 			else if (a->masterParameters())
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
-						       a->masterParameters()->name()))
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  @%s\n", newPrefix.get(),
+						       keywords().keyword(Species::AngleKeyword), a->indexI() + 1,
+						       a->indexJ() + 1, a->indexK() + 1, a->masterParameters()->name()))
 					return false;
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword), a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
-					     SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-				for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)a->form()); ++n)
+				CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(),
+					     keywords().keyword(Species::AngleKeyword), a->indexI() + 1, a->indexJ() + 1,
+					     a->indexK() + 1, SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+				for (int n = 0;
+				     n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)a->form()); ++n)
 					s.strcatf("  %8.3f", a->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get()))
 					return false;
@@ -666,21 +711,28 @@ bool Species::write(LineParser &parser, const char *prefix)
 		{
 			if (t->form() == SpeciesTorsion::NoForm)
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1,
-						       t->indexL() + 1))
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i\n", newPrefix.get(),
+						       keywords().keyword(Species::TorsionKeyword), t->indexI() + 1,
+						       t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1))
 					return false;
 			}
 			else if (t->masterParameters())
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI() + 1, t->indexJ() + 1,
-						       t->indexK() + 1, t->indexL() + 1, t->masterParameters()->name()))
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(),
+						       keywords().keyword(Species::TorsionKeyword), t->indexI() + 1,
+						       t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
+						       t->masterParameters()->name()))
 					return false;
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword), t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1,
-					     t->indexL() + 1, SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-				for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)t->form()); ++n)
+				CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(),
+					     keywords().keyword(Species::TorsionKeyword), t->indexI() + 1, t->indexJ() + 1,
+					     t->indexK() + 1, t->indexL() + 1,
+					     SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+				for (int n = 0;
+				     n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)t->form());
+				     ++n)
 					s.strcatf("  %8.3f", t->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get()))
 					return false;
@@ -698,15 +750,21 @@ bool Species::write(LineParser &parser, const char *prefix)
 		{
 			if (imp->masterParameters())
 			{
-				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::ImproperKeyword), imp->indexI() + 1, imp->indexJ() + 1,
-						       imp->indexK() + 1, imp->indexL() + 1, imp->masterParameters()->name()))
+				if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(),
+						       keywords().keyword(Species::ImproperKeyword), imp->indexI() + 1,
+						       imp->indexJ() + 1, imp->indexK() + 1, imp->indexL() + 1,
+						       imp->masterParameters()->name()))
 					return false;
 			}
 			else
 			{
-				CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::ImproperKeyword), imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1,
-					     imp->indexL() + 1, SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-				for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp->form()); ++n)
+				CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(),
+					     keywords().keyword(Species::ImproperKeyword), imp->indexI() + 1, imp->indexJ() + 1,
+					     imp->indexK() + 1, imp->indexL() + 1,
+					     SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+				for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(
+							    (SpeciesImproper::ImproperFunction)imp->form());
+				     ++n)
 					s.strcatf("  %8.3f", imp->parameter(n));
 				if (!parser.writeLineF("%s\n", s.get()))
 					return false;
@@ -719,7 +777,8 @@ bool Species::write(LineParser &parser, const char *prefix)
 	{
 		if (!parser.writeLineF("\n%s# Forcefield\n", newPrefix.get()))
 			return false;
-		if (!parser.writeLineF("%s%s  '%s'\n", newPrefix.get(), keywords().keyword(Species::ForcefieldKeyword), forcefield_->name()))
+		if (!parser.writeLineF("%s%s  '%s'\n", newPrefix.get(), keywords().keyword(Species::ForcefieldKeyword),
+				       forcefield_->name()))
 			return false;
 	}
 
@@ -731,7 +790,8 @@ bool Species::write(LineParser &parser, const char *prefix)
 
 		for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 		{
-			if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword), iso->name()))
+			if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword),
+					       iso->name()))
 				return false;
 			RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
 			while (AtomType *atomType = isotopeIterator.iterate())
@@ -763,7 +823,9 @@ bool Species::write(LineParser &parser, const char *prefix)
 	// Input Coordinates
 	if (coordinateSetInputCoordinates_.hasValidFileAndFormat())
 	{
-		if (!coordinateSetInputCoordinates_.writeFilenameAndFormat(parser, CharString("\n%s%s  ", newPrefix.get(), keywords().keyword(Species::CoordinateSetsKeyword))))
+		if (!coordinateSetInputCoordinates_.writeFilenameAndFormat(
+			    parser,
+			    CharString("\n%s%s  ", newPrefix.get(), keywords().keyword(Species::CoordinateSetsKeyword))))
 			return false;
 		if (!coordinateSetInputCoordinates_.writeBlock(parser, newPrefix.get()))
 			return false;

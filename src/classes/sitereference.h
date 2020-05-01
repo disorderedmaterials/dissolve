@@ -31,16 +31,16 @@ class SiteStack;
 // Site Reference
 class SiteReference : public ListItem<SiteReference>
 {
-      public:
+	public:
 	SiteReference(SiteStack &siteStack, const char *name);
 
-      private:
+	private:
 	// Referenced stack of sites
 	SiteStack &siteStack_;
 	// Name of this site stack (in the context of an Analyser)
 	CharString name_;
 
-      public:
+	public:
 	// Return referenced stack of sites
 	SiteStack &siteStack() const;
 	// Return name of this site stack (in the context of an Analyser)

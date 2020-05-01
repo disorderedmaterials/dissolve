@@ -52,7 +52,10 @@ bool CharStringKeyword::read(LineParser &parser, int startArg, const CoreData &c
 }
 
 // Write keyword data to specified LineParser
-bool CharStringKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.get()); }
+bool CharStringKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+{
+	return parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.get());
+}
 
 /*
  * Conversion

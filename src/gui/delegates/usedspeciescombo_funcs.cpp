@@ -30,7 +30,8 @@ UsedSpeciesComboDelegate::UsedSpeciesComboDelegate(QObject *parent) : QItemDeleg
 UsedSpeciesComboDelegate::~UsedSpeciesComboDelegate() {}
 
 // Create editor
-QWidget *UsedSpeciesComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *UsedSpeciesComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+						const QModelIndex &index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox *editor = new QComboBox(parent);
@@ -45,7 +46,8 @@ QWidget *UsedSpeciesComboDelegate::createEditor(QWidget *parent, const QStyleOpt
 		}
 	}
 	else
-		Messenger::error("Underlying model did not contain a Configuration*, so UsedSpeciesCombo cannot provide options.\n");
+		Messenger::error(
+			"Underlying model did not contain a Configuration*, so UsedSpeciesCombo cannot provide options.\n");
 
 	return editor;
 }
@@ -80,4 +82,8 @@ void UsedSpeciesComboDelegate::setModelData(QWidget *editor, QAbstractItemModel 
 }
 
 // Update widget geometry
-void UsedSpeciesComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void UsedSpeciesComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+						    const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}

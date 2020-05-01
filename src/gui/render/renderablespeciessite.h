@@ -32,46 +32,46 @@ class Axes;
 // Renderable for SpeciesSite
 class RenderableSpeciesSite : public Renderable
 {
-      public:
+	public:
 	RenderableSpeciesSite(const Species *sp, const SpeciesSite *site);
 	~RenderableSpeciesSite();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source Species
 	const Species *speciesSource_;
 	// Source site in Species
 	const SpeciesSite *siteSource_;
 
-      private:
+	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-      public:
+	public:
 	// Return version of data
 	int dataVersion();
 
 	/*
 	 * Transform / Limits
 	 */
-      protected:
+	protected:
 	// Transform data values according to current settings
 	void transformValues();
 
 	/*
 	 * Rendering Primitives
 	 */
-      private:
+	private:
 	// Basic primitives
 	Primitive *originPrimitive_, *crossPrimitive_, *axesPrimitive_;
 	// Main assemblies
 	PrimitiveAssembly siteAssembly_;
 
-      protected:
+	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
@@ -80,7 +80,7 @@ class RenderableSpeciesSite : public Renderable
 	/*
 	 * Style
 	 */
-      public:
+	public:
 	// Display Styles enum
 	enum SpeciesSiteDisplayStyle
 	{
@@ -90,11 +90,11 @@ class RenderableSpeciesSite : public Renderable
 	// Return EnumOptions for SpeciesSiteDisplayStyle
 	static EnumOptions<SpeciesSiteDisplayStyle> speciesSiteDisplayStyles();
 
-      private:
+	private:
 	// Display style for the renderable
 	SpeciesSiteDisplayStyle displayStyle_;
 
-      public:
+	public:
 	// Set display style for renderable
 	void setDisplayStyle(SpeciesSiteDisplayStyle displayStyle);
 	// Return display style for the renderable
@@ -103,7 +103,7 @@ class RenderableSpeciesSite : public Renderable
 	/*
 	 * Style I/O
 	 */
-      public:
+	public:
 	// SpeciesSiteStyle Keywords Enum
 	enum SpeciesSiteStyleKeyword
 	{

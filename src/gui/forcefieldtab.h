@@ -36,21 +36,21 @@ class ForcefieldTab : public QWidget, public MainTab
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title);
 	~ForcefieldTab();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ForcefieldTab ui_;
 
 	/*
 	 * MainTab Reimplementations
 	 */
-      public:
+	public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Return whether the tab can be closed
@@ -59,7 +59,7 @@ class ForcefieldTab : public QWidget, public MainTab
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// Row update function for BondsTable
 	void updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems);
 	// Row update function for AnglesTable
@@ -73,7 +73,7 @@ class ForcefieldTab : public QWidget, public MainTab
 	// Row update function for PairPotentialsTable
 	void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
 
-      protected:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -84,11 +84,11 @@ class ForcefieldTab : public QWidget, public MainTab
 	/*
 	 * Signals / Slots
 	 */
-      private:
+	private:
 	// Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
 	void atomTypeDataModified();
 
-      private slots:
+	private slots:
 	// Atom Types
 	void on_AtomTypeAddButton_clicked(bool checked);
 	void on_AtomTypeRemoveButton_clicked(bool checked);
@@ -122,7 +122,7 @@ class ForcefieldTab : public QWidget, public MainTab
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser

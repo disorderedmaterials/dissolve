@@ -30,10 +30,13 @@
 EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywords()
 {
 	static EnumOptionsList ConfigurationKeywords =
-	    EnumOptionsList() << EnumOption(ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1) << EnumOption(ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration")
-			      << EnumOption(ConfigurationBlock::GeneratorKeyword, "Generator") << EnumOption(ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2)
-			      << EnumOption(ConfigurationBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument) << EnumOption(ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1)
-			      << EnumOption(ConfigurationBlock::TemperatureKeyword, "Temperature", 1);
+		EnumOptionsList() << EnumOption(ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1)
+				  << EnumOption(ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration")
+				  << EnumOption(ConfigurationBlock::GeneratorKeyword, "Generator")
+				  << EnumOption(ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2)
+				  << EnumOption(ConfigurationBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument)
+				  << EnumOption(ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1)
+				  << EnumOption(ConfigurationBlock::TemperatureKeyword, "Temperature", 1);
 
 	static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options("ConfigurationKeyword", ConfigurationKeywords);
 
@@ -43,7 +46,8 @@ EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywor
 // Parse Configuration block
 bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configuration *cfg)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
+	Messenger::print("\nParsing %s block '%s'...\n",
+			 BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
 	Species *sp;
 	Module *module;
@@ -71,7 +75,8 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 			cfg->setRequestedCellDivisionLength(parser.argd(1));
 			break;
 		case (ConfigurationBlock::EndConfigurationKeyword):
-			Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
+			Messenger::print("Found end of %s block.\n",
+					 BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
 			blockDone = true;
 			break;
 		case (ConfigurationBlock::GeneratorKeyword):
@@ -82,13 +87,18 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 			}
 			break;
 		case (ConfigurationBlock::InputCoordinatesKeyword):
-			if (!cfg->inputCoordinates().read(parser, 1, CharString("End%s", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)), dissolve->coreData()))
+			if (!cfg->inputCoordinates().read(
+				    parser, 1,
+				    CharString("End%s", ConfigurationBlock::keywords().keyword(
+								ConfigurationBlock::InputCoordinatesKeyword)),
+				    dissolve->coreData()))
 			{
 				Messenger::error("Failed to set input coordinates file / format.\n");
 				error = true;
 				break;
 			}
-			Messenger::printVerbose("Initial coordinates will be loaded from file '%s' (%s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
+			Messenger::printVerbose("Initial coordinates will be loaded from file '%s' (%s)\n",
+						cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
 			break;
 		case (ConfigurationBlock::ModuleKeyword):
 			// The argument following the keyword is the module name, so try to create an instance of that Module
@@ -105,7 +115,8 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 				// Add our pointer to the Module's list of associated Configurations
 				if (!module->addTargetConfiguration(cfg))
 				{
-					Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n", cfg->name(), module->type());
+					Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n",
+							 cfg->name(), module->type());
 					error = true;
 				}
 			}
@@ -117,7 +128,8 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 			if (error)
 				break;
 
-			// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it, or any Configuration)
+			// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or
+			// instance of it, or any Configuration)
 			if (parser.hasArg(2))
 			{
 				niceName = DissolveSys::niceName(parser.argc(2));
@@ -130,7 +142,9 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 				}
 				else if (dissolve->findConfigurationByNiceName(niceName))
 				{
-					Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
+					Messenger::error("A Configuration with the unique name '%s' already exist, and so "
+							 "cannot be used as a Module name.\n",
+							 niceName.get());
 					error = true;
 					break;
 				}
@@ -152,7 +166,9 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 			cfg->setTemperature(parser.argd(1));
 			break;
 		default:
-			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), keywords().keyword(kwd));
+			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+			       BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
+			       keywords().keyword(kwd));
 			error = true;
 			break;
 		}
@@ -169,7 +185,8 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n",
+				 BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
 		error = true;
 	}
 

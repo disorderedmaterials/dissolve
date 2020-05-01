@@ -24,7 +24,11 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite *site, bool axesRequired) : KeywordData<SpeciesSite *>(KeywordBase::SpeciesSiteData, site) { axesRequired_ = axesRequired; }
+SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite *site, bool axesRequired)
+	: KeywordData<SpeciesSite *>(KeywordBase::SpeciesSiteData, site)
+{
+	axesRequired_ = axesRequired;
+}
 
 SpeciesSiteKeyword::~SpeciesSiteKeyword() {}
 
@@ -59,9 +63,12 @@ bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, const CoreData &
 	// Find specified Site (second argument) in the Species
 	data_ = sp->findSite(parser.argc(startArg + 1));
 	if (!data_)
-		return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(startArg + 1), sp->name());
+		return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n",
+					parser.argc(startArg + 1), sp->name());
 	if (axesRequired_ && (!data_->hasAxes()))
-		return Messenger::error("Can't select site '%s' for keyword '%s', as the keyword requires axes specifications to be present.\n", data_->name(), name());
+		return Messenger::error(
+			"Can't select site '%s' for keyword '%s', as the keyword requires axes specifications to be present.\n",
+			data_->name(), name());
 
 	set_ = true;
 

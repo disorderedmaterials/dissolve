@@ -32,7 +32,7 @@ class QToolButton;
 // System Template
 class SystemTemplate : public ListItem<SystemTemplate>
 {
-      public:
+	public:
 	SystemTemplate();
 	~SystemTemplate();
 	SystemTemplate(const SystemTemplate &source);
@@ -41,7 +41,7 @@ class SystemTemplate : public ListItem<SystemTemplate>
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Name of the template
 	QString name_;
 	// Group in which the template exists
@@ -55,7 +55,7 @@ class SystemTemplate : public ListItem<SystemTemplate>
 	// QToolButton created for the template
 	QToolButton *toolButton_;
 
-      public:
+	public:
 	// Read data contained in specified dir
 	bool read(const QDir rootResourceDir);
 	// Return name of the template

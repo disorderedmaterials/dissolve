@@ -25,7 +25,8 @@
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
 
-BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
+BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4,
+				       double p5, double p6)
 {
 	set(function, p1, p2, p3, p4, p5, p6);
 
@@ -49,44 +50,44 @@ const char *BroadeningFunctionKeywords[] = {"None", "Gaussian", "ScaledGaussian"
 int BroadeningFunctionNParameters[] = {0, 1, 2, 1, 2};
 
 const char *BroadeningFunctionParameters[][MAXBROADENINGFUNCTIONPARAMS] = {{
-									       "",
-									       "",
-									       "",
-									       "",
-									       "",
-									       "",
+										   "",
+										   "",
+										   "",
+										   "",
+										   "",
+										   "",
 									   },
 									   {
-									       "FWHM",
-									       "",
-									       "",
-									       "",
-									       "",
-									       "",
+										   "FWHM",
+										   "",
+										   "",
+										   "",
+										   "",
+										   "",
 									   },
 									   {
-									       "A",
-									       "FWHM",
-									       "",
-									       "",
-									       "",
-									       "",
+										   "A",
+										   "FWHM",
+										   "",
+										   "",
+										   "",
+										   "",
 									   },
 									   {
-									       "FWHM",
-									       "",
-									       "",
-									       "",
-									       "",
-									       "",
+										   "FWHM",
+										   "",
+										   "",
+										   "",
+										   "",
+										   "",
 									   },
 									   {
-									       "FWHM1 (independent)",
-									       "FWHM2 (dependent)",
-									       "",
-									       "",
-									       "",
-									       "",
+										   "FWHM1 (independent)",
+										   "FWHM2 (dependent)",
+										   "",
+										   "",
+										   "",
+										   "",
 									   }};
 
 // Return FunctionType from supplied string
@@ -135,7 +136,8 @@ const char *BroadeningFunction::functionDescription(FunctionType func)
  * Function Data
  */
 
-void BroadeningFunction::set(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
+void BroadeningFunction::set(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
+			     double p6)
 {
 	function_ = function;
 	parameters_[0] = p1;
@@ -167,8 +169,9 @@ bool BroadeningFunction::set(LineParser &parser, int startArg)
 	// Do we have the right number of arguments for the function specified?
 	if ((parser.nArgs() - startArg) < BroadeningFunction::nFunctionParameters(funcType))
 	{
-		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n", BroadeningFunction::functionType(funcType),
-				 BroadeningFunction::nFunctionParameters(funcType), parser.nArgs() - startArg);
+		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n",
+				 BroadeningFunction::functionType(funcType), BroadeningFunction::nFunctionParameters(funcType),
+				 parser.nArgs() - startArg);
 		return false;
 	}
 
@@ -196,7 +199,8 @@ bool BroadeningFunction::set(LineParser &parser, int startArg)
 		parameters_[1] = parser.argd(startArg + 2);
 		break;
 	default:
-		Messenger::error("Function form '%s' not accounted for in BroadeningFunction::set(LineParser&,int).\n", BroadeningFunction::functionType(funcType));
+		Messenger::error("Function form '%s' not accounted for in BroadeningFunction::set(LineParser&,int).\n",
+				 BroadeningFunction::functionType(funcType));
 		return false;
 	}
 
@@ -275,7 +279,8 @@ void BroadeningFunction::setUpDependentParameters()
 		parameters_[5] = 1.0 / parameters_[3];
 		break;
 	default:
-		Messenger::error("Function form '%s' not accounted for in BroadeningFunction::setUpDependentParameters().\n", BroadeningFunction::functionType(function_));
+		Messenger::error("Function form '%s' not accounted for in BroadeningFunction::setUpDependentParameters().\n",
+				 BroadeningFunction::functionType(function_));
 	}
 }
 
@@ -357,7 +362,8 @@ double BroadeningFunction::yActual(double x, double omega) const
 		 * f(x) = exp ( - ------------------- )      where cn = --------------
 		 * 	      (   2 * (c1 + c2*a2)**2 )		       2 sqrt(2 ln 2)
 		 */
-		return exp(-(x * x) / (2.0 * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
+		return exp(-(x * x) /
+			   (2.0 * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
 		break;
 	default:
 		Messenger::warn("BroadeningFunction::value() - Function id %i not accounted for.\n", function_);
@@ -433,7 +439,8 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 		 * f(x) = exp ( - -------------------------- )      where cn = --------------
 		 * 	      (                2             )	               2 sqrt(2 ln 2)
 		 */
-		return exp(-(0.5 * x * x * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
+		return exp(
+			-(0.5 * x * x * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
 		break;
 	default:
 		Messenger::warn("BroadeningFunction::ft() - Function id %i not accounted for.\n", function_);
@@ -452,10 +459,12 @@ double BroadeningFunction::yFT(double x) const { return yFT(x, staticOmega_); }
 // Return value of function given parameter x, and using static omega if necessary, regardless of inversion state
 double BroadeningFunction::yActual(double x) const { return yActual(x, staticOmega_); }
 
-// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of inversion state
+// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of
+// inversion state
 double BroadeningFunction::yFTActual(double x) const { return yFTActual(x, staticOmega_); }
 
-// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth, and using static omega if necessary
+// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth, and using
+// static omega if necessary
 double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
 {
 	// Return the multiplicative factor to normalise the current function against its discretised sum
@@ -525,7 +534,8 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
 		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * staticOmega_));
 		break;
 	default:
-		Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx) - Function id %i not accounted for.\n", function_);
+		Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx) - Function id %i not accounted for.\n",
+				function_);
 		break;
 	}
 
@@ -603,7 +613,9 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
 		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * omega));
 		break;
 	default:
-		Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx,omega) - Function id %i not accounted for.\n", function_);
+		Messenger::warn(
+			"BroadeningFunction::discreteKernelNormalisation(dx,omega) - Function id %i not accounted for.\n",
+			function_);
 		break;
 	}
 
@@ -658,7 +670,8 @@ bool BroadeningFunction::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(EnumCast<BroadeningFunction::FunctionType>(function_)))
-		return Messenger::error("BroadeningFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
+		return Messenger::error("BroadeningFunction function type is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), function_);
 	if (!procPool.equality(parameters_, MAXBROADENINGFUNCTIONPARAMS))
 		return Messenger::error("BroadeningFunction parameters are not equivalent.\n");
 #endif

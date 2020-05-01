@@ -34,25 +34,41 @@ Matrix4 Matrix4::operator*(const Matrix4 &B) const
 {
 	// [ row(A|this).column(B) ]
 	Matrix4 AB;
-	AB.matrix_[0] = matrix_[0] * B.matrix_[0] + matrix_[4] * B.matrix_[1] + matrix_[8] * B.matrix_[2] + matrix_[12] * B.matrix_[3];
-	AB.matrix_[1] = matrix_[1] * B.matrix_[0] + matrix_[5] * B.matrix_[1] + matrix_[9] * B.matrix_[2] + matrix_[13] * B.matrix_[3];
-	AB.matrix_[2] = matrix_[2] * B.matrix_[0] + matrix_[6] * B.matrix_[1] + matrix_[10] * B.matrix_[2] + matrix_[14] * B.matrix_[3];
-	AB.matrix_[3] = matrix_[3] * B.matrix_[0] + matrix_[7] * B.matrix_[1] + matrix_[11] * B.matrix_[2] + matrix_[15] * B.matrix_[3];
+	AB.matrix_[0] =
+		matrix_[0] * B.matrix_[0] + matrix_[4] * B.matrix_[1] + matrix_[8] * B.matrix_[2] + matrix_[12] * B.matrix_[3];
+	AB.matrix_[1] =
+		matrix_[1] * B.matrix_[0] + matrix_[5] * B.matrix_[1] + matrix_[9] * B.matrix_[2] + matrix_[13] * B.matrix_[3];
+	AB.matrix_[2] =
+		matrix_[2] * B.matrix_[0] + matrix_[6] * B.matrix_[1] + matrix_[10] * B.matrix_[2] + matrix_[14] * B.matrix_[3];
+	AB.matrix_[3] =
+		matrix_[3] * B.matrix_[0] + matrix_[7] * B.matrix_[1] + matrix_[11] * B.matrix_[2] + matrix_[15] * B.matrix_[3];
 
-	AB.matrix_[4] = matrix_[0] * B.matrix_[4] + matrix_[4] * B.matrix_[5] + matrix_[8] * B.matrix_[6] + matrix_[12] * B.matrix_[7];
-	AB.matrix_[5] = matrix_[1] * B.matrix_[4] + matrix_[5] * B.matrix_[5] + matrix_[9] * B.matrix_[6] + matrix_[13] * B.matrix_[7];
-	AB.matrix_[6] = matrix_[2] * B.matrix_[4] + matrix_[6] * B.matrix_[5] + matrix_[10] * B.matrix_[6] + matrix_[14] * B.matrix_[7];
-	AB.matrix_[7] = matrix_[3] * B.matrix_[4] + matrix_[7] * B.matrix_[5] + matrix_[11] * B.matrix_[6] + matrix_[15] * B.matrix_[7];
+	AB.matrix_[4] =
+		matrix_[0] * B.matrix_[4] + matrix_[4] * B.matrix_[5] + matrix_[8] * B.matrix_[6] + matrix_[12] * B.matrix_[7];
+	AB.matrix_[5] =
+		matrix_[1] * B.matrix_[4] + matrix_[5] * B.matrix_[5] + matrix_[9] * B.matrix_[6] + matrix_[13] * B.matrix_[7];
+	AB.matrix_[6] =
+		matrix_[2] * B.matrix_[4] + matrix_[6] * B.matrix_[5] + matrix_[10] * B.matrix_[6] + matrix_[14] * B.matrix_[7];
+	AB.matrix_[7] =
+		matrix_[3] * B.matrix_[4] + matrix_[7] * B.matrix_[5] + matrix_[11] * B.matrix_[6] + matrix_[15] * B.matrix_[7];
 
-	AB.matrix_[8] = matrix_[0] * B.matrix_[8] + matrix_[4] * B.matrix_[9] + matrix_[8] * B.matrix_[10] + matrix_[12] * B.matrix_[11];
-	AB.matrix_[9] = matrix_[1] * B.matrix_[8] + matrix_[5] * B.matrix_[9] + matrix_[9] * B.matrix_[10] + matrix_[13] * B.matrix_[11];
-	AB.matrix_[10] = matrix_[2] * B.matrix_[8] + matrix_[6] * B.matrix_[9] + matrix_[10] * B.matrix_[10] + matrix_[14] * B.matrix_[11];
-	AB.matrix_[11] = matrix_[3] * B.matrix_[8] + matrix_[7] * B.matrix_[9] + matrix_[11] * B.matrix_[10] + matrix_[15] * B.matrix_[11];
+	AB.matrix_[8] = matrix_[0] * B.matrix_[8] + matrix_[4] * B.matrix_[9] + matrix_[8] * B.matrix_[10] +
+			matrix_[12] * B.matrix_[11];
+	AB.matrix_[9] = matrix_[1] * B.matrix_[8] + matrix_[5] * B.matrix_[9] + matrix_[9] * B.matrix_[10] +
+			matrix_[13] * B.matrix_[11];
+	AB.matrix_[10] = matrix_[2] * B.matrix_[8] + matrix_[6] * B.matrix_[9] + matrix_[10] * B.matrix_[10] +
+			 matrix_[14] * B.matrix_[11];
+	AB.matrix_[11] = matrix_[3] * B.matrix_[8] + matrix_[7] * B.matrix_[9] + matrix_[11] * B.matrix_[10] +
+			 matrix_[15] * B.matrix_[11];
 
-	AB.matrix_[12] = matrix_[0] * B.matrix_[12] + matrix_[4] * B.matrix_[13] + matrix_[8] * B.matrix_[14] + matrix_[12] * B.matrix_[15];
-	AB.matrix_[13] = matrix_[1] * B.matrix_[12] + matrix_[5] * B.matrix_[13] + matrix_[9] * B.matrix_[14] + matrix_[13] * B.matrix_[15];
-	AB.matrix_[14] = matrix_[2] * B.matrix_[12] + matrix_[6] * B.matrix_[13] + matrix_[10] * B.matrix_[14] + matrix_[14] * B.matrix_[15];
-	AB.matrix_[15] = matrix_[3] * B.matrix_[12] + matrix_[7] * B.matrix_[13] + matrix_[11] * B.matrix_[14] + matrix_[15] * B.matrix_[15];
+	AB.matrix_[12] = matrix_[0] * B.matrix_[12] + matrix_[4] * B.matrix_[13] + matrix_[8] * B.matrix_[14] +
+			 matrix_[12] * B.matrix_[15];
+	AB.matrix_[13] = matrix_[1] * B.matrix_[12] + matrix_[5] * B.matrix_[13] + matrix_[9] * B.matrix_[14] +
+			 matrix_[13] * B.matrix_[15];
+	AB.matrix_[14] = matrix_[2] * B.matrix_[12] + matrix_[6] * B.matrix_[13] + matrix_[10] * B.matrix_[14] +
+			 matrix_[14] * B.matrix_[15];
+	AB.matrix_[15] = matrix_[3] * B.matrix_[12] + matrix_[7] * B.matrix_[13] + matrix_[11] * B.matrix_[14] +
+			 matrix_[15] * B.matrix_[15];
 	return AB;
 }
 
@@ -104,25 +120,41 @@ Matrix4 &Matrix4::operator*=(const Matrix4 &B)
 {
 	// [ row(A|this).column(B) ]
 	Matrix4 AB;
-	AB.matrix_[0] = matrix_[0] * B.matrix_[0] + matrix_[4] * B.matrix_[1] + matrix_[8] * B.matrix_[2] + matrix_[12] * B.matrix_[3];
-	AB.matrix_[1] = matrix_[1] * B.matrix_[0] + matrix_[5] * B.matrix_[1] + matrix_[9] * B.matrix_[2] + matrix_[13] * B.matrix_[3];
-	AB.matrix_[2] = matrix_[2] * B.matrix_[0] + matrix_[6] * B.matrix_[1] + matrix_[10] * B.matrix_[2] + matrix_[14] * B.matrix_[3];
-	AB.matrix_[3] = matrix_[3] * B.matrix_[0] + matrix_[7] * B.matrix_[1] + matrix_[11] * B.matrix_[2] + matrix_[15] * B.matrix_[3];
+	AB.matrix_[0] =
+		matrix_[0] * B.matrix_[0] + matrix_[4] * B.matrix_[1] + matrix_[8] * B.matrix_[2] + matrix_[12] * B.matrix_[3];
+	AB.matrix_[1] =
+		matrix_[1] * B.matrix_[0] + matrix_[5] * B.matrix_[1] + matrix_[9] * B.matrix_[2] + matrix_[13] * B.matrix_[3];
+	AB.matrix_[2] =
+		matrix_[2] * B.matrix_[0] + matrix_[6] * B.matrix_[1] + matrix_[10] * B.matrix_[2] + matrix_[14] * B.matrix_[3];
+	AB.matrix_[3] =
+		matrix_[3] * B.matrix_[0] + matrix_[7] * B.matrix_[1] + matrix_[11] * B.matrix_[2] + matrix_[15] * B.matrix_[3];
 
-	AB.matrix_[4] = matrix_[0] * B.matrix_[4] + matrix_[4] * B.matrix_[5] + matrix_[8] * B.matrix_[6] + matrix_[12] * B.matrix_[7];
-	AB.matrix_[5] = matrix_[1] * B.matrix_[4] + matrix_[5] * B.matrix_[5] + matrix_[9] * B.matrix_[6] + matrix_[13] * B.matrix_[7];
-	AB.matrix_[6] = matrix_[2] * B.matrix_[4] + matrix_[6] * B.matrix_[5] + matrix_[10] * B.matrix_[6] + matrix_[14] * B.matrix_[7];
-	AB.matrix_[7] = matrix_[3] * B.matrix_[4] + matrix_[7] * B.matrix_[5] + matrix_[11] * B.matrix_[6] + matrix_[15] * B.matrix_[7];
+	AB.matrix_[4] =
+		matrix_[0] * B.matrix_[4] + matrix_[4] * B.matrix_[5] + matrix_[8] * B.matrix_[6] + matrix_[12] * B.matrix_[7];
+	AB.matrix_[5] =
+		matrix_[1] * B.matrix_[4] + matrix_[5] * B.matrix_[5] + matrix_[9] * B.matrix_[6] + matrix_[13] * B.matrix_[7];
+	AB.matrix_[6] =
+		matrix_[2] * B.matrix_[4] + matrix_[6] * B.matrix_[5] + matrix_[10] * B.matrix_[6] + matrix_[14] * B.matrix_[7];
+	AB.matrix_[7] =
+		matrix_[3] * B.matrix_[4] + matrix_[7] * B.matrix_[5] + matrix_[11] * B.matrix_[6] + matrix_[15] * B.matrix_[7];
 
-	AB.matrix_[8] = matrix_[0] * B.matrix_[8] + matrix_[4] * B.matrix_[9] + matrix_[8] * B.matrix_[10] + matrix_[12] * B.matrix_[11];
-	AB.matrix_[9] = matrix_[1] * B.matrix_[8] + matrix_[5] * B.matrix_[9] + matrix_[9] * B.matrix_[10] + matrix_[13] * B.matrix_[11];
-	AB.matrix_[10] = matrix_[2] * B.matrix_[8] + matrix_[6] * B.matrix_[9] + matrix_[10] * B.matrix_[10] + matrix_[14] * B.matrix_[11];
-	AB.matrix_[11] = matrix_[3] * B.matrix_[8] + matrix_[7] * B.matrix_[9] + matrix_[11] * B.matrix_[10] + matrix_[15] * B.matrix_[11];
+	AB.matrix_[8] = matrix_[0] * B.matrix_[8] + matrix_[4] * B.matrix_[9] + matrix_[8] * B.matrix_[10] +
+			matrix_[12] * B.matrix_[11];
+	AB.matrix_[9] = matrix_[1] * B.matrix_[8] + matrix_[5] * B.matrix_[9] + matrix_[9] * B.matrix_[10] +
+			matrix_[13] * B.matrix_[11];
+	AB.matrix_[10] = matrix_[2] * B.matrix_[8] + matrix_[6] * B.matrix_[9] + matrix_[10] * B.matrix_[10] +
+			 matrix_[14] * B.matrix_[11];
+	AB.matrix_[11] = matrix_[3] * B.matrix_[8] + matrix_[7] * B.matrix_[9] + matrix_[11] * B.matrix_[10] +
+			 matrix_[15] * B.matrix_[11];
 
-	AB.matrix_[12] = matrix_[0] * B.matrix_[12] + matrix_[4] * B.matrix_[13] + matrix_[8] * B.matrix_[14] + matrix_[12] * B.matrix_[15];
-	AB.matrix_[13] = matrix_[1] * B.matrix_[12] + matrix_[5] * B.matrix_[13] + matrix_[9] * B.matrix_[14] + matrix_[13] * B.matrix_[15];
-	AB.matrix_[14] = matrix_[2] * B.matrix_[12] + matrix_[6] * B.matrix_[13] + matrix_[10] * B.matrix_[14] + matrix_[14] * B.matrix_[15];
-	AB.matrix_[15] = matrix_[3] * B.matrix_[12] + matrix_[7] * B.matrix_[13] + matrix_[11] * B.matrix_[14] + matrix_[15] * B.matrix_[15];
+	AB.matrix_[12] = matrix_[0] * B.matrix_[12] + matrix_[4] * B.matrix_[13] + matrix_[8] * B.matrix_[14] +
+			 matrix_[12] * B.matrix_[15];
+	AB.matrix_[13] = matrix_[1] * B.matrix_[12] + matrix_[5] * B.matrix_[13] + matrix_[9] * B.matrix_[14] +
+			 matrix_[13] * B.matrix_[15];
+	AB.matrix_[14] = matrix_[2] * B.matrix_[12] + matrix_[6] * B.matrix_[13] + matrix_[10] * B.matrix_[14] +
+			 matrix_[14] * B.matrix_[15];
+	AB.matrix_[15] = matrix_[3] * B.matrix_[12] + matrix_[7] * B.matrix_[13] + matrix_[11] * B.matrix_[14] +
+			 matrix_[15] * B.matrix_[15];
 	*this = AB;
 	return *this;
 }
@@ -143,25 +175,41 @@ void Matrix4::preMultiply(const Matrix4 &B)
 {
 	// [ row(B).column(A|this) ]
 	Matrix4 AB;
-	AB.matrix_[0] = matrix_[0] * B.matrix_[0] + matrix_[1] * B.matrix_[4] + matrix_[2] * B.matrix_[8] + matrix_[3] * B.matrix_[12];
-	AB.matrix_[1] = matrix_[0] * B.matrix_[1] + matrix_[1] * B.matrix_[5] + matrix_[2] * B.matrix_[9] + matrix_[3] * B.matrix_[13];
-	AB.matrix_[2] = matrix_[0] * B.matrix_[2] + matrix_[1] * B.matrix_[6] + matrix_[2] * B.matrix_[10] + matrix_[3] * B.matrix_[14];
-	AB.matrix_[3] = matrix_[0] * B.matrix_[3] + matrix_[1] * B.matrix_[7] + matrix_[2] * B.matrix_[11] + matrix_[3] * B.matrix_[15];
+	AB.matrix_[0] =
+		matrix_[0] * B.matrix_[0] + matrix_[1] * B.matrix_[4] + matrix_[2] * B.matrix_[8] + matrix_[3] * B.matrix_[12];
+	AB.matrix_[1] =
+		matrix_[0] * B.matrix_[1] + matrix_[1] * B.matrix_[5] + matrix_[2] * B.matrix_[9] + matrix_[3] * B.matrix_[13];
+	AB.matrix_[2] =
+		matrix_[0] * B.matrix_[2] + matrix_[1] * B.matrix_[6] + matrix_[2] * B.matrix_[10] + matrix_[3] * B.matrix_[14];
+	AB.matrix_[3] =
+		matrix_[0] * B.matrix_[3] + matrix_[1] * B.matrix_[7] + matrix_[2] * B.matrix_[11] + matrix_[3] * B.matrix_[15];
 
-	AB.matrix_[4] = matrix_[4] * B.matrix_[0] + matrix_[5] * B.matrix_[4] + matrix_[6] * B.matrix_[8] + matrix_[7] * B.matrix_[12];
-	AB.matrix_[5] = matrix_[4] * B.matrix_[1] + matrix_[5] * B.matrix_[5] + matrix_[6] * B.matrix_[9] + matrix_[7] * B.matrix_[13];
-	AB.matrix_[6] = matrix_[4] * B.matrix_[2] + matrix_[5] * B.matrix_[6] + matrix_[6] * B.matrix_[10] + matrix_[7] * B.matrix_[14];
-	AB.matrix_[7] = matrix_[4] * B.matrix_[3] + matrix_[5] * B.matrix_[7] + matrix_[6] * B.matrix_[11] + matrix_[7] * B.matrix_[15];
+	AB.matrix_[4] =
+		matrix_[4] * B.matrix_[0] + matrix_[5] * B.matrix_[4] + matrix_[6] * B.matrix_[8] + matrix_[7] * B.matrix_[12];
+	AB.matrix_[5] =
+		matrix_[4] * B.matrix_[1] + matrix_[5] * B.matrix_[5] + matrix_[6] * B.matrix_[9] + matrix_[7] * B.matrix_[13];
+	AB.matrix_[6] =
+		matrix_[4] * B.matrix_[2] + matrix_[5] * B.matrix_[6] + matrix_[6] * B.matrix_[10] + matrix_[7] * B.matrix_[14];
+	AB.matrix_[7] =
+		matrix_[4] * B.matrix_[3] + matrix_[5] * B.matrix_[7] + matrix_[6] * B.matrix_[11] + matrix_[7] * B.matrix_[15];
 
-	AB.matrix_[8] = matrix_[8] * B.matrix_[0] + matrix_[9] * B.matrix_[4] + matrix_[10] * B.matrix_[8] + matrix_[11] * B.matrix_[12];
-	AB.matrix_[9] = matrix_[8] * B.matrix_[1] + matrix_[9] * B.matrix_[5] + matrix_[10] * B.matrix_[9] + matrix_[11] * B.matrix_[13];
-	AB.matrix_[10] = matrix_[8] * B.matrix_[2] + matrix_[9] * B.matrix_[6] + matrix_[10] * B.matrix_[10] + matrix_[11] * B.matrix_[14];
-	AB.matrix_[11] = matrix_[8] * B.matrix_[3] + matrix_[9] * B.matrix_[7] + matrix_[10] * B.matrix_[11] + matrix_[11] * B.matrix_[15];
+	AB.matrix_[8] = matrix_[8] * B.matrix_[0] + matrix_[9] * B.matrix_[4] + matrix_[10] * B.matrix_[8] +
+			matrix_[11] * B.matrix_[12];
+	AB.matrix_[9] = matrix_[8] * B.matrix_[1] + matrix_[9] * B.matrix_[5] + matrix_[10] * B.matrix_[9] +
+			matrix_[11] * B.matrix_[13];
+	AB.matrix_[10] = matrix_[8] * B.matrix_[2] + matrix_[9] * B.matrix_[6] + matrix_[10] * B.matrix_[10] +
+			 matrix_[11] * B.matrix_[14];
+	AB.matrix_[11] = matrix_[8] * B.matrix_[3] + matrix_[9] * B.matrix_[7] + matrix_[10] * B.matrix_[11] +
+			 matrix_[11] * B.matrix_[15];
 
-	AB.matrix_[12] = matrix_[12] * B.matrix_[0] + matrix_[13] * B.matrix_[4] + matrix_[14] * B.matrix_[8] + matrix_[15] * B.matrix_[12];
-	AB.matrix_[13] = matrix_[12] * B.matrix_[1] + matrix_[13] * B.matrix_[5] + matrix_[14] * B.matrix_[9] + matrix_[15] * B.matrix_[13];
-	AB.matrix_[14] = matrix_[12] * B.matrix_[2] + matrix_[13] * B.matrix_[6] + matrix_[14] * B.matrix_[10] + matrix_[15] * B.matrix_[14];
-	AB.matrix_[15] = matrix_[12] * B.matrix_[3] + matrix_[13] * B.matrix_[7] + matrix_[14] * B.matrix_[11] + matrix_[15] * B.matrix_[15];
+	AB.matrix_[12] = matrix_[12] * B.matrix_[0] + matrix_[13] * B.matrix_[4] + matrix_[14] * B.matrix_[8] +
+			 matrix_[15] * B.matrix_[12];
+	AB.matrix_[13] = matrix_[12] * B.matrix_[1] + matrix_[13] * B.matrix_[5] + matrix_[14] * B.matrix_[9] +
+			 matrix_[15] * B.matrix_[13];
+	AB.matrix_[14] = matrix_[12] * B.matrix_[2] + matrix_[13] * B.matrix_[6] + matrix_[14] * B.matrix_[10] +
+			 matrix_[15] * B.matrix_[14];
+	AB.matrix_[15] = matrix_[12] * B.matrix_[3] + matrix_[13] * B.matrix_[7] + matrix_[14] * B.matrix_[11] +
+			 matrix_[15] * B.matrix_[15];
 	*this = AB;
 }
 
@@ -250,13 +298,17 @@ Matrix4 &Matrix4::transpose() const
 // Calculate determinant
 double Matrix4::determinant() const
 {
-	double a = matrix_[0] * (matrix_[5] * (matrix_[10] * matrix_[15] - matrix_[11] * matrix_[14]) - matrix_[9] * (matrix_[6] * matrix_[15] - matrix_[7] * matrix_[14]) +
+	double a = matrix_[0] * (matrix_[5] * (matrix_[10] * matrix_[15] - matrix_[11] * matrix_[14]) -
+				 matrix_[9] * (matrix_[6] * matrix_[15] - matrix_[7] * matrix_[14]) +
 				 matrix_[13] * (matrix_[6] * matrix_[11] - matrix_[7] * matrix_[10]));
-	double b = matrix_[4] * (matrix_[1] * (matrix_[10] * matrix_[15] - matrix_[11] * matrix_[14]) - matrix_[9] * (matrix_[2] * matrix_[15] - matrix_[3] * matrix_[14]) +
+	double b = matrix_[4] * (matrix_[1] * (matrix_[10] * matrix_[15] - matrix_[11] * matrix_[14]) -
+				 matrix_[9] * (matrix_[2] * matrix_[15] - matrix_[3] * matrix_[14]) +
 				 matrix_[13] * (matrix_[2] * matrix_[11] - matrix_[3] * matrix_[10]));
-	double c = matrix_[8] * (matrix_[1] * (matrix_[6] * matrix_[15] - matrix_[7] * matrix_[14]) - matrix_[5] * (matrix_[2] * matrix_[15] - matrix_[3] * matrix_[14]) +
+	double c = matrix_[8] * (matrix_[1] * (matrix_[6] * matrix_[15] - matrix_[7] * matrix_[14]) -
+				 matrix_[5] * (matrix_[2] * matrix_[15] - matrix_[3] * matrix_[14]) +
 				 matrix_[13] * (matrix_[2] * matrix_[7] - matrix_[3] * matrix_[6]));
-	double d = matrix_[12] * (matrix_[1] * (matrix_[6] * matrix_[11] - matrix_[7] * matrix_[10]) - matrix_[5] * (matrix_[2] * matrix_[11] - matrix_[3] * matrix_[10]) +
+	double d = matrix_[12] * (matrix_[1] * (matrix_[6] * matrix_[11] - matrix_[7] * matrix_[10]) -
+				  matrix_[5] * (matrix_[2] * matrix_[11] - matrix_[3] * matrix_[10]) +
 				  matrix_[9] * (matrix_[2] * matrix_[7] - matrix_[3] * matrix_[6]));
 	return (a - b + c - d);
 }
@@ -474,8 +526,8 @@ void Matrix4::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix4::columnNormalise(int col)
 {
-	double mag =
-	    1.0 / sqrt(matrix_[col * 4] * matrix_[col * 4] + matrix_[col * 4 + 1] * matrix_[col * 4 + 1] + matrix_[col * 4 + 2] * matrix_[col * 4 + 2] + matrix_[col * 4 + 3] * matrix_[col * 4 + 3]);
+	double mag = 1.0 / sqrt(matrix_[col * 4] * matrix_[col * 4] + matrix_[col * 4 + 1] * matrix_[col * 4 + 1] +
+				matrix_[col * 4 + 2] * matrix_[col * 4 + 2] + matrix_[col * 4 + 3] * matrix_[col * 4 + 3]);
 	matrix_[col * 4] *= mag;
 	matrix_[col * 4 + 1] *= mag;
 	matrix_[col * 4 + 2] *= mag;
@@ -1234,14 +1286,16 @@ void Matrix4::applyShearX(double shearx)
 	matrix_[6] += shearx * matrix_[2];
 	matrix_[7] += shearx * matrix_[3];
 
-	// 	AB.matrix_[8] = matrix_[8]*B.matrix_[0] + matrix_[9]*B.matrix_[4] + matrix_[10]*B.matrix_[8] + matrix_[11]*B.matrix_[12];
-	// 	AB.matrix_[9] = matrix_[8]*B.matrix_[1] + matrix_[9]*B.matrix_[5] + matrix_[10]*B.matrix_[9] + matrix_[11]*B.matrix_[13];
-	// 	AB.matrix_[10] = matrix_[8]*B.matrix_[2] + matrix_[9]*B.matrix_[6] + matrix_[10]*B.matrix_[10] + matrix_[11]*B.matrix_[14];
-	// 	AB.matrix_[11] = matrix_[8]*B.matrix_[3] + matrix_[9]*B.matrix_[7] + matrix_[10]*B.matrix_[11] + matrix_[11]*B.matrix_[15];
+	// 	AB.matrix_[8] = matrix_[8]*B.matrix_[0] + matrix_[9]*B.matrix_[4] + matrix_[10]*B.matrix_[8] +
+	// matrix_[11]*B.matrix_[12]; 	AB.matrix_[9] = matrix_[8]*B.matrix_[1] + matrix_[9]*B.matrix_[5] +
+	// matrix_[10]*B.matrix_[9] + matrix_[11]*B.matrix_[13]; 	AB.matrix_[10] = matrix_[8]*B.matrix_[2] +
+	// matrix_[9]*B.matrix_[6] + matrix_[10]*B.matrix_[10] + matrix_[11]*B.matrix_[14]; 	AB.matrix_[11] =
+	// matrix_[8]*B.matrix_[3] + matrix_[9]*B.matrix_[7] + matrix_[10]*B.matrix_[11] + matrix_[11]*B.matrix_[15];
 	//
-	// 	AB.matrix_[12] = matrix_[12]*B.matrix_[0] + matrix_[13]*B.matrix_[4] + matrix_[14]*B.matrix_[8] + matrix_[15]*B.matrix_[12];
-	// 	AB.matrix_[13] = matrix_[12]*B.matrix_[1] + matrix_[13]*B.matrix_[5] + matrix_[14]*B.matrix_[9] + matrix_[15]*B.matrix_[13];
-	// 	AB.matrix_[14] = matrix_[12]*B.matrix_[2] + matrix_[13]*B.matrix_[6] + matrix_[14]*B.matrix_[10] + matrix_[15]*B.matrix_[14];
-	// 	AB.matrix_[15] = matrix_[12]*B.matrix_[3] + matrix_[13]*B.matrix_[7] + matrix_[14]*B.matrix_[11] + matrix_[15]*B.matrix_[15];
-	// 	return AB;
+	// 	AB.matrix_[12] = matrix_[12]*B.matrix_[0] + matrix_[13]*B.matrix_[4] + matrix_[14]*B.matrix_[8] +
+	// matrix_[15]*B.matrix_[12]; 	AB.matrix_[13] = matrix_[12]*B.matrix_[1] + matrix_[13]*B.matrix_[5] +
+	// matrix_[14]*B.matrix_[9] + matrix_[15]*B.matrix_[13]; 	AB.matrix_[14] = matrix_[12]*B.matrix_[2] +
+	// matrix_[13]*B.matrix_[6] + matrix_[14]*B.matrix_[10] + matrix_[15]*B.matrix_[14]; 	AB.matrix_[15] =
+	// matrix_[12]*B.matrix_[3] + matrix_[13]*B.matrix_[7] + matrix_[14]*B.matrix_[11] + matrix_[15]*B.matrix_[15];
+	// return AB;
 }

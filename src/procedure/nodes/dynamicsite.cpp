@@ -38,8 +38,10 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) 
 {
 	parent_ = parent;
 
-	keywords_.add("Definition", new AtomTypeRefListKeyword(atomTypes_), "AtomType", "Define one or more AtomTypes to include in this site");
-	keywords_.add("Definition", new ElementRefListKeyword(elements_), "Element", "Define one or more Elements to include in this site");
+	keywords_.add("Definition", new AtomTypeRefListKeyword(atomTypes_), "AtomType",
+		      "Define one or more AtomTypes to include in this site");
+	keywords_.add("Definition", new ElementRefListKeyword(elements_), "Element",
+		      "Define one or more Elements to include in this site");
 }
 
 DynamicSiteProcedureNode::~DynamicSiteProcedureNode() {}
@@ -49,7 +51,10 @@ DynamicSiteProcedureNode::~DynamicSiteProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 // Return whether a name for the node must be provided
 bool DynamicSiteProcedureNode::mustBeNamed() const { return false; }
@@ -88,7 +93,8 @@ const Array<Site> &DynamicSiteProcedureNode::generatedSites() const { return gen
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								     const char *prefix, GenericList &targetList)
 {
 	// Clear our current list of sites
 	generatedSites_.clear();
@@ -98,9 +104,10 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 	std::shared_ptr<const Molecule> moleculeParent = parent_->sameMoleculeMolecule();
 
 	/*
-	 * We'll loop over all Molecules in the Configuration, rather than all Atoms, since there are useful exclusions we can make based on the parent Molecule.
-	 * If, however, a sameMolecule_ is defined then we can simply grab this Molecule and do the checks within it, rather than looping.
-	 * Both use the local function generateSites(std::shared_ptr<Molecule>) in order to extract site information.
+	 * We'll loop over all Molecules in the Configuration, rather than all Atoms, since there are useful exclusions we can
+	 * make based on the parent Molecule. If, however, a sameMolecule_ is defined then we can simply grab this Molecule and
+	 * do the checks within it, rather than looping. Both use the local function generateSites(std::shared_ptr<Molecule>) in
+	 * order to extract site information.
 	 */
 
 	if (moleculeParent)

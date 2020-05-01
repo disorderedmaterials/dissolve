@@ -31,17 +31,17 @@
 // Keyword Interface
 template <class T> class KeywordData : public KeywordBase
 {
-      public:
+	public:
 	KeywordData(KeywordBase::KeywordDataType type, T data) : KeywordBase(type), data_(data) {}
 
 	/*
 	 * Data
 	 */
-      protected:
+	protected:
 	// Data (POD or otherwise) that is to be set by reading from an input file
 	T data_;
 
-      protected:
+	protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	virtual bool isDataEmpty() const
 	{
@@ -49,7 +49,7 @@ template <class T> class KeywordData : public KeywordBase
 		return false;
 	}
 
-      public:
+	public:
 	// Set data, validating as necessary
 	bool setData(T value)
 	{
@@ -72,7 +72,7 @@ template <class T> class KeywordData : public KeywordBase
 	/*
 	 * Data Validation
 	 */
-      public:
+	public:
 	// Validate supplied value
 	virtual bool isValid(T value) { return true; }
 };

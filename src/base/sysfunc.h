@@ -28,7 +28,7 @@ class DissolveSys
 	/*
 	 * Conversion Functions
 	 */
-      public:
+	public:
 	// Convert integer to string representation
 	static const char *itoa(int i);
 	// Convert double to string representation (as %f)
@@ -45,7 +45,7 @@ class DissolveSys
 	/*
 	 * String Functions
 	 */
-      public:
+	public:
 	// Convert string to uppercase
 	static const char *upperCase(const char *);
 	// Convert string to lowercase
@@ -90,14 +90,14 @@ class DissolveSys
 	/*
 	 * Files
 	 */
-      public:
+	public:
 	// Return whether specified file exists
 	static bool fileExists(const char *filename);
 
 	/*
 	 * Time Functions
 	 */
-      public:
+	public:
 	// Return string of current time / date
 	static const char *currentTimeAndDate();
 };

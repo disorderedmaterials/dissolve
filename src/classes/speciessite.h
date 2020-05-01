@@ -39,14 +39,14 @@ class SpeciesAtom;
 // Species Site Definition
 class SpeciesSite : public ListItem<SpeciesSite>
 {
-      public:
+	public:
 	SpeciesSite();
 	~SpeciesSite();
 
 	/*
 	 * Basic Information
 	 */
-      private:
+	private:
 	// Name of site
 	CharString name_;
 	// Parent Species
@@ -54,7 +54,7 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Version of the SpeciesSite
 	VersionCounter version_;
 
-      public:
+	public:
 	// Set name of site
 	void setName(const char *newName);
 	// Return anme of site
@@ -69,7 +69,7 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// List of SpeciesAtoms whose average position is the origin of the site
 	RefList<SpeciesAtom> originAtoms_;
 	// Whether the origin should be calculated with mass-weighted positions
@@ -79,7 +79,7 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
 	RefList<SpeciesAtom> yAxisAtoms_;
 
-      public:
+	public:
 	// Add origin atom
 	bool addOriginAtom(SpeciesAtom *originAtom);
 	// Add origin atom from index
@@ -126,23 +126,26 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	/*
 	 * Generation from Parent
 	 */
-      public:
+	public:
 	// Create and return Site description from parent Species
 	Site *createFromParent() const;
 
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Site Block Keyword Enum
 	enum SiteKeyword
 	{
-		EndSiteKeyword,		   /* 'EndSite' - Signals the end of the Site */
-		OriginKeyword,		   /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
-		OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with mass-weighted coordinates */
-		XAxisKeyword,		   /* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x axis */
-		YAxisKeyword,		   /* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
-		nSiteKeywords		   /* Number of keywords defined for this block */
+		EndSiteKeyword, /* 'EndSite' - Signals the end of the Site */
+		OriginKeyword,  /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
+		OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with
+					      mass-weighted coordinates */
+		XAxisKeyword, /* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x
+				 axis */
+		YAxisKeyword, /* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y
+				 axis */
+		nSiteKeywords /* Number of keywords defined for this block */
 	};
 	// Return enum option info for SiteKeyword
 	static EnumOptions<SpeciesSite::SiteKeyword> keywords();

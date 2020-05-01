@@ -29,7 +29,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableConfiguration::RenderableConfiguration(const Configuration *source, const char *objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
+RenderableConfiguration::RenderableConfiguration(const Configuration *source, const char *objectTag)
+	: Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
@@ -107,7 +108,8 @@ void RenderableConfiguration::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
+void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j,
+						 const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
 {
 	Matrix4 A;
 	Vec3<double> unit = vij;
@@ -120,7 +122,8 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, co
 	A.columnMultiply(2, 0.5 * mag);
 	A.applyScaling(radialScaling, radialScaling, 1.0);
 
-	// If drawing from individual Atoms, locate on each Atom and draw the bond halves from there. If not, locate to the bond centre.
+	// If drawing from individual Atoms, locate on each Atom and draw the bond halves from there. If not, locate to the bond
+	// centre.
 	if (drawFromAtoms)
 	{
 		// Render half of Bond in colour of Atom j
@@ -191,17 +194,20 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 				const Vec3<double> r = i->r();
 				colour = ElementColours::colour(i->speciesAtom()->element());
 
-				lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
-				lineConfigurationPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
-				lineConfigurationPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+				lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y,
+								  r.z, colour);
+				lineConfigurationPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_,
+								  r.z, colour);
+				lineConfigurationPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y,
+								  r.z + linesAtomRadius_, colour);
 			}
 			else
 			{
 				// Draw all bonds from this atom
 				for (const auto *bond : i->speciesAtom()->bonds())
 				{
-					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond
-					// only once)
+					// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is
+					// the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
 					partner = i->molecule()->atom(bond->indexJ());
 					if (i == partner)
 						continue;
@@ -210,11 +216,18 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 					rj = partner->r();
 
 					// Determine half delta i-j for bond
-					const Vec3<double> dij = (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
+					const Vec3<double> dij =
+						(i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj)
+											 : rj - ri) *
+						0.5;
 
 					// Draw bond halves
-					lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(bond->i()->element()));
-					lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(bond->j()->element()));
+					lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y,
+									  ri.z + dij.z,
+									  ElementColours::colour(bond->i()->element()));
+					lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y,
+									  rj.z - dij.z,
+									  ElementColours::colour(bond->j()->element()));
 				}
 			}
 		}
@@ -241,15 +254,18 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 			// Bonds from this atom
 			for (const auto *bond : i->speciesAtom()->bonds())
 			{
-				// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
+				// Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same
+				// as 'i' (in which case we skip it, ensuring we draw every bond only once)
 				partner = i->molecule()->atom(bond->indexJ());
 				if (i == partner)
 					continue;
 
 				if (i->cell()->mimRequired(partner->cell()))
-					createCylinderBond(configurationAssembly_, i, partner, box->minimumVector(i->r(), partner->r()), true, spheresBondRadius_);
+					createCylinderBond(configurationAssembly_, i, partner,
+							   box->minimumVector(i->r(), partner->r()), true, spheresBondRadius_);
 				else
-					createCylinderBond(configurationAssembly_, i, partner, partner->r() - i->r(), false, spheresBondRadius_);
+					createCylinderBond(configurationAssembly_, i, partner, partner->r() - i->r(), false,
+							   spheresBondRadius_);
 			}
 		}
 	}
@@ -284,9 +300,11 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
 EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
 	static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList()
-							   << EnumOption(RenderableConfiguration::LinesStyle, "Lines") << EnumOption(RenderableConfiguration::SpheresStyle, "Spheres");
+							   << EnumOption(RenderableConfiguration::LinesStyle, "Lines")
+							   << EnumOption(RenderableConfiguration::SpheresStyle, "Spheres");
 
-	static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle", ConfigurationStyleOptions);
+	static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle",
+										       ConfigurationStyleOptions);
 
 	return options;
 }
@@ -309,10 +327,12 @@ RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::disp
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableConfiguration::DisplayKeyword, "Display", 1)
-								 << EnumOption(RenderableConfiguration::EndStyleKeyword, "EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList()
+					       << EnumOption(RenderableConfiguration::DisplayKeyword, "Display", 1)
+					       << EnumOption(RenderableConfiguration::EndStyleKeyword, "EndStyle");
 
-	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
+	static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword",
+										       StyleKeywords);
 
 	return options;
 }
@@ -326,7 +346,9 @@ bool RenderableConfiguration::writeStyleBlock(LineParser &parser, int indentLeve
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword), configurationDisplayStyles().keyword(displayStyle_)))
+	if (!parser.writeLineF("%s%s  %s\n", indent,
+			       configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword),
+			       configurationDisplayStyles().keyword(displayStyle_)))
 		return false;
 
 	return true;

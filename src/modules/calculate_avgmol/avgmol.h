@@ -31,21 +31,21 @@
 // Calculate Average Molecule Module
 class CalculateAvgMolModule : public Module
 {
-      public:
+	public:
 	CalculateAvgMolModule();
 	~CalculateAvgMolModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -58,14 +58,14 @@ class CalculateAvgMolModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
@@ -74,26 +74,26 @@ class CalculateAvgMolModule : public Module
 	/*
 	 * Functions / Data
 	 */
-      private:
+	private:
 	// Species targeted by module (derived from selected site)
 	Species *targetSpecies_;
 	// Local Species representing average of targeted Species
 	Species averageSpecies_;
 
-      private:
+	private:
 	// Ensure arrays are the correct size for the current target Species
 	void updateArrays(Dissolve &dissolve);
 	// Update the local species with the coordinates from the supplied arrays
 	void updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y, const Array<SampledDouble> &z);
 
-      public:
+	public:
 	// Return average Species
 	Species &averageSpecies();
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

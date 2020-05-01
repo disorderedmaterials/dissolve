@@ -31,38 +31,38 @@ class Axes;
 // Renderable for Configuration
 class RenderableConfiguration : public Renderable
 {
-      public:
+	public:
 	RenderableConfiguration(const Configuration *source, const char *objectTag);
 	~RenderableConfiguration();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source data
 	const Configuration *source_;
 
-      private:
+	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-      public:
+	public:
 	// Return version of data
 	int dataVersion();
 
 	/*
 	 * Transform / Limits
 	 */
-      protected:
+	protected:
 	// Transform data according to current settings
 	void transformValues();
 
 	/*
 	 * Rendering Primitives
 	 */
-      private:
+	private:
 	// Basic primitives
 	Primitive *atomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
 	// Main primitives
@@ -70,11 +70,12 @@ class RenderableConfiguration : public Renderable
 	// Main assemblies
 	PrimitiveAssembly configurationAssembly_, interactionAssembly_, unitCellAssembly_;
 
-      private:
+	private:
 	// Create cylinder bond between supplied atoms in specified assembly
-	void createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling);
+	void createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij,
+				bool drawFromAtoms, double radialScaling);
 
-      protected:
+	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
@@ -83,7 +84,7 @@ class RenderableConfiguration : public Renderable
 	/*
 	 * Style
 	 */
-      public:
+	public:
 	// Display Styles enum
 	enum ConfigurationDisplayStyle
 	{
@@ -94,7 +95,7 @@ class RenderableConfiguration : public Renderable
 	// Return EnumOptions for ConfigurationDisplayStyle
 	static EnumOptions<ConfigurationDisplayStyle> configurationDisplayStyles();
 
-      private:
+	private:
 	// Display style for the renderable
 	ConfigurationDisplayStyle displayStyle_;
 	// Radius of free (unbound) atoms when drawing with lines
@@ -104,7 +105,7 @@ class RenderableConfiguration : public Renderable
 	// Radius of bonds when drawing with spheres
 	double spheresBondRadius_;
 
-      public:
+	public:
 	// Set display style for renderable
 	void setDisplayStyle(ConfigurationDisplayStyle displayStyle);
 	// Return display style for the renderable
@@ -113,7 +114,7 @@ class RenderableConfiguration : public Renderable
 	/*
 	 * Style I/O
 	 */
-      public:
+	public:
 	// ConfigurationStyle Keywords Enum
 	enum ConfigurationStyleKeyword
 	{

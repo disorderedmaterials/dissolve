@@ -40,21 +40,21 @@ class EPSRModule : public Module
 	 * Generates interatomic potentials using methodology mimicking EPSR as closely as possible.
 	 */
 
-      public:
+	public:
 	EPSRModule();
 	~EPSRModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -67,7 +67,7 @@ class EPSRModule : public Module
 	/*
 	 * Initialisation
 	 */
-      public:
+	public:
 	// Expansion Function Type Enum
 	enum ExpansionFunctionType
 	{
@@ -78,25 +78,25 @@ class EPSRModule : public Module
 	// Return enum option info for ExpansionFunctionType
 	static EnumOptions<EPSRModule::ExpansionFunctionType> expansionFunctionTypes();
 
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
-      public:
+	public:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-      private:
+	private:
 	// Test datasets (if any)
 	Data1DStore testData_;
 	// Target Modules, divided into groups
@@ -104,7 +104,7 @@ class EPSRModule : public Module
 	// Simulated data added as reference data
 	Array<Data1D> simulatedReferenceData_;
 
-      public:
+	public:
 	// Return list of target Modules / data for refeinement
 	const RefDataList<Module, ModuleGroup *> &allTargets() const;
 	// Return grouped target Modules
@@ -114,7 +114,8 @@ class EPSRModule : public Module
 	// Create / retrieve arrays for storage of empirical potential coefficients
 	Array2D<Array<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
 	// Generate empirical potentials from current coefficients
-	bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+	bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
+					 int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
 	// Generate and return single empirical potential function
 	Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
 	// Calculate absolute energy of empirical potentials
@@ -125,7 +126,7 @@ class EPSRModule : public Module
 	/*
 	 * EPSR File I/O
 	 */
-      public:
+	public:
 	// PCof File Keywords
 	enum EPSRPCofKeyword
 	{
@@ -155,14 +156,14 @@ class EPSRModule : public Module
 	// Convert EPSRPCofKeyword to text string
 	static const char *epsrPCofKeyword(EPSRPCofKeyword pcofkwd);
 
-      public:
+	public:
 	// Read data from supplied pcof file
 	bool readPCof(Dissolve &dissolve, ProcessPool &procPool, const char *filename);
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

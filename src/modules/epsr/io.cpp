@@ -26,8 +26,9 @@
 #include "modules/epsr/epsr.h"
 
 // EPSR PCof Keywords
-const char *EPSRPCofKeywordKeywords[] = {"addpottype", "expecf", "gaussian", "ncoeffp",   "npitss",     "paccept", "pdmax",   "pdstep", "power",   "psigma2",
-					 "q",	  "rbroad", "rcharge",  "refpotfac", "reppottype", "rmaxpt",  "rminfac", "rminpt", "roverlap"};
+const char *EPSRPCofKeywordKeywords[] = {"addpottype", "expecf", "gaussian", "ncoeffp", "npitss",  "paccept", "pdmax",
+					 "pdstep",     "power",  "psigma2",  "q",       "rbroad",  "rcharge", "refpotfac",
+					 "reppottype", "rmaxpt", "rminfac",  "rminpt",  "roverlap"};
 
 // Convert text string to EPSRPCofKeyword
 EPSRModule::EPSRPCofKeyword EPSRModule::epsrPCofKeyword(const char *s)
@@ -71,9 +72,11 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 		case (EPSRModule::ExpecFPCofKeyword):
 			break;
 		case (EPSRModule::GaussianPCofKeyword):
-			keywords_.set<EPSRModule::ExpansionFunctionType>("expansionfunction", (DissolveSys::sameString(parser.argc(1), "Poisson") || DissolveSys::sameString(parser.argc(1), "T")
-												   ? EPSRModule::PoissonExpansionFunction
-												   : EPSRModule::GaussianExpansionFunction));
+			keywords_.set<EPSRModule::ExpansionFunctionType>(
+				"expansionfunction", (DissolveSys::sameString(parser.argc(1), "Poisson") ||
+								      DissolveSys::sameString(parser.argc(1), "T")
+							      ? EPSRModule::PoissonExpansionFunction
+							      : EPSRModule::GaussianExpansionFunction));
 			break;
 		case (EPSRModule::NCoeffPPCofKeyword):
 			ncoeffp = parser.argi(1);
@@ -94,7 +97,8 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 			keywords_.set<double>("psigma1", parser.argd(1));
 			keywords_.set<double>("psigma2", parser.argd(1));
 			keywords_.set<double>("gsigma1", parser.argd(1));
-			// Note - the factor of two applied here is used to reproduce the broadening applied by ESPR to the r-space Gaussian transformation
+			// Note - the factor of two applied here is used to reproduce the broadening applied by ESPR to the
+			// r-space Gaussian transformation
 			keywords_.set<double>("gsigma2", parser.argd(1) * 2.0);
 			break;
 		case (EPSRModule::QuitPCofKeyword):
@@ -129,8 +133,8 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 	}
 
 	// Retrieve and zero the current potential coefficients file
-	Array2D<Array<double>> &potentialCoefficients =
-	    GenericListHelper<Array2D<Array<double>>>::realise(dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+	Array2D<Array<double>> &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+		dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
 	potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 	for (int n = 0; n < potentialCoefficients.linearArraySize(); ++n)
 	{
@@ -138,7 +142,8 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 		potentialCoefficients.linearArray()[n] = 0.0;
 	}
 
-	// Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect coefficients for
+	// Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect
+	// coefficients for
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
 		return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
 	int nPots = parser.argi(0);
@@ -162,12 +167,14 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
 			return Messenger::error("Failed to read ??? and ??? from pcof file.\n");
 
-		// Grab the coefficient storage from the module data and read the coefficients in - they will all be on one single line in the file.
+		// Grab the coefficient storage from the module data and read the coefficients in - they will all be on one
+		// single line in the file.
 		Array<double> &coefficients = potentialCoefficients.at(at1->index(), at2->index());
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
 			return Messenger::error("Failed to read coefficients from pcof file.\n");
 		if (parser.nArgs() != ncoeffp)
-			return Messenger::error("Number of potential coefficients (%i) does not match ncoeffp (%i).\n", parser.nArgs(), ncoeffp);
+			return Messenger::error("Number of potential coefficients (%i) does not match ncoeffp (%i).\n",
+						parser.nArgs(), ncoeffp);
 		for (int i = 0; i < ncoeffp; ++i)
 			coefficients[i] = parser.argd(i);
 

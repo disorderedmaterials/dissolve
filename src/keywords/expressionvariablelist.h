@@ -32,43 +32,44 @@ class ProcedureNode;
 // Keyword with ExpressionVariable List
 class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
 {
-      public:
-	ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables, ExpressionValue::ValueType variableType);
+	public:
+	ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables,
+				      ExpressionValue::ValueType variableType);
 	~ExpressionVariableListKeyword();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
-      public:
+	public:
 	// Return parent ProcedureNode
 	const ProcedureNode *parentNode() const;
 
 	/*
 	 * Variable Type
 	 */
-      private:
+	private:
 	// Assumed type for variables in the list
 	ExpressionValue::ValueType variableType_;
 
-      public:
+	public:
 	// Return assumed type for variables in the list
 	ExpressionValue::ValueType variableType() const;
 
 	/*
 	 * Data
 	 */
-      protected:
+	protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -81,7 +82,7 @@ class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 };
 
 #endif

@@ -27,7 +27,8 @@
 #include "classes/coredata.h"
 
 AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection, const RefList<Configuration> &sourceConfigurations)
-    : KeywordData<AtomTypeList &>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+	: KeywordData<AtomTypeList &>(KeywordBase::AtomTypeSelectionData, selection),
+	  sourceConfigurations_(sourceConfigurations)
 {
 }
 

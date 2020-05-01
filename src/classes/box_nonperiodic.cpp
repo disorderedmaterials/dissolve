@@ -91,7 +91,10 @@ double NonPeriodicBox::minimumDistanceSquared(const Atom &i, const Atom &j) cons
 double NonPeriodicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const { return (j - i->r()).magnitudeSq(); }
 
 // Return minimum image squared distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const { return (j - i).magnitudeSq(); }
+double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+{
+	return (j - i).magnitudeSq();
+}
 
 /*
  * Utility Routines (Virtual Implementations)

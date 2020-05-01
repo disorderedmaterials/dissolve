@@ -35,12 +35,17 @@
 
 Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::Sum1DNode)
 {
-	keywords_.add("Target", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target), "SourceData", "Process1D node containing the data to sum");
-	keywords_.add("Ranges", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA", "X range for first summation region");
+	keywords_.add("Target",
+		      new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target),
+		      "SourceData", "Process1D node containing the data to sum");
+	keywords_.add("Ranges", new RangeKeyword(Range(0.0, 3.0), Vec3Labels::MinMaxDeltaLabels), "RangeA",
+		      "X range for first summation region");
 	keywords_.add("Ranges", new BoolKeyword(false), "RangeBEnabled", "Whether the second summation region is enabled");
-	keywords_.add("Ranges", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB", "X range for second summation region");
+	keywords_.add("Ranges", new RangeKeyword(Range(3.0, 6.0), Vec3Labels::MinMaxDeltaLabels), "RangeB",
+		      "X range for second summation region");
 	keywords_.add("Ranges", new BoolKeyword(false), "RangeCEnabled", "Whether the second summation region is enabled");
-	keywords_.add("Ranges", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC", "X range for third summation region");
+	keywords_.add("Ranges", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC",
+		      "X range for third summation region");
 }
 
 Sum1DProcedureNode::~Sum1DProcedureNode() {}
@@ -50,7 +55,10 @@ Sum1DProcedureNode::~Sum1DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Sum1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Sum1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Data
@@ -88,7 +96,8 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Generic
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+							       GenericList &targetList)
 {
 	// Calculate integrals
 	sum_[0] += Integrator::sum(processNode_->processedData(), rangeA_);
@@ -98,14 +107,20 @@ ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &proc
 		sum_[2] += Integrator::sum(processNode_->processedData(), rangeC_);
 
 	// Print info
-	Messenger::print("Sum1D - Range A: %e +/- %e over %e < x < %e.\n", sum_[0].mean(), sum_[0].stDev(), rangeA_.minimum(), rangeA_.maximum());
+	Messenger::print("Sum1D - Range A: %e +/- %e over %e < x < %e.\n", sum_[0].mean(), sum_[0].stDev(), rangeA_.minimum(),
+			 rangeA_.maximum());
 	if (rangeBEnabled_)
-		Messenger::print("Sum1D - Range B: %e +/- %e over %e < x < %e.\n", sum_[1].mean(), sum_[1].stDev(), rangeB_.minimum(), rangeB_.maximum());
+		Messenger::print("Sum1D - Range B: %e +/- %e over %e < x < %e.\n", sum_[1].mean(), sum_[1].stDev(),
+				 rangeB_.minimum(), rangeB_.maximum());
 	if (rangeCEnabled_)
-		Messenger::print("Sum1D - Range C: %e +/- %e over %e < x < %e.\n", sum_[2].mean(), sum_[2].stDev(), rangeC_.minimum(), rangeC_.maximum());
+		Messenger::print("Sum1D - Range C: %e +/- %e over %e < x < %e.\n", sum_[2].mean(), sum_[2].stDev(),
+				 rangeC_.minimum(), rangeC_.maximum());
 
 	return ProcedureNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+{
+	return true;
+}

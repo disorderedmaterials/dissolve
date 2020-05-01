@@ -31,7 +31,7 @@ class ProcessPool;
 // Forces Import Formats
 class ForceImportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Forces Formats
 	enum ForceImportFormat
 	{
@@ -46,14 +46,14 @@ class ForceImportFileFormat : public FileAndFormat
 	/*
 	 * Keyword Options
 	 */
-      private:
+	private:
 	// Set up keywords for the format
 	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for ForceImportFormat
 	static EnumOptions<ForceImportFileFormat::ForceImportFormat> forceImportFormats();
 	// Return number of available formats
@@ -68,20 +68,20 @@ class ForceImportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import Functions
 	 */
-      private:
+	private:
 	// Import XYZ forces through specified parser
 	bool importXYZ(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 	// Import DL_POLY forces through specified parser
 	bool importDLPOLY(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 
-      public:
+	public:
 	// Import forces using current filename and format
 	bool importData(Array<double> &fx, Array<double> &fy, Array<double> &fz, ProcessPool *procPool = NULL);
 	// Import forces using supplied parser and current format

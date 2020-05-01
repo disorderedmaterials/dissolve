@@ -10,8 +10,10 @@
 
 template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 {
-      public:
-	MonteCarloMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+	public:
+	MonteCarloMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction,
+			       bool pokeBeforeCost = false)
+		: MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		parameterSmoothingFrequency_ = 0;
 		acceptanceMemoryLength_ = 25;
@@ -21,7 +23,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 		minStepSize_ = 1.0e-5;
 	}
 
-      private:
+	private:
 	// Maximum number of iterations to perform
 	int maxIterations_;
 	// Step size
@@ -37,7 +39,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 	// Target acceptance ratio
 	double targetAcceptanceRatio_;
 
-      private:
+	private:
 	// Smooth current parameter set
 	void smoothParameters(Array<double> &values)
 	{
@@ -77,7 +79,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 		}
 	}
 
-      public:
+	public:
 	// Set maximum number of iterations to perform
 	void setMaxIterations(int maxIterations) { maxIterations_ = maxIterations; }
 	// Set step size
@@ -166,7 +168,9 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 			}
 
 			if (iter % (maxIterations_ / 10) == 0)
-				Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Iteration %04i error = %f, stepSize = %f\n", iter + 1, currentError, stepSize_);
+				Messenger::printVerbose(
+					"MonteCarloMinimiser<T>::minimise() - Iteration %04i error = %f, stepSize = %f\n",
+					iter + 1, currentError, stepSize_);
 		}
 
 		return currentError;

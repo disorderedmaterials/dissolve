@@ -21,7 +21,8 @@
 
 #include "neta/logic.h"
 
-NETALogicNode::NETALogicNode(NETADefinition *parent, NETALogicNode::LogicType logic, NETANode *arg1, NETANode *arg2) : NETANode(parent, NETANode::LogicNode)
+NETALogicNode::NETALogicNode(NETADefinition *parent, NETALogicNode::LogicType logic, NETANode *arg1, NETANode *arg2)
+	: NETANode(parent, NETANode::LogicNode)
 {
 	// Private variables
 	logic_ = logic;

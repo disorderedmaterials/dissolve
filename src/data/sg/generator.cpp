@@ -81,7 +81,8 @@ bool SymmetryGenerator::set(const char *s)
 	parser.getArgsDelim(LineParser::Defaults, s);
 	if (parser.nArgs() != 3)
 	{
-		Messenger::print("Tried to set a symmetry Generator from text ('%s') that didn't split into three arguments.", s);
+		Messenger::print("Tried to set a symmetry Generator from text ('%s') that didn't split into three arguments.",
+				 s);
 		return false;
 	}
 

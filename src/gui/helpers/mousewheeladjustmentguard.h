@@ -20,9 +20,11 @@
 */
 
 /*
- * Code below copied from: https://stackoverflow.com/questions/5821802/qspinbox-inside-a-qscrollarea-how-to-prevent-spin-box-from-stealing-focus-when
+ * Code below copied from:
+ * https://stackoverflow.com/questions/5821802/qspinbox-inside-a-qscrollarea-how-to-prevent-spin-box-from-stealing-focus-when
  * Formatting adjustments / comments added by T. Youngs.
- * Constructor modified to take QWidget* as argument, and to set focus policy to Qt::StrongFocus which is also required for the desired effect.
+ * Constructor modified to take QWidget* as argument, and to set focus policy to Qt::StrongFocus which is also required for the
+ * desired effect.
  */
 
 #include <QEvent>
@@ -30,10 +32,10 @@
 
 class MouseWheelWidgetAdjustmentGuard : public QObject
 {
-      public:
+	public:
 	explicit MouseWheelWidgetAdjustmentGuard(QWidget *widget) : QObject(widget) { widget->setFocusPolicy(Qt::StrongFocus); }
 
-      protected:
+	protected:
 	// Custom event filter
 	bool eventFilter(QObject *o, QEvent *e) override
 	{

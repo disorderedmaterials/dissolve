@@ -31,14 +31,14 @@ class SpeciesAtom;
 // NTf2 Forcefield by Ludwig Group
 class Forcefield_NTf2_Ludwig : public Forcefield
 {
-      public:
+	public:
 	Forcefield_NTf2_Ludwig();
 	~Forcefield_NTf2_Ludwig();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield

@@ -42,7 +42,8 @@ NETARootNode::~NETARootNode() {}
 // Return enum options for NETARootModifiers
 EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh");
+	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds")
+								   << EnumOption(NHydrogensModifier, "nh");
 
 	static EnumOptions<NETARootNode::NETARootModifier> options("RootModifier", ModifierOptions);
 
@@ -84,8 +85,8 @@ bool NETARootNode::setModifier(const char *modifier, ComparisonOperator op, int 
 int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
 	// 	printf("I AM THE ROOT - matchPath size = %i:\n", matchPath.nItems());
-	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
-	// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
+	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
+	// iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	int totalScore = 0;
 

@@ -38,7 +38,8 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
 
 	Array<double> newY(data.nValues());
 
-	// Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening parameter
+	// Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening
+	// parameter
 	double xCentre, xBroad, norm;
 	if (variableOmega)
 		for (int n = 0; n < x.nItems(); ++n)
@@ -253,14 +254,16 @@ void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds,
 			// X axis value now exceeds the xMax - interpolate the end?
 			if (interpolateEnds)
 			{
-				// Is there a usable data point with lower x than the present one that we can use for our interpolation?
+				// Is there a usable data point with lower x than the present one that we can use for our
+				// interpolation?
 				if (n > 0)
 				{
 					double intervalFraction = (xMax - x.constAt(n - 1)) / (x.constAt(n) - x.constAt(n - 1));
 					if ((1.0 - intervalFraction) > interpolationThreshold)
 					{
 						newX.add(xMax);
-						newY.add(data.value(n - 1) + intervalFraction * (data.value(n) - data.value(n - 1)));
+						newY.add(data.value(n - 1) +
+							 intervalFraction * (data.value(n) - data.value(n - 1)));
 					}
 				}
 			}

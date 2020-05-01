@@ -28,15 +28,17 @@
 #include "keywords/bool.h"
 #include "procedure/nodes/select.h"
 
-CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1, bool rotateIntoFrame)
-    : CalculateProcedureNodeBase(ProcedureNode::CalculateVectorNode, site0, site1)
+CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1,
+							   bool rotateIntoFrame)
+	: CalculateProcedureNodeBase(ProcedureNode::CalculateVectorNode, site0, site1)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
 	keywords_.add("Sites", siteKeywords_[0], "I", "Site that represents 'i' in the vector i->j");
 	siteKeywords_[1] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site1);
 	keywords_.add("Sites", siteKeywords_[1], "J", "Site that represents 'j' in the vector i->j");
-	keywords_.add("Sites", new BoolKeyword(rotateIntoFrame), "RotateIntoFrame", "Whether to rotate the calculated vector into the local frame defined on 'I'");
+	keywords_.add("Sites", new BoolKeyword(rotateIntoFrame), "RotateIntoFrame",
+		      "Whether to rotate the calculated vector into the local frame defined on 'I'");
 }
 
 CalculateVectorProcedureNode::~CalculateVectorProcedureNode() {}
@@ -69,7 +71,8 @@ bool CalculateVectorProcedureNode::prepare(Configuration *cfg, const char *prefi
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+									 const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	for (int n = 0; n < nSitesRequired(); ++n)

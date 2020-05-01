@@ -35,20 +35,20 @@ class LineParser;
 // Isotopologue Weight
 class IsotopologueWeight : public ListItem<IsotopologueWeight>
 {
-      public:
+	public:
 	IsotopologueWeight(const Isotopologue *iso = NULL, double weight = 1.0);
 	~IsotopologueWeight();
 
 	/*
 	 * Isotopologue and Weight
 	 */
-      private:
+	private:
 	// Associated Isotopologue
 	const Isotopologue *isotopologue_;
 	// Relative weight
 	double weight_;
 
-      public:
+	public:
 	// Set associated Isotopologue and weight
 	void set(const Isotopologue *iso, double weight);
 	// Set associated Isotopologue

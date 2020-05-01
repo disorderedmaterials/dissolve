@@ -41,22 +41,22 @@ class NETANode;
 // NETADefinition Generator
 class NETADefinitionGenerator
 {
-      private:
+	private:
 	NETADefinitionGenerator(NETADefinition &definition, const char *definitionText, const Forcefield *associatedFF = NULL);
 
-      public:
+	public:
 	~NETADefinitionGenerator();
 
 	/*
 	 * Target Objects
 	 */
-      private:
+	private:
 	// Pointer to target NETADefinition
 	static NETADefinition *definition_;
 	// The NETADefinitionGenerator object calling the parser/lexer
 	static NETADefinitionGenerator *generator_;
 
-      public:
+	public:
 	// Return target NETADefinition (static to allow NETADefinitionGenerator_parse() to use it)
 	static NETADefinition *definition();
 	// Return current NETADefinitionGenerator (static to allow NETADefinitionGenerator_parse() to use it)
@@ -65,13 +65,13 @@ class NETADefinitionGenerator
 	/*
 	 * Lexer
 	 */
-      private:
+	private:
 	// Source definition string
 	CharString definitionString_;
 	// Integer position in stringSource, total length of string, and starting position of current token/function
 	int stringPos_, stringLength_, tokenStart_, functionStart_;
 
-      private:
+	private:
 	// Set string source for lexer
 	void setSource(const char *definitionText);
 	// Get next character from current input stream
@@ -81,14 +81,14 @@ class NETADefinitionGenerator
 	// 'Replace' last character read from current input stream
 	void unGetChar();
 
-      public:
+	public:
 	// Parser lexer, called by yylex()
 	int lex();
 
 	/*
 	 * Creation
 	 */
-      private:
+	private:
 	// Encompassing forcefield for the definition (if any)
 	static const Forcefield *associatedForcefield_;
 	// Temporary element array used in definition creation
@@ -100,7 +100,7 @@ class NETADefinitionGenerator
 	// Whether to recognise text elements as generic names, rather than an element or unrecognised token
 	static bool expectName_;
 
-      public:
+	public:
 	// Add element target to array (by Z)
 	static bool addElementTarget(int elementZ);
 	// Add atomtype target to array (by id)

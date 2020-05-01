@@ -39,7 +39,10 @@ PrimitiveInstance::PrimitiveInstance() : ListItem<PrimitiveInstance>()
 PrimitiveInstance::InstanceType PrimitiveInstance::globalInstanceType() { return globalInstanceType_; }
 
 // Set global instance type to use
-void PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::InstanceType instanceType) { globalInstanceType_ = instanceType; }
+void PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::InstanceType instanceType)
+{
+	globalInstanceType_ = instanceType;
+}
 
 // Return context to which primitive instance is associated
 const QOpenGLContext *PrimitiveInstance::context() { return context_; }

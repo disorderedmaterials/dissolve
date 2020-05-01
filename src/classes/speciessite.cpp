@@ -64,7 +64,8 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom *originAtom)
 
 	// If the SpeciesAtom already exists in the list, complain
 	if (originAtoms_.contains(originAtom))
-		return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(), name_.get());
+		return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(),
+					name_.get());
 
 	originAtoms_.append(originAtom);
 
@@ -91,7 +92,8 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 {
 #ifdef CHECKS
 	if (!parent_)
-		return Messenger::error("Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
+		return Messenger::error(
+			"Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addOriginAtom(parent_->atom(atomIndex));
 }
@@ -145,7 +147,8 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
 
 	// If the SpeciesAtom already exists in the list, complain
 	if (xAxisAtoms_.contains(xAxisAtom))
-		return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(), name_.get());
+		return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(),
+					name_.get());
 
 	xAxisAtoms_.append(xAxisAtom);
 
@@ -159,7 +162,8 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 {
 #ifdef CHECKS
 	if (!parent_)
-		return Messenger::error("Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
+		return Messenger::error(
+			"Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addXAxisAtom(parent_->atom(atomIndex));
 }
@@ -215,7 +219,8 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
 
 	// If the SpeciesAtom already exists in the list, complain
 	if (yAxisAtoms_.contains(yAxisAtom))
-		return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(), name_.get());
+		return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(),
+					name_.get());
 
 	yAxisAtoms_.append(yAxisAtom);
 
@@ -229,7 +234,8 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 {
 #ifdef CHECKS
 	if (!parent_)
-		return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
+		return Messenger::error(
+			"Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addYAxisAtom(parent_->atom(atomIndex));
 }
@@ -373,9 +379,11 @@ Site *SpeciesSite::createFromParent() const
 EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
 	static EnumOptionsList SiteKeywords =
-	    EnumOptionsList() << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite") << EnumOption(SpeciesSite::OriginKeyword, "Origin", EnumOption::OneOrMoreArguments)
-			      << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1) << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", EnumOption::OneOrMoreArguments)
-			      << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", EnumOption::OneOrMoreArguments);
+		EnumOptionsList() << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite")
+				  << EnumOption(SpeciesSite::OriginKeyword, "Origin", EnumOption::OneOrMoreArguments)
+				  << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1)
+				  << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", EnumOption::OneOrMoreArguments)
+				  << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", EnumOption::OneOrMoreArguments);
 
 	static EnumOptions<SpeciesSite::SiteKeyword> options("SiteKeyword", SiteKeywords);
 
@@ -491,7 +499,8 @@ bool SpeciesSite::write(LineParser &parser, const char *prefix)
 	}
 
 	// Origin mass weighted?
-	if (originMassWeighted_ && (!parser.writeLineF("%s  %s  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
+	if (originMassWeighted_ &&
+	    (!parser.writeLineF("%s  %s  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
 		return false;
 
 	// X-Axis atom indices

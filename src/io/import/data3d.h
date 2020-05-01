@@ -31,7 +31,7 @@ class ProcessPool;
 // Data3D Import Formats
 class Data3DImportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available Data3D formats
 	enum Data3DImportFormat
 	{
@@ -47,14 +47,14 @@ class Data3DImportFileFormat : public FileAndFormat
 	/*
 	 * Keyword Options
 	 */
-      private:
+	private:
 	// Set up keywords for the format
 	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for Data3DImportFormat
 	static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> data3DImportFormats();
 	// Return number of available formats
@@ -69,21 +69,21 @@ class Data3DImportFileFormat : public FileAndFormat
 	/*
 	 * Templating
 	 */
-      private:
+	private:
 	// Object tag of Data3D upon which to template arrays before importing
 	CharString templateSourceObjectTag_;
 
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import / Write
 	 */
-      protected:
+	protected:
 	// Parse additional argument
 	bool parseArgument(const char *arg);
 	// Return whether this file/format has any additional arguments to write
@@ -94,11 +94,11 @@ class Data3DImportFileFormat : public FileAndFormat
 	/*
 	 * Data Import
 	 */
-      private:
+	private:
 	// Import cartesian data from supplied parser
 	bool importCartesian(LineParser &parser, Data3D &data);
 
-      public:
+	public:
 	// Import Data3D using current filename and format
 	bool importData(Data3D &data, ProcessPool *procPool = NULL);
 	// Import Data3D using supplied parser and current format

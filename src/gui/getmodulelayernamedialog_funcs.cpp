@@ -24,7 +24,10 @@
 #include "gui/getmodulelayernamedialog.h"
 #include "module/layer.h"
 
-GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers) : layers_(layers) { ui_.setupUi(this); }
+GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers) : layers_(layers)
+{
+	ui_.setupUi(this);
+}
 
 GetModuleLayerNameDialog::~GetModuleLayerNameDialog() {}
 

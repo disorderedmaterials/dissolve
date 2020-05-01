@@ -34,18 +34,18 @@ class AtomShakeModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	AtomShakeModule *module_;
 
-      public:
+	public:
 	AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module);
 	~AtomShakeModuleWidget();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::AtomShakeModuleWidget ui_;
 };

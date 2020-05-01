@@ -35,11 +35,11 @@ class GetModuleLayerNameDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
+	public:
 	GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers);
 	~GetModuleLayerNameDialog();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::GetModuleLayerNameDialog ui_;
 	// Layer list
@@ -47,7 +47,7 @@ class GetModuleLayerNameDialog : public QDialog
 	// Current ModuleLayer that we are renaming
 	const ModuleLayer *moduleLayer_;
 
-      public:
+	public:
 	// Run the dialog
 	bool get(const ModuleLayer *currentModuleLayer, const char *currentName);
 	// Return the name string
@@ -56,7 +56,7 @@ class GetModuleLayerNameDialog : public QDialog
 	/*
 	 * Slots
 	 */
-      private slots:
+	private slots:
 	void on_NameEdit_textChanged(const QString text);
 	void on_CancelButton_clicked(bool checked);
 	void on_OKButton_clicked(bool checked);

@@ -38,11 +38,11 @@ class SQModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve);
 	~SQModuleWidget();
 
-      private:
+	private:
 	// Associated Module
 	SQModule *module_;
 	// DataViewers contained within this widget
@@ -53,18 +53,18 @@ class SQModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SQModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -73,7 +73,7 @@ class SQModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(SQModule *module);
 };

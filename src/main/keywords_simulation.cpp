@@ -27,9 +27,11 @@
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 {
-	static EnumOptionsList SimulationKeywords = EnumOptionsList()
-						    << EnumOption(SimulationBlock::EndSimulationKeyword, "EndSimulation") << EnumOption(SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1)
-						    << EnumOption(SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1) << EnumOption(SimulationBlock::SeedKeyword, "Seed", 1);
+	static EnumOptionsList SimulationKeywords =
+		EnumOptionsList() << EnumOption(SimulationBlock::EndSimulationKeyword, "EndSimulation")
+				  << EnumOption(SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1)
+				  << EnumOption(SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1)
+				  << EnumOption(SimulationBlock::SeedKeyword, "Seed", 1);
 
 	static EnumOptions<SimulationBlock::SimulationKeyword> options("SimulationKeyword", SimulationKeywords);
 
@@ -60,7 +62,8 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
 		switch (kwd)
 		{
 		case (SimulationBlock::EndSimulationKeyword):
-			Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
+			Messenger::print("Found end of %s block.\n",
+					 BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 			blockDone = true;
 			break;
 		case (SimulationBlock::ParallelStrategyKeyword):
@@ -80,7 +83,9 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
 			Messenger::print("Random seed set to %i.\n", dissolve->seed());
 			break;
 		default:
-			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword), keywords().keyword(kwd));
+			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+			       BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword),
+			       keywords().keyword(kwd));
 			error = true;
 			break;
 		}
@@ -97,7 +102,8 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n",
+				 BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 		error = true;
 	}
 

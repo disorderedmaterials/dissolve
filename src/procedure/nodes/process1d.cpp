@@ -33,13 +33,17 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::Process1DNode)
+Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *target)
+	: ProcedureNode(ProcedureNode::Process1DNode)
 {
-	keywords_.add("Target", new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target), "SourceData", "Collect1D node containing the data to process");
+	keywords_.add("Target",
+		      new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target),
+		      "SourceData", "Collect1D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
-	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation", "Branch providing normalisation operations for the data");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext),
+		      "Normalisation", "Branch providing normalisation operations for the data");
 
 	// Initialise branch
 	normalisationBranch_ = NULL;
@@ -55,7 +59,10 @@ Process1DProcedureNode::~Process1DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Data
@@ -121,11 +128,13 @@ bool Process1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								   const char *prefix, GenericList &targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data1D &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	Data1D &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+							  GenericItem::InRestartFileFlag, &created);
 	processedData_ = &data;
 
 	data.setName(name());
@@ -176,4 +185,7 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+{
+	return true;
+}

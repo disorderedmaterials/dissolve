@@ -100,7 +100,9 @@ bool DissolveWindow::loadState()
 					// The title represents the unique name of the Module, so find it now
 					Module *module = dissolve_.findModuleInstance(stateParser.argc(1));
 					if (!module)
-						return Messenger::error("Failed to find Module instance '%s' for display in a ModuleTab.\n", stateParser.argc(1));
+						return Messenger::error(
+							"Failed to find Module instance '%s' for display in a ModuleTab.\n",
+							stateParser.argc(1));
 
 					tab = ui_.MainTabs->addModuleTab(this, module);
 				}
@@ -110,7 +112,9 @@ bool DissolveWindow::loadState()
 					tab = ui_.MainTabs->addWorkspaceTab(this, stateParser.argc(1));
 				}
 				else
-					return Messenger::error("Unrecognised tab ('%s') or tab type ('%s') found in state file.\n", stateParser.argc(1), stateParser.argc(2));
+					return Messenger::error(
+						"Unrecognised tab ('%s') or tab type ('%s') found in state file.\n",
+						stateParser.argc(1), stateParser.argc(2));
 
 				// Now read state information
 				if (!tab->readState(stateParser, dissolve_.coreData()))
@@ -124,13 +128,16 @@ bool DissolveWindow::loadState()
 			refPoint->setRestartFile(stateParser.argc(2));
 
 			if (!DissolveSys::fileExists(refPoint->restartFile()))
-				QMessageBox::warning(this, "Error loading reference point",
-						     QString("Couldn't load reference point data from '%1' as the file does not exist.\n").arg(refPoint->restartFile()));
+				QMessageBox::warning(
+					this, "Error loading reference point",
+					QString("Couldn't load reference point data from '%1' as the file does not exist.\n")
+						.arg(refPoint->restartFile()));
 			else if (!dissolve_.loadRestartAsReference(refPoint->restartFile(), refPoint->suffix()))
 				QMessageBox::warning(
-				    this, "Error loading reference point",
-				    QString("Couldn't load reference point data from '%1'.\nThis may be because your simulation setup doesn't match that expected by the restart data.\n")
-					.arg(refPoint->restartFile()));
+					this, "Error loading reference point",
+					QString("Couldn't load reference point data from '%1'.\nThis may be because your "
+						"simulation setup doesn't match that expected by the restart data.\n")
+						.arg(refPoint->restartFile()));
 		}
 		else
 		{

@@ -22,7 +22,10 @@
 #include "keywords/data3dstore.h"
 #include "base/lineparser.h"
 
-Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data3DStore) : KeywordData<Data3DStore &>(KeywordBase::Data3DStoreData, data3DStore) {}
+Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data3DStore)
+	: KeywordData<Data3DStore &>(KeywordBase::Data3DStoreData, data3DStore)
+{
+}
 
 Data3DStoreKeyword::~Data3DStoreKeyword() {}
 
@@ -47,7 +50,8 @@ int Data3DStoreKeyword::maxArguments() const
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool Data3DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2), parser.argc(startArg + 1));
+	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg),
+			 parser.argc(startArg + 2), parser.argc(startArg + 1));
 
 	if (!data_.addData(parser.argc(startArg), parser, startArg + 1, CharString("End%s", name()), coreData))
 		return Messenger::error("Failed to add data.\n");

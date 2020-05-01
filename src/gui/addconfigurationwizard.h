@@ -35,20 +35,20 @@ class AddConfigurationWizard : public WizardWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	AddConfigurationWizard(QWidget *parent);
 	~AddConfigurationWizard();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Main instance of Dissolve that we're using as a reference
 	const Dissolve *dissolveReference_;
 	// Target Configuration for import
 	Configuration *importTarget_;
 
-      public:
+	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve *dissolveReference);
 	// Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
@@ -57,7 +57,7 @@ class AddConfigurationWizard : public WizardWidget
 	/*
 	 * Controls
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::AddConfigurationWizard ui_;
 	// Lock counter for the widget refreshing
@@ -71,7 +71,7 @@ class AddConfigurationWizard : public WizardWidget
 		nPages
 	};
 
-      protected:
+	protected:
 	// Go to specified page index in the controls widget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
@@ -83,14 +83,14 @@ class AddConfigurationWizard : public WizardWidget
 	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
-      public:
+	public:
 	// Reset, ready for adding a new Configuration
 	void reset();
 
 	/*
 	 * Start Page
 	 */
-      private slots:
+	private slots:
 	void on_StartCreateEmptyButton_clicked(bool checked);
 	void on_StartCreateTemplateButton_clicked(bool checked);
 
@@ -102,7 +102,7 @@ class AddConfigurationWizard : public WizardWidget
 	/*
 	 * Configuration Name Page (final page)
 	 */
-      private slots:
+	private slots:
 	void on_FinishNameEdit_textChanged(const QString text);
 };
 

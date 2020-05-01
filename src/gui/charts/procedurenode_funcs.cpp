@@ -26,7 +26,8 @@
 #include "templates/variantpointer.h"
 #include <QPainter>
 
-ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData) : QWidget(parent), ChartBlock()
+ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData)
+	: QWidget(parent), ChartBlock()
 {
 	// Set up user interface
 	ui_.setupUi(this);

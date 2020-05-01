@@ -28,8 +28,9 @@
 #include <string.h>
 
 // Static list of LineStipples
-LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},	{1, 0xaaaa, "Dots"},      {1, 0xcccc, "Fine Dash"}, {3, 0xaaaa, "Eighth Dash"},
-				      {1, 0xf0f0, "Quarter Dash"}, {1, 0xff00, "Half Dash"}, {1, 0x6f6f, "Dot Dash 1"}};
+LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},       {1, 0xaaaa, "Dots"},	 {1, 0xcccc, "Fine Dash"},
+				      {3, 0xaaaa, "Eighth Dash"}, {1, 0xf0f0, "Quarter Dash"}, {1, 0xff00, "Half Dash"},
+				      {1, 0x6f6f, "Dot Dash 1"}};
 
 // Convert text string to StippleType
 LineStipple::StippleType LineStipple::stippleType(QString s)

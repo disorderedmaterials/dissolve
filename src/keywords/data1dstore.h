@@ -30,14 +30,14 @@ class Data1DStore;
 // Keyword with a store of Data1D
 class Data1DStoreKeyword : public KeywordData<Data1DStore &>
 {
-      public:
+	public:
 	Data1DStoreKeyword(Data1DStore &dataStore);
 	~Data1DStoreKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

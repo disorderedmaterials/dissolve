@@ -23,8 +23,17 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-CoordinateImportFileFormat::CoordinateImportFileFormat(CoordinateImportFileFormat::CoordinateImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
-CoordinateImportFileFormat::CoordinateImportFileFormat(const char *filename, CoordinateImportFileFormat::CoordinateImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
+CoordinateImportFileFormat::CoordinateImportFileFormat(CoordinateImportFileFormat::CoordinateImportFormat format)
+	: FileAndFormat(format)
+{
+	setUpKeywords();
+}
+CoordinateImportFileFormat::CoordinateImportFileFormat(const char *filename,
+						       CoordinateImportFileFormat::CoordinateImportFormat format)
+	: FileAndFormat(filename, format)
+{
+	setUpKeywords();
+}
 
 CoordinateImportFileFormat::~CoordinateImportFileFormat() {}
 
@@ -42,11 +51,13 @@ void CoordinateImportFileFormat::setUpKeywords() {}
 // Return enum options for CoordinateImportFormat
 EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFormats()
 {
-	static EnumOptionsList CoordinateImportFormats = EnumOptionsList() << EnumOption(CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ")
-									   << EnumOption(CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG")
-									   << EnumOption(CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO");
+	static EnumOptionsList CoordinateImportFormats =
+		EnumOptionsList() << EnumOption(CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ")
+				  << EnumOption(CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG")
+				  << EnumOption(CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO");
 
-	static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> options("CoordinateImportFileFormat", CoordinateImportFormats);
+	static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> options("CoordinateImportFileFormat",
+										       CoordinateImportFormats);
 
 	return options;
 }
@@ -58,10 +69,16 @@ int CoordinateImportFileFormat::nFormats() const { return CoordinateImportFileFo
 const char *CoordinateImportFileFormat::formatKeyword(int id) const { return coordinateImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *CoordinateImportFileFormat::formatDescription(int id) const { return coordinateImportFormats().descriptionByIndex(id); }
+const char *CoordinateImportFileFormat::formatDescription(int id) const
+{
+	return coordinateImportFormats().descriptionByIndex(id);
+}
 
 // Return current format as CoordinateImportFormat
-CoordinateImportFileFormat::CoordinateImportFormat CoordinateImportFileFormat::coordinateFormat() const { return (CoordinateImportFileFormat::CoordinateImportFormat)format_; }
+CoordinateImportFileFormat::CoordinateImportFormat CoordinateImportFileFormat::coordinateFormat() const
+{
+	return (CoordinateImportFileFormat::CoordinateImportFormat)format_;
+}
 
 /*
  * Import Functions

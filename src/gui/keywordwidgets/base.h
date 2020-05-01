@@ -31,24 +31,24 @@ class GenericList;
 // Keyword Widget Base Class
 class KeywordWidgetBase
 {
-      public:
+	public:
 	KeywordWidgetBase(const CoreData &coreData);
 
 	/*
 	 * CoreData Reference
 	 */
-      protected:
+	protected:
 	// CoreData source
 	const CoreData &coreData_;
 
 	/*
 	 * Update
 	 */
-      protected:
+	protected:
 	// Whether the widget is currently refreshing
 	bool refreshing_;
 
-      public:
+	public:
 	// Update value displayed in widget
 	virtual void updateValue() = 0;
 };

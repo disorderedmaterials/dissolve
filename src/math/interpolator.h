@@ -30,7 +30,7 @@ class Data1D;
 // Interpolator
 class Interpolator
 {
-      public:
+	public:
 	// Interpolation Schemes
 	enum InterpolationScheme
 	{
@@ -47,7 +47,7 @@ class Interpolator
 	/*
 	 * Interpolation
 	 */
-      private:
+	private:
 	// Target x array
 	const Array<double> &x_;
 	// Target y array
@@ -59,7 +59,7 @@ class Interpolator
 	// Interval of last returned interpolated point
 	int lastInterval_;
 
-      private:
+	private:
 	// Prepare natural spline interpolation of data
 	void interpolateSpline();
 	// Prepare constrained natural spline interpolation of data
@@ -69,7 +69,7 @@ class Interpolator
 	// Prepare three-point interpolation of data
 	void interpolateThreePoint();
 
-      public:
+	public:
 	// Regenerate using specified scheme
 	void interpolate(InterpolationScheme scheme = SplineInterpolation);
 	// Return interpolated y value for supplied x
@@ -80,7 +80,7 @@ class Interpolator
 	/*
 	 * Static Functions
 	 */
-      public:
+	public:
 	// Approximate y at specified x value using three-point interpolation of supplied data
 	static double approximate(const Data1D &data, double x);
 	// Add interpolated data B to data A, with supplied multiplication factor

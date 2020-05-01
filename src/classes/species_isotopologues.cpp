@@ -67,11 +67,15 @@ void Species::removeIsotopologue(Isotopologue *iso)
 	}
 	else
 	{
-		Messenger::print("BAD_REMOVE - Can't remove specified Isotopologue '%s' from Species '%s' since it doesn't exist.\n", iso->name(), name_.get());
+		Messenger::print(
+			"BAD_REMOVE - Can't remove specified Isotopologue '%s' from Species '%s' since it doesn't exist.\n",
+			iso->name(), name_.get());
 		if (iso->parent() == NULL)
 			Messenger::print("BAD_CLASS - No parent pointer set in Isotopologue '%s'.\n", iso->name());
 		else
-			Messenger::print("BAD_REMOVE - Parent Species (%s) of Isotopologue '%s' is different from this one (%s).\n", iso->parent()->name(), iso->name(), name());
+			Messenger::print(
+				"BAD_REMOVE - Parent Species (%s) of Isotopologue '%s' is different from this one (%s).\n",
+				iso->parent()->name(), iso->name(), name());
 	}
 }
 

@@ -31,7 +31,7 @@
 // 3D vector
 template <class T> class Vec3
 {
-      public:
+	public:
 	Vec3<T>(T xx = 0, T yy = 0, T zz = 0)
 	{
 		x = xx;
@@ -44,7 +44,7 @@ template <class T> class Vec3
 	/*
 	 * Set / adjust / retrieve
 	 */
-      public:
+	public:
 	// Set the vector to 0,0,0
 	void zero()
 	{
@@ -102,7 +102,7 @@ template <class T> class Vec3
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator=(const T value)
 	{
 		x = value;
@@ -199,7 +199,7 @@ template <class T> class Vec3
 	/*
 	 * Methods
 	 */
-      public:
+	public:
 	// Return vector of absolute elements
 	Vec3<T> abs() const { return Vec3<T>(fabs(x), fabs(y), fabs(z)); }
 	// Returns the largest absolute value of the vector
@@ -434,7 +434,7 @@ template <class T> class Vec3
  */
 template <class T> class ListVec3 : public Vec3<T>, public ListItem<ListVec3<T>>
 {
-      public:
+	public:
 	ListVec3<T>(T xx = 0, T yy = 0, T zz = 0) : Vec3<T>(xx, yy, zz), ListItem<ListVec3>() {}
 	ListVec3<T>(const Vec3<T> &source)
 	{

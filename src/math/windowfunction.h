@@ -35,7 +35,7 @@ class Data1D;
 // Window Function
 class WindowFunction : public GenericItemBase
 {
-      public:
+	public:
 	// Function Types
 	enum FunctionType
 	{
@@ -57,15 +57,16 @@ class WindowFunction : public GenericItemBase
 	// Return description for FunctionType
 	static const char *functionDescription(FunctionType func);
 
-      public:
-	WindowFunction(FunctionType function = NoWindow, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	public:
+	WindowFunction(FunctionType function = NoWindow, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0,
+		       double p5 = 0.0, double p6 = 0.0);
 	~WindowFunction();
 	void operator=(const WindowFunction &source);
 
 	/*
 	 * Function Data
 	 */
-      private:
+	private:
 	// Function Type
 	FunctionType function_;
 	// Parameters
@@ -73,9 +74,10 @@ class WindowFunction : public GenericItemBase
 	// Maximal x value for current data target
 	double xMax_;
 
-      public:
+	public:
 	// Set function data
-	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0,
+		 double p6 = 0.0);
 	// Set function data from LineParser source
 	bool set(LineParser &parser, int startArg);
 	// Return function type
@@ -92,7 +94,7 @@ class WindowFunction : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -103,7 +105,7 @@ class WindowFunction : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

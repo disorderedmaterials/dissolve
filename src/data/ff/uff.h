@@ -37,14 +37,14 @@ class SpeciesTorsion;
 // Universal Forcefield
 class Forcefield_UFF : public Forcefield
 {
-      public:
+	public:
 	Forcefield_UFF();
 	~Forcefield_UFF();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield
@@ -55,22 +55,24 @@ class Forcefield_UFF : public Forcefield
 	/*
 	 * Atom Type Data
 	 */
-      public:
+	public:
 	// Determine and return atom type for specified SpeciesAtom
 	ForcefieldAtomType *determineAtomType(SpeciesAtom *i) const;
 
 	/*
 	 * Term Assignment
 	 */
-      private:
+	private:
 	// Generate bond parameters for the supplied UFF atom types
 	bool generateBondTerm(const Species *sp, SpeciesBond *bondTerm, UFFAtomType *i, UFFAtomType *j) const;
 	// Generate angle parameters for the supplied UFF atom types
-	bool generateAngleTerm(const Species *sp, SpeciesAngle *angleTerm, UFFAtomType *i, UFFAtomType *j, UFFAtomType *k) const;
+	bool generateAngleTerm(const Species *sp, SpeciesAngle *angleTerm, UFFAtomType *i, UFFAtomType *j,
+			       UFFAtomType *k) const;
 	// Generate torsion parameters for the supplied UFF atom types
-	bool generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, UFFAtomType *i, UFFAtomType *j, UFFAtomType *k, UFFAtomType *l) const;
+	bool generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, UFFAtomType *i, UFFAtomType *j, UFFAtomType *k,
+				 UFFAtomType *l) const;
 
-      public:
+	public:
 	// Assign suitable AtomTypes to the supplied Species
 	bool assignAtomTypes(Species *sp, CoreData &coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species

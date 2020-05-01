@@ -35,21 +35,21 @@ class Weights;
 // SQ Module
 class SQModule : public Module
 {
-      public:
+	public:
 	SQModule();
 	~SQModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -62,35 +62,37 @@ class SQModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Members / Functions
 	 */
-      private:
+	private:
 	// Test data
 	Data1DStore testData_;
 
-      public:
+	public:
 	// Calculate unweighted S(Q) from unweighted g(r)
-	static bool calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
+	static bool calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr,
+					  PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
 					  const WindowFunction &windowFunction, const BroadeningFunction &broadening);
 	// Sum unweighted S(Q) over the supplied Module's target Configurations
-	static bool sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericList &moduleData, PartialSet &summedUnweightedSQ);
+	static bool sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericList &moduleData,
+				    PartialSet &summedUnweightedSQ);
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

@@ -50,7 +50,10 @@ bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreDat
 }
 
 // Write keyword data to specified LineParser
-bool BoolKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %s\n", prefix, keywordName, DissolveSys::btoa(data_)); }
+bool BoolKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+{
+	return parser.writeLineF("%s%s  %s\n", prefix, keywordName, DissolveSys::btoa(data_));
+}
 
 /*
  * Conversion

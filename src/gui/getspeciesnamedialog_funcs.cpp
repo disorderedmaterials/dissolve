@@ -24,7 +24,10 @@
 #include "classes/species.h"
 #include "gui/getspeciesnamedialog.h"
 
-GetSpeciesNameDialog::GetSpeciesNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData) { ui_.setupUi(this); }
+GetSpeciesNameDialog::GetSpeciesNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData)
+{
+	ui_.setupUi(this);
+}
 
 GetSpeciesNameDialog::~GetSpeciesNameDialog() {}
 

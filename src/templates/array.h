@@ -32,7 +32,7 @@ using namespace std;
 // Array
 template <class A> class Array : public ListItem<Array<A>>
 {
-      public:
+	public:
 	Array(int initialSize = 0) : ListItem<Array<A>>()
 	{
 		chunkSize_ = 128;
@@ -79,7 +79,7 @@ template <class A> class Array : public ListItem<Array<A>>
 	/*
 	 * Array Data
 	 */
-      private:
+	private:
 	// Current size of Array
 	int size_;
 	// Array data
@@ -89,7 +89,7 @@ template <class A> class Array : public ListItem<Array<A>>
 	// Chunk (increment) size for Array
 	int chunkSize_;
 
-      private:
+	private:
 	// Resize array
 	void resize(int newSize)
 	{
@@ -116,7 +116,8 @@ template <class A> class Array : public ListItem<Array<A>>
 		}
 		catch (bad_alloc &alloc)
 		{
-			Messenger::error("Array<T>() - Failed to allocate sufficient memory for array_. Exception was : %s\n", alloc.what());
+			Messenger::error("Array<T>() - Failed to allocate sufficient memory for array_. Exception was : %s\n",
+					 alloc.what());
 			return;
 		}
 
@@ -126,7 +127,7 @@ template <class A> class Array : public ListItem<Array<A>>
 		delete[] oldItems;
 	}
 
-      public:
+	public:
 	// Return number of items in array
 	int nItems() const { return nItems_; }
 	// Return current maximum size of array
@@ -177,7 +178,7 @@ template <class A> class Array : public ListItem<Array<A>>
 	/*
 	 * Add / Remove
 	 */
-      public:
+	public:
 	// Add new element to array
 	void add(A data)
 	{
@@ -194,7 +195,8 @@ template <class A> class Array : public ListItem<Array<A>>
 #ifdef CHECKS
 		if ((position < 0) || (position >= nItems_))
 		{
-			Messenger::print("OUT_OF_RANGE - Position index %i is out of range in Array::insert() (nItems = %i).\n", position, nItems_);
+			Messenger::print("OUT_OF_RANGE - Position index %i is out of range in Array::insert() (nItems = %i).\n",
+					 position, nItems_);
 			return;
 		}
 #endif
@@ -251,7 +253,8 @@ template <class A> class Array : public ListItem<Array<A>>
 #ifdef CHECKS
 		if ((position < 0) || (position >= nItems_))
 		{
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::remove() (nItems = %i).\n", position, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::remove() (nItems = %i).\n",
+					 position, nItems_);
 			return;
 		}
 #endif
@@ -264,7 +267,7 @@ template <class A> class Array : public ListItem<Array<A>>
 	/*
 	 * Set / Get
 	 */
-      public:
+	public:
 	// Return reference to nth item in array
 	A &operator[](int n)
 	{
@@ -272,7 +275,8 @@ template <class A> class Array : public ListItem<Array<A>>
 		if ((n < 0) || (n >= nItems_))
 		{
 			static A dummy;
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::operator[] (nItems = %i).\n", n, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::operator[] (nItems = %i).\n",
+					 n, nItems_);
 			return dummy;
 		}
 #endif
@@ -285,7 +289,8 @@ template <class A> class Array : public ListItem<Array<A>>
 		if ((n < 0) || (n >= nItems_))
 		{
 			static A dummy;
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::at() (nItems = %i).\n", n, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::at() (nItems = %i).\n", n,
+					 nItems_);
 			return dummy;
 		}
 #endif
@@ -298,7 +303,8 @@ template <class A> class Array : public ListItem<Array<A>>
 		if ((n < 0) || (n >= nItems_))
 		{
 			static A dummy;
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::constAt() (nItems = %i).\n", n, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::constAt() (nItems = %i).\n",
+					 n, nItems_);
 			return dummy;
 		}
 #endif
@@ -350,14 +356,15 @@ template <class A> class Array : public ListItem<Array<A>>
 	/*
 	 * Move
 	 */
-      public:
+	public:
 	// Shift item up in the array (towards higher indices)
 	void shiftUp(int position)
 	{
 #ifdef CHECKS
 		if ((position < 0) || (position >= nItems_))
 		{
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftUp() (nItems = %i).\n", position, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftUp() (nItems = %i).\n",
+					 position, nItems_);
 			return;
 		}
 #endif
@@ -375,7 +382,8 @@ template <class A> class Array : public ListItem<Array<A>>
 #ifdef CHECKS
 		if ((position < 0) || (position >= nItems_))
 		{
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftDown() (nItems = %i).\n", position, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftDown() (nItems = %i).\n",
+					 position, nItems_);
 			return;
 		}
 #endif
@@ -391,7 +399,7 @@ template <class A> class Array : public ListItem<Array<A>>
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	// Operator= (set all)
 	void operator=(const A value)
 	{
@@ -473,7 +481,7 @@ template <class A> class Array : public ListItem<Array<A>>
 	/*
 	 * Functions
 	 */
-      public:
+	public:
 	// Return sum of elements in array
 	A sum()
 	{

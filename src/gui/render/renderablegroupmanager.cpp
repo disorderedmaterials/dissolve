@@ -80,7 +80,8 @@ RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, cons
 	{
 		if (DissolveSys::sameString(renderable->group()->name(), groupName))
 		{
-			Messenger::print("Renderable '%s' already associated to group '%s'...\n", renderable->name(), renderable->group()->name());
+			Messenger::print("Renderable '%s' already associated to group '%s'...\n", renderable->name(),
+					 renderable->group()->name());
 			return renderable->group();
 		}
 

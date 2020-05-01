@@ -30,14 +30,14 @@
 // OPLS-AA/2005 Alkenes Forcefield
 class Forcefield_OPLSAA2005_Alkenes : public Forcefield_OPLSAA2005_Alkanes
 {
-      public:
+	public:
 	Forcefield_OPLSAA2005_Alkenes();
 	~Forcefield_OPLSAA2005_Alkenes();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield

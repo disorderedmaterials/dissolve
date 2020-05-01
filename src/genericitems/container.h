@@ -28,24 +28,24 @@
 // GenericItemContainer Template Class
 template <class T> class GenericItemContainer : public GenericItem
 {
-      public:
+	public:
 	GenericItemContainer<T>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Data item
 	T data_;
 
-      public:
+	public:
 	// Return data item
 	T &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-      protected:
+	protected:
 	// Create a new GenericItem containing same class as current type
 	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
@@ -54,14 +54,14 @@ template <class T> class GenericItemContainer : public GenericItem
 		return NULL;
 	}
 
-      public:
+	public:
 	// Return class name contained in item
 	virtual const char *itemClassName() { return T::itemClassName(); }
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write data through specified parser
 	bool write(LineParser &parser) { return data_.write(parser); }
 	// Read data through specified parser
@@ -70,9 +70,12 @@ template <class T> class GenericItemContainer : public GenericItem
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return data_.broadcast(procPool, root, coreData); }
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
+	{
+		return data_.broadcast(procPool, root, coreData);
+	}
 	// Check for equality
 	bool equality(ProcessPool &procPool) { return data_.equality(procPool); }
 };

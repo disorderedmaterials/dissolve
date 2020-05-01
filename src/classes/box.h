@@ -35,7 +35,7 @@ class ProcessPool;
 // Basic Box Definition
 class Box
 {
-      public:
+	public:
 	Box();
 	// Virtual Destructor
 	virtual ~Box();
@@ -44,7 +44,7 @@ class Box
 	/*
 	 * Basic Definition
 	 */
-      public:
+	public:
 	// Box Type Enum
 	enum BoxType
 	{
@@ -58,7 +58,7 @@ class Box
 	// Return enum options for BoxType
 	static EnumOptions<BoxType> boxTypes();
 
-      protected:
+	protected:
 	// Box type
 	BoxType type_;
 	// Box lengths
@@ -80,7 +80,7 @@ class Box
 	// Reciprocal volume
 	double reciprocalVolume_;
 
-      public:
+	public:
 	// Finalise Box, storing volume and reciprocal and inverted axes
 	void finalise();
 	// Return Box type
@@ -111,7 +111,7 @@ class Box
 	/*
 	 * Minimum Image Routines (Pure Virtual)
 	 */
-      public:
+	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	virtual Vec3<double> minimumImage(const Atom *i, const Atom *ref) const = 0;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
@@ -146,18 +146,19 @@ class Box
 	/*
 	 * Utility Routines
 	 */
-      public:
+	public:
 	// Generate a suitable Box given the supplied relative lengths, angles, and volume
 	static Box *generate(Vec3<double> lengths, Vec3<double> angles);
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
-	bool calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const;
+	bool calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth,
+				       int nPoints) const;
 
 	/*
 	 * Utility Routines (Pure Virtual)
 	 */
-      public:
+	public:
 	// Return random coordinate inside Box
 	virtual Vec3<double> randomCoordinate() const = 0;
 	// Return folded coordinate (i.e. inside current Box)
@@ -170,7 +171,7 @@ class Box
 	/*
 	 * Utility Routines
 	 */
-      public:
+	public:
 	// Return angle (in degrees, no MIM) between Atoms
 	double angleInDegrees(const Atom *i, const Atom *j, const Atom *k) const;
 	// Return angle (in degrees) between coordinates
@@ -183,25 +184,29 @@ class Box
 	static double literalAngleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k);
 	// Return torsion (in degrees) between supplied unnormalised vectors
 	static double torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl);
-	// Return torsion (in degrees) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-	static double torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
+	// Return torsion (in degrees) between supplied unnormalised vectors, storing cross products and magnitude in supplied
+	// variables
+	static double torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl,
+				       Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
 	// Return torsion (in radians) between supplied unnormalised vectors
 	static double torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl);
-	// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-	static double torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
+	// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied
+	// variables
+	static double torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl,
+				       Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
 };
 
 // Non-Periodic Box Definition
 class NonPeriodicBox : public Box
 {
-      public:
+	public:
 	NonPeriodicBox(double length);
 	~NonPeriodicBox();
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
@@ -236,7 +241,7 @@ class NonPeriodicBox : public Box
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
@@ -250,14 +255,14 @@ class NonPeriodicBox : public Box
 // Cubic Box Definition
 class CubicBox : public Box
 {
-      public:
+	public:
 	CubicBox(double length);
 	~CubicBox();
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
@@ -292,7 +297,7 @@ class CubicBox : public Box
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
@@ -306,14 +311,14 @@ class CubicBox : public Box
 // Orthorhombic Box Definition
 class OrthorhombicBox : public Box
 {
-      public:
+	public:
 	OrthorhombicBox(const Vec3<double> lengths);
 	~OrthorhombicBox();
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
@@ -348,7 +353,7 @@ class OrthorhombicBox : public Box
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
@@ -362,14 +367,14 @@ class OrthorhombicBox : public Box
 // Monoclinic Box Definition
 class MonoclinicBox : public Box
 {
-      public:
+	public:
 	MonoclinicBox(const Vec3<double> lengths, double beta);
 	~MonoclinicBox();
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
@@ -404,7 +409,7 @@ class MonoclinicBox : public Box
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
@@ -418,14 +423,14 @@ class MonoclinicBox : public Box
 // Triclinic Box Definition
 class TriclinicBox : public Box
 {
-      public:
+	public:
 	TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
 	~TriclinicBox();
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
@@ -460,7 +465,7 @@ class TriclinicBox : public Box
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-      public:
+	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)

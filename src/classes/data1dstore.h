@@ -33,20 +33,20 @@
 // Data1D Store
 class Data1DStore
 {
-      public:
+	public:
 	Data1DStore();
 	~Data1DStore();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// List of contained data
 	List<Data1D> data_;
 	// References for Data1D and associated file/format
 	RefDataList<Data1D, Data1DImportFileFormat> dataReferences_;
 
-      public:
+	public:
 	// Add named data reference to store, reading file and format from specified parser / starting argument
 	bool addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Check to see if the named data is present in the store

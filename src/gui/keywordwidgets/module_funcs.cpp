@@ -23,7 +23,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/module.h"
 
-ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -39,7 +40,8 @@ ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, 
 		updateValue();
 	}
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	ui_.ModuleCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.ModuleCombo));
 
 	refreshing_ = false;
@@ -82,7 +84,8 @@ void ModuleKeywordWidget::updateValue()
 
 	// Get the list of available modules of the specified type
 	RefList<Module> availableModules = coreData_.findModules(keyword_->moduleType());
-	ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->baseModule(), this, &ModuleKeywordWidget::uniqueNameOfModule);
+	ComboBoxTextUpdater<ModuleKeywordWidget, Module> comboUpdater(ui_.ModuleCombo, availableModules, keyword_->baseModule(),
+								      this, &ModuleKeywordWidget::uniqueNameOfModule);
 
 	refreshing_ = false;
 }

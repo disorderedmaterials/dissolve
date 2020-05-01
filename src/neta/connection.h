@@ -34,11 +34,13 @@ class NETADefinition;
 // NETA Connection Node
 class NETAConnectionNode : public NETANode
 {
-      public:
-	NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+	public:
+	NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements,
+			   std::vector<ForcefieldAtomType *> targetAtomTypes,
+			   SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAConnectionNode();
 
-      private:
+	private:
 	// Array of elements that the current context atom may be
 	std::vector<Element *> allowedElements_;
 	// Array of ForcefieldAtomTypes that the current context atom may be
@@ -49,7 +51,7 @@ class NETAConnectionNode : public NETANode
 	/*
 	 * Modifiers
 	 */
-      private:
+	private:
 	// Repeat count value
 	int repeatCount_;
 	// Repeat count comparison operator
@@ -63,7 +65,7 @@ class NETAConnectionNode : public NETANode
 	// Numbe of hydrogens value comparison operator
 	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
-      public:
+	public:
 	// Available modifiers
 	enum NETAConnectionModifier
 	{
@@ -82,11 +84,11 @@ class NETAConnectionNode : public NETANode
 	/*
 	 * Flags
 	 */
-      private:
+	private:
 	// Whether to allow the root atom of the path to be re-matched within this node
 	bool allowRootMatch_;
 
-      public:
+	public:
 	// Available flags
 	enum NETAConnectionFlag
 	{
@@ -103,7 +105,7 @@ class NETAConnectionNode : public NETANode
 	/*
 	 * Scoring
 	 */
-      public:
+	public:
 	// Evaluate the node and return its score
 	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };

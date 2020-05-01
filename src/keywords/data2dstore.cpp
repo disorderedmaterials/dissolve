@@ -22,7 +22,10 @@
 #include "keywords/data2dstore.h"
 #include "base/lineparser.h"
 
-Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data2DStore) : KeywordData<Data2DStore &>(KeywordBase::Data2DStoreData, data2DStore) {}
+Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data2DStore)
+	: KeywordData<Data2DStore &>(KeywordBase::Data2DStoreData, data2DStore)
+{
+}
 
 Data2DStoreKeyword::~Data2DStoreKeyword() {}
 
@@ -47,7 +50,8 @@ int Data2DStoreKeyword::maxArguments() const
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool Data2DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2), parser.argc(startArg + 1));
+	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg),
+			 parser.argc(startArg + 2), parser.argc(startArg + 1));
 
 	if (!data_.addData(parser.argc(startArg), parser, startArg + 1, CharString("End%s", name()), coreData))
 		return Messenger::error("Failed to add data.\n");

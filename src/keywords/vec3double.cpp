@@ -22,14 +22,16 @@
 #include "keywords/vec3double.h"
 #include "base/lineparser.h"
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType)
+	: KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType)
+	: KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
 	minimumLimit_ = true;
@@ -37,7 +39,9 @@ Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, 
 	maximumLimit_ = false;
 }
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue,
+				     Vec3Labels::LabelType labelType)
+	: KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
 	minimumLimit_ = true;
@@ -125,11 +129,17 @@ bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &c
 			if (!isValid(n, parser.argd(startArg + n)))
 			{
 				if (minimumLimit_[n] && maximumLimit_[n])
-					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is  <= n <= %12.6e.\n", data_[n], name(), min_[n], max_[n]);
+					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is  <= n "
+							 "<= %12.6e.\n",
+							 data_[n], name(), min_[n], max_[n]);
 				else if (minimumLimit_[n])
-					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is %12.6e <= n.\n", data_[n], name(), min_[n]);
+					Messenger::error(
+						"Value %12.6e is out of range for keyword '%s'. Valid range is %12.6e <= n.\n",
+						data_[n], name(), min_[n]);
 				else
-					Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is n <= %12.6e.\n", data_[n], name(), max_[n]);
+					Messenger::error(
+						"Value %12.6e is out of range for keyword '%s'. Valid range is n <= %12.6e.\n",
+						data_[n], name(), max_[n]);
 
 				return false;
 			}

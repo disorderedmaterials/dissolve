@@ -29,8 +29,11 @@
 // Return enum option info for ModuleKeyword
 EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 {
-	static EnumOptionsList ModuleKeywords = EnumOptionsList() << EnumOption(ModuleBlock::ConfigurationKeyword, "Configuration", 1) << EnumOption(ModuleBlock::DisableKeyword, "Disabled")
-								  << EnumOption(ModuleBlock::EndModuleKeyword, "EndModule") << EnumOption(ModuleBlock::FrequencyKeyword, "Frequency", 1);
+	static EnumOptionsList ModuleKeywords = EnumOptionsList()
+						<< EnumOption(ModuleBlock::ConfigurationKeyword, "Configuration", 1)
+						<< EnumOption(ModuleBlock::DisableKeyword, "Disabled")
+						<< EnumOption(ModuleBlock::EndModuleKeyword, "EndModule")
+						<< EnumOption(ModuleBlock::FrequencyKeyword, "Frequency", 1);
 
 	static EnumOptions<ModuleBlock::ModuleKeyword> options("ModuleKeyword", ModuleKeywords);
 
@@ -38,9 +41,11 @@ EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 }
 
 // Parse Module block
-bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, GenericList &targetList, bool moduleInConfiguration)
+bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, GenericList &targetList,
+			bool moduleInConfiguration)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), module->type());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+			 module->type());
 
 	Configuration *targetCfg;
 	CharString varName, dataName;
@@ -67,7 +72,9 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 				targetCfg = dissolve->findConfiguration(parser.argc(1));
 				if (!targetCfg)
 				{
-					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->type());
+					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no "
+							 "Configuration by this name exists.\n",
+							 parser.argc(1), module->type());
 					error = true;
 					break;
 				}
@@ -75,20 +82,24 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 				// Add it as a target
 				if (!module->addTargetConfiguration(targetCfg))
 				{
-					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
+					Messenger::error("Failed to add Configuration target in Module '%s'.\n",
+							 module->type());
 					error = true;
 					break;
 				}
 
 				// Create weight data if a second argument was provided
 				if (parser.hasArg(2))
-					GenericListHelper<double>::add(targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()), module->uniqueName()) = parser.argd(2);
+					GenericListHelper<double>::add(
+						targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()),
+						module->uniqueName()) = parser.argd(2);
 				break;
 			case (ModuleBlock::DisableKeyword):
 				module->setEnabled(false);
 				break;
 			case (ModuleBlock::EndModuleKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
+				Messenger::print("Found end of %s block.\n",
+						 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
 				blockDone = true;
 				break;
 			case (ModuleBlock::FrequencyKeyword):
@@ -98,7 +109,9 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 				// Never used, since it is accounted for in the beginning 'if'
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), keywords().keyword(kwd));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+				       BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+				       keywords().keyword(kwd));
 				error = true;
 				break;
 			}
@@ -111,8 +124,10 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 				error = true;
 			else if (result == -1)
 			{
-				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n",
-						 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), parser.argc(0), module->type());
+				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no "
+						 "option with this name.\n",
+						 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+						 parser.argc(0), module->type());
 				keywords().errorAndPrintValid(parser.argc(0));
 				module->printValidKeywords();
 				error = true;
@@ -131,7 +146,8 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n",
+				 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
 		error = true;
 	}
 

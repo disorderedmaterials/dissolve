@@ -40,7 +40,10 @@ Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data
 
 Data2D::~Data2D() {}
 
-Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this) { (*this) = source; }
+Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this)
+{
+	(*this) = source;
+}
 
 // Clear Data
 void Data2D::clear()
@@ -345,7 +348,8 @@ double &Data2D::error(int xIndex, int yIndex)
 	if (!hasError_)
 	{
 		static double dummy;
-		Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(), objectTag());
+		Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n",
+				name(), objectTag());
 		return dummy;
 	}
 #ifdef CHECKS
@@ -373,7 +377,9 @@ double Data2D::constError(int xIndex, int yIndex) const
 {
 	if (!hasError_)
 	{
-		Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but constError(int,int) was requested.\n", name(), objectTag());
+		Messenger::warn(
+			"This Data2D (name='%s', tag='%s') has no errors to return, but constError(int,int) was requested.\n",
+			name(), objectTag());
 		return 0.0;
 	}
 #ifdef CHECKS
@@ -396,7 +402,8 @@ double Data2D::constError(int xIndex, int yIndex) const
 Array2D<double> &Data2D::errors()
 {
 	if (!hasError_)
-		Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
+		Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n",
+				name(), objectTag());
 
 	++version_;
 
@@ -407,7 +414,9 @@ Array2D<double> &Data2D::errors()
 const Array2D<double> &Data2D::constErrors2D() const
 {
 	if (!hasError_)
-		Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but constErrors2D() was requested.\n", name(), objectTag());
+		Messenger::warn(
+			"This Data2D (name='%s', tag='%s') has no errors to return, but constErrors2D() was requested.\n",
+			name(), objectTag());
 
 	return errors_;
 }

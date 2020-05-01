@@ -34,14 +34,14 @@ class GenericItemBase
 	/*
 	 * Item Class
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Read data through specified parser
 	virtual bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified parser
@@ -50,7 +50,7 @@ class GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	virtual bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Return equality between items

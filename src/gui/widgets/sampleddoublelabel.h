@@ -33,18 +33,18 @@ class SampledDoubleLabel : public QLabel
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	SampledDoubleLabel(QWidget *parent);
 	~SampledDoubleLabel();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SampledDoubleLabel ui_;
 
-      public:
+	public:
 	// Set font sizes for labels
 	void setLabelFonts(int basePointSize);
 	// Set label values

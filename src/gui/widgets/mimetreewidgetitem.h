@@ -32,18 +32,18 @@
 // Mime Tree Widget Item
 class MimeTreeWidgetItem : public QTreeWidgetItem
 {
-      public:
+	public:
 	MimeTreeWidgetItem(QTreeWidget *parent, int type);
 	MimeTreeWidgetItem(QTreeWidgetItem *parent, int type);
 
 	/*
 	 * Mime Data
 	 */
-      private:
+	private:
 	// Mime string data
 	MimeStrings mimeStrings_;
 
-      public:
+	public:
 	// Add mime data of specified type
 	void addMimeString(MimeString::MimeStringType type, QString data);
 	// Return mime strings

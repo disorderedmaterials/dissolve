@@ -40,7 +40,7 @@ class SpeciesAtom;
 // NETA Node
 class NETANode : public ListItem<NETANode>
 {
-      public:
+	public:
 	// Node types
 	enum NodeType
 	{
@@ -76,13 +76,13 @@ class NETANode : public ListItem<NETANode>
 	/*
 	 * Node Type and Parent
 	 */
-      protected:
+	protected:
 	// Type of node
 	NodeType nodeType_;
 	// Pointer to parent definition
 	NETADefinition *parent_;
 
-      public:
+	public:
 	// Return node type
 	NodeType nodeType() const;
 	// Return parent definition
@@ -91,11 +91,11 @@ class NETANode : public ListItem<NETANode>
 	/*
 	 * Branching and Node Generation
 	 */
-      protected:
+	protected:
 	// Branch of nodes
 	List<NETANode> branch_;
 
-      public:
+	public:
 	// Clear all nodes
 	void clear();
 	// Return last node of branch
@@ -103,16 +103,18 @@ class NETANode : public ListItem<NETANode>
 	// Return number of nodes defined in branch
 	int nBranchNodes() const;
 	// Create connectivity node in the branch
-	NETAConnectionNode *createConnectionNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes);
+	NETAConnectionNode *createConnectionNode(std::vector<Element *> targetElements,
+						 std::vector<ForcefieldAtomType *> targetAtomTypes);
 	// Create presence node in the branch
-	NETAPresenceNode *createPresenceNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes);
+	NETAPresenceNode *createPresenceNode(std::vector<Element *> targetElements,
+					     std::vector<ForcefieldAtomType *> targetAtomTypes);
 	// Create ring node in the branch
 	NETARingNode *createRingNode();
 
 	/*
 	 * Modifiers
 	 */
-      public:
+	public:
 	// Return whether the specified modifier is valid for this node
 	virtual bool isValidModifier(const char *s) const;
 	// Set value and comparator for specified modifier
@@ -121,7 +123,7 @@ class NETANode : public ListItem<NETANode>
 	/*
 	 * Flags
 	 */
-      public:
+	public:
 	// Return whether the specified flag is valid for this node
 	virtual bool isValidFlag(const char *s) const;
 	// Set specified flag
@@ -130,18 +132,18 @@ class NETANode : public ListItem<NETANode>
 	/*
 	 * Value Comparison
 	 */
-      public:
+	public:
 	// Return result of comparison between values provided
 	static bool compareValues(int lhsValue, ComparisonOperator op, int rhsValue);
 
 	/*
 	 * Scoring
 	 */
-      protected:
+	protected:
 	// Whether to use reverse logic when returning the final value
 	bool reverseLogic_;
 
-      public:
+	public:
 	// Set node to use reverse logic
 	void setReverseLogic();
 	// Evaluate the node and return its score

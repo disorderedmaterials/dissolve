@@ -61,6 +61,8 @@ const char *Forcefield_OPLSAA2005_Aromatics::name() const { return "OPLSAA2005/A
 // Return description for Forcefield
 const char *Forcefield_OPLSAA2005_Aromatics::description() const
 {
-	static CharString desc("Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: %s", publicationReferences());
+	static CharString desc(
+		"Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: %s",
+		publicationReferences());
 	return desc.get();
 }

@@ -135,7 +135,8 @@ void ModuleControlWidget::updateControls()
 		else
 			item->setCheckState(Qt::Unchecked);
 	}
-	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nRequiredTargets() != Module::ZeroTargets));
+	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) &&
+						 (module_->nRequiredTargets() != Module::ZeroTargets));
 	ui_.HeaderFrame->setToolTip(toolTip.get());
 
 	// Update keywords

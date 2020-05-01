@@ -31,22 +31,23 @@
 // Keyword with Double Triplet Data
 class Vec3DoubleKeyword : public KeywordData<Vec3<double>>
 {
-      public:
+	public:
 	Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue,
+			  Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	~Vec3DoubleKeyword();
 
 	/*
 	 * Data Validation
 	 */
-      private:
+	private:
 	// Validation limits to apply (if any)
 	Vec3<bool> minimumLimit_, maximumLimit_;
 	// Validation range (if appropriate)
 	Vec3<double> min_, max_;
 
-      public:
+	public:
 	// Return whether a minimum validation limit has been set for supplied index
 	bool hasValidationMin(int index);
 	// Return validation minimum limit for supplied index
@@ -63,18 +64,18 @@ class Vec3DoubleKeyword : public KeywordData<Vec3<double>>
 	/*
 	 * Label Type
 	 */
-      private:
+	private:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType_;
 
-      public:
+	public:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -87,7 +88,7 @@ class Vec3DoubleKeyword : public KeywordData<Vec3<double>>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as Vec3<int>)
 	Vec3<int> asVec3Int();
 	// Return value (as Vec3<double>)

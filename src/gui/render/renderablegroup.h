@@ -33,28 +33,28 @@ class Renderable;
 // Renderable Group
 class RenderableGroup : public ListItem<RenderableGroup>
 {
-      public:
+	public:
 	RenderableGroup(const char *name, StockColours::StockColour colour);
 
 	/*
 	 * Name
 	 */
-      private:
+	private:
 	// Name of the group
 	CharString name_;
 
-      public:
+	public:
 	// Return name of group
 	const char *name() const;
 
 	/*
 	 * Renderable Targets
 	 */
-      private:
+	private:
 	// Renderables using this group
 	RefList<Renderable> renderables_;
 
-      public:
+	public:
 	// Associate Renderable to group (if it isn't already)
 	void associateRenderable(Renderable *renderable);
 	// Remove Renderable from group (if it exists)
@@ -71,11 +71,11 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	/*
 	 * Visibility
 	 */
-      private:
+	private:
 	// Whether data within the group is visible
 	bool visible_;
 
-      public:
+	public:
 	// Set whether group contents are visible
 	void setVisible(bool visible);
 	// Return whether group contents are visible
@@ -84,7 +84,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	/*
 	 * Colouring
 	 */
-      public:
+	public:
 	// Colouring to apply to targeted renderables
 	enum GroupColouring
 	{
@@ -95,7 +95,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Return enum options for GroupColouring
 	static EnumOptions<RenderableGroup::GroupColouring> groupColourings();
 
-      private:
+	private:
 	// Colouring style for the group
 	GroupColouring colouringStyle_;
 	// Stock colour associated to this group
@@ -103,13 +103,13 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Usage counters for stock colours when colouringStyle_ == AutomaticIndividualColouring
 	Array<int> automaticStockColourUsageCount_;
 
-      private:
+	private:
 	// Set colour information for the supplied Renderable, according to our settings
 	void setRenderableColour(Renderable *rend);
 	// Set all Renderable colours
 	void setRenderableColours();
 
-      public:
+	public:
 	// Set colouring style for the group
 	void setColouringStyle(GroupColouring colouringStyle);
 	// Return colouring style for the group
@@ -124,17 +124,17 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	/*
 	 * Line Style
 	 */
-      private:
+	private:
 	// Line stipple for the group
 	LineStipple::StippleType lineStipple_;
 
-      private:
+	private:
 	// Set line style for the supplied Renderable, according to our settings
 	void setRenderableLineStyle(Renderable *rend);
 	// Set all Renderable line styles
 	void setRenderableLineStyles();
 
-      public:
+	public:
 	// Set line stipple for the group
 	void setLineStipple(LineStipple::StippleType stipple);
 	// Return line stipple for the group
@@ -143,18 +143,19 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	/*
 	 * Vertical Shifting
 	 */
-      public:
+	public:
 	// Vertical Shift Style
 	enum VerticalShiftStyle
 	{
 		PreventVerticalShifting,   /* Data within the group will not be subject to vertical shifting */
 		GroupVerticalShifting,     /* Data within the group will be shifted by the same amount */
-		IndividualVerticalShifting /* Data within the group will be shifted individually and incrementally by the specified amount */
+		IndividualVerticalShifting /* Data within the group will be shifted individually and incrementally by the
+					      specified amount */
 	};
 	// Return enum options for VerticalShiftStyle
 	static EnumOptions<RenderableGroup::VerticalShiftStyle> verticalShiftStyles();
 
-      private:
+	private:
 	// Vertical shifting style for this group
 	VerticalShiftStyle verticalShiftStyle_;
 	// Shift (in vertical axis) to apply to Renderables
@@ -162,13 +163,13 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Shift multiplier
 	int verticalShiftMultiplier_;
 
-      private:
+	private:
 	// Set vertical shift in specified Renderable
 	void setRenderableVerticalShift(Renderable *renderable, int rendIndex);
 	// Set vertical shift in all Renderables in the group via their transform equations
 	void setRenderableVerticalShifts();
 
-      public:
+	public:
 	// Set whether vertical shifting is enabled in this group
 	void setVerticalShiftStyle(VerticalShiftStyle shiftStyle);
 	// Return vertical shifting in force for this group

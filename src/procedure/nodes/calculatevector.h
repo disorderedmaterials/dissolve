@@ -31,21 +31,22 @@ class SelectProcedureNode;
 // Calculate Vector Node
 class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 {
-      public:
-	CalculateVectorProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL, bool rotateIntoFrame = false);
+	public:
+	CalculateVectorProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL,
+				     bool rotateIntoFrame = false);
 	~CalculateVectorProcedureNode();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Whether to rotate into the frame of the first site (retrieved from keyword)
 	bool rotateIntoFrame_;
 
 	/*
 	 * Observable Target (implements virtuals in CalculateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Return number of sites required to calculate observable
 	int nSitesRequired() const;
 	// Return dimensionality of calculated observable
@@ -54,11 +55,12 @@ class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 };
 
 #endif

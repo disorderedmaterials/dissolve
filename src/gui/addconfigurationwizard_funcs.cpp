@@ -41,12 +41,15 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
 
 	// Register pages with the wizard
 	registerChoicePage(AddConfigurationWizard::StartPage, "Create Configuration");
-	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template", AddConfigurationWizard::NameAndTemperaturePage);
-	registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature", WizardWidgetPageInfo::FinishHereFlag);
+	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template",
+		     AddConfigurationWizard::NameAndTemperaturePage);
+	registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature",
+		     WizardWidgetPageInfo::FinishHereFlag);
 
 	// Connect signals / slots
-	// 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
-	// 	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
+	// 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this,
+	// SLOT(atomTypesListEdited(QWidget*))); 	connect(ui_.CreateAtomicElementSelector,
+	// SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
 
 	lockedForRefresh_ = 0;
 }
@@ -58,7 +61,10 @@ AddConfigurationWizard::~AddConfigurationWizard() {}
  */
 
 // Set Dissolve reference
-void AddConfigurationWizard::setMainDissolveReference(const Dissolve *dissolveReference) { dissolveReference_ = dissolveReference; }
+void AddConfigurationWizard::setMainDissolveReference(const Dissolve *dissolveReference)
+{
+	dissolveReference_ = dissolveReference;
+}
 
 // Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
 Configuration *AddConfigurationWizard::importConfiguration(Dissolve &dissolve)
@@ -187,9 +193,15 @@ void AddConfigurationWizard::reset()
  * Start Page
  */
 
-void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked) { goToPage(AddConfigurationWizard::NameAndTemperaturePage); }
+void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked)
+{
+	goToPage(AddConfigurationWizard::NameAndTemperaturePage);
+}
 
-void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked) { goToPage(AddConfigurationWizard::SelectTemplatePage); }
+void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked)
+{
+	goToPage(AddConfigurationWizard::SelectTemplatePage);
+}
 
 /*
  * Select Template Page

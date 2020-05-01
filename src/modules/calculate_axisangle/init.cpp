@@ -114,7 +114,8 @@ void CalculateAxisAngleModule::initialise()
 	forEachB->addNode(calcDistance);
 
 	// -- -- Calculate: 'axisAngle'
-	CalculateAxisAngleProcedureNode *calcAngle = new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
+	CalculateAxisAngleProcedureNode *calcAngle =
+		new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
 	forEachB->addNode(calcAngle);
 
 	// -- -- Collect2D:  'rAB vs axisAngle)'
@@ -171,20 +172,32 @@ void CalculateAxisAngleModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "DistanceRange",
-		      "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange",
-		      "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "DistanceRange", "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
 
 	// Sites
-	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
+	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA",
+		       "Add site(s) which represent 'A' in the interaction A-B...C",
+		       "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.link("Sites", calcAngle->keywords().find("AxisI"), "AxisA", "Axis to use from site A");
-	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
+	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB",
+		       "Add site(s) which represent 'B' in the interaction A-B...C",
+		       "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.link("Sites", calcAngle->keywords().find("AxisJ"), "AxisB", "Axis to use from site B");
-	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
+	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule",
+		      "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
 
 	// Export
-	keywords_.link("Export", processDistance_->keywords().find("Save"), "SaveRDF", "Whether to save calculated B-C RDF to disk", "<True|False>");
-	keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle", "Whether to save calculated A-B...C angle histrogram to disk", "<True|False>");
-	keywords_.link("Export", processDAngle_->keywords().find("Save"), "SaveDAngle", "Whether to save calculated A-B...C angle map to disk", "<True|False>");
+	keywords_.link("Export", processDistance_->keywords().find("Save"), "SaveRDF",
+		       "Whether to save calculated B-C RDF to disk", "<True|False>");
+	keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle",
+		       "Whether to save calculated A-B...C angle histrogram to disk", "<True|False>");
+	keywords_.link("Export", processDAngle_->keywords().find("Save"), "SaveDAngle",
+		       "Whether to save calculated A-B...C angle map to disk", "<True|False>");
 }

@@ -84,7 +84,8 @@ int SpeciesAngle::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesAngle::indexI(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesAngle::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -97,7 +98,8 @@ int SpeciesAngle::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesAngle::indexJ(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesAngle::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -110,7 +112,8 @@ int SpeciesAngle::indexK() const
 #ifdef CHECKS
 	if (k_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesAngle::indexK(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesAngle::indexK(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -149,7 +152,8 @@ bool SpeciesAngle::isSelected() const
 #ifdef CHECKS
 	if (i_ == NULL || j_ == NULL || k_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesAngle::isSelected(). Returning false...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesAngle::isSelected(). Returning false...\n");
 		return false;
 	}
 #endif
@@ -163,8 +167,11 @@ bool SpeciesAngle::isSelected() const
 // Return enum options for AngleFunction
 EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 {
-	static EnumOptionsList AngleFunctionOptions = EnumOptionsList() << EnumOption(SpeciesAngle::NoForm, "None", 0, 0) << EnumOption(SpeciesAngle::HarmonicForm, "Harmonic", 2, 2)
-									<< EnumOption(SpeciesAngle::CosineForm, "Cos", 4, 4) << EnumOption(SpeciesAngle::Cos2Form, "Cos2", 4, 4);
+	static EnumOptionsList AngleFunctionOptions = EnumOptionsList()
+						      << EnumOption(SpeciesAngle::NoForm, "None", 0, 0)
+						      << EnumOption(SpeciesAngle::HarmonicForm, "Harmonic", 2, 2)
+						      << EnumOption(SpeciesAngle::CosineForm, "Cos", 4, 4)
+						      << EnumOption(SpeciesAngle::Cos2Form, "Cos2", 4, 4);
 
 	static EnumOptions<SpeciesAngle::AngleFunction> options("AngleFunction", AngleFunctionOptions);
 
@@ -185,7 +192,8 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 		k = params[0];
 	else
 	{
-		Messenger::error("Functional form of SpeciesAngle term not set, or no force constant available, so can't determine fundamental frequency.\n");
+		Messenger::error("Functional form of SpeciesAngle term not set, or no force constant available, so can't "
+				 "determine fundamental frequency.\n");
 		return 0.0;
 	}
 
@@ -297,7 +305,8 @@ double SpeciesAngle::force(double angleInDegrees) const
 		 * 2 : Equilibrium angle, eq (degrees)
 		 * 3 : Sign, s
 		 */
-		return dTheta_dCosTheta * -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD);
+		return dTheta_dCosTheta * -params[0] * params[1] * params[3] *
+		       sin(params[1] * angleInRadians - params[2] / DEGRAD);
 	}
 	else if (form() == SpeciesAngle::Cos2Form)
 	{
@@ -310,7 +319,8 @@ double SpeciesAngle::force(double angleInDegrees) const
 		 * 2 : Constant C1
 		 * 3 : Constant C2
 		 */
-		return dTheta_dCosTheta * -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians));
+		return dTheta_dCosTheta * -params[0] *
+		       (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians));
 	}
 
 	Messenger::error("Functional form of SpeciesAngle term not accounted for, so can't calculate force.\n");

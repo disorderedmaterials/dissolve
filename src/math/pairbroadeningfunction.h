@@ -37,7 +37,7 @@ class SpeciesIntra;
 // Pair Broadening Function
 class PairBroadeningFunction : public GenericItemBase
 {
-      public:
+	public:
 	// Function Types
 	enum FunctionType
 	{
@@ -54,7 +54,7 @@ class PairBroadeningFunction : public GenericItemBase
 	// Return number of parameters needed to define FunctionType
 	static int nFunctionParameters(FunctionType func);
 
-      public:
+	public:
 	PairBroadeningFunction(FunctionType function = NoFunction);
 	~PairBroadeningFunction();
 	PairBroadeningFunction(const PairBroadeningFunction &source);
@@ -63,7 +63,7 @@ class PairBroadeningFunction : public GenericItemBase
 	/*
 	 * Function Data
 	 */
-      private:
+	private:
 	// Function Type
 	FunctionType function_;
 	// Gaussian FWHM parameter
@@ -77,7 +77,7 @@ class PairBroadeningFunction : public GenericItemBase
 	// Frequency-based angle broadening constant
 	double frequencyAngleConstant_;
 
-      public:
+	public:
 	// Read function data from LineParser source
 	bool readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write function data to LineParser source
@@ -108,7 +108,7 @@ class PairBroadeningFunction : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -119,7 +119,7 @@ class PairBroadeningFunction : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

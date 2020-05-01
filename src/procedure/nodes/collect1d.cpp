@@ -29,12 +29,20 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
+Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax,
+					       double binWidth)
+	: ProcedureNode(ProcedureNode::Collect1DNode)
 {
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0), "QuantityX", "Calculated observable to collect");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeX",
-		      "Range of calculation for the specified observable");
-	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantity was binned successfully");
+	keywords_.add("Target",
+		      new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true,
+									    observable, 0),
+		      "QuantityX", "Calculated observable to collect");
+	keywords_.add("Target",
+		      new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "RangeX", "Range of calculation for the specified observable");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+		      "Branch which runs if the target quantity was binned successfully");
 
 	// Initialise branch
 	subCollectBranch_ = NULL;
@@ -47,7 +55,10 @@ Collect1DProcedureNode::~Collect1DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Data
@@ -104,10 +115,13 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 	// Construct our data name, and search for it in the supplied list
 	CharString dataName("%s_%s_Bins", name(), cfg->niceName());
 	bool created;
-	Histogram1D &target = GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
+	Histogram1D &target = GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix,
+								      GenericItem::InRestartFileFlag, &created);
 	if (created)
 	{
-		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
+		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be "
+					"initialised...\n",
+					name());
 		target.initialise(minimum(), maximum(), binWidth());
 	}
 
@@ -132,7 +146,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								   const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	if (!xObservable_)

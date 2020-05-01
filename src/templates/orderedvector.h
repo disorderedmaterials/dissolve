@@ -28,7 +28,7 @@
 
 template <class T> class OrderedVector : std::vector<T>
 {
-      private:
+	private:
 	std::function<bool(T, T)> compare_ = std::less<T>();
 	using std::vector<T>::back;
 	using std::vector<T>::emplace_back;
@@ -37,7 +37,7 @@ template <class T> class OrderedVector : std::vector<T>
 	using std::vector<T>::pop_back;
 	using std::vector<T>::push_back;
 
-      public:
+	public:
 	using std::vector<T>::begin;
 	using std::vector<T>::clear;
 	using std::vector<T>::end;

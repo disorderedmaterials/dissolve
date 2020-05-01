@@ -35,21 +35,21 @@ class ChecksModule : public Module
 	 * Module for making simple checkss
 	 */
 
-      public:
+	public:
 	ChecksModule();
 	~ChecksModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -62,20 +62,20 @@ class ChecksModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Checks
 	 */
-      private:
+	private:
 	// Distances between atoms
 	List<Geometry> distances_;
 	// Angles between atoms

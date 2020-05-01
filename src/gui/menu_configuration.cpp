@@ -57,7 +57,8 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 	generator.addRootSequenceNode(new BoxProcedureNode);
 	for (auto sp : mixSpecies)
 	{
-		generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
+		generator.addRootSequenceNode(
+			new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
 	}
 
 	// Run the generator
@@ -91,14 +92,17 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 		// Add a parameter for the ratio of this species to the first (or the population of the first)
 		if (count == 0)
 			generator.addRootSequenceNode(
-			    new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+				new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()),
+							    NodeValue("rho", paramsNode->parameterReferences())));
 		else
 		{
 			CharString parameterName("ratio%c", 65 + count);
 			paramsNode->addParameter(parameterName, 1);
 
-			generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue(CharString("%s*populationA", parameterName.get()), paramsNode->parameterReferences()),
-										  NodeValue("rho", paramsNode->parameterReferences())));
+			generator.addRootSequenceNode(new AddSpeciesProcedureNode(
+				sp,
+				NodeValue(CharString("%s*populationA", parameterName.get()), paramsNode->parameterReferences()),
+				NodeValue("rho", paramsNode->parameterReferences())));
 		}
 
 		++count;
@@ -151,13 +155,15 @@ void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
 		return;
 
 	// Get a suitable export file name
-	QString exportFile = QFileDialog::getSaveFileName(this, "Choose XYZ export file name", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
+	QString exportFile = QFileDialog::getSaveFileName(this, "Choose XYZ export file name", QDir().absolutePath(),
+							  "XYZ Coordinates (*.xyz)");
 	if (exportFile.isEmpty())
 		return;
 
 	CoordinateExportFileFormat fileAndFormat(qPrintable(exportFile), CoordinateExportFileFormat::XYZCoordinates);
 	if (!fileAndFormat.exportData(cfg))
-		QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.", QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.",
+				     QMessageBox::Ok, QMessageBox::Ok);
 	else
 		Messenger::print("Successfully exported configuration '%s' to '%s'.\n", cfg->name(), fileAndFormat.filename());
 }

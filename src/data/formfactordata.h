@@ -25,19 +25,19 @@
 // Form Factor Base Class
 class FormFactorData
 {
-      public:
+	public:
 	FormFactorData(int Z = 0, int formalCharge = 0);
 
 	/*
 	 * Element State
 	 */
-      protected:
+	protected:
 	// Element to which the data relates
 	int Z_;
 	// Formal charge of element to which the data relates
 	int formalCharge_;
 
-      public:
+	public:
 	// Return element to which the data relates
 	int Z() const;
 	// Return formal charge of element to which the data relates
@@ -46,7 +46,7 @@ class FormFactorData
 	/*
 	 * Form Factor Generation
 	 */
-      public:
+	public:
 	// Return magnitude of form factor at specified Q value
 	virtual double magnitude(double Q = 0.0) const = 0;
 };

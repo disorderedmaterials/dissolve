@@ -27,7 +27,8 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1) : CalculateProcedureNodeBase(ProcedureNode::CalculateDistanceNode, site0, site1)
+CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1)
+	: CalculateProcedureNodeBase(ProcedureNode::CalculateDistanceNode, site0, site1)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
@@ -53,7 +54,8 @@ int CalculateDistanceProcedureNode::dimensionality() const { return 1; }
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateDistanceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult CalculateDistanceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+									   const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	for (int n = 0; n < nSitesRequired(); ++n)

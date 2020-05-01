@@ -32,14 +32,14 @@ class Configuration;
 // Keyword with AtomType RefList Data
 class AtomTypeRefListKeyword : public KeywordData<RefList<AtomType> &>
 {
-      public:
+	public:
 	AtomTypeRefListKeyword(RefList<AtomType> &targetRefList);
 	~AtomTypeRefListKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -52,7 +52,7 @@ class AtomTypeRefListKeyword : public KeywordData<RefList<AtomType> &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied AtomType in the contained data
 	void removeReferencesTo(AtomType *at);
 };

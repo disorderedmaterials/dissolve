@@ -29,7 +29,7 @@
 // Generic List Helper
 template <class T> class GenericListHelper
 {
-      public:
+	public:
 	// Add new named item of template-guided type to specified list
 	static T &add(GenericList &targetList, const char *name, const char *prefix = NULL, int flags = -1)
 	{
@@ -44,7 +44,8 @@ template <class T> class GenericListHelper
 		GenericItem *existingItem = targetList.find(varName);
 		if (existingItem)
 		{
-			printf("WARNING - Item '%s' already exists in the list - a dummy value will be returned instead.\n", varName.get());
+			printf("WARNING - Item '%s' already exists in the list - a dummy value will be returned instead.\n",
+			       varName.get());
 			static T dummy;
 			return dummy;
 		}
@@ -57,7 +58,8 @@ template <class T> class GenericListHelper
 		return newItem->data();
 	}
 	// Return named (const) item from specified list as template-guided type
-	static const T &value(GenericList &sourceList, const char *name, const char *prefix = NULL, T defaultValue = T(), bool *found = NULL)
+	static const T &value(GenericList &sourceList, const char *name, const char *prefix = NULL, T defaultValue = T(),
+			      bool *found = NULL)
 	{
 		// Construct full name
 		CharString varName;
@@ -70,7 +72,8 @@ template <class T> class GenericListHelper
 		GenericItem *item = sourceList.find(varName);
 		if (!item)
 		{
-			Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n", varName.get());
+			Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n",
+						varName.get());
 			static T dummy;
 			dummy = defaultValue;
 			if (found != NULL)
@@ -94,7 +97,8 @@ template <class T> class GenericListHelper
 		return castItem->data();
 	}
 	// Retrieve named item from specified list as template-guided type, assuming that it is going to be modified
-	static T &retrieve(GenericList &sourceList, const char *name, const char *prefix = NULL, T defaultValue = T(), bool *found = NULL)
+	static T &retrieve(GenericList &sourceList, const char *name, const char *prefix = NULL, T defaultValue = T(),
+			   bool *found = NULL)
 	{
 		// Construct full name
 		CharString varName;
@@ -107,7 +111,8 @@ template <class T> class GenericListHelper
 		GenericItem *item = sourceList.find(varName);
 		if (!item)
 		{
-			Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n", varName.get());
+			Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n",
+						varName.get());
 			static T dummy;
 			dummy = defaultValue;
 			if (found != NULL)
@@ -134,7 +139,8 @@ template <class T> class GenericListHelper
 		return castItem->data();
 	}
 	// Create or retrieve named item from specified list as template-guided type
-	static T &realise(GenericList &sourceList, const char *name, const char *prefix = NULL, int flags = -1, bool *created = NULL)
+	static T &realise(GenericList &sourceList, const char *name, const char *prefix = NULL, int flags = -1,
+			  bool *created = NULL)
 	{
 		// Construct full name
 		CharString varName;

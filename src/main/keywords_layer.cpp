@@ -28,9 +28,11 @@
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 {
-	static EnumOptionsList LayerKeywords = EnumOptionsList() << EnumOption(LayerBlock::DisabledKeyword, "Disabled") << EnumOption(LayerBlock::EndLayerKeyword, "EndLayer")
-								 << EnumOption(LayerBlock::FrequencyKeyword, "Frequency", 1)
-								 << EnumOption(LayerBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument);
+	static EnumOptionsList LayerKeywords =
+		EnumOptionsList() << EnumOption(LayerBlock::DisabledKeyword, "Disabled")
+				  << EnumOption(LayerBlock::EndLayerKeyword, "EndLayer")
+				  << EnumOption(LayerBlock::FrequencyKeyword, "Frequency", 1)
+				  << EnumOption(LayerBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument);
 
 	static EnumOptions<LayerBlock::LayerKeyword> options("LayerKeyword", LayerKeywords);
 
@@ -40,7 +42,8 @@ EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 // Parse Layer block
 bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *layer)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), layer->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
+			 layer->name());
 
 	bool blockDone = false, error = false;
 	Module *module = NULL;
@@ -66,7 +69,8 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 			layer->setEnabled(false);
 			break;
 		case (LayerBlock::EndLayerKeyword):
-			Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
+			Messenger::print("Found end of %s block.\n",
+					 BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
 			blockDone = true;
 			break;
 		case (LayerBlock::FrequencyKeyword):
@@ -90,7 +94,8 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 			if (error)
 				break;
 
-			// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it)
+			// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or
+			// instance of it)
 			if (parser.hasArg(2))
 			{
 				niceName = DissolveSys::niceName(parser.argc(2));
@@ -103,7 +108,9 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 				}
 				else if (dissolve->findConfigurationByNiceName(niceName))
 				{
-					Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
+					Messenger::error("A Configuration with the unique name '%s' already exist, and so "
+							 "cannot be used as a Module name.\n",
+							 niceName.get());
 					error = true;
 					break;
 				}
@@ -121,7 +128,8 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 				break;
 			break;
 		default:
-			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), keywords().keyword(kwd));
+			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+			       BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), keywords().keyword(kwd));
 			error = true;
 			break;
 		}
@@ -138,7 +146,8 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n",
+				 BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
 		error = true;
 	}
 

@@ -32,31 +32,31 @@
 // EnumOptionsKeyword base class
 class EnumOptionsBaseKeyword
 {
-      public:
+	public:
 	EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : baseOptions_(baseOptions) {}
 
 	/*
 	 * Source Options
 	 */
-      private:
+	private:
 	// Source EnumBaseOptions
 	EnumOptionsBase &baseOptions_;
 
-      public:
+	public:
 	// Return EnumBaseOptions
 	const EnumOptionsBase &baseOptions() const { return baseOptions_; }
 
 	/*
 	 * Set
 	 */
-      public:
+	public:
 	// Set new option index, informing KeywordBase
 	virtual void setEnumerationByIndex(int optionIndex) = 0;
 
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
@@ -64,8 +64,10 @@ class EnumOptionsBaseKeyword
 // Keyword based on EnumOptions
 template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, public KeywordData<EnumOptions<E>>
 {
-      public:
-	EnumOptionsKeyword(EnumOptions<E> options) : KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData, options), EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_)
+	public:
+	EnumOptionsKeyword(EnumOptions<E> options)
+		: KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData, options),
+		  EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_)
 	{
 		// Set our array of valid values
 		for (int n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
@@ -76,11 +78,11 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	/*
 	 * Data Validation
 	 */
-      private:
+	private:
 	// List of valid keyword values
 	Array<CharString> validKeywords_;
 
-      public:
+	public:
 	// Return validation list
 	const Array<CharString> &validationList() { return validKeywords_; }
 	// Validate supplied value
@@ -89,7 +91,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
@@ -117,13 +119,14 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	// Write keyword data to specified LineParser
 	bool write(LineParser &parser, const char *keywordName, const char *prefix)
 	{
-		return parser.writeLineF("%s%s  %s\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.currentOptionKeyword());
+		return parser.writeLineF("%s%s  %s\n", prefix, keywordName,
+					 KeywordData<EnumOptions<E>>::data_.currentOptionKeyword());
 	}
 
 	/*
 	 * Set (implementing pure virtual from EnumOptionsBaseKeyword)
 	 */
-      public:
+	public:
 	// Set new option index, informing KeywordBase
 	void setEnumerationByIndex(int optionIndex)
 	{
@@ -134,14 +137,14 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as string)
 	const char *asString() { return KeywordData<EnumOptions<E>>::data_.currentOptionKeyword(); }
 };

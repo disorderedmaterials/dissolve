@@ -37,7 +37,7 @@ class ProcessPool;
  */
 class AtomTypeData : public ListItem<AtomTypeData>
 {
-      public:
+	public:
 	AtomTypeData();
 	AtomTypeData(const AtomTypeData &source);
 	void operator=(const AtomTypeData &source);
@@ -45,7 +45,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	/*
 	 * Properties
 	 */
-      private:
+	private:
 	// List index of AtomTypeData in AtomTypeList
 	int listIndex_;
 	// Reference AtomType
@@ -61,7 +61,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	// Calculated bound coherent scattering over all Isotopes
 	double boundCoherent_;
 
-      public:
+	public:
 	// Initialise
 	bool initialise(int listIndex, AtomType *atomType, double population = 0);
 	// Add to population
@@ -102,7 +102,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Read data through specified LineParser
 	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
@@ -111,7 +111,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

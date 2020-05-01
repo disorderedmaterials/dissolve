@@ -168,7 +168,8 @@ void DissolveWindow::addOutputHandler()
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile,
+				   bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	ui_.MainTabs->clearTabs();
@@ -185,7 +186,9 @@ bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFil
 	{
 		QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName())))
-			QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.",
+			QMessageBox::warning(this, "Input file contained errors.",
+					     "The input file failed to load correctly.\nCheck the simulation carefully, and "
+					     "see the messages for more details.",
 					     QMessageBox::Ok, QMessageBox::Ok);
 	}
 	else
@@ -203,8 +206,10 @@ bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFil
 		{
 			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile.get());
 			if (!dissolve_.loadRestart(actualRestartFile))
-				QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok,
-						     QMessageBox::Ok);
+				QMessageBox::warning(
+					this, "Restart file contained errors.",
+					"The restart file failed to load correctly.\nSee the messages for more details.",
+					QMessageBox::Ok, QMessageBox::Ok);
 
 			// Reset the restart filename to be the standard one
 			dissolve_.setRestartFilename(CharString("%s.restart", dissolve_.inputFilename()));
@@ -281,7 +286,9 @@ void DissolveWindow::initialiseSystemTemplates()
 void DissolveWindow::updateWindowTitle()
 {
 	// Window Title
-	QString title = QString("Dissolve v%1 - %2%3").arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : "");
+	QString title = QString("Dissolve v%1 - %2%3")
+				.arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>",
+				     modified_ ? "(*)" : "");
 	setWindowTitle(title);
 
 	// Update save menu item
@@ -305,7 +312,10 @@ void DissolveWindow::updateControlsFrame()
 	{
 		localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
 		restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
-		restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename() ? CharString("Current restart file is '%s'", dissolve_.restartFilename()).get() : "No restart file available");
+		restartFileIndicator_->setToolTip(
+			dissolve_.hasRestartFilename()
+				? CharString("Current restart file is '%s'", dissolve_.restartFilename()).get()
+				: "No restart file available");
 		heartbeatFileIndicator_->setEnabled(false);
 		heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
 	}

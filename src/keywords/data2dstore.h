@@ -31,14 +31,14 @@
 // Keyword with a store of Data2D
 class Data2DStoreKeyword : public KeywordData<Data2DStore &>
 {
-      public:
+	public:
 	Data2DStoreKeyword(Data2DStore &dataStore);
 	~Data2DStoreKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

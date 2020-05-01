@@ -372,7 +372,8 @@ bool CharString::asBool() const
 		result = true;
 	else
 	{
-		std::printf("Character constant '%s' doesn't translate directly to a boolean value - false assumed.\n", lcase.get());
+		std::printf("Character constant '%s' doesn't translate directly to a boolean value - false assumed.\n",
+			    lcase.get());
 		result = false;
 	}
 	return result;

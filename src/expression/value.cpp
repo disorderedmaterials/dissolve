@@ -137,7 +137,13 @@ bool ExpressionValue::isInteger() const { return (type_ == IntegerType); }
 bool ExpressionValue::isDouble() const { return (type_ == DoubleType); }
 
 // Return the supplied ExpressionValues both contain integer types
-bool ExpressionValue::bothIntegers(const ExpressionValue &a, const ExpressionValue &b) { return ((a.type_ == IntegerType) && (b.type_ == IntegerType)); }
+bool ExpressionValue::bothIntegers(const ExpressionValue &a, const ExpressionValue &b)
+{
+	return ((a.type_ == IntegerType) && (b.type_ == IntegerType));
+}
 
 // Return the supplied ExpressionValues both contain double types
-bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValue &b) { return ((a.type_ == DoubleType) && (b.type_ == DoubleType)); }
+bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValue &b)
+{
+	return ((a.type_ == DoubleType) && (b.type_ == DoubleType));
+}

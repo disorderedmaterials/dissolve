@@ -35,7 +35,7 @@ class Weights;
 // Scattering Matrix Container
 class ScatteringMatrix
 {
-      public:
+	public:
 	ScatteringMatrix();
 
 	/*
@@ -47,7 +47,7 @@ class ScatteringMatrix
 	 * 	[  2,1     2,n ] [ x2 ] = [ B2 ]
 	 * 	[  n,1     n,n ] [ xn ]   [ Bn ]
 	 */
-      private:
+	private:
 	// Reference pairs of AtomTypes
 	List<Pair<AtomType *, AtomType *>> typePairs_;
 	// Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
@@ -57,7 +57,7 @@ class ScatteringMatrix
 	// Reference data (B) (n * 1)
 	Array<Data1D> data_;
 
-      public:
+	public:
 	// Return number of reference AtomType pairs
 	int nPairs() const;
 	// Return index of specified AtomType pair
@@ -78,15 +78,17 @@ class ScatteringMatrix
 	/*
 	 * Construction
 	 */
-      public:
+	public:
 	// Initialise from supplied list of AtomTypes
-	void initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix, const char *groupName);
+	void initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix,
+			const char *groupName);
 	// Finalise
 	bool finalise();
 	// Add reference data with its associated Weights, applying optional factor to those weights and the data itself
 	bool addReferenceData(const Data1D &weightedData, Weights &dataWeights, double factor = 1.0);
 	// Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-	bool addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight, double factor = 1.0);
+	bool addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight,
+				     double factor = 1.0);
 };
 
 #endif

@@ -31,7 +31,8 @@
 #include <QHBoxLayout>
 #include <QString>
 
-ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -145,7 +146,8 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData &coreData)
 	RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
 	// Update the list widget
-	TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
+	TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
+									   &ModuleGroupsKeywordWidget::updateSelectionRow);
 
 	ui_.SelectionTable->resizeColumnToContents(0);
 

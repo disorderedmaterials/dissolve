@@ -26,8 +26,9 @@
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, ModuleLayer *layer)
-    : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
+LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+		   ModuleLayer *layer)
+	: ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {
 	ui_.setupUi(this);
 

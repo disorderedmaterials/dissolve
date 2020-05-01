@@ -29,10 +29,11 @@
 // Minimiser Base Class
 template <class T> class MinimiserBase
 {
-      public:
+	public:
 	// Cost function pointer typedef
 	typedef double (T::*MinimiserCostFunction)(const Array<double> &alpha);
-	MinimiserBase<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : object_(object), costFunction_(costFunction)
+	MinimiserBase<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
+		: object_(object), costFunction_(costFunction)
 	{
 		penaltyPower_ = 2;
 		penaltyFactor_ = 1e5;
@@ -42,22 +43,22 @@ template <class T> class MinimiserBase
 	/*
 	 * Object Target
 	 */
-      protected:
+	protected:
 	// Object used to call cost function
 	T &object_;
 
 	/*
 	 * Cost Function
 	 */
-      private:
+	private:
 	// Whether to poke values into targets before calling the cost function
 	bool pokeBeforeCost_;
 
-      protected:
+	protected:
 	// Pointer to cost function
 	MinimiserCostFunction costFunction_;
 
-      protected:
+	protected:
 	// Calculate cost from specified values, including contributions from any supplied limits
 	double cost(const Array<double> &alpha)
 	{
@@ -83,14 +84,14 @@ template <class T> class MinimiserBase
 		return x;
 	}
 
-      public:
+	public:
 	// Set whether to poke values before assessing cost
 	void setPokeBeforeCost(bool b) { pokeBeforeCost_ = b; }
 
 	/*
 	 * Target Parameters
 	 */
-      protected:
+	protected:
 	// Pointers to double values to be fit
 	Array<double *> targets_;
 	// Whether maximum limits have been set for targets
@@ -106,14 +107,14 @@ template <class T> class MinimiserBase
 	// Scaling factor for penalties incurred when outside of allowable limit
 	double penaltyFactor_;
 
-      private:
+	private:
 	void pokeValues(const Array<double> &values)
 	{
 		for (int n = 0; n < targets_.nItems(); ++n)
 			(*targets_[n]) = values.constAt(n);
 	}
 
-      public:
+	public:
 	// Add pointer as fit target, with limits specified
 	void addTarget(double *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
 	{
@@ -127,14 +128,19 @@ template <class T> class MinimiserBase
 		maximumValue_.add(maxValue);
 	}
 	// Add reference as fit target, with limits specified
-	void addTarget(double &var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0) { addTarget(&var, minLimit, minValue, maxLimit, maxValue); }
+	void addTarget(double &var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+	{
+		addTarget(&var, minLimit, minValue, maxLimit, maxValue);
+	}
 	// Add ExpressionVariable as target, with limits specified
-	void addTarget(ExpressionVariable *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+	void addTarget(ExpressionVariable *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
+		       double maxValue = 0.0)
 	{
 		addTarget(var->valuePointer()->doublePointer(), minLimit, minValue, maxLimit, maxValue);
 	}
 	// Add array of pointers to targets
-	void addTargets(Array<double *> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+	void addTargets(Array<double *> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
+			double maxValue = 0.0)
 	{
 		for (int n = 0; n < vars.nItems(); ++n)
 			addTarget(vars[n], minLimit, minValue, maxLimit, maxValue);
@@ -147,11 +153,11 @@ template <class T> class MinimiserBase
 	/*
 	 * Minimise
 	 */
-      protected:
+	protected:
 	// Minimiser function to be called in derived class
 	virtual double execute(Array<double> &values) = 0;
 
-      public:
+	public:
 	// Minimise target parameters
 	double minimise()
 	{

@@ -33,25 +33,25 @@
 // Keyword with IsotopologueCollection Data
 class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection &>
 {
-      public:
+	public:
 	IsotopologueCollectionKeyword(IsotopologueCollection &collection, const RefList<Configuration> &allowedConfigurations);
 	~IsotopologueCollectionKeyword();
 
 	/*
 	 * Allowed Configurations
 	 */
-      private:
+	private:
 	// Allowed Configurations, to which the IsotopologueCollection may refer
 	const RefList<Configuration> &allowedConfigurations_;
 
-      public:
+	public:
 	// Return allowed Configurations, to which the IsotopologueCollection may refer
 	const RefList<Configuration> &allowedConfigurations() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -64,7 +64,7 @@ class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection 
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied Species in the contained data
 	void removeReferencesTo(Species *sp);
 	// Prune any references to the supplied Isotopologue in the contained data

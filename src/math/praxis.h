@@ -31,8 +31,10 @@
 // Brent's Principal Axis Minimiser
 template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 {
-      public:
-	PrAxisMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+	public:
+	PrAxisMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction,
+			   bool pokeBeforeCost = false)
+		: MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		maxStep_ = 0.01;
 		tolerance_ = 1.0e-3;
@@ -42,7 +44,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	/*
 	 * Interface
 	 */
-      private:
+	private:
 	// Maximum step size
 	double maxStep_;
 	// Convergence tolerance
@@ -50,11 +52,11 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	// Print level
 	int printLevel_;
 
-      private:
+	private:
 	// Perform minimisation
 	double execute(Array<double> &values) { return praxis(tolerance_, maxStep_, values, printLevel_); }
 
-      public:
+	public:
 	// Set maximum step size
 	void setMaxStep(double step) { maxStep_ = step; }
 	// Set convergence tolerance
@@ -69,9 +71,11 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	 * *** CLASSified BY T.YOUNGS ***
 	 * Changes:
 	 *   - Removed r8_min, r8_max, and r8_epsilon and replaced with C++ builtins.
-	 *   - Inner loop now runs from 1 <= k <= nAlpha - the original implementation demanded at least two alpha values in the function.
+	 *   - Inner loop now runs from 1 <= k <= nAlpha - the original implementation demanded at least two alpha values in the
+	 * function.
 	 *
-	 * PRAXIS is a C++ library which minimizes a scalar function of a vector argument, without needing derivative information, by Richard Brent.
+	 * PRAXIS is a C++ library which minimizes a scalar function of a vector argument, without needing derivative
+	 * information, by Richard Brent.
 	 *
 	 * PRAXIS seeks an M-dimensional point X which minimizes a given scalar function F(X).
 	 * The code is a refinement of Powell's method of conjugate search directions.
@@ -80,7 +84,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	 *
 	 * Licensing:
 	 *
-	 * The computer code and data files described and made available on the above web page are distributed under the GNU LGPL license.
+	 * The computer code and data files described and made available on the above web page are distributed under the GNU
+	 * LGPL license.
 	 *
 	 * Reference:
 	 *
@@ -91,10 +96,11 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	 *   LC: QA402.5.B74.
 	 */
 
-      private:
+	private:
 	//****************************************************************************80
 
-	double flin(const Array<double> alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[], double &qd0, double &qd1, double &qa, double &qb, double &qc)
+	double flin(const Array<double> alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[],
+		    double &qd0, double &qd1, double &qa, double &qb, double &qc)
 
 	//****************************************************************************80
 	//
@@ -632,8 +638,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	}
 	//****************************************************************************80
 
-	void minny(Array<double> &alpha, int jsearch, int nits, double &d2, double &x1, double &f1, bool fk, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
-		   double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0, double &qd1)
+	void minny(Array<double> &alpha, int jsearch, int nits, double &d2, double &x1, double &f1, bool fk, double t, double h,
+		   double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt, double &fx, double &qa,
+		   double &qb, double &qc, double &qd0, double &qd1)
 
 	//****************************************************************************80
 	//
@@ -1013,8 +1020,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	}
 	//****************************************************************************80
 
-	void quad(Array<double> &alpha, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt, double &fx, double &qf1, double &qa, double &qb,
-		  double &qc, double &qd0, double &qd1)
+	void quad(Array<double> &alpha, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
+		  double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, double &qd0, double &qd1)
 
 	//****************************************************************************80
 	//
@@ -1123,7 +1130,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 			value = qf1;
 			fk = true;
 
-			minny(alpha, jsearch, nits, s, l, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+			minny(alpha, jsearch, nits, s, l, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0,
+			      qd1);
 
 			qa = l * (l - qd1) / (qd0 + qd1) / qd0;
 			qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
@@ -2170,7 +2178,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 						value = fx;
 						fk = false;
 
-						minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+						minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt,
+						      fx, qa, qb, qc, qd0, qd1);
 
 						d[k2 - 1] = d2;
 
@@ -2221,7 +2230,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 					value = fx;
 					fk = false;
 
-					minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+					minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa,
+					      qb, qc, qd0, qd1);
 
 					d[k2 - 1] = d2;
 				}
@@ -2270,7 +2280,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 					value = f1;
 					fk = true;
 
-					minny(x, jsearch, nits, d2, lds, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+					minny(x, jsearch, nits, d2, lds, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa,
+					      qb, qc, qd0, qd1);
 
 					d[k - 1] = d2;
 

@@ -32,18 +32,18 @@ class Configuration;
 // Keyword with AtomTypeList Data
 class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 {
-      public:
+	public:
 	AtomTypeSelectionKeyword(AtomTypeList &selection_, const RefList<Configuration> &sourceConfigurations);
 	~AtomTypeSelectionKeyword();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source Configurations from which we take our valid AtomTypes
 	const RefList<Configuration> &sourceConfigurations_;
 
-      public:
+	public:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 	// Check selection and make sure it is consistent based on the source Configurations
@@ -54,7 +54,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -67,7 +67,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied AtomType in the contained data
 	void removeReferencesTo(AtomType *at);
 };

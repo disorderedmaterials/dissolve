@@ -23,4 +23,7 @@
 #include "modules/benchmark/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *BenchmarkModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new BenchmarkModuleWidget(parent, this); }
+ModuleWidget *BenchmarkModule::createWidget(QWidget *parent, Dissolve &dissolve)
+{
+	return new BenchmarkModuleWidget(parent, this);
+}

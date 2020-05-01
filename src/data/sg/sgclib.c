@@ -1333,7 +1333,9 @@ static void TidyTranslation(T_SgInfo *SgInfo)
 			n0t = (t1 == 0) + (t2 == 0) + (t3 == 0);
 			n0mint = (mint1 == 0) + (mint2 == 0) + (mint3 == 0);
 
-			if (n0t > n0mint || (n0t == n0mint && (t1 + t2 + t3 < mint1 + mint2 + mint3 || (t1 + t2 + t3 == mint1 + mint2 + mint3 && (t1 < mint1 || (t1 == mint1 && t2 < mint2))))))
+			if (n0t > n0mint || (n0t == n0mint && (t1 + t2 + t3 < mint1 + mint2 + mint3 ||
+							       (t1 + t2 + t3 == mint1 + mint2 + mint3 &&
+								(t1 < mint1 || (t1 == mint1 && t2 < mint2))))))
 			{
 				mint1 = t1;
 				mint2 = t2;
@@ -1624,7 +1626,8 @@ int FindSeitzMx(const T_SgInfo *SgInfo, int Order, int HonorSign, int RefAxis, i
 		else
 			MatchingOrder = (Order == lrmxi->Order);
 
-		if (MatchingOrder && lrmxi->Inverse == 0 && (RefAxis == 0 || RefAxis == lrmxi->RefAxis) && (DirCode == 0 || DirCode == lrmxi->DirCode))
+		if (MatchingOrder && lrmxi->Inverse == 0 && (RefAxis == 0 || RefAxis == lrmxi->RefAxis) &&
+		    (DirCode == 0 || DirCode == lrmxi->DirCode))
 		{
 			if (DirCode != '*')
 				return iList;
@@ -1948,7 +1951,8 @@ static int BuildGenerator_iList(T_SgInfo *SgInfo)
 
 		if (SgInfo_CI)
 			SgInfo->PointGroup = PG_mmm;
-		else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1 || deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
+		else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1 ||
+			 deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
 			SgInfo->PointGroup = PG_mm2;
 		else
 			SgInfo->PointGroup = PG_222;
@@ -2618,7 +2622,8 @@ int CompleteSgInfo(T_SgInfo *SgInfo)
 		return -1;
 
 	for (tsgn = TabSgName; tsgn->HallSymbol; tsgn++)
-		if (strcmp(tsgn->HallSymbol, SgInfo->HallSymbol) == 0 && (SgInfo->TabSgName == NULL || SgInfo->TabSgName == tsgn))
+		if (strcmp(tsgn->HallSymbol, SgInfo->HallSymbol) == 0 &&
+		    (SgInfo->TabSgName == NULL || SgInfo->TabSgName == tsgn))
 			break;
 
 	if (SgInfo->TabSgName != NULL && tsgn->HallSymbol == NULL)
@@ -2626,7 +2631,8 @@ int CompleteSgInfo(T_SgInfo *SgInfo)
 		if (SgError)
 			return -1;
 
-		sprintf(SgErrorBuffer, "Internal Error: Input/Output HallSymbol mismatch: %s <> %s", SgInfo->TabSgName->HallSymbol, SgInfo->HallSymbol);
+		sprintf(SgErrorBuffer, "Internal Error: Input/Output HallSymbol mismatch: %s <> %s",
+			SgInfo->TabSgName->HallSymbol, SgInfo->HallSymbol);
 
 		SetSgError(SgErrorBuffer);
 		return -1;

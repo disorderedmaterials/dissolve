@@ -41,22 +41,22 @@ class ModuleListEditor : public QWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	ModuleListEditor(QWidget *parent = NULL);
 	~ModuleListEditor();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ModuleListEditor ui_;
 
-      private:
+	private:
 	// Whether the widget is currently refreshing
 	bool refreshing_;
 
-      public:
+	public:
 	// Update controls
 	void updateControls();
 	// Disable sensitive controls within widget
@@ -69,7 +69,7 @@ class ModuleListEditor : public QWidget
 	/*
 	 * Setup
 	 */
-      private:
+	private:
 	// Pointer to main window
 	DissolveWindow *dissolveWindow_;
 	// Target ModuleLayer
@@ -79,18 +79,18 @@ class ModuleListEditor : public QWidget
 	// Module categories and their associated MimeTreeWidgetItems
 	RefDataList<MimeTreeWidgetItem, CharString> moduleCategories_;
 
-      public:
+	public:
 	// Set up the ModuleListEditor for the specified ModuleLayer
 	bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = NULL);
 
 	/*
 	 * Widget Functions
 	 */
-      private:
+	private:
 	// Chart widget being displayed
 	ModuleListChart *chartWidget_;
 
-      private slots:
+	private slots:
 	void blockSelectionChanged(const QString &blockIdentifier);
 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem *item);
 	void chartWidgetDataModified();
@@ -100,7 +100,7 @@ class ModuleListEditor : public QWidget
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser

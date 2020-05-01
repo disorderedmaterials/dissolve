@@ -23,7 +23,8 @@
 #include "base/lineparser.h"
 #include "io/fileandformat.h"
 
-FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword) : KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat)
+FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword)
+	: KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat)
 {
 	endKeyword_ = endKeyword;
 }

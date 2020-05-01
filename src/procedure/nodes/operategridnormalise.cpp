@@ -28,7 +28,10 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateGridNormaliseNode) {}
+OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode()
+	: OperateProcedureNodeBase(ProcedureNode::OperateGridNormaliseNode)
+{
+}
 
 OperateGridNormaliseProcedureNode::~OperateGridNormaliseProcedureNode() {}
 

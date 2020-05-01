@@ -60,8 +60,9 @@ void Messenger::createText(const char *indentText, const char *format, va_list a
 	bool lastPart = (*endChar == '\0');
 	while (!lastPart)
 	{
-		// Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is the true end of the string)
-		// We will set this end position to be NULL regardless, since a newline will be appended in the next part
+		// Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is
+		// the true end of the string) We will set this end position to be NULL regardless, since a newline will be
+		// appended in the next part
 		while ((*endChar != '\n') && (*endChar != '\0'))
 			endChar++;
 		if (*endChar == '\0')

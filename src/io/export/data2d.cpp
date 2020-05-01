@@ -24,7 +24,10 @@
 #include "base/sysfunc.h"
 #include "math/data2d.h"
 
-Data2DExportFileFormat::Data2DExportFileFormat(const char *filename, Data2DExportFormat format) : FileAndFormat(filename, format) {}
+Data2DExportFileFormat::Data2DExportFileFormat(const char *filename, Data2DExportFormat format)
+	: FileAndFormat(filename, format)
+{
+}
 
 /*
  * Format Access
@@ -33,8 +36,10 @@ Data2DExportFileFormat::Data2DExportFileFormat(const char *filename, Data2DExpor
 // Return enum options for Data2DExportFormat
 EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::data2DExportFormats()
 {
-	static EnumOptionsList Data2DExportFormats = EnumOptionsList() << EnumOption(Data2DExportFileFormat::BlockData2D, "block", "Block Data")
-								       << EnumOption(Data2DExportFileFormat::CartesianData2D, "cartesian", "Cartesian (x,y,value) Data");
+	static EnumOptionsList Data2DExportFormats = EnumOptionsList()
+						     << EnumOption(Data2DExportFileFormat::BlockData2D, "block", "Block Data")
+						     << EnumOption(Data2DExportFileFormat::CartesianData2D, "cartesian",
+								   "Cartesian (x,y,value) Data");
 
 	static EnumOptions<Data2DExportFileFormat::Data2DExportFormat> options("Data2DExportFileFormat", Data2DExportFormats);
 
@@ -51,7 +56,10 @@ const char *Data2DExportFileFormat::formatKeyword(int id) const { return data2DE
 const char *Data2DExportFileFormat::formatDescription(int id) const { return data2DExportFormats().descriptionByIndex(id); }
 
 // Return current format as CoordinateExportFormat
-Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const { return (Data2DExportFileFormat::Data2DExportFormat)format_; }
+Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const
+{
+	return (Data2DExportFileFormat::Data2DExportFormat)format_;
+}
 
 /*
  * Export Functions
@@ -88,7 +96,8 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
 	for (int x = 0; x < values.nRows(); ++x)
 	{
 		for (int y = 0; y < values.nColumns(); ++y)
-			if (!parser.writeLineF("%15.9f %15.9f %15.9f\n", xAxis.constAt(x), yAxis.constAt(y), values.constAt(x, y)))
+			if (!parser.writeLineF("%15.9f %15.9f %15.9f\n", xAxis.constAt(x), yAxis.constAt(y),
+					       values.constAt(x, y)))
 				return false;
 		if (!parser.writeLineF("\n"))
 			return false;

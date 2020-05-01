@@ -23,4 +23,7 @@
 #include "modules/calibration/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalibrationModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalibrationModuleWidget(parent, this); }
+ModuleWidget *CalibrationModule::createWidget(QWidget *parent, Dissolve &dissolve)
+{
+	return new CalibrationModuleWidget(parent, this);
+}

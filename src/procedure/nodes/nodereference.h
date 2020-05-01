@@ -33,14 +33,14 @@ class AnalyseModule;
 // Procedure Node Reference
 class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 {
-      public:
+	public:
 	ProcedureNodeReference(ProcedureNode *node = NULL);
 	~ProcedureNodeReference();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Target node
 	ProcedureNode *node_;
 	// Parent AnalyseModule owning the node (if relevant)
@@ -48,7 +48,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 	// Allowable node types (when reading / setting)
 	bool allowedTypes_[ProcedureNode::nNodeTypes];
 
-      public:
+	public:
 	// Return target node
 	ProcedureNode *node();
 	// Return node type
@@ -63,14 +63,14 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator=(ProcedureNode *node);
 	void operator=(const ProcedureNodeReference &nodeRef);
 
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Read structure from specified LineParser
 	bool read(LineParser &parser, int startArg, const CoreData &coreData, const Procedure *procedure);
 	// Write structure to specified LineParser

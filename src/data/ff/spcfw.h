@@ -31,14 +31,14 @@ class SpeciesAtom;
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
 {
-      public:
+	public:
 	Forcefield_SPCFw();
 	~Forcefield_SPCFw();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield

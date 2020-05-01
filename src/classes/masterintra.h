@@ -35,20 +35,20 @@
  */
 class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 {
-      public:
+	public:
 	MasterIntra();
 	~MasterIntra();
 
 	/*
 	 * Basic Data
 	 */
-      protected:
+	protected:
 	// Name for interaction
 	CharString name_;
 	// Type of this interaction
 	SpeciesIntra::InteractionType type_;
 
-      public:
+	public:
 	// Set name for interaction (if relevant)
 	void setName(const char *name);
 	// Return name for interaction
@@ -59,7 +59,7 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 	/*
 	 * SpeciesIntra Virtuals
 	 */
-      public:
+	public:
 	// Set up any necessary parameters
 	void setUp();
 	// Calculate and return fundamental frequency for the interaction

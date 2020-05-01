@@ -31,20 +31,20 @@ template <class T> class ListIterator;
 // ListItem Class
 template <class T> class ListItem
 {
-      public:
+	public:
 	ListItem<T>()
 	{
 		prev_ = NULL;
 		next_ = NULL;
 	}
 
-      private:
+	private:
 	// Pointer to previous item in list
 	T *prev_;
 	// Pointer to next item in list
 	T *next_;
 
-      public:
+	public:
 	// Return previous item in list
 	T *prev() const { return prev_; }
 	// Return next item in list

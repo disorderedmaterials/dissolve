@@ -26,7 +26,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableSpecies::RenderableSpecies(const Species *source, const char *objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
+RenderableSpecies::RenderableSpecies(const Species *source, const char *objectTag)
+	: Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
 	displayStyle_ = SpheresStyle;
@@ -139,7 +140,8 @@ void RenderableSpecies::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableSpecies::createCylinderBond(PrimitiveAssembly &assembly, const SpeciesAtom *i, const SpeciesAtom *j, double radialScaling)
+void RenderableSpecies::createCylinderBond(PrimitiveAssembly &assembly, const SpeciesAtom *i, const SpeciesAtom *j,
+					   double radialScaling)
 {
 	Matrix4 A;
 
@@ -215,8 +217,10 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
 			const Vec3<double> dij = (rj - ri) * 0.5;
 
 			// Draw bond halves
-			lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(b->i()->element()));
-			lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(b->j()->element()));
+			lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
+						    ElementColours::colour(b->i()->element()));
+			lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
+						    ElementColours::colour(b->j()->element()));
 		}
 	}
 	else if (displayStyle_ == SpheresStyle)
@@ -240,7 +244,8 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
 			// Is the atom selected?
 			if (i->isSelected())
 			{
-				selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+				selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1],
+						       colourBlack[2], colourBlack[3]);
 			}
 		}
 
@@ -305,9 +310,12 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			{
 				const Vec3<double> r = i->r();
 
-				lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
-				lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
-				lineSelectionPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+				lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y,
+							      r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_,
+							      r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y,
+							      r.z + linesAtomRadius_, colour);
 			}
 			else
 			{
@@ -318,7 +326,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
 					const auto dij = (bond->partner(i)->r() - ri) * 0.5;
 
 					// Draw bond halves
-					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
+					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y,
+								      ri.z + dij.z, colour);
 				}
 			}
 		}
@@ -373,8 +382,10 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 		const Vec3<double> dij = (rj - ri) * 0.5;
 
 		// Draw bond halves
-		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(fromAtom->element()));
-		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(toAtom->element()));
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
+						ElementColours::colour(fromAtom->element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
+						ElementColours::colour(toAtom->element()));
 	}
 	else if (displayStyle_ == SpheresStyle)
 	{
@@ -412,8 +423,10 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 		const Vec3<double> dij = (rj - ri) * 0.5;
 
 		// Draw bond halves
-		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(fromAtom->element()));
-		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(j.element()));
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
+						ElementColours::colour(fromAtom->element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
+						ElementColours::colour(j.element()));
 	}
 	else if (displayStyle_ == SpheresStyle)
 	{
@@ -432,7 +445,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint, Element *toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint,
+							 Element *toElement)
 {
 	// Clear existing data
 	clearInteractionPrimitive();
@@ -459,8 +473,10 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 		const Vec3<double> dij = (rj - ri) * 0.5;
 
 		// Draw bond halves
-		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(i.element()));
-		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(j.element()));
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
+						ElementColours::colour(i.element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
+						ElementColours::colour(j.element()));
 	}
 	else if (displayStyle_ == SpheresStyle)
 	{
@@ -491,7 +507,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 // Return EnumOptions for SpeciesDisplayStyle
 EnumOptions<RenderableSpecies::SpeciesDisplayStyle> RenderableSpecies::speciesDisplayStyles()
 {
-	static EnumOptionsList SpeciesStyleOptions = EnumOptionsList() << EnumOption(RenderableSpecies::LinesStyle, "Lines") << EnumOption(RenderableSpecies::SpheresStyle, "Spheres");
+	static EnumOptionsList SpeciesStyleOptions = EnumOptionsList()
+						     << EnumOption(RenderableSpecies::LinesStyle, "Lines")
+						     << EnumOption(RenderableSpecies::SpheresStyle, "Spheres");
 
 	static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options("SpeciesDisplayStyle", SpeciesStyleOptions);
 
@@ -516,7 +534,8 @@ RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const {
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableSpecies::DisplayKeyword, "Display", 1) << EnumOption(RenderableSpecies::EndStyleKeyword, "EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableSpecies::DisplayKeyword, "Display", 1)
+								 << EnumOption(RenderableSpecies::EndStyleKeyword, "EndStyle");
 
 	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options("SpeciesStyleKeyword", StyleKeywords);
 
@@ -532,7 +551,8 @@ bool RenderableSpecies::writeStyleBlock(LineParser &parser, int indentLevel) con
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword), speciesDisplayStyles().keyword(displayStyle_)))
+	if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword),
+			       speciesDisplayStyles().keyword(displayStyle_)))
 		return false;
 
 	return true;

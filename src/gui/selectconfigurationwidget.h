@@ -36,14 +36,14 @@ class SelectConfigurationWidget : public QWidget
 {
 	Q_OBJECT
 
-      public:
+	public:
 	SelectConfigurationWidget(QWidget *parent);
 	~SelectConfigurationWidget();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SelectConfigurationWidget ui_;
 	// Whether the widget is refreshing
@@ -52,7 +52,7 @@ class SelectConfigurationWidget : public QWidget
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// CoreData containing available Configuration
 	const CoreData *coreData_;
 	// Minimum number of Configuration in a valid selection
@@ -60,7 +60,7 @@ class SelectConfigurationWidget : public QWidget
 	// Maximum number of Configuration in a valid selection (-1 for no limit)
 	int maximumSelectionSize_;
 
-      public:
+	public:
 	// Set CoreData containing available Configuration
 	void setCoreData(const CoreData *coreData);
 	// Reset widget, applying specified min and max limits to selection
@@ -69,28 +69,28 @@ class SelectConfigurationWidget : public QWidget
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// Update the list of Configuration
 	void updateConfigurationList();
 
 	/*
 	 * Signals / Slots
 	 */
-      private slots:
+	private slots:
 	void on_SelectNoneButton_clicked(bool checked);
 	void on_SelectAllButton_clicked(bool checked);
 	void on_ConfigurationList_itemSelectionChanged();
 	void on_ConfigurationList_itemDoubleClicked(QListWidgetItem *item);
 
-      signals:
+	signals:
 	void speciesSelectionChanged(bool isValid);
 	void speciesDoubleClicked();
 
-      private:
+	private:
 	// Return whether number of selected items is valid
 	bool isSelectionValid() const;
 
-      public:
+	public:
 	// Return number of species currently selected
 	int nSelected() const;
 	// Return the currently-selected Configuration

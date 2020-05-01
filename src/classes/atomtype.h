@@ -33,20 +33,20 @@ class Element;
 // AtomType Definition
 class AtomType : public ListItem<AtomType>
 {
-      public:
+	public:
 	AtomType();
 	~AtomType();
 
 	/*
 	 * Character
 	 */
-      private:
+	private:
 	// Name
 	CharString name_;
 	// Associated Element
 	Element *element_;
 
-      public:
+	public:
 	// Set name of AtomType
 	void setName(const char *name);
 	// Return name of AtomType
@@ -59,7 +59,7 @@ class AtomType : public ListItem<AtomType>
 	/*
 	 * Interaction Parameters
 	 */
-      private:
+	private:
 	// Short-range interaction type
 	Forcefield::ShortRangeType shortRangeType_;
 	// Interatomic interaction parameters (including charge)
@@ -69,7 +69,7 @@ class AtomType : public ListItem<AtomType>
 	// Index of this type in the master type index
 	int index_;
 
-      public:
+	public:
 	// Set short-range interaction type
 	void setShortRangeType(Forcefield::ShortRangeType srType);
 	// Return short-range interaction type

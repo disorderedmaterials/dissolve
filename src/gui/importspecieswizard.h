@@ -35,14 +35,14 @@ class ImportSpeciesWizard : public WizardWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	ImportSpeciesWizard(QWidget *parent);
 	~ImportSpeciesWizard();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Main instance of Dissolve that we're using as a reference
 	const Dissolve *dissolveReference_;
 	// Temporary core data for creating / importing new Species
@@ -52,7 +52,7 @@ class ImportSpeciesWizard : public WizardWidget
 	// Target Species (in temporaryCoreData_) for import
 	Species *importTarget_;
 
-      public:
+	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve *dissolveReference);
 	// Copy imported Species over to the specified Dissolve object, returning the new pointer to it
@@ -61,7 +61,7 @@ class ImportSpeciesWizard : public WizardWidget
 	/*
 	 * Controls
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ImportSpeciesWizard ui_;
 	// Lock counter for the widget refreshing
@@ -77,7 +77,7 @@ class ImportSpeciesWizard : public WizardWidget
 		nPages
 	};
 
-      protected:
+	protected:
 	// Go to specified page index in the controls widget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
@@ -89,14 +89,14 @@ class ImportSpeciesWizard : public WizardWidget
 	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
-      public:
+	public:
 	// Reset, ready for adding a new Species
 	void reset();
 
 	/*
 	 * Select File Page
 	 */
-      private slots:
+	private slots:
 	// Input File Page
 	void on_InputFileEdit_textChanged(const QString text);
 	void on_InputFileSelectButton_clicked(bool checked);
@@ -105,13 +105,13 @@ class ImportSpeciesWizard : public WizardWidget
 	/*
 	 * AtomTypes Page
 	 */
-      private:
+	private:
 	// Row update function for AtomTypesList
 	void updateAtomTypesListRow(int row, AtomType *atomType, bool createItem);
 	// Update page with AtomTypes in our temporary Dissolve reference
 	void updateAtomTypesPage();
 
-      private slots:
+	private slots:
 	void on_AtomTypesList_itemSelectionChanged();
 	void atomTypesListEdited(QWidget *lineEdit);
 	void on_AtomTypesPrefixButton_clicked(bool checked);
@@ -120,16 +120,16 @@ class ImportSpeciesWizard : public WizardWidget
 	/*
 	 * MasterTerms Page
 	 */
-      private:
+	private:
 	// Parental tree widgets for master terms
 	QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
 
-      private:
+	private:
 	// Row update function for MasterTermsTree
 	void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra, bool createItem);
 	void updateMasterTermsPage();
 
-      private slots:
+	private slots:
 	void on_MasterTermsTree_itemSelectionChanged();
 	void masterTermsTreeEdited(QWidget *lineEdit);
 	void on_MasterTermsPrefixButton_clicked(bool checked);
@@ -138,7 +138,7 @@ class ImportSpeciesWizard : public WizardWidget
 	/*
 	 * Species Name Page (final page)
 	 */
-      private slots:
+	private slots:
 	void on_SpeciesNameEdit_textChanged(const QString text);
 };
 

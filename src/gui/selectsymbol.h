@@ -34,7 +34,7 @@ class SelectSymbolDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
+	public:
 	SelectSymbolDialog(QWidget *parent);
 	~SelectSymbolDialog();
 	// Main form declaration
@@ -43,26 +43,26 @@ class SelectSymbolDialog : public QDialog
 	/*
 	 * Symbol Table
 	 */
-      private:
+	private:
 	// Desired minimum size of item in table
 	const int itemSize_;
 	// Selected equation
 	QChar selectedSymbol_;
 
-      public:
+	public:
 	// Return selected character
 	QChar selectedSymbol();
 
 	/*
 	 * Reimplementations
 	 */
-      protected:
+	protected:
 	void resizeEvent(QResizeEvent *event);
 
 	/*
 	 * Slots
 	 */
-      public slots:
+	public slots:
 	void on_SearchEdit_textChanged(QString text);
 	void on_ClearSearchButton_clicked(bool checked);
 	void on_SymbolTable_itemSelectionChanged();
@@ -73,7 +73,7 @@ class SelectSymbolDialog : public QDialog
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update symbol table
 	void updateTable(bool force = false);
 };

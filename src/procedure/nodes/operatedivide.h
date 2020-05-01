@@ -30,14 +30,14 @@
 // Operate Divide Node
 class OperateDivideProcedureNode : public OperateProcedureNodeBase
 {
-      public:
+	public:
 	OperateDivideProcedureNode();
 	~OperateDivideProcedureNode();
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target

@@ -44,11 +44,13 @@ PlainValue *PlainValueList::add(const char *name, PlainValue newValue, const cha
 	{
 		var = values_.add();
 		var->initialise(name, newValue, description, genericItemFlags);
-		Messenger::printVerbose("Added new %s value '%s' with value '%s'.\n", PlainValue::valueType(var->type()), name, newValue.asString());
+		Messenger::printVerbose("Added new %s value '%s' with value '%s'.\n", PlainValue::valueType(var->type()), name,
+					newValue.asString());
 	}
 	else
 	{
-		Messenger::printVerbose("Set existing %s value '%s' to value '%s' (previous value was '%s').\n", PlainValue::valueType(var->type()), name, newValue.asString(), var->asString());
+		Messenger::printVerbose("Set existing %s value '%s' to value '%s' (previous value was '%s').\n",
+					PlainValue::valueType(var->type()), name, newValue.asString(), var->asString());
 		var->set(newValue);
 	}
 

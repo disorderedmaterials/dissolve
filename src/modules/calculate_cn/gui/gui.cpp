@@ -23,4 +23,7 @@
 #include "modules/calculate_cn/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateCNModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalculateCNModuleWidget(parent, this); }
+ModuleWidget *CalculateCNModule::createWidget(QWidget *parent, Dissolve &dissolve)
+{
+	return new CalculateCNModuleWidget(parent, this);
+}

@@ -80,7 +80,10 @@ SpeciesAtom *SpeciesImproper::k() const { return k_; }
 SpeciesAtom *SpeciesImproper::l() const { return l_; }
 
 // Return whether the improper uses the specified SpeciesAtom
-bool SpeciesImproper::uses(SpeciesAtom *spAtom) const { return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom)); }
+bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
+{
+	return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
+}
 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesImproper::indexI() const
@@ -88,7 +91,8 @@ int SpeciesImproper::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesImproper::indexI(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesImproper::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -101,7 +105,8 @@ int SpeciesImproper::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesImproper::indexJ(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesImproper::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -114,7 +119,8 @@ int SpeciesImproper::indexK() const
 #ifdef CHECKS
 	if (k_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesImproper::indexK(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesImproper::indexK(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -127,7 +133,8 @@ int SpeciesImproper::indexL() const
 #ifdef CHECKS
 	if (l_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesImproper::indexL(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesImproper::indexL(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -181,7 +188,8 @@ bool SpeciesImproper::isSelected() const
 #ifdef CHECKS
 	if (i_ == NULL || j_ == NULL || k_ == NULL || l_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesImproper::isSelected(). Returning false...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesImproper::isSelected(). Returning false...\n");
 		return false;
 	}
 #endif
@@ -195,7 +203,8 @@ bool SpeciesImproper::isSelected() const
 // Return enum options for ImproperFunction
 EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-	static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() << EnumOption(SpeciesImproper::CosineForm, "Cos", 4, 4);
+	static EnumOptionsList ImproperFunctionOptions = EnumOptionsList()
+							 << EnumOption(SpeciesImproper::CosineForm, "Cos", 4, 4);
 
 	static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 

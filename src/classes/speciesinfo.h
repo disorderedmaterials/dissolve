@@ -32,20 +32,20 @@ class Species;
  */
 class SpeciesInfo : public ListItem<SpeciesInfo>
 {
-      public:
+	public:
 	SpeciesInfo();
 	~SpeciesInfo();
 
 	/*
 	 * Species Target
 	 */
-      private:
+	private:
 	// Target Species
 	Species *species_;
 	// Population of the Species
 	int population_;
 
-      public:
+	public:
 	// Set target Species
 	void setSpecies(Species *sp);
 	// Return target Species

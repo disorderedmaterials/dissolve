@@ -34,7 +34,9 @@ PrimitiveInfo::~PrimitiveInfo() {}
  * UncolouredPrimitiveInfo
  */
 
-UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive *prim, Matrix4 transform) : primitive_(prim), transform_(transform) {}
+UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive *prim, Matrix4 transform) : primitive_(prim), transform_(transform)
+{
+}
 
 UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo() {}
 
@@ -55,7 +57,8 @@ void UncolouredPrimitiveInfo::sendToGL(double pixelScaling)
  * ColouredPrimitiveInfo
  */
 
-ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive *prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a) : primitive_(prim), transform_(transform)
+ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive *prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+	: primitive_(prim), transform_(transform)
 {
 	colour_[0] = r;
 	colour_[1] = g;
@@ -85,7 +88,9 @@ void ColouredPrimitiveInfo::sendToGL(double pixelScaling)
  * StylePrimitiveInfo
  */
 
-StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode) {}
+StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode)
+{
+}
 
 StylePrimitiveInfo::~StylePrimitiveInfo() {}
 

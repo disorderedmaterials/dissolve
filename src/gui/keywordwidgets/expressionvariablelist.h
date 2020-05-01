@@ -35,39 +35,39 @@ class ExpressionVariableListKeywordWidget : public QWidget, public KeywordWidget
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	ExpressionVariableListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	ExpressionVariableListKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ExpressionVariableListWidget ui_;
 
-      private:
+	private:
 	// Variable table update function
 	void updateVariableTableRow(int row, ExpressionNode *node, bool createItem);
 
-      private slots:
+	private slots:
 	// Variables table item changed
 	void on_VariablesTable_itemChanged(QTableWidgetItem *item);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 };

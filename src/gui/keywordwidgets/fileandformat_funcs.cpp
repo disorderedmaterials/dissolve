@@ -31,7 +31,8 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI
 	ui_.setupUi(this);
@@ -99,13 +100,15 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 	{
 		// Input File
 		QFileInfo fileInfo(fileAndFormat.filename());
-		filename = QFileDialog::getOpenFileName(this, tr("Select Input File"), fileInfo.absoluteFilePath(), tr("All Files (*.*)"));
+		filename = QFileDialog::getOpenFileName(this, tr("Select Input File"), fileInfo.absoluteFilePath(),
+							tr("All Files (*.*)"));
 	}
 	else
 	{
 		// Output File
 		QFileInfo fileInfo(fileAndFormat.filename());
-		filename = QFileDialog::getSaveFileName(this, tr("Select Output File"), fileInfo.absoluteFilePath(), tr("All Files (*.*)"));
+		filename = QFileDialog::getSaveFileName(this, tr("Select Output File"), fileInfo.absoluteFilePath(),
+							tr("All Files (*.*)"));
 	}
 
 	if (!filename.isEmpty())

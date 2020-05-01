@@ -32,14 +32,14 @@ class Configuration;
 // Keyword with Element RefList Data
 class ElementRefListKeyword : public KeywordData<RefList<Element> &>
 {
-      public:
+	public:
 	ElementRefListKeyword(RefList<Element> &targetRefList);
 	~ElementRefListKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

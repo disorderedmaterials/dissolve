@@ -22,7 +22,10 @@
 #include "keywords/broadeningfunction.h"
 #include "base/lineparser.h"
 
-BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value) : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value) {}
+BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value)
+	: KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value)
+{
+}
 
 BroadeningFunctionKeyword::~BroadeningFunctionKeyword() {}
 
@@ -52,5 +55,6 @@ bool BroadeningFunctionKeyword::write(LineParser &parser, const char *keywordNam
 	CharString params;
 	for (int n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
 		params.strcatf("  %f", data_.parameter(n));
-	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()), params.get());
+	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()),
+				 params.get());
 }

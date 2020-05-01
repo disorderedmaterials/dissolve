@@ -31,18 +31,18 @@ class QOpenGLContext;
 // Rendering Primitive List
 class PrimitiveList
 {
-      public:
+	public:
 	PrimitiveList();
 	~PrimitiveList();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// List of Primitives owned and managed by this list
 	List<Primitive> primitives_;
 
-      public:
+	public:
 	// Clear all existing Primitives
 	void clear();
 	// Forget all data, leaving arrays intact
@@ -73,7 +73,7 @@ class PrimitiveList
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	Primitive *operator[](int index);
 };
 

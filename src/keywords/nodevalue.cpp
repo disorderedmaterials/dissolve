@@ -23,7 +23,11 @@
 #include "base/lineparser.h"
 #include "procedure/nodes/node.h"
 
-NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, NodeValue value) : KeywordData<NodeValue>(KeywordData::NodeValueData, value) { parentNode_ = parentNode; }
+NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, NodeValue value)
+	: KeywordData<NodeValue>(KeywordData::NodeValueData, value)
+{
+	parentNode_ = parentNode;
+}
 
 NodeValueKeyword::~NodeValueKeyword() {}
 
@@ -38,7 +42,10 @@ int NodeValueKeyword::minArguments() const { return 1; }
 int NodeValueKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData &coreData) { return setValue(parser.argc(startArg)); }
+bool NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+{
+	return setValue(parser.argc(startArg));
+}
 
 // Write keyword data to specified LineParser
 bool NodeValueKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)

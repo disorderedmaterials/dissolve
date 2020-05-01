@@ -37,22 +37,22 @@ class ProcessPool;
 // IsotopologueCollection - Isotopologues over one or more Configurations
 class IsotopologueCollection : public GenericItemBase
 {
-      public:
+	public:
 	IsotopologueCollection();
 	~IsotopologueCollection();
 
 	/*
 	 * Sets
 	 */
-      private:
+	private:
 	// IsotopologueSets for individual Configurations
 	List<IsotopologueSet> isotopologueSets_;
 
-      private:
+	private:
 	// Remove any sets from the collection that are empty
 	void pruneEmptySets();
 
-      public:
+	public:
 	// Clear all existing data
 	void clear();
 	// Add Isotopologue weight for the specified Configuration / Species
@@ -85,7 +85,7 @@ class IsotopologueCollection : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser

@@ -36,7 +36,10 @@ SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const Core
 
 SelectConfigurationDialog::~SelectConfigurationDialog() {}
 
-void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }
+void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(bool isValid)
+{
+	ui_.SelectButton->setEnabled(isValid);
+}
 
 void SelectConfigurationDialog::on_ConfigurationWidget_speciesDoubleClicked()
 {

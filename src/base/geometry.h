@@ -31,7 +31,7 @@
 // Geometry Definition
 class Geometry : public ListItem<Geometry>
 {
-      public:
+	public:
 	Geometry();
 	~Geometry();
 	// Type of geometry data passed
@@ -45,13 +45,13 @@ class Geometry : public ListItem<Geometry>
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Reference value
 	double value_;
 	// Array for indices
 	int indices_[4];
 
-      public:
+	public:
 	// Set reference value and indices
 	void set(double value, int a, int b, int c = -1, int d = -1);
 	// Return reference value

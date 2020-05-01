@@ -25,9 +25,14 @@
 #include "module/list.h"
 #include "module/module.h"
 
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxModules) : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references) { maxModules_ = maxModules; }
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxModules)
+	: KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
+{
+	maxModules_ = maxModules;
+}
 
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules) : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules)
+	: KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
 	moduleTypes_ = allowedModuleTypes;
 	maxModules_ = maxModules;
@@ -75,7 +80,9 @@ bool ModuleRefListKeyword::read(LineParser &parser, int startArg, const CoreData
 		// Check the module's type
 		if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
 		{
-			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
+			Messenger::error(
+				"Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n",
+				parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
 			return false;
 		}
 

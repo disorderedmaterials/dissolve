@@ -32,14 +32,14 @@ class Cell;
 // Change Data
 class ChangeData : public ListItem<ChangeData>
 {
-      public:
+	public:
 	ChangeData();
 	~ChangeData();
 
 	/*
 	 * Target Data
 	 */
-      private:
+	private:
 	// Atom
 	Atom *atom_;
 	// Flag indicating whether Atom has moved
@@ -49,7 +49,7 @@ class ChangeData : public ListItem<ChangeData>
 	// Stored Cell of Atom
 	Cell *cell_;
 
-      public:
+	public:
 	// Set target Atom
 	void setAtom(Atom *i);
 	// Return target Atom

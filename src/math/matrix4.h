@@ -31,17 +31,17 @@ class Matrix3;
 // Column-major 4x4 matrix
 class Matrix4
 {
-      public:
+	public:
 	Matrix4();
 
-      private:
+	private:
 	// Matrix4
 	double matrix_[16];
 
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	Matrix4 operator*(const Matrix4 &B) const;
 	Matrix4 operator*(const double a) const;
 	Matrix4 operator+(const Matrix4 &B) const;
@@ -57,7 +57,7 @@ class Matrix4
 	/*
 	 * Basic Set/Get
 	 */
-      public:
+	public:
 	// Reset the matrix to the identity
 	void setIdentity();
 	// Prints the matrix to stdout
@@ -76,7 +76,7 @@ class Matrix4
 	/*
 	 * Column Operations
 	 */
-      public:
+	public:
 	// Copy column contents to supplied Vec3
 	Vec3<double> columnAsVec3(int col) const;
 	// Copy column contents to supplied Vec4
@@ -113,7 +113,7 @@ class Matrix4
 	/*
 	 * Rotations
 	 */
-      public:
+	public:
 	// Create rotation matrix about X
 	void createRotationX(double angle);
 	// Create XY rotation matrix
@@ -148,7 +148,7 @@ class Matrix4
 	/*
 	 * Translations
 	 */
-      public:
+	public:
 	// Create a translation matrix (as glTranslated would do)
 	void createTranslation(double dx, double dy, double dz);
 	// Create a translation matrix (as glTranslated would do)
@@ -179,7 +179,7 @@ class Matrix4
 	/*
 	 * Scaling
 	 */
-      public:
+	public:
 	// Apply a general scaling to the matrix
 	void applyScaling(double scalex, double scaley, double scalez);
 	// Apply a general scaling to the matrix
@@ -198,7 +198,7 @@ class Matrix4
 	/*
 	 * Transforms
 	 */
-      public:
+	public:
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(double x, double y, double z) const;
 	// Transform coordinates supplied and return as Vec3<double>
@@ -219,7 +219,7 @@ class Matrix4
 	/*
 	 * Shearing
 	 */
-      public:
+	public:
 	// Apply a shearing along X
 	void applyShearX(double shearx);
 };

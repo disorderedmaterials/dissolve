@@ -30,7 +30,7 @@ class Configuration;
 // Coordinate Export Formats
 class CoordinateExportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available coordinate formats
 	enum CoordinateExportFormat
 	{
@@ -43,7 +43,7 @@ class CoordinateExportFileFormat : public FileAndFormat
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for CoordinateExportFormat
 	static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> coordinateExportFormats();
 	// Return number of available formats
@@ -58,20 +58,20 @@ class CoordinateExportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-      private:
+	private:
 	// Export Configuration as XYZ
 	bool exportXYZ(LineParser &parser, Configuration *cfg);
 	// Export Configuration as DL_POLY CONFIG
 	bool exportDLPOLY(LineParser &parser, Configuration *cfg);
 
-      public:
+	public:
 	// Export Configuration using current filename and format
 	bool exportData(Configuration *cfg);
 };

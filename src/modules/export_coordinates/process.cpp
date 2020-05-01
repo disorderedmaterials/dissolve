@@ -52,7 +52,8 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	// Only the pool master saves the data
 	if (procPool.isMaster())
 	{
-		Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", format.description(), cfg->name());
+		Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", format.description(),
+				 cfg->name());
 
 		if (!format.exportData(cfg))
 		{

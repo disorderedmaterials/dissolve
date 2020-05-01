@@ -30,18 +30,18 @@ class ExpressionVariable;
 // Expression Value Node (retrieves value of an ExpressionVariable)
 class ExpressionVariableValue : public ExpressionNode
 {
-      public:
+	public:
 	ExpressionVariableValue(ExpressionVariable *var = 0);
 	~ExpressionVariableValue();
 
 	/*
 	 * Variable Target
 	 */
-      private:
+	private:
 	// Variable that this node links to
 	ExpressionVariable *variable_;
 
-      public:
+	public:
 	// Set variable target
 	void setVariable(ExpressionVariable *v);
 	// Get variable target
@@ -52,7 +52,7 @@ class ExpressionVariableValue : public ExpressionNode
 	/*
 	 * Inherited Virtuals
 	 */
-      public:
+	public:
 	// Execute node
 	bool execute(ExpressionValue &result);
 	// Print node contents

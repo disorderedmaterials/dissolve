@@ -29,16 +29,16 @@
 // OrderedListItem Class
 template <class T> class OrderedListItem
 {
-      public:
+	public:
 	OrderedListItem<T>();
 	// List pointers
 	OrderedListItem<T> *prev, *next;
 
-      private:
+	private:
 	// Instance of the object
 	T object_;
 
-      public:
+	public:
 	// Return reference to object
 	T &object();
 	// Return object index
@@ -64,7 +64,7 @@ template <class T> class OrderedList
 	 * Ordered, linked list of OrderedListItems, which contain an instance of the template class T.
 	 * The class T must provide an 'int T::index() const' function, as well as operator=.
 	 */
-      public:
+	public:
 	OrderedList<T>();
 	~OrderedList();
 	OrderedList<T>(const OrderedList<T> &source);
@@ -72,7 +72,7 @@ template <class T> class OrderedList
 	/*
 	 * Item List
 	 */
-      private:
+	private:
 	// Object factory
 	ObjectFactory<OrderedListItem<T>> factory_;
 	// Pointers to head and tail of list
@@ -91,7 +91,7 @@ template <class T> class OrderedList
 	/*
 	 * Access / Manipulation
 	 */
-      private:
+	private:
 	// Insert item pointing to specified object, after specified item
 	OrderedListItem<T> *insertAfter(T &object, OrderedListItem<T> *afterThis);
 	// Insert item pointing to specified object, before specified item
@@ -107,7 +107,7 @@ template <class T> class OrderedList
 	// Find and return the item with the next highest index to the index specified
 	OrderedListItem<T> *nextHighestIndex(int objectIndex);
 
-      public:
+	public:
 	// Clear the list
 	void clear();
 	// Returns the number of items referenced in the list
@@ -133,12 +133,13 @@ template <class T> class OrderedList
 	// Invalidate current item and object arrays, forcing them to be recreated
 	void invalidateLists();
 	// Given a second list, generate new lists containing unique items to each list, and those that appear in both
-	void difference(OrderedList<T> &listB, OrderedList<T> &uniqueToA, OrderedList<T> &uniqueToB, OrderedList<T> &commonItems);
+	void difference(OrderedList<T> &listB, OrderedList<T> &uniqueToA, OrderedList<T> &uniqueToB,
+			OrderedList<T> &commonItems);
 
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator=(const OrderedList<T> &other);
 	OrderedListItem<T> *operator[](int);
 };
@@ -375,7 +376,9 @@ template <class T> void OrderedList<T>::addAtEnd(T object)
 	else if (listTail_->objectIndex() < object->index())
 		insertAfter(object, listTail_);
 	else
-		printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedList, but last item in list has index %i\n", object->index(), listTail_->objectIndex());
+		printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedList, but last item in list has "
+		       "index %i\n",
+		       object->index(), listTail_->objectIndex());
 }
 
 // Remove item reference from list
@@ -491,7 +494,9 @@ template <class T> void OrderedList<T>::invalidateLists()
 }
 
 // Given a second list, generate new lists containing unique items to each list, and those that appear in both
-template <class T> void OrderedList<T>::difference(OrderedList<T> &listB, OrderedList<T> &uniqueToA, OrderedList<T> &uniqueToB, OrderedList<T> &commonItems)
+template <class T>
+void OrderedList<T>::difference(OrderedList<T> &listB, OrderedList<T> &uniqueToA, OrderedList<T> &uniqueToB,
+				OrderedList<T> &commonItems)
 {
 	// Clear supplied results lists
 	uniqueToA.clear();

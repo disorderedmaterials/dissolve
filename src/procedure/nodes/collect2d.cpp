@@ -29,19 +29,29 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax,
+Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable,
+					       double xMin, double xMax, double xBinWidth, double yMin, double yMax,
 					       double yBinWidth)
-    : ProcedureNode(ProcedureNode::Collect2DNode)
+	: ProcedureNode(ProcedureNode::Collect2DNode)
 {
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0), "QuantityX",
-		      "Calculated observable to collect for x axis");
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0), "QuantityY",
-		      "Calculated observable to collect for y axis");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeX",
-		      "Range of calculation for the specified x observable");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "RangeY",
-		      "Range of calculation for the specified y observable");
-	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");
+	keywords_.add("Target",
+		      new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true,
+									    xObservable, 0),
+		      "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target",
+		      new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true,
+									    yObservable, 0),
+		      "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target",
+		      new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "RangeX", "Range of calculation for the specified x observable");
+	keywords_.add("Target",
+		      new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxDeltaLabels),
+		      "RangeY", "Range of calculation for the specified y observable");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
+		      "Branch which runs if the target quantities were binned successfully");
 
 	// Initialise branch
 	subCollectBranch_ = NULL;
@@ -54,7 +64,10 @@ Collect2DProcedureNode::~Collect2DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Data
@@ -119,10 +132,13 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 	// Construct our data name, and search for it in the supplied list
 	CharString dataName("%s_%s_Bins", name(), cfg->niceName());
 	bool created;
-	Histogram2D &target = GenericListHelper<Histogram2D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
+	Histogram2D &target = GenericListHelper<Histogram2D>::realise(targetList, dataName.get(), prefix,
+								      GenericItem::InRestartFileFlag, &created);
 	if (created)
 	{
-		Messenger::printVerbose("Two-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
+		Messenger::printVerbose("Two-dimensional histogram data for '%s' was not in the target list, so it will now be "
+					"initialised...\n",
+					name());
 		target.initialise(xMinimum(), xMaximum(), xBinWidth(), yMinimum(), yMaximum(), yBinWidth());
 	}
 
@@ -152,22 +168,26 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								   const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	if (!xObservable_)
 	{
-		Messenger::error("No CalculateProcedureNodeBase pointer set for X observable in Collect2DProcedureNode '%s'.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for X observable in Collect2DProcedureNode '%s'.\n",
+				 name());
 		return ProcedureNode::Failure;
 	}
 	if (!yObservable_)
 	{
-		Messenger::error("No CalculateProcedureNodeBase pointer set for Y observable in Collect2DProcedureNode '%s'.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for Y observable in Collect2DProcedureNode '%s'.\n",
+				 name());
 		return ProcedureNode::Failure;
 	}
 #endif
 	// Bin the current value of the observable
-	if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) && subCollectBranch_)
+	if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) &&
+	    subCollectBranch_)
 		return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return ProcedureNode::Success;

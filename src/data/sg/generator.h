@@ -31,23 +31,23 @@
 // Symmetry Generator
 class SymmetryGenerator
 {
-      public:
+	public:
 	SymmetryGenerator();
 
 	/*
 	 * Generator Information
 	 */
-      private:
+	private:
 	// Generator text (if any)
 	CharString text_;
 	// Generator matrix
 	Matrix4 matrix_;
 
-      private:
+	private:
 	// Set partial element of matrix in specified row
 	void setMatrixPart(int row, const char *part);
 
-      public:
+	public:
 	// Set from plain text string
 	bool set(const char *s);
 	// Set rotation matrix row (not including translation vector)

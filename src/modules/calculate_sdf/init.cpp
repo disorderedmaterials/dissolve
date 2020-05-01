@@ -114,18 +114,29 @@ void CalculateSDFModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05), Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
+					    Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
 		      "RangeX", "Range along X axis", "<min> <max> <delta> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05), Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
+					    Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
 		      "RangeY", "Range along Y axis", "<min> <max> <delta> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05), Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
+					    Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
 		      "RangeZ", "Range along Z axis", "<min> <max> <delta> (Angstroms)");
 
 	// Sites
-	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF", "<Species> <Site>");
-	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", "<Species> <Site>");
-	keywords_.add("Sites", new BoolKeyword(true), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA",
+		       "Set the site(s) 'A' which are to represent the origin of the SDF", "<Species> <Site>");
+	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB",
+		       "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+		       "<Species> <Site>");
+	keywords_.add("Sites", new BoolKeyword(true), "ExcludeSameMolecule",
+		      "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 
 	// Export
-	keywords_.add("Export", new FileAndFormatKeyword(sdfFileAndFormat_, "EndExportSDF"), "ExportSDF", "Save the SDF to the specified file / format");
+	keywords_.add("Export", new FileAndFormatKeyword(sdfFileAndFormat_, "EndExportSDF"), "ExportSDF",
+		      "Save the SDF to the specified file / format");
 }

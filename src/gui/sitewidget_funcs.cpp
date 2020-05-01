@@ -102,7 +102,8 @@ void SiteWidget::updateStatusBar()
 
 	// Set / update empirical formula for the Species and its current atom selection
 	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
-	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
+	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true)
+								     : "--");
 }
 
 /*

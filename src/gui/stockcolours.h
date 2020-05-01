@@ -31,7 +31,7 @@
 // Stock Colours
 class StockColours
 {
-      public:
+	public:
 	// Stock Colours
 	enum StockColour
 	{

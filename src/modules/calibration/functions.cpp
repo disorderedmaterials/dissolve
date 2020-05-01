@@ -32,9 +32,11 @@
  * CalibrationModuleCostFunctions
  */
 
-CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
-							       RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences)
-    : dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
+CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
+	Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
+	RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences)
+	: dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules),
+	  intraBroadeningReferences_(intraBroadeningReferences)
 {
 }
 
@@ -47,7 +49,8 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
 	for (Module *rdfModule : intraBroadeningModules_)
 	{
 		// Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
-		PairBroadeningFunction &broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+		PairBroadeningFunction &broadening =
+			rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
 		// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 		int smoothing = rdfModule->keywords().asInt("Smoothing");
@@ -61,14 +64,16 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
 
 	// Go over NeutronSQ Modules, run the processing, and sum errors in an ReferenceData we have
 	double totalError = 0.0;
-	RefDataListIterator<Module, CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(intraBroadeningReferences_);
+	RefDataListIterator<Module, CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(
+		intraBroadeningReferences_);
 	while (Module *module = neutronModuleIterator.iterate())
 	{
 		// Check for ReferenceData first
 		if (!dissolve_.processingModuleData().contains("ReferenceData", module->uniqueName()))
 			continue;
 
-		// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
+		// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
+		// Configurations
 		for (Configuration *cfg : module->targetConfigurations())
 			GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
 
@@ -79,18 +84,24 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
 
 		// Grab target data and compare
 		CalibrationModule::IntraBroadeningFitTarget target = neutronModuleIterator.currentData();
-		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetSQ))
+		if ((target == CalibrationModule::IntraBroadeningTargetBoth) ||
+		    (target == CalibrationModule::IntraBroadeningTargetSQ))
 		{
 			// Grab WeightedSQ and ReferenceData and compare
-			const PartialSet &weightedSQ = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
-			const Data1D &referenceData = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
+			const PartialSet &weightedSQ = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(),
+											    "WeightedSQ", module->uniqueName());
+			const Data1D &referenceData = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(),
+										       "ReferenceData", module->uniqueName());
 			totalError += Error::rmse(weightedSQ.constTotal(), referenceData, true);
 		}
-		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
+		if ((target == CalibrationModule::IntraBroadeningTargetBoth) ||
+		    (target == CalibrationModule::IntraBroadeningTargetGR))
 		{
 			// Grab WeightedGR and ReferenceDataFT and compare
-			const PartialSet &weightedGR = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
-			const Data1D &referenceDataFT = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
+			const PartialSet &weightedGR = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(),
+											    "WeightedGR", module->uniqueName());
+			const Data1D &referenceDataFT = GenericListHelper<Data1D>::value(
+				dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
 			totalError += Error::rmse(weightedGR.constTotal(), referenceDataFT, true);
 		}
 	}

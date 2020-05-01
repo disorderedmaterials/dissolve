@@ -23,7 +23,9 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-ForcefieldAngleTerm::ForcefieldAngleTerm(const char *typeI, const char *typeJ, const char *typeK, SpeciesAngle::AngleFunction form, double data0, double data1, double data2, double data3)
+ForcefieldAngleTerm::ForcefieldAngleTerm(const char *typeI, const char *typeJ, const char *typeK,
+					 SpeciesAngle::AngleFunction form, double data0, double data1, double data2,
+					 double data3)
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -46,9 +48,11 @@ bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType *i, const ForcefieldA
 {
 	if (!DissolveSys::sameWildString(typeJ_, j->equivalentName()))
 		return false;
-	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName()))
+	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) &&
+	    DissolveSys::sameWildString(typeK_, k->equivalentName()))
 		return true;
-	if (DissolveSys::sameWildString(typeK_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, k->equivalentName()))
+	if (DissolveSys::sameWildString(typeK_, i->equivalentName()) &&
+	    DissolveSys::sameWildString(typeI_, k->equivalentName()))
 		return true;
 
 	return false;

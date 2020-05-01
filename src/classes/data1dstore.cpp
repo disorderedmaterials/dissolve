@@ -32,7 +32,8 @@ Data1DStore::~Data1DStore() {}
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data1DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
+bool Data1DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword,
+			  const CoreData &coreData)
 {
 	// Create new data
 	Data1D *data = data_.add();
@@ -69,7 +70,8 @@ const Data1D &Data1DStore::data(const char *name) const
 			return (*xyData);
 
 	static Data1D dummy;
-	Messenger::warn("Data named '%s' was requested from Data1DStore, but it does not exist. Returning an empty Data1D...\n", name);
+	Messenger::warn("Data named '%s' was requested from Data1DStore, but it does not exist. Returning an empty Data1D...\n",
+			name);
 	return dummy;
 }
 

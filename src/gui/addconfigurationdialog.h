@@ -34,15 +34,15 @@ class AddConfigurationDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
+	public:
 	AddConfigurationDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
 	~AddConfigurationDialog();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::AddConfigurationDialog ui_;
 
-      public:
+	public:
 	// Reset, ready for adding a new Configuration
 	void reset();
 	// Copy imported Configuration over to the specified Dissolve object

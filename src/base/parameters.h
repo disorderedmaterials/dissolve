@@ -29,14 +29,14 @@
 // Interatomic Interaction Parameters
 class InteractionParameters
 {
-      public:
+	public:
 	InteractionParameters();
 	~InteractionParameters();
 
 	/*
 	 * Parameters
 	 */
-      private:
+	private:
 	// Whether the parameters / charge are empty (i.e. none have ever been set)
 	bool empty_;
 	// Parameter array
@@ -44,7 +44,7 @@ class InteractionParameters
 	// Atomic charge
 	double charge_;
 
-      public:
+	public:
 	// Return whether the parameters / charge are empty (i.e. none have ever been set)
 	bool isEmpty() const;
 	// Set parameter with index specified

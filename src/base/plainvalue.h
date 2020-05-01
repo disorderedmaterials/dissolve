@@ -32,7 +32,7 @@ class ProcessPool;
 // PlainValue
 class PlainValue : public ListItem<PlainValue>
 {
-      public:
+	public:
 	PlainValue();
 	~PlainValue();
 	PlainValue(bool value);
@@ -56,7 +56,7 @@ class PlainValue : public ListItem<PlainValue>
 	/*
 	 * Value Storage
 	 */
-      private:
+	private:
 	// Name of value
 	CharString name_;
 	// Description of value, if any
@@ -74,11 +74,11 @@ class PlainValue : public ListItem<PlainValue>
 	// Value (string)
 	CharString valueC_;
 
-      private:
+	private:
 	// Clear all data
 	void clear();
 
-      public:
+	public:
 	// Set up value, including name and description
 	void initialise(const char *name, PlainValue newValue, const char *description, int genericItemFlags);
 	// Set value
@@ -95,7 +95,7 @@ class PlainValue : public ListItem<PlainValue>
 	/*
 	 * Validation
 	 */
-      private:
+	private:
 	// Whether this option has any validation
 	bool hasValidation_;
 	// Validation limits to apply (if appropriate)
@@ -109,7 +109,7 @@ class PlainValue : public ListItem<PlainValue>
 	// Pointer to valid string values array (if appropriate)
 	const char **validC_;
 
-      public:
+	public:
 	// Set integer validation range
 	void setValidationRange(int minValue, int maxValue);
 	// Set minimum validation limit
@@ -150,11 +150,11 @@ class PlainValue : public ListItem<PlainValue>
 	/*
 	 * Conversion
 	 */
-      private:
+	private:
 	// Temporary working string
 	CharString conversionStringTemp_;
 
-      public:
+	public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)
@@ -167,7 +167,7 @@ class PlainValue : public ListItem<PlainValue>
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool);
 };

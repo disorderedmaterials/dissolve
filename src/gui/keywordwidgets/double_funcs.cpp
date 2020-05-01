@@ -23,7 +23,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/double.hui"
 
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : ExponentialSpin(parent), KeywordWidgetBase(coreData)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: ExponentialSpin(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<DoubleKeyword *>(keyword);
@@ -44,7 +45,8 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, 
 	// Connect the valueChanged signal to our own slot
 	connect(this, SIGNAL(valueChanged(double)), this, SLOT(myValueChanged(double)));
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
 }
 

@@ -28,13 +28,13 @@
 // GenericItemContainer< Array<DummyClass> >
 template <> class GenericItemContainer<Array<DummyClass>> : public GenericItem
 {
-      public:
+	public:
 	GenericItemContainer<Array<DummyClass>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Item Class
 	 */
-      protected:
+	protected:
 	// Create a new GenericItem containing same class as current type
 	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
@@ -43,14 +43,14 @@ template <> class GenericItemContainer<Array<DummyClass>> : public GenericItem
 		return NULL;
 	}
 
-      public:
+	public:
 	// Return class name contained in item
 	const char *itemClassName() { return "Array<DummyClass>"; }
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write data through specified parser
 	bool write(LineParser &parser) { return false; }
 	// Read data through specified parser
@@ -59,7 +59,7 @@ template <> class GenericItemContainer<Array<DummyClass>> : public GenericItem
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return false; }
 	// Return equality between items

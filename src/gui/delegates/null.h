@@ -26,7 +26,7 @@
 
 class NullDelegate : public QStyledItemDelegate
 {
-      public:
+	public:
 	NullDelegate(QObject *parent = 0);
 	// Reimplemented virtual function to create editing widget
 	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

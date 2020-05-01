@@ -34,7 +34,7 @@ class ProcessPool;
 // One-Dimensional Histogram
 class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D>, public GenericItemBase
 {
-      public:
+	public:
 	Histogram3D();
 	~Histogram3D();
 	Histogram3D(const Histogram3D &source);
@@ -44,7 +44,7 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	/*
 	 * Histogram Data
 	 */
-      private:
+	private:
 	// Minimum value for x data (hard left-edge of first bin)
 	double xMinimum_;
 	// Maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -86,13 +86,14 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	// Accumulated data
 	Data3D accumulatedData_;
 
-      private:
+	private:
 	// Update accumulated data
 	void updateAccumulatedData();
 
-      public:
+	public:
 	// Initialise with specified bin range
-	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth, double zMinimum, double zMaximum, double zBinWidth);
+	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth,
+			double zMinimum, double zMaximum, double zBinWidth);
 	// Zero histogram bins
 	void zeroBins();
 	// Return minimum value for x data (hard left-edge of first bin)
@@ -143,13 +144,13 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator=(const Histogram3D &source);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -160,7 +161,7 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Sum histogram data onto all processes
 	bool allSum(ProcessPool &procPool);
 	// Broadcast data

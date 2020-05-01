@@ -26,7 +26,8 @@
 #include "modules/neutronsq/neutronsq.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
-bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights, NeutronSQModule::NormalisationType normalisation)
+bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights,
+					  NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
 	for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
@@ -62,7 +63,8 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights, NeutronSQModule::NormalisationType normalisation)
+bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights,
+					  NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
 	for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
@@ -112,11 +114,13 @@ bool NeutronSQModule::calculateSummedWeights(Weights &summedWeights) const
 			// Find the Isotopologues for the Configuration/Species, if they have been defined
 			const Isotopologues *topes = isotopologues_.isotopologues(cfg, spInfo->species());
 
-			// Use the natural isotopologue if a species in the Configuration is not covered by at least one explicit Isotopologue definition
+			// Use the natural isotopologue if a species in the Configuration is not covered by at least one
+			// explicit Isotopologue definition
 			if (!topes)
 			{
-				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(),
-						 cfg->name());
+				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is "
+						 "missing, so the natural isotopologue will be used.\n",
+						 spInfo->species()->name(), cfg->name());
 
 				Species *sp = spInfo->species();
 				summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
@@ -126,7 +130,8 @@ bool NeutronSQModule::calculateSummedWeights(Weights &summedWeights) const
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
 				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
 				while (IsotopologueWeight *isoWeight = weightIterator.iterate())
-					summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
+					summedWeights.addIsotopologue(spInfo->species(), spInfo->population(),
+								      isoWeight->isotopologue(), isoWeight->weight());
 			}
 		}
 	}

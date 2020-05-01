@@ -33,13 +33,13 @@
 // Font Instance
 class FontInstance
 {
-      public:
+	public:
 	FontInstance();
 
 	/*
 	 * Font Data
 	 */
-      private:
+	private:
 	// Font file last passed to setupFont()
 	QString fontFile_;
 	// Font data
@@ -55,7 +55,7 @@ class FontInstance
 	// General scaling factor for primitives rendered with this font instance
 	double scaleFactor_;
 
-      public:
+	public:
 	// Set up font with font filename specified
 	bool setUp(QString fontFileName = QString());
 	// Return whether font exists and is ready for use
@@ -72,7 +72,7 @@ class FontInstance
 	/*
 	 * Rendering
 	 */
-      public:
+	public:
 	// Set face size
 	bool setFaceSize(double faceSize);
 	// Render supplied text
@@ -81,11 +81,11 @@ class FontInstance
 	/*
 	 * Bounding Box Calculation
 	 */
-      private:
+	private:
 	// Return bounding box for specified string
 	FTBBox boundingBox(QString text) const;
 
-      public:
+	public:
 	// Calculate bounding box for specified string
 	void boundingBox(QString text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
 	// Calculate bounding box width for specified string

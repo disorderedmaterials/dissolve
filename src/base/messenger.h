@@ -31,13 +31,13 @@ class LineParser;
 // Global messaging handler
 class Messenger
 {
-      public:
+	public:
 	Messenger();
 
 	/*
 	 * General Print Routines
 	 */
-      private:
+	private:
 	// Quiet mode
 	static bool quiet_;
 	// Mute mode (temporary quietness if not already)
@@ -51,7 +51,7 @@ class Messenger
 	// Working storage for text to print
 	static char workingText_[8096];
 
-      private:
+	private:
 	// Master text creation / formatting routine
 	static void createText(const char *indentText, const char *format, va_list arguments);
 	// Master text creation / formatting routine (indent text only, for banners etc.)
@@ -61,7 +61,7 @@ class Messenger
 	// Create and print text (simple)
 	static void createAndPrintText(const char *text);
 
-      public:
+	public:
 	// Set status of quiet mode
 	static void setQuiet(bool b);
 	// Return status of quiet mode
@@ -92,11 +92,11 @@ class Messenger
 	/*
 	 * Text Output Routine
 	 */
-      private:
+	private:
 	// Output handler (if any)
 	static OutputHandler *outputHandler_;
 
-      public:
+	public:
 	// Set output handler
 	static void setOutputHandler(OutputHandler *outputHandler);
 	// Print text
@@ -105,13 +105,13 @@ class Messenger
 	/*
 	 * File Redirection
 	 */
-      private:
+	private:
 	// Whether file redirection is enabled
 	static bool redirect_;
 	// Local LineParser for file redirection
 	static LineParser parser_;
 
-      public:
+	public:
 	// Enable redirection of all messaging to specified file
 	static bool enableRedirect(const char *filename);
 	// Cease redirection of messaging to file

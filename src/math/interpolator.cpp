@@ -22,8 +22,14 @@
 #include "math/interpolator.h"
 #include "math/data1d.h"
 
-Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(x) { interpolate(scheme); }
-Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.constXAxis()), y_(source.constValues()) { interpolate(scheme); }
+Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(x)
+{
+	interpolate(scheme);
+}
+Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.constXAxis()), y_(source.constValues())
+{
+	interpolate(scheme);
+}
 
 Interpolator::~Interpolator() {}
 
@@ -38,7 +44,8 @@ void Interpolator::interpolateSpline()
 	 *
 	 * 	S(i)(x) = a(i) + b(i)(x - x(i)) + c(i)(x - x(i))**2 + d(i)h(x - x(i))**3.
 	 *
-	 * As such, there are 4N unknown coefficients - {a(0),b(0),c(0),d(0),a(1),b(1),c(1),d(1),...,a(N-1),b(N-1),c(N-1),d(N-1)}
+	 * As such, there are 4N unknown coefficients -
+	 *{a(0),b(0),c(0),d(0),a(1),b(1),c(1),d(1),...,a(N-1),b(N-1),c(N-1),d(N-1)}
 	 *
 	 * Conditions:
 	 * 	At the extreme values of x in each interval, the original y values are retained
@@ -48,11 +55,9 @@ void Interpolator::interpolateSpline()
 	 * 	Second derivatives are continuous across intervals (i.e. match at extreme x values of intervals)
 	 * 		S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))					== (N-1) equations
 	 *
-	 * So, there are 4N-2 equations specified here - the remaining two come from specifying endpoint conditions of the spline fit.
-	 * No derivative matching is (can) be performed at the extreme points i=0 and i=N-1, so specify exact derivatives at these points:
-	 * 	Natural splines:
-	 * 		S'(0) = 0	S'(N-1) = 0
-	 * 	Clamped splines
+	 * So, there are 4N-2 equations specified here - the remaining two come from specifying endpoint conditions of the
+	 *spline fit. No derivative matching is (can) be performed at the extreme points i=0 and i=N-1, so specify exact
+	 *derivatives at these points: Natural splines: S'(0) = 0	S'(N-1) = 0 Clamped splines
 	 *
 	 * We need expressions for the derivatives of S:
 	 * 	Let h(i) = x - x(i)
@@ -64,14 +69,12 @@ void Interpolator::interpolateSpline()
 	 * 	S(i)(x = x(i)) = y(i)	  ==>	a(i) = y(i)	since x = x(i) and so h(i) = x(i) - x(i) = 0
 	 * 	S(i)(x = x(i+1)) = y(i+1) ==>	a(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)
 	 * 	S'(i)(x = x(i+1)) = S'(i+1)(x = x(i+1))   ==>	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 - b(i+1) = 0
-	 * 							since at x = x(i+1), h(i+1) = 0 and so S'(i+1)(x = x(i+1)) = b(i+1)
-	 * 	S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))   ==>	2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0
-	 * 							since at x = x(i+1), h(i+1) = 0 and so S"(i+1)(x = x(i+1)) = 2 c(i+1)
-	 * To summarise:
-	 * 	a(i) = y(i)						for i = 0,N-1	(N eqs)
-	 * 	a(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)	for i = 0,N-1	(N eqs)
-	 * 	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 - b(i+1) = 0		for i = 0,N-2	(N-1 eqs)
-	 * 	2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0			for i = 0,N-2	(N-1 eqs)
+	 * 							since at x = x(i+1), h(i+1) = 0 and so S'(i+1)(x = x(i+1)) =
+	 *b(i+1) S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))   ==>	2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0 since at x = x(i+1), h(i+1) =
+	 *0 and so S"(i+1)(x = x(i+1)) = 2 c(i+1) To summarise: a(i) = y(i)						for i =
+	 *0,N-1	(N eqs) a(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)	for i = 0,N-1	(N eqs) b(i) + 2 c(i)h(i) + 3
+	 *d(i)h(i)**2 - b(i+1) = 0		for i = 0,N-2	(N-1 eqs) 2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0
+	 *for i = 0,N-2	(N-1 eqs)
 	 *
 	 * To simplify, consider value of second derivative in i'th interval at leftmost value:
 	 * 	S"(i)(x = x(i)) = 2 c(i)	since at x = x(i+1), h(i+1) = 0 and so S"(i+1)(x = x(i+1)) = 2 c(i+1)
@@ -81,18 +84,20 @@ void Interpolator::interpolateSpline()
 	 * 							       -------------
 	 * 								   6 h(i)
 	 * 											  m(i)		m(i+1) - m(i)
-	 * 	y(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)	==>	y(i) + b(i)h(i) + --- h(i)**2 + ------------- h(i)**3 = y(i+1)
-	 * 											   2		    6 h(i)
+	 * 	y(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)	==>	y(i) + b(i)h(i) + --- h(i)**2 + -------------
+	 *h(i)**3 = y(i+1) 2		    6 h(i)
 	 *
 	 * 									       y(i+1) - y(i)   m(i)	  m(i+1) - m(i)
-	 * 								==>	b(i) = ------------- - --- h(i) - ------------- h(i)
-	 * 										    h(i)	2	        6
+	 * 								==>	b(i) = ------------- - --- h(i) - -------------
+	 *h(i) h(i)	2	        6
 	 *
 	 *
 	 * 	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 = b(i+1)	==>
-	 * 	( y(i+1) - y(i)   m(i)	     m(i+1) - m(i)	)		 m(i+1) - m(i)		 ( y(i+2) - y(i+1)   m(i+1)	     m(i+2) - m(i+1)        )
-	 * 	( ------------- - --- h(i) - ------------- h(i) ) + m(i)h(i) + 3 ------------- h(i)**2 = ( --------------- - ------ h(i+1) - --------------- h(i+1) )
-	 * 	(      h(i)	   2	           6		)		     6 h(i)		 (      h(i+1)	        2	            6	            )
+	 * 	( y(i+1) - y(i)   m(i)	     m(i+1) - m(i)	)		 m(i+1) - m(i)		 ( y(i+2) - y(i+1)
+	 *m(i+1)	     m(i+2) - m(i+1)        ) ( ------------- - --- h(i) - ------------- h(i) ) + m(i)h(i) + 3
+	 *------------- h(i)**2 = ( --------------- - ------ h(i+1) - --------------- h(i+1) )
+	 * 	(      h(i)	   2	           6		)		     6 h(i)		 (      h(i+1) 2
+	 *6	            )
 	 *
 	 * 								      ( y(i+2) - y(i+1)   y(i+1) - y(i) )
 	 * 	==>	h(i)m(i) + 2 (h(i) + h(i+1))m(i+1) + h(i+1)m(i+2) = 6 ( --------------- - ------------- )
@@ -100,11 +105,13 @@ void Interpolator::interpolateSpline()
 	 *
 	 * Written in matrix form, the above system of equations is:
 	 *
-	 * 	[ 1		0		0		0	...	0 ] [  m(0)  ]     [			0			 ]
-	 * 	[ h(0)		2(h(0) + h(1))	h(1)		0	...	0 ] [  m(1)  ]     [ (y(2) - y(1)) / h(1) - (y(1) - y(0)) / h(0) ]
-	 * 	[ 0		h(1)		2(h(1) + h(2))	h(2)	...	0 ] [  m(2)  ] = 6 [ (y(3) - y(2)) / h(2) - (y(2) - y(1)) / h(1) ]
-	 * 	[			...				...	  ] [  ...   ]     [						 ]
-	 * 	[ 0		0		0		0	...	1 ] [ m(N-1) ]     [ 			0			 ]
+	 * 	[ 1		0		0		0	...	0 ] [  m(0)  ]     [			0
+	 *]
+	 * 	[ h(0)		2(h(0) + h(1))	h(1)		0	...	0 ] [  m(1)  ]     [ (y(2) - y(1)) / h(1) -
+	 *(y(1) - y(0)) / h(0) ] [ 0		h(1)		2(h(1) + h(2))	h(2)	...	0 ] [  m(2)  ] = 6 [ (y(3) -
+	 *y(2)) / h(2) - (y(2) - y(1)) / h(1) ] [			...				...	  ] [ ...   ] [
+	 *] [ 0		0		0		0	...	1 ] [ m(N-1) ]     [ 			0
+	 *]
 	 *
 	 * Once solved, we have the set of m() and can thus determine a, b, c, and d as follows:
 	 *
@@ -112,8 +119,8 @@ void Interpolator::interpolateSpline()
 	 * 	a(i) = y(i)	b(i) = ----------- - ---- m(i) - ---- (m(i+1)-m(i))	c(i) = ----	d(i) = -----------
 	 * 				  h(i)	      2	          6				2		  6 h(i)
 	 *
-	 * The constrained spline fit removes the requirement that the second derivatives are equal at the boundaries of every interval, and instead specifies
-	 * that an exact first derivative is obtained there instead. As such:
+	 * The constrained spline fit removes the requirement that the second derivatives are equal at the boundaries of every
+	 *interval, and instead specifies that an exact first derivative is obtained there instead. As such:
 	 *
 	 * 	S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))	  ==>	S'(i)(x = x(i+1)) = S'(i+1)(x = x(i+1)) = f'(x = x(i+1))
 	 *
@@ -129,7 +136,8 @@ void Interpolator::interpolateSpline()
 	 * 	f'(0) = -------------- - -----		f'(N-1) = -------------------- - -------
 	 * 		2( x(1)-x(0) )     2			  2( x(i-1) - x(n-2) )      2
 	 *
-	 * Since the slope at each point is known, there is no longer a need to solve a system of equations, and each coefficient may be calculated as follows:
+	 * Since the slope at each point is known, there is no longer a need to solve a system of equations, and each
+	 *coefficient may be calculated as follows:
 	 *
 	 * 		  2( f'(i)+2f'(i-1) )   6(y(i) - y(i-1)
 	 * 	S"(i) =   ------------------- - ----------------	and  S"(i-1) = -S"(i)
@@ -169,7 +177,8 @@ void Interpolator::interpolateSpline()
 
 	for (i = 1; i < nPoints - 1; ++i)
 	{
-		// For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) - y(n-1)) / h(n-1)
+		// For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) -
+		// y(n-1)) / h(n-1)
 		p = h_[i - 1];
 		q = 2.0 * (h_[i - 1] + h_[i]);
 		r = h_[i];
@@ -231,7 +240,8 @@ void Interpolator::interpolateConstrainedSpline()
 			fp[i] = 2.0 / (gradA + gradB);
 	}
 	// 		fp[0] = (3.0*(y_[1] - y_[0])) / (2.0*x_[1]-x_[0]) - 0.5*fp[1];
-	// 		fp[nPoints-1] = (3.0*(y_[nPoints-1] - y_[nPoints-2])) / (2.0*x_[nPoints-1]-x_[nPoints-2]) - 0.5*fp[nPoints-2];
+	// 		fp[nPoints-1] = (3.0*(y_[nPoints-1] - y_[nPoints-2])) / (2.0*x_[nPoints-1]-x_[nPoints-2]) -
+	// 0.5*fp[nPoints-2];
 	fp[0] = 0.0;
 	fp[nPoints - 1] = 0.0;
 
@@ -246,10 +256,12 @@ void Interpolator::interpolateConstrainedSpline()
 		d_[i - 1] = (fppi - fppim1) / (6.0 * dx);
 		c_[i - 1] = (x_.constAt(i) * fppim1 - x_.constAt(i - 1) * fppi) / (2.0 * dx);
 		b_[i - 1] = (dy - c_[i - 1] * (x_.constAt(i) * x_.constAt(i) - x_.constAt(i - 1) * x_.constAt(i - 1)) -
-			     d_[i - 1] * (x_.constAt(i) * x_.constAt(i) * x_.constAt(i) - x_.constAt(i - 1) * x_.constAt(i - 1) * x_.constAt(i - 1))) /
+			     d_[i - 1] * (x_.constAt(i) * x_.constAt(i) * x_.constAt(i) -
+					  x_.constAt(i - 1) * x_.constAt(i - 1) * x_.constAt(i - 1))) /
 			    dx;
-		a_[i - 1] =
-		    y_.constAt(i - 1) - b_[i - 1] * x_.constAt(i - 1) - c_[i - 1] * x_.constAt(i - 1) * x_.constAt(i - 1) - d_[i - 1] * x_.constAt(i - 1) * x_.constAt(i - 1) * x_.constAt(i - 1);
+		a_[i - 1] = y_.constAt(i - 1) - b_[i - 1] * x_.constAt(i - 1) -
+			    c_[i - 1] * x_.constAt(i - 1) * x_.constAt(i - 1) -
+			    d_[i - 1] * x_.constAt(i - 1) * x_.constAt(i - 1) * x_.constAt(i - 1);
 	}
 
 	lastInterval_ = 0;
@@ -360,7 +372,8 @@ double Interpolator::y(double x, int interval)
 		double vk2 = y_.constAt(interval + 2);
 		double t1 = vk0 + (vk1 - vk0) * ppp;
 		double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
-		// 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5);
+		// 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp,
+		// t1+(t2-t1)*ppp*0.5);
 		return t1 + (t2 - t1) * ppp * 0.5;
 	}
 

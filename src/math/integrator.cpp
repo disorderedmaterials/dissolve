@@ -90,7 +90,10 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
 }
 
 // Compute integral of supplied data via trapezoid rule within the specified range
-double Integrator::trapezoid(const Data1D &data, const Range range) { return trapezoid(data, range.minimum(), range.maximum()); }
+double Integrator::trapezoid(const Data1D &data, const Range range)
+{
+	return trapezoid(data, range.minimum(), range.maximum());
+}
 
 // Compute absolute integral of supplied data via trapezoid rule
 double Integrator::absTrapezoid(const Data1D &data)
@@ -230,7 +233,10 @@ double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
 }
 
 // Return sum of squares of values within the specified range
-double Integrator::sumOfSquares(const Data1D &data, const Range range) { return sumOfSquares(data, range.minimum(), range.maximum()); }
+double Integrator::sumOfSquares(const Data1D &data, const Range range)
+{
+	return sumOfSquares(data, range.minimum(), range.maximum());
+}
 
 // Return sum of all values in supplied data
 double Integrator::sum(const Data2D &data)

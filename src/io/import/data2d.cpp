@@ -24,8 +24,15 @@
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 
-Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
-Data2DImportFileFormat::Data2DImportFileFormat(const char *filename, Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
+Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(format)
+{
+	setUpKeywords();
+}
+Data2DImportFileFormat::Data2DImportFileFormat(const char *filename, Data2DImportFileFormat::Data2DImportFormat format)
+	: FileAndFormat(filename, format)
+{
+	setUpKeywords();
+}
 
 Data2DImportFileFormat::~Data2DImportFileFormat() {}
 
@@ -36,8 +43,10 @@ Data2DImportFileFormat::~Data2DImportFileFormat() {}
 // Set up keywords for the format
 void Data2DImportFileFormat::setUpKeywords()
 {
-	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "XAxis", "Min, max, and delta to assume for x axis");
-	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "YAxis", "Min, max, and delta to assume for y axis");
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "XAxis",
+		      "Min, max, and delta to assume for x axis");
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "YAxis",
+		      "Min, max, and delta to assume for y axis");
 }
 
 /*
@@ -47,7 +56,8 @@ void Data2DImportFileFormat::setUpKeywords()
 // Return enum options for Data2DImportFormat
 EnumOptions<Data2DImportFileFormat::Data2DImportFormat> Data2DImportFileFormat::data2DImportFormats()
 {
-	static EnumOptionsList Data2DImportFormats = EnumOptionsList() << EnumOption(Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data");
+	static EnumOptionsList Data2DImportFormats = EnumOptionsList() << EnumOption(Data2DImportFileFormat::CartesianData2D,
+										     "cartesian", "Cartesian X,Y,f(X,Y) data");
 
 	static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> options("Data2DImportFileFormat", Data2DImportFormats);
 
@@ -64,7 +74,10 @@ const char *Data2DImportFileFormat::formatKeyword(int id) const { return data2DI
 const char *Data2DImportFileFormat::formatDescription(int id) const { return data2DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data2DImportFormat
-Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const { return (Data2DImportFileFormat::Data2DImportFormat)format_; }
+Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const
+{
+	return (Data2DImportFileFormat::Data2DImportFormat)format_;
+}
 
 /*
  * Import Functions

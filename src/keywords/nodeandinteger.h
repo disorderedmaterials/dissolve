@@ -34,31 +34,31 @@ class ProcedureNode;
 // Keyword with ProcedureNode and integer index base class
 class NodeAndIntegerKeywordBase
 {
-      public:
+	public:
 	NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
 	virtual ~NodeAndIntegerKeywordBase();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
-      public:
+	public:
 	// Return parent ProcedureNode
 	ProcedureNode *parentNode() const;
 
 	/*
 	 * Target Node
 	 */
-      private:
+	private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 	// Whether to accept nodes within scope only
 	bool onlyInScope_;
 
-      public:
+	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
 	// Return whether to accept nodes within scope only
@@ -71,7 +71,7 @@ class NodeAndIntegerKeywordBase
 	/*
 	 * Associated Index
 	 */
-      public:
+	public:
 	// Set target index
 	virtual void setIndex(int index) = 0;
 	// Return target index
@@ -82,7 +82,7 @@ class NodeAndIntegerKeywordBase
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
@@ -90,13 +90,17 @@ class NodeAndIntegerKeywordBase
 // Keyword with ProcedureNode and integer index
 template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData<Pair<N *, int>>
 {
-      public:
+	public:
 	NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node)
-	    : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(KeywordBase::NodeAndIntegerData, Pair<N *, int>(node))
+		: NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(
+											KeywordBase::NodeAndIntegerData,
+											Pair<N *, int>(node))
 	{
 	}
 	NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node, int index)
-	    : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(KeywordBase::NodeAndIntegerData, Pair<N *, int>(node, index))
+		: NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(
+											KeywordBase::NodeAndIntegerData,
+											Pair<N *, int>(node, index))
 	{
 	}
 	~NodeAndIntegerKeyword() {}
@@ -104,7 +108,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
@@ -113,12 +117,15 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
 		if (!parentNode())
-			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+						KeywordBase::name());
 
 		// Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+		ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg))
+						    : parentNode()->nodeExists(parser.argc(startArg));
 		if (!node)
-			return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+			return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+						KeywordBase::name());
 
 		return setNode(node);
 	}
@@ -136,7 +143,8 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 		}
 		else
 		{
-			if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???", KeywordData<Pair<N *, int>>::data_.b()))
+			if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???",
+					       KeywordData<Pair<N *, int>>::data_.b()))
 				return false;
 		}
 
@@ -146,7 +154,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	/*
 	 * Target Node
 	 */
-      public:
+	public:
 	// Set the target node
 	bool setNode(ProcedureNode *node)
 	{
@@ -154,7 +162,8 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 			return false;
 
 		if (!node->isType(nodeType()))
-			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n",
+						node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
 						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData<Pair<N *, int>>::data_.setA(dynamic_cast<N *>(node));
@@ -169,7 +178,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	/*
 	 * Associated Index
 	 */
-      public:
+	public:
 	// Set target index
 	void setIndex(int index)
 	{
@@ -187,14 +196,14 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 };
 
 #endif

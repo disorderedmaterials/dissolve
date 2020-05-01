@@ -23,8 +23,15 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
-Data3DImportFileFormat::Data3DImportFileFormat(const char *filename, Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
+Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(format)
+{
+	setUpKeywords();
+}
+Data3DImportFileFormat::Data3DImportFileFormat(const char *filename, Data3DImportFileFormat::Data3DImportFormat format)
+	: FileAndFormat(filename, format)
+{
+	setUpKeywords();
+}
 
 Data3DImportFileFormat::~Data3DImportFileFormat() {}
 
@@ -42,7 +49,9 @@ void Data3DImportFileFormat::setUpKeywords() {}
 // Return enum options for Data3DImportFormat
 EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::data3DImportFormats()
 {
-	static EnumOptionsList Data3DImportFormats = EnumOptionsList() << EnumOption(Data3DImportFileFormat::CartesianData3D, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data");
+	static EnumOptionsList Data3DImportFormats = EnumOptionsList()
+						     << EnumOption(Data3DImportFileFormat::CartesianData3D, "cartesian",
+								   "Cartesian X,Y,Z,f(x,y,z) data");
 
 	static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> options("Data3DImportFileFormat", Data3DImportFormats);
 
@@ -59,7 +68,10 @@ const char *Data3DImportFileFormat::formatKeyword(int id) const { return data3DI
 const char *Data3DImportFileFormat::formatDescription(int id) const { return data3DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data3DImportFormat
-Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat() const { return (Data3DImportFileFormat::Data3DImportFormat)format_; }
+Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat() const
+{
+	return (Data3DImportFileFormat::Data3DImportFormat)format_;
+}
 
 /*
  * Import / Write

@@ -150,7 +150,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
 		else if (selectedAction == saveAsAction)
 		{
 			// Get save file name
-			QString filename = QFileDialog::getSaveFileName(this, "Select Exported Data File", QDir::currentPath(), "All Files (*.*)");
+			QString filename = QFileDialog::getSaveFileName(this, "Select Exported Data File", QDir::currentPath(),
+									"All Files (*.*)");
 			if (!filename.isEmpty())
 			{
 				if (rend->type() == Renderable::Data1DRenderable)
@@ -158,7 +159,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
 					Data1DExportFileFormat exportFormat(qPrintable(filename));
 					Data1D *data = Data1D::findObject(rend->objectTag());
 					if (!data)
-						Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+						Messenger::error("Failed to locate data to export (tag = %s).\n",
+								 rend->objectTag());
 					else
 						exportFormat.exportData(*data);
 				}
@@ -167,7 +169,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
 					Data2DExportFileFormat exportFormat(qPrintable(filename));
 					Data2D *data = Data2D::findObject(rend->objectTag());
 					if (!data)
-						Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+						Messenger::error("Failed to locate data to export (tag = %s).\n",
+								 rend->objectTag());
 					else
 						exportFormat.exportData(*data);
 				}
@@ -176,7 +179,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
 					Data3DExportFileFormat exportFormat(qPrintable(filename));
 					Data3D *data = Data3D::findObject(rend->objectTag());
 					if (!data)
-						Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+						Messenger::error("Failed to locate data to export (tag = %s).\n",
+								 rend->objectTag());
 					else
 						exportFormat.exportData(*data);
 				}
@@ -187,7 +191,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
 			Gizmo *destination = copyToActions.dataForItem(selectedAction);
 			if (!destination)
 				return;
-			destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
+			destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(),
+					      rend->name());
 		}
 		else if (selectedAction == removeAction)
 			removeRenderable(rend);

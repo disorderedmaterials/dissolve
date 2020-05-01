@@ -23,7 +23,8 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-ForcefieldTorsionTerm::ForcefieldTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2,
+ForcefieldTorsionTerm::ForcefieldTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
+					     SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2,
 					     double data3)
 {
 	typeI_ = typeI;
@@ -44,12 +45,17 @@ ForcefieldTorsionTerm::~ForcefieldTorsionTerm() {}
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldTorsionTerm::isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const
+bool ForcefieldTorsionTerm::isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
+				    const ForcefieldAtomType *l) const
 {
-	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName()) && DissolveSys::sameWildString(typeK_, k->equivalentName()) &&
+	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) &&
+	    DissolveSys::sameWildString(typeJ_, j->equivalentName()) &&
+	    DissolveSys::sameWildString(typeK_, k->equivalentName()) &&
 	    DissolveSys::sameWildString(typeL_, l->equivalentName()))
 		return true;
-	if (DissolveSys::sameWildString(typeL_, i->equivalentName()) && DissolveSys::sameWildString(typeK_, j->equivalentName()) && DissolveSys::sameWildString(typeJ_, k->equivalentName()) &&
+	if (DissolveSys::sameWildString(typeL_, i->equivalentName()) &&
+	    DissolveSys::sameWildString(typeK_, j->equivalentName()) &&
+	    DissolveSys::sameWildString(typeJ_, k->equivalentName()) &&
 	    DissolveSys::sameWildString(typeI_, l->equivalentName()))
 		return true;
 

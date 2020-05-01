@@ -31,35 +31,35 @@ class Axes;
 // Renderable for Data2D
 class RenderableData2D : public Renderable
 {
-      public:
+	public:
 	RenderableData2D(const Data2D *source, const char *objectTag);
 	~RenderableData2D();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source data
 	const Data2D *source_;
 
-      private:
+	private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-      public:
+	public:
 	// Return version of data
 	int dataVersion();
 
 	/*
 	 * Transform / Limits
 	 */
-      private:
+	private:
 	// Transformed data
 	Data2D transformedData_;
 
-      protected:
+	protected:
 	// Transform data according to current settings
 	void transformValues();
 	// Return reference to transformed data
@@ -69,12 +69,12 @@ class RenderableData2D : public Renderable
 	 * Rendering Primitives
 	 */
 
-      private:
+	private:
 	// Create line strip primitive
-	void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array2D<double> &displayValues, const Axes &axes,
-			   const ColourDefinition &colourDefinition);
+	void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
+			   const Array2D<double> &displayValues, const Axes &axes, const ColourDefinition &colourDefinition);
 
-      protected:
+	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
@@ -83,7 +83,7 @@ class RenderableData2D : public Renderable
 	/*
 	 * Style
 	 */
-      public:
+	public:
 	// Display Styles enum
 	enum Data2DDisplayStyle
 	{
@@ -93,11 +93,11 @@ class RenderableData2D : public Renderable
 	// Return EnumOptions for Data2DDisplayStyle
 	static EnumOptions<Data2DDisplayStyle> data2DDisplayStyles();
 
-      private:
+	private:
 	// Display style for the renderable
 	Data2DDisplayStyle displayStyle_;
 
-      public:
+	public:
 	// Set display style for renderable
 	void setDisplayStyle(Data2DDisplayStyle displayStyle);
 	// Return display style for the renderable
@@ -106,7 +106,7 @@ class RenderableData2D : public Renderable
 	/*
 	 * Style I/O
 	 */
-      public:
+	public:
 	// Data2DStyle Keywords Enum
 	enum Data2DStyleKeyword
 	{

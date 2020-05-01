@@ -32,25 +32,25 @@
 // Keyword with Double Triplet Data
 class RangeKeyword : public KeywordData<Range>
 {
-      public:
+	public:
 	RangeKeyword(Range value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	~RangeKeyword();
 
 	/*
 	 * Label Type
 	 */
-      private:
+	private:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType_;
 
-      public:
+	public:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

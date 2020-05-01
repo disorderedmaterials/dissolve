@@ -33,7 +33,10 @@ KeywordList::~KeywordList() {}
  */
 
 // Add keyword
-bool KeywordList::add(KeywordBase *object, const char *name, const char *description, int optionMask) { return add(object, name, description, "", optionMask); }
+bool KeywordList::add(KeywordBase *object, const char *name, const char *description, int optionMask)
+{
+	return add(object, name, description, "", optionMask);
+}
 
 // Add keyword (including argument description)
 bool KeywordList::add(KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask)
@@ -53,7 +56,8 @@ bool KeywordList::add(const char *groupName, KeywordBase *object, const char *na
 }
 
 // Add keyword to named group (including argument description)
-bool KeywordList::add(const char *groupName, KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask)
+bool KeywordList::add(const char *groupName, KeywordBase *object, const char *name, const char *description,
+		      const char *arguments, int optionMask)
 {
 	KeywordGroup *group = addGroup(groupName);
 	return group->add(object, name, description, arguments, optionMask);
@@ -70,7 +74,8 @@ bool KeywordList::link(const char *groupName, KeywordBase *object, const char *n
 }
 
 // Add link to specified keyword that exists elsewhere (including argument description)
-bool KeywordList::link(const char *groupName, KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask)
+bool KeywordList::link(const char *groupName, KeywordBase *object, const char *name, const char *description,
+		       const char *arguments, int optionMask)
 {
 	if (!object)
 		return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
@@ -199,7 +204,9 @@ Vec3<double> KeywordList::asVec3Double(const char *name) const
 	KeywordBase *keyword = find(name);
 	if (!keyword)
 	{
-		Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n", name);
+		Messenger::warn(
+			"No Module keyword named '%s' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n",
+			name);
 		return Vec3<double>(0.0, 0.0, 0.0);
 	}
 
@@ -270,7 +277,8 @@ bool KeywordList::write(LineParser &parser, const char *prefix, bool onlyIfSet)
 		if (onlyIfSet && (!keyword->base()->isSet()))
 			continue;
 
-		// Make sure we are calling the write() function of the base() keyword class, but with the parent object's name()...
+		// Make sure we are calling the write() function of the base() keyword class, but with the parent object's
+		// name()...
 		if (!keyword->base()->write(parser, keyword->name(), prefix))
 			return false;
 	}

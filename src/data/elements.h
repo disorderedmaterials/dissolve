@@ -29,10 +29,10 @@
 // Basic Element Definition (Z, name, symbol)
 class Element
 {
-      public:
+	public:
 	Element(int Z, const char *name, const char *symbol, int group);
 
-      private:
+	private:
 	// Atomic number (Z)
 	int Z_;
 	// Element name
@@ -42,7 +42,7 @@ class Element
 	// Group in periodic table
 	int group_;
 
-      public:
+	public:
 	// Return atomic number (Z)
 	int Z() const;
 	// Return whether the element is unknown
@@ -61,11 +61,11 @@ class Elements
 	/*
 	 * Element Data
 	 */
-      private:
+	private:
 	// Instantiate / return array of element data
 	static Element *elements();
 
-      public:
+	public:
 	// Return Element with corresponding Z
 	static Element &element(int Z);
 	// Return Element with corresponding symbol
@@ -86,7 +86,7 @@ class Elements
 	/*
 	 * Helper Functions
 	 */
-      public:
+	public:
 	// Create array of Lists, with array size equal to number of elements defined
 	template <class T> static void createElementListArray(Array<List<T>> &listArray)
 	{
@@ -100,21 +100,24 @@ class Elements
 			listArray[n].setDisownOnDestruction(true);
 	}
 	// Create array of RefLists, with array size equal to number of elements defined
-	template <class T> static void createElementRefListArray(Array<RefList<T>> &listArray) { listArray.initialise(Elements::nElements()); }
+	template <class T> static void createElementRefListArray(Array<RefList<T>> &listArray)
+	{
+		listArray.initialise(Elements::nElements());
+	}
 };
 
 // Reference to Element, for use in constructing derived/associated data classes
 class ElementReference
 {
-      public:
+	public:
 	ElementReference(int Z);
 	virtual ~ElementReference();
 
-      private:
+	private:
 	// Referenced Element
 	const Element &element_;
 
-      public:
+	public:
 	// Return referenced element
 	const Element &element() const;
 	// Return atomic number (Z)

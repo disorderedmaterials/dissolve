@@ -23,7 +23,8 @@
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/modulewidget.h"
 
-CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module) : ModuleWidget(parent), module_(module)
+CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module)
+	: ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -125,15 +126,21 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *mod
 	for (Configuration *cfg : module_->targetConfigurations())
 	{
 		// Calculated B...C RDF
-		Renderable *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+		Renderable *rdf = rdfGraph_->createRenderable(
+			Renderable::Data1DRenderable,
+			CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
 		rdf->setColour(StockColours::BlueStockColour);
 
 		// Calculated angle histogram
-		Renderable *angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
+		Renderable *angle = angleGraph_->createRenderable(
+			Renderable::Data1DRenderable,
+			CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
 		angle->setColour(StockColours::RedStockColour);
 
 		// Calculated distance-angle map
-		Renderable *dAngle =
-		    dAngleGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C//%s");
+		Renderable *dAngle = dAngleGraph_->createRenderable(
+			Renderable::Data2DRenderable,
+			CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()),
+			"B...C vs A-B...C//%s");
 	}
 }

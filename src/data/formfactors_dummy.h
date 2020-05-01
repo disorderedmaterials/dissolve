@@ -28,14 +28,14 @@
 // Dummy Form Factor Data
 class FormFactorData_Dummy : public FormFactorData
 {
-      public:
+	public:
 	FormFactorData_Dummy();
 	FormFactorData_Dummy &operator=(const FormFactorData_Dummy &source);
 
 	/*
 	 * Form Factor Generation
 	 */
-      public:
+	public:
 	// Return magnitude of form factor at specified Q value
 	double magnitude(double Q = 0.0) const;
 };

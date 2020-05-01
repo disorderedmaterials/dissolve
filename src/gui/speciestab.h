@@ -41,18 +41,19 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species);
+	public:
+	SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+		   Species *species);
 	~SpeciesTab();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SpeciesTab ui_;
 
-      public slots:
+	public slots:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -63,7 +64,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	/*
 	 * MainTab Reimplementations
 	 */
-      public:
+	public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
@@ -76,18 +77,18 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	/*
 	 * Species Target
 	 */
-      private:
+	private:
 	// Species data to display
 	Species *species_;
 
-      public:
+	public:
 	// Return displayed Species
 	Species *species() const;
 
 	/*
 	 * Widget Functions - Geometry
 	 */
-      private:
+	private:
 	// SpeciesAtomTable row update function
 	void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
 	// SpeciesBondTable row update function
@@ -99,11 +100,11 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// SpeciesImproperTable row update function
 	void updateImproperTableRow(int row, SpeciesImproper *speciesImproper, bool createItems);
 
-      private slots:
+	private slots:
 	// Update atom table selection
 	void updateAtomTableSelection();
 
-      private slots:
+	private slots:
 	void on_AtomTable_itemChanged(QTableWidgetItem *w);
 	void on_AtomTable_itemSelectionChanged();
 	void on_BondTable_itemChanged(QTableWidgetItem *w);
@@ -111,22 +112,24 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_TorsionTable_itemChanged(QTableWidgetItem *w);
 	void on_ImproperTable_itemChanged(QTableWidgetItem *w);
 
-      public slots:
+	public slots:
 	// Update Geometry tab
 	void updateGeometryTab();
 
 	/*
 	 * Widget Functions - Isotopologues
 	 */
-      private:
+	private:
 	// IsotopologuesTree top-level update function
-	void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data, bool createItem);
+	void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data,
+						 bool createItem);
 	// IsotopologuesTree item update function
-	void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *item, Isotope *data, bool createItem);
+	void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *item, Isotope *data,
+					      bool createItem);
 	// Return currently-selected Isotopologue
 	Isotopologue *currentIsotopologue();
 
-      private slots:
+	private slots:
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);
 	void on_IsotopologueGenerateButton_clicked(bool checked);
@@ -134,18 +137,18 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_IsotopologueCollapseAllButton_clicked(bool checked);
 	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int column);
 
-      public slots:
+	public slots:
 	// Update Isotopologues tab
 	void updateIsotopologuesTab();
 
 	/*
 	 * Widget Functions - Sites
 	 */
-      private:
+	private:
 	// Return currently-selected SpeciesSite
 	SpeciesSite *currentSite();
 
-      private slots:
+	private slots:
 	void setCurrentSiteFromViewer();
 	void on_SiteAddButton_clicked(bool checked);
 	void on_SiteRemoveButton_clicked(bool checked);
@@ -153,14 +156,14 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_SiteList_itemChanged(QListWidgetItem *item);
 	void on_SiteOriginMassWeightedCheck_clicked(bool checked);
 
-      public slots:
+	public slots:
 	// Update sites tab
 	void updateSitesTab();
 
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser

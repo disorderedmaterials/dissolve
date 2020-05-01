@@ -34,21 +34,21 @@ class ProcessPool;
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTorsion>
 {
-      public:
+	public:
 	SpeciesTorsion();
 	~SpeciesTorsion();
 
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-      public:
+	public:
 	// Clear object, ready for re-use
 	void clear();
 
 	/*
 	 * Atom Information
 	 */
-      private:
+	private:
 	// First SpeciesAtom in interaction
 	SpeciesAtom *i_;
 	// Second SpeciesAtom in interaction
@@ -58,7 +58,7 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	// Fourth SpeciesAtom in interaction
 	SpeciesAtom *l_;
 
-      public:
+	public:
 	// Set Atoms involved in Torsion
 	void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
 	// Return first SpeciesAtom
@@ -87,7 +87,7 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	/*
 	 * Interaction Parameters
 	 */
-      public:
+	public:
 	// Torsion functional forms
 	enum TorsionFunction
 	{
@@ -101,7 +101,7 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	// Return enum options for TorsionFunction
 	static EnumOptions<TorsionFunction> torsionFunctions();
 
-      public:
+	public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -116,7 +116,7 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

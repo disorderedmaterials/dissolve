@@ -45,26 +45,31 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	const int averaging = keywords_.asInt("Averaging");
 	if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
 		return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
-	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
+	Averaging::AveragingScheme averagingScheme =
+		Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMax = keywords_.asDouble("QMax");
 	const double qMin = keywords_.asDouble("QMin");
 	const Vec3<int> multiplicity = keywords_.asVec3Int("Multiplicity");
-	// TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was used in the generation of the Configuration).
+	// TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was
+	// used in the generation of the Configuration).
 	const bool saveReflections = keywords_.asBool("SaveReflections");
 
 	// Print argument/parameter summary
-	Messenger::print("Bragg: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
+	Messenger::print("Bragg: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n",
+			 qMin, qMax, qDelta);
 	Messenger::print("Bragg: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
 	if (averaging <= 1)
 		Messenger::print("Bragg: No averaging of reflections will be performed.\n");
 	else
-		Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().keyword(averagingScheme));
+		Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging,
+				 Averaging::averagingSchemes().keyword(averagingScheme));
 	Messenger::print("\n");
 
 	/*
-	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
-	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
+	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or
+	 * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
+	 * for each.
 	 */
 	for (Configuration *cfg : targetConfigurations_)
 	{
@@ -86,7 +91,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Perform averaging of reflections data if requested
 		if (averaging > 1)
 		{
-			Averaging::arrayAverage<Array<BraggReflection>>(cfg->moduleData(), "BraggReflections", "", averaging, averagingScheme);
+			Averaging::arrayAverage<Array<BraggReflection>>(cfg->moduleData(), "BraggReflections", "", averaging,
+									averagingScheme);
 		}
 
 		// Form partial and total reflection functions
@@ -97,9 +103,12 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		{
 			// Retrieve BraggReflection data from the Configuration's module data
 			bool found = false;
-			const Array<BraggReflection> &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
+			const Array<BraggReflection> &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
+				cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
 			if (!found)
-				return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
+				return Messenger::error(
+					"Failed to find BraggReflection array in module data for Configuration '%s'.\n",
+					cfg->name());
 
 			// Open a file and save the basic reflection data
 			LineParser braggParser(&procPool);
@@ -108,7 +117,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
 			for (int n = 0; n < braggReflections.nItems(); ++n)
 			{
-				if (!braggParser.writeLineF("%6i  %10.6f  %8i  %10.6e\n", n, braggReflections.constAt(n).q(), braggReflections.constAt(n).nKVectors(),
+				if (!braggParser.writeLineF("%6i  %10.6f  %8i  %10.6e\n", n, braggReflections.constAt(n).q(),
+							    braggReflections.constAt(n).nKVectors(),
 							    braggReflections.constAt(n).intensity(0, 0)))
 					return false;
 			}
@@ -122,12 +132,16 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				for (AtomTypeData *atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++j)
 				{
 					LineParser intensityParser(&procPool);
-					if (!intensityParser.openOutput(CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName())))
+					if (!intensityParser.openOutput(CharString("%s-Bragg-%s-%s.txt", cfg->niceName(),
+										   atd1->atomTypeName(), atd2->atomTypeName())))
 						return false;
-					intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1->atomTypeName(), atd2->atomTypeName());
+					intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1->atomTypeName(),
+								   atd2->atomTypeName());
 					for (int n = 0; n < braggReflections.nItems(); ++n)
 					{
-						if (!intensityParser.writeLineF("%10.6f  %10.6e\n", braggReflections.constAt(n).q(), braggReflections.constAt(n).intensity(i, j)))
+						if (!intensityParser.writeLineF("%10.6f  %10.6e\n",
+										braggReflections.constAt(n).q(),
+										braggReflections.constAt(n).intensity(i, j)))
 							return false;
 					}
 					intensityParser.closeFiles();

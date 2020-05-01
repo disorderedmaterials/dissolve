@@ -29,7 +29,8 @@ TextPrimitiveList::TextPrimitiveList() {}
 void TextPrimitiveList::clear() { textPrimitives_.clear(); }
 
 // Set data from literal coordinates and text
-void TextPrimitiveList::add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &localRotation,
+void TextPrimitiveList::add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint,
+			    TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &localRotation,
 			    double textSize, bool flat)
 {
 	TextPrimitive *primitive = textPrimitives_.add();
@@ -37,7 +38,8 @@ void TextPrimitiveList::add(FontInstance &fontInstance, QString text, Vec3<doubl
 }
 
 // Update global bounding cuboid for all text primitives in the list
-Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize, Cuboid startingCuboid)
+Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
+					 Cuboid startingCuboid)
 {
 	Cuboid result = startingCuboid;
 	Matrix4 textMatrix;
@@ -63,7 +65,8 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matri
 }
 
 // Render all primitives in list
-void TextPrimitiveList::renderAll(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize)
+void TextPrimitiveList::renderAll(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
+				  double baseFontSize)
 {
 	if (!fontInstance.fontOK())
 	{

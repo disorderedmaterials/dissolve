@@ -36,21 +36,21 @@ class NodeScopeStack;
 // Procedure Node - Sum1D
 class Sum1DProcedureNode : public ProcedureNode
 {
-      public:
+	public:
 	Sum1DProcedureNode(const Process1DProcedureNode *target = NULL);
 	~Sum1DProcedureNode();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Process1D node that we are targetting (retrieved from keyword 'SourceData')
 	const Process1DProcedureNode *processNode_;
 	// Ranges for sums (retrieved from keywords)
@@ -60,7 +60,7 @@ class Sum1DProcedureNode : public ProcedureNode
 	// Calculated sums (stored in processing data list)
 	SampledDouble sum_[3];
 
-      public:
+	public:
 	// Return calculated sum specified
 	const SampledDouble &sum(int index) const;
 	// Return whether range B is enabled (from keyword data)
@@ -71,11 +71,12 @@ class Sum1DProcedureNode : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };

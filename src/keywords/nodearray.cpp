@@ -22,7 +22,8 @@
 #include "keywords/nodearray.h"
 #include "procedure/nodes/node.h"
 
-NodeArrayKeywordBase::NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, bool uniqueNodes)
+NodeArrayKeywordBase::NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+					   bool uniqueNodes)
 {
 	parentNode_ = parentNode;
 	nodeType_ = nodeType;
@@ -31,7 +32,8 @@ NodeArrayKeywordBase::NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureN
 	fixedArraySize_ = -1;
 	nodesAreUnique_ = uniqueNodes;
 }
-NodeArrayKeywordBase::NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize, bool onlyInScope, bool uniqueNodes)
+NodeArrayKeywordBase::NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize,
+					   bool onlyInScope, bool uniqueNodes)
 {
 	parentNode_ = parentNode;
 	nodeType_ = nodeType;

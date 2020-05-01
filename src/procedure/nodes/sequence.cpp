@@ -24,8 +24,9 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/nodes.h"
 
-SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode, const char *blockTerminationKeyword)
-    : ProcedureNode(ProcedureNode::SequenceNode)
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure,
+					     ProcedureNode *parentNode, const char *blockTerminationKeyword)
+	: ProcedureNode(ProcedureNode::SequenceNode)
 {
 	context_ = context;
 	procedure_ = procedure;
@@ -40,7 +41,10 @@ SequenceProcedureNode::~SequenceProcedureNode() { clear(); }
  */
 
 // Return whether specified context is relevant for this node type
-bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context != ProcedureNode::NoContext); }
+bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context != ProcedureNode::NoContext);
+}
 
 /*
  * Node Keywords
@@ -70,7 +74,8 @@ void SequenceProcedureNode::addNode(ProcedureNode *node)
 		return;
 
 	if (!node->isContextRelevant(context_))
-		Messenger::error("Node '%s' (type = '%s') is not relevant to the '%s' context.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+		Messenger::error("Node '%s' (type = '%s') is not relevant to the '%s' context.\n", node->name(),
+				 ProcedureNode::nodeTypes().keyword(node->type()),
 				 ProcedureNode::nodeContexts().keyword(context_));
 
 	sequence_.own(node);
@@ -87,7 +92,8 @@ int SequenceProcedureNode::nNodes() const { return sequence_.nItems(); }
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-ProcedureNode *SequenceProcedureNode::searchNodes(const char *name, ProcedureNode *excludeNode, ProcedureNode::NodeType nt) const
+ProcedureNode *SequenceProcedureNode::searchNodes(const char *name, ProcedureNode *excludeNode,
+						  ProcedureNode::NodeType nt) const
 {
 	ListIterator<ProcedureNode> nodeIterator(sequence_);
 	while (ProcedureNode *node = nodeIterator.iterate())
@@ -204,7 +210,8 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, c
 	// Is this node present in our own sequence?
 	if (queryingNode && (!sequence_.contains(queryingNode)))
 	{
-		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodeInScope() is not a member of this sequence.\n");
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodeInScope() is not a member "
+				 "of this sequence.\n");
 		return NULL;
 	}
 
@@ -235,7 +242,8 @@ RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryi
 	// Is this node present in our own sequence?
 	if (queryingNode && (!sequence_.contains(queryingNode)))
 	{
-		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodesInScope() is not a member of this sequence.\n");
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodesInScope() is not a "
+				 "member of this sequence.\n");
 		return RefList<ProcedureNode>();
 	}
 
@@ -270,12 +278,14 @@ ProcedureNode *SequenceProcedureNode::nodeExists(const char *name, ProcedureNode
 }
 
 // Return whether the named parameter is currently in scope
-ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, const char *name, ExpressionVariable *excludeParameter)
+ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, const char *name,
+							    ExpressionVariable *excludeParameter)
 {
 	// Is this node present in our own sequence?
 	if (queryingNode && (!sequence_.contains(queryingNode)))
 	{
-		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parameterInScope() is not a member of this sequence.\n");
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parameterInScope() is not a "
+				 "member of this sequence.\n");
 		return NULL;
 	}
 
@@ -314,7 +324,8 @@ RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNo
 	// Is this node present in our own sequence?
 	if (queryingNode && (!sequence_.contains(queryingNode)))
 	{
-		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parametersInScope() is not a member of this sequence.\n");
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parametersInScope() is not a "
+				 "member of this sequence.\n");
 		return parameters;
 	}
 
@@ -348,7 +359,8 @@ bool SequenceProcedureNode::prepare(Configuration *cfg, const char *prefix, Gene
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+								  GenericList &targetList)
 {
 	ProcedureNode::NodeExecutionResult result = ProcedureNode::Success;
 
@@ -439,7 +451,8 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 			break;
 		case (ProcedureNode::CalculateBaseNode):
 			/* This should never be called */
-			return Messenger::error("Can't create a node of CalculateBase type directly - create the parent node instead.\n");
+			return Messenger::error(
+				"Can't create a node of CalculateBase type directly - create the parent node instead.\n");
 			break;
 		case (ProcedureNode::CalculateVectorNode):
 			newNode = new CalculateVectorProcedureNode();
@@ -461,7 +474,8 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 			break;
 		case (ProcedureNode::OperateBaseNode):
 			/* This should never be called */
-			return Messenger::error("Can't create a node of OperateBase type directly - create the parent node instead.\n");
+			return Messenger::error(
+				"Can't create a node of OperateBase type directly - create the parent node instead.\n");
 			break;
 		case (ProcedureNode::OperateDivideNode):
 			newNode = new OperateDivideProcedureNode();
@@ -507,20 +521,23 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 			return Messenger::error("Unrecognised procedure node type '%s' found.\n", parser.argc(0));
 			break;
 		default:
-			return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n", parser.argc(0));
+			return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n",
+						parser.argc(0));
 		}
 
 		// Check for clash of names with existing node in scope
 		if (nodeInScope(sequence_.last(), parser.hasArg(1) ? parser.argc(1) : newNode->name()))
 		{
-			return Messenger::error("A node named '%s' is already in scope.\n", parser.hasArg(1) ? parser.argc(1) : newNode->name());
+			return Messenger::error("A node named '%s' is already in scope.\n",
+						parser.hasArg(1) ? parser.argc(1) : newNode->name());
 		}
 
 		// Set the name of the node if it is required
 		if (newNode->mustBeNamed())
 		{
 			if (!parser.hasArg(1))
-				Messenger::error("A name must be given explicitly to a node of type %s.\n", ProcedureNode::nodeTypes().keyword(newNode->type()));
+				Messenger::error("A name must be given explicitly to a node of type %s.\n",
+						 ProcedureNode::nodeTypes().keyword(newNode->type()));
 			else
 				newNode->setName(parser.argc(1));
 		}
@@ -528,7 +545,8 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 		// Is the new node permitted in our context?
 		if (!newNode->isContextRelevant(context_))
 		{
-			return Messenger::error("'%s' node not allowed / relevant in '%s' context.\n", ProcedureNode::nodeTypes().keyword(newNode->type()),
+			return Messenger::error("'%s' node not allowed / relevant in '%s' context.\n",
+						ProcedureNode::nodeTypes().keyword(newNode->type()),
 						ProcedureNode::nodeContexts().keyword(context_));
 		}
 
@@ -547,7 +565,8 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 // Write structure to specified LineParser
 bool SequenceProcedureNode::write(LineParser &parser, const char *prefix)
 {
-	// Block Start - should have already been written by the calling function, since we don't know the keyword we are linked to
+	// Block Start - should have already been written by the calling function, since we don't know the keyword we are linked
+	// to
 
 	// Loop over nodes in this sequence
 	ListIterator<ProcedureNode> nodeIterator(sequence_);

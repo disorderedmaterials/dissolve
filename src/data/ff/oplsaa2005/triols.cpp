@@ -52,6 +52,7 @@ const char *Forcefield_OPLSAA2005_Triols::name() const { return "OPLSAA2005/Trio
 // Return description for Forcefield
 const char *Forcefield_OPLSAA2005_Triols::description() const
 {
-	static CharString desc("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: %s", publicationReferences());
+	static CharString desc("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: %s",
+			       publicationReferences());
 	return desc.get();
 }

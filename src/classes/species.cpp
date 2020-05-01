@@ -101,7 +101,8 @@ bool Species::checkSetUp()
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
-			Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), i->element()->symbol());
+			Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n",
+					 i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 
@@ -111,7 +112,9 @@ bool Species::checkSetUp()
 			SpeciesAtom *partner = bond->partner(i);
 			if (!partner->hasBond(i))
 			{
-				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), partner->userIndex(), partner->userIndex());
+				Messenger::error(
+					"SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n",
+					i->userIndex(), partner->userIndex(), partner->userIndex());
 				++nErrors;
 			}
 		}
@@ -129,12 +132,15 @@ bool Species::checkSetUp()
 		{
 			if (isotopeIterator.currentData() == NULL)
 			{
-				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
+				Messenger::error(
+					"Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n",
+					iso->name(), atomType->name());
 				++nErrors;
 			}
 			else if (!Isotopes::isotope(atomType->element(), isotopeIterator.currentData()->A()))
 			{
-				Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
+				Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n",
+						 iso->name(), atomType->name());
 				++nErrors;
 			}
 		}
@@ -152,8 +158,9 @@ void Species::print()
 	for (int n = 0; n < nAtoms(); ++n)
 	{
 		SpeciesAtom *i = atoms_[n];
-		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n + 1, i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"),
-				 (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n + 1, i->element()->symbol(),
+				 (i->atomType() ? i->atomType()->name() : "??"), (i->atomType() ? i->atomType()->index() : -1),
+				 i->r().x, i->r().y, i->r().z, i->charge());
 	}
 
 	if (nBonds() > 0)
@@ -164,7 +171,8 @@ void Species::print()
 		DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
 		while (const SpeciesBond *b = bondIterator.iterate())
 		{
-			CharString s("   %4i  %4i    %c%-12s", b->indexI() + 1, b->indexJ() + 1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+			CharString s("   %4i  %4i    %c%-12s", b->indexI() + 1, b->indexJ() + 1,
+				     b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(b->form()));
 			for (int n = 0; n < MAXINTRAPARAMS; ++n)
 				s.strcatf("  %12.4e", b->parameter(n));
 			Messenger::print("%s\n", s.get());
@@ -175,11 +183,13 @@ void Species::print()
 	{
 		Messenger::print("\n  Angles:\n");
 		Messenger::print("      I     J     K    Form             Parameters\n");
-		Messenger::print("    ---------------------------------------------------------------------------------------\n");
+		Messenger::print(
+			"    ---------------------------------------------------------------------------------------\n");
 		DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
 		while (const SpeciesAngle *a = angleIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1, a->masterParameters() ? '@' : ' ',
+			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
+				     a->masterParameters() ? '@' : ' ',
 				     SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
 			for (int n = 0; n < MAXINTRAPARAMS; ++n)
 				s.strcatf("  %12.4e", a->parameter(n));
@@ -191,12 +201,14 @@ void Species::print()
 	{
 		Messenger::print("\n  Torsions:\n");
 		Messenger::print("      I     J     K     L    Form             Parameters\n");
-		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
+		Messenger::print(
+			"    ---------------------------------------------------------------------------------------------\n");
 		// Loop over Torsions
 		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
 		while (const SpeciesTorsion *t = torsionIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1, t->masterParameters() ? '@' : ' ',
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1,
+				     t->indexL() + 1, t->masterParameters() ? '@' : ' ',
 				     SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
 			for (int n = 0; n < MAXINTRAPARAMS; ++n)
 				s.strcatf("  %12.4e", t->parameter(n));
@@ -208,12 +220,14 @@ void Species::print()
 	{
 		Messenger::print("\n  Impropers:\n");
 		Messenger::print("      I     J     K     L    Form             Parameters\n");
-		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
+		Messenger::print(
+			"    ---------------------------------------------------------------------------------------------\n");
 		// Loop over Impropers
 		DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
 		while (const SpeciesImproper *imp = improperIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1, imp->indexL() + 1, imp->masterParameters() ? '@' : ' ',
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI() + 1, imp->indexJ() + 1,
+				     imp->indexK() + 1, imp->indexL() + 1, imp->masterParameters() ? '@' : ' ',
 				     SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
 			for (int n = 0; n < MAXINTRAPARAMS; ++n)
 				s.strcatf("  %12.4e", imp->parameter(n));

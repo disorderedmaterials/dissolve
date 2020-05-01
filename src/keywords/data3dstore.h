@@ -31,14 +31,14 @@
 // Keyword with a store of Data3D
 class Data3DStoreKeyword : public KeywordData<Data3DStore &>
 {
-      public:
+	public:
 	Data3DStoreKeyword(Data3DStore &dataStore);
 	~Data3DStoreKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

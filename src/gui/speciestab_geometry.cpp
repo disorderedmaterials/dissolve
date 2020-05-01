@@ -87,7 +87,9 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
 		item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
 	item->setSelected(speciesAtom->isSelected());
-	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb()
+			       ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+			       : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 }
 
 // BondTable row update function
@@ -107,7 +109,8 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 		else
 			item = ui_.BondTable->item(row, n);
 		item->setText(QString::number(speciesBond->index(n) + 1));
-		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+							       : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -119,7 +122,8 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 	}
 	else
 		item = ui_.BondTable->item(row, 2);
-	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name()) : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
+	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name())
+						      : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -133,7 +137,8 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 		else
 			item = ui_.BondTable->item(row, n + 3);
 		item->setText(QString::number(speciesBond->parameter(n)));
-		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+							       : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -154,7 +159,8 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 		else
 			item = ui_.AngleTable->item(row, n);
 		item->setText(QString::number(speciesAngle->index(n) + 1));
-		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								: Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -166,7 +172,8 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 	}
 	else
 		item = ui_.AngleTable->item(row, 3);
-	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name()) : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
+	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name())
+						       : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -180,7 +187,8 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 		else
 			item = ui_.AngleTable->item(row, n + 4);
 		item->setText(QString::number(speciesAngle->parameter(n)));
-		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								: Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -201,7 +209,8 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 		else
 			item = ui_.TorsionTable->item(row, n);
 		item->setText(QString::number(speciesTorsion->index(n) + 1));
-		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								  : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -213,7 +222,9 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 	}
 	else
 		item = ui_.TorsionTable->item(row, 4);
-	item->setText(speciesTorsion->masterParameters() ? QString("@%1").arg(speciesTorsion->masterParameters()->name()) : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
+	item->setText(speciesTorsion->masterParameters()
+			      ? QString("@%1").arg(speciesTorsion->masterParameters()->name())
+			      : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -227,7 +238,8 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 		else
 			item = ui_.TorsionTable->item(row, n + 5);
 		item->setText(QString::number(speciesTorsion->parameter(n)));
-		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								  : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -248,7 +260,8 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
 		else
 			item = ui_.ImproperTable->item(row, n);
 		item->setText(QString::number(speciesImproper->index(n) + 1));
-		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								   : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -260,8 +273,9 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
 	}
 	else
 		item = ui_.ImproperTable->item(row, 4);
-	item->setText(speciesImproper->masterParameters() ? QString("@%1").arg(speciesImproper->masterParameters()->name())
-							  : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
+	item->setText(speciesImproper->masterParameters()
+			      ? QString("@%1").arg(speciesImproper->masterParameters()->name())
+			      : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -275,7 +289,8 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
 		else
 			item = ui_.ImproperTable->item(row, n + 5);
 		item->setText(QString::number(speciesImproper->parameter(n)));
-		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								   : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -568,7 +583,8 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
 		}
 		else
 		{
-			SpeciesTorsion::TorsionFunction tf = SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
+			SpeciesTorsion::TorsionFunction tf =
+				SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
 			speciesTorsion->setMasterParameters(NULL);
 			speciesTorsion->setForm(tf);
 		}
@@ -639,7 +655,8 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
 		}
 		else
 		{
-			SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
+			SpeciesImproper::ImproperFunction tf =
+				SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
 			speciesImproper->setMasterParameters(NULL);
 			speciesImproper->setForm(tf);
 		}
@@ -684,7 +701,8 @@ void SpeciesTab::updateGeometryTab()
 	if (!species_)
 		ui_.AtomTable->clearContents();
 	else
-		TableWidgetUpdater<SpeciesTab, SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this,
+									       &SpeciesTab::updateAtomTableRow);
 
 	// -- Intramolecular terms
 	if (!species_)
@@ -696,10 +714,14 @@ void SpeciesTab::updateGeometryTab()
 	}
 	else
 	{
-		TableWidgetUpdater<SpeciesTab, SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this, &SpeciesTab::updateBondTableRow);
-		TableWidgetUpdater<SpeciesTab, SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this, &SpeciesTab::updateAngleTableRow);
-		TableWidgetUpdater<SpeciesTab, SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this, &SpeciesTab::updateTorsionTableRow);
-		TableWidgetUpdater<SpeciesTab, SpeciesImproper> improperUpdater(ui_.ImproperTable, species_->impropers(), this, &SpeciesTab::updateImproperTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this,
+									&SpeciesTab::updateBondTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this,
+									  &SpeciesTab::updateAngleTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this,
+									      &SpeciesTab::updateTorsionTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesImproper> improperUpdater(ui_.ImproperTable, species_->impropers(), this,
+										&SpeciesTab::updateImproperTableRow);
 	}
 	ui_.BondTable->resizeColumnsToContents();
 	ui_.AngleTable->resizeColumnsToContents();

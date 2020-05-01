@@ -35,37 +35,37 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	NodeValueEnumOptionsBaseKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::NodeValueEnumOptionsWidget ui_;
 
-      private slots:
+	private slots:
 	// Value edited
 	void on_ValueEdit_editingFinished();
 	void on_ValueEdit_returnPressed();
 	void on_OptionsCombo_currentIndexChanged(int index);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 };

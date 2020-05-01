@@ -80,7 +80,9 @@ std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const string name)
 		if (DissolveSys::sameString(ff->name(), name.c_str()))
 			return ff;
 	}
-	auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> ff) { return DissolveSys::sameString(ff->name(), name.c_str()); });
+	auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> ff) {
+		return DissolveSys::sameString(ff->name(), name.c_str());
+	});
 	if (it == forcefields().end())
 		return nullptr;
 

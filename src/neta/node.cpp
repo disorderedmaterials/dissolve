@@ -30,8 +30,10 @@
 // Return enum options for SymbolToken
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 {
-	static EnumOptionsList ComparisonOperatorOptions = EnumOptionsList() << EnumOption(EqualTo, "=") << EnumOption(NotEqualTo, "!=") << EnumOption(GreaterThan, ">") << EnumOption(LessThan, "<")
-									     << EnumOption(GreaterThanEqualTo, ">=") << EnumOption(LessThanEqualTo, "<=");
+	static EnumOptionsList ComparisonOperatorOptions =
+		EnumOptionsList() << EnumOption(EqualTo, "=") << EnumOption(NotEqualTo, "!=") << EnumOption(GreaterThan, ">")
+				  << EnumOption(LessThan, "<") << EnumOption(GreaterThanEqualTo, ">=")
+				  << EnumOption(LessThanEqualTo, "<=");
 
 	static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", ComparisonOperatorOptions);
 
@@ -71,7 +73,8 @@ NETANode *NETANode::lastBranchNode() { return branch_.last(); }
 int NETANode::nBranchNodes() const { return branch_.nItems(); }
 
 // Create connectivity node from current targets
-NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes)
+NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> targetElements,
+						   std::vector<ForcefieldAtomType *> targetAtomTypes)
 {
 	// Create the new node and own it
 	NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
@@ -81,7 +84,8 @@ NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> target
 }
 
 // Create presence node in the branch
-NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes)
+NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements,
+					       std::vector<ForcefieldAtomType *> targetAtomTypes)
 {
 	// Create the new node and own it
 	NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);

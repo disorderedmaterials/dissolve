@@ -35,21 +35,21 @@ class CalibrationModule : public Module
 	 * Module for testing various functions
 	 */
 
-      public:
+	public:
 	CalibrationModule();
 	~CalibrationModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -62,7 +62,7 @@ class CalibrationModule : public Module
 	/*
 	 * Initialisation
 	 */
-      public:
+	public:
 	// IntraBroadening Fitting Targets
 	enum IntraBroadeningFitTarget
 	{
@@ -72,21 +72,21 @@ class CalibrationModule : public Module
 		nIntraBroadeningFitTargets
 	};
 
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Members / Functions
 	 */
-      private:
+	private:
 	// RDF Module targets for IntraBroadening calibration
 	RefList<Module> intraBroadeningModules_;
 	// NeutronSQ Module targets for IntraBroadening calibration (S(Q) data)
@@ -97,7 +97,7 @@ class CalibrationModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
@@ -105,11 +105,12 @@ class CalibrationModule : public Module
 // Interface Class for Complex Cost Functions
 class CalibrationModuleCostFunctions
 {
-      public:
-	CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
-				       RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences);
+	public:
+	CalibrationModuleCostFunctions(
+		Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
+		RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences);
 
-      private:
+	private:
 	// Dissolve Main Object
 	Dissolve &dissolve_;
 	// Target ProcessPool
@@ -119,7 +120,7 @@ class CalibrationModuleCostFunctions
 	// NeutronSQModule targets for IntraBroadening fitting
 	RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences_;
 
-      public:
+	public:
 	// Cost function for intraBroadening minimisation
 	double intraBroadeningCost(const Array<double> &alpha);
 };

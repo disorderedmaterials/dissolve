@@ -30,7 +30,7 @@
 // Number Format
 class NumberFormat
 {
-      public:
+	public:
 	NumberFormat();
 	~NumberFormat();
 	// Basic Number Type
@@ -49,7 +49,7 @@ class NumberFormat
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// Format type
 	FormatType type_;
 	// Number of decimals to use
@@ -61,7 +61,7 @@ class NumberFormat
 	// Whether to use 'E' notation in preference to 'x10' notation
 	bool useENotation_;
 
-      public:
+	public:
 	// Set format type
 	void setType(NumberFormat::FormatType type);
 	// Return format type
@@ -86,7 +86,7 @@ class NumberFormat
 	/*
 	 * Number Conversion
 	 */
-      public:
+	public:
 	// Return number formatted according to internal definition
 	QString format(double number);
 };

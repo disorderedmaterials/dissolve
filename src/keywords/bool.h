@@ -30,14 +30,14 @@
 // Keyword with Bool Data
 class BoolKeyword : public KeywordData<bool>
 {
-      public:
+	public:
 	BoolKeyword(bool value);
 	~BoolKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -50,7 +50,7 @@ class BoolKeyword : public KeywordData<bool>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)

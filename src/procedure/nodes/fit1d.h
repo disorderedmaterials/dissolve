@@ -39,21 +39,21 @@ class NodeScopeStack;
 // Procedure Node - Fit1D
 class Fit1DProcedureNode : public ProcedureNode
 {
-      public:
+	public:
 	Fit1DProcedureNode(Collect1DProcedureNode *target = NULL);
 	~Fit1DProcedureNode();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 	/*
 	 * Node Keywords
 	 */
-      public:
+	public:
 	// Node Keywords
 	enum Fit1DNodeKeyword
 	{
@@ -72,7 +72,7 @@ class Fit1DProcedureNode : public ProcedureNode
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Node containing source data to fit
 	ProcedureNodeReference dataNode_;
 	// Fit equation object
@@ -88,11 +88,11 @@ class Fit1DProcedureNode : public ProcedureNode
 	// Whether to save data after normalisation
 	bool saveData_;
 
-      private:
+	private:
 	// Fitting cost function
 	double equationCost(const Array<double> &alpha);
 
-      public:
+	public:
 	// Return fitted data
 	const Data1D &fittedData() const;
 	// Set whether to save processed data
@@ -101,18 +101,19 @@ class Fit1DProcedureNode : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Read structure from specified LineParser
 	bool read(LineParser &parser, const CoreData &coreData);
 	// Write structure to specified LineParser

@@ -37,29 +37,29 @@ class ModuleBlock : public QWidget, public ChartBlock
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve);
 	~ModuleBlock();
 
-      private:
+	private:
 	// Reference to Dissolve
 	Dissolve &dissolve_;
 
 	/*
 	 * Module Target
 	 */
-      private:
+	private:
 	// Displayed Module
 	Module *module_;
 
-      public:
+	public:
 	// Return displayed Module
 	Module *module() const;
 
 	/*
 	 * Controls
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ModuleBlockWidget ui_;
 	// Whether the widget is currently refreshing
@@ -69,40 +69,40 @@ class ModuleBlock : public QWidget, public ChartBlock
 	// Colour to use for drawing
 	QColor displayColour_;
 
-      public:
+	public:
 	// Return suitable QPixmap for supplied Module
 	static QPixmap modulePixmap(const Module *module);
 	// Return suitable QPixmap for supplied Module type
 	static QPixmap modulePixmap(QString moduleType);
 
-      public slots:
+	public slots:
 	void on_RemoveButton_clicked(bool checked);
 	void on_NameEdit_editingFinished();
 	void on_NameEdit_returnPressed();
 	void on_EnabledButton_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
 
-      signals:
+	signals:
 	void remove(const QString &blockIdentifier);
 
 	/*
 	 * QWidget Reimplementations
 	 */
-      protected:
+	protected:
 	// Paint event
 	void paintEvent(QPaintEvent *event);
 
 	/*
 	 * Type (ChartBlock Reimplementations)
 	 */
-      public:
+	public:
 	// Return type of this block
 	const char *blockType();
 
 	/*
 	 * Widget (ChartBlock Reimplementations)
 	 */
-      public:
+	public:
 	// Return underlying widget
 	QWidget *widget();
 	// Return width of underlying widget
@@ -115,7 +115,7 @@ class ModuleBlock : public QWidget, public ChartBlock
 	/*
 	 * Update (ChartBlock Reimplementations)
 	 */
-      public:
+	public:
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls
@@ -126,7 +126,7 @@ class ModuleBlock : public QWidget, public ChartBlock
 	/*
 	 * Signals / Slots
 	 */
-      signals:
+	signals:
 	// Notify that the Module's data has been modified in some way
 	void dataModified();
 };

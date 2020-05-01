@@ -39,7 +39,10 @@ Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data
 
 Data3D::~Data3D() {}
 
-Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this) { (*this) = source; }
+Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this)
+{
+	(*this) = source;
+}
 
 // Clear Data
 void Data3D::clear()
@@ -351,7 +354,8 @@ double &Data3D::error(int xIndex, int yIndex, int zIndex)
 	if (!hasError_)
 	{
 		static double dummy;
-		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(), objectTag());
+		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n",
+				name(), objectTag());
 		return dummy;
 	}
 #ifdef CHECKS
@@ -384,7 +388,9 @@ double Data3D::constError(int xIndex, int yIndex, int zIndex) const
 {
 	if (!hasError_)
 	{
-		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constError(int,int) was requested.\n", name(), objectTag());
+		Messenger::warn(
+			"This Data3D (name='%s', tag='%s') has no errors to return, but constError(int,int) was requested.\n",
+			name(), objectTag());
 		return 0.0;
 	}
 #ifdef CHECKS
@@ -412,7 +418,8 @@ double Data3D::constError(int xIndex, int yIndex, int zIndex) const
 Array3D<double> &Data3D::errors()
 {
 	if (!hasError_)
-		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
+		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n",
+				name(), objectTag());
 
 	++version_;
 
@@ -423,7 +430,8 @@ Array3D<double> &Data3D::errors()
 const Array3D<double> &Data3D::constErrors3D() const
 {
 	if (!hasError_)
-		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
+		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n",
+				name(), objectTag());
 
 	return errors_;
 }

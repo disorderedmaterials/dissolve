@@ -32,7 +32,7 @@ template <class T> class Array3D;
 // Plottable
 class PlottableData
 {
-      public:
+	public:
 	// Plottable Types
 	enum PlottableDataType
 	{
@@ -45,15 +45,15 @@ class PlottableData
 	/*
 	 * Basic Information
 	 */
-      private:
+	private:
 	// Type of plottable
 	PlottableDataType type_;
 
-      protected:
+	protected:
 	// Name of plottable
 	CharString name_;
 
-      public:
+	public:
 	// Set name of plottable
 	void setName(const char *name);
 	// Return name of plottable
@@ -62,7 +62,7 @@ class PlottableData
 	/*
 	 * Axis Information
 	 */
-      public:
+	public:
 	// Return x axis Array
 	virtual const Array<double> &constXAxis() const = 0;
 	// Return y axis Array
@@ -73,7 +73,7 @@ class PlottableData
 	/*
 	 * Values / Errors
 	 */
-      public:
+	public:
 	// Return data version
 	virtual int version() const = 0;
 	// Return values Array

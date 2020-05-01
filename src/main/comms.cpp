@@ -77,7 +77,8 @@ bool Dissolve::setUpMPIPools()
 	// If there is only one process, make sure we revert to SequentialConfigStrategy
 	if ((ProcessPool::nWorldProcesses() == 1) && (parallelStrategy_ != Dissolve::SequentialConfigStrategy))
 	{
-		Messenger::warn("Parallel strategies make no sense with only one processor, so reverting to sequential strategy default.\n");
+		Messenger::warn("Parallel strategies make no sense with only one processor, so reverting to sequential "
+				"strategy default.\n");
 		parallelStrategy_ = Dissolve::SequentialConfigStrategy;
 	}
 
@@ -109,13 +110,15 @@ bool Dissolve::setUpMPIPools()
 			// All processes divided equally amongst Configurations - do we have enough?
 			if (ProcessPool::nWorldProcesses() < nConfigurations())
 			{
-				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(),
-						 nConfigurations());
+				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so "
+						 "Even strategy can't be employed.\n",
+						 ProcessPool::nWorldProcesses(), nConfigurations());
 				return false;
 			}
 			else if (ProcessPool::nWorldProcesses() % nConfigurations() != 0)
 			{
-				Messenger::error("Number of processes (%i) does not divide equally amongst the number of Configurations (%i) so Even strategy can't be employed.\n",
+				Messenger::error("Number of processes (%i) does not divide equally amongst the number of "
+						 "Configurations (%i) so Even strategy can't be employed.\n",
 						 ProcessPool::nWorldProcesses(), coreData_.nConfigurations());
 				return false;
 			}

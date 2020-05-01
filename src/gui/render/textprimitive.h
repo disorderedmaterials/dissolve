@@ -39,7 +39,7 @@ class FontInstance;
 // Text Primitive
 class TextPrimitive : public ListItem<TextPrimitive>
 {
-      public:
+	public:
 	TextPrimitive();
 	~TextPrimitive();
 	// Text Anchors enum
@@ -77,7 +77,7 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// Coordinates of anchorpoint of text
 	Vec3<double> anchorPoint_;
 	// Location of anchorpoint on text bounding box
@@ -93,20 +93,23 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Text fragments to render
 	List<TextFragment> fragments_;
 
-      public:
+	public:
 	// Set data
-	void set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
+	void set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition,
+		 Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
 	// Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
-	Matrix4 transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize, TextFragment *fragment = NULL);
+	Matrix4 transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
+				     TextFragment *fragment = NULL);
 	// Calculate bounding box of primitive
 	void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight);
 	// Render primitive
-	void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize);
+	void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
+		    double baseFontSize);
 
 	/*
 	 * Generation
 	 */
-      private:
+	private:
 	// Character string source
 	static QString stringSource_;
 	// Integer position in stringSource, total length of string, and starting position of current token/function
@@ -126,7 +129,7 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Current horizontal position, used when generating primitive
 	static double horizontalPosition_;
 
-      public:
+	public:
 	// Parser lexer, called by yylex()
 	static int lex();
 	// Generate TextFragment data for specified TextPrimitive from supplied string

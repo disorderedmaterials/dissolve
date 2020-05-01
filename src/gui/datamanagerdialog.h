@@ -36,11 +36,11 @@ class DataManagerDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
+	public:
 	DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints);
 	~DataManagerDialog();
 
-      private:
+	private:
 	// Reference to Dissolve
 	Dissolve &dissolve_;
 	// List of current ReferencePoints
@@ -49,13 +49,14 @@ class DataManagerDialog : public QDialog
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::DataManagerDialog ui_;
 
-      private:
+	private:
 	// Append GenericItems to table under specified source
-	void addItemsToTable(QTableWidget *table, List<GenericItem> &items, const char *locationName, const char *locationIconResource);
+	void addItemsToTable(QTableWidget *table, List<GenericItem> &items, const char *locationName,
+			     const char *locationIconResource);
 	// Update the specified table of GenericItems, optionally filtering them by name and description
 	void filterTable(QTableWidget *table, GenericItem *current, QString filter);
 	// Update ReferencePoint table row
@@ -65,7 +66,7 @@ class DataManagerDialog : public QDialog
 	// Update controls
 	void updateControls();
 
-      private slots:
+	private slots:
 	// Simulation Data
 	void on_SimulationDataFilterEdit_textChanged(const QString &text);
 	// Reference Points

@@ -29,25 +29,25 @@ class ProcessPool;
 // Version Counter
 class VersionCounter
 {
-      public:
+	public:
 	VersionCounter();
 	~VersionCounter();
 
 	/*
 	 * Version Information
 	 */
-      private:
+	private:
 	// Version counter
 	int version_;
 
-      public:
+	public:
 	// Reset version counter to zero
 	void zero();
 
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	// Automatic conversion to integer
 	operator int() const;
 	// Prefix increment
@@ -56,7 +56,7 @@ class VersionCounter
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const int root);
 };

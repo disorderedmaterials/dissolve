@@ -28,7 +28,9 @@ namespace XRayFormFactors
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 {
-	static EnumOptionsList XRayFormFactorDataSets = EnumOptionsList() << EnumOption(XRayFormFactors::NoFormFactorData, "None") << EnumOption(XRayFormFactors::WaasmaierKirfel1995, "WK1995");
+	static EnumOptionsList XRayFormFactorDataSets = EnumOptionsList()
+							<< EnumOption(XRayFormFactors::NoFormFactorData, "None")
+							<< EnumOption(XRayFormFactors::WaasmaierKirfel1995, "WK1995");
 
 	static EnumOptions<XRayFormFactors::XRayFormFactorData> options("XRayFormFactors", XRayFormFactorDataSets);
 
@@ -51,6 +53,9 @@ optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int 
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge) { return formFactorData(dataSet, el->Z(), formalCharge); }
+optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge)
+{
+	return formFactorData(dataSet, el->Z(), formalCharge);
+}
 
 } // namespace XRayFormFactors

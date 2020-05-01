@@ -35,7 +35,8 @@ ComboListItems::~ComboListItems() {}
  * ComboListDelegate
  */
 
-ComboListDelegate::ComboListDelegate(QObject *parent, ComboListItems *items, bool allowNewItems) : QItemDelegate(parent), items_(items)
+ComboListDelegate::ComboListDelegate(QObject *parent, ComboListItems *items, bool allowNewItems)
+	: QItemDelegate(parent), items_(items)
 {
 	// Private variables
 	allowNewItems_ = allowNewItems;
@@ -95,7 +96,11 @@ void ComboListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
 }
 
 // Update widget geometry
-void ComboListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void ComboListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+					     const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}
 
 /*
  * Signals / Slots

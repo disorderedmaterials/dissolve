@@ -31,18 +31,18 @@
 // Plain Value List
 class PlainValueList
 {
-      public:
+	public:
 	PlainValueList();
 	~PlainValueList();
 
 	/*
 	 * Values
 	 */
-      private:
+	private:
 	// List of contained Values
 	List<PlainValue> values_;
 
-      public:
+	public:
 	// Return first Value in list
 	PlainValue *values();
 	// Add Value
@@ -59,14 +59,14 @@ class PlainValueList
 	/*
 	 * Search
 	 */
-      public:
+	public:
 	// Return named Value
 	PlainValue *value(const char *name);
 
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool);
 };

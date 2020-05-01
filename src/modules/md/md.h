@@ -34,21 +34,21 @@ class MDModule : public Module
 	 * Module for testing various functions
 	 */
 
-      public:
+	public:
 	MDModule();
 	~MDModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -61,25 +61,25 @@ class MDModule : public Module
 	/*
 	 * Initialisation
 	 */
-      private:
+	private:
 	// Species types to restrict calculation to (if any)
 	RefList<Species> restrictToSpecies_;
 
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-      private:
+	private:
 	// Cap forces in Configuration
 	int capForces(Configuration *cfg, double maxForceSq, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 	// Determine timestep based on maximal force component

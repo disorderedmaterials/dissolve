@@ -33,7 +33,7 @@
 #include <QMenu>
 
 WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title)
-    : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
+	: ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -43,7 +43,8 @@ WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, M
 	mdiArea_ = new TMdiArea(dissolveWindow);
 	ui.verticalLayout->addWidget(mdiArea_);
 	connect(mdiArea_, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
-	connect(mdiArea_, SIGNAL(subWindowActivated(QMdiSubWindow *)), dissolveWindow, SLOT(currentWorkspaceGizmoChanged(QMdiSubWindow *)));
+	connect(mdiArea_, SIGNAL(subWindowActivated(QMdiSubWindow *)), dissolveWindow,
+		SLOT(currentWorkspaceGizmoChanged(QMdiSubWindow *)));
 }
 
 WorkspaceTab::~WorkspaceTab() {}
@@ -139,7 +140,8 @@ Gizmo *WorkspaceTab::createGizmo(const char *type)
 	}
 	else if (DissolveSys::sameString(type, "Integrator1D"))
 	{
-		Integrator1DGizmo *integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), Gizmo::uniqueName("Integrator1D"));
+		Integrator1DGizmo *integrator1D =
+			new Integrator1DGizmo(dissolveWindow_->dissolve(), Gizmo::uniqueName("Integrator1D"));
 		connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
 		gizmo = integrator1D;
 		widget = integrator1D;
@@ -208,9 +210,9 @@ void WorkspaceTab::showContextMenu(const QPoint &pos)
 	// 		ListIterator<Module> moduleIterator(cfg->modules());
 	// 		while (Module* module= moduleIterator.iterate())
 	// 		{
-	// 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
-	// 			moduleItem->setData(VariantPointer<Module>(module));
-	// 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
+	// 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(),
+	// module->uniqueName()).get()); 			moduleItem->setData(VariantPointer<Module>(module));
+	// connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
 	// 		}
 	// 	}
 
@@ -292,7 +294,8 @@ bool WorkspaceTab::writeState(LineParser &parser) const
 
 		// Write window geometry / state
 		QRect geometry = gizmo->window()->geometry();
-		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DissolveSys::btoa(gizmo->window()->isMaximized()),
+		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(),
+				       DissolveSys::btoa(gizmo->window()->isMaximized()),
 				       DissolveSys::btoa(gizmo->window()->isShaded())))
 			return false;
 

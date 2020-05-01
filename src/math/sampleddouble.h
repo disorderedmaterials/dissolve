@@ -31,14 +31,14 @@ class ProcessPool;
 // Double value with sampling
 class SampledDouble : public GenericItemBase
 {
-      public:
+	public:
 	SampledDouble();
 	SampledDouble(const double x);
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Sample size contributing to averages etc.
 	int count_;
 	// Mean of sampled data (i.e. current value)
@@ -46,7 +46,7 @@ class SampledDouble : public GenericItemBase
 	// Aggregate of squared distance from mean
 	double m2_;
 
-      public:
+	public:
 	// Clear data
 	void clear();
 	// Return current (mean) value
@@ -63,7 +63,7 @@ class SampledDouble : public GenericItemBase
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	operator double &();
 	void operator=(double x);
 	void operator=(const SampledDouble &source);
@@ -76,7 +76,7 @@ class SampledDouble : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -87,7 +87,7 @@ class SampledDouble : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Sum data over all processes within the pool
 	bool allSum(ProcessPool &procPool);
 	// Broadcast data

@@ -32,7 +32,8 @@ Data3DStore::~Data3DStore() {}
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data3DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
+bool Data3DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword,
+			  const CoreData &coreData)
 {
 	// Create new data
 	Data3D *data = data_.add();
@@ -69,7 +70,8 @@ const Data3D &Data3DStore::data(const char *name) const
 			return (*xyData);
 
 	static Data3D dummy;
-	Messenger::warn("Data named '%s' was requested from Data3DStore, but it does not exist. Returning an empty Data3D...\n", name);
+	Messenger::warn("Data named '%s' was requested from Data3DStore, but it does not exist. Returning an empty Data3D...\n",
+			name);
 	return dummy;
 }
 

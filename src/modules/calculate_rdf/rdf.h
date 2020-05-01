@@ -34,21 +34,21 @@ class SpeciesSite;
 // Calculate RDF Module
 class CalculateRDFModule : public Module
 {
-      public:
+	public:
 	CalculateRDFModule();
 	~CalculateRDFModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -61,14 +61,14 @@ class CalculateRDFModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
@@ -77,7 +77,7 @@ class CalculateRDFModule : public Module
 	/*
 	 * Functions / Data
 	 */
-      private:
+	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A
@@ -89,7 +89,7 @@ class CalculateRDFModule : public Module
 	// Process1DNode for A-B RDF
 	Process1DProcedureNode *processDistance_;
 
-      public:
+	public:
 	// Return Collect1DNode for A-B RDF
 	const Collect1DProcedureNode *collectDistanceNode() const;
 	// Return SelectNode for site A
@@ -100,7 +100,7 @@ class CalculateRDFModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

@@ -55,7 +55,10 @@ const char *Forcefield_OPLSAA2005_NobleGases::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_OPLSAA2005_NobleGases::shortRangeType() const { return Forcefield::LennardJonesGeometricType; }
+Forcefield::ShortRangeType Forcefield_OPLSAA2005_NobleGases::shortRangeType() const
+{
+	return Forcefield::LennardJonesGeometricType;
+}
 
 /*
  * Atom Type Data

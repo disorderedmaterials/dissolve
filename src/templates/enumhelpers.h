@@ -26,10 +26,11 @@
 template <class E> class EnumCast
 {
 	/*
-	 * Template-only class that takes reference to an enum and allows the integer conversion to be passed by reference to the
-	 * broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the original enum ref.
+	 * Template-only class that takes reference to an enum and allows the integer conversion to be passed by reference to
+	 * the broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the
+	 * original enum ref.
 	 */
-      public:
+	public:
 	EnumCast(E &originalEnum) : originalEnum_(originalEnum) { integerValue_ = originalEnum_; }
 	~EnumCast()
 	{
@@ -38,7 +39,7 @@ template <class E> class EnumCast
 	}
 	operator int &() { return integerValue_; }
 
-      private:
+	private:
 	// Original enum object
 	E &originalEnum_;
 	// Integer conversion of enum
@@ -51,16 +52,16 @@ template <class E> class EnumContainer
 	/*
 	 * Template-only class that stores an enum for inclusion in a list or similar.
 	 */
-      public:
+	public:
 	EnumContainer(E value = 0) : value_(value) {}
 	operator E() { return value_; }
 	void operator=(const E value) { value_ = value; }
 
-      private:
+	private:
 	// Original enum
 	E value_;
 
-      public:
+	public:
 	// Return value
 	E &value() { return value_; }
 };

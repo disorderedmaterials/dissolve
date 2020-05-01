@@ -36,17 +36,17 @@ class AnalyseModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, const CoreData &coreData);
 
-      private:
+	private:
 	// Associated Module
 	AnalyseModule *module_;
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::AnalyseModuleWidget ui_;
 };

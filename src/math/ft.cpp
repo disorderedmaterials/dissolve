@@ -23,12 +23,15 @@
 #include "base/sysfunc.h"
 #include "math/data1d.h"
 
-// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function, modification function, and window applied (if requested)
-bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
+// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening
+// function, modification function, and window applied (if requested)
+bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction,
+		     BroadeningFunction broadening)
 {
 	/*
-	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
-	 * be suitable for the required purpose. Broadening functions are applied to the transformed function utilising convolution theorem:
+	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms -
+	 * normalisation and broadening functions must be suitable for the required purpose. Broadening functions are applied to
+	 * the transformed function utilising convolution theorem:
 	 *
 	 * 	f(x) and g(x) are the original functions, while F(q) and G(q) are their Fourier transforms.
 	 * 	Pointwise multiplication (.) in one domain equals convolution (*) in the other:
@@ -36,10 +39,11 @@ bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep,
 	 * 	FT[ f(x) * g(x) ] = F(q) . G(q)
 	 * 	FT[ f(x) . g(x) ] = F(q) * G(q)
 	 *
-	 * Since the ultimate goal of this function is to generate the broadened FT of the input data (with the broadening applied to the transformed data, rather than
-	 * applied to the input data and then transformed) we require the first case listed above. The quantity we want is the pointwise multiplication of the FT of the
-	 * input data with the broadening functions given, so we can simply perform the convolution of the input data with the *FT* of the broadening functions, and FT
-	 * the result.
+	 * Since the ultimate goal of this function is to generate the broadened FT of the input data (with the broadening
+	 * applied to the transformed data, rather than applied to the input data and then transformed) we require the first
+	 * case listed above. The quantity we want is the pointwise multiplication of the FT of the input data with the
+	 * broadening functions given, so we can simply perform the convolution of the input data with the *FT* of the
+	 * broadening functions, and FT the result.
 	 */
 
 	// Set up window function for the present data

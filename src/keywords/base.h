@@ -42,7 +42,7 @@ class ProcessPool;
 // Keyword Base Class
 class KeywordBase : public ListItem<KeywordBase>
 {
-      public:
+	public:
 	// Keyword Data Type
 	enum KeywordDataType
 	{
@@ -96,23 +96,24 @@ class KeywordBase : public ListItem<KeywordBase>
 	/*
 	 * Base Pointer Return
 	 */
-      public:
+	public:
 	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
 	virtual KeywordBase *base();
 
 	/*
 	 * Keyword Description
 	 */
-      public:
+	public:
 	// Keyword Options
 	enum KeywordOption
 	{
-		NoOptions = 0,			    /* Keyword has no options set */
-		InRestartFileOption = 1,	    /* Keyword should have its data written to the restart file */
-		ModificationRequiresSetUpOption = 2 /* Modifying the keyword's data requires that the owning object requires setting up */
+		NoOptions = 0,		 /* Keyword has no options set */
+		InRestartFileOption = 1, /* Keyword should have its data written to the restart file */
+		ModificationRequiresSetUpOption =
+			2 /* Modifying the keyword's data requires that the owning object requires setting up */
 	};
 
-      private:
+	private:
 	// Data type stored by keyword
 	KeywordDataType type_;
 	// Keyword name
@@ -124,11 +125,11 @@ class KeywordBase : public ListItem<KeywordBase>
 	// Keyword option mask
 	int optionMask_;
 
-      protected:
+	protected:
 	// Whether the current data value has ever been set
 	bool set_;
 
-      public:
+	public:
 	// Set name, description, arguments, and option mask
 	void set(const char *name, const char *description, const char *arguments, int optionMask = NoOptions);
 	// Return whether data has been set
@@ -155,7 +156,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	virtual int minArguments() const = 0;
 	// Return maximum number of arguments accepted
@@ -170,7 +171,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	/*
 	 * Parse Result
 	 */
-      public:
+	public:
 	// Keyword Parse Result
 	enum ParseResult
 	{
@@ -182,7 +183,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as bool)
 	virtual bool asBool();
 	// Return value (as int)
@@ -199,11 +200,11 @@ class KeywordBase : public ListItem<KeywordBase>
 	/*
 	 * Object Management
 	 */
-      private:
+	private:
 	// References to all keyword objects
 	static RefList<KeywordBase> allKeywords_;
 
-      protected:
+	protected:
 	// Prune any references to the supplied AtomType in the contained data
 	virtual void removeReferencesTo(AtomType *at);
 	// Prune any references to the supplied Configuration in the contained data
@@ -219,7 +220,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	// Prune any references to the supplied ProcedureNode in the contained data
 	virtual void removeReferencesTo(ProcedureNode *node);
 
-      public:
+	public:
 	// Gracefully deal with the specified object no longer being valid
 	template <class O> static void objectNoLongerValid(O *object)
 	{

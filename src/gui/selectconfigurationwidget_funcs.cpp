@@ -79,14 +79,18 @@ void SelectConfigurationWidget::updateConfigurationList()
 		return;
 	}
 
-	ListWidgetUpdater<SelectConfigurationWidget, Configuration> speciesUpdater(ui_.ConfigurationList, coreData_->constConfigurations());
+	ListWidgetUpdater<SelectConfigurationWidget, Configuration> speciesUpdater(ui_.ConfigurationList,
+										   coreData_->constConfigurations());
 }
 
 void SelectConfigurationWidget::on_SelectNoneButton_clicked(bool checked) { ui_.ConfigurationList->clearSelection(); }
 
 void SelectConfigurationWidget::on_SelectAllButton_clicked(bool checked) { ui_.ConfigurationList->selectAll(); }
 
-void SelectConfigurationWidget::on_ConfigurationList_itemSelectionChanged() { emit(speciesSelectionChanged(isSelectionValid())); }
+void SelectConfigurationWidget::on_ConfigurationList_itemSelectionChanged()
+{
+	emit(speciesSelectionChanged(isSelectionValid()));
+}
 
 void SelectConfigurationWidget::on_ConfigurationList_itemDoubleClicked(QListWidgetItem *item)
 {

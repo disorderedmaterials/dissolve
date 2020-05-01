@@ -38,21 +38,21 @@ class SpeciesSite;
 // Calculate Angle Module
 class CalculateAngleModule : public Module
 {
-      public:
+	public:
 	CalculateAngleModule();
 	~CalculateAngleModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -65,14 +65,14 @@ class CalculateAngleModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
@@ -81,7 +81,7 @@ class CalculateAngleModule : public Module
 	/*
 	 * Functions / Data
 	 */
-      private:
+	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A
@@ -118,7 +118,7 @@ class CalculateAngleModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

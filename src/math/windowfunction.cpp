@@ -26,7 +26,8 @@
 #include "math/data1d.h"
 #include "templates/enumhelpers.h"
 
-WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
+WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
+			       double p6)
 {
 	set(function, p1, p2, p3, p4, p5, p6);
 
@@ -101,7 +102,8 @@ const char *WindowFunction::functionDescription(FunctionType func)
  * Function Data
  */
 
-void WindowFunction::set(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
+void WindowFunction::set(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
+			 double p6)
 {
 	function_ = function;
 	parameters_[0] = p1;
@@ -126,7 +128,8 @@ bool WindowFunction::set(LineParser &parser, int startArg)
 	// Do we have the right number of arguments for the function specified?
 	if ((parser.nArgs() - startArg) < WindowFunction::nFunctionParameters(funcType))
 	{
-		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n", WindowFunction::functionType(funcType), WindowFunction::nFunctionParameters(funcType),
+		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n",
+				 WindowFunction::functionType(funcType), WindowFunction::nFunctionParameters(funcType),
 				 parser.nArgs() - startArg);
 		return false;
 	}
@@ -145,7 +148,8 @@ bool WindowFunction::set(LineParser &parser, int startArg)
 		// No fixed parameters.
 		break;
 	default:
-		Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", WindowFunction::functionType(funcType));
+		Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n",
+				 WindowFunction::functionType(funcType));
 		return false;
 	}
 
@@ -235,7 +239,8 @@ double WindowFunction::y(double x, double omega) const
 		return sin(PI * (2 * chi - 1.0)) / (PI * (2 * chi - 1.0));
 		break;
 	case (WindowFunction::NuttallWindow):
-		return (0.355768 - 0.487396 * cos(2.0 * PI * chi) + 0.144232 * cos(4.0 * PI * chi) - 0.012604 * cos(6.0 * PI * chi));
+		return (0.355768 - 0.487396 * cos(2.0 * PI * chi) + 0.144232 * cos(4.0 * PI * chi) -
+			0.012604 * cos(6.0 * PI * chi));
 		break;
 	case (WindowFunction::SineWindow):
 		return 1.0 - sin(PI * 0.5 * chi);
@@ -310,7 +315,8 @@ bool WindowFunction::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(EnumCast<WindowFunction::FunctionType>(function_)))
-		return Messenger::error("WindowFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
+		return Messenger::error("WindowFunction function type is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), function_);
 	if (!procPool.equality(parameters_, MAXWINDOWFUNCTIONPARAMS))
 		return Messenger::error("WindowFunction parameters are not equivalent.\n");
 #endif

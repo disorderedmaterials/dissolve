@@ -55,7 +55,9 @@ const Matrix3 &Site::axes() const
  * Oriented Site
  */
 
-OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis, Vec3<double> yAxis, Vec3<double> zAxis) : Site(molecule, origin)
+OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis,
+			   Vec3<double> yAxis, Vec3<double> zAxis)
+	: Site(molecule, origin)
 {
 	axes_.setColumn(0, xAxis);
 	axes_.setColumn(1, yAxis);
@@ -70,7 +72,9 @@ bool OrientedSite::hasAxes() const { return true; }
 // Return enum options for SiteAxis
 EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
 {
-	static EnumOptionsList SiteAxisOptions = EnumOptionsList() << EnumOption(OrientedSite::XAxis, "XAxis") << EnumOption(OrientedSite::YAxis, "YAxis") << EnumOption(OrientedSite::ZAxis, "ZAxis");
+	static EnumOptionsList SiteAxisOptions = EnumOptionsList() << EnumOption(OrientedSite::XAxis, "XAxis")
+								   << EnumOption(OrientedSite::YAxis, "YAxis")
+								   << EnumOption(OrientedSite::ZAxis, "ZAxis");
 
 	static EnumOptions<OrientedSite::SiteAxis> options("SiteAxis", SiteAxisOptions);
 

@@ -88,7 +88,8 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
 	if (destIntra->masterParameters())
 		destIntra->detachFromMasterIntra();
 
-	// If sourceIntra references a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if necessary
+	// If sourceIntra references a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if
+	// necessary
 	if (sourceIntra->masterParameters())
 	{
 		// Search for MasterIntra by the same name in our main Dissolve instance

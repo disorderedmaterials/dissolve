@@ -39,7 +39,8 @@ TextPrimitive::TextPrimitive() : ListItem<TextPrimitive>() {}
 TextPrimitive::~TextPrimitive() {}
 
 // Text Anchor Keywords
-const char *TextAnchorKeywords[] = {"TopLeft", "TopMiddle", "TopRight", "MiddleLeft", "Central", "MiddleRight", "BottomLeft", "BottomMiddle", "BottomRight"};
+const char *TextAnchorKeywords[] = {"TopLeft",     "TopMiddle",  "TopRight",     "MiddleLeft", "Central",
+				    "MiddleRight", "BottomLeft", "BottomMiddle", "BottomRight"};
 
 // Convert text string to TextAnchor
 TextPrimitive::TextAnchor TextPrimitive::textAnchor(const char *s)
@@ -66,7 +67,8 @@ TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(const char *s)
 }
 
 // Set data
-void TextPrimitive::set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation,
+void TextPrimitive::set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint,
+			TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation,
 			double textSize, bool flat)
 {
 	// Call the parser
@@ -81,7 +83,8 @@ void TextPrimitive::set(FontInstance &fontInstance, QString text, Vec3<double> a
 }
 
 // Return transformation matrix to use when rendering the text
-Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize, TextFragment *fragment)
+Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
+					    TextFragment *fragment)
 {
 	Matrix4 textMatrix, A;
 	Vec3<double> lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
@@ -200,7 +203,8 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
 }
 
 // Render primitive
-void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize)
+void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
+			   double baseFontSize)
 {
 	Matrix4 textMatrix;
 

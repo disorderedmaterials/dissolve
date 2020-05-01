@@ -36,42 +36,42 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
+	public:
 	FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	FileAndFormatKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::FileAndFormatWidget ui_;
 
-      private slots:
+	private slots:
 	void on_FileEdit_editingFinished();
 	void on_FileEdit_returnPressed();
 	void on_FormatCombo_currentIndexChanged(int index);
 	void on_FileSelectButton_clicked(bool checked);
 	void on_OptionsButton_clicked(bool checked);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// Check / set validity of current filename
 	void checkFileValidity();
 
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

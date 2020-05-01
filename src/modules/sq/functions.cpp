@@ -30,7 +30,8 @@
  */
 
 // Generate S(Q) from supplied g(r)
-bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
+bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr,
+				     PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
 				     const WindowFunction &windowFunction, const BroadeningFunction &broadening)
 {
 	// Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
@@ -51,18 +52,21 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, 
 			// Total partial
 			unweightedsq.partial(n, m).copyArrays(unweightedgr.constPartial(n, m));
 			unweightedsq.partial(n, m).values() -= 1.0;
-			if (!Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening))
+			if (!Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction,
+					     broadening))
 				return false;
 
 			// Bound partial
 			unweightedsq.boundPartial(n, m).copyArrays(unweightedgr.constBoundPartial(n, m));
-			if (!Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening))
+			if (!Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax,
+					     windowFunction, broadening))
 				return false;
 
 			// Unbound partial
 			unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.constUnboundPartial(n, m));
 			unweightedsq.unboundPartial(n, m).values() -= 1.0;
-			if (!Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening))
+			if (!Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax,
+					     windowFunction, broadening))
 				return false;
 		}
 	}
@@ -71,7 +75,8 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, 
 	unweightedsq.formTotal(true);
 
 	timer.stop();
-	Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n",
+			 timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	return true;
 }
@@ -90,18 +95,22 @@ bool SQModule::sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericLis
 	summedUnweightedSQ.setObjectTags(CharString("%s//UnweightedSQ", module->uniqueName()));
 
 	// Loop over Configurations again, summing into the PartialSet we have just set up
-	// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
+	// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of
+	// partials at the end.
 	double totalWeight = 0.0;
 	CharString fingerprint;
 	for (Configuration *cfg : module->targetConfigurations())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion())
+						     : CharString("_%i", cfg->contentsVersion());
 
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::value(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(
+			moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
-		Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+		Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight,
+				 totalWeight);
 
 		// Grab partials for Configuration and add into our set
 		if (!cfg->moduleData().contains("UnweightedSQ"))

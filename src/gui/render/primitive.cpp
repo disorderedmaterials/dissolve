@@ -155,7 +155,8 @@ void Primitive::pushInstance(const QOpenGLContext *context)
 			glFunctions->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
 
 			// Initialise index array data
-			glFunctions->glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexData_.nItems() * sizeof(GLuint), indexData_.array(), GL_STATIC_DRAW);
+			glFunctions->glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexData_.nItems() * sizeof(GLuint),
+						  indexData_.array(), GL_STATIC_DRAW);
 			if (glGetError() != GL_NO_ERROR)
 			{
 				glFunctions->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -344,10 +345,16 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 }
 
 // Define next vertex and normal
-GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba) { return defineVertex(x, y, z, normal.x, normal.y, normal.z, rgba); }
+GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba)
+{
+	return defineVertex(x, y, z, normal.x, normal.y, normal.z, rgba);
+}
 
 // Define next vertex and normal
-GLuint Primitive::defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba) { return defineVertex(vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z, rgba); }
+GLuint Primitive::defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba)
+{
+	return defineVertex(vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z, rgba);
+}
 
 // Define next index double
 void Primitive::defineIndices(GLuint a, GLuint b)
@@ -430,7 +437,8 @@ void Primitive::sphere(double radius, int nStacks, int nSlices)
 }
 
 // Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified
-void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat vy, GLfloat vz, double startRadius, double endRadius, int nStacks, int nSlices, bool capStart, bool capEnd)
+void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat vy, GLfloat vz, double startRadius,
+			 double endRadius, int nStacks, int nSlices, bool capStart, bool capEnd)
 {
 	int i, j;
 	Vec3<GLfloat> u, v, w, vert[4], normal[2], deltarj, rj;
@@ -467,17 +475,23 @@ void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat
 			// Triangle 1
 			if ((i > 1) || (startRadius > 1.0e-5))
 			{
-				defineVertex(ox + vert[0].x, oy + vert[0].y, oz + vert[0].z, normal[0].x, normal[0].y, normal[0].z);
-				defineVertex(ox + vert[1].x, oy + vert[1].y, oz + vert[1].z, normal[0].x, normal[0].y, normal[0].z);
-				defineVertex(ox + vert[2].x, oy + vert[2].y, oz + vert[2].z, normal[1].x, normal[1].y, normal[1].z);
+				defineVertex(ox + vert[0].x, oy + vert[0].y, oz + vert[0].z, normal[0].x, normal[0].y,
+					     normal[0].z);
+				defineVertex(ox + vert[1].x, oy + vert[1].y, oz + vert[1].z, normal[0].x, normal[0].y,
+					     normal[0].z);
+				defineVertex(ox + vert[2].x, oy + vert[2].y, oz + vert[2].z, normal[1].x, normal[1].y,
+					     normal[1].z);
 			}
 
 			// Triangle 2
 			if ((i < nStacks) || (endRadius > 1.0e-5))
 			{
-				defineVertex(ox + vert[1].x, oy + vert[1].y, oz + vert[1].z, normal[0].x, normal[0].y, normal[0].z);
-				defineVertex(ox + vert[2].x, oy + vert[2].y, oz + vert[2].z, normal[1].x, normal[1].y, normal[1].z);
-				defineVertex(ox + vert[3].x, oy + vert[3].y, oz + vert[3].z, normal[1].x, normal[1].y, normal[1].z);
+				defineVertex(ox + vert[1].x, oy + vert[1].y, oz + vert[1].z, normal[0].x, normal[0].y,
+					     normal[0].z);
+				defineVertex(ox + vert[2].x, oy + vert[2].y, oz + vert[2].z, normal[1].x, normal[1].y,
+					     normal[1].z);
+				defineVertex(ox + vert[3].x, oy + vert[3].y, oz + vert[3].z, normal[1].x, normal[1].y,
+					     normal[1].z);
 			}
 
 			// Start cap
@@ -530,7 +544,8 @@ void Primitive::ring(double radius, double width, int nStacks, int nSlices, int 
 
 			for (m = 0; m < nSlices; ++m)
 			{
-				// Plot along specified direction, and then map vertices from straight cylinder onto circle in XY plane
+				// Plot along specified direction, and then map vertices from straight cylinder onto circle in
+				// XY plane
 				d1 = m * dtheta;
 				d2 = d1 + dtheta;
 
@@ -607,7 +622,8 @@ void Primitive::cross(double width)
 	}
 }
 
-// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles =
+// 2*nSubs )
 void Primitive::orthorhomboid(double sizex, double sizey, double sizez, int nSubs, double ox, double oy, double oz)
 {
 	// Create each face individually - 'offset' calculated so centre of orthorhombus is at <ox,oy,oz>
@@ -645,26 +661,35 @@ void Primitive::orthorhomboid(double sizex, double sizey, double sizez, int nSub
 				vertex[2] = offset[2] + i * veca[2] + j * vecb[2];
 				// Define triangle vertices for 'lower' plane
 				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
-				defineVertex(vertex[0] + veca[0], vertex[1] + veca[1], vertex[2] + veca[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
-				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1], vertex[2] + veca[2] + vecb[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
+				defineVertex(vertex[0] + veca[0], vertex[1] + veca[1], vertex[2] + veca[2], plane == 0,
+					     -1 * (plane == 1), -1 * (plane == 2));
+				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1],
+					     vertex[2] + veca[2] + vecb[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
 				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
-				defineVertex(vertex[0] + vecb[0], vertex[1] + vecb[1], vertex[2] + vecb[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
-				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1], vertex[2] + veca[2] + vecb[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
+				defineVertex(vertex[0] + vecb[0], vertex[1] + vecb[1], vertex[2] + vecb[2], plane == 0,
+					     -1 * (plane == 1), -1 * (plane == 2));
+				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1],
+					     vertex[2] + veca[2] + vecb[2], plane == 0, -1 * (plane == 1), -1 * (plane == 2));
 
 				// Define trangle vertices for 'upper' plane
 				vertex[plane] += sizes[plane];
 				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2);
-				defineVertex(vertex[0] + veca[0], vertex[1] + veca[1], vertex[2] + veca[2], plane == 0, plane == 1, plane == 2);
-				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1], vertex[2] + veca[2] + vecb[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0] + veca[0], vertex[1] + veca[1], vertex[2] + veca[2], plane == 0,
+					     plane == 1, plane == 2);
+				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1],
+					     vertex[2] + veca[2] + vecb[2], plane == 0, plane == 1, plane == 2);
 				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2);
-				defineVertex(vertex[0] + vecb[0], vertex[1] + vecb[1], vertex[2] + vecb[2], plane == 0, plane == 1, plane == 2);
-				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1], vertex[2] + veca[2] + vecb[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0] + vecb[0], vertex[1] + vecb[1], vertex[2] + vecb[2], plane == 0,
+					     plane == 1, plane == 2);
+				defineVertex(vertex[0] + veca[0] + vecb[0], vertex[1] + veca[1] + vecb[1],
+					     vertex[2] + veca[2] + vecb[2], plane == 0, plane == 1, plane == 2);
 			}
 		}
 	}
 }
 
-// Plot wireframe orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+// Plot wireframe orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles =
+// 2*nSubs )
 void Primitive::wireOrthorhomboid(double sizex, double sizey, double sizez, double ox, double oy, double oz)
 {
 	GLfloat offset[3];

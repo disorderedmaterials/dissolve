@@ -70,7 +70,8 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 			currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
 
 			// Set the current drawing coordinates in data-space
-			drawCoordinateCurrent_ = currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
+			drawCoordinateCurrent_ =
+				currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
 
 			// Update the interaction Primitive
 			if (clickedAtom_)
@@ -78,10 +79,12 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 				if (currentAtom)
 					speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
 				else
-					speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+					speciesRenderable_->recreateDrawInteractionPrimitive(
+						clickedAtom_, drawCoordinateCurrent_, drawElement_);
 			}
 			else
-				speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
+				speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
+										     drawCoordinateCurrent_, drawElement_);
 		}
 		else if (buttonState_.testFlag(Qt::RightButton))
 			view_.rotateView(-dy / 2.0, dx / 2.0);

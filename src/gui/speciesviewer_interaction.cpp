@@ -37,11 +37,13 @@ SpeciesAtom *SpeciesViewer::atomAt(int x, int y)
 	double lengthScale;
 	Vec3<double> rScreen;
 
-	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point provided
+	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
+	// provided
 	ListIterator<SpeciesAtom> atomIterator(species_->atoms());
 	while (SpeciesAtom *i = atomIterator.iterate())
 	{
-		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with the atom's screen radius
+		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with
+		// the atom's screen radius
 		lengthScale = 0.3;
 		rScreen = view_.dataToScreen(i->r(), lengthScale);
 
@@ -84,7 +86,8 @@ void SpeciesViewer::startInteraction()
 		clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
 
 		// Get the clicked position in the coordinate space of the Species
-		drawCoordinateStart_ = clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
+		drawCoordinateStart_ =
+			clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
 		drawCoordinateCurrent_ = drawCoordinateStart_;
 
 		// If Ctrl is pressed, we transmute the atom under the mouse, but don't allow drawing of anything else
@@ -93,9 +96,11 @@ void SpeciesViewer::startInteraction()
 
 		// Update the interaction Primitive
 		if (clickedAtom_)
-			speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+			speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_,
+									     drawElement_);
 		else
-			speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
+			speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
+									     drawCoordinateCurrent_, drawElement_);
 		break;
 	// Delete
 	case (SpeciesViewer::DeleteInteraction):
@@ -107,14 +112,17 @@ void SpeciesViewer::startInteraction()
 		clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
 
 		// Get the clicked position in the coordinate space of the Species
-		drawCoordinateStart_ = clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
+		drawCoordinateStart_ =
+			clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
 		drawCoordinateCurrent_ = drawCoordinateStart_;
 
 		// Update the interaction Primitive
 		if (clickedAtom_)
-			speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+			speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_,
+									     drawElement_);
 		else
-			speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
+			speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
+									     drawCoordinateCurrent_, drawElement_);
 		break;
 	default:
 		break;
@@ -132,13 +140,15 @@ void SpeciesViewer::endInteraction()
 	case (SpeciesViewer::DefaultInteraction):
 		break;
 	case (SpeciesViewer::SelectAreaInteraction):
-		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
+		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather
+		// than an area select
 		if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 		{
 			// Single, targetted click - atom under mouse?
 			SpeciesAtom *i = atomAt(rMouseLast_.x, rMouseLast_.y);
 
-			// If there is an atom at the current position, (de)select it, maintaining the current selection if Shift was pressed
+			// If there is an atom at the current position, (de)select it, maintaining the current selection if
+			// Shift was pressed
 			if (i)
 			{
 				if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
@@ -241,7 +251,8 @@ void SpeciesViewer::endInteraction()
 		if (!clickedAtom_)
 			break;
 
-		// Get atom at current coordinates - if its the same as the clicked atom, nullify the pointer so we don't try to remove a bonv
+		// Get atom at current coordinates - if its the same as the clicked atom, nullify the pointer so we don't try to
+		// remove a bonv
 		j = atomAt(rMouseLast_.x, rMouseLast_.y);
 		if (j == clickedAtom_)
 			j = NULL;
@@ -293,7 +304,8 @@ const char *SpeciesViewer::interactionModeText() const
 	case (SpeciesViewer::DefaultInteraction):
 		return "View: <b>Left</b> Select; <b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
 	case (SpeciesViewer::SelectAreaInteraction):
-		return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; <i>+Shift</i> Toggle";
+		return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; "
+		       "<i>+Shift</i> Toggle";
 	case (SpeciesViewer::RotateViewInteraction):
 		return "Rotate view";
 	case (SpeciesViewer::TranslateViewInteraction):

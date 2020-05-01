@@ -33,20 +33,20 @@
 // Data2D Store
 class Data2DStore
 {
-      public:
+	public:
 	Data2DStore();
 	~Data2DStore();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// List of contained data
 	List<Data2D> data_;
 	// References for Data2D and associated file/format
 	RefDataList<Data2D, Data2DImportFileFormat> dataReferences_;
 
-      public:
+	public:
 	// Add named data reference to store, reading file and format from specified parser / starting argument
 	bool addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Check to see if the named data is present in the store

@@ -55,7 +55,7 @@ class Species;
 // Configuration
 class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
 {
-      public:
+	public:
 	Configuration();
 	~Configuration();
 	void operator=(Configuration &source);
@@ -65,7 +65,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// Name of the Configuration
 	CharString name_;
 	// Nice name (generated from name_) used for output files
@@ -77,7 +77,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Temperature of this configuration (K)
 	double temperature_;
 
-      public:
+	public:
 	// Set name of the Configuration
 	void setName(const char *name);
 	// Return name of the Configuration
@@ -102,7 +102,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Content
 	 */
-      private:
+	private:
 	// List of Species used by the Configuration and their populations
 	List<SpeciesInfo> usedSpecies_;
 	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
@@ -114,7 +114,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Array of Atoms
 	DynamicArray<Atom> atoms_;
 
-      public:
+	public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
 	// Initialise content array
@@ -171,7 +171,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Periodic Box and Cells
 	 */
-      private:
+	private:
 	// Requested size factor for Box
 	double requestedSizeFactor_;
 	// Size factor currently applied to Box / Cells
@@ -183,7 +183,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Cell array
 	CellArray cells_;
 
-      public:
+	public:
 	// Create Box definition with specified lengths and angles
 	bool createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
 	// Return Box
@@ -210,7 +210,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Upkeep
 	 */
-      public:
+	public:
 	// Update Cell contents
 	void updateCellContents();
 	// Update Cell location of specified Atom
@@ -223,13 +223,13 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Modules
 	 */
-      private:
+	private:
 	// Module layer associated to this Configuration
 	ModuleLayer moduleLayer_;
 	// Variables set by Modules
 	GenericList moduleData_;
 
-      public:
+	public:
 	// Associate Module to the Configuration
 	bool ownModule(Module *module);
 	// Return number of Modules associated to this Configuration
@@ -244,18 +244,18 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Site Stacks
 	 */
-      private:
+	private:
 	// List of current SiteStacks
 	List<SiteStack> siteStacks_;
 
-      public:
+	public:
 	// Calculate / retrieve stack of sites for specified SpeciesSite
 	const SiteStack *siteStack(SpeciesSite *site);
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write through specified LineParser
 	bool write(LineParser &parser) const;
 	// Read through specified LineParser
@@ -264,11 +264,11 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	/*
 	 * Parallel Comms
 	 */
-      private:
+	private:
 	// Process pool for this Configuration
 	ProcessPool processPool_;
 
-      public:
+	public:
 	// Set up process pool for this Configuration
 	bool setUpProcessPool(Array<int> worldRanks, int groupPopulation);
 	// Return process pool for this Configuration

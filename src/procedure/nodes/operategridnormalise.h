@@ -30,14 +30,14 @@
 // Operate Grid Normalise Node
 class OperateGridNormaliseProcedureNode : public OperateProcedureNodeBase
 {
-      public:
+	public:
 	OperateGridNormaliseProcedureNode();
 	~OperateGridNormaliseProcedureNode();
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target

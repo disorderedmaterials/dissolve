@@ -38,8 +38,9 @@ class Molecule;
 // Regional Distributor
 class RegionalDistributor
 {
-      public:
-	RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy);
+	public:
+	RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
+			    ProcessPool &procPool, ProcessPool::DivisionStrategy strategy);
 	~RegionalDistributor();
 	// Molecule Status Flag
 	enum MoleculeStatusFlag
@@ -63,7 +64,7 @@ class RegionalDistributor
 	/*
 	 * Core
 	 */
-      private:
+	private:
 	// ProcessPool that we are using
 	const ProcessPool &processPool_;
 	// Original parallel strategy to employ
@@ -77,12 +78,13 @@ class RegionalDistributor
 	// Number of cycles the distributor has been run for
 	int nCycles_;
 
-      private:
+	private:
 	// Set process/group limits based on supplied strategy
 	bool setProcessOrGroupLimits(ProcessPool::DivisionStrategy strategy);
 
-      public:
-	// Set up next distribution of Molecules amongst processes/groups, returning false if there are no more Molecules to distribute
+	public:
+	// Set up next distribution of Molecules amongst processes/groups, returning false if there are no more Molecules to
+	// distribute
 	bool cycle();
 	// Return current parallel strategy, based on last cycle
 	ProcessPool::DivisionStrategy currentStrategy();
@@ -90,7 +92,7 @@ class RegionalDistributor
 	/*
 	 * Cell Data
 	 */
-      private:
+	private:
 	// Source CellArray
 	const CellArray &cellArray_;
 	// Lists of Cells locked by each process/group
@@ -100,14 +102,14 @@ class RegionalDistributor
 	// Cell status flags
 	Array<CellStatusFlag> cellStatusFlags_;
 
-      private:
+	private:
 	// Return whether the specified processOrGroup can lock the given Cell index
 	bool canLockCellForEditing(int processOrGroup, int cellIndex);
 
 	/*
 	 * Molecule Data
 	 */
-      private:
+	private:
 	// Source Molecule Array
 	const std::deque<std::shared_ptr<Molecule>> &moleculeArray_;
 	// Number of Molecules to distribute
@@ -119,7 +121,7 @@ class RegionalDistributor
 	// Arrays of Molecule IDs assigned to each process / group
 	std::vector<std::vector<int>> assignedMolecules_;
 
-      private:
+	private:
 	// Assign Molecule to process/group if possible
 	bool assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup);
 	// Try to assign a Molecule from the specified Cell to the process/group
@@ -127,14 +129,14 @@ class RegionalDistributor
 	// Try to find a Molecule target for the process/group
 	std::shared_ptr<Molecule> assignMolecule(int processOrGroup);
 
-      public:
+	public:
 	// Return next set of Molecule IDs assigned to this process
 	std::vector<int> &assignedMolecules();
 
 	/*
 	 * Helper Functions
 	 */
-      public:
+	public:
 	// Return whether to collect statistics (counts, energies etc. - ensures correct summation)
 	bool collectStatistics();
 	// Increment integer counter, but only if the process should (depend on the current strategy)

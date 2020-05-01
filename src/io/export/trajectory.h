@@ -30,7 +30,7 @@ class Configuration;
 // Trajectory Export Formats
 class TrajectoryExportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Trajectory Export Formats
 	enum TrajectoryExportFormat
 	{
@@ -42,7 +42,7 @@ class TrajectoryExportFileFormat : public FileAndFormat
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for TrajectoryExportFormat
 	static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFormats();
 	// Return number of available formats
@@ -57,18 +57,18 @@ class TrajectoryExportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-      private:
+	private:
 	// Append XYZ frame to trajectory
 	bool exportXYZ(LineParser &parser, Configuration *cfg);
 
-      public:
+	public:
 	// Append trajectory using current filename and format
 	bool exportData(Configuration *cfg);
 };

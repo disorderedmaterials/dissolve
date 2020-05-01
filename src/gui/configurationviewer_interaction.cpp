@@ -36,13 +36,15 @@ const Atom *ConfigurationViewer::atomAt(int x, int y)
 	double lengthScale;
 	Vec3<double> rScreen;
 
-	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point provided
+	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
+	// provided
 	const DynamicArray<Atom> &atoms = configuration_->constAtoms();
 	for (int n = 0; n < atoms.nItems(); ++n)
 	{
 		const Atom *i = atoms.constValue(n);
 
-		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with the atom's screen radius
+		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with
+		// the atom's screen radius
 		lengthScale = 0.3;
 		rScreen = view_.dataToScreen(i->r(), lengthScale);
 

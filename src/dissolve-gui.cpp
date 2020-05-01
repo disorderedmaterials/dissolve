@@ -60,9 +60,11 @@ int main(int argc, char **argv)
 				printf("\t-I\t\tIgnore GUI state file\n");
 				printf("\t-q\t\tQuiet mode - print no output\n");
 				printf("\t-r <N>\t\tSet restart file frequency (default = 10)\n");
-				printf("\t-t <file>\tLoad restart data from specified file (but still write to standard restart file)\n");
+				printf("\t-t <file>\tLoad restart data from specified file (but still write to standard "
+				       "restart file)\n");
 				printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
-				printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");
+				printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if "
+				       "present)\n");
 				ProcessPool::finalise();
 				return 0;
 				break;
@@ -83,7 +85,8 @@ int main(int argc, char **argv)
 					return 1;
 				}
 				nIterations = atoi(argv[n]);
-				Messenger::print("%i main-loop iterations will be performed, then the GUI will be launched.\n", nIterations);
+				Messenger::print("%i main-loop iterations will be performed, then the GUI will be launched.\n",
+						 nIterations);
 				break;
 			case ('q'):
 				Messenger::setQuiet(true);
@@ -101,9 +104,11 @@ int main(int argc, char **argv)
 				if (dissolve.restartFileFrequency() <= 0)
 					Messenger::print("Restart file will not be written.\n");
 				else if (dissolve.restartFileFrequency() == 1)
-					Messenger::print("Restart file will be written after every iteration.\n", dissolve.restartFileFrequency());
+					Messenger::print("Restart file will be written after every iteration.\n",
+							 dissolve.restartFileFrequency());
 				else
-					Messenger::print("Restart file will be written after every %i iterations.\n", dissolve.restartFileFrequency());
+					Messenger::print("Restart file will be written after every %i iterations.\n",
+							 dissolve.restartFileFrequency());
 				break;
 			case ('t'):
 				// Next argument is filename

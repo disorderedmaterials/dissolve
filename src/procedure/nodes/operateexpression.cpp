@@ -27,7 +27,8 @@
 #include "math/data1d.h"
 #include "math/integrator.h"
 
-OperateExpressionProcedureNode::OperateExpressionProcedureNode(const char *expressionText) : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
+OperateExpressionProcedureNode::OperateExpressionProcedureNode(const char *expressionText)
+	: OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
 {
 	// Set up persistent variables and initial expression value
 	x_ = expression_.createDoubleVariable("x", true);

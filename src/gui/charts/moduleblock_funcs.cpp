@@ -29,7 +29,8 @@
 #include <QFile>
 #include <QPainter>
 
-ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve) : QWidget(parent), ChartBlock(), dissolve_(dissolve)
+ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
+	: QWidget(parent), ChartBlock(), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -48,7 +49,8 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve) : 
 	ui_.TopLabel->setText(module_->type());
 	ui_.IconLabel->setPixmap(modulePixmap(module_));
 
-	// Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
+	// will exist in a QScrollArea)
 	ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
 
 	// Update our controls
@@ -160,7 +162,8 @@ void ModuleBlock::paintEvent(QPaintEvent *event)
 	QPainterPath borderPath;
 	const int blockDentLeft = width() * 0.5 - metrics.blockDentRadius();
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentRadius() * 2, metrics.blockDentRadius() * 2, 180, 180);
+	borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint() - metrics.blockDentRadius(),
+			 metrics.blockDentRadius() * 2, metrics.blockDentRadius() * 2, 180, 180);
 	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
 	borderPath.lineTo(width() - metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
 	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
@@ -237,7 +240,9 @@ void ModuleBlock::updateControls()
 		if (module_->nRequiredTargets() == Module::OneOrMoreTargets)
 			toolTip = "This module may target any number of configurations.\n";
 		else
-			toolTip = QString("This module must target exactly %1 %2.\n").arg(module_->nRequiredTargets()).arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
+			toolTip = QString("This module must target exactly %1 %2.\n")
+					  .arg(module_->nRequiredTargets())
+					  .arg(module_->nRequiredTargets() == 1 ? "configuration" : "configurations");
 
 		if (module_->nTargetConfigurations() == 0)
 			toolTip += "No configuration targets set.";

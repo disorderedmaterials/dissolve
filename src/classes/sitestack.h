@@ -34,14 +34,14 @@ class Molecule;
 // Site Stack Definition
 class SiteStack : public ListItem<SiteStack>
 {
-      public:
+	public:
 	SiteStack();
 	~SiteStack();
 
 	/*
 	 * Target
 	 */
-      private:
+	private:
 	// Target Configuration from which we will determine sites
 	Configuration *configuration_;
 	// Index at which the sites were last calculated for the Configuration
@@ -49,7 +49,7 @@ class SiteStack : public ListItem<SiteStack>
 	// Target SpeciesSite
 	SpeciesSite *speciesSite_;
 
-      public:
+	public:
 	// Create stack for specified Configuration and site
 	bool create(Configuration *cfg, SpeciesSite *speciesSite);
 	// Return target Configuration
@@ -60,7 +60,7 @@ class SiteStack : public ListItem<SiteStack>
 	/*
 	 * Stack
 	 */
-      private:
+	private:
 	// Whether the stack contains associate Molecule information
 	bool sitesInMolecules_;
 	// Whether the current stack contains local axes information
@@ -70,7 +70,7 @@ class SiteStack : public ListItem<SiteStack>
 	// Oriented site array (if local axes are defined)
 	Array<OrientedSite> orientedSites_;
 
-      public:
+	public:
 	// Return number of sites in the stack
 	int nSites() const;
 	// Return whether the stack contains associate Molecule information

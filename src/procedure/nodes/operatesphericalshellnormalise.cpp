@@ -28,7 +28,10 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-OperateSphericalShellNormaliseProcedureNode::OperateSphericalShellNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateSphericalShellNormaliseNode) {}
+OperateSphericalShellNormaliseProcedureNode::OperateSphericalShellNormaliseProcedureNode()
+	: OperateProcedureNodeBase(ProcedureNode::OperateSphericalShellNormaliseNode)
+{
+}
 
 OperateSphericalShellNormaliseProcedureNode::~OperateSphericalShellNormaliseProcedureNode() {}
 

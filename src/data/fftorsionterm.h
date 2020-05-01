@@ -33,15 +33,16 @@ class ForcefieldAtomType;
 // Forcefield Torsion Term
 class ForcefieldTorsionTerm
 {
-      public:
-	ForcefieldTorsionTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL, const char *typeL = NULL, SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm,
+	public:
+	ForcefieldTorsionTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL,
+			      const char *typeL = NULL, SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm,
 			      double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldTorsionTerm();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Type names involved in interaction
 	CharString typeI_, typeJ_, typeK_, typeL_;
 	// Functional form of interaction
@@ -49,9 +50,10 @@ class ForcefieldTorsionTerm
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-      public:
+	public:
 	// Return if this term matches the atom types supplied
-	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
+		     const ForcefieldAtomType *l) const;
 	// Return functional form index of interaction
 	SpeciesTorsion::TorsionFunction form() const;
 	// Return array of parameters

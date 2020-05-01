@@ -49,7 +49,8 @@ void BaseViewer::initializeGL()
 	Messenger::printVerbose("Done.");
 
 	// Check for vertex buffer extensions
-	if ((!hasOpenGLFeature(QOpenGLFunctions::Buffers)) && (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance))
+	if ((!hasOpenGLFeature(QOpenGLFunctions::Buffers)) &&
+	    (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance))
 	{
 		printf("VBO extension is requested but not available, so reverting to display lists instead.\n");
 		PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::ListInstance);
@@ -120,9 +121,11 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	view().recalculateView();
 
 	// Set-up the GL viewport
-	glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2], view_.viewportMatrix()[3]);
-	// 		printf("Viewport for pane '%s' is %i %i %i %i (offset = %i %i)\n" , qPrintable(view_.name()), view_.viewportMatrix()[0], view_.viewportMatrix()[1], view_.viewportMatrix()[2],
-	// view_.viewportMatrix()[3], xOffset, yOffset);
+	glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2],
+		   view_.viewportMatrix()[3]);
+	// 		printf("Viewport for pane '%s' is %i %i %i %i (offset = %i %i)\n" , qPrintable(view_.name()),
+	// view_.viewportMatrix()[0], view_.viewportMatrix()[1], view_.viewportMatrix()[2], view_.viewportMatrix()[3], xOffset,
+	// yOffset);
 
 	// Apply our View's projection matrix
 	glMatrixMode(GL_PROJECTION);
@@ -159,10 +162,14 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 			for (int axis = 0; axis < 3; ++axis)
 				if (view_.axes().visible(axis) && (axis != skipAxis))
 				{
-					view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-					updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
-					view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-					updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+					view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix,
+										    viewRotationInverse, view_.textZScale());
+					updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis),
+						    CharString("%c", 88 + axis));
+					view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix,
+										    viewRotationInverse, view_.textZScale());
+					updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis),
+						    CharString("%c", 88 + axis));
 				}
 		}
 
@@ -175,14 +182,16 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 			{
 				view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
 				view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-				updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+				updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis),
+					    CharString("%c", 88 + axis));
 			}
 		for (int axis = 0; axis < 3; ++axis)
 			if (view_.axes().visible(axis) && (axis != skipAxis))
 			{
 				view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
 				view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-				updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+				updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis),
+					    CharString("%c", 88 + axis));
 			}
 
 		// -- Reset line style, ensure polygons are now filled, and render the axis lines
@@ -212,7 +221,8 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		rend->updateAndSendPrimitives(view(), renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
-		updateQuery(BaseViewer::RenderableObject, rend->objectTag(), Renderable::renderableTypes().keyword(rend->type()));
+		updateQuery(BaseViewer::RenderableObject, rend->objectTag(),
+			    Renderable::renderableTypes().keyword(rend->type()));
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -381,7 +391,8 @@ void BaseViewer::postRedisplay()
 	if ((!valid_) || drawing_)
 		return;
 
-	// This is the entry-point for our assmebling of a unique list of viewer to update from this call, including any linked viewers
+	// This is the entry-point for our assmebling of a unique list of viewer to update from this call, including any linked
+	// viewers
 	std::vector<BaseViewer *> updateStack;
 	createUpdateStack(updateStack);
 
@@ -410,7 +421,8 @@ void BaseViewer::enableClipping()
 	// Get clip plane coordinates and indices
 	Vec3<double> clipMin = view_.axes().clipMin();
 	Vec3<double> clipMax = view_.axes().clipMax();
-	static GLenum planes[6] = {GL_CLIP_PLANE0, GL_CLIP_PLANE1, GL_CLIP_PLANE2, GL_CLIP_PLANE3, GL_CLIP_PLANE4, GL_CLIP_PLANE5};
+	static GLenum planes[6] = {GL_CLIP_PLANE0, GL_CLIP_PLANE1, GL_CLIP_PLANE2,
+				   GL_CLIP_PLANE3, GL_CLIP_PLANE4, GL_CLIP_PLANE5};
 
 	// Loop over axes
 	Vec3<double> translation;

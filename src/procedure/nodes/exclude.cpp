@@ -28,7 +28,9 @@
 
 ExcludeProcedureNode::ExcludeProcedureNode() : ProcedureNode(ProcedureNode::ExcludeNode)
 {
-	keywords_.add("Exclusions", new NodeArrayKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, 2, true, true, sameSites_), "SameSite", "Calculated observable to collect for x axis");
+	keywords_.add("Exclusions",
+		      new NodeArrayKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, 2, true, true, sameSites_),
+		      "SameSite", "Calculated observable to collect for x axis");
 }
 
 ExcludeProcedureNode::~ExcludeProcedureNode() {}
@@ -38,14 +40,18 @@ ExcludeProcedureNode::~ExcludeProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Execute
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+								 GenericList &targetList)
 {
 	// Exclude based on Sites?
 	if (sameSites_.at(0) && sameSites_.at(1))

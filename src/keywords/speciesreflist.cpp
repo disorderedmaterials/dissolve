@@ -24,7 +24,10 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species> &references) : KeywordData<RefList<Species> &>(KeywordBase::SpeciesRefListData, references) {}
+SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species> &references)
+	: KeywordData<RefList<Species> &>(KeywordBase::SpeciesRefListData, references)
+{
+}
 
 SpeciesRefListKeyword::~SpeciesRefListKeyword() {}
 
@@ -53,7 +56,8 @@ bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, const CoreDat
 	{
 		Species *sp = coreData.findSpecies(parser.argc(n));
 		if (!sp)
-			return Messenger::error("Error defining Species targets - no Species named '%s' exists.\n", parser.argc(n));
+			return Messenger::error("Error defining Species targets - no Species named '%s' exists.\n",
+						parser.argc(n));
 
 		data_.append(sp);
 	}

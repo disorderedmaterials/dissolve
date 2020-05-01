@@ -439,7 +439,8 @@ bool PlainValue::broadcast(ProcessPool &procPool)
 			return false;
 		break;
 	default:
-		Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n", PlainValue::valueType(type_));
+		Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n",
+				 PlainValue::valueType(type_));
 		return false;
 	}
 #endif

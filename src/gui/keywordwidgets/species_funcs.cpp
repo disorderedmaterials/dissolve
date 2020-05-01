@@ -25,7 +25,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/species.hui"
 
-SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
+SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<SpeciesKeyword *>(keyword);
@@ -40,7 +41,8 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword
 	// Connect the
 	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myIndexChanged(int)));
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
 }
 

@@ -24,8 +24,15 @@
 #include "base/sysfunc.h"
 #include "math/filters.h"
 
-Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
-Data1DImportFileFormat::Data1DImportFileFormat(const char *filename, Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
+Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format)
+{
+	setUpKeywords();
+}
+Data1DImportFileFormat::Data1DImportFileFormat(const char *filename, Data1DImportFileFormat::Data1DImportFormat format)
+	: FileAndFormat(filename, format)
+{
+	setUpKeywords();
+}
 
 Data1DImportFileFormat::~Data1DImportFileFormat() {}
 
@@ -39,7 +46,8 @@ void Data1DImportFileFormat::setUpKeywords()
 	keywords_.add("Columns", new IntegerKeyword(1, 1), "X", "Column index to use for x values");
 	keywords_.add("Columns", new IntegerKeyword(2, 1), "Y", "Column index to use for y values");
 	keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
-	keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage", "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
+	keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage",
+		      "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
 }
 
 /*
@@ -49,9 +57,11 @@ void Data1DImportFileFormat::setUpKeywords()
 // Return enum options for Data1DImportFormat
 EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
 {
-	static EnumOptionsList Data1DImportFormats = EnumOptionsList() << EnumOption(Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)")
-								       << EnumOption(Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)")
-								       << EnumOption(Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)");
+	static EnumOptionsList Data1DImportFormats =
+		EnumOptionsList() << EnumOption(Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)")
+				  << EnumOption(Data1DImportFileFormat::HistogramData1D, "histogram",
+						"Histogrammed Data (x = bin left-boundaries)")
+				  << EnumOption(Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)");
 
 	static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> options("Data1DImportFileFormat", Data1DImportFormats);
 
@@ -68,7 +78,10 @@ const char *Data1DImportFileFormat::formatKeyword(int id) const { return data1DI
 const char *Data1DImportFileFormat::formatDescription(int id) const { return data1DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data1DImportFormat
-Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const { return (Data1DImportFileFormat::Data1DImportFormat)format_; }
+Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const
+{
+	return (Data1DImportFileFormat::Data1DImportFormat)format_;
+}
 
 /*
  * Import Functions
@@ -114,7 +127,8 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 	if (removeAverage > 0.0)
 	{
 		double level = Filters::subtractAverage(data, removeAverage);
-		Messenger::print("Removed average level of %f from data, forming average over x >= %f.\n", level, removeAverage);
+		Messenger::print("Removed average level of %f from data, forming average over x >= %f.\n", level,
+				 removeAverage);
 	}
 
 	return result;

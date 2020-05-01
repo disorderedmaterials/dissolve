@@ -38,4 +38,7 @@ AddConfigurationDialog::~AddConfigurationDialog() {}
 void AddConfigurationDialog::reset() { ui_.AddConfigurationWidget->reset(); }
 
 // Copy imported Configuration over to the specified Dissolve object
-Configuration *AddConfigurationDialog::importConfiguration(Dissolve &dissolve) { return ui_.AddConfigurationWidget->importConfiguration(dissolve); }
+Configuration *AddConfigurationDialog::importConfiguration(Dissolve &dissolve)
+{
+	return ui_.AddConfigurationWidget->importConfiguration(dissolve);
+}

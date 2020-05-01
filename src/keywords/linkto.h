@@ -30,21 +30,21 @@
 // Keyword with Link to Other Keyword
 class LinkToKeyword : public KeywordData<KeywordBase *>
 {
-      public:
+	public:
 	LinkToKeyword(KeywordBase *keywordData);
 	~LinkToKeyword();
 
 	/*
 	 * Base Pointer Return (Overloading KeywordBase virtual)
 	 */
-      public:
+	public:
 	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
 	KeywordBase *base();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

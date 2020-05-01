@@ -41,14 +41,15 @@ class SpeciesTorsion;
 // ForceKernel
 class ForceKernel
 {
-      public:
-	ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz, double cutoffDistance = -1.0);
+	public:
+	ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
+		    Array<double> &fy, Array<double> &fz, double cutoffDistance = -1.0);
 	~ForceKernel();
 
 	/*
 	 * Source Data
 	 */
-      protected:
+	protected:
 	// Source Configuration
 	const Configuration *configuration_;
 	// Source Box (from Configuration)
@@ -69,7 +70,7 @@ class ForceKernel
 	/*
 	 * Internal Force Calculation
 	 */
-      private:
+	private:
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
 	void forcesWithoutMim(const Atom *i, const Atom *j, double scale = 1.0);
 	// Calculate inter-particle forces between Atoms provided (minimum image calculation)
@@ -78,7 +79,7 @@ class ForceKernel
 	/*
 	 * PairPotential Terms
 	 */
-      public:
+	public:
 	// Calculate forces between atoms provided
 	void forces(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ);
 	// Calculate forces between two cells
@@ -93,7 +94,7 @@ class ForceKernel
 	/*
 	 * Intramolecular Terms
 	 */
-      public:
+	public:
 	// Calculate SpeciesBond forces
 	void forces(const SpeciesBond *b, const Atom *i, const Atom *j);
 	// Calculate SpeciesBond forces for specified Atom only
@@ -110,7 +111,7 @@ class ForceKernel
 	/*
 	 * Parallel Comms
 	 */
-      private:
+	private:
 	// Process pool over which this kernel operates
 	ProcessPool &processPool_;
 };

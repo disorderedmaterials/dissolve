@@ -29,14 +29,15 @@
 // Isotopic Neutron Scattering Data
 class Isotope : public ElementReference, public ListItem<Isotope>
 {
-      public:
-	Isotope(int z = 0, int A = 0, const char *spin = NULL, double mass = 0.0, double bc = 0.0, double bi = 0.0, double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
+	public:
+	Isotope(int z = 0, int A = 0, const char *spin = NULL, double mass = 0.0, double bc = 0.0, double bi = 0.0,
+		double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
 	Isotope &operator=(const Isotope &source);
 
 	/*
 	 * Isotope Data
 	 */
-      private:
+	private:
 	// Mass number (A) of isotope
 	int A_;
 	// Isotope mass(given C = 12)
@@ -56,7 +57,7 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 	// Absorption cross section for thermal (2200 m/s) neutron (barn)
 	double absorptionXS_;
 
-      public:
+	public:
 	// Return index of isotope in it's Element parent's list
 	int index() const;
 	// Return mass number (A) of Isotope
@@ -80,15 +81,15 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 // Sears '91 Isotope Data
 class Isotopes : public Elements
 {
-      private:
+	private:
 	// Isotope data, grouped by element
 	static Array<List<Isotope>> isotopesByElementPrivate_;
 
-      private:
+	private:
 	// Return isotope data for specified Element
 	static List<Isotope> &isotopesByElement(int Z);
 
-      public:
+	public:
 	// Register specified Isotope to given Element
 	static void registerIsotope(Isotope *isotope, int Z);
 	// Return Isotope with specified A (if it exists) for given Z

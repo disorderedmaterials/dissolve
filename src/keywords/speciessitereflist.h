@@ -31,25 +31,25 @@ class SpeciesSite;
 // Keyword with SpeciesSiteReference Data
 class SpeciesSiteRefListKeyword : public KeywordData<RefList<SpeciesSite> &>
 {
-      public:
+	public:
 	SpeciesSiteRefListKeyword(RefList<SpeciesSite> &references, bool axesRequired = false);
 	~SpeciesSiteRefListKeyword();
 
 	/*
 	 * Specification
 	 */
-      private:
+	private:
 	// Whether sites in the list must have a defined orientation
 	bool axesRequired_;
 
-      public:
+	public:
 	// Return whether axes are required for the site
 	bool axesRequired() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -62,7 +62,7 @@ class SpeciesSiteRefListKeyword : public KeywordData<RefList<SpeciesSite> &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied Species in the contained data
 	void removeReferencesTo(Species *sp);
 	// Prune any references to the supplied SpeciesSite in the contained data

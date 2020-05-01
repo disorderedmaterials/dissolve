@@ -30,7 +30,7 @@ class SelectProcedureNode;
 // Operate Site Population Normalise Node
 class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeBase
 {
-      public:
+	public:
 	OperateSitePopulationNormaliseProcedureNode();
 	OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
 	~OperateSitePopulationNormaliseProcedureNode();
@@ -38,14 +38,14 @@ class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeB
 	/*
 	 * Target Sites (SelectNodes)
 	 */
-      private:
+	private:
 	// List of sites (nodes) whose populations will be used to normalise the data
 	RefList<const SelectProcedureNode> selectNodes_;
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target

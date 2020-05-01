@@ -45,7 +45,9 @@ bool DissolveWindow::checkSaveCurrentInput()
 			// If an input filename has been set, just overwrite it. If not, request a name first
 			if (!dissolve_.hasInputFilename())
 			{
-				QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+				QString newFile =
+					QFileDialog::getSaveFileName(this, "Choose input file name to save",
+								     QDir().absolutePath(), "Dissolve input files (*.txt)");
 				if (newFile.isEmpty())
 					return false;
 
@@ -129,7 +131,8 @@ void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
 		return;
 
 	// Request a new file to open
-	QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(), "Dissolve input files (*.txt)");
+	QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(),
+							 "Dissolve input files (*.txt)");
 	if (inputFile.isEmpty())
 		return;
 
@@ -164,7 +167,8 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 	// If an input file name has not been set, get one now
 	if (!dissolve_.hasInputFilename())
 	{
-		QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+		QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(),
+							       "Dissolve input files (*.txt)");
 		if (newFile.isEmpty())
 			return;
 
@@ -185,7 +189,8 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
 {
 	// Get a suitable input file name
-	QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+	QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(),
+						       "Dissolve input files (*.txt)");
 	if (newFile.isEmpty())
 		return;
 

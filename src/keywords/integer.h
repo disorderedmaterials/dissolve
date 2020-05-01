@@ -30,7 +30,7 @@
 // Keyword with Integer Data
 class IntegerKeyword : public KeywordData<int>
 {
-      public:
+	public:
 	IntegerKeyword(int value);
 	IntegerKeyword(int value, int minValue);
 	IntegerKeyword(int value, int minValue, int maxValue);
@@ -39,13 +39,13 @@ class IntegerKeyword : public KeywordData<int>
 	/*
 	 * Data Validation
 	 */
-      private:
+	private:
 	// Validation limits to apply (if any)
 	bool minimumLimit_, maximumLimit_;
 	// Validation range (if appropriate)
 	int min_, max_;
 
-      public:
+	public:
 	// Return whether a minimum validation limit has been set
 	bool hasValidationMin();
 	// Return validation minimum limit
@@ -60,7 +60,7 @@ class IntegerKeyword : public KeywordData<int>
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -73,7 +73,7 @@ class IntegerKeyword : public KeywordData<int>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)

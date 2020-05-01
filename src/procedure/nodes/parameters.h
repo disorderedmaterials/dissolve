@@ -32,14 +32,14 @@ class ExpressionVariable;
 // Parameters Node
 class ParametersProcedureNode : public ProcedureNode
 {
-      public:
+	public:
 	ParametersProcedureNode();
 	~ParametersProcedureNode();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 	// Return whether a name for the node must be provided
@@ -48,13 +48,13 @@ class ParametersProcedureNode : public ProcedureNode
 	/*
 	 * Parameters
 	 */
-      private:
+	private:
 	// List of defined integer parameters (as base ExpressionNode type)
 	List<ExpressionNode> integerParameters_;
 	// List of defined double parameters (as base ExpressionNode type)
 	List<ExpressionNode> doubleParameters_;
 
-      public:
+	public:
 	// Add new integer parameter
 	bool addParameter(const char *name, int initialValue = 0);
 	// Add new double parameter
@@ -67,11 +67,12 @@ class ParametersProcedureNode : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 };
 
 #endif

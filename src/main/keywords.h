@@ -68,14 +68,15 @@ namespace ConfigurationBlock
 // Configuration Block Keyword Enum
 enum ConfigurationKeyword
 {
-	CellDivisionLengthKeyword, /* 'CellDivisionLength' - Set the requested side length for regions when partitioning the unit cell */
+	CellDivisionLengthKeyword, /* 'CellDivisionLength' - Set the requested side length for regions when partitioning the
+				      unit cell */
 	EndConfigurationKeyword,   /* 'EndConfiguration' - Signals the end of the Configuration block */
 	GeneratorKeyword,	  /* 'Generator' - Define the generator procedure for the Configuration */
 	InputCoordinatesKeyword,   /* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 	ModuleKeyword,		   /* 'Module' - Starts the set up of a Module for this configuration */
-	SizeFactorKeyword,	 /* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
-	TemperatureKeyword,	/* 'Temperature' - Defines the temperature of the simulation */
-	nConfigurationKeywords     /* Number of keywords defined for this block */
+	SizeFactorKeyword,     /* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
+	TemperatureKeyword,    /* 'Temperature' - Defines the temperature of the simulation */
+	nConfigurationKeywords /* Number of keywords defined for this block */
 };
 // Return enum option info for ConfigurationKeyword
 EnumOptions<ConfigurationBlock::ConfigurationKeyword> keywords();
@@ -152,15 +153,16 @@ namespace PairPotentialsBlock
 // PairPotential Block Keyword Enum
 enum PairPotentialsKeyword
 {
-	CoulombTruncationKeyword,	 /* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
-	DeltaKeyword,			  /* 'Delta' - Gives the spacing between points in the tabulated potentials */
-	EndPairPotentialsKeyword,	 /* 'EndPairPotentials' - Signals the end of the PairPotentials block */
-	GenerateKeyword,		  /* 'Generate' - Generates a single PairPotential with the specified contributions */
-	IncludeCoulombKeyword,		  /* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
-	ParametersKeyword,		  /* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
-	RangeKeyword,			  /* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
+	CoulombTruncationKeyword, /* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
+	DeltaKeyword,		  /* 'Delta' - Gives the spacing between points in the tabulated potentials */
+	EndPairPotentialsKeyword, /* 'EndPairPotentials' - Signals the end of the PairPotentials block */
+	GenerateKeyword,	  /* 'Generate' - Generates a single PairPotential with the specified contributions */
+	IncludeCoulombKeyword,    /* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
+	ParametersKeyword, /* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
+	RangeKeyword,      /* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
 	ShortRangeTruncationKeyword,      /* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
-	ShortRangeTruncationWidthKeyword, /* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
+	ShortRangeTruncationWidthKeyword, /* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce
+					     short-range term to zero */
 	nPairPotentialsKeywords		  /* Number of keywords defined for this block */
 };
 // Return enum option info for PairPotentialsKeyword
@@ -177,9 +179,10 @@ namespace SimulationBlock
 // Simulation Block Keyword Enum
 enum SimulationKeyword
 {
-	EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
-	ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
-	ParallelGroupPopulationKeyword, /* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes in a pool in to */
+	EndSimulationKeyword,    /* 'EndSimulation' - Signals the end of the Simulation block */
+	ParallelStrategyKeyword, /* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
+	ParallelGroupPopulationKeyword, /* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes
+					   in a pool in to */
 	SeedKeyword,			/* 'Seed' - Random seed to use */
 	nSimulationKeywords		/* Number of keywords defined for this block */
 };

@@ -40,19 +40,19 @@ using namespace std;
 // Line Parser
 class LineParser
 {
-      public:
+	public:
 	LineParser(ProcessPool *procPool = NULL);
 	~LineParser();
 	// Parse Options Enum
 	enum ParseOption
 	{
-		Defaults = 0,		   /* Default parsing behaviour */
-		KeepComments = 1,	  /* Automatically strip comments (beginning # or //) from files */
-		IgnoreQuotes = 2,	  /* Quoted text in files will not be retained as a single argument */
-		KeepBlanks = 4,		   /* Don't automatically skip blank lines (those containing nothing or only whitespace) */
-		StripBrackets = 8,	 /* Remove parentheses during parsing */
-		NoEscapes = 16,		   /* Don't convert excaped characters */
-		UseBraces = 32,		   /* Text inside curly brackets is retaind as a single argument */
+		Defaults = 0,      /* Default parsing behaviour */
+		KeepComments = 1,  /* Automatically strip comments (beginning # or //) from files */
+		IgnoreQuotes = 2,  /* Quoted text in files will not be retained as a single argument */
+		KeepBlanks = 4,    /* Don't automatically skip blank lines (those containing nothing or only whitespace) */
+		StripBrackets = 8, /* Remove parentheses during parsing */
+		NoEscapes = 16,    /* Don't convert excaped characters */
+		UseBraces = 32,    /* Text inside curly brackets is retaind as a single argument */
 		CommasAreDelimiters = 64,  /* Treat commas as delimiting marks in files */
 		SemiColonLineBreaks = 128, /* Treat semicolons as line-breaks */
 		nParseOptions = 9
@@ -68,7 +68,7 @@ class LineParser
 	/*
 	 * Source line/file and read options
 	 */
-      private:
+	private:
 	// Associated process pool (if any)
 	ProcessPool *processPool_;
 	// Current input filename (if any)
@@ -92,11 +92,11 @@ class LineParser
 	// Target stream for cached writing
 	stringstream *cachedFile_;
 
-      private:
+	private:
 	// Return current stream for input
 	istream *inputStream() const;
 
-      public:
+	public:
 	// Reset data
 	void reset();
 	// Return associated process pool (if any)
@@ -143,7 +143,7 @@ class LineParser
 	/*
 	 * Read/Write Routines
 	 */
-      private:
+	private:
 	// Whether input is from file or strings
 	bool fileInput_;
 	// Whether output is cached or direct
@@ -153,7 +153,7 @@ class LineParser
 	// Working storage for text to write
 	char workingText_[8096];
 
-      public:
+	public:
 	// Gets next delimited arg from internal line
 	bool getNextArg(int optionMask, CharString *destarg);
 	// Gets next n chars from internal line
@@ -198,7 +198,7 @@ class LineParser
 	/*
 	 * Argument Data
 	 */
-      private:
+	private:
 	// Temporary string variable
 	char tempArg_[MAXLINELENGTH];
 	// Parsed arguments
@@ -206,7 +206,7 @@ class LineParser
 	// Whether the end of the string has been found in get_next_arg()
 	bool endOfLine_;
 
-      public:
+	public:
 	// Returns number of arguments grabbed from last parse
 	int nArgs() const;
 	// Returns the specified argument as a character string

@@ -31,14 +31,14 @@ class QWidget;
 // Wizard Widget Highlight Definition
 class WizardWidgetHighlight : public ListItem<WizardWidgetHighlight>
 {
-      public:
+	public:
 	WizardWidgetHighlight();
 	~WizardWidgetHighlight();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Target widget
 	QWidget *widget_;
 	// Original palette
@@ -46,7 +46,7 @@ class WizardWidgetHighlight : public ListItem<WizardWidgetHighlight>
 	// Highlight colour
 	QColor colour_;
 
-      public:
+	public:
 	// Set target widget
 	void setWidget(QWidget *widget);
 	// Set highlight colour
@@ -55,7 +55,7 @@ class WizardWidgetHighlight : public ListItem<WizardWidgetHighlight>
 	/*
 	 * Highlighting
 	 */
-      public:
+	public:
 	// Highlight the target widget
 	void highlight();
 	// Remove highlight from the target widget

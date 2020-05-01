@@ -74,8 +74,10 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
 		// Set initial step size - the line minimiser will modify this as we proceed
 		double stepSize = initialStepSize;
 
-		Messenger::print("Cycle  %-16s  %-16s  %-16s  %-16s  %-16s\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)", "dRMS", "Step Size");
-		Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------", stepSize);
+		Messenger::print("Cycle  %-16s  %-16s  %-16s  %-16s  %-16s\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)",
+				 "dRMS", "Step Size");
+		Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------",
+				 stepSize);
 
 		int nStepSizeResets = 0;
 		for (int cycle = 1; cycle <= nCycles; ++cycle)
@@ -86,7 +88,8 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
 			// Line minimise along the force gradient
 			double newEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), tolerance * 0.01, stepSize);
 
-			// Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine new step size
+			// Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine
+			// new step size
 			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), xForce_, yForce_, zForce_);
 			double newRMSForce = rmsForce();
 
@@ -95,7 +98,8 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
 			double dF = newRMSForce - oldRMSForce;
 
 			// Print summary
-			Messenger::print("%5i  %16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", cycle, newEnergy, dE, newRMSForce, dF, stepSize);
+			Messenger::print("%5i  %16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", cycle, newEnergy, dE, newRMSForce, dF,
+					 stepSize);
 
 			// Check convergence
 			if ((fabs(dE) < tolerance) || (fabs(dF) < tolerance))

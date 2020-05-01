@@ -30,7 +30,8 @@ IsotopologueComboDelegate::IsotopologueComboDelegate(QObject *parent) : QItemDel
 IsotopologueComboDelegate::~IsotopologueComboDelegate() {}
 
 // Create editor
-QWidget *IsotopologueComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *IsotopologueComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+						 const QModelIndex &index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox *editor = new QComboBox(parent);
@@ -49,7 +50,8 @@ QWidget *IsotopologueComboDelegate::createEditor(QWidget *parent, const QStyleOp
 		ComboNameListPopulator<Isotopologue>(editor, sp->isotopologues(), true);
 	}
 	else
-		Messenger::error("Underlying model did not contain an Isotopologue*, so IsotopologueCombo cannot provide options.\n");
+		Messenger::error(
+			"Underlying model did not contain an Isotopologue*, so IsotopologueCombo cannot provide options.\n");
 
 	return editor;
 }
@@ -84,4 +86,8 @@ void IsotopologueComboDelegate::setModelData(QWidget *editor, QAbstractItemModel
 }
 
 // Update widget geometry
-void IsotopologueComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void IsotopologueComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+						     const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}

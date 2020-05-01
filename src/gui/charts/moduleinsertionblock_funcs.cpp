@@ -52,7 +52,8 @@ void ModuleInsertionBlock::paintEvent(QPaintEvent *event)
 	QPainterPath borderPath;
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
 	borderPath.lineTo(metrics.blockBorderMidPoint(), metrics.blockDentOffset());
-	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentOffset() + metrics.blockBorderMidPoint(), metrics.blockDentRadius() * 2,
+	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(),
+			 metrics.blockDentOffset() + metrics.blockBorderMidPoint(), metrics.blockDentRadius() * 2,
 			 metrics.blockDentRadius() * 2, 90, -180);
 	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
 	borderPath.lineTo(width() - metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
@@ -92,7 +93,10 @@ int ModuleInsertionBlock::widgetWidth() const { return minimumSize().width(); }
 int ModuleInsertionBlock::widgetHeight() const { return minimumSize().height(); }
 
 // Set underlying widget geometry
-void ModuleInsertionBlock::setWidgetGeometry(int left, int top, int width, int height) { setGeometry(left, top, width, height); }
+void ModuleInsertionBlock::setWidgetGeometry(int left, int top, int width, int height)
+{
+	setGeometry(left, top, width, height);
+}
 
 /*
  * Icons

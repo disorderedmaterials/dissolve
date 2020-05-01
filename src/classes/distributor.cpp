@@ -23,8 +23,9 @@
 #include "base/processpool.h"
 #include "classes/cell.h"
 
-Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool allowRepeats)
-    : cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
+Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool,
+			 ProcessPool::DivisionStrategy strategy, bool allowRepeats)
+	: cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
 {
 	// Cells
 	cellLocks_.initialise(cellArray_.nCells());
@@ -75,15 +76,19 @@ bool Distributor::addSoftLock(int cellIndex)
 bool Distributor::removeSoftLock(int cellIndex)
 {
 	// Remove a soft lock from the Cell - decrease the current lock counter
-	// We can't soft-unlock a cell if it is currently being modified ( == HardLocked ) or if there are no soft locks left to remove
+	// We can't soft-unlock a cell if it is currently being modified ( == HardLocked ) or if there are no soft locks left to
+	// remove
 	if (cellLocks_[cellIndex] == NoLocks)
 	{
-		Messenger::error("Can't remove a soft lock from Cell index %i since there are no soft locks to remove.\n", cellIndex);
+		Messenger::error("Can't remove a soft lock from Cell index %i since there are no soft locks to remove.\n",
+				 cellIndex);
 		return false;
 	}
 	else if (cellLocks_[cellIndex] == HardLocked)
 	{
-		Messenger::error("Can't remove a soft lock from Cell index %i since it is being modified (there are no soft locks to remove).\n", cellIndex);
+		Messenger::error("Can't remove a soft lock from Cell index %i since it is being modified (there are no soft "
+				 "locks to remove).\n",
+				 cellIndex);
 		return false;
 	}
 
@@ -115,7 +120,8 @@ bool Distributor::addHardLocks(Array<Cell *> cells)
 
 	// Form a list of unique surrounding cells that we need to soft-lock
 	Array<Cell *> softCells = surroundingCells(cells);
-	Messenger::printVerbose("Hard-locking %i cells and soft-locking %i surrounding ones...\n", cells.nItems(), softCells.nItems());
+	Messenger::printVerbose("Hard-locking %i cells and soft-locking %i surrounding ones...\n", cells.nItems(),
+				softCells.nItems());
 
 	// Loop over Cells to hard-lock
 	for (int n = 0; n < cells.nItems(); ++n)
@@ -126,12 +132,14 @@ bool Distributor::addHardLocks(Array<Cell *> cells)
 		// We can't hard-lock a cell if it is currently being modified ( == HardLocked ) or is soft-locked ( > 0 )
 		if (cellLocks_[cellId] == HardLocked)
 		{
-			Messenger::error("Can't add a hard lock to Cell index %i since it is already being modified.\n", cellId);
+			Messenger::error("Can't add a hard lock to Cell index %i since it is already being modified.\n",
+					 cellId);
 			return false;
 		}
 		else if (cellLocks_[cellId] > NoLocks)
 		{
-			Messenger::error("Can't add a hard lock to Cell index %i since it already has soft locks (%i).\n", cellId, cellLocks_[cellId]);
+			Messenger::error("Can't add a hard lock to Cell index %i since it already has soft locks (%i).\n",
+					 cellId, cellLocks_[cellId]);
 			return false;
 		}
 
@@ -156,7 +164,8 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
 
 	// Form a list of unique surrounding cells that we need to soft-lock
 	Array<Cell *> softCells = surroundingCells(cells);
-	Messenger::printVerbose("Hard-unlocking %i cells and soft-unlocking %i surrounding ones...\n", cells.nItems(), softCells.nItems());
+	Messenger::printVerbose("Hard-unlocking %i cells and soft-unlocking %i surrounding ones...\n", cells.nItems(),
+				softCells.nItems());
 
 	// Loop over Cells to hard-unlock
 	for (int n = 0; n < cells.nItems(); ++n)
@@ -167,12 +176,15 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
 		// We can't hard-unlock a cell unless it is currently hard-locked (obviously!)
 		if (cellLocks_[cellId] == NoLocks)
 		{
-			Messenger::error("Can't remove a hard lock from Cell index %i since there is no hard lock to remove.\n", cellId);
+			Messenger::error("Can't remove a hard lock from Cell index %i since there is no hard lock to remove.\n",
+					 cellId);
 			return false;
 		}
 		else if (cellLocks_[cellId] > NoLocks)
 		{
-			Messenger::error("Can't remove a hard lock from Cell index %i since there are only soft locks to remove.\n", cellId);
+			Messenger::error(
+				"Can't remove a hard lock from Cell index %i since there are only soft locks to remove.\n",
+				cellId);
 			return false;
 		}
 
@@ -295,7 +307,8 @@ Array<Cell *> Distributor::surroundingCells(Array<Cell *> centralCells)
 int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 {
 	/*
-	 * All processes should call here together. We will work out the index of the next object that should be the target for each process or group of processes.
+	 * All processes should call here together. We will work out the index of the next object that should be the target for
+	 * each process or group of processes.
 	 */
 
 	Array<Cell *> hardLocksRequired, softLocksRequired;
@@ -312,7 +325,8 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 	}
 
 	// Loop over target groups / processes
-	// Every process will determine the next object for every group / process, and return therelevant one at the end of the routine
+	// Every process will determine the next object for every group / process, and return therelevant one at the end of the
+	// routine
 	for (int processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
 	{
 		// Find the next object for this process / group, starting from the last one we found.
@@ -345,17 +359,19 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 				if (objectStatus_[index] == Distributor::DistributedFlag)
 					continue;
 
-				// If the object is waiting for distribution *OR* has already been completed, we are allowing repeats, and we have already sent all objects, properly check its validity
-				// for distribution
+				// If the object is waiting for distribution *OR* has already been completed, we are allowing
+				// repeats, and we have already sent all objects, properly check its validity for distribution
 				if ((objectStatus_[index] == Distributor::WaitingFlag) ||
-				    ((nObjectsDistributed_ >= nObjects_) && repeatsAllowed_ && (objectStatus_[index] == Distributor::CompletedFlag)))
+				    ((nObjectsDistributed_ >= nObjects_) && repeatsAllowed_ &&
+				     (objectStatus_[index] == Distributor::CompletedFlag)))
 				{
 					// We now check the possibility for locking the Cells necessary for modifying the object
 
 					// First, get the Cells that we need to hard-lock if the object is to be modifeid
 					hardLocksRequired = cellsToBeModifiedForObject(index);
 
-					// If any of these Cells have been modified by a process other than this one, continue the search
+					// If any of these Cells have been modified by a process other than this one, continue
+					// the search
 					// TODO Should we just broadcast changes instead of continuing the search?
 					hardCellModified = false;
 					for (int i = 0; i < hardLocksRequired.nItems(); ++i)
@@ -376,9 +392,11 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 						continue;
 
 					// We can hard-lock the Cells, so this looks like a viable object to use as a target.
-					// Check now to see if any of the surrounding cells we need to soft-lock have the 'cellContentsModifiedBy_' values. If they have been set by someone else, there
-					// are changes to that Cell which we need, and so must broadcast any stored changes before the calculation proceeds Check the current value of
-					// changesBroadcastRequired first - if it is already 'true', there's no point making further checks
+					// Check now to see if any of the surrounding cells we need to soft-lock have the
+					// 'cellContentsModifiedBy_' values. If they have been set by someone else, there are
+					// changes to that Cell which we need, and so must broadcast any stored changes before
+					// the calculation proceeds Check the current value of changesBroadcastRequired first -
+					// if it is already 'true', there's no point making further checks
 					if (!changesBroadcastRequired)
 					{
 						softLocksRequired = surroundingCells(hardLocksRequired);
@@ -391,17 +409,22 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 							if (cellContentsModifiedBy_[cellIndex] == -1)
 								continue;
 
-							// If this Cell has been modified by the present process/group, that's OK, since it will have the new coordinates already
+							// If this Cell has been modified by the present process/group, that's
+							// OK, since it will have the new coordinates already
 							if (cellContentsModifiedBy_[cellIndex] == processOrGroup)
 								continue;
 
-							// It's been modified by someone else, so we will need to distribute changes before the calculation begins
+							// It's been modified by someone else, so we will need to distribute
+							// changes before the calculation begins
 							changesBroadcastRequired = true;
 							++nChangeBroadcastsRequired_;
-							Messenger::printVerbose("Changes broadcast required - Cell %i is required by process/group %i, and process/group %i has modified it.\n",
-										cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
+							Messenger::printVerbose(
+								"Changes broadcast required - Cell %i is required by "
+								"process/group %i, and process/group %i has modified it.\n",
+								cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
 
-							// Reset the modified by flags here - this makes the assumption that the calling routine will honour the truth of 'changesBroadcastRequired'
+							// Reset the modified by flags here - this makes the assumption that the
+							// calling routine will honour the truth of 'changesBroadcastRequired'
 							cellContentsModifiedBy_ = -1;
 							break;
 						}
@@ -419,7 +442,8 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 		// Did we find a valid object?
 		if (nextObject == Distributor::NoneAvailable)
 		{
-			Messenger::printVerbose("No viable objects left to distribute for group / process %i.\n", processOrGroup);
+			Messenger::printVerbose("No viable objects left to distribute for group / process %i.\n",
+						processOrGroup);
 
 			lastObjectDistributed_[processOrGroup] = Distributor::NoneAvailable;
 
@@ -431,7 +455,8 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 		else
 		{
 			// We have found a viable object for this process / group
-			Messenger::printVerbose("Next object for process/group %i is %i (number already distributed = %i).\n", processOrGroup, nextObject, nObjectsDistributed_);
+			Messenger::printVerbose("Next object for process/group %i is %i (number already distributed = %i).\n",
+						processOrGroup, nextObject, nObjectsDistributed_);
 			lastObjectDistributed_[processOrGroup] = nextObject;
 			lastHardLockedCells_[processOrGroup] = hardLocksRequired;
 
@@ -451,8 +476,9 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 bool Distributor::finishedWithObject()
 {
 	// Unlock all cells that we hard/soft-locked in the last distribution, and set flags on modified Cells
-	// We assume that changes were made to all hard-locked cells by all processes / groups. This may not be the case, but to find out the true picture we would need to perform further MPI
-	// broadcast of information each time, and that is what we are trying to avoid!
+	// We assume that changes were made to all hard-locked cells by all processes / groups. This may not be the case, but to
+	// find out the true picture we would need to perform further MPI broadcast of information each time, and that is what
+	// we are trying to avoid!
 	for (int processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
 	{
 		int objectIndex = lastObjectDistributed_[processOrGroup];
@@ -472,7 +498,8 @@ bool Distributor::finishedWithObject()
 
 			// Sanity check - has this cell been modified by somebody else?
 			if (cellContentsModifiedBy_[cellIndex] != -1)
-				Messenger::warn("Cell index %i contents modified twice (%i and %i)?\n", cellIndex, cellContentsModifiedBy_[cellIndex], processOrGroup);
+				Messenger::warn("Cell index %i contents modified twice (%i and %i)?\n", cellIndex,
+						cellContentsModifiedBy_[cellIndex], processOrGroup);
 
 			cellContentsModifiedBy_[cellIndex] = processOrGroup;
 		}

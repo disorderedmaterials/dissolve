@@ -22,7 +22,9 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/nodevalueenumoptions.h"
 
-NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword,
+								     const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -46,7 +48,8 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *pa
 				ui_.OptionsCombo->setCurrentIndex(n);
 		}
 
-		// Set event filtering on the combo so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+		// Set event filtering on the combo so that we do not blindly accept mouse wheel events (problematic since we
+		// will exist in a QScrollArea)
 		ui_.OptionsCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.OptionsCombo));
 
 		// Update values

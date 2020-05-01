@@ -27,24 +27,24 @@
 // GenericItemContainer< Array< Vec3<double> > >
 template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
 {
-      public:
+	public:
 	GenericItemContainer<Array<Vec3<double>>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Data item
 	Array<Vec3<double>> data_;
 
-      public:
+	public:
 	// Return data item
 	Array<Vec3<double>> &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-      protected:
+	protected:
 	// Create a new GenericItem containing same class as current type
 	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
@@ -53,14 +53,14 @@ template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
 		return NULL;
 	}
 
-      public:
+	public:
 	// Return class name contained in item
 	const char *itemClassName() { return "Array<Vec3<double>>"; }
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write data through specified parser
 	bool write(LineParser &parser)
 	{
@@ -92,9 +92,12 @@ template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
+	{
+		return procPool.broadcast(data_, root);
+	}
 	// Return equality between items
 	bool equality(ProcessPool &procPool)
 	{

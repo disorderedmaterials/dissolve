@@ -8,7 +8,8 @@
 #define SGCOREDEF__
 #include "sginfo.h"
 
-static int InitialCBMxR(T_SgInfo *SgInfo, const T_LatticeInfo **NewLatticeInfo, int *NewPointGroup, int *IniCBMxR, int *IniInvCBMxR)
+static int InitialCBMxR(T_SgInfo *SgInfo, const T_LatticeInfo **NewLatticeInfo, int *NewPointGroup, int *IniCBMxR,
+			int *IniInvCBMxR)
 {
 	int Code, NewPG, deterCCMx, fac, i;
 	const T_LatticeInfo *NewLI;
@@ -324,7 +325,8 @@ static const T_RTMx *GetSMxWithSameRot(const int *WtdRotMx, const T_SgInfo *SgIn
 
 static int BuildFreeMx(const int *EigenVector, int Order, int *FreeMx)
 {
-	static const int GeneratorEigenVectors[] = {001, 0, 0, 1, 010, 0, 1, 0, 100, 1, 0, 0, 110, 1, 1, 0, -110, 1, -1, 0, 111, 1, 1, 1, 0};
+	static const int GeneratorEigenVectors[] = {001, 0, 0, 1,    010, 0,  1, 0,   100, 1, 0, 0, 110,
+						    1,   1, 0, -110, 1,   -1, 0, 111, 1,   1, 1, 0};
 
 	int i;
 	const int *gev;
@@ -412,7 +414,8 @@ static int BuildFreeMx(const int *EigenVector, int Order, int *FreeMx)
 	return -1;
 }
 
-static int StartFixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx, T_RTMx *SMxG, T_RTMx *SMxS_G, int *FreeMx, int *TryAgain)
+static int StartFixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx,
+			T_RTMx *SMxG, T_RTMx *SMxS_G, int *FreeMx, int *TryAgain)
 {
 	int iG, Order, i;
 	const int *EV;
@@ -644,7 +647,8 @@ static int SetInvCBMxT(const int *CBMxT, const int *InvCBMxR, int *InvCBMxT)
 	return 0;
 }
 
-static int FixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx, int *FreeMx, int TryAgain)
+static int FixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx, int *FreeMx,
+		   int TryAgain)
 {
 	int i, NextTryAgain;
 	int IniCBMxT[3], SingleFreeMx[9];
@@ -792,7 +796,8 @@ ReturnError:
 	return -1;
 }
 
-static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, const T_SgInfo *GenSgI, const int *IniCBMxR, const int *IniInvCBMxR, T_RTMx *CBMx, T_RTMx *InvCBMx)
+static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, const T_SgInfo *GenSgI, const int *IniCBMxR,
+			const int *IniInvCBMxR, T_RTMx *CBMx, T_RTMx *InvCBMx)
 {
 	int iGen[5], i;
 

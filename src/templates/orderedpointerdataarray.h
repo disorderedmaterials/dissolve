@@ -38,7 +38,7 @@
  */
 template <class T, class D> class OrderedPointerDataArray
 {
-      public:
+	public:
 	OrderedPointerDataArray<T, D>()
 	{
 		nItems_ = 0;
@@ -72,7 +72,9 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
 		{
-			Messenger::error("OrderedPointerDataArray<T,D>::operator[](%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			Messenger::error("OrderedPointerDataArray<T,D>::operator[](%i) - Array index out of bounds (%i items "
+					 "in array).\n",
+					 index, nItems_);
 			return NULL;
 		}
 #endif
@@ -82,7 +84,7 @@ template <class T, class D> class OrderedPointerDataArray
 	/*
 	 * Basic Data
 	 */
-      protected:
+	protected:
 	// Array of items
 	T **items_;
 	// Array of data
@@ -92,7 +94,7 @@ template <class T, class D> class OrderedPointerDataArray
 	// Number of items in array
 	int nItems_;
 
-      public:
+	public:
 	// Clear the list
 	void clear()
 	{
@@ -137,7 +139,9 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
 		{
-			Messenger::error("OrderedPointerDataArray<T,D>::value(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			Messenger::error(
+				"OrderedPointerDataArray<T,D>::value(%i) - Array index out of bounds (%i items in array).\n",
+				index, nItems_);
 			return NULL;
 		}
 #endif
@@ -150,7 +154,9 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
 		{
-			Messenger::error("OrderedPointerDataArray<T,D>::data(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			Messenger::error(
+				"OrderedPointerDataArray<T,D>::data(%i) - Array index out of bounds (%i items in array).\n",
+				index, nItems_);
 			return D();
 		}
 #endif
@@ -165,7 +171,7 @@ template <class T, class D> class OrderedPointerDataArray
 	/*
 	 * Item Management
 	 */
-      public:
+	public:
 	// Add an item to the list
 	void add(T *ptr, D ptrData = D())
 	{
@@ -180,9 +186,9 @@ template <class T, class D> class OrderedPointerDataArray
 				break;
 		}
 
-		// The pointer is not currently in the list, and we have the position at which it should be inserted in 'insertAt'.
-		// If there is no more space, resize the array and copy the old items, inserting our new pointer at the correct position.
-		// If there is no space for the new item we must resize the array
+		// The pointer is not currently in the list, and we have the position at which it should be inserted in
+		// 'insertAt'. If there is no more space, resize the array and copy the old items, inserting our new pointer at
+		// the correct position. If there is no space for the new item we must resize the array
 		if (nItems_ == arraySize_)
 		{
 			// Create a new array with some more item space
@@ -220,7 +226,8 @@ template <class T, class D> class OrderedPointerDataArray
 		}
 		else
 		{
-			// Shuffle items from the insertion point up one place in the array (to higher indices), working backwards to avoid overwriting data
+			// Shuffle items from the insertion point up one place in the array (to higher indices), working
+			// backwards to avoid overwriting data
 			for (n = nItems_ - 1; n >= insertAt; --n)
 			{
 				items_[n + 1] = items_[n];
@@ -240,7 +247,9 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
 		{
-			Messenger::error("OrderedPointerDataArray<T,D>::setData(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			Messenger::error(
+				"OrderedPointerDataArray<T,D>::setData(%i) - Array index out of bounds (%i items in array).\n",
+				index, nItems_);
 			return;
 		}
 #endif

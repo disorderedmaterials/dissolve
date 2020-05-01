@@ -33,15 +33,15 @@ class AddForcefieldTermsDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
+	public:
 	AddForcefieldTermsDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
 	~AddForcefieldTermsDialog();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::AddForcefieldTermsDialog ui_;
 
-      public:
+	public:
 	// Reset, ready for adding a new Configuration
 	void reset();
 	// Set target Species that we are acquiring forcefield terms for

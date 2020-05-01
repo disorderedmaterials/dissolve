@@ -33,31 +33,31 @@ class ProcedureNode;
 // Keyword with ProcedureNode RefList
 class NodeRefListKeywordBase
 {
-      public:
+	public:
 	NodeRefListKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
 	virtual ~NodeRefListKeywordBase();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
-      public:
+	public:
 	// Return parent ProcedureNode
 	ProcedureNode *parentNode() const;
 
 	/*
 	 * Target Node
 	 */
-      private:
+	private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 	// Whether to accept nodes within scope only
 	bool onlyInScope_;
 
-      public:
+	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
 	// Return whether to accept nodes within scope only
@@ -75,9 +75,11 @@ class NodeRefListKeywordBase
 // Keyword with ProcedureNode RefList
 template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, public KeywordData<RefList<N> &>
 {
-      public:
-	NodeRefListKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, RefList<N> &nodeRefList)
-	    : NodeRefListKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<RefList<N> &>(KeywordBase::NodeRefListData, nodeRefList)
+	public:
+	NodeRefListKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope,
+			   RefList<N> &nodeRefList)
+		: NodeRefListKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<RefList<N> &>(
+										     KeywordBase::NodeRefListData, nodeRefList)
 	{
 	}
 	~NodeRefListKeyword() {}
@@ -85,7 +87,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
@@ -94,15 +96,18 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
 		if (!parentNode())
-			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+						KeywordBase::name());
 
 		// Loop over arguments
 		for (int n = startArg; n < parser.nArgs(); ++n)
 		{
 			// Locate the named node - don't prune by type yet (we'll check that in setNode())
-			ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(n)) : parentNode()->nodeExists(parser.argc(n));
+			ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(n))
+							    : parentNode()->nodeExists(parser.argc(n));
 			if (!node)
-				return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(n), KeywordBase::name());
+				return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(n),
+							KeywordBase::name());
 
 			if (!addNode(node))
 				return false;
@@ -129,7 +134,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 	/*
 	 * Target Node
 	 */
-      public:
+	public:
 	// Add the specified node to the list
 	bool addNode(ProcedureNode *node)
 	{
@@ -137,7 +142,8 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 			return false;
 
 		if (node->type() != nodeType())
-			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n",
+						node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
 						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		// Cast up the node
@@ -147,7 +153,8 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 
 		// If this node is already in the list, complain
 		if (KeywordData<RefList<N> &>::data_.contains(castNode))
-			return Messenger::error("Node '%s' is already present in this list for keyword %s.\n", castNode->name(), KeywordBase::name());
+			return Messenger::error("Node '%s' is already present in this list for keyword %s.\n", castNode->name(),
+						KeywordBase::name());
 
 		// Add the node to the list
 		KeywordData<RefList<N> &>::data_.append(castNode);
@@ -182,8 +189,10 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 			return false;
 
 		if (node->type() != nodeType())
-			return Messenger::error("Node '%s' is of type %s, but the %s keyword stores nodes of type %s, so not attempting to remove it.\n", node->name(),
-						ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword stores nodes of type %s, so not "
+						"attempting to remove it.\n",
+						node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		// Cast up the node
 		N *castNode = dynamic_cast<N *>(node);
@@ -192,7 +201,8 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 
 		// Check that the list actually contains the specified node
 		if (!KeywordData<RefList<N> &>::data_.contains(castNode))
-			return Messenger::error("Node '%s' is not in this keyword's (%s) list of nodes, so can't remove it.\n", castNode->name(), KeywordBase::name());
+			return Messenger::error("Node '%s' is not in this keyword's (%s) list of nodes, so can't remove it.\n",
+						castNode->name(), KeywordBase::name());
 
 		KeywordData<RefList<N> &>::data_.remove(castNode);
 
@@ -202,7 +212,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied ProcedureNode in the contained data
 	void removeReferencesTo(ProcedureNode *node)
 	{

@@ -24,7 +24,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableData1D::RenderableData1D(const Data1D *source, const char *objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
+RenderableData1D::RenderableData1D(const Data1D *source, const char *objectTag)
+	: Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
 	// Set style defaults
 	displayStyle_ = LinesStyle;
@@ -70,7 +71,8 @@ void RenderableData1D::transformValues()
 	if (valuesTransformDataVersion_ == dataVersion())
 		return;
 
-	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
+	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have
+	// previously been active
 	if (!source_)
 		transformedData_.clear();
 	else
@@ -201,7 +203,8 @@ void RenderableData1D::recreatePrimitives(const View &view, const ColourDefiniti
 {
 	dataPrimitive_->initialise(GL_LINE_STRIP, true, 4096);
 
-	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
+	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(),
+			colourDefinition);
 }
 
 // Send primitives for rendering
@@ -220,7 +223,8 @@ const void RenderableData1D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, const Array<double> &displayValues, Primitive *primitive, const Axes &axes, const ColourDefinition &colourDefinition,
+void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, const Array<double> &displayValues,
+				       Primitive *primitive, const Axes &axes, const ColourDefinition &colourDefinition,
 				       double zCoordinate)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
@@ -271,7 +275,8 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
 		// Loop over x values
 		for (int n = 0; n < nX; ++n)
 		{
-			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
+			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch,
+						colour);
 			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 
 			// If both vertices are valid, plot a line
@@ -315,7 +320,8 @@ RenderableData1D::Data1DDisplayStyle RenderableData1D::displayStyle() const { re
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData1D::Data1DStyleKeyword> RenderableData1D::data1DStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData1D::DisplayKeyword, "Display", 1) << EnumOption(RenderableData1D::EndStyleKeyword, "EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData1D::DisplayKeyword, "Display", 1)
+								 << EnumOption(RenderableData1D::EndStyleKeyword, "EndStyle");
 
 	static EnumOptions<RenderableData1D::Data1DStyleKeyword> options("Data1DStyleKeyword", StyleKeywords);
 
@@ -331,7 +337,8 @@ bool RenderableData1D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, data1DStyleKeywords().keyword(RenderableData1D::DisplayKeyword), data1DDisplayStyles().keyword(displayStyle_)))
+	if (!parser.writeLineF("%s%s  %s\n", indent, data1DStyleKeywords().keyword(RenderableData1D::DisplayKeyword),
+			       data1DDisplayStyles().keyword(displayStyle_)))
 		return false;
 
 	return true;

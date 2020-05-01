@@ -32,18 +32,18 @@
 // Coordinate Set
 class CoordinateSet : public ListItem<CoordinateSet>
 {
-      public:
+	public:
 	CoordinateSet();
 	~CoordinateSet();
 
 	/*
 	 * Coordinates
 	 */
-      protected:
+	protected:
 	// Coordinates
 	Array<Vec3<double>> coordinates_;
 
-      public:
+	public:
 	// Initialise to specified size
 	void initialise(int size);
 	// Return size

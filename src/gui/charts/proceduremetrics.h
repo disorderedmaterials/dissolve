@@ -33,7 +33,7 @@ class ProcedureChartMetrics
 	/*
 	 * Module Chart Block
 	 */
-      public:
+	public:
 	// Border line width
 	static int blockBorderWidth() { return 2; }
 	// Border mid-point
@@ -42,7 +42,8 @@ class ProcedureChartMetrics
 	static QMargins blockMargins()
 	{
 		int innerGap = 4;
-		return QMargins(blockBorderWidth() + innerGap + dragHandleWidth(), blockBorderWidth() + innerGap, blockBorderWidth() + innerGap, blockBorderWidth() + innerGap);
+		return QMargins(blockBorderWidth() + innerGap + dragHandleWidth(), blockBorderWidth() + innerGap,
+				blockBorderWidth() + innerGap, blockBorderWidth() + innerGap);
 	}
 	// Vertical spacing between blocks
 	static int blockVerticalSpacing() { return 2; }
@@ -54,7 +55,7 @@ class ProcedureChartMetrics
 	/*
 	 * Procedure Chart
 	 */
-      public:
+	public:
 	// Inner margin around widgets
 	static int chartMargin() { return 0; }
 	// Spacing between rows

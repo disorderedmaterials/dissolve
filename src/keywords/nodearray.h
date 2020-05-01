@@ -34,26 +34,27 @@ class ProcedureNode;
 // Keyword with Node Array
 class NodeArrayKeywordBase
 {
-      public:
+	public:
 	NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, bool uniqueNodes);
-	NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize, bool onlyInScope, bool uniqueNodes);
+	NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize, bool onlyInScope,
+			     bool uniqueNodes);
 	virtual ~NodeArrayKeywordBase();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
-      public:
+	public:
 	// Return parent ProcedureNode
 	ProcedureNode *parentNode() const;
 
 	/*
 	 * Target Nodes and Array Size
 	 */
-      private:
+	private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 	// Whether to accept nodes within scope only
@@ -65,7 +66,7 @@ class NodeArrayKeywordBase
 	// Whether nodes in the array must all be unique
 	bool nodesAreUnique_;
 
-      public:
+	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
 	// Return whether to accept nodes within scope only
@@ -87,15 +88,20 @@ class NodeArrayKeywordBase
 // Keyword with ProcedureNode RefList
 template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public KeywordData<Array<N *> &>
 {
-      public:
-	NodeArrayKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, bool uniqueNodes, Array<N *> &nodeArray)
-	    : NodeArrayKeywordBase(parentNode, nodeType, onlyInScope, uniqueNodes), KeywordData<Array<N *> &>(KeywordBase::NodeArrayData, nodeArray)
+	public:
+	NodeArrayKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, bool uniqueNodes,
+			 Array<N *> &nodeArray)
+		: NodeArrayKeywordBase(parentNode, nodeType, onlyInScope, uniqueNodes), KeywordData<Array<N *> &>(
+												KeywordBase::NodeArrayData,
+												nodeArray)
 	{
 		// Initialise the array
 		nodeArray.clear();
 	}
-	NodeArrayKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize, bool onlyInScope, bool uniqueNodes, Array<N *> &nodeArray)
-	    : NodeArrayKeywordBase(parentNode, nodeType, fixedArraySize, onlyInScope, uniqueNodes), KeywordData<Array<N *> &>(KeywordBase::NodeArrayData, nodeArray)
+	NodeArrayKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize, bool onlyInScope,
+			 bool uniqueNodes, Array<N *> &nodeArray)
+		: NodeArrayKeywordBase(parentNode, nodeType, fixedArraySize, onlyInScope, uniqueNodes),
+		  KeywordData<Array<N *> &>(KeywordBase::NodeArrayData, nodeArray)
 	{
 		// Initialise the array if it looks like it needs it
 		if (nodeArray.nItems() != fixedArraySize)
@@ -110,24 +116,30 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const { return NodeArrayKeywordBase::isVariableSize() ? 1 : NodeArrayKeywordBase::fixedArraySize(); }
 	// Return maximum number of arguments accepted
-	int maxArguments() const { return NodeArrayKeywordBase::isVariableSize() ? 99 : NodeArrayKeywordBase::fixedArraySize(); }
+	int maxArguments() const
+	{
+		return NodeArrayKeywordBase::isVariableSize() ? 99 : NodeArrayKeywordBase::fixedArraySize();
+	}
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
 		if (!parentNode())
-			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+						KeywordBase::name());
 
 		// Loop over arguments
 		for (int n = startArg; n < parser.nArgs(); ++n)
 		{
 			// Locate the named node - don't prune by type yet (we'll check that in setNode())
-			ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+			ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg))
+							    : parentNode()->nodeExists(parser.argc(startArg));
 			if (!node)
-				return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+				return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+							KeywordBase::name());
 
 			if (!addNode(node))
 				return false;
@@ -157,7 +169,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 	/*
 	 * Target Nodes Array
 	 */
-      public:
+	public:
 	// Add the specified node to the array (only possible if we are a variable size array)
 	bool addNode(ProcedureNode *node)
 	{
@@ -166,10 +178,12 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
 		// Check if array extension is allowed
 		if (!NodeArrayKeywordBase::isVariableSize())
-			return Messenger::error("Can't dynamically add a node to the fixed-size NodeArray keyword '%s'.\n", KeywordBase::name());
+			return Messenger::error("Can't dynamically add a node to the fixed-size NodeArray keyword '%s'.\n",
+						KeywordBase::name());
 
 		if (node->type() != nodeType())
-			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n",
+						node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
 						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		// Cast up the node
@@ -179,7 +193,8 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
 		// If we only accept unique nodes over all array elements, check that this node is not already in the array
 		if (NodeArrayKeywordBase::nodesAreUnique() && (indexOfNode(node) != -1))
-			return Messenger::error("Node '%s' is already present in the array for keyword %s.\n", castNode->name(), KeywordBase::name());
+			return Messenger::error("Node '%s' is already present in the array for keyword %s.\n", castNode->name(),
+						KeywordBase::name());
 
 		// Add the node to the list
 		KeywordData<Array<N *> &>::data_.add(castNode);
@@ -196,10 +211,12 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
 		// Check array index provided
 		if ((arrayIndex < 0) || (arrayIndex >= KeywordData<Array<N *> &>::data_.nItems()))
-			return Messenger::error("Array index %i is out of bounds for the NodeArray keyword '%s'.\n", arrayIndex, KeywordBase::name());
+			return Messenger::error("Array index %i is out of bounds for the NodeArray keyword '%s'.\n", arrayIndex,
+						KeywordBase::name());
 
 		if (node->type() != nodeType())
-			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n",
+						node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
 						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		// Cast up the node
@@ -209,7 +226,8 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
 		// If we only accept unique nodes over all array elements, check that this node is not already in the array
 		if (NodeArrayKeywordBase::nodesAreUnique() && (indexOfNode(node) != -1))
-			return Messenger::error("Node '%s' is already present in the array for keyword %s.\n", castNode->name(), KeywordBase::name());
+			return Messenger::error("Node '%s' is already present in the array for keyword %s.\n", castNode->name(),
+						KeywordBase::name());
 
 		// Set the node pointer in the specified position
 		KeywordData<Array<N *> &>::data_[arrayIndex] = castNode;
@@ -223,7 +241,9 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 	{
 		// Check array index provided
 		if ((arrayIndex < 0) || (arrayIndex >= KeywordData<Array<N *> &>::data_.nItems()))
-			return Messenger::error("Array index %i is out of bounds for the NodeArray keyword '%s', so can't clear the element.\n", arrayIndex, KeywordBase::name());
+			return Messenger::error(
+				"Array index %i is out of bounds for the NodeArray keyword '%s', so can't clear the element.\n",
+				arrayIndex, KeywordBase::name());
 
 		// Set the node pointer in the specified position
 		KeywordData<Array<N *> &>::data_[arrayIndex] = NULL;
@@ -259,7 +279,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied ProcedureNode in the contained data
 	void removeReferencesTo(ProcedureNode *node)
 	{

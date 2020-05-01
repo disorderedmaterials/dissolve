@@ -46,10 +46,11 @@ void EPSRModule::addTargets(RefList<Module> targets, const char *groupName)
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
-	Array2D<Array<double>> &coefficients =
-	    GenericListHelper<Array2D<Array<double>>>::realise(dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+	Array2D<Array<double>> &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+		dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
 	int arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
-	if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) || ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
+	if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
+	    ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
 	{
 		coefficients.initialise(nAtomTypes, nAtomTypes, true);
 		for (int n = 0; n < coefficients.linearArraySize(); ++n)
@@ -63,7 +64,8 @@ Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, co
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1,
+bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType,
+					     double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1,
 					     double sigma2)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
@@ -87,15 +89,18 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 				// Construct our fitting object and generate the potential using it
 				GaussFit generator(ep);
 				generator.set(rmaxpt, potCoeff, sigma1);
-				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(), sigma2 / sigma1);
+				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
+							     dissolve.pairPotentialRange(), sigma2 / sigma1);
 			}
 			else if (functionType == EPSRModule::PoissonExpansionFunction)
 			{
 				// Construct our fitting object and generate the potential using it
-				// We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho not present in our denominator
+				// We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho not
+				// present in our denominator
 				PoissonFit generator(ep);
 				generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
-				ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+				ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0,
+							     dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
 			}
 
 			// Multiply by truncation function
@@ -105,7 +110,8 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 			PairPotential *pp = dissolve.pairPotential(at1, at2);
 			if (!pp)
 			{
-				Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+				Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(),
+						 at2->name());
 				return false;
 			}
 
@@ -153,14 +159,16 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
 		// Construct our fitting object and generate the potential using it
 		GaussFit generator(result);
 		generator.set(rmaxpt, potCoeff, gsigma1);
-		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(), gsigma2 / gsigma1);
+		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
+						  dissolve.pairPotentialRange(), gsigma2 / gsigma1);
 	}
 	else if (functionType == EPSRModule::PoissonExpansionFunction)
 	{
 		// Construct our fitting object and generate the potential using it
 		PoissonFit generator(result);
 		generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, psigma1, psigma2);
-		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
+						  dissolve.pairPotentialRange());
 	}
 
 	// Multiply by truncation function

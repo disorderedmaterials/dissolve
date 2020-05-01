@@ -33,14 +33,14 @@
 // Rendering Primitive List
 class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 {
-      public:
+	public:
 	PrimitiveAssembly();
 	~PrimitiveAssembly();
 
 	/*
 	 * Object Factories
 	 */
-      private:
+	private:
 	// Factories for all PrimitiveInfo-derived classes
 	ObjectFactory<UncolouredPrimitiveInfo> uncolouredPrimitiveFactory_;
 	ObjectFactory<ColouredPrimitiveInfo> colouredPrimitiveFactory_;
@@ -50,11 +50,11 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	/*
 	 * Assembly
 	 */
-      private:
+	private:
 	// Array of PrimitiveInfo pointers that constitute our assembly
 	Array<PrimitiveInfo *> assembly_;
 
-      public:
+	public:
 	// Clear existing data
 	void clear();
 	// Add Primitive to the assembly
@@ -71,7 +71,7 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	/*
 	 * GL
 	 */
-      public:
+	public:
 	// Send to OpenGL (i.e. render)
 	void sendToGL(double pixelScaling);
 };

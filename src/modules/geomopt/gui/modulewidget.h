@@ -34,17 +34,17 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	GeometryOptimisationModule *module_;
 
-      public:
+	public:
 	GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::GeometryOptimisationModuleWidget ui_;
 };

@@ -35,8 +35,9 @@
 #include "templates/variantpointer.h"
 #include <QMessageBox>
 
-ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Configuration *cfg)
-    : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
+				   const char *title, Configuration *cfg)
+	: ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -196,7 +197,8 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 {
 	// Are we sure that's what we want to do?
 	QMessageBox queryBox;
-	queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
+	queryBox.setText(
+		QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
 	queryBox.setInformativeText("Proceed?");
 	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	queryBox.setDefaultButton(QMessageBox::No);

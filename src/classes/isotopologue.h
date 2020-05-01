@@ -38,20 +38,20 @@ class Species;
  */
 class Isotopologue : public ListItem<Isotopologue>
 {
-      public:
+	public:
 	Isotopologue();
 	~Isotopologue();
 
 	/*
 	 * Basic Information
 	 */
-      private:
+	private:
 	// Parent Species
 	Species *parent_;
 	// Descriptive name
 	CharString name_;
 
-      public:
+	public:
 	// Set parent Species
 	void setParent(Species *parent);
 	// Return parent Species
@@ -64,11 +64,11 @@ class Isotopologue : public ListItem<Isotopologue>
 	/*
 	 * Isotope Definition
 	 */
-      private:
+	private:
 	// List of AtomType references and their assigned Isotopes
 	RefDataList<AtomType, Isotope *> isotopes_;
 
-      public:
+	public:
 	// Update AtomType/Isotope RefList
 	void update();
 	// Set AtomType/Isotope pair in list

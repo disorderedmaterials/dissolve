@@ -32,29 +32,30 @@ class Forcefield;
 // Forcefield Parameters Base Class
 class ForcefieldParameters : public ListItem<ForcefieldParameters>
 {
-      public:
-	ForcefieldParameters(const char *name = NULL, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	public:
+	ForcefieldParameters(const char *name = NULL, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
+			     double data3 = 0.0);
 	~ForcefieldParameters();
 
 	/*
 	 * Identity
 	 */
-      private:
+	private:
 	// Name of parameters
 	CharString name_;
 
-      public:
+	public:
 	// Return name of type
 	const char *name() const;
 
 	/*
 	 * Parameters
 	 */
-      private:
+	private:
 	// Interatomic interaction parameters
 	InteractionParameters parameters_;
 
-      public:
+	public:
 	// Return interatomic interaction parameters
 	const InteractionParameters &parameters() const;
 };

@@ -28,7 +28,7 @@
 // Expression Value
 class ExpressionValue
 {
-      public:
+	public:
 	ExpressionValue();
 	ExpressionValue(int value);
 	ExpressionValue(double value);
@@ -39,7 +39,7 @@ class ExpressionValue
 	/*
 	 * Data
 	 */
-      public:
+	public:
 	// Value Type
 	enum ValueType
 	{
@@ -47,7 +47,7 @@ class ExpressionValue
 		DoubleType
 	};
 
-      private:
+	private:
 	// Current result type
 	ValueType type_;
 	// Whether current result type is fixed
@@ -57,7 +57,7 @@ class ExpressionValue
 	// Double value (if type_ == DoubleType)
 	double valueD_;
 
-      public:
+	public:
 	// Return the current result type
 	ValueType type() const;
 	void operator=(int i);
@@ -76,7 +76,7 @@ class ExpressionValue
 	/*
 	 * Tests
 	 */
-      public:
+	public:
 	// Return whether the contained type is an integer
 	bool isInteger() const;
 	// Return whether the contained type is an double

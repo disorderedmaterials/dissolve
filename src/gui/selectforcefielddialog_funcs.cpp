@@ -29,7 +29,10 @@ SelectForcefieldDialog::SelectForcefieldDialog(QWidget *parent, const List<Force
 
 SelectForcefieldDialog::~SelectForcefieldDialog() {}
 
-void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }
+void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid)
+{
+	ui_.SelectButton->setEnabled(isValid);
+}
 
 void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldDoubleClicked()
 {

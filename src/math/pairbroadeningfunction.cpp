@@ -75,7 +75,10 @@ PairBroadeningFunction::FunctionType PairBroadeningFunction::functionType(const 
 }
 
 // Return FunctionType name
-const char *PairBroadeningFunction::functionType(PairBroadeningFunction::FunctionType func) { return PairBroadeningFunctionKeywords[func]; }
+const char *PairBroadeningFunction::functionType(PairBroadeningFunction::FunctionType func)
+{
+	return PairBroadeningFunctionKeywords[func];
+}
 
 // Return number of parameters needed to define function
 int PairBroadeningFunction::nFunctionParameters(FunctionType func) { return PairBroadeningFunctionNParameters[func]; }
@@ -101,7 +104,8 @@ bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, con
 	// Do we have the right number of arguments for the function specified?
 	if ((parser.nArgs() - startArg) < PairBroadeningFunction::nFunctionParameters(funcType))
 	{
-		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n", PairBroadeningFunction::functionType(funcType),
+		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n",
+				 PairBroadeningFunction::functionType(funcType),
 				 PairBroadeningFunction::nFunctionParameters(funcType), parser.nArgs() - startArg);
 		return false;
 	}
@@ -123,7 +127,8 @@ bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, con
 		frequencyAngleConstant_ = parser.argd(startArg + 2);
 		break;
 	default:
-		Messenger::error("Function form '%s' not accounted for in PairBroadeningFunction::set(LineParser&,int).\n", PairBroadeningFunction::functionType(funcType));
+		Messenger::error("Function form '%s' not accounted for in PairBroadeningFunction::set(LineParser&,int).\n",
+				 PairBroadeningFunction::functionType(funcType));
 		return false;
 	}
 
@@ -172,14 +177,17 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, const char *pref
 			{
 				if (elementPairGaussianFlags_.constAt(i, j))
 				{
-					if (!parser.writeLineF("%s%s  %s  %f\n", prefix, Elements::element(i).symbol(), Elements::element(j).symbol(), elementPairGaussianFWHM_.constAt(i, j)))
+					if (!parser.writeLineF("%s%s  %s  %f\n", prefix, Elements::element(i).symbol(),
+							       Elements::element(j).symbol(),
+							       elementPairGaussianFWHM_.constAt(i, j)))
 						return false;
 				}
 			}
 		}
 		break;
 	case (PairBroadeningFunction::FrequencyFunction):
-		if (!parser.writeLineF("%s%s  %e  %e\n", prefix, functionType(function_), frequencyBondConstant_, frequencyAngleConstant_))
+		if (!parser.writeLineF("%s%s  %e  %e\n", prefix, functionType(function_), frequencyBondConstant_,
+				       frequencyAngleConstant_))
 			return false;
 		break;
 	default:
@@ -285,16 +293,19 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
 		// If this matrix value has never been used/read, set the flag now
 		if (!elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()))
 			elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()) = true;
-		result.set(BroadeningFunction::GaussianFunction, elementPairGaussianFWHM_.at(at1->element()->Z(), at2->element()->Z()));
+		result.set(BroadeningFunction::GaussianFunction,
+			   elementPairGaussianFWHM_.at(at1->element()->Z(), at2->element()->Z()));
 		break;
 	case (PairBroadeningFunction::FrequencyFunction):
 		// Broadening based on fundamental frequency of interaction - requires SpeciesIntra
 		if (!intra)
-			Messenger::error("Broadening type is '%s', but a valid SpeciesIntra reference has not been provided.\n", PairBroadeningFunction::functionType(function_));
+			Messenger::error("Broadening type is '%s', but a valid SpeciesIntra reference has not been provided.\n",
+					 PairBroadeningFunction::functionType(function_));
 		else
 		{
 			// If this interaction is a torsion, treat it as a special case
-			if ((intra->type() == SpeciesIntra::TorsionInteraction) || (intra->type() == SpeciesIntra::ImproperInteraction))
+			if ((intra->type() == SpeciesIntra::TorsionInteraction) ||
+			    (intra->type() == SpeciesIntra::ImproperInteraction))
 			{
 				// TODO This will kill all torsion and improper interactions!
 				result.set(BroadeningFunction::NoFunction);
@@ -319,8 +330,8 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
 		// POSSIBLE USE AS FUNCTION FOR ELEMENT/ATOMTYPE-DEPENDENT BROADENING?
 		// 		case (PairBroadeningFunction::GaussianElementFunction):
 		// 			// Calculate reduced mass (store in parameters_[1])
-		// 			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) * AtomicMass::mass(at2->element())) / (AtomicMass::mass(at1->element()) +
-		// AtomicMass::mass(at2->element())));
+		// 			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) * AtomicMass::mass(at2->element()))
+		// / (AtomicMass::mass(at1->element()) + AtomicMass::mass(at2->element())));
 		//
 		// 			// Calculate final broadening
 		// 			parameters_[0] = 1.0 / (2.0 * sqrt(2.0) * parameters_[1]);
@@ -328,7 +339,8 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
 		// 			result.set(BroadeningFunction::GaussianFunction, parameters_[0]);
 		// 			break;
 	default:
-		Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", PairBroadeningFunction::functionType(function_));
+		Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n",
+				 PairBroadeningFunction::functionType(function_));
 	}
 
 	return result;
@@ -378,10 +390,14 @@ bool PairBroadeningFunction::read(LineParser &parser, const CoreData &coreData)
 				// Line format is:  Element1  Element2  FWHM
 				Element &el1 = Elements::element(parser.argc(0));
 				if (el1.isUnknown())
-					return Messenger::error("Unrecognised element '%s' found in pair broadening parameters.\n", parser.argc(0));
+					return Messenger::error(
+						"Unrecognised element '%s' found in pair broadening parameters.\n",
+						parser.argc(0));
 				Element &el2 = Elements::element(parser.argc(1));
 				if (el2.isUnknown())
-					return Messenger::error("Unrecognised element '%s' found in pair broadening parameters.\n", parser.argc(1));
+					return Messenger::error(
+						"Unrecognised element '%s' found in pair broadening parameters.\n",
+						parser.argc(1));
 
 				// Set the value
 				elementPairGaussianFlags_.at(el1.Z(), el2.Z()) = parser.argd(2);
@@ -424,7 +440,8 @@ bool PairBroadeningFunction::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(EnumCast<PairBroadeningFunction::FunctionType>(function_)))
-		return Messenger::error("PairBroadeningFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
+		return Messenger::error("PairBroadeningFunction function type is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), function_);
 	if (!procPool.equality(gaussianFWHM_))
 		return Messenger::error("PairBroadeningFunction Gaussian parameters are not equivalent.\n");
 	if (!procPool.equality(elementPairGaussianFWHM_))

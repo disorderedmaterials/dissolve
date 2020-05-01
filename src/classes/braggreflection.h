@@ -34,9 +34,10 @@
 class BraggReflection : public GenericItemBase
 {
 	/*
-	 *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
+	 *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same
+	 * Q value.
 	 */
-      public:
+	public:
 	BraggReflection();
 	~BraggReflection();
 	BraggReflection(const BraggReflection &source);
@@ -50,7 +51,7 @@ class BraggReflection : public GenericItemBase
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Q-position of reflection
 	double q_;
 	// Integer index (derived from q_)
@@ -60,7 +61,7 @@ class BraggReflection : public GenericItemBase
 	// Number of k-vectors which contributed to the intensity (for normalisation)
 	int nKVectors_;
 
-      public:
+	public:
 	// Initialise arrays
 	void initialise(double q, int index, int nTypes);
 	// Return Q value of reflection
@@ -87,7 +88,7 @@ class BraggReflection : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified parser
@@ -98,7 +99,7 @@ class BraggReflection : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from root to all other processes
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

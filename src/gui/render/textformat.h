@@ -30,7 +30,7 @@
 // Text Formatter
 class TextFormat : public ListItem<TextFormat>
 {
-      public:
+	public:
 	// Constructor / Desctructor
 	TextFormat();
 	~TextFormat();
@@ -40,7 +40,7 @@ class TextFormat : public ListItem<TextFormat>
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// Vertical (bottom-edge) position
 	double y_;
 	// Scale
@@ -52,7 +52,7 @@ class TextFormat : public ListItem<TextFormat>
 	// Whether text is actually a symbol
 	bool symbol_;
 
-      public:
+	public:
 	// Set vertical (bottom-edge) position
 	void setY(double y);
 	// Adjust vertical (bottom-edge) position
