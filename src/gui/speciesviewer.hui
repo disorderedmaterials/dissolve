@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_VIEWER_SPECIES_H
 #define DISSOLVE_VIEWER_SPECIES_H
 
-#include "gui/viewer.hui"
 #include "gui/render/renderablespecies.h"
+#include "gui/viewer.hui"
 
 // Forward Declarations
 class Element;
@@ -40,7 +40,6 @@ class SpeciesViewer : public BaseViewer
 	SpeciesViewer(QWidget *parent);
 	~SpeciesViewer();
 
-
 	/*
 	 * Rendering (BaseViewer virtuals)
 	 */
@@ -52,14 +51,12 @@ class SpeciesViewer : public BaseViewer
 	// Render 2D overlay content
 	void render2DOverlay();
 
-
 	/*
 	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
 	// Mouse moved
 	void mouseMoved(int dx, int dy);
-
 
 	/*
 	 * Interaction (BaseViewer virtuals)
@@ -79,9 +76,9 @@ class SpeciesViewer : public BaseViewer
 
 	private:
 	// Clicked atom at the start of the interaction (if any)
-	SpeciesAtom* clickedAtom_;
+	SpeciesAtom *clickedAtom_;
 	// Element for created atoms in DrawInteraction
-	Element* drawElement_;
+	Element *drawElement_;
 	// Species-space coordinates at clicked position for DrawInteraction
 	Vec3<double> drawCoordinateStart_;
 	// Species-space coordinates at current position for DrawInteraction
@@ -89,7 +86,7 @@ class SpeciesViewer : public BaseViewer
 
 	private:
 	// Return atom at specified coordinates
-	SpeciesAtom* atomAt(int x, int y);
+	SpeciesAtom *atomAt(int x, int y);
 
 	protected:
 	// Start interaction at the specified screen coordinates
@@ -101,33 +98,31 @@ class SpeciesViewer : public BaseViewer
 
 	public:
 	// Return text describing current interaction mode
-	const char* interactionModeText() const;
+	const char *interactionModeText() const;
 	// Set current Element for DrawInteraction
-	void setDrawElement(Element* element);
+	void setDrawElement(Element *element);
 	// Return current Element for DrawInteraction
-	Element* drawElement() const;
-
+	Element *drawElement() const;
 
 	/*
 	 * Source Species
 	 */
 	private:
 	// Source Species to display
-	Species* species_;
+	Species *species_;
 
 	public:
 	// Set target Species
-	void setSpecies(Species* sp);
+	void setSpecies(Species *sp);
 	// Return target Species
-	Species* species() const;
-
+	Species *species() const;
 
 	/*
 	 * Renderable
 	 */
 	private:
 	// Renderable for source Species
-	RenderableSpecies* speciesRenderable_;
+	RenderableSpecies *speciesRenderable_;
 
 	public:
 	// Set renderable draw style
@@ -136,7 +131,6 @@ class SpeciesViewer : public BaseViewer
 	RenderableSpecies::SpeciesDisplayStyle renderableDrawStyle() const;
 	// Recreate selection primitive
 	void recreateSelectionPrimitive();
-
 
 	/*
 	 * Signals

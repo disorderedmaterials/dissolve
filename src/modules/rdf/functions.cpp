@@ -538,8 +538,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		//
 		// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into
 		// our
-		// broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int i=0;
-		// i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
+		// broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int
+		// i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
 		// 			{
 		// 				typeJ = typeI;
 		// 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
@@ -573,8 +573,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		// 		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
 		//
 		// 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by
-		// their associated SpeciesBond 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra; 		for (int
-		// n=0; n<cfg->nAngles(); ++n)
+		// their associated SpeciesBond 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
+		// for (int n=0; n<cfg->nAngles(); ++n)
 		// 		{
 		// 			SpeciesAngle* sa = angles[n]->speciesAngle();
 		// 			angleIntra.addUnique(sa->parameterSource(), sa);
@@ -611,8 +611,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 		//
 		// 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into
 		// our
-		// broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int i=0;
-		// i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
+		// broadened partial set 			typeI = tempgr.atomTypes().first(); 			for (int
+		// i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
 		// 			{
 		// 				typeJ = typeI;
 		// 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())

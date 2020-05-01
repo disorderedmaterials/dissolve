@@ -37,7 +37,6 @@ class DataViewer : public BaseViewer
 	DataViewer(QWidget *parent);
 	~DataViewer();
 
-
 	/*
 	 * Rendering (BaseViewer virtuals)
 	 */
@@ -48,7 +47,6 @@ class DataViewer : public BaseViewer
 	void postResizeGL();
 	// Render 2D overlay content
 	void render2DOverlay();
-
 
 	/*
 	 * Mouse / Keyboard Input (BaseViewer virtuals)
@@ -70,7 +68,6 @@ class DataViewer : public BaseViewer
 	signals:
 	void currentCoordinateChanged();
 	void controlAspectChanged();
-
 
 	/*
 	 * Interaction (BaseViewer Virtuals)
@@ -97,12 +94,11 @@ class DataViewer : public BaseViewer
 
 	public:
 	// Return text describing current interaction mode
-	const char* interactionModeText() const;
+	const char *interactionModeText() const;
 	// Return clicked interaction coordinate on axis
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis
 	double currentInteractionCoordinate();
-
 
 	/*
 	 * Menus
@@ -111,15 +107,14 @@ class DataViewer : public BaseViewer
 	// Show general context menu
 	void showGeneralContextMenu(QPoint pos);
 	// Show renderable context menu
-	void showRenderableContextMenu(QPoint pos, Renderable* rend);
-
+	void showRenderableContextMenu(QPoint pos, Renderable *rend);
 
 	/*
 	 * Control Flags
 	 */
 	private:
 	// Pointer to Dissolve
-	Dissolve* dissolve_;
+	Dissolve *dissolve_;
 	// Control flags
 	int controlFlags_;
 
@@ -133,7 +128,7 @@ class DataViewer : public BaseViewer
 		UserCanRemoveDataFlag = 4
 	};
 	// Set pointer to Dissolve
-	void setDissolve(Dissolve* dissolve);
+	void setDissolve(Dissolve *dissolve);
 	// Set control flags
 	void setFlags(int flags);
 	// Return whether the specified flag is set

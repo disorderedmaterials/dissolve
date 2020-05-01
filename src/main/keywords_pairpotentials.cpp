@@ -117,7 +117,8 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
 			// 				if (pot) Messenger::warn("Overwriting previous PairPotential parameters
 			// for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3)); else
 			// 				{
-			// 					Messenger::printVerbose("Adding PairPotential for interaction between
+			// 					Messenger::printVerbose("Adding PairPotential for interaction
+			// between
 			// '%s' and '%s'...\n", parser.argc(2), parser.argc(3)); 					pot =
 			// dissolve->addPairPotential(at1, at2);
 			// 				}

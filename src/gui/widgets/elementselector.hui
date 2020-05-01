@@ -38,9 +38,8 @@ class ElementSelector : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ElementSelector(QWidget* parent);
+	ElementSelector(QWidget *parent);
 	~ElementSelector();
-
 
 	/*
 	 * Widget Functions
@@ -57,29 +56,28 @@ class ElementSelector : public QWidget
 	void elementSelected(bool);
 	void elementDoubleClicked();
 
-
 	/*
 	 * Data
 	 */
 	private:
 	// Current element
-	Element* currentElement_;
+	Element *currentElement_;
 	// Reference list of buttons and their associated Elements
-	RefDataList<QToolButton,Element*> elementButtons_;
+	RefDataList<QToolButton, Element *> elementButtons_;
 
 	public:
 	// Set current element
-	void setCurrentElement(Element* element);
+	void setCurrentElement(Element *element);
 	// Return current element
-	Element* currentElement() const;
-
+	Element *currentElement() const;
 
 	/*
 	 * Static Functions
 	 */
 	public:
 	// Get Element from user via input dialog
-	static Element* getElement(QWidget* parent, const char* title, const char* labelText, Element* element, bool* ok = NULL, Qt::WindowFlags flags = Qt::Dialog);
+	static Element *getElement(QWidget *parent, const char *title, const char *labelText, Element *element, bool *ok = NULL,
+				   Qt::WindowFlags flags = Qt::Dialog);
 };
 
 #endif

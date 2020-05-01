@@ -34,7 +34,7 @@ class MainTabsBar : public QTabBar
 
 	public:
 	// Constructor
-	MainTabsBar(QWidget* parent);
+	MainTabsBar(QWidget *parent);
 };
 
 #endif

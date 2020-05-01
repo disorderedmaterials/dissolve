@@ -34,9 +34,14 @@ class CheckIndicator : public QLabel
 
 	public:
 	// Constructor / Destructor
-	CheckIndicator(QWidget* parent = NULL);
+	CheckIndicator(QWidget *parent = NULL);
 	// Indicator State enum
-	enum IndicatorState { OKState, NotOKState, WarningState };
+	enum IndicatorState
+	{
+		OKState,
+		NotOKState,
+		WarningState
+	};
 
 	private:
 	// State of indicator
@@ -45,7 +50,6 @@ class CheckIndicator : public QLabel
 	public:
 	// Return state of indicator
 	IndicatorState state() const;
-
 
 	/*
 	 * State Update

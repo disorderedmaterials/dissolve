@@ -22,12 +22,12 @@
 #ifndef DISSOLVE_DELEGATES_COMBOLIST_H
 #define DISSOLVE_DELEGATES_COMBOLIST_H
 
-#include <QtWidgets/QItemDelegate>
-#include <QModelIndex>
-#include <QObject>
-#include <QComboBox>
 #include "base/enumoptions.h"
 #include "templates/list.h"
+#include <QComboBox>
+#include <QModelIndex>
+#include <QObject>
+#include <QtWidgets/QItemDelegate>
 
 // Base class for source List
 class ComboListItems
@@ -37,7 +37,6 @@ class ComboListItems
 	ComboListItems();
 	// Destructor
 	virtual ~ComboListItems();
-
 
 	/*
 	 * Access
@@ -50,7 +49,7 @@ class ComboListItems
 	// Move to next item in list
 	virtual bool nextItem() = 0;
 	// Return text entry for nth item
-	virtual const char* currentItemText() = 0;
+	virtual const char *currentItemText() = 0;
 };
 
 // Enum-Access Item Source
@@ -58,7 +57,7 @@ class ComboListEnumItems : public ComboListItems
 {
 	public:
 	// Constructor
-	ComboListEnumItems(int nItems, const char** items)
+	ComboListEnumItems(int nItems, const char **items)
 	{
 		nItems_ = nItems;
 		items_ = items;
@@ -69,44 +68,36 @@ class ComboListEnumItems : public ComboListItems
 	// Number of items in array
 	int nItems_;
 	// Array of items
-	const char** items_;
+	const char **items_;
 	// Current item index in array
 	int currentItem_;
-
 
 	/*
 	 * Access
 	 */
 	public:
 	// Return number of items in list
-	int nItems()
-	{
-		return nItems_;
-	}
+	int nItems() { return nItems_; }
 	// Restart list iteration
-	void restartIterator()
-	{
-		currentItem_ = -1;
-	}
+	void restartIterator() { currentItem_ = -1; }
 	// Move to next item in list
 	bool nextItem()
 	{
 		// If already at the end of the list (== -2) return false immediately
-		if (currentItem_ == -2) return false;
+		if (currentItem_ == -2)
+			return false;
 		++currentItem_;
 
 		// If this is a valid index, return true
-		if (currentItem_ < nItems_) return true;
+		if (currentItem_ < nItems_)
+			return true;
 
 		// Not a vlaid index, so set item index to -2 (end of list) and return false
 		currentItem_ = -2;
 		return false;
 	}
 	// Return text entry for nth item
-	const char* currentItemText()
-	{
-		return (currentItem_ < 0 ? "NULL" : items_[currentItem_]);
-	}
+	const char *currentItemText() { return (currentItem_ < 0 ? "NULL" : items_[currentItem_]); }
 };
 
 // Templated Item Source for ComboList (utilising T's name())
@@ -114,33 +105,24 @@ template <class T> class ComboNameListItems : public ComboListItems
 {
 	public:
 	// Constructor
-	ComboNameListItems(const List<T>& items) : items_(items), iterator_(items)
-	{
-	}
+	ComboNameListItems(const List<T> &items) : items_(items), iterator_(items) {}
 
 	private:
 	// Associated item list
-	const List<T>& items_;
+	const List<T> &items_;
 	// List iterator
 	ListIterator<T> iterator_;
 	// Current iteration item
-	T* currentItem_;
-
+	T *currentItem_;
 
 	/*
 	 * Access
 	 */
 	public:
 	// Return number of items in list
-	int nItems()
-	{
-		return items_.nItems();
-	}
+	int nItems() { return items_.nItems(); }
 	// Restart list iteration
-	void restartIterator()
-	{
-		iterator_.restart();
-	}
+	void restartIterator() { iterator_.restart(); }
 	// Move to next item in list
 	bool nextItem()
 	{
@@ -148,10 +130,7 @@ template <class T> class ComboNameListItems : public ComboListItems
 		return currentItem_;
 	}
 	// Return text entry for nth item
-	const char* currentItemText()
-	{
-		return (currentItem_ ? currentItem_->name() : "NULL");
-	}
+	const char *currentItemText() { return (currentItem_ ? currentItem_->name() : "NULL"); }
 };
 
 // Templated EnumOptions Source for ComboList
@@ -159,10 +138,7 @@ template <class E> class ComboEnumOptionsItems : public ComboListItems
 {
 	public:
 	// Constructor
-	ComboEnumOptionsItems(EnumOptions<E> enumOptions) : items_(enumOptions)
-	{
-		currentItemIndex_ = 0;
-	}
+	ComboEnumOptionsItems(EnumOptions<E> enumOptions) : items_(enumOptions) { currentItemIndex_ = 0; }
 
 	private:
 	// Associated item list
@@ -170,21 +146,14 @@ template <class E> class ComboEnumOptionsItems : public ComboListItems
 	// Current iterator index
 	int currentItemIndex_;
 
-
 	/*
 	 * Access
 	 */
 	public:
 	// Return number of items in list
-	int nItems()
-	{
-		return items_.nOptions();
-	}
+	int nItems() { return items_.nOptions(); }
 	// Restart list iteration
-	void restartIterator()
-	{
-		currentItemIndex_ = -1;
-	}
+	void restartIterator() { currentItemIndex_ = -1; }
 	// Move to next item in list
 	bool nextItem()
 	{
@@ -192,7 +161,7 @@ template <class E> class ComboEnumOptionsItems : public ComboListItems
 		return (currentItemIndex_ < nItems());
 	}
 	// Return text entry for nth item
-	const char* currentItemText()
+	const char *currentItemText()
 	{
 		return (currentItemIndex_ < nItems() ? items_.keywordByIndex(currentItemIndex_) : "NULL");
 	}
@@ -205,34 +174,31 @@ class ComboListDelegate : public QItemDelegate
 
 	public:
 	// Constructor
-	ComboListDelegate(QObject* parent, ComboListItems* items, bool allowNewItems = false);
+	ComboListDelegate(QObject *parent, ComboListItems *items, bool allowNewItems = false);
 	// Destructor
 	virtual ~ComboListDelegate();
-
 
 	/*
 	 * Data
 	 */
 	private:
 	// Associated item list
-	ComboListItems* items_;
+	ComboListItems *items_;
 	// Parameters for editor
 	bool allowNewItems_;
-
 
 	/*
 	 * QItemDelegate Virtuals
 	 */
 	private:
 	// Create editing widget
-	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 	// Set the data to appear when the editor is called
-	void setEditorData(QWidget* editor, const QModelIndex& index) const;
+	void setEditorData(QWidget *editor, const QModelIndex &index) const;
 	// Extract data from editor, and place back into source model
-	void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 	// Resize editor
-	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-
+	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 	/*
 	 * Signals / Slots

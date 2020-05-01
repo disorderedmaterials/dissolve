@@ -330,8 +330,8 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
 		// POSSIBLE USE AS FUNCTION FOR ELEMENT/ATOMTYPE-DEPENDENT BROADENING?
 		// 		case (PairBroadeningFunction::GaussianElementFunction):
 		// 			// Calculate reduced mass (store in parameters_[1])
-		// 			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) * AtomicMass::mass(at2->element()))
-		// / (AtomicMass::mass(at1->element()) + AtomicMass::mass(at2->element())));
+		// 			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) *
+		// AtomicMass::mass(at2->element())) / (AtomicMass::mass(at1->element()) + AtomicMass::mass(at2->element())));
 		//
 		// 			// Calculate final broadening
 		// 			parameters_[0] = 1.0 / (2.0 * sqrt(2.0) * parameters_[1]);

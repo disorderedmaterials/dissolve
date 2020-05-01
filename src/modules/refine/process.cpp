@@ -708,7 +708,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 					crgr /= scaleFactor;
 
 					// Original PY
-			      // 					for (int n=0; n<deltaGR.nPoints(); ++n) dU.addPoint(deltaGR.x(n), log(1.0
+			      // 					for (int n=0; n<deltaGR.nPoints(); ++n)
+			      dU.addPoint(deltaGR.x(n), log(1.0
 			      - cr.y(n)/(deltaGR.y(n)+1.0));
 
 					// Modified PY

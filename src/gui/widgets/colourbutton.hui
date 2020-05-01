@@ -34,8 +34,7 @@ class ColourButton : public QPushButton
 
 	public:
 	// Constructor
-	ColourButton(QWidget* parent);
-
+	ColourButton(QWidget *parent);
 
 	/*
 	// Content
@@ -54,7 +53,7 @@ class ColourButton : public QPushButton
 
 	protected:
 	// Paint event callback
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent *event);
 };
 
 #endif

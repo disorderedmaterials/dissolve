@@ -571,8 +571,9 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
 	 */
 
 	// 	# The original formula in the paper is given as a sum over cosine terms, but this reduces to: 0.5 * V * (1 -
-	// cos(n*eq) * cos(n*phi)) 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq)) 	#
-	// Therefore: forcek = 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#		 eq = 0.0
+	// cos(n*eq) * cos(n*phi)) 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq)) #
+	// Therefore: forcek = 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#
+	// eq = 0.0
 
 	const int groupJ = group(j->Z());
 	const int groupK = group(k->Z());
@@ -792,8 +793,8 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
 // 	#   g) everything else (no torsional barrier)
 //
 // 	# The original formula in the paper is given as a sum over cosine terms, but this reduces to: 0.5 * V * (1 - cos(n*eq) *
-// cos(n*phi)) 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq)) 	# Therefore: forcek = 0.5 *
-// V 	#		  s = -cos(n*eq) 	#	     period = n 	#		 eq = 0.0
+// cos(n*phi)) 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq)) 	# Therefore: forcek =
+// 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#		 eq = 0.0
 //
 // 	ffatom fi = i.type;
 // 	ffatom fj = j.type;

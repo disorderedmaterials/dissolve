@@ -34,15 +34,14 @@ class TMdiArea : public QMdiArea
 
 	public:
 	// Constructor
-	TMdiArea(DissolveWindow* dissolveWindow, QWidget* parent = NULL);
-
+	TMdiArea(DissolveWindow *dissolveWindow, QWidget *parent = NULL);
 
 	/*
 	 * DissolveWindow Pointer
 	 */
 	private:
 	// DissolveWindow Pointer
-	DissolveWindow* dissolveWindow_;
+	DissolveWindow *dissolveWindow_;
 };
 
 #endif

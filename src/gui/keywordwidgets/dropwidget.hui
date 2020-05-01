@@ -34,16 +34,14 @@ class DropWidget : public QWidget
 
 	public:
 	// Constructor
-	DropWidget(QWidget* parent = NULL);
-
+	DropWidget(QWidget *parent = NULL);
 
 	/*
 	 * Reimplementations
 	 */
 	private:
 	// Hide event
-	void hideEvent(QHideEvent* event);
-
+	void hideEvent(QHideEvent *event);
 
 	/*
 	 * Signals

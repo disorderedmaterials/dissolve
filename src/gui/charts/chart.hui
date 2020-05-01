@@ -43,9 +43,8 @@ class ChartBase : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ChartBase(QWidget* parent = NULL);
+	ChartBase(QWidget *parent = NULL);
 	~ChartBase();
-
 
 	/*
 	 * Chart Blocks
@@ -58,8 +57,7 @@ class ChartBase : public QWidget
 	// Update the content block widgets against the current target data
 	virtual void updateContentBlocks() = 0;
 	// Return if a ChartBlock can be dragged from the supplied position
-	ChartBlock* dragBlockAt(QPoint point);
-
+	ChartBlock *dragBlockAt(QPoint point);
 
 	/*
 	 * Update
@@ -76,34 +74,32 @@ class ChartBase : public QWidget
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
-
 	/*
 	 * QWidget Reimplementations
 	 */
 	protected:
 	// Geometry changed
-	void resizeEvent(QResizeEvent* event);
+	void resizeEvent(QResizeEvent *event);
 	// Size hint
 	QSize sizeHint() const;
 	// Minimum size hint
 	QSize minimumSizeHint() const;
 	// Mouse press event
-	void mousePressEvent(QMouseEvent* event);
+	void mousePressEvent(QMouseEvent *event);
 	// Mouse move event
-	void mouseMoveEvent(QMouseEvent* event);
+	void mouseMoveEvent(QMouseEvent *event);
 	// Mouse release event
-	void mouseReleaseEvent(QMouseEvent* event);
+	void mouseReleaseEvent(QMouseEvent *event);
 	// Mouse double-click event
-	void mouseDoubleClickEvent(QMouseEvent* event);
+	void mouseDoubleClickEvent(QMouseEvent *event);
 	// Drag enter event
-	void dragEnterEvent(QDragEnterEvent* event);
+	void dragEnterEvent(QDragEnterEvent *event);
 	// Draw move event
-	void dragMoveEvent(QDragMoveEvent* event);
+	void dragMoveEvent(QDragMoveEvent *event);
 	// Drag leave event
-	void dragLeaveEvent(QDragLeaveEvent* event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
 	// Drop event
-	void dropEvent(QDropEvent* event);
-
+	void dropEvent(QDropEvent *event);
 
 	/*
 	 * Block Interaction
@@ -112,47 +108,46 @@ class ChartBase : public QWidget
 	// Position of last mouse click
 	QPoint mouseDownPosition_;
 	// ChartBlock being dragged (if a local drag)
-	ChartBlock* draggedBlock_;
+	ChartBlock *draggedBlock_;
 	// Selected ChartBlock
-	ChartBlock* selectedBlock_;
+	ChartBlock *selectedBlock_;
 	// Drop hotspots available on the chart
 	List<ChartHotSpot> hotSpots_;
 	// Current hotspot the dragged object is over (if any)
-	ChartHotSpot* currentHotSpot_;
+	ChartHotSpot *currentHotSpot_;
 
 	private:
 	// Return hotspot under specified point
-	ChartHotSpot* hotSpotAt(QPoint point);
+	ChartHotSpot *hotSpotAt(QPoint point);
 	// Reset after drop
 	void resetAfterDrop(bool animateWidgets = true);
 
 	protected:
 	// Return whether to accept the dragged object (described by its mime info)
-	virtual bool acceptDraggedObject(const MimeStrings* strings);
+	virtual bool acceptDraggedObject(const MimeStrings *strings);
 	// Handle hover over specified hotspot
-	virtual bool handleHotSpotHover(const ChartHotSpot* hotSpot);
+	virtual bool handleHotSpotHover(const ChartHotSpot *hotSpot);
 	// Handle the drop of an object (described by its mime info)
-	virtual void handleDroppedObject(const MimeStrings* strings);
+	virtual void handleDroppedObject(const MimeStrings *strings);
 	// Return mime info for specified block (owned by this chart)
-	virtual MimeStrings mimeInfo(ChartBlock* block);
+	virtual MimeStrings mimeInfo(ChartBlock *block);
 	// Specified block has been double clicked
-	virtual void blockDoubleClicked(ChartBlock* block);
+	virtual void blockDoubleClicked(ChartBlock *block);
 	// Block selection has changed
-	virtual void blockSelectionChanged(ChartBlock* block);
+	virtual void blockSelectionChanged(ChartBlock *block);
 
 	protected slots:
 	// The chart has requested removal of one of its blocks
-	virtual void blockRemovalRequested(const QString& blockIdentifier);
+	virtual void blockRemovalRequested(const QString &blockIdentifier);
 
 	public:
 	// Return selected ChartBlock
-	ChartBlock* selectedBlock() const;
+	ChartBlock *selectedBlock() const;
 
 	signals:
-	void blockDoubleClicked(const QString& blockIdentifeir);
-	void blockRemoved(const QString& blockIdentifier);
-	void blockSelectionChanged(const QString& blockIdentifier);
-
+	void blockDoubleClicked(const QString &blockIdentifeir);
+	void blockRemoved(const QString &blockIdentifier);
+	void blockSelectionChanged(const QString &blockIdentifier);
 
 	/*
 	 * Widget Layout
@@ -177,16 +172,14 @@ class ChartBase : public QWidget
 	// Recalculate layout (after widget size change etc.)
 	void recalculateLayout();
 
-
 	/*
 	 * State I/O
 	 */
 	public:
 	// Read widget state through specified LineParser
-	virtual bool readState(LineParser& parser) = 0;
+	virtual bool readState(LineParser &parser) = 0;
 	// Write widget state through specified LineParser
-	virtual bool writeState(LineParser& parser) const = 0;
-
+	virtual bool writeState(LineParser &parser) const = 0;
 
 	/*
 	 * Signals / Slots

@@ -62,8 +62,9 @@ void DataViewer::endInteraction()
 		{
 			// Single, targetted click - get the clicked object
 			// TODO What action are we performing here? Would this be better as a right-click action, raising a
-			// context menu? 				ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
-			// printf("Object Type = %s, info = [%s]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
+			// context menu? 				ViewerObject obj = queryAt(rMouseLast_.x,
+			// rMouseLast_.y); printf("Object Type = %s, info = [%s]\n", BaseViewer::viewerObject(obj),
+			// queryObjectInfo());
 		}
 		else
 		{

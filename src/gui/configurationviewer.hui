@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_VIEWER_CONFIGURATION_H
 #define DISSOLVE_VIEWER_CONFIGURATION_H
 
-#include "gui/viewer.hui"
 #include "gui/render/renderableconfiguration.h"
+#include "gui/viewer.hui"
 
 // Forward Declarations
 class Configuration;
@@ -39,7 +39,6 @@ class ConfigurationViewer : public BaseViewer
 	ConfigurationViewer(QWidget *parent);
 	~ConfigurationViewer();
 
-
 	/*
 	 * Rendering (BaseViewer virtuals)
 	 */
@@ -51,14 +50,12 @@ class ConfigurationViewer : public BaseViewer
 	// Render 2D overlay content
 	void render2DOverlay();
 
-
 	/*
 	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
 	// Mouse moved
 	void mouseMoved(int dx, int dy);
-
 
 	/*
 	 * Interaction (BaseViewer virtuals)
@@ -75,7 +72,7 @@ class ConfigurationViewer : public BaseViewer
 
 	private:
 	// Return atom at specified coordinates
-	const Atom* atomAt(int x, int y);
+	const Atom *atomAt(int x, int y);
 
 	protected:
 	// Start interaction at the specified screen coordinates
@@ -87,29 +84,27 @@ class ConfigurationViewer : public BaseViewer
 
 	public:
 	// Return text describing current interaction mode
-	const char* interactionModeText() const;
-
+	const char *interactionModeText() const;
 
 	/*
 	 * Source Configuration
 	 */
 	private:
 	// Source Configuration to display
-	Configuration* configuration_;
+	Configuration *configuration_;
 
 	public:
 	// Set target Configuration
-	void setConfiguration(Configuration* sp);
+	void setConfiguration(Configuration *sp);
 	// Return target Configuration
-	Configuration* configuration() const;
-
+	Configuration *configuration() const;
 
 	/*
 	 * Renderable
 	 */
 	private:
 	// Renderable for source Configuration
-	RenderableConfiguration* configurationRenderable_;
+	RenderableConfiguration *configurationRenderable_;
 
 	public:
 	// Set renderable draw style

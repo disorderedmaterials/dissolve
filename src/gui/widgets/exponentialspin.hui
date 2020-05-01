@@ -28,11 +28,10 @@
 class ExponentialSpin : public QDoubleSpinBox
 {
 	Q_OBJECT
-	
+
 	public:
 	// Constructor
-	ExponentialSpin(QWidget* parent = 0);
-
+	ExponentialSpin(QWidget *parent = 0);
 
 	/*
 	 * Data
@@ -51,7 +50,6 @@ class ExponentialSpin : public QDoubleSpinBox
 	// Remove range limits
 	void removeLimits();
 
-
 	/*
 	 * Reimplementations
 	 */
@@ -59,14 +57,13 @@ class ExponentialSpin : public QDoubleSpinBox
 	// Convert supplied value to text
 	QString textFromValue(double value) const;
 	// Validate supplied text
-	QValidator::State validate(QString& text, int& pos) const;
+	QValidator::State validate(QString &text, int &pos) const;
 	// Interpret text into value
-	double valueFromText(const QString& text) const;
+	double valueFromText(const QString &text) const;
 
 	protected:
 	// Return which steps should be enabled
-// 	StepEnabled stepEnabled() const;
+	// 	StepEnabled stepEnabled() const;
 };
 
 #endif
-

@@ -40,9 +40,8 @@ class KeywordsWidget : public QToolBox
 
 	public:
 	// Constructor / Destructor
-	KeywordsWidget(QWidget* parent);
+	KeywordsWidget(QWidget *parent);
 	~KeywordsWidget();
-
 
 	/*
 	 * Controls
@@ -55,14 +54,14 @@ class KeywordsWidget : public QToolBox
 
 	private:
 	// Create widget for specified keyword
-	QWidget* createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData);
+	QWidget *createKeywordWidget(RefList<KeywordWidgetBase> &keywordWidgets, KeywordBase *keyword,
+				     const CoreData &coreData);
 
 	public:
 	// Set up controls for specified keyword list
-	void setUp(const KeywordList& keywords, const CoreData& coreData);
+	void setUp(const KeywordList &keywords, const CoreData &coreData);
 	// Update controls within widget
 	void updateControls();
-
 
 	/*
 	 * Signals / Slots

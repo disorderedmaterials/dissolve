@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_VIEWER_SITE_H
 #define DISSOLVE_VIEWER_SITE_H
 
-#include "gui/viewer.hui"
 #include "gui/render/renderablespecies.h"
 #include "gui/render/renderablespeciessite.h"
+#include "gui/viewer.hui"
 
 // Forward Declarations
 class Element;
@@ -41,7 +41,6 @@ class SiteViewer : public BaseViewer
 	SiteViewer(QWidget *parent);
 	~SiteViewer();
 
-
 	/*
 	 * Rendering (BaseViewer virtuals)
 	 */
@@ -53,14 +52,12 @@ class SiteViewer : public BaseViewer
 	// Render 2D overlay content
 	void render2DOverlay();
 
-
 	/*
 	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
 	// Mouse moved
 	void mouseMoved(int dx, int dy);
-
 
 	/*
 	 * Interaction (BaseViewer virtuals)
@@ -78,11 +75,11 @@ class SiteViewer : public BaseViewer
 
 	private:
 	// Clicked atom at the start of the interaction (if any)
-	SpeciesAtom* clickedAtom_;
+	SpeciesAtom *clickedAtom_;
 
 	private:
 	// Return atom at specified coordinates
-	SpeciesAtom* atomAt(int x, int y);
+	SpeciesAtom *atomAt(int x, int y);
 
 	protected:
 	// Start interaction at the specified screen coordinates
@@ -94,37 +91,35 @@ class SiteViewer : public BaseViewer
 
 	public:
 	// Return text describing current interaction mode
-	const char* interactionModeText() const;
-
+	const char *interactionModeText() const;
 
 	/*
 	 * Source Species and Site
 	 */
 	private:
 	// Source SpeciesSite to display
-	SpeciesSite* site_;
+	SpeciesSite *site_;
 	// Parent Species for displayed site
-	Species* species_;
+	Species *species_;
 
 	public:
 	// Set target Species
-	void setSpecies(Species* sp);
+	void setSpecies(Species *sp);
 	// Return parent Species for site
-	Species* species() const;
+	Species *species() const;
 	// Set target SpeciesSite
-	void setSite(SpeciesSite* site);
+	void setSite(SpeciesSite *site);
 	// Return target SpeciesSite
-	SpeciesSite* speciesSite() const;
-
+	SpeciesSite *speciesSite() const;
 
 	/*
 	 * Renderables
 	 */
 	private:
 	// Renderable for parent Species of Site
-	RenderableSpecies* speciesRenderable_;
+	RenderableSpecies *speciesRenderable_;
 	// Renderable for displayed site
-	RenderableSpeciesSite* siteRenderable_;
+	RenderableSpeciesSite *siteRenderable_;
 
 	public:
 	// Set Species renderable draw style
@@ -133,7 +128,6 @@ class SiteViewer : public BaseViewer
 	RenderableSpecies::SpeciesDisplayStyle speciesRenderableDrawStyle() const;
 	// Recreate selection primitive
 	void recreateSelectionPrimitive();
-
 
 	/*
 	 * Signals

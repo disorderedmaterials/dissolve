@@ -35,13 +35,13 @@ class DissolveThreadWorker : public QObject
 
 	public:
 	// Constructor
-	DissolveThreadWorker(Dissolve& dissolve);
+	DissolveThreadWorker(Dissolve &dissolve);
 
 	private:
 	// Whether the iteration loop should keep going
 	bool keepIterating_;
 	// Reference to Dissolve
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 	// Number of iterations to run
 	int nIterationsToRun_;
 
@@ -65,10 +65,10 @@ class DissolveThreadController : public QObject
 	private:
 	// Thread for this object
 	QThread workerThread_;
-	
+
 	public:
 	// Constructor
-	DissolveThreadController(DissolveWindow* parentWindow, Dissolve& dissolve, int nIterations = -1);
+	DissolveThreadController(DissolveWindow *parentWindow, Dissolve &dissolve, int nIterations = -1);
 	// Destructor
 	~DissolveThreadController();
 

@@ -208,8 +208,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 								else
 									vecji *= potentialMap.force(i, j, r);
 
-								// 							printf("%i  %i  %f
-								// %15.9e %15.9e\n", i->arrayIndex()+1, j->arrayIndex()+1,
+								// 							printf("%i
+								// %i %f %15.9e %15.9e\n", i->arrayIndex()+1, j->arrayIndex()+1,
 								// sqrt(magji), potentialMap.force(i->globalTypeIndex(),
 								// j->globalTypeIndex(), magji),
 								// potentialMap.analyticForce(i->globalTypeIndex(),

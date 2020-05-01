@@ -35,12 +35,11 @@ class MimeTreeWidget : public QTreeWidget
 
 	public:
 	// Constructor
-	MimeTreeWidget(QWidget* parent);
+	MimeTreeWidget(QWidget *parent);
 
 	private:
 	// Start of drag position
 	QPoint dragStartPos_;
-
 
 	/*
 	 * Signals / Slots
@@ -56,4 +55,3 @@ class MimeTreeWidget : public QTreeWidget
 };
 
 #endif
-

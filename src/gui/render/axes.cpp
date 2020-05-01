@@ -1358,8 +1358,8 @@ void Axes::updateAxisPrimitives()
 				v2[ortho1] = tickPositions[ortho1][i1];
 				v2[ortho2] = tickPositions[ortho2][i2];
 				// 				v1.set(coordMin_[0][0], tickPositions[1][j],
-				// tickPositions[2][k]); 				v2.set(coordMax_[0][0], tickPositions[1][j],
-				// tickPositions[2][k]);
+				// tickPositions[2][k]); 				v2.set(coordMax_[0][0],
+				// tickPositions[1][j], tickPositions[2][k]);
 
 				// If we are only drawing lines in the planes orthogonal to the axis, break if we have moved
 				// away from it... Otherwise, we change either the i1 or i2 components of v1 and v2 to position

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_ENUMOPTIONS_H
 #define DISSOLVE_KEYWORDWIDGET_ENUMOPTIONS_H
 
-#include "keywords/enumoptions.h"
 #include "gui/keywordwidgets/base.h"
+#include "keywords/enumoptions.h"
 #include <QComboBox>
 
 // Forward Declarations
@@ -36,16 +36,14 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
 	private:
 	// Associated keyword
-	EnumOptionsBaseKeyword* keyword_;
-
+	EnumOptionsBaseKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
@@ -57,7 +55,6 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
