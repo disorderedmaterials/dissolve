@@ -2476,12 +2476,16 @@ void ProcessPool::initialiseRandomBuffer(ProcessPool::DivisionStrategy strategy)
 	{
 		case (GroupsStrategy):
 			randomBufferCommGroup_ = ProcessPool::GroupLeadersCommunicator;
+			break;
 		case (GroupProcessesStrategy):
 			randomBufferCommGroup_ = ProcessPool::GroupProcessesCommunicator;
+			break;
 		case (PoolStrategy):
 			randomBufferCommGroup_ = ProcessPool::PoolProcessesCommunicator;
+			break;
 		case (PoolProcessesStrategy):
 			randomBufferCommGroup_ = ProcessPool::NoCommunicator;
+			break;
 	}
 	refillRandomBuffer();
 }
