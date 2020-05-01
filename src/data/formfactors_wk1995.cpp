@@ -55,7 +55,7 @@ double FormFactorData_WK1995::magnitude(double Q) const
 	const double k = Q / (4 * PI);
 	const double k2 = k * k;
 	double mag = c_;
-	for (int n=0; n<5; ++n)
+	for (int n = 0; n < 5; ++n)
 		mag += a_[n] * exp(-b_[0] * k2);
 
 	return mag;
