@@ -77,8 +77,7 @@ template <class T> class List
 		for (olditem = source.first(); olditem != NULL; olditem = olditem->next_)
 		{
 			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own it
-			newitem = new T;
-			*newitem = *olditem;
+			newitem = new T(*olditem);
 			newitem->prev_ = NULL;
 			newitem->next_ = NULL;
 			own(newitem);
@@ -154,9 +153,9 @@ template <class T> class List
 	 */
       public:
 	// Append an item to the list
-	T *add()
+	template <typename... Args> T *add(Args... args)
 	{
-		T *newItem = new T;
+		T *newItem = new T(args...);
 		// Add the pointer to the list
 		listHead_ == NULL ? listHead_ = newItem : listTail_->next_ = newItem;
 		newItem->prev_ = listTail_;
@@ -166,9 +165,9 @@ template <class T> class List
 		return newItem;
 	}
 	// Prepend an item to the list
-	T *prepend()
+	template <typename... Args> T *prepend(Args... args)
 	{
-		T *newItem = new T;
+		T *newItem = new T(args...);
 
 		// Add the pointer to the start of the list
 		newItem->next_ = listHead_;
@@ -194,12 +193,12 @@ template <class T> class List
 		return insertAfter(prevItem);
 	}
 	// Insert an item into the list (after supplied item)
-	T *insertAfter(T *item)
+	template <typename... Args> T *insertAfter(T *item, Args... args)
 	{
 		if (item == NULL)
 			return prepend();
 
-		T *newItem = new T;
+		T *newItem = new T(args...);
 		// Get pointer to next item after the supplied item (our newnext)
 		T *newNext = item->next_;
 		// Re-point newprev and the new item
@@ -216,14 +215,14 @@ template <class T> class List
 		return newItem;
 	}
 	// Insert an item into the list (before supplied item)
-	T *insertBefore(T *item)
+	template <typename... Args> T *insertBefore(T *item, Args... args)
 	{
 		if (item == NULL)
 		{
 			Messenger::error("No item supplied to List<T>::insertBefore().\n");
 			return NULL;
 		}
-		T *newItem = new T;
+		T *newItem = new T(args...);
 		// Get pointer to next item after the supplied item (our newprev)
 		T *newPrev = item->prev_;
 		// Re-point newnext and the new item
