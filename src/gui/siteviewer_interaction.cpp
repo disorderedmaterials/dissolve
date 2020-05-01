@@ -66,18 +66,18 @@ void SiteViewer::startInteraction()
 {
 	switch (interactionMode())
 	{
-	// Default Interaction Mode
-	case (SiteViewer::DefaultInteraction):
-		// This is the standard mode, giving access to view manipulation
-		if (buttonState_.testFlag(Qt::LeftButton))
-			setInteractionMode(SiteViewer::SelectAreaInteraction);
-		else if (buttonState_.testFlag(Qt::RightButton))
-			setInteractionMode(SiteViewer::RotateViewInteraction);
-		else if (buttonState_.testFlag(Qt::MiddleButton))
-			setInteractionMode(SiteViewer::TranslateViewInteraction);
-		break;
-	default:
-		break;
+		// Default Interaction Mode
+		case (SiteViewer::DefaultInteraction):
+			// This is the standard mode, giving access to view manipulation
+			if (buttonState_.testFlag(Qt::LeftButton))
+				setInteractionMode(SiteViewer::SelectAreaInteraction);
+			else if (buttonState_.testFlag(Qt::RightButton))
+				setInteractionMode(SiteViewer::RotateViewInteraction);
+			else if (buttonState_.testFlag(Qt::MiddleButton))
+				setInteractionMode(SiteViewer::TranslateViewInteraction);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -89,70 +89,70 @@ void SiteViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
-	case (SiteViewer::DefaultInteraction):
-		break;
-	case (SiteViewer::SelectAreaInteraction):
-		// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather
-		// than an area select
-		if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
-		{
-			// Single, targetted click - atom under mouse?
-			SpeciesAtom *i = atomAt(rMouseLast_.x, rMouseLast_.y);
-
-			// If there is an atom at the current position, (de)select it, maintaining the current selection if
-			// Shift was pressed
-			if (i)
+		case (SiteViewer::DefaultInteraction):
+			break;
+		case (SiteViewer::SelectAreaInteraction):
+			// Check the pixel area of the clicked region and determine whether this was actually a targeted click
+			// rather than an area select
+			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 			{
-				if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
-					species_->toggleAtomSelection(i);
+				// Single, targetted click - atom under mouse?
+				SpeciesAtom *i = atomAt(rMouseLast_.x, rMouseLast_.y);
+
+				// If there is an atom at the current position, (de)select it, maintaining the current selection
+				// if Shift was pressed
+				if (i)
+				{
+					if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
+						species_->toggleAtomSelection(i);
+					else
+					{
+						species_->clearAtomSelection();
+						species_->selectAtom(i);
+					}
+				}
 				else
 				{
-					species_->clearAtomSelection();
-					species_->selectAtom(i);
+					// No atom at the current position - if Shift was not pressed, deselect everything
+					if (!mouseDownModifiers_.testFlag(Qt::ShiftModifier))
+						species_->clearAtomSelection();
 				}
 			}
 			else
 			{
-				// No atom at the current position - if Shift was not pressed, deselect everything
+				// Click-drag - area select
+				// If Shift was not pressed, clear the current selection first
 				if (!mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 					species_->clearAtomSelection();
+				Vec3<double> rScreen;
+				QRect selectionRect(QPoint(rMouseDown_.x, rMouseDown_.y), QPoint(rMouseLast_.x, rMouseLast_.y));
+				ListIterator<SpeciesAtom> atomIterator(species_->atoms());
+				while (SpeciesAtom *i = atomIterator.iterate())
+				{
+					rScreen = view_.dataToScreen(i->r());
+					if (selectionRect.contains(rScreen.x, rScreen.y))
+						species_->selectAtom(i);
+				}
 			}
-		}
-		else
-		{
-			// Click-drag - area select
-			// If Shift was not pressed, clear the current selection first
-			if (!mouseDownModifiers_.testFlag(Qt::ShiftModifier))
-				species_->clearAtomSelection();
-			Vec3<double> rScreen;
-			QRect selectionRect(QPoint(rMouseDown_.x, rMouseDown_.y), QPoint(rMouseLast_.x, rMouseLast_.y));
-			ListIterator<SpeciesAtom> atomIterator(species_->atoms());
-			while (SpeciesAtom *i = atomIterator.iterate())
-			{
-				rScreen = view_.dataToScreen(i->r());
-				if (selectionRect.contains(rScreen.x, rScreen.y))
-					species_->selectAtom(i);
-			}
-		}
 
-		// Update the selection
-		speciesRenderable_->recreateSelectionPrimitive();
-		emit(atomSelectionChanged());
+			// Update the selection
+			speciesRenderable_->recreateSelectionPrimitive();
+			emit(atomSelectionChanged());
 
-		// Revert to default interaction mode
-		setInteractionMode(SiteViewer::DefaultInteraction);
-		break;
-	case (SiteViewer::RotateViewInteraction):
-		// Rotation matrix has already been modified. Revert to default interaction mode
-		setInteractionMode(SiteViewer::DefaultInteraction);
-		break;
-	case (SiteViewer::TranslateViewInteraction):
-		// Translation has already been applied. Revert to default interaction mode
-		setInteractionMode(SiteViewer::DefaultInteraction);
-		break;
-	default:
-		printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
-		break;
+			// Revert to default interaction mode
+			setInteractionMode(SiteViewer::DefaultInteraction);
+			break;
+		case (SiteViewer::RotateViewInteraction):
+			// Rotation matrix has already been modified. Revert to default interaction mode
+			setInteractionMode(SiteViewer::DefaultInteraction);
+			break;
+		case (SiteViewer::TranslateViewInteraction):
+			// Translation has already been applied. Revert to default interaction mode
+			setInteractionMode(SiteViewer::DefaultInteraction);
+			break;
+		default:
+			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
+			break;
 	}
 }
 
@@ -162,8 +162,8 @@ void SiteViewer::cancelInteraction()
 	// Perform any actions necessary to properly cancel the current interaction
 	switch (interactionMode())
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	// Reset other data
@@ -179,16 +179,16 @@ const char *SiteViewer::interactionModeText() const
 {
 	switch (interactionMode())
 	{
-	case (SiteViewer::DefaultInteraction):
-		return "View: <b>Left</b> Select; <b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
-	case (SiteViewer::SelectAreaInteraction):
-		return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; "
-		       "<i>+Shift</i> Toggle";
-	case (SiteViewer::RotateViewInteraction):
-		return "Rotate view";
-	case (SiteViewer::TranslateViewInteraction):
-		return "Translate";
-	default:
-		return "Unknown SiteViewerInteraction";
+		case (SiteViewer::DefaultInteraction):
+			return "View: <b>Left</b> Select; <b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
+		case (SiteViewer::SelectAreaInteraction):
+			return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; "
+			       "<i>+Shift</i> Toggle";
+		case (SiteViewer::RotateViewInteraction):
+			return "Rotate view";
+		case (SiteViewer::TranslateViewInteraction):
+			return "Translate";
+		default:
+			return "Unknown SiteViewerInteraction";
 	}
 }

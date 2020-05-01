@@ -115,8 +115,8 @@ bool ImportSpeciesWizard::displayControlPage(int index)
 	// Update controls in the target page if necessary
 	switch (index)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return true;
@@ -128,14 +128,14 @@ bool ImportSpeciesWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-	case (ImportSpeciesWizard::SelectFilePage):
-		return ((!ui_.InputFileEdit->text().isEmpty()) && (QFile::exists(ui_.InputFileEdit->text())));
-	case (ImportSpeciesWizard::SelectSpeciesPage):
-		return (ui_.SpeciesList->currentRow() != -1);
-	case (ImportSpeciesWizard::SpeciesNamePage):
-		return (ui_.SpeciesNameIndicator->state() == CheckIndicator::OKState);
-	default:
-		break;
+		case (ImportSpeciesWizard::SelectFilePage):
+			return ((!ui_.InputFileEdit->text().isEmpty()) && (QFile::exists(ui_.InputFileEdit->text())));
+		case (ImportSpeciesWizard::SelectSpeciesPage):
+			return (ui_.SpeciesList->currentRow() != -1);
+		case (ImportSpeciesWizard::SpeciesNamePage):
+			return (ui_.SpeciesNameIndicator->state() == CheckIndicator::OKState);
+		default:
+			break;
 	}
 
 	return true;
@@ -148,31 +148,31 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-	case (ImportSpeciesWizard::SelectFilePage):
-		// Check that the input/species file exists, and can be read in successfully
-		if (!temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text())))
-		{
-			return false;
-		}
-		// Update the Species and AtomTypes lists
-		ui_.SpeciesList->clear();
-		for (Species *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
-		{
-			QListWidgetItem *item = new QListWidgetItem(sp->name());
-			item->setData(Qt::UserRole, VariantPointer<Species>(sp));
-			ui_.SpeciesList->addItem(item);
-		}
-		if (ui_.SpeciesList->count() > 0)
-		{
-			ui_.SpeciesList->setCurrentRow(0);
-			importTarget_ = temporaryCoreData_.species().first();
-		}
+		case (ImportSpeciesWizard::SelectFilePage):
+			// Check that the input/species file exists, and can be read in successfully
+			if (!temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text())))
+			{
+				return false;
+			}
+			// Update the Species and AtomTypes lists
+			ui_.SpeciesList->clear();
+			for (Species *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
+			{
+				QListWidgetItem *item = new QListWidgetItem(sp->name());
+				item->setData(Qt::UserRole, VariantPointer<Species>(sp));
+				ui_.SpeciesList->addItem(item);
+			}
+			if (ui_.SpeciesList->count() > 0)
+			{
+				ui_.SpeciesList->setCurrentRow(0);
+				importTarget_ = temporaryCoreData_.species().first();
+			}
 
-		updateAtomTypesPage();
-		updateMasterTermsPage();
-		break;
-	default:
-		break;
+			updateAtomTypesPage();
+			updateMasterTermsPage();
+			break;
+		default:
+			break;
 	}
 
 	return true;
@@ -183,15 +183,15 @@ int ImportSpeciesWizard::determineNextPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-	case (ImportSpeciesWizard::AtomTypesPage):
-		// If there are master terms present, go to that page first. Otherwise, skip straight to naming
-		if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() ||
-		    temporaryCoreData_.nMasterTorsions())
-			return ImportSpeciesWizard::MasterTermsPage;
-		else
-			return ImportSpeciesWizard::SpeciesNamePage;
-	default:
-		break;
+		case (ImportSpeciesWizard::AtomTypesPage):
+			// If there are master terms present, go to that page first. Otherwise, skip straight to naming
+			if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() ||
+			    temporaryCoreData_.nMasterTorsions())
+				return ImportSpeciesWizard::MasterTermsPage;
+			else
+				return ImportSpeciesWizard::SpeciesNamePage;
+		default:
+			break;
 	}
 
 	return -1;
@@ -202,11 +202,11 @@ bool ImportSpeciesWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-	case (ImportSpeciesWizard::SelectSpeciesPage):
-		// Clear the temporary dissolve instance
-		temporaryDissolve_.clear();
-	default:
-		break;
+		case (ImportSpeciesWizard::SelectSpeciesPage):
+			// Clear the temporary dissolve instance
+			temporaryDissolve_.clear();
+		default:
+			break;
 	}
 
 	return true;

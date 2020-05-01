@@ -260,33 +260,33 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
 	Isotopologue *iso;
 	switch (column)
 	{
-	// Isotopologue
-	case (2):
-		// Find the isotopologue by name in the parent species...
-		iso = topes->species()->findIsotopologue(qPrintable(w->text(column)));
-		if (!iso)
-			return;
+		// Isotopologue
+		case (2):
+			// Find the isotopologue by name in the parent species...
+			iso = topes->species()->findIsotopologue(qPrintable(w->text(column)));
+			if (!iso)
+				return;
 
-		// Set the new Isotopologue
-		topeWeight->setIsotopologue(iso);
+			// Set the new Isotopologue
+			topeWeight->setIsotopologue(iso);
 
-		// Manually flag that the keyword data has changed
-		keyword_->hasBeenSet();
+			// Manually flag that the keyword data has changed
+			keyword_->hasBeenSet();
 
-		emit(keywordValueChanged(keyword_->optionMask()));
-		break;
-	// Weight
-	case (3):
-		topeWeight->setWeight(w->text(column).toDouble());
+			emit(keywordValueChanged(keyword_->optionMask()));
+			break;
+		// Weight
+		case (3):
+			topeWeight->setWeight(w->text(column).toDouble());
 
-		// Manually flag that the keyword data has changed
-		keyword_->hasBeenSet();
+			// Manually flag that the keyword data has changed
+			keyword_->hasBeenSet();
 
-		emit(keywordValueChanged(keyword_->optionMask()));
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", column);
-		break;
+			emit(keywordValueChanged(keyword_->optionMask()));
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", column);
+			break;
 	}
 }
 

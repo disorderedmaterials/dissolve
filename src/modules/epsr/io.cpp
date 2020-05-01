@@ -67,64 +67,64 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 		EPSRModule::EPSRPCofKeyword keyword = epsrPCofKeyword(parser.argc(0));
 		switch (keyword)
 		{
-		case (EPSRModule::AddPotTypePCofKeyword):
-			break;
-		case (EPSRModule::ExpecFPCofKeyword):
-			break;
-		case (EPSRModule::GaussianPCofKeyword):
-			keywords_.set<EPSRModule::ExpansionFunctionType>(
-				"expansionfunction", (DissolveSys::sameString(parser.argc(1), "Poisson") ||
-								      DissolveSys::sameString(parser.argc(1), "T")
-							      ? EPSRModule::PoissonExpansionFunction
-							      : EPSRModule::GaussianExpansionFunction));
-			break;
-		case (EPSRModule::NCoeffPPCofKeyword):
-			ncoeffp = parser.argi(1);
-			keywords_.set<int>("ncoeffp", ncoeffp);
-			break;
-		case (EPSRModule::NPItSSPCofKeyword):
-			keywords_.set<int>("npitss", parser.argi(1));
-			break;
-		case (EPSRModule::PAcceptPCofKeyword):
-			break;
-		case (EPSRModule::PDMaxPCofKeyword):
-			break;
-		case (EPSRModule::PDStepPCofKeyword):
-			break;
-		case (EPSRModule::PowerPCofKeyword):
-			break;
-		case (EPSRModule::PSigma2PCofKeyword):
-			keywords_.set<double>("psigma1", parser.argd(1));
-			keywords_.set<double>("psigma2", parser.argd(1));
-			keywords_.set<double>("gsigma1", parser.argd(1));
-			// Note - the factor of two applied here is used to reproduce the broadening applied by ESPR to the
-			// r-space Gaussian transformation
-			keywords_.set<double>("gsigma2", parser.argd(1) * 2.0);
-			break;
-		case (EPSRModule::QuitPCofKeyword):
-			done = true;
-			break;
-		case (EPSRModule::RBroadPCofKeyword):
-			break;
-		case (EPSRModule::RChargePCofKeyword):
-			break;
-		case (EPSRModule::RefPotFacPCofKeyword):
-			break;
-		case (EPSRModule::RepPotTypePCofKeyword):
-			break;
-		case (EPSRModule::RMaxPtPCofKeyword):
-			keywords_.set<double>("rmaxpt", parser.argd(1));
-			break;
-		case (EPSRModule::RMinFacPCofKeyword):
-			break;
-		case (EPSRModule::RMinPtPCofKeyword):
-			keywords_.set<double>("rminpt", parser.argd(1));
-			break;
-		case (EPSRModule::ROverlapPCofKeyword):
-			break;
-		default:
-			Messenger::warn("Unrecognised pcof file keyword '%s'...\n", parser.argc(0));
-			continue;
+			case (EPSRModule::AddPotTypePCofKeyword):
+				break;
+			case (EPSRModule::ExpecFPCofKeyword):
+				break;
+			case (EPSRModule::GaussianPCofKeyword):
+				keywords_.set<EPSRModule::ExpansionFunctionType>(
+					"expansionfunction", (DissolveSys::sameString(parser.argc(1), "Poisson") ||
+									      DissolveSys::sameString(parser.argc(1), "T")
+								      ? EPSRModule::PoissonExpansionFunction
+								      : EPSRModule::GaussianExpansionFunction));
+				break;
+			case (EPSRModule::NCoeffPPCofKeyword):
+				ncoeffp = parser.argi(1);
+				keywords_.set<int>("ncoeffp", ncoeffp);
+				break;
+			case (EPSRModule::NPItSSPCofKeyword):
+				keywords_.set<int>("npitss", parser.argi(1));
+				break;
+			case (EPSRModule::PAcceptPCofKeyword):
+				break;
+			case (EPSRModule::PDMaxPCofKeyword):
+				break;
+			case (EPSRModule::PDStepPCofKeyword):
+				break;
+			case (EPSRModule::PowerPCofKeyword):
+				break;
+			case (EPSRModule::PSigma2PCofKeyword):
+				keywords_.set<double>("psigma1", parser.argd(1));
+				keywords_.set<double>("psigma2", parser.argd(1));
+				keywords_.set<double>("gsigma1", parser.argd(1));
+				// Note - the factor of two applied here is used to reproduce the broadening applied by ESPR to
+				// the r-space Gaussian transformation
+				keywords_.set<double>("gsigma2", parser.argd(1) * 2.0);
+				break;
+			case (EPSRModule::QuitPCofKeyword):
+				done = true;
+				break;
+			case (EPSRModule::RBroadPCofKeyword):
+				break;
+			case (EPSRModule::RChargePCofKeyword):
+				break;
+			case (EPSRModule::RefPotFacPCofKeyword):
+				break;
+			case (EPSRModule::RepPotTypePCofKeyword):
+				break;
+			case (EPSRModule::RMaxPtPCofKeyword):
+				keywords_.set<double>("rmaxpt", parser.argd(1));
+				break;
+			case (EPSRModule::RMinFacPCofKeyword):
+				break;
+			case (EPSRModule::RMinPtPCofKeyword):
+				keywords_.set<double>("rminpt", parser.argd(1));
+				break;
+			case (EPSRModule::ROverlapPCofKeyword):
+				break;
+			default:
+				Messenger::warn("Unrecognised pcof file keyword '%s'...\n", parser.argc(0));
+				continue;
 		}
 
 		// If we have found the 'q' keyword, exit the loop

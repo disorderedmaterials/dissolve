@@ -422,26 +422,26 @@ bool PlainValue::broadcast(ProcessPool &procPool)
 	type_ = (PlainValue::ValueType)tempType;
 	switch (type_)
 	{
-	case (PlainValue::BooleanType):
-		if (!procPool.broadcast(valueB_))
+		case (PlainValue::BooleanType):
+			if (!procPool.broadcast(valueB_))
+				return false;
+			break;
+		case (PlainValue::IntegerType):
+			if (!procPool.broadcast(&valueI_, 1))
+				return false;
+			break;
+		case (PlainValue::DoubleType):
+			if (!procPool.broadcast(&valueD_, 1))
+				return false;
+			break;
+		case (PlainValue::StringType):
+			if (!procPool.broadcast(valueC_))
+				return false;
+			break;
+		default:
+			Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n",
+					 PlainValue::valueType(type_));
 			return false;
-		break;
-	case (PlainValue::IntegerType):
-		if (!procPool.broadcast(&valueI_, 1))
-			return false;
-		break;
-	case (PlainValue::DoubleType):
-		if (!procPool.broadcast(&valueD_, 1))
-			return false;
-		break;
-	case (PlainValue::StringType):
-		if (!procPool.broadcast(valueC_))
-			return false;
-		break;
-	default:
-		Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n",
-				 PlainValue::valueType(type_));
-		return false;
 	}
 #endif
 	return true;

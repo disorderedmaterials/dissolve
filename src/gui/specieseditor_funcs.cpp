@@ -75,12 +75,12 @@ void SpeciesEditor::updateToolbar()
 	// Set current interaction mode
 	switch (speciesViewer()->interactionMode())
 	{
-	case (SpeciesViewer::DefaultInteraction):
-		ui_.InteractionViewButton->setChecked(true);
-		break;
-	case (SpeciesViewer::DrawInteraction):
-		ui_.InteractionDrawButton->setChecked(true);
-		break;
+		case (SpeciesViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			ui_.InteractionDrawButton->setChecked(true);
+			break;
 	}
 
 	// Set drawing element symbol

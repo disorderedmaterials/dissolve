@@ -373,20 +373,21 @@ bool RenderableConfiguration::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableConfiguration::DisplayKeyword):
-			if (!configurationDisplayStyles().isValid(parser.argc(1)))
-				return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableConfiguration::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableConfiguration::DisplayKeyword):
+				if (!configurationDisplayStyles().isValid(parser.argc(1)))
+					return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableConfiguration::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

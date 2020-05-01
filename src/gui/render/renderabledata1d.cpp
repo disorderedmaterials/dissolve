@@ -363,20 +363,21 @@ bool RenderableData1D::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableData1D::DisplayKeyword):
-			if (!data1DDisplayStyles().isValid(parser.argc(1)))
-				return data1DDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = data1DDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableData1D::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableData1D: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableData1D::DisplayKeyword):
+				if (!data1DDisplayStyles().isValid(parser.argc(1)))
+					return data1DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data1DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableData1D::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData1D: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

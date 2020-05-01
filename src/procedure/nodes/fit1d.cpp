@@ -134,24 +134,24 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
 	Process1DProcedureNode *process1DNode;
 	switch (dataNode_.type())
 	{
-	case (ProcedureNode::Collect1DNode):
-		collect1DNode = dynamic_cast<Collect1DProcedureNode *>(dataNode_.node());
-		if (collect1DNode)
-			return Messenger::error("Failed to cast dataNode_ into a Collect1DProcedureNode.\n");
-		referenceData_ = collect1DNode->accumulatedData();
-		break;
-	case (ProcedureNode::Process1DNode):
-		process1DNode = dynamic_cast<Process1DProcedureNode *>(dataNode_.node());
-		if (process1DNode)
-			return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");
-		referenceData_ = process1DNode->processedData();
-		break;
-	case (ProcedureNode::nNodeTypes):
-		return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
-		break;
-	default:
-		return Messenger::error("No suitable data to extract from a node of type '%s'.\n",
-					ProcedureNode::nodeTypes().keyword(dataNode_.type()));
+		case (ProcedureNode::Collect1DNode):
+			collect1DNode = dynamic_cast<Collect1DProcedureNode *>(dataNode_.node());
+			if (collect1DNode)
+				return Messenger::error("Failed to cast dataNode_ into a Collect1DProcedureNode.\n");
+			referenceData_ = collect1DNode->accumulatedData();
+			break;
+		case (ProcedureNode::Process1DNode):
+			process1DNode = dynamic_cast<Process1DProcedureNode *>(dataNode_.node());
+			if (process1DNode)
+				return Messenger::error("Failed to cast dataNode_ into a Process1DProcedureNode.\n");
+			referenceData_ = process1DNode->processedData();
+			break;
+		case (ProcedureNode::nNodeTypes):
+			return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
+			break;
+		default:
+			return Messenger::error("No suitable data to extract from a node of type '%s'.\n",
+						ProcedureNode::nodeTypes().keyword(dataNode_.type()));
 	}
 
 	// Print equation info
@@ -275,41 +275,41 @@ bool Fit1DProcedureNode::read(LineParser &parser, const CoreData &coreData)
 		// All OK, so process it
 		switch (nk)
 		{
-		case (Fit1DProcedureNode::ConstantKeyword):
-			var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
-			if (!var)
-				return Messenger::error("Failed to create constant.\n");
-			constants_.append(var);
-			break;
-		case (Fit1DProcedureNode::EndFit1DKeyword):
-			return true;
-		case (Fit1DProcedureNode::EquationKeyword):
-			if (!equation_.set(parser.argc(1)))
-				return Messenger::error("Failed to create expression.\n");
-			break;
-		case (Fit1DProcedureNode::FitKeyword):
-			var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
-			if (!var)
-				return Messenger::error("Failed to create variable '%s'.\n", parser.argc(1));
-			fitTargets_.append(var);
-			break;
-		case (Fit1DProcedureNode::MethodKeyword):
-			return false;
-			break;
-		case (Fit1DProcedureNode::SaveKeyword):
-			saveData_ = parser.argb(1);
-			break;
-		case (Fit1DProcedureNode::SourceDataKeyword):
-			if (!dataNode_.read(parser, 1, coreData, procedure()))
-				return Messenger::error("Couldn't set source data for node.\n");
-			break;
-		case (Fit1DProcedureNode::nFit1DNodeKeywords):
-			return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));
-			break;
-		default:
-			return Messenger::error(
-				"Epic Developer Fail - Don't know how to deal with the Fit1D node keyword '%s'.\n",
-				parser.argc(0));
+			case (Fit1DProcedureNode::ConstantKeyword):
+				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
+				if (!var)
+					return Messenger::error("Failed to create constant.\n");
+				constants_.append(var);
+				break;
+			case (Fit1DProcedureNode::EndFit1DKeyword):
+				return true;
+			case (Fit1DProcedureNode::EquationKeyword):
+				if (!equation_.set(parser.argc(1)))
+					return Messenger::error("Failed to create expression.\n");
+				break;
+			case (Fit1DProcedureNode::FitKeyword):
+				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
+				if (!var)
+					return Messenger::error("Failed to create variable '%s'.\n", parser.argc(1));
+				fitTargets_.append(var);
+				break;
+			case (Fit1DProcedureNode::MethodKeyword):
+				return false;
+				break;
+			case (Fit1DProcedureNode::SaveKeyword):
+				saveData_ = parser.argb(1);
+				break;
+			case (Fit1DProcedureNode::SourceDataKeyword):
+				if (!dataNode_.read(parser, 1, coreData, procedure()))
+					return Messenger::error("Couldn't set source data for node.\n");
+				break;
+			case (Fit1DProcedureNode::nFit1DNodeKeywords):
+				return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));
+				break;
+			default:
+				return Messenger::error(
+					"Epic Developer Fail - Don't know how to deal with the Fit1D node keyword '%s'.\n",
+					parser.argc(0));
 		}
 	}
 

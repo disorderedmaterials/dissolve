@@ -115,19 +115,20 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			// Add its parameters to our minimiser - only add broadening functions with global parameters once
 			switch (broadening.function())
 			{
-			case (PairBroadeningFunction::NoFunction):
-				return Messenger::error("No pair broadening function set, so nothing to optimise.\n");
-			case (PairBroadeningFunction::GaussianElementPairFunction):
-				if (broadeningAdded[broadening.function()])
-				{
-					Messenger::print("Broadening function of type '%s' used over multiple RDF modules, so "
-							 "parameters will only be added once.\n",
-							 PairBroadeningFunction::functionType(broadening.function()));
-					continue;
-				}
-				break;
-			default:
-				break;
+				case (PairBroadeningFunction::NoFunction):
+					return Messenger::error("No pair broadening function set, so nothing to optimise.\n");
+				case (PairBroadeningFunction::GaussianElementPairFunction):
+					if (broadeningAdded[broadening.function()])
+					{
+						Messenger::print(
+							"Broadening function of type '%s' used over multiple RDF modules, so "
+							"parameters will only be added once.\n",
+							PairBroadeningFunction::functionType(broadening.function()));
+						continue;
+					}
+					break;
+				default:
+					break;
 			}
 
 			broadeningMinimiser.addTargets(broadening.parameters(), true, 0.02, true, 0.5);

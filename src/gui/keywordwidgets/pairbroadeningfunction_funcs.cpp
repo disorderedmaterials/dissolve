@@ -102,20 +102,20 @@ void PairBroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &cor
 	// Radio button
 	switch (pairBroadeningFunction.function())
 	{
-	case (PairBroadeningFunction::NoFunction):
-		ui_.NoneRadio->setChecked(true);
-		break;
-	case (PairBroadeningFunction::GaussianFunction):
-		ui_.GaussianRadio->setChecked(true);
-		break;
-		// 		case (PairBroadeningFunction::GaussianElementPairFunction):
-		// 			ui_.GaussianElementsRadio->setChecked(true);
-		// 			break;
-		// 		case (PairBroadeningFunction::FrequencyFunction):
-		// 			ui_.FrequencyRadio->setChecked(true);
-		// 			break;
-	default:
-		break;
+		case (PairBroadeningFunction::NoFunction):
+			ui_.NoneRadio->setChecked(true);
+			break;
+		case (PairBroadeningFunction::GaussianFunction):
+			ui_.GaussianRadio->setChecked(true);
+			break;
+			// 		case (PairBroadeningFunction::GaussianElementPairFunction):
+			// 			ui_.GaussianElementsRadio->setChecked(true);
+			// 			break;
+			// 		case (PairBroadeningFunction::FrequencyFunction):
+			// 			ui_.FrequencyRadio->setChecked(true);
+			// 			break;
+		default:
+			break;
 	}
 
 	// Parameters

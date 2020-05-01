@@ -402,13 +402,13 @@ bool DissolveSys::isEmpty(const char *s)
 	{
 		switch (*c)
 		{
-		case (' '):
-		case ('\t'):
-		case ('\n'):
-		case ('\r'):
-			continue;
-		default:
-			return false;
+			case (' '):
+			case ('\t'):
+			case ('\n'):
+			case ('\r'):
+				continue;
+			default:
+				return false;
 		}
 	}
 	return true;
@@ -449,36 +449,36 @@ bool DissolveSys::isNumber(const char *text, bool &isFloatingPoint)
 		char c = text[n];
 		switch (text[n])
 		{
-		// Decimal point
-		case ('.'):
-			isFloatingPoint = true;
-			break;
-		// Negate or plus
-		case ('-'):
-		case ('+'):
-			// Only allow as first character or immediately following an exponent
-			if (n != (exponentIndex + 1))
-				return false;
-			break;
-		// Exponentiation
-		case ('e'):
-		case ('E'):
-			// Can't be first character
-			if (n == 0)
-				return false;
+			// Decimal point
+			case ('.'):
+				isFloatingPoint = true;
+				break;
+			// Negate or plus
+			case ('-'):
+			case ('+'):
+				// Only allow as first character or immediately following an exponent
+				if (n != (exponentIndex + 1))
+					return false;
+				break;
+			// Exponentiation
+			case ('e'):
+			case ('E'):
+				// Can't be first character
+				if (n == 0)
+					return false;
 
-			// Can't have more than one
-			if (exponentIndex > 0)
-				return false;
+				// Can't have more than one
+				if (exponentIndex > 0)
+					return false;
 
-			// Store position
-			exponentIndex = n;
-			break;
-		default:
-			// If not a digit, return false
-			if (!isdigit(c))
-				return false;
-			break;
+				// Store position
+				exponentIndex = n;
+				break;
+			default:
+				// If not a digit, return false
+				if (!isdigit(c))
+					return false;
+				break;
 		}
 	}
 

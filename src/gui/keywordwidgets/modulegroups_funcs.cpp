@@ -106,23 +106,24 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem *item)
 	// Check the column of the item
 	switch (item->column())
 	{
-	// Module (checked if a target)
-	case (0):
-		if (isSelected)
-			keyword_->data().addModule(module, qPrintable(groupName));
-		else
-			keyword_->data().removeModule(module);
-		keyword_->hasBeenSet();
-		break;
-	// Group name
-	case (1):
-		// Take the new name and try to re-add the current Module to the (new) group (only if the Module is selected...)
-		if (isSelected)
-		{
-			keyword_->data().addModule(module, qPrintable(groupName));
+		// Module (checked if a target)
+		case (0):
+			if (isSelected)
+				keyword_->data().addModule(module, qPrintable(groupName));
+			else
+				keyword_->data().removeModule(module);
 			keyword_->hasBeenSet();
-		}
-		break;
+			break;
+		// Group name
+		case (1):
+			// Take the new name and try to re-add the current Module to the (new) group (only if the Module is
+			// selected...)
+			if (isSelected)
+			{
+				keyword_->data().addModule(module, qPrintable(groupName));
+				keyword_->hasBeenSet();
+			}
+			break;
 	}
 
 	updateSummaryText();

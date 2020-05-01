@@ -758,28 +758,29 @@ bool RenderableData3D::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableData3D::DisplayKeyword):
-			if (!data3DDisplayStyles().isValid(parser.argc(1)))
-				return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableData3D::EndStyleKeyword):
-			return true;
-		// Lower cutoff
-		case (RenderableData3D::LowerCutoffKeyword):
-			lowerCutoff_ = parser.argd(1);
-			break;
-		// Upper cutoff
-		case (RenderableData3D::UpperCutoffKeyword):
-			upperCutoff_ = parser.argd(1);
-			break;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableData3D: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableData3D::DisplayKeyword):
+				if (!data3DDisplayStyles().isValid(parser.argc(1)))
+					return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableData3D::EndStyleKeyword):
+				return true;
+			// Lower cutoff
+			case (RenderableData3D::LowerCutoffKeyword):
+				lowerCutoff_ = parser.argd(1);
+				break;
+			// Upper cutoff
+			case (RenderableData3D::UpperCutoffKeyword):
+				upperCutoff_ = parser.argd(1);
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData3D: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

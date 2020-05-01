@@ -413,50 +413,50 @@ bool SpeciesSite::read(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		case (SpeciesSite::EndSiteKeyword):
-			Messenger::print("Found end of Site '%s'.\n", name());
-			blockDone = true;
-			break;
-		case (SpeciesSite::OriginKeyword):
-			for (int n = 1; n < parser.nArgs(); ++n)
-			{
-				if (!addOriginAtom(parser.argi(n) - 1))
+			case (SpeciesSite::EndSiteKeyword):
+				Messenger::print("Found end of Site '%s'.\n", name());
+				blockDone = true;
+				break;
+			case (SpeciesSite::OriginKeyword):
+				for (int n = 1; n < parser.nArgs(); ++n)
 				{
-					Messenger::error("Failed to add origin atom for site '%s'.\n", name());
-					error = true;
-					break;
+					if (!addOriginAtom(parser.argi(n) - 1))
+					{
+						Messenger::error("Failed to add origin atom for site '%s'.\n", name());
+						error = true;
+						break;
+					}
 				}
-			}
-			break;
-		case (SpeciesSite::OriginMassWeightedKeyword):
-			setOriginMassWeighted(parser.argb(1));
-			break;
-		case (SpeciesSite::XAxisKeyword):
-			for (int n = 1; n < parser.nArgs(); ++n)
-			{
-				if (!addXAxisAtom(parser.argi(n) - 1))
+				break;
+			case (SpeciesSite::OriginMassWeightedKeyword):
+				setOriginMassWeighted(parser.argb(1));
+				break;
+			case (SpeciesSite::XAxisKeyword):
+				for (int n = 1; n < parser.nArgs(); ++n)
 				{
-					Messenger::error("Failed to add x-axis atom for site '%s'.\n", name());
-					error = true;
-					break;
+					if (!addXAxisAtom(parser.argi(n) - 1))
+					{
+						Messenger::error("Failed to add x-axis atom for site '%s'.\n", name());
+						error = true;
+						break;
+					}
 				}
-			}
-			break;
-		case (SpeciesSite::YAxisKeyword):
-			for (int n = 1; n < parser.nArgs(); ++n)
-			{
-				if (!addYAxisAtom(parser.argi(n) - 1))
+				break;
+			case (SpeciesSite::YAxisKeyword):
+				for (int n = 1; n < parser.nArgs(); ++n)
 				{
-					Messenger::error("Failed to add y-axis atom for site '%s'.\n", name());
-					error = true;
-					break;
+					if (!addYAxisAtom(parser.argi(n) - 1))
+					{
+						Messenger::error("Failed to add y-axis atom for site '%s'.\n", name());
+						error = true;
+						break;
+					}
 				}
-			}
-			break;
-		default:
-			printf("DEV_OOPS - Site block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
-			error = true;
-			break;
+				break;
+			default:
+				printf("DEV_OOPS - Site block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
+				error = true;
+				break;
 		}
 
 		// Error encountered?

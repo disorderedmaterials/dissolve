@@ -43,43 +43,43 @@ int NETALogicNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &match
 	int score1 = NETANode::NoMatch, score2 = NETANode::NoMatch, totalscore = NETANode::NoMatch;
 	switch (logic_)
 	{
-	case (NETALogicNode::AndLogic):
-		// Evaluate first argument
-		score1 = argument1_->score(i, matchPath);
-		if (score1 == NETANode::NoMatch)
-			break;
+		case (NETALogicNode::AndLogic):
+			// Evaluate first argument
+			score1 = argument1_->score(i, matchPath);
+			if (score1 == NETANode::NoMatch)
+				break;
 
-		// Evaluate second argument
-		score2 = argument2_->score(i, matchPath);
-		if (score2 == NETANode::NoMatch)
-			break;
-
-		// Generate final score
-		totalscore = score1 + score2;
-		break;
-	case (NETALogicNode::OrLogic):
-		score1 = argument1_->score(i, matchPath);
-		if (score1 != NETANode::NoMatch)
-			totalscore = score1;
-		else
-		{
-			score2 = argument2_->score(i, matchPath);
-			if (score2 != NETANode::NoMatch)
-				totalscore = score2;
-		}
-		break;
-	case (NETALogicNode::AndNotLogic):
-		score1 = argument1_->score(i, matchPath);
-		if (score1 != NETANode::NoMatch)
-		{
+			// Evaluate second argument
 			score2 = argument2_->score(i, matchPath);
 			if (score2 == NETANode::NoMatch)
+				break;
+
+			// Generate final score
+			totalscore = score1 + score2;
+			break;
+		case (NETALogicNode::OrLogic):
+			score1 = argument1_->score(i, matchPath);
+			if (score1 != NETANode::NoMatch)
 				totalscore = score1;
-		}
-		break;
-	default:
-		printf("Internal Error: Unrecognised logic in NETA::score.\n");
-		break;
+			else
+			{
+				score2 = argument2_->score(i, matchPath);
+				if (score2 != NETANode::NoMatch)
+					totalscore = score2;
+			}
+			break;
+		case (NETALogicNode::AndNotLogic):
+			score1 = argument1_->score(i, matchPath);
+			if (score1 != NETANode::NoMatch)
+			{
+				score2 = argument2_->score(i, matchPath);
+				if (score2 == NETANode::NoMatch)
+					totalscore = score1;
+			}
+			break;
+		default:
+			printf("Internal Error: Unrecognised logic in NETA::score.\n");
+			break;
 	}
 
 	// Check for reverse logic

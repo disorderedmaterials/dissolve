@@ -279,17 +279,17 @@ bool ProcessPool::setUp(const char *name, Array<int> worldRanks, int groupPopula
 	// Set default maximum number of groups
 	switch (groupPopulation)
 	{
-	case (ProcessPool::MaximumGroupPopulation):
-		maxProcessGroups_ = worldRanks_.nItems();
-		break;
-	case (ProcessPool::MinimumGroupPopulation):
-		maxProcessGroups_ = 1;
-		break;
-	case (ProcessPool::HalfMaximumGroupPopulation):
-		maxProcessGroups_ = worldRanks_.nItems() / 2;
-		break;
-	default:
-		maxProcessGroups_ = groupPopulation;
+		case (ProcessPool::MaximumGroupPopulation):
+			maxProcessGroups_ = worldRanks_.nItems();
+			break;
+		case (ProcessPool::MinimumGroupPopulation):
+			maxProcessGroups_ = 1;
+			break;
+		case (ProcessPool::HalfMaximumGroupPopulation):
+			maxProcessGroups_ = worldRanks_.nItems() / 2;
+			break;
+		default:
+			maxProcessGroups_ = groupPopulation;
 	}
 
 	Messenger::print("There are %i processes in pool '%s' (max groups = %i).\n", worldRanks_.nItems(), name_.get(),
@@ -567,18 +567,18 @@ ProcessPool::DivisionStrategy ProcessPool::subDivisionStrategy(ProcessPool::Divi
 {
 	switch (strategy)
 	{
-	case (GroupsStrategy):
-		return GroupProcessesStrategy;
-	case (GroupProcessesStrategy):
-		Messenger::error(
-			"Strategy is GroupProcessesStrategy, and so can't subdivide any further. Results may be incorrect!\n");
-		return GroupProcessesStrategy;
-	case (PoolStrategy):
-		return PoolProcessesStrategy;
-	case (PoolProcessesStrategy):
-		Messenger::error(
-			"Strategy is PoolProcessesStrategy, and so can't subdivide any further. Results may be incorrect!\n");
-		return PoolProcessesStrategy;
+		case (GroupsStrategy):
+			return GroupProcessesStrategy;
+		case (GroupProcessesStrategy):
+			Messenger::error("Strategy is GroupProcessesStrategy, and so can't subdivide any further. Results may "
+					 "be incorrect!\n");
+			return GroupProcessesStrategy;
+		case (PoolStrategy):
+			return PoolProcessesStrategy;
+		case (PoolProcessesStrategy):
+			Messenger::error("Strategy is PoolProcessesStrategy, and so can't subdivide any further. Results may "
+					 "be incorrect!\n");
+			return PoolProcessesStrategy;
 	}
 
 	// Default
@@ -618,14 +618,14 @@ int ProcessPool::strategyNDivisions(ProcessPool::DivisionStrategy strategy) cons
 {
 	switch (strategy)
 	{
-	case (GroupsStrategy):
-		return nProcessGroups();
-	case (GroupProcessesStrategy):
-		return nProcessesInGroup(groupIndex());
-	case (PoolStrategy):
-		return nProcesses();
-	case (PoolProcessesStrategy):
-		return 1;
+		case (GroupsStrategy):
+			return nProcessGroups();
+		case (GroupProcessesStrategy):
+			return nProcessesInGroup(groupIndex());
+		case (PoolStrategy):
+			return nProcesses();
+		case (PoolProcessesStrategy):
+			return 1;
 	}
 
 	// Default
@@ -637,14 +637,14 @@ int ProcessPool::strategyProcessIndex(ProcessPool::DivisionStrategy strategy) co
 {
 	switch (strategy)
 	{
-	case (GroupsStrategy):
-		return groupIndex_;
-	case (GroupProcessesStrategy):
-		return groupRank_;
-	case (PoolStrategy):
-		return poolRank_;
-	case (PoolProcessesStrategy):
-		return 0;
+		case (GroupsStrategy):
+			return groupIndex_;
+		case (GroupProcessesStrategy):
+			return groupRank_;
+		case (PoolStrategy):
+			return poolRank_;
+		case (PoolProcessesStrategy):
+			return 0;
 	}
 
 	// Default
@@ -2474,14 +2474,14 @@ void ProcessPool::initialiseRandomBuffer(ProcessPool::DivisionStrategy strategy)
 {
 	switch (strategy)
 	{
-	case (GroupsStrategy):
-		randomBufferCommGroup_ = ProcessPool::GroupLeadersCommunicator;
-	case (GroupProcessesStrategy):
-		randomBufferCommGroup_ = ProcessPool::GroupProcessesCommunicator;
-	case (PoolStrategy):
-		randomBufferCommGroup_ = ProcessPool::PoolProcessesCommunicator;
-	case (PoolProcessesStrategy):
-		randomBufferCommGroup_ = ProcessPool::NoCommunicator;
+		case (GroupsStrategy):
+			randomBufferCommGroup_ = ProcessPool::GroupLeadersCommunicator;
+		case (GroupProcessesStrategy):
+			randomBufferCommGroup_ = ProcessPool::GroupProcessesCommunicator;
+		case (PoolStrategy):
+			randomBufferCommGroup_ = ProcessPool::PoolProcessesCommunicator;
+		case (PoolProcessesStrategy):
+			randomBufferCommGroup_ = ProcessPool::NoCommunicator;
 	}
 	refillRandomBuffer();
 }

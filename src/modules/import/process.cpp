@@ -75,16 +75,16 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			// Read the frame
 			switch (trajectoryFile_.trajectoryFormat())
 			{
-			case (TrajectoryImportFileFormat::XYZTrajectory):
-				if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
-					return false;
-				cfg->incrementContentsVersion();
-				break;
-			default:
-				return Messenger::error(
-					"Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n",
-					trajectoryFile_.trajectoryFormat());
-				break;
+				case (TrajectoryImportFileFormat::XYZTrajectory):
+					if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
+						return false;
+					cfg->incrementContentsVersion();
+					break;
+				default:
+					return Messenger::error(
+						"Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n",
+						trajectoryFile_.trajectoryFormat());
+					break;
 			}
 
 			// Set the trajectory file position in the restart file

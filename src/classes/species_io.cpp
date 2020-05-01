@@ -154,411 +154,426 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		case (Species::AngleKeyword):
-			// Create a new angle definition between the specified atoms
-			a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
-			if (!a)
-			{
-				error = true;
-				break;
-			}
-
-			/*
-			 * If only the indices were given, create an angle without a specified functional form (a Forcefield is
-			 * presumably going to be specified). Otherwise, check the functional form specified - if it starts with
-			 * '@' it is a reference to master parameters
-			 */
-			if (parser.nArgs() == 4)
-				a->setForm(SpeciesAngle::NoForm);
-			else if (parser.argc(4)[0] == '@')
-			{
-				// Search through master Angle parameters to see if this name exists
-				MasterIntra *master = coreData.hasMasterAngle(parser.argc(4));
-				if (!master)
+			case (Species::AngleKeyword):
+				// Create a new angle definition between the specified atoms
+				a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
+				if (!a)
 				{
-					Messenger::error("No master Angle parameters named '%s' exist.\n", &parser.argc(4)[1]);
 					error = true;
 					break;
 				}
 
-				a->setMasterParameters(master);
-			}
-			else
-			{
-				if (!SpeciesAngle::angleFunctions().isValid(parser.argc(4)))
+				/*
+				 * If only the indices were given, create an angle without a specified functional form (a
+				 * Forcefield is presumably going to be specified). Otherwise, check the functional form
+				 * specified - if it starts with
+				 * '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 4)
+					a->setForm(SpeciesAngle::NoForm);
+				else if (parser.argc(4)[0] == '@')
 				{
-					Messenger::error("Functional form of Angle (%s) not recognised.\n", parser.argc(4));
-					error = true;
-					break;
-				}
-				af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
-
-				a->setForm(af);
-				for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
-				{
-					if (!parser.hasArg(n + 5))
+					// Search through master Angle parameters to see if this name exists
+					MasterIntra *master = coreData.hasMasterAngle(parser.argc(4));
+					if (!master)
 					{
-						Messenger::error("Angle function type '%s' requires %i parameters\n",
-								 SpeciesAngle::angleFunctions().keyword(af),
-								 SpeciesAngle::angleFunctions().minArgs(af));
+						Messenger::error("No master Angle parameters named '%s' exist.\n",
+								 &parser.argc(4)[1]);
 						error = true;
 						break;
 					}
-					a->setParameter(n, parser.argd(n + 5));
+
+					a->setMasterParameters(master);
 				}
-			}
-
-			// Perform any final setup on the Angle
-			a->setUp();
-			break;
-		case (Species::AtomKeyword):
-			el = Elements::elementPointer(parser.argc(2));
-			if (el->Z() == 0)
-			{
-				Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2),
-						 Species::keywords().keyword(Species::AtomKeyword));
-				el = NULL;
-				error = true;
-				break;
-			}
-			i = addAtom(el, parser.arg3d(3));
-			if (parser.hasArg(7))
-				i->setCharge(parser.argd(7));
-
-			// Locate the AtomType assigned to the Atom
-			if (DissolveSys::sameString("None", parser.argc(6)))
-				at = NULL;
-			else
-			{
-				at = coreData.findAtomType(parser.argc(6));
-				if (!at)
+				else
 				{
-					Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
-					at = coreData.addAtomType(el);
-					at->setName(parser.argc(6));
-				}
-			}
-
-			// Finally, set AtomType for the Atom
-			i->setAtomType(at);
-			break;
-		case (Species::BondKeyword):
-			// Create a new bond definition between the specified atoms
-			b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
-			if (!b)
-			{
-				error = true;
-				break;
-			}
-
-			/*
-			 * If only the indices were given, create a bond without a specified functional form (a Forcefield is
-			 * presumably going to be specified). Otherwise, check the functional form specified - if it starts with
-			 * '@' it is a reference to master parameters
-			 */
-			if (parser.nArgs() == 3)
-				b->setForm(SpeciesBond::NoForm);
-			else if (parser.argc(3)[0] == '@')
-			{
-				// Search through master Bond parameters to see if this name exists
-				MasterIntra *master = coreData.hasMasterBond(parser.argc(3));
-				if (!master)
-				{
-					Messenger::error("No master Bond parameters named '%s' exist.\n", &parser.argc(3)[1]);
-					error = true;
-					break;
-				}
-
-				b->setMasterParameters(master);
-			}
-			else
-			{
-				// Check the functional form specified
-				if (!SpeciesBond::bondFunctions().isValid(parser.argc(3)))
-				{
-					Messenger::error("Functional form of Bond (%s) not recognised.\n", parser.argc(3));
-					error = true;
-					break;
-				}
-				bf = SpeciesBond::bondFunctions().enumeration(parser.argc(3));
-
-				b->setForm(bf);
-				for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
-				{
-					if (!parser.hasArg(4 + n))
+					if (!SpeciesAngle::angleFunctions().isValid(parser.argc(4)))
 					{
-						Messenger::error("Bond function type '%s' requires %i parameters\n",
-								 SpeciesBond::bondFunctions().keyword(bf),
-								 SpeciesBond::bondFunctions().minArgs(bf));
+						Messenger::error("Functional form of Angle (%s) not recognised.\n",
+								 parser.argc(4));
 						error = true;
 						break;
 					}
-					b->setParameter(n, parser.argd(n + 4));
-				}
-			}
+					af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
 
-			// Perform any final setup on the Bond
-			b->setUp();
-			break;
-		case (Species::BondTypeKeyword):
-			// Find the specified bond
-			b = bond(parser.argi(1) - 1, parser.argi(2) - 1);
-			if (!b)
-			{
-				Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond "
-						 "does not exist.\n",
-						 parser.argi(1), parser.argi(2));
-				error = true;
-				break;
-			}
-
-			// Get the bond type
-			bt = SpeciesBond::bondType(parser.argc(3));
-			if (bt == SpeciesBond::nBondTypes)
-			{
-				Messenger::error("Unrecognised bond type '%s'.\n", parser.argc(3));
-				error = true;
-				break;
-			}
-			b->setBondType(bt);
-			break;
-		case (Species::ChargeKeyword):
-			i = atom(parser.argi(1) - 1);
-			if (i)
-				i->setCharge(parser.argd(2));
-			else
-			{
-				Messenger::error("Specified Atom index (%i) for Charge keyword is out of range.\n",
-						 parser.argi(1));
-				error = true;
-			}
-			break;
-		case (Species::CoordinateSetsKeyword):
-			if (!coordinateSetInputCoordinates_.read(
-				    parser, 1, CharString("End%s", keywords().keyword(Species::CoordinateSetsKeyword)),
-				    coreData))
-			{
-				Messenger::error("Failed to set coordinate sets file / format.\n");
-				error = true;
-			}
-			else
-			{
-				// Open the specified file
-				LineParser coordinateSetParser(parser.processPool());
-				if ((!coordinateSetParser.openInput(coordinateSetInputCoordinates_.filename())) ||
-				    (!coordinateSetParser.isFileGoodForReading()))
-				{
-					Messenger::error("Couldn't open coordinate sets file '%s'.\n",
-							 coordinateSetInputCoordinates_.filename());
-					error = true;
-					break;
-				}
-
-				while (!coordinateSetParser.eofOrBlank())
-				{
-					CoordinateSet *coordSet = addCoordinateSet();
-					if (!coordinateSetInputCoordinates_.importData(coordinateSetParser,
-										       coordSet->coordinates()))
+					a->setForm(af);
+					for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
 					{
-						Messenger::error("Failed to read coordinate set %i from file.\n",
-								 nCoordinateSets());
-						error = true;
-						coordinateSets_.remove(coordSet);
-						break;
+						if (!parser.hasArg(n + 5))
+						{
+							Messenger::error("Angle function type '%s' requires %i parameters\n",
+									 SpeciesAngle::angleFunctions().keyword(af),
+									 SpeciesAngle::angleFunctions().minArgs(af));
+							error = true;
+							break;
+						}
+						a->setParameter(n, parser.argd(n + 5));
 					}
 				}
 
-				Messenger::print("%i coordinate sets read in for Species '%s'.\n", nCoordinateSets(), name());
-			}
-			break;
-		case (Species::EndSpeciesKeyword):
-			if (forcefield_)
-				applyForcefieldTerms(coreData);
-			Messenger::print("Found end of Species '%s'.\n", name());
-			blockDone = true;
-			break;
-		case (Species::ForcefieldKeyword):
-			forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
-			break;
-		case (Species::ImproperKeyword):
-			// Check the functional form specified - if it starts with '@' it is a reference to master parameters
-			if (parser.argc(5)[0] == '@')
-			{
-				// Search through master Improper parameters to see if this name exists
-				MasterIntra *master = coreData.hasMasterImproper(parser.argc(5));
-				if (!master)
+				// Perform any final setup on the Angle
+				a->setUp();
+				break;
+			case (Species::AtomKeyword):
+				el = Elements::elementPointer(parser.argc(2));
+				if (el->Z() == 0)
 				{
-					Messenger::error("No master Improper parameters named '%s' exist.\n",
-							 &parser.argc(5)[1]);
+					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n",
+							 parser.argc(2), Species::keywords().keyword(Species::AtomKeyword));
+					el = NULL;
 					error = true;
 					break;
 				}
+				i = addAtom(el, parser.arg3d(3));
+				if (parser.hasArg(7))
+					i->setCharge(parser.argd(7));
 
-				// Create a new improper definition
-				imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1,
-						  parser.argi(4) - 1);
-				if (!imp)
+				// Locate the AtomType assigned to the Atom
+				if (DissolveSys::sameString("None", parser.argc(6)))
+					at = NULL;
+				else
 				{
-					error = true;
-					break;
-				}
-				t->setMasterParameters(master);
-			}
-			else
-			{
-				// Check the functional form specified
-				if (!SpeciesImproper::improperFunctions().isValid(parser.argc(5)))
-				{
-					Messenger::error("Functional form of Improper (%s) not recognised.\n", parser.argc(5));
-					error = true;
-					break;
-				}
-				impf = SpeciesImproper::improperFunctions().enumeration(parser.argc(5));
-
-				// Create a new improper definition
-				imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1,
-						  parser.argi(4) - 1);
-				if (!imp)
-				{
-					error = true;
-					break;
-				}
-				t->setForm(tf);
-				for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
-				{
-					if (!parser.hasArg(n + 6))
+					at = coreData.findAtomType(parser.argc(6));
+					if (!at)
 					{
-						Messenger::error("Improper function type '%s' requires %i parameters\n",
-								 SpeciesImproper::improperFunctions().keyword(impf),
-								 SpeciesImproper::improperFunctions().minArgs(impf));
+						Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
+						at = coreData.addAtomType(el);
+						at->setName(parser.argc(6));
+					}
+				}
+
+				// Finally, set AtomType for the Atom
+				i->setAtomType(at);
+				break;
+			case (Species::BondKeyword):
+				// Create a new bond definition between the specified atoms
+				b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
+				if (!b)
+				{
+					error = true;
+					break;
+				}
+
+				/*
+				 * If only the indices were given, create a bond without a specified functional form (a
+				 * Forcefield is presumably going to be specified). Otherwise, check the functional form
+				 * specified - if it starts with
+				 * '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 3)
+					b->setForm(SpeciesBond::NoForm);
+				else if (parser.argc(3)[0] == '@')
+				{
+					// Search through master Bond parameters to see if this name exists
+					MasterIntra *master = coreData.hasMasterBond(parser.argc(3));
+					if (!master)
+					{
+						Messenger::error("No master Bond parameters named '%s' exist.\n",
+								 &parser.argc(3)[1]);
 						error = true;
 						break;
 					}
-					t->setParameter(n, parser.argd(n + 6));
+
+					b->setMasterParameters(master);
 				}
-			}
-
-			// Perform any final setup on the Improper
-			t->setUp();
-			break;
-		case (Species::IsotopologueKeyword):
-			iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
-			Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
-			// Each parser argument is a string of the form ATOMTYPE=ISO
-			for (int n = 2; n < parser.nArgs(); ++n)
-			{
-				// Split argument into parts before and after '='
-				arg1 = DissolveSys::beforeChar(parser.argc(n), '=');
-				arg2 = DissolveSys::afterChar(parser.argc(n), '=');
-
-				at = coreData.findAtomType(arg1.get());
-				if (at == NULL)
+				else
 				{
-					Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', "
-							 "Species '%s'\n",
-							 arg1.get(), iso->name(), name());
-					error = true;
-					break;
-				}
-
-				// Is the supplied isotope valid for the AtomType's element?
-				el = at->element();
-				tope = Isotopes::isotope(el, arg2.asInteger());
-				if (tope == NULL)
-				{
-					Messenger::error("No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue "
-							 "'%s', Species '%s'\n",
-							 arg2.asInteger(), el->symbol(), at->name(), iso->name(), name());
-					error = true;
-					break;
-				}
-
-				// Assign isotope to AtomType
-				if (!iso->setAtomTypeIsotope(at, tope))
-				{
-					error = true;
-					break;
-				}
-			}
-			break;
-		case (Species::SiteKeyword):
-			// First argument is the name of the site to create - make sure it doesn't exist already
-			site = findSite(parser.argc(1));
-			if (site)
-			{
-				Messenger::error("The site '%s' already exists on Species '%s', and cannot be redefined.\n",
-						 parser.argc(1), name());
-				error = true;
-				break;
-			}
-
-			site = addSite(parser.argc(1));
-			if (!site->read(parser))
-				error = true;
-			break;
-		case (Species::TorsionKeyword):
-			// Create a new angle definition between the specified atoms
-			t = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-			if (!t)
-			{
-				error = true;
-				break;
-			}
-
-			/*
-			 * If only the indices were given, create an angle without a specified functional form (a Forcefield is
-			 * presumably going to be specified). Otherwise, check the functional form specified - if it starts with
-			 * '@' it is a reference to master parameters
-			 */
-			if (parser.nArgs() == 5)
-				t->setForm(SpeciesTorsion::NoForm);
-			else if (parser.argc(5)[0] == '@')
-			{
-				// Search through master Torsion parameters to see if this name exists
-				MasterIntra *master = coreData.hasMasterTorsion(parser.argc(5));
-				if (!master)
-				{
-					Messenger::error("No master Torsion parameters named '%s' exist.\n",
-							 &parser.argc(5)[1]);
-					error = true;
-					break;
-				}
-
-				t->setMasterParameters(master);
-			}
-			else
-			{
-				// Check the functional form specified
-				if (!SpeciesTorsion::torsionFunctions().isValid(parser.argc(5)))
-				{
-					Messenger::error("Functional form of Torsion (%s) not recognised.\n", parser.argc(5));
-					error = true;
-					break;
-				}
-				tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
-
-				t->setForm(tf);
-				for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
-				{
-					if (!parser.hasArg(n + 6))
+					// Check the functional form specified
+					if (!SpeciesBond::bondFunctions().isValid(parser.argc(3)))
 					{
-						Messenger::error("Torsion function type '%s' requires %i parameters\n",
-								 SpeciesTorsion::torsionFunctions().keyword(tf),
-								 SpeciesTorsion::torsionFunctions().minArgs(tf));
+						Messenger::error("Functional form of Bond (%s) not recognised.\n",
+								 parser.argc(3));
 						error = true;
 						break;
 					}
-					t->setParameter(n, parser.argd(n + 6));
-				}
-			}
+					bf = SpeciesBond::bondFunctions().enumeration(parser.argc(3));
 
-			// Perform any final setup on the Torsion
-			t->setUp();
-			break;
-		default:
-			printf("DEV_OOPS - Species block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
-			error = true;
-			break;
+					b->setForm(bf);
+					for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
+					{
+						if (!parser.hasArg(4 + n))
+						{
+							Messenger::error("Bond function type '%s' requires %i parameters\n",
+									 SpeciesBond::bondFunctions().keyword(bf),
+									 SpeciesBond::bondFunctions().minArgs(bf));
+							error = true;
+							break;
+						}
+						b->setParameter(n, parser.argd(n + 4));
+					}
+				}
+
+				// Perform any final setup on the Bond
+				b->setUp();
+				break;
+			case (Species::BondTypeKeyword):
+				// Find the specified bond
+				b = bond(parser.argi(1) - 1, parser.argi(2) - 1);
+				if (!b)
+				{
+					Messenger::error(
+						"Tried to set the bond type of bond between atoms %i and %i, but this bond "
+						"does not exist.\n",
+						parser.argi(1), parser.argi(2));
+					error = true;
+					break;
+				}
+
+				// Get the bond type
+				bt = SpeciesBond::bondType(parser.argc(3));
+				if (bt == SpeciesBond::nBondTypes)
+				{
+					Messenger::error("Unrecognised bond type '%s'.\n", parser.argc(3));
+					error = true;
+					break;
+				}
+				b->setBondType(bt);
+				break;
+			case (Species::ChargeKeyword):
+				i = atom(parser.argi(1) - 1);
+				if (i)
+					i->setCharge(parser.argd(2));
+				else
+				{
+					Messenger::error("Specified Atom index (%i) for Charge keyword is out of range.\n",
+							 parser.argi(1));
+					error = true;
+				}
+				break;
+			case (Species::CoordinateSetsKeyword):
+				if (!coordinateSetInputCoordinates_.read(
+					    parser, 1, CharString("End%s", keywords().keyword(Species::CoordinateSetsKeyword)),
+					    coreData))
+				{
+					Messenger::error("Failed to set coordinate sets file / format.\n");
+					error = true;
+				}
+				else
+				{
+					// Open the specified file
+					LineParser coordinateSetParser(parser.processPool());
+					if ((!coordinateSetParser.openInput(coordinateSetInputCoordinates_.filename())) ||
+					    (!coordinateSetParser.isFileGoodForReading()))
+					{
+						Messenger::error("Couldn't open coordinate sets file '%s'.\n",
+								 coordinateSetInputCoordinates_.filename());
+						error = true;
+						break;
+					}
+
+					while (!coordinateSetParser.eofOrBlank())
+					{
+						CoordinateSet *coordSet = addCoordinateSet();
+						if (!coordinateSetInputCoordinates_.importData(coordinateSetParser,
+											       coordSet->coordinates()))
+						{
+							Messenger::error("Failed to read coordinate set %i from file.\n",
+									 nCoordinateSets());
+							error = true;
+							coordinateSets_.remove(coordSet);
+							break;
+						}
+					}
+
+					Messenger::print("%i coordinate sets read in for Species '%s'.\n", nCoordinateSets(),
+							 name());
+				}
+				break;
+			case (Species::EndSpeciesKeyword):
+				if (forcefield_)
+					applyForcefieldTerms(coreData);
+				Messenger::print("Found end of Species '%s'.\n", name());
+				blockDone = true;
+				break;
+			case (Species::ForcefieldKeyword):
+				forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
+				break;
+			case (Species::ImproperKeyword):
+				// Check the functional form specified - if it starts with '@' it is a reference to master
+				// parameters
+				if (parser.argc(5)[0] == '@')
+				{
+					// Search through master Improper parameters to see if this name exists
+					MasterIntra *master = coreData.hasMasterImproper(parser.argc(5));
+					if (!master)
+					{
+						Messenger::error("No master Improper parameters named '%s' exist.\n",
+								 &parser.argc(5)[1]);
+						error = true;
+						break;
+					}
+
+					// Create a new improper definition
+					imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1,
+							  parser.argi(4) - 1);
+					if (!imp)
+					{
+						error = true;
+						break;
+					}
+					t->setMasterParameters(master);
+				}
+				else
+				{
+					// Check the functional form specified
+					if (!SpeciesImproper::improperFunctions().isValid(parser.argc(5)))
+					{
+						Messenger::error("Functional form of Improper (%s) not recognised.\n",
+								 parser.argc(5));
+						error = true;
+						break;
+					}
+					impf = SpeciesImproper::improperFunctions().enumeration(parser.argc(5));
+
+					// Create a new improper definition
+					imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1,
+							  parser.argi(4) - 1);
+					if (!imp)
+					{
+						error = true;
+						break;
+					}
+					t->setForm(tf);
+					for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
+					{
+						if (!parser.hasArg(n + 6))
+						{
+							Messenger::error("Improper function type '%s' requires %i parameters\n",
+									 SpeciesImproper::improperFunctions().keyword(impf),
+									 SpeciesImproper::improperFunctions().minArgs(impf));
+							error = true;
+							break;
+						}
+						t->setParameter(n, parser.argd(n + 6));
+					}
+				}
+
+				// Perform any final setup on the Improper
+				t->setUp();
+				break;
+			case (Species::IsotopologueKeyword):
+				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
+				Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
+				// Each parser argument is a string of the form ATOMTYPE=ISO
+				for (int n = 2; n < parser.nArgs(); ++n)
+				{
+					// Split argument into parts before and after '='
+					arg1 = DissolveSys::beforeChar(parser.argc(n), '=');
+					arg2 = DissolveSys::afterChar(parser.argc(n), '=');
+
+					at = coreData.findAtomType(arg1.get());
+					if (at == NULL)
+					{
+						Messenger::error(
+							"Failed to find AtomType '%s', referred to in Isotopologue '%s', "
+							"Species '%s'\n",
+							arg1.get(), iso->name(), name());
+						error = true;
+						break;
+					}
+
+					// Is the supplied isotope valid for the AtomType's element?
+					el = at->element();
+					tope = Isotopes::isotope(el, arg2.asInteger());
+					if (tope == NULL)
+					{
+						Messenger::error(
+							"No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue "
+							"'%s', Species '%s'\n",
+							arg2.asInteger(), el->symbol(), at->name(), iso->name(), name());
+						error = true;
+						break;
+					}
+
+					// Assign isotope to AtomType
+					if (!iso->setAtomTypeIsotope(at, tope))
+					{
+						error = true;
+						break;
+					}
+				}
+				break;
+			case (Species::SiteKeyword):
+				// First argument is the name of the site to create - make sure it doesn't exist already
+				site = findSite(parser.argc(1));
+				if (site)
+				{
+					Messenger::error(
+						"The site '%s' already exists on Species '%s', and cannot be redefined.\n",
+						parser.argc(1), name());
+					error = true;
+					break;
+				}
+
+				site = addSite(parser.argc(1));
+				if (!site->read(parser))
+					error = true;
+				break;
+			case (Species::TorsionKeyword):
+				// Create a new angle definition between the specified atoms
+				t = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+				if (!t)
+				{
+					error = true;
+					break;
+				}
+
+				/*
+				 * If only the indices were given, create an angle without a specified functional form (a
+				 * Forcefield is presumably going to be specified). Otherwise, check the functional form
+				 * specified - if it starts with
+				 * '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 5)
+					t->setForm(SpeciesTorsion::NoForm);
+				else if (parser.argc(5)[0] == '@')
+				{
+					// Search through master Torsion parameters to see if this name exists
+					MasterIntra *master = coreData.hasMasterTorsion(parser.argc(5));
+					if (!master)
+					{
+						Messenger::error("No master Torsion parameters named '%s' exist.\n",
+								 &parser.argc(5)[1]);
+						error = true;
+						break;
+					}
+
+					t->setMasterParameters(master);
+				}
+				else
+				{
+					// Check the functional form specified
+					if (!SpeciesTorsion::torsionFunctions().isValid(parser.argc(5)))
+					{
+						Messenger::error("Functional form of Torsion (%s) not recognised.\n",
+								 parser.argc(5));
+						error = true;
+						break;
+					}
+					tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
+
+					t->setForm(tf);
+					for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
+					{
+						if (!parser.hasArg(n + 6))
+						{
+							Messenger::error("Torsion function type '%s' requires %i parameters\n",
+									 SpeciesTorsion::torsionFunctions().keyword(tf),
+									 SpeciesTorsion::torsionFunctions().minArgs(tf));
+							error = true;
+							break;
+						}
+						t->setParameter(n, parser.argd(n + 6));
+					}
+				}
+
+				// Perform any final setup on the Torsion
+				t->setUp();
+				break;
+			default:
+				printf("DEV_OOPS - Species block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
+				error = true;
+				break;
 		}
 
 		// Error encountered?

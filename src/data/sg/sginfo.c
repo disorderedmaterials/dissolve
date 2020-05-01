@@ -848,34 +848,34 @@ static void PutShelx(const T_SgInfo *SgInfo, FILE *fpout)
 
 	switch (SgInfo->LatticeInfo->Code)
 	{
-	case 'P':
-		Latt_N = 1;
-		break;
-	case 'A':
-		Latt_N = 5;
-		break;
-	case 'B':
-		Latt_N = 6;
-		break;
-	case 'C':
-		Latt_N = 7;
-		break;
-	case 'I':
-		Latt_N = 2;
-		break;
-	case 'R':
-		if (SgInfo->ExtraInfo == EI_Obverse)
-			Latt_N = 3;
-		break;
-	case 'S':
-	case 'T':
-		SetSgError("Shelx supports R-obverse only");
-		return;
-	case 'F':
-		Latt_N = 4;
-		break;
-	default:
-		goto ReturnError;
+		case 'P':
+			Latt_N = 1;
+			break;
+		case 'A':
+			Latt_N = 5;
+			break;
+		case 'B':
+			Latt_N = 6;
+			break;
+		case 'C':
+			Latt_N = 7;
+			break;
+		case 'I':
+			Latt_N = 2;
+			break;
+		case 'R':
+			if (SgInfo->ExtraInfo == EI_Obverse)
+				Latt_N = 3;
+			break;
+		case 'S':
+		case 'T':
+			SetSgError("Shelx supports R-obverse only");
+			return;
+		case 'F':
+			Latt_N = 4;
+			break;
+		default:
+			goto ReturnError;
 	}
 
 	/* N must be made negative if the structure is non-centrosymmetric
@@ -1211,103 +1211,103 @@ static int HarmonizeSgLatCon(T_SgInfo *SgInfo, T_LatticeConstants *lc, int np)
 {
 	switch (SgInfo->XtalSystem)
 	{
-	case XS_Triclinic:
-		if (np != 6)
-			goto IllUnitCell;
-		break;
-	case XS_Monoclinic:
-		if (np != 4 && np != 6)
-			goto IllUnitCell;
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 'x':
-			lc->beta = lc->gamma = 90. * PIover180;
-			break;
-		case 'y':
+		case XS_Triclinic:
 			if (np != 6)
-				lc->beta = lc->alpha;
-			lc->alpha = lc->gamma = 90. * PIover180;
+				goto IllUnitCell;
 			break;
-		case 'z':
-			if (np != 6)
-				lc->gamma = lc->alpha;
-			lc->alpha = lc->beta = 90. * PIover180;
+		case XS_Monoclinic:
+			if (np != 4 && np != 6)
+				goto IllUnitCell;
+			switch (SgInfo->UniqueRefAxis)
+			{
+				case 'x':
+					lc->beta = lc->gamma = 90. * PIover180;
+					break;
+				case 'y':
+					if (np != 6)
+						lc->beta = lc->alpha;
+					lc->alpha = lc->gamma = 90. * PIover180;
+					break;
+				case 'z':
+					if (np != 6)
+						lc->gamma = lc->alpha;
+					lc->alpha = lc->beta = 90. * PIover180;
+					break;
+				default:
+					goto IntErr;
+			}
 			break;
-		default:
-			goto IntErr;
-		}
-		break;
-	case XS_Orthorhombic:
-		if (np != 3 && np != 6)
-			goto IllUnitCell;
-		lc->alpha = lc->beta = lc->gamma = 90. * PIover180;
-		break;
-	case XS_Tetragonal:
-		if (np != 2 && np != 6)
-			goto IllUnitCell;
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 'x':
-			lc->c = lc->b;
+		case XS_Orthorhombic:
+			if (np != 3 && np != 6)
+				goto IllUnitCell;
+			lc->alpha = lc->beta = lc->gamma = 90. * PIover180;
 			break;
-		case 'y':
-			lc->c = lc->a;
+		case XS_Tetragonal:
+			if (np != 2 && np != 6)
+				goto IllUnitCell;
+			switch (SgInfo->UniqueRefAxis)
+			{
+				case 'x':
+					lc->c = lc->b;
+					break;
+				case 'y':
+					lc->c = lc->a;
+					break;
+				case 'z':
+					if (np != 6)
+						lc->c = lc->b;
+					lc->b = lc->a;
+					break;
+				default:
+					goto IntErr;
+			}
+			lc->alpha = lc->beta = lc->gamma = 90. * PIover180;
 			break;
-		case 'z':
-			if (np != 6)
-				lc->c = lc->b;
-			lc->b = lc->a;
+		case XS_Trigonal:
+			if (np != 2 && np != 6)
+				goto IllUnitCell;
+			if (SgInfo->UniqueDirCode == '*')
+			{
+				if (np != 6)
+					lc->alpha = lc->b * PIover180;
+				lc->c = lc->b = lc->a;
+				lc->gamma = lc->beta = lc->alpha;
+				break;
+			}
+		case XS_Hexagonal:
+			if (np != 2 && np != 6)
+				goto IllUnitCell;
+			switch (SgInfo->UniqueRefAxis)
+			{
+				case 'x':
+					lc->c = lc->b;
+					lc->alpha = 120. * PIover180;
+					lc->beta = lc->gamma = 90. * PIover180;
+					break;
+				case 'y':
+					lc->c = lc->a;
+					lc->beta = 120. * PIover180;
+					lc->alpha = lc->gamma = 90. * PIover180;
+					break;
+				case 'z':
+					if (np != 6)
+						lc->c = lc->b;
+					lc->b = lc->a;
+					lc->gamma = 120. * PIover180;
+					lc->alpha = lc->beta = 90. * PIover180;
+					break;
+				default:
+					goto IntErr;
+			}
 			break;
-		default:
-			goto IntErr;
-		}
-		lc->alpha = lc->beta = lc->gamma = 90. * PIover180;
-		break;
-	case XS_Trigonal:
-		if (np != 2 && np != 6)
-			goto IllUnitCell;
-		if (SgInfo->UniqueDirCode == '*')
-		{
-			if (np != 6)
-				lc->alpha = lc->b * PIover180;
+		case XS_Cubic:
+			if (np != 1 && np != 6)
+				goto IllUnitCell;
 			lc->c = lc->b = lc->a;
-			lc->gamma = lc->beta = lc->alpha;
-			break;
-		}
-	case XS_Hexagonal:
-		if (np != 2 && np != 6)
-			goto IllUnitCell;
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 'x':
-			lc->c = lc->b;
-			lc->alpha = 120. * PIover180;
-			lc->beta = lc->gamma = 90. * PIover180;
-			break;
-		case 'y':
-			lc->c = lc->a;
-			lc->beta = 120. * PIover180;
-			lc->alpha = lc->gamma = 90. * PIover180;
-			break;
-		case 'z':
-			if (np != 6)
-				lc->c = lc->b;
-			lc->b = lc->a;
-			lc->gamma = 120. * PIover180;
-			lc->alpha = lc->beta = 90. * PIover180;
+			lc->alpha = lc->beta = lc->gamma = 90. * PIover180;
 			break;
 		default:
 			goto IntErr;
-		}
-		break;
-	case XS_Cubic:
-		if (np != 1 && np != 6)
-			goto IllUnitCell;
-		lc->c = lc->b = lc->a;
-		lc->alpha = lc->beta = lc->gamma = 90. * PIover180;
-		break;
-	default:
-		goto IntErr;
 	}
 
 	return 0;

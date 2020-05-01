@@ -75,9 +75,9 @@ void SiteWidget::updateToolbar()
 	// Set current interaction mode
 	switch (siteViewer()->interactionMode())
 	{
-	case (SiteViewer::DefaultInteraction):
-		ui_.InteractionViewButton->setChecked(true);
-		break;
+		case (SiteViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
 	}
 
 	// Set checkable buttons

@@ -67,53 +67,54 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 			// All OK, so process the keyword
 			switch (kwd)
 			{
-			case (ModuleBlock::ConfigurationKeyword):
-				// Find the named Configuration
-				targetCfg = dissolve->findConfiguration(parser.argc(1));
-				if (!targetCfg)
-				{
-					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no "
-							 "Configuration by this name exists.\n",
-							 parser.argc(1), module->type());
+				case (ModuleBlock::ConfigurationKeyword):
+					// Find the named Configuration
+					targetCfg = dissolve->findConfiguration(parser.argc(1));
+					if (!targetCfg)
+					{
+						Messenger::error(
+							"Can't associate Configuration '%s' to the Module '%s', since no "
+							"Configuration by this name exists.\n",
+							parser.argc(1), module->type());
+						error = true;
+						break;
+					}
+
+					// Add it as a target
+					if (!module->addTargetConfiguration(targetCfg))
+					{
+						Messenger::error("Failed to add Configuration target in Module '%s'.\n",
+								 module->type());
+						error = true;
+						break;
+					}
+
+					// Create weight data if a second argument was provided
+					if (parser.hasArg(2))
+						GenericListHelper<double>::add(
+							targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()),
+							module->uniqueName()) = parser.argd(2);
+					break;
+				case (ModuleBlock::DisableKeyword):
+					module->setEnabled(false);
+					break;
+				case (ModuleBlock::EndModuleKeyword):
+					Messenger::print("Found end of %s block.\n",
+							 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
+					blockDone = true;
+					break;
+				case (ModuleBlock::FrequencyKeyword):
+					module->setFrequency(parser.argi(1));
+					break;
+				case (ModuleBlock::nModuleKeywords):
+					// Never used, since it is accounted for in the beginning 'if'
+					break;
+				default:
+					printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+					       BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+					       keywords().keyword(kwd));
 					error = true;
 					break;
-				}
-
-				// Add it as a target
-				if (!module->addTargetConfiguration(targetCfg))
-				{
-					Messenger::error("Failed to add Configuration target in Module '%s'.\n",
-							 module->type());
-					error = true;
-					break;
-				}
-
-				// Create weight data if a second argument was provided
-				if (parser.hasArg(2))
-					GenericListHelper<double>::add(
-						targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()),
-						module->uniqueName()) = parser.argd(2);
-				break;
-			case (ModuleBlock::DisableKeyword):
-				module->setEnabled(false);
-				break;
-			case (ModuleBlock::EndModuleKeyword):
-				Messenger::print("Found end of %s block.\n",
-						 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
-				blockDone = true;
-				break;
-			case (ModuleBlock::FrequencyKeyword):
-				module->setFrequency(parser.argi(1));
-				break;
-			case (ModuleBlock::nModuleKeywords):
-				// Never used, since it is accounted for in the beginning 'if'
-				break;
-			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
-				       BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-				       keywords().keyword(kwd));
-				error = true;
-				break;
 			}
 		}
 		else

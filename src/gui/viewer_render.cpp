@@ -356,31 +356,31 @@ void BaseViewer::checkGlError()
 	{
 		switch (glGetError())
 		{
-		case (GL_INVALID_ENUM):
-			Messenger::printVerbose("GLenum argument out of range\n");
-			break;
-		case (GL_INVALID_VALUE):
-			Messenger::printVerbose("Numeric argument out of range\n");
-			break;
-		case (GL_INVALID_OPERATION):
-			Messenger::printVerbose("Operation illegal in current state\n");
-			break;
-		case (GL_STACK_OVERFLOW):
-			Messenger::printVerbose("Command would cause a stack overflow\n");
-			break;
-		case (GL_STACK_UNDERFLOW):
-			Messenger::printVerbose("Command would cause a stack underflow\n");
-			break;
-		case (GL_OUT_OF_MEMORY):
-			Messenger::printVerbose("Not enough memory left to execute command\n");
-			break;
-		case (GL_NO_ERROR):
-			Messenger::printVerbose("No GL error\n");
-			return;
-			// 			case (GL_CONTEXT_LOST): return;		/* Not recognised on OSX? */
-		default:
-			Messenger::printVerbose("Unknown GL error?\n");
-			break;
+			case (GL_INVALID_ENUM):
+				Messenger::printVerbose("GLenum argument out of range\n");
+				break;
+			case (GL_INVALID_VALUE):
+				Messenger::printVerbose("Numeric argument out of range\n");
+				break;
+			case (GL_INVALID_OPERATION):
+				Messenger::printVerbose("Operation illegal in current state\n");
+				break;
+			case (GL_STACK_OVERFLOW):
+				Messenger::printVerbose("Command would cause a stack overflow\n");
+				break;
+			case (GL_STACK_UNDERFLOW):
+				Messenger::printVerbose("Command would cause a stack underflow\n");
+				break;
+			case (GL_OUT_OF_MEMORY):
+				Messenger::printVerbose("Not enough memory left to execute command\n");
+				break;
+			case (GL_NO_ERROR):
+				Messenger::printVerbose("No GL error\n");
+				return;
+				// 			case (GL_CONTEXT_LOST): return;		/* Not recognised on OSX? */
+			default:
+				Messenger::printVerbose("Unknown GL error?\n");
+				break;
 		}
 	} while (glerr != GL_NO_ERROR);
 }

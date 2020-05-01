@@ -425,8 +425,8 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 			SequenceNodeKeyword nk = sequenceNodeKeywords().enumeration(parser.argc(0));
 			switch (nk)
 			{
-			case (SequenceProcedureNode::nSequenceNodeKeywords):
-				break;
+				case (SequenceProcedureNode::nSequenceNodeKeywords):
+					break;
 			}
 		}
 
@@ -437,92 +437,92 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 		ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argc(0));
 		switch (nt)
 		{
-		case (ProcedureNode::AddSpeciesNode):
-			newNode = new AddSpeciesProcedureNode();
-			break;
-		case (ProcedureNode::BoxNode):
-			newNode = new BoxProcedureNode();
-			break;
-		case (ProcedureNode::CalculateAngleNode):
-			newNode = new CalculateAngleProcedureNode();
-			break;
-		case (ProcedureNode::CalculateDistanceNode):
-			newNode = new CalculateDistanceProcedureNode();
-			break;
-		case (ProcedureNode::CalculateBaseNode):
-			/* This should never be called */
-			return Messenger::error(
-				"Can't create a node of CalculateBase type directly - create the parent node instead.\n");
-			break;
-		case (ProcedureNode::CalculateVectorNode):
-			newNode = new CalculateVectorProcedureNode();
-			break;
-		case (ProcedureNode::Collect1DNode):
-			newNode = new Collect1DProcedureNode();
-			break;
-		case (ProcedureNode::Collect2DNode):
-			newNode = new Collect2DProcedureNode();
-			break;
-		case (ProcedureNode::Collect3DNode):
-			newNode = new Collect3DProcedureNode();
-			break;
-		case (ProcedureNode::ExcludeNode):
-			newNode = new ExcludeProcedureNode();
-			break;
-		case (ProcedureNode::Fit1DNode):
-			newNode = new Fit1DProcedureNode();
-			break;
-		case (ProcedureNode::OperateBaseNode):
-			/* This should never be called */
-			return Messenger::error(
-				"Can't create a node of OperateBase type directly - create the parent node instead.\n");
-			break;
-		case (ProcedureNode::OperateDivideNode):
-			newNode = new OperateDivideProcedureNode();
-			break;
-		case (ProcedureNode::OperateExpressionNode):
-			newNode = new OperateExpressionProcedureNode();
-			break;
-		case (ProcedureNode::OperateMultiplyNode):
-			newNode = new OperateMultiplyProcedureNode();
-			break;
-		case (ProcedureNode::OperateNormaliseNode):
-			newNode = new OperateNormaliseProcedureNode();
-			break;
-		case (ProcedureNode::OperateNumberDensityNormaliseNode):
-			newNode = new OperateNumberDensityNormaliseProcedureNode();
-			break;
-		case (ProcedureNode::OperateSitePopulationNormaliseNode):
-			newNode = new OperateSitePopulationNormaliseProcedureNode();
-			break;
-		case (ProcedureNode::OperateSphericalShellNormaliseNode):
-			newNode = new OperateSphericalShellNormaliseProcedureNode();
-			break;
-		case (ProcedureNode::ParametersNode):
-			newNode = new ParametersProcedureNode();
-			break;
-		case (ProcedureNode::Process1DNode):
-			newNode = new Process1DProcedureNode();
-			break;
-		case (ProcedureNode::Process2DNode):
-			newNode = new Process2DProcedureNode();
-			break;
-		case (ProcedureNode::Process3DNode):
-			newNode = new Process3DProcedureNode();
-			break;
-		case (ProcedureNode::SelectNode):
-			newNode = new SelectProcedureNode();
-			break;
-		case (ProcedureNode::SequenceNode):
-			/* This should never be called */
-			newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
-			break;
-		case (ProcedureNode::nNodeTypes):
-			return Messenger::error("Unrecognised procedure node type '%s' found.\n", parser.argc(0));
-			break;
-		default:
-			return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n",
-						parser.argc(0));
+			case (ProcedureNode::AddSpeciesNode):
+				newNode = new AddSpeciesProcedureNode();
+				break;
+			case (ProcedureNode::BoxNode):
+				newNode = new BoxProcedureNode();
+				break;
+			case (ProcedureNode::CalculateAngleNode):
+				newNode = new CalculateAngleProcedureNode();
+				break;
+			case (ProcedureNode::CalculateDistanceNode):
+				newNode = new CalculateDistanceProcedureNode();
+				break;
+			case (ProcedureNode::CalculateBaseNode):
+				/* This should never be called */
+				return Messenger::error("Can't create a node of CalculateBase type directly - create the "
+							"parent node instead.\n");
+				break;
+			case (ProcedureNode::CalculateVectorNode):
+				newNode = new CalculateVectorProcedureNode();
+				break;
+			case (ProcedureNode::Collect1DNode):
+				newNode = new Collect1DProcedureNode();
+				break;
+			case (ProcedureNode::Collect2DNode):
+				newNode = new Collect2DProcedureNode();
+				break;
+			case (ProcedureNode::Collect3DNode):
+				newNode = new Collect3DProcedureNode();
+				break;
+			case (ProcedureNode::ExcludeNode):
+				newNode = new ExcludeProcedureNode();
+				break;
+			case (ProcedureNode::Fit1DNode):
+				newNode = new Fit1DProcedureNode();
+				break;
+			case (ProcedureNode::OperateBaseNode):
+				/* This should never be called */
+				return Messenger::error(
+					"Can't create a node of OperateBase type directly - create the parent node instead.\n");
+				break;
+			case (ProcedureNode::OperateDivideNode):
+				newNode = new OperateDivideProcedureNode();
+				break;
+			case (ProcedureNode::OperateExpressionNode):
+				newNode = new OperateExpressionProcedureNode();
+				break;
+			case (ProcedureNode::OperateMultiplyNode):
+				newNode = new OperateMultiplyProcedureNode();
+				break;
+			case (ProcedureNode::OperateNormaliseNode):
+				newNode = new OperateNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::OperateNumberDensityNormaliseNode):
+				newNode = new OperateNumberDensityNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::OperateSitePopulationNormaliseNode):
+				newNode = new OperateSitePopulationNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::OperateSphericalShellNormaliseNode):
+				newNode = new OperateSphericalShellNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::ParametersNode):
+				newNode = new ParametersProcedureNode();
+				break;
+			case (ProcedureNode::Process1DNode):
+				newNode = new Process1DProcedureNode();
+				break;
+			case (ProcedureNode::Process2DNode):
+				newNode = new Process2DProcedureNode();
+				break;
+			case (ProcedureNode::Process3DNode):
+				newNode = new Process3DProcedureNode();
+				break;
+			case (ProcedureNode::SelectNode):
+				newNode = new SelectProcedureNode();
+				break;
+			case (ProcedureNode::SequenceNode):
+				/* This should never be called */
+				newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
+				break;
+			case (ProcedureNode::nNodeTypes):
+				return Messenger::error("Unrecognised procedure node type '%s' found.\n", parser.argc(0));
+				break;
+			default:
+				return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n",
+							parser.argc(0));
 		}
 
 		// Check for clash of names with existing node in scope

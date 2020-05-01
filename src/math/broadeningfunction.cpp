@@ -110,23 +110,23 @@ const char *BroadeningFunction::functionDescription(FunctionType func)
 {
 	switch (func)
 	{
-	case (BroadeningFunction::NoFunction):
-		return "Function that always returns 1.0";
-		break;
-	case (BroadeningFunction::GaussianFunction):
-		return "Gaussian (no prefactor, unnormalised)";
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		return "Gaussian with prefactor";
-		break;
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		return "Gaussian (no prefactor, unnormalised, omega dependent FWHM)";
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		return "Gaussian (no prefactor, unnormalised, independent and omega-dependent FWHM, EPSR-style)";
-		break;
-	default:
-		break;
+		case (BroadeningFunction::NoFunction):
+			return "Function that always returns 1.0";
+			break;
+		case (BroadeningFunction::GaussianFunction):
+			return "Gaussian (no prefactor, unnormalised)";
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			return "Gaussian with prefactor";
+			break;
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			return "Gaussian (no prefactor, unnormalised, omega dependent FWHM)";
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			return "Gaussian (no prefactor, unnormalised, independent and omega-dependent FWHM, EPSR-style)";
+			break;
+		default:
+			break;
 	}
 
 	return "NO BROADENING FUNCTION DESCRIPTION AVAILABLE.";
@@ -179,29 +179,29 @@ bool BroadeningFunction::set(LineParser &parser, int startArg)
 	function_ = funcType;
 	switch (function_)
 	{
-	case (BroadeningFunction::NoFunction):
-		break;
-	case (BroadeningFunction::GaussianFunction):
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		// FWHM
-		parameters_[0] = parser.argd(startArg + 1);
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		// Prefactor A
-		parameters_[0] = parser.argd(startArg + 1);
-		// FWHM
-		parameters_[1] = parser.argd(startArg + 2);
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		// FWHM1
-		parameters_[0] = parser.argd(startArg + 1);
-		// FWHM2
-		parameters_[1] = parser.argd(startArg + 2);
-		break;
-	default:
-		Messenger::error("Function form '%s' not accounted for in BroadeningFunction::set(LineParser&,int).\n",
-				 BroadeningFunction::functionType(funcType));
-		return false;
+		case (BroadeningFunction::NoFunction):
+			break;
+		case (BroadeningFunction::GaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			// FWHM
+			parameters_[0] = parser.argd(startArg + 1);
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			// Prefactor A
+			parameters_[0] = parser.argd(startArg + 1);
+			// FWHM
+			parameters_[1] = parser.argd(startArg + 2);
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			// FWHM1
+			parameters_[0] = parser.argd(startArg + 1);
+			// FWHM2
+			parameters_[1] = parser.argd(startArg + 2);
+			break;
+		default:
+			Messenger::error("Function form '%s' not accounted for in BroadeningFunction::set(LineParser&,int).\n",
+					 BroadeningFunction::functionType(funcType));
+			return false;
 	}
 
 	// Set up any necessary dependent parameters
@@ -248,39 +248,40 @@ void BroadeningFunction::setUpDependentParameters()
 {
 	switch (function_)
 	{
-	case (BroadeningFunction::NoFunction):
-		break;
-	case (BroadeningFunction::GaussianFunction):
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		// parameters_[0] = FWHM
-		// c (calculated from FWHM)
-		parameters_[1] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
-		// 1/c
-		parameters_[2] = 1.0 / parameters_[1];
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		// parameters_[0] = A
-		// parameters_[1] = FWHM
-		// c (calculated from FWHM)
-		parameters_[2] = parameters_[1] / (2.0 * sqrt(2.0 * log(2.0)));
-		// 1/c
-		parameters_[3] = 1.0 / parameters_[2];
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		// parameters_[0] = FWHM1
-		// parameters_[1] = FWHM2
-		// c1 (calculated from FWHM1)
-		parameters_[2] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
-		// c2 (calculated from FWHM2)
-		parameters_[3] = parameters_[1] / (2.0 * sqrt(2.0 * log(2.0)));
-		// 1/c1
-		parameters_[4] = 1.0 / parameters_[2];
-		// 1/c2
-		parameters_[5] = 1.0 / parameters_[3];
-		break;
-	default:
-		Messenger::error("Function form '%s' not accounted for in BroadeningFunction::setUpDependentParameters().\n",
-				 BroadeningFunction::functionType(function_));
+		case (BroadeningFunction::NoFunction):
+			break;
+		case (BroadeningFunction::GaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			// parameters_[0] = FWHM
+			// c (calculated from FWHM)
+			parameters_[1] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
+			// 1/c
+			parameters_[2] = 1.0 / parameters_[1];
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			// parameters_[0] = A
+			// parameters_[1] = FWHM
+			// c (calculated from FWHM)
+			parameters_[2] = parameters_[1] / (2.0 * sqrt(2.0 * log(2.0)));
+			// 1/c
+			parameters_[3] = 1.0 / parameters_[2];
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			// parameters_[0] = FWHM1
+			// parameters_[1] = FWHM2
+			// c1 (calculated from FWHM1)
+			parameters_[2] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
+			// c2 (calculated from FWHM2)
+			parameters_[3] = parameters_[1] / (2.0 * sqrt(2.0 * log(2.0)));
+			// 1/c1
+			parameters_[4] = 1.0 / parameters_[2];
+			// 1/c2
+			parameters_[5] = 1.0 / parameters_[3];
+			break;
+		default:
+			Messenger::error(
+				"Function form '%s' not accounted for in BroadeningFunction::setUpDependentParameters().\n",
+				BroadeningFunction::functionType(function_));
 	}
 }
 
@@ -301,73 +302,73 @@ double BroadeningFunction::yActual(double x, double omega) const
 {
 	switch (function_)
 	{
-	case (BroadeningFunction::NoFunction):
-		return 1.0;
-		break;
-	case (BroadeningFunction::GaussianFunction):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 * 	      (     x * x   ) 			  FWHM
-		 * f(x) = exp ( - --------- )      where c = --------------
-		 * 	      (   2 * c * c )		     2 sqrt(2 ln 2)
-		 */
-		return exp(-(0.5 * x * x * parameters_[2] * parameters_[2]));
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		/*
-		 * Gaussian with prefactor, centred at zero
-		 *
-		 * Parameters:  0 = A, prefactor
-		 * 		1 = FWHM
-		 * 		2 = c     	(precalculated from FWHM)
-		 * 		3 = 1.0 / c
-		 *
-		 * 	        (     x * x   ) 		    FWHM
-		 * f(x) = A exp ( - --------- )      where c = --------------
-		 * 	        (   2 * c * c )		       2 sqrt(2 ln 2)
-		 */
-		return parameters_[0] * exp(-(0.5 * x * x * parameters_[3] * parameters_[3]));
-		break;
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 * 	      (         x * x      )		        FWHM
-		 * f(x) = exp ( - ---------------- )      where c = --------------
-		 * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2)
-		 */
-		return exp(-(x * x) / (2.0 * (parameters_[1] * omega) * (parameters_[1] * omega)));
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
-		 *
-		 * Parameters:  0 = FWHM1
-		 * 		1 = FWHM2
-		 * 		2 = c1     	(precalculated from FWHM1)
-		 * 		3 = c2     	(precalculated from FWHM2)
-		 * 		4 = 1.0 / c1
-		 * 		5 = 1.0 / c2
-		 *
-		 * 	      (         a1 * a1       )			   FWHMn
-		 * f(x) = exp ( - ------------------- )      where cn = --------------
-		 * 	      (   2 * (c1 + c2*a2)**2 )		       2 sqrt(2 ln 2)
-		 */
-		return exp(-(x * x) /
-			   (2.0 * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
-		break;
-	default:
-		Messenger::warn("BroadeningFunction::value() - Function id %i not accounted for.\n", function_);
-		break;
+		case (BroadeningFunction::NoFunction):
+			return 1.0;
+			break;
+		case (BroadeningFunction::GaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 * 	      (     x * x   ) 			  FWHM
+			 * f(x) = exp ( - --------- )      where c = --------------
+			 * 	      (   2 * c * c )		     2 sqrt(2 ln 2)
+			 */
+			return exp(-(0.5 * x * x * parameters_[2] * parameters_[2]));
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			/*
+			 * Gaussian with prefactor, centred at zero
+			 *
+			 * Parameters:  0 = A, prefactor
+			 * 		1 = FWHM
+			 * 		2 = c     	(precalculated from FWHM)
+			 * 		3 = 1.0 / c
+			 *
+			 * 	        (     x * x   ) 		    FWHM
+			 * f(x) = A exp ( - --------- )      where c = --------------
+			 * 	        (   2 * c * c )		       2 sqrt(2 ln 2)
+			 */
+			return parameters_[0] * exp(-(0.5 * x * x * parameters_[3] * parameters_[3]));
+			break;
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 * 	      (         x * x      )		        FWHM
+			 * f(x) = exp ( - ---------------- )      where c = --------------
+			 * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2)
+			 */
+			return exp(-(x * x) / (2.0 * (parameters_[1] * omega) * (parameters_[1] * omega)));
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
+			 *
+			 * Parameters:  0 = FWHM1
+			 * 		1 = FWHM2
+			 * 		2 = c1     	(precalculated from FWHM1)
+			 * 		3 = c2     	(precalculated from FWHM2)
+			 * 		4 = 1.0 / c1
+			 * 		5 = 1.0 / c2
+			 *
+			 * 	      (         a1 * a1       )			   FWHMn
+			 * f(x) = exp ( - ------------------- )      where cn = --------------
+			 * 	      (   2 * (c1 + c2*a2)**2 )		       2 sqrt(2 ln 2)
+			 */
+			return exp(-(x * x) / (2.0 * (parameters_[2] + parameters_[3] * omega) *
+					       (parameters_[2] + parameters_[3] * omega)));
+			break;
+		default:
+			Messenger::warn("BroadeningFunction::value() - Function id %i not accounted for.\n", function_);
+			break;
 	}
 
 	return 0.0;
@@ -378,73 +379,73 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 {
 	switch (function_)
 	{
-	case (BroadeningFunction::NoFunction):
-		return 1.0;
-		break;
-	case (BroadeningFunction::GaussianFunction):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 * 	      (   x * x * c * c ) 		      FWHM
-		 * f(x) = exp ( - ------------- )      where c = --------------
-		 * 	      (         2       )	         2 sqrt(2 ln 2)
-		 */
-		return exp(-(0.5 * x * x * parameters_[1] * parameters_[1]));
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		/*
-		 * Gaussian with prefactor, centred at zero
-		 *
-		 * Parameters:  0 = A, prefactor
-		 * 		1 = FWHM
-		 * 		2 = c     	(precalculated from FWHM)
-		 * 		3 = 1.0 / c
-		 *
-		 * 	        (   x * x * c * c ) 		        FWHM
-		 * f(x) = A exp ( - ------------- )      where c = --------------
-		 * 	        (	  2	  )		   2 sqrt(2 ln 2)
-		 */
-		return parameters_[0] * exp(-(0.5 * x * x * parameters_[2] * parameters_[2]));
-		break;
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 * 	      (   x*x * (c*omega)**2 ) 		           FWHM
-		 * f(x) = exp ( - ------------------ )      where c = --------------
-		 * 	      (		   2         )	              2 sqrt(2 ln 2)
-		 */
-		return exp(-(0.5 * x * x * (parameters_[1] * omega) * (parameters_[1] * omega)));
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
-		 *
-		 * Parameters:  0 = FWHM1
-		 * 		1 = FWHM2
-		 * 		2 = c1     	(precalculated from FWHM1)
-		 * 		3 = c2     	(precalculated from FWHM2)
-		 * 		4 = 1.0 / c1
-		 * 		5 = 1.0 / c2
-		 *
-		 * 	      (   x * x * (c1 + c2*omega)**2 ) 		           FWHMn
-		 * f(x) = exp ( - -------------------------- )      where cn = --------------
-		 * 	      (                2             )	               2 sqrt(2 ln 2)
-		 */
-		return exp(
-			-(0.5 * x * x * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
-		break;
-	default:
-		Messenger::warn("BroadeningFunction::ft() - Function id %i not accounted for.\n", function_);
-		break;
+		case (BroadeningFunction::NoFunction):
+			return 1.0;
+			break;
+		case (BroadeningFunction::GaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 * 	      (   x * x * c * c ) 		      FWHM
+			 * f(x) = exp ( - ------------- )      where c = --------------
+			 * 	      (         2       )	         2 sqrt(2 ln 2)
+			 */
+			return exp(-(0.5 * x * x * parameters_[1] * parameters_[1]));
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			/*
+			 * Gaussian with prefactor, centred at zero
+			 *
+			 * Parameters:  0 = A, prefactor
+			 * 		1 = FWHM
+			 * 		2 = c     	(precalculated from FWHM)
+			 * 		3 = 1.0 / c
+			 *
+			 * 	        (   x * x * c * c ) 		        FWHM
+			 * f(x) = A exp ( - ------------- )      where c = --------------
+			 * 	        (	  2	  )		   2 sqrt(2 ln 2)
+			 */
+			return parameters_[0] * exp(-(0.5 * x * x * parameters_[2] * parameters_[2]));
+			break;
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 * 	      (   x*x * (c*omega)**2 ) 		           FWHM
+			 * f(x) = exp ( - ------------------ )      where c = --------------
+			 * 	      (		   2         )	              2 sqrt(2 ln 2)
+			 */
+			return exp(-(0.5 * x * x * (parameters_[1] * omega) * (parameters_[1] * omega)));
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
+			 *
+			 * Parameters:  0 = FWHM1
+			 * 		1 = FWHM2
+			 * 		2 = c1     	(precalculated from FWHM1)
+			 * 		3 = c2     	(precalculated from FWHM2)
+			 * 		4 = 1.0 / c1
+			 * 		5 = 1.0 / c2
+			 *
+			 * 	      (   x * x * (c1 + c2*omega)**2 ) 		           FWHMn
+			 * f(x) = exp ( - -------------------------- )      where cn = --------------
+			 * 	      (                2             )	               2 sqrt(2 ln 2)
+			 */
+			return exp(-(0.5 * x * x * (parameters_[2] + parameters_[3] * omega) *
+				     (parameters_[2] + parameters_[3] * omega)));
+			break;
+		default:
+			Messenger::warn("BroadeningFunction::ft() - Function id %i not accounted for.\n", function_);
+			break;
 	}
 
 	return 0.0;
@@ -470,73 +471,74 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
 	// Return the multiplicative factor to normalise the current function against its discretised sum
 	switch (function_)
 	{
-	case (BroadeningFunction::NoFunction):
-		return 1.0;
-		break;
-	case (BroadeningFunction::GaussianFunction):
-		/*
-		 * Gaussian with no prefactor, centred at zero
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 * 	       2 * deltaX
-		 * DKN = ----------------------
-		 * 	 sqrt(pi / ln 2) * FWHM
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0]);
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		/*
-		 * Gaussian with prefactor, centred at zero
-		 *
-		 * Parameters:  0 = A, prefactor
-		 * 		1 = FWHM
-		 * 		2 = c     	(precalculated from FWHM)
-		 * 		3 = 1.0 / c
-		 *
-		 * 		 2 * deltaX
-		 * DKN = --------------------------
-		 * 	 sqrt(pi / ln 2) * FWHM * A
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * parameters_[1]);
-		break;
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 *		  2 * deltaX
-		 * DKN = ------------------------------
-		 * 	 sqrt(pi / ln 2) * FWHM * omega
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * staticOmega_);
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
-		 *
-		 * Parameters:  0 = FWHM1
-		 * 		1 = FWHM2
-		 * 		2 = c1     	(precalculated from FWHM1)
-		 * 		3 = c2     	(precalculated from FWHM2)
-		 * 		4 = 1.0 / c1
-		 * 		5 = 1.0 / c2
-		 *
-		 *			2 * deltaX
-		 * DKN = ----------------------------------------
-		 * 	 sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * staticOmega_));
-		break;
-	default:
-		Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx) - Function id %i not accounted for.\n",
+		case (BroadeningFunction::NoFunction):
+			return 1.0;
+			break;
+		case (BroadeningFunction::GaussianFunction):
+			/*
+			 * Gaussian with no prefactor, centred at zero
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 * 	       2 * deltaX
+			 * DKN = ----------------------
+			 * 	 sqrt(pi / ln 2) * FWHM
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0]);
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			/*
+			 * Gaussian with prefactor, centred at zero
+			 *
+			 * Parameters:  0 = A, prefactor
+			 * 		1 = FWHM
+			 * 		2 = c     	(precalculated from FWHM)
+			 * 		3 = 1.0 / c
+			 *
+			 * 		 2 * deltaX
+			 * DKN = --------------------------
+			 * 	 sqrt(pi / ln 2) * FWHM * A
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * parameters_[1]);
+			break;
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 *		  2 * deltaX
+			 * DKN = ------------------------------
+			 * 	 sqrt(pi / ln 2) * FWHM * omega
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * staticOmega_);
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
+			 *
+			 * Parameters:  0 = FWHM1
+			 * 		1 = FWHM2
+			 * 		2 = c1     	(precalculated from FWHM1)
+			 * 		3 = c2     	(precalculated from FWHM2)
+			 * 		4 = 1.0 / c1
+			 * 		5 = 1.0 / c2
+			 *
+			 *			2 * deltaX
+			 * DKN = ----------------------------------------
+			 * 	 sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * staticOmega_));
+			break;
+		default:
+			Messenger::warn(
+				"BroadeningFunction::discreteKernelNormalisation(dx) - Function id %i not accounted for.\n",
 				function_);
-		break;
+			break;
 	}
 
 	return 1.0;
@@ -549,74 +551,74 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
 	// Return the multiplicative factor to normalise the current function against its discretised sum
 	switch (function_)
 	{
-	case (BroadeningFunction::NoFunction):
-		return 1.0;
-		break;
-	case (BroadeningFunction::GaussianFunction):
-		/*
-		 * Gaussian with no prefactor, centred at zero
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 * 	       2 * deltaX
-		 * DKN = ----------------------
-		 * 	 sqrt(pi / ln 2) * FWHM
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0]);
-		break;
-	case (BroadeningFunction::ScaledGaussianFunction):
-		/*
-		 * Gaussian with prefactor, centred at zero
-		 *
-		 * Parameters:  0 = A, prefactor
-		 * 		1 = FWHM
-		 * 		2 = c     	(precalculated from FWHM)
-		 * 		3 = 1.0 / c
-		 *
-		 * 		 2 * deltaX
-		 * DKN = --------------------------
-		 * 	 sqrt(pi / ln 2) * FWHM * A
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * parameters_[1]);
-		break;
-	case (BroadeningFunction::OmegaDependentGaussianFunction):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-		 *
-		 * Parameters:  0 = FWHM
-		 * 		1 = c     	(precalculated from FWHM)
-		 * 		2 = 1.0 / c
-		 *
-		 *		  2 * deltaX
-		 * DKN = ------------------------------
-		 * 	 sqrt(pi / ln 2) * FWHM * omega
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * omega);
-		break;
-	case (BroadeningFunction::GaussianC2Function):
-		/*
-		 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
-		 *
-		 * Parameters:  0 = FWHM1
-		 * 		1 = FWHM2
-		 * 		2 = c1     	(precalculated from FWHM1)
-		 * 		3 = c2     	(precalculated from FWHM2)
-		 * 		4 = 1.0 / c1
-		 * 		5 = 1.0 / c2
-		 *
-		 *			2 * deltaX
-		 * DKN = ----------------------------------------
-		 * 	 sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
-		 */
-		return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * omega));
-		break;
-	default:
-		Messenger::warn(
-			"BroadeningFunction::discreteKernelNormalisation(dx,omega) - Function id %i not accounted for.\n",
-			function_);
-		break;
+		case (BroadeningFunction::NoFunction):
+			return 1.0;
+			break;
+		case (BroadeningFunction::GaussianFunction):
+			/*
+			 * Gaussian with no prefactor, centred at zero
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 * 	       2 * deltaX
+			 * DKN = ----------------------
+			 * 	 sqrt(pi / ln 2) * FWHM
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0]);
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			/*
+			 * Gaussian with prefactor, centred at zero
+			 *
+			 * Parameters:  0 = A, prefactor
+			 * 		1 = FWHM
+			 * 		2 = c     	(precalculated from FWHM)
+			 * 		3 = 1.0 / c
+			 *
+			 * 		 2 * deltaX
+			 * DKN = --------------------------
+			 * 	 sqrt(pi / ln 2) * FWHM * A
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * parameters_[1]);
+			break;
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 *
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 *
+			 *		  2 * deltaX
+			 * DKN = ------------------------------
+			 * 	 sqrt(pi / ln 2) * FWHM * omega
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * omega);
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
+			 *
+			 * Parameters:  0 = FWHM1
+			 * 		1 = FWHM2
+			 * 		2 = c1     	(precalculated from FWHM1)
+			 * 		3 = c2     	(precalculated from FWHM2)
+			 * 		4 = 1.0 / c1
+			 * 		5 = 1.0 / c2
+			 *
+			 *			2 * deltaX
+			 * DKN = ----------------------------------------
+			 * 	 sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
+			 */
+			return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * omega));
+			break;
+		default:
+			Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx,omega) - Function id %i not "
+					"accounted for.\n",
+					function_);
+			break;
 	}
 
 	return 1.0;

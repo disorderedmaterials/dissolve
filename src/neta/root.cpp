@@ -62,16 +62,16 @@ bool NETARootNode::setModifier(const char *modifier, ComparisonOperator op, int 
 
 	switch (modifiers().enumeration(modifier))
 	{
-	case (NETARootNode::NBondsModifier):
-		nBondsValue_ = value;
-		nBondsValueOperator_ = op;
-		break;
-	case (NETARootNode::NHydrogensModifier):
-		nHydrogensValue_ = value;
-		nHydrogensValueOperator_ = op;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle modifier '%s' in root node.\n", modifier);
+		case (NETARootNode::NBondsModifier):
+			nBondsValue_ = value;
+			nBondsValueOperator_ = op;
+			break;
+		case (NETARootNode::NHydrogensModifier):
+			nHydrogensValue_ = value;
+			nHydrogensValueOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in root node.\n", modifier);
 	}
 
 	return true;

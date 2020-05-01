@@ -58,8 +58,8 @@ void ConfigurationWidget::updateToolbar()
 	// Set current interaction mode
 	switch (configurationViewer()->interactionMode())
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	// Set checkable buttons

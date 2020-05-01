@@ -57,77 +57,77 @@ bool Dissolve::loadInput(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		case (BlockKeywords::ConfigurationBlockKeyword):
-			// Check to see if a Configuration with this name already exists...
-			if (findConfiguration(parser.argc(1)))
-			{
-				Messenger::error("Redefinition of Configuration '%s'.\n", parser.argc(1));
-				error = true;
-				break;
-			}
-			cfg = addConfiguration();
-			cfg->setName(parser.argc(1));
-			Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
-			if (!ConfigurationBlock::parse(parser, this, cfg))
-			{
-				error = true;
-				break;
-			}
+			case (BlockKeywords::ConfigurationBlockKeyword):
+				// Check to see if a Configuration with this name already exists...
+				if (findConfiguration(parser.argc(1)))
+				{
+					Messenger::error("Redefinition of Configuration '%s'.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				cfg = addConfiguration();
+				cfg->setName(parser.argc(1));
+				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
+				if (!ConfigurationBlock::parse(parser, this, cfg))
+				{
+					error = true;
+					break;
+				}
 
-			// Prepare the Configuration
-			if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
-				Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
-			break;
-		case (BlockKeywords::LayerBlockKeyword):
-			// Check to see if a processing layer with this name already exists...
-			if (findProcessingLayer(parser.argc(1)))
-			{
-				Messenger::error("Redefinition of processing layer '%s'.\n", parser.argc(1));
+				// Prepare the Configuration
+				if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
+					Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
+				break;
+			case (BlockKeywords::LayerBlockKeyword):
+				// Check to see if a processing layer with this name already exists...
+				if (findProcessingLayer(parser.argc(1)))
+				{
+					Messenger::error("Redefinition of processing layer '%s'.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				layer = addProcessingLayer();
+				layer->setName(parser.argc(1));
+				Messenger::print("\n--> Created processing layer '%s'\n", layer->name());
+				if (!LayerBlock::parse(parser, this, layer))
+					error = true;
+				break;
+			case (BlockKeywords::MasterBlockKeyword):
+				if (!MasterBlock::parse(parser, coreData_))
+					error = true;
+				break;
+			case (BlockKeywords::PairPotentialsBlockKeyword):
+				if (!PairPotentialsBlock::parse(parser, this))
+					error = true;
+				break;
+			case (BlockKeywords::SimulationBlockKeyword):
+				if (!SimulationBlock::parse(parser, this))
+					error = true;
+				break;
+			case (BlockKeywords::SpeciesBlockKeyword):
+				// Check to see if a Species with this name already exists...
+				if (findSpecies(parser.argc(1)))
+				{
+					Messenger::error("Redefinition of species '%s'.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				sp = addSpecies();
+				sp->setName(parser.argc(1));
+				Messenger::print("\n--> Created Species '%s'\n", sp->name());
+				if (!sp->read(parser, coreData_))
+					error = true;
+				else if (Messenger::isVerbose())
+				{
+					Messenger::print("\n--- Species '%s'...\n", sp->name());
+					sp->print();
+				}
+				break;
+			default:
+				Messenger::error("Block keyword '%s' is not relevant in this context.\n",
+						 BlockKeywords::keywords().keyword(kwd));
 				error = true;
 				break;
-			}
-			layer = addProcessingLayer();
-			layer->setName(parser.argc(1));
-			Messenger::print("\n--> Created processing layer '%s'\n", layer->name());
-			if (!LayerBlock::parse(parser, this, layer))
-				error = true;
-			break;
-		case (BlockKeywords::MasterBlockKeyword):
-			if (!MasterBlock::parse(parser, coreData_))
-				error = true;
-			break;
-		case (BlockKeywords::PairPotentialsBlockKeyword):
-			if (!PairPotentialsBlock::parse(parser, this))
-				error = true;
-			break;
-		case (BlockKeywords::SimulationBlockKeyword):
-			if (!SimulationBlock::parse(parser, this))
-				error = true;
-			break;
-		case (BlockKeywords::SpeciesBlockKeyword):
-			// Check to see if a Species with this name already exists...
-			if (findSpecies(parser.argc(1)))
-			{
-				Messenger::error("Redefinition of species '%s'.\n", parser.argc(1));
-				error = true;
-				break;
-			}
-			sp = addSpecies();
-			sp->setName(parser.argc(1));
-			Messenger::print("\n--> Created Species '%s'\n", sp->name());
-			if (!sp->read(parser, coreData_))
-				error = true;
-			else if (Messenger::isVerbose())
-			{
-				Messenger::print("\n--- Species '%s'...\n", sp->name());
-				sp->print();
-			}
-			break;
-		default:
-			Messenger::error("Block keyword '%s' is not relevant in this context.\n",
-					 BlockKeywords::keywords().keyword(kwd));
-			error = true;
-			break;
 		}
 
 		// Error encountered?

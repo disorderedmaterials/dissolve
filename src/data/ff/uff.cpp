@@ -321,120 +321,120 @@ ForcefieldAtomType *Forcefield_UFF::determineAtomType(SpeciesAtom *i) const
 {
 	switch (i->element()->Z())
 	{
-	// H
-	case (ELEMENT_H):
-		if (isBoundTo(i, &Elements::element(5), 2))
-			return atomTypeByName("H_b", i->element());
-		else
-			return atomTypeByName("H_", i->element());
-		break;
-	// Boron
-	case (ELEMENT_B):
-		if (isAtomGeometry(i, Forcefield::TetrahedralGeometry))
-			return atomTypeByName("B_3", i->element());
-		else
-			return atomTypeByName("B_2", i->element());
-		break;
-	// Carbon
-	case (ELEMENT_C):
-		if (isBondPattern(i, 0, 0, 0, 0, -1))
-			return atomTypeByName("C_R", i->element());
-		else if (isBondPattern(i, 2, 1))
-			return atomTypeByName("C_2", i->element());
-		else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
-			return atomTypeByName("C_1", i->element());
-		else
-			return atomTypeByName("C_3", i->element());
-		break;
-	// Nitrogen
-	case (ELEMENT_N):
-		if (isBondPattern(i, 0, 0, 0, 0, -1))
-			return atomTypeByName("N_R", i->element());
-		else if (isBondPattern(i, 1, 1))
-			return atomTypeByName("N_2", i->element());
-		else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
-			return atomTypeByName("N_1", i->element());
-		else
-			return atomTypeByName("N_3", i->element());
-		break;
-	// Oxygen
-	case (ELEMENT_O):
-		if (isBondPattern(i, 0, 0, 0, 0, -1))
-			return atomTypeByName("O_R", i->element());
-		else if (isBondPattern(i, 0, 1))
-			return atomTypeByName("O_2", i->element());
-		else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
-			return atomTypeByName("O_1", i->element());
-		else if (isBoundTo(i, &Elements::element(ELEMENT_SI), 2))
-			return atomTypeByName("O_3_z", i->element());
-		else
-			return atomTypeByName("O_3", i->element());
-		break;
-	// Phosphorus
-	case (ELEMENT_P):
-		if (guessOxidationState(i) == 5)
-			return atomTypeByName("P_3+5", i->element());
-		else if (guessOxidationState(i) == 3)
-			return atomTypeByName("P_3+3", i->element());
-		else if ((i->nBonds() == 4) && (isAtomGeometry(i, Forcefield::TetrahedralGeometry)))
-			return atomTypeByName("P_3+q", i->element());
-		break;
-	// Sulphur
-	case (ELEMENT_S):
-		if (guessOxidationState(i) == 2)
-			return atomTypeByName("S_3+2", i->element());
-		else if (guessOxidationState(i) == 4)
-			return atomTypeByName("S_3+4", i->element());
-		else if (guessOxidationState(i) == 6)
-			return atomTypeByName("S_3+6", i->element());
-		else if (isBondPattern(i, 0, 0, 0, 0, -1))
-			return atomTypeByName("S_R", i->element());
-		else if (isAtomGeometry(i, Forcefield::TrigonalPlanarGeometry))
-			return atomTypeByName("S_2", i->element());
-		break;
-	// Titanium
-	case (ELEMENT_TI):
-		if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-			return atomTypeByName("Ti6+4", i->element());
-		else
-			return atomTypeByName("Ti3+4", i->element());
-		break;
-	// Iron
-	case (ELEMENT_FE):
-		if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-			return atomTypeByName("Fe6+2", i->element());
-		else
-			return atomTypeByName("Fe3+2", i->element());
+		// H
+		case (ELEMENT_H):
+			if (isBoundTo(i, &Elements::element(5), 2))
+				return atomTypeByName("H_b", i->element());
+			else
+				return atomTypeByName("H_", i->element());
+			break;
+		// Boron
+		case (ELEMENT_B):
+			if (isAtomGeometry(i, Forcefield::TetrahedralGeometry))
+				return atomTypeByName("B_3", i->element());
+			else
+				return atomTypeByName("B_2", i->element());
+			break;
+		// Carbon
+		case (ELEMENT_C):
+			if (isBondPattern(i, 0, 0, 0, 0, -1))
+				return atomTypeByName("C_R", i->element());
+			else if (isBondPattern(i, 2, 1))
+				return atomTypeByName("C_2", i->element());
+			else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
+				return atomTypeByName("C_1", i->element());
+			else
+				return atomTypeByName("C_3", i->element());
+			break;
+		// Nitrogen
+		case (ELEMENT_N):
+			if (isBondPattern(i, 0, 0, 0, 0, -1))
+				return atomTypeByName("N_R", i->element());
+			else if (isBondPattern(i, 1, 1))
+				return atomTypeByName("N_2", i->element());
+			else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
+				return atomTypeByName("N_1", i->element());
+			else
+				return atomTypeByName("N_3", i->element());
+			break;
+		// Oxygen
+		case (ELEMENT_O):
+			if (isBondPattern(i, 0, 0, 0, 0, -1))
+				return atomTypeByName("O_R", i->element());
+			else if (isBondPattern(i, 0, 1))
+				return atomTypeByName("O_2", i->element());
+			else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
+				return atomTypeByName("O_1", i->element());
+			else if (isBoundTo(i, &Elements::element(ELEMENT_SI), 2))
+				return atomTypeByName("O_3_z", i->element());
+			else
+				return atomTypeByName("O_3", i->element());
+			break;
+		// Phosphorus
+		case (ELEMENT_P):
+			if (guessOxidationState(i) == 5)
+				return atomTypeByName("P_3+5", i->element());
+			else if (guessOxidationState(i) == 3)
+				return atomTypeByName("P_3+3", i->element());
+			else if ((i->nBonds() == 4) && (isAtomGeometry(i, Forcefield::TetrahedralGeometry)))
+				return atomTypeByName("P_3+q", i->element());
+			break;
+		// Sulphur
+		case (ELEMENT_S):
+			if (guessOxidationState(i) == 2)
+				return atomTypeByName("S_3+2", i->element());
+			else if (guessOxidationState(i) == 4)
+				return atomTypeByName("S_3+4", i->element());
+			else if (guessOxidationState(i) == 6)
+				return atomTypeByName("S_3+6", i->element());
+			else if (isBondPattern(i, 0, 0, 0, 0, -1))
+				return atomTypeByName("S_R", i->element());
+			else if (isAtomGeometry(i, Forcefield::TrigonalPlanarGeometry))
+				return atomTypeByName("S_2", i->element());
+			break;
+		// Titanium
+		case (ELEMENT_TI):
+			if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
+				return atomTypeByName("Ti6+4", i->element());
+			else
+				return atomTypeByName("Ti3+4", i->element());
+			break;
+		// Iron
+		case (ELEMENT_FE):
+			if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
+				return atomTypeByName("Fe6+2", i->element());
+			else
+				return atomTypeByName("Fe3+2", i->element());
 
-		break;
-	// Molybdenum
-	case (ELEMENT_MO):
-		if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-			return atomTypeByName("Mo6+6", i->element());
-		else
-			return atomTypeByName("Mo3+6", i->element());
-		break;
-	// Tungsten
-	case (ELEMENT_W):
-		if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-			return atomTypeByName("W_6+6", i->element());
-		else if (guessOxidationState(i) == 4)
-			return atomTypeByName("W_3+4", i->element());
-		else
-			return atomTypeByName("W_3+6", i->element());
-		break;
-	// Rhenium
-	case (ELEMENT_RE):
-		if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-			return atomTypeByName("Re6+5", i->element());
-		else
-			return atomTypeByName("Re3+7", i->element());
-		break;
-	// Default - all elements with only one type
-	default:
-		const auto &tempRef = atomTypesByElementPrivate_[i->element()->Z()].front();
-		return &tempRef.get();
-		break;
+			break;
+		// Molybdenum
+		case (ELEMENT_MO):
+			if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
+				return atomTypeByName("Mo6+6", i->element());
+			else
+				return atomTypeByName("Mo3+6", i->element());
+			break;
+		// Tungsten
+		case (ELEMENT_W):
+			if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
+				return atomTypeByName("W_6+6", i->element());
+			else if (guessOxidationState(i) == 4)
+				return atomTypeByName("W_3+4", i->element());
+			else
+				return atomTypeByName("W_3+6", i->element());
+			break;
+		// Rhenium
+		case (ELEMENT_RE):
+			if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
+				return atomTypeByName("Re6+5", i->element());
+			else
+				return atomTypeByName("Re3+7", i->element());
+			break;
+		// Default - all elements with only one type
+		default:
+			const auto &tempRef = atomTypesByElementPrivate_[i->element()->Z()].front();
+			return &tempRef.get();
+			break;
 	}
 
 	return NULL;

@@ -75,20 +75,20 @@ bool NETAConnectionNode::setModifier(const char *modifier, ComparisonOperator op
 
 	switch (modifiers().enumeration(modifier))
 	{
-	case (NETAConnectionNode::NBondsModifier):
-		nBondsValue_ = value;
-		nBondsValueOperator_ = op;
-		break;
-	case (NETAConnectionNode::NHydrogensModifier):
-		nHydrogensValue_ = value;
-		nHydrogensValueOperator_ = op;
-		break;
-	case (NETAConnectionNode::RepeatConnectionModifier):
-		repeatCount_ = value;
-		repeatCountOperator_ = op;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle modifier '%s' in connection node.\n", modifier);
+		case (NETAConnectionNode::NBondsModifier):
+			nBondsValue_ = value;
+			nBondsValueOperator_ = op;
+			break;
+		case (NETAConnectionNode::NHydrogensModifier):
+			nHydrogensValue_ = value;
+			nHydrogensValueOperator_ = op;
+			break;
+		case (NETAConnectionNode::RepeatConnectionModifier):
+			repeatCount_ = value;
+			repeatCountOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in connection node.\n", modifier);
 	}
 
 	return true;
@@ -120,11 +120,11 @@ bool NETAConnectionNode::setFlag(const char *flag, bool state)
 
 	switch (flags().enumeration(flag))
 	{
-	case (NETAConnectionNode::RootFlag):
-		allowRootMatch_ = state;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
+		case (NETAConnectionNode::RootFlag):
+			allowRootMatch_ = state;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
 	}
 
 	return true;

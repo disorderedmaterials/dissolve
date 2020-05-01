@@ -527,88 +527,90 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
 	// Work based on the number of bound atoms
 	switch (i->nBonds())
 	{
-	// 'Simple' cases first
-	case (0):
-		result = Forcefield::UnboundGeometry;
-		break;
-	case (1):
-		result = Forcefield::TerminalGeometry;
-		break;
-	case (5):
-		result = Forcefield::TrigonalBipyramidalGeometry;
-		break;
-	case (6):
-		result = Forcefield::OctahedralGeometry;
-		break;
-	// For the remaining types, take averages of bond angles about the atom
-	case (2):
-		h = i->bond(0)->partner(i);
-		j = i->bond(1)->partner(i);
-		angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-		if (angle > 150.0)
-			result = Forcefield::LinearGeometry;
-		// 			else if ((angle > 100.0) && (angle < 115.0)) result = Forcefield::TetrahedralGeometry;
-		else
-			result = Forcefield::TetrahedralGeometry;
-		break;
-	case (3):
-		// 			bref1 = bonds();
-		// 			bref2 = bonds()->next;
-		// 			b1 = bref1->item;
-		// 			b2 = bref2->item;
-		// 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-		// 			largest = angle;
-		// 			b2 = bref2->next->item;
-		// 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-		// 			if (angle > largest) largest = angle;
-		// 			b1 = bref1->next->item;
-		// 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-		// 			if (angle > largest) largest = angle;
-		// 			if (largest > 170.0) result = Forcefield::TShapeGeometry;
-		// 			else if ((largest > 115.0) && (largest < 125.0)) result =
-		// Forcefield::TrigPlanarGeometry; 			else if ((largest < 115.0) && (largest > 100.0)) result
-		// = Forcefield::TetrahedralGeometry; Get largest of the three angles around the central atom
-		h = i->bond(0)->partner(i);
-		j = i->bond(1)->partner(i);
-		angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-		largest = angle;
-		j = i->bond(2)->partner(i);
-		angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-		if (angle > largest)
+		// 'Simple' cases first
+		case (0):
+			result = Forcefield::UnboundGeometry;
+			break;
+		case (1):
+			result = Forcefield::TerminalGeometry;
+			break;
+		case (5):
+			result = Forcefield::TrigonalBipyramidalGeometry;
+			break;
+		case (6):
+			result = Forcefield::OctahedralGeometry;
+			break;
+		// For the remaining types, take averages of bond angles about the atom
+		case (2):
+			h = i->bond(0)->partner(i);
+			j = i->bond(1)->partner(i);
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+			if (angle > 150.0)
+				result = Forcefield::LinearGeometry;
+			// 			else if ((angle > 100.0) && (angle < 115.0)) result =
+			// Forcefield::TetrahedralGeometry;
+			else
+				result = Forcefield::TetrahedralGeometry;
+			break;
+		case (3):
+			// 			bref1 = bonds();
+			// 			bref2 = bonds()->next;
+			// 			b1 = bref1->item;
+			// 			b2 = bref2->item;
+			// 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
+			// 			largest = angle;
+			// 			b2 = bref2->next->item;
+			// 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
+			// 			if (angle > largest) largest = angle;
+			// 			b1 = bref1->next->item;
+			// 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
+			// 			if (angle > largest) largest = angle;
+			// 			if (largest > 170.0) result = Forcefield::TShapeGeometry;
+			// 			else if ((largest > 115.0) && (largest < 125.0)) result =
+			// Forcefield::TrigPlanarGeometry; 			else if ((largest < 115.0) && (largest > 100.0))
+			// result = Forcefield::TetrahedralGeometry; Get largest of the three angles around the central atom
+			h = i->bond(0)->partner(i);
+			j = i->bond(1)->partner(i);
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
 			largest = angle;
-		h = i->bond(1)->partner(i);
-		angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
-		if (angle > largest)
-			largest = angle;
-		if (largest > 150.0)
-			result = Forcefield::TShapeGeometry;
-		else if ((largest > 115.0) && (largest < 125.0))
-			result = Forcefield::TrigonalPlanarGeometry;
-		// 			else if ((largest < 115.0) && (largest > 100.0)) result =
-		// Forcefield::TetrahedralGeometry;
-		else
-			result = Forcefield::TetrahedralGeometry;
-		break;
-	case (4):
-		// Two possibilities - tetrahedral or square planar. Tetrahedral will have an
-		// average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
-		angle = 0.0;
-		for (int n = 0; n < i->nBonds(); ++n)
-		{
-			h = i->bond(n)->partner(i);
-			for (int m = n + 1; m < i->nBonds(); ++m)
+			j = i->bond(2)->partner(i);
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+			if (angle > largest)
+				largest = angle;
+			h = i->bond(1)->partner(i);
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+			if (angle > largest)
+				largest = angle;
+			if (largest > 150.0)
+				result = Forcefield::TShapeGeometry;
+			else if ((largest > 115.0) && (largest < 125.0))
+				result = Forcefield::TrigonalPlanarGeometry;
+			// 			else if ((largest < 115.0) && (largest > 100.0)) result =
+			// Forcefield::TetrahedralGeometry;
+			else
+				result = Forcefield::TetrahedralGeometry;
+			break;
+		case (4):
+			// Two possibilities - tetrahedral or square planar. Tetrahedral will have an
+			// average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
+			angle = 0.0;
+			for (int n = 0; n < i->nBonds(); ++n)
 			{
-				j = i->bond(m)->partner(i);
-				angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+				h = i->bond(n)->partner(i);
+				for (int m = n + 1; m < i->nBonds(); ++m)
+				{
+					j = i->bond(m)->partner(i);
+					angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
+				}
 			}
-		}
-		angle /= 6.0;
-		if ((angle > 100.0) && (angle < 115.0))
-			result = Forcefield::TetrahedralGeometry;
-		// 			else if ((angle >= 115.0) && (angle < 125.0)) result = Forcefield::SquarePlanarGeometry;
-		else
-			result = Forcefield::SquarePlanarGeometry;
-		break;
+			angle /= 6.0;
+			if ((angle > 100.0) && (angle < 115.0))
+				result = Forcefield::TetrahedralGeometry;
+			// 			else if ((angle >= 115.0) && (angle < 125.0)) result =
+			// Forcefield::SquarePlanarGeometry;
+			else
+				result = Forcefield::SquarePlanarGeometry;
+			break;
 	}
 
 	return result;
@@ -626,34 +628,34 @@ bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const in
 	{
 		switch (bond->bondType())
 		{
-		case (SpeciesBond::SingleBond):
-			if (nSingle == actualNSingle)
+			case (SpeciesBond::SingleBond):
+				if (nSingle == actualNSingle)
+					return false;
+				++actualNSingle;
+				break;
+			case (SpeciesBond::DoubleBond):
+				if (nDouble == actualNDouble)
+					return false;
+				++actualNDouble;
+				break;
+			case (SpeciesBond::TripleBond):
+				if (nTriple == actualNTriple)
+					return false;
+				++actualNTriple;
+				break;
+			case (SpeciesBond::QuadrupleBond):
+				if (nQuadruple == actualNQuadruple)
+					return false;
+				++actualNQuadruple;
+				break;
+			case (SpeciesBond::AromaticBond):
+				if (nAromatic == actualNAromatic)
+					return false;
+				++actualNAromatic;
+				break;
+			default:
+				Messenger::error("Bond has unassigned bond type.\n");
 				return false;
-			++actualNSingle;
-			break;
-		case (SpeciesBond::DoubleBond):
-			if (nDouble == actualNDouble)
-				return false;
-			++actualNDouble;
-			break;
-		case (SpeciesBond::TripleBond):
-			if (nTriple == actualNTriple)
-				return false;
-			++actualNTriple;
-			break;
-		case (SpeciesBond::QuadrupleBond):
-			if (nQuadruple == actualNQuadruple)
-				return false;
-			++actualNQuadruple;
-			break;
-		case (SpeciesBond::AromaticBond):
-			if (nAromatic == actualNAromatic)
-				return false;
-			++actualNAromatic;
-			break;
-		default:
-			Messenger::error("Bond has unassigned bond type.\n");
-			return false;
 		}
 	}
 
@@ -705,41 +707,41 @@ int Forcefield::guessOxidationState(const SpeciesAtom *i) const
 		Element *element = bond->partner(i)->element();
 		switch (element->Z())
 		{
-		// Group 1A - Alkali earth metals (includes Hydrogen)
-		case (ELEMENT_H):
-		case (ELEMENT_LI):
-		case (ELEMENT_NA):
-		case (ELEMENT_K):
-		case (ELEMENT_RB):
-		case (ELEMENT_CS):
-		case (ELEMENT_FR):
-			osBound += 1;
-			break;
-		// Group 2A - Alkaline earth metals
-		case (ELEMENT_BE):
-		case (ELEMENT_MG):
-		case (ELEMENT_CA):
-		case (ELEMENT_SR):
-		case (ELEMENT_BA):
-		case (ELEMENT_RA):
-			osBound += 1;
-			break;
-		// Oxygen
-		case (ELEMENT_O):
-			if (bond->bondType() == SpeciesBond::DoubleBond)
-				osBound -= 2;
-			else
+			// Group 1A - Alkali earth metals (includes Hydrogen)
+			case (ELEMENT_H):
+			case (ELEMENT_LI):
+			case (ELEMENT_NA):
+			case (ELEMENT_K):
+			case (ELEMENT_RB):
+			case (ELEMENT_CS):
+			case (ELEMENT_FR):
+				osBound += 1;
+				break;
+			// Group 2A - Alkaline earth metals
+			case (ELEMENT_BE):
+			case (ELEMENT_MG):
+			case (ELEMENT_CA):
+			case (ELEMENT_SR):
+			case (ELEMENT_BA):
+			case (ELEMENT_RA):
+				osBound += 1;
+				break;
+			// Oxygen
+			case (ELEMENT_O):
+				if (bond->bondType() == SpeciesBond::DoubleBond)
+					osBound -= 2;
+				else
+					osBound -= 1;
+				break;
+			// Halogens (F, Cl, Br, I)
+			case (ELEMENT_F):
+			case (ELEMENT_CL):
+			case (ELEMENT_BR):
+			case (ELEMENT_I):
 				osBound -= 1;
-			break;
-		// Halogens (F, Cl, Br, I)
-		case (ELEMENT_F):
-		case (ELEMENT_CL):
-		case (ELEMENT_BR):
-		case (ELEMENT_I):
-			osBound -= 1;
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 
 		// Check for same element

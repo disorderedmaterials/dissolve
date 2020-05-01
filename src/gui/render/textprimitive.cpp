@@ -96,35 +96,35 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
 	boundingBox(fontInstance, lowerLeft, upperRight);
 	switch (anchorPosition_)
 	{
-	case (TextPrimitive::TopLeftAnchor):
-		anchorPos.set(lowerLeft.x, upperRight.y, 0.0);
-		break;
-	case (TextPrimitive::TopMiddleAnchor):
-		anchorPos.set((lowerLeft.x + upperRight.x) * 0.5, upperRight.y, 0.0);
-		break;
-	case (TextPrimitive::TopRightAnchor):
-		anchorPos = upperRight;
-		break;
-	case (TextPrimitive::MiddleLeftAnchor):
-		anchorPos.set(lowerLeft.x, (lowerLeft.y + upperRight.y) * 0.5, 0.0);
-		break;
-	case (TextPrimitive::CentralAnchor):
-		anchorPos.set((lowerLeft.x + upperRight.x) * 0.5, (lowerLeft.y + upperRight.y) * 0.5, 0.0);
-		break;
-	case (TextPrimitive::MiddleRightAnchor):
-		anchorPos.set(upperRight.x, (lowerLeft.y + upperRight.y) * 0.5, 0.0);
-		break;
-	case (TextPrimitive::BottomLeftAnchor):
-		anchorPos = lowerLeft;
-		break;
-	case (TextPrimitive::BottomMiddleAnchor):
-		anchorPos.set((lowerLeft.x + upperRight.x) * 0.5, lowerLeft.y, 0.0);
-		break;
-	case (TextPrimitive::BottomRightAnchor):
-		anchorPos.set(upperRight.x, lowerLeft.y, 0.0);
-		break;
-	default:
-		break;
+		case (TextPrimitive::TopLeftAnchor):
+			anchorPos.set(lowerLeft.x, upperRight.y, 0.0);
+			break;
+		case (TextPrimitive::TopMiddleAnchor):
+			anchorPos.set((lowerLeft.x + upperRight.x) * 0.5, upperRight.y, 0.0);
+			break;
+		case (TextPrimitive::TopRightAnchor):
+			anchorPos = upperRight;
+			break;
+		case (TextPrimitive::MiddleLeftAnchor):
+			anchorPos.set(lowerLeft.x, (lowerLeft.y + upperRight.y) * 0.5, 0.0);
+			break;
+		case (TextPrimitive::CentralAnchor):
+			anchorPos.set((lowerLeft.x + upperRight.x) * 0.5, (lowerLeft.y + upperRight.y) * 0.5, 0.0);
+			break;
+		case (TextPrimitive::MiddleRightAnchor):
+			anchorPos.set(upperRight.x, (lowerLeft.y + upperRight.y) * 0.5, 0.0);
+			break;
+		case (TextPrimitive::BottomLeftAnchor):
+			anchorPos = lowerLeft;
+			break;
+		case (TextPrimitive::BottomMiddleAnchor):
+			anchorPos.set((lowerLeft.x + upperRight.x) * 0.5, lowerLeft.y, 0.0);
+			break;
+		case (TextPrimitive::BottomRightAnchor):
+			anchorPos.set(upperRight.x, lowerLeft.y, 0.0);
+			break;
+		default:
+			break;
 	}
 
 	// Rotate anchor position with local rotation matrix
@@ -421,36 +421,36 @@ bool TextPrimitive::addEscape(TextPrimitive::EscapeSequence escSeq)
 	// Deal with the escape sequence
 	switch (escSeq)
 	{
-	// Add bold level
-	case (TextPrimitive::BoldEscape):
-		newFormat->setBold(true);
-		break;
-	// Add italic level
-	case (TextPrimitive::ItalicEscape):
-		newFormat->setItalic(true);
-		break;
-	// Newline
-	case (TextPrimitive::NewLineEscape):
-		// 			newFormat->		TODO
-		break;
-	// Add subscript level - adjust baseline position and scale of current format
-	case (TextPrimitive::SubScriptEscape):
-		newFormat->adjustY(-fontInstance_->fontBaseHeight() * newFormat->scale() * (1.0 / 3.0));
-		newFormat->setScale(0.583 * newFormat->scale());
-		break;
-	// Add superscript level - adjust baseline position and scale of current format
-	case (TextPrimitive::SuperScriptEscape):
-		newFormat->adjustY(fontInstance_->fontBaseHeight() * newFormat->scale() * (2.0 / 3.0));
-		newFormat->setScale(0.583 * newFormat->scale());
-		break;
-	// Add a symbol (flags that any text added to it should be converted to a named symbol)
-	case (TextPrimitive::SymbolEscape):
-		newFormat->setSymbol(true);
-		break;
-	default:
-		Messenger::print("Escape %i not handled in TextPrimitive::addEscape().\n", escSeq);
-		return false;
-		break;
+		// Add bold level
+		case (TextPrimitive::BoldEscape):
+			newFormat->setBold(true);
+			break;
+		// Add italic level
+		case (TextPrimitive::ItalicEscape):
+			newFormat->setItalic(true);
+			break;
+		// Newline
+		case (TextPrimitive::NewLineEscape):
+			// 			newFormat->		TODO
+			break;
+		// Add subscript level - adjust baseline position and scale of current format
+		case (TextPrimitive::SubScriptEscape):
+			newFormat->adjustY(-fontInstance_->fontBaseHeight() * newFormat->scale() * (1.0 / 3.0));
+			newFormat->setScale(0.583 * newFormat->scale());
+			break;
+		// Add superscript level - adjust baseline position and scale of current format
+		case (TextPrimitive::SuperScriptEscape):
+			newFormat->adjustY(fontInstance_->fontBaseHeight() * newFormat->scale() * (2.0 / 3.0));
+			newFormat->setScale(0.583 * newFormat->scale());
+			break;
+		// Add a symbol (flags that any text added to it should be converted to a named symbol)
+		case (TextPrimitive::SymbolEscape):
+			newFormat->setSymbol(true);
+			break;
+		default:
+			Messenger::print("Escape %i not handled in TextPrimitive::addEscape().\n", escSeq);
+			return false;
+			break;
 	}
 
 	return true;

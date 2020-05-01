@@ -579,47 +579,47 @@ static int IsSpecialSeitzMx(T_SgInfo *SgInfo, const T_RTMx *SMx, int ExpandLT)
 
 		switch (SgInfo->LatticeInfo->Code)
 		{
-		case 'P':
-			if (IsSMxTransl0(LI_A, SMx->s.T) == 1)
-			{
-				ExpLT = LI_A;
-				break;
-			}
-			if (IsSMxTransl0(LI_B, SMx->s.T) == 1)
-			{
-				ExpLT = LI_B;
-				break;
-			}
-			if (IsSMxTransl0(LI_C, SMx->s.T) == 1)
-			{
-				ExpLT = LI_C;
-				break;
-			}
-			if (IsSMxTransl0(LI_I, SMx->s.T) == 1)
-			{
-				ExpLT = LI_I;
-				break;
-			}
-			if (IsSMxTransl0(LI_R, SMx->s.T) == 1)
-			{
-				ExpLT = LI_R;
-				break;
-			}
-			if (IsSMxTransl0(LI_S, SMx->s.T) == 1)
-			{
-				ExpLT = LI_S;
-				break;
-			}
-			if (IsSMxTransl0(LI_T, SMx->s.T) == 1)
-			{
-				ExpLT = LI_T;
-				break;
-			}
-		case 'A':
-		case 'B':
-		case 'C':
-			if (IsSMxTransl0(LI_F, SMx->s.T) == 1)
-				ExpLT = LI_F;
+			case 'P':
+				if (IsSMxTransl0(LI_A, SMx->s.T) == 1)
+				{
+					ExpLT = LI_A;
+					break;
+				}
+				if (IsSMxTransl0(LI_B, SMx->s.T) == 1)
+				{
+					ExpLT = LI_B;
+					break;
+				}
+				if (IsSMxTransl0(LI_C, SMx->s.T) == 1)
+				{
+					ExpLT = LI_C;
+					break;
+				}
+				if (IsSMxTransl0(LI_I, SMx->s.T) == 1)
+				{
+					ExpLT = LI_I;
+					break;
+				}
+				if (IsSMxTransl0(LI_R, SMx->s.T) == 1)
+				{
+					ExpLT = LI_R;
+					break;
+				}
+				if (IsSMxTransl0(LI_S, SMx->s.T) == 1)
+				{
+					ExpLT = LI_S;
+					break;
+				}
+				if (IsSMxTransl0(LI_T, SMx->s.T) == 1)
+				{
+					ExpLT = LI_T;
+					break;
+				}
+			case 'A':
+			case 'B':
+			case 'C':
+				if (IsSMxTransl0(LI_F, SMx->s.T) == 1)
+					ExpLT = LI_F;
 		}
 
 		if (ExpLT != NULL)
@@ -677,29 +677,29 @@ int GetRotMxOrder(const int *RotMx)
 	{
 		switch (traceRotMx(RotMx))
 		{
-		case -3:
-			return -1;
-		case -2:
-			return -6;
-		case -1:
-			if (deter == -1)
-				return -4;
-			else
-				return 2;
-		case 0:
-			if (deter == -1)
-				return -3;
-			else
-				return 3;
-		case 1:
-			if (deter == -1)
-				return -2;
-			else
-				return 4;
-		case 2:
-			return 6;
-		case 3:
-			return 1;
+			case -3:
+				return -1;
+			case -2:
+				return -6;
+			case -1:
+				if (deter == -1)
+					return -4;
+				else
+					return 2;
+			case 0:
+				if (deter == -1)
+					return -3;
+				else
+					return 3;
+			case 1:
+				if (deter == -1)
+					return -2;
+				else
+					return 4;
+			case 2:
+				return 6;
+			case 3:
+				return 1;
 		}
 	}
 
@@ -710,23 +710,23 @@ static int nNextBasis_of_DirCode(const int DirCode, const int **RMx, const int *
 {
 	switch (DirCode)
 	{
-	case '.':
-		*RMx = *InvRMx = NULL;
-		return 1;
-	case '=':
-	case '"':
-	case '\'':
-	case '|':
-	case '\\':
-		*RMx = RMx_3_111;
-		*InvRMx = RMx_3i111;
-		return 3;
-	case '*':
-		*RMx = RMx_4_001;
-		*InvRMx = RMx_4i001;
-		return 4;
-	default:
-		break;
+		case '.':
+			*RMx = *InvRMx = NULL;
+			return 1;
+		case '=':
+		case '"':
+		case '\'':
+		case '|':
+		case '\\':
+			*RMx = RMx_3_111;
+			*InvRMx = RMx_3i111;
+			return 3;
+		case '*':
+			*RMx = RMx_4_001;
+			*InvRMx = RMx_4i001;
+			return 4;
+		default:
+			break;
 	}
 
 	SetSgError("Internal Error: Corrupt DirCode");
@@ -809,15 +809,15 @@ int GetRotMxInfo(const int *RotMx, T_RotMxInfo *RotMxInfo)
 							{
 								switch (iNextBasis)
 								{
-								case 0:
-									RotMxInfo->RefAxis = 'z';
-									break;
-								case 1:
-									RotMxInfo->RefAxis = 'x';
-									break;
-								case 2:
-									RotMxInfo->RefAxis = 'y';
-									break;
+									case 0:
+										RotMxInfo->RefAxis = 'z';
+										break;
+									case 1:
+										RotMxInfo->RefAxis = 'x';
+										break;
+									case 2:
+										RotMxInfo->RefAxis = 'y';
+										break;
 								}
 							}
 							else
@@ -1691,24 +1691,24 @@ static int FindXtalSystem(T_SgInfo *SgInfo)
 
 		switch (abs(lrmxi->Order))
 		{
-		case 1:
-			i = N1;
-			break;
-		case 2:
-			i = N2;
-			break;
-		case 3:
-			i = N3;
-			break;
-		case 4:
-			i = N4;
-			break;
-		case 6:
-			i = N6;
-			break;
-		default:
-			SetSgError("Internal Error: FindXtalSystem(): Corrupt ListRotMxInfo");
-			return XS_Unknown;
+			case 1:
+				i = N1;
+				break;
+			case 2:
+				i = N2;
+				break;
+			case 3:
+				i = N3;
+				break;
+			case 4:
+				i = N4;
+				break;
+			case 6:
+				i = N6;
+				break;
+			default:
+				SetSgError("Internal Error: FindXtalSystem(): Corrupt ListRotMxInfo");
+				return XS_Unknown;
 		}
 
 		if (lrmxi->Inverse == 0) /* skip N^-1 */
@@ -1760,39 +1760,39 @@ static int FindXtalSystem(T_SgInfo *SgInfo)
 
 		switch (SgInfo->XtalSystem)
 		{
-		case XS_Monoclinic:
-			iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '=');
-			if (iList < 0)
-				SgInfo->XtalSystem = XS_Unknown;
-			break;
-		case XS_Tetragonal:
-			CheckEnantiomorph = 1;
-			iList = FindSeitzMx(SgInfo, 4, HonorSign, 0, '=');
-			if (iList < 0)
-				SgInfo->XtalSystem = XS_Unknown;
-			break;
-		case XS_Trigonal:
-			CheckEnantiomorph = 1;
-			iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '=');
-			if (iList < 0)
-				iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '*');
-			if (iList < 0)
-				SgInfo->XtalSystem = XS_Unknown;
-			break;
-		case XS_Hexagonal:
-			CheckEnantiomorph = 1;
-			iList = FindSeitzMx(SgInfo, 6, HonorSign, 0, '=');
-			if (iList < 0)
-				SgInfo->XtalSystem = XS_Unknown;
-			break;
-		case XS_Cubic:
-			iList = FindSeitzMx(SgInfo, 4, HonorSign, 0, '=');
-			if (iList >= 0)
+			case XS_Monoclinic:
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '=');
+				if (iList < 0)
+					SgInfo->XtalSystem = XS_Unknown;
+				break;
+			case XS_Tetragonal:
 				CheckEnantiomorph = 1;
-			break;
-		default:
-			iList = -1;
-			break;
+				iList = FindSeitzMx(SgInfo, 4, HonorSign, 0, '=');
+				if (iList < 0)
+					SgInfo->XtalSystem = XS_Unknown;
+				break;
+			case XS_Trigonal:
+				CheckEnantiomorph = 1;
+				iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '=');
+				if (iList < 0)
+					iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '*');
+				if (iList < 0)
+					SgInfo->XtalSystem = XS_Unknown;
+				break;
+			case XS_Hexagonal:
+				CheckEnantiomorph = 1;
+				iList = FindSeitzMx(SgInfo, 6, HonorSign, 0, '=');
+				if (iList < 0)
+					SgInfo->XtalSystem = XS_Unknown;
+				break;
+			case XS_Cubic:
+				iList = FindSeitzMx(SgInfo, 4, HonorSign, 0, '=');
+				if (iList >= 0)
+					CheckEnantiomorph = 1;
+				break;
+			default:
+				iList = -1;
+				break;
 		}
 	}
 
@@ -1818,39 +1818,39 @@ static int FindXtalSystem(T_SgInfo *SgInfo)
 			{
 				switch (lrmxi->RefAxis)
 				{
-				case 'z':
-					switch (SgInfo->LatticeInfo->Code)
-					{
-					case 'R':
-						SgInfo->ExtraInfo = EI_Obverse;
+					case 'z':
+						switch (SgInfo->LatticeInfo->Code)
+						{
+							case 'R':
+								SgInfo->ExtraInfo = EI_Obverse;
+								break;
+							case 'T':
+								SgInfo->ExtraInfo = EI_Reverse;
+								break;
+						}
 						break;
-					case 'T':
-						SgInfo->ExtraInfo = EI_Reverse;
+					case 'y':
+						switch (SgInfo->LatticeInfo->Code)
+						{
+							case 'S':
+								SgInfo->ExtraInfo = EI_Obverse;
+								break;
+							case 'R':
+								SgInfo->ExtraInfo = EI_Reverse;
+								break;
+						}
 						break;
-					}
-					break;
-				case 'y':
-					switch (SgInfo->LatticeInfo->Code)
-					{
-					case 'S':
-						SgInfo->ExtraInfo = EI_Obverse;
+					case 'x':
+						switch (SgInfo->LatticeInfo->Code)
+						{
+							case 'T':
+								SgInfo->ExtraInfo = EI_Obverse;
+								break;
+							case 'S':
+								SgInfo->ExtraInfo = EI_Reverse;
+								break;
+						}
 						break;
-					case 'R':
-						SgInfo->ExtraInfo = EI_Reverse;
-						break;
-					}
-					break;
-				case 'x':
-					switch (SgInfo->LatticeInfo->Code)
-					{
-					case 'T':
-						SgInfo->ExtraInfo = EI_Obverse;
-						break;
-					case 'S':
-						SgInfo->ExtraInfo = EI_Reverse;
-						break;
-					}
-					break;
 				}
 			}
 		}
@@ -1897,301 +1897,301 @@ static int BuildGenerator_iList(T_SgInfo *SgInfo)
 
 	switch (SgInfo->XtalSystem)
 	{
-	case XS_Triclinic:
-		if (iList_1 < 0)
-			iList_1 = FindSeitzMx(SgInfo, 1, HonorSign, 'o', '.');
-		if (iList_1 >= 0)
-			G_iL[nG++] = iList_1;
+		case XS_Triclinic:
+			if (iList_1 < 0)
+				iList_1 = FindSeitzMx(SgInfo, 1, HonorSign, 'o', '.');
+			if (iList_1 >= 0)
+				G_iL[nG++] = iList_1;
 
-		if (SgInfo_CI)
-			SgInfo->PointGroup = PG_1b;
-		else
-			SgInfo->PointGroup = PG_1;
+			if (SgInfo_CI)
+				SgInfo->PointGroup = PG_1b;
+			else
+				SgInfo->PointGroup = PG_1;
 
-		SgInfo->nGenerator = nG;
-		return 0;
+			SgInfo->nGenerator = nG;
+			return 0;
 
-	case XS_Monoclinic:
-		iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '=');
-		if (iList < 0)
-			break;
-		G_iL[nG++] = iList;
-
-		if (SgInfo_CI)
-			SgInfo->PointGroup = PG_2_m;
-		else if (deterRotMx(SgInfo->ListSeitzMx[iList].s.R) == -1)
-			SgInfo->PointGroup = PG_m;
-		else
-			SgInfo->PointGroup = PG_2;
-
-		if (iList_1 >= 0)
-			G_iL[nG++] = iList_1;
-
-		SgInfo->nGenerator = nG;
-		return 0;
-
-	case XS_Orthorhombic:
-		iList = FindSeitzMx(SgInfo, 2, HonorSign, 'z', '=');
-		if (iList >= 0)
+		case XS_Monoclinic:
+			iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '=');
+			if (iList < 0)
+				break;
 			G_iL[nG++] = iList;
 
-		iList = FindSeitzMx(SgInfo, 2, HonorSign, 'x', '=');
-		if (iList >= 0)
-			G_iL[nG++] = iList;
+			if (SgInfo_CI)
+				SgInfo->PointGroup = PG_2_m;
+			else if (deterRotMx(SgInfo->ListSeitzMx[iList].s.R) == -1)
+				SgInfo->PointGroup = PG_m;
+			else
+				SgInfo->PointGroup = PG_2;
 
-		if (nG < 2)
-		{
-			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'y', '=');
+			if (iList_1 >= 0)
+				G_iL[nG++] = iList_1;
+
+			SgInfo->nGenerator = nG;
+			return 0;
+
+		case XS_Orthorhombic:
+			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'z', '=');
 			if (iList >= 0)
 				G_iL[nG++] = iList;
-		}
 
-		if (nG != 2)
-			break;
-
-		if (SgInfo_CI)
-			SgInfo->PointGroup = PG_mmm;
-		else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1 ||
-			 deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
-			SgInfo->PointGroup = PG_mm2;
-		else
-			SgInfo->PointGroup = PG_222;
-
-		if (iList_1 >= 0)
-			G_iL[nG++] = iList_1;
-
-		SgInfo->nGenerator = nG;
-		return 0;
-
-	case XS_Tetragonal:
-		iList = FindSeitzMx(SgInfo, 4, HonorSign, 0, '=');
-		if (iList < 0)
-			break;
-		G_iL[nG++] = iList;
-
-		if (SgInfo->UniqueRefAxis != 'x')
-		{
 			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'x', '=');
 			if (iList >= 0)
 				G_iL[nG++] = iList;
-		}
-		if (nG < 2 && SgInfo->UniqueRefAxis != 'z')
-		{
-			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'z', '=');
-			if (iList >= 0)
-				G_iL[nG++] = iList;
-		}
-		if (nG < 2 && SgInfo->UniqueRefAxis != 'y')
-		{
-			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'y', '=');
-			if (iList >= 0)
-				G_iL[nG++] = iList;
-		}
 
-		if (nG < 2)
-		{
-			if (SgInfo_CI)
-				SgInfo->PointGroup = PG_4_m;
-			else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
-				SgInfo->PointGroup = PG_4b;
-			else
-				SgInfo->PointGroup = PG_4;
-		}
-		else
-		{
-			if (SgInfo_CI)
-				SgInfo->PointGroup = PG_4_mmm;
-			else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
+			if (nG < 2)
 			{
-				if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
-					SgInfo->PointGroup = PG_4bm2;
-				else
-					SgInfo->PointGroup = PG_4b2m;
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 'y', '=');
+				if (iList >= 0)
+					G_iL[nG++] = iList;
 			}
+
+			if (nG != 2)
+				break;
+
+			if (SgInfo_CI)
+				SgInfo->PointGroup = PG_mmm;
+			else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1 ||
+				 deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
+				SgInfo->PointGroup = PG_mm2;
 			else
-			{
-				if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
-					SgInfo->PointGroup = PG_4mm;
-				else
-					SgInfo->PointGroup = PG_422;
-			}
-		}
+				SgInfo->PointGroup = PG_222;
 
-		if (iList_1 >= 0)
-			G_iL[nG++] = iList_1;
+			if (iList_1 >= 0)
+				G_iL[nG++] = iList_1;
 
-		SgInfo->nGenerator = nG;
-		return 0;
+			SgInfo->nGenerator = nG;
+			return 0;
 
-	case XS_Trigonal:
-	case XS_Hexagonal:
-		Flag3asterisk = 0;
-
-		if (SgInfo->XtalSystem == XS_Trigonal)
-		{
-			iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '=');
+		case XS_Tetragonal:
+			iList = FindSeitzMx(SgInfo, 4, HonorSign, 0, '=');
 			if (iList < 0)
-			{
-				iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '*');
-				Flag3asterisk = 1;
-			}
-		}
-		else
-			iList = FindSeitzMx(SgInfo, 6, HonorSign, 0, '=');
-
-		if (iList < 0)
-			break;
-		G_iL[nG++] = iList;
-
-		iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '\'');
-		if (iList >= 0)
+				break;
 			G_iL[nG++] = iList;
 
-		FlagPG = -1;
+			if (SgInfo->UniqueRefAxis != 'x')
+			{
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 'x', '=');
+				if (iList >= 0)
+					G_iL[nG++] = iList;
+			}
+			if (nG < 2 && SgInfo->UniqueRefAxis != 'z')
+			{
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 'z', '=');
+				if (iList >= 0)
+					G_iL[nG++] = iList;
+			}
+			if (nG < 2 && SgInfo->UniqueRefAxis != 'y')
+			{
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 'y', '=');
+				if (iList >= 0)
+					G_iL[nG++] = iList;
+			}
 
-		if (nG < 2)
-		{
-			iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '"');
+			if (nG < 2)
+			{
+				if (SgInfo_CI)
+					SgInfo->PointGroup = PG_4_m;
+				else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
+					SgInfo->PointGroup = PG_4b;
+				else
+					SgInfo->PointGroup = PG_4;
+			}
+			else
+			{
+				if (SgInfo_CI)
+					SgInfo->PointGroup = PG_4_mmm;
+				else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
+				{
+					if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
+						SgInfo->PointGroup = PG_4bm2;
+					else
+						SgInfo->PointGroup = PG_4b2m;
+				}
+				else
+				{
+					if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
+						SgInfo->PointGroup = PG_4mm;
+					else
+						SgInfo->PointGroup = PG_422;
+				}
+			}
+
+			if (iList_1 >= 0)
+				G_iL[nG++] = iList_1;
+
+			SgInfo->nGenerator = nG;
+			return 0;
+
+		case XS_Trigonal:
+		case XS_Hexagonal:
+			Flag3asterisk = 0;
+
+			if (SgInfo->XtalSystem == XS_Trigonal)
+			{
+				iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '=');
+				if (iList < 0)
+				{
+					iList = FindSeitzMx(SgInfo, 3, HonorSign, 0, '*');
+					Flag3asterisk = 1;
+				}
+			}
+			else
+				iList = FindSeitzMx(SgInfo, 6, HonorSign, 0, '=');
+
+			if (iList < 0)
+				break;
+			G_iL[nG++] = iList;
+
+			iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '\'');
 			if (iList >= 0)
 				G_iL[nG++] = iList;
-			FlagPG = 1;
-		}
 
-		if (SgInfo->XtalSystem == XS_Trigonal)
-		{
+			FlagPG = -1;
+
 			if (nG < 2)
 			{
-				if (SgInfo_CI)
-					SgInfo->PointGroup = PG_3b;
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 0, '"');
+				if (iList >= 0)
+					G_iL[nG++] = iList;
+				FlagPG = 1;
+			}
+
+			if (SgInfo->XtalSystem == XS_Trigonal)
+			{
+				if (nG < 2)
+				{
+					if (SgInfo_CI)
+						SgInfo->PointGroup = PG_3b;
+					else
+						SgInfo->PointGroup = PG_3;
+				}
 				else
-					SgInfo->PointGroup = PG_3;
+				{
+					if (Flag3asterisk == 1)
+					{
+						if (SgInfo_CI)
+							SgInfo->PointGroup = PG_3bm;
+						else
+						{
+							FlagPG = deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R);
+							if (FlagPG == -1)
+								SgInfo->PointGroup = PG_3m;
+							else
+								SgInfo->PointGroup = PG_32;
+						}
+					}
+					else if (FlagPG == -1)
+					{
+						if (SgInfo_CI)
+							SgInfo->PointGroup = PG_3b1m;
+						else
+						{
+							FlagPG = deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R);
+							if (FlagPG == -1)
+								SgInfo->PointGroup = PG_31m;
+							else
+								SgInfo->PointGroup = PG_312;
+						}
+					}
+					else
+					{
+						if (SgInfo_CI)
+							SgInfo->PointGroup = PG_3bm1;
+						else
+						{
+							FlagPG = deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R);
+							if (FlagPG == -1)
+								SgInfo->PointGroup = PG_3m1;
+							else
+								SgInfo->PointGroup = PG_321;
+						}
+					}
+				}
 			}
 			else
 			{
-				if (Flag3asterisk == 1)
+				if (nG < 2)
 				{
 					if (SgInfo_CI)
-						SgInfo->PointGroup = PG_3bm;
+						SgInfo->PointGroup = PG_6_m;
+					else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
+						SgInfo->PointGroup = PG_6b;
 					else
-					{
-						FlagPG = deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R);
-						if (FlagPG == -1)
-							SgInfo->PointGroup = PG_3m;
-						else
-							SgInfo->PointGroup = PG_32;
-					}
-				}
-				else if (FlagPG == -1)
-				{
-					if (SgInfo_CI)
-						SgInfo->PointGroup = PG_3b1m;
-					else
-					{
-						FlagPG = deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R);
-						if (FlagPG == -1)
-							SgInfo->PointGroup = PG_31m;
-						else
-							SgInfo->PointGroup = PG_312;
-					}
+						SgInfo->PointGroup = PG_6;
 				}
 				else
 				{
 					if (SgInfo_CI)
-						SgInfo->PointGroup = PG_3bm1;
-					else
+						SgInfo->PointGroup = PG_6_mmm;
+					else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
 					{
-						FlagPG = deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R);
-						if (FlagPG == -1)
-							SgInfo->PointGroup = PG_3m1;
+						if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == FlagPG)
+							SgInfo->PointGroup = PG_6b2m;
 						else
-							SgInfo->PointGroup = PG_321;
+							SgInfo->PointGroup = PG_6bm2;
 					}
+					else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
+						SgInfo->PointGroup = PG_6mm;
+					else
+						SgInfo->PointGroup = PG_622;
 				}
 			}
-		}
-		else
-		{
-			if (nG < 2)
+
+			if (iList_1 >= 0)
+				G_iL[nG++] = iList_1;
+
+			SgInfo->nGenerator = nG;
+			return 0;
+
+		case XS_Cubic:
+			FlagPG = 0;
+
+			iList = FindSeitzMx(SgInfo, 4, HonorSign, 'z', '=');
+			if (iList < 0)
+			{
+				iList = FindSeitzMx(SgInfo, 2, HonorSign, 'z', '=');
+				FlagPG = 1;
+			}
+			if (iList < 0)
+				break;
+			G_iL[nG++] = iList;
+
+			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'x', '=');
+			if (iList < 0)
+				break;
+			G_iL[nG++] = iList;
+
+			iList = FindSeitzMx(SgInfo, 3, HonorSign, 'o', '*');
+			if (iList < 0)
+				break;
+			G_iL[nG++] = iList;
+
+			if (FlagPG)
 			{
 				if (SgInfo_CI)
-					SgInfo->PointGroup = PG_6_m;
+					SgInfo->PointGroup = PG_m3b;
+				else
+					SgInfo->PointGroup = PG_23;
+			}
+			else
+			{
+				if (SgInfo_CI)
+					SgInfo->PointGroup = PG_m3bm;
 				else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
-					SgInfo->PointGroup = PG_6b;
+					SgInfo->PointGroup = PG_4b3m;
 				else
-					SgInfo->PointGroup = PG_6;
+					SgInfo->PointGroup = PG_432;
 			}
-			else
-			{
-				if (SgInfo_CI)
-					SgInfo->PointGroup = PG_6_mmm;
-				else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
-				{
-					if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == FlagPG)
-						SgInfo->PointGroup = PG_6b2m;
-					else
-						SgInfo->PointGroup = PG_6bm2;
-				}
-				else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[1]].s.R) == -1)
-					SgInfo->PointGroup = PG_6mm;
-				else
-					SgInfo->PointGroup = PG_622;
-			}
-		}
 
-		if (iList_1 >= 0)
-			G_iL[nG++] = iList_1;
+			if (iList_1 >= 0)
+				G_iL[nG++] = iList_1;
 
-		SgInfo->nGenerator = nG;
-		return 0;
+			SgInfo->nGenerator = nG;
+			return 0;
 
-	case XS_Cubic:
-		FlagPG = 0;
-
-		iList = FindSeitzMx(SgInfo, 4, HonorSign, 'z', '=');
-		if (iList < 0)
-		{
-			iList = FindSeitzMx(SgInfo, 2, HonorSign, 'z', '=');
-			FlagPG = 1;
-		}
-		if (iList < 0)
+		default:
 			break;
-		G_iL[nG++] = iList;
-
-		iList = FindSeitzMx(SgInfo, 2, HonorSign, 'x', '=');
-		if (iList < 0)
-			break;
-		G_iL[nG++] = iList;
-
-		iList = FindSeitzMx(SgInfo, 3, HonorSign, 'o', '*');
-		if (iList < 0)
-			break;
-		G_iL[nG++] = iList;
-
-		if (FlagPG)
-		{
-			if (SgInfo_CI)
-				SgInfo->PointGroup = PG_m3b;
-			else
-				SgInfo->PointGroup = PG_23;
-		}
-		else
-		{
-			if (SgInfo_CI)
-				SgInfo->PointGroup = PG_m3bm;
-			else if (deterRotMx(SgInfo->ListSeitzMx[G_iL[0]].s.R) == -1)
-				SgInfo->PointGroup = PG_4b3m;
-			else
-				SgInfo->PointGroup = PG_432;
-		}
-
-		if (iList_1 >= 0)
-			G_iL[nG++] = iList_1;
-
-		SgInfo->nGenerator = nG;
-		return 0;
-
-	default:
-		break;
 	}
 
 #undef G_iL
@@ -2645,68 +2645,68 @@ int CompleteSgInfo(T_SgInfo *SgInfo)
 
 	switch (SgInfo->LatticeInfo->Code)
 	{
-	case 'P':
-		SgInfo->CCMx_LP = CCMx_PP;
-		break;
-	case 'A':
-		SgInfo->CCMx_LP = CCMx_AP;
-		break;
-	case 'B':
-		SgInfo->CCMx_LP = CCMx_BP;
-		break;
-	case 'C':
-		SgInfo->CCMx_LP = CCMx_CP;
-		break;
-	case 'I':
-		SgInfo->CCMx_LP = CCMx_IP;
-		break;
-	case 'R':
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 0:
-		case 'z':
-			SgInfo->CCMx_LP = CCMx_RP_z;
+		case 'P':
+			SgInfo->CCMx_LP = CCMx_PP;
 			break;
-		case 'y':
-			SgInfo->CCMx_LP = CCMx_RP_y;
+		case 'A':
+			SgInfo->CCMx_LP = CCMx_AP;
+			break;
+		case 'B':
+			SgInfo->CCMx_LP = CCMx_BP;
+			break;
+		case 'C':
+			SgInfo->CCMx_LP = CCMx_CP;
+			break;
+		case 'I':
+			SgInfo->CCMx_LP = CCMx_IP;
+			break;
+		case 'R':
+			switch (SgInfo->UniqueRefAxis)
+			{
+				case 0:
+				case 'z':
+					SgInfo->CCMx_LP = CCMx_RP_z;
+					break;
+				case 'y':
+					SgInfo->CCMx_LP = CCMx_RP_y;
+					break;
+				default:
+					break;
+			}
+			break;
+		case 'S':
+			switch (SgInfo->UniqueRefAxis)
+			{
+				case 0:
+				case 'y':
+					SgInfo->CCMx_LP = CCMx_SP_y;
+					break;
+				case 'x':
+					SgInfo->CCMx_LP = CCMx_SP_x;
+					break;
+				default:
+					break;
+			}
+			break;
+		case 'T':
+			switch (SgInfo->UniqueRefAxis)
+			{
+				case 0:
+				case 'x':
+					SgInfo->CCMx_LP = CCMx_TP_x;
+					break;
+				case 'z':
+					SgInfo->CCMx_LP = CCMx_TP_z;
+					break;
+				default:
+					break;
+			}
+			break;
+		case 'F':
+			SgInfo->CCMx_LP = CCMx_FP;
 			break;
 		default:
 			break;
-		}
-		break;
-	case 'S':
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 0:
-		case 'y':
-			SgInfo->CCMx_LP = CCMx_SP_y;
-			break;
-		case 'x':
-			SgInfo->CCMx_LP = CCMx_SP_x;
-			break;
-		default:
-			break;
-		}
-		break;
-	case 'T':
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 0:
-		case 'x':
-			SgInfo->CCMx_LP = CCMx_TP_x;
-			break;
-		case 'z':
-			SgInfo->CCMx_LP = CCMx_TP_z;
-			break;
-		default:
-			break;
-		}
-		break;
-	case 'F':
-		SgInfo->CCMx_LP = CCMx_FP;
-		break;
-	default:
-		break;
 	}
 
 	if (SgInfo->CCMx_LP == NULL)

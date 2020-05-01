@@ -39,42 +39,42 @@ void MarkLegalOrigins(const T_SgInfo *SgInfo, int *TestField)
 
 	switch (SgInfo->LatticeInfo->Code)
 	{
-	default:
-	case 'P':
-		lx = ly = lz = 12;
-		break;
-	case 'A':
-		lx = ly = 12;
-		lz = 6;
-		break;
-	case 'B':
-		ly = lz = 12;
-		lx = 6;
-		break;
-	case 'C':
-		lz = lx = 12;
-		ly = 6;
-		break;
-	case 'I':
-		lx = ly = 12;
-		lz = 6;
-		break;
-	case 'R':
-		lx = ly = 12;
-		lz = 4;
-		break;
-	case 'S':
-		lz = lx = 12;
-		ly = 4;
-		break;
-	case 'T':
-		ly = lz = 12;
-		lx = 4;
-		break;
-	case 'F':
-		lx = 12;
-		ly = lz = 6;
-		break;
+		default:
+		case 'P':
+			lx = ly = lz = 12;
+			break;
+		case 'A':
+			lx = ly = 12;
+			lz = 6;
+			break;
+		case 'B':
+			ly = lz = 12;
+			lx = 6;
+			break;
+		case 'C':
+			lz = lx = 12;
+			ly = 6;
+			break;
+		case 'I':
+			lx = ly = 12;
+			lz = 6;
+			break;
+		case 'R':
+			lx = ly = 12;
+			lz = 4;
+			break;
+		case 'S':
+			lz = lx = 12;
+			ly = 4;
+			break;
+		case 'T':
+			ly = lz = 12;
+			lx = 4;
+			break;
+		case 'F':
+			lx = 12;
+			ly = lz = 6;
+			break;
 	}
 
 	for (O[0] = 0; O[0] < 12; O[0]++)

@@ -204,37 +204,37 @@ bool PairPotential::setUp(AtomType *typeI, AtomType *typeJ)
 		shortRangeType_ = atomTypeI_->shortRangeType();
 		switch (shortRangeType_)
 		{
-		case (Forcefield::UndefinedType):
-			return Messenger::error("PairPotential between atom types '%s' and '%s' is undefined.\n",
-						atomTypeI_->name(), atomTypeJ_->name());
-		case (Forcefield::NoInteractionType):
-			break;
-		case (Forcefield::LennardJonesType):
-			/*
-			 * Combine parameters (Lorentz-Berthelot):
-			 * Parameter 0 = Epsilon
-			 * Parameter 1 = Sigma
-			 */
-			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-			parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5;
-			chargeI_ = paramsI.charge();
-			chargeJ_ = paramsJ.charge();
-			break;
-		case (Forcefield::LennardJonesGeometricType):
-			/*
-			 * Combine parameters (Geometric):
-			 * Parameter 0 = Epsilon
-			 * Parameter 1 = Sigma
-			 */
-			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-			parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
-			chargeI_ = paramsI.charge();
-			chargeJ_ = paramsJ.charge();
-			break;
-		default:
-			Messenger::error("Short-range type %i is not accounted for in PairPotential::setUp().\n",
-					 shortRangeType_);
-			return false;
+			case (Forcefield::UndefinedType):
+				return Messenger::error("PairPotential between atom types '%s' and '%s' is undefined.\n",
+							atomTypeI_->name(), atomTypeJ_->name());
+			case (Forcefield::NoInteractionType):
+				break;
+			case (Forcefield::LennardJonesType):
+				/*
+				 * Combine parameters (Lorentz-Berthelot):
+				 * Parameter 0 = Epsilon
+				 * Parameter 1 = Sigma
+				 */
+				parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+				parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5;
+				chargeI_ = paramsI.charge();
+				chargeJ_ = paramsJ.charge();
+				break;
+			case (Forcefield::LennardJonesGeometricType):
+				/*
+				 * Combine parameters (Geometric):
+				 * Parameter 0 = Epsilon
+				 * Parameter 1 = Sigma
+				 */
+				parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+				parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
+				chargeI_ = paramsI.charge();
+				chargeJ_ = paramsJ.charge();
+				break;
+			default:
+				Messenger::error("Short-range type %i is not accounted for in PairPotential::setUp().\n",
+						 shortRangeType_);
+				return false;
 		}
 	}
 	else

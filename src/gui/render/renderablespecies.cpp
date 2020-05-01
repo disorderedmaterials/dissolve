@@ -577,20 +577,21 @@ bool RenderableSpecies::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableSpecies::DisplayKeyword):
-			if (!speciesDisplayStyles().isValid(parser.argc(1)))
-				return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableSpecies::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableSpecies::DisplayKeyword):
+				if (!speciesDisplayStyles().isValid(parser.argc(1)))
+					return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableSpecies::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

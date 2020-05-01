@@ -68,20 +68,20 @@ bool NETAPresenceNode::setModifier(const char *modifier, ComparisonOperator op, 
 
 	switch (modifiers().enumeration(modifier))
 	{
-	case (NETAPresenceNode::NBondsModifier):
-		nBondsValue_ = value;
-		nBondsValueOperator_ = op;
-		break;
-	case (NETAPresenceNode::NHydrogensModifier):
-		nHydrogensValue_ = value;
-		nHydrogensValueOperator_ = op;
-		break;
-	case (NETAPresenceNode::RepeatCharacterModifier):
-		repeatCount_ = value;
-		repeatCountOperator_ = op;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle modifier '%s' in character node.\n", modifier);
+		case (NETAPresenceNode::NBondsModifier):
+			nBondsValue_ = value;
+			nBondsValueOperator_ = op;
+			break;
+		case (NETAPresenceNode::NHydrogensModifier):
+			nHydrogensValue_ = value;
+			nHydrogensValueOperator_ = op;
+			break;
+		case (NETAPresenceNode::RepeatCharacterModifier):
+			repeatCount_ = value;
+			repeatCountOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in character node.\n", modifier);
 	}
 
 	return true;

@@ -695,17 +695,17 @@ Vec3<double> Axes::tickDirection(int axis) const
 	if (useBestFlatView_ && parentView_.isFlatView())
 		switch (parentView_.viewType())
 		{
-		case (View::FlatXYView):
-			return (axis == 0 ? Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0)
-					  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
-		case (View::FlatXZView):
-			return (axis == 0 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
-					  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
-		case (View::FlatZYView):
-			return (axis == 1 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
-					  : Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0));
-		default:
-			break;
+			case (View::FlatXYView):
+				return (axis == 0 ? Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0)
+						  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
+			case (View::FlatXZView):
+				return (axis == 0 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
+						  : Vec3<double>(inverted_.x ? 1.0 : -1.0, 0.0, 0.0));
+			case (View::FlatZYView):
+				return (axis == 1 ? Vec3<double>(0.0, 0.0, inverted_.z ? 1.0 : -1.0)
+						  : Vec3<double>(0.0, inverted_.y ? 1.0 : -1.0, 0.0));
+			default:
+				break;
 		}
 
 	// Safety catch
@@ -865,14 +865,14 @@ Vec3<double> Axes::labelOrientation(int axis) const
 	if (useBestFlatView_ && parentView_.isFlatView())
 		switch (parentView_.viewType())
 		{
-		case (View::FlatXYView):
-			return (axis == 0 ? Vec3<double>(0.0, 0.0, 0.2) : Vec3<double>(0.0, 0.0, 0.2));
-		case (View::FlatXZView):
-			return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.2) : Vec3<double>(270.0, 0.0, 0.2));
-		case (View::FlatZYView):
-			return (axis == 1 ? Vec3<double>(90.0, 0.0, 0.2) : Vec3<double>(90.0, 0.0, 0.2));
-		default:
-			break;
+			case (View::FlatXYView):
+				return (axis == 0 ? Vec3<double>(0.0, 0.0, 0.2) : Vec3<double>(0.0, 0.0, 0.2));
+			case (View::FlatXZView):
+				return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.2) : Vec3<double>(270.0, 0.0, 0.2));
+			case (View::FlatZYView):
+				return (axis == 1 ? Vec3<double>(90.0, 0.0, 0.2) : Vec3<double>(90.0, 0.0, 0.2));
+			default:
+				break;
 		}
 
 	// Safety catch
@@ -893,17 +893,23 @@ TextPrimitive::TextAnchor Axes::labelAnchor(int axis) const
 	if (useBestFlatView_ && parentView_.isFlatView())
 		switch (parentView_.viewType())
 		{
-		case (View::FlatXYView):
-			return (axis == 0 ? (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-					  : (inverted_.x ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor));
-		case (View::FlatXZView):
-			return (axis == 0 ? (inverted_.z ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-					  : (inverted_.x ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor));
-		case (View::FlatZYView):
-			return (axis == 1 ? (inverted_.z ? TextPrimitive::MiddleLeftAnchor : TextPrimitive::MiddleRightAnchor)
-					  : (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor));
-		default:
-			break;
+			case (View::FlatXYView):
+				return (axis == 0 ? (inverted_.y ? TextPrimitive::BottomMiddleAnchor
+								 : TextPrimitive::TopMiddleAnchor)
+						  : (inverted_.x ? TextPrimitive::MiddleLeftAnchor
+								 : TextPrimitive::MiddleRightAnchor));
+			case (View::FlatXZView):
+				return (axis == 0 ? (inverted_.z ? TextPrimitive::BottomMiddleAnchor
+								 : TextPrimitive::TopMiddleAnchor)
+						  : (inverted_.x ? TextPrimitive::MiddleLeftAnchor
+								 : TextPrimitive::MiddleRightAnchor));
+			case (View::FlatZYView):
+				return (axis == 1 ? (inverted_.z ? TextPrimitive::MiddleLeftAnchor
+								 : TextPrimitive::MiddleRightAnchor)
+						  : (inverted_.y ? TextPrimitive::BottomMiddleAnchor
+								 : TextPrimitive::TopMiddleAnchor));
+			default:
+				break;
 		}
 
 	// Safety catch
@@ -935,14 +941,14 @@ Vec3<double> Axes::titleOrientation(int axis) const
 	if (useBestFlatView_ && parentView_.isFlatView())
 		switch (parentView_.viewType())
 		{
-		case (View::FlatXYView):
-			return (axis == 0 ? Vec3<double>(0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
-		case (View::FlatXZView):
-			return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.0) : Vec3<double>(270.0, 0.0, 90.0));
-		case (View::FlatZYView):
-			return (axis == 1 ? Vec3<double>(0.0, 90.0, 90.0) : Vec3<double>(0.0, 90.0, 0.0));
-		default:
-			break;
+			case (View::FlatXYView):
+				return (axis == 0 ? Vec3<double>(0.0, 0.0) : Vec3<double>(0.0, 270.0, 0.0));
+			case (View::FlatXZView):
+				return (axis == 0 ? Vec3<double>(270.0, 0.0, 0.0) : Vec3<double>(270.0, 0.0, 90.0));
+			case (View::FlatZYView):
+				return (axis == 1 ? Vec3<double>(0.0, 90.0, 90.0) : Vec3<double>(0.0, 90.0, 0.0));
+			default:
+				break;
 		}
 
 	// Safety catch
@@ -975,17 +981,23 @@ TextPrimitive::TextAnchor Axes::titleAnchor(int axis) const
 	if (useBestFlatView_ && parentView_.isFlatView())
 		switch (parentView_.viewType())
 		{
-		case (View::FlatXYView):
-			return (axis == 0 ? (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-					  : (inverted_.x ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor));
-		case (View::FlatXZView):
-			return (axis == 0 ? (inverted_.z ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor)
-					  : (inverted_.x ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor));
-		case (View::FlatZYView):
-			return (axis == 1 ? (inverted_.z ? TextPrimitive::TopMiddleAnchor : TextPrimitive::BottomMiddleAnchor)
-					  : (inverted_.y ? TextPrimitive::BottomMiddleAnchor : TextPrimitive::TopMiddleAnchor));
-		default:
-			break;
+			case (View::FlatXYView):
+				return (axis == 0 ? (inverted_.y ? TextPrimitive::BottomMiddleAnchor
+								 : TextPrimitive::TopMiddleAnchor)
+						  : (inverted_.x ? TextPrimitive::TopMiddleAnchor
+								 : TextPrimitive::BottomMiddleAnchor));
+			case (View::FlatXZView):
+				return (axis == 0 ? (inverted_.z ? TextPrimitive::BottomMiddleAnchor
+								 : TextPrimitive::TopMiddleAnchor)
+						  : (inverted_.x ? TextPrimitive::TopMiddleAnchor
+								 : TextPrimitive::BottomMiddleAnchor));
+			case (View::FlatZYView):
+				return (axis == 1 ? (inverted_.z ? TextPrimitive::TopMiddleAnchor
+								 : TextPrimitive::BottomMiddleAnchor)
+						  : (inverted_.y ? TextPrimitive::BottomMiddleAnchor
+								 : TextPrimitive::TopMiddleAnchor));
+			default:
+				break;
 		}
 
 	// Safety catch

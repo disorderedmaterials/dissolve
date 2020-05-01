@@ -217,20 +217,21 @@ bool RenderableSpeciesSite::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableSpeciesSite::DisplayKeyword):
-			if (!speciesSiteDisplayStyles().isValid(parser.argc(1)))
-				return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableSpeciesSite::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableSpeciesSite::DisplayKeyword):
+				if (!speciesSiteDisplayStyles().isValid(parser.argc(1)))
+					return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableSpeciesSite::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

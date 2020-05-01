@@ -237,21 +237,21 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
 		// Set / generate position of Molecule
 		switch (positioning)
 		{
-		case (AddSpeciesProcedureNode::RandomPositioning):
-			fr.set(procPool.random(), procPool.random(), procPool.random());
-			newCentre = box->fracToReal(fr);
-			mol->setCentreOfGeometry(box, newCentre);
-			break;
-		case (AddSpeciesProcedureNode::CentralPositioning):
-			fr.set(0.5, 0.5, 0.5);
-			newCentre = box->fracToReal(fr);
-			mol->setCentreOfGeometry(box, newCentre);
-			break;
-		case (AddSpeciesProcedureNode::CurrentPositioning):
-			break;
-		default:
-			Messenger::error("Unrecognised positioning type.\n");
-			break;
+			case (AddSpeciesProcedureNode::RandomPositioning):
+				fr.set(procPool.random(), procPool.random(), procPool.random());
+				newCentre = box->fracToReal(fr);
+				mol->setCentreOfGeometry(box, newCentre);
+				break;
+			case (AddSpeciesProcedureNode::CentralPositioning):
+				fr.set(0.5, 0.5, 0.5);
+				newCentre = box->fracToReal(fr);
+				mol->setCentreOfGeometry(box, newCentre);
+				break;
+			case (AddSpeciesProcedureNode::CurrentPositioning):
+				break;
+			default:
+				Messenger::error("Unrecognised positioning type.\n");
+				break;
 		}
 
 		// Generate and apply a random rotation matrix

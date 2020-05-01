@@ -187,29 +187,29 @@ void SetListMin_hkl(const T_SgInfo *SgInfo, int Maxk, int Maxl, int *Minh, int *
 
 	switch (SgInfo->XtalSystem)
 	{
-	case XS_Triclinic:
-		*Mink = -Maxk;
-		*Minl = -Maxl;
-		break;
-	case XS_Monoclinic:
-		if (SgInfo->UniqueRefAxis == 'z')
-		{
+		case XS_Triclinic:
 			*Mink = -Maxk;
-			*Minl = 0;
-		}
-		else
-		{
-			*Mink = 0;
 			*Minl = -Maxl;
-		}
-		break;
-	default:
-		if (SgInfo->XtalSystem == XS_Trigonal && SgInfo->UniqueDirCode == '*')
-			*Mink = -Maxk;
-		else
-			*Mink = 0;
-		*Minl = 0;
-		break;
+			break;
+		case XS_Monoclinic:
+			if (SgInfo->UniqueRefAxis == 'z')
+			{
+				*Mink = -Maxk;
+				*Minl = 0;
+			}
+			else
+			{
+				*Mink = 0;
+				*Minl = -Maxl;
+			}
+			break;
+		default:
+			if (SgInfo->XtalSystem == XS_Trigonal && SgInfo->UniqueDirCode == '*')
+				*Mink = -Maxk;
+			else
+				*Mink = 0;
+			*Minl = 0;
+			break;
 	}
 }
 

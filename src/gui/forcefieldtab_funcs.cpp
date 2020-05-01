@@ -581,34 +581,34 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		atomType->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Charge
-	case (2):
-		atomType->parameters().setCharge(w->text().toDouble());
-		atomTypeDataModified();
-		dissolveWindow_->setModified();
-		break;
-	// Short-range form
-	case (3):
-		atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
-		atomTypeDataModified();
-		break;
-	// Parameters
-	case (4):
-	case (5):
-	case (6):
-	case (7):
-		atomType->parameters().setParameter(w->column() - 4, w->text().toDouble());
-		atomTypeDataModified();
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			atomType->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Charge
+		case (2):
+			atomType->parameters().setCharge(w->text().toDouble());
+			atomTypeDataModified();
+			dissolveWindow_->setModified();
+			break;
+		// Short-range form
+		case (3):
+			atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
+			atomTypeDataModified();
+			break;
+		// Parameters
+		case (4):
+		case (5):
+		case (6):
+		case (7):
+			atomType->parameters().setParameter(w->column() - 4, w->text().toDouble());
+			atomTypeDataModified();
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
+			break;
 	}
 }
 
@@ -768,32 +768,33 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Functional form
-	case (2):
-		// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Charge I
-	case (3):
-		pairPotential->setChargeI(w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	// Charge J
-	case (4):
-		pairPotential->setChargeJ(w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (5):
-	case (6):
-	case (7):
-	case (8):
-		pairPotential->setParameter(w->column() - 5, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());
-		break;
+		// Functional form
+		case (2):
+			// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Charge I
+		case (3):
+			pairPotential->setChargeI(w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Charge J
+		case (4):
+			pairPotential->setChargeJ(w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			pairPotential->setParameter(w->column() - 5, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n",
+					 w->column());
+			break;
 	}
 }
 
@@ -814,27 +815,27 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 
@@ -855,27 +856,27 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 
@@ -896,27 +897,27 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 
@@ -937,27 +938,27 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 

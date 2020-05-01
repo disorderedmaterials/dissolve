@@ -608,82 +608,82 @@ bool LineParser::getNextArg(int optionMask, CharString *destarg)
 		c = line_[linePos_];
 		switch (c)
 		{
-		// End of line markers
-		case (10): // Line feed (\n)
-		case (13): // Carriage Return
-			done = true;
-			endOfLine_ = true;
-			break;
-		// Delimiters
-		// If we encounter one and arg length != 0 this signals the end of the argument.
-		case (','): // Comma
-			if (!(optionMask & LineParser::CommasAreDelimiters))
-			{
-				tempArg_[arglen++] = c;
-				break;
-			}
-		case (9):   // Horizontal Tab
-		case (' '): // Space
-			if (quotechar != '\0')
-				tempArg_[arglen++] = c;
-			else if (arglen != 0)
+			// End of line markers
+			case (10): // Line feed (\n)
+			case (13): // Carriage Return
 				done = true;
-			break;
-		// Quote marks
-		// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
-		case (34): // Double quotes
-		case (39): // Single quotes
-			if (optionMask & LineParser::IgnoreQuotes)
+				endOfLine_ = true;
 				break;
-			if (quotechar == '\0')
-				quotechar = c;
-			else if (quotechar == c)
-			{
-				quotechar = '\0';
-				hadquotes = true;
-				done = true;
-			}
-			else
-				tempArg_[arglen++] = c;
-			break;
-		// Curly brackets - treat in the same way as quotes
-		case ('{'):
-		case ('}'):
-			// If explicitly not useing braces, add as normal character
-			if (!(optionMask & LineParser::UseBraces))
-				tempArg_[arglen++] = c;
-			else
-			{
-				// If the quotechar is a left brace and we have a right brace, stop quoting
-				if ((quotechar == '{') && (c == '}'))
+			// Delimiters
+			// If we encounter one and arg length != 0 this signals the end of the argument.
+			case (','): // Comma
+				if (!(optionMask & LineParser::CommasAreDelimiters))
 				{
-					quotechar = '\0';
+					tempArg_[arglen++] = c;
 					break;
 				}
-				// If we are already quoting by some other means, add character and exit
+			case (9):   // Horizontal Tab
+			case (' '): // Space
 				if (quotechar != '\0')
 					tempArg_[arglen++] = c;
-				// No previous quoting, so begin quoting if '{'
-				if (c == '{')
-					quotechar = '{';
-			}
-			break;
-		// Parentheses
-		case ('('): // Left parenthesis
-		case (')'): // Right parenthesis
-			if (optionMask & LineParser::StripBrackets)
+				else if (arglen != 0)
+					done = true;
 				break;
-			tempArg_[arglen++] = c;
-			break;
-		// Comment markers
-		case ('#'): // "#" Rest/all of line is a comment
-			endOfLine_ = true;
-			done = true;
-			break;
-		// Normal character
-		default:
-			tempArg_[arglen++] = c;
-			break;
+			// Quote marks
+			// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
+			case (34): // Double quotes
+			case (39): // Single quotes
+				if (optionMask & LineParser::IgnoreQuotes)
+					break;
+				if (quotechar == '\0')
+					quotechar = c;
+				else if (quotechar == c)
+				{
+					quotechar = '\0';
+					hadquotes = true;
+					done = true;
+				}
+				else
+					tempArg_[arglen++] = c;
+				break;
+			// Curly brackets - treat in the same way as quotes
+			case ('{'):
+			case ('}'):
+				// If explicitly not useing braces, add as normal character
+				if (!(optionMask & LineParser::UseBraces))
+					tempArg_[arglen++] = c;
+				else
+				{
+					// If the quotechar is a left brace and we have a right brace, stop quoting
+					if ((quotechar == '{') && (c == '}'))
+					{
+						quotechar = '\0';
+						break;
+					}
+					// If we are already quoting by some other means, add character and exit
+					if (quotechar != '\0')
+						tempArg_[arglen++] = c;
+					// No previous quoting, so begin quoting if '{'
+					if (c == '{')
+						quotechar = '{';
+				}
+				break;
+			// Parentheses
+			case ('('): // Left parenthesis
+			case (')'): // Right parenthesis
+				if (optionMask & LineParser::StripBrackets)
+					break;
+				tempArg_[arglen++] = c;
+				break;
+			// Comment markers
+			case ('#'): // "#" Rest/all of line is a comment
+				endOfLine_ = true;
+				done = true;
+				break;
+			// Normal character
+			default:
+				tempArg_[arglen++] = c;
+				break;
 		}
 		// Increment line position
 		++linePos_;
@@ -725,18 +725,18 @@ bool LineParser::getNextN(int optionMask, int length, CharString *destarg)
 		c = line_[linePos_];
 		switch (c)
 		{
-		// Brackets
-		case ('('): // Left parenthesis
-		case (')'): // Right parenthesis
-			if (optionMask & LineParser::StripBrackets)
+			// Brackets
+			case ('('): // Left parenthesis
+			case (')'): // Right parenthesis
+				if (optionMask & LineParser::StripBrackets)
+					break;
+				tempArg_[arglen] = c;
+				arglen++;
 				break;
-			tempArg_[arglen] = c;
-			arglen++;
-			break;
-		default:
-			tempArg_[arglen] = c;
-			arglen++;
-			break;
+			default:
+				tempArg_[arglen] = c;
+				arglen++;
+				break;
 		}
 		linePos_++;
 	}
@@ -801,15 +801,15 @@ bool LineParser::getRestDelim(CharString *destarg)
 		c = line_[linePos_];
 		switch (c)
 		{
-		// Ignore whitespace occuring before first proper character
-		case (' '):
-		case ('\0'):
-			if (arglen != 0)
+			// Ignore whitespace occuring before first proper character
+			case (' '):
+			case ('\0'):
+				if (arglen != 0)
+					tempArg_[arglen++] = c;
+				break;
+			default:
 				tempArg_[arglen++] = c;
-			break;
-		default:
-			tempArg_[arglen++] = c;
-			break;
+				break;
 		}
 		linePos_++;
 	}
@@ -894,90 +894,90 @@ bool LineParser::getCharsDelim(int optionMask, CharString *source, CharString *d
 		c = (*source)[pos];
 		switch (c)
 		{
-		// End of line markers
-		case (10): // Line feed (\n)
-		case (13): // Carriage Return
-			done = true;
-			break;
-		// Delimiters
-		// If we encounter one and arg length != 0 this signals the end of the argument.
-		case (9):   // Horizontal Tab
-		case (' '): // Space
-		case (','): // Comma
-			if (quotechar != '\0')
-			{
-				tempArg_[arglen] = c;
-				arglen++;
-			}
-			else if (arglen != 0)
+			// End of line markers
+			case (10): // Line feed (\n)
+			case (13): // Carriage Return
 				done = true;
-			break;
-		// Quote marks
-		// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
-		case (34): // Double quotes
-		case (39): // Single quotes
-			if (optionMask & LineParser::IgnoreQuotes)
 				break;
-			if (quotechar == '\0')
-				quotechar = c;
-			else if (quotechar == c)
-			{
-				quotechar = '\0';
-				hadquotes = true;
-				done = true;
-			}
-			else
-			{
-				tempArg_[arglen] = c;
-				arglen++;
-			}
-			break;
-		// Curly brackets - treat in the same way as quotes
-		case ('{'):
-		case ('}'):
-			if (!(optionMask & LineParser::UseBraces))
-			{
-				// Just add as normal character
-				tempArg_[arglen] = c;
-				arglen++;
-			}
-			else
-			{
-				// If the quotechar is a left brace and we have a right brace, stop quoting
-				if ((quotechar == '{') && (c == '}'))
-				{
-					quotechar = '\0';
-					break;
-				}
-				// If we are already quoting by some other means, add character and exit
+			// Delimiters
+			// If we encounter one and arg length != 0 this signals the end of the argument.
+			case (9):   // Horizontal Tab
+			case (' '): // Space
+			case (','): // Comma
 				if (quotechar != '\0')
 				{
 					tempArg_[arglen] = c;
 					arglen++;
 				}
-				// No previous quoting, so begin quoting if '{'
-				if (c == '{')
-					quotechar = '{';
-			}
-			break;
-		// Parentheses
-		case ('('): // Left parenthesis
-		case (')'): // Right parenthesis
-			if (optionMask & LineParser::StripBrackets)
+				else if (arglen != 0)
+					done = true;
 				break;
-			tempArg_[arglen] = c;
-			arglen++;
-			break;
-		// Comment markers
-		case ('#'): // "#" Rest/all of line is a comment
-			endOfLine_ = true;
-			done = true;
-			break;
-		// Normal character
-		default:
-			tempArg_[arglen] = c;
-			arglen++;
-			break;
+			// Quote marks
+			// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
+			case (34): // Double quotes
+			case (39): // Single quotes
+				if (optionMask & LineParser::IgnoreQuotes)
+					break;
+				if (quotechar == '\0')
+					quotechar = c;
+				else if (quotechar == c)
+				{
+					quotechar = '\0';
+					hadquotes = true;
+					done = true;
+				}
+				else
+				{
+					tempArg_[arglen] = c;
+					arglen++;
+				}
+				break;
+			// Curly brackets - treat in the same way as quotes
+			case ('{'):
+			case ('}'):
+				if (!(optionMask & LineParser::UseBraces))
+				{
+					// Just add as normal character
+					tempArg_[arglen] = c;
+					arglen++;
+				}
+				else
+				{
+					// If the quotechar is a left brace and we have a right brace, stop quoting
+					if ((quotechar == '{') && (c == '}'))
+					{
+						quotechar = '\0';
+						break;
+					}
+					// If we are already quoting by some other means, add character and exit
+					if (quotechar != '\0')
+					{
+						tempArg_[arglen] = c;
+						arglen++;
+					}
+					// No previous quoting, so begin quoting if '{'
+					if (c == '{')
+						quotechar = '{';
+				}
+				break;
+			// Parentheses
+			case ('('): // Left parenthesis
+			case (')'): // Right parenthesis
+				if (optionMask & LineParser::StripBrackets)
+					break;
+				tempArg_[arglen] = c;
+				arglen++;
+				break;
+			// Comment markers
+			case ('#'): // "#" Rest/all of line is a comment
+				endOfLine_ = true;
+				done = true;
+				break;
+			// Normal character
+			default:
+				tempArg_[arglen] = c;
+				arglen++;
+				break;
 		}
 		// Increment line position
 		pos++;

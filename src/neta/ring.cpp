@@ -63,16 +63,16 @@ bool NETARingNode::setModifier(const char *modifier, ComparisonOperator op, int 
 
 	switch (modifiers().enumeration(modifier))
 	{
-	case (NETARingNode::SizeModifier):
-		sizeValue_ = value;
-		sizeValueOperator_ = op;
-		break;
-	case (NETARingNode::RepeatRingModifier):
-		repeatCount_ = value;
-		repeatCountOperator_ = op;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle modifier '%s' in ring node.\n", modifier);
+		case (NETARingNode::SizeModifier):
+			sizeValue_ = value;
+			sizeValueOperator_ = op;
+			break;
+		case (NETARingNode::RepeatRingModifier):
+			repeatCount_ = value;
+			repeatCountOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in ring node.\n", modifier);
 	}
 
 	return true;

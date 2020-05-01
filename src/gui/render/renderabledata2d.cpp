@@ -371,20 +371,21 @@ bool RenderableData2D::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableData2D::DisplayKeyword):
-			if (!data2DDisplayStyles().isValid(parser.argc(1)))
-				return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableData2D::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableData2D::DisplayKeyword):
+				if (!data2DDisplayStyles().isValid(parser.argc(1)))
+					return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableData2D::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

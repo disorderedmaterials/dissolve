@@ -51,24 +51,24 @@ void SymmetryGenerator::setMatrixPart(int row, const char *part)
 	// Now, check if this character is x, y, or z.
 	switch (part[pos])
 	{
-	case ('x'):
-	case ('X'):
-		matrix_[row] = multiplier;
-		break;
-	case ('y'):
-	case ('Y'):
-		matrix_[4 + row] = multiplier;
-		break;
-	case ('z'):
-	case ('Z'):
-		matrix_[8 + row] = multiplier;
-		break;
-	default:
-		// Must be a number, and hence part of the translation vector
-		a = DissolveSys::beforeStr(part, "/");
-		b = DissolveSys::afterStr(part, "/");
-		matrix_[12 + row] = a.asDouble() / b.asDouble();
-		break;
+		case ('x'):
+		case ('X'):
+			matrix_[row] = multiplier;
+			break;
+		case ('y'):
+		case ('Y'):
+			matrix_[4 + row] = multiplier;
+			break;
+		case ('z'):
+		case ('Z'):
+			matrix_[8 + row] = multiplier;
+			break;
+		default:
+			// Must be a number, and hence part of the translation vector
+			a = DissolveSys::beforeStr(part, "/");
+			b = DissolveSys::afterStr(part, "/");
+			matrix_[12 + row] = a.asDouble() / b.asDouble();
+			break;
 	}
 }
 

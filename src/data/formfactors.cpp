@@ -42,10 +42,10 @@ optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int 
 {
 	switch (dataSet)
 	{
-	case (XRayFormFactors::WaasmaierKirfel1995):
-		return wk1995Data(Z, formalCharge);
-	default:
-		Messenger::error("Form factor data set type %i not recognised.\n");
+		case (XRayFormFactors::WaasmaierKirfel1995):
+			return wk1995Data(Z, formalCharge);
+		default:
+			Messenger::error("Form factor data set type %i not recognised.\n");
 	}
 
 	static const FormFactorData_Dummy dummyData;

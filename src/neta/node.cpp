@@ -135,27 +135,27 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 
 	switch (op)
 	{
-	case (EqualTo):
-		result = (lhsValue == rhsValue);
-		break;
-	case (NotEqualTo):
-		result = (lhsValue != rhsValue);
-		break;
-	case (GreaterThan):
-		result = (lhsValue > rhsValue);
-		break;
-	case (LessThan):
-		result = (lhsValue < rhsValue);
-		break;
-	case (GreaterThanEqualTo):
-		result = (lhsValue >= rhsValue);
-		break;
-	case (LessThanEqualTo):
-		result = (lhsValue <= rhsValue);
-		break;
-	default:
-		printf("Internal Error: Unrecognised operator (%i) in NETANode::valueComparison.\n", op);
-		break;
+		case (EqualTo):
+			result = (lhsValue == rhsValue);
+			break;
+		case (NotEqualTo):
+			result = (lhsValue != rhsValue);
+			break;
+		case (GreaterThan):
+			result = (lhsValue > rhsValue);
+			break;
+		case (LessThan):
+			result = (lhsValue < rhsValue);
+			break;
+		case (GreaterThanEqualTo):
+			result = (lhsValue >= rhsValue);
+			break;
+		case (LessThanEqualTo):
+			result = (lhsValue <= rhsValue);
+			break;
+		default:
+			printf("Internal Error: Unrecognised operator (%i) in NETANode::valueComparison.\n", op);
+			break;
 	}
 
 	return result;

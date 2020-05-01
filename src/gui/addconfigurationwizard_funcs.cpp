@@ -101,8 +101,8 @@ bool AddConfigurationWizard::displayControlPage(int index)
 	// Update controls / check flow
 	switch (index)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	// Page index is valid, so show it - no need to switch/case
@@ -117,10 +117,10 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-	case (AddConfigurationWizard::NameAndTemperaturePage):
-		return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
-	default:
-		break;
+		case (AddConfigurationWizard::NameAndTemperaturePage):
+			return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
+		default:
+			break;
 	}
 
 	return true;
@@ -133,12 +133,12 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-	case (AddConfigurationWizard::SelectTemplatePage):
-		// Clear Configuration, and add used Species
-		importTarget_->clear();
-		break;
-	default:
-		break;
+		case (AddConfigurationWizard::SelectTemplatePage):
+			// Clear Configuration, and add used Species
+			importTarget_->clear();
+			break;
+		default:
+			break;
 	}
 
 	return true;
@@ -151,8 +151,8 @@ int AddConfigurationWizard::determineNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return result;
@@ -163,8 +163,8 @@ bool AddConfigurationWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return true;

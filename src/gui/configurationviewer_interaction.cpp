@@ -67,16 +67,16 @@ void ConfigurationViewer::startInteraction()
 {
 	switch (interactionMode())
 	{
-	// Default Interaction Mode
-	case (ConfigurationViewer::DefaultInteraction):
-		// This is the standard mode, giving access to view manipulation
-		if (buttonState_.testFlag(Qt::RightButton))
-			setInteractionMode(ConfigurationViewer::RotateViewInteraction);
-		else if (buttonState_.testFlag(Qt::MiddleButton))
-			setInteractionMode(ConfigurationViewer::TranslateViewInteraction);
-		break;
-	default:
-		break;
+		// Default Interaction Mode
+		case (ConfigurationViewer::DefaultInteraction):
+			// This is the standard mode, giving access to view manipulation
+			if (buttonState_.testFlag(Qt::RightButton))
+				setInteractionMode(ConfigurationViewer::RotateViewInteraction);
+			else if (buttonState_.testFlag(Qt::MiddleButton))
+				setInteractionMode(ConfigurationViewer::TranslateViewInteraction);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -86,19 +86,19 @@ void ConfigurationViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode())
 	{
-	case (ConfigurationViewer::DefaultInteraction):
-		break;
-	case (ConfigurationViewer::RotateViewInteraction):
-		// Rotation matrix has already been modified. Revert to default interaction mode
-		setInteractionMode(ConfigurationViewer::DefaultInteraction);
-		break;
-	case (ConfigurationViewer::TranslateViewInteraction):
-		// Translation has already been applied. Revert to default interaction mode
-		setInteractionMode(ConfigurationViewer::DefaultInteraction);
-		break;
-	default:
-		printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
-		break;
+		case (ConfigurationViewer::DefaultInteraction):
+			break;
+		case (ConfigurationViewer::RotateViewInteraction):
+			// Rotation matrix has already been modified. Revert to default interaction mode
+			setInteractionMode(ConfigurationViewer::DefaultInteraction);
+			break;
+		case (ConfigurationViewer::TranslateViewInteraction):
+			// Translation has already been applied. Revert to default interaction mode
+			setInteractionMode(ConfigurationViewer::DefaultInteraction);
+			break;
+		default:
+			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
+			break;
 	}
 }
 
@@ -108,8 +108,8 @@ void ConfigurationViewer::cancelInteraction()
 	// Perform any actions necessary to properly cancel the current interaction
 	switch (interactionMode())
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 }
 
@@ -122,13 +122,13 @@ const char *ConfigurationViewer::interactionModeText() const
 {
 	switch (interactionMode())
 	{
-	case (ConfigurationViewer::DefaultInteraction):
-		return "<b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
-	case (ConfigurationViewer::RotateViewInteraction):
-		return "Rotate view";
-	case (ConfigurationViewer::TranslateViewInteraction):
-		return "Translate";
-	default:
-		return "Unknown ConfigurationViewerInteraction";
+		case (ConfigurationViewer::DefaultInteraction):
+			return "<b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
+		case (ConfigurationViewer::RotateViewInteraction):
+			return "Rotate view";
+		case (ConfigurationViewer::TranslateViewInteraction):
+			return "Translate";
+		default:
+			return "Unknown ConfigurationViewerInteraction";
 	}
 }

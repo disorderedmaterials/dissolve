@@ -105,27 +105,27 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
 	// Check column of the item to see what we need to do
 	switch (w->column())
 	{
-	// Variable name
-	case (0):
-		// Check that the name is not currently in use anywhere in the Procedure
-		if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
-		{
-			Messenger::error("A Node with name '%s' already exists elsewhere in the Procedure.\n",
-					 qPrintable(w->text()));
-			w->setText(var->name());
-			return;
-		}
-		else
-			var->setName(qPrintable(w->text()));
-		break;
-	// Variable value
-	case (1):
-		// Set the new value
-		if (keyword_->variableType() == ExpressionValue::IntegerType)
-			var->set(w->text().toInt());
-		else if (keyword_->variableType() == ExpressionValue::DoubleType)
-			var->set(w->text().toDouble());
-		break;
+		// Variable name
+		case (0):
+			// Check that the name is not currently in use anywhere in the Procedure
+			if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
+			{
+				Messenger::error("A Node with name '%s' already exists elsewhere in the Procedure.\n",
+						 qPrintable(w->text()));
+				w->setText(var->name());
+				return;
+			}
+			else
+				var->setName(qPrintable(w->text()));
+			break;
+		// Variable value
+		case (1):
+			// Set the new value
+			if (keyword_->variableType() == ExpressionValue::IntegerType)
+				var->set(w->text().toInt());
+			else if (keyword_->variableType() == ExpressionValue::DoubleType)
+				var->set(w->text().toDouble());
+			break;
 	}
 
 	emit(keywordValueChanged(keyword_->optionMask()));

@@ -298,12 +298,12 @@ void DataWidget::updateToolbar()
 	// Set current interaction mode
 	switch (dataViewer()->interactionMode())
 	{
-	case (DataViewer::DefaultInteraction):
-		ui_.InteractionViewButton->setChecked(true);
-		break;
-		// 		case (DataViewer::ZoomInteraction):
-		// 			ui_.InteractionZoomutton->setChecked(true);
-		// 			break;
+		case (DataViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+			// 		case (DataViewer::ZoomInteraction):
+			// 			ui_.InteractionZoomutton->setChecked(true);
+			// 			break;
 	}
 
 	// Controls reflecting the state of options in the underlying DataViewer
@@ -335,18 +335,18 @@ void DataWidget::updateStatusBar()
 	QString text;
 	switch (view.viewType())
 	{
-	case (View::FlatXYView):
-		text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
-		break;
-	case (View::FlatXZView):
-		text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
-		break;
-	case (View::FlatZYView):
-		text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
-		break;
-	default:
-		text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
-		break;
+		case (View::FlatXYView):
+			text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
+			break;
+		case (View::FlatXZView):
+			text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
+			break;
+		case (View::FlatZYView):
+			text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
+			break;
+		default:
+			text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
+			break;
 	}
 
 	ui_.CoordinateLabel->setText(text);

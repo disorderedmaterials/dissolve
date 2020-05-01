@@ -389,27 +389,27 @@ bool CharString::isNumeric() const
 		++nChars;
 		switch (*c)
 		{
-		case (' '):
-		case ('e'):
-		case ('E'):
-		case ('+'):
-		case ('-'):
-		case ('.'):
-			++nSymbols;
-			break;
-		case ('0'):
-		case ('1'):
-		case ('2'):
-		case ('3'):
-		case ('4'):
-		case ('5'):
-		case ('6'):
-		case ('7'):
-		case ('8'):
-		case ('9'):
-			break;
-		default:
-			return false;
+			case (' '):
+			case ('e'):
+			case ('E'):
+			case ('+'):
+			case ('-'):
+			case ('.'):
+				++nSymbols;
+				break;
+			case ('0'):
+			case ('1'):
+			case ('2'):
+			case ('3'):
+			case ('4'):
+			case ('5'):
+			case ('6'):
+			case ('7'):
+			case ('8'):
+			case ('9'):
+				break;
+			default:
+				return false;
 		}
 	}
 	return (nSymbols != nChars);
