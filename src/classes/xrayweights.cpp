@@ -26,6 +26,7 @@
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 #include "genericitems/array2ddouble.h"
+#include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
 XRayWeights::XRayWeights()
@@ -57,15 +58,15 @@ bool XRayWeights::initialiseFormFactors()
 {
     formFactorData_.clear();
 
-    for (AtomTypeData *atd = atomTypes_.first(); atd != NULL; atd = atd->next())
+    for (auto &atd : atomTypes_)
     {
-        auto *at = atd->atomType();
+        auto &at = atd.atomType();
 
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
-        auto data = XRayFormFactors::formFactorData(formFactors_, at->element());
+        auto data = XRayFormFactors::formFactorData(formFactors_, at.element());
         if (std::get<1>(data))
             return Messenger::error("No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n",
-                                    at->element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+                                    at.element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
         formFactorData_.push_back(std::reference_wrapper<const FormFactorData>(std::get<0>(data)));
     }
@@ -97,7 +98,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 
         // Loop over Atoms in the Species
         for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
-            atomTypes_.add(i->atomType(), spInfo->population());
+            atomTypes_.add(*i->atomType(), spInfo->population());
     }
 
     // Perform final setup based on now-completed atomtypes list
@@ -108,7 +109,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
     for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
-        atomTypes_.add(i->atomType(), population);
+        atomTypes_.add(*i->atomType(), population);
 
     valid_ = false;
 }
@@ -157,24 +158,17 @@ void XRayWeights::setUpMatrices()
     concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
     preFactors_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 
-    double ci, cj;
-
     // Determine atomic concentration products and full pre-factor
-    AtomTypeData *atd1 = atomTypes_.first(), *atd2;
-    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI, atd1 = atd1->next())
-    {
-        ci = atd1->fraction();
-        concentrations_.at(typeI) = ci;
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                      double ci = atd1.fraction();
+                      concentrations_.at(typeI) = ci;
 
-        atd2 = atd1;
-        for (int typeJ = typeI; typeJ < atomTypes_.nItems(); ++typeJ, atd2 = atd2->next())
-        {
-            cj = atd2->fraction();
+                      double cj = atd2.fraction();
 
-            concentrationProducts_.at(typeI, typeJ) = ci * cj;
-            preFactors_.at(typeI, typeJ) = ci * cj * (typeI == typeJ ? 1 : 2);
-        }
-    }
+                      concentrationProducts_.at(typeI, typeJ) = ci * cj;
+                      preFactors_.at(typeI, typeJ) = ci * cj * (typeI == typeJ ? 1 : 2);
+                  });
 }
 
 // Return concentration product for type i

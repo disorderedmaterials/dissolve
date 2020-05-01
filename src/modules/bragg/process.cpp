@@ -27,6 +27,7 @@
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "modules/bragg/bragg.h"
+#include "templates/algorithms.h"
 
 // Run main processing
 bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
@@ -124,26 +125,22 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             braggParser.closeFiles();
 
             // Save intensity data
-            int i = 0;
-            for (AtomTypeData *atd1 = cfg->usedAtomTypes(); atd1 != NULL; atd1 = atd1->next(), ++i)
-            {
-                int j = i;
-                for (AtomTypeData *atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++j)
+            auto &types = cfg->usedAtomTypesList();
+            for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
+                LineParser intensityParser(&procPool);
+                if (!intensityParser.openOutput(
+                        CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
+                    return false;
+                intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1.atomTypeName(), atd2.atomTypeName());
+                for (int n = 0; n < braggReflections.nItems(); ++n)
                 {
-                    LineParser intensityParser(&procPool);
-                    if (!intensityParser.openOutput(
-                            CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName())))
+                    if (!intensityParser.writeLineF("%10.6f  %10.6e\n", braggReflections.constAt(n).q(),
+                                                    braggReflections.constAt(n).intensity(i, j)))
                         return false;
-                    intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1->atomTypeName(), atd2->atomTypeName());
-                    for (int n = 0; n < braggReflections.nItems(); ++n)
-                    {
-                        if (!intensityParser.writeLineF("%10.6f  %10.6e\n", braggReflections.constAt(n).q(),
-                                                        braggReflections.constAt(n).intensity(i, j)))
-                            return false;
-                    }
-                    intensityParser.closeFiles();
+                    intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1.atomTypeName(), atd2.atomTypeName());
                 }
-            }
+                intensityParser.closeFiles();
+            });
         }
     }
 

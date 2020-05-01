@@ -46,13 +46,12 @@ void AtomTypeSelectionKeyword::checkSelection()
     AtomTypeList newSelection;
 
     // Loop over existing selection, checking for each AtomType existing in any source Configuration
-    ListIterator<AtomTypeData> typeIterator(data_.types());
-    while (AtomTypeData *atd = typeIterator.iterate())
+    for (const AtomTypeData &atd : data_)
     {
         bool found = false;
         for (auto cfg : sourceConfigurations_)
         {
-            if (cfg->usedAtomTypesList().contains(atd->atomType()))
+            if (cfg->usedAtomTypesList().contains(atd.atomType()))
             {
                 found = true;
                 break;
@@ -60,7 +59,7 @@ void AtomTypeSelectionKeyword::checkSelection()
         }
 
         if (found)
-            newSelection.add(atd->atomType());
+            newSelection.add(atd.atomType());
     }
 
     // Copy the new list over the old one
@@ -105,11 +104,11 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, const Core
             return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
         // If the AtomType is in the list already, complain
-        if (data_.contains(atomType))
+        if (data_.contains(*atomType))
             return Messenger::error("AtomType '%s' specified in selection list twice.\n", parser.argc(n));
 
         // All OK - add it to our selection list
-        data_.add(atomType);
+        data_.add(*atomType);
     }
 
     set_ = true;
@@ -122,9 +121,8 @@ bool AtomTypeSelectionKeyword::write(LineParser &parser, const char *keywordName
 {
     // Loop over the AtomType selection list
     CharString selection;
-    ListIterator<AtomTypeData> typeIterator(data_.types());
-    while (AtomTypeData *atd = typeIterator.iterate())
-        selection.strcatf("  %s", atd->atomTypeName());
+    for (auto &atd : data_)
+        selection.strcatf("  %s", atd.atomTypeName());
 
     if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, selection.get()))
         return false;
@@ -137,4 +135,4 @@ bool AtomTypeSelectionKeyword::write(LineParser &parser, const char *keywordName
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeSelectionKeyword::removeReferencesTo(AtomType *at) { data_.remove(at); }
+void AtomTypeSelectionKeyword::removeReferencesTo(AtomType &at) { data_.remove(at); }

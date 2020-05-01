@@ -102,7 +102,7 @@ class PairBroadeningFunction : public GenericItemBase
     // Return short summary of function and its parameters
     CharString summary() const;
     // Return a BroadeningFunction tailored to the specified AtomType pair
-    BroadeningFunction broadeningFunction(AtomType *at1, AtomType *at2, SpeciesIntra *intra = NULL);
+    BroadeningFunction broadeningFunction(AtomType &at1, AtomType &at2, SpeciesIntra *intra = NULL);
 
     /*
      * GenericItemBase Implementations

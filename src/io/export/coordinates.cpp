@@ -135,8 +135,8 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     for (int n = 0; n < cfg->nAtoms(); ++n)
     {
         Atom *i = cfg->atom(n);
-        if (!parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->usedAtomType(i->localTypeIndex())->name(),
-                               n + 1, AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z))
+        if (!parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->usedAtomType(i->localTypeIndex()).name(), n + 1,
+                               AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z))
             return false;
     }
 

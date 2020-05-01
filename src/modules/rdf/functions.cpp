@@ -34,6 +34,7 @@
 #include "math/filters.h"
 #include "module/group.h"
 #include "modules/rdf/rdf.h"
+#include "templates/algorithms.h"
 #include <iterator>
 
 /*
@@ -79,9 +80,9 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     int *binss[nTypes], *bins;
 
     n = 0;
-    for (AtomTypeData *atd = cfg->usedAtomTypes(); atd != NULL; atd = atd->next())
+    for (auto &atd : cfg->usedAtomTypesList())
     {
-        maxr[n] = atd->population();
+        maxr[n] = atd.population();
         nr[n] = 0;
         r[n] = new Vec3<double>[maxr[n]];
         binss[n] = new int[maxr[n]];
@@ -421,8 +422,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         unweightedgr.total().copyArrays(originalgr.constTotal());
     }
 
-    AtomTypeData *typeI, *typeJ;
-
     // Remove bound partial from full partial
     for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
     {
@@ -434,19 +433,14 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) ||
         (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
     {
-        typeI = unweightedgr.atomTypes().first();
-        for (int i = 0; i < unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
-        {
-            typeJ = typeI;
-            for (int j = i; j < unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-            {
-                // Set up the broadening function for these AtomTypes
-                BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
+        auto &types = unweightedgr.atomTypes();
+        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+            // Set up the broadening function for these AtomTypes
+            BroadeningFunction function = intraBroadening.broadeningFunction(typeI.atomType(), typeJ.atomType());
 
-                // Convolute the bound partial with the broadening function
-                Filters::convolve(unweightedgr.boundPartial(i, j), function);
-            }
-        }
+            // Convolute the bound partial with the broadening function
+            Filters::convolve(unweightedgr.boundPartial(i, j), function);
+        });
     }
     else if (intraBroadening.function() == PairBroadeningFunction::FrequencyFunction)
     {
@@ -472,13 +466,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         tempgr.setUpHistograms(unweightedgr.rdfRange(), unweightedgr.rdfBinWidth());
 
         // Make sure bound g(r) are zeroed
-        typeI = broadgr.atomTypes().first();
-        for (int i = 0; i < broadgr.nAtomTypes(); ++i, typeI = typeI->next())
-        {
-            typeJ = typeI;
-            for (int j = i; j < broadgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-                broadgr.boundPartial(i, j).values() = 0.0;
-        }
+        auto &types = broadgr.atomTypes();
+        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+            broadgr.boundPartial(i, j).values() = 0.0;
+        });
 
         // 		// Assemble lists of unique intramolecular terms (in respect of their parameters)
         // 		RefDataList<const SpeciesIntra, const SpeciesBond*> bondIntra;
@@ -640,38 +631,25 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // TODO FIXME There is serious limitation for Frequency-broadening which means that it cannot be used with RDF
         // averaging (as we are calculating the intramolecular RDFs afresh).
 
-        typeI = broadgr.atomTypes().first();
-        for (int i = 0; i < broadgr.nAtomTypes(); ++i, typeI = typeI->next())
-        {
-            typeJ = typeI;
-            for (int j = i; j < broadgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-                unweightedgr.boundPartial(i, j) += broadgr.boundPartial(i, j);
-        }
+        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+            unweightedgr.boundPartial(i, j) += broadgr.boundPartial(i, j);
+        });
     }
 
     // Add broadened bound partials back in to full partials
-    typeI = unweightedgr.atomTypes().first();
-    for (int i = 0; i < unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
-    {
-        typeJ = typeI;
-        for (int j = i; j < unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-            unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
-    }
+    auto &types = unweightedgr.atomTypes();
+    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+        unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
+    });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-        AtomTypeData *typeI = unweightedgr.atomTypes().first();
-        for (int i = 0; i < unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
-        {
-            AtomTypeData *typeJ = typeI;
-            for (int j = i; j < unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next())
-            {
-                Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
-                Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
-                Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
-            }
-        }
+        for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+            Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
+            Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
+            Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
+        });
     }
 
     // Calculate total
@@ -845,41 +823,36 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 {
     // Get a copy of the AtomTypeList to work from
     AtomTypeList atomTypes = setA.atomTypes();
-    AtomTypeData *typeI = atomTypes.first();
     double error;
-    for (int n = 0; n < atomTypes.nItems(); ++n, typeI = typeI->next())
-    {
-        AtomTypeData *typeJ = typeI;
-        for (int m = n; m < atomTypes.nItems(); ++m, typeJ = typeJ->next())
-        {
-            // Full partial
-            error = Error::percent(setA.partial(n, m), setB.partial(n, m));
-            Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is "
-                             "%s (threshold is %6.3f%%)\n\n",
-                             typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                             testThreshold);
-            if (error > testThreshold)
-                return false;
 
-            // Bound partial
-            error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-            Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and "
-                             "is %s (threshold is %6.3f%%)\n\n",
-                             typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                             testThreshold);
-            if (error > testThreshold)
-                return false;
+    for_each_pair(atomTypes.begin(), atomTypes.end(), [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) {
+        // Full partial
+        error = Error::percent(setA.partial(n, m), setB.partial(n, m));
+        Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is "
+                         "%s (threshold is %6.3f%%)\n\n",
+                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                         testThreshold);
+        if (error > testThreshold)
+            return false;
 
-            // Unbound reference
-            error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-            Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and "
-                             "is %s (threshold is %6.3f%%)\n\n",
-                             typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                             testThreshold);
-            if (error > testThreshold)
-                return false;
-        }
-    }
+        // Bound partial
+        error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
+        Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and "
+                         "is %s (threshold is %6.3f%%)\n\n",
+                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                         testThreshold);
+        if (error > testThreshold)
+            return false;
+
+        // Unbound reference
+        error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
+        Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and "
+                         "is %s (threshold is %6.3f%%)\n\n",
+                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                         testThreshold);
+        if (error > testThreshold)
+            return false;
+    });
 
     // Total reference data supplied?
     error = Error::percent(setA.total(), setB.total());

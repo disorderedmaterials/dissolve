@@ -27,6 +27,7 @@
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include <cstdio>
+#include <numeric>
 
 // Set random seed
 void Dissolve::setSeed(int seed) { seed_ = seed; }
@@ -77,9 +78,10 @@ bool Dissolve::prepare()
         double totalQ = 0.0;
         if (pairPotentialsIncludeCoulomb_)
         {
-            ListIterator<AtomTypeData> atdIterator(cfg->usedAtomTypesList().types());
-            while (AtomTypeData *atd = atdIterator.iterate())
-                totalQ += atd->population() * atd->atomType()->parameters().charge();
+            auto &types = cfg->usedAtomTypesList();
+            totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](double acc, const AtomTypeData &atd) {
+                return acc + atd.population() * atd.atomType().parameters().charge();
+            });
         }
         else
         {

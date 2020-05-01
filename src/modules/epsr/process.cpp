@@ -37,6 +37,7 @@
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
 #include "modules/rdf/rdf.h"
+#include "templates/algorithms.h"
 #include "templates/array3d.h"
 
 // Run set-up stage
@@ -559,22 +560,17 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Sum up the unweighted partials and density from this target
             double factor = 1.0;
-            i = 0;
-            for (AtomTypeData *atd1 = unweightedSQ.atomTypes().first(); atd1 != NULL; atd1 = atd1->next(), ++i)
-            {
-                j = i;
-                for (AtomTypeData *atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++j)
-                {
-                    double globalI = atd1->atomType()->index();
-                    double globalJ = atd2->atomType()->index();
+            auto &types = unweightedSQ.atomTypes();
+            for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
+                double globalI = atd1.atomType().index();
+                double globalJ = atd2.atomType().index();
 
-                    Data1D partialIJ = unweightedSQ.constUnboundPartial(i, j);
-                    Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
-                    combinedRho.at(globalI, globalJ) += rho * factor;
-                    combinedFactor.at(globalI, globalJ) += factor;
-                    combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i, j);
-                }
-            }
+                Data1D partialIJ = unweightedSQ.constUnboundPartial(i, j);
+                Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
+                combinedRho.at(globalI, globalJ) += rho * factor;
+                combinedFactor.at(globalI, globalJ) += factor;
+                combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i, j);
+            });
         }
 
         // Normalise the combined values

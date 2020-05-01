@@ -30,6 +30,7 @@
 #include "math/broadeningfunction.h"
 #include "math/filters.h"
 #include "modules/bragg/bragg.h"
+#include "templates/algorithms.h"
 #include "templates/array3d.h"
 
 /*
@@ -329,17 +330,12 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
         kVectors[m].calculateIntensities(reflections);
 
     // Normalise intensities against number of atoms and unit cell multiplicity
-    AtomTypeData *atd1 = cfg->usedAtomTypes();
+    auto &types = cfg->usedAtomTypesList();
     const double divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
-    for (int i = 0; i < cfg->nUsedAtomTypes(); ++i, atd1 = atd1->next())
-    {
-        AtomTypeData *atd2 = atd1;
-        for (int j = i; j < cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next())
-        {
-            for (m = 0; m < nReflections; ++m)
-                reflections[m].scaleIntensity(i, j, divisor);
-        }
-    }
+    for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
+        for (m = 0; m < nReflections; ++m)
+            reflections[m].scaleIntensity(i, j, divisor);
+    });
 
     // Store the new version of the data
     GenericListHelper<int>::realise(cfg->moduleData(), "BraggVersion", "") = cfg->contentsVersion();
@@ -395,34 +391,28 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre, factor;
     int bin;
-    AtomTypeData *atd1 = cfg->usedAtomTypes();
-    for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next())
-    {
-        AtomTypeData *atd2 = atd1;
-        for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next())
+    auto &types = cfg->usedAtomTypesList();
+    for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+        // Retrieve partial container and make sure its object tag is set
+        Data1D &partial = braggPartials.at(typeI, typeJ);
+        partial.setObjectTag(CharString("%s//OriginalBragg//%s-%s", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
+
+        // Loop over defined Bragg reflections
+        for (int n = 0; n < nReflections; ++n)
         {
-            // Retrieve partial container and make sure its object tag is set
-            Data1D &partial = braggPartials.at(typeI, typeJ);
-            partial.setObjectTag(
-                CharString("%s//OriginalBragg//%s-%s", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()));
+            // Get q value and intensity of reflection
+            qCentre = braggReflections.constAt(n).q();
+            bin = qCentre / qDelta;
 
-            // Loop over defined Bragg reflections
-            for (int n = 0; n < nReflections; ++n)
-            {
-                // Get q value and intensity of reflection
-                qCentre = braggReflections.constAt(n).q();
-                bin = qCentre / qDelta;
-
-                partial.value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
-            }
-
-            // Add this partial into the total function, accounting for doubling of partials between unlike atom
-            // types
-            braggTotal += partial;
-            if (typeI != typeJ)
-                braggTotal += partial;
+            partial.value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
         }
-    }
+
+        // Add this partial into the total function, accounting for doubling of partials between unlike atom
+        // types
+        braggTotal += partial;
+        if (typeI != typeJ)
+            braggTotal += partial;
+    });
 
     return true;
 }
@@ -464,11 +454,12 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        AtomTypeData *atd1 = cfg->usedAtomTypes();
-        for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next())
+        auto &types = cfg->usedAtomTypesList();
+        int typeI = 0;
+        for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {
-            AtomTypeData *atd2 = atd1;
-            for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next())
+            int typeJ = typeI;
+            for (auto atd2 = atd1; atd2 != types.end(); typeJ++, atd2++)
             {
                 braggPartials.at(typeI, typeJ).value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
             }

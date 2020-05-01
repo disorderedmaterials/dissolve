@@ -326,10 +326,10 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     // Subtract self-scattering level if types are equivalent
                     if (i == j)
-                        braggPartials.at(i, i) -= cfg->usedAtomTypeData(i)->fraction();
+                        braggPartials.at(i, i) -= cfg->usedAtomTypeData(i).fraction();
 
                     // Remove atomic fraction normalisation
-                    braggPartials.at(i, j) /= cfg->usedAtomTypeData(i)->fraction() * cfg->usedAtomTypeData(j)->fraction();
+                    braggPartials.at(i, j) /= cfg->usedAtomTypeData(i).fraction() * cfg->usedAtomTypeData(j).fraction();
                 }
             }
 
@@ -378,13 +378,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (isotopologues_.contains(cfg))
         {
             // Get the set...
-            const auto data = isotopologues_.getIsotopologueSet(cfg);
-
-            // TODO Raise exception if no isotopologue set found
-            auto &topeSet = std::get<0>(data);
+            optional<IsotopologueSet> topeSet = isotopologues_.getIsotopologueSet(cfg);
+            if (std::get<1>(topeSet))
+            {
+                return Messenger::error("Could not locate IsotopologueSet");
+            }
 
             // Iterate over Species present in the set
-            for (auto topes : topeSet.constIsotopologues())
+            for (Isotopologues &topes : std::get<0>(topeSet).isotopologues())
             {
                 // Find the referenced Species in our SpeciesInfo list
                 SpeciesInfo *spInfo = cfg->usedSpeciesInfo(topes.species());
@@ -393,7 +394,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                             topes.species()->name(), cfg->niceName());
 
                 // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-                for (auto isoWeight : topes.mix())
+                for (IsotopologueWeight &isoWeight : topes.mix())
                     weights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight.isotopologue(),
                                             isoWeight.weight());
             }

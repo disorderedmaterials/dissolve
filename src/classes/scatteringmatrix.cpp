@@ -280,12 +280,12 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
     {
         for (int m = n; m < nUsedTypes; ++m)
         {
-            int colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
+            int colIndex = pairIndex(&usedTypes.atomType(n), &usedTypes.atomType(m));
             if (colIndex == -1)
             {
                 Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
                                  "('%s' and/or '%s').\n",
-                                 usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+                                 usedTypes.atomType(n).name(), usedTypes.atomType(m).name());
                 return false;
             }
 

@@ -68,5 +68,5 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
      */
     protected:
     // Prune any references to the supplied AtomType in the contained data
-    void removeReferencesTo(AtomType *at);
+    void removeReferencesTo(AtomType &at);
 };
