@@ -33,7 +33,6 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::Integrate1DNode)
 {
 	keywords_.add("Target", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target), "SourceData", "Process1D node containing the data to integrate");
@@ -42,7 +41,6 @@ Integrate1DProcedureNode::Integrate1DProcedureNode(const Process1DProcedureNode 
 	keywords_.add("Ranges", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC", "X range for third integration region");
 }
 
-// Destructor
 Integrate1DProcedureNode::~Integrate1DProcedureNode() {}
 
 /*

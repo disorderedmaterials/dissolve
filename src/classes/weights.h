@@ -35,11 +35,8 @@
 class Weights : public GenericItemBase
 {
       public:
-	// Constructor
 	Weights();
-	// Copy Constructor
 	Weights(const Weights &source);
-	// Assignment operator
 	void operator=(const Weights &source);
 
 	/*

@@ -22,7 +22,6 @@
 #include "gui/render/colourscaledelta.h"
 #include "gui/render/colourscalepoint.h"
 
-// Constructor
 ColourScaleDelta::ColourScaleDelta()
 {
 	// Private variables

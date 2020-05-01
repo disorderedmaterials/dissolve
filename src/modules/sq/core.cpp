@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 SQModule::SQModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 SQModule::~SQModule() {}
 
 /*

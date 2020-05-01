@@ -39,10 +39,8 @@ class ForceImportFileFormat : public FileAndFormat
 		DLPOLYForces,
 		nForceImportFormats
 	};
-	// Constructors
 	ForceImportFileFormat(ForceImportFormat format = XYZForces);
 	ForceImportFileFormat(const char *filename, ForceImportFormat format = XYZForces);
-	// Destructor
 	~ForceImportFileFormat();
 
 	/*

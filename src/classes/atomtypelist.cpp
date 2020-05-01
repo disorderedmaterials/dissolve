@@ -30,16 +30,12 @@
 #include "templates/broadcastlist.h"
 #include <string.h>
 
-// Constructor
 AtomTypeList::AtomTypeList() {}
 
-// Destructor
 AtomTypeList::~AtomTypeList() {}
 
-// Copy Constructor
 AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 
-// Assignment Operator
 void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types_; }
 
 // Array access operator

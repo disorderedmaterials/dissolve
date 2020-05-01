@@ -29,7 +29,6 @@ template <class Histogram1D> int ObjectStore<Histogram1D>::objectCount_ = 0;
 template <class Histogram1D> int ObjectStore<Histogram1D>::objectType_ = ObjectInfo::Histogram1DObject;
 template <class Histogram1D> const char *ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
 
-// Constructor
 Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this)
 {
 	accumulatedData_.addErrors();
@@ -37,10 +36,8 @@ Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(t
 	clear();
 }
 
-// Destructor
 Histogram1D::~Histogram1D() {}
 
-// Copy Constructor
 Histogram1D::Histogram1D(const Histogram1D &source) : ObjectStore<Histogram1D>(this) { (*this) = source; }
 
 // Clear Data
@@ -189,7 +186,6 @@ const Data1D &Histogram1D::accumulatedData() const { return accumulatedData_; }
  * Operators
  */
 
-// Operator =
 void Histogram1D::operator=(const Histogram1D &source)
 {
 	minimum_ = source.minimum_;

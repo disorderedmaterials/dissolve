@@ -40,7 +40,6 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData);
 
       private:

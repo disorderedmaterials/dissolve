@@ -29,9 +29,7 @@
 class FormFactorData_WK1995 : public FormFactorData
 {
       public:
-	// Constructor
 	FormFactorData_WK1995(int z = 0, int formalCharge = 0, std::vector<double> a = {}, std::vector<double> b = {}, double c = 0.0);
-	// Assignment Operator
 	FormFactorData_WK1995 &operator=(const FormFactorData_WK1995 &source);
 
 	/*

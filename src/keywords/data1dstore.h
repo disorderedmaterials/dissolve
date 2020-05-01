@@ -31,9 +31,7 @@ class Data1DStore;
 class Data1DStoreKeyword : public KeywordData<Data1DStore &>
 {
       public:
-	// Constructor
 	Data1DStoreKeyword(Data1DStore &dataStore);
-	// Destructor
 	~Data1DStoreKeyword();
 
 	/*

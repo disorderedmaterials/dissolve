@@ -25,7 +25,6 @@
 // Static Singletons
 RefList<KeywordBase> KeywordBase::allKeywords_;
 
-// Constructor
 KeywordBase::KeywordBase(KeywordDataType type) : ListItem<KeywordBase>(), type_(type)
 {
 	set_ = false;
@@ -34,7 +33,6 @@ KeywordBase::KeywordBase(KeywordDataType type) : ListItem<KeywordBase>(), type_(
 	allKeywords_.append(this);
 }
 
-// Destructor
 KeywordBase::~KeywordBase()
 {
 	// Remove ourselves from the master reference list of keywords

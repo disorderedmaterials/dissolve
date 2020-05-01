@@ -32,9 +32,7 @@
 class Data2DStoreKeyword : public KeywordData<Data2DStore &>
 {
       public:
-	// Constructor
 	Data2DStoreKeyword(Data2DStore &dataStore);
-	// Destructor
 	~Data2DStoreKeyword();
 
 	/*

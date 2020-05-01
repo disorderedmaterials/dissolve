@@ -26,14 +26,12 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 Isotopologues::Isotopologues() : ListItem<Isotopologues>()
 {
 	species_ = NULL;
 	speciesPopulation_ = 0;
 }
 
-// Destructor
 Isotopologues::~Isotopologues() {}
 
 /*

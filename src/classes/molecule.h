@@ -37,9 +37,7 @@ class Species;
 class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_from_this<Molecule>
 {
       public:
-	// Constructor
 	Molecule();
-	// Destructor
 	~Molecule();
 
 	/*

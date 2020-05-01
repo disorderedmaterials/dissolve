@@ -24,7 +24,6 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-// Constructor
 SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates) : systemTemplates_(systemTemplates)
 {
 	ui_.setupUi(this);
@@ -38,7 +37,6 @@ SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const Li
 	}
 }
 
-// Destructor
 SelectSystemTemplateDialog::~SelectSystemTemplateDialog() {}
 
 // Update the list of system templates, optionally filtering them by name and description

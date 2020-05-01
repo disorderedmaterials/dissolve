@@ -33,9 +33,7 @@ class GenericList;
 class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
 {
       public:
-	// Constructor
 	ModuleLayer();
-	// Destructor
 	~ModuleLayer();
 
 	/*

@@ -35,9 +35,7 @@ class AtomShakeModule : public Module
 	 */
 
       public:
-	// Constructor
 	AtomShakeModule();
-	// Destructor
 	~AtomShakeModule();
 
 	/*

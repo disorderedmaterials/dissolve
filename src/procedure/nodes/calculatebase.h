@@ -33,10 +33,8 @@ class SelectProcedureNode;
 class CalculateProcedureNodeBase : public ProcedureNode
 {
       public:
-	// Constructor
 	CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL, SelectProcedureNode *site2 = NULL,
 				   SelectProcedureNode *site3 = NULL);
-	// Destructor
 	virtual ~CalculateProcedureNodeBase();
 
 	/*

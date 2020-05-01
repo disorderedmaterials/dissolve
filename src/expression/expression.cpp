@@ -31,16 +31,12 @@
 #include <stdarg.h>
 #include <string.h>
 
-// Constructor
 Expression::Expression(const char *expressionText) { set(expressionText); }
 
-// Destructor
 Expression::~Expression() { clear(); }
 
-// Copy constructor
 Expression::Expression(const Expression &source) { (*this) = source; }
 
-// Assignment operator
 void Expression::operator=(const Expression &source)
 {
 	// Reset our structure, and regenerate from the expression string

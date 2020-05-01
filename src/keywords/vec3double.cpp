@@ -22,7 +22,6 @@
 #include "keywords/vec3double.h"
 #include "base/lineparser.h"
 
-// Constructors
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType) : KeywordData<Vec3<double>>(KeywordBase::Vec3DoubleData, value)
 {
 	labelType_ = labelType;
@@ -47,7 +46,6 @@ Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, 
 	max_ = maxValue;
 }
 
-// Destructor
 Vec3DoubleKeyword::~Vec3DoubleKeyword() {}
 
 /*

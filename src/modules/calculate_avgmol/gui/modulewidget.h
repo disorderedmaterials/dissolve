@@ -39,7 +39,6 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 	CalculateAvgMolModule *module_;
 
       public:
-	// Constructor
 	CalculateAvgMolModuleWidget(QWidget *parent, CalculateAvgMolModule *module);
 
 	/*

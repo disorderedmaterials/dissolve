@@ -32,12 +32,9 @@
 class LineStyle
 {
       public:
-	// Constructor / Destructor
 	LineStyle(double width = 1.0, LineStipple::StippleType stipple = LineStipple::NoStipple, double r = 0.0, double g = 0.0, double b = 0.0, double a = 1.0);
 	~LineStyle();
-	// Copy constructor
 	LineStyle(const LineStyle &source);
-	// Assignment operator
 	void operator=(const LineStyle &source);
 
 	/*

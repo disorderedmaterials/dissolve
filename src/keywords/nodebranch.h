@@ -33,9 +33,7 @@ class SequenceProcedureNode;
 class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
 {
       public:
-	// Constructor
 	NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer, ProcedureNode::NodeContext branchContext);
-	// Destructor
 	~NodeBranchKeyword();
 
 	/*

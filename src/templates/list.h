@@ -36,7 +36,6 @@
 template <class T> class List
 {
       public:
-	// Constructor
 	List<T>()
 	{
 		listHead_ = NULL;
@@ -46,7 +45,6 @@ template <class T> class List
 		disownOnDestruction_ = false;
 		items_ = NULL;
 	}
-	// Destructor
 	~List()
 	{
 		if (disownOnDestruction_)
@@ -57,7 +55,6 @@ template <class T> class List
 		else
 			clear();
 	}
-	// Copy Constructor
 	List<T>(const List<T> &source)
 	{
 		listHead_ = NULL;
@@ -68,7 +65,6 @@ template <class T> class List
 		items_ = NULL;
 		(*this) = source;
 	}
-	// Assignment operator
 	List<T> &operator=(const List<T> &source)
 	{
 		// Clear any current data in the list...
@@ -87,7 +83,6 @@ template <class T> class List
 
 		return *this;
 	}
-	// Element access operator
 	T *operator[](int index)
 	{
 		if ((index < 0) || (index >= nItems_))
@@ -834,7 +829,6 @@ template <class T, class P> class ParentList : public List<T>
 template <class T> class ListIterator
 {
       public:
-	// Constructor
 	ListIterator<T>(const List<T> &source, bool reverse = false) : reverse_(reverse), targetList_(source)
 	{
 		finished_ = false;

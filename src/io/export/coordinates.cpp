@@ -28,7 +28,6 @@
 #include "classes/speciesatom.h"
 #include "data/atomicmass.h"
 
-// Constructor
 CoordinateExportFileFormat::CoordinateExportFileFormat(const char *filename, CoordinateExportFormat format) : FileAndFormat(filename, format) {}
 
 /*

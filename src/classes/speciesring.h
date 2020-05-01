@@ -36,9 +36,7 @@ class SpeciesAtom;
 class SpeciesRing : public ListItem<SpeciesRing>
 {
       public:
-	// Constructor
 	SpeciesRing();
-	// Destructor
 	~SpeciesRing();
 
 	/*
@@ -64,7 +62,6 @@ class SpeciesRing : public ListItem<SpeciesRing>
 	 * Comparison
 	 */
       public:
-	// Equality operator
 	bool operator==(const SpeciesRing &other);
 };
 

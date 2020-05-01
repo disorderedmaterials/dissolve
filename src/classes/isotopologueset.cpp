@@ -26,7 +26,6 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 IsotopologueSet::IsotopologueSet() : ListItem<IsotopologueSet>()
 {
 	parentCollection_ = NULL;
@@ -34,7 +33,6 @@ IsotopologueSet::IsotopologueSet() : ListItem<IsotopologueSet>()
 	clear();
 }
 
-// Destructor
 IsotopologueSet::~IsotopologueSet() {}
 
 /*

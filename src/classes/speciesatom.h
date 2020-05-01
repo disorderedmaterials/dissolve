@@ -42,9 +42,7 @@ class ProcessPool;
 class SpeciesAtom : public ListItem<SpeciesAtom>
 {
       public:
-	// Constructor
 	SpeciesAtom();
-	// Destructor
 	~SpeciesAtom();
 
 	/*

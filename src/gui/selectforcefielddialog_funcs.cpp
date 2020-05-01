@@ -25,10 +25,8 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-// Constructor
 SelectForcefieldDialog::SelectForcefieldDialog(QWidget *parent, const List<Forcefield> &forcefields) { ui_.setupUi(this); }
 
-// Destructor
 SelectForcefieldDialog::~SelectForcefieldDialog() {}
 
 void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }

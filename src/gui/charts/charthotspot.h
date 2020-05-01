@@ -32,7 +32,6 @@ class ChartBlock;
 class ChartHotSpot : public ListItem<ChartHotSpot>
 {
       public:
-	// Constructor / Destructor
 	ChartHotSpot();
 	~ChartHotSpot();
 	// HotSpot type

@@ -28,7 +28,6 @@
 class DoubleExp
 {
       public:
-	// Constructors
 	DoubleExp();
 	DoubleExp(double value);
 	DoubleExp(double mantissa, int exponent);
@@ -39,11 +38,8 @@ class DoubleExp
 	 * Operators
 	 */
       public:
-	// Assignment Operator
 	void operator=(double d);
-	// Equality Operator
 	bool operator==(const double other);
-	// Inequality Operator
 	bool operator!=(const double other);
 
 	/*

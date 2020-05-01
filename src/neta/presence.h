@@ -35,7 +35,6 @@ class NETADefinition;
 class NETAPresenceNode : public NETANode
 {
       public:
-	// Constructor / Destructor
 	NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAPresenceNode();
 

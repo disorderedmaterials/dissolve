@@ -35,9 +35,7 @@ class GetConfigurationNameDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData);
-	// Destructor
 	~GetConfigurationNameDialog();
 
       private:

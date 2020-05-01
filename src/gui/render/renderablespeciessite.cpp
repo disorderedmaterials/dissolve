@@ -28,7 +28,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-// Constructor
 RenderableSpeciesSite::RenderableSpeciesSite(const Species *sp, const SpeciesSite *site) : Renderable(Renderable::SpeciesSiteRenderable, "SiteRenderable")
 {
 	// Set defaults
@@ -47,7 +46,6 @@ RenderableSpeciesSite::RenderableSpeciesSite(const Species *sp, const SpeciesSit
 	axesPrimitive_->colouredAxes(1.2);
 }
 
-// Destructor
 RenderableSpeciesSite::~RenderableSpeciesSite() {}
 
 /*

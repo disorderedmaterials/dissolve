@@ -42,7 +42,6 @@ class View
 	const List<Renderable> &renderables_;
 
       public:
-	// Constructor / Destructor
 	View(const List<Renderable> &renderables, FontInstance &fontInstance);
 	~View();
 	// Clear view, resetting to defaults

@@ -32,9 +32,7 @@
 class ProcedureKeyword : public KeywordData<Procedure &>
 {
       public:
-	// Constructor
 	ProcedureKeyword(Procedure &procedure);
-	// Destructor
 	~ProcedureKeyword();
 
 	/*

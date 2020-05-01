@@ -32,9 +32,7 @@
 class Data3DStoreKeyword : public KeywordData<Data3DStore &>
 {
       public:
-	// Constructor
 	Data3DStoreKeyword(Data3DStore &dataStore);
-	// Destructor
 	~Data3DStoreKeyword();
 
 	/*

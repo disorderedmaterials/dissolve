@@ -34,7 +34,6 @@
 class FontInstance
 {
       public:
-	// Constructor
 	FontInstance();
 
 	/*

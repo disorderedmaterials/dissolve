@@ -25,13 +25,11 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 IsotopologueCollectionKeyword::IsotopologueCollectionKeyword(IsotopologueCollection &collection, const RefList<Configuration> &allowedConfigurations)
     : KeywordData<IsotopologueCollection &>(KeywordBase::IsotopologueCollectionData, collection), allowedConfigurations_(allowedConfigurations)
 {
 }
 
-// Destructor
 IsotopologueCollectionKeyword::~IsotopologueCollectionKeyword() {}
 
 /*

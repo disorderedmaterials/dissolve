@@ -38,14 +38,10 @@ class Data3DImportFileFormat : public FileAndFormat
 		CartesianData3D,
 		nData3DImportFormats
 	};
-	// Constructors
 	Data3DImportFileFormat(Data3DImportFormat format = CartesianData3D);
 	Data3DImportFileFormat(const char *filename, Data3DImportFormat format = CartesianData3D);
-	// Destructor
 	~Data3DImportFileFormat();
-	// Copy Constructor
 	Data3DImportFileFormat(const Data3DImportFileFormat &source);
-	// Assignment Operator
 	void operator=(const Data3DImportFileFormat &source);
 
 	/*

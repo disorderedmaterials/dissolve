@@ -22,11 +22,9 @@
 #include "io/import/trajectory.h"
 #include "base/sysfunc.h"
 
-// Constructors
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFileFormat::TrajectoryImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(const char *filename, TrajectoryImportFileFormat::TrajectoryImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
-// Destructor
 TrajectoryImportFileFormat::~TrajectoryImportFileFormat() {}
 
 /*

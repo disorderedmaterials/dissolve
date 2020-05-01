@@ -26,13 +26,11 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-// Constructor
 AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList &selection, const RefList<Configuration> &sourceConfigurations)
     : KeywordData<AtomTypeList &>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
-// Destructor
 AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword() {}
 
 /*

@@ -35,10 +35,8 @@ class ProcedureNode;
 class NodeArrayKeywordBase
 {
       public:
-	// Constructors
 	NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, bool uniqueNodes);
 	NodeArrayKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, int fixedArraySize, bool onlyInScope, bool uniqueNodes);
-	// Destructor
 	virtual ~NodeArrayKeywordBase();
 
 	/*
@@ -90,7 +88,6 @@ class NodeArrayKeywordBase
 template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public KeywordData<Array<N *> &>
 {
       public:
-	// Constructors
 	NodeArrayKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, bool uniqueNodes, Array<N *> &nodeArray)
 	    : NodeArrayKeywordBase(parentNode, nodeType, onlyInScope, uniqueNodes), KeywordData<Array<N *> &>(KeywordBase::NodeArrayData, nodeArray)
 	{
@@ -108,7 +105,6 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 				nodeArray[n] = NULL;
 		}
 	}
-	// Destructor
 	~NodeArrayKeyword() {}
 
 	/*

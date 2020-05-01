@@ -26,7 +26,6 @@
 #include "classes/configuration.h"
 #include "keywords/types.h"
 
-// Constructor
 BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic) : ProcedureNode(ProcedureNode::BoxNode)
 {
 	keywords_.add("Definition", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
@@ -34,7 +33,6 @@ BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bo
 	keywords_.add("Definition", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
 }
 
-// Destructor
 BoxProcedureNode::~BoxProcedureNode() {}
 
 /*

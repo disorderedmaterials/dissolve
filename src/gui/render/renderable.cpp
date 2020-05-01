@@ -43,7 +43,6 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 	return options;
 }
 
-// Constructor
 Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
 {
 	// Instance
@@ -82,7 +81,6 @@ Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
 	styleVersion_ = 0;
 }
 
-// Destructor
 Renderable::~Renderable() { instances_.remove(this); }
 
 /*

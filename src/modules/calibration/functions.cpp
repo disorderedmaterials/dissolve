@@ -32,7 +32,6 @@
  * CalibrationModuleCostFunctions
  */
 
-// Constructor
 CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
 							       RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences)
     : dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)

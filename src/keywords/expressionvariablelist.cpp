@@ -25,7 +25,6 @@
 #include "expression/variable.h"
 #include "procedure/nodes/node.h"
 
-// Constructor
 ExpressionVariableListKeyword::ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables, ExpressionValue::ValueType variableType)
     : KeywordData<List<ExpressionNode> &>(KeywordBase::ExpressionVariableListData, variables)
 {
@@ -33,7 +32,6 @@ ExpressionVariableListKeyword::ExpressionVariableListKeyword(ProcedureNode *pare
 	variableType_ = variableType;
 }
 
-// Destructor
 ExpressionVariableListKeyword::~ExpressionVariableListKeyword() {}
 
 /*

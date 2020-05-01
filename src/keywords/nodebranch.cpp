@@ -24,7 +24,6 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
-// Constructor
 NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedureNode **branchPointer, ProcedureNode::NodeContext branchContext)
     : KeywordData<SequenceProcedureNode **>(KeywordData::NodeBranchData, branchPointer)
 {
@@ -32,7 +31,6 @@ NodeBranchKeyword::NodeBranchKeyword(ProcedureNode *parentNode, SequenceProcedur
 	branchContext_ = branchContext;
 }
 
-// Destructor
 NodeBranchKeyword::~NodeBranchKeyword() {}
 
 /*

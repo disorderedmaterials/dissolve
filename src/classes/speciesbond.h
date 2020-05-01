@@ -35,9 +35,7 @@ class ProcessPool;
 class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
 {
       public:
-	// Constructor
 	SpeciesBond();
-	// Destructor
 	~SpeciesBond();
 
 	/*

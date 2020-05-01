@@ -22,7 +22,6 @@
 #include "modules/geomopt/geomopt.h"
 #include "modules/geomopt/gui/modulewidget.h"
 
-// Constructor
 GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

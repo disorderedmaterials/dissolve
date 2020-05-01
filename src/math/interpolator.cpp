@@ -22,11 +22,9 @@
 #include "math/interpolator.h"
 #include "math/data1d.h"
 
-// Constructors
 Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(x) { interpolate(scheme); }
 Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.constXAxis()), y_(source.constValues()) { interpolate(scheme); }
 
-// Destructor
 Interpolator::~Interpolator() {}
 
 /*

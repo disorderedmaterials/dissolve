@@ -30,7 +30,6 @@ template <class Data3D> int ObjectStore<Data3D>::objectCount_ = 0;
 template <class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3DObject;
 template <class Data3D> const char *ObjectStore<Data3D>::objectTypeName_ = "Data3D";
 
-// Constructor
 Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data3D>(), ObjectStore<Data3D>(this)
 {
 	hasError_ = false;
@@ -38,10 +37,8 @@ Data3D::Data3D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data
 	clear();
 }
 
-// Destructor
 Data3D::~Data3D() {}
 
-// Copy Constructor
 Data3D::Data3D(const Data3D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data3D>(this) { (*this) = source; }
 
 // Clear Data
@@ -435,7 +432,6 @@ const Array3D<double> &Data3D::constErrors3D() const
  * Operators
  */
 
-// Operator =
 void Data3D::operator=(const Data3D &source)
 {
 	name_ = source.name_;
@@ -449,7 +445,6 @@ void Data3D::operator=(const Data3D &source)
 	++version_;
 }
 
-// Operator +=
 void Data3D::operator+=(const double delta)
 {
 	for (int n = 0; n < values_.linearArraySize(); ++n)
@@ -458,7 +453,6 @@ void Data3D::operator+=(const double delta)
 	++version_;
 }
 
-// Operator -=
 void Data3D::operator-=(const double delta)
 {
 	for (int n = 0; n < values_.linearArraySize(); ++n)
@@ -467,7 +461,6 @@ void Data3D::operator-=(const double delta)
 	++version_;
 }
 
-// Operator *=
 void Data3D::operator*=(const double factor)
 {
 	values_ *= factor;
@@ -477,7 +470,6 @@ void Data3D::operator*=(const double factor)
 	++version_;
 }
 
-// Operator /=
 void Data3D::operator/=(const double factor)
 {
 	values_ /= factor;

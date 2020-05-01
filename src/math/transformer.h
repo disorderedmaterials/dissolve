@@ -37,12 +37,9 @@ class Variable;
 class Transformer
 {
       public:
-	// Constructor / Destructor
 	Transformer();
 	~Transformer();
-	// Copy constructor
 	Transformer(const Transformer &source);
-	// Assignment operator
 	void operator=(const Transformer &source);
 
 	/*

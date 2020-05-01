@@ -41,7 +41,6 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
 Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
 {
 	// Short-Range Parameters

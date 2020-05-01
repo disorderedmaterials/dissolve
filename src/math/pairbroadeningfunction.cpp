@@ -29,7 +29,6 @@
 #include "genericitems/array2ddouble.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)
 {
 	function_ = function;
@@ -46,13 +45,10 @@ PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionT
 	frequencyAngleConstant_ = 1.0e-3;
 }
 
-// Destructor
 PairBroadeningFunction::~PairBroadeningFunction() {}
 
-// Copy Constructor
 PairBroadeningFunction::PairBroadeningFunction(const PairBroadeningFunction &source) { (*this) = source; }
 
-// Assignment operator
 void PairBroadeningFunction::operator=(const PairBroadeningFunction &source)
 {
 	function_ = source.function_;

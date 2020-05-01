@@ -36,10 +36,8 @@ class NodeScopeStack;
 class Collect2DProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable = NULL, CalculateProcedureNodeBase *yObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05,
 			       double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
-	// Destructor
 	~Collect2DProcedureNode();
 
 	/*

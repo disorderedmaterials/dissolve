@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 GeometryOptimisationModule::GeometryOptimisationModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 GeometryOptimisationModule::~GeometryOptimisationModule() {}
 
 /*

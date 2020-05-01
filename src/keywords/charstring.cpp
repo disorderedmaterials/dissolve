@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
 CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value) {}
 
-// Destructor
 CharStringKeyword::~CharStringKeyword() {}
 
 /*

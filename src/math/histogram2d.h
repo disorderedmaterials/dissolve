@@ -35,11 +35,8 @@ class ProcessPool;
 class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D>, public GenericItemBase
 {
       public:
-	// Constructor
 	Histogram2D();
-	// Destructor
 	~Histogram2D();
-	// Copy Constructor
 	Histogram2D(const Histogram2D &source);
 	// Clear data
 	void clear();
@@ -121,7 +118,6 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	 * Operators
 	 */
       public:
-	// Assignment Operator
 	void operator=(const Histogram2D &source);
 
 	/*

@@ -29,7 +29,6 @@
 #include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
-// Constructor
 SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -52,7 +51,6 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 	updateStatusBar();
 }
 
-// Destructor
 SpeciesEditor::~SpeciesEditor() {}
 
 // Set main CoreData pointer

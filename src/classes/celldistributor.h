@@ -31,9 +31,7 @@
 class CellDistributor : public Distributor
 {
       public:
-	// Constructor
 	CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
-	// Destructor
 	~CellDistributor();
 
 	/*

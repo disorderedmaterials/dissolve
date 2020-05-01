@@ -23,11 +23,9 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 CoordinateImportFileFormat::CoordinateImportFileFormat(CoordinateImportFileFormat::CoordinateImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
 CoordinateImportFileFormat::CoordinateImportFileFormat(const char *filename, CoordinateImportFileFormat::CoordinateImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
-// Destructor
 CoordinateImportFileFormat::~CoordinateImportFileFormat() {}
 
 /*

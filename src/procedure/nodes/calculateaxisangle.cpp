@@ -29,7 +29,6 @@
 #include "keywords/enumoptions.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedureNode *site0, OrientedSite::SiteAxis axis0, SelectProcedureNode *site1, OrientedSite::SiteAxis axis1)
     : CalculateProcedureNodeBase(ProcedureNode::CalculateAxisAngleNode, site0, site1)
 {
@@ -42,7 +41,6 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(SelectProcedure
 	keywords_.add("Sites", new EnumOptionsKeyword<OrientedSite::SiteAxis>(OrientedSite::siteAxis() = axis1), "AxisJ", "Axis to use from site J");
 }
 
-// Destructor
 CalculateAxisAngleProcedureNode::~CalculateAxisAngleProcedureNode() {}
 
 /*

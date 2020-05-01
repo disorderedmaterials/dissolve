@@ -29,7 +29,6 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-// Constructor
 Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax,
 					       double yBinWidth)
     : ProcedureNode(ProcedureNode::Collect2DNode)
@@ -48,7 +47,6 @@ Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObse
 	subCollectBranch_ = NULL;
 }
 
-// Destructor
 Collect2DProcedureNode::~Collect2DProcedureNode() {}
 
 /*

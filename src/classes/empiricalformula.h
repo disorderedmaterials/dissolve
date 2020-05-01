@@ -35,9 +35,7 @@ class SpeciesAtom;
 class EmpiricalFormula
 {
       public:
-	// Constructor
 	EmpiricalFormula();
-	// Destructor
 	~EmpiricalFormula();
 
 	/*

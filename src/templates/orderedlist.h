@@ -30,7 +30,6 @@
 template <class T> class OrderedListItem
 {
       public:
-	// Constructor
 	OrderedListItem<T>();
 	// List pointers
 	OrderedListItem<T> *prev, *next;
@@ -46,7 +45,6 @@ template <class T> class OrderedListItem
 	int objectIndex() const;
 };
 
-// Constructor
 template <class T> OrderedListItem<T>::OrderedListItem()
 {
 	prev = NULL;
@@ -67,11 +65,8 @@ template <class T> class OrderedList
 	 * The class T must provide an 'int T::index() const' function, as well as operator=.
 	 */
       public:
-	// Constructor
 	OrderedList<T>();
-	// Destructor
 	~OrderedList();
-	// Copy constructor
 	OrderedList<T>(const OrderedList<T> &source);
 
 	/*
@@ -144,13 +139,10 @@ template <class T> class OrderedList
 	 * Operators
 	 */
       public:
-	// Assignment operator
 	void operator=(const OrderedList<T> &other);
-	// Element access operator
 	OrderedListItem<T> *operator[](int);
 };
 
-// Constructor
 template <class T> OrderedList<T>::OrderedList()
 {
 	listHead_ = NULL;
@@ -164,10 +156,8 @@ template <class T> OrderedList<T>::OrderedList()
 	objects_ = NULL;
 }
 
-// Destructor
 template <class T> OrderedList<T>::~OrderedList() { clear(); }
 
-// Copy constructor
 template <class T> OrderedList<T>::OrderedList(const OrderedList<T> &source) { (*this) = source; }
 
 /*
@@ -565,7 +555,6 @@ template <class T> void OrderedList<T>::difference(OrderedList<T> &listB, Ordere
 // Operators
 */
 
-// Assignment operator
 template <class T> void OrderedList<T>::operator=(const OrderedList<T> &other)
 {
 	clear();
@@ -573,7 +562,6 @@ template <class T> void OrderedList<T>::operator=(const OrderedList<T> &other)
 		addAtEnd(item->object());
 }
 
-// Element access operator
 template <class T> OrderedListItem<T> *OrderedList<T>::operator[](int index)
 {
 #ifdef CHECKS

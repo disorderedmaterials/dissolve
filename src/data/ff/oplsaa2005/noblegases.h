@@ -37,7 +37,6 @@ class SpeciesTorsion;
 class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_OPLSAA2005_NobleGases();
 	~Forcefield_OPLSAA2005_NobleGases();
 

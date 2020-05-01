@@ -35,9 +35,7 @@ class Molecule;
 class SiteStack : public ListItem<SiteStack>
 {
       public:
-	// Constructor
 	SiteStack();
-	// Destructor
 	~SiteStack();
 
 	/*

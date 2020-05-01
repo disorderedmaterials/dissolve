@@ -33,9 +33,7 @@ class ExpressionVariable;
 class ParametersProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	ParametersProcedureNode();
-	// Destructor
 	~ParametersProcedureNode();
 
 	/*

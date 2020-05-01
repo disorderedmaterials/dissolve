@@ -37,9 +37,7 @@ class SelectForcefieldDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectForcefieldDialog(QWidget *parent, const List<Forcefield> &forcefields);
-	// Destructor
 	~SelectForcefieldDialog();
 
       private:

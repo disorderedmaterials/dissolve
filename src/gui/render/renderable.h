@@ -51,7 +51,6 @@ class Renderable : public ListItem<Renderable>
 	};
 	// Return enum options for RenderableType
 	static EnumOptions<RenderableType> renderableTypes();
-	// Constructor / Destructor
 	Renderable(RenderableType type, const char *objectTag);
 	virtual ~Renderable();
 

@@ -32,7 +32,6 @@ class SpeciesAtom;
 class Forcefield_Py5_Ludwig : public Forcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_Py5_Ludwig();
 	~Forcefield_Py5_Ludwig();
 

@@ -33,9 +33,7 @@ class Configuration;
 class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
 {
       public:
-	// Constructor
 	AtomTypeSelectionKeyword(AtomTypeList &selection_, const RefList<Configuration> &sourceConfigurations);
-	// Destructor
 	~AtomTypeSelectionKeyword();
 
 	/*

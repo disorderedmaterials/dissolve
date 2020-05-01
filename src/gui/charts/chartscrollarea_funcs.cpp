@@ -22,7 +22,6 @@
 #include "gui/charts/chartscrollarea.hui"
 #include <QScrollBar>
 
-// Constructor
 ChartScrollArea::ChartScrollArea(QWidget *parent) : QScrollArea(parent) {}
 
 ChartScrollArea::~ChartScrollArea() {}

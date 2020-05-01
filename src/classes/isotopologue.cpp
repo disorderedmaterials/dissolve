@@ -25,10 +25,8 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-// Constructor
 Isotopologue::Isotopologue() : ListItem<Isotopologue>() { parent_ = NULL; }
 
-// Destructor
 Isotopologue::~Isotopologue() {}
 
 /*

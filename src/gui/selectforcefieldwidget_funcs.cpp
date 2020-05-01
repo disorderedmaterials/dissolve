@@ -24,7 +24,6 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-// Constructor
 SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields) : QWidget(parent), forcefields_(forcefields)
 {
 	ui_.setupUi(this);
@@ -41,7 +40,6 @@ SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vecto
 	refreshing_ = false;
 }
 
-// Destructor
 SelectForcefieldWidget::~SelectForcefieldWidget() {}
 
 // Update the list of Forcefields, optionally filtering them by name and description

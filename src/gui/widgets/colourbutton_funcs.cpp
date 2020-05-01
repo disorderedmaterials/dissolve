@@ -27,7 +27,6 @@
  * ColourButton
  */
 
-// Constructor
 ColourButton::ColourButton(QWidget *parent) : QPushButton(parent) {}
 
 // Set displayed colour

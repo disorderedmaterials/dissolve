@@ -35,7 +35,6 @@ class KeywordDropDown : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	KeywordDropDown(QWidget *parent);
 
 	/*

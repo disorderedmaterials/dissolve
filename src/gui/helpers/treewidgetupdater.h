@@ -184,7 +184,6 @@ template <class T, class I> class TreeWidgetRefListUpdater
 		}
 	}
 
-	// Constructor
 	TreeWidgetRefListUpdater(QTreeWidgetItem *parentItem, const RefList<I> &list, T *functionParent, TreeWidgetChildUpdateFunction updateChild)
 	{
 		QTreeWidgetItem *treeItem;
@@ -235,7 +234,6 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *item, D data, bool createItem);
 
       public:
-	// Constructor
 	TreeWidgetRefDataListUpdater(QTreeWidgetItem *parentItem, const RefDataList<I, D> &list, T *functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
 	{
 		QTreeWidgetItem *treeItem;

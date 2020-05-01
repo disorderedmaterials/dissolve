@@ -34,9 +34,7 @@ class Molecule;
 class PotentialMap
 {
       public:
-	// Constructor
 	PotentialMap();
-	// Destructor
 	~PotentialMap();
 	// Clear all data
 	void clear();

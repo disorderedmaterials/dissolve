@@ -37,7 +37,6 @@ template <class T, class D> class OrderedPointerDataListItem
 	 */
 
       public:
-	// Constructor
 	OrderedPointerDataListItem<T, D>(T *object = NULL, D data = D()) : object_(object), data_(data)
 	{
 		prev = NULL;
@@ -73,7 +72,6 @@ template <class T, class D> class OrderedPointerDataList
 	 */
 
       public:
-	// Constructor
 	OrderedPointerDataList<T, D>()
 	{
 		listHead_ = NULL;
@@ -86,9 +84,7 @@ template <class T, class D> class OrderedPointerDataList
 		items_ = NULL;
 		objects_ = NULL;
 	}
-	// Destructor
 	~OrderedPointerDataList() { clear(); }
-	// Copy constructor
 	OrderedPointerDataList<T, D>(const OrderedPointerDataList<T, D> &source) { (*this) = source; }
 
 	/*
@@ -525,14 +521,12 @@ template <class T, class D> class OrderedPointerDataList
 	 * Operators
 	 */
       public:
-	// Assignment operator
 	void operator=(const OrderedPointerDataList<T, D> &other)
 	{
 		clear();
 		for (OrderedPointerDataListItem<T, D> *item = other.listHead_; item != NULL; item = item->next)
 			addAtEnd(item->object());
 	}
-	// Element access operator
 	OrderedPointerDataListItem<T, D> *operator[](int index)
 	{
 #ifdef CHECKS
@@ -552,7 +546,6 @@ template <class T, class D> class OrderedPointerDataList
 template <class T, class D> class OrderedPointerDataListIterator
 {
       public:
-	// Constructor
 	OrderedPointerDataListIterator<T, D>(const OrderedPointerDataList<T, D> &source, bool reverse = false) : targetList_(source), reverse_(reverse)
 	{
 		finished_ = false;

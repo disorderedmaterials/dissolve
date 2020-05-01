@@ -34,9 +34,7 @@
 class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection &>
 {
       public:
-	// Constructor
 	IsotopologueCollectionKeyword(IsotopologueCollection &collection, const RefList<Configuration> &allowedConfigurations);
-	// Destructor
 	~IsotopologueCollectionKeyword();
 
 	/*

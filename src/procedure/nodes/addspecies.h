@@ -33,9 +33,7 @@ class Species;
 class AddSpeciesProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	AddSpeciesProcedureNode(Species *sp = NULL, NodeValue population = 0, NodeValue density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
-	// Destructor
 	~AddSpeciesProcedureNode();
 
 	/*

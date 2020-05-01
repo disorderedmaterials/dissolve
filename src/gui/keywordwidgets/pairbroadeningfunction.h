@@ -37,7 +37,6 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 	Q_OBJECT
 
       public:
-	// Constructor
 	PairBroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

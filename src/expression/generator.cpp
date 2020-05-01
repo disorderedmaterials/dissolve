@@ -32,7 +32,6 @@
 Expression *ExpressionGenerator::expression_ = NULL;
 ExpressionGenerator *ExpressionGenerator::generator_ = NULL;
 
-// Constructors
 ExpressionGenerator::ExpressionGenerator(Expression &expression, const char *expressionText)
 {
 	// Private variables
@@ -46,7 +45,6 @@ ExpressionGenerator::ExpressionGenerator(Expression &expression, const char *exp
 	setSource(expressionText);
 }
 
-// Destructor
 ExpressionGenerator::~ExpressionGenerator() {}
 
 /*

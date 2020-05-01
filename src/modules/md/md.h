@@ -35,9 +35,7 @@ class MDModule : public Module
 	 */
 
       public:
-	// Constructor
 	MDModule();
-	// Destructor
 	~MDModule();
 
 	/*

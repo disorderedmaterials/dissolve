@@ -26,7 +26,6 @@
 class FormFactorData
 {
       public:
-	// Constructor
 	FormFactorData(int Z = 0, int formalCharge = 0);
 
 	/*

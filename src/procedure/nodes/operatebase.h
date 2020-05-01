@@ -35,9 +35,7 @@ class Data3D;
 class OperateProcedureNodeBase : public ProcedureNode
 {
       public:
-	// Constructor
 	OperateProcedureNodeBase(ProcedureNode::NodeType nodeType);
-	// Destructor
 	virtual ~OperateProcedureNodeBase();
 
 	/*

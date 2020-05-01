@@ -37,9 +37,7 @@ class SelectSpeciesDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectSpeciesDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle);
-	// Destructor
 	~SelectSpeciesDialog();
 
       private:

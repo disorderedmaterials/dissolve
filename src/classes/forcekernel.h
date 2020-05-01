@@ -42,9 +42,7 @@ class SpeciesTorsion;
 class ForceKernel
 {
       public:
-	// Constructor
 	ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz, double cutoffDistance = -1.0);
-	// Destructor
 	~ForceKernel();
 
 	/*

@@ -31,7 +31,6 @@
 class RenderableGroupManager
 {
       public:
-	// Constructor
 	RenderableGroupManager();
 	// Clear all groups
 	void clear();

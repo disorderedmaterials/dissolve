@@ -40,9 +40,7 @@ class SpeciesAtom;
 class SpeciesSite : public ListItem<SpeciesSite>
 {
       public:
-	// Constructor
 	SpeciesSite();
-	// Destructor
 	~SpeciesSite();
 
 	/*

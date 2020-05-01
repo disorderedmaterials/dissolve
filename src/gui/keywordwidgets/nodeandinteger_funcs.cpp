@@ -23,7 +23,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/nodeandinteger.h"
 
-// Constructor
 NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI

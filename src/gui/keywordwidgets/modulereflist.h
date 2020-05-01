@@ -37,7 +37,6 @@ class ModuleRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetB
 	Q_OBJECT
 
       public:
-	// Constructor
 	ModuleRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

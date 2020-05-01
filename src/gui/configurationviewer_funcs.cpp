@@ -24,7 +24,6 @@
 #include "gui/configurationviewer.hui"
 #include "gui/render/renderableconfiguration.h"
 
-// Constructor
 ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Source data
@@ -44,7 +43,6 @@ ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)
 	setClipToAxesVolume(false);
 }
 
-// Destructor
 ConfigurationViewer::~ConfigurationViewer() {}
 
 /*

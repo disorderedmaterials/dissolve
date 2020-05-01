@@ -23,7 +23,6 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
-// Constructor
 NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::PresenceNode)
 {
@@ -38,7 +37,6 @@ NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *
 	nHydrogensValueOperator_ = NETANode::EqualTo;
 }
 
-// Destructor
 NETAPresenceNode::~NETAPresenceNode() {}
 
 /*

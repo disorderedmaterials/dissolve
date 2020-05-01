@@ -34,7 +34,6 @@
 class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 {
       public:
-	// Constructor / Destructor
 	PrimitiveAssembly();
 	~PrimitiveAssembly();
 

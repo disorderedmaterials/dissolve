@@ -32,7 +32,6 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target) : ProcedureNode(ProcedureNode::Process2DNode)
 {
 	keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target), "SourceData", "Collect2D node containing the data to process");
@@ -49,7 +48,6 @@ Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *tar
 	processedData_ = NULL;
 }
 
-// Destructor
 Process2DProcedureNode::~Process2DProcedureNode() {}
 
 /*

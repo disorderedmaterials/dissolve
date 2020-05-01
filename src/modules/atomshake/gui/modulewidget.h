@@ -39,7 +39,6 @@ class AtomShakeModuleWidget : public ModuleWidget
 	AtomShakeModule *module_;
 
       public:
-	// Constructor / Destructor
 	AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module);
 	~AtomShakeModuleWidget();
 

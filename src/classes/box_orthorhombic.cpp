@@ -23,7 +23,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
 {
 	type_ = Box::OrthorhombicBoxType;
@@ -45,7 +44,6 @@ OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
 	finalise();
 }
 
-// Destructor
 OrthorhombicBox::~OrthorhombicBox() {}
 
 /*

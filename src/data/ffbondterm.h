@@ -34,7 +34,6 @@ class ForcefieldAtomType;
 class ForcefieldBondTerm
 {
       public:
-	// Constructor / Destructor
 	ForcefieldBondTerm(const char *typeI = NULL, const char *typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
 			   double data3 = 0.0);
 	~ForcefieldBondTerm();

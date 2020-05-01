@@ -33,7 +33,6 @@
 class ObjectInfo
 {
       public:
-	// Constructor
 	ObjectInfo()
 	{
 		type_ = 0;
@@ -106,7 +105,6 @@ class ObjectInfo
 template <class T> class ObjectStore
 {
       public:
-	// Constructor
 	ObjectStore<T>(T *object)
 	{
 		// If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy constructor)
@@ -123,19 +121,16 @@ template <class T> class ObjectStore
 		setObjectTag(CharString("%p", object_));
 		objects_.append(object_, objectInfo_.id());
 	}
-	// Destructor
 	~ObjectStore<T>()
 	{
 		// Remove our pointer from the master list
 		if (object_)
 			objects_.remove(object_);
 	}
-	// Copy Constructor
 	ObjectStore<T>(const ObjectStore<T> &source)
 	{
 		// ObjectStore<T> members are *not* copied, since a named object should be unique.
 	}
-	// Assignment Operator
 	void operator=(const ObjectStore<T> &source)
 	{
 		// ObjectStore<T> members are *not* copied, since a named object should be unique.

@@ -29,7 +29,6 @@
 #include "classes/species.h"
 #include <iterator>
 
-// Constructor
 EnergyKernel::EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
     : configuration_(config), cells_(config->cells()), potentialMap_(potentialMap), processPool_(procPool)
 {
@@ -37,7 +36,6 @@ EnergyKernel::EnergyKernel(ProcessPool &procPool, Configuration *config, const P
 	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
 }
 
-// Destructor
 EnergyKernel::~EnergyKernel() {}
 
 /*

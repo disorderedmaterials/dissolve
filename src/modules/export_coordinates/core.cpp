@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 ExportCoordinatesModule::ExportCoordinatesModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 ExportCoordinatesModule::~ExportCoordinatesModule() {}
 
 /*

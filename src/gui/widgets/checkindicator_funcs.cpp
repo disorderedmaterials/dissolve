@@ -24,7 +24,6 @@
 #include <QPixmap>
 #include <QSizePolicy>
 
-// Constructor
 CheckIndicator::CheckIndicator(QWidget *parent) : QLabel(parent)
 {
 	// Set minimum size

@@ -33,7 +33,6 @@
 class TextFragment : public ListItem<TextFragment>
 {
       public:
-	// Constructor / Destructor
 	TextFragment();
 	~TextFragment();
 

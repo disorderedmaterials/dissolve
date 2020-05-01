@@ -28,7 +28,6 @@
 #include "modules/neutronsq/neutronsq.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface

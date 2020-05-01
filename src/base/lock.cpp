@@ -26,10 +26,8 @@
  * Lock
  */
 
-// Constructor
 Lock::Lock() { lockCounter_ = 0; }
 
-// Destructor
 Lock::~Lock() {}
 
 // Increase lock count
@@ -50,7 +48,6 @@ bool Lock::isLocked() const { return (lockCounter_ > 0); }
  * Locker
  */
 
-// Constructor
 Locker::Locker(Lock &lock) : lock_(lock)
 {
 	lock.addLockLevel();
@@ -58,7 +55,6 @@ Locker::Locker(Lock &lock) : lock_(lock)
 	unlocked_ = false;
 }
 
-// Destructor
 Locker::~Locker()
 {
 	if (!unlocked_)

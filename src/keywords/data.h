@@ -32,7 +32,6 @@
 template <class T> class KeywordData : public KeywordBase
 {
       public:
-	// Constructor
 	KeywordData(KeywordBase::KeywordDataType type, T data) : KeywordBase(type), data_(data) {}
 
 	/*

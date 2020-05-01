@@ -32,7 +32,6 @@
 class ReferencePoint : public ListItem<ReferencePoint>
 {
       public:
-	// Constructor / Destructor
 	ReferencePoint();
 	~ReferencePoint();
 

@@ -38,7 +38,6 @@ class PairPotentialExportFileFormat : public FileAndFormat
 		DLPOLYTABLEPairPotential,
 		nPairPotentialExportFormats
 	};
-	// Constructor
 	PairPotentialExportFileFormat(const char *filename = NULL, PairPotentialExportFormat format = BlockPairPotential);
 
 	/*

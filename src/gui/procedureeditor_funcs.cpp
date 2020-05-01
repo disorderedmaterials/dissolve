@@ -27,7 +27,6 @@
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 
-// Constructor / Destructor
 ProcedureEditor::ProcedureEditor(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);

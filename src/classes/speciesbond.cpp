@@ -26,10 +26,8 @@
 #include "data/atomicmass.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>() { clear(); }
 
-// Destructor
 SpeciesBond::~SpeciesBond() {}
 
 /*

@@ -24,10 +24,8 @@
 #include "classes/data1dstore.h"
 #include "io/import/data1d.h"
 
-// Constructor
 Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data1DStore) : KeywordData<Data1DStore &>(KeywordBase::Data1DStoreData, data1DStore) {}
 
-// Destructor
 Data1DStoreKeyword::~Data1DStoreKeyword() {}
 
 /*

@@ -25,7 +25,6 @@
  * Constructor / Destructor
  */
 
-// Constructor
 BenchmarkModule::BenchmarkModule() : Module()
 {
 	// Set unique name for this instance of the Module
@@ -36,7 +35,6 @@ BenchmarkModule::BenchmarkModule() : Module()
 	initialise();
 }
 
-// Destructor
 BenchmarkModule::~BenchmarkModule() {}
 
 /*

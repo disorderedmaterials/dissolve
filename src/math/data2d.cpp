@@ -31,7 +31,6 @@ template <class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
 template <class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
 template <class Data2D> const char *ObjectStore<Data2D>::objectTypeName_ = "Data2D";
 
-// Constructor
 Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data2D>(), ObjectStore<Data2D>(this)
 {
 	hasError_ = false;
@@ -39,10 +38,8 @@ Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data
 	clear();
 }
 
-// Destructor
 Data2D::~Data2D() {}
 
-// Copy Constructor
 Data2D::Data2D(const Data2D &source) : PlottableData(PlottableData::TwoAxisPlottable), ObjectStore<Data2D>(this) { (*this) = source; }
 
 // Clear Data
@@ -419,7 +416,6 @@ const Array2D<double> &Data2D::constErrors2D() const
  * Operators
  */
 
-// Operator =
 void Data2D::operator=(const Data2D &source)
 {
 	name_ = source.name_;
@@ -432,7 +428,6 @@ void Data2D::operator=(const Data2D &source)
 	++version_;
 }
 
-// Operator +=
 void Data2D::operator+=(const double delta)
 {
 	for (int n = 0; n < values_.linearArraySize(); ++n)
@@ -441,7 +436,6 @@ void Data2D::operator+=(const double delta)
 	++version_;
 }
 
-// Operator -=
 void Data2D::operator-=(const double delta)
 {
 	for (int n = 0; n < values_.linearArraySize(); ++n)
@@ -450,7 +444,6 @@ void Data2D::operator-=(const double delta)
 	++version_;
 }
 
-// Operator *=
 void Data2D::operator*=(const double factor)
 {
 	values_ *= factor;
@@ -460,7 +453,6 @@ void Data2D::operator*=(const double factor)
 	++version_;
 }
 
-// Operator /=
 void Data2D::operator/=(const double factor)
 {
 	values_ /= factor;

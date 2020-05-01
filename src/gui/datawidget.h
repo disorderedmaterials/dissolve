@@ -35,7 +35,6 @@ class DataWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	DataWidget(QWidget *parent = 0);
 	~DataWidget();
 

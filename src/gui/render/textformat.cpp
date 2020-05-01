@@ -21,7 +21,6 @@
 
 #include "gui/render/textformat.h"
 
-// Constructor
 TextFormat::TextFormat() : ListItem<TextFormat>()
 {
 	y_ = 0.0;
@@ -34,10 +33,8 @@ TextFormat::TextFormat() : ListItem<TextFormat>()
 // Desctructor
 TextFormat::~TextFormat() {}
 
-// Copy constructor
 TextFormat::TextFormat(const TextFormat &source) { (*this) = source; }
 
-// Assignment operator
 void TextFormat::operator=(const TextFormat &source)
 {
 	y_ = source.y_;

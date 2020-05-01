@@ -40,9 +40,7 @@ class SelectForcefieldWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields = ForcefieldLibrary::forcefields());
-	// Destructor
 	~SelectForcefieldWidget();
 
       private:

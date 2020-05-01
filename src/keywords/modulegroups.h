@@ -33,9 +33,7 @@ class ModuleGroups;
 class ModuleGroupsKeyword : public KeywordData<ModuleGroups &>
 {
       public:
-	// Constructor
 	ModuleGroupsKeyword(ModuleGroups &groups);
-	// Destructor
 	~ModuleGroupsKeyword();
 
 	/*

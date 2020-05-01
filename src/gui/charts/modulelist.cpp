@@ -36,7 +36,6 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-// Constructor
 ModuleListChart::ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration) : ChartBase(), dissolve_(dissolve)
 {
 	refreshing_ = false;

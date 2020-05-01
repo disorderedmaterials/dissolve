@@ -31,7 +31,6 @@
 #include "templates/broadcastlist.h"
 #include <string.h>
 
-// Constructor
 AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
@@ -41,10 +40,8 @@ AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
 	boundCoherent_ = 0.0;
 }
 
-// Copy Constructor
 AtomTypeData::AtomTypeData(const AtomTypeData &source) { (*this) = source; }
 
-// Assignment Operator
 void AtomTypeData::operator=(const AtomTypeData &source)
 {
 	atomType_ = source.atomType_;

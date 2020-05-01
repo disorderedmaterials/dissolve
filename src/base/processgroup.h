@@ -35,7 +35,6 @@ class ProcessGroup : public ListItem<ProcessGroup>
 	 * Class to define a group of processes within a pool, keeping reference of their pool and world ranks.
 	 */
       public:
-	// Constructor
 	ProcessGroup();
 
 	/*

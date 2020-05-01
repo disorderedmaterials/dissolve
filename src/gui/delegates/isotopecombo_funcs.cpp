@@ -26,7 +26,6 @@
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
-// Destructor
 IsotopeComboDelegate::~IsotopeComboDelegate() {}
 
 // Create editor

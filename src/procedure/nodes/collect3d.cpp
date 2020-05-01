@@ -29,7 +29,6 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-// Constructors
 Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable, CalculateProcedureNodeBase *yObservable, CalculateProcedureNodeBase *zObservable, double xMin, double xMax,
 					       double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::Collect3DNode)
@@ -73,7 +72,6 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
 	subCollectBranch_ = NULL;
 }
 
-// Destructor
 Collect3DProcedureNode::~Collect3DProcedureNode() {}
 
 /*

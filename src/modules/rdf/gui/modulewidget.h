@@ -40,7 +40,6 @@ class RDFModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
 	~RDFModuleWidget();
 

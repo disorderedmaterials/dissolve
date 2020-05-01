@@ -37,11 +37,9 @@ class ExpressionVariable;
 class ExpressionGenerator
 {
       private:
-	// Constructor
 	ExpressionGenerator(Expression &expression, const char *expressionText);
 
       public:
-	// Destructor
 	~ExpressionGenerator();
 
 	/*

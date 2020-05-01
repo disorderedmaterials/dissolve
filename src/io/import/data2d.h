@@ -41,10 +41,8 @@ class Data2DImportFileFormat : public FileAndFormat
 		CartesianData2D,
 		nData2DImportFormats
 	};
-	// Constructors
 	Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
 	Data2DImportFileFormat(const char *filename, Data2DImportFormat format = CartesianData2D);
-	// Destructor
 	~Data2DImportFileFormat();
 
 	/*

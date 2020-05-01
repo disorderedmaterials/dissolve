@@ -24,7 +24,6 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/nodes.h"
 
-// Constructor
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode, const char *blockTerminationKeyword)
     : ProcedureNode(ProcedureNode::SequenceNode)
 {
@@ -34,7 +33,6 @@ SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context,
 	blockTerminationKeyword_ = blockTerminationKeyword;
 }
 
-// Destructor
 SequenceProcedureNode::~SequenceProcedureNode() { clear(); }
 
 /*

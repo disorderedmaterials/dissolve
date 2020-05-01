@@ -32,7 +32,6 @@ class QWidget;
 class WizardWidgetHighlight : public ListItem<WizardWidgetHighlight>
 {
       public:
-	// Constructor / Destructor
 	WizardWidgetHighlight();
 	~WizardWidgetHighlight();
 

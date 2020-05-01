@@ -28,7 +28,6 @@
 #include "modules/energy/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

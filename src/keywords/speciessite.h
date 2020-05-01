@@ -32,9 +32,7 @@ class SpeciesSite;
 class SpeciesSiteKeyword : public KeywordData<SpeciesSite *>
 {
       public:
-	// Constructor
 	SpeciesSiteKeyword(SpeciesSite *site = NULL, bool axesRequired = false);
-	// Destructor
 	~SpeciesSiteKeyword();
 
 	/*

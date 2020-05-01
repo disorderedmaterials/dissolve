@@ -35,9 +35,7 @@ class SpeciesSite;
 class CalculateRDFModule : public Module
 {
       public:
-	// Constructor
 	CalculateRDFModule();
-	// Destructor
 	~CalculateRDFModule();
 
 	/*

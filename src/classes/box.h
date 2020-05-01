@@ -36,11 +36,9 @@ class ProcessPool;
 class Box
 {
       public:
-	// Constructor
 	Box();
 	// Virtual Destructor
 	virtual ~Box();
-	// Assignment operator
 	void operator=(const Box &source);
 
 	/*
@@ -197,9 +195,7 @@ class Box
 class NonPeriodicBox : public Box
 {
       public:
-	// Constructor
 	NonPeriodicBox(double length);
-	// Destructor
 	~NonPeriodicBox();
 
 	/*
@@ -255,9 +251,7 @@ class NonPeriodicBox : public Box
 class CubicBox : public Box
 {
       public:
-	// Constructor
 	CubicBox(double length);
-	// Destructor
 	~CubicBox();
 
 	/*
@@ -313,9 +307,7 @@ class CubicBox : public Box
 class OrthorhombicBox : public Box
 {
       public:
-	// Constructor
 	OrthorhombicBox(const Vec3<double> lengths);
-	// Destructor
 	~OrthorhombicBox();
 
 	/*
@@ -371,9 +363,7 @@ class OrthorhombicBox : public Box
 class MonoclinicBox : public Box
 {
       public:
-	// Constructor
 	MonoclinicBox(const Vec3<double> lengths, double beta);
-	// Destructor
 	~MonoclinicBox();
 
 	/*
@@ -429,9 +419,7 @@ class MonoclinicBox : public Box
 class TriclinicBox : public Box
 {
       public:
-	// Constructor
 	TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
-	// Destructor
 	~TriclinicBox();
 
 	/*

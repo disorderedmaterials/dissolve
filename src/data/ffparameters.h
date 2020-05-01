@@ -33,9 +33,7 @@ class Forcefield;
 class ForcefieldParameters : public ListItem<ForcefieldParameters>
 {
       public:
-	// Constructors
 	ForcefieldParameters(const char *name = NULL, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-	// Destructor
 	~ForcefieldParameters();
 
 	/*

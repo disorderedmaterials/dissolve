@@ -26,7 +26,6 @@
 #include "math/data1d.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
 {
 	set(function, p1, p2, p3, p4, p5, p6);
@@ -34,7 +33,6 @@ WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1,
 	xMax_ = -1.0;
 }
 
-// Assignment operator
 void WindowFunction::operator=(const WindowFunction &source)
 {
 	function_ = source.function_;
@@ -44,7 +42,6 @@ void WindowFunction::operator=(const WindowFunction &source)
 	xMax_ = source.xMax_;
 }
 
-// Destructor
 WindowFunction::~WindowFunction() {}
 
 // Window Function keywords

@@ -40,7 +40,6 @@ class CalculateAngleModuleWidget : public ModuleWidget
 	CalculateAngleModule *module_;
 
       public:
-	// Constructor
 	CalculateAngleModuleWidget(QWidget *parent, CalculateAngleModule *module);
 
 	/*

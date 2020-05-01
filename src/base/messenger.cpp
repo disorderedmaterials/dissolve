@@ -38,7 +38,6 @@ char Messenger::text_[8096];
 char Messenger::workingText_[8096];
 OutputHandler *Messenger::outputHandler_ = NULL;
 
-// Constructor
 Messenger::Messenger() {}
 
 /*

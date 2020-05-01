@@ -25,10 +25,8 @@
 #include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(), DynamicArrayObject<SpeciesImproper>() { clear(); }
 
-// Destructor
 SpeciesImproper::~SpeciesImproper() {}
 
 /*

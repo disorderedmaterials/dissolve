@@ -22,10 +22,8 @@
 #include "keywords/data3dstore.h"
 #include "base/lineparser.h"
 
-// Constructor
 Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore &data3DStore) : KeywordData<Data3DStore &>(KeywordBase::Data3DStoreData, data3DStore) {}
 
-// Destructor
 Data3DStoreKeyword::~Data3DStoreKeyword() {}
 
 /*

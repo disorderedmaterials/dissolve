@@ -33,9 +33,7 @@ class Cell;
 class CellArray
 {
       public:
-	// Constructor
 	CellArray();
-	// Destructor
 	~CellArray();
 
 	/*

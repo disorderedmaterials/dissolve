@@ -39,7 +39,6 @@ class ModuleControlWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ModuleControlWidget(QWidget *parent);
 	~ModuleControlWidget();
 

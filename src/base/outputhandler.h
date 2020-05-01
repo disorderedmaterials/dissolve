@@ -29,9 +29,7 @@
 class OutputHandler
 {
       public:
-	// Constructor
 	OutputHandler();
-	// Destructor
 	virtual ~OutputHandler();
 
 	/*

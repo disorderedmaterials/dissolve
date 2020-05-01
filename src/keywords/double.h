@@ -31,11 +31,9 @@
 class DoubleKeyword : public KeywordData<double>
 {
       public:
-	// Constructors
 	DoubleKeyword(double value);
 	DoubleKeyword(double value, double minValue);
 	DoubleKeyword(double value, double minValue, double maxValue);
-	// Destructor
 	~DoubleKeyword();
 
 	/*

@@ -35,9 +35,7 @@
 class MoleculeDistributor : public Distributor
 {
       public:
-	// Constructor
 	MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
-	// Destructor
 	~MoleculeDistributor();
 
 	/*

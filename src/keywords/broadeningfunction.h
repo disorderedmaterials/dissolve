@@ -32,9 +32,7 @@
 class BroadeningFunctionKeyword : public KeywordData<BroadeningFunction>
 {
       public:
-	// Constructor
 	BroadeningFunctionKeyword(BroadeningFunction value);
-	// Destructor
 	~BroadeningFunctionKeyword();
 
 	/*

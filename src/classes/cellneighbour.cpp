@@ -22,14 +22,12 @@
 #include "classes/cellneighbour.h"
 #include <cstdlib>
 
-// Constructor
 CellNeighbour::CellNeighbour()
 {
 	cell_ = NULL;
 	useMim_ = false;
 }
 
-// Destructor
 CellNeighbour::~CellNeighbour() {}
 
 // Set cell and mim flag

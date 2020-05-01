@@ -34,9 +34,7 @@ class SelectProcedureNode;
 class ExcludeProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	ExcludeProcedureNode();
-	// Destructor
 	~ExcludeProcedureNode();
 
 	/*

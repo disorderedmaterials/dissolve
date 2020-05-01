@@ -34,9 +34,7 @@
 class Data2DStore
 {
       public:
-	// Constructor
 	Data2DStore();
-	// Destructor
 	~Data2DStore();
 
 	/*

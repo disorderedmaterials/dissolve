@@ -34,9 +34,7 @@ class ProcedureNode;
 class NodeRefListKeywordBase
 {
       public:
-	// Constructor
 	NodeRefListKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-	// Destructor
 	virtual ~NodeRefListKeywordBase();
 
 	/*
@@ -78,12 +76,10 @@ class NodeRefListKeywordBase
 template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, public KeywordData<RefList<N> &>
 {
       public:
-	// Constructor
 	NodeRefListKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, RefList<N> &nodeRefList)
 	    : NodeRefListKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<RefList<N> &>(KeywordBase::NodeRefListData, nodeRefList)
 	{
 	}
-	// Destructor
 	~NodeRefListKeyword() {}
 
 	/*

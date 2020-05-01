@@ -29,7 +29,6 @@
 template <> class GenericItemContainer<streampos> : public GenericItem
 {
       public:
-	// Constructor
 	GenericItemContainer<streampos>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*

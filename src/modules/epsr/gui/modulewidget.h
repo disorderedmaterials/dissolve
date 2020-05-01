@@ -39,7 +39,6 @@ class EPSRModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve);
 	~EPSRModuleWidget();
 

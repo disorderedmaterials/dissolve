@@ -28,7 +28,6 @@
 #include "modules/sq/sq.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface

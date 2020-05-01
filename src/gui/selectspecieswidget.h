@@ -37,9 +37,7 @@ class SelectSpeciesWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectSpeciesWidget(QWidget *parent);
-	// Destructor
 	~SelectSpeciesWidget();
 
 	/*

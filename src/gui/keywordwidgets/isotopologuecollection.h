@@ -37,7 +37,6 @@ class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public Keywo
 	Q_OBJECT
 
       public:
-	// Constructor
 	IsotopologueCollectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

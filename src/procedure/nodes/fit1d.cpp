@@ -31,7 +31,6 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 
-// Constructor
 Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::Fit1DNode)
 {
 	dataNode_.addAllowableNodeType(ProcedureNode::Process1DNode);
@@ -43,7 +42,6 @@ Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : Procedu
 	saveData_ = false;
 }
 
-// Destructor
 Fit1DProcedureNode::~Fit1DProcedureNode() {}
 
 /*

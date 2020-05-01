@@ -22,7 +22,6 @@
 #include "gui/render/renderablegroup.h"
 #include "gui/render/renderable.h"
 
-// Constructor
 RenderableGroup::RenderableGroup(const char *name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
 {
 	name_ = name;

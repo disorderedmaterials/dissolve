@@ -31,7 +31,6 @@
 class MouseWheelWidgetAdjustmentGuard : public QObject
 {
       public:
-	// Constructor
 	explicit MouseWheelWidgetAdjustmentGuard(QWidget *widget) : QObject(widget) { widget->setFocusPolicy(Qt::StrongFocus); }
 
       protected:

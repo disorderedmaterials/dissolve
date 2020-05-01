@@ -34,7 +34,6 @@ class SiteWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	SiteWidget(QWidget *parent = 0);
 	~SiteWidget();
 

@@ -29,7 +29,6 @@
 #include <QPushButton>
 #include <QToolButton>
 
-// Constructor
 ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 {
 	currentElement_ = NULL;
@@ -149,7 +148,6 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 	doubleClickTimer_.setInterval(QApplication::doubleClickInterval());
 }
 
-// Destructor
 ElementSelector::~ElementSelector() {}
 
 /*

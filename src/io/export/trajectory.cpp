@@ -26,7 +26,6 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-// Constructor
 TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char *filename, TrajectoryExportFormat format) : FileAndFormat(filename, format) {}
 
 /*

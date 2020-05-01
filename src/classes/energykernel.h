@@ -43,9 +43,7 @@ class SpeciesTorsion;
 class EnergyKernel
 {
       public:
-	// Constructor
 	EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff = -1.0);
-	// Destructor
 	~EnergyKernel();
 	// Clear all data
 	void clear();

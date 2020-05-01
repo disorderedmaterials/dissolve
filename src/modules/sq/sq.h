@@ -36,9 +36,7 @@ class Weights;
 class SQModule : public Module
 {
       public:
-	// Constructor
 	SQModule();
-	// Destructor
 	~SQModule();
 
 	/*

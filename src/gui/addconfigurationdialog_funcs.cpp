@@ -21,7 +21,6 @@
 
 #include "gui/addconfigurationdialog.h"
 
-// Constructor
 AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
@@ -33,7 +32,6 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, const Dissolve &
 	connect(ui_.AddConfigurationWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }
 
-// Destructor
 AddConfigurationDialog::~AddConfigurationDialog() {}
 
 // Reset, ready for adding a new Configuration

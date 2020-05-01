@@ -24,10 +24,8 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species> &references) : KeywordData<RefList<Species> &>(KeywordBase::SpeciesRefListData, references) {}
 
-// Destructor
 SpeciesRefListKeyword::~SpeciesRefListKeyword() {}
 
 /*

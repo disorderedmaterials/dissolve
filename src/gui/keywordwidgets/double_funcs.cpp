@@ -23,7 +23,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/double.hui"
 
-// Constructor
 DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : ExponentialSpin(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type

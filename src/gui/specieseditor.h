@@ -34,7 +34,6 @@ class SpeciesEditor : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	SpeciesEditor(QWidget *parent = 0);
 	~SpeciesEditor();
 

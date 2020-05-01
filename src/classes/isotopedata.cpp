@@ -26,7 +26,6 @@
 #include "data/elements.h"
 #include "data/isotopes.h"
 
-// Constructor
 IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 {
 	isotope_ = NULL;
@@ -34,10 +33,8 @@ IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 	fraction_ = 0.0;
 }
 
-// Copy Constructor
 IsotopeData::IsotopeData(const IsotopeData &source) { (*this) = source; }
 
-// Assignment Operator
 void IsotopeData::operator=(const IsotopeData &source)
 {
 	isotope_ = source.isotope_;

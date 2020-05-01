@@ -37,9 +37,7 @@ class SpeciesSite;
 class CalculateDAngleModule : public Module
 {
       public:
-	// Constructor
 	CalculateDAngleModule();
-	// Destructor
 	~CalculateDAngleModule();
 
 	/*

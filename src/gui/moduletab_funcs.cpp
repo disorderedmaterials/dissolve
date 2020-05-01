@@ -28,7 +28,6 @@
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
 
-// Constructor / Destructor
 ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Module *module)
     : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {

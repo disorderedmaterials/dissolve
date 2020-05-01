@@ -31,9 +31,7 @@
 class ScaledEnergyKernel : public EnergyKernel
 {
       public:
-	// Constructor
 	ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff = -1.0);
-	// Destructor
 	~ScaledEnergyKernel();
 	// Clear all data
 	void clear();

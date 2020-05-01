@@ -36,9 +36,7 @@ class NodeScopeStack;
 class Integrate1DProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	Integrate1DProcedureNode(const Process1DProcedureNode *target = NULL);
-	// Destructor
 	~Integrate1DProcedureNode();
 
 	/*

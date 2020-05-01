@@ -39,9 +39,7 @@ class Species;
 class Isotopologue : public ListItem<Isotopologue>
 {
       public:
-	// Constructor
 	Isotopologue();
-	// Destructor
 	~Isotopologue();
 
 	/*

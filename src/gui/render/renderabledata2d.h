@@ -32,7 +32,6 @@ class Axes;
 class RenderableData2D : public Renderable
 {
       public:
-	// Constructor / Destructor
 	RenderableData2D(const Data2D *source, const char *objectTag);
 	~RenderableData2D();
 

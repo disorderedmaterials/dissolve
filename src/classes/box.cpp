@@ -26,7 +26,6 @@
 #include "math/interpolator.h"
 #include <string.h>
 
-// Constructor
 Box::Box()
 {
 	type_ = Box::nBoxTypes;
@@ -37,7 +36,6 @@ Box::Box()
 // Virtual Destructor
 Box::~Box() {}
 
-// Assignment operator
 void Box::operator=(const Box &source)
 {
 	// Basic Definition

@@ -26,7 +26,6 @@
 #include "math/svd.h"
 #include <algorithm>
 
-// Constructor
 ScatteringMatrix::ScatteringMatrix() {}
 
 /*

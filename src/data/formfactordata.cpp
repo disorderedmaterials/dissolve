@@ -21,7 +21,6 @@
 
 #include "data/formfactordata.h"
 
-// Constructor
 FormFactorData::FormFactorData(int Z, int formalCharge) : Z_(Z), formalCharge_(formalCharge) {}
 
 /*

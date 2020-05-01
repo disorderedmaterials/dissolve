@@ -32,9 +32,7 @@ class SelectProcedureNode;
 class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 {
       public:
-	// Constructor
 	CalculateVectorProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL, bool rotateIntoFrame = false);
-	// Destructor
 	~CalculateVectorProcedureNode();
 
 	/*

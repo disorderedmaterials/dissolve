@@ -23,10 +23,8 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-// Constructor
 SpeciesRing::SpeciesRing() : ListItem<SpeciesRing>() {}
 
-// Destructor
 SpeciesRing::~SpeciesRing() {}
 
 /*
@@ -58,7 +56,6 @@ void SpeciesRing::print() const
  * Comparison
  */
 
-// Equality operator
 bool SpeciesRing::operator==(const SpeciesRing &other)
 {
 	// Check ring size first

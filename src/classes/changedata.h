@@ -33,9 +33,7 @@ class Cell;
 class ChangeData : public ListItem<ChangeData>
 {
       public:
-	// Constructor
 	ChangeData();
-	// Destructor
 	~ChangeData();
 
 	/*

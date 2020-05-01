@@ -35,7 +35,6 @@ class ProcedureNode;
 class NodeValueEnumOptionsBaseKeyword
 {
       public:
-	// Constructor
 	NodeValueEnumOptionsBaseKeyword(NodeValue &nodeValue, EnumOptionsBase &baseOptions) : nodeValue_(nodeValue), baseOptions_(baseOptions) {}
 
 	/*
@@ -74,14 +73,12 @@ class NodeValueEnumOptionsBaseKeyword
 template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, public KeywordData<Venum<NodeValue, E>>
 {
       public:
-	// Constructor
 	NodeValueEnumOptionsKeyword(ProcedureNode *parentNode, NodeValue value, EnumOptions<E> enumOptions)
 	    : KeywordData<Venum<NodeValue, E>>(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue, E>(value, enumOptions)),
 	      NodeValueEnumOptionsBaseKeyword(KeywordData<Venum<NodeValue, E>>::data_.value(), KeywordData<Venum<NodeValue, E>>::data_.baseOptions())
 	{
 		parentNode_ = parentNode;
 	}
-	// Destructor
 	~NodeValueEnumOptionsKeyword() {}
 
 	/*

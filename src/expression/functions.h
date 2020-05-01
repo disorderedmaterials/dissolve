@@ -49,7 +49,6 @@ class ExpressionFunctionData
 class ExpressionFunctions
 {
       public:
-	// Constructor / Destructor
 	ExpressionFunctions();
 	~ExpressionFunctions();
 

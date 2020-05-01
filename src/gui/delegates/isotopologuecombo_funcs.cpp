@@ -27,7 +27,6 @@
 
 IsotopologueComboDelegate::IsotopologueComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
-// Destructor
 IsotopologueComboDelegate::~IsotopologueComboDelegate() {}
 
 // Create editor

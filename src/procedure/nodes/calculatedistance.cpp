@@ -27,7 +27,6 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1) : CalculateProcedureNodeBase(ProcedureNode::CalculateDistanceNode, site0, site1)
 {
 	// Create keywords - store the pointers to the superclasses for later use
@@ -37,7 +36,6 @@ CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(SelectProcedureNo
 	keywords_.add("Sites", siteKeywords_[1], "J", "Site that represents 'j' in the distance i-j");
 }
 
-// Destructor
 CalculateDistanceProcedureNode::~CalculateDistanceProcedureNode() {}
 
 /*

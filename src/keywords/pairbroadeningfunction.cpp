@@ -22,10 +22,8 @@
 #include "keywords/pairbroadeningfunction.h"
 #include "base/lineparser.h"
 
-// Constructor
 PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value) : KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value) {}
 
-// Destructor
 PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword() {}
 
 /*

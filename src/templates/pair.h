@@ -28,7 +28,6 @@
 template <class T1, class T2> class Pair : public ListItem<Pair<T1, T2>>
 {
       public:
-	// Constructors
 	Pair()
 	{
 		a_ = T1();
@@ -43,11 +42,8 @@ template <class T1, class T2> class Pair : public ListItem<Pair<T1, T2>>
 		bSet_ = false;
 	}
 	Pair(T1 a, T2 b) { set(a, b); }
-	// Destructor
 	~Pair() {}
-	// Copy constructor
 	Pair(const Pair<T1, T2> &source) { (*this) = source; }
-	// Assignment operator
 	void operator=(const Pair<T1, T2> &source)
 	{
 		a_ = source.a_;

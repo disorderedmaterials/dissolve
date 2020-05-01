@@ -33,7 +33,6 @@
 class EnumOptionsBaseKeyword
 {
       public:
-	// Constructor
 	EnumOptionsBaseKeyword(EnumOptionsBase &baseOptions) : baseOptions_(baseOptions) {}
 
 	/*
@@ -66,14 +65,12 @@ class EnumOptionsBaseKeyword
 template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, public KeywordData<EnumOptions<E>>
 {
       public:
-	// Constructor
 	EnumOptionsKeyword(EnumOptions<E> options) : KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData, options), EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_)
 	{
 		// Set our array of valid values
 		for (int n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
 			validKeywords_.add(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n));
 	}
-	// Destructor
 	~EnumOptionsKeyword() {}
 
 	/*

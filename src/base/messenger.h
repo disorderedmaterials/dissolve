@@ -32,7 +32,6 @@ class LineParser;
 class Messenger
 {
       public:
-	// Constructor
 	Messenger();
 
 	/*

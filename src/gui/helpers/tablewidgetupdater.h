@@ -37,7 +37,6 @@ template <class T, class I> class TableWidgetUpdater
 	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, bool createItems);
 
       public:
-	// Constructor (from const List<I>)
 	TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
@@ -82,7 +81,6 @@ template <class T, class I> class TableWidgetUpdater
 		// Set the number of table rows again here in order to catch the case where there were zero data items to iterate over
 		table->setRowCount(rowCount);
 	}
-	// Constructor (from const RefList<I>)
 	TableWidgetUpdater(QTableWidget *table, const RefList<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
@@ -126,7 +124,6 @@ template <class T, class I> class TableWidgetUpdater
 		// Set the number of table rows again here in order to catch the case where there were zero data items to iterate over
 		table->setRowCount(rowCount);
 	}
-	// Constructor (from const DynamicArray<I>)
 	TableWidgetUpdater(QTableWidget *table, DynamicArray<I> &array, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
@@ -180,7 +177,6 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
 	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, D data, bool createItems);
 
       public:
-	// Constructor
 	TableWidgetRefDataListUpdater(QTableWidget *table, const RefDataList<I, D> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;

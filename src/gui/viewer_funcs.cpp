@@ -22,7 +22,6 @@
 #include "base/messenger.h"
 #include "gui/viewer.hui"
 
-// Constructor
 BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderables_, fontInstance_)
 {
 	// Character / Setup
@@ -60,5 +59,4 @@ BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderabl
 	setFormat(surfaceFormat);
 }
 
-// Destructor
 BaseViewer::~BaseViewer() {}

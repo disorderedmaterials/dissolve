@@ -21,10 +21,8 @@
 
 #include "gui/render/primitivelist.h"
 
-// Constructor
 PrimitiveList::PrimitiveList() {}
 
-// Destructor
 PrimitiveList::~PrimitiveList() {}
 
 // Clear all existing Primitives
@@ -125,5 +123,4 @@ void PrimitiveList::sendToGL()
  * Operators
  */
 
-// Element access operator
 Primitive *PrimitiveList::operator[](int index) { return primitives_[index]; }

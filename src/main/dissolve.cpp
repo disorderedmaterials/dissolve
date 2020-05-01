@@ -37,7 +37,6 @@
 bool ObjectInfo::autoSuffixing_ = false;
 CharString ObjectInfo::autoSuffix_;
 
-// Constructor
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
 	// Set Module instances list in our core data
@@ -61,7 +60,6 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 	registerGenericItems();
 }
 
-// Destructor
 Dissolve::~Dissolve()
 {
 	// Clear main data

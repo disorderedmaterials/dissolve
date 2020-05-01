@@ -32,9 +32,7 @@ class SelectProcedureNode;
 class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
 {
       public:
-	// Constructor
 	CalculateAngleProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL, SelectProcedureNode *site2 = NULL);
-	// Destructor
 	~CalculateAngleProcedureNode();
 
 	/*

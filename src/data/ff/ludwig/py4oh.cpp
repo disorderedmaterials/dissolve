@@ -41,7 +41,6 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
 Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
 {
 	// Short-Range Parameters

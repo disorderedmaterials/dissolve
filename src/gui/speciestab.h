@@ -42,7 +42,6 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species);
 	~SpeciesTab();
 

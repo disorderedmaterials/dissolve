@@ -25,13 +25,11 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite> &references, bool axesRequired) : KeywordData<RefList<SpeciesSite> &>(KeywordData::SpeciesSiteRefListData, references)
 {
 	axesRequired_ = axesRequired;
 }
 
-// Destructor
 SpeciesSiteRefListKeyword::~SpeciesSiteRefListKeyword() {}
 
 /*

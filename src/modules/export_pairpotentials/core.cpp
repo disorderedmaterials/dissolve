@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 ExportPairPotentialsModule::ExportPairPotentialsModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 ExportPairPotentialsModule::~ExportPairPotentialsModule() {}
 
 /*

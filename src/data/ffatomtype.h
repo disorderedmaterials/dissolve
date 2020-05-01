@@ -35,13 +35,11 @@ class ForcefieldParameters;
 class ForcefieldAtomType : public ElementReference
 {
       public:
-	// Constructors
 	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL, const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
 			   double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL, const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
 			   const char *parameterReference = NULL);
 	ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition = NULL, const char *equivalentName = NULL);
-	// Destructor
 	virtual ~ForcefieldAtomType();
 
 	/*

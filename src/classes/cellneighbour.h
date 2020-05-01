@@ -33,9 +33,7 @@ class CellNeighbour
 	 * considering the contents of this cell with the cell which owns the array in which it appears.
 	 */
       public:
-	// Constructor
 	CellNeighbour();
-	// Destructor
 	~CellNeighbour();
 
       private:

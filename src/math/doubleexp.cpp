@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// Constructors
 DoubleExp::DoubleExp()
 {
 	mantissa_ = 0.0;
@@ -50,13 +49,10 @@ DoubleExp::DoubleExp(double mantissa, int exponent)
 // Assignment from single value
 void DoubleExp::operator=(double d) { set(d); }
 
-// Equality Operator
 bool DoubleExp::operator==(const double other) { return value_ == other; }
 
-// Inequality Operator
 bool DoubleExp::operator!=(const double other) { return value_ != other; }
 
-// Conversion operators
 DoubleExp::operator double() { return value(); }
 
 /*

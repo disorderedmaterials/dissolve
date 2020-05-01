@@ -35,9 +35,7 @@ class ProcessPool;
 class Procedure
 {
       public:
-	// Constructor
 	Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword = "EndProcedure");
-	// Destructor
 	~Procedure();
 
 	/*

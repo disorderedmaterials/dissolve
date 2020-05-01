@@ -36,11 +36,8 @@ class ProcessPool;
 class IsotopeData : public ListItem<IsotopeData>
 {
       public:
-	// Constructor
 	IsotopeData();
-	// Copy Constructor
 	IsotopeData(const IsotopeData &source);
-	// Assignment Operator
 	void operator=(const IsotopeData &source);
 
 	/*

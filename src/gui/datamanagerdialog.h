@@ -37,9 +37,7 @@ class DataManagerDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints);
-	// Destructor
 	~DataManagerDialog();
 
       private:

@@ -26,7 +26,6 @@
 #include "templates/refdatalist.h"
 #include <algorithm>
 
-// Constructor
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
 {
 	repeatCount_ = 1;
@@ -35,7 +34,6 @@ NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::
 	sizeValueOperator_ = NETANode::EqualTo;
 }
 
-// Destructor
 NETARingNode::~NETARingNode() {}
 
 /*

@@ -31,9 +31,7 @@
 class CharStringKeyword : public KeywordData<CharString>
 {
       public:
-	// Constructor
 	CharStringKeyword(CharString value = CharString());
-	// Destructor
 	~CharStringKeyword();
 
 	/*

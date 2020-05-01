@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 CalibrationModule::CalibrationModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 CalibrationModule::~CalibrationModule() {}
 
 /*

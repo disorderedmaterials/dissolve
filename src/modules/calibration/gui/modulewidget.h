@@ -39,7 +39,6 @@ class CalibrationModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	CalibrationModuleWidget(QWidget *parent, CalibrationModule *module);
 	~CalibrationModuleWidget();
 

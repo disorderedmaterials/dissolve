@@ -29,7 +29,6 @@
 template <> class GenericItemContainer<bool> : public GenericItem
 {
       public:
-	// Constructor
 	GenericItemContainer<bool>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*

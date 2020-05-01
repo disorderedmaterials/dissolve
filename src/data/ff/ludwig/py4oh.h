@@ -32,7 +32,6 @@ class SpeciesAtom;
 class Forcefield_Py4OH_Ludwig : public Forcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_Py4OH_Ludwig();
 	~Forcefield_Py4OH_Ludwig();
 

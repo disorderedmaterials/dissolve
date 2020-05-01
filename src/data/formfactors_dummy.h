@@ -29,9 +29,7 @@
 class FormFactorData_Dummy : public FormFactorData
 {
       public:
-	// Constructor
 	FormFactorData_Dummy();
-	// Assignment Operator
 	FormFactorData_Dummy &operator=(const FormFactorData_Dummy &source);
 
 	/*

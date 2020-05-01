@@ -28,7 +28,6 @@
 #include "main/dissolve.h"
 #include <QToolButton>
 
-// Constructor
 MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
 {
 	// Create our own tab bar

@@ -36,7 +36,6 @@ template <class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
 template <class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
 template <class Configuration> const char *ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
-// Constructor
 Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
 	box_ = NULL;
@@ -44,10 +43,8 @@ Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configur
 	clear();
 }
 
-// Destructor
 Configuration::~Configuration() { clear(); }
 
-// Assignment operator
 void Configuration::operator=(Configuration &source) { Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n"); }
 
 // Clear all data

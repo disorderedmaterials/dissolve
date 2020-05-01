@@ -24,10 +24,8 @@
 #include "base/sysfunc.h"
 #include "keywords/linkto.h"
 
-// Constructor
 KeywordList::KeywordList() {}
 
-// Destructor
 KeywordList::~KeywordList() {}
 
 /*

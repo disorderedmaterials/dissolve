@@ -39,9 +39,7 @@ class MasterIntra;
 class SpeciesIntra
 {
       public:
-	// Constructor
 	SpeciesIntra();
-	// Destructor
 	virtual ~SpeciesIntra();
 	// Interaction Type
 	enum InteractionType

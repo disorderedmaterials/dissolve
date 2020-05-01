@@ -38,7 +38,6 @@ class NETALogicNode : public NETANode
 		OrLogic,
 		AndNotLogic
 	};
-	// Constructor / Destructor
 	NETALogicNode(NETADefinition *parent, LogicType logic, NETANode *arg1, NETANode *arg2);
 	~NETALogicNode();
 

@@ -21,8 +21,6 @@
 
 #include "base/outputhandler.h"
 
-// Constructor
 OutputHandler::OutputHandler() {}
 
-// Destructor
 OutputHandler::~OutputHandler() {}

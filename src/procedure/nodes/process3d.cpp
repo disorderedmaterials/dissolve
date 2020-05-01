@@ -30,7 +30,6 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *target) : ProcedureNode(ProcedureNode::Process3DNode)
 {
 	keywords_.add("Target", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target), "SourceData", "Collect3D node containing the data to process");
@@ -48,7 +47,6 @@ Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *tar
 	processedData_ = NULL;
 }
 
-// Destructor
 Process3DProcedureNode::~Process3DProcedureNode() {}
 
 /*

@@ -39,7 +39,6 @@
 template <class T, class D> class OrderedPointerDataArray
 {
       public:
-	// Constructor
 	OrderedPointerDataArray<T, D>()
 	{
 		nItems_ = 0;
@@ -47,9 +46,7 @@ template <class T, class D> class OrderedPointerDataArray
 		items_ = NULL;
 		data_ = NULL;
 	}
-	// Destructor
 	~OrderedPointerDataArray() { clear(); }
-	// Copy Constructor
 	OrderedPointerDataArray<T, D>(const OrderedPointerDataArray<T, D> &source)
 	{
 		nItems_ = 0;
@@ -58,7 +55,6 @@ template <class T, class D> class OrderedPointerDataArray
 		data_ = NULL;
 		(*this) = source;
 	}
-	// Assignment operator
 	OrderedPointerDataArray<T, D> &operator=(const OrderedPointerDataArray<T, D> &source)
 	{
 		// Clear any current data in the list...
@@ -71,7 +67,6 @@ template <class T, class D> class OrderedPointerDataArray
 
 		return *this;
 	}
-	// Element access operator
 	T *operator[](int index)
 	{
 #ifdef CHECKS

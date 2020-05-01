@@ -34,9 +34,7 @@ class Element;
 class AtomType : public ListItem<AtomType>
 {
       public:
-	// Constructor
 	AtomType();
-	// Destructor
 	~AtomType();
 
 	/*

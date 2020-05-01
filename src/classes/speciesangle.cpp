@@ -25,10 +25,8 @@
 #include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(), DynamicArrayObject<SpeciesAngle>() { clear(); }
 
-// Destructor
 SpeciesAngle::~SpeciesAngle() {}
 
 /*

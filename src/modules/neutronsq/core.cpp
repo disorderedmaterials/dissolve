@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 NeutronSQModule::NeutronSQModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 NeutronSQModule::~NeutronSQModule() {}
 
 /*

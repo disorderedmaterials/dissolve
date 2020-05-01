@@ -56,11 +56,8 @@ class Species;
 class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
 {
       public:
-	// Constructor
 	Configuration();
-	// Destructor
 	~Configuration();
-	// Assignment operator
 	void operator=(Configuration &source);
 	// Clear all data
 	void clear();

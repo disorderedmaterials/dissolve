@@ -31,7 +31,6 @@
 class Forcefield_OPLSAA2005_Alkanes : public OPLSAA2005BaseForcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_OPLSAA2005_Alkanes();
 	~Forcefield_OPLSAA2005_Alkanes();
 

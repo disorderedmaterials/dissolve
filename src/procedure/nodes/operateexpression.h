@@ -32,9 +32,7 @@
 class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructors
 	OperateExpressionProcedureNode(const char *expressionText = "");
-	// Destructor
 	~OperateExpressionProcedureNode();
 
 	/*

@@ -34,11 +34,8 @@ class ProcessPool;
 class ModuleList
 {
       public:
-	// Constructor
 	ModuleList();
-	// Destructor
 	~ModuleList();
-	// Conversion operator (List<Module>&)
 	operator List<Module> &();
 
 	/*

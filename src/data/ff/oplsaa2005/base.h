@@ -31,7 +31,6 @@
 class OPLSAA2005BaseForcefield : public Forcefield
 {
       public:
-	// Constructor / Destructor
 	OPLSAA2005BaseForcefield();
 	virtual ~OPLSAA2005BaseForcefield();
 

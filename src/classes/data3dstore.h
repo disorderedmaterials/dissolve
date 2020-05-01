@@ -34,9 +34,7 @@
 class Data3DStore
 {
       public:
-	// Constructor
 	Data3DStore();
-	// Destructor
 	~Data3DStore();
 
 	/*

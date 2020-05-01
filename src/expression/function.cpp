@@ -26,7 +26,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-// Constructor
 ExpressionFunction::ExpressionFunction(ExpressionFunctions::Function func) : ExpressionNode(), function_(func)
 {
 	// Private variables
@@ -35,7 +34,6 @@ ExpressionFunction::ExpressionFunction(ExpressionFunctions::Function func) : Exp
 
 ExpressionFunction::ExpressionFunction(ExpressionNode *source) { copy(source); }
 
-// Destructor
 ExpressionFunction::~ExpressionFunction() {}
 
 // Get function

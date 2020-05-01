@@ -33,7 +33,6 @@ class Axes;
 class RenderableSpeciesSite : public Renderable
 {
       public:
-	// Constructor / Destructor
 	RenderableSpeciesSite(const Species *sp, const SpeciesSite *site);
 	~RenderableSpeciesSite();
 

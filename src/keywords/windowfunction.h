@@ -32,9 +32,7 @@
 class WindowFunctionKeyword : public KeywordData<WindowFunction>
 {
       public:
-	// Constructor
 	WindowFunctionKeyword(WindowFunction value);
-	// Destructor
 	~WindowFunctionKeyword();
 
 	/*

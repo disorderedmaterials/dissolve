@@ -22,10 +22,8 @@
 #include "keywords/broadeningfunction.h"
 #include "base/lineparser.h"
 
-// Constructor
 BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value) : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value) {}
 
-// Destructor
 BroadeningFunctionKeyword::~BroadeningFunctionKeyword() {}
 
 /*

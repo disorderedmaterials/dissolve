@@ -49,7 +49,6 @@ class SpeciesAtom;
 class Forcefield : public Elements
 {
       public:
-	// Constructor / Destructor
 	Forcefield() = default;
 	virtual ~Forcefield() = default;
 

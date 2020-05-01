@@ -33,9 +33,7 @@ class Species;
 class SpeciesInfo : public ListItem<SpeciesInfo>
 {
       public:
-	// Constructor
 	SpeciesInfo();
-	// Destructor
 	~SpeciesInfo();
 
 	/*

@@ -28,7 +28,6 @@
 class EnumOptionsBase
 {
       public:
-	// Constructors
 	EnumOptionsBase();
 	EnumOptionsBase(const char *name, const EnumOptionsList &options);
 	EnumOptionsBase(const char *name, const EnumOptionsList &options, int defaultEnumeration);

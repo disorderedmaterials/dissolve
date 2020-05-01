@@ -52,7 +52,6 @@ class DissolveWindow : public QMainWindow
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	DissolveWindow(Dissolve &dissolve);
 	~DissolveWindow();
 

@@ -35,9 +35,7 @@ class Weights;
 class NeutronSQModule : public Module
 {
       public:
-	// Constructor
 	NeutronSQModule();
-	// Destructor
 	~NeutronSQModule();
 
 	/*

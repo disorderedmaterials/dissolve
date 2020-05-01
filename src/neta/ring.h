@@ -36,7 +36,6 @@ class NETADefinition;
 class NETARingNode : public NETANode
 {
       public:
-	// Constructor / Destructor
 	NETARingNode(NETADefinition *parent);
 	~NETARingNode();
 

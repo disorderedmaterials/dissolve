@@ -39,7 +39,6 @@ std::vector<ForcefieldAtomType *> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
-// Constructor
 NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, const char *definitionText, const Forcefield *associatedFF)
 {
 	// Clear any possible old data
@@ -58,7 +57,6 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
 	setSource(definitionText);
 }
 
-// Destructor
 NETADefinitionGenerator::~NETADefinitionGenerator() {}
 
 /*

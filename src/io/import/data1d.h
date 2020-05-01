@@ -41,10 +41,8 @@ class Data1DImportFileFormat : public FileAndFormat
 		GudrunMintData1D,
 		nData1DImportFormats
 	};
-	// Constructors
 	Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
 	Data1DImportFileFormat(const char *filename, Data1DImportFormat format = XYData1D);
-	// Destructor
 	~Data1DImportFileFormat();
 
 	/*

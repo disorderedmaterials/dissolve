@@ -27,7 +27,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-// Constructor
 LineParser::LineParser(ProcessPool *procPool)
 {
 	arguments_.clear();
@@ -36,7 +35,6 @@ LineParser::LineParser(ProcessPool *procPool)
 	processPool_ = procPool;
 }
 
-// Destructor
 LineParser::~LineParser()
 {
 	closeFiles();

@@ -36,9 +36,7 @@ class ChecksModule : public Module
 	 */
 
       public:
-	// Constructor
 	ChecksModule();
-	// Destructor
 	~ChecksModule();
 
 	/*

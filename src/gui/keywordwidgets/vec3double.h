@@ -36,7 +36,6 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 	Q_OBJECT
 
       public:
-	// Constructor
 	Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

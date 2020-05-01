@@ -29,7 +29,6 @@
 #include <QMessageBox>
 #include <QRegExp>
 
-// Constructor
 DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints) : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints)
 {
 	ui_.setupUi(this);
@@ -37,7 +36,6 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<R
 	updateControls();
 }
 
-// Destructor
 DataManagerDialog::~DataManagerDialog() {}
 
 /*

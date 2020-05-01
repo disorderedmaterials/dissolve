@@ -25,7 +25,6 @@
  * Constructor / Destructor
  */
 
-// Constructor
 CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
 	// Set unique name for this instance of the Module
@@ -36,7 +35,6 @@ CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::Anal
 	initialise();
 }
 
-// Destructor
 CalculateCNModule::~CalculateCNModule() {}
 
 /*

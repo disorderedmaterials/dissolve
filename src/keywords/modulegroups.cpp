@@ -27,10 +27,8 @@
 #include "module/groups.h"
 #include "module/module.h"
 
-// Constructor
 ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups) : KeywordData<ModuleGroups &>(KeywordBase::ModuleGroupsData, groups) {}
 
-// Destructor
 ModuleGroupsKeyword::~ModuleGroupsKeyword() {}
 
 /*

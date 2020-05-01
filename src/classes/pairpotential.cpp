@@ -37,7 +37,6 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ =
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ = PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-// Constructor
 PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
 	for (int n = 0; n < MAXSRPARAMETERS; ++n)

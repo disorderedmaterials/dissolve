@@ -31,7 +31,6 @@
 template <class A> class Array2D
 {
       public:
-	// Constructor
 	Array2D(int nrows = 0, int ncolumns = 0, bool half = false)
 	{
 		array_ = NULL;
@@ -43,7 +42,6 @@ template <class A> class Array2D
 		if ((nrows > 0) && (ncolumns > 0))
 			resize(nrows, ncolumns);
 	}
-	// Destructor
 	~Array2D() { clear(); }
 	// Clear array data
 	void clear()
@@ -58,7 +56,6 @@ template <class A> class Array2D
 		nRows_ = 0;
 		nColumns_ = 0;
 	}
-	// Copy Constructor
 	Array2D(const Array2D<A> &source)
 	{
 		array_ = NULL;
@@ -69,7 +66,6 @@ template <class A> class Array2D
 		half_ = false;
 		(*this) = source;
 	}
-	// Assignment Operator
 	void operator=(const A value)
 	{
 		// Copy source data elements
@@ -83,7 +79,6 @@ template <class A> class Array2D
 					array_[rowOffsets_[row] + column] = value;
 		}
 	}
-	// Assignment Operator
 	void operator=(const Array2D<A> &source)
 	{
 		// Clear any existing data and reinitialise the array

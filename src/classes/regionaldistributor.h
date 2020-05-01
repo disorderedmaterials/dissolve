@@ -39,9 +39,7 @@ class Molecule;
 class RegionalDistributor
 {
       public:
-	// Constructor
 	RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy);
-	// Destructor
 	~RegionalDistributor();
 	// Molecule Status Flag
 	enum MoleculeStatusFlag

@@ -33,13 +33,9 @@
 class ColourDefinition
 {
       public:
-	// Constructor
 	ColourDefinition();
-	// Destructor
 	~ColourDefinition();
-	// Copy constructor
 	ColourDefinition(const ColourDefinition &source);
-	// Assignment operator
 	void operator=(const ColourDefinition &source);
 
 	/*

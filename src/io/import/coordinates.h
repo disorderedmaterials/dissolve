@@ -40,10 +40,8 @@ class CoordinateImportFileFormat : public FileAndFormat
 		EPSRCoordinates,
 		nCoordinateImportFormats
 	};
-	// Constructors
 	CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
 	CoordinateImportFileFormat(const char *filename, CoordinateImportFormat format = XYZCoordinates);
-	// Destructor
 	~CoordinateImportFileFormat();
 
 	/*

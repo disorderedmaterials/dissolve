@@ -33,9 +33,7 @@ class Configuration;
 class ElementRefListKeyword : public KeywordData<RefList<Element> &>
 {
       public:
-	// Constructor
 	ElementRefListKeyword(RefList<Element> &targetRefList);
-	// Destructor
 	~ElementRefListKeyword();
 
 	/*

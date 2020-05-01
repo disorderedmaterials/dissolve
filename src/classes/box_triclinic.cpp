@@ -23,7 +23,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles) : Box()
 {
 	type_ = Box::TriclinicBoxType;
@@ -59,7 +58,6 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
 	finalise();
 }
 
-// Destructor
 TriclinicBox::~TriclinicBox() {}
 
 /*

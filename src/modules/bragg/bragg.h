@@ -35,9 +35,7 @@ class Weights;
 class BraggModule : public Module
 {
       public:
-	// Constructor
 	BraggModule();
-	// Destructor
 	~BraggModule();
 
 	/*

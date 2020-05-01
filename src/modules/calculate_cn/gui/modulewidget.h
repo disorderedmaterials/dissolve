@@ -35,7 +35,6 @@ class CalculateCNModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule);
 
 	/*

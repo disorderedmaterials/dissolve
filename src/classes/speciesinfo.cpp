@@ -22,14 +22,12 @@
 #include "classes/speciesinfo.h"
 #include "base/sysfunc.h"
 
-// Constructor
 SpeciesInfo::SpeciesInfo() : ListItem<SpeciesInfo>()
 {
 	species_ = NULL;
 	population_ = 0;
 }
 
-// Destructor
 SpeciesInfo::~SpeciesInfo() {}
 
 /*

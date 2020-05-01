@@ -34,9 +34,7 @@ class GetGizmoNameDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	GetGizmoNameDialog(QWidget *parent);
-	// Destructor
 	~GetGizmoNameDialog();
 
       private:

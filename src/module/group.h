@@ -33,9 +33,7 @@ class Module;
 class ModuleGroup : public ListItem<ModuleGroup>
 {
       public:
-	// Constructor
 	ModuleGroup(const char *name = NULL);
-	// Destructor
 	~ModuleGroup();
 
 	/*

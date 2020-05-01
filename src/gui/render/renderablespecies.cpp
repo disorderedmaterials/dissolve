@@ -26,7 +26,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-// Constructor
 RenderableSpecies::RenderableSpecies(const Species *source, const char *objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
@@ -54,7 +53,6 @@ RenderableSpecies::RenderableSpecies(const Species *source, const char *objectTa
 	selectionPrimitiveVersion_ = -1;
 }
 
-// Destructor
 RenderableSpecies::~RenderableSpecies() {}
 
 /*

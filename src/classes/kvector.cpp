@@ -23,7 +23,6 @@
 #include "base/processpool.h"
 #include "classes/braggreflection.h"
 
-// Constructor
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)
 {
 	hkl_.set(h, k, l);
@@ -34,10 +33,8 @@ KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)
 	sinTerms_.initialise(nAtomTypes);
 }
 
-// Destructor
 KVector::~KVector() {}
 
-// Copy constructor
 KVector::KVector(const KVector &source) { (*this) = source; }
 
 // Operator=

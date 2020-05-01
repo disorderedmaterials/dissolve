@@ -25,7 +25,6 @@
 #include "expression/variable.h"
 #include "procedure/nodes/dynamicsite.h"
 
-// Constructor
 DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes, bool axesRequired)
     : KeywordData<RefList<DynamicSiteProcedureNode> &>(KeywordBase::DynamicSiteNodesData, nodes)
 {
@@ -33,7 +32,6 @@ DynamicSiteNodesKeyword::DynamicSiteNodesKeyword(SelectProcedureNode *parentNode
 	axesRequired_ = axesRequired;
 }
 
-// Destructor
 DynamicSiteNodesKeyword::~DynamicSiteNodesKeyword() {}
 
 /*

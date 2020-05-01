@@ -22,7 +22,6 @@
 #include "math/cuboid.h"
 #include "math/mathfunc.h"
 
-// Constructor
 Cuboid::Cuboid()
 {
 	minima_.zero();

@@ -34,9 +34,7 @@ class ProcessPool;
 class Distributor
 {
       public:
-	// Constructor
 	Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool allowRepeats);
-	// Destructor
 	virtual ~Distributor();
 	// Object Status Flag
 	enum ObjectStatusFlag

@@ -38,7 +38,6 @@ class ModuleList;
 class ModuleListChart : public ChartBase
 {
       public:
-	// Constructor / Destructor
 	ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = NULL);
 	~ModuleListChart();
 

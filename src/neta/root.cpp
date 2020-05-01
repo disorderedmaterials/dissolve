@@ -25,7 +25,6 @@
 #include "templates/dynamicarray.h"
 #include "templates/refdatalist.h"
 
-// Constructor
 NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::RootNode)
 {
 	nBondsValue_ = -1;
@@ -34,7 +33,6 @@ NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::
 	nHydrogensValueOperator_ = NETANode::EqualTo;
 }
 
-// Destructor
 NETARootNode::~NETARootNode() {}
 
 /*

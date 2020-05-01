@@ -23,13 +23,11 @@
 #include "base/lineparser.h"
 #include "io/fileandformat.h"
 
-// Constructor
 FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword) : KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat)
 {
 	endKeyword_ = endKeyword;
 }
 
-// Destructor
 FileAndFormatKeyword::~FileAndFormatKeyword() {}
 
 /*

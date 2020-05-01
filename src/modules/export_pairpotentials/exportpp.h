@@ -36,9 +36,7 @@ class ExportPairPotentialsModule : public Module
 	 */
 
       public:
-	// Constructor
 	ExportPairPotentialsModule();
-	// Destructor
 	~ExportPairPotentialsModule();
 
 	/*

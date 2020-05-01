@@ -34,9 +34,7 @@
 class Data1DStore
 {
       public:
-	// Constructor
 	Data1DStore();
-	// Destructor
 	~Data1DStore();
 
 	/*

@@ -34,9 +34,7 @@ class TextFormat : public ListItem<TextFormat>
 	// Constructor / Desctructor
 	TextFormat();
 	~TextFormat();
-	// Copy constructor
 	TextFormat(const TextFormat &source);
-	// Assignment operator
 	void operator=(const TextFormat &source);
 
 	/*

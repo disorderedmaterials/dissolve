@@ -34,9 +34,7 @@ class AddForcefieldTermsDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	AddForcefieldTermsDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
-	// Destructor
 	~AddForcefieldTermsDialog();
 
       private:

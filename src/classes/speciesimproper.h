@@ -35,9 +35,7 @@ class ProcessPool;
 class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesImproper>
 {
       public:
-	// Constructor
 	SpeciesImproper();
-	// Destructor
 	~SpeciesImproper();
 
 	/*

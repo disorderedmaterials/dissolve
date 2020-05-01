@@ -23,10 +23,8 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-// Constructor
 Molecule::Molecule() { species_ = NULL; }
 
-// Destructor
 Molecule::~Molecule() {}
 
 /*

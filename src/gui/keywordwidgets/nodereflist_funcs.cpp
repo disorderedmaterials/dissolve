@@ -28,7 +28,6 @@
 #include <QLabel>
 #include <QSpacerItem>
 
-// Constructor
 NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container

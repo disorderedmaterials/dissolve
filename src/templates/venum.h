@@ -29,11 +29,8 @@
 template <class V, class E> class Venum
 {
       public:
-	// Constructor
 	Venum(V value = V(), EnumOptions<E> enumOptions = EnumOptions<E>()) : enumOptions_(enumOptions) { value_ = value; }
-	// Destructor
 	~Venum() {}
-	// Copy Constructor
 	Venum(const Venum &source) : enumOptions_(source.enumOptions_) { value_ = source.value_; }
 	// Assignment Operators
 	void operator=(const Venum &source)

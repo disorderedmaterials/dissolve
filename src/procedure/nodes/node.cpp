@@ -61,7 +61,6 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 	return options;
 }
 
-// Constructor
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()
 {
 	type_ = nodeType;
@@ -72,7 +71,6 @@ ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<Proced
 	name_ = CharString("Node%04i", ++nodeCount);
 }
 
-// Destructor
 ProcedureNode::~ProcedureNode() {}
 
 /*

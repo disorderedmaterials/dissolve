@@ -29,14 +29,11 @@
 class CharStringList
 {
       public:
-	// Constructor / Destructor
 	CharStringList();
 	~CharStringList();
-	// Copy constructor
 	CharStringList(const CharStringList &source);
 	// Conversion from const char*
 	CharStringList(const char *text);
-	// Assignment operator
 	void operator=(const CharStringList &source);
 
 	/*

@@ -26,7 +26,6 @@
 #include "math/mc.h"
 #include "math/praxis.h"
 
-// Constructor
 PoissonFit::PoissonFit(const Data1D &referenceData) : expMax_(25.0)
 {
 	referenceData_ = referenceData;

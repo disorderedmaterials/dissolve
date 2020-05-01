@@ -26,7 +26,6 @@
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-// Constructor / Destructor
 LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, ModuleLayer *layer)
     : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {

@@ -24,10 +24,8 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 SpeciesKeyword::SpeciesKeyword(Species *sp) : KeywordData<Species *>(KeywordBase::SpeciesData, sp) {}
 
-// Destructor
 SpeciesKeyword::~SpeciesKeyword() {}
 
 /*

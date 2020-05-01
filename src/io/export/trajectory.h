@@ -37,7 +37,6 @@ class TrajectoryExportFileFormat : public FileAndFormat
 		XYZTrajectory,
 		nTrajectoryExportFormats
 	};
-	// Constructor
 	TrajectoryExportFileFormat(const char *filename = NULL, TrajectoryExportFormat format = XYZTrajectory);
 
 	/*

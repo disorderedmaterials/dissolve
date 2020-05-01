@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 ExportTrajectoryModule::ExportTrajectoryModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 ExportTrajectoryModule::~ExportTrajectoryModule() {}
 
 /*

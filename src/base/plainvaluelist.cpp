@@ -24,10 +24,8 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 
-// Constructor
 PlainValueList::PlainValueList() {}
 
-// Destructor
 PlainValueList::~PlainValueList() {}
 
 /*

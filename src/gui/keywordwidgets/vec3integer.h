@@ -36,7 +36,6 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 	Q_OBJECT
 
       public:
-	// Constructor
 	Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

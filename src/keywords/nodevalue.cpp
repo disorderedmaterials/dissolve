@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "procedure/nodes/node.h"
 
-// Constructor
 NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, NodeValue value) : KeywordData<NodeValue>(KeywordData::NodeValueData, value) { parentNode_ = parentNode; }
 
-// Destructor
 NodeValueKeyword::~NodeValueKeyword() {}
 
 /*

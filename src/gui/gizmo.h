@@ -37,7 +37,6 @@ class QMdiSubWindow;
 class Gizmo : public ListItem<Gizmo>
 {
       public:
-	// Constructor / Destructor
 	Gizmo(Dissolve &dissolve, const char *uniqueName);
 	virtual ~Gizmo();
 

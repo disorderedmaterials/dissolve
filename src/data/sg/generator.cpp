@@ -25,7 +25,6 @@
 #include "data/sg/sginfo.h"
 #include <string.h>
 
-// Constructor
 SymmetryGenerator::SymmetryGenerator() {}
 
 // Set partial element of matrix or translation vector

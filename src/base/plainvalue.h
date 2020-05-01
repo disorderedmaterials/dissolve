@@ -33,23 +33,14 @@ class ProcessPool;
 class PlainValue : public ListItem<PlainValue>
 {
       public:
-	// Constructor
 	PlainValue();
-	// Destructor
 	~PlainValue();
-	// Constructor (bool)
 	PlainValue(bool value);
-	// Constructor (int)
 	PlainValue(int value);
-	// Constructor (double)
 	PlainValue(double value);
-	// Constructor (const char*)
 	PlainValue(const char *value);
-	// Constructor (CharString)
 	PlainValue(const CharString &value);
-	// Constructor (PlainValue)
 	PlainValue(const PlainValue &value);
-	// Assignment Operator
 	void operator=(const PlainValue &value);
 	// Value Type
 	enum ValueType

@@ -36,7 +36,6 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
 	Q_OBJECT
 
       public:
-	// Constructor
 	NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

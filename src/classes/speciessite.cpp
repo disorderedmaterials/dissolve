@@ -25,14 +25,12 @@
 #include "classes/species.h"
 #include "data/atomicmass.h"
 
-// Constructor
 SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
 {
 	parent_ = NULL;
 	originMassWeighted_ = false;
 }
 
-// Destructor
 SpeciesSite::~SpeciesSite() {}
 
 /*

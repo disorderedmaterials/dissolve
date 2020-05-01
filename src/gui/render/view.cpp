@@ -29,10 +29,8 @@
 // Static Members
 const double View::defaultZTranslation_ = -10.0;
 
-// Constructor
 View::View(const List<Renderable> &renderables, FontInstance &fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance) { clear(); }
 
-// Destructor
 View::~View() {}
 
 // Clear view, resetting to defaults

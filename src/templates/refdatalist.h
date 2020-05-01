@@ -37,7 +37,6 @@ template <class T, class D> class RefDataListIterator;
 template <class T, class D> class RefDataItem
 {
       public:
-	// Constructor
 	RefDataItem<T, D>()
 	{
 		item_ = NULL;
@@ -82,7 +81,6 @@ template <class T, class D> class RefDataItem
 template <class T, class D> class RefDataList
 {
       public:
-	// Constructor
 	RefDataList<T, D>()
 	{
 		listHead_ = NULL;
@@ -92,9 +90,7 @@ template <class T, class D> class RefDataList
 		nItems_ = 0;
 	}
 
-	// Destructor
 	~RefDataList() { clear(); }
-	// Copy Constructor
 	RefDataList<T, D>(const RefDataList<T, D> &source)
 	{
 		listHead_ = NULL;
@@ -105,7 +101,6 @@ template <class T, class D> class RefDataList
 		for (RefDataItem<T, D> *ri = source.first(); ri != NULL; ri = ri->next_)
 			append(ri->item_, ri->data_);
 	}
-	// Operator =
 	void operator=(const RefDataList<T, D> &source)
 	{
 		// Clear any current data...
@@ -113,7 +108,6 @@ template <class T, class D> class RefDataList
 		for (RefDataItem<T, D> *ri = source.first(); ri != NULL; ri = ri->next_)
 			append(ri->item_, ri->data_);
 	}
-	// Element access operator
 	RefDataItem<T, D> *operator[](int index)
 	{
 #ifdef CHECKS
@@ -547,7 +541,6 @@ template <class T, class D> class RefDataList
 template <class T, class D> class RefDataListIterator
 {
       public:
-	// Constructor
 	RefDataListIterator<T, D>(const RefDataList<T, D> &source, bool reverse = false) : reverse_(reverse), targetRefList_(source)
 	{
 		finished_ = false;

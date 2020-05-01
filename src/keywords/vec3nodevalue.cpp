@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "procedure/nodes/node.h"
 
-// Constructors
 Vec3NodeValueKeyword::Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value, Vec3Labels::LabelType labelType)
     : KeywordData<Vec3<NodeValue>>(KeywordBase::Vec3NodeValueData, Vec3<NodeValue>(value.x, value.y, value.z))
 {
@@ -31,7 +30,6 @@ Vec3NodeValueKeyword::Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<doubl
 	labelType_ = labelType;
 }
 
-// Destructor
 Vec3NodeValueKeyword::~Vec3NodeValueKeyword() {}
 
 /*

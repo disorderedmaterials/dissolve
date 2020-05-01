@@ -26,7 +26,6 @@
 #include "templates/orderedvector.h"
 #include <algorithm>
 
-// Constructor
 Cell::Cell()
 {
 	index_ = -1;
@@ -34,7 +33,6 @@ Cell::Cell()
 	nMimCellNeighbours_ = 0;
 }
 
-// Destructor
 Cell::~Cell() {}
 
 /*

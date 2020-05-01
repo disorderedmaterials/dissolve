@@ -55,13 +55,9 @@ class PairBroadeningFunction : public GenericItemBase
 	static int nFunctionParameters(FunctionType func);
 
       public:
-	// Constructor
 	PairBroadeningFunction(FunctionType function = NoFunction);
-	// Destructor
 	~PairBroadeningFunction();
-	// Copy Constructor
 	PairBroadeningFunction(const PairBroadeningFunction &source);
-	// Assignment Operator
 	void operator=(const PairBroadeningFunction &source);
 
 	/*

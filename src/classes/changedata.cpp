@@ -24,7 +24,6 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 
-// Constructor
 ChangeData::ChangeData() : ListItem<ChangeData>()
 {
 	atom_ = NULL;
@@ -32,7 +31,6 @@ ChangeData::ChangeData() : ListItem<ChangeData>()
 	moved_ = false;
 }
 
-// Destructor
 ChangeData::~ChangeData() {}
 
 /*

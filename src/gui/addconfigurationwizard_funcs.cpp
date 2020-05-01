@@ -30,7 +30,6 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-// Constructor / Destructor
 AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
 {
 	dissolveReference_ = NULL;

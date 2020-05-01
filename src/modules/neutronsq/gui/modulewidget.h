@@ -38,7 +38,6 @@ class NeutronSQModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve);
 	~NeutronSQModuleWidget();
 

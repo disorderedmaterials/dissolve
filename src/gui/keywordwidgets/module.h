@@ -36,7 +36,6 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
 	Q_OBJECT
 
       public:
-	// Constructor
 	ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

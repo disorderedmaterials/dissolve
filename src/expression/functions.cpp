@@ -34,14 +34,12 @@ ExpressionFunctions expressionFunctions;
 // Default settings
 bool ExpressionFunctions::assumeDegrees_ = true;
 
-// Constructor
 ExpressionFunctions::ExpressionFunctions()
 {
 	// Create pointer list
 	initPointers();
 }
 
-// Constructor
 ExpressionFunctions::~ExpressionFunctions() {}
 
 /*

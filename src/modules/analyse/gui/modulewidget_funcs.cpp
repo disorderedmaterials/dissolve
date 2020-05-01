@@ -22,7 +22,6 @@
 #include "modules/analyse/analyse.h"
 #include "modules/analyse/gui/modulewidget.h"
 
-// Constructor
 AnalyseModuleWidget::AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, const CoreData &coreData) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

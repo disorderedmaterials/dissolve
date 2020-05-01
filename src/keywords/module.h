@@ -35,9 +35,7 @@ class ProcedureModule;
 class ModuleKeywordBase
 {
       public:
-	// Constructor
 	ModuleKeywordBase(const char *moduleType);
-	// Destructor
 	virtual ~ModuleKeywordBase();
 
 	/*
@@ -67,9 +65,7 @@ class ModuleKeywordBase
 template <class M> class ModuleKeyword : public ModuleKeywordBase, public KeywordData<M *>
 {
       public:
-	// Constructor
 	ModuleKeyword(const char *moduleType, M *module = NULL) : ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module) {}
-	// Destructor
 	~ModuleKeyword() {}
 
 	/*

@@ -35,7 +35,6 @@ class NETADefinition;
 class NETARootNode : public NETANode
 {
       public:
-	// Constructor / Destructor
 	NETARootNode(NETADefinition *parent);
 	~NETARootNode();
 

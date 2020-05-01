@@ -39,7 +39,6 @@ class SQModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve);
 	~SQModuleWidget();
 

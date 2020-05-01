@@ -32,9 +32,7 @@ class SelectProcedureNode;
 class CalculateDistanceProcedureNode : public CalculateProcedureNodeBase
 {
       public:
-	// Constructor
 	CalculateDistanceProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL);
-	// Destructor
 	~CalculateDistanceProcedureNode();
 
 	/*

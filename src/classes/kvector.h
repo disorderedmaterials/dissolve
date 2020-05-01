@@ -34,11 +34,8 @@ class BraggReflection;
 class KVector : public GenericItemBase
 {
       public:
-	// Constructor
 	KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
-	// Destructor
 	~KVector();
-	// Copy constructor
 	KVector(const KVector &source);
 	// Operator=
 	void operator=(const KVector &source);

@@ -39,7 +39,6 @@ class DataTestModuleWidget : public ModuleWidget
 	DataTestModule *module_;
 
       public:
-	// Constructor
 	DataTestModuleWidget(QWidget *parent, DataTestModule *module);
 
 	/*

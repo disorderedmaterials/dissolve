@@ -37,11 +37,8 @@ class BraggReflection : public GenericItemBase
 	 *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
 	 */
       public:
-	// Constructor
 	BraggReflection();
-	// Destructor
 	~BraggReflection();
-	// Copy constructor
 	BraggReflection(const BraggReflection &source);
 	// Operator=
 	void operator=(const BraggReflection &source);

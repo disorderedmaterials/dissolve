@@ -36,9 +36,7 @@ class CalibrationModule : public Module
 	 */
 
       public:
-	// Constructor
 	CalibrationModule();
-	// Destructor
 	~CalibrationModule();
 
 	/*
@@ -108,7 +106,6 @@ class CalibrationModule : public Module
 class CalibrationModuleCostFunctions
 {
       public:
-	// Constructor
 	CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
 				       RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences);
 

@@ -28,7 +28,6 @@
  * OPLS-AA (2005) Alkanes
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_Alkanes::Forcefield_OPLSAA2005_Alkanes()
 {
 	// Copy required types from OPLS-AA (2005) core list

@@ -40,7 +40,6 @@ class BraggModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	BraggModuleWidget(QWidget *parent, BraggModule *module);
 	~BraggModuleWidget();
 

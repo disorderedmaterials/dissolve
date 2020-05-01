@@ -36,9 +36,7 @@ class SelectSystemTemplateDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates);
-	// Destructor
 	~SelectSystemTemplateDialog();
 
       private:

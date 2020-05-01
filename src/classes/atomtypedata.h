@@ -38,11 +38,8 @@ class ProcessPool;
 class AtomTypeData : public ListItem<AtomTypeData>
 {
       public:
-	// Constructor
 	AtomTypeData();
-	// Copy Constructor
 	AtomTypeData(const AtomTypeData &source);
-	// Assignment Operator
 	void operator=(const AtomTypeData &source);
 
 	/*

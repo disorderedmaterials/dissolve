@@ -38,7 +38,6 @@ class Data2DExportFileFormat : public FileAndFormat
 		CartesianData2D,
 		nData2DExportFormats
 	};
-	// Constructor
 	Data2DExportFileFormat(const char *filename = NULL, Data2DExportFormat format = Data2DExportFileFormat::BlockData2D);
 
 	/*

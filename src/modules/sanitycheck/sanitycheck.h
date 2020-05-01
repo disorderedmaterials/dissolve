@@ -35,9 +35,7 @@ class SanityCheckModule : public Module
 	 */
 
       public:
-	// Constructor
 	SanityCheckModule();
-	// Destructor
 	~SanityCheckModule();
 
 	/*

@@ -31,10 +31,8 @@
 class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructors
 	OperateNormaliseProcedureNode(double value = 1.0);
 	OperateNormaliseProcedureNode(int value);
-	// Destructor
 	~OperateNormaliseProcedureNode();
 
 	/*

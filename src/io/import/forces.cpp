@@ -23,11 +23,9 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
 ForceImportFileFormat::ForceImportFileFormat(const char *filename, ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
-// Destructor
 ForceImportFileFormat::~ForceImportFileFormat() {}
 
 /*

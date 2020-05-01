@@ -94,9 +94,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	};
 	// Return enum option info for NodeContext
 	static EnumOptions<NodeContext> nodeContexts();
-	// Constructor
 	ProcedureNode(NodeType nodeType);
-	// Destructor
 	virtual ~ProcedureNode();
 
 	/*

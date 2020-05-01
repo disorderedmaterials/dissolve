@@ -32,7 +32,6 @@ template <class T> class MinimiserBase
       public:
 	// Cost function pointer typedef
 	typedef double (T::*MinimiserCostFunction)(const Array<double> &alpha);
-	// Constructor
 	MinimiserBase<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : object_(object), costFunction_(costFunction)
 	{
 		penaltyPower_ = 2;

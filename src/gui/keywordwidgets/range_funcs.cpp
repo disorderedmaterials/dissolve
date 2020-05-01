@@ -24,7 +24,6 @@
 #include "gui/keywordwidgets/range.h"
 #include "vec3labels.h"
 
-// Constructor
 RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI

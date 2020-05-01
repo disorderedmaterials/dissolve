@@ -34,7 +34,6 @@ class QWidget;
 class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 {
       public:
-	// Constructor / Destructor
 	WizardWidgetPageInfo();
 	~WizardWidgetPageInfo();
 	// Page Types

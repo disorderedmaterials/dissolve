@@ -36,7 +36,6 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 	Q_OBJECT
 
       public:
-	// Constructor
 	Vec3NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

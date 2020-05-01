@@ -32,7 +32,6 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 
-// Constructors
 SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) : ProcedureNode(ProcedureNode::SelectNode)
 {
 	if (site)
@@ -63,7 +62,6 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) :
 	distanceReferenceSite_ = NULL;
 }
 
-// Destructor
 SelectProcedureNode::~SelectProcedureNode()
 {
 	// Remove the forEach branch

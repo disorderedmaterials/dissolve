@@ -33,7 +33,6 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : ProcedureNode(ProcedureNode::Sum1DNode)
 {
 	keywords_.add("Target", new NodeKeyword<const Process1DProcedureNode>(this, ProcedureNode::Process1DNode, false, target), "SourceData", "Process1D node containing the data to sum");
@@ -44,7 +43,6 @@ Sum1DProcedureNode::Sum1DProcedureNode(const Process1DProcedureNode *target) : P
 	keywords_.add("Ranges", new RangeKeyword(Range(6.0, 9.0), Vec3Labels::MinMaxDeltaLabels), "RangeC", "X range for third summation region");
 }
 
-// Destructor
 Sum1DProcedureNode::~Sum1DProcedureNode() {}
 
 /*

@@ -24,7 +24,6 @@
 #include "gui/keywordwidgets/vec3double.h"
 #include "vec3labels.h"
 
-// Constructor
 Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI

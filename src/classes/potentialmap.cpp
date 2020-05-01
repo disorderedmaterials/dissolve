@@ -32,10 +32,8 @@
 #include <new>
 using namespace std;
 
-// Constructor
 PotentialMap::PotentialMap() {}
 
-// Destructor
 PotentialMap::~PotentialMap() {}
 
 // Clear all data

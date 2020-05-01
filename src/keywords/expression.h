@@ -32,9 +32,7 @@ class ProcedureNode;
 class ExpressionKeyword : public KeywordData<Expression &>
 {
       public:
-	// Constructor
 	ExpressionKeyword(Expression &expression);
-	// Destructor
 	~ExpressionKeyword();
 
 	/*

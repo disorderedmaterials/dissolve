@@ -33,9 +33,7 @@
 class RangeKeyword : public KeywordData<Range>
 {
       public:
-	// Constructors
 	RangeKeyword(Range value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-	// Destructor
 	~RangeKeyword();
 
 	/*

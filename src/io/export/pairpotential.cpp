@@ -25,7 +25,6 @@
 #include "classes/pairpotential.h"
 #include "math/data1d.h"
 
-// Constructor
 PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char *filename, PairPotentialExportFormat format) : FileAndFormat(filename, format) {}
 
 /*

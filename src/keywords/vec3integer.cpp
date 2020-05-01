@@ -22,7 +22,6 @@
 #include "keywords/vec3integer.h"
 #include "base/lineparser.h"
 
-// Constructors
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3Labels::LabelType labelType) : KeywordData<Vec3<int>>(KeywordBase::Vec3IntegerData, value)
 {
 	labelType_ = labelType;
@@ -47,7 +46,6 @@ Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3
 	max_ = maxValue;
 }
 
-// Destructor
 Vec3IntegerKeyword::~Vec3IntegerKeyword() {}
 
 /*

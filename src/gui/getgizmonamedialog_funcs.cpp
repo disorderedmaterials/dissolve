@@ -23,10 +23,8 @@
 // #include "gui/workspacetab.h"
 #include "base/sysfunc.h"
 
-// Constructor
 GetGizmoNameDialog::GetGizmoNameDialog(QWidget *parent) { ui_.setupUi(this); }
 
-// Destructor
 GetGizmoNameDialog::~GetGizmoNameDialog() {}
 
 // Run the dialog

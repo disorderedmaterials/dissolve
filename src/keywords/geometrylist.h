@@ -33,10 +33,8 @@
 class GeometryListKeyword : public KeywordData<List<Geometry> &>
 {
       public:
-	// Constructor
 	GeometryListKeyword(List<Geometry> &, Geometry::GeometryType t);
 
-	// Destructor
 	~GeometryListKeyword();
 
 	/*

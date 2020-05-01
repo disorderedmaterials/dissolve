@@ -88,9 +88,7 @@ class KeywordBase : public ListItem<KeywordBase>
 		Vec3NodeValueData,
 		WindowFunctionData
 	};
-	// Constructor
 	KeywordBase(KeywordDataType type);
-	// Destructor
 	virtual ~KeywordBase();
 	// Return DataType name
 	static const char *keywordDataType(KeywordDataType kdt);

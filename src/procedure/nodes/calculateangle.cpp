@@ -27,7 +27,6 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1, SelectProcedureNode *site2)
     : CalculateProcedureNodeBase(ProcedureNode::CalculateAngleNode, site0, site1, site2)
 {
@@ -40,7 +39,6 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *si
 	keywords_.add("Sites", siteKeywords_[2], "K", "Site that represents 'k' in the angle i-j-k");
 }
 
-// Destructor
 CalculateAngleProcedureNode::~CalculateAngleProcedureNode() {}
 
 /*

@@ -24,7 +24,6 @@
 #include "base/sysfunc.h"
 #include "math/data2d.h"
 
-// Constructor
 Data2DExportFileFormat::Data2DExportFileFormat(const char *filename, Data2DExportFormat format) : FileAndFormat(filename, format) {}
 
 /*

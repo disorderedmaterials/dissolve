@@ -31,9 +31,7 @@
 class BenchmarkModule : public Module
 {
       public:
-	// Constructor
 	BenchmarkModule();
-	// Destructor
 	~BenchmarkModule();
 
 	/*

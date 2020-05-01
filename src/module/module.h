@@ -41,9 +41,7 @@ class QWidget;
 class Module : public ListItem<Module>
 {
       public:
-	// Constructor
 	Module();
-	// Destructor
 	virtual ~Module();
 
 	/*

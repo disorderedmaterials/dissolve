@@ -35,9 +35,7 @@ class ProcessPool;
 class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTorsion>
 {
       public:
-	// Constructor
 	SpeciesTorsion();
-	// Destructor
 	~SpeciesTorsion();
 
 	/*

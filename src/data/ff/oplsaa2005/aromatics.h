@@ -31,7 +31,6 @@
 class Forcefield_OPLSAA2005_Aromatics : public OPLSAA2005BaseForcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_OPLSAA2005_Aromatics();
 	~Forcefield_OPLSAA2005_Aromatics();
 

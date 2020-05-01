@@ -31,9 +31,7 @@ class PotentialMap;
 class GeometryOptimisationModule : public Module
 {
       public:
-	// Constructor
 	GeometryOptimisationModule();
-	// Destructor
 	~GeometryOptimisationModule();
 
 	/*

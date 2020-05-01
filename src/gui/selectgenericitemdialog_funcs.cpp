@@ -23,7 +23,6 @@
 #include "main/dissolve.h"
 #include <QRegExp>
 
-// Constructor
 SelectGenericItemDialog::SelectGenericItemDialog(QWidget *parent, Dissolve &dissolve) : dissolve_(dissolve)
 {
 	ui_.setupUi(this);
@@ -31,7 +30,6 @@ SelectGenericItemDialog::SelectGenericItemDialog(QWidget *parent, Dissolve &diss
 	connect(this, SIGNAL(genericItemSelectionChanged(bool)), ui_.SelectButton, SLOT(setEnabled(bool)));
 }
 
-// Destructor
 SelectGenericItemDialog::~SelectGenericItemDialog() {}
 
 // Update the table of GenericItems, optionally filtering them by name and description

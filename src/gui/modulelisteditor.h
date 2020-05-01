@@ -42,7 +42,6 @@ class ModuleListEditor : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ModuleListEditor(QWidget *parent = NULL);
 	~ModuleListEditor();
 

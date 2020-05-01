@@ -23,7 +23,6 @@
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/modulewidget.h"
 
-// Constructor
 CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

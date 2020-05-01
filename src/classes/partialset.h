@@ -37,9 +37,7 @@ class Interpolator;
 class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 {
       public:
-	// Constructor
 	PartialSet();
-	// Destructor
 	~PartialSet();
 
 	/*

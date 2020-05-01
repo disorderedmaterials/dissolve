@@ -32,7 +32,6 @@ class Axes;
 class RenderableSpecies : public Renderable
 {
       public:
-	// Constructor / Destructor
 	RenderableSpecies(const Species *source, const char *objectTag);
 	~RenderableSpecies();
 

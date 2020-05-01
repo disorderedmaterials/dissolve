@@ -23,7 +23,6 @@
 #include "gui/charts/modulelistmetrics.h"
 #include <QPainter>
 
-// Constructor
 ModuleInsertionBlock::ModuleInsertionBlock(QWidget *parent) : QWidget(parent)
 {
 	// Set up user interface

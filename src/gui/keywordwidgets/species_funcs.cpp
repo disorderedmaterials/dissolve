@@ -25,7 +25,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/species.hui"
 
-// Constructor
 SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type

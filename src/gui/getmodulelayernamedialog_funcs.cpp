@@ -24,10 +24,8 @@
 #include "gui/getmodulelayernamedialog.h"
 #include "module/layer.h"
 
-// Constructor
 GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers) : layers_(layers) { ui_.setupUi(this); }
 
-// Destructor
 GetModuleLayerNameDialog::~GetModuleLayerNameDialog() {}
 
 // Run the dialog

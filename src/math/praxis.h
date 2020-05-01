@@ -32,7 +32,6 @@
 template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 {
       public:
-	// Constructor
 	PrAxisMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		maxStep_ = 0.01;

@@ -33,7 +33,6 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *target) : ProcedureNode(ProcedureNode::Process1DNode)
 {
 	keywords_.add("Target", new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target), "SourceData", "Collect1D node containing the data to process");
@@ -49,7 +48,6 @@ Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *tar
 	processedData_ = NULL;
 }
 
-// Destructor
 Process1DProcedureNode::~Process1DProcedureNode() {}
 
 /*

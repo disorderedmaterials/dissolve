@@ -29,7 +29,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-// Constructor
 RenderableConfiguration::RenderableConfiguration(const Configuration *source, const char *objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
 {
 	// Set defaults
@@ -50,7 +49,6 @@ RenderableConfiguration::RenderableConfiguration(const Configuration *source, co
 	lineInteractionPrimitive_->setNoInstances();
 }
 
-// Destructor
 RenderableConfiguration::~RenderableConfiguration() {}
 
 /*

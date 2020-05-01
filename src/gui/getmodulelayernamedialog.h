@@ -36,9 +36,7 @@ class GetModuleLayerNameDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers);
-	// Destructor
 	~GetModuleLayerNameDialog();
 
       private:

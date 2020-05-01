@@ -36,9 +36,7 @@ class GetTabNameDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	GetTabNameDialog(QWidget *parent, RefList<const MainTab> currentTabs);
-	// Destructor
 	~GetTabNameDialog();
 
       private:

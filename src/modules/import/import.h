@@ -34,9 +34,7 @@ class Data3D;
 class ImportModule : public Module
 {
       public:
-	// Constructor
 	ImportModule();
-	// Destructor
 	~ImportModule();
 
 	/*

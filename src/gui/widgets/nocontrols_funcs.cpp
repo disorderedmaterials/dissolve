@@ -21,8 +21,6 @@
 
 #include "gui/widgets/nocontrols.h"
 
-// Constructor
 NoControlsWidget::NoControlsWidget(QWidget *parent) : QWidget(parent) {}
 
-// Destructor
 NoControlsWidget::~NoControlsWidget() {}

@@ -23,7 +23,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
 {
 	type_ = Box::MonoclinicBoxType;
@@ -53,7 +52,6 @@ MonoclinicBox::MonoclinicBox(const Vec3<double> lengths, double beta) : Box()
 	finalise();
 }
 
-// Destructor
 MonoclinicBox::~MonoclinicBox() {}
 
 /*

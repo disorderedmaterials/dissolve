@@ -28,7 +28,6 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
@@ -46,7 +45,6 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
 	selectNodes_ = selectNodes;
 }
 
-// Destructor
 OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProcedureNode() {}
 
 /*

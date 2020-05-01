@@ -28,7 +28,6 @@
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 
-// Constructor
 RenderableData3D::RenderableData3D(const Data3D *source, const char *objectTag) : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
 {
 	// Set style defaults
@@ -41,7 +40,6 @@ RenderableData3D::RenderableData3D(const Data3D *source, const char *objectTag) 
 	dataPrimitive_ = createPrimitive();
 }
 
-// Destructor
 RenderableData3D::~RenderableData3D() {}
 
 /*

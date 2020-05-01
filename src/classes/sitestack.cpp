@@ -27,7 +27,6 @@
 #include "classes/speciessite.h"
 #include "data/atomicmass.h"
 
-// Constructor
 SiteStack::SiteStack() : ListItem<SiteStack>()
 {
 	configuration_ = NULL;
@@ -37,7 +36,6 @@ SiteStack::SiteStack() : ListItem<SiteStack>()
 	sitesHaveOrientation_ = false;
 }
 
-// Destructor
 SiteStack::~SiteStack() {}
 
 /*

@@ -33,7 +33,6 @@
 class MimeTreeWidgetItem : public QTreeWidgetItem
 {
       public:
-	// Constructors
 	MimeTreeWidgetItem(QTreeWidget *parent, int type);
 	MimeTreeWidgetItem(QTreeWidgetItem *parent, int type);
 

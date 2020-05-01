@@ -35,7 +35,6 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 	 * Chunk of objects, maintained by an ObjectFactory
 	 */
       public:
-	// Constructor
 	ObjectChunk<T>(int size) : ListItem<ObjectChunk<T>>(), nObjects_(size)
 	{
 		objectArray_ = new T[nObjects_];
@@ -44,7 +43,6 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 
 		markAllObjectsUnused();
 	}
-	// Destructor
 	~ObjectChunk()
 	{
 		if (objectArray_)
@@ -166,7 +164,6 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 template <class T> class ObjectFactory
 {
       public:
-	// Constructor
 	ObjectFactory<T>()
 	{
 		currentChunk_ = NULL;

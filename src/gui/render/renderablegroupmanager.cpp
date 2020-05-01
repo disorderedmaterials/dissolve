@@ -23,7 +23,6 @@
 #include "base/sysfunc.h"
 #include "gui/render/renderable.h"
 
-// Constructor
 RenderableGroupManager::RenderableGroupManager()
 {
 	stockColourUsageCount_.initialise(StockColours::nStockColours);

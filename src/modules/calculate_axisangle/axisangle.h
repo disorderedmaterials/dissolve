@@ -37,9 +37,7 @@ class SpeciesSite;
 class CalculateAxisAngleModule : public Module
 {
       public:
-	// Constructor
 	CalculateAxisAngleModule();
-	// Destructor
 	~CalculateAxisAngleModule();
 
 	/*

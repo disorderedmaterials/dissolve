@@ -22,7 +22,6 @@
 #include "data/ffparameters.h"
 #include "data/ff.h"
 
-// Constructors
 ForcefieldParameters::ForcefieldParameters(const char *name, double data0, double data1, double data2, double data3) : ListItem<ForcefieldParameters>()
 {
 	name_ = name;
@@ -32,7 +31,6 @@ ForcefieldParameters::ForcefieldParameters(const char *name, double data0, doubl
 	parameters_.setParameter(3, data3);
 }
 
-// Destructor
 ForcefieldParameters::~ForcefieldParameters() {}
 
 /*

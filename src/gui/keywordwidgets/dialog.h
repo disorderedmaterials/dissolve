@@ -35,9 +35,7 @@ class KeywordsDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	KeywordsDialog(QWidget *parent, const KeywordList &keywords, const CoreData &coreData);
-	// Destructor
 	~KeywordsDialog();
 
       private:

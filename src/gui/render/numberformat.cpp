@@ -39,7 +39,6 @@ NumberFormat::FormatType NumberFormat::formatType(QString s)
 // Convert FormatType to text string
 const char *NumberFormat::formatType(NumberFormat::FormatType ft) { return FormatTypeKeywords[ft]; }
 
-// Constructor
 NumberFormat::NumberFormat()
 {
 	type_ = NumberFormat::DecimalFormat;
@@ -49,7 +48,6 @@ NumberFormat::NumberFormat()
 	useENotation_ = true;
 }
 
-// Destructor
 NumberFormat::~NumberFormat() {}
 
 /*

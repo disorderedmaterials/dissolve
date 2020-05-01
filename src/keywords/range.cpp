@@ -22,10 +22,8 @@
 #include "keywords/range.h"
 #include "base/lineparser.h"
 
-// Constructors
 RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : KeywordData<Range>(KeywordBase::RangeData, value) { labelType_ = labelType; }
 
-// Destructor
 RangeKeyword::~RangeKeyword() {}
 
 /*

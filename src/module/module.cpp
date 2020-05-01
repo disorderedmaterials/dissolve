@@ -25,7 +25,6 @@
 #include "classes/configuration.h"
 #include "main/dissolve.h"
 
-// Constructor
 Module::Module()
 {
 	frequency_ = 1;
@@ -33,7 +32,6 @@ Module::Module()
 	configurationLocal_ = true;
 }
 
-// Destructor
 Module::~Module() {}
 
 /*

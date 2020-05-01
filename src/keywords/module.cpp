@@ -22,10 +22,8 @@
 #include "keywords/module.h"
 #include "module/module.h"
 
-// Constructor
 ModuleKeywordBase::ModuleKeywordBase(const char *moduleType) { moduleType_ = moduleType; }
 
-// Destructor
 ModuleKeywordBase::~ModuleKeywordBase() {}
 
 /*

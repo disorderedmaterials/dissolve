@@ -23,10 +23,8 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-// Constructor
 SelectElementDialog::SelectElementDialog(QWidget *parent) { ui_.setupUi(this); }
 
-// Destructor
 SelectElementDialog::~SelectElementDialog() {}
 
 void SelectElementDialog::on_ElementWidget_elementSelected(bool dummy) { ui_.SelectButton->setEnabled(true); }

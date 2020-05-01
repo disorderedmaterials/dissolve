@@ -28,7 +28,6 @@
 class Matrix3
 {
       public:
-	// Constructor
 	Matrix3();
 
       private:

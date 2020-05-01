@@ -24,7 +24,6 @@
 #include "base/processpool.h"
 #include "genericitems/array2ddouble.h"
 
-// Constructor
 BraggReflection::BraggReflection()
 {
 	q_ = 0.0;
@@ -32,10 +31,8 @@ BraggReflection::BraggReflection()
 	nKVectors_ = 0;
 }
 
-// Destructor
 BraggReflection::~BraggReflection() {}
 
-// Copy constructor
 BraggReflection::BraggReflection(const BraggReflection &source) { (*this) = source; }
 
 // Operator=

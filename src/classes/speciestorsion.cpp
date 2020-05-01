@@ -25,10 +25,8 @@
 #include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), DynamicArrayObject<SpeciesTorsion>() { clear(); }
 
-// Destructor
 SpeciesTorsion::~SpeciesTorsion() {}
 
 /*

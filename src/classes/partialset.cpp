@@ -27,10 +27,8 @@
 #include "genericitems/array2dbool.h"
 #include "io/export/data1d.h"
 
-// Constructor
 PartialSet::PartialSet() : ListItem<PartialSet>() { fingerprint_ = "NO_FINGERPRINT"; }
 
-// Destructor
 PartialSet::~PartialSet()
 {
 	fullHistograms_.clear();

@@ -41,9 +41,7 @@ class RefineModule : public Module
 	 */
 
       public:
-	// Constructor
 	RefineModule();
-	// Destructor
 	~RefineModule();
 
 	/*

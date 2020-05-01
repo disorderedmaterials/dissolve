@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "expression/expression.h"
 
-// Constructor
 ExpressionKeyword::ExpressionKeyword(Expression &expression) : KeywordData<Expression &>(KeywordData::ExpressionData, expression) {}
 
-// Destructor
 ExpressionKeyword::~ExpressionKeyword() {}
 
 /*

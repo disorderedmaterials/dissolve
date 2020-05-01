@@ -33,7 +33,6 @@ class GLExtensions;
 class PrimitiveInstance : public ListItem<PrimitiveInstance>
 {
       public:
-	// Constructor
 	PrimitiveInstance();
 	// Instance Type
 	enum InstanceType

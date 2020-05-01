@@ -37,7 +37,6 @@ class SequenceProcedureNode;
 class ProcedureChart : public ChartBase
 {
       public:
-	// Constructor / Destructor
 	ProcedureChart(Procedure *procedure, const CoreData &coreData);
 	~ProcedureChart();
 

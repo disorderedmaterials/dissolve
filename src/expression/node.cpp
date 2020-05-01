@@ -30,7 +30,6 @@
 // Local constant
 const int MAXNODEARGS = 10;
 
-// Constructors
 ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 {
 	// Private variables
@@ -41,7 +40,6 @@ ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 	nodeType_ = ExpressionNode::BasicNode;
 }
 
-// Destructor
 ExpressionNode::~ExpressionNode() {}
 
 // Copy data

@@ -23,7 +23,6 @@
 #include <math.h>
 #include <stdio.h>
 
-// Constructor
 VertexChunk::VertexChunk()
 {
 	// Public variables
@@ -41,7 +40,6 @@ VertexChunk::VertexChunk()
 	type_ = GL_TRIANGLES;
 }
 
-// Destructor
 VertexChunk::~VertexChunk()
 {
 	if (vertexData_ != NULL)

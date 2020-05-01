@@ -34,7 +34,6 @@
 #include "procedure/nodes/select.h"
 #include "templates/dynamicarray.h"
 
-// Constructor
 DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
 {
 	parent_ = parent;
@@ -43,7 +42,6 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) 
 	keywords_.add("Definition", new ElementRefListKeyword(elements_), "Element", "Define one or more Elements to include in this site");
 }
 
-// Destructor
 DynamicSiteProcedureNode::~DynamicSiteProcedureNode() {}
 
 /*

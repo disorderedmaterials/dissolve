@@ -28,9 +28,7 @@
 class Lock
 {
       public:
-	// Constructor
 	Lock();
-	// Destructor
 	~Lock();
 	// Declare Locker to be our friend
 	friend class Locker;
@@ -54,9 +52,7 @@ class Lock
 class Locker
 {
       public:
-	// Constructor
 	Locker(Lock &lock);
-	// Destructor
 	~Locker();
 
       private:

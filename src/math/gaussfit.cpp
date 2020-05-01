@@ -26,7 +26,6 @@
 #include "math/mc.h"
 #include "math/praxis.h"
 
-// Constructor
 GaussFit::GaussFit(const Data1D &referenceData)
 {
 	referenceData_ = referenceData;

@@ -52,7 +52,6 @@ class PrimitiveInfo
 class UncolouredPrimitiveInfo : public PrimitiveInfo
 {
       public:
-	// Constructor / Destructor
 	UncolouredPrimitiveInfo(Primitive *prim = NULL, Matrix4 transform = Matrix4());
 	~UncolouredPrimitiveInfo();
 
@@ -71,7 +70,6 @@ class UncolouredPrimitiveInfo : public PrimitiveInfo
 class ColouredPrimitiveInfo : public PrimitiveInfo
 {
       public:
-	// Constructor / Destructor
 	ColouredPrimitiveInfo(Primitive *prim = NULL, Matrix4 transform = Matrix4(), GLfloat r = 0.0, GLfloat g = 0.0, GLfloat b = 0.0, GLfloat a = 0.0);
 	~ColouredPrimitiveInfo();
 
@@ -92,7 +90,6 @@ class ColouredPrimitiveInfo : public PrimitiveInfo
 class StylePrimitiveInfo : public PrimitiveInfo
 {
       public:
-	// Constructor / Destructor
 	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL);
 	~StylePrimitiveInfo();
 
@@ -111,7 +108,6 @@ class StylePrimitiveInfo : public PrimitiveInfo
 class LineStylePrimitiveInfo : public PrimitiveInfo
 {
       public:
-	// Constructor / Destructor
 	LineStylePrimitiveInfo(LineStyle style = LineStyle());
 	~LineStylePrimitiveInfo();
 

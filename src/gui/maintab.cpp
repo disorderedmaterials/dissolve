@@ -32,7 +32,6 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 
-// Constructor / Destructor
 MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page) : dissolve_(dissolve)
 {
 	dissolveWindow_ = dissolveWindow;

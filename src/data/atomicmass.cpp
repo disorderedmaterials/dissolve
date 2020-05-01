@@ -27,7 +27,6 @@
  * Atomic Mass Data
  */
 
-// Constructor
 AtomicMassData::AtomicMassData(int z, double massMin, double massMax) : ElementReference(z)
 {
 	if (massMax < 0.0)

@@ -34,7 +34,6 @@ class ConfigurationWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ConfigurationWidget(QWidget *parent = 0);
 	~ConfigurationWidget();
 

@@ -30,7 +30,6 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
 ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget

@@ -39,7 +39,6 @@ class Data3DExportFileFormat : public FileAndFormat
 		PDensData3D,
 		nData3DExportFormats
 	};
-	// Constructor
 	Data3DExportFileFormat(const char *filename = NULL, Data3DExportFormat format = Data3DExportFileFormat::BlockData3D);
 
 	/*

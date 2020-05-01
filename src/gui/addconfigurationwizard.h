@@ -36,7 +36,6 @@ class AddConfigurationWizard : public WizardWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	AddConfigurationWizard(QWidget *parent);
 	~AddConfigurationWizard();
 

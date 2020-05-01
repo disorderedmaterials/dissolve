@@ -34,7 +34,6 @@
 class KeywordList
 {
       public:
-	// Constructor / Destructor
 	KeywordList();
 	~KeywordList();
 

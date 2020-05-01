@@ -31,10 +31,8 @@ class SelectProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructors
 	OperateSitePopulationNormaliseProcedureNode();
 	OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
-	// Destructor
 	~OperateSitePopulationNormaliseProcedureNode();
 
 	/*

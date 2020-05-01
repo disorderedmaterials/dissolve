@@ -32,11 +32,9 @@
 class Vec3DoubleKeyword : public KeywordData<Vec3<double>>
 {
       public:
-	// Constructors
 	Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-	// Destructor
 	~Vec3DoubleKeyword();
 
 	/*

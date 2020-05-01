@@ -44,7 +44,6 @@ const char *CellStatusFlagKeywords[] = {"Unused", "LockedForEditing", "ReadByOne
 // Return string for specified CellStatusFlag
 const char *RegionalDistributor::cellStatusFlag(RegionalDistributor::CellStatusFlag flag) { return CellStatusFlagKeywords[flag]; }
 
-// Constructor
 RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy)
     : processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray), moleculeArray_(moleculeArray)
 {
@@ -68,7 +67,6 @@ RegionalDistributor::RegionalDistributor(const std::deque<std::shared_ptr<Molecu
 	nMoleculesDistributed_ = 0;
 }
 
-// Destructor
 RegionalDistributor::~RegionalDistributor() { delete[] lockedCells_; }
 
 /*

@@ -33,7 +33,6 @@ class QWidget;
 class ChartBlock : public ListItem<ChartBlock>
 {
       public:
-	// Constructor / Destructor
 	ChartBlock();
 	virtual ~ChartBlock();
 

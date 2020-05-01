@@ -40,7 +40,6 @@ class PlottableData
 		TwoAxisPlottable,  /* Contains data points plotted against two axes (x and y) */
 		ThreeAxisPlottable /* Contains data points plotted againas three axes (x, y, and z) */
 	};
-	// Constructor
 	PlottableData(PlottableDataType type);
 
 	/*

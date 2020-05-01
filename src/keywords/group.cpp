@@ -22,7 +22,6 @@
 #include "keywords/group.h"
 #include "keywords/list.h"
 
-// Constructor
 KeywordGroup::KeywordGroup(KeywordList &keywordList) : ListItem<KeywordGroup>(), keywordList_(keywordList) {}
 
 /*

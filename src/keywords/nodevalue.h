@@ -33,9 +33,7 @@ class ProcedureNode;
 class NodeValueKeyword : public KeywordData<NodeValue>
 {
       public:
-	// Constructor
 	NodeValueKeyword(ProcedureNode *parentNode, NodeValue value);
-	// Destructor
 	~NodeValueKeyword();
 
 	/*

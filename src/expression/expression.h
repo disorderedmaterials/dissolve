@@ -35,13 +35,9 @@ class Node;
 class Expression
 {
       public:
-	// Constructor
 	Expression(const char *expressionText = NULL);
-	// Destructor
 	~Expression();
-	// Copy constructor
 	Expression(const Expression &source);
-	// Assignment operator
 	void operator=(const Expression &source);
 
 	/*

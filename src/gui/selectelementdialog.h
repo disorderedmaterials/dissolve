@@ -36,9 +36,7 @@ class SelectElementDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectElementDialog(QWidget *parent);
-	// Destructor
 	~SelectElementDialog();
 
       private:

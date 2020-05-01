@@ -32,7 +32,6 @@
 class SymmetryGenerator
 {
       public:
-	// Constructor
 	SymmetryGenerator();
 
 	/*

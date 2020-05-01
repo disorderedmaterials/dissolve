@@ -32,7 +32,6 @@ class Timer
 	 * Simple class to store and manipulate tick information in order to provide timings for routines etc.
 	 */
       public:
-	// Constructor
 	Timer();
 
 	/*

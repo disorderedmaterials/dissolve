@@ -25,7 +25,6 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
-// Constructor
 BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container

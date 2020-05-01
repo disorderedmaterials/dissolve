@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 BraggModule::BraggModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 BraggModule::~BraggModule() {}
 
 /*

@@ -35,9 +35,7 @@ class ProcedureNode;
 class NodeAndIntegerKeywordBase
 {
       public:
-	// Constructor
 	NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-	// Destructor
 	virtual ~NodeAndIntegerKeywordBase();
 
 	/*
@@ -93,7 +91,6 @@ class NodeAndIntegerKeywordBase
 template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData<Pair<N *, int>>
 {
       public:
-	// Constructors
 	NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node)
 	    : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(KeywordBase::NodeAndIntegerData, Pair<N *, int>(node))
 	{
@@ -102,7 +99,6 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	    : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(KeywordBase::NodeAndIntegerData, Pair<N *, int>(node, index))
 	{
 	}
-	// Destructor
 	~NodeAndIntegerKeyword() {}
 
 	/*

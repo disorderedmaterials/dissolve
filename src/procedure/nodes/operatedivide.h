@@ -31,9 +31,7 @@
 class OperateDivideProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructor
 	OperateDivideProcedureNode();
-	// Destructor
 	~OperateDivideProcedureNode();
 
 	/*

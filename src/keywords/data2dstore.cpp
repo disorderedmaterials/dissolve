@@ -22,10 +22,8 @@
 #include "keywords/data2dstore.h"
 #include "base/lineparser.h"
 
-// Constructor
 Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore &data2DStore) : KeywordData<Data2DStore &>(KeywordBase::Data2DStoreData, data2DStore) {}
 
-// Destructor
 Data2DStoreKeyword::~Data2DStoreKeyword() {}
 
 /*

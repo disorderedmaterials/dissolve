@@ -37,7 +37,6 @@ class AnalyseModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, const CoreData &coreData);
 
       private:

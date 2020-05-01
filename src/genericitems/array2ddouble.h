@@ -28,7 +28,6 @@
 template <> class GenericItemContainer<Array2D<double>> : public GenericItem
 {
       public:
-	// Constructor
 	GenericItemContainer<Array2D<double>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*

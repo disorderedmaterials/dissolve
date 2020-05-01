@@ -30,14 +30,12 @@
 #include "module/list.h"
 #include "module/module.h"
 
-// Constructor
 CoreData::CoreData()
 {
 	moduleInstances_ = NULL;
 	inputFilename_ = NULL;
 }
 
-// Destructor
 CoreData::~CoreData() {}
 
 // Clear all data

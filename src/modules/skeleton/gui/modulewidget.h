@@ -39,7 +39,6 @@ class SkeletonModuleWidget : public ModuleWidget
 	SkeletonModule *module_;
 
       public:
-	// Constructor
 	SkeletonModuleWidget(QWidget *parent, SkeletonModule *module);
 
 	/*

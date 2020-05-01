@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
 CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0, SelectProcedureNode *site1, SelectProcedureNode *site2, SelectProcedureNode *site3)
     : ProcedureNode(nodeType)
 {
@@ -38,7 +37,6 @@ CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType n
 	value_ = 0.0;
 }
 
-// Destructor
 CalculateProcedureNodeBase::~CalculateProcedureNodeBase() {}
 
 /*

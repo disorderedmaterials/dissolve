@@ -22,10 +22,8 @@
 #include "classes/coordinateset.h"
 #include "base/messenger.h"
 
-// Constructor
 CoordinateSet::CoordinateSet() : ListItem<CoordinateSet>() {}
 
-// Destructor
 CoordinateSet::~CoordinateSet() {}
 
 /*

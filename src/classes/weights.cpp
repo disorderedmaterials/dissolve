@@ -28,7 +28,6 @@
 #include "genericitems/array2ddouble.h"
 #include "templates/broadcastlist.h"
 
-// Constructor
 Weights::Weights()
 {
 	boundCoherentSquareOfAverage_ = 0.0;
@@ -36,10 +35,8 @@ Weights::Weights()
 	valid_ = false;
 }
 
-// Copy Constructor
 Weights::Weights(const Weights &source) { (*this) = source; }
 
-// Assignment Operator
 void Weights::operator=(const Weights &source)
 {
 	// Isotopologue Mix

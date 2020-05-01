@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 DoubleKeyword::DoubleKeyword(double value) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
 	minimumLimit_ = false;
@@ -45,7 +44,6 @@ DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue) : K
 	max_ = maxValue;
 }
 
-// Destructor
 DoubleKeyword::~DoubleKeyword() {}
 
 /*

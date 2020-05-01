@@ -24,7 +24,6 @@
 #include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/process1d.h"
 
-// Constructor
 CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule) : ModuleWidget(parent), module_(cnModule)
 {
 	// Set up user interface

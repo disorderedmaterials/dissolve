@@ -34,9 +34,7 @@ class AnalyseModule;
 class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 {
       public:
-	// Constructor
 	ProcedureNodeReference(ProcedureNode *node = NULL);
-	// Destructor
 	~ProcedureNodeReference();
 
 	/*
@@ -66,9 +64,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 	 * Operators
 	 */
       public:
-	// Assignment operator
 	void operator=(ProcedureNode *node);
-	// Assignment operator
 	void operator=(const ProcedureNodeReference &nodeRef);
 
 	/*

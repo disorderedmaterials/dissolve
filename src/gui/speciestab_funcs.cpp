@@ -32,7 +32,6 @@
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-// Constructor / Destructor
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species)
     : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
 {

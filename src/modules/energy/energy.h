@@ -35,9 +35,7 @@ class EnergyModule : public Module
 	 */
 
       public:
-	// Constructor
 	EnergyModule();
-	// Destructor
 	~EnergyModule();
 
 	/*

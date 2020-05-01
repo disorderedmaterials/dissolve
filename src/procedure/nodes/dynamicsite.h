@@ -40,9 +40,7 @@ class NodeScopeStack;
 class DynamicSiteProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	DynamicSiteProcedureNode(SelectProcedureNode *parent);
-	// Destructor
 	~DynamicSiteProcedureNode();
 
 	/*

@@ -41,7 +41,6 @@ class MimeString : public ListItem<MimeString>
 		ModuleType, /* Module type */
 		nMimeStringTypes
 	};
-	// Constructor
 	MimeString(MimeString::MimeStringType type = NoMimeType, QString data = QString());
 
       private:
@@ -61,13 +60,9 @@ class MimeString : public ListItem<MimeString>
 class MimeStrings : public QMimeData
 {
       public:
-	// Constructor
 	MimeStrings();
-	// Destructor
 	~MimeStrings();
-	// Copy Constructor
 	MimeStrings(const MimeStrings &source);
-	// Assignment Operator
 	void operator=(const MimeStrings &source);
 
 	/*

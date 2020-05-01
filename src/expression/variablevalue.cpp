@@ -23,7 +23,6 @@
 #include "expression/variable.h"
 #include <string.h>
 
-// Constructor
 ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable *var) : ExpressionNode(), variable_(var)
 {
 	// Private variables
@@ -31,7 +30,6 @@ ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable *var) : Expr
 	nodeType_ = ExpressionNode::VariableValueNode;
 }
 
-// Destructor
 ExpressionVariableValue::~ExpressionVariableValue() {}
 
 // Set function

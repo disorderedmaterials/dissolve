@@ -29,7 +29,6 @@
  * OPLS-AA (2005) Noble Gases
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_Alkenes::Forcefield_OPLSAA2005_Alkenes()
 {
 	// Add required types from OPLS-AA (2005) core list

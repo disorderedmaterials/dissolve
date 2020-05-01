@@ -36,7 +36,6 @@ class ImportSpeciesWizard : public WizardWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ImportSpeciesWizard(QWidget *parent);
 	~ImportSpeciesWizard();
 

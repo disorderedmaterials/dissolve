@@ -38,9 +38,7 @@ class ForcesModule : public Module
 	 */
 
       public:
-	// Constructor
 	ForcesModule();
-	// Destructor
 	~ForcesModule();
 
 	/*

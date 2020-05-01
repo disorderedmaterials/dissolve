@@ -43,7 +43,6 @@ class QWidget;
 class MainTab
 {
       public:
-	// Constructor / Destructor
 	MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page);
 	virtual ~MainTab();
 	// Tab Types

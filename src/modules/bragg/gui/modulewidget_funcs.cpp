@@ -28,7 +28,6 @@
 #include "modules/bragg/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

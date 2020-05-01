@@ -32,7 +32,6 @@ template <class T> class BroadcastArray
 	 * to slave processes. The Array items must be trivially copyable (via an assignment operator) and broadcastable.
 	 */
       public:
-	// Constructor
 	BroadcastArray(ProcessPool &procPool, int root, Array<T> &array, const CoreData &coreData, bool &result)
 	{
 		result = false;

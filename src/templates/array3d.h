@@ -30,7 +30,6 @@
 template <class A> class Array3D
 {
       public:
-	// Constructor
 	Array3D(int nX = 0, int nY = 0, int nZ = 0)
 	{
 		array_ = NULL;
@@ -42,7 +41,6 @@ template <class A> class Array3D
 		if ((nX > 0) && (nY > 0) && (nZ > 0))
 			resize(nX, nY, nZ);
 	}
-	// Destructor
 	~Array3D() { clear(); }
 	// Clear array data
 	void clear()
@@ -58,7 +56,6 @@ template <class A> class Array3D
 		nY_ = 0;
 		nZ_ = 0;
 	}
-	// Copy Constructor
 	Array3D(const Array3D<A> &source)
 	{
 		array_ = NULL;
@@ -69,14 +66,12 @@ template <class A> class Array3D
 		nZ_ = 0;
 		(*this) = source;
 	}
-	// Assignment Operator
 	void operator=(const A value)
 	{
 		// Copy source data elements
 		for (int n = 0; n < linearSize_; ++n)
 			array_[n] = value;
 	}
-	// Assignment Operator
 	void operator=(const Array3D<A> &source)
 	{
 		// Clear any existing data and reinitialise the array
@@ -270,7 +265,6 @@ template <class A> class Array3D
 template <class A> class OffsetArray3D
 {
       public:
-	// Constructor
 	OffsetArray3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
 	{
 		array_ = NULL;
@@ -279,7 +273,6 @@ template <class A> class OffsetArray3D
 
 		initialise(xMin, xMax, yMin, yMax, zMin, zMax);
 	}
-	// Destructor
 	~OffsetArray3D() { clear(); }
 	// Clear array data
 	void clear()
@@ -301,7 +294,6 @@ template <class A> class OffsetArray3D
 		nY_ = 0;
 		nZ_ = 0;
 	}
-	// Copy Constructor
 	OffsetArray3D(const OffsetArray3D<A> &source)
 	{
 		array_ = NULL;
@@ -318,14 +310,12 @@ template <class A> class OffsetArray3D
 		nZ_ = 0;
 		(*this) = source;
 	}
-	// Assignment Operator
 	void operator=(const A value)
 	{
 		// Copy source data elements
 		for (int n = 0; n < linearSize_; ++n)
 			array_[n] = value;
 	}
-	// Assignment Operator
 	void operator=(const Array3D<A> &source)
 	{
 		// Clear any existing data and reinitialise the array

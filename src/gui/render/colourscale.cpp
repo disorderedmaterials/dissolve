@@ -21,7 +21,6 @@
 
 #include "gui/render/colourscale.h"
 
-// Constructor
 ColourScale::ColourScale()
 {
 	// Private variables
@@ -29,10 +28,8 @@ ColourScale::ColourScale()
 	useHSV_ = false;
 }
 
-// Copy Constructor
 ColourScale::ColourScale(const ColourScale &source) { (*this) = source; }
 
-// Assignment operator
 void ColourScale::operator=(const ColourScale &source)
 {
 	clear();

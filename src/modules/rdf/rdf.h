@@ -37,9 +37,7 @@ class Weights;
 class RDFModule : public Module
 {
       public:
-	// Constructor
 	RDFModule();
-	// Destructor
 	~RDFModule();
 
 	/*

@@ -36,9 +36,7 @@
 class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 {
       public:
-	// Constructor
 	MasterIntra();
-	// Destructor
 	~MasterIntra();
 
 	/*

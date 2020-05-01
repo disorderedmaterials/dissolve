@@ -28,7 +28,6 @@
 template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
 {
       public:
-	// Constructor
 	GenericItemContainer<Array<Vec3<double>>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*

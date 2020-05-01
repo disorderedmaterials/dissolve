@@ -32,7 +32,6 @@ class SpeciesAtom;
 class Forcefield_SPCFw : public Forcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_SPCFw();
 	~Forcefield_SPCFw();
 

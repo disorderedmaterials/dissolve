@@ -30,7 +30,6 @@
 #include <QGridLayout>
 #include <QLabel>
 
-// Constructor
 ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 {
 	// Set up user interface

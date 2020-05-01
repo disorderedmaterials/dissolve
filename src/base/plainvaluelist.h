@@ -32,9 +32,7 @@
 class PlainValueList
 {
       public:
-	// Constructor
 	PlainValueList();
-	// Destructor
 	~PlainValueList();
 
 	/*

@@ -28,7 +28,6 @@
 class AtomicMassData : public ElementReference
 {
       public:
-	// Constructor
 	AtomicMassData(int z, double massMin, double massMax = -1.0);
 
       private:

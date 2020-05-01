@@ -31,9 +31,7 @@
 class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructors
 	OperateSphericalShellNormaliseProcedureNode();
-	// Destructor
 	~OperateSphericalShellNormaliseProcedureNode();
 
 	/*

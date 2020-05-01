@@ -35,9 +35,7 @@ class ProcessPool;
 class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle>
 {
       public:
-	// Constructor
 	SpeciesAngle();
-	// Destructor
 	~SpeciesAngle();
 
 	/*

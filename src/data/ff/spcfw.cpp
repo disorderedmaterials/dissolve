@@ -38,7 +38,6 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor
 Forcefield_SPCFw::Forcefield_SPCFw()
 {
 	// Atom types
@@ -52,7 +51,6 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 	addAngleTerm("HW", "OW", "HW", SpeciesAngle::HarmonicForm, 317.5656, 113.24);
 }
 
-// Destructor
 Forcefield_SPCFw::~Forcefield_SPCFw() {}
 
 /*

@@ -37,9 +37,7 @@ class SelectConfigurationWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectConfigurationWidget(QWidget *parent);
-	// Destructor
 	~SelectConfigurationWidget();
 
 	/*

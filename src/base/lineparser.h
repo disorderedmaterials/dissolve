@@ -41,9 +41,7 @@ using namespace std;
 class LineParser
 {
       public:
-	// Constructor
 	LineParser(ProcessPool *procPool = NULL);
-	// Destructor
 	~LineParser();
 	// Parse Options Enum
 	enum ParseOption

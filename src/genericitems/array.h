@@ -29,7 +29,6 @@
 template <class T> class GenericItemContainer<Array<T>> : public GenericItem
 {
       public:
-	// Constructor
 	GenericItemContainer<Array<T>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*

@@ -21,7 +21,6 @@
 
 #include "gui/addforcefieldtermsdialog.h"
 
-// Constructor
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
@@ -33,7 +32,6 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, const Dissol
 	connect(ui_.AddForcefieldTermsWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }
 
-// Destructor
 AddForcefieldTermsDialog::~AddForcefieldTermsDialog() {}
 
 // Reset, ready for adding a new Configuration

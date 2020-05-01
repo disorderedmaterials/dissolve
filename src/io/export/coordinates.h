@@ -38,7 +38,6 @@ class CoordinateExportFileFormat : public FileAndFormat
 		DLPOLYCoordinates,
 		nCoordinateExportFormats
 	};
-	// Constructor
 	CoordinateExportFileFormat(const char *filename = NULL, CoordinateExportFormat format = XYZCoordinates);
 
 	/*

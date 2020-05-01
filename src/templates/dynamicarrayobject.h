@@ -29,7 +29,6 @@ template <class T> class DynamicArray;
 template <class T> class DynamicArrayObjectBase
 {
       public:
-	// Constructor
 	DynamicArrayObjectBase<T>() { arrayIndex_ = -1; }
 
       protected:

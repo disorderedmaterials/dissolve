@@ -21,7 +21,6 @@
 
 #include "gui/render/textfragment.h"
 
-// Constructor
 TextFragment::TextFragment() : ListItem<TextFragment>()
 {
 	scale_ = 1.0;
@@ -29,7 +28,6 @@ TextFragment::TextFragment() : ListItem<TextFragment>()
 	bold_ = false;
 }
 
-// Destructor
 TextFragment::~TextFragment() {}
 
 // Set fragment data

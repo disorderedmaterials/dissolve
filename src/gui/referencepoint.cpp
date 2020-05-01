@@ -21,7 +21,6 @@
 
 #include "gui/referencepoint.h"
 
-// Constructor / Destructor
 ReferencePoint::ReferencePoint() : ListItem<ReferencePoint>() {}
 
 ReferencePoint::~ReferencePoint() {}

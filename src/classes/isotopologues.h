@@ -36,9 +36,7 @@ class LineParser;
 class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 {
       public:
-	// Constructor
 	Isotopologues();
-	// Destructor
 	~Isotopologues();
 
 	/*

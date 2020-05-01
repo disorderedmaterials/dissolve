@@ -36,9 +36,7 @@ class SpeciesSite;
 class CalculateSDFModule : public Module
 {
       public:
-	// Constructor
 	CalculateSDFModule();
-	// Destructor
 	~CalculateSDFModule();
 
 	/*

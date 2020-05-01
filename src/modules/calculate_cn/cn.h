@@ -34,9 +34,7 @@ class OperateSitePopulationNormaliseProcedureNode;
 class CalculateCNModule : public Module
 {
       public:
-	// Constructor
 	CalculateCNModule();
-	// Destructor
 	~CalculateCNModule();
 
 	/*

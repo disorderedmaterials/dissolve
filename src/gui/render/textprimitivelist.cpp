@@ -23,7 +23,6 @@
 #include "gui/render/fontinstance.h"
 #include "gui/render/view.h"
 
-// Constructor
 TextPrimitiveList::TextPrimitiveList() {}
 
 // Clear list

@@ -22,7 +22,6 @@
 #include "math/matrix3.h"
 #include "base/messenger.h"
 
-// Constructor
 Matrix3::Matrix3() { setIdentity(); }
 
 /*

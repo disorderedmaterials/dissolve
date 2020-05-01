@@ -22,10 +22,8 @@
 #include "gui/wizardwidgethighlight.h"
 #include <QWidget>
 
-// Constructor
 WizardWidgetHighlight::WizardWidgetHighlight() : ListItem<WizardWidgetHighlight>() { widget_ = NULL; }
 
-// Destructor
 WizardWidgetHighlight::~WizardWidgetHighlight() {}
 
 /*

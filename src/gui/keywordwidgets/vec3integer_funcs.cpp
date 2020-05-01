@@ -24,7 +24,6 @@
 #include "gui/keywordwidgets/vec3integer.h"
 #include "gui/keywordwidgets/vec3labels.h"
 
-// Constructor
 Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI

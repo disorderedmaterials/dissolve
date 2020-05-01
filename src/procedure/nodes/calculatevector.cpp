@@ -28,7 +28,6 @@
 #include "keywords/bool.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1, bool rotateIntoFrame)
     : CalculateProcedureNodeBase(ProcedureNode::CalculateVectorNode, site0, site1)
 {
@@ -40,7 +39,6 @@ CalculateVectorProcedureNode::CalculateVectorProcedureNode(SelectProcedureNode *
 	keywords_.add("Sites", new BoolKeyword(rotateIntoFrame), "RotateIntoFrame", "Whether to rotate the calculated vector into the local frame defined on 'I'");
 }
 
-// Destructor
 CalculateVectorProcedureNode::~CalculateVectorProcedureNode() {}
 
 /*

@@ -23,7 +23,6 @@
 #include "base/messenger.h"
 #include "classes/atom.h"
 
-// Constructor
 MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
 {
 	parent_ = NULL;
@@ -32,7 +31,6 @@ MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
 		parameters_[n] = 0.0;
 }
 
-// Destructor
 MasterIntra::~MasterIntra() {}
 
 /*

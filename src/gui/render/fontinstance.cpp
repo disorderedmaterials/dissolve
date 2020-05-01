@@ -22,7 +22,6 @@
 #include "gui/render/fontinstance.h"
 #include "base/messenger.h"
 
-// Constructor
 FontInstance::FontInstance()
 {
 	fontData_ = NULL;

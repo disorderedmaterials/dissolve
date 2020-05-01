@@ -38,7 +38,6 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData);
 	~ProcedureChartNodeBlock();
 

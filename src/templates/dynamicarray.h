@@ -36,7 +36,6 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 	 * Chunk of objects, maintained by a DynamicArray
 	 */
       public:
-	// Constructor
 	ArrayChunk<T>(int nObjects = 512) : ListItem<ArrayChunk<T>>()
 	{
 		nObjects_ = nObjects;
@@ -46,7 +45,6 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 		nextAvailableObject_ = -1;
 		nUnusedObjects_ = 0;
 	}
-	// Destructor
 	~ArrayChunk()
 	{
 		if (objectArray_)
@@ -205,7 +203,6 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 template <class T> class DynamicArray
 {
       public:
-	// Constructor
 	DynamicArray<T>() { currentChunk_ = NULL; }
 
 	/*
@@ -350,7 +347,6 @@ template <class T> class DynamicArray
 	int nItems() const { return array_.nItems(); }
 	// Return item array
 	T **array() { return array_.array(); }
-	// Element access operator
 	T *operator[](int index)
 	{
 #ifdef CHECKS
@@ -397,7 +393,6 @@ template <class T> class DynamicArray
 template <class T> class DynamicArrayIterator
 {
       public:
-	// Constructor
 	DynamicArrayIterator<T>(DynamicArray<T> &target) : arrayTarget_(target)
 	{
 		if (arrayTarget_.nItems() == 0)
@@ -450,7 +445,6 @@ template <class T> class DynamicArrayIterator
 template <class T> class DynamicArrayConstIterator
 {
       public:
-	// Constructor
 	DynamicArrayConstIterator<T>(const DynamicArray<T> &target) : arrayTarget_(target)
 	{
 		index_ = 0;

@@ -34,9 +34,7 @@ class EditSpeciesDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	EditSpeciesDialog(QWidget *parent, Species *sp);
-	// Destructor
 	~EditSpeciesDialog();
 
       private:

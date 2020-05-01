@@ -30,7 +30,6 @@
 template <class T> class Vec4
 {
       public:
-	// Constructor
 	Vec4<T>(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
 	{
 		x = xx;
@@ -153,7 +152,6 @@ template <class T> class Vec4
 		z *= value;
 		w *= value;
 	}
-	// Element access operator
 	T operator[](int index)
 	{
 		if (index == 0)

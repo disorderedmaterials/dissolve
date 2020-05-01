@@ -31,9 +31,7 @@ class FileAndFormat;
 class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
 {
       public:
-	// Constructor
 	FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword);
-	// Destructor
 	~FileAndFormatKeyword();
 
 	/*

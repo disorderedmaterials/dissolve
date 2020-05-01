@@ -33,7 +33,6 @@ class Expression;
 class ExpressionNode : public ListItem<ExpressionNode>
 {
       public:
-	// Constructor / Destructor
 	ExpressionNode();
 	virtual ~ExpressionNode();
 	// List pointers (for argument list)

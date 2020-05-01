@@ -31,9 +31,7 @@
 class BoolKeyword : public KeywordData<bool>
 {
       public:
-	// Constructor
 	BoolKeyword(bool value);
-	// Destructor
 	~BoolKeyword();
 
 	/*

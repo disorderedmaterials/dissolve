@@ -37,9 +37,7 @@ class SelectConfigurationDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectConfigurationDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle);
-	// Destructor
 	~SelectConfigurationDialog();
 
       private:

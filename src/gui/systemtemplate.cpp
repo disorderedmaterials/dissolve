@@ -28,15 +28,12 @@
 #include <QXmlStreamReader>
 #include <stdlib.h>
 
-// Constructor / Destructor
 SystemTemplate::SystemTemplate() { toolButton_ = NULL; }
 
 SystemTemplate::~SystemTemplate() {}
 
-// Copy Constructor
 SystemTemplate::SystemTemplate(const SystemTemplate &source) { (*this) = source; }
 
-// Assignment operator
 void SystemTemplate::operator=(const SystemTemplate &source)
 {
 	name_ = source.name_;

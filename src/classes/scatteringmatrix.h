@@ -36,7 +36,6 @@ class Weights;
 class ScatteringMatrix
 {
       public:
-	// Constructor
 	ScatteringMatrix();
 
 	/*

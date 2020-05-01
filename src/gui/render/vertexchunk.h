@@ -31,7 +31,6 @@
 class VertexChunk
 {
       public:
-	// Constructor / Destructor
 	VertexChunk();
 	~VertexChunk();
 	// List pointers

@@ -25,7 +25,6 @@
 #include "gui/render/view.h"
 #include "math/doubleexp.h"
 
-// Constructor
 Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), fontInstance_(fontInstance)
 {
 	// Definition
@@ -114,7 +113,6 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
 	primitiveVersion_ = -1;
 }
 
-// Destructor
 Axes::~Axes() {}
 
 /*

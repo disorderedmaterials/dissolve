@@ -22,10 +22,8 @@
 #include "keywords/windowfunction.h"
 #include "base/lineparser.h"
 
-// Constructor
 WindowFunctionKeyword::WindowFunctionKeyword(WindowFunction value) : KeywordData<WindowFunction>(KeywordBase::WindowFunctionData, value) {}
 
-// Destructor
 WindowFunctionKeyword::~WindowFunctionKeyword() {}
 
 /*

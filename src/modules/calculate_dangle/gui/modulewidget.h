@@ -40,7 +40,6 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	CalculateDAngleModule *module_;
 
       public:
-	// Constructor
 	CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module);
 
 	/*

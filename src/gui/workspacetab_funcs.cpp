@@ -32,7 +32,6 @@
 #include <QMdiSubWindow>
 #include <QMenu>
 
-// Constructor
 WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title)
     : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
@@ -47,7 +46,6 @@ WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, M
 	connect(mdiArea_, SIGNAL(subWindowActivated(QMdiSubWindow *)), dissolveWindow, SLOT(currentWorkspaceGizmoChanged(QMdiSubWindow *)));
 }
 
-// Destructor
 WorkspaceTab::~WorkspaceTab() {}
 
 /*

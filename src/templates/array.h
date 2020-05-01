@@ -33,7 +33,6 @@ using namespace std;
 template <class A> class Array : public ListItem<Array<A>>
 {
       public:
-	// Constructors
 	Array(int initialSize = 0) : ListItem<Array<A>>()
 	{
 		chunkSize_ = 128;
@@ -50,13 +49,11 @@ template <class A> class Array : public ListItem<Array<A>>
 		nItems_ = 0;
 		copy(source, firstIndex, lastIndex);
 	}
-	// Destructor
 	~Array()
 	{
 		if (array_ != NULL)
 			delete[] array_;
 	}
-	// Copy Constructor
 	Array(const Array<A> &source)
 	{
 		chunkSize_ = source.chunkSize_;
@@ -68,7 +65,6 @@ template <class A> class Array : public ListItem<Array<A>>
 		for (int n = 0; n < nItems_; ++n)
 			array_[n] = source.array_[n];
 	}
-	// Assignment Operator
 	void operator=(const Array<A> &source)
 	{
 		chunkSize_ = source.chunkSize_;
@@ -78,7 +74,6 @@ template <class A> class Array : public ListItem<Array<A>>
 		for (int n = 0; n < nItems_; ++n)
 			array_[n] = source.array_[n];
 	}
-	// Conversion operator (to standard array)
 	operator A *() { return array_; }
 
 	/*

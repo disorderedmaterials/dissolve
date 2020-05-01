@@ -28,12 +28,10 @@
 class CharString : public ListItem<CharString>
 {
       public:
-	// Constructor / Destructor
 	CharString();
 	CharString(int size);
 	CharString(const char *fmt, ...);
 	~CharString();
-	// Copy constructor
 	CharString(const CharString &);
 
 	/*
@@ -94,25 +92,15 @@ class CharString : public ListItem<CharString>
 	 * Operators
 	 */
       public:
-	// Assignment operator
 	void operator=(const char *);
-	// Assignment operator
 	void operator=(const CharString &);
-	// Equality operator (const char*)
 	bool operator==(const char *) const;
-	// Inequality operator (const char*)
 	bool operator!=(const char *) const;
-	// Equality operator
 	bool operator==(const CharString &) const;
-	// Inequality operator
 	bool operator!=(const CharString &) const;
-	// Array subscript operator
 	char &operator[](int);
-	// Character addition operator
 	void operator+=(char);
-	// String addition operator
 	void operator+=(const char *);
-	// Conversion operators
 	operator const char *() const;
 
 	/*

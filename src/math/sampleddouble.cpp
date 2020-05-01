@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include <math.h>
 
-// Constructor
 SampledDouble::SampledDouble() { clear(); }
 
 SampledDouble::SampledDouble(const double x)
@@ -84,7 +83,6 @@ void SampledDouble::operator=(const SampledDouble &source)
 	m2_ = source.m2_;
 }
 
-// Operator +=
 void SampledDouble::operator+=(double x)
 {
 	// Accumulate value using Welford's online algorithm
@@ -103,10 +101,8 @@ void SampledDouble::operator+=(double x)
 	m2_ += delta * (x - mean_);
 }
 
-// Operator +=
 void SampledDouble::operator+=(int i) { (*this) += (double)i; }
 
-// Operator +=
 void SampledDouble::operator+=(const SampledDouble &source)
 {
 	// Accumulate other values using parallel algorithm of Chan
@@ -131,7 +127,6 @@ void SampledDouble::operator+=(const SampledDouble &source)
 	count_ += source.count_;
 }
 
-// Operator *=
 void SampledDouble::operator*=(double x)
 {
 	// Apply factor to mean and m2_
@@ -139,7 +134,6 @@ void SampledDouble::operator*=(double x)
 	m2_ *= x;
 }
 
-// Operator /=
 void SampledDouble::operator/=(double x)
 {
 	// Apply factor to mean and m2_

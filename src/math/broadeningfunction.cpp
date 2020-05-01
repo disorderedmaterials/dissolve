@@ -25,7 +25,6 @@
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
 {
 	set(function, p1, p2, p3, p4, p5, p6);
@@ -33,13 +32,10 @@ BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function
 	inverted_ = false;
 }
 
-// Destructor
 BroadeningFunction::~BroadeningFunction() {}
 
-// Copy Constructor
 BroadeningFunction::BroadeningFunction(const BroadeningFunction &source) { (*this) = source; }
 
-// Assignment operator
 void BroadeningFunction::operator=(const BroadeningFunction &source)
 {
 	function_ = source.function_;

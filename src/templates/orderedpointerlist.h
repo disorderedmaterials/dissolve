@@ -35,7 +35,6 @@ template <class T> class OrderedPointerListItem
 	 */
 
       public:
-	// Constructor
 	OrderedPointerListItem<T>(T *object = NULL);
 	// List pointers
 	OrderedPointerListItem<T> *prev, *next;
@@ -51,7 +50,6 @@ template <class T> class OrderedPointerListItem
 	T *object();
 };
 
-// Constructor
 template <class T> OrderedPointerListItem<T>::OrderedPointerListItem(T *object) : object_(object)
 {
 	prev = NULL;
@@ -72,11 +70,8 @@ template <class T> class OrderedPointerList
 	 */
 
       public:
-	// Constructor
 	OrderedPointerList<T>();
-	// Destructor
 	~OrderedPointerList();
-	// Copy constructor
 	OrderedPointerList<T>(const OrderedPointerList<T> &source);
 
 	/*
@@ -151,13 +146,10 @@ template <class T> class OrderedPointerList
 	 * Operators
 	 */
       public:
-	// Assignment operator
 	void operator=(const OrderedPointerList<T> &other);
-	// Element access operator
 	OrderedPointerListItem<T> *operator[](int);
 };
 
-// Constructor
 template <class T> OrderedPointerList<T>::OrderedPointerList()
 {
 	listHead_ = NULL;
@@ -171,10 +163,8 @@ template <class T> OrderedPointerList<T>::OrderedPointerList()
 	objects_ = NULL;
 }
 
-// Destructor
 template <class T> OrderedPointerList<T>::~OrderedPointerList() { clear(); }
 
-// Copy constructor
 template <class T> OrderedPointerList<T>::OrderedPointerList(const OrderedPointerList<T> &source) { (*this) = source; }
 
 /*
@@ -561,7 +551,6 @@ template <class T> void OrderedPointerList<T>::invalidateLists()
  * Operators
  */
 
-// Assignment operator
 template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerList<T> &other)
 {
 	clear();
@@ -569,7 +558,6 @@ template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerLis
 		addAtEnd(item->object());
 }
 
-// Element access operator
 template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](int index)
 {
 #ifdef CHECKS
@@ -590,7 +578,6 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](
 template <class T> class OrderedPointerListIterator
 {
       public:
-	// Constructor
 	OrderedPointerListIterator<T>(const OrderedPointerList<T> &source, bool reverse = false) : reverse_(reverse), targetList_(source)
 	{
 		finished_ = false;

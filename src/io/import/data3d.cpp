@@ -23,11 +23,9 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
 Data3DImportFileFormat::Data3DImportFileFormat(const char *filename, Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
-// Destructor
 Data3DImportFileFormat::~Data3DImportFileFormat() {}
 
 /*

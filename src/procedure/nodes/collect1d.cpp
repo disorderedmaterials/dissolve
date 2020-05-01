@@ -29,7 +29,6 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 
-// Constructor
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
 {
 	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0), "QuantityX", "Calculated observable to collect");
@@ -41,7 +40,6 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
 	subCollectBranch_ = NULL;
 }
 
-// Destructor
 Collect1DProcedureNode::~Collect1DProcedureNode() {}
 
 /*

@@ -35,11 +35,8 @@ class Histogram2D;
 class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
       public:
-	// Constructor
 	Data2D();
-	// Destructor
 	~Data2D();
-	// Copy Constructor
 	Data2D(const Data2D &source);
 	// Clear data
 	void clear();
@@ -125,15 +122,10 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	 * Operators
 	 */
       public:
-	// Assignment Operator
 	void operator=(const Data2D &source);
-	// Operator +=
 	void operator+=(const double delta);
-	// Operator -=
 	void operator-=(const double delta);
-	// Operator *=
 	void operator*=(const double factor);
-	// Operator /=
 	void operator/=(const double factor);
 
 	/*

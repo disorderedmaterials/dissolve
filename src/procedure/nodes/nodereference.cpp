@@ -26,7 +26,6 @@
 #include "module/list.h"
 #include "modules/analyse/analyse.h"
 
-// Constructor
 ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<ProcedureNodeReference>()
 {
 	node_ = node;
@@ -36,7 +35,6 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<P
 	analyseModuleParent_ = NULL;
 }
 
-// Destructor
 ProcedureNodeReference::~ProcedureNodeReference() {}
 
 /*
@@ -66,10 +64,8 @@ bool ProcedureNodeReference::isNull() const { return (node_ == NULL); }
  * Operators
  */
 
-// Assignment operator
 void ProcedureNodeReference::operator=(ProcedureNode *node) { node_ = node; }
 
-// Assignment operator
 void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
 {
 	node_ = nodeRef.node_;

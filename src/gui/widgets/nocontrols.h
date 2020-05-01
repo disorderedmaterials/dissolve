@@ -34,9 +34,7 @@ class NoControlsWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	NoControlsWidget(QWidget *parent);
-	// Destructor
 	virtual ~NoControlsWidget();
 };
 

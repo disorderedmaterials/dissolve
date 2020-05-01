@@ -31,10 +31,8 @@ class SelectProcedureNode;
 class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructors
 	OperateNumberDensityNormaliseProcedureNode();
 	OperateNumberDensityNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
-	// Destructor
 	~OperateNumberDensityNormaliseProcedureNode();
 
 	/*

@@ -27,7 +27,6 @@
 #include "main/dissolve.h"
 #include <QButtonGroup>
 
-// Constructor
 ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -38,7 +37,6 @@ ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
 	connect(ui_.ConfigurationView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 }
 
-// Destructor
 ConfigurationWidget::~ConfigurationWidget() {}
 
 /*

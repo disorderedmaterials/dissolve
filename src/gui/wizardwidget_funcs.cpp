@@ -22,7 +22,6 @@
 #include "base/sysfunc.h"
 #include "gui/wizardwidget.hui"
 
-// Constructor / Destructor
 WizardWidget::WizardWidget()
 {
 	headerAvailable_ = false;

@@ -21,7 +21,6 @@
 
 #include "gui/editspeciesdialog.h"
 
-// Constructor
 EditSpeciesDialog::EditSpeciesDialog(QWidget *parent, Species *sp)
 {
 	ui_.setupUi(this);
@@ -35,7 +34,6 @@ EditSpeciesDialog::EditSpeciesDialog(QWidget *parent, Species *sp)
 	ui_.OKButton->setEnabled(species_ && species_->nAtoms() > 0);
 }
 
-// Destructor
 EditSpeciesDialog::~EditSpeciesDialog() {}
 
 void EditSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }

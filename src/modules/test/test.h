@@ -35,9 +35,7 @@ class TestModule : public Module
 	 */
 
       public:
-	// Constructor
 	TestModule();
-	// Destructor
 	~TestModule();
 
 	/*

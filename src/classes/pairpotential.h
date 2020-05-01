@@ -35,7 +35,6 @@ class AtomType;
 class PairPotential : public ListItem<PairPotential>
 {
       public:
-	// Constructor
 	PairPotential();
 	// Coulomb Truncation Scheme enum
 	enum CoulombTruncationScheme

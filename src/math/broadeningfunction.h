@@ -55,13 +55,9 @@ class BroadeningFunction : public GenericItemBase
 	static const char *functionDescription(FunctionType func);
 
       public:
-	// Constructor
 	BroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
-	// Destructor
 	~BroadeningFunction();
-	// Copy Constructor
 	BroadeningFunction(const BroadeningFunction &source);
-	// Assignment Operator
 	void operator=(const BroadeningFunction &source);
 
 	/*

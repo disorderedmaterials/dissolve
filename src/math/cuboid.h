@@ -28,7 +28,6 @@
 class Cuboid
 {
       public:
-	// Constructor / Destructor
 	Cuboid();
 
 	/*

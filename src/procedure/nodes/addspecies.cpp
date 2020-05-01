@@ -28,7 +28,6 @@
 #include "classes/species.h"
 #include "keywords/types.h"
 
-// Constructor
 AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue population, NodeValue density, Units::DensityUnits densityUnits) : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
 	// Set up keywords
@@ -42,7 +41,6 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue populati
 		      "Positioning type for individual molecules");
 }
 
-// Destructor
 AddSpeciesProcedureNode::~AddSpeciesProcedureNode() {}
 
 /*

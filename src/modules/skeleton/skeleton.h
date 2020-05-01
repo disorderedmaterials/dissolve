@@ -31,9 +31,7 @@
 class SkeletonModule : public Module
 {
       public:
-	// Constructor
 	SkeletonModule();
-	// Destructor
 	~SkeletonModule();
 
 	/*

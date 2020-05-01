@@ -26,14 +26,12 @@
  * Site
  */
 
-// Constructor
 Site::Site(std::shared_ptr<const Molecule> molecule, Vec3<double> origin)
 {
 	molecule_ = molecule;
 	origin_ = origin;
 }
 
-// Destructor
 Site::~Site() {}
 
 // Return site origin
@@ -57,7 +55,6 @@ const Matrix3 &Site::axes() const
  * Oriented Site
  */
 
-// Constructor
 OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis, Vec3<double> yAxis, Vec3<double> zAxis) : Site(molecule, origin)
 {
 	axes_.setColumn(0, xAxis);
@@ -65,7 +62,6 @@ OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double
 	axes_.setColumn(2, zAxis);
 }
 
-// Destructor
 OrientedSite::~OrientedSite() {}
 
 // Return whether local axes are present

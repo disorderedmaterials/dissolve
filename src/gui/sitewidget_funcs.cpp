@@ -29,7 +29,6 @@
 #include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
-// Constructor
 SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -52,7 +51,6 @@ SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
 	updateStatusBar();
 }
 
-// Destructor
 SiteWidget::~SiteWidget() {}
 
 // Set main CoreData pointer

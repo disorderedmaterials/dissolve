@@ -234,7 +234,6 @@ template <class T> class Simplex
 	}
 
       public:
-	// Constructor
 	Simplex(T &object, SimplexCostFunction costFunc) : object_(object)
 	{
 		// Private variables

@@ -28,7 +28,6 @@
 class EnumOption
 {
       public:
-	// Constructors
 	EnumOption();
 	EnumOption(const int enumeration, const char *keyword, int minArgs = 0, int maxArgs = 0);
 	EnumOption(const int enumeration, const char *keyword, const char *description, int minArgs = 0, int maxArgs = 0);
@@ -80,7 +79,6 @@ class EnumOption
 class UnrecognisedEnumOption : public EnumOption
 {
       public:
-	// Constructor
 	UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD") {}
 
       public:

@@ -32,7 +32,6 @@ class Axes;
 class RenderableConfiguration : public Renderable
 {
       public:
-	// Constructor / Destructor
 	RenderableConfiguration(const Configuration *source, const char *objectTag);
 	~RenderableConfiguration();
 

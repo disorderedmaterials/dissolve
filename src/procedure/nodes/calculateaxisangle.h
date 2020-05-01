@@ -33,10 +33,8 @@ class SelectProcedureNode;
 class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
 {
       public:
-	// Constructor
 	CalculateAxisAngleProcedureNode(SelectProcedureNode *site0 = NULL, OrientedSite::SiteAxis axis0 = OrientedSite::XAxis, SelectProcedureNode *site1 = NULL,
 					OrientedSite::SiteAxis axis1 = OrientedSite::XAxis);
-	// Destructor
 	~CalculateAxisAngleProcedureNode();
 
 	/*

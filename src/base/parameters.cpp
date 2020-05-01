@@ -22,7 +22,6 @@
 #include "base/parameters.h"
 #include "base/messenger.h"
 
-// Constructor
 InteractionParameters::InteractionParameters()
 {
 	for (int n = 0; n < MAXSRPARAMETERS; ++n)
@@ -31,7 +30,6 @@ InteractionParameters::InteractionParameters()
 	empty_ = true;
 }
 
-// Destructor
 InteractionParameters::~InteractionParameters() {}
 
 /*

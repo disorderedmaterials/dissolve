@@ -35,7 +35,6 @@
 class Primitive : public ListItem<Primitive>
 {
       public:
-	// Constructor / Destructor
 	Primitive();
 	~Primitive();
 

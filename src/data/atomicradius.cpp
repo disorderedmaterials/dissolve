@@ -27,7 +27,6 @@
  * Atomic Radius Data
  */
 
-// Constructor
 AtomicRadiusData::AtomicRadiusData(int z, double radius) : ElementReference(z) { radius_ = radius; }
 
 // Return radius of element

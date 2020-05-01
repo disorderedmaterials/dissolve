@@ -33,12 +33,10 @@ class LineParser;
 class NodeValue
 {
       public:
-	// Constructors
 	NodeValue();
 	NodeValue(const int i);
 	NodeValue(const double d);
 	NodeValue(const char *expressionText, RefList<ExpressionVariable> parameters);
-	// Destructor
 	~NodeValue();
 	// Assignment from integer
 	void operator=(const int value);

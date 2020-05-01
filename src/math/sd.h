@@ -29,7 +29,6 @@
 template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 {
       public:
-	// Constructor
 	SteepestDescentMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
 	    : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 

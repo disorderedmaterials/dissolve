@@ -28,7 +28,6 @@
 class AtomicRadiusData : public ElementReference
 {
       public:
-	// Constructor
 	AtomicRadiusData(int z, double radius);
 
       private:

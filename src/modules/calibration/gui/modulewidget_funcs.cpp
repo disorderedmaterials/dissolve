@@ -28,7 +28,6 @@
 #include "modules/calibration/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 CalibrationModuleWidget::CalibrationModuleWidget(QWidget *parent, CalibrationModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

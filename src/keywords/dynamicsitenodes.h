@@ -34,9 +34,7 @@ class SelectProcedureNode;
 class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureNode> &>
 {
       public:
-	// Constructor
 	DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes, bool axesRequired = false);
-	// Destructor
 	~DynamicSiteNodesKeyword();
 
 	/*

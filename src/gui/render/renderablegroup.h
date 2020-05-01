@@ -34,7 +34,6 @@ class Renderable;
 class RenderableGroup : public ListItem<RenderableGroup>
 {
       public:
-	// Constructor
 	RenderableGroup(const char *name, StockColours::StockColour colour);
 
 	/*

@@ -30,7 +30,6 @@
 #include "modules/refine/refine.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 RefineModuleWidget::RefineModuleWidget(QWidget *parent, RefineModule *module, Dissolve &dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface

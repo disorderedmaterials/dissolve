@@ -32,7 +32,6 @@
 class ExpressionFunction : public ExpressionNode
 {
       public:
-	// Constructors / Destructor
 	ExpressionFunction(ExpressionFunctions::Function func = ExpressionFunctions::NoFunction);
 	ExpressionFunction(ExpressionNode *source);
 	~ExpressionFunction();

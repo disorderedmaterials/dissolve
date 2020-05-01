@@ -23,7 +23,6 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-// Constructor
 ForcefieldBondTerm::ForcefieldBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3)
 {
 	typeI_ = typeI;
@@ -35,7 +34,6 @@ ForcefieldBondTerm::ForcefieldBondTerm(const char *typeI, const char *typeJ, Spe
 	parameters_[3] = data3;
 }
 
-// Destructor
 ForcefieldBondTerm::~ForcefieldBondTerm() {}
 
 /*

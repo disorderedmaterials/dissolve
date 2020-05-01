@@ -43,9 +43,7 @@ class SpeciesSite;
 class SelectProcedureNode : public ProcedureNode
 {
       public:
-	// Constructors
 	SelectProcedureNode(SpeciesSite *site = NULL, bool axesRequired = false);
-	// Destructor
 	~SelectProcedureNode();
 
 	/*

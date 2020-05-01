@@ -29,7 +29,6 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-// Constructor / Destructor
 ImportSpeciesWizard::ImportSpeciesWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;

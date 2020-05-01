@@ -33,9 +33,7 @@ class Configuration;
 class AtomTypeRefListKeyword : public KeywordData<RefList<AtomType> &>
 {
       public:
-	// Constructor
 	AtomTypeRefListKeyword(RefList<AtomType> &targetRefList);
-	// Destructor
 	~AtomTypeRefListKeyword();
 
 	/*

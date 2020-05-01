@@ -34,9 +34,7 @@ class ModuleGroup;
 class ModuleGroups
 {
       public:
-	// Constructor
 	ModuleGroups();
-	// Destructor
 	~ModuleGroups();
 
 	/*

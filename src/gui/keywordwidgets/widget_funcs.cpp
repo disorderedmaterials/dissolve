@@ -28,7 +28,6 @@
 #include <QLabel>
 #include <QToolBox>
 
-// Constructor
 KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
 {
 	refreshing_ = false;

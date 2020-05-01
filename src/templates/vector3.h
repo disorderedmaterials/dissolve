@@ -32,7 +32,6 @@
 template <class T> class Vec3
 {
       public:
-	// Constructor
 	Vec3<T>(T xx = 0, T yy = 0, T zz = 0)
 	{
 		x = xx;
@@ -104,7 +103,6 @@ template <class T> class Vec3
 	 * Operators
 	 */
       public:
-	// Operator =
 	void operator=(const T value)
 	{
 		x = value;
@@ -184,7 +182,6 @@ template <class T> class Vec3
 		// Cross Product
 		return Vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
 	}
-	// Element access operator
 	T &operator[](int index)
 	{
 		if (index == 0)
@@ -438,9 +435,7 @@ template <class T> class Vec3
 template <class T> class ListVec3 : public Vec3<T>, public ListItem<ListVec3<T>>
 {
       public:
-	// Constructor
 	ListVec3<T>(T xx = 0, T yy = 0, T zz = 0) : Vec3<T>(xx, yy, zz), ListItem<ListVec3>() {}
-	// Copy Constructor
 	ListVec3<T>(const Vec3<T> &source)
 	{
 		Vec3<T>::x = source.x;

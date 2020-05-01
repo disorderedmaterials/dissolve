@@ -22,7 +22,6 @@
 #include "gui/widgets/superstackedwidget.hui"
 #include <QPainter>
 
-// Constructor
 SuperStackedWidget::SuperStackedWidget(QWidget *parent) : QStackedWidget(parent) {}
 
 // Paint event

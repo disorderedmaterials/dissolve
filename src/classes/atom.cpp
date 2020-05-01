@@ -24,10 +24,8 @@
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
 
-// Constructor
 Atom::Atom() { clear(); }
 
-// Destructor
 Atom::~Atom() {}
 
 /*

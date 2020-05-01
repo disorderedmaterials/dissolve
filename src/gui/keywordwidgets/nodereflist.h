@@ -37,7 +37,6 @@ class NodeRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
 	Q_OBJECT
 
       public:
-	// Constructor
 	NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

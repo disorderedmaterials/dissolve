@@ -30,7 +30,6 @@
 #include "templates/orderedvector.h"
 #include <iterator>
 
-// Constructor
 ForceKernel::ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz, double cutoffDistance)
     : configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz), processPool_(procPool)
 {
@@ -38,7 +37,6 @@ ForceKernel::ForceKernel(ProcessPool &procPool, Configuration *cfg, const Potent
 	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
 }
 
-// Destructor
 ForceKernel::~ForceKernel() {}
 
 /*

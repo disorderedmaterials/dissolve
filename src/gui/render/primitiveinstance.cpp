@@ -25,7 +25,6 @@
 // Static members
 PrimitiveInstance::InstanceType PrimitiveInstance::globalInstanceType_ = PrimitiveInstance::VBOInstance;
 
-// Constructor
 PrimitiveInstance::PrimitiveInstance() : ListItem<PrimitiveInstance>()
 {
 	// Private variables

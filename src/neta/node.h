@@ -69,7 +69,6 @@ class NETANode : public ListItem<NETANode>
 	{
 		NoMatch = -1
 	};
-	// Constructor / Destructor
 	NETANode(NETADefinition *parent, NodeType type);
 	NETANode() = default;
 	virtual ~NETANode();

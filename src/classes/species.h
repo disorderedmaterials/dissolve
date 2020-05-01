@@ -44,7 +44,6 @@ class Forcefield;
 class Species : public ListItem<Species>, public ObjectStore<Species>
 {
       public:
-	// Constructor / Destructor
 	Species();
 	~Species();
 	// Clear Data

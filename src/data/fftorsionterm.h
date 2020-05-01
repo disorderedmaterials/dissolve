@@ -34,7 +34,6 @@ class ForcefieldAtomType;
 class ForcefieldTorsionTerm
 {
       public:
-	// Constructor / Destructor
 	ForcefieldTorsionTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL, const char *typeL = NULL, SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm,
 			      double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldTorsionTerm();

@@ -24,7 +24,6 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-// Constructor
 RenderableData1D::RenderableData1D(const Data1D *source, const char *objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
 	// Set style defaults
@@ -34,7 +33,6 @@ RenderableData1D::RenderableData1D(const Data1D *source, const char *objectTag) 
 	dataPrimitive_ = createPrimitive();
 }
 
-// Destructor
 RenderableData1D::~RenderableData1D() {}
 
 /*

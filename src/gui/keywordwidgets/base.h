@@ -32,7 +32,6 @@ class GenericList;
 class KeywordWidgetBase
 {
       public:
-	// Constructor
 	KeywordWidgetBase(const CoreData &coreData);
 
 	/*

@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 IntegerKeyword::IntegerKeyword(int value) : KeywordData<int>(KeywordBase::IntegerData, value)
 {
 	minimumLimit_ = false;
@@ -45,7 +44,6 @@ IntegerKeyword::IntegerKeyword(int value, int minValue, int maxValue) : KeywordD
 	max_ = maxValue;
 }
 
-// Destructor
 IntegerKeyword::~IntegerKeyword() {}
 
 /*

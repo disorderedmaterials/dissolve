@@ -32,7 +32,6 @@ template <class T> class ListIterator;
 template <class T> class ListItem
 {
       public:
-	// Constructor
 	ListItem<T>()
 	{
 		prev_ = NULL;

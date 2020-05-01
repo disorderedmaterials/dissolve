@@ -30,15 +30,12 @@ template <class E> class EnumCast
 	 * broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the original enum ref.
 	 */
       public:
-	// Constructor
 	EnumCast(E &originalEnum) : originalEnum_(originalEnum) { integerValue_ = originalEnum_; }
-	// Destructor
 	~EnumCast()
 	{
 		// Cast integer variable back into enum
 		originalEnum_ = (E)integerValue_;
 	}
-	// Conversion Operator (to int&)
 	operator int &() { return integerValue_; }
 
       private:
@@ -55,11 +52,8 @@ template <class E> class EnumContainer
 	 * Template-only class that stores an enum for inclusion in a list or similar.
 	 */
       public:
-	// Constructor
 	EnumContainer(E value = 0) : value_(value) {}
-	// Conversion operator
 	operator E() { return value_; }
-	// Assignment Operator
 	void operator=(const E value) { value_ = value; }
 
       private:

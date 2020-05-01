@@ -23,7 +23,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/integer.hui"
 
-// Constructor
 IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QSpinBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type

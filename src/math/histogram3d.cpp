@@ -30,7 +30,6 @@ template <class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
 template <class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
 template <class Histogram3D> const char *ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";
 
-// Constructor
 Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(this)
 {
 	accumulatedData_.addErrors();
@@ -38,10 +37,8 @@ Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(t
 	clear();
 }
 
-// Destructor
 Histogram3D::~Histogram3D() {}
 
-// Copy Constructor
 Histogram3D::Histogram3D(const Histogram3D &source) : ObjectStore<Histogram3D>(this) { (*this) = source; }
 
 // Clear Data
@@ -253,7 +250,6 @@ const Data3D &Histogram3D::accumulatedData() const { return accumulatedData_; }
  * Operators
  */
 
-// Operator =
 void Histogram3D::operator=(const Histogram3D &source)
 {
 	xMinimum_ = source.xMinimum_;

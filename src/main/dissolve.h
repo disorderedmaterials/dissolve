@@ -42,9 +42,7 @@ class ChangeStore;
 class Dissolve
 {
       public:
-	// Constructor
 	Dissolve(CoreData &coreData);
-	// Destructor
 	~Dissolve();
 
 	/*

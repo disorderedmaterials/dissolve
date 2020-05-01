@@ -39,7 +39,6 @@ class RefineModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	RefineModuleWidget(QWidget *parent, RefineModule *module, Dissolve &dissolve);
 	~RefineModuleWidget();
 

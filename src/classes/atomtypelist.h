@@ -35,13 +35,9 @@ class Isotope;
 class AtomTypeList : public GenericItemBase
 {
       public:
-	// Constructor
 	AtomTypeList();
-	// Destructor
 	~AtomTypeList();
-	// Copy Constructor
 	AtomTypeList(const AtomTypeList &source);
-	// Assignment Operator
 	void operator=(const AtomTypeList &source);
 	// Array access operator
 	AtomTypeData *operator[](int n);

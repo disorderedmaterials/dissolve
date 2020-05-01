@@ -28,7 +28,6 @@
  * OPLS-AA (2005) Aromatics
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_Aromatics::Forcefield_OPLSAA2005_Aromatics()
 {
 	// Copy required types from OPLS-AA (2005) core list

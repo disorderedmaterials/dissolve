@@ -36,7 +36,6 @@ class Integrator1DGizmo : public QWidget, public Gizmo
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName);
 	~Integrator1DGizmo();
 

@@ -27,7 +27,6 @@
 #include "data/elements.h"
 #include <algorithm>
 
-// Constructor
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
 	element_ = NULL;
@@ -38,7 +37,6 @@ SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 	selected_ = false;
 }
 
-// Destructor
 SpeciesAtom::~SpeciesAtom() {}
 
 // Set Species parent

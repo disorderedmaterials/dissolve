@@ -35,9 +35,7 @@ class ImportSpeciesDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
-	// Destructor
 	~ImportSpeciesDialog();
 
       private:

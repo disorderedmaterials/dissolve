@@ -23,13 +23,11 @@
 #include "base/processpool.h"
 #include "classes/cell.h"
 
-// Constructor
 CellDistributor::CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed)
     : Distributor(cellArray.nCells(), cellArray, procPool, strategy, repeatsAllowed), cells_(cellArray)
 {
 }
 
-// Destructor
 CellDistributor::~CellDistributor() {}
 
 /*

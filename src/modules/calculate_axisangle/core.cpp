@@ -25,7 +25,6 @@
  * Constructor / Destructor
  */
 
-// Constructor
 CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
 	// Set unique name for this instance of the Module
@@ -36,7 +35,6 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(Proce
 	initialise();
 }
 
-// Destructor
 CalculateAxisAngleModule::~CalculateAxisAngleModule() {}
 
 /*

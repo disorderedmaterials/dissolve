@@ -36,7 +36,6 @@ template <class T> class BroadcastList
 	bool result_;
 
       public:
-	// Constructor
 	BroadcastList(ProcessPool &procPool, int root, List<T> &items, const CoreData &coreData)
 	{
 		result_ = false;

@@ -31,7 +31,6 @@
 class LinkToKeyword : public KeywordData<KeywordBase *>
 {
       public:
-	// Constructor / Destructor
 	LinkToKeyword(KeywordBase *keywordData);
 	~LinkToKeyword();
 

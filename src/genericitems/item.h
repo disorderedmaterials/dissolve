@@ -34,7 +34,6 @@ class CoreData;
 class GenericItem : public ListItem<GenericItem>
 {
       public:
-	// Constructor
 	GenericItem(const char *name, int flags);
 	virtual ~GenericItem();
 	// Item Flags

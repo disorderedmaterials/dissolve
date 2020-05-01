@@ -25,7 +25,6 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-// Constructor
 SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
 {
 	ui_.setupUi(this);
@@ -35,7 +34,6 @@ SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const Core
 	ui_.ConfigurationWidget->setCoreData(&coreData);
 }
 
-// Destructor
 SelectConfigurationDialog::~SelectConfigurationDialog() {}
 
 void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }

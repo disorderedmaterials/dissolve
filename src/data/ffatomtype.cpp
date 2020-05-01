@@ -24,7 +24,6 @@
 #include "data/ffparameters.h"
 #include "neta/generator.h"
 
-// Constructors
 ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition, const char *description, double q, double data0, double data1, double data2,
 				       double data3)
     : ElementReference(Z)
@@ -74,7 +73,6 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomT
 		equivalentName_ = equivalentName;
 }
 
-// Destructor
 ForcefieldAtomType::~ForcefieldAtomType() {}
 
 /*

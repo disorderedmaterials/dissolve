@@ -35,9 +35,7 @@ class IntraShakeModule : public Module
 	 */
 
       public:
-	// Constructor
 	IntraShakeModule();
-	// Destructor
 	~IntraShakeModule();
 
 	/*

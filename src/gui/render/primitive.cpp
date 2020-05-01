@@ -23,7 +23,6 @@
 #include "base/messenger.h"
 #include <string.h>
 
-// Constructor
 Primitive::Primitive() : ListItem<Primitive>()
 {
 	colouredVertexData_ = false;
@@ -33,7 +32,6 @@ Primitive::Primitive() : ListItem<Primitive>()
 	useInstances_ = true;
 }
 
-// Destructor
 Primitive::~Primitive() {}
 
 /*

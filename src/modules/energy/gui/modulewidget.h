@@ -40,7 +40,6 @@ class EnergyModuleWidget : public ModuleWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	EnergyModuleWidget(QWidget *parent, EnergyModule *module);
 	~EnergyModuleWidget();
 

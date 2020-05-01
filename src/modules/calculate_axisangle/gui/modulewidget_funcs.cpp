@@ -23,7 +23,6 @@
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_axisangle/gui/modulewidget.h"
 
-// Constructor
 CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, CalculateAxisAngleModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

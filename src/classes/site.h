@@ -33,9 +33,7 @@ class Molecule;
 class Site
 {
       public:
-	// Constructor
 	Site(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>());
-	// Destructor
 	virtual ~Site();
 
 	/*
@@ -62,10 +60,8 @@ class Site
 class OrientedSite : public Site
 {
       public:
-	// Constructor
 	OrientedSite(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>(), Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(),
 		     Vec3<double> zAxis = Vec3<double>());
-	// Destructor
 	~OrientedSite();
 
 	/*

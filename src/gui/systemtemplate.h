@@ -33,12 +33,9 @@ class QToolButton;
 class SystemTemplate : public ListItem<SystemTemplate>
 {
       public:
-	// Constructor / Destructor
 	SystemTemplate();
 	~SystemTemplate();
-	// Copy Constructor
 	SystemTemplate(const SystemTemplate &source);
-	// Assignment operator
 	void operator=(const SystemTemplate &source);
 
 	/*

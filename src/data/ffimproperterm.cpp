@@ -23,7 +23,6 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-// Constructor
 ForcefieldImproperTerm::ForcefieldImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL, SpeciesImproper::ImproperFunction form, double data0, double data1,
 					       double data2, double data3)
 {
@@ -38,7 +37,6 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(const char *typeI, const char *ty
 	parameters_[3] = data3;
 }
 
-// Destructor
 ForcefieldImproperTerm::~ForcefieldImproperTerm() {}
 
 /*

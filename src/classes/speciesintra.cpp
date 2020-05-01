@@ -24,7 +24,6 @@
 #include "classes/masterintra.h"
 #include "classes/speciesatom.h"
 
-// Constructor
 SpeciesIntra::SpeciesIntra()
 {
 	parent_ = NULL;
@@ -41,7 +40,6 @@ SpeciesIntra::SpeciesIntra()
 	inCycle_ = false;
 }
 
-// Destructor
 SpeciesIntra::~SpeciesIntra() { deleteAttachedAtomArrays(); }
 
 /*

@@ -34,11 +34,8 @@ class Histogram3D;
 class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore<Data3D>, public GenericItemBase
 {
       public:
-	// Constructor
 	Data3D();
-	// Destructor
 	~Data3D();
-	// Copy Constructor
 	Data3D(const Data3D &source);
 	// Clear data
 	void clear();
@@ -128,19 +125,12 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	 * Operators
 	 */
       public:
-	// Assignment Operator
 	void operator=(const Data3D &source);
-	// Operator +=
 	void operator+=(const Data3D &source);
-	// Operator +=
 	void operator+=(const double delta);
-	// Operator -=
 	void operator-=(const Data3D &source);
-	// Operator -=
 	void operator-=(const double delta);
-	// Operator *=
 	void operator*=(const double factor);
-	// Operator /=
 	void operator/=(const double factor);
 
 	/*

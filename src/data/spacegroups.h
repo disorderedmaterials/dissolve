@@ -26,7 +26,6 @@
 class SpacegroupNameData
 {
       public:
-	// Constructor
 	SpacegroupNameData(const char *name, const char *formattedName);
 
       private:

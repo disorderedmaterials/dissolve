@@ -22,7 +22,6 @@
 #include "keywords/nodeandinteger.h"
 #include "procedure/nodes/node.h"
 
-// Constructor
 NodeAndIntegerKeywordBase::NodeAndIntegerKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
 {
 	parentNode_ = parentNode;
@@ -30,7 +29,6 @@ NodeAndIntegerKeywordBase::NodeAndIntegerKeywordBase(ProcedureNode *parentNode, 
 	onlyInScope_ = onlyInScope;
 }
 
-// Destructor
 NodeAndIntegerKeywordBase::~NodeAndIntegerKeywordBase() {}
 
 /*

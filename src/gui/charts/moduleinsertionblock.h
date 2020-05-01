@@ -36,7 +36,6 @@ class ModuleInsertionBlock : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ModuleInsertionBlock(QWidget *parent);
 	~ModuleInsertionBlock();
 

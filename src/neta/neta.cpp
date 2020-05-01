@@ -28,10 +28,8 @@
 #include <stdarg.h>
 #include <string.h>
 
-// Constructor
 NETADefinition::NETADefinition(const char *netaDefinition, const Forcefield *associatedFF) : rootNode_(this) { set(netaDefinition, associatedFF); }
 
-// Destructor
 NETADefinition::~NETADefinition() { clear(); }
 
 /*

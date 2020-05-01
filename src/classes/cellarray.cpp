@@ -23,14 +23,12 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 CellArray::CellArray()
 {
 	cells_ = NULL;
 	nCells_ = 0;
 }
 
-// Destructor
 CellArray::~CellArray() {}
 
 /*

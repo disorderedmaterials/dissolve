@@ -32,7 +32,6 @@ class QOpenGLContext;
 class PrimitiveList
 {
       public:
-	// Constructor / Destructor
 	PrimitiveList();
 	~PrimitiveList();
 
@@ -75,7 +74,6 @@ class PrimitiveList
 	 * Operators
 	 */
       public:
-	// Element access operator
 	Primitive *operator[](int index);
 };
 

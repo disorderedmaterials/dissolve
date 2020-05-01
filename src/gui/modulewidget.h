@@ -31,7 +31,6 @@ class LineParser;
 class ModuleWidget : public QWidget
 {
       public:
-	// Constructor / Destructor
 	ModuleWidget(QWidget *parent);
 	virtual ~ModuleWidget();
 

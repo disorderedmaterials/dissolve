@@ -35,9 +35,7 @@ class GetSpeciesNameDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	GetSpeciesNameDialog(QWidget *parent, const CoreData &coreData);
-	// Destructor
 	~GetSpeciesNameDialog();
 
       private:

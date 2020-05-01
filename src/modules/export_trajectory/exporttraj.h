@@ -36,9 +36,7 @@ class ExportTrajectoryModule : public Module
 	 */
 
       public:
-	// Constructor
 	ExportTrajectoryModule();
-	// Destructor
 	~ExportTrajectoryModule();
 
 	/*

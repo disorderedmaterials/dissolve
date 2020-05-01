@@ -25,13 +25,11 @@
 #include "keywords/types.h"
 #include "math/data1d.h"
 
-// Constructor
 OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateDivideNode)
 {
 	keywords_.add("Divisor", new NodeValueKeyword(this, 1.0), "Value", "Value expression to divide by");
 }
 
-// Destructor
 OperateDivideProcedureNode::~OperateDivideProcedureNode() {}
 
 /*

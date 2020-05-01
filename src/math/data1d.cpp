@@ -30,7 +30,6 @@ template <class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
 template <class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
 template <class Data1D> const char *ObjectStore<Data1D>::objectTypeName_ = "Data1D";
 
-// Constructor
 Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
 {
 	static int count = 0;
@@ -41,10 +40,8 @@ Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data
 	clear();
 }
 
-// Destructor
 Data1D::~Data1D() {}
 
-// Copy Constructor
 Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable), ObjectStore<Data1D>(this) { (*this) = source; }
 
 // Clear Data
@@ -338,7 +335,6 @@ const Array<double> &Data1D::constErrors() const
  * Operators
  */
 
-// Operator =
 void Data1D::operator=(const Data1D &source)
 {
 	name_ = source.name_;
@@ -350,7 +346,6 @@ void Data1D::operator=(const Data1D &source)
 	++version_;
 }
 
-// Operator +=
 void Data1D::operator+=(const Data1D &source)
 {
 	// If no data is present, simply copy the other arrays
@@ -384,7 +379,6 @@ void Data1D::operator+=(const Data1D &source)
 	}
 }
 
-// Operator +=
 void Data1D::operator+=(const double delta)
 {
 	for (int n = 0; n < values_.nItems(); ++n)
@@ -393,7 +387,6 @@ void Data1D::operator+=(const double delta)
 	++version_;
 }
 
-// Operator -=
 void Data1D::operator-=(const Data1D &source)
 {
 	// If no data is present, simply copy the other arrays and negate the y array
@@ -429,7 +422,6 @@ void Data1D::operator-=(const Data1D &source)
 	}
 }
 
-// Operator -=
 void Data1D::operator-=(const double delta)
 {
 	for (int n = 0; n < values_.nItems(); ++n)
@@ -438,7 +430,6 @@ void Data1D::operator-=(const double delta)
 	++version_;
 }
 
-// Operator *=
 void Data1D::operator*=(const double factor)
 {
 	values_ *= factor;
@@ -448,7 +439,6 @@ void Data1D::operator*=(const double factor)
 	++version_;
 }
 
-// Operator /=
 void Data1D::operator/=(const double factor)
 {
 	++version_;

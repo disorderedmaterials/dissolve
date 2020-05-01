@@ -24,10 +24,8 @@
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 
-// Constructor
 Procedure::Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword) : rootSequence_(context, this, NULL, blockTerminationKeyword) { context_ = context; }
 
-// Destructor
 Procedure::~Procedure() {}
 
 /*

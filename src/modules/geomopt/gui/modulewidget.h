@@ -39,7 +39,6 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 	GeometryOptimisationModule *module_;
 
       public:
-	// Constructor
 	GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module);
 
 	/*

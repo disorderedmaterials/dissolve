@@ -21,7 +21,6 @@
 
 #include "gui/keywordwidgets/nodevalue.h"
 
-// Constructor
 NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI

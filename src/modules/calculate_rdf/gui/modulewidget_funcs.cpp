@@ -23,7 +23,6 @@
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
-// Constructor
 CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

@@ -37,7 +37,6 @@ class Data1DExportFileFormat : public FileAndFormat
 		XYData1D,
 		nData1DExportFormats
 	};
-	// Constructor
 	Data1DExportFileFormat(const char *filename = NULL, Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
 
 	/*

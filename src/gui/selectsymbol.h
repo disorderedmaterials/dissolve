@@ -35,9 +35,7 @@ class SelectSymbolDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectSymbolDialog(QWidget *parent);
-	// Destructor
 	~SelectSymbolDialog();
 	// Main form declaration
 	Ui::SelectSymbolDialog ui;

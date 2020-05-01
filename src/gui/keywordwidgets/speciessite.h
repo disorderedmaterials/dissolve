@@ -37,7 +37,6 @@ class SpeciesSiteKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
 	Q_OBJECT
 
       public:
-	// Constructor
 	SpeciesSiteKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

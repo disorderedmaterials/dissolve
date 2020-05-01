@@ -28,7 +28,6 @@
 
 IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms) { items_ = items; }
 
-// Destructor
 IntraFormComboDelegate::~IntraFormComboDelegate() {}
 
 // Create editor

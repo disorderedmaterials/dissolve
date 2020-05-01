@@ -22,7 +22,6 @@
 #include "data/ff/uffatomtype.h"
 #include "data/ff/uff.h"
 
-// Constructor
 UFFAtomType::UFFAtomType(Forcefield *parent, int z, int index, const char *name, const char *neta, const char *description, double r, double theta, double x, double D, double zeta, double Z,
 			 double chi, int geom, double V, double U)
     : ForcefieldAtomType(parent, z, index, name, neta, description, 0.0, 0.0, 0.0)
@@ -40,7 +39,6 @@ UFFAtomType::UFFAtomType(Forcefield *parent, int z, int index, const char *name,
 	U_ = U;
 }
 
-// Assignment Operator
 UFFAtomType &UFFAtomType::operator=(const UFFAtomType &source)
 {
 	r_ = source.r_;

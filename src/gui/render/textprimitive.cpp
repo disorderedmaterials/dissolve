@@ -34,10 +34,8 @@ int TextPrimitive::stringPos_, TextPrimitive::stringLength_;
 List<TextFormat> TextPrimitive::formatStack_;
 double TextPrimitive::horizontalPosition_;
 
-// Constructor
 TextPrimitive::TextPrimitive() : ListItem<TextPrimitive>() {}
 
-// Destructor
 TextPrimitive::~TextPrimitive() {}
 
 // Text Anchor Keywords

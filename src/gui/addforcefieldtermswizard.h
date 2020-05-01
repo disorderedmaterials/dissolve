@@ -37,7 +37,6 @@ class AddForcefieldTermsWizard : public WizardWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	AddForcefieldTermsWizard(QWidget *parent);
 	~AddForcefieldTermsWizard();
 

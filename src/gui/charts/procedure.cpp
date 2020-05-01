@@ -35,7 +35,6 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-// Constructor
 ProcedureChart::ProcedureChart(Procedure *procedure, const CoreData &coreData) : ChartBase(), coreData_(coreData)
 {
 	refreshing_ = false;

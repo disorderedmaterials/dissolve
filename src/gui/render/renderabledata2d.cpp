@@ -27,7 +27,6 @@
 #include "math/extrema.h"
 #include "templates/array2d.h"
 
-// Constructor
 RenderableData2D::RenderableData2D(const Data2D *source, const char *objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
 {
 	// Set defaults
@@ -35,7 +34,6 @@ RenderableData2D::RenderableData2D(const Data2D *source, const char *objectTag) 
 	colour().setStyle(ColourDefinition::HSVGradientStyle);
 }
 
-// Destructor
 RenderableData2D::~RenderableData2D() {}
 
 /*

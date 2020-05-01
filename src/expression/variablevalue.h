@@ -31,7 +31,6 @@ class ExpressionVariable;
 class ExpressionVariableValue : public ExpressionNode
 {
       public:
-	// Constructor / Destructor
 	ExpressionVariableValue(ExpressionVariable *var = 0);
 	~ExpressionVariableValue();
 

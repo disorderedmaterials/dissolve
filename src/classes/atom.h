@@ -39,9 +39,7 @@ class SpeciesAtom;
 class Atom : public DynamicArrayObject<Atom>
 {
       public:
-	// Constructor
 	Atom();
-	// Destructor
 	~Atom();
 
 	/*

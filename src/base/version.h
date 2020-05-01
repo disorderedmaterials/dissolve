@@ -30,7 +30,6 @@ class ProcessPool;
 class VersionCounter
 {
       public:
-	// Constructor / Destructor
 	VersionCounter();
 	~VersionCounter();
 

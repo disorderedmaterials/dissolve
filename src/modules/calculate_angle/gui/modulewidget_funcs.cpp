@@ -23,7 +23,6 @@
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_angle/gui/modulewidget.h"
 
-// Constructor
 CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, CalculateAngleModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

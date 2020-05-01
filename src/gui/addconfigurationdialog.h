@@ -35,9 +35,7 @@ class AddConfigurationDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	AddConfigurationDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
-	// Destructor
 	~AddConfigurationDialog();
 
       private:

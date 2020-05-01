@@ -25,7 +25,6 @@
 #include "module/list.h"
 #include "module/module.h"
 
-// Constructors
 ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxModules) : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references) { maxModules_ = maxModules; }
 
 ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules) : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
@@ -34,7 +33,6 @@ ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStri
 	maxModules_ = maxModules;
 }
 
-// Destructor
 ModuleRefListKeyword::~ModuleRefListKeyword() {}
 
 /*

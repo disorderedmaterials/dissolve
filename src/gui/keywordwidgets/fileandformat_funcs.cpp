@@ -31,7 +31,6 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 
-// Constructor
 FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI

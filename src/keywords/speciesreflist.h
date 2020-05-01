@@ -32,9 +32,7 @@ class Species;
 class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
 {
       public:
-	// Constructor
 	SpeciesRefListKeyword(RefList<Species> &references);
-	// Destructor
 	~SpeciesRefListKeyword();
 
 	/*

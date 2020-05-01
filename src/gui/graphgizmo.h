@@ -36,7 +36,6 @@ class GraphGizmo : public QWidget, public Gizmo
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	GraphGizmo(Dissolve &dissolve, const char *uniqueName);
 	~GraphGizmo();
 

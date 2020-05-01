@@ -39,7 +39,6 @@ class Module;
 class CoreData
 {
       public:
-	// Constructor / Destructor
 	CoreData();
 	~CoreData();
 	// Clear all data

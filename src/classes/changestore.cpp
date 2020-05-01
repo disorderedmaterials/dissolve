@@ -28,10 +28,8 @@
 #include "templates/orderedpointerlist.h"
 #include <memory>
 
-// Constructor
 ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 
-// Destructor
 ChangeStore::~ChangeStore() {}
 
 /*

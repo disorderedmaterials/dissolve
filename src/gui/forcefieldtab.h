@@ -37,7 +37,6 @@ class ForcefieldTab : public QWidget, public MainTab
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title);
 	~ForcefieldTab();
 

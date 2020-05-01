@@ -36,7 +36,6 @@ class ExpressionVariableListKeywordWidget : public QWidget, public KeywordWidget
 	Q_OBJECT
 
       public:
-	// Constructor
 	ExpressionVariableListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

@@ -27,7 +27,6 @@
 #include <QLabel>
 #include <QMessageBox>
 
-// Constructor
 GraphGizmo::GraphGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
 {
 	// Set up user interface
@@ -49,7 +48,6 @@ GraphGizmo::GraphGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(disso
 	refreshing_ = false;
 }
 
-// Destructor
 GraphGizmo::~GraphGizmo() {}
 
 /*

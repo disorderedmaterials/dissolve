@@ -36,11 +36,8 @@
 class ColourScale
 {
       public:
-	// Constructor
 	ColourScale();
-	// Copy constructor
 	ColourScale(const ColourScale &);
-	// Assignment operator
 	void operator=(const ColourScale &source);
 	// Clear ColourScale
 	void clear();

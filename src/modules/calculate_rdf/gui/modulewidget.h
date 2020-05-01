@@ -42,7 +42,6 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	DataViewer *rdfGraph_;
 
       public:
-	// Constructor
 	CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module);
 
 	/*

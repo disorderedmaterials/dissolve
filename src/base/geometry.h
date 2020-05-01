@@ -32,9 +32,7 @@
 class Geometry : public ListItem<Geometry>
 {
       public:
-	// Constructor
 	Geometry();
-	// Destructor
 	~Geometry();
 	// Type of geometry data passed
 	enum GeometryType

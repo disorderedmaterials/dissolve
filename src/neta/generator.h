@@ -42,11 +42,9 @@ class NETANode;
 class NETADefinitionGenerator
 {
       private:
-	// Constructor
 	NETADefinitionGenerator(NETADefinition &definition, const char *definitionText, const Forcefield *associatedFF = NULL);
 
       public:
-	// Destructor
 	~NETADefinitionGenerator();
 
 	/*

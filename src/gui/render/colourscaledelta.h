@@ -35,7 +35,6 @@ class ColourScalePoint;
 class ColourScaleDelta
 {
       public:
-	// Constructors
 	ColourScaleDelta();
 	ColourScaleDelta(const ColourScalePoint &start, const ColourScalePoint &end, bool useHSV);
 

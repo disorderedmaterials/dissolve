@@ -27,7 +27,6 @@
 // Static Singleton
 UnrecognisedEnumOption EnumOptionsBase::unrecognisedOption_;
 
-// Constructors
 EnumOption::EnumOption()
 {
 	enumeration_ = 0;

@@ -38,9 +38,7 @@ class CellNeighbour;
 class Cell
 {
       public:
-	// Constructor
 	Cell();
-	// Destructor
 	~Cell();
 
 	/*

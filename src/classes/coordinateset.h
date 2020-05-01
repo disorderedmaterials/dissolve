@@ -33,9 +33,7 @@
 class CoordinateSet : public ListItem<CoordinateSet>
 {
       public:
-	// Constructor
 	CoordinateSet();
-	// Destructor
 	~CoordinateSet();
 
 	/*

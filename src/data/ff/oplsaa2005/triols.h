@@ -31,7 +31,6 @@
 class Forcefield_OPLSAA2005_Triols : public Forcefield_OPLSAA2005_Alkanes
 {
       public:
-	// Constructor / Destructor
 	Forcefield_OPLSAA2005_Triols();
 	~Forcefield_OPLSAA2005_Triols();
 

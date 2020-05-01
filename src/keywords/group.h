@@ -34,7 +34,6 @@ class KeywordList;
 class KeywordGroup : public ListItem<KeywordGroup>
 {
       public:
-	// Constructor
 	KeywordGroup(KeywordList &keywordList);
 
 	/*

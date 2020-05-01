@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "io/import/data2d.h"
 
-// Constructor
 Data2DStore::Data2DStore() {}
 
-// Destructor
 Data2DStore::~Data2DStore() {}
 
 /*

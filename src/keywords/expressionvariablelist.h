@@ -33,9 +33,7 @@ class ProcedureNode;
 class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
 {
       public:
-	// Constructor
 	ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables, ExpressionValue::ValueType variableType);
-	// Destructor
 	~ExpressionVariableListKeyword();
 
 	/*

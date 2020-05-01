@@ -32,9 +32,7 @@
 class CalculateAvgMolModule : public Module
 {
       public:
-	// Constructor
 	CalculateAvgMolModule();
-	// Destructor
 	~CalculateAvgMolModule();
 
 	/*

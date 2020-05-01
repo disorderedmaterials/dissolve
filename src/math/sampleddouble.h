@@ -32,7 +32,6 @@ class ProcessPool;
 class SampledDouble : public GenericItemBase
 {
       public:
-	// Constructors
 	SampledDouble();
 	SampledDouble(const double x);
 
@@ -65,21 +64,13 @@ class SampledDouble : public GenericItemBase
 	 * Operators
 	 */
       public:
-	// Conversion (double)
 	operator double &();
-	// Assigment
 	void operator=(double x);
-	// Assigment
 	void operator=(const SampledDouble &source);
-	// Operator +=
 	void operator+=(double x);
-	// Operator +=
 	void operator+=(int i);
-	// Operator +=
 	void operator+=(const SampledDouble &source);
-	// Operator *=
 	void operator*=(double factor);
-	// Operator /=
 	void operator/=(double factor);
 
 	/*

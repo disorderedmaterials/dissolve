@@ -38,7 +38,6 @@ class ModuleBlock : public QWidget, public ChartBlock
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve);
 	~ModuleBlock();
 

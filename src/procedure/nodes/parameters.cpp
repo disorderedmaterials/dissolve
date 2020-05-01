@@ -25,14 +25,12 @@
 #include "expression/variable.h"
 #include "keywords/types.h"
 
-// Constructor
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
 {
 	keywords_.add("Defined Parameters", new ExpressionVariableListKeyword(this, integerParameters_, ExpressionValue::IntegerType), "Integer", "Available integer parameters");
 	keywords_.add("Defined Parameters", new ExpressionVariableListKeyword(this, doubleParameters_, ExpressionValue::DoubleType), "Real", "Available real (floating point) parameters");
 }
 
-// Destructor
 ParametersProcedureNode::~ParametersProcedureNode() {}
 
 /*

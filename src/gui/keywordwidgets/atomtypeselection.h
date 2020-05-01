@@ -37,7 +37,6 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	Q_OBJECT
 
       public:
-	// Constructor
 	AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 	// Main form declaration
 	Ui::AtomTypeSelectionWidget ui;

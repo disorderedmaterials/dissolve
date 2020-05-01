@@ -37,7 +37,6 @@
  * All energy values are in kcal.
  */
 
-// Constructor / Destructor
 Forcefield_UFF::Forcefield_UFF() : Forcefield()
 {
 	// Create the atom type data - the ForcefieldAtomTypes will be registered with the parent Forcefield via their constructors

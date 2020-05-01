@@ -31,11 +31,9 @@
 class IntegerKeyword : public KeywordData<int>
 {
       public:
-	// Constructors
 	IntegerKeyword(int value);
 	IntegerKeyword(int value, int minValue);
 	IntegerKeyword(int value, int minValue, int maxValue);
-	// Destructor
 	~IntegerKeyword();
 
 	/*

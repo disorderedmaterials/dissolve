@@ -44,11 +44,8 @@ class ProcessPool
 	 * and macros to simplify coding and aid readability.
 	 */
       public:
-	// Constructor
 	ProcessPool();
-	// Copy Constructor
 	ProcessPool(const ProcessPool &source);
-	// Assignment Operator
 	void operator=(const ProcessPool &source);
 	// Clear all data
 	void clear();

@@ -22,7 +22,6 @@
 #include "modules/atomshake/atomshake.h"
 #include "modules/atomshake/gui/modulewidget.h"
 
-// Constructor
 AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
@@ -31,5 +30,4 @@ AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *m
 	refreshing_ = false;
 }
 
-// Destructor
 AtomShakeModuleWidget::~AtomShakeModuleWidget() {}

@@ -22,7 +22,6 @@
 #include "keywords/nodereflist.h"
 #include "procedure/nodes/node.h"
 
-// Constructor
 NodeRefListKeywordBase::NodeRefListKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
 {
 	parentNode_ = parentNode;
@@ -30,7 +29,6 @@ NodeRefListKeywordBase::NodeRefListKeywordBase(ProcedureNode *parentNode, Proced
 	onlyInScope_ = onlyInScope;
 }
 
-// Destructor
 NodeRefListKeywordBase::~NodeRefListKeywordBase() {}
 
 /*

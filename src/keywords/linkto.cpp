@@ -21,10 +21,8 @@
 
 #include "keywords/linkto.h"
 
-// Constructor
 LinkToKeyword::LinkToKeyword(KeywordBase *keywordData) : KeywordData<KeywordBase *>(KeywordBase::LinkToKeywordData, keywordData) {}
 
-// Destructor
 LinkToKeyword::~LinkToKeyword() {}
 
 /*

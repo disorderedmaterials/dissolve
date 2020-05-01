@@ -36,9 +36,7 @@ class LineParser;
 class IsotopologueWeight : public ListItem<IsotopologueWeight>
 {
       public:
-	// Constructor
 	IsotopologueWeight(const Isotopologue *iso = NULL, double weight = 1.0);
-	// Destructor
 	~IsotopologueWeight();
 
 	/*

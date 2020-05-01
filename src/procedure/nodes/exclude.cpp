@@ -26,13 +26,11 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
 ExcludeProcedureNode::ExcludeProcedureNode() : ProcedureNode(ProcedureNode::ExcludeNode)
 {
 	keywords_.add("Exclusions", new NodeArrayKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, 2, true, true, sameSites_), "SameSite", "Calculated observable to collect for x axis");
 }
 
-// Destructor
 ExcludeProcedureNode::~ExcludeProcedureNode() {}
 
 /*

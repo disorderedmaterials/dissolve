@@ -39,9 +39,7 @@ class SelectGenericItemDialog : public QDialog
 	Q_OBJECT
 
       public:
-	// Constructor
 	SelectGenericItemDialog(QWidget *parent, Dissolve &dissolve);
-	// Destructor
 	~SelectGenericItemDialog();
 
       private:

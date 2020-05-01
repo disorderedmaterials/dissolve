@@ -40,7 +40,6 @@ class FontInstance;
 class TextPrimitive : public ListItem<TextPrimitive>
 {
       public:
-	// Constructor / Destructor
 	TextPrimitive();
 	~TextPrimitive();
 	// Text Anchors enum

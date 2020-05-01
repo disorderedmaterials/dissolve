@@ -29,15 +29,11 @@
 class ExpressionValue
 {
       public:
-	// Constructors
 	ExpressionValue();
 	ExpressionValue(int value);
 	ExpressionValue(double value);
-	// Destructor
 	~ExpressionValue();
-	// Copy constructor
 	ExpressionValue(const ExpressionValue &source);
-	// Assignment operator
 	void operator=(const ExpressionValue &source);
 
 	/*
@@ -64,9 +60,7 @@ class ExpressionValue
       public:
 	// Return the current result type
 	ValueType type() const;
-	// Assignment operator (integer)
 	void operator=(int i);
-	// Assignment operator (double)
 	void operator=(double d);
 	// Return as integer (regardless of current type)
 	int asInteger() const;

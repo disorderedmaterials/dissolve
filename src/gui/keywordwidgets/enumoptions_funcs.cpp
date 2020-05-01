@@ -23,7 +23,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/enumoptions.hui"
 
-// Constructor
 EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type

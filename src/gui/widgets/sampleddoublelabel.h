@@ -34,7 +34,6 @@ class SampledDoubleLabel : public QLabel
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	SampledDoubleLabel(QWidget *parent);
 	~SampledDoubleLabel();
 

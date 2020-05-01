@@ -27,10 +27,8 @@
  * ComboListItems
  */
 
-// Constructor
 ComboListItems::ComboListItems() {}
 
-// Destructor
 ComboListItems::~ComboListItems() {}
 
 /*
@@ -43,7 +41,6 @@ ComboListDelegate::ComboListDelegate(QObject *parent, ComboListItems *items, boo
 	allowNewItems_ = allowNewItems;
 }
 
-// Destructor
 ComboListDelegate::~ComboListDelegate()
 {
 	if (items_)

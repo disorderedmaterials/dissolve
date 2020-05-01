@@ -31,7 +31,6 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-// Constructor / Destructor
 AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;

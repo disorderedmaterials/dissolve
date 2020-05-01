@@ -21,7 +21,6 @@
 
 #include "neta/logic.h"
 
-// Constructor
 NETALogicNode::NETALogicNode(NETADefinition *parent, NETALogicNode::LogicType logic, NETANode *arg1, NETANode *arg2) : NETANode(parent, NETANode::LogicNode)
 {
 	// Private variables
@@ -30,7 +29,6 @@ NETALogicNode::NETALogicNode(NETADefinition *parent, NETALogicNode::LogicType lo
 	argument2_ = arg2;
 };
 
-// Destructor
 NETALogicNode::~NETALogicNode() {}
 
 /*

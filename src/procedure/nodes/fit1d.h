@@ -40,9 +40,7 @@ class NodeScopeStack;
 class Fit1DProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	Fit1DProcedureNode(Collect1DProcedureNode *target = NULL);
-	// Destructor
 	~Fit1DProcedureNode();
 
 	/*

@@ -28,7 +28,6 @@
 #include "modules/rdf/rdf.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface

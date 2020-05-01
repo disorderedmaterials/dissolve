@@ -21,7 +21,6 @@
 
 #include "gui/keywordwidgets/dropdown.h"
 
-// Constructor
 KeywordDropDown::KeywordDropDown(QWidget *parent)
 {
 	ui_.setupUi(this);

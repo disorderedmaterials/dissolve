@@ -34,7 +34,6 @@ class SpeciesWidget : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	SpeciesWidget(QWidget *parent = 0);
 	~SpeciesWidget();
 

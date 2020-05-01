@@ -38,7 +38,6 @@ class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
 	Q_OBJECT
 
       public:
-	// Constructor
 	ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*

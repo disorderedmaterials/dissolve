@@ -46,7 +46,6 @@ class Axes
 	FontInstance &fontInstance_;
 
       public:
-	// Constructor / Destructor
 	Axes(View &parent, FontInstance &fontInstance);
 	~Axes();
 

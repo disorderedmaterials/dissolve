@@ -30,9 +30,7 @@
 class InteractionParameters
 {
       public:
-	// Constructor
 	InteractionParameters();
-	// Destructor
 	~InteractionParameters();
 
 	/*

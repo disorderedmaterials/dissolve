@@ -24,7 +24,6 @@
 #include "base/sysfunc.h"
 #include "math/data3d.h"
 
-// Constructor
 Data3DExportFileFormat::Data3DExportFileFormat(const char *filename, Data3DExportFormat format) : FileAndFormat(filename, format) {}
 
 /*

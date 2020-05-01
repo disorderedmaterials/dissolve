@@ -38,7 +38,6 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 
-// Constructor
 DissolveWindow::DissolveWindow(Dissolve &dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
 {
 	// Initialise resources
@@ -102,7 +101,6 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve) : QMainWindow(NULL), dissolve
 	showMainStackPage(DissolveWindow::StartStackPage);
 }
 
-// Destructor
 DissolveWindow::~DissolveWindow() {}
 
 // Catch window close event

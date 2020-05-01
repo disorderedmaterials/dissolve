@@ -34,9 +34,7 @@ class Procedure;
 class SequenceProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode = NULL, const char *blockTerminationKeyword = NULL);
-	// Destructor
 	~SequenceProcedureNode();
 
 	/*

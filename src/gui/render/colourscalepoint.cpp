@@ -21,20 +21,16 @@
 
 #include "gui/render/colourscalepoint.h"
 
-// Constructor
 ColourScalePoint::ColourScalePoint(double value, QColor colour)
 {
 	// Private variables
 	value_ = value;
 	setColour(colour);
 }
-// Destructor
 ColourScalePoint::~ColourScalePoint() {}
 
-// Copy Constructor
 ColourScalePoint::ColourScalePoint(const ColourScalePoint &source) { (*this) = source; }
 
-// Assignment Operator
 void ColourScalePoint::operator=(const ColourScalePoint &source)
 {
 	value_ = source.value_;

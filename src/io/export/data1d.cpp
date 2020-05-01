@@ -24,7 +24,6 @@
 #include "base/sysfunc.h"
 #include "math/data1d.h"
 
-// Constructor
 Data1DExportFileFormat::Data1DExportFileFormat(const char *filename, Data1DExportFormat format) : FileAndFormat(filename, format) {}
 
 /*

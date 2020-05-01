@@ -33,10 +33,8 @@ int ProcessPool::FAILED = 0;
 int ProcessPool::SUCCEEDED = 1;
 int ProcessPool::RESULT;
 
-// Constructor
 ProcessPool::ProcessPool() { clear(); }
 
-// Copy Constructor
 ProcessPool::ProcessPool(const ProcessPool &source)
 {
 	(*this) = source;
@@ -45,7 +43,6 @@ ProcessPool::ProcessPool(const ProcessPool &source)
 	groupRank_ = -99;
 }
 
-// Assignment Operator
 void ProcessPool::operator=(const ProcessPool &source)
 {
 	// Process Identification

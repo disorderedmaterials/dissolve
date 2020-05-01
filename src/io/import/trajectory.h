@@ -37,10 +37,8 @@ class TrajectoryImportFileFormat : public FileAndFormat
 		XYZTrajectory,
 		nTrajectoryImportFormats
 	};
-	// Constructors
 	TrajectoryImportFileFormat(TrajectoryImportFormat format = XYZTrajectory);
 	TrajectoryImportFileFormat(const char *filename, TrajectoryImportFormat format = XYZTrajectory);
-	// Destructor
 	~TrajectoryImportFileFormat();
 
 	/*

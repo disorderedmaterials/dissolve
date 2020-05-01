@@ -23,7 +23,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 CubicBox::CubicBox(double length) : Box()
 {
 	type_ = Box::CubicBoxType;
@@ -41,7 +40,6 @@ CubicBox::CubicBox(double length) : Box()
 	finalise();
 }
 
-// Destructor
 CubicBox::~CubicBox() {}
 
 /*

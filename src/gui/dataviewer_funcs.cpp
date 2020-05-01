@@ -22,7 +22,6 @@
 #include "base/messenger.h"
 #include "gui/dataviewer.hui"
 
-// Constructor
 DataViewer::DataViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Interaction
@@ -36,7 +35,6 @@ DataViewer::DataViewer(QWidget *parent) : BaseViewer(parent)
 	controlFlags_ = NoFlags;
 }
 
-// Destructor
 DataViewer::~DataViewer() {}
 
 /*

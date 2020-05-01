@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 ForcesModule::ForcesModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 ForcesModule::~ForcesModule() {}
 
 /*

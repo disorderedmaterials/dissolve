@@ -29,7 +29,6 @@ class DummyClass
 	 * DummyClass, utilised by GenericItemContainer<T> to provide placeholder object creating other specialisations
 	 */
       public:
-	// Constructor
 	DummyClass() {}
 };
 

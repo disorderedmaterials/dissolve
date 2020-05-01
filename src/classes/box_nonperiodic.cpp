@@ -24,7 +24,6 @@
 #include "classes/cell.h"
 #include "templates/array.h"
 
-// Constructor
 NonPeriodicBox::NonPeriodicBox(double length) : Box()
 {
 	type_ = Box::NonPeriodicBoxType;
@@ -43,7 +42,6 @@ NonPeriodicBox::NonPeriodicBox(double length) : Box()
 	finalise();
 }
 
-// Destructor
 NonPeriodicBox::~NonPeriodicBox() {}
 
 /*

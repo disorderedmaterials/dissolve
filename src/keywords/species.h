@@ -32,9 +32,7 @@ class Species;
 class SpeciesKeyword : public KeywordData<Species *>
 {
       public:
-	// Constructor
 	SpeciesKeyword(Species *sp = NULL);
-	// Destructor
 	~SpeciesKeyword();
 
 	/*

@@ -26,7 +26,6 @@
 #include <QButtonGroup>
 #include <QInputDialog>
 
-// Constructor
 DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -53,7 +52,6 @@ DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 	updateDataTree();
 }
 
-// Destructor
 DataWidget::~DataWidget() {}
 
 // Return contained DataViewer

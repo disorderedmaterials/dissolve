@@ -38,7 +38,6 @@ class SpeciesTorsion;
 class Forcefield_UFF : public Forcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_UFF();
 	~Forcefield_UFF();
 

@@ -36,9 +36,7 @@ class ExportCoordinatesModule : public Module
 	 */
 
       public:
-	// Constructor
 	ExportCoordinatesModule();
-	// Destructor
 	~ExportCoordinatesModule();
 
 	/*

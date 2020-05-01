@@ -41,7 +41,6 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
 Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
 {
 	// Short-Range Parameters

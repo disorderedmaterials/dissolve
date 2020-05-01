@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 FileAndFormat::FileAndFormat(int format) { format_ = format; }
 
 FileAndFormat::FileAndFormat(const char *filename, int format)
@@ -32,10 +31,8 @@ FileAndFormat::FileAndFormat(const char *filename, int format)
 	format_ = format;
 }
 
-// Destructor
 FileAndFormat::~FileAndFormat() {}
 
-// Conversion operators
 FileAndFormat::operator const char *() const { return filename_.get(); }
 
 /*

@@ -22,10 +22,8 @@
 #include "gui/widgets/sampleddoublelabel.h"
 #include "math/sampleddouble.h"
 
-// Constructor
 SampledDoubleLabel::SampledDoubleLabel(QWidget *parent) : QLabel(parent) { ui_.setupUi(this); }
 
-// Destructor
 SampledDoubleLabel::~SampledDoubleLabel() {}
 
 /*

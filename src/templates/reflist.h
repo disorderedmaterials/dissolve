@@ -36,7 +36,6 @@ template <class T> class RefList;
 template <class T> class RefListItem : public std::iterator<std::forward_iterator_tag, T *>
 {
       public:
-	// Constructor
 	RefListItem<T>()
 	{
 		item_ = NULL;
@@ -95,7 +94,6 @@ template <class T> class RefListItem : public std::iterator<std::forward_iterato
 template <class T> class RefList
 {
       public:
-	// Constructors
 	RefList<T>()
 	{
 		listHead_ = NULL;
@@ -115,9 +113,7 @@ template <class T> class RefList
 		append(singleItem);
 	}
 
-	// Destructor
 	~RefList() { clear(); }
-	// Copy Constructor
 	RefList<T>(const RefList<T> &source)
 	{
 		listHead_ = NULL;
@@ -128,7 +124,6 @@ template <class T> class RefList
 		for (RefListItem<T> *ri = source.first(); ri != NULL; ri = ri->next_)
 			append(ri->item_);
 	}
-	// Operator =
 	void operator=(const RefList<T> &source)
 	{
 		// Clear any current data...
@@ -136,14 +131,12 @@ template <class T> class RefList
 		for (RefListItem<T> *ri = source.first(); ri != NULL; ri = ri->next_)
 			append(ri->item_);
 	}
-	// Operator +=
 	void operator+=(const RefList<T> &source)
 	{
 		// Add unique items in the source list to our own
 		for (RefListItem<T> *ri = source.first(); ri != NULL; ri = ri->next_)
 			addUnique(ri->item_);
 	}
-	// Element access operator
 	RefListItem<T> *operator[](int index)
 	{
 #ifdef CHECKS

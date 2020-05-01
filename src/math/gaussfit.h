@@ -31,7 +31,6 @@
 class GaussFit
 {
       public:
-	// Constructor / Destructor
 	GaussFit(const Data1D &referenceData);
 
 	/*

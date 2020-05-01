@@ -36,9 +36,7 @@
 class DataTestModule : public Module
 {
       public:
-	// Constructor
 	DataTestModule();
-	// Destructor
 	~DataTestModule();
 
 	/*

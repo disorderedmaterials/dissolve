@@ -30,7 +30,6 @@ template <class Histogram2D> int ObjectStore<Histogram2D>::objectCount_ = 0;
 template <class Histogram2D> int ObjectStore<Histogram2D>::objectType_ = ObjectInfo::Histogram2DObject;
 template <class Histogram2D> const char *ObjectStore<Histogram2D>::objectTypeName_ = "Histogram2D";
 
-// Constructor
 Histogram2D::Histogram2D() : ListItem<Histogram2D>(), ObjectStore<Histogram2D>(this)
 {
 	accumulatedData_.addErrors();
@@ -38,10 +37,8 @@ Histogram2D::Histogram2D() : ListItem<Histogram2D>(), ObjectStore<Histogram2D>(t
 	clear();
 }
 
-// Destructor
 Histogram2D::~Histogram2D() {}
 
-// Copy Constructor
 Histogram2D::Histogram2D(const Histogram2D &source) : ObjectStore<Histogram2D>(this) { (*this) = source; }
 
 // Clear Data
@@ -205,7 +202,6 @@ const Data2D &Histogram2D::accumulatedData() const { return accumulatedData_; }
  * Operators
  */
 
-// Operator =
 void Histogram2D::operator=(const Histogram2D &source)
 {
 	xMinimum_ = source.xMinimum_;

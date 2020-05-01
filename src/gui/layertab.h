@@ -36,7 +36,6 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, ModuleLayer *layer);
 	~LayerTab();
 

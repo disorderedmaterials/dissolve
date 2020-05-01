@@ -27,7 +27,6 @@
 #include <QLabel>
 #include <QMessageBox>
 
-// Constructor
 Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
 {
 	// Set up user interface
@@ -49,7 +48,6 @@ Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName)
 	refreshing_ = false;
 }
 
-// Destructor
 Integrator1DGizmo::~Integrator1DGizmo() {}
 
 /*

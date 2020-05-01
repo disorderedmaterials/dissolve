@@ -36,9 +36,7 @@ class NodeScopeStack;
 class Process1DProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	Process1DProcedureNode(const Collect1DProcedureNode *target = NULL);
-	// Destructor
 	~Process1DProcedureNode();
 
 	/*

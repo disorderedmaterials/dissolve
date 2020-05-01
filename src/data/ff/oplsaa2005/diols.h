@@ -31,7 +31,6 @@
 class Forcefield_OPLSAA2005_Diols : public Forcefield_OPLSAA2005_Alkanes
 {
       public:
-	// Constructor / Destructor
 	Forcefield_OPLSAA2005_Diols();
 	~Forcefield_OPLSAA2005_Diols();
 

@@ -28,7 +28,6 @@
 class Range
 {
       public:
-	// Constructor / Destructor
 	Range(double minimum = 0.0, double maximum = 0.0);
 
 	/*

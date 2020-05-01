@@ -35,9 +35,7 @@ class MolShakeModule : public Module
 	 */
 
       public:
-	// Constructor
 	MolShakeModule();
-	// Destructor
 	~MolShakeModule();
 
 	/*

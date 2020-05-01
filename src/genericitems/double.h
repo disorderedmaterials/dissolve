@@ -28,7 +28,6 @@
 template <> class GenericItemContainer<double> : public GenericItem
 {
       public:
-	// Constructor
 	GenericItemContainer<double>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*

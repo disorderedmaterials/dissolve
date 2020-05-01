@@ -25,7 +25,6 @@
 #include <QDrag>
 #include <QMouseEvent>
 
-// Constructor
 MimeTreeWidget::MimeTreeWidget(QWidget *parent) : QTreeWidget(parent) { setAcceptDrops(true); }
 
 /*

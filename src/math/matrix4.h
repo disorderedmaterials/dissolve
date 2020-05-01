@@ -32,7 +32,6 @@ class Matrix3;
 class Matrix4
 {
       public:
-	// Constructor
 	Matrix4();
 
       private:

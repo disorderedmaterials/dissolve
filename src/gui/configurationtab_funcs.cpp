@@ -35,7 +35,6 @@
 #include "templates/variantpointer.h"
 #include <QMessageBox>
 
-// Constructor / Destructor
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Configuration *cfg)
     : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {

@@ -24,7 +24,6 @@
 #include "base/sysfunc.h"
 #include <stddef.h>
 
-// Constructors
 EnumOptionsBase::EnumOptionsBase()
 {
 	name_ = "DummyOptions";

@@ -25,7 +25,6 @@
 #include "gui/selectconfigurationwidget.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 SelectConfigurationWidget::SelectConfigurationWidget(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);
@@ -37,7 +36,6 @@ SelectConfigurationWidget::SelectConfigurationWidget(QWidget *parent) : QWidget(
 	refreshing_ = false;
 }
 
-// Destructor
 SelectConfigurationWidget::~SelectConfigurationWidget() {}
 
 /*

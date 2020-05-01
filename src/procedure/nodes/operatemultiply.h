@@ -31,9 +31,7 @@
 class OperateMultiplyProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructor
 	OperateMultiplyProcedureNode();
-	// Destructor
 	~OperateMultiplyProcedureNode();
 
 	/*

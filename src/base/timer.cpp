@@ -22,7 +22,6 @@
 #include "base/timer.h"
 #include "base/charstring.h"
 
-// Constructor
 Timer::Timer()
 {
 	totalTime_ = 0;

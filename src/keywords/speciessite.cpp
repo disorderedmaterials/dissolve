@@ -24,10 +24,8 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite *site, bool axesRequired) : KeywordData<SpeciesSite *>(KeywordBase::SpeciesSiteData, site) { axesRequired_ = axesRequired; }
 
-// Destructor
 SpeciesSiteKeyword::~SpeciesSiteKeyword() {}
 
 /*

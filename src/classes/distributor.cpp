@@ -23,7 +23,6 @@
 #include "base/processpool.h"
 #include "classes/cell.h"
 
-// Constructor
 Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool allowRepeats)
     : cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
 {
@@ -50,7 +49,6 @@ Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &
 	repeatsAllowed_ = allowRepeats;
 }
 
-// Destructor
 Distributor::~Distributor() { delete[] lastHardLockedCells_; }
 
 /*

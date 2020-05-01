@@ -35,11 +35,8 @@ class ProcessPool;
 class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D>, public GenericItemBase
 {
       public:
-	// Constructor
 	Histogram3D();
-	// Destructor
 	~Histogram3D();
-	// Copy Constructor
 	Histogram3D(const Histogram3D &source);
 	// Clear data
 	void clear();
@@ -147,7 +144,6 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	 * Operators
 	 */
       public:
-	// Assignment Operator
 	void operator=(const Histogram3D &source);
 
 	/*

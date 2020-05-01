@@ -23,7 +23,6 @@
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 
-// Constructor
 PlottableData::PlottableData(PlottableData::PlottableDataType type) { type_ = type; }
 
 /*

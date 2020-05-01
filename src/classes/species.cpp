@@ -32,7 +32,6 @@ template <class Species> int ObjectStore<Species>::objectCount_ = 0;
 template <class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
 template <class Species> const char *ObjectStore<Species>::objectTypeName_ = "Species";
 
-// Constructor
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
 	forcefield_ = NULL;
@@ -46,7 +45,6 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 	naturalIsotopologuePoint_ = -1;
 }
 
-// Destructor
 Species::~Species() {}
 
 // Clear Data

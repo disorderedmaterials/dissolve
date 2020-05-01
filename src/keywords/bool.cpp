@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
 BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value) {}
 
-// Destructor
 BoolKeyword::~BoolKeyword() {}
 
 /*

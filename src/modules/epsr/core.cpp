@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 EPSRModule::EPSRModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 EPSRModule::~EPSRModule() {}
 
 /*

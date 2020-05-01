@@ -25,7 +25,6 @@
  * Constructor / Destructor
  */
 
-// Constructor
 CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
 	// Set unique name for this instance of the Module
@@ -36,7 +35,6 @@ CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::An
 	initialise();
 }
 
-// Destructor
 CalculateRDFModule::~CalculateRDFModule() {}
 
 /*

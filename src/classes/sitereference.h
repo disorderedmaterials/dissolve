@@ -32,7 +32,6 @@ class SiteStack;
 class SiteReference : public ListItem<SiteReference>
 {
       public:
-	// Constructor
 	SiteReference(SiteStack &siteStack, const char *name);
 
       private:

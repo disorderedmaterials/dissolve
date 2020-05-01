@@ -27,7 +27,6 @@
 
 UsedSpeciesComboDelegate::UsedSpeciesComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
-// Destructor
 UsedSpeciesComboDelegate::~UsedSpeciesComboDelegate() {}
 
 // Create editor

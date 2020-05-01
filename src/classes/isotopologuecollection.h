@@ -38,9 +38,7 @@ class ProcessPool;
 class IsotopologueCollection : public GenericItemBase
 {
       public:
-	// Constructor
 	IsotopologueCollection();
-	// Destructor
 	~IsotopologueCollection();
 
 	/*

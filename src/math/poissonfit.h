@@ -31,7 +31,6 @@
 class PoissonFit
 {
       public:
-	// Constructor / Destructor
 	PoissonFit(const Data1D &referenceData);
 
 	/*

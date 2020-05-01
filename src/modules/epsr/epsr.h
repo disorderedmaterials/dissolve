@@ -41,9 +41,7 @@ class EPSRModule : public Module
 	 */
 
       public:
-	// Constructor
 	EPSRModule();
-	// Destructor
 	~EPSRModule();
 
 	/*

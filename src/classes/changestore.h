@@ -39,9 +39,7 @@ class ProcessPool;
 class ChangeStore
 {
       public:
-	// Constructor
 	ChangeStore(ProcessPool &procPool);
-	// Destructor
 	~ChangeStore();
 
 	/*

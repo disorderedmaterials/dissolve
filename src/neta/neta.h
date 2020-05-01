@@ -37,9 +37,7 @@ class SpeciesAtom;
 class NETADefinition
 {
       public:
-	// Constructor
 	NETADefinition(const char *netaDefinition = NULL, const Forcefield *associatedFF = NULL);
-	// Destructor
 	~NETADefinition();
 
 	/*

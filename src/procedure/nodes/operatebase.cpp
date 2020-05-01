@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
 OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType) : ProcedureNode(nodeType)
 {
 	targetData1D_ = NULL;
@@ -31,7 +30,6 @@ OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeT
 	targetData3D_ = NULL;
 }
 
-// Destructor
 OperateProcedureNodeBase::~OperateProcedureNodeBase() {}
 
 /*

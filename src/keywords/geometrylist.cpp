@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-// Constructor
 GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(List<Geometry> &data, Geometry::GeometryType type) : KeywordData<List<Geometry> &>(KeywordBase::GeometryListData, data), type_(type) {}
 
-// Destructor
 GeometryListKeyword::~GeometryListKeyword() {}
 
 // Return minimum number of arguments accepted

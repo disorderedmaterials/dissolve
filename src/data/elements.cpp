@@ -29,7 +29,6 @@
  * Element
  */
 
-// Constructor
 Element::Element(int Z, const char *name, const char *symbol, int group)
 {
 	Z_ = Z;
@@ -168,10 +167,8 @@ int Elements::group(int Z) { return element(Z).group(); }
  * ElementReference
  */
 
-// Constructor
 ElementReference::ElementReference(int z) : element_(Elements::element(z)) {}
 
-// Destructor
 ElementReference::~ElementReference() {}
 
 // Return referenced element

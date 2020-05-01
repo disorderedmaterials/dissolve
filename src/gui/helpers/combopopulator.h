@@ -31,7 +31,6 @@
 class ComboPopulator
 {
       public:
-	// Constructor
 	ComboPopulator(QComboBox *combo, int nItems, const char **itemArray, bool append = false)
 	{
 		// Clear the combobox
@@ -48,7 +47,6 @@ class ComboPopulator
 class ComboEnumOptionsPopulator
 {
       public:
-	// Constructor
 	ComboEnumOptionsPopulator(QComboBox *combo, const EnumOptionsBase &options, bool append = false)
 	{
 		// Clear the combobox
@@ -65,7 +63,6 @@ class ComboEnumOptionsPopulator
 template <class T> class ComboNameListPopulator
 {
       public:
-	// Constructors
 	ComboNameListPopulator<T>(QComboBox *combo, const List<T> &items, bool append = false)
 	{
 		// Clear the combobox
@@ -76,7 +73,6 @@ template <class T> class ComboNameListPopulator
 		for (T *item = items.first(); item != NULL; item = item->next())
 			combo->addItem(item->name(), VariantPointer<T>(item));
 	}
-	// Constructor
 	ComboNameListPopulator<T>(QComboBox *combo, const List<T> &items, const char *prefix, bool append = false)
 	{
 		// Clear the combobox

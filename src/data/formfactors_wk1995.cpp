@@ -25,10 +25,8 @@
 #include <functional>
 #include <vector>
 
-// Constructor
 FormFactorData_WK1995::FormFactorData_WK1995(int z, int formalCharge, std::vector<double> a, std::vector<double> b, double c) : FormFactorData(z, formalCharge), a_(a), b_(b), c_(c) {}
 
-// Assignment Operator
 FormFactorData_WK1995 &FormFactorData_WK1995::operator=(const FormFactorData_WK1995 &source)
 {
 	a_ = source.a_;

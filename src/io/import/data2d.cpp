@@ -24,11 +24,9 @@
 #include "base/sysfunc.h"
 #include "keywords/types.h"
 
-// Constructors
 Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
 Data2DImportFileFormat::Data2DImportFileFormat(const char *filename, Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
-// Destructor
 Data2DImportFileFormat::~Data2DImportFileFormat() {}
 
 /*

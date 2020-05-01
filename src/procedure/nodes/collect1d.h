@@ -36,9 +36,7 @@ class NodeScopeStack;
 class Collect1DProcedureNode : public ProcedureNode
 {
       public:
-	// Constructor
 	Collect1DProcedureNode(CalculateProcedureNodeBase *observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
-	// Destructor
 	~Collect1DProcedureNode();
 
 	/*

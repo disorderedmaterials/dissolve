@@ -40,10 +40,8 @@ class Interpolator
 		LinearInterpolation,
 		ThreePointInterpolation
 	};
-	// Constructors
 	Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme = SplineInterpolation);
 	Interpolator(const Data1D &source, InterpolationScheme scheme = SplineInterpolation);
-	// Destructor
 	~Interpolator();
 
 	/*

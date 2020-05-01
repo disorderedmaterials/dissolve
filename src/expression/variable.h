@@ -29,7 +29,6 @@
 class ExpressionVariable : public ExpressionNode
 {
       public:
-	// Constructor / Destructor
 	ExpressionVariable(ExpressionValue value = ExpressionValue(), bool readOnly = false);
 	~ExpressionVariable();
 

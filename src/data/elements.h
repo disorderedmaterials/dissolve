@@ -30,7 +30,6 @@
 class Element
 {
       public:
-	// Constructor
 	Element(int Z, const char *name, const char *symbol, int group);
 
       private:
@@ -108,9 +107,7 @@ class Elements
 class ElementReference
 {
       public:
-	// Constructor
 	ElementReference(int Z);
-	// Destructor
 	virtual ~ElementReference();
 
       private:

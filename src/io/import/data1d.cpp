@@ -24,11 +24,9 @@
 #include "base/sysfunc.h"
 #include "math/filters.h"
 
-// Constructors
 Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
 Data1DImportFileFormat::Data1DImportFileFormat(const char *filename, Data1DImportFileFormat::Data1DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
-// Destructor
 Data1DImportFileFormat::~Data1DImportFileFormat() {}
 
 /*

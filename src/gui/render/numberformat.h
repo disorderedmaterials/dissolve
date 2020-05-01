@@ -31,7 +31,6 @@
 class NumberFormat
 {
       public:
-	// Constructor / Destructor
 	NumberFormat();
 	~NumberFormat();
 	// Basic Number Type

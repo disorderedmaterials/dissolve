@@ -41,7 +41,6 @@ class ProcedureEditor : public QWidget
 	Q_OBJECT
 
       public:
-	// Constructor / Destructor
 	ProcedureEditor(QWidget *parent = NULL);
 	~ProcedureEditor();
 

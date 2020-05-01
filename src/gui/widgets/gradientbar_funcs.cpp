@@ -26,7 +26,6 @@
  * Gradient Bar
  */
 
-// Constructor
 GradientBar::GradientBar(QWidget *parent) : QWidget(parent)
 {
 	// Private variables

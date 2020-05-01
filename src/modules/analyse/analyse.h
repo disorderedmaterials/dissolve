@@ -32,9 +32,7 @@
 class AnalyseModule : public Module
 {
       public:
-	// Constructor
 	AnalyseModule();
-	// Destructor
 	~AnalyseModule();
 
 	/*

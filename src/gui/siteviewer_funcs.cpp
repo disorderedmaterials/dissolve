@@ -24,7 +24,6 @@
 #include "gui/render/renderablespecies.h"
 #include "gui/siteviewer.hui"
 
-// Constructor
 SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Source data
@@ -47,7 +46,6 @@ SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
 	setClipToAxesVolume(false);
 }
 
-// Destructor
 SiteViewer::~SiteViewer() {}
 
 /*

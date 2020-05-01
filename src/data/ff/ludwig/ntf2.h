@@ -32,7 +32,6 @@ class SpeciesAtom;
 class Forcefield_NTf2_Ludwig : public Forcefield
 {
       public:
-	// Constructor / Destructor
 	Forcefield_NTf2_Ludwig();
 	~Forcefield_NTf2_Ludwig();
 

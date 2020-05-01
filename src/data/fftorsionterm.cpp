@@ -23,7 +23,6 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-// Constructor
 ForcefieldTorsionTerm::ForcefieldTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL, SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2,
 					     double data3)
 {
@@ -38,7 +37,6 @@ ForcefieldTorsionTerm::ForcefieldTorsionTerm(const char *typeI, const char *type
 	parameters_[3] = data3;
 }
 
-// Destructor
 ForcefieldTorsionTerm::~ForcefieldTorsionTerm() {}
 
 /*

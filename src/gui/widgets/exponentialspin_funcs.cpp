@@ -23,7 +23,6 @@
 #include "math/doubleexp.h"
 #include <QLineEdit>
 
-// Constructor
 ExponentialSpin::ExponentialSpin(QWidget *parent) : QDoubleSpinBox(parent)
 {
 	// Set up validator

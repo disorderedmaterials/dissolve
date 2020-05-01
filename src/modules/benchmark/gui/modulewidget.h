@@ -39,7 +39,6 @@ class BenchmarkModuleWidget : public ModuleWidget
 	BenchmarkModule *module_;
 
       public:
-	// Constructor
 	BenchmarkModuleWidget(QWidget *parent, BenchmarkModule *module);
 
 	/*

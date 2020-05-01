@@ -36,7 +36,6 @@ class FontInstance;
 class TextPrimitiveList
 {
       public:
-	// Constructor
 	TextPrimitiveList();
 
       private:

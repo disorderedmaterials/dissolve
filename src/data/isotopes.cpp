@@ -29,7 +29,6 @@ Array<List<Isotope>> Isotopes::isotopesByElementPrivate_;
  * Isotopic Neutron Scattering Data
  */
 
-// Constructor
 Isotope::Isotope(int z, int A, const char *spin, double mass, double bc, double bi, double sc, double si, double totalxs, double absxs) : ElementReference(z), ListItem<Isotope>()
 {
 	// Set the isotope's data
@@ -47,7 +46,6 @@ Isotope::Isotope(int z, int A, const char *spin, double mass, double bc, double 
 	Isotopes::registerIsotope(this, z);
 }
 
-// Assignment Operator
 Isotope &Isotope::operator=(const Isotope &source)
 {
 	A_ = source.A_;

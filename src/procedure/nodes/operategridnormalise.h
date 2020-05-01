@@ -31,9 +31,7 @@
 class OperateGridNormaliseProcedureNode : public OperateProcedureNodeBase
 {
       public:
-	// Constructor
 	OperateGridNormaliseProcedureNode();
-	// Destructor
 	~OperateGridNormaliseProcedureNode();
 
 	/*

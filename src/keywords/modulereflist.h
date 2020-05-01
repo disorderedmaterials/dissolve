@@ -33,10 +33,8 @@ class Module;
 class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 {
       public:
-	// Constructors
 	ModuleRefListKeyword(RefList<Module> &references, int maxModules = -1);
 	ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules = -1);
-	// Destructor
 	~ModuleRefListKeyword();
 
 	/*

@@ -28,7 +28,6 @@
  * OPLS-AA (2005) Noble Gases
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_NobleGases::Forcefield_OPLSAA2005_NobleGases()
 {
 	// Copy required types from OPLS-AA (2005) core list

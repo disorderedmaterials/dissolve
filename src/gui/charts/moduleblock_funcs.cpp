@@ -29,7 +29,6 @@
 #include <QFile>
 #include <QPainter>
 
-// Constructor
 ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve) : QWidget(parent), ChartBlock(), dissolve_(dissolve)
 {
 	// Set up user interface
