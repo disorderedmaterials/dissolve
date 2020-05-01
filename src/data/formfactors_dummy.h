@@ -1,6 +1,6 @@
 /*
-	*** Form Factor Data Base Class
-	*** src/data/formfactordata.h
+	*** Dummy X-Ray Form Factors
+	*** src/data/formfactors_dummy.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,37 +19,27 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_FORMFACTORDATA_H
-#define DISSOLVE_DATA_FORMFACTORDATA_H
+#ifndef DISSOLVE_DATA_FORMFACTORS_DUMMY_H
+#define DISSOLVE_DATA_FORMFACTORS_DUMMY_H
 
-// Form Factor Base Class
-class FormFactorData
+#include "data/formfactordata.h"
+#include <vector>
+
+// Dummy Form Factor Data
+class FormFactorData_Dummy : public FormFactorData
 {
       public:
 	// Constructor
-	FormFactorData(int Z = 0, int formalCharge = 0);
-
-	/*
-	 * Element State
-	 */
-      protected:
-	// Element to which the data relates
-	int Z_;
-	// Formal charge of element to which the data relates
-	int formalCharge_;
-
-      public:
-	// Return element to which the data relates
-	int Z() const;
-	// Return formal charge of element to which the data relates
-	int formalCharge() const;
+	FormFactorData_Dummy();
+	// Assignment Operator
+	FormFactorData_Dummy &operator=(const FormFactorData_Dummy &source);
 
 	/*
 	 * Form Factor Generation
 	 */
       public:
 	// Return magnitude of form factor at specified Q value
-	virtual double magnitude(double Q = 0.0) const = 0;
+	double magnitude(double Q = 0.0) const;
 };
 
 #endif

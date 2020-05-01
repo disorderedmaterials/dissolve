@@ -20,6 +20,7 @@
 */
 
 #include "data/formfactors.h"
+#include "data/formfactors_dummy.h"
 
 namespace XRayFormFactors
 {
@@ -45,7 +46,7 @@ optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int 
 		Messenger::error("Form factor data set type %i not recognised.\n");
 	}
 
-	static const FormFactorData dummyData;
+	static const FormFactorData_Dummy dummyData;
 	return std::make_tuple(dummyData, true);
 }
 
