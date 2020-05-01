@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/formfactors.h"
 #include "data/formfactors_wk1995.h"
+#include "data/formfactors.h"
 #include <algorithm>
 #include <functional>
 #include <vector>
@@ -55,7 +55,8 @@ double FormFactorData_WK1995::magnitude(double Q) const
 	const double k = Q / (4 * PI);
 	const double k2 = k * k;
 	double mag = c_;
-	for (int n=0; n<5; ++n) mag += a_[n] * exp(-b_[0] * k2);
+	for (int n=0; n<5; ++n)
+		mag += a_[n] * exp(-b_[0] * k2);
 
 	return mag;
 }
