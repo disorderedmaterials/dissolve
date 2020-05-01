@@ -24,7 +24,7 @@
 
 #include "base/enumoptions.h"
 #include "data/elements.h"
-#include "data/formfactor.h"
+#include "data/formfactordata.h"
 #include <tuple>
 
 template <class T> using optional = std::tuple<T, bool>;

@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_DATA_FORMFACTORS_WK1995_H
 #define DISSOLVE_DATA_FORMFACTORS_WK1995_H
 
-#include "data/formfactor.h"
+#include "data/formfactordata.h"
 #include <vector>
 
 // Waasmaier & Kirfel '95 Form Factor Data

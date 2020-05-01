@@ -1,6 +1,6 @@
 /*
-	*** Form Factor Base Class
-	*** src/data/formfactor.h
+	*** Form Factor Data Base Class
+	*** src/data/formfactordata.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.

@@ -1,6 +1,6 @@
 /*
-	*** Form Factor Base Class
-	*** src/data/formfactor.h
+	*** Form Factor Data Base Class
+	*** src/data/formfactordata.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/formfactor.h"
+#include "data/formfactordata.h"
 
 // Constructor
 FormFactorData::FormFactorData(int Z, int formalCharge) : Z_(Z), formalCharge_(formalCharge) {}
