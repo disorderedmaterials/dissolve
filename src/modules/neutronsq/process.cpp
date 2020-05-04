@@ -156,7 +156,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
 	 * Calculate neutron structure factors from existing g(r) data
-	 * 
+	 *
 	 * This is a serial routine, with each process constructing its own copy of the data.
 	 * Partial calculation routines called by this routine are parallel.
 	 */

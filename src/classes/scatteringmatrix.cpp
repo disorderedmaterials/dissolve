@@ -263,7 +263,7 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(const Data1D& weightedData, NeutronWeights& dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeights &dataWeights, double factor)
 {
 	// Make sure that the scattering weights are valid
 	if (!dataWeights.isValid())

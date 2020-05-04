@@ -37,7 +37,7 @@ class SpeciesInfo;
 // XRay Weights Container
 class XRayWeights : public GenericItemBase
 {
-      public:
+	public:
 	// Constructor
 	XRayWeights();
 	// Copy Constructor
@@ -48,7 +48,7 @@ class XRayWeights : public GenericItemBase
 	/*
 	 * Source AtomTypes
 	 */
-      private:
+	private:
 	// X-Ray form factors to use
 	XRayFormFactors::XRayFormFactorData formFactors_;
 	// Type list derived from supplied Species
@@ -58,11 +58,11 @@ class XRayWeights : public GenericItemBase
 	// Whether the structure is valid (i.e. has been finalised)
 	bool valid_;
 
-      private:
+	private:
 	// Retrieve form factor data for the current atom types
 	bool getFormFactors();
 
-      public:
+	public:
 	// Clear contents
 	void clear();
 	// Set-up from supplied SpeciesInfo list
@@ -81,7 +81,7 @@ class XRayWeights : public GenericItemBase
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Concentration products (ci)
 	Array<double> concentrations_;
 	// Concentration product matrix (ci * cj)
@@ -93,11 +93,11 @@ class XRayWeights : public GenericItemBase
 	// Bound coherent squared average scattering (<b**2>)
 	double boundCoherentAverageOfSquares_;
 
-      private:
+	private:
 	// Set up matrices based on current AtomType information
 	void setUpMatrices();
 
-      public:
+	public:
 	// Return concentration product for type i
 	double concentration(int typeIndexI) const;
 	// Return concentration product for types i and j
@@ -116,7 +116,7 @@ class XRayWeights : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -127,7 +127,7 @@ class XRayWeights : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

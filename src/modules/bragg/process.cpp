@@ -21,8 +21,8 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
 #include "classes/neutronweights.h"
+#include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"

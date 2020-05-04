@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/xrayweights.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
-#include "classes/xrayweights.h"
 #include "genericitems/array2ddouble.h"
 #include "templates/enumhelpers.h"
 
@@ -69,8 +69,9 @@ bool XRayWeights::getFormFactors()
 		// Try to retrieve form factor data for this atom type (element, formal charge [TODO])
 		auto data = XRayFormFactors::formFactorData(formFactors_, at->element());
 		if (std::get<1>(data))
-			return Messenger::error("No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n", at->element()->symbol(), 0,
-						XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+			return Messenger::error(
+				"No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n",
+				at->element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
 		formFactorData_.push_back(std::reference_wrapper<const FormFactorData>(std::get<0>(data)));
 	}
@@ -93,7 +94,8 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 {
 	valid_ = false;
 
-	// Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species populations
+	// Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
+	// populations
 	atomTypes_.clear();
 	for (SpeciesInfo *spInfo = speciesInfoList.first(); spInfo != NULL; spInfo = spInfo->next())
 	{
@@ -185,7 +187,10 @@ void XRayWeights::setUpMatrices()
 double XRayWeights::concentration(int typeIndexI) const { return concentrations_.constAt(typeIndexI); }
 
 // Return concentration product for types i and j
-double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const { return concentrationProducts_.constAt(typeIndexI, typeIndexJ); }
+double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
+{
+	return concentrationProducts_.constAt(typeIndexI, typeIndexJ);
+}
 
 // Return form factor for type i over supplied Q values
 Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) const
@@ -228,7 +233,10 @@ double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) 
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const { return preFactors_.constAt(typeIndexI, typeIndexJ) * formFactorProduct(typeIndexI, typeIndexJ, Q); }
+double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
+{
+	return preFactors_.constAt(typeIndexI, typeIndexJ) * formFactorProduct(typeIndexI, typeIndexJ, Q);
+}
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
 Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const
@@ -340,7 +348,8 @@ bool XRayWeights::equality(ProcessPool &procPool)
 	if (!procPool.equality(preFactors_))
 		return Messenger::error("XRayWeights bound coherent matrix is not equivalent.\n");
 	if (!procPool.equality(valid_))
-		return Messenger::error("XRayWeights validity is not equivalent (process %i has %i).\n", procPool.poolRank(), valid_);
+		return Messenger::error("XRayWeights validity is not equivalent (process %i has %i).\n", procPool.poolRank(),
+					valid_);
 #endif
 	return true;
 }
