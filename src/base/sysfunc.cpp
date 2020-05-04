@@ -131,8 +131,9 @@ bool DissolveSys::sameWildString(const char *wild, const char *s2, bool caseSens
 	{
 		/*
 		 * If this is not the last character in the string and there are no more characters in s2, return false.
-		 * Otherwise, we try to match the next character in 'wild' from the current character in s2, then the current character in wild with the next character in s2.
-		 * This allows the '*' to match as many characters as it can, but always checks for absolute character matching between the current characters.
+		 * Otherwise, we try to match the next character in 'wild' from the current character in s2, then the current
+		 * character in wild with the next character in s2. This allows the '*' to match as many characters as it can,
+		 * but always checks for absolute character matching between the current characters.
 		 */
 		if ((*(wild + 1) != '\0') && (*s2 == '\0'))
 			return false;
@@ -295,8 +296,8 @@ void DissolveSys::removeComments(char *s)
 			*c = '\0';
 			break;
 		}
-		// Removed July 2019 - C-style comments not permitted in input files as this breaks object tags (which contain '//' as delimiters)
-		// 		else if ((*c == '/') && (!escaped) && (quotechar == '\0'))
+		// Removed July 2019 - C-style comments not permitted in input files as this breaks object tags (which contain
+		// '//' as delimiters) 		else if ((*c == '/') && (!escaped) && (quotechar == '\0'))
 		// 		{
 		// 			char* c2 = c;
 		// 			c2++;
@@ -401,13 +402,13 @@ bool DissolveSys::isEmpty(const char *s)
 	{
 		switch (*c)
 		{
-		case (' '):
-		case ('\t'):
-		case ('\n'):
-		case ('\r'):
-			continue;
-		default:
-			return false;
+			case (' '):
+			case ('\t'):
+			case ('\n'):
+			case ('\r'):
+				continue;
+			default:
+				return false;
 		}
 	}
 	return true;
@@ -448,36 +449,36 @@ bool DissolveSys::isNumber(const char *text, bool &isFloatingPoint)
 		char c = text[n];
 		switch (text[n])
 		{
-		// Decimal point
-		case ('.'):
-			isFloatingPoint = true;
-			break;
-		// Negate or plus
-		case ('-'):
-		case ('+'):
-			// Only allow as first character or immediately following an exponent
-			if (n != (exponentIndex + 1))
-				return false;
-			break;
-		// Exponentiation
-		case ('e'):
-		case ('E'):
-			// Can't be first character
-			if (n == 0)
-				return false;
+			// Decimal point
+			case ('.'):
+				isFloatingPoint = true;
+				break;
+			// Negate or plus
+			case ('-'):
+			case ('+'):
+				// Only allow as first character or immediately following an exponent
+				if (n != (exponentIndex + 1))
+					return false;
+				break;
+			// Exponentiation
+			case ('e'):
+			case ('E'):
+				// Can't be first character
+				if (n == 0)
+					return false;
 
-			// Can't have more than one
-			if (exponentIndex > 0)
-				return false;
+				// Can't have more than one
+				if (exponentIndex > 0)
+					return false;
 
-			// Store position
-			exponentIndex = n;
-			break;
-		default:
-			// If not a digit, return false
-			if (!isdigit(c))
-				return false;
-			break;
+				// Store position
+				exponentIndex = n;
+				break;
+			default:
+				// If not a digit, return false
+				if (!isdigit(c))
+					return false;
+				break;
 		}
 	}
 

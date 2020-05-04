@@ -23,4 +23,7 @@
 #include "modules/calculate_avgmol/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateAvgMolModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalculateAvgMolModuleWidget(parent, this); }
+ModuleWidget *CalculateAvgMolModule::createWidget(QWidget *parent, Dissolve &dissolve)
+{
+	return new CalculateAvgMolModuleWidget(parent, this);
+}

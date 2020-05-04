@@ -33,12 +33,9 @@ class BraggReflection;
 // K-Vector
 class KVector : public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
-	// Destructor
 	~KVector();
-	// Copy constructor
 	KVector(const KVector &source);
 	// Operator=
 	void operator=(const KVector &source);
@@ -46,7 +43,7 @@ class KVector : public GenericItemBase
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Integer hkl indices of vector
 	Vec3<int> hkl_;
 	// Associated BraggReflection index
@@ -54,7 +51,7 @@ class KVector : public GenericItemBase
 	// Contributions to this kvector from individual atom types
 	Array<double> cosTerms_, sinTerms_;
 
-      public:
+	public:
 	// Initialise
 	void initialise(int h, int k, int l, int reflectionIndex, int nAtomTypes);
 	// Return hkl indices
@@ -83,14 +80,14 @@ class KVector : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from root to all other processes
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

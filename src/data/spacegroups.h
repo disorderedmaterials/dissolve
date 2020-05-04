@@ -25,17 +25,16 @@
 // Spacegroup Name Data
 class SpacegroupNameData
 {
-      public:
-	// Constructor
+	public:
 	SpacegroupNameData(const char *name, const char *formattedName);
 
-      private:
+	private:
 	// Name of the spacegroup
 	const char *name_;
 	// Formatted name of the spacegroup
 	const char *formattedName_;
 
-      public:
+	public:
 	// Return the name of the spacegroup
 	const char *name() const;
 	// Return the formatted name of the spacegroup
@@ -45,7 +44,7 @@ class SpacegroupNameData
 // Spacegroups
 class Spacegroups
 {
-      private:
+	private:
 	// Return SpacegroupNameData with index specified
 	static const SpacegroupNameData &spacegroupNameData(int id);
 };

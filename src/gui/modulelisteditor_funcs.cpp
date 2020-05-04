@@ -28,7 +28,6 @@
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 
-// Constructor / Destructor
 ModuleListEditor::ModuleListEditor(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);
@@ -60,9 +59,11 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
 	connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 	connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
 	connect(chartWidget_, SIGNAL(requiredSizeChanged()), this, SLOT(chartWidgetSizeChanged()));
-	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString &)), dissolveWindow_, SLOT(showModuleTab(const QString &)));
+	connect(chartWidget_, SIGNAL(blockDoubleClicked(const QString &)), dissolveWindow_,
+		SLOT(showModuleTab(const QString &)));
 	connect(chartWidget_, SIGNAL(blockRemoved(const QString &)), dissolveWindow_, SLOT(removeModuleTab(const QString &)));
-	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this, SLOT(blockSelectionChanged(const QString &)));
+	connect(chartWidget_, SIGNAL(blockSelectionChanged(const QString &)), this,
+		SLOT(blockSelectionChanged(const QString &)));
 
 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 	moduleCategories_.clear();
@@ -212,7 +213,8 @@ void ModuleListEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem
 			while (Configuration *cfg = configIterator.iterate())
 			{
 				newInstance->addTargetConfiguration(cfg);
-				if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
+				if ((newInstance->nRequiredTargets() != Module::OneOrMoreTargets) &&
+				    (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations()))
 					break;
 			}
 		}

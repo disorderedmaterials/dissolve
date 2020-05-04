@@ -43,8 +43,7 @@ class Forcefield;
 // Species Definition
 class Species : public ListItem<Species>, public ObjectStore<Species>
 {
-      public:
-	// Constructor / Destructor
+	public:
 	Species();
 	~Species();
 	// Clear Data
@@ -53,13 +52,13 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Basic Information
 	 */
-      private:
+	private:
 	// Name of the Species
 	CharString name_;
 	// Version of the Species
 	VersionCounter version_;
 
-      public:
+	public:
 	// Set name of the Species
 	void setName(const char *name);
 	// Return the name of the Species
@@ -74,7 +73,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Atomic Information
 	 */
-      private:
+	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
 	// Version of the atom types
@@ -88,7 +87,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Point at which the used atom types list was last update
 	int usedAtomTypesPoint_;
 
-      public:
+	public:
 	// Add a new atom to the Species
 	SpeciesAtom *addAtom(Element *element, Vec3<double> r, double q = 0.0);
 	// Remove the specified atom from the species
@@ -141,7 +140,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Intramolecular Data
 	 */
-      private:
+	private:
 	// Array of bonds between atoms in the Species
 	DynamicArray<SpeciesBond> bonds_;
 	// Array of angles between atoms in the Species
@@ -153,11 +152,11 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated_;
 
-      private:
+	private:
 	// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
 	void updateIntramolecularTerms();
 
-      public:
+	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
 	SpeciesBond *addBond(SpeciesAtom *i, SpeciesAtom *j);
 	// Add new SpeciesBond definition
@@ -244,13 +243,13 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Source Forcefield (if any)
 	 */
-      private:
+	private:
 	// Forcefield to source terms from
 	std::shared_ptr<Forcefield> forcefield_;
 	// Auto-generate missing intramolecular terms, and remove invalid ones
 	bool autoUpdateIntramolecularTerms_;
 
-      public:
+	public:
 	// Set Forcefield to source terms from
 	void setForcefield(std::shared_ptr<Forcefield> ff);
 	// Return Forcefield to source terms from
@@ -265,7 +264,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Isotopologues
 	 */
-      private:
+	private:
 	// Natural Isotopologue
 	Isotopologue naturalIsotopologue_;
 	// Point at which natural Isotopologue was last updated
@@ -273,7 +272,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// List of isotopic variants defined for this species
 	List<Isotopologue> isotopologues_;
 
-      public:
+	public:
 	// Update current Isotopologues
 	void updateIsotopologues();
 	// Update and return natural isotopologue
@@ -300,11 +299,11 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Site
 	 */
-      private:
+	private:
 	// List of defined sites
 	List<SpeciesSite> sites_;
 
-      public:
+	public:
 	// Add a new SpeciesSite to this Species
 	SpeciesSite *addSite(const char *name = NULL);
 	// Remove specified SpeciesSite
@@ -323,7 +322,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Transforms
 	 */
-      public:
+	public:
 	// Calculate and return centre of geometry
 	Vec3<double> centreOfGeometry(const Box *box) const;
 	// Set centre of geometry
@@ -334,13 +333,13 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Coordinate Sets
 	 */
-      private:
+	private:
 	// Available coordinate sets representing conformers, symmetry copies etc.
 	List<CoordinateSet> coordinateSets_;
 	// File / format of coordinate sets file, if provided
 	CoordinateImportFileFormat coordinateSetInputCoordinates_;
 
-      public:
+	public:
 	// Clear coordinate sets
 	void clearCoordinateSets();
 	// Add new coordinate set
@@ -353,7 +352,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * File Input / Output
 	 */
-      public:
+	public:
 	// Load Species information from XYZ file
 	bool loadFromXYZ(const char *filename);
 	// Load Species from file
@@ -362,7 +361,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Species Block Keyword Enum
 	enum SpeciesKeyword
 	{

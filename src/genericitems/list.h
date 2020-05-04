@@ -33,11 +33,11 @@ class GenericList
 	/*
 	 * List Contents
 	 */
-      private:
+	private:
 	// List of generic items
 	List<GenericItem> items_;
 
-      public:
+	public:
 	// Clear all items (except those that are marked protected)
 	void clear();
 	// Clear all items, including protected items
@@ -74,7 +74,7 @@ class GenericList
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast all data
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check equality of all data

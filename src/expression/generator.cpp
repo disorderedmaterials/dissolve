@@ -32,7 +32,6 @@
 Expression *ExpressionGenerator::expression_ = NULL;
 ExpressionGenerator *ExpressionGenerator::generator_ = NULL;
 
-// Constructors
 ExpressionGenerator::ExpressionGenerator(Expression &expression, const char *expressionText)
 {
 	// Private variables
@@ -46,7 +45,6 @@ ExpressionGenerator::ExpressionGenerator(Expression &expression, const char *exp
 	setSource(expressionText);
 }
 
-// Destructor
 ExpressionGenerator::~ExpressionGenerator() {}
 
 /*
@@ -66,8 +64,10 @@ ExpressionGenerator *ExpressionGenerator::generator() { return generator_; }
 // Return enum options for SymbolToken
 EnumOptions<int> ExpressionGenerator::symbolTokens()
 {
-	static EnumOptionsList SymbolTokenOptions = EnumOptionsList() << EnumOption(DISSOLVE_EXPR_EQ, "==") << EnumOption(DISSOLVE_EXPR_GEQ, ">=") << EnumOption(DISSOLVE_EXPR_LEQ, "<=")
-								      << EnumOption(DISSOLVE_EXPR_NEQ, "!=") << EnumOption(DISSOLVE_EXPR_AND, "&&") << EnumOption(DISSOLVE_EXPR_OR, "||");
+	static EnumOptionsList SymbolTokenOptions =
+		EnumOptionsList() << EnumOption(DISSOLVE_EXPR_EQ, "==") << EnumOption(DISSOLVE_EXPR_GEQ, ">=")
+				  << EnumOption(DISSOLVE_EXPR_LEQ, "<=") << EnumOption(DISSOLVE_EXPR_NEQ, "!=")
+				  << EnumOption(DISSOLVE_EXPR_AND, "&&") << EnumOption(DISSOLVE_EXPR_OR, "||");
 
 	static EnumOptions<int> options("SymbolToken", SymbolTokenOptions);
 
@@ -172,7 +172,8 @@ int ExpressionGenerator::lex()
 			}
 			else if ((c == '-') || (c == '+'))
 			{
-				// We allow '-' or '+' only as part of an exponentiation, so if it is not preceeded by 'E' we stop parsing
+				// We allow '-' or '+' only as part of an exponentiation, so if it is not preceeded by 'E' we
+				// stop parsing
 				if ((!token.isEmpty()) && (!(token.lastChar() == 'E')))
 				{
 					unGetChar();
@@ -192,13 +193,15 @@ int ExpressionGenerator::lex()
 		if (isInteger)
 		{
 			ExpressionGenerator_lval.integerConst = token.asInteger();
-			Messenger::printVerbose("LEXER (%p): found an integer constant [%s] [%i]\n", this, token.get(), ExpressionGenerator_lval.integerConst);
+			Messenger::printVerbose("LEXER (%p): found an integer constant [%s] [%i]\n", this, token.get(),
+						ExpressionGenerator_lval.integerConst);
 			return DISSOLVE_EXPR_INTEGERCONSTANT;
 		}
 		else
 		{
 			ExpressionGenerator_lval.doubleConst = token.asDouble();
-			Messenger::printVerbose("LEXER (%p): found a double constant [%s] [%e]\n", this, token.get(), ExpressionGenerator_lval.doubleConst);
+			Messenger::printVerbose("LEXER (%p): found a double constant [%s] [%e]\n", this, token.get(),
+						ExpressionGenerator_lval.doubleConst);
 			return DISSOLVE_EXPR_DOUBLECONSTANT;
 		}
 	}
@@ -303,7 +306,8 @@ int ExpressionGenerator::lex()
 
 	// We have found a symbolic character (or a pair) that corresponds to an operator
 	// Return immediately in the case of brackets, comma, and semicolon
-	if ((c == '(') || (c == ')') || (c == ';') || (c == ',') || (c == '{') || (c == '}') || (c == '[') || (c == ']') || (c == '%') || (c == ':'))
+	if ((c == '(') || (c == ')') || (c == ';') || (c == ',') || (c == '{') || (c == '}') || (c == '[') || (c == ']') ||
+	    (c == '%') || (c == ':'))
 	{
 		Messenger::printVerbose("LEXER (%p): found symbol [%c]\n", this, c);
 		return c;

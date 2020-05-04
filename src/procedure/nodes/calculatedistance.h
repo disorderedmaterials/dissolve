@@ -31,16 +31,14 @@ class SelectProcedureNode;
 // Calculate Distance Node
 class CalculateDistanceProcedureNode : public CalculateProcedureNodeBase
 {
-      public:
-	// Constructor
+	public:
 	CalculateDistanceProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL);
-	// Destructor
 	~CalculateDistanceProcedureNode();
 
 	/*
 	 * Observable Target (implements virtuals in CalculateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Return number of sites required to calculate observable
 	int nSitesRequired() const;
 	// Return dimensionality of calculated observable
@@ -49,9 +47,10 @@ class CalculateDistanceProcedureNode : public CalculateProcedureNodeBase
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 };
 
 #endif

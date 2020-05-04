@@ -35,7 +35,6 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-// Constructor
 ProcedureChart::ProcedureChart(Procedure *procedure, const CoreData &coreData) : ChartBase(), coreData_(coreData)
 {
 	refreshing_ = false;
@@ -92,7 +91,8 @@ void ProcedureChart::paintEvent(QPaintEvent *event)
  */
 
 // Update the content block widgets against the current target data for the supplied SequenceNode
-void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence, RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel)
+void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence,
+					 RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel)
 {
 	// Create a temporary list that will store our widgets to be 'reused'
 	RefList<ProcedureChartNodeBlock> newSequenceWidgets;
@@ -108,7 +108,8 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence, 
 			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
 			newSequenceWidgets.append(block);
 			oldSequenceWidgets.remove(block);
-			Messenger::printVerbose("Using existing ProcedureChartNodeBlock %p for node %p (%s).\n", block, node, node->name());
+			Messenger::printVerbose("Using existing ProcedureChartNodeBlock %p for node %p (%s).\n", block, node,
+						node->name());
 		}
 		else
 		{
@@ -119,7 +120,8 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence, 
 			// 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newSequenceWidgets.append(block);
 			chartBlocks_.append(block);
-			Messenger::printVerbose("Creating new ProcedureChartNodeBlock %p for node %p (%s).\n", block, node, node->name());
+			Messenger::printVerbose("Creating new ProcedureChartNodeBlock %p for node %p (%s).\n", block, node,
+						node->name());
 		}
 
 		// Set the colour of the widget according to the current indent level

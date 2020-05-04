@@ -25,7 +25,6 @@
  * Constructor / Destructor
  */
 
-// Constructor
 SkeletonModule::SkeletonModule() : Module()
 {
 	// Set unique name for this instance of the Module
@@ -36,7 +35,6 @@ SkeletonModule::SkeletonModule() : Module()
 	initialise();
 }
 
-// Destructor
 SkeletonModule::~SkeletonModule() {}
 
 /*

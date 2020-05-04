@@ -24,10 +24,8 @@
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
 
-// Constructor
 Atom::Atom() { clear(); }
 
-// Destructor
 Atom::~Atom() {}
 
 /*
@@ -140,7 +138,8 @@ double Atom::scaling(Atom *j) const
 #ifdef CHECKS
 	if (!speciesAtom_)
 	{
-		Messenger::error("Source SpeciesAtom pointer has not been set in Atom %i, so can't return scaling().\n", arrayIndex());
+		Messenger::error("Source SpeciesAtom pointer has not been set in Atom %i, so can't return scaling().\n",
+				 arrayIndex());
 		return 0.0;
 	}
 	if (!j)
@@ -150,7 +149,8 @@ double Atom::scaling(Atom *j) const
 	}
 	if (!j->speciesAtom())
 	{
-		Messenger::error("SpeciesAtom pointer has not been set in partner Atom %i, so can't return scaling().\n", j->arrayIndex());
+		Messenger::error("SpeciesAtom pointer has not been set in partner Atom %i, so can't return scaling().\n",
+				 j->arrayIndex());
 		return 0.0;
 	}
 #endif

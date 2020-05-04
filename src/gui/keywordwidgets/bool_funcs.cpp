@@ -22,8 +22,8 @@
 #include "genericitems/listhelper.h"
 #include "gui/keywordwidgets/bool.hui"
 
-// Constructor
-BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QCheckBox(parent), KeywordWidgetBase(coreData)
+BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QCheckBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<BoolKeyword *>(keyword);

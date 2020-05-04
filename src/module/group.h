@@ -32,22 +32,20 @@ class Module;
 // ModuleGroup
 class ModuleGroup : public ListItem<ModuleGroup>
 {
-      public:
-	// Constructor
+	public:
 	ModuleGroup(const char *name = NULL);
-	// Destructor
 	~ModuleGroup();
 
 	/*
 	 * Module Group
 	 */
-      private:
+	private:
 	// Name of the group
 	CharString name_;
 	// RefList of Modules in this group
 	RefList<Module> modules_;
 
-      public:
+	public:
 	// Return name of group
 	const char *name();
 	// Return whether name of group is as specified

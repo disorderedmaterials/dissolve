@@ -47,7 +47,8 @@ GenericItem *GenericList::create(const char *name, const char *itemClassName, in
 	GenericItem *newItem = find(name);
 	if (newItem)
 	{
-		Messenger::printVerbose("Item named '%s' already exists in the list, so returning it instead of creating a new one.\n", name);
+		Messenger::printVerbose(
+			"Item named '%s' already exists in the list, so returning it instead of creating a new one.\n", name);
 		return newItem;
 	}
 
@@ -184,7 +185,8 @@ bool GenericList::remove(const char *name, const char *prefix)
 	GenericItem *item = find(name, prefix);
 	if (!item)
 	{
-		Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't remove it.\n", name, prefix);
+		Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't remove it.\n",
+					name, prefix);
 		return false;
 	}
 
@@ -199,7 +201,8 @@ bool GenericList::rename(const char *oldName, const char *oldPrefix, const char 
 	GenericItem *item = find(oldName, oldPrefix);
 	if (!item)
 	{
-		Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't rename it.\n", oldName, oldPrefix);
+		Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't rename it.\n",
+					oldName, oldPrefix);
 		return false;
 	}
 
@@ -266,7 +269,8 @@ bool GenericList::equality(ProcessPool &procPool)
 				if (checkedItems.contains(item))
 					continue;
 
-				// Found an item that hasn't already been checked, so flag to the slaves that we will be sending another name to check
+				// Found an item that hasn't already been checked, so flag to the slaves that we will be sending
+				// another name to check
 				if (!procPool.decideTrue(n))
 					return false;
 
@@ -278,7 +282,9 @@ bool GenericList::equality(ProcessPool &procPool)
 					return false;
 				if (!procPool.allTrue(true))
 				{
-					Messenger::error("GenericList equality check failed - item '%s' is not present on all processes.\n", item->name());
+					Messenger::error("GenericList equality check failed - item '%s' is not present on all "
+							 "processes.\n",
+							 item->name());
 					++nFailed;
 					continue;
 				}
@@ -289,7 +295,9 @@ bool GenericList::equality(ProcessPool &procPool)
 					return false;
 				if (!procPool.allTrue(true))
 				{
-					Messenger::error("GenericList equality check failed - item '%s' is not of the same type (%s) on all processes.\n", item->name(), item->itemClassName());
+					Messenger::error("GenericList equality check failed - item '%s' is not of the same "
+							 "type (%s) on all processes.\n",
+							 item->name(), item->itemClassName());
 					++nFailed;
 					continue;
 				}
@@ -319,7 +327,9 @@ bool GenericList::equality(ProcessPool &procPool)
 				GenericItem *item = find(itemName);
 				if (!procPool.allTrue(item))
 				{
-					Messenger::error("GenericList equality check failed - item '%s' not found on process %i.\n", item->name(), procPool.poolRank());
+					Messenger::error(
+						"GenericList equality check failed - item '%s' not found on process %i.\n",
+						item->name(), procPool.poolRank());
 					++nFailed;
 					continue;
 				}
@@ -329,8 +339,9 @@ bool GenericList::equality(ProcessPool &procPool)
 					return false;
 				if (!procPool.allTrue(DissolveSys::sameString(item->itemClassName(), itemClassName)))
 				{
-					Messenger::error("GenericList equality check failed - item '%s' not of the correct type (is %s) on process %i.\n", item->name(), item->itemClassName(),
-							 procPool.poolRank());
+					Messenger::error("GenericList equality check failed - item '%s' not of the correct "
+							 "type (is %s) on process %i.\n",
+							 item->name(), item->itemClassName(), procPool.poolRank());
 					++nFailed;
 					continue;
 				}

@@ -33,20 +33,18 @@ class ModuleGroup;
 // Set of Module Groups
 class ModuleGroups
 {
-      public:
-	// Constructor
+	public:
 	ModuleGroups();
-	// Destructor
 	~ModuleGroups();
 
 	/*
 	 * Module Types
 	 */
-      private:
+	private:
 	// List of allowed Module types in any group
 	CharStringList allowedModuleTypes_;
 
-      public:
+	public:
 	// Add allowed Module type
 	void addAllowedModuleType(const char *moduleType);
 	// Set list of allowed Module types
@@ -59,13 +57,13 @@ class ModuleGroups
 	/*
 	 * Module Groups
 	 */
-      private:
+	private:
 	// Current list of groups
 	List<ModuleGroup> groups_;
 	// RefList of all Modules present in all groups
 	RefDataList<Module, ModuleGroup *> allModules_;
 
-      public:
+	public:
 	// Add Module to specified group, creating it if necessary
 	ModuleGroup *addModule(Module *module, const char *groupName);
 	// Remove Module

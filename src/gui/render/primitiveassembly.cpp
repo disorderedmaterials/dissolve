@@ -21,10 +21,8 @@
 
 #include "gui/render/primitiveassembly.h"
 
-// Constructor
 PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>() {}
 
-// Destructor
 PrimitiveAssembly::~PrimitiveAssembly() {}
 
 // Clear all existing primitives

@@ -28,10 +28,11 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
-OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateGridNormaliseNode) {}
+OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode()
+	: OperateProcedureNodeBase(ProcedureNode::OperateGridNormaliseNode)
+{
+}
 
-// Destructor
 OperateGridNormaliseProcedureNode::~OperateGridNormaliseProcedureNode() {}
 
 /*

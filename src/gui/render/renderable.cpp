@@ -34,16 +34,19 @@ RefList<Renderable> Renderable::instances_;
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-	static EnumOptionsList RenderableTypeOptions = EnumOptionsList() << EnumOption(Renderable::ConfigurationRenderable, "Configuration") << EnumOption(Renderable::Data1DRenderable, "Data1D")
-									 << EnumOption(Renderable::Data2DRenderable, "Data2D") << EnumOption(Renderable::Data3DRenderable, "Data3D")
-									 << EnumOption(Renderable::SpeciesRenderable, "Species") << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
+	static EnumOptionsList RenderableTypeOptions = EnumOptionsList()
+						       << EnumOption(Renderable::ConfigurationRenderable, "Configuration")
+						       << EnumOption(Renderable::Data1DRenderable, "Data1D")
+						       << EnumOption(Renderable::Data2DRenderable, "Data2D")
+						       << EnumOption(Renderable::Data3DRenderable, "Data3D")
+						       << EnumOption(Renderable::SpeciesRenderable, "Species")
+						       << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
 
 	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
 
 	return options;
 }
 
-// Constructor
 Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
 {
 	// Instance
@@ -82,7 +85,6 @@ Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
 	styleVersion_ = 0;
 }
 
-// Destructor
 Renderable::~Renderable() { instances_.remove(this); }
 
 /*
@@ -272,7 +274,10 @@ bool Renderable::isVisible() const
 void Renderable::setColour(int r, int g, int b, int a) { colour_.setSingleColour(QColor(r, g, b, a)); }
 
 // Set basic colour
-void Renderable::setColour(StockColours::StockColour stockColour) { colour_.setSingleColour(StockColours::stockColour(stockColour)); }
+void Renderable::setColour(StockColours::StockColour stockColour)
+{
+	colour_.setSingleColour(StockColours::stockColour(stockColour));
+}
 
 // Return local colour definition for display
 ColourDefinition &Renderable::colour() { return colour_; }
@@ -294,7 +299,10 @@ int Renderable::styleVersion() const { return styleVersion_; }
 Primitive *Renderable::createPrimitive(GLenum type, bool colourData) { return primitives_.add(type, colourData); }
 
 // Reinitialise managed Primitive list to the size specified
-void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData) { primitives_.reinitialise(newSize, type, colourData); }
+void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData)
+{
+	primitives_.reinitialise(newSize, type, colourData);
+}
 
 // Return number of primitives managed by the Renderable
 int Renderable::nPrimitives() const { return primitives_.nPrimitives(); }
@@ -306,7 +314,8 @@ Primitive *Renderable::primitive(int n) { return primitives_[n]; }
 void Renderable::removePrimitive(Primitive *primitive) { primitives_.remove(primitive); }
 
 // Update primitives and send to display
-void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context, double pixelScaling)
+void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context,
+					 double pixelScaling)
 {
 	// If this Renderable is not visible, return now
 	if (!visible_)
@@ -324,7 +333,8 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
 		upToDate = false;
 	else if (lastAxesVersion_ != axes.version())
 		upToDate = false;
-	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true))
+	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_,
+					  CharString("%p@%i", group_, colourDefinition.version()), true))
 		upToDate = false;
 	else if (lastDataVersion_ != dataVersion())
 		upToDate = false;

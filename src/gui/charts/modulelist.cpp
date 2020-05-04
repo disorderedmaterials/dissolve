@@ -36,8 +36,8 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-// Constructor
-ModuleListChart::ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration) : ChartBase(), dissolve_(dissolve)
+ModuleListChart::ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration)
+	: ChartBase(), dissolve_(dissolve)
 {
 	refreshing_ = false;
 
@@ -95,7 +95,8 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
 		p2 = QPoint(width() / 2, block->geometry().top());
 		painter.drawLine(p1, p2);
 		painter.setBrush(Qt::black);
-		painter.drawEllipse(p2, metrics.blockDentRadius() - metrics.blockBorderWidth() - 1, metrics.blockDentRadius() - metrics.blockBorderWidth() - 1);
+		painter.drawEllipse(p2, metrics.blockDentRadius() - metrics.blockBorderWidth() - 1,
+				    metrics.blockDentRadius() - metrics.blockBorderWidth() - 1);
 
 		top = block->geometry().bottom();
 	}
@@ -158,7 +159,8 @@ void ModuleListChart::updateContentBlocks()
 			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
 			newWidgets.append(block);
 			moduleBlockWidgets_.remove(block);
-			Messenger::printVerbose("Using existing ModuleBlock %p for Module %p (%s).\n", block, module, module->uniqueName());
+			Messenger::printVerbose("Using existing ModuleBlock %p for Module %p (%s).\n", block, module,
+						module->uniqueName());
 		}
 		else
 		{
@@ -168,7 +170,8 @@ void ModuleListChart::updateContentBlocks()
 			connect(block, SIGNAL(remove(const QString &)), this, SLOT(blockRemovalRequested(const QString &)));
 			newWidgets.append(block);
 			chartBlocks_.append(block);
-			Messenger::printVerbose("Creating new ModuleBlock %p for Module %p (%s).\n", block, module, module->uniqueName());
+			Messenger::printVerbose("Creating new ModuleBlock %p for Module %p (%s).\n", block, module,
+						module->uniqueName());
 		}
 	}
 
@@ -227,7 +230,8 @@ bool ModuleListChart::acceptDraggedObject(const MimeStrings *strings)
 	// Check the content of the strings
 	if (strings->hasData(MimeString::ModuleType))
 	{
-		// We accept the drop of an object specifying a Module type - we'll create a new instance of this type in the list
+		// We accept the drop of an object specifying a Module type - we'll create a new instance of this type in the
+		// list
 		return true;
 	}
 	else if (strings->hasData(MimeString::LocalType))
@@ -494,8 +498,9 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 	hotSpot->setSurroundingBlocks(lastVisibleBlock, NULL);
 	hotSpot = hotSpot->next();
 
-	// Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero height
-	// 	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next()) spot->setWidth(maxWidth);
+	// Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero
+	// height 	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next())
+	// spot->setWidth(maxWidth);
 	for (ChartHotSpot *spot = hotSpot; spot != NULL; spot = spot->next())
 		spot->setHeight(0);
 

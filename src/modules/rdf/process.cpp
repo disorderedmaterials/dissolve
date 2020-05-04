@@ -48,7 +48,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
 		return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
 	Averaging::AveragingScheme averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-	PairBroadeningFunction &intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+	PairBroadeningFunction &intraBroadening =
+		keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
 	const double useHalfCellRange = keywords_.asBool("UseHalfCellRange");
 	const double specifiedRange = keywords_.asDouble("Range");
@@ -67,19 +68,23 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	if (averaging <= 1)
 		Messenger::print("RDF: No averaging of partials will be performed.\n");
 	else
-		Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().keyword(averagingScheme));
+		Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging,
+				 Averaging::averagingSchemes().keyword(averagingScheme));
 	if (intraBroadening.function() == PairBroadeningFunction::NoFunction)
 		Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
 	else
-		Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s.", intraBroadening.summary().get());
+		Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s.",
+				 intraBroadening.summary().get());
 	Messenger::print("RDF: Calculation method is '%s'.\n", partialsMethods().keyword(method));
 	Messenger::print("RDF: Save data is %s.\n", DissolveSys::onOff(saveData));
-	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DissolveSys::onOff(smoothing > 0));
+	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing,
+			 DissolveSys::onOff(smoothing > 0));
 	Messenger::print("\n");
 
 	/*
-	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
-	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
+	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or
+	 * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
+	 * for each.
 	 */
 	for (Configuration *cfg : targetConfigurations_)
 	{
@@ -90,13 +95,15 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		double rdfRange = cfg->box()->inscribedSphereRadius();
 		if (useHalfCellRange)
 		{
-			Messenger::print("Maximal cutoff used for Configuration '%s' (%f Angstroms).\n", cfg->niceName(), rdfRange);
+			Messenger::print("Maximal cutoff used for Configuration '%s' (%f Angstroms).\n", cfg->niceName(),
+					 rdfRange);
 		}
 		else
 		{
 			if (specifiedRange > rdfRange)
-				return Messenger::error("Specified RDF range of %f Angstroms is out of range for Configuration '%s' (max = %f Angstroms).\n", specifiedRange, cfg->niceName(),
-							rdfRange);
+				return Messenger::error("Specified RDF range of %f Angstroms is out of range for Configuration "
+							"'%s' (max = %f Angstroms).\n",
+							specifiedRange, cfg->niceName(), rdfRange);
 			rdfRange = specifiedRange;
 			Messenger::print("Cutoff for Configuration '%s' is %f Angstroms.\n", cfg->niceName(), rdfRange);
 		}
@@ -105,7 +112,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		rdfRange = int(rdfRange / binWidth) * binWidth;
 		Messenger::print("Cutoff (snapped to bin width) is %f Angstroms.\n", rdfRange);
 
-		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
+		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the
+		// uniqueName_)
 		bool alreadyUpToDate;
 		calculateGR(procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
 		PartialSet &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
@@ -123,7 +131,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			{
 				if (!cfg->moduleData().contains(CharString("OriginalGR_%i", n)))
 					continue;
-				PartialSet &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), CharString("OriginalGR_%i", n));
+				PartialSet &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(),
+											CharString("OriginalGR_%i", n));
 				p.setObjectTags(CharString("%s//OriginalGR", cfg->niceName()), CharString("Avg%i", n));
 			}
 
@@ -145,7 +154,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		}
 
 		// Form unweighted g(r) from original g(r), applying any requested smoothing / intramolecular broadening
-		PartialSet &unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", NULL, GenericItem::InRestartFileFlag);
+		PartialSet &unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", NULL,
+										  GenericItem::InRestartFileFlag);
 		calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
 
 		// Set names of resources and filename in Data1D within the PartialSet

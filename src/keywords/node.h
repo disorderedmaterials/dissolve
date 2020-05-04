@@ -33,33 +33,31 @@ class ProcedureNode;
 // Keyword with ProcedureNode base class
 class NodeKeywordBase
 {
-      public:
-	// Constructor
+	public:
 	NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
-	// Destructor
 	virtual ~NodeKeywordBase();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent ProcedureNode
 	ProcedureNode *parentNode_;
 
-      public:
+	public:
 	// Return parent ProcedureNode
 	ProcedureNode *parentNode() const;
 
 	/*
 	 * Target Node
 	 */
-      private:
+	private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 	// Whether to accept nodes within scope only
 	bool onlyInScope_;
 
-      public:
+	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
 	// Return whether to accept nodes within scope only
@@ -72,7 +70,7 @@ class NodeKeywordBase
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
@@ -80,19 +78,17 @@ class NodeKeywordBase
 // Keyword with ProcedureNode
 template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordData<N *>
 {
-      public:
-	// Constructor
+	public:
 	NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node = NULL)
-	    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
+		: NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
 	{
 	}
-	// Destructor
 	~NodeKeyword() {}
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
@@ -101,12 +97,15 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
 		if (!parentNode())
-			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+						KeywordBase::name());
 
 		// Locate the named node - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+		ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg))
+						    : parentNode()->nodeExists(parser.argc(startArg));
 		if (!node)
-			return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+			return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+						KeywordBase::name());
 
 		return setNode(node);
 	}
@@ -126,7 +125,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	/*
 	 * Target Node
 	 */
-      public:
+	public:
 	// Set the target node
 	bool setNode(ProcedureNode *node)
 	{
@@ -134,7 +133,8 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 			return false;
 
 		if (!node->isType(nodeType()))
-			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n",
+						node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
 						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData<N *>::data_ = dynamic_cast<N *>(node);
@@ -151,14 +151,14 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied ProcedureNode in the contained data
 	void removeReferencesTo(ProcedureNode *node)
 	{

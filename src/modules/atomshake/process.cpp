@@ -64,7 +64,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Print argument/parameter summary
 		Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
 		Messenger::print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-		Messenger::print("AtomShake: Step size for adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", stepSize, stepSizeMin, stepSizeMax);
+		Messenger::print("AtomShake: Step size for adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n",
+				 stepSize, stepSizeMin, stepSizeMax);
 		Messenger::print("AtomShake: Target acceptance rate is %f.\n", targetAcceptanceRate);
 		Messenger::print("\n");
 
@@ -129,7 +130,9 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 					for (shake = 0; shake < nShakesPerAtom; ++shake)
 					{
 						// Create a random translation vector
-						rDelta.set(procPool.randomPlusMinusOne() * stepSize, procPool.randomPlusMinusOne() * stepSize, procPool.randomPlusMinusOne() * stepSize);
+						rDelta.set(procPool.randomPlusMinusOne() * stepSize,
+							   procPool.randomPlusMinusOne() * stepSize,
+							   procPool.randomPlusMinusOne() * stepSize);
 
 						// Translate Atom and update its Cell position
 						i->translateCoordinates(rDelta);
@@ -153,7 +156,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 							changeStore.revert(n);
 
 						// Increase attempt counters
-						// The strategy in force at any one time may vary, so use the distributor's helper functions.
+						// The strategy in force at any one time may vary, so use the distributor's
+						// helper functions.
 						if (distributor.collectStatistics())
 						{
 							if (accept)
@@ -194,9 +198,11 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
 		// Calculate and print acceptance rate
 		double rate = double(nAccepted) / nAttempts;
-		Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nAttempts,
+				 timer.totalTimeString(), procPool.accumulatedTimeString());
 
-		Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
+		Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * rate, nAccepted,
+				 nAttempts);
 
 		// Update and set translation step size
 		stepSize *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;

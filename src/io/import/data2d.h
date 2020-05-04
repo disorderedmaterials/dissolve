@@ -34,30 +34,28 @@ class Vec3DoubleKeyword;
 // Data2D Import Formats
 class Data2DImportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available Data2D formats
 	enum Data2DImportFormat
 	{
 		CartesianData2D,
 		nData2DImportFormats
 	};
-	// Constructors
 	Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
 	Data2DImportFileFormat(const char *filename, Data2DImportFormat format = CartesianData2D);
-	// Destructor
 	~Data2DImportFileFormat();
 
 	/*
 	 * Keyword Options
 	 */
-      private:
+	private:
 	// Set up keywords for the format
 	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for Data2DImportFormat
 	static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> data2DImportFormats();
 	// Return number of available formats
@@ -72,18 +70,18 @@ class Data2DImportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return true; }
 
 	/*
 	 * Data Import
 	 */
-      private:
+	private:
 	// Import cartesian data from supplied parser
 	bool importCartesian(LineParser &parser, Data2D &data);
 
-      public:
+	public:
 	// Import Data2D using current filename and format
 	bool importData(Data2D &data, ProcessPool *procPool = NULL);
 	// Import Data2D using supplied parser and current format

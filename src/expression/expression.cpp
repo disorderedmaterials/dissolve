@@ -31,16 +31,12 @@
 #include <stdarg.h>
 #include <string.h>
 
-// Constructor
 Expression::Expression(const char *expressionText) { set(expressionText); }
 
-// Destructor
 Expression::~Expression() { clear(); }
 
-// Copy constructor
 Expression::Expression(const Expression &source) { (*this) = source; }
 
-// Assignment operator
 void Expression::operator=(const Expression &source)
 {
 	// Reset our structure, and regenerate from the expression string
@@ -62,7 +58,8 @@ void Expression::clear()
 	statements_.clear();
 
 	// Clear variables and constants, except those that are in the persistent nodes list
-	std::remove_if(variables_.begin(), variables_.end(), [&](const ExpressionNode *x) { return !persistentNodes_.contains(x); });
+	std::remove_if(variables_.begin(), variables_.end(),
+		       [&](const ExpressionNode *x) { return !persistentNodes_.contains(x); });
 
 	for (auto varRef : variables_)
 	{
@@ -170,7 +167,8 @@ ExpressionNode *Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
 	// Check that the correct number of arguments were given to the function
 	if (leaf->nArgs() != ExpressionFunctions::data[func].nArguments)
 	{
-		Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword, ExpressionFunctions::data[func].nArguments,
+		Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword,
+				 ExpressionFunctions::data[func].nArguments,
 				 ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
 		return NULL;
 	}
@@ -179,7 +177,8 @@ ExpressionNode *Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
 }
 
 // Add a function node to the list (overloaded to accept simple arguments instead of a list)
-ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *a1, ExpressionNode *a2, ExpressionNode *a3, ExpressionNode *a4)
+ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *a1, ExpressionNode *a2,
+					    ExpressionNode *a3, ExpressionNode *a4)
 {
 	// Create new command node
 	ExpressionFunction *leaf = new ExpressionFunction(func);
@@ -199,7 +198,8 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
 	// Check that the correct number of arguments were given to the function
 	if (leaf->nArgs() != ExpressionFunctions::data[func].nArguments)
 	{
-		Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword, ExpressionFunctions::data[func].nArguments,
+		Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword,
+				 ExpressionFunctions::data[func].nArguments,
 				 ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
 		return NULL;
 	}

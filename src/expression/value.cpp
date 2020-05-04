@@ -22,7 +22,6 @@
 #include "expression/value.h"
 #include "base/charstring.h"
 
-// Constructors
 ExpressionValue::ExpressionValue()
 {
 	valueI_ = 0;
@@ -47,13 +46,10 @@ ExpressionValue::ExpressionValue(double value)
 	typeFixed_ = true;
 }
 
-// Destructor
 ExpressionValue::~ExpressionValue() {}
 
-// Copy constructor
 ExpressionValue::ExpressionValue(const ExpressionValue &source) { (*this) = source; }
 
-// Assignment operator
 void ExpressionValue::operator=(const ExpressionValue &source)
 {
 	if (typeFixed_)
@@ -89,7 +85,6 @@ void ExpressionValue::operator=(const ExpressionValue &source)
 // Return the current result type
 ExpressionValue::ValueType ExpressionValue::type() const { return type_; }
 
-// Assignment operator (integer)
 void ExpressionValue::operator=(int i)
 {
 	valueI_ = i;
@@ -98,7 +93,6 @@ void ExpressionValue::operator=(int i)
 		type_ = IntegerType;
 }
 
-// Assignment operator (double)
 void ExpressionValue::operator=(double d)
 {
 	valueI_ = int(d);
@@ -143,7 +137,13 @@ bool ExpressionValue::isInteger() const { return (type_ == IntegerType); }
 bool ExpressionValue::isDouble() const { return (type_ == DoubleType); }
 
 // Return the supplied ExpressionValues both contain integer types
-bool ExpressionValue::bothIntegers(const ExpressionValue &a, const ExpressionValue &b) { return ((a.type_ == IntegerType) && (b.type_ == IntegerType)); }
+bool ExpressionValue::bothIntegers(const ExpressionValue &a, const ExpressionValue &b)
+{
+	return ((a.type_ == IntegerType) && (b.type_ == IntegerType));
+}
 
 // Return the supplied ExpressionValues both contain double types
-bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValue &b) { return ((a.type_ == DoubleType) && (b.type_ == DoubleType)); }
+bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValue &b)
+{
+	return ((a.type_ == DoubleType) && (b.type_ == DoubleType));
+}

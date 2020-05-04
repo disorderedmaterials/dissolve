@@ -35,8 +35,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 	/*
 	 * Chunk of objects, maintained by a DynamicArray
 	 */
-      public:
-	// Constructor
+	public:
 	ArrayChunk<T>(int nObjects = 512) : ListItem<ArrayChunk<T>>()
 	{
 		nObjects_ = nObjects;
@@ -46,7 +45,6 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 		nextAvailableObject_ = -1;
 		nUnusedObjects_ = 0;
 	}
-	// Destructor
 	~ArrayChunk()
 	{
 		if (objectArray_)
@@ -58,7 +56,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 	/*
 	 * Chunk Data
 	 */
-      private:
+	private:
 	// Number of objects in chunk
 	int nObjects_;
 	// Size of individual object
@@ -72,7 +70,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 	// Index of next available object
 	int nextAvailableObject_;
 
-      private:
+	private:
 	// Determine array offset of object
 	int objectOffset(T *object)
 	{
@@ -85,7 +83,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 		return (index < nObjects_ ? index : -1);
 	}
 
-      public:
+	public:
 	// Initialise chunk
 	bool initialise()
 	{
@@ -96,7 +94,9 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 		}
 		catch (bad_alloc &alloc)
 		{
-			Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : %s\n", alloc.what());
+			Messenger::error(
+				"ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : %s\n",
+				alloc.what());
 			return false;
 		}
 
@@ -107,7 +107,9 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 		}
 		catch (bad_alloc &alloc)
 		{
-			Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : %s\n", alloc.what());
+			Messenger::error(
+				"ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : %s\n",
+				alloc.what());
 			return false;
 		}
 
@@ -204,20 +206,19 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 // Dynamic Array Class
 template <class T> class DynamicArray
 {
-      public:
-	// Constructor
+	public:
 	DynamicArray<T>() { currentChunk_ = NULL; }
 
 	/*
 	 * Storage
 	 */
-      private:
+	private:
 	// List of object chunks maintained by this factory
 	List<ArrayChunk<T>> arrayChunks_;
 	// Current chunk from which objects are being taken
 	ArrayChunk<T> *currentChunk_;
 
-      private:
+	private:
 	// Produce a new object
 	T *produce()
 	{
@@ -232,7 +233,8 @@ template <class T> class DynamicArray
 			return currentChunk_->nextAvailable();
 		else
 		{
-			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
+			// Must search current chunk list to see if any current chunks have available space. If not, we will
+			// create a new one
 			for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
 			{
 				if (chunk == currentChunk_)
@@ -269,18 +271,19 @@ template <class T> class DynamicArray
 		}
 
 		// Couldn't find it!
-		printf("Internal Error - Tried to return an object (%p) to a DynamicArray chunk which didn't produce it.\n", object);
+		printf("Internal Error - Tried to return an object (%p) to a DynamicArray chunk which didn't produce it.\n",
+		       object);
 		return false;
 	}
 
 	/*
 	 * Array Creation / Initialisation
 	 */
-      private:
+	private:
 	// Array of pointers to our objects
 	Array<T *> array_;
 
-      public:
+	public:
 	// Clear array, returning all objects to the pool
 	void clear()
 	{
@@ -308,7 +311,7 @@ template <class T> class DynamicArray
 	/*
 	 * Set / Get
 	 */
-      public:
+	public:
 	// Add single item to end of array
 	T *add()
 	{
@@ -335,7 +338,8 @@ template <class T> class DynamicArray
 		if (!returnObject(array_[index]))
 			return;
 
-		// Now, we will simply swap the last item in the array for this one, changing its index in the process (unless it is the last item in the list)
+		// Now, we will simply swap the last item in the array for this one, changing its index in the process (unless
+		// it is the last item in the list)
 		if (index != (array_.nItems() - 1))
 		{
 			array_[index] = array_[array_.nItems() - 1];
@@ -350,7 +354,6 @@ template <class T> class DynamicArray
 	int nItems() const { return array_.nItems(); }
 	// Return item array
 	T **array() { return array_.array(); }
-	// Element access operator
 	T *operator[](int index)
 	{
 #ifdef CHECKS
@@ -396,8 +399,7 @@ template <class T> class DynamicArray
 // Iterator
 template <class T> class DynamicArrayIterator
 {
-      public:
-	// Constructor
+	public:
 	DynamicArrayIterator<T>(DynamicArray<T> &target) : arrayTarget_(target)
 	{
 		if (arrayTarget_.nItems() == 0)
@@ -413,7 +415,7 @@ template <class T> class DynamicArrayIterator
 		}
 	}
 
-      private:
+	private:
 	// Target DynamicArray
 	DynamicArray<T> &arrayTarget_;
 	// Current index for iterator
@@ -423,7 +425,7 @@ template <class T> class DynamicArrayIterator
 	// Result to return
 	T *result_;
 
-      public:
+	public:
 	// Iterate
 	T *iterate()
 	{
@@ -449,15 +451,14 @@ template <class T> class DynamicArrayIterator
 // Const Iterator
 template <class T> class DynamicArrayConstIterator
 {
-      public:
-	// Constructor
+	public:
 	DynamicArrayConstIterator<T>(const DynamicArray<T> &target) : arrayTarget_(target)
 	{
 		index_ = 0;
 		result_ = NULL;
 	}
 
-      private:
+	private:
 	// Target DynamicArray
 	const DynamicArray<T> &arrayTarget_;
 	// Current index for iterator
@@ -465,7 +466,7 @@ template <class T> class DynamicArrayConstIterator
 	// Result to return
 	const T *result_;
 
-      public:
+	public:
 	// Iterate
 	const T *iterate()
 	{

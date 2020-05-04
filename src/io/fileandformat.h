@@ -33,11 +33,9 @@ class LineParser;
 // File / Format Base
 class FileAndFormat
 {
-      public:
-	// Constructors
+	public:
 	FileAndFormat(int format = 0);
 	FileAndFormat(const char *filename = NULL, int format = 0);
-	// Destructor
 	virtual ~FileAndFormat();
 	// Conversion to const char*
 	operator const char *() const;
@@ -45,11 +43,11 @@ class FileAndFormat
 	/*
 	 * Available Formats
 	 */
-      protected:
+	protected:
 	// Format of associated file
 	int format_;
 
-      public:
+	public:
 	// Return number of available formats
 	virtual int nFormats() const = 0;
 	// Return format keyword for supplied index
@@ -72,11 +70,11 @@ class FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      protected:
+	protected:
 	// Associated filename / basename
 	CharString filename_;
 
-      public:
+	public:
 	// Return whether the file must exist
 	virtual bool fileMustExist() const = 0;
 	// Return whether the file actually exists
@@ -89,7 +87,7 @@ class FileAndFormat
 	/*
 	 * Check
 	 */
-      public:
+	public:
 	// Return whether a filename has been set
 	bool hasFilename() const;
 	// Return whether a filename and format have been set
@@ -98,18 +96,18 @@ class FileAndFormat
 	/*
 	 * Additional Options
 	 */
-      protected:
+	protected:
 	// Available keywords options
 	KeywordList keywords_;
 
-      public:
+	public:
 	// Return available keywords
 	KeywordList &keywords();
 
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Read format / filename from specified parser
 	bool read(LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Write format / filename to specified parser

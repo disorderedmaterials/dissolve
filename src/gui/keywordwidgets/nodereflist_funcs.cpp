@@ -28,8 +28,8 @@
 #include <QLabel>
 #include <QSpacerItem>
 
-// Constructor
-NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -104,8 +104,11 @@ void NodeRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 	refreshing_ = true;
 
 	// Get list of available nodes of the correct type and in the relevant scope
-	RefList<ProcedureNode> availableNodes = keyword_->onlyInScope() ? keyword_->parentNode()->nodesInScope(keyword_->nodeType()) : keyword_->parentNode()->nodes(keyword_->nodeType());
-	ListWidgetUpdater<NodeRefListKeywordWidget, ProcedureNode> listUpdater(ui_.NodeList, availableNodes, this, &NodeRefListKeywordWidget::updateListRow);
+	RefList<ProcedureNode> availableNodes = keyword_->onlyInScope()
+							? keyword_->parentNode()->nodesInScope(keyword_->nodeType())
+							: keyword_->parentNode()->nodes(keyword_->nodeType());
+	ListWidgetUpdater<NodeRefListKeywordWidget, ProcedureNode> listUpdater(ui_.NodeList, availableNodes, this,
+									       &NodeRefListKeywordWidget::updateListRow);
 
 	updateSummaryText();
 

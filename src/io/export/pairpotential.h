@@ -30,7 +30,7 @@ class PairPotential;
 // PairPotential Export Formats
 class PairPotentialExportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available data formats
 	enum PairPotentialExportFormat
 	{
@@ -38,13 +38,12 @@ class PairPotentialExportFileFormat : public FileAndFormat
 		DLPOLYTABLEPairPotential,
 		nPairPotentialExportFormats
 	};
-	// Constructor
 	PairPotentialExportFileFormat(const char *filename = NULL, PairPotentialExportFormat format = BlockPairPotential);
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for PairPotentialExportFormat
 	static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> pairPotentialExportFormats();
 	// Return number of available formats
@@ -59,20 +58,20 @@ class PairPotentialExportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return false; }
 
 	/*
 	 * Static Functions - PairPotentials
 	 */
-      private:
+	private:
 	// Export PairPotential as simple block data
 	bool exportBlock(LineParser &parser, PairPotential *pp);
 	// Export PairPotential as a DL_POLY TABLE file
 	bool exportDLPOLY(LineParser &parser, PairPotential *pp);
 
-      public:
+	public:
 	// Export PairPotential using current filename and format
 	bool exportData(PairPotential *pp);
 };

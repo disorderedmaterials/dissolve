@@ -37,16 +37,14 @@ class CellNeighbour;
  */
 class Cell
 {
-      public:
-	// Constructor
+	public:
 	Cell();
-	// Destructor
 	~Cell();
 
 	/*
 	 * Identity
 	 */
-      private:
+	private:
 	// Grid reference
 	Vec3<int> gridReference_;
 	// Unique index
@@ -54,7 +52,7 @@ class Cell
 	// Real-space coordinates at the centre of this cell
 	Vec3<double> centre_;
 
-      public:
+	public:
 	// Set grid reference
 	void setGridReference(int x, int y, int z);
 	// Return grid reference
@@ -71,13 +69,14 @@ class Cell
 	/*
 	 * Contents
 	 */
-      private:
+	private:
 	// Array of Atoms contained in this Cell
 	OrderedVector<Atom *> atoms_;
 	// Return array of contained Atoms, ordered by their array indices
-	OrderedVector<Atom *> indexOrderedAtoms_ = OrderedVector<Atom *>([](const Atom *lhs, const Atom *rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
+	OrderedVector<Atom *> indexOrderedAtoms_ =
+		OrderedVector<Atom *>([](const Atom *lhs, const Atom *rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
 
-      public:
+	public:
 	// Return array of contained Atoms
 	OrderedVector<Atom *> &atoms();
 	// Return array of contained Atoms, ordered by their array indices
@@ -92,7 +91,7 @@ class Cell
 	/*
 	 * Neighbours
 	 */
-      private:
+	private:
 	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
 	std::vector<Cell *> cellNeighbours_, mimCellNeighbours_;
 	// Array of all neighbouring cells
@@ -100,7 +99,7 @@ class Cell
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 
-      public:
+	public:
 	// Add Cell neighbours
 	void addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation

@@ -28,16 +28,15 @@
 // Waasmaier & Kirfel '95 Form Factor Data
 class FormFactorData_WK1995 : public FormFactorData
 {
-      public:
-	// Constructor
-	FormFactorData_WK1995(int z = 0, int formalCharge = 0, std::vector<double> a = {}, std::vector<double> b = {}, double c = 0.0);
-	// Assignment Operator
+	public:
+	FormFactorData_WK1995(int z = 0, int formalCharge = 0, std::vector<double> a = {}, std::vector<double> b = {},
+			      double c = 0.0);
 	FormFactorData_WK1995 &operator=(const FormFactorData_WK1995 &source);
 
 	/*
 	 * Form Factor Data
 	 */
-      private:
+	private:
 	// Exponential pre-factors
 	std::vector<double> a_;
 	// Exponential factors
@@ -45,14 +44,14 @@ class FormFactorData_WK1995 : public FormFactorData
 	// Constant offset
 	double c_;
 
-      public:
+	public:
 	// Return index of isotope in it's Element parent's list
 	int index() const;
 
 	/*
 	 * Form Factor Generation
 	 */
-      public:
+	public:
 	// Return magnitude of form factor at specified Q value
 	double magnitude(double Q = 0.0) const;
 };

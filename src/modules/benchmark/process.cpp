@@ -68,7 +68,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				Messenger::unMute();
 				timing += timer.split();
 			}
-			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "Generator"), "Configuration generator", timing, saveTimings);
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "Generator"),
+					  "Configuration generator", timing, saveTimings);
 		}
 
 		/*
@@ -88,11 +89,13 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				bool upToDate;
 				Timer timer;
 				Messenger::mute();
-				rdfModule.calculateGR(procPool, cfg, RDFModule::CellsMethod, cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
+				rdfModule.calculateGR(procPool, cfg, RDFModule::CellsMethod,
+						      cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
 				Messenger::unMute();
 				timing += timer.split();
 			}
-			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFCells"), "RDF (Cells) to half-cell limit", timing, saveTimings);
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFCells"),
+					  "RDF (Cells) to half-cell limit", timing, saveTimings);
 		}
 
 		/*
@@ -112,11 +115,13 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				bool upToDate;
 				Timer timer;
 				Messenger::mute();
-				rdfModule.calculateGR(procPool, cfg, RDFModule::SimpleMethod, cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
+				rdfModule.calculateGR(procPool, cfg, RDFModule::SimpleMethod,
+						      cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
 				Messenger::unMute();
 				timing += timer.split();
 			}
-			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFSimple"), "RDF (Simple) to half-cell limit", timing, saveTimings);
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFSimple"),
+					  "RDF (Simple) to half-cell limit", timing, saveTimings);
 		}
 
 		/*
@@ -133,7 +138,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				Messenger::unMute();
 				timing += timer.split();
 			}
-			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "IntraEnergy"), "Intramolecular energy", timing, saveTimings);
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "IntraEnergy"),
+					  "Intramolecular energy", timing, saveTimings);
 		}
 
 		/*
@@ -150,7 +156,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				Messenger::unMute();
 				timing += timer.split();
 			}
-			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy", timing, saveTimings);
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "InterEnergy"),
+					  "Interatomic energy", timing, saveTimings);
 		}
 
 		/*
@@ -193,7 +200,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				Messenger::unMute();
 				timing += timer.split();
 			}
-			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RegionalDist"), "Distributor (regional)", timing, saveTimings);
+			printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RegionalDist"),
+					  "Distributor (regional)", timing, saveTimings);
 		}
 	}
 
@@ -201,7 +209,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 }
 
 // Print timing information, assessing it against last value in existing timings (if found)
-void BenchmarkModule::printTimingResult(const char *testFile, const char *testDescription, const SampledDouble &timing, bool storeNewTiming)
+void BenchmarkModule::printTimingResult(const char *testFile, const char *testDescription, const SampledDouble &timing,
+					bool storeNewTiming)
 {
 	bool existingDataAvailable = false;
 
@@ -222,7 +231,8 @@ void BenchmarkModule::printTimingResult(const char *testFile, const char *testDe
 	{
 		SampledDouble lastTiming = existingTimings.values().last();
 		double deltaT = lastTiming.value() - timing.value();
-		Messenger::print("  %50s  %8.4e s (+/- %8.4e s) => %c%0.3e s (%c%0.2f%%)\n", testDescription, timing.value(), timing.stDev(), deltaT < timing.value() ? '+' : '-', fabs(deltaT),
+		Messenger::print("  %50s  %8.4e s (+/- %8.4e s) => %c%0.3e s (%c%0.2f%%)\n", testDescription, timing.value(),
+				 timing.stDev(), deltaT < timing.value() ? '+' : '-', fabs(deltaT),
 				 deltaT < timing.value() ? '+' : '-', fabs((deltaT / timing.value()) * 100.0));
 	}
 	else

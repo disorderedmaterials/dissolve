@@ -32,27 +32,25 @@ class Module;
 // Keyword with Module RefList data
 class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 {
-      public:
-	// Constructors
+	public:
 	ModuleRefListKeyword(RefList<Module> &references, int maxModules = -1);
 	ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules = -1);
-	// Destructor
 	~ModuleRefListKeyword();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Module type(s) to allow
 	CharStringList moduleTypes_;
 	// Maximum number of modules to allow in list (-1 for any number)
 	int maxModules_;
 
-      protected:
+	protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 
-      public:
+	public:
 	// Return the Module type(s) to allow
 	const CharStringList &moduleTypes() const;
 	// Return maximum number of Modules to allow in the list
@@ -61,7 +59,7 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -74,7 +72,7 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied Module in the contained data
 	void removeReferencesTo(Module *module);
 };

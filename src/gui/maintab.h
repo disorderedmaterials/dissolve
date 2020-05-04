@@ -42,8 +42,7 @@ class QWidget;
 // Base Tab
 class MainTab
 {
-      public:
-	// Constructor / Destructor
+	public:
 	MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page);
 	virtual ~MainTab();
 	// Tab Types
@@ -62,7 +61,7 @@ class MainTab
 	/*
 	 * Data
 	 */
-      protected:
+	protected:
 	// Reference to Dissolve
 	Dissolve &dissolve_;
 	// Pointer to main window
@@ -74,11 +73,11 @@ class MainTab
 	// Unique title (name) of tab
 	CharString title_;
 
-      protected:
+	protected:
 	// Raise suitable dialog for entering / checking new tab name
 	virtual QString getNewTitle(bool &ok);
 
-      public:
+	public:
 	// Return tab type
 	virtual TabType type() const = 0;
 	// Return page widget
@@ -89,11 +88,11 @@ class MainTab
 	/*
 	 * Management
 	 */
-      protected:
+	protected:
 	// Return whether the title of the tab can be changed
 	virtual bool canChangeTitle() const;
 
-      public:
+	public:
 	// Rename tab through suitable dialog / widget
 	bool rename();
 	// Return whether the tab can be closed (after any necessary user querying, etc.)
@@ -102,11 +101,11 @@ class MainTab
 	/*
 	 * Update
 	 */
-      protected:
+	protected:
 	// Lock for widget refresh
 	Lock refreshLock_;
 
-      public:
+	public:
 	// Update controls in tab
 	virtual void updateControls() = 0;
 	// Disable sensitive controls within the tab
@@ -117,7 +116,7 @@ class MainTab
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser &parser) const = 0;
 	// Read widget state through specified LineParser

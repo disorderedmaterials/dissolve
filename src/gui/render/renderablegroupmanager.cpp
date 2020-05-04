@@ -23,7 +23,6 @@
 #include "base/sysfunc.h"
 #include "gui/render/renderable.h"
 
-// Constructor
 RenderableGroupManager::RenderableGroupManager()
 {
 	stockColourUsageCount_.initialise(StockColours::nStockColours);
@@ -81,7 +80,8 @@ RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, cons
 	{
 		if (DissolveSys::sameString(renderable->group()->name(), groupName))
 		{
-			Messenger::print("Renderable '%s' already associated to group '%s'...\n", renderable->name(), renderable->group()->name());
+			Messenger::print("Renderable '%s' already associated to group '%s'...\n", renderable->name(),
+					 renderable->group()->name());
 			return renderable->group();
 		}
 

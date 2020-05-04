@@ -21,7 +21,6 @@
 
 #include "gui/addconfigurationdialog.h"
 
-// Constructor
 AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
@@ -33,11 +32,13 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, const Dissolve &
 	connect(ui_.AddConfigurationWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }
 
-// Destructor
 AddConfigurationDialog::~AddConfigurationDialog() {}
 
 // Reset, ready for adding a new Configuration
 void AddConfigurationDialog::reset() { ui_.AddConfigurationWidget->reset(); }
 
 // Copy imported Configuration over to the specified Dissolve object
-Configuration *AddConfigurationDialog::importConfiguration(Dissolve &dissolve) { return ui_.AddConfigurationWidget->importConfiguration(dissolve); }
+Configuration *AddConfigurationDialog::importConfiguration(Dissolve &dissolve)
+{
+	return ui_.AddConfigurationWidget->importConfiguration(dissolve);
+}

@@ -28,25 +28,22 @@
 // Character String List
 class CharStringList
 {
-      public:
-	// Constructor / Destructor
+	public:
 	CharStringList();
 	~CharStringList();
-	// Copy constructor
 	CharStringList(const CharStringList &source);
 	// Conversion from const char*
 	CharStringList(const char *text);
-	// Assignment operator
 	void operator=(const CharStringList &source);
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Array of CharStrings
 	Array<CharString> strings_;
 
-      public:
+	public:
 	// Clear list
 	void clear();
 	// Add string to list

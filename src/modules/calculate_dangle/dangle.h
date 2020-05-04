@@ -36,23 +36,21 @@ class SpeciesSite;
 // Calculate Distance-Angle Module
 class CalculateDAngleModule : public Module
 {
-      public:
-	// Constructor
+	public:
 	CalculateDAngleModule();
-	// Destructor
 	~CalculateDAngleModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -65,14 +63,14 @@ class CalculateDAngleModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
@@ -81,7 +79,7 @@ class CalculateDAngleModule : public Module
 	/*
 	 * Functions / Data
 	 */
-      private:
+	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A
@@ -106,7 +104,7 @@ class CalculateDAngleModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

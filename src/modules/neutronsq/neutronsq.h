@@ -34,23 +34,21 @@ class Weights;
 // SQ Module
 class NeutronSQModule : public Module
 {
-      public:
-	// Constructor
+	public:
 	NeutronSQModule();
-	// Destructor
 	~NeutronSQModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -63,7 +61,7 @@ class NeutronSQModule : public Module
 	/*
 	 * Initialisation
 	 */
-      private:
+	private:
 	// Isotopologue information
 	IsotopologueCollection isotopologues_;
 	// Exchangeable AtomTypes
@@ -71,11 +69,11 @@ class NeutronSQModule : public Module
 	// Reference F(Q) file and format
 	Data1DImportFileFormat referenceFQ_;
 
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
-      public:
+	public:
 	// Normalisation Type enum
 	enum NormalisationType
 	{
@@ -92,33 +90,35 @@ class NeutronSQModule : public Module
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
-      public:
+	public:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Members / Functions
 	 */
-      private:
+	private:
 	// Test data
 	Data1DStore testData_;
 
-      public:
+	public:
 	// Calculate weighted g(r) from supplied unweighted g(r) and Weights
-	bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights, NeutronSQModule::NormalisationType normalisation);
+	bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights,
+				 NeutronSQModule::NormalisationType normalisation);
 	// Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-	bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights, NeutronSQModule::NormalisationType normalisation);
+	bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights,
+				 NeutronSQModule::NormalisationType normalisation);
 	// Calculate Weights matrix summed over target Configurations
 	bool calculateSummedWeights(Weights &summedWeights) const;
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

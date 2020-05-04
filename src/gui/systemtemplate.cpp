@@ -28,15 +28,12 @@
 #include <QXmlStreamReader>
 #include <stdlib.h>
 
-// Constructor / Destructor
 SystemTemplate::SystemTemplate() { toolButton_ = NULL; }
 
 SystemTemplate::~SystemTemplate() {}
 
-// Copy Constructor
 SystemTemplate::SystemTemplate(const SystemTemplate &source) { (*this) = source; }
 
-// Assignment operator
 void SystemTemplate::operator=(const SystemTemplate &source)
 {
 	name_ = source.name_;
@@ -64,7 +61,8 @@ bool SystemTemplate::read(const QDir rootResourceDir)
 	if (!infoReader.readNextStartElement())
 		return Messenger::error("Failed to do initial read from system template xml.\n");
 	if (infoReader.name() != "systemtemplate")
-		return Messenger::error("System template file has wrong root node type (%s).\n", qPrintable(infoReader.name().toString()));
+		return Messenger::error("System template file has wrong root node type (%s).\n",
+					qPrintable(infoReader.name().toString()));
 
 	QString inputFileResource;
 
@@ -127,7 +125,8 @@ QToolButton *SystemTemplate::toolButton() const { return toolButton_; }
 QToolButton *SystemTemplate::createButton()
 {
 	if (toolButton_)
-		Messenger::warn("A QToolButton already exists for the SystemTemplate '%s'. It will be overwritten.\n", qPrintable(name_));
+		Messenger::warn("A QToolButton already exists for the SystemTemplate '%s'. It will be overwritten.\n",
+				qPrintable(name_));
 	toolButton_ = new QToolButton;
 	toolButton_->setText(name_);
 	toolButton_->setMaximumSize(QSize(200, 200));

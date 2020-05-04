@@ -25,20 +25,26 @@
 #include "classes/pairpotential.h"
 #include "math/data1d.h"
 
-// Constructor
-PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char *filename, PairPotentialExportFormat format) : FileAndFormat(filename, format) {}
+PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char *filename, PairPotentialExportFormat format)
+	: FileAndFormat(filename, format)
+{
+}
 
 /*
  * Format Access
  */
 
 // Return enum options for PairPotentialExportFormat
-EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> PairPotentialExportFileFormat::pairPotentialExportFormats()
+EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>
+PairPotentialExportFileFormat::pairPotentialExportFormats()
 {
-	static EnumOptionsList PairPotentialExportFormats = EnumOptionsList() << EnumOption(PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data")
-									      << EnumOption(PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File");
+	static EnumOptionsList PairPotentialExportFormats =
+		EnumOptionsList() << EnumOption(PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data")
+				  << EnumOption(PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table",
+						"DL_POLY TABLE File");
 
-	static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> options("PairPotentialExportFileFormat", PairPotentialExportFormats);
+	static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> options("PairPotentialExportFileFormat",
+											     PairPotentialExportFormats);
 
 	return options;
 }
@@ -47,13 +53,22 @@ EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> PairPotent
 int PairPotentialExportFileFormat::nFormats() const { return PairPotentialExportFileFormat::nPairPotentialExportFormats; }
 
 // Return format keyword for supplied index
-const char *PairPotentialExportFileFormat::formatKeyword(int id) const { return pairPotentialExportFormats().keywordByIndex(id); }
+const char *PairPotentialExportFileFormat::formatKeyword(int id) const
+{
+	return pairPotentialExportFormats().keywordByIndex(id);
+}
 
 // Return description string for supplied index
-const char *PairPotentialExportFileFormat::formatDescription(int id) const { return pairPotentialExportFormats().descriptionByIndex(id); }
+const char *PairPotentialExportFileFormat::formatDescription(int id) const
+{
+	return pairPotentialExportFormats().descriptionByIndex(id);
+}
 
 // Return current format as PairPotentialExportFormat
-PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const { return (PairPotentialExportFileFormat::PairPotentialExportFormat)format_; }
+PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
+{
+	return (PairPotentialExportFileFormat::PairPotentialExportFormat)format_;
+}
 
 /*
  * Export Functions
@@ -70,14 +85,18 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
 	const int nPoints = pp->nPoints();
 
 	// Write header comment
-	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)"))
+	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional",
+			       "Exact(Orig)", "Exact(Deriv)"))
 		return false;
-	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
+	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)",
+			       "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
 		return false;
 
 	for (int n = 0; n < nPoints; ++n)
-		if (!parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
-				       uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)), pp->analyticForce(uOriginal.constXAxis(n))))
+		if (!parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal.constXAxis(n),
+				       uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
+				       uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)),
+				       pp->analyticForce(uOriginal.constXAxis(n))))
 			return false;
 
 	return true;

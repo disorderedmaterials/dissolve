@@ -29,7 +29,7 @@
 
 class RenderableFactory
 {
-      public:
+	public:
 	// Create Renderable of specified type, from specified data (referenced by objectTag)
 	static Renderable *create(Renderable::RenderableType renderableType, const char *objectTag);
 };

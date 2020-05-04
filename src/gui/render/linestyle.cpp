@@ -22,7 +22,6 @@
 #include "gui/render/linestyle.h"
 #include <stdio.h>
 
-// Constructor
 LineStyle::LineStyle(double width, LineStipple::StippleType stipple, double r, double g, double b, double a)
 {
 	width_ = width;
@@ -30,13 +29,10 @@ LineStyle::LineStyle(double width, LineStipple::StippleType stipple, double r, d
 	setColour(r, g, b, a);
 }
 
-// Destructor
 LineStyle::~LineStyle() {}
 
-// Copy constructor
 LineStyle::LineStyle(const LineStyle &source) { (*this) = source; }
 
-// Assignment operator
 void LineStyle::operator=(const LineStyle &source)
 {
 	width_ = source.width_;

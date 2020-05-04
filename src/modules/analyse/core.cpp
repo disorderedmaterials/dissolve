@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 AnalyseModule::AnalyseModule() : Module(), analyser_(ProcedureNode::AnalysisContext, "EndAnalyser")
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 AnalyseModule::~AnalyseModule() {}
 
 /*

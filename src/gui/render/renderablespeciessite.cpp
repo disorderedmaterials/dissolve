@@ -28,8 +28,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-// Constructor
-RenderableSpeciesSite::RenderableSpeciesSite(const Species *sp, const SpeciesSite *site) : Renderable(Renderable::SpeciesSiteRenderable, "SiteRenderable")
+RenderableSpeciesSite::RenderableSpeciesSite(const Species *sp, const SpeciesSite *site)
+	: Renderable(Renderable::SpeciesSiteRenderable, "SiteRenderable")
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
@@ -47,7 +47,6 @@ RenderableSpeciesSite::RenderableSpeciesSite(const Species *sp, const SpeciesSit
 	axesPrimitive_->colouredAxes(1.2);
 }
 
-// Destructor
 RenderableSpeciesSite::~RenderableSpeciesSite() {}
 
 /*
@@ -147,9 +146,11 @@ const void RenderableSpeciesSite::sendToGL(const double pixelScaling)
 // Return EnumOptions for SpeciesSiteDisplayStyle
 EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> RenderableSpeciesSite::speciesSiteDisplayStyles()
 {
-	static EnumOptionsList SpeciesSiteStyleOptions = EnumOptionsList() << EnumOption(RenderableSpeciesSite::LinesStyle, "Lines");
+	static EnumOptionsList SpeciesSiteStyleOptions = EnumOptionsList()
+							 << EnumOption(RenderableSpeciesSite::LinesStyle, "Lines");
 
-	static EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> options("SpeciesSiteDisplayStyle", SpeciesSiteStyleOptions);
+	static EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> options("SpeciesSiteDisplayStyle",
+										   SpeciesSiteStyleOptions);
 
 	return options;
 }
@@ -172,7 +173,9 @@ RenderableSpeciesSite::SpeciesSiteDisplayStyle RenderableSpeciesSite::displaySty
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> RenderableSpeciesSite::speciesSiteStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableSpeciesSite::DisplayKeyword, "Display", 1) << EnumOption(RenderableSpeciesSite::EndStyleKeyword, "EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList()
+					       << EnumOption(RenderableSpeciesSite::DisplayKeyword, "Display", 1)
+					       << EnumOption(RenderableSpeciesSite::EndStyleKeyword, "EndStyle");
 
 	static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> options("SpeciesSiteStyleKeyword", StyleKeywords);
 
@@ -188,7 +191,8 @@ bool RenderableSpeciesSite::writeStyleBlock(LineParser &parser, int indentLevel)
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, speciesSiteStyleKeywords().keyword(RenderableSpeciesSite::DisplayKeyword), speciesSiteDisplayStyles().keyword(displayStyle_)))
+	if (!parser.writeLineF("%s%s  %s\n", indent, speciesSiteStyleKeywords().keyword(RenderableSpeciesSite::DisplayKeyword),
+			       speciesSiteDisplayStyles().keyword(displayStyle_)))
 		return false;
 
 	return true;
@@ -213,20 +217,21 @@ bool RenderableSpeciesSite::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableSpeciesSite::DisplayKeyword):
-			if (!speciesSiteDisplayStyles().isValid(parser.argc(1)))
-				return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableSpeciesSite::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableSpeciesSite::DisplayKeyword):
+				if (!speciesSiteDisplayStyles().isValid(parser.argc(1)))
+					return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableSpeciesSite::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

@@ -113,7 +113,8 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 	if (refreshing_)
 		return;
 
-	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets are derived
+	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets
+	// are derived
 	MainTab *currentTab = dynamic_cast<MainTab *>(ui_.MainTabs->widget(index));
 	if (!currentTab)
 	{

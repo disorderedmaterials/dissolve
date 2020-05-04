@@ -30,7 +30,7 @@ class Data2D;
 // Data2D Export Formats
 class Data2DExportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available data formats
 	enum Data2DExportFormat
 	{
@@ -38,13 +38,12 @@ class Data2DExportFileFormat : public FileAndFormat
 		CartesianData2D,
 		nData2DExportFormats
 	};
-	// Constructor
 	Data2DExportFileFormat(const char *filename = NULL, Data2DExportFormat format = Data2DExportFileFormat::BlockData2D);
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for Data2DExportFormat
 	static EnumOptions<Data2DExportFileFormat::Data2DExportFormat> data2DExportFormats();
 	// Return number of available formats
@@ -59,20 +58,20 @@ class Data2DExportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-      private:
+	private:
 	// Export Data2D as simple block data
 	bool exportBlock(LineParser &parser, const Data2D &data);
 	// Export Data2D as cartesian data
 	bool exportCartesian(LineParser &parser, const Data2D &data);
 
-      public:
+	public:
 	// Export Data2D using current filename and format
 	bool exportData(const Data2D &data);
 };

@@ -38,8 +38,7 @@ class Module;
 // Core Data Container
 class CoreData
 {
-      public:
-	// Constructor / Destructor
+	public:
 	CoreData();
 	~CoreData();
 	// Clear all data
@@ -48,13 +47,13 @@ class CoreData
 	/*
 	 * Atom Types
 	 */
-      private:
+	private:
 	// Core AtomTypes list
 	List<AtomType> atomTypes_;
 	// AtomTypes version
 	VersionCounter atomTypesVersion_;
 
-      public:
+	public:
 	// Add new AtomType
 	AtomType *addAtomType(Element *el);
 	// Remove specified AtomType
@@ -79,7 +78,7 @@ class CoreData
 	/*
 	 * Master Intramolecular Terms
 	 */
-      private:
+	private:
 	// List of master Bond parameters for Species
 	List<MasterIntra> masterBonds_;
 	// List of master Angles parameters for Species
@@ -89,7 +88,7 @@ class CoreData
 	// List of master Improper parameters for Species
 	List<MasterIntra> masterImpropers_;
 
-      public:
+	public:
 	// Add new master Bond parameters
 	MasterIntra *addMasterBond(const char *name);
 	// Return number of master Bond parameters in list
@@ -138,11 +137,11 @@ class CoreData
 	/*
 	 * Species
 	 */
-      private:
+	private:
 	// Core Species list
 	List<Species> species_;
 
-      public:
+	public:
 	// Add new Species
 	Species *addSpecies();
 	// Remove specified Species
@@ -163,11 +162,11 @@ class CoreData
 	/*
 	 * Configurations
 	 */
-      private:
+	private:
 	// Core Configurations list
 	List<Configuration> configurations_;
 
-      public:
+	public:
 	// Add new Configuration
 	Configuration *addConfiguration();
 	// Remove specified Configuration
@@ -188,11 +187,11 @@ class CoreData
 	/*
 	 * Module Instances
 	 */
-      private:
+	private:
 	// Pointer to Module instances list
 	const RefList<Module> *moduleInstances_;
 
-      public:
+	public:
 	// Set target Module instances list
 	void setModuleInstances(RefList<Module> *moduleInstances);
 	// Search for any instance of any module with the specified unique name
@@ -219,11 +218,11 @@ class CoreData
 	/*
 	 * Input Filename
 	 */
-      private:
+	private:
 	// Pointer to the current input filename (from Dissolve)
 	const CharString *inputFilename_;
 
-      public:
+	public:
 	// Set pointer to the current input filename
 	void setInputFilename(const CharString *inputFilePtr);
 	// Return the current input filename (from Dissolve)

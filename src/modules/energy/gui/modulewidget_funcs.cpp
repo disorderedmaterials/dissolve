@@ -28,7 +28,6 @@
 #include "modules/energy/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
@@ -81,12 +80,14 @@ void EnergyModuleWidget::updateControls(int flags)
 	QPalette labelPalette = ui_.StableLabel->palette();
 	if (currentConfiguration_)
 	{
-		const Data1D &totalEnergyArray = GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
+		const Data1D &totalEnergyArray = GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total",
+										  module_->uniqueName(), Data1D());
 		if (totalEnergyArray.nValues() < stabilityWindow)
 			ui_.GradientValueLabel->setText("N/A");
 		else
 		{
-			double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
+			double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient",
+								       "", 0.0);
 			ui_.GradientValueLabel->setText(QString::number(grad));
 		}
 
@@ -168,18 +169,35 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
 	// Add data targets
 	Renderable *rend;
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
-	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
+	energyGraph_->createRenderable(
+		Renderable::Data1DRenderable,
+		CharString("Data1D%%%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total",
+		"Totals");
+	rend = energyGraph_->createRenderable(
+		Renderable::Data1DRenderable,
+		CharString("Data1D%%%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter",
+		"Totals");
 	rend->setColour(StockColours::RedStockColour);
-	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Totals");
+	rend = energyGraph_->createRenderable(
+		Renderable::Data1DRenderable,
+		CharString("Data1D%%%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra",
+		"Totals");
 	rend->setColour(StockColours::BlueStockColour);
 
-	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Intramolecular");
+	rend = energyGraph_->createRenderable(
+		Renderable::Data1DRenderable,
+		CharString("Data1D%%%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond",
+		"Intramolecular");
 	rend->setColour(StockColours::GreenStockColour);
-	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Intramolecular");
+	rend = energyGraph_->createRenderable(
+		Renderable::Data1DRenderable,
+		CharString("Data1D%%%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle",
+		"Intramolecular");
 	rend->setColour(StockColours::PurpleStockColour);
-	rend =
-	    energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
+	rend = energyGraph_->createRenderable(
+		Renderable::Data1DRenderable,
+		CharString("Data1D%%%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion",
+		"Intramolecular");
 	rend->setColour(StockColours::OrangeStockColour);
 
 	updateControls();

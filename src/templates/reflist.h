@@ -35,8 +35,7 @@ template <class T> class RefList;
 
 template <class T> class RefListItem : public std::iterator<std::forward_iterator_tag, T *>
 {
-      public:
-	// Constructor
+	public:
 	RefListItem<T>()
 	{
 		item_ = NULL;
@@ -47,11 +46,11 @@ template <class T> class RefListItem : public std::iterator<std::forward_iterato
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Pointer to item
 	T *item_;
 
-      public:
+	public:
 	// Return item
 	T *item() { return item_; }
 	RefListItem<T> operator++()
@@ -77,11 +76,11 @@ template <class T> class RefListItem : public std::iterator<std::forward_iterato
 	/*
 	 * List Pointers
 	 */
-      private:
+	private:
 	// List pointers
 	RefListItem<T> *prev_, *next_;
 
-      public:
+	public:
 	// Return item after this one
 	RefListItem<T> *next() const { return next_; }
 	// Declare the list and iterator as friends
@@ -94,8 +93,7 @@ template <class T> class RefListItem : public std::iterator<std::forward_iterato
 
 template <class T> class RefList
 {
-      public:
-	// Constructors
+	public:
 	RefList<T>()
 	{
 		listHead_ = NULL;
@@ -115,9 +113,7 @@ template <class T> class RefList
 		append(singleItem);
 	}
 
-	// Destructor
 	~RefList() { clear(); }
-	// Copy Constructor
 	RefList<T>(const RefList<T> &source)
 	{
 		listHead_ = NULL;
@@ -128,7 +124,6 @@ template <class T> class RefList
 		for (RefListItem<T> *ri = source.first(); ri != NULL; ri = ri->next_)
 			append(ri->item_);
 	}
-	// Operator =
 	void operator=(const RefList<T> &source)
 	{
 		// Clear any current data...
@@ -136,14 +131,12 @@ template <class T> class RefList
 		for (RefListItem<T> *ri = source.first(); ri != NULL; ri = ri->next_)
 			append(ri->item_);
 	}
-	// Operator +=
 	void operator+=(const RefList<T> &source)
 	{
 		// Add unique items in the source list to our own
 		for (RefListItem<T> *ri = source.first(); ri != NULL; ri = ri->next_)
 			addUnique(ri->item_);
 	}
-	// Element access operator
 	RefListItem<T> *operator[](int index)
 	{
 #ifdef CHECKS
@@ -173,7 +166,7 @@ template <class T> class RefList
 	/*
 	 * Items
 	 */
-      private:
+	private:
 	// Head and tail of reference items
 	RefListItem<T> *listHead_, *listTail_;
 	// Number of items in list
@@ -183,7 +176,7 @@ template <class T> class RefList
 	// Array regeneration flag
 	bool regenerate_;
 
-      public:
+	public:
 	// Clear the list of all references
 	void clear()
 	{
@@ -436,7 +429,9 @@ template <class T> class RefList
 				break;
 			ri = ri->next_;
 			if (ri == NULL)
-				printf("Internal Error: Not enough items in list (requested %i, had %i) in RefList::fillArray()\n", n, nItems_);
+				printf("Internal Error: Not enough items in list (requested %i, had %i) in "
+				       "RefList::fillArray()\n",
+				       n, nItems_);
 		}
 		regenerate_ = true;
 	}
@@ -479,7 +474,7 @@ template <class T> class RefList
 	/*
 	 * Search
 	 */
-      public:
+	public:
 	// Search references for item
 	RefListItem<T> *contains(const T *item) const
 	{

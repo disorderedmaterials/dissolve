@@ -26,7 +26,6 @@
 #include "math/svd.h"
 #include <algorithm>
 
-// Constructor
 ScatteringMatrix::ScatteringMatrix() {}
 
 /*
@@ -177,7 +176,8 @@ void ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
 	 * [         ...     ] [ .. ]   [ .. ]		M is number of data (where M >= N)
 	 * [ cM1 cM2 ... cMN ] [ PN ]   [ DM ]
 	 *
-	 * ... where the coefficients in the matrix are the partial weights, P are the (unknown) partial S(Q), and D are the (known) data.
+	 * ... where the coefficients in the matrix are the partial weights, P are the (unknown) partial S(Q), and D are the
+	 * (known) data.
 	 *
 	 * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
 	 */
@@ -211,7 +211,8 @@ Array2D<double> ScatteringMatrix::matrixProduct() const { return inverseA_ * A_;
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix, const char *groupName)
+void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix,
+				  const char *groupName)
 {
 	// Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
 	A_.clear();
@@ -236,7 +237,8 @@ void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &
 	for (Pair<AtomType *, AtomType *> *pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		partials[index].setName(CharString("EstimatedSQ-%s-%s-%s.sq", pair->a()->name(), pair->b()->name(), groupName));
-		partials[index].setObjectTag(CharString("%s//EstimatedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a()->name(), pair->b()->name()));
+		partials[index].setObjectTag(CharString("%s//EstimatedSQ//%s//%s-%s", objectNamePrefix, groupName,
+							pair->a()->name(), pair->b()->name()));
 		++index;
 	}
 }
@@ -247,7 +249,9 @@ bool ScatteringMatrix::finalise()
 	// Check that we have the correct number of reference data to be able to invert the matrix
 	if (data_.nItems() < A_.nColumns())
 	{
-		Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data (%i) compared to rows in the matrix (%i).\n", data_.nItems(), A_.nColumns());
+		Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data (%i) "
+				 "compared to rows in the matrix (%i).\n",
+				 data_.nItems(), A_.nColumns());
 		return false;
 	}
 
@@ -281,8 +285,9 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, Weights &dat
 			int colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
 			if (colIndex == -1)
 			{
-				Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", usedTypes.atomType(n)->name(),
-						 usedTypes.atomType(m)->name());
+				Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
+						 "('%s' and/or '%s').\n",
+						 usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 				return false;
 			}
 
@@ -299,7 +304,8 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, Weights &dat
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight,
+					       double factor)
 {
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());
@@ -308,7 +314,9 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *a
 	int colIndex = pairIndex(at1, at2);
 	if (colIndex == -1)
 	{
-		Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", at1->name(), at2->name());
+		Messenger::error(
+			"Weights associated to reference data contain one or more unknown AtomTypes ('%s' and/or '%s').\n",
+			at1->name(), at2->name());
 		return false;
 	}
 

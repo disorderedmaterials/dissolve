@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_CHARSTRING_H
 #define DISSOLVE_KEYWORDWIDGET_CHARSTRING_H
 
-#include "keywords/charstring.h"
 #include "gui/keywordwidgets/base.h"
+#include "keywords/charstring.h"
 #include <QLineEdit>
 
 // Forward Declarations
@@ -36,28 +36,25 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	CharStringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
 	private:
 	// Associated keyword
-	CharStringKeyword* keyword_;
-
+	CharStringKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
 	 */
 	private slots:
 	// Line edit text changed
-	void myTextChanged(const QString& text);
+	void myTextChanged(const QString &text);
 
 	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update

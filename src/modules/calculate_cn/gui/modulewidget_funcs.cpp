@@ -24,8 +24,8 @@
 #include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/process1d.h"
 
-// Constructor
-CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule) : ModuleWidget(parent), module_(cnModule)
+CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNModule *cnModule)
+	: ModuleWidget(parent), module_(cnModule)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -91,7 +91,8 @@ void CalculateCNModuleWidget::setGraphDataTargets()
 
 	// Get target RDF module
 	bool found = false;
-	const CalculateRDFModule *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
+	const CalculateRDFModule *rdfModule =
+		module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
 
 	// If the RDF data for the graph has not yet been found, attempt to locate it now
 	if (!rdfDataLocated_)
@@ -108,7 +109,8 @@ void CalculateCNModuleWidget::setGraphDataTargets()
 	}
 
 	// Set RDF data target
-	Renderable *rdfRenderable = rdfGraph_->createRenderable(Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->uniqueName());
+	Renderable *rdfRenderable = rdfGraph_->createRenderable(
+		Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->uniqueName());
 	rdfRenderable->setColour(StockColours::BlueStockColour);
 
 	rdfDataLocated_ = true;

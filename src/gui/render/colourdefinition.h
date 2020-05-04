@@ -32,20 +32,16 @@
 // Colour Definition
 class ColourDefinition
 {
-      public:
-	// Constructor
+	public:
 	ColourDefinition();
-	// Destructor
 	~ColourDefinition();
-	// Copy constructor
 	ColourDefinition(const ColourDefinition &source);
-	// Assignment operator
 	void operator=(const ColourDefinition &source);
 
 	/*
 	 * Enumerations
 	 */
-      public:
+	public:
 	// Colour Styles
 	enum ColourStyle
 	{
@@ -63,7 +59,7 @@ class ColourDefinition
 	/*
 	 * Style
 	 */
-      private:
+	private:
 	// Current colour style in use
 	ColourStyle style_;
 	// Whether to use global alpha value
@@ -73,7 +69,7 @@ class ColourDefinition
 	// Version
 	VersionCounter version_;
 
-      public:
+	public:
 	// Set colour style to use
 	void setStyle(ColourStyle source);
 	// Return colour style in use
@@ -92,11 +88,11 @@ class ColourDefinition
 	/*
 	 * Single Colour Definition
 	 */
-      private:
+	private:
 	// Single colour
 	QColor singleColour_;
 
-      public:
+	public:
 	// Set single colour
 	void setSingleColour(QColor colour);
 	// Return single colour
@@ -105,11 +101,11 @@ class ColourDefinition
 	/*
 	 * RGB Gradient Definition
 	 */
-      private:
+	private:
 	// RGB Gradient
 	ColourScale rgbGradient_;
 
-      public:
+	public:
 	// Set RGB gradient start value
 	void setRGBGradientStartValue(double value);
 	// Return RGB gradient start value
@@ -134,11 +130,11 @@ class ColourDefinition
 	/*
 	 * HSV Gradient Definition
 	 */
-      private:
+	private:
 	// HSV gradient
 	ColourScale hsvGradient_;
 
-      public:
+	public:
 	// Set HSV gradient start value
 	void setHSVGradientStartValue(double value);
 	// Return HSV gradient start value
@@ -163,11 +159,11 @@ class ColourDefinition
 	/*
 	 * Custom Gradient Definition
 	 */
-      private:
+	private:
 	// Custom gradient
 	ColourScale customGradient_;
 
-      public:
+	public:
 	// Set custom gradient point value and colour
 	void setCustomGradientPoint(int index, double value, QColor colour);
 	// Return custom gradient point specified
@@ -190,7 +186,7 @@ class ColourDefinition
 	/*
 	 * Colour Access
 	 */
-      public:
+	public:
 	// Return (set) colour for specified value
 	void colour(double value, GLfloat *rgba) const;
 };

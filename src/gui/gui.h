@@ -51,26 +51,25 @@ class DissolveWindow : public QMainWindow
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	DissolveWindow(Dissolve &dissolve);
 	~DissolveWindow();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::DissolveWindow ui_;
 
-      protected:
+	protected:
 	void closeEvent(QCloseEvent *event);
 	void resizeEvent(QResizeEvent *event);
 
 	/*
 	 * Dissolve Integration
 	 */
-      private:
+	private:
 	// Dissolve reference
 	Dissolve &dissolve_;
 	// Whether any data has been modified
@@ -84,11 +83,11 @@ class DissolveWindow : public QMainWindow
 	// Whether the current simulation is on the local machine
 	bool localSimulation_;
 
-      public slots:
+	public slots:
 	// Flag that data has been modified via the GUI
 	void setModified();
 
-      public:
+	public:
 	// Return reference to Dissolve
 	Dissolve &dissolve();
 	// Return const reference to Dissolve
@@ -99,7 +98,7 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * StatusBar
 	 */
-      private:
+	private:
 	// Label for local / remote simulation indicator
 	QLabel *localSimulationIndicator_;
 	// Label for restart file indicator
@@ -112,32 +111,32 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * File
 	 */
-      public:
+	public:
 	// Open specified input file
 	bool openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
 
 	/*
 	 * System Templates
 	 */
-      private:
+	private:
 	// List of available SystemTemplates
 	List<SystemTemplate> systemTemplates_;
 
-      private:
+	private:
 	// Initialise system templates from the main resource
 	void initialiseSystemTemplates();
 
 	/*
 	 * Reference Points
 	 */
-      private:
+	private:
 	// List of ReferencePoints currently loaded
 	List<ReferencePoint> referencePoints_;
 
 	/*
 	 * Update Functions
 	 */
-      public slots:
+	public slots:
 	// Update window title
 	void updateWindowTitle();
 	// Update controls frame
@@ -152,13 +151,13 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * Main Menu
 	 */
-      private:
+	private:
 	// Check whether current input needs to be saved and, if so, if it saved successfully
 	bool checkSaveCurrentInput();
 	// Clear all data and start new simulation afresh
 	void startNew();
 
-      private slots:
+	private slots:
 	// File
 	void on_FileNewAction_triggered(bool checked);
 	void on_FileNewFromTemplateAction_triggered(bool checked);
@@ -216,13 +215,13 @@ class DissolveWindow : public QMainWindow
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
 
-      public slots:
+	public slots:
 	void currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow);
 
 	/*
 	 * Main Stack
 	 */
-      private:
+	private:
 	// Stack Pages Enum
 	enum MainStackPage
 	{
@@ -231,14 +230,14 @@ class DissolveWindow : public QMainWindow
 		nStackPages
 	};
 
-      private:
+	private:
 	// Set currently-visible main stack page
 	void showMainStackPage(MainStackPage page);
 
 	/*
 	 * 'Start' Stack Page
 	 */
-      private slots:
+	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
 	void on_StartCreateFromTemplateButton_clicked(bool checked);
@@ -253,7 +252,7 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Simulation' Stack Page - Run Control
 	 */
-      public:
+	public:
 	// Dissolve State Enum
 	enum DissolveState
 	{
@@ -263,23 +262,23 @@ class DissolveWindow : public QMainWindow
 		nDissolveStates
 	};
 
-      private:
+	private:
 	// Thread controller
 	DissolveThreadController threadController_;
 	// Current state of Dissolve
 	DissolveState dissolveState_;
 
-      public:
+	public:
 	// Return current state of Dissolve
 	DissolveState dissolveState() const;
 
-      private slots:
+	private slots:
 	void on_ControlRunButton_clicked(bool checked);
 	void on_ControlStepButton_clicked(bool checked);
 	void on_ControlPauseButton_clicked(bool checked);
 	void on_ControlReloadButton_clicked(bool checked);
 
-      public slots:
+	public slots:
 	// Disable sensitive controls
 	void disableSensitiveControls();
 	// Enable sensitive controls
@@ -287,21 +286,21 @@ class DissolveWindow : public QMainWindow
 	// All iterations requested are complete
 	void iterationsComplete();
 
-      signals:
+	signals:
 	void iterate(int);
 	void stopIterating();
 
 	/*
 	 * 'Simulation' Stack Page - Tabs
 	 */
-      private slots:
+	private slots:
 	void on_MainTabs_currentChanged(int index);
 
-      public:
+	public:
 	// Return list of all current tabs
 	RefList<const MainTab> allTabs() const;
 
-      public slots:
+	public slots:
 	// Add or go to Module tab for the Module with the unique name provided
 	void showModuleTab(const QString &uniqueName);
 	// Remove the Module tab (if it exists) for the Module with the unique name provided
@@ -310,7 +309,7 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Simulation' Stack Page - Messages
 	 */
-      private slots:
+	private slots:
 	void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
 	void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
 	void clearMessages();
@@ -319,11 +318,11 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * GUI State
 	 */
-      private:
+	private:
 	// Filename containing current GUI state
 	CharString stateFilename_;
 
-      public:
+	public:
 	// Save current GUI state
 	bool saveState();
 	// Load GUI state

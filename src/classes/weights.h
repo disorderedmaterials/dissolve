@@ -34,26 +34,24 @@
 // Weights Container
 class Weights : public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Weights();
-	// Copy Constructor
 	Weights(const Weights &source);
-	// Assignment operator
 	void operator=(const Weights &source);
 
 	/*
 	 * Construction
 	 */
-      private:
+	private:
 	// List of Isotopologues for Species
 	List<Isotopologues> isotopologueMixtures_;
 
-      public:
+	public:
 	// Clear contents
 	void clear();
 	// Add Species Isotopologue to the relevant mixture
-	bool addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso, double isotopologueRelativePopulation);
+	bool addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+			     double isotopologueRelativePopulation);
 	// Return whether we have a mixtures definition for the provided Species
 	Isotopologues *hasIsotopologues(Species *sp) const;
 	// Print atomtype / weights information
@@ -62,7 +60,7 @@ class Weights : public GenericItemBase
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Type list derived from Species referenced in isotopologueMixtures_
 	AtomTypeList atomTypes_;
 	// Concentration product matrix (ci * cj)
@@ -80,11 +78,11 @@ class Weights : public GenericItemBase
 	// Whether the structure is valid (i.e. has been finalised)
 	bool valid_;
 
-      private:
+	private:
 	// Calculate weighting matrices based on current AtomType / Isotope information
 	void calculateWeightingMatrices();
 
-      public:
+	public:
 	// Create AtomType list and matrices based on stored Isotopologues information
 	void createFromIsotopologues(const AtomTypeList &exchangeableTypes);
 	// Reduce data to be naturally-weighted
@@ -115,7 +113,7 @@ class Weights : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -126,7 +124,7 @@ class Weights : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

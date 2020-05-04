@@ -27,7 +27,6 @@
 #include "data/elements.h"
 #include <algorithm>
 
-// Constructor
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
 	element_ = NULL;
@@ -38,7 +37,6 @@ SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 	selected_ = false;
 }
 
-// Destructor
 SpeciesAtom::~SpeciesAtom() {}
 
 // Set Species parent
@@ -84,7 +82,9 @@ void SpeciesAtom::setAtomType(AtomType *at)
 	// Check elements
 	if (at && (at->element() != element_))
 	{
-		Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n", at->name(), element_->symbol(), at->element()->symbol());
+		Messenger::warn(
+			"Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n",
+			at->name(), element_->symbol(), at->element()->symbol());
 		return;
 	}
 
@@ -142,7 +142,8 @@ const std::vector<SpeciesBond *> &SpeciesAtom::bonds() const { return bonds_; }
 // Return whether Bond to specified Atom exists
 SpeciesBond *SpeciesAtom::hasBond(SpeciesAtom *partner)
 {
-	auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond *bond) { return bond->partner(this) == partner; });
+	auto result =
+		find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond *bond) { return bond->partner(this) == partner; });
 	return result == bonds_.end() ? nullptr : *result;
 }
 
@@ -223,7 +224,8 @@ double SpeciesAtom::scaling(const SpeciesAtom *j) const
 		if (exclusions_.pointer(n) == j)
 			return exclusions_.data(n);
 
-		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the list
+		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the
+		// list
 		if (exclusions_.pointer(n) > j)
 			return 1.0;
 	}

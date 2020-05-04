@@ -30,8 +30,10 @@ using namespace std;
 // Return enum option info for AveragingScheme
 EnumOptions<Error::ErrorType> Error::errorTypes()
 {
-	static EnumOptionsList ErrorTypeOptions = EnumOptionsList() << EnumOption(Error::RMSEError, "RMSE") << EnumOption(Error::MAAPEError, "MAAPE") << EnumOption(Error::MAPEError, "MAPE")
-								    << EnumOption(Error::PercentError, "Percent") << EnumOption(Error::RFactorError, "RFactor");
+	static EnumOptionsList ErrorTypeOptions =
+		EnumOptionsList() << EnumOption(Error::RMSEError, "RMSE") << EnumOption(Error::MAAPEError, "MAAPE")
+				  << EnumOption(Error::MAPEError, "MAPE") << EnumOption(Error::PercentError, "Percent")
+				  << EnumOption(Error::RFactorError, "RFactor");
 
 	static EnumOptions<Error::ErrorType> options("ErrorType", ErrorTypeOptions, Error::PercentError);
 
@@ -101,7 +103,8 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
 	// Finalise RMSE and summarise result
 	rmse = sqrt(rmse / nPointsConsidered);
 	if (!quiet)
-		Messenger::print("RMSE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rmse, firstX, lastX, nPointsConsidered);
+		Messenger::print("RMSE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rmse, firstX, lastX,
+				 nPointsConsidered);
 
 	return rmse;
 }
@@ -150,7 +153,8 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
 
 	double mape = 100.0 * sum / nPointsConsidered;
 	if (!quiet)
-		Messenger::print("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", mape, firstX, lastX, nPointsConsidered);
+		Messenger::print("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", mape, firstX,
+				 lastX, nPointsConsidered);
 
 	return mape;
 }
@@ -197,7 +201,8 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
 
 	double maape = 100.0 * sum / nPointsConsidered;
 	if (!quiet)
-		Messenger::print("MAAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", maape, firstX, lastX, nPointsConsidered);
+		Messenger::print("MAAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", maape, firstX,
+				 lastX, nPointsConsidered);
 
 	return maape;
 }
@@ -248,10 +253,12 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
 	if (!quiet)
 	{
 		if (zeroSum)
-			Messenger::print("Absolute squared error between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", percentError, aX.constAt(firstPoint), aX.constAt(lastPoint),
-					 (lastPoint - firstPoint) + 1);
+			Messenger::print(
+				"Absolute squared error between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n",
+				percentError, aX.constAt(firstPoint), aX.constAt(lastPoint), (lastPoint - firstPoint) + 1);
 		else
-			Messenger::print("Percentage error between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", percentError, aX.constAt(firstPoint), aX.constAt(lastPoint),
+			Messenger::print("Percentage error between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n",
+					 percentError, aX.constAt(firstPoint), aX.constAt(lastPoint),
 					 (lastPoint - firstPoint) + 1);
 	}
 
@@ -299,7 +306,8 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
 	// Calculate squared error per point and summarise result
 	rfac /= nPointsConsidered;
 	if (!quiet)
-		Messenger::print("R-Factor between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rfac, firstX, lastX, nPointsConsidered);
+		Messenger::print("R-Factor between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rfac, firstX,
+				 lastX, nPointsConsidered);
 
 	return rfac;
 }

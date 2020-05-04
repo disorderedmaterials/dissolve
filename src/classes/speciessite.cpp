@@ -25,14 +25,12 @@
 #include "classes/species.h"
 #include "data/atomicmass.h"
 
-// Constructor
 SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
 {
 	parent_ = NULL;
 	originMassWeighted_ = false;
 }
 
-// Destructor
 SpeciesSite::~SpeciesSite() {}
 
 /*
@@ -66,7 +64,8 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom *originAtom)
 
 	// If the SpeciesAtom already exists in the list, complain
 	if (originAtoms_.contains(originAtom))
-		return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(), name_.get());
+		return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(),
+					name_.get());
 
 	originAtoms_.append(originAtom);
 
@@ -93,7 +92,8 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 {
 #ifdef CHECKS
 	if (!parent_)
-		return Messenger::error("Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
+		return Messenger::error(
+			"Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addOriginAtom(parent_->atom(atomIndex));
 }
@@ -147,7 +147,8 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
 
 	// If the SpeciesAtom already exists in the list, complain
 	if (xAxisAtoms_.contains(xAxisAtom))
-		return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(), name_.get());
+		return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(),
+					name_.get());
 
 	xAxisAtoms_.append(xAxisAtom);
 
@@ -161,7 +162,8 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 {
 #ifdef CHECKS
 	if (!parent_)
-		return Messenger::error("Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
+		return Messenger::error(
+			"Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addXAxisAtom(parent_->atom(atomIndex));
 }
@@ -217,7 +219,8 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
 
 	// If the SpeciesAtom already exists in the list, complain
 	if (yAxisAtoms_.contains(yAxisAtom))
-		return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(), name_.get());
+		return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(),
+					name_.get());
 
 	yAxisAtoms_.append(yAxisAtom);
 
@@ -231,7 +234,8 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 {
 #ifdef CHECKS
 	if (!parent_)
-		return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
+		return Messenger::error(
+			"Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
 #endif
 	return addYAxisAtom(parent_->atom(atomIndex));
 }
@@ -375,9 +379,11 @@ Site *SpeciesSite::createFromParent() const
 EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
 	static EnumOptionsList SiteKeywords =
-	    EnumOptionsList() << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite") << EnumOption(SpeciesSite::OriginKeyword, "Origin", EnumOption::OneOrMoreArguments)
-			      << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1) << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", EnumOption::OneOrMoreArguments)
-			      << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", EnumOption::OneOrMoreArguments);
+		EnumOptionsList() << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite")
+				  << EnumOption(SpeciesSite::OriginKeyword, "Origin", EnumOption::OneOrMoreArguments)
+				  << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1)
+				  << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", EnumOption::OneOrMoreArguments)
+				  << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", EnumOption::OneOrMoreArguments);
 
 	static EnumOptions<SpeciesSite::SiteKeyword> options("SiteKeyword", SiteKeywords);
 
@@ -407,50 +413,50 @@ bool SpeciesSite::read(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		case (SpeciesSite::EndSiteKeyword):
-			Messenger::print("Found end of Site '%s'.\n", name());
-			blockDone = true;
-			break;
-		case (SpeciesSite::OriginKeyword):
-			for (int n = 1; n < parser.nArgs(); ++n)
-			{
-				if (!addOriginAtom(parser.argi(n) - 1))
+			case (SpeciesSite::EndSiteKeyword):
+				Messenger::print("Found end of Site '%s'.\n", name());
+				blockDone = true;
+				break;
+			case (SpeciesSite::OriginKeyword):
+				for (int n = 1; n < parser.nArgs(); ++n)
 				{
-					Messenger::error("Failed to add origin atom for site '%s'.\n", name());
-					error = true;
-					break;
+					if (!addOriginAtom(parser.argi(n) - 1))
+					{
+						Messenger::error("Failed to add origin atom for site '%s'.\n", name());
+						error = true;
+						break;
+					}
 				}
-			}
-			break;
-		case (SpeciesSite::OriginMassWeightedKeyword):
-			setOriginMassWeighted(parser.argb(1));
-			break;
-		case (SpeciesSite::XAxisKeyword):
-			for (int n = 1; n < parser.nArgs(); ++n)
-			{
-				if (!addXAxisAtom(parser.argi(n) - 1))
+				break;
+			case (SpeciesSite::OriginMassWeightedKeyword):
+				setOriginMassWeighted(parser.argb(1));
+				break;
+			case (SpeciesSite::XAxisKeyword):
+				for (int n = 1; n < parser.nArgs(); ++n)
 				{
-					Messenger::error("Failed to add x-axis atom for site '%s'.\n", name());
-					error = true;
-					break;
+					if (!addXAxisAtom(parser.argi(n) - 1))
+					{
+						Messenger::error("Failed to add x-axis atom for site '%s'.\n", name());
+						error = true;
+						break;
+					}
 				}
-			}
-			break;
-		case (SpeciesSite::YAxisKeyword):
-			for (int n = 1; n < parser.nArgs(); ++n)
-			{
-				if (!addYAxisAtom(parser.argi(n) - 1))
+				break;
+			case (SpeciesSite::YAxisKeyword):
+				for (int n = 1; n < parser.nArgs(); ++n)
 				{
-					Messenger::error("Failed to add y-axis atom for site '%s'.\n", name());
-					error = true;
-					break;
+					if (!addYAxisAtom(parser.argi(n) - 1))
+					{
+						Messenger::error("Failed to add y-axis atom for site '%s'.\n", name());
+						error = true;
+						break;
+					}
 				}
-			}
-			break;
-		default:
-			printf("DEV_OOPS - Site block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
-			error = true;
-			break;
+				break;
+			default:
+				printf("DEV_OOPS - Site block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
+				error = true;
+				break;
 		}
 
 		// Error encountered?
@@ -493,7 +499,8 @@ bool SpeciesSite::write(LineParser &parser, const char *prefix)
 	}
 
 	// Origin mass weighted?
-	if (originMassWeighted_ && (!parser.writeLineF("%s  %s  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
+	if (originMassWeighted_ &&
+	    (!parser.writeLineF("%s  %s  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
 		return false;
 
 	// X-Axis atom indices

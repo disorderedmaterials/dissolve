@@ -31,23 +31,21 @@ class Species;
 // Keyword with Species RefList Data
 class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
 {
-      public:
-	// Constructor
+	public:
 	SpeciesRefListKeyword(RefList<Species> &references);
-	// Destructor
 	~SpeciesRefListKeyword();
 
 	/*
 	 * Data
 	 */
-      protected:
+	protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -60,7 +58,7 @@ class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied Species in the contained data
 	void removeReferencesTo(Species *sp);
 };

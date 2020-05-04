@@ -33,22 +33,19 @@ class ProcessPool;
 // ModuleList
 class ModuleList
 {
-      public:
-	// Constructor
+	public:
 	ModuleList();
-	// Destructor
 	~ModuleList();
-	// Conversion operator (List<Module>&)
 	operator List<Module> &();
 
 	/*
 	 * Module List
 	 */
-      private:
+	private:
 	// List of Modules
 	List<Module> modules_;
 
-      public:
+	public:
 	// Clear list
 	void clear();
 	// Associate Module to the list
@@ -67,7 +64,7 @@ class ModuleList
 	/*
 	 * General Actions
 	 */
-      public:
+	public:
 	// Run set-up stages for all modules
 	bool setUpAll(Dissolve &dissolve, ProcessPool &procPool);
 };

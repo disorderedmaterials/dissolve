@@ -23,14 +23,12 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 CellArray::CellArray()
 {
 	cells_ = NULL;
 	nCells_ = 0;
 }
 
-// Destructor
 CellArray::~CellArray() {}
 
 /*
@@ -60,7 +58,8 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
 	box_ = box;
 
-	Messenger::print("Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide, cellSize);
+	Messenger::print("Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide,
+			 cellSize);
 
 	// Get Box axis lengths and divide through by cellSize
 	Vec3<double> boxLengths(box_->axisLength(0), box_->axisLength(1), box_->axisLength(2));
@@ -69,15 +68,18 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 	divisions_.zero();
 	realCellSize_.zero();
 
-	Messenger::print("Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
+	Messenger::print("Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y,
+			 divisions.z);
 
 	// How does the smallest length compare with the PairPotential range?
 	if (divisions.min() < minCellsPerSide)
 	{
-		Messenger::warn("Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize,
-				minCellsPerSide);
+		Messenger::warn("Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, "
+				"while we require at least %i.\n",
+				divisions.min(), cellSize, minCellsPerSide);
 
-		// We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that side
+		// We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that
+		// side
 		minEl = boxLengths.minElement();
 		realCellSize_[minEl] = boxLengths[minEl] / minCellsPerSide;
 		divisions_[minEl] = minCellsPerSide;
@@ -107,22 +109,25 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 		{
 			divisions_[el] = int(x) + 1;
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			Messenger::print("Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el,
-					 remainder);
+			Messenger::print("Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within "
+					 "tolerance (-%e).\n",
+					 realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < tolerance)
 		{
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			Messenger::print("Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el,
-					 remainder);
+			Messenger::print("Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within "
+					 "tolerance (+%e).\n",
+					 realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < 0.5)
 		{
 			// Can't fit more than half another cell in, so reduce number of divisions...
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			Messenger::print("Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			Messenger::print("Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el,
+					 realCellSize_[el], divisions_[el]);
 		}
 		else
 		{
@@ -133,18 +138,22 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 			{
 				--divisions_[el];
 				realCellSize_[el] = boxLengths[el] / divisions_[el];
-				Messenger::print("Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the cell size.\n", el,
-						 realCellSize_[el], divisions_[el]);
+				Messenger::print("Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) "
+						 "since increasing it gave a length larger than the cell size.\n",
+						 el, realCellSize_[el], divisions_[el]);
 			}
 			else
-				Messenger::print("Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+				Messenger::print("Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el,
+						 realCellSize_[el], divisions_[el]);
 		}
 	}
 
 	// Summarise
 	fractionalCellSize_.set(1.0 / divisions_.x, 1.0 / divisions_.y, 1.0 / divisions_.z);
-	Messenger::print("Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x * divisions_.y * divisions_.z);
-	Messenger::print("Fractional cell size is (%f,%f,%f).\n", fractionalCellSize_.x, fractionalCellSize_.y, fractionalCellSize_.z);
+	Messenger::print("Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x,
+			 divisions_.y, divisions_.z, divisions_.x * divisions_.y * divisions_.z);
+	Messenger::print("Fractional cell size is (%f,%f,%f).\n", fractionalCellSize_.x, fractionalCellSize_.y,
+			 fractionalCellSize_.z);
 
 	// Construct Cell arrays
 	clear();
@@ -196,11 +205,13 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 			r = cellAxes * r;
 		} while (r[n] < pairPotentialRange);
 
-		// If we require a larger number of cells than the box physically has along this direction, reduce it accordingly
+		// If we require a larger number of cells than the box physically has along this direction, reduce it
+		// accordingly
 		if ((extents_[n] * 2 + 1) > divisions_[n])
 			extents_[n] = divisions_[n] / 2;
 	}
-	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
+	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x,
+			 extents_.y, extents_.z);
 
 	// Now, loop over extent integers and construct list of gridReferences within range
 	neighbourIndices_.clear();
@@ -216,7 +227,8 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 				if ((x == 0) && (y == 0) && (z == 0))
 					continue;
 
-				// Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of corners are in range
+				// Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of
+				// corners are in range
 				bool close = false;
 				for (int iCorner = 0; iCorner < 8; ++iCorner)
 				{
@@ -226,7 +238,8 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 					for (int jCorner = 0; jCorner < 8; ++jCorner)
 					{
 						// Set integer vertex of corner on 'other' box
-						j.set(x + (jCorner & 1 ? 1 : 0), y + (jCorner & 2 ? 1 : 0), z + (jCorner & 4 ? 1 : 0));
+						j.set(x + (jCorner & 1 ? 1 : 0), y + (jCorner & 2 ? 1 : 0),
+						      z + (jCorner & 4 ? 1 : 0));
 
 						// Get minimum image of vertex j w.r.t. i
 						j = mimGridDelta(j - i);
@@ -407,27 +420,32 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
 	}
 #endif
 
-	// Check every pair of corners between the Cell two grid references, and determine if minimum image calculation would be required
+	// Check every pair of corners between the Cell two grid references, and determine if minimum image calculation would be
+	// required
 	Vec3<int> i, j;
 	Vec3<double> r;
 	for (int iCorner = 0; iCorner < 8; ++iCorner)
 	{
 		// Set integer vertex of corner on 'central' box
-		i.set(a->gridReference().x + (iCorner & 1 ? 1 : 0), a->gridReference().y + (iCorner & 2 ? 1 : 0), a->gridReference().z + (iCorner & 4 ? 1 : 0));
+		i.set(a->gridReference().x + (iCorner & 1 ? 1 : 0), a->gridReference().y + (iCorner & 2 ? 1 : 0),
+		      a->gridReference().z + (iCorner & 4 ? 1 : 0));
 
 		for (int jCorner = 0; jCorner < 8; ++jCorner)
 		{
 			// Set integer vertex of corner on 'other' box
-			j.set(b->gridReference().x + (jCorner & 1 ? 1 : 0), b->gridReference().y + (jCorner & 2 ? 1 : 0), b->gridReference().z + (jCorner & 4 ? 1 : 0));
+			j.set(b->gridReference().x + (jCorner & 1 ? 1 : 0), b->gridReference().y + (jCorner & 2 ? 1 : 0),
+			      b->gridReference().z + (jCorner & 4 ? 1 : 0));
 
-			// Check literal distance between points - if it's less than the distance specified we can continue (no mim required)
+			// Check literal distance between points - if it's less than the distance specified we can continue (no
+			// mim required)
 			j -= i;
 			r.set(j.x, j.y, j.z);
 			r = axes_ * r;
 			if (r.magnitude() < distance)
 				continue;
 
-			// Check minimum image distance between points - if it's less than the distance specified we require mim for this cell pair
+			// Check minimum image distance between points - if it's less than the distance specified we require mim
+			// for this cell pair
 			j = mimGridDelta(j);
 			r.set(j.x, j.y, j.z);
 			r = axes_ * r;

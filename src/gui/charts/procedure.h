@@ -36,65 +36,65 @@ class SequenceProcedureNode;
 // Procedure Chart - Manages display of a sequence of nodes in a Procedure
 class ProcedureChart : public ChartBase
 {
-      public:
-	// Constructor / Destructor
+	public:
 	ProcedureChart(Procedure *procedure, const CoreData &coreData);
 	~ProcedureChart();
 
 	/*
 	 * CoreData Reference
 	 */
-      private:
+	private:
 	// CoreData reference
 	const CoreData &coreData_;
 
 	/*
 	 * Target Procedure
 	 */
-      private:
+	private:
 	// Target Procedure for display
 	Procedure *procedure_;
 
 	/*
 	 * QWidget Reimplementations
 	 */
-      protected:
+	protected:
 	// Paint event
 	void paintEvent(QPaintEvent *event);
 
 	/*
 	 * Chart Blocks
 	 */
-      private:
+	private:
 	// Widgets for our root sequence Procedure nodes
 	RefList<ProcedureChartNodeBlock> rootSequenceNodeWidgets_;
 
-      private:
+	private:
 	// Create / own chart block widgets for the specified sequence
-	void updateContentBlocks(const SequenceProcedureNode *sequenceNode, RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel);
+	void updateContentBlocks(const SequenceProcedureNode *sequenceNode,
+				 RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel);
 	// Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
 	ProcedureChartNodeBlock *nodeBlock(ProcedureNode *node);
 	// Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
 	ProcedureChartNodeBlock *nodeBlock(ProcedureNode *node, const RefList<ProcedureChartNodeBlock> &list);
 
-      protected:
+	protected:
 	// Update the content block widgets against the current target data
 	void updateContentBlocks();
 
 	/*
 	 * Drag / Drop
 	 */
-      protected:
+	protected:
 	// TODO
 
 	/*
 	 * Widget Layout
 	 */
-      private:
+	private:
 	// Chart metrics
 	ProcedureChartMetrics metrics_;
 
-      private:
+	private:
 	// Calculate geometries for the widgets in the supplied sequence list
 	void calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeWidgets, QSize &requiredSize, int &indentLevel);
 	// Calculate new widget geometry according to the layout requirements, returning the entire area required
@@ -103,7 +103,7 @@ class ProcedureChart : public ChartBase
 	/*
 	 * State I/O (ChartBase Reimplementations)
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser);
 	// Write widget state through specified LineParser

@@ -23,11 +23,16 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
-ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
-ForceImportFileFormat::ForceImportFileFormat(const char *filename, ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
+ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(format)
+{
+	setUpKeywords();
+}
+ForceImportFileFormat::ForceImportFileFormat(const char *filename, ForceImportFileFormat::ForceImportFormat format)
+	: FileAndFormat(filename, format)
+{
+	setUpKeywords();
+}
 
-// Destructor
 ForceImportFileFormat::~ForceImportFileFormat() {}
 
 /*
@@ -44,8 +49,9 @@ void ForceImportFileFormat::setUpKeywords() {}
 // Return enum options for ForceImportFormat
 EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::forceImportFormats()
 {
-	static EnumOptionsList ForceImportFileFormats = EnumOptionsList() << EnumOption(ForceImportFileFormat::XYZForces, "xyz", "Simple X,Y,Z,f(x,y,z) Data")
-									  << EnumOption(ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces");
+	static EnumOptionsList ForceImportFileFormats =
+		EnumOptionsList() << EnumOption(ForceImportFileFormat::XYZForces, "xyz", "Simple X,Y,Z,f(x,y,z) Data")
+				  << EnumOption(ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces");
 
 	static EnumOptions<ForceImportFileFormat::ForceImportFormat> options("ForceImportFileFormat", ForceImportFileFormats);
 
@@ -62,7 +68,10 @@ const char *ForceImportFileFormat::formatKeyword(int id) const { return forceImp
 const char *ForceImportFileFormat::formatDescription(int id) const { return forceImportFormats().descriptionByIndex(id); }
 
 // Return current format as ForceImportFormat
-ForceImportFileFormat::ForceImportFormat ForceImportFileFormat::forceFormat() const { return (ForceImportFileFormat::ForceImportFormat)format_; }
+ForceImportFileFormat::ForceImportFormat ForceImportFileFormat::forceFormat() const
+{
+	return (ForceImportFileFormat::ForceImportFormat)format_;
+}
 
 /*
  * Import Functions

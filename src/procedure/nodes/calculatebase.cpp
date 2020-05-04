@@ -23,9 +23,10 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
-CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0, SelectProcedureNode *site1, SelectProcedureNode *site2, SelectProcedureNode *site3)
-    : ProcedureNode(nodeType)
+CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0,
+						       SelectProcedureNode *site1, SelectProcedureNode *site2,
+						       SelectProcedureNode *site3)
+	: ProcedureNode(nodeType)
 {
 	sites_[0] = site0;
 	sites_[1] = site1;
@@ -38,7 +39,6 @@ CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType n
 	value_ = 0.0;
 }
 
-// Destructor
 CalculateProcedureNodeBase::~CalculateProcedureNodeBase() {}
 
 /*
@@ -46,7 +46,10 @@ CalculateProcedureNodeBase::~CalculateProcedureNodeBase() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool CalculateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool CalculateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Observable Target
@@ -58,7 +61,9 @@ double CalculateProcedureNodeBase::value(int id) const
 #ifdef CHECKS
 	if ((id < 0) || (id >= dimensionality()))
 	{
-		Messenger::error("Observable value index %i is out of range for this observable which has a dimensionality of %i.\n", id, dimensionality());
+		Messenger::error(
+			"Observable value index %i is out of range for this observable which has a dimensionality of %i.\n", id,
+			dimensionality());
 		return 0.0;
 	}
 #endif

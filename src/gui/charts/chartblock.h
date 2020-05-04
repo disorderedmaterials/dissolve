@@ -32,26 +32,25 @@ class QWidget;
 // Chart Block - Base class for any widget displayed in a chart
 class ChartBlock : public ListItem<ChartBlock>
 {
-      public:
-	// Constructor / Destructor
+	public:
 	ChartBlock();
 	virtual ~ChartBlock();
 
 	/*
 	 * Type
 	 */
-      public:
+	public:
 	// Return type of this block
 	virtual const char *blockType() = 0;
 
 	/*
 	 * Widget
 	 */
-      private:
+	private:
 	// Proposed new geometry of the widget
 	QRect newGeometry_;
 
-      public:
+	public:
 	// Return underlying widget
 	virtual QWidget *widget() = 0;
 	// Return width of underlying widget
@@ -72,7 +71,7 @@ class ChartBlock : public ListItem<ChartBlock>
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update controls within widget
 	virtual void updateControls() = 0;
 	// Disable sensitive controls

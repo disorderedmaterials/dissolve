@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 FileAndFormat::FileAndFormat(int format) { format_ = format; }
 
 FileAndFormat::FileAndFormat(const char *filename, int format)
@@ -32,10 +31,8 @@ FileAndFormat::FileAndFormat(const char *filename, int format)
 	format_ = format;
 }
 
-// Destructor
 FileAndFormat::~FileAndFormat() {}
 
-// Conversion operators
 FileAndFormat::operator const char *() const { return filename_.get(); }
 
 /*
@@ -178,7 +175,13 @@ bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeywor
 }
 
 // Write format / filename to specified parser
-bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, const char *prefix) { return parser.writeLineF("%s%s  '%s'\n", prefix, formatKeyword(format_), filename_.get()); }
+bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, const char *prefix)
+{
+	return parser.writeLineF("%s%s  '%s'\n", prefix, formatKeyword(format_), filename_.get());
+}
 
 // Write options and end block
-bool FileAndFormat::writeBlock(LineParser &parser, const char *prefix) { return keywords_.write(parser, CharString("%s  ", prefix)); }
+bool FileAndFormat::writeBlock(LineParser &parser, const char *prefix)
+{
+	return keywords_.write(parser, CharString("%s  ", prefix));
+}

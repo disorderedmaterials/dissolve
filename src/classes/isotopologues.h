@@ -35,16 +35,14 @@ class LineParser;
 // Isotopologues
 class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Isotopologues();
-	// Destructor
 	~Isotopologues();
 
 	/*
 	 * Isotopologue Mixture Data
 	 */
-      private:
+	private:
 	// Associated Species
 	Species *species_;
 	// Integer population of associated Species
@@ -52,7 +50,7 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	// Weighted Isotopologue mixture
 	List<IsotopologueWeight> mix_;
 
-      public:
+	public:
 	// Set associated Species and population
 	void setSpecies(Species *sp, int population);
 	// Return associated Species
@@ -85,7 +83,7 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -96,7 +94,7 @@ class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

@@ -34,10 +34,10 @@ class SuperStackedWidget : public QStackedWidget
 
 	public:
 	// Constructor
-	SuperStackedWidget(QWidget* parent);
+	SuperStackedWidget(QWidget *parent);
 
 	protected:
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent *event);
 };
 
 #endif

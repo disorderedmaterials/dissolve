@@ -34,12 +34,9 @@ class ProcessPool;
 // One-Dimensional Histogram
 class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Histogram1D();
-	// Destructor
 	~Histogram1D();
-	// Copy Constructor
 	Histogram1D(const Histogram1D &source);
 	// Clear data
 	void clear();
@@ -47,7 +44,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	/*
 	 * Histogram Data
 	 */
-      private:
+	private:
 	// Minimum value for data (hard left-edge of first bin)
 	double minimum_;
 	// Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -69,11 +66,11 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	// Accumulated data
 	Data1D accumulatedData_;
 
-      private:
+	private:
 	// Update accumulated data
 	void updateAccumulatedData();
 
-      public:
+	public:
 	// Initialise with specified bin range
 	void initialise(double minimum, double maximum, double binWidth);
 	// Zero histogram bins
@@ -106,14 +103,13 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment Operator
+	public:
 	void operator=(const Histogram1D &source);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -124,7 +120,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Sum histogram data onto all processes
 	bool allSum(ProcessPool &procPool);
 	// Broadcast data

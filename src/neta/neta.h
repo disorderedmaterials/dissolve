@@ -36,22 +36,20 @@ class SpeciesAtom;
 // NETA Definition
 class NETADefinition
 {
-      public:
-	// Constructor
+	public:
 	NETADefinition(const char *netaDefinition = NULL, const Forcefield *associatedFF = NULL);
-	// Destructor
 	~NETADefinition();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Root node of the definition
 	NETARootNode rootNode_;
 	// Original definition string
 	CharString definitionString_;
 
-      public:
+	public:
 	// Clear all definition data
 	void clear();
 	// Return root node pointer
@@ -66,11 +64,11 @@ class NETADefinition
 	/*
 	 * Matching
 	 */
-      private:
+	private:
 	// Current SpeciesAtom being typed
 	SpeciesAtom *targetAtom_;
 
-      public:
+	public:
 	// Check supplied atom to see if it matches this NETA description
 	int score(const SpeciesAtom *i) const;
 };

@@ -22,8 +22,8 @@
 #include "gui/keywordwidgets/vec3labels.h"
 #include "gui/keywordwidgets/vec3nodevalue.h"
 
-// Constructor
-Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);

@@ -38,12 +38,11 @@ class CalibrationModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	CalibrationModuleWidget(QWidget *parent, CalibrationModule *module);
 	~CalibrationModuleWidget();
 
-      private:
+	private:
 	// Associated Module
 	CalibrationModule *module_;
 	// DataViewer contained within this widget
@@ -52,18 +51,18 @@ class CalibrationModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::CalibrationModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -72,7 +71,7 @@ class CalibrationModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 };
 
 #endif

@@ -34,10 +34,10 @@
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
-PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ = PairPotential::ShiftedShortRangeTruncation;
+PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
+	PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-// Constructor
 PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
 	for (int n = 0; n < MAXSRPARAMETERS; ++n)
@@ -82,7 +82,10 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
 }
 
 // Convert ShortRangeTruncationScheme to text string
-const char *PairPotential::shortRangeTruncationScheme(ShortRangeTruncationScheme id) { return ShortRangeTruncationSchemeKeywords[id]; }
+const char *PairPotential::shortRangeTruncationScheme(ShortRangeTruncationScheme id)
+{
+	return ShortRangeTruncationSchemeKeywords[id];
+}
 
 // Return ShortRangeTruncationScheme array
 const char **PairPotential::shortRangeTruncationSchemes() { return ShortRangeTruncationSchemeKeywords; }
@@ -95,7 +98,10 @@ const char **PairPotential::shortRangeTruncationSchemes() { return ShortRangeTru
 Forcefield::ShortRangeType PairPotential::shortRangeType() const { return shortRangeType_; }
 
 // Set short-ranged truncation scheme
-void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme scheme) { shortRangeTruncationScheme_ = scheme; }
+void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme scheme)
+{
+	shortRangeTruncationScheme_ = scheme;
+}
 
 // Return short-ranged truncation scheme
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme() { return shortRangeTruncationScheme_; }
@@ -113,7 +119,10 @@ void PairPotential::setIncludeCoulomb(bool b) { includeCoulomb_ = b; }
 bool PairPotential::includeCoulomb() { return includeCoulomb_; }
 
 // Set Coulomb truncation scheme
-void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme) { coulombTruncationScheme_ = scheme; }
+void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme)
+{
+	coulombTruncationScheme_ = scheme;
+}
 
 // Return Coulomb truncation scheme
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() { return coulombTruncationScheme_; }
@@ -128,12 +137,14 @@ void PairPotential::setData1DNames()
 	// Check for NULL pointers
 	if (atomTypeI_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData1DNames().\n");
+		Messenger::error(
+			"NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData1DNames().\n");
 		return;
 	}
 	if (atomTypeJ_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData1DNames().\n");
+		Messenger::error(
+			"NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData1DNames().\n");
 		return;
 	}
 
@@ -175,11 +186,15 @@ bool PairPotential::setUp(AtomType *typeI, AtomType *typeJ)
 	if (paramsI.isEmpty() || paramsJ.isEmpty())
 	{
 		if (paramsI.isEmpty() && paramsJ.isEmpty())
-			Messenger::error("Can't set parameters for PairPotential since neither AtomType (%s and %s) contain any parameters.\n", atomTypeI_->name(), atomTypeJ_->name());
+			Messenger::error("Can't set parameters for PairPotential since neither AtomType (%s and %s) contain "
+					 "any parameters.\n",
+					 atomTypeI_->name(), atomTypeJ_->name());
 		else if (paramsI.isEmpty())
-			Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeI_->name());
+			Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n",
+					 atomTypeI_->name());
 		else
-			Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeJ_->name());
+			Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n",
+					 atomTypeJ_->name());
 		return false;
 	}
 
@@ -189,43 +204,47 @@ bool PairPotential::setUp(AtomType *typeI, AtomType *typeJ)
 		shortRangeType_ = atomTypeI_->shortRangeType();
 		switch (shortRangeType_)
 		{
-		case (Forcefield::UndefinedType):
-			return Messenger::error("PairPotential between atom types '%s' and '%s' is undefined.\n", atomTypeI_->name(), atomTypeJ_->name());
-		case (Forcefield::NoInteractionType):
-			break;
-		case (Forcefield::LennardJonesType):
-			/*
-			 * Combine parameters (Lorentz-Berthelot):
-			 * Parameter 0 = Epsilon
-			 * Parameter 1 = Sigma
-			 */
-			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-			parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5;
-			chargeI_ = paramsI.charge();
-			chargeJ_ = paramsJ.charge();
-			break;
-		case (Forcefield::LennardJonesGeometricType):
-			/*
-			 * Combine parameters (Geometric):
-			 * Parameter 0 = Epsilon
-			 * Parameter 1 = Sigma
-			 */
-			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-			parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
-			chargeI_ = paramsI.charge();
-			chargeJ_ = paramsJ.charge();
-			break;
-		default:
-			Messenger::error("Short-range type %i is not accounted for in PairPotential::setUp().\n", shortRangeType_);
-			return false;
+			case (Forcefield::UndefinedType):
+				return Messenger::error("PairPotential between atom types '%s' and '%s' is undefined.\n",
+							atomTypeI_->name(), atomTypeJ_->name());
+			case (Forcefield::NoInteractionType):
+				break;
+			case (Forcefield::LennardJonesType):
+				/*
+				 * Combine parameters (Lorentz-Berthelot):
+				 * Parameter 0 = Epsilon
+				 * Parameter 1 = Sigma
+				 */
+				parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+				parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5;
+				chargeI_ = paramsI.charge();
+				chargeJ_ = paramsJ.charge();
+				break;
+			case (Forcefield::LennardJonesGeometricType):
+				/*
+				 * Combine parameters (Geometric):
+				 * Parameter 0 = Epsilon
+				 * Parameter 1 = Sigma
+				 */
+				parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+				parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
+				chargeI_ = paramsI.charge();
+				chargeJ_ = paramsJ.charge();
+				break;
+			default:
+				Messenger::error("Short-range type %i is not accounted for in PairPotential::setUp().\n",
+						 shortRangeType_);
+				return false;
 		}
 	}
 	else
 	{
 		// Can't mix parameters of different functional forms in general, so complain...
 		shortRangeType_ = Forcefield::UndefinedType;
-		return Messenger::error("Can't generate potential parameters between atom types '%s' and '%s', which have short-range types %s and %s.\nAdd a suitable potential manually.\n",
-					atomTypeI_->name(), atomTypeJ_->name(), Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
+		return Messenger::error("Can't generate potential parameters between atom types '%s' and '%s', which have "
+					"short-range types %s and %s.\nAdd a suitable potential manually.\n",
+					atomTypeI_->name(), atomTypeJ_->name(),
+					Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
 					Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
 	}
 
@@ -268,7 +287,9 @@ void PairPotential::setParameter(int index, double value)
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
 	{
-		Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be set.\n", index, MAXSRPARAMETERS);
+		Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it "
+				 "cannot be set.\n",
+				 index, MAXSRPARAMETERS);
 		return;
 	}
 #endif
@@ -281,7 +302,9 @@ double PairPotential::parameter(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
 	{
-		Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be returned.\n", index, MAXSRPARAMETERS);
+		Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it "
+				 "cannot be returned.\n",
+				 index, MAXSRPARAMETERS);
 		return 0.0;
 	}
 #endif
@@ -305,7 +328,8 @@ double PairPotential::chargeJ() const { return chargeJ_; }
  */
 
 // Return analytic short range potential energy
-double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type,
+					       PairPotential::ShortRangeTruncationScheme truncation)
 {
 	if (type == Forcefield::NoInteractionType)
 		return 0.0;
@@ -340,13 +364,16 @@ double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeT
 		return energy;
 	}
 
-	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeEnergy(). Returning 0.0...\n", type);
+	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeEnergy(). "
+			 "Returning 0.0...\n",
+			 type);
 
 	return 0.0;
 }
 
 // Return analytic short range force
-double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
+double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeType type,
+					      PairPotential::ShortRangeTruncationScheme truncation)
 {
 	if (type == Forcefield::NoInteractionType)
 		return 0.0;
@@ -379,8 +406,11 @@ double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeTy
 			{
 				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
 				// d/dx = -PI*sin((PI*truncr)/shortRangeTruncationWidth_) / shortRangeTruncationWidth_
-				double de_t = (-48.0 * parameters_[0] * ((sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)))) * (cos(PI * (truncr / shortRangeTruncationWidth_)) + 1) * 0.5;
-				double e_dt = (4.0 * parameters_[0] * (sigmar12 - sigmar6)) * -PI * sin((PI * truncr) / shortRangeTruncationWidth_) / shortRangeTruncationWidth_;
+				double de_t =
+					(-48.0 * parameters_[0] * ((sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)))) *
+					(cos(PI * (truncr / shortRangeTruncationWidth_)) + 1) * 0.5;
+				double e_dt = (4.0 * parameters_[0] * (sigmar12 - sigmar6)) * -PI *
+					      sin((PI * truncr) / shortRangeTruncationWidth_) / shortRangeTruncationWidth_;
 				return de_t * e_dt;
 			}
 			else
@@ -388,7 +418,9 @@ double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeTy
 		}
 	}
 
-	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeForce(). Returning 0.0...\n", type);
+	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeForce(). "
+			 "Returning 0.0...\n",
+			 type);
 
 	return 0.0;
 }
@@ -431,7 +463,8 @@ void PairPotential::calculateDUFull()
 		else
 		{
 			// Five-point stencil
-			fprime = -uFull_.constValue(n + 2) + 8 * uFull_.constValue(n + 1) - 8 * uFull_.constValue(n - 1) + uFull_.constValue(n - 2);
+			fprime = -uFull_.constValue(n + 2) + 8 * uFull_.constValue(n + 1) - 8 * uFull_.constValue(n - 1) +
+				 uFull_.constValue(n - 2);
 			fprime /= 12 * delta_;
 			dUFull_.value(n) = fprime;
 		}

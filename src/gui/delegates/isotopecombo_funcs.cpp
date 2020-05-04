@@ -26,7 +26,6 @@
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
-// Destructor
 IsotopeComboDelegate::~IsotopeComboDelegate() {}
 
 // Create editor
@@ -46,7 +45,8 @@ QWidget *IsotopeComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
 			editor->addItem(textForIsotope(tope));
 	}
 	else
-		Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
+		Messenger::error(
+			"IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
 
 	return editor;
 }
@@ -64,7 +64,8 @@ void IsotopeComboDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 		comboBox->setCurrentIndex(isotope->index());
 	}
 	else
-		Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
+		Messenger::error(
+			"IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
 	// 	QString value = index.model()->data(index, Qt::EditRole).toString();
 }
 
@@ -89,7 +90,11 @@ void IsotopeComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 }
 
 // Update widget geometry
-void IsotopeComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void IsotopeComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+						const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}
 
 /*
  * Helper Functions

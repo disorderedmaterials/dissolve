@@ -30,7 +30,7 @@ class Data3D;
 // Data3D Export Formats
 class Data3DExportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available data formats
 	enum Data3DExportFormat
 	{
@@ -39,13 +39,12 @@ class Data3DExportFileFormat : public FileAndFormat
 		PDensData3D,
 		nData3DExportFormats
 	};
-	// Constructor
 	Data3DExportFileFormat(const char *filename = NULL, Data3DExportFormat format = Data3DExportFileFormat::BlockData3D);
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for Data3DExportFormat
 	static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> data3DExportFormats();
 	// Return number of available formats
@@ -60,14 +59,14 @@ class Data3DExportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-      private:
+	private:
 	// Export Data3D as simple block data
 	bool exportBlock(LineParser &parser, const Data3D &data);
 	// Export Data3D as cartesian data
@@ -75,7 +74,7 @@ class Data3DExportFileFormat : public FileAndFormat
 	// Export Data3D as pdens data
 	bool exportPDens(LineParser &parser, const Data3D &data);
 
-      public:
+	public:
 	// Export Data3D using current filename and format
 	bool exportData(const Data3D &data);
 };

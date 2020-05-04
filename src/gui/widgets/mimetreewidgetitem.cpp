@@ -21,7 +21,6 @@
 
 #include "gui/widgets/mimetreewidgetitem.h"
 
-// Constructors
 MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidget *parent, int type) : QTreeWidgetItem(parent, type) {}
 MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidgetItem *parent, int type) : QTreeWidgetItem(parent, type) {}
 

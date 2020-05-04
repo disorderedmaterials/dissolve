@@ -29,8 +29,8 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
-ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -101,7 +101,8 @@ void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 	RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
 
 	// Update the list widget
-	ListWidgetUpdater<ModuleRefListKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this, &ModuleRefListKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<ModuleRefListKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this,
+									  &ModuleRefListKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 

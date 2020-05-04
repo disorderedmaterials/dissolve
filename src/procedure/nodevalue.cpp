@@ -23,7 +23,6 @@
 #include "base/sysfunc.h"
 #include "expression/generator.h"
 
-// Constructors
 NodeValue::NodeValue()
 {
 	valueI_ = 0;
@@ -49,7 +48,6 @@ NodeValue::NodeValue(const char *expressionText, RefList<ExpressionVariable> par
 	set(expressionText, parameters);
 }
 
-// Destructor
 NodeValue::~NodeValue() {}
 
 // Assignment from integer

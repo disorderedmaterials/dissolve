@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_DOUBLE_H
 #define DISSOLVE_KEYWORDWIDGET_DOUBLE_H
 
-#include "keywords/double.h"
 #include "gui/keywordwidgets/base.h"
 #include "gui/widgets/exponentialspin.hui"
+#include "keywords/double.h"
 
 // Forward Declarations
 /* none */
@@ -36,16 +36,14 @@ class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
 	private:
 	// Associated keyword
-	DoubleKeyword* keyword_;
-
+	DoubleKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
@@ -57,7 +55,6 @@ class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
 	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update

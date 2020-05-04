@@ -34,22 +34,20 @@ class ProcessPool;
 // Procedure
 class Procedure
 {
-      public:
-	// Constructor
+	public:
 	Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword = "EndProcedure");
-	// Destructor
 	~Procedure();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Context for the main Procedure
 	ProcedureNode::NodeContext context_;
 	// Sequence node from which the Procedure starts
 	SequenceProcedureNode rootSequence_;
 
-      public:
+	public:
 	// Clear all data
 	void clear();
 	// Add (own) specified node to root sequence
@@ -64,18 +62,18 @@ class Procedure
 	/*
 	 * Execute
 	 */
-      private:
+	private:
 	// List of Configurations and the coordinate indices at which they were last processed
 	RefDataList<Configuration, int> configurationPoints_;
 
-      public:
+	public:
 	// Run procedure on specified Configuration, storing / retrieving generated data from supplied list
 	bool execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Read procedure from specified LineParser
 	bool read(LineParser &parser, const CoreData &coreData);
 	// Write procedure to specified LineParser

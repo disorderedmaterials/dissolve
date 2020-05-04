@@ -34,13 +34,11 @@ class KeywordsDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	KeywordsDialog(QWidget *parent, const KeywordList &keywords, const CoreData &coreData);
-	// Destructor
 	~KeywordsDialog();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::KeywordsDialog ui_;
 	// CoreData reference
@@ -50,7 +48,7 @@ class KeywordsDialog : public QDialog
 	// Whether any set-up needs to be re-run following keyword modification
 	bool setUpRequired_;
 
-      public:
+	public:
 	// Run the dialog
 	void showOptions();
 	// Return whether any keywords have been modified in the current 'show'
@@ -61,7 +59,7 @@ class KeywordsDialog : public QDialog
 	/*
 	 * Slots
 	 */
-      private slots:
+	private slots:
 	void keywordChanged();
 	void setUpRequired();
 	void on_OKButton_clicked(bool checked);

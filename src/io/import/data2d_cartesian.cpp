@@ -34,7 +34,8 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
 
 	// Must have axis ranges - otherwise tricky to work out axis limits without reading the whole file in twice
 	if ((!keywords_.isSet("XRange")) || (!keywords_.isSet("YRange")))
-		return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
+		return Messenger::error(
+			"Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
 
 	// Set up our data
 	const Vec3<double> xRange = keywords_.asVec3Double("XRange");
@@ -66,13 +67,15 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
 		int xBin = (x - xMin) / xDelta;
 		if ((xBin < 0) || (xBin >= data.constXAxis().nItems()))
 		{
-			Messenger::warn("Coordinates x=%e y=%e are out-of-range (xBin = %i, nBins = %i).\n", x, y, xBin, data.constXAxis().nItems());
+			Messenger::warn("Coordinates x=%e y=%e are out-of-range (xBin = %i, nBins = %i).\n", x, y, xBin,
+					data.constXAxis().nItems());
 			continue;
 		}
 		int yBin = (y - yMin) / yDelta;
 		if ((yBin < 0) || (yBin >= data.constYAxis().nItems()))
 		{
-			Messenger::warn("Coordinates x=%e y=%e are out-of-range (yBin = %i, nBins = %i).\n", x, y, yBin, data.constYAxis().nItems());
+			Messenger::warn("Coordinates x=%e y=%e are out-of-range (yBin = %i, nBins = %i).\n", x, y, yBin,
+					data.constYAxis().nItems());
 			continue;
 		}
 

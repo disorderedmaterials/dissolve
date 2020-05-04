@@ -36,19 +36,21 @@ template <class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
 template <class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
 template <class Configuration> const char *ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
-// Constructor
-Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
+Configuration::Configuration()
+	: ListItem<Configuration>(), ObjectStore<Configuration>(this),
+	  generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
 	box_ = NULL;
 
 	clear();
 }
 
-// Destructor
 Configuration::~Configuration() { clear(); }
 
-// Assignment operator
-void Configuration::operator=(Configuration &source) { Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n"); }
+void Configuration::operator=(Configuration &source)
+{
+	Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
+}
 
 // Clear all data
 void Configuration::clear()
@@ -138,7 +140,9 @@ bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileForm
 	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
 	if (atoms_.nItems() != r.nItems())
 	{
-		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), atoms_.nItems());
+		Messenger::error(
+			"Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n",
+			r.nItems(), atoms_.nItems());
 		return false;
 	}
 
@@ -176,7 +180,8 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
 		{
 			if (DissolveSys::fileExists(inputCoordinates_))
 			{
-				Messenger::print("Loading initial coordinates from file '%s'...\n", inputCoordinates_.filename());
+				Messenger::print("Loading initial coordinates from file '%s'...\n",
+						 inputCoordinates_.filename());
 				LineParser inputFileParser(&procPool);
 				if (!inputFileParser.openInput(inputCoordinates_))
 					return false;
@@ -188,7 +193,9 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
 				updateCellContents();
 			}
 			else
-				return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the file doesn't exist.\n", name(), inputCoordinates_.filename());
+				return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the "
+							"file doesn't exist.\n",
+							name(), inputCoordinates_.filename());
 		}
 	}
 

@@ -38,10 +38,8 @@ class MasterIntra;
  */
 class SpeciesIntra
 {
-      public:
-	// Constructor
+	public:
 	SpeciesIntra();
-	// Destructor
 	virtual ~SpeciesIntra();
 	// Interaction Type
 	enum InteractionType
@@ -55,11 +53,11 @@ class SpeciesIntra
 	/*
 	 * Basic Data
 	 */
-      protected:
+	protected:
 	// Parent Species
 	Species *parent_;
 
-      public:
+	public:
 	// Set parent Species
 	void setParent(Species *parent);
 	// Return parent Species
@@ -68,7 +66,7 @@ class SpeciesIntra
 	/*
 	 * Interaction Parameters
 	 */
-      protected:
+	protected:
 	// Linked master from which parameters should be taken (if relevant)
 	MasterIntra *masterParameters_;
 	// Index of functional form of interaction
@@ -76,7 +74,7 @@ class SpeciesIntra
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-      public:
+	public:
 	// Set linked master from which parameters should be taken
 	void setMasterParameters(MasterIntra *master);
 	// Return linked master from which parameters should be taken
@@ -113,7 +111,7 @@ class SpeciesIntra
 	/*
 	 * Connections
 	 */
-      private:
+	private:
 	// Number of SpeciesAtoms attached to termini (number of items stored in attached_ arrays)
 	int nAttached_[2];
 	// Arrays of indices (in)directly attached to termini
@@ -123,7 +121,7 @@ class SpeciesIntra
 	// Whether the term is contained within a cycle
 	bool inCycle_;
 
-      public:
+	public:
 	// Clear and delete all arrays
 	void deleteAttachedAtomArrays();
 	// Set attached SpeciesAtoms for terminus specified

@@ -24,8 +24,8 @@
 #include "gui/keywordwidgets/vec3integer.h"
 #include "gui/keywordwidgets/vec3labels.h"
 
-// Constructor
-Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -39,9 +39,12 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase 
 	else
 	{
 		// Set minimum and maximum values for each component
-		ui_.Spin1->setRange(keyword_->hasValidationMin(0) ? keyword_->validationMin(0) : -1e6, keyword_->hasValidationMax(0) ? keyword_->validationMax(0) : 1e6);
-		ui_.Spin2->setRange(keyword_->hasValidationMin(1) ? keyword_->validationMin(1) : -1e6, keyword_->hasValidationMax(1) ? keyword_->validationMax(1) : 1e6);
-		ui_.Spin3->setRange(keyword_->hasValidationMin(2) ? keyword_->validationMin(2) : -1e6, keyword_->hasValidationMax(2) ? keyword_->validationMax(2) : 1e6);
+		ui_.Spin1->setRange(keyword_->hasValidationMin(0) ? keyword_->validationMin(0) : -1e6,
+				    keyword_->hasValidationMax(0) ? keyword_->validationMax(0) : 1e6);
+		ui_.Spin2->setRange(keyword_->hasValidationMin(1) ? keyword_->validationMin(1) : -1e6,
+				    keyword_->hasValidationMax(1) ? keyword_->validationMax(1) : 1e6);
+		ui_.Spin3->setRange(keyword_->hasValidationMin(2) ? keyword_->validationMin(2) : -1e6,
+				    keyword_->hasValidationMax(2) ? keyword_->validationMax(2) : 1e6);
 
 		// Set current values
 		ui_.Spin1->setValue(keyword_->asVec3Int().x);
@@ -49,7 +52,8 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase 
 		ui_.Spin3->setValue(keyword_->asVec3Int().z);
 	}
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	ui_.Spin1->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin1));
 	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
 	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));

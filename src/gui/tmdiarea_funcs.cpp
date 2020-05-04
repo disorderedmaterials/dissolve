@@ -23,7 +23,6 @@
 #include "gui/tmdiarea.hui"
 #include "main/dissolve.h"
 
-// Constructor
 TMdiArea::TMdiArea(DissolveWindow *dissolveWindow, QWidget *parent) : QMdiArea(parent)
 {
 	dissolveWindow_ = dissolveWindow;

@@ -8,7 +8,8 @@
 #define SGCOREDEF__
 #include "sginfo.h"
 
-static int InitialCBMxR(T_SgInfo *SgInfo, const T_LatticeInfo **NewLatticeInfo, int *NewPointGroup, int *IniCBMxR, int *IniInvCBMxR)
+static int InitialCBMxR(T_SgInfo *SgInfo, const T_LatticeInfo **NewLatticeInfo, int *NewPointGroup, int *IniCBMxR,
+			int *IniInvCBMxR)
 {
 	int Code, NewPG, deterCCMx, fac, i;
 	const T_LatticeInfo *NewLI;
@@ -21,92 +22,92 @@ static int InitialCBMxR(T_SgInfo *SgInfo, const T_LatticeInfo **NewLatticeInfo, 
 
 	switch (SgInfo->XtalSystem)
 	{
-	case XS_Triclinic:
-		NewLI = LI_P;
-		CCMx = SgInfo->CCMx_LP;
-		break;
+		case XS_Triclinic:
+			NewLI = LI_P;
+			CCMx = SgInfo->CCMx_LP;
+			break;
 
-	case XS_Monoclinic:
-	case XS_Tetragonal:
-		switch (SgInfo->UniqueRefAxis)
-		{
-		case 'z':
-			if (Code == 'C')
+		case XS_Monoclinic:
+		case XS_Tetragonal:
+			switch (SgInfo->UniqueRefAxis)
 			{
-				NewLI = LI_P;
-				CCMx = SgInfo->CCMx_LP;
+				case 'z':
+					if (Code == 'C')
+					{
+						NewLI = LI_P;
+						CCMx = SgInfo->CCMx_LP;
+					}
+					else if (Code == 'F')
+					{
+						NewLI = LI_I;
+						CCMx = CCMx_FI_z;
+					}
+					break;
+				case 'y':
+					if (Code == 'B')
+					{
+						NewLI = LI_P;
+						CCMx = SgInfo->CCMx_LP;
+					}
+					else if (Code == 'F')
+					{
+						NewLI = LI_I;
+						CCMx = CCMx_FI_y;
+					}
+					break;
+				case 'x':
+					if (Code == 'A')
+					{
+						NewLI = LI_P;
+						CCMx = SgInfo->CCMx_LP;
+					}
+					else if (Code == 'F')
+					{
+						NewLI = LI_I;
+						CCMx = CCMx_FI_x;
+					}
+					break;
+				default:
+					goto ReturnError;
 			}
-			else if (Code == 'F')
+
+			if (SgInfo->XtalSystem == XS_Tetragonal && SgInfo->LatticeInfo != NewLI)
 			{
-				NewLI = LI_I;
-				CCMx = CCMx_FI_z;
+				if (NewPG == PG_4b2m)
+					NewPG = PG_4bm2;
+				else if (NewPG == PG_4bm2)
+					NewPG = PG_4b2m;
 			}
+
 			break;
-		case 'y':
-			if (Code == 'B')
-			{
-				NewLI = LI_P;
-				CCMx = SgInfo->CCMx_LP;
-			}
-			else if (Code == 'F')
-			{
-				NewLI = LI_I;
-				CCMx = CCMx_FI_y;
-			}
+
+		case XS_Orthorhombic:
 			break;
-		case 'x':
-			if (Code == 'A')
+
+		case XS_Trigonal:
+			NewLI = LI_P;
+			CCMx = SgInfo->CCMx_LP;
+
+			if (Code == 'R' || Code == 'S' || Code == 'T')
 			{
-				NewLI = LI_P;
-				CCMx = SgInfo->CCMx_LP;
+				if (NewPG == PG_321)
+					NewPG = PG_32;
+				else if (NewPG == PG_3m1)
+					NewPG = PG_3m;
+				else if (NewPG == PG_3bm1)
+					NewPG = PG_3bm;
 			}
-			else if (Code == 'F')
-			{
-				NewLI = LI_I;
-				CCMx = CCMx_FI_x;
-			}
+
 			break;
+
+		case XS_Hexagonal:
+			break;
+
+		case XS_Cubic:
+			break;
+
 		default:
 			goto ReturnError;
-		}
-
-		if (SgInfo->XtalSystem == XS_Tetragonal && SgInfo->LatticeInfo != NewLI)
-		{
-			if (NewPG == PG_4b2m)
-				NewPG = PG_4bm2;
-			else if (NewPG == PG_4bm2)
-				NewPG = PG_4b2m;
-		}
-
-		break;
-
-	case XS_Orthorhombic:
-		break;
-
-	case XS_Trigonal:
-		NewLI = LI_P;
-		CCMx = SgInfo->CCMx_LP;
-
-		if (Code == 'R' || Code == 'S' || Code == 'T')
-		{
-			if (NewPG == PG_321)
-				NewPG = PG_32;
-			else if (NewPG == PG_3m1)
-				NewPG = PG_3m;
-			else if (NewPG == PG_3bm1)
-				NewPG = PG_3bm;
-		}
-
-		break;
-
-	case XS_Hexagonal:
-		break;
-
-	case XS_Cubic:
-		break;
-
-	default:
-		goto ReturnError;
 	}
 
 	deterCCMx = deterRotMx(CCMx);
@@ -324,7 +325,8 @@ static const T_RTMx *GetSMxWithSameRot(const int *WtdRotMx, const T_SgInfo *SgIn
 
 static int BuildFreeMx(const int *EigenVector, int Order, int *FreeMx)
 {
-	static const int GeneratorEigenVectors[] = {001, 0, 0, 1, 010, 0, 1, 0, 100, 1, 0, 0, 110, 1, 1, 0, -110, 1, -1, 0, 111, 1, 1, 1, 0};
+	static const int GeneratorEigenVectors[] = {001, 0, 0, 1,    010, 0,  1, 0,   100, 1, 0, 0, 110,
+						    1,   1, 0, -110, 1,   -1, 0, 111, 1,   1, 1, 0};
 
 	int i;
 	const int *gev;
@@ -351,60 +353,60 @@ static int BuildFreeMx(const int *EigenVector, int Order, int *FreeMx)
 	{
 		switch (*gev)
 		{
-		case 001:
-			FreeMx[0] = 1;
-			FreeMx[4] = 1;
-			return 0;
-		case 010:
-			FreeMx[8] = 1;
-			FreeMx[0] = 1;
-			return 0;
-		case 100:
-			FreeMx[4] = 1;
-			FreeMx[8] = 1;
-			return 0;
-		case 110:
-			FreeMx[1] = 1;
-			FreeMx[4] = -1;
-			FreeMx[8] = 1;
-			return 1;
-		case -110:
-			FreeMx[1] = 1;
-			FreeMx[4] = 1;
-			FreeMx[8] = 1;
-			return 1;
-		default:
-			break;
+			case 001:
+				FreeMx[0] = 1;
+				FreeMx[4] = 1;
+				return 0;
+			case 010:
+				FreeMx[8] = 1;
+				FreeMx[0] = 1;
+				return 0;
+			case 100:
+				FreeMx[4] = 1;
+				FreeMx[8] = 1;
+				return 0;
+			case 110:
+				FreeMx[1] = 1;
+				FreeMx[4] = -1;
+				FreeMx[8] = 1;
+				return 1;
+			case -110:
+				FreeMx[1] = 1;
+				FreeMx[4] = 1;
+				FreeMx[8] = 1;
+				return 1;
+			default:
+				break;
 		}
 	}
 	else if (Order > 1)
 	{
 		switch (*gev)
 		{
-		case 001:
-			FreeMx[8] = 1;
-			return 0;
-		case 010:
-			FreeMx[4] = 1;
-			return 0;
-		case 100:
-			FreeMx[0] = 1;
-			return 0;
-		case 110:
-			FreeMx[0] = 1;
-			FreeMx[3] = 1;
-			return 1;
-		case -110:
-			FreeMx[0] = 1;
-			FreeMx[3] = -1;
-			return 1;
-		case 111:
-			FreeMx[0] = 1;
-			FreeMx[3] = 1;
-			FreeMx[6] = 1;
-			return 1;
-		default:
-			break;
+			case 001:
+				FreeMx[8] = 1;
+				return 0;
+			case 010:
+				FreeMx[4] = 1;
+				return 0;
+			case 100:
+				FreeMx[0] = 1;
+				return 0;
+			case 110:
+				FreeMx[0] = 1;
+				FreeMx[3] = 1;
+				return 1;
+			case -110:
+				FreeMx[0] = 1;
+				FreeMx[3] = -1;
+				return 1;
+			case 111:
+				FreeMx[0] = 1;
+				FreeMx[3] = 1;
+				FreeMx[6] = 1;
+				return 1;
+			default:
+				break;
 		}
 	}
 
@@ -412,7 +414,8 @@ static int BuildFreeMx(const int *EigenVector, int Order, int *FreeMx)
 	return -1;
 }
 
-static int StartFixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx, T_RTMx *SMxG, T_RTMx *SMxS_G, int *FreeMx, int *TryAgain)
+static int StartFixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx,
+			T_RTMx *SMxG, T_RTMx *SMxS_G, int *FreeMx, int *TryAgain)
 {
 	int iG, Order, i;
 	const int *EV;
@@ -644,7 +647,8 @@ static int SetInvCBMxT(const int *CBMxT, const int *InvCBMxR, int *InvCBMxT)
 	return 0;
 }
 
-static int FixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx, int *FreeMx, int TryAgain)
+static int FixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iGen, T_RTMx *CBMx, T_RTMx *InvCBMx, int *FreeMx,
+		   int TryAgain)
 {
 	int i, NextTryAgain;
 	int IniCBMxT[3], SingleFreeMx[9];
@@ -715,18 +719,20 @@ static int FixAxes(const T_SgInfo *SgInfo, const T_SgInfo *GenSgI, const int *iG
 
 			switch (nActive)
 			{
-			case 1:
-				RedSh[icActive[0]] = S_G[irActive[0]];
-				break;
-			case 2:
-				RedSh[icActive[0]] = InvR_I_FMx[0] * S_G[irActive[0]] + InvR_I_FMx[1] * S_G[irActive[1]];
-				RedSh[icActive[1]] = InvR_I_FMx[2] * S_G[irActive[0]] + InvR_I_FMx[3] * S_G[irActive[1]];
-				break;
-			case 3:
-				RotMx_t_Vector(RedSh, InvR_I_FMx, S_G, 0);
-				break;
-			default:
-				break;
+				case 1:
+					RedSh[icActive[0]] = S_G[irActive[0]];
+					break;
+				case 2:
+					RedSh[icActive[0]] =
+						InvR_I_FMx[0] * S_G[irActive[0]] + InvR_I_FMx[1] * S_G[irActive[1]];
+					RedSh[icActive[1]] =
+						InvR_I_FMx[2] * S_G[irActive[0]] + InvR_I_FMx[3] * S_G[irActive[1]];
+					break;
+				case 3:
+					RotMx_t_Vector(RedSh, InvR_I_FMx, S_G, 0);
+					break;
+				default:
+					break;
 			}
 
 			if (FreeMx)
@@ -792,7 +798,8 @@ ReturnError:
 	return -1;
 }
 
-static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, const T_SgInfo *GenSgI, const int *IniCBMxR, const int *IniInvCBMxR, T_RTMx *CBMx, T_RTMx *InvCBMx)
+static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, const T_SgInfo *GenSgI, const int *IniCBMxR,
+			const int *IniInvCBMxR, T_RTMx *CBMx, T_RTMx *InvCBMx)
 {
 	int iGen[5], i;
 
@@ -851,18 +858,18 @@ static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, cons
 
 		switch (GenSgI->ListRotMxInfo[1].RefAxis)
 		{
-		case 'z':
-			break;
-		case 'x':
-			RotateRotMx(RMxCCs_Buf, RMx_3_111, RMx_3i111);
-			RotateRotMx(RMxCCn_Buf, RMx_3_111, RMx_3i111);
-			break;
-		case 'y':
-			RotateRotMx(RMxCCs_Buf, RMx_3i111, RMx_3_111);
-			RotateRotMx(RMxCCn_Buf, RMx_3i111, RMx_3_111);
-			break;
-		default:
-			goto ReturnError;
+			case 'z':
+				break;
+			case 'x':
+				RotateRotMx(RMxCCs_Buf, RMx_3_111, RMx_3i111);
+				RotateRotMx(RMxCCn_Buf, RMx_3_111, RMx_3i111);
+				break;
+			case 'y':
+				RotateRotMx(RMxCCs_Buf, RMx_3i111, RMx_3_111);
+				RotateRotMx(RMxCCn_Buf, RMx_3i111, RMx_3_111);
+				break;
+			default:
+				goto ReturnError;
 		}
 
 		InverseRotMx(RMxCCn_Buf, InvRMxCCn_Buf);
@@ -1027,19 +1034,19 @@ static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, cons
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_422:
-		case PG_4mm:
-		case PG_4b2m:
-		case PG_4bm2:
-		case PG_4_mmm:
-			iGen[i++] = 2;
+			case PG_422:
+			case PG_4mm:
+			case PG_4b2m:
+			case PG_4bm2:
+			case PG_4_mmm:
+				iGen[i++] = 2;
 		}
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_4_m:
-		case PG_4_mmm:
-			iGen[i++] = -1;
+			case PG_4_m:
+			case PG_4_mmm:
+				iGen[i++] = -1;
 		}
 		iGen[i] = 0;
 
@@ -1055,39 +1062,39 @@ static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, cons
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_3:
-		case PG_312:
-		case PG_32:
-		case PG_3m1:
-		case PG_3m:
-			iGen[i++] = 1;
-			break;
-		case PG_3b:
-		case PG_3bm1:
-		case PG_3b1m:
-		case PG_3bm:
-			iGen[i++] = -3;
+			case PG_3:
+			case PG_312:
+			case PG_32:
+			case PG_3m1:
+			case PG_3m:
+				iGen[i++] = 1;
+				break;
+			case PG_3b:
+			case PG_3bm1:
+			case PG_3b1m:
+			case PG_3bm:
+				iGen[i++] = -3;
 		}
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_321:
-		case PG_312:
-		case PG_32:
-		case PG_3m1:
-		case PG_31m:
-		case PG_3m:
-		case PG_3bm1:
-		case PG_3b1m:
-		case PG_3bm:
-			iGen[i++] = 2;
+			case PG_321:
+			case PG_312:
+			case PG_32:
+			case PG_3m1:
+			case PG_31m:
+			case PG_3m:
+			case PG_3bm1:
+			case PG_3b1m:
+			case PG_3bm:
+				iGen[i++] = 2;
 		}
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_321:
-		case PG_31m:
-			iGen[i++] = 1;
+			case PG_321:
+			case PG_31m:
+				iGen[i++] = 1;
 		}
 		iGen[i] = 0;
 
@@ -1103,25 +1110,25 @@ static int CompleteCBMx(const T_SgInfo *SgInfo, const T_LatticeInfo *NewLI, cons
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_6bm2:
-		case PG_6b2m:
-			iGen[i++] = 2;
+			case PG_6bm2:
+			case PG_6b2m:
+				iGen[i++] = 2;
 		}
 		iGen[i++] = 1;
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_622:
-		case PG_6mm:
-		case PG_6_mmm:
-			iGen[i++] = 2;
+			case PG_622:
+			case PG_6mm:
+			case PG_6_mmm:
+				iGen[i++] = 2;
 		}
 
 		switch (GenSgI->PointGroup)
 		{
-		case PG_6_m:
-		case PG_6_mmm:
-			iGen[i++] = -1;
+			case PG_6_m:
+			case PG_6_mmm:
+				iGen[i++] = -1;
 		}
 		iGen[i] = 0;
 

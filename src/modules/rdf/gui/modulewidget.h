@@ -39,12 +39,11 @@ class RDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
 	~RDFModuleWidget();
 
-      private:
+	private:
 	// Associated Module
 	RDFModule *module_;
 	// DataViewers contained within this widget
@@ -55,18 +54,18 @@ class RDFModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::RDFModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -75,15 +74,15 @@ class RDFModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Current Configuration whose data is being displayed
 	Configuration *currentConfiguration_;
 
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(RDFModule *module);
 
-      private slots:
+	private slots:
 	void on_TargetCombo_currentIndexChanged(int index);
 };
 

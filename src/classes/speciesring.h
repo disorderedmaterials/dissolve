@@ -35,20 +35,18 @@ class SpeciesAtom;
 // SpeciesRing Definition
 class SpeciesRing : public ListItem<SpeciesRing>
 {
-      public:
-	// Constructor
+	public:
 	SpeciesRing();
-	// Destructor
 	~SpeciesRing();
 
 	/*
 	 * Atoms
 	 */
-      private:
+	private:
 	// Array of atoms in the ring, in the order in which they appear
 	std::vector<const SpeciesAtom *> atoms_;
 
-      public:
+	public:
 	// Set atoms in ring
 	void setAtoms(const std::vector<const SpeciesAtom *> &atoms);
 	// Return nth atom in ring
@@ -63,8 +61,7 @@ class SpeciesRing : public ListItem<SpeciesRing>
 	/*
 	 * Comparison
 	 */
-      public:
-	// Equality operator
+	public:
 	bool operator==(const SpeciesRing &other);
 };
 

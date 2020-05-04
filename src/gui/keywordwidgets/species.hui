@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_SPECIES_H
 #define DISSOLVE_KEYWORDWIDGET_SPECIES_H
 
-#include "keywords/species.h"
 #include "gui/keywordwidgets/base.h"
+#include "keywords/species.h"
 #include <QComboBox>
 
 // Forward Declarations
@@ -36,16 +36,14 @@ class SpeciesKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	SpeciesKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
 	private:
 	// Associated keyword
-	SpeciesKeyword* keyword_;
-
+	SpeciesKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
@@ -57,7 +55,6 @@ class SpeciesKeywordWidget : public QComboBox, public KeywordWidgetBase
 	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update

@@ -33,23 +33,21 @@ class OperateSitePopulationNormaliseProcedureNode;
 // CalculateCN Module
 class CalculateCNModule : public Module
 {
-      public:
-	// Constructor
+	public:
 	CalculateCNModule();
-	// Destructor
 	~CalculateCNModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -62,21 +60,21 @@ class CalculateCNModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-      private:
+	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// Sum1D node
@@ -86,7 +84,7 @@ class CalculateCNModule : public Module
 	// Site normalisation node
 	OperateSitePopulationNormaliseProcedureNode *siteNormaliser_;
 
-      public:
+	public:
 	// Return specified coordination number (from Sum1D node)
 	const SampledDouble &coordinationNumber(int index);
 	// Return whether range B is enabled
@@ -97,7 +95,7 @@ class CalculateCNModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

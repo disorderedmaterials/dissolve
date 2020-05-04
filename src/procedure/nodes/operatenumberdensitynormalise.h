@@ -30,24 +30,22 @@ class SelectProcedureNode;
 // Operate Number Density Normalise Node
 class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBase
 {
-      public:
-	// Constructors
+	public:
 	OperateNumberDensityNormaliseProcedureNode();
 	OperateNumberDensityNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes);
-	// Destructor
 	~OperateNumberDensityNormaliseProcedureNode();
 
 	/*
 	 * Target Sites (SelectNodes)
 	 */
-      private:
+	private:
 	// List of sites (nodes) whose populations will be used to normalise the data
 	RefList<const SelectProcedureNode> selectNodes_;
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target

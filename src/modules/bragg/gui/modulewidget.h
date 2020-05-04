@@ -39,12 +39,11 @@ class BraggModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	BraggModuleWidget(QWidget *parent, BraggModule *module);
 	~BraggModuleWidget();
 
-      private:
+	private:
 	// Associated Module
 	BraggModule *module_;
 	// DataViewers contained within this widget
@@ -53,11 +52,11 @@ class BraggModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::BraggModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
@@ -68,7 +67,7 @@ class BraggModuleWidget : public ModuleWidget
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -77,15 +76,15 @@ class BraggModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Current Configuration whose data is being displayed
 	Configuration *currentConfiguration_;
 
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets();
 
-      private slots:
+	private slots:
 	void on_TargetCombo_currentIndexChanged(int index);
 };
 

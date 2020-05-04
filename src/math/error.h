@@ -34,7 +34,7 @@ class Error
 	/*
 	 * Error Type
 	 */
-      public:
+	public:
 	// Error Types
 	enum ErrorType
 	{
@@ -51,7 +51,7 @@ class Error
 	/*
 	 * Data1D
 	 */
-      public:
+	public:
 	// Return erorr of specified type between supplied data
 	static double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false);
 	// Return RMSE between supplied data

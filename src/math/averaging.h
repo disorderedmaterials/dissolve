@@ -31,7 +31,7 @@
 // Data Averaging
 class Averaging
 {
-      public:
+	public:
 	// Averaging Schemes
 	enum AveragingScheme
 	{
@@ -42,7 +42,7 @@ class Averaging
 	// Return enum options for AveragingScheme
 	static EnumOptions<Averaging::AveragingScheme> averagingSchemes();
 
-      private:
+	private:
 	// Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
 	static int pruneOldData(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage)
 	{
@@ -51,7 +51,8 @@ class Averaging
 		for (nStored = 0; nStored < nSetsInAverage; ++nStored)
 			if (!moduleData.contains(CharString("%s_%i", name, nStored + 1), prefix))
 				break;
-		Messenger::print("Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage - 1);
+		Messenger::print("Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage,
+				 nStored, nSetsInAverage - 1);
 
 		// Remove the oldest dataset if it exists, and shuffle the others down
 		if (nStored == nSetsInAverage)
@@ -77,14 +78,17 @@ class Averaging
 		return 1.0;
 	}
 
-      public:
+	public:
 	// Perform averaging of named data
-	template <class T> static bool average(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage, AveragingScheme averagingScheme)
+	template <class T>
+	static bool average(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage,
+			    AveragingScheme averagingScheme)
 	{
 		// Find the 'root' data of type T, which should currently contain the most recently-calculated data
 		if (!moduleData.contains(name, prefix))
 		{
-			Messenger::error("Couldn't find root data '%s' (prefix = '%s') in order to perform averaging.\n", name, prefix);
+			Messenger::error("Couldn't find root data '%s' (prefix = '%s') in order to perform averaging.\n", name,
+					 prefix);
 			return false;
 		}
 		T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
@@ -93,7 +97,8 @@ class Averaging
 		int nData = pruneOldData(moduleData, name, prefix, nSetsInAverage);
 
 		// Store the current T as the earliest data (index == 1)
-		T &recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
+		T &recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix,
+							      GenericItem::InRestartFileFlag);
 		recentData = currentData;
 		++nData;
 
@@ -124,12 +129,15 @@ class Averaging
 		return true;
 	};
 	// Perform averaging of named array data
-	template <class T> static bool arrayAverage(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage, AveragingScheme averagingScheme)
+	template <class T>
+	static bool arrayAverage(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage,
+				 AveragingScheme averagingScheme)
 	{
 		// Find the 'root' data of type T, which should currently contain the most recently-calculated data
 		if (!moduleData.contains(name, prefix))
 		{
-			Messenger::error("Couldn't find root data '%s' (prefix = '%s') in order to perform averaging.\n", name, prefix);
+			Messenger::error("Couldn't find root data '%s' (prefix = '%s') in order to perform averaging.\n", name,
+					 prefix);
 			return false;
 		}
 		T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
@@ -138,7 +146,8 @@ class Averaging
 		int nData = pruneOldData(moduleData, name, prefix, nSetsInAverage);
 
 		// Store the current T as the earliest data (index == 1)
-		T &recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
+		T &recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix,
+							      GenericItem::InRestartFileFlag);
 		recentData = currentData;
 		++nData;
 

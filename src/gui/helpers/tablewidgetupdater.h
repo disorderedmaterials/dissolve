@@ -30,14 +30,14 @@
 #ifndef DISSOLVE_TABLEWIDGETUPDATER_H
 #define DISSOLVE_TABLEWIDGETUPDATER_H
 
-// TableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as much as possible
+// TableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as much
+// as possible
 template <class T, class I> class TableWidgetUpdater
 {
 	// Typedefs for passed functions
 	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, bool createItems);
 
-      public:
-	// Constructor (from const List<I>)
+	public:
 	TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
@@ -50,7 +50,8 @@ template <class T, class I> class TableWidgetUpdater
 			// Our table may or may not be populated, and with different items to those in the list.
 
 			// If there is an item already on this row, check it
-			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+			// again
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
@@ -79,11 +80,12 @@ template <class T, class I> class TableWidgetUpdater
 			++rowCount;
 		}
 
-		// Set the number of table rows again here in order to catch the case where there were zero data items to iterate over
+		// Set the number of table rows again here in order to catch the case where there were zero data items to
+		// iterate over
 		table->setRowCount(rowCount);
 	}
-	// Constructor (from const RefList<I>)
-	TableWidgetUpdater(QTableWidget *table, const RefList<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetUpdater(QTableWidget *table, const RefList<I> &list, T *functionParent,
+			   TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
 
@@ -94,7 +96,8 @@ template <class T, class I> class TableWidgetUpdater
 			// Our table may or may not be populated, and with different items to those in the list.
 
 			// If there is an item already on this row, check it
-			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+			// again
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
@@ -123,11 +126,12 @@ template <class T, class I> class TableWidgetUpdater
 			++rowCount;
 		}
 
-		// Set the number of table rows again here in order to catch the case where there were zero data items to iterate over
+		// Set the number of table rows again here in order to catch the case where there were zero data items to
+		// iterate over
 		table->setRowCount(rowCount);
 	}
-	// Constructor (from const DynamicArray<I>)
-	TableWidgetUpdater(QTableWidget *table, DynamicArray<I> &array, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetUpdater(QTableWidget *table, DynamicArray<I> &array, T *functionParent,
+			   TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
 
@@ -139,7 +143,8 @@ template <class T, class I> class TableWidgetUpdater
 			// Our table may or may not be populated, and with different items to those in the list.
 
 			// If there is an item already on this row, check it
-			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+			// again
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
@@ -168,20 +173,22 @@ template <class T, class I> class TableWidgetUpdater
 			++rowCount;
 		}
 
-		// Set the number of table rows again here in order to catch the case where there were zero data items to iterate over
+		// Set the number of table rows again here in order to catch the case where there were zero data items to
+		// iterate over
 		table->setRowCount(rowCount);
 	}
 };
 
-// TableWidgetRefDataUpdater - Constructor-only template class to update contents of a QTableWidget from a RefDataList, preserving original items as much as possible
+// TableWidgetRefDataUpdater - Constructor-only template class to update contents of a QTableWidget from a RefDataList,
+// preserving original items as much as possible
 template <class T, class I, class D> class TableWidgetRefDataListUpdater
 {
 	// Typedefs for passed functions
 	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, D data, bool createItems);
 
-      public:
-	// Constructor
-	TableWidgetRefDataListUpdater(QTableWidget *table, const RefDataList<I, D> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+	public:
+	TableWidgetRefDataListUpdater(QTableWidget *table, const RefDataList<I, D> &list, T *functionParent,
+				      TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem *tableItem;
 
@@ -193,7 +200,8 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
 			// Our table may or may not be populated, and with different items to those in the list.
 
 			// If there is an item already on this row, check it
-			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+			// again
 			while (rowCount < table->rowCount())
 			{
 				tableItem = table->item(rowCount, 0);
@@ -222,7 +230,8 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
 			++rowCount;
 		}
 
-		// Set the number of table rows again here in order to catch the case where there were zero data items to iterate over
+		// Set the number of table rows again here in order to catch the case where there were zero data items to
+		// iterate over
 		table->setRowCount(rowCount);
 	}
 };

@@ -40,7 +40,7 @@ void ConfigurationViewer::render2DOverlay()
 	if (interacting())
 		switch (interactionMode())
 		{
-		default:
-			break;
+			default:
+				break;
 		}
 }

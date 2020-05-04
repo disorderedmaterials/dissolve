@@ -30,30 +30,28 @@
 // Trajectory Import Formats
 class TrajectoryImportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available trajectory formats
 	enum TrajectoryImportFormat
 	{
 		XYZTrajectory,
 		nTrajectoryImportFormats
 	};
-	// Constructors
 	TrajectoryImportFileFormat(TrajectoryImportFormat format = XYZTrajectory);
 	TrajectoryImportFileFormat(const char *filename, TrajectoryImportFormat format = XYZTrajectory);
-	// Destructor
 	~TrajectoryImportFileFormat();
 
 	/*
 	 * Keyword Options
 	 */
-      private:
+	private:
 	// Set up keywords for the format
 	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for TrajectoryImportFileFormat
 	static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> trajectoryImportFormats();
 	// Return number of available formats
@@ -68,7 +66,7 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return true; }
 };

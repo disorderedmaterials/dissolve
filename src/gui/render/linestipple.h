@@ -32,7 +32,7 @@ class QComboBox;
 // Line Stipple
 class LineStipple
 {
-      public:
+	public:
 	// Line Stipple Types
 	enum StippleType
 	{
@@ -53,7 +53,7 @@ class LineStipple
 	/*
 	 * Stipple
 	 */
-      public:
+	public:
 	// Line stipple factor
 	GLint stippleFactor;
 	// Line stipple pattern
@@ -61,7 +61,7 @@ class LineStipple
 	// Name of stipple
 	const char *name;
 
-      public:
+	public:
 	// Add stipple pattern to specified QComboBox
 	void addStippleItem(QComboBox *combo, int lineHeight);
 	// Return stipple pattern as a Qt-compatible dash pattern
@@ -70,14 +70,14 @@ class LineStipple
 	/*
 	 * GL
 	 */
-      public:
+	public:
 	// Apply stipple pattern
 	void apply();
 
 	/*
 	 * Singleton
 	 */
-      public:
+	public:
 	// Static list of line stipples
 	static LineStipple stipple[];
 };

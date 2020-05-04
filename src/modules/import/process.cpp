@@ -54,7 +54,8 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		 */
 		if (readTrajectory)
 		{
-			Messenger::print("Import: Reading trajectory file frame from '%s' into Configuration '%s'...\n", trajectoryFile_.filename(), cfg->name());
+			Messenger::print("Import: Reading trajectory file frame from '%s' into Configuration '%s'...\n",
+					 trajectoryFile_.filename(), cfg->name());
 
 			// Open the file
 			LineParser parser(&procPool);
@@ -66,25 +67,29 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
 			{
 				// Retrieve the streampos and go to it in the file
-				streampos trajPos = GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
+				streampos trajPos = GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(),
+											   streamPosName, uniqueName());
 				parser.seekg(trajPos);
 			}
 
 			// Read the frame
 			switch (trajectoryFile_.trajectoryFormat())
 			{
-			case (TrajectoryImportFileFormat::XYZTrajectory):
-				if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
-					return false;
-				cfg->incrementContentsVersion();
-				break;
-			default:
-				return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n", trajectoryFile_.trajectoryFormat());
-				break;
+				case (TrajectoryImportFileFormat::XYZTrajectory):
+					if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
+						return false;
+					cfg->incrementContentsVersion();
+					break;
+				default:
+					return Messenger::error(
+						"Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n",
+						trajectoryFile_.trajectoryFormat());
+					break;
 			}
 
 			// Set the trajectory file position in the restart file
-			GenericListHelper<streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(), GenericItem::InRestartFileFlag) = parser.tellg();
+			GenericListHelper<streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(),
+							      GenericItem::InRestartFileFlag) = parser.tellg();
 		}
 	}
 

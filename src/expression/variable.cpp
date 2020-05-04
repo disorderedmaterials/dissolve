@@ -23,7 +23,6 @@
 #include "base/messenger.h"
 #include <string.h>
 
-// Constructor
 ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : ExpressionNode()
 {
 	// Private variables

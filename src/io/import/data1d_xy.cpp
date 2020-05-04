@@ -44,7 +44,9 @@ bool Data1DImportFileFormat::importXY(LineParser &parser, Data1D &data)
 		// Check columns provided
 		if ((xCol >= parser.nArgs()) || (yCol >= parser.nArgs()))
 		{
-			return Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xCol + 1, yCol + 1);
+			return Messenger::error(
+				"Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n",
+				parser.inputFilename(), xCol + 1, yCol + 1);
 		}
 
 		// Are we reading errors too?
@@ -54,7 +56,9 @@ bool Data1DImportFileFormat::importXY(LineParser &parser, Data1D &data)
 		{
 			if (errorCol >= parser.nArgs())
 			{
-				return Messenger::error("Error reading from '%s', as the error column specified (%i) is not present.\n", parser.inputFilename(), errorCol + 1);
+				return Messenger::error(
+					"Error reading from '%s', as the error column specified (%i) is not present.\n",
+					parser.inputFilename(), errorCol + 1);
 			}
 
 			data.addPoint(parser.argd(xCol), parser.argd(yCol), parser.argd(errorCol));

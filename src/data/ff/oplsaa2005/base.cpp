@@ -21,7 +21,6 @@
 
 #include "data/ff/oplsaa2005/base.h"
 
-// Constructor
 OPLSAA2005BaseForcefield::OPLSAA2005BaseForcefield() {}
 
 OPLSAA2005BaseForcefield::~OPLSAA2005BaseForcefield() {}

@@ -34,12 +34,9 @@ class Histogram2D;
 // One-Dimensional Data
 class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Data2D();
-	// Destructor
 	~Data2D();
-	// Copy Constructor
 	Data2D(const Data2D &source);
 	// Clear data
 	void clear();
@@ -47,7 +44,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// X axis array
 	Array<double> x_;
 	// Y axis array
@@ -61,7 +58,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	// Data version
 	VersionCounter version_;
 
-      public:
+	public:
 	// Initialise arrays to specified size
 	void initialise(int xSize, int ySize, bool withError = false);
 	// Initialise to be consistent in size and axes with supplied object
@@ -124,22 +121,17 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment Operator
+	public:
 	void operator=(const Data2D &source);
-	// Operator +=
 	void operator+=(const double delta);
-	// Operator -=
 	void operator-=(const double delta);
-	// Operator *=
 	void operator*=(const double factor);
-	// Operator /=
 	void operator/=(const double factor);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -150,7 +142,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

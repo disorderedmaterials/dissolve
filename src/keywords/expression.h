@@ -31,16 +31,14 @@ class ProcedureNode;
 // Keyword with Expression
 class ExpressionKeyword : public KeywordData<Expression &>
 {
-      public:
-	// Constructor
+	public:
 	ExpressionKeyword(Expression &expression);
-	// Destructor
 	~ExpressionKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -53,14 +51,14 @@ class ExpressionKeyword : public KeywordData<Expression &>
 	/*
 	 * Set
 	 */
-      public:
+	public:
 	// Set the value from supplied expression text
 	bool setValue(const char *expressionText);
 
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as int)
 	int asInt();
 	// Return value (as double)
@@ -69,7 +67,7 @@ class ExpressionKeyword : public KeywordData<Expression &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 };
 
 #endif

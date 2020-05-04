@@ -26,7 +26,6 @@
 #include "module/list.h"
 #include "modules/analyse/analyse.h"
 
-// Constructor
 ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<ProcedureNodeReference>()
 {
 	node_ = node;
@@ -36,7 +35,6 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<P
 	analyseModuleParent_ = NULL;
 }
 
-// Destructor
 ProcedureNodeReference::~ProcedureNodeReference() {}
 
 /*
@@ -66,10 +64,8 @@ bool ProcedureNodeReference::isNull() const { return (node_ == NULL); }
  * Operators
  */
 
-// Assignment operator
 void ProcedureNodeReference::operator=(ProcedureNode *node) { node_ = node; }
 
-// Assignment operator
 void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
 {
 	node_ = nodeRef.node_;
@@ -93,7 +89,8 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
 		if (!module)
 			return Messenger::error("No Analyse module named '%s' exists.\n", parser.argc(startArg + 1));
 		if (!DissolveSys::sameString("Analyse", module->type()))
-			return Messenger::error("Specified module '%s' must be an Analyse module.\n", parser.argc(startArg + 1));
+			return Messenger::error("Specified module '%s' must be an Analyse module.\n",
+						parser.argc(startArg + 1));
 
 		// Found the target AnalyseModule, so cast it up and search for the named node in its Analyser
 		analyseModuleParent_ = dynamic_cast<AnalyseModule *>(module);
@@ -103,7 +100,8 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
 		node_ = analyseModuleParent_->analyser().node(parser.argc(startArg));
 
 		if (!node_)
-			return Messenger::error("No node named '%s' exists in the Analyse module specified (%s).\n", parser.argc(startArg), parser.argc(startArg + 1));
+			return Messenger::error("No node named '%s' exists in the Analyse module specified (%s).\n",
+						parser.argc(startArg), parser.argc(startArg + 1));
 	}
 	else
 	{

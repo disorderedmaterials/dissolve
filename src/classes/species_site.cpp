@@ -46,11 +46,15 @@ void Species::removeSite(SpeciesSite *site)
 	}
 	else
 	{
-		Messenger::print("BAD_REMOVE - Can't remove specified SpeciesSite '%s' from Species '%s' since it doesn't exist.\n", site->name(), name_.get());
+		Messenger::print(
+			"BAD_REMOVE - Can't remove specified SpeciesSite '%s' from Species '%s' since it doesn't exist.\n",
+			site->name(), name_.get());
 		if (!site->parent())
 			Messenger::print("BAD_CLASS - No parent pointer set in Isotopologue '%s'.\n", site->name());
 		else
-			Messenger::print("BAD_REMOVE - Parent Species (%s) of SpeciesSite '%s' is different from this one (%s).\n", site->parent()->name(), site->name(), name());
+			Messenger::print(
+				"BAD_REMOVE - Parent Species (%s) of SpeciesSite '%s' is different from this one (%s).\n",
+				site->parent()->name(), site->name(), name());
 	}
 }
 

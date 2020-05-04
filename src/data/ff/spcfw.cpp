@@ -38,7 +38,6 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor
 Forcefield_SPCFw::Forcefield_SPCFw()
 {
 	// Atom types
@@ -52,7 +51,6 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 	addAngleTerm("HW", "OW", "HW", SpeciesAngle::HarmonicForm, 317.5656, 113.24);
 }
 
-// Destructor
 Forcefield_SPCFw::~Forcefield_SPCFw() {}
 
 /*
@@ -65,7 +63,8 @@ const char *Forcefield_SPCFw::name() const { return "SPC/Fw"; }
 // Return description for Forcefield
 const char *Forcefield_SPCFw::description() const
 {
-	return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with improved liquid-state properties', <i>Journal of Chemical Physics</i> "
+	return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with "
+	       "improved liquid-state properties', <i>Journal of Chemical Physics</i> "
 	       "<b>124</b> "
 	       "024503 (2006), http://dx.doi.org/10.1063/1.2136877";
 }

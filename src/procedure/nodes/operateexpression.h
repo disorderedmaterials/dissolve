@@ -31,16 +31,14 @@
 // Operate Expression Node
 class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {
-      public:
-	// Constructors
+	public:
 	OperateExpressionProcedureNode(const char *expressionText = "");
-	// Destructor
 	~OperateExpressionProcedureNode();
 
 	/*
 	 * Expression and Variables
 	 */
-      private:
+	private:
 	// Normalisation expression
 	Expression expression_;
 	// X variable in equation
@@ -55,7 +53,7 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target

@@ -29,12 +29,14 @@
 #ifndef DISSOLVE_COMBOBOXUPDATER_H
 #define DISSOLVE_COMBOBOXUPDATER_H
 
-// ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as possible
+// ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as
+// possible
 template <class I> class ComboBoxUpdater
 {
-      public:
+	public:
 	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
-	ComboBoxUpdater(QComboBox *comboBox, const List<I> &data, const I *currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
+	ComboBoxUpdater(QComboBox *comboBox, const List<I> &data, const I *currentItem, int startIndex = 0,
+			int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
 		currentIndex_ = startIndex;
@@ -53,7 +55,8 @@ template <class I> class ComboBoxUpdater
 	}
 
 	// Update QComboBox from supplied RefList, assuming that class I implements a name() function for the item
-	ComboBoxUpdater(QComboBox *comboBox, const RefList<I> &data, const I *currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
+	ComboBoxUpdater(QComboBox *comboBox, const RefList<I> &data, const I *currentItem, int startIndex = 0,
+			int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
 		currentIndex_ = startIndex;
@@ -71,7 +74,8 @@ template <class I> class ComboBoxUpdater
 	}
 
 	// Update QComboBox from supplied RefDataList, using the CharString data as the item's name
-	ComboBoxUpdater(QComboBox *comboBox, const RefDataList<I, CharString> &data, const I *currentItem, int startIndex = 0, int indexIfNoCurrentItem = -1)
+	ComboBoxUpdater(QComboBox *comboBox, const RefDataList<I, CharString> &data, const I *currentItem, int startIndex = 0,
+			int indexIfNoCurrentItem = -1)
 	{
 		comboBox_ = comboBox;
 		currentIndex_ = startIndex;
@@ -89,13 +93,13 @@ template <class I> class ComboBoxUpdater
 			comboBox->setCurrentIndex(indexIfNoCurrentItem);
 	}
 
-      private:
+	private:
 	// Target combo box
 	QComboBox *comboBox_;
 	// Item index
 	int currentIndex_;
 
-      private:
+	private:
 	// Update item at specified position in combo box (if it exists)
 	void updateItem(const char *itemText, I *itemData, bool isCurrent)
 	{
@@ -139,15 +143,17 @@ template <class I> class ComboBoxUpdater
 	}
 };
 
-// ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as possible
+// ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as
+// possible
 template <class T, class I> class ComboBoxTextUpdater
 {
 	// Typedefs for passed functions
 	typedef const char *(T::*ComboBoxItemTextFunction)(const I *item);
 
-      public:
+	public:
 	// Update QComboBox from supplied RefList, using provided function to acquire text to display for item
-	ComboBoxTextUpdater(QComboBox *comboBox, const RefList<I> &data, const I *currentItem, T *functionParent, ComboBoxItemTextFunction textForItem)
+	ComboBoxTextUpdater(QComboBox *comboBox, const RefList<I> &data, const I *currentItem, T *functionParent,
+			    ComboBoxItemTextFunction textForItem)
 	{
 		int currentIndex = 0;
 

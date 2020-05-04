@@ -23,7 +23,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles) : Box()
 {
 	type_ = Box::TriclinicBoxType;
@@ -59,7 +58,6 @@ TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles
 	finalise();
 }
 
-// Destructor
 TriclinicBox::~TriclinicBox() {}
 
 /*
@@ -210,19 +208,31 @@ double TriclinicBox::minimumDistance(const Atom &i, const Atom &j) const { retur
 double TriclinicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const { return minimumVector(i, j).magnitude(); }
 
 // Return minimum image distance from 'i' to 'j'
-double TriclinicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const { return minimumVector(i, j).magnitude(); }
+double TriclinicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
+{
+	return minimumVector(i, j).magnitude();
+}
 
 // Return minimum image squared distance from 'i' to 'j' (pointers)
 double TriclinicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const { return minimumVector(i, j).magnitudeSq(); }
 
 // Return minimum image squared distance from 'i' to 'j' (references)
-double TriclinicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const { return minimumVector(i.r(), j.r()).magnitudeSq(); }
+double TriclinicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
+{
+	return minimumVector(i.r(), j.r()).magnitudeSq();
+}
 
 // Return minimum image squared distance from 'i' to 'j'
-double TriclinicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const { return minimumVector(i, j).magnitudeSq(); }
+double TriclinicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const
+{
+	return minimumVector(i, j).magnitudeSq();
+}
 
 // Return minimum image squared distance from 'i' to 'j'
-double TriclinicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const { return minimumVector(i, j).magnitudeSq(); }
+double TriclinicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+{
+	return minimumVector(i, j).magnitudeSq();
+}
 
 /*
  * Utility Routines (Virtual Implementations)

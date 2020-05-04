@@ -32,13 +32,11 @@ class LineParser;
 // Node Value
 class NodeValue
 {
-      public:
-	// Constructors
+	public:
 	NodeValue();
 	NodeValue(const int i);
 	NodeValue(const double d);
 	NodeValue(const char *expressionText, RefList<ExpressionVariable> parameters);
-	// Destructor
 	~NodeValue();
 	// Assignment from integer
 	void operator=(const int value);
@@ -50,7 +48,7 @@ class NodeValue
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Value Types
 	enum NodeValueType
 	{
@@ -67,7 +65,7 @@ class NodeValue
 	// Expression, if defined
 	Expression expression_;
 
-      public:
+	public:
 	// Set integer value
 	bool set(int value);
 	// Set double value
@@ -80,7 +78,7 @@ class NodeValue
 	/*
 	 * Value Retrieval
 	 */
-      public:
+	public:
 	// Return contained value as integer
 	int asInteger();
 	// Return contained value as double

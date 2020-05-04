@@ -21,7 +21,6 @@
 
 #include "gui/wizardwidgetpageinfo.h"
 
-// Constructor / Destructor
 WizardWidgetPageInfo::WizardWidgetPageInfo() : ListItem<WizardWidgetPageInfo>()
 {
 	pageType_ = WizardWidgetPageInfo::NormalPage;

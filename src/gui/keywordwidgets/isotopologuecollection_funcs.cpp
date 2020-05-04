@@ -33,8 +33,9 @@
 #include "module/module.h"
 #include "templates/variantpointer.h"
 
-// Constructor
-IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget *parent, KeywordBase *keyword,
+									 const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -47,8 +48,10 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
 	connect(ui_.AutoButton, SIGNAL(clicked(bool)), this, SLOT(autoButton_clicked(bool)));
 	connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
 	connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
-	connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(isotopologueTree_itemChanged(QTreeWidgetItem *, int)));
-	connect(ui_.IsotopologueTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+	connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this,
+		SLOT(isotopologueTree_itemChanged(QTreeWidgetItem *, int)));
+	connect(ui_.IsotopologueTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this,
+		SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
@@ -257,44 +260,49 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
 	Isotopologue *iso;
 	switch (column)
 	{
-	// Isotopologue
-	case (2):
-		// Find the isotopologue by name in the parent species...
-		iso = topes->species()->findIsotopologue(qPrintable(w->text(column)));
-		if (!iso)
-			return;
+		// Isotopologue
+		case (2):
+			// Find the isotopologue by name in the parent species...
+			iso = topes->species()->findIsotopologue(qPrintable(w->text(column)));
+			if (!iso)
+				return;
 
-		// Set the new Isotopologue
-		topeWeight->setIsotopologue(iso);
+			// Set the new Isotopologue
+			topeWeight->setIsotopologue(iso);
 
-		// Manually flag that the keyword data has changed
-		keyword_->hasBeenSet();
+			// Manually flag that the keyword data has changed
+			keyword_->hasBeenSet();
 
-		emit(keywordValueChanged(keyword_->optionMask()));
-		break;
-	// Weight
-	case (3):
-		topeWeight->setWeight(w->text(column).toDouble());
+			emit(keywordValueChanged(keyword_->optionMask()));
+			break;
+		// Weight
+		case (3):
+			topeWeight->setWeight(w->text(column).toDouble());
 
-		// Manually flag that the keyword data has changed
-		keyword_->hasBeenSet();
+			// Manually flag that the keyword data has changed
+			keyword_->hasBeenSet();
 
-		emit(keywordValueChanged(keyword_->optionMask()));
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", column);
-		break;
+			emit(keywordValueChanged(keyword_->optionMask()));
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", column);
+			break;
 	}
 }
 
-void IsotopologueCollectionKeywordWidget::isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem, QTreeWidgetItem *previousItem) { ui_.RemoveButton->setEnabled(currentItem); }
+void IsotopologueCollectionKeywordWidget::isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem,
+									      QTreeWidgetItem *previousItem)
+{
+	ui_.RemoveButton->setEnabled(currentItem);
+}
 
 /*
  * Update
  */
 
 // IsotopologueTree parent (IsotopologueSet) item update function
-void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem(QTreeWidget *treeWidget, int topLevelItemIndex, IsotopologueSet *topeSet, bool createItem)
+void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem(QTreeWidget *treeWidget, int topLevelItemIndex,
+									 IsotopologueSet *topeSet, bool createItem)
 {
 	QTreeWidgetItem *item;
 	if (createItem)
@@ -311,11 +319,13 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem(QTreeWi
 	item->setText(0, topeSet->configuration()->name());
 
 	// Update child (Isotopologues) items
-	TreeWidgetUpdater<IsotopologueCollectionKeywordWidget, Isotopologues> treeUpdater(item, topeSet->isotopologues(), this, &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem);
+	TreeWidgetUpdater<IsotopologueCollectionKeywordWidget, Isotopologues> treeUpdater(
+		item, topeSet->isotopologues(), this, &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem);
 }
 
 // IsotopologueTree child (Isotopologues) update function
-void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, Isotopologues *topes, bool createItem)
+void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeWidgetItem *parentItem, int childIndex,
+									  Isotopologues *topes, bool createItem)
 {
 	QTreeWidgetItem *item;
 	if (createItem)
@@ -333,11 +343,13 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeW
 	item->setText(1, topes->species()->name());
 
 	// Update sub-child (Isotopologue/weight) items
-	TreeWidgetUpdater<IsotopologueCollectionKeywordWidget, IsotopologueWeight> subChildUpdater(item, topes->mix(), this, &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem);
+	TreeWidgetUpdater<IsotopologueCollectionKeywordWidget, IsotopologueWeight> subChildUpdater(
+		item, topes->mix(), this, &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem);
 }
 
 // IsotopologueTree sub-child (Isotopologue/double) update function
-void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem(QTreeWidgetItem *parentItem, int childIndex, IsotopologueWeight *isoWeight, bool createItem)
+void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem(QTreeWidgetItem *parentItem, int childIndex,
+									     IsotopologueWeight *isoWeight, bool createItem)
 {
 	QTreeWidgetItem *item;
 	if (createItem)
@@ -364,8 +376,9 @@ void IsotopologueCollectionKeywordWidget::updateWidgetValues(const CoreData &cor
 	refreshing_ = true;
 
 	// Update the root items of the tree with the allowed Configurations list
-	TreeWidgetUpdater<IsotopologueCollectionKeywordWidget, IsotopologueSet> treeUpdater(ui_.IsotopologueTree, keyword_->data().isotopologueSets(), this,
-											    &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem);
+	TreeWidgetUpdater<IsotopologueCollectionKeywordWidget, IsotopologueSet> treeUpdater(
+		ui_.IsotopologueTree, keyword_->data().isotopologueSets(), this,
+		&IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem);
 
 	for (int n = 0; n < 4; ++n)
 		ui_.IsotopologueTree->resizeColumnToContents(n);

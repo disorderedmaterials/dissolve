@@ -28,15 +28,14 @@ template <class T> class DynamicArray;
 // Dynamic Array Object Class
 template <class T> class DynamicArrayObjectBase
 {
-      public:
-	// Constructor
+	public:
 	DynamicArrayObjectBase<T>() { arrayIndex_ = -1; }
 
-      protected:
+	protected:
 	// Index of object within parent DynamicArray
 	int arrayIndex_;
 
-      public:
+	public:
 	// Return index of object within parent DynamicArray
 	int arrayIndex() const { return arrayIndex_; }
 };
@@ -44,7 +43,7 @@ template <class T> class DynamicArrayObjectBase
 // Dynamic Array Object Class
 template <class T> class DynamicArrayObject : public DynamicArrayObjectBase<T>
 {
-      public:
+	public:
 	// Clear object, ready for re-use
 	virtual void clear() = 0;
 	// Return index of object within parent DynamicArray

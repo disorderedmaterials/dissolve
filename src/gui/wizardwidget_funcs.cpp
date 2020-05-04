@@ -22,7 +22,6 @@
 #include "base/sysfunc.h"
 #include "gui/wizardwidget.hui"
 
-// Constructor / Destructor
 WizardWidget::WizardWidget()
 {
 	headerAvailable_ = false;
@@ -97,7 +96,8 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo *page)
 			int nextIndex = page->nextIndex();
 			if (nextIndex == -1)
 				nextIndex = determineNextPage(page->index());
-			footerUi_.NextButton->setVisible((page->pageType() == WizardWidgetPageInfo::NormalPage) && (nextIndex != WizardWidgetPageInfo::FinishHereFlag));
+			footerUi_.NextButton->setVisible((page->pageType() == WizardWidgetPageInfo::NormalPage) &&
+							 (nextIndex != WizardWidgetPageInfo::FinishHereFlag));
 			footerUi_.NextButton->setEnabled(nextIndex != -1);
 			footerUi_.FinishButton->setVisible(nextIndex == WizardWidgetPageInfo::FinishHereFlag);
 

@@ -33,16 +33,16 @@ class ForcefieldAtomType;
 // Forcefield Angle Term
 class ForcefieldAngleTerm
 {
-      public:
-	// Constructor / Destructor
-	ForcefieldAngleTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, double data0 = 0.0,
-			    double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	public:
+	ForcefieldAngleTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL,
+			    SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, double data0 = 0.0, double data1 = 0.0,
+			    double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldAngleTerm();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Type names involved in interaction
 	CharString typeI_, typeJ_, typeK_;
 	// Functional form of interaction
@@ -50,7 +50,7 @@ class ForcefieldAngleTerm
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-      public:
+	public:
 	// Return if this term matches the atom types supplied
 	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
 	// Return functional form index of interaction

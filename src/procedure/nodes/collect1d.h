@@ -35,23 +35,22 @@ class NodeScopeStack;
 // Procedure Node - Collect1D
 class Collect1DProcedureNode : public ProcedureNode
 {
-      public:
-	// Constructor
-	Collect1DProcedureNode(CalculateProcedureNodeBase *observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
-	// Destructor
+	public:
+	Collect1DProcedureNode(CalculateProcedureNodeBase *observable = NULL, double rMin = 0.0, double rMax = 10.0,
+			       double binWidth = 0.05);
 	~Collect1DProcedureNode();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Observable to bin along x (retrieved from keyword)
 	CalculateProcedureNodeBase *xObservable_;
 	// Index of x observable data to use (retrieved from keyword)
@@ -59,7 +58,7 @@ class Collect1DProcedureNode : public ProcedureNode
 	// Histogram in which to accumulate data
 	Histogram1D *histogram_;
 
-      public:
+	public:
 	// Return accumulated data
 	const Data1D &accumulatedData() const;
 	// Return range minimum
@@ -72,11 +71,11 @@ class Collect1DProcedureNode : public ProcedureNode
 	/*
 	 * Branches
 	 */
-      private:
+	private:
 	// Branch for subcollection (if defined), run if the target quantity is successfully binned
 	SequenceProcedureNode *subCollectBranch_;
 
-      public:
+	public:
 	// Add and return subcollection sequence branch
 	SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
 	// Return whether this node has a branch
@@ -87,11 +86,12 @@ class Collect1DProcedureNode : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };

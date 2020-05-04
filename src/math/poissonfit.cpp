@@ -26,7 +26,6 @@
 #include "math/mc.h"
 #include "math/praxis.h"
 
-// Constructor
 PoissonFit::PoissonFit(const Data1D &referenceData) : expMax_(25.0)
 {
 	referenceData_ = referenceData;
@@ -121,7 +120,8 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 
 	double factor = 1.0 / ((n + 2) * pow(sqrtOnePlusQSqSigmaSq_.constAt(qIndex), n + 4));
 
-	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.constXAxis(qIndex) * sigmaQ_)) * sin(na);
+	double value =
+		2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.constXAxis(qIndex) * sigmaQ_)) * sin(na);
 
 	return factor * value;
 }
@@ -150,7 +150,8 @@ Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, 
 }
 
 // Calculate and return single function in requested space
-Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
+Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep,
+				  double xMax) const
 {
 	Data1D func;
 	double x = xMin;
@@ -344,7 +345,8 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 			currentError_ = poissonMinimiser.minimise();
 			Messenger::printVerbose("PoissonFit::reFitC() - P = %i, error = %f\n", p, currentError_);
 
-			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
+			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a
+			// little with this one
 			if (p < nPoissons_)
 				p -= overlap;
 		}
@@ -356,9 +358,11 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 	return Error::percent(referenceData_, approximateData_);
 }
 
-// Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin will be zeroed)
-double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK,
-				       int smoothingM, bool reFitAtEnd)
+// Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin
+// will be zeroed)
+double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations,
+				       double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
+				       bool reFitAtEnd)
 {
 	// Clear any existing data
 	nPoissons_ = nPoissons;
@@ -408,8 +412,9 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 }
 
 // Construct suitable reciprocal-space representation using provided coefficients as a starting point
-double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold,
-				       int smoothingK, int smoothingM, bool reFitAtEnd)
+double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ, double sigmaR,
+				       int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK,
+				       int smoothingM, bool reFitAtEnd)
 {
 	// Set up data
 	nPoissons_ = coefficients.nItems();

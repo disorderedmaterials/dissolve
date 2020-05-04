@@ -33,8 +33,7 @@ class QWidget;
 // Wizard Page Info
 class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 {
-      public:
-	// Constructor / Destructor
+	public:
 	WizardWidgetPageInfo();
 	~WizardWidgetPageInfo();
 	// Page Types
@@ -48,7 +47,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Page type
 	PageType pageType_;
 	// Identifying index for this page
@@ -60,7 +59,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	// Index of the 'next' page (for linear progressions)
 	int nextIndex_;
 
-      public:
+	public:
 	// Set page information
 	void set(int index, const char *title, int nextIndex = -1);
 	// Set page index
@@ -85,13 +84,13 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	/*
 	 * Widget Interaction
 	 */
-      private:
+	private:
 	// Associated widget in QStackedWidget
 	QWidget *stackedWidgetPage_;
 	// Highlighted widgets
 	List<WizardWidgetHighlight> widgetHighlights_;
 
-      public:
+	public:
 	// Set Associated widget in QStackedWidget
 	void setStackedWidgetPage(QWidget *widget);
 	// Return associated widget in QStackedWidget

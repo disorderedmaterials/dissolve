@@ -30,7 +30,7 @@ template <class T> class Array3D;
 // Extrema
 class Extrema
 {
-      public:
+	public:
 	// Return minimum from array provided
 	static double min(const Array<double> &A);
 	// Return maximum from array provided

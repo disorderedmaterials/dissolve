@@ -32,10 +32,8 @@
 #include <new>
 using namespace std;
 
-// Constructor
 PotentialMap::PotentialMap() {}
 
-// Destructor
 PotentialMap::~PotentialMap() {}
 
 // Clear all data
@@ -46,7 +44,8 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
  */
 
 // Initialise maps
-bool PotentialMap::initialise(const List<AtomType> &masterAtomTypes, const List<PairPotential> &pairPotentials, double pairPotentialRange)
+bool PotentialMap::initialise(const List<AtomType> &masterAtomTypes, const List<PairPotential> &pairPotentials,
+			      double pairPotentialRange)
 {
 	// Clear old data first
 	clear();
@@ -75,13 +74,14 @@ bool PotentialMap::initialise(const List<AtomType> &masterAtomTypes, const List<
 		// Store PairPotential pointer
 		if (indexI == indexJ)
 		{
-			Messenger::print("Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
+			Messenger::print("Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n",
+					 pot->atomTypeI()->name(), indexI, indexJ);
 			potentialMatrix_.at(indexI, indexI) = pot;
 		}
 		else
 		{
-			Messenger::print("Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ,
-					 indexJ, indexI);
+			Messenger::print("Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n",
+					 pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
 			potentialMatrix_.at(indexI, indexJ) = pot;
 			potentialMatrix_.at(indexJ, indexI) = pot;
 		}
@@ -106,12 +106,16 @@ double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", i->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::energy() is out of range "
+				 "(nTypes_ = %i).\n",
+				 i->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if ((j->masterTypeIndex() < 0) || (j->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", j->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::energy() is out of range "
+				 "(nTypes_ = %i).\n",
+				 j->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -121,11 +125,14 @@ double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
 	}
 	if ((!i->speciesAtom()) || (!j->speciesAtom()))
 	{
-		Messenger::print("NULL_POINTER - One or both SpeciesAtoms in the Atoms passed to PotentialMap::energy() are NULL (%p %p).\n", i->speciesAtom(), j->speciesAtom());
+		Messenger::print("NULL_POINTER - One or both SpeciesAtoms in the Atoms passed to PotentialMap::energy() are "
+				 "NULL (%p %p).\n",
+				 i->speciesAtom(), j->speciesAtom());
 		return 0.0;
 	}
 #endif
-	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
+	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
+	// interpolated potential
 	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb())
 		return pp->energy(r);
@@ -139,12 +146,16 @@ double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) cons
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", i->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::analyticEnergy() is out of "
+				 "range (nTypes_ = %i).\n",
+				 i->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if ((j->masterTypeIndex() < 0) || (j->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", j->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::analyticEnergy() is out of "
+				 "range (nTypes_ = %i).\n",
+				 j->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -153,7 +164,8 @@ double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) cons
 		return 0.0;
 	}
 #endif
-	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom types
+	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
+	// types
 	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb())
 		pp->analyticEnergy(r);
@@ -167,12 +179,16 @@ double PotentialMap::force(const Atom *i, const Atom *j, double r) const
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", i->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::force() is out of range "
+				 "(nTypes_ = %i).\n",
+				 i->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if ((j->masterTypeIndex() < 0) || (j->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", j->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::force() is out of range "
+				 "(nTypes_ = %i).\n",
+				 j->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -182,11 +198,14 @@ double PotentialMap::force(const Atom *i, const Atom *j, double r) const
 	}
 	if ((!i->speciesAtom()) || (!j->speciesAtom()))
 	{
-		Messenger::print("NULL_POINTER - One or both SpeciesAtoms in the Atoms passed to PotentialMap::force() are NULL (%p %p).\n", i->speciesAtom(), j->speciesAtom());
+		Messenger::print("NULL_POINTER - One or both SpeciesAtoms in the Atoms passed to PotentialMap::force() are "
+				 "NULL (%p %p).\n",
+				 i->speciesAtom(), j->speciesAtom());
 		return 0.0;
 	}
 #endif
-	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
+	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
+	// interpolated potential
 	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb())
 		return pp->force(r);
@@ -200,12 +219,16 @@ double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 #ifdef CHECKS
 	if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", i->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::analyticForce() is out of "
+				 "range (nTypes_ = %i).\n",
+				 i->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if ((j->masterTypeIndex() < 0) || (j->masterTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", j->masterTypeIndex(), nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::analyticForce() is out of "
+				 "range (nTypes_ = %i).\n",
+				 j->masterTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -214,7 +237,8 @@ double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 		return 0.0;
 	}
 #endif
-	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
+	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
+	// interpolated potential
 	PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb())
 		return pp->analyticForce(r);

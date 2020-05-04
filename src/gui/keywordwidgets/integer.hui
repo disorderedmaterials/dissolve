@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_INTEGER_H
 #define DISSOLVE_KEYWORDWIDGET_INTEGER_H
 
-#include "keywords/integer.h"
 #include "gui/keywordwidgets/base.h"
+#include "keywords/integer.h"
 #include <QSpinBox>
 
 // Forward Declarations
@@ -36,16 +36,14 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
 	private:
 	// Associated keyword
-	IntegerKeyword* keyword_;
-
+	IntegerKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
@@ -57,7 +55,6 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
 	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update

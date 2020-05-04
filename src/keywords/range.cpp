@@ -22,10 +22,11 @@
 #include "keywords/range.h"
 #include "base/lineparser.h"
 
-// Constructors
-RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : KeywordData<Range>(KeywordBase::RangeData, value) { labelType_ = labelType; }
+RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : KeywordData<Range>(KeywordBase::RangeData, value)
+{
+	labelType_ = labelType;
+}
 
-// Destructor
 RangeKeyword::~RangeKeyword() {}
 
 /*
@@ -59,4 +60,7 @@ bool RangeKeyword::read(LineParser &parser, int startArg, const CoreData &coreDa
 }
 
 // Write keyword data to specified LineParser
-bool RangeKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %12.6e  %12.6e\n", prefix, keywordName, data_.minimum(), data_.maximum()); }
+bool RangeKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+{
+	return parser.writeLineF("%s%s  %12.6e  %12.6e\n", prefix, keywordName, data_.minimum(), data_.maximum());
+}

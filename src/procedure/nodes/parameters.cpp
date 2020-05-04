@@ -25,14 +25,16 @@
 #include "expression/variable.h"
 #include "keywords/types.h"
 
-// Constructor
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
 {
-	keywords_.add("Defined Parameters", new ExpressionVariableListKeyword(this, integerParameters_, ExpressionValue::IntegerType), "Integer", "Available integer parameters");
-	keywords_.add("Defined Parameters", new ExpressionVariableListKeyword(this, doubleParameters_, ExpressionValue::DoubleType), "Real", "Available real (floating point) parameters");
+	keywords_.add("Defined Parameters",
+		      new ExpressionVariableListKeyword(this, integerParameters_, ExpressionValue::IntegerType), "Integer",
+		      "Available integer parameters");
+	keywords_.add("Defined Parameters",
+		      new ExpressionVariableListKeyword(this, doubleParameters_, ExpressionValue::DoubleType), "Real",
+		      "Available real (floating point) parameters");
 }
 
-// Destructor
 ParametersProcedureNode::~ParametersProcedureNode() {}
 
 /*
@@ -40,7 +42,10 @@ ParametersProcedureNode::~ParametersProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context != ProcedureNode::NoContext); }
+bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context != ProcedureNode::NoContext);
+}
 
 // Return whether a name for the node must be provided
 bool ParametersProcedureNode::mustBeNamed() const { return false; }
@@ -145,4 +150,8 @@ RefList<ExpressionVariable> ParametersProcedureNode::parameterReferences() const
 bool ParametersProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return ProcedureNode::Success; }
+ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								    const char *prefix, GenericList &targetList)
+{
+	return ProcedureNode::Success;
+}

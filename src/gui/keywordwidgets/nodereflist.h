@@ -36,39 +36,38 @@ class NodeRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	NodeRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	NodeRefListKeywordBase *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::NodeRefListWidget ui_;
 
-      private slots:
+	private slots:
 	void nodeItemChanged(QListWidgetItem *item);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// List widget row update function
 	void updateListRow(int row, ProcedureNode *node, bool createItem);
 
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

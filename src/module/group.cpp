@@ -22,10 +22,8 @@
 #include "module/group.h"
 #include "base/sysfunc.h"
 
-// Constructor
 ModuleGroup::ModuleGroup(const char *name) : ListItem<ModuleGroup>() { name_ = name; }
 
-// Destructor
 ModuleGroup::~ModuleGroup() {}
 
 /*

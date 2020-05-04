@@ -34,12 +34,12 @@ class NETADefinition;
 // NETA Character Node
 class NETAPresenceNode : public NETANode
 {
-      public:
-	// Constructor / Destructor
-	NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+	public:
+	NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
+			 std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
 	~NETAPresenceNode();
 
-      private:
+	private:
 	// Array of elements that the current context atom may be
 	std::vector<Element *> allowedElements_;
 	// Array of ForcefieldAtomTypes that the current context atom may be
@@ -48,7 +48,7 @@ class NETAPresenceNode : public NETANode
 	/*
 	 * Modifiers
 	 */
-      private:
+	private:
 	// Repeat count value
 	int repeatCount_;
 	// Repeat count comparison operator
@@ -62,7 +62,7 @@ class NETAPresenceNode : public NETANode
 	// Numbe of hydrogens value comparison operator
 	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
-      public:
+	public:
 	// Available modifiers
 	enum NETACharacterModifier
 	{
@@ -81,7 +81,7 @@ class NETAPresenceNode : public NETANode
 	/*
 	 * Scoring
 	 */
-      public:
+	public:
 	// Evaluate the node and return its score
 	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const;
 };

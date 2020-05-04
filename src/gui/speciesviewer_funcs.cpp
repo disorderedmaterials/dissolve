@@ -24,7 +24,6 @@
 #include "gui/render/renderablespecies.h"
 #include "gui/speciesviewer.hui"
 
-// Constructor
 SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Source data
@@ -46,7 +45,6 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 	setClipToAxesVolume(false);
 }
 
-// Destructor
 SpeciesViewer::~SpeciesViewer() {}
 
 /*

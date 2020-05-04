@@ -32,8 +32,7 @@ class Expression;
 // Expresison Node
 class ExpressionNode : public ListItem<ExpressionNode>
 {
-      public:
-	// Constructor / Destructor
+	public:
 	ExpressionNode();
 	virtual ~ExpressionNode();
 	// List pointers (for argument list)
@@ -54,13 +53,13 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	/*
 	 * Node Type
 	 */
-      protected:
+	protected:
 	// Type of node
 	NodeType nodeType_;
 	// Pointer to parent expression
 	Expression *parent_;
 
-      public:
+	public:
 	// Retrieve node type
 	NodeType nodeType() const;
 	// Set parent
@@ -71,11 +70,11 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	/*
 	 * Argument Data
 	 */
-      protected:
+	protected:
 	// Arguments (if any) to leaf node operation
 	RefList<ExpressionNode> args_;
 
-      public:
+	public:
 	// Return number of arguments currently assigned to node
 	int nArgs() const;
 	// Add list of arguments formas as a plain List<Node>, beginning from supplied list head
@@ -104,11 +103,11 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	/*
 	 * Node Character
 	 */
-      protected:
+	protected:
 	// Whether node is read-only
 	bool readOnly_;
 
-      public:
+	public:
 	// Set the readonly status of the node to true
 	void setReadOnly();
 	// Return the readonly status of the node
@@ -117,7 +116,7 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	/*
 	 * Node Data Set / Get / Execute
 	 */
-      public:
+	public:
 	// Set from value
 	virtual bool set(ExpressionValue value) = 0;
 	// Get reduced value of node

@@ -40,17 +40,17 @@ void SpeciesViewer::render2DOverlay()
 	if (interacting())
 		switch (interactionMode())
 		{
-		case (SpeciesViewer::SelectAreaInteraction):
-			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
-			selectionBoxStyle.sendToGL();
-			glBegin(GL_LINE_LOOP);
-			glVertex2d(rMouseDown_.x, rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, rMouseLast_.y);
-			glVertex2d(rMouseDown_.x, rMouseLast_.y);
-			glEnd();
-			break;
-		default:
-			break;
+			case (SpeciesViewer::SelectAreaInteraction):
+				// Draw dashed box indicating selection area, form clicked to current mouse coordinates
+				selectionBoxStyle.sendToGL();
+				glBegin(GL_LINE_LOOP);
+				glVertex2d(rMouseDown_.x, rMouseDown_.y);
+				glVertex2d(rMouseLast_.x, rMouseDown_.y);
+				glVertex2d(rMouseLast_.x, rMouseLast_.y);
+				glVertex2d(rMouseDown_.x, rMouseLast_.y);
+				glEnd();
+				break;
+			default:
+				break;
 		}
 }

@@ -202,7 +202,9 @@ Atom *Configuration::atom(int n)
 #ifdef CHECKS
 	if ((n < 0) || (n >= atoms_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Atom index %i passed to Configuration::atom() is out of range (nAtoms = %i).\n", n, atoms_.nItems());
+		Messenger::print(
+			"OUT_OF_RANGE - Atom index %i passed to Configuration::atom() is out of range (nAtoms = %i).\n", n,
+			atoms_.nItems());
 		return NULL;
 	}
 #endif

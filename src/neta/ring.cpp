@@ -26,7 +26,6 @@
 #include "templates/refdatalist.h"
 #include <algorithm>
 
-// Constructor
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
 {
 	repeatCount_ = 1;
@@ -35,7 +34,6 @@ NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::
 	sizeValueOperator_ = NETANode::EqualTo;
 }
 
-// Destructor
 NETARingNode::~NETARingNode() {}
 
 /*
@@ -45,7 +43,8 @@ NETARingNode::~NETARingNode() {}
 // Return enum options for NETARingModifiers
 EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(SizeModifier, "size") << EnumOption(RepeatRingModifier, "n");
+	static EnumOptionsList ModifierOptions = EnumOptionsList()
+						 << EnumOption(SizeModifier, "size") << EnumOption(RepeatRingModifier, "n");
 
 	static EnumOptions<NETARingNode::NETARingModifier> options("RingModifier", ModifierOptions);
 
@@ -64,16 +63,16 @@ bool NETARingNode::setModifier(const char *modifier, ComparisonOperator op, int 
 
 	switch (modifiers().enumeration(modifier))
 	{
-	case (NETARingNode::SizeModifier):
-		sizeValue_ = value;
-		sizeValueOperator_ = op;
-		break;
-	case (NETARingNode::RepeatRingModifier):
-		repeatCount_ = value;
-		repeatCountOperator_ = op;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle modifier '%s' in ring node.\n", modifier);
+		case (NETARingNode::SizeModifier):
+			sizeValue_ = value;
+			sizeValueOperator_ = op;
+			break;
+		case (NETARingNode::RepeatRingModifier):
+			repeatCount_ = value;
+			repeatCountOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in ring node.\n", modifier);
 	}
 
 	return true;
@@ -84,7 +83,8 @@ bool NETARingNode::setModifier(const char *modifier, ComparisonOperator op, int 
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const
+void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
+			     const int minSize, const int maxSize) const
 {
 	// Check whether the path is already at the maximum size - if so, return immediately.
 	if (path.size() == maxSize)
@@ -106,7 +106,8 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 		j = bond->partner(currentAtom);
 		if ((path.size() >= minSize) && (j == path.at(0)))
 		{
-			// Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum size
+			// Special case - if NotEqualTo was specified as the comparison operator, check that against the maximum
+			// size
 			if ((sizeValueOperator_ == NETANode::NotEqualTo) && (path.size() == maxSize))
 				continue;
 
@@ -132,8 +133,8 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
 	// 	printf("I AM THE RING - matchPath size = %i:\n", matchPath.nItems());
-	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
-	// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
+	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
+	// iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	// Generate array of rings of specified size that the atom 'i' is present in
 	List<SpeciesRing> rings;
@@ -157,7 +158,8 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
 	ListIterator<SpeciesRing> ringIterator(rings);
 	while (SpeciesRing *ring = ringIterator.iterate())
 	{
-		// Check this ring against others in the list - if we find a duplicate, we can remove it and then move on with the next ring.
+		// Check this ring against others in the list - if we find a duplicate, we can remove it and then move on with
+		// the next ring.
 		for (SpeciesRing *other = ring->next(); other != NULL; other = other->next())
 		{
 			if ((*ring) == (*other))
@@ -185,7 +187,8 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
 		}
 		else
 		{
-			// Disordered search - try to match the branch definition against this ring, in any order (provide all atoms in the ring at once)
+			// Disordered search - try to match the branch definition against this ring, in any order (provide all
+			// atoms in the ring at once)
 			RefList<const SpeciesAtom> ringAtoms;
 			for (int n = 0; n < ring->size(); ++n)
 				ringAtoms.append(ring->atom(n));

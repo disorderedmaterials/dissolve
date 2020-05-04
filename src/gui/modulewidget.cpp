@@ -21,7 +21,6 @@
 
 #include "gui/modulewidget.h"
 
-// Constructor
 ModuleWidget::ModuleWidget(QWidget *parent) : QWidget(parent) { refreshing_ = false; }
 
 ModuleWidget::~ModuleWidget() {}

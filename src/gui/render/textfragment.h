@@ -32,15 +32,14 @@
 // Text Fragment
 class TextFragment : public ListItem<TextFragment>
 {
-      public:
-	// Constructor / Destructor
+	public:
 	TextFragment();
 	~TextFragment();
 
 	/*
 	 * Fragment Definition
 	 */
-      private:
+	private:
 	// Fragment text
 	QString text_;
 	// Local scale for fragment
@@ -52,9 +51,10 @@ class TextFragment : public ListItem<TextFragment>
 	// Whether fragment is to be drawn bold
 	bool bold_;
 
-      public:
+	public:
 	// Set fragment data
-	void set(QString &text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool italic = false, bool bold = false);
+	void set(QString &text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool italic = false,
+		 bool bold = false);
 	// Return fragment text
 	QString text();
 	// Return local scale for fragment

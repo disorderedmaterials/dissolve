@@ -24,7 +24,6 @@
 #include "classes/masterintra.h"
 #include "classes/speciesatom.h"
 
-// Constructor
 SpeciesIntra::SpeciesIntra()
 {
 	parent_ = NULL;
@@ -41,7 +40,6 @@ SpeciesIntra::SpeciesIntra()
 	inCycle_ = false;
 }
 
-// Destructor
 SpeciesIntra::~SpeciesIntra() { deleteAttachedAtomArrays(); }
 
 /*
@@ -93,7 +91,9 @@ void SpeciesIntra::setParameter(int id, double value)
 #ifdef CHECKS
 	if ((id < 0) || (id >= MAXINTRAPARAMS))
 	{
-		Messenger::error("Tried to add a parameter to a SpeciesIntra definition, but the index is out of range (%i vs %i parameters max).\n", id, MAXINTRAPARAMS);
+		Messenger::error("Tried to add a parameter to a SpeciesIntra definition, but the index is out of range (%i vs "
+				 "%i parameters max).\n",
+				 id, MAXINTRAPARAMS);
 		return;
 	}
 #endif
@@ -129,7 +129,9 @@ double SpeciesIntra::parameter(int id) const
 #ifdef CHECKS
 	if ((id < 0) || (id >= MAXINTRAPARAMS))
 	{
-		Messenger::error("Tried to return a parameter from a SpeciesIntra definition, but the index is out of range (%i vs %i parameters max).\n", id, MAXINTRAPARAMS);
+		Messenger::error("Tried to return a parameter from a SpeciesIntra definition, but the index is out of range "
+				 "(%i vs %i parameters max).\n",
+				 id, MAXINTRAPARAMS);
 		return 0.0;
 	}
 #endif

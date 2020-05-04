@@ -35,23 +35,21 @@
 // DataTest Module
 class DataTestModule : public Module
 {
-      public:
-	// Constructor
+	public:
 	DataTestModule();
-	// Destructor
 	~DataTestModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -64,21 +62,21 @@ class DataTestModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-      private:
+	private:
 	// Target module containing / owning data to test
 	RefList<Module> targetModule_;
 	// Test 1D datasets
@@ -88,9 +86,11 @@ class DataTestModule : public Module
 	// Test 3D datasets
 	Data3DStore test3DData_;
 
-      private:
+	private:
 	// Find reference Data
-	template <class T> const T &findReferenceData(const char *dataIdentifier, Module *targetModule, GenericList &processingModuleData, bool &found)
+	template <class T>
+	const T &findReferenceData(const char *dataIdentifier, Module *targetModule, GenericList &processingModuleData,
+				   bool &found)
 	{
 		static T dummy;
 
@@ -100,19 +100,27 @@ class DataTestModule : public Module
 		if (targetModule)
 		{
 			// Get target module data list
-			GenericList &moduleData = targetModule->configurationLocal() ? targetModule->targetConfigurations().firstItem()->moduleData() : processingModuleData;
+			GenericList &moduleData = targetModule->configurationLocal()
+							  ? targetModule->targetConfigurations().firstItem()->moduleData()
+							  : processingModuleData;
 
-			// The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in the target list?
+			// The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
+			// the target list?
 			if (moduleData.contains(dataIdentifier, targetModule->uniqueName()))
 			{
 				// Try to retrieve the data as the current type
 				found = false;
-				const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier, targetModule->uniqueName(), T(), &found);
+				const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier,
+									    targetModule->uniqueName(), T(), &found);
 
 				if (!found)
 				{
-					Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than %s).\n", targetModule->uniqueName(), dataIdentifier,
-							 moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
+					Messenger::error(
+						"Data named '%s_%s' exists, but is not of the correct type (is %s rather than "
+						"%s).\n",
+						targetModule->uniqueName(), dataIdentifier,
+						moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
+						T::itemClassName());
 					return dummy;
 				}
 				else
@@ -126,8 +134,12 @@ class DataTestModule : public Module
 
 				if (!found)
 				{
-					Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than %s).\n", dataIdentifier,
-							 moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(), T::itemClassName());
+					Messenger::error(
+						"Data named '%s' exists, but is not of the correct type (is %s rather than "
+						"%s).\n",
+						dataIdentifier,
+						moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
+						T::itemClassName());
 					return dummy;
 				}
 				else
@@ -152,7 +164,7 @@ class DataTestModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

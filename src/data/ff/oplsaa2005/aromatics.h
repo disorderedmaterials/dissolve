@@ -30,15 +30,14 @@
 // OPLS-AA/2005 Aromatics Forcefield
 class Forcefield_OPLSAA2005_Aromatics : public OPLSAA2005BaseForcefield
 {
-      public:
-	// Constructor / Destructor
+	public:
 	Forcefield_OPLSAA2005_Aromatics();
 	~Forcefield_OPLSAA2005_Aromatics();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield

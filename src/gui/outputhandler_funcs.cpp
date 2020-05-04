@@ -22,10 +22,8 @@
 #include "gui/outputhandler.hui"
 #include <QColor>
 
-// Constructor
 GUIOutputHandler::GUIOutputHandler() {}
 
-// Destructor
 GUIOutputHandler::~GUIOutputHandler() {}
 
 /*

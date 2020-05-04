@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 RefineModule::RefineModule() : Module(), interpolatedFitData_(fitData_)
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 RefineModule::~RefineModule() {}
 
 /*

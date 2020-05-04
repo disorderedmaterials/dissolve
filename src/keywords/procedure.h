@@ -31,16 +31,14 @@
 // Keyword with Procedure data
 class ProcedureKeyword : public KeywordData<Procedure &>
 {
-      public:
-	// Constructor
+	public:
 	ProcedureKeyword(Procedure &procedure);
-	// Destructor
 	~ProcedureKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted

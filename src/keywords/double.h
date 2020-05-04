@@ -30,24 +30,22 @@
 // Keyword with Double Data
 class DoubleKeyword : public KeywordData<double>
 {
-      public:
-	// Constructors
+	public:
 	DoubleKeyword(double value);
 	DoubleKeyword(double value, double minValue);
 	DoubleKeyword(double value, double minValue, double maxValue);
-	// Destructor
 	~DoubleKeyword();
 
 	/*
 	 * Data Validation
 	 */
-      private:
+	private:
 	// Validation limits to apply (if any)
 	bool minimumLimit_, maximumLimit_;
 	// Validation range (if appropriate)
 	double min_, max_;
 
-      public:
+	public:
 	// Return whether a minimum validation limit has been set
 	bool hasValidationMin();
 	// Return validation minimum limit
@@ -62,7 +60,7 @@ class DoubleKeyword : public KeywordData<double>
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -75,7 +73,7 @@ class DoubleKeyword : public KeywordData<double>
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)

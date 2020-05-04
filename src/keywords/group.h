@@ -33,18 +33,17 @@ class KeywordList;
 // Keyword Group
 class KeywordGroup : public ListItem<KeywordGroup>
 {
-      public:
-	// Constructor
+	public:
 	KeywordGroup(KeywordList &keywordList);
 
 	/*
 	 * Identity
 	 */
-      private:
+	private:
 	// Name of the group
 	CharString name_;
 
-      public:
+	public:
 	// Set name of group
 	void setName(const char *name);
 	// Return name of group
@@ -53,21 +52,22 @@ class KeywordGroup : public ListItem<KeywordGroup>
 	/*
 	 * Keyword Group
 	 */
-      private:
+	private:
 	// Associated KeywordList
 	KeywordList &keywordList_;
 	// List of keywords (in the referenced KeywordList) that are in this group
 	RefList<KeywordBase> keywords_;
 
-      private:
+	private:
 	// Add specified keyword to the group
 	void addKeywordToGroup(KeywordBase *object);
 
-      public:
+	public:
 	// Add keyword (pass-thru to KeywordList)
 	bool add(KeywordBase *object, const char *keyword, const char *description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword (pass-thru to KeywordList)
-	bool add(KeywordBase *object, const char *keyword, const char *description, const char *arguments, int optionMask = KeywordBase::NoOptions);
+	bool add(KeywordBase *object, const char *keyword, const char *description, const char *arguments,
+		 int optionMask = KeywordBase::NoOptions);
 	// Return reference list of keywords in group
 	RefList<KeywordBase> &keywords();
 };

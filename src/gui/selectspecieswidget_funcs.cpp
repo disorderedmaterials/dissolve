@@ -25,7 +25,6 @@
 #include "gui/selectspecieswidget.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);
@@ -37,7 +36,6 @@ SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 	refreshing_ = false;
 }
 
-// Destructor
 SelectSpeciesWidget::~SelectSpeciesWidget() {}
 
 /*

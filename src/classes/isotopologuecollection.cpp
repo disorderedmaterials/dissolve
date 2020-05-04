@@ -26,10 +26,8 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 IsotopologueCollection::IsotopologueCollection() { clear(); }
 
-// Destructor
 IsotopologueCollection::~IsotopologueCollection() {}
 
 /*

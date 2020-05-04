@@ -25,10 +25,8 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-// Constructor
 Isotopologue::Isotopologue() : ListItem<Isotopologue>() { parent_ = NULL; }
 
-// Destructor
 Isotopologue::~Isotopologue() {}
 
 /*
@@ -83,7 +81,8 @@ void Isotopologue::update()
 		AtomType *at = i->atomType();
 		if (at == NULL)
 		{
-			Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n", i->userIndex());
+			Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n",
+					 i->userIndex());
 			continue;
 		}
 
@@ -133,7 +132,8 @@ Isotope *Isotopologue::atomTypeIsotope(AtomType *at) const
 	RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
 	if (!rdi)
 	{
-		Messenger::error("Couldn't retrieve AtomType '%s' from Isotopologue '%s' as it doesn't exist.\n", at->name(), name_.get());
+		Messenger::error("Couldn't retrieve AtomType '%s' from Isotopologue '%s' as it doesn't exist.\n", at->name(),
+				 name_.get());
 		return NULL;
 	}
 	return rdi->data();

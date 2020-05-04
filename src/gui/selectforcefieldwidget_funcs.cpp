@@ -24,8 +24,8 @@
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
-// Constructor
-SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields) : QWidget(parent), forcefields_(forcefields)
+SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields)
+	: QWidget(parent), forcefields_(forcefields)
 {
 	ui_.setupUi(this);
 
@@ -41,7 +41,6 @@ SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vecto
 	refreshing_ = false;
 }
 
-// Destructor
 SelectForcefieldWidget::~SelectForcefieldWidget() {}
 
 // Update the list of Forcefields, optionally filtering them by name and description
@@ -116,7 +115,10 @@ void SelectForcefieldWidget::on_ForcefieldsList_itemDoubleClicked(QListWidgetIte
 }
 
 // Set the current forcefield
-void SelectForcefieldWidget::setCurrentForcefield(std::shared_ptr<Forcefield> currentFF) { updateForcefieldsList(currentFF, ui_.FilterEdit->text()); }
+void SelectForcefieldWidget::setCurrentForcefield(std::shared_ptr<Forcefield> currentFF)
+{
+	updateForcefieldsList(currentFF, ui_.FilterEdit->text());
+}
 
 // Return the currently-selected Forcefield
 std::shared_ptr<Forcefield> SelectForcefieldWidget::currentForcefield() const

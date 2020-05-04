@@ -42,7 +42,8 @@ void BaseViewer::ownRenderable(Renderable *newRenderable)
 {
 	// Warn if an existing Renderable has the same name as this one
 	if (renderable(newRenderable->name()))
-		Messenger::warn("A Renderable named '%s' already exists, and another with the same name is being added...\n", newRenderable->name());
+		Messenger::warn("A Renderable named '%s' already exists, and another with the same name is being added...\n",
+				newRenderable->name());
 
 	// Own the new Renderable
 	renderables_.own(newRenderable);
@@ -51,7 +52,8 @@ void BaseViewer::ownRenderable(Renderable *newRenderable)
 }
 
 // Create Renderable by type and object identifier
-Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, const char *objectTag, const char *name, const char *groupName)
+Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, const char *objectTag, const char *name,
+					 const char *groupName)
 {
 	Renderable *renderable = RenderableFactory::create(type, objectTag);
 	if (renderable)

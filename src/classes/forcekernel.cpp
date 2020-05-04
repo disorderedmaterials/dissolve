@@ -30,15 +30,16 @@
 #include "templates/orderedvector.h"
 #include <iterator>
 
-// Constructor
-ForceKernel::ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz, double cutoffDistance)
-    : configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz), processPool_(procPool)
+ForceKernel::ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
+			 Array<double> &fy, Array<double> &fz, double cutoffDistance)
+	: configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz),
+	  processPool_(procPool)
 {
 	box_ = configuration_->box();
-	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
+	cutoffDistanceSquared_ =
+		(cutoffDistance < 0.0 ? potentialMap_.range() * potentialMap_.range() : cutoffDistance * cutoffDistance);
 }
 
-// Destructor
 ForceKernel::~ForceKernel() {}
 
 /*
@@ -109,7 +110,8 @@ void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool exclu
 	// If Atoms are the same, we refuse to calculate
 	if (i == j)
 	{
-		// 		printf("Warning: Refusing to calculate self-energy in ForceKernel::forces(Atom,Atom,bool,bool).\n");
+		// 		printf("Warning: Refusing to calculate self-energy in
+		// ForceKernel::forces(Atom,Atom,bool,bool).\n");
 		return;
 	}
 
@@ -124,17 +126,20 @@ void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool exclu
 }
 
 // Calculate forces between atoms in supplied cells
-void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ,
+			 ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
+		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to "
+				 "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
 		return;
 	}
 	if (otherCell == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
+		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to "
+				 "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
 		return;
 	}
 #endif
@@ -231,7 +236,8 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
+		Messenger::error(
+			"NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
 		return;
 	}
 #endif
@@ -479,7 +485,8 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom 
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis))
 	{
-		Messenger::error("Forces requested for specific Atom in Bond, but neither Atom in the Bond is the one specified.\n");
+		Messenger::error(
+			"Forces requested for specific Atom in Bond, but neither Atom in the Bond is the one specified.\n");
 		return;
 	}
 #endif
@@ -567,7 +574,8 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
 #ifdef CHECKS
 	if ((i != onlyThis) && (j != onlyThis) && (k != onlyThis))
 	{
-		Messenger::error("Forces requested for specific Atom in Angle, but no Atom in the Angle is the one specified.\n");
+		Messenger::error(
+			"Forces requested for specific Atom in Angle, but no Atom in the Angle is the one specified.\n");
 		return;
 	}
 #endif
@@ -685,14 +693,20 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
 	fz_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
 
 	index = j->arrayIndex();
-	fx_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
-	fy_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
-	fz_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
+	fx_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
+				 dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
+	fy_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
+				 dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
+	fz_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
+				 dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
 
 	index = k->arrayIndex();
-	fx_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
-	fy_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
-	fz_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
+	fx_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
+				 dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
+	fy_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
+				 dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
+	fz_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
+				 dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
 
 	index = l->arrayIndex();
 	fx_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
@@ -701,7 +715,8 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
 }
 
 // Calculate Torsion forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k,
+			 const Atom *l)
 {
 	// Calculate vectors, ensuring we account for minimum image
 	Vec3<double> vecji, vecjk, veckl;
@@ -773,15 +788,21 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
 	}
 	else if (onlyThis == j)
 	{
-		fx_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
-		fy_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
-		fz_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
+		fx_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
+					 dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
+		fy_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
+					 dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
+		fz_[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
+					 dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
 	}
 	else if (onlyThis == k)
 	{
-		fx_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
-		fy_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
-		fz_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
+		fx_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
+					 dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
+		fy_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
+					 dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
+		fz_[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
+					 dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
 	}
 	else
 	{

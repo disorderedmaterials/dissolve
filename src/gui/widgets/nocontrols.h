@@ -33,10 +33,8 @@ class NoControlsWidget : public QWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	NoControlsWidget(QWidget *parent);
-	// Destructor
 	virtual ~NoControlsWidget();
 };
 

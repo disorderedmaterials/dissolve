@@ -26,15 +26,14 @@
 #include "math/data1d.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
-WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
+WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
+			       double p6)
 {
 	set(function, p1, p2, p3, p4, p5, p6);
 
 	xMax_ = -1.0;
 }
 
-// Assignment operator
 void WindowFunction::operator=(const WindowFunction &source)
 {
 	function_ = source.function_;
@@ -44,7 +43,6 @@ void WindowFunction::operator=(const WindowFunction &source)
 	xMax_ = source.xMax_;
 }
 
-// Destructor
 WindowFunction::~WindowFunction() {}
 
 // Window Function keywords
@@ -72,29 +70,29 @@ const char *WindowFunction::functionDescription(FunctionType func)
 {
 	switch (func)
 	{
-	case (WindowFunction::NoWindow):
-		return "No window";
-		break;
-	case (WindowFunction::BartlettWindow):
-		return "Bartlett (triangular) window";
-		break;
-	case (WindowFunction::HannWindow):
-		return "von Hann (Hanning) window";
-		break;
-	case (WindowFunction::LanczosWindow):
-		return "Lanczos window";
-		break;
-	case (WindowFunction::NuttallWindow):
-		return "Nuttall window (continuous first derivatives over range)";
-		break;
-	case (WindowFunction::SineWindow):
-		return "Sine Window";
-		break;
-	case (WindowFunction::Lorch0Window):
-		return "Original Lorch function";
-		break;
-	default:
-		break;
+		case (WindowFunction::NoWindow):
+			return "No window";
+			break;
+		case (WindowFunction::BartlettWindow):
+			return "Bartlett (triangular) window";
+			break;
+		case (WindowFunction::HannWindow):
+			return "von Hann (Hanning) window";
+			break;
+		case (WindowFunction::LanczosWindow):
+			return "Lanczos window";
+			break;
+		case (WindowFunction::NuttallWindow):
+			return "Nuttall window (continuous first derivatives over range)";
+			break;
+		case (WindowFunction::SineWindow):
+			return "Sine Window";
+			break;
+		case (WindowFunction::Lorch0Window):
+			return "Original Lorch function";
+			break;
+		default:
+			break;
 	}
 
 	return "NO WINDOW FUNCTION DESCRIPTION AVAILABLE.";
@@ -104,7 +102,8 @@ const char *WindowFunction::functionDescription(FunctionType func)
  * Function Data
  */
 
-void WindowFunction::set(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
+void WindowFunction::set(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
+			 double p6)
 {
 	function_ = function;
 	parameters_[0] = p1;
@@ -129,7 +128,8 @@ bool WindowFunction::set(LineParser &parser, int startArg)
 	// Do we have the right number of arguments for the function specified?
 	if ((parser.nArgs() - startArg) < WindowFunction::nFunctionParameters(funcType))
 	{
-		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n", WindowFunction::functionType(funcType), WindowFunction::nFunctionParameters(funcType),
+		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n",
+				 WindowFunction::functionType(funcType), WindowFunction::nFunctionParameters(funcType),
 				 parser.nArgs() - startArg);
 		return false;
 	}
@@ -138,18 +138,19 @@ bool WindowFunction::set(LineParser &parser, int startArg)
 	function_ = funcType;
 	switch (function_)
 	{
-	case (WindowFunction::NoWindow):
-	case (WindowFunction::BartlettWindow):
-	case (WindowFunction::HannWindow):
-	case (WindowFunction::LanczosWindow):
-	case (WindowFunction::NuttallWindow):
-	case (WindowFunction::SineWindow):
-	case (WindowFunction::Lorch0Window):
-		// No fixed parameters.
-		break;
-	default:
-		Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", WindowFunction::functionType(funcType));
-		return false;
+		case (WindowFunction::NoWindow):
+		case (WindowFunction::BartlettWindow):
+		case (WindowFunction::HannWindow):
+		case (WindowFunction::LanczosWindow):
+		case (WindowFunction::NuttallWindow):
+		case (WindowFunction::SineWindow):
+		case (WindowFunction::Lorch0Window):
+			// No fixed parameters.
+			break;
+		default:
+			Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n",
+					 WindowFunction::functionType(funcType));
+			return false;
 	}
 
 	return true;
@@ -166,20 +167,20 @@ CharString WindowFunction::parameterSummary() const
 {
 	switch (function_)
 	{
-	case (WindowFunction::NoWindow):
-	case (WindowFunction::BartlettWindow):
-	case (WindowFunction::HannWindow):
-	case (WindowFunction::LanczosWindow):
-	case (WindowFunction::NuttallWindow):
-	case (WindowFunction::SineWindow):
-		return "No Parameters";
-		break;
-	case (WindowFunction::Lorch0Window):
-		return "Delta0=PI/xMax";
-		break;
-	default:
-		Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
-		break;
+		case (WindowFunction::NoWindow):
+		case (WindowFunction::BartlettWindow):
+		case (WindowFunction::HannWindow):
+		case (WindowFunction::LanczosWindow):
+		case (WindowFunction::NuttallWindow):
+		case (WindowFunction::SineWindow):
+			return "No Parameters";
+			break;
+		case (WindowFunction::Lorch0Window):
+			return "Delta0=PI/xMax";
+			break;
+		default:
+			Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
+			break;
 	}
 
 	return "NULL";
@@ -193,20 +194,20 @@ bool WindowFunction::setUp(const Data1D &data)
 
 	switch (function_)
 	{
-	case (WindowFunction::NoWindow):
-	case (WindowFunction::BartlettWindow):
-	case (WindowFunction::HannWindow):
-	case (WindowFunction::LanczosWindow):
-	case (WindowFunction::NuttallWindow):
-	case (WindowFunction::SineWindow):
-		break;
-	case (WindowFunction::Lorch0Window):
-		// Set Delta0 from the high x limit of the data
-		parameters_[0] = PI / xMax_;
-		break;
-	default:
-		Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
-		break;
+		case (WindowFunction::NoWindow):
+		case (WindowFunction::BartlettWindow):
+		case (WindowFunction::HannWindow):
+		case (WindowFunction::LanczosWindow):
+		case (WindowFunction::NuttallWindow):
+		case (WindowFunction::SineWindow):
+			break;
+		case (WindowFunction::Lorch0Window):
+			// Set Delta0 from the high x limit of the data
+			parameters_[0] = PI / xMax_;
+			break;
+		default:
+			Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
+			break;
 	}
 
 	return true;
@@ -225,39 +226,40 @@ double WindowFunction::y(double x, double omega) const
 
 	switch (function_)
 	{
-	case (WindowFunction::NoWindow):
-		return 1.0;
-		break;
-	case (WindowFunction::BartlettWindow):
-		return (1.0 - fabs((chi - 0.5) / 0.5));
-		break;
-	case (WindowFunction::HannWindow):
-		return 0.5 * (1.0 - cos(2 * PI * chi));
-		break;
-	case (WindowFunction::LanczosWindow):
-		return sin(PI * (2 * chi - 1.0)) / (PI * (2 * chi - 1.0));
-		break;
-	case (WindowFunction::NuttallWindow):
-		return (0.355768 - 0.487396 * cos(2.0 * PI * chi) + 0.144232 * cos(4.0 * PI * chi) - 0.012604 * cos(6.0 * PI * chi));
-		break;
-	case (WindowFunction::SineWindow):
-		return 1.0 - sin(PI * 0.5 * chi);
-		break;
-	case (WindowFunction::Lorch0Window):
-		/*
-		 * Original Lorch function
-		 *
-		 * Parameters:  0 = delta0	( = PI/xmax )
-		 *
-		 * 	  sin(x * delta0)
-		 * f(x) = ---------------
-		 * 	    x * delta0
-		 */
-		return sin(x * parameters_[0]) / (x * parameters_[0]);
-		break;
-	default:
-		Messenger::warn("WindowFunction::value() - Function id %i not accounted for.\n", function_);
-		break;
+		case (WindowFunction::NoWindow):
+			return 1.0;
+			break;
+		case (WindowFunction::BartlettWindow):
+			return (1.0 - fabs((chi - 0.5) / 0.5));
+			break;
+		case (WindowFunction::HannWindow):
+			return 0.5 * (1.0 - cos(2 * PI * chi));
+			break;
+		case (WindowFunction::LanczosWindow):
+			return sin(PI * (2 * chi - 1.0)) / (PI * (2 * chi - 1.0));
+			break;
+		case (WindowFunction::NuttallWindow):
+			return (0.355768 - 0.487396 * cos(2.0 * PI * chi) + 0.144232 * cos(4.0 * PI * chi) -
+				0.012604 * cos(6.0 * PI * chi));
+			break;
+		case (WindowFunction::SineWindow):
+			return 1.0 - sin(PI * 0.5 * chi);
+			break;
+		case (WindowFunction::Lorch0Window):
+			/*
+			 * Original Lorch function
+			 *
+			 * Parameters:  0 = delta0	( = PI/xmax )
+			 *
+			 * 	  sin(x * delta0)
+			 * f(x) = ---------------
+			 * 	    x * delta0
+			 */
+			return sin(x * parameters_[0]) / (x * parameters_[0]);
+			break;
+		default:
+			Messenger::warn("WindowFunction::value() - Function id %i not accounted for.\n", function_);
+			break;
 	}
 
 	return 0.0;
@@ -313,7 +315,8 @@ bool WindowFunction::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(EnumCast<WindowFunction::FunctionType>(function_)))
-		return Messenger::error("WindowFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
+		return Messenger::error("WindowFunction function type is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), function_);
 	if (!procPool.equality(parameters_, MAXWINDOWFUNCTIONPARAMS))
 		return Messenger::error("WindowFunction parameters are not equivalent.\n");
 #endif

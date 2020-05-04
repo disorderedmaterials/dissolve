@@ -23,7 +23,6 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 CubicBox::CubicBox(double length) : Box()
 {
 	type_ = Box::CubicBoxType;
@@ -41,7 +40,6 @@ CubicBox::CubicBox(double length) : Box()
 	finalise();
 }
 
-// Destructor
 CubicBox::~CubicBox() {}
 
 /*
@@ -52,8 +50,8 @@ CubicBox::~CubicBox() {}
 Vec3<double> CubicBox::minimumImage(const Atom *i, const Atom *ref) const
 {
 	/*
-	 * This, and all other routines, use a ternary if/else test and an int() cast in order to calculate minimum image vectors, distances, and coordinates,
-	 * since this is about 25-30% faster than using floor().
+	 * This, and all other routines, use a ternary if/else test and an int() cast in order to calculate minimum image
+	 * vectors, distances, and coordinates, since this is about 25-30% faster than using floor().
 	 */
 	Vec3<double> mimVec = i->r();
 	mimVec -= ref->r();

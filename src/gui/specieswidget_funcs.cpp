@@ -29,7 +29,6 @@
 #include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
-// Constructor
 SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -45,7 +44,6 @@ SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
 	updateStatusBar();
 }
 
-// Destructor
 SpeciesWidget::~SpeciesWidget() {}
 
 // Set main CoreData pointer
@@ -83,7 +81,8 @@ void SpeciesWidget::updateStatusBar()
 
 	// Set / update empirical formula for the Species and its current atom selection
 	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
-	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
+	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true)
+								     : "--");
 }
 
 /*
@@ -178,7 +177,8 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0, 1.0, 1.0), Vec3<double>(90, 90, 90), true));
 	AddSpeciesProcedureNode *addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
 	addSpeciesNode->setKeyword<bool>("Rotate", false);
-	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
+	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
+										 AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
 	if (!temporaryCfg->initialiseContent(temporaryDissolve.worldPool(), 15.0))
 		return;

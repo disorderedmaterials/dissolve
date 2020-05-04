@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 MolShakeModule::MolShakeModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 MolShakeModule::~MolShakeModule() {}
 
 /*

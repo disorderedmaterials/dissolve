@@ -31,7 +31,7 @@ class ProcessPool;
 // Coordinate Import Formats
 class CoordinateImportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Coordinate Import Formats
 	enum CoordinateImportFormat
 	{
@@ -40,23 +40,21 @@ class CoordinateImportFileFormat : public FileAndFormat
 		EPSRCoordinates,
 		nCoordinateImportFormats
 	};
-	// Constructors
 	CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
 	CoordinateImportFileFormat(const char *filename, CoordinateImportFormat format = XYZCoordinates);
-	// Destructor
 	~CoordinateImportFileFormat();
 
 	/*
 	 * Keyword Options
 	 */
-      private:
+	private:
 	// Set up keywords for the format
 	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for CoordinateImportFormat
 	static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFormats();
 	// Return number of available formats
@@ -71,14 +69,14 @@ class CoordinateImportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import Functions
 	 */
-      private:
+	private:
 	// Import DL_POLY coordinates through specified parser
 	bool importDLPOLY(LineParser &parser, Array<Vec3<double>> &r);
 	// Import EPSR ATO coordinates through specified parser
@@ -86,7 +84,7 @@ class CoordinateImportFileFormat : public FileAndFormat
 	// Import xyz coordinates through specified parser
 	bool importXYZ(LineParser &parser, Array<Vec3<double>> &r);
 
-      public:
+	public:
 	// Import coordinates using current filename and format
 	bool importData(Array<Vec3<double>> &r, ProcessPool *procPool = NULL);
 	// Import coordinates using supplied parser and current format

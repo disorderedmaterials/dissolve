@@ -39,21 +39,20 @@ class View;
 // Axes
 class Axes
 {
-      private:
+	private:
 	// Parent rendering View in which these axes are displayed
 	View &parentView_;
 	// Associated FontInstance from parent viewer
 	FontInstance &fontInstance_;
 
-      public:
-	// Constructor / Destructor
+	public:
 	Axes(View &parent, FontInstance &fontInstance);
 	~Axes();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Autoscaling for axes
 	enum AutoScaleMethod
 	{
@@ -67,7 +66,7 @@ class Axes
 	// Convert AutoScaleMethod to text string
 	static const char *autoScaleMethod(AutoScaleMethod scale);
 
-      private:
+	private:
 	// Data limits for surface generation
 	Vec3<double> min_, max_;
 	// Limiting values for axis limits (accounting for data, log scales etc.)
@@ -93,13 +92,13 @@ class Axes
 	// Autoscaling method employed for each axis
 	Axes::AutoScaleMethod autoScale_[3];
 
-      private:
+	private:
 	// Recalculate minimum, maximum, and centre coordinates of axes
 	void updateCoordinates();
 	// Clamp axis position and min/max to current limits
 	void clamp(int axis);
 
-      public:
+	public:
 	// Set minimum value for specified axis
 	void setMin(int axis, double value);
 	// Return minimum value for specified axis
@@ -113,7 +112,8 @@ class Axes
 	// Return real axis range (accounting for log axes)
 	double realRange(int axis) const;
 	// Ensure a sensible (non-zero) range, modifying the supplied values
-	static void ensureSensibleRange(double &minValue, double &maxValue, bool alwaysExpand = false, double expansionFactor = -1.0);
+	static void ensureSensibleRange(double &minValue, double &maxValue, bool alwaysExpand = false,
+					double expansionFactor = -1.0);
 	// Return central value of axes
 	Vec3<double> centre() const;
 	// Return real axis minimum (accounting for log axes)
@@ -178,7 +178,7 @@ class Axes
 	/*
 	 * Data Transforms
 	 */
-      public:
+	public:
 	// Return supplied data x value in local axes coordinates
 	double transformX(double x) const;
 	// Transform entire array of values into local axes coordinates
@@ -201,7 +201,7 @@ class Axes
 	/*
 	 * Ticks
 	 */
-      private:
+	private:
 	// Axis tick direction
 	Vec3<double> tickDirection_[3];
 	// Axis tick size (relative to font size)
@@ -215,11 +215,11 @@ class Axes
 	// Number of minor ticks in major tick intervals
 	Vec3<int> minorTicks_;
 
-      private:
+	private:
 	// Recalculate tick deltas for specified axis
 	void calculateTickDeltas(int axis);
 
-      public:
+	public:
 	// Set axis tick direction
 	void setTickDirection(int axis, int dir, double value);
 	// Return axis tick direction for specified axis
@@ -248,7 +248,7 @@ class Axes
 	/*
 	 * Labels
 	 */
-      private:
+	private:
 	// Number formats for labels
 	NumberFormat numberFormat_[3];
 	// Whether to determine number formats automatically
@@ -268,11 +268,11 @@ class Axes
 	// Axis title text anchor positions
 	TextPrimitive::TextAnchor titleAnchor_[3];
 
-      private:
+	private:
 	// Determine suitable label format for the supplied axis
 	void determineLabelFormat(int axis);
 
-      public:
+	public:
 	// Return number format for specified axis
 	const NumberFormat &numberFormat(int axis) const;
 	// Set number format for specified axis
@@ -313,13 +313,13 @@ class Axes
 	/*
 	 * Style Helpers
 	 */
-      private:
+	private:
 	// Whether to use best tick/label orientation for flat views, or the user's definitions
 	bool useBestFlatView_;
 	// Whether to automatically place titles at a sensible position after label text
 	bool autoPositionTitles_;
 
-      public:
+	public:
 	// Set whether to use best tick/label orientation for view
 	void setUseBestFlatView(bool b);
 	// Return whether to use best tick/label orientation for view
@@ -332,7 +332,7 @@ class Axes
 	/*
 	 * GridLines
 	 */
-      private:
+	private:
 	// Whether gridlines cover entire volume or just at axis lines
 	Vec3<bool> gridLinesFull_;
 	// Whether gridLines at major tick intervals are active
@@ -340,7 +340,7 @@ class Axes
 	// Whether gridLines at minor tick intervals are active
 	Vec3<bool> gridLinesMinor_;
 
-      public:
+	public:
 	// Set whether gridlines cover entire volume or just at axis lines
 	void setGridLinesFull(int axis, bool b);
 	// Return whether gridlines cover entire volume or just at axis lines
@@ -357,18 +357,18 @@ class Axes
 	/*
 	 * Versions
 	 */
-      private:
+	private:
 	// Version of axes definitions
 	VersionCounter version_;
 
-      public:
+	public:
 	// Return version of axes definitions
 	int version() const;
 
 	/*
 	 * GL
 	 */
-      private:
+	private:
 	// Clip plane coordinates
 	Vec3<double> clipMin_, clipMax_;
 	// Display primitives
@@ -384,11 +384,11 @@ class Axes
 	// Versions at which primitives were last generated
 	int primitiveVersion_;
 
-      private:
+	private:
 	// Update primitives for axis
 	void updateAxisPrimitives();
 
-      public:
+	public:
 	// Return clip plane lower Y value
 	Vec3<double> clipMin() const;
 	// Return clip plane upper Y value

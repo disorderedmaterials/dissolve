@@ -34,14 +34,13 @@ class ProcessGroup : public ListItem<ProcessGroup>
 	/*
 	 * Class to define a group of processes within a pool, keeping reference of their pool and world ranks.
 	 */
-      public:
-	// Constructor
+	public:
 	ProcessGroup();
 
 	/*
 	 * Group Data
 	 */
-      private:
+	private:
 	// List of world ranks of processes in this group
 	Array<int> worldRanks_;
 	// List of corresponding pool ranks of world processes in this group
@@ -51,7 +50,7 @@ class ProcessGroup : public ListItem<ProcessGroup>
 	// Pool rank of the group leader process
 	int leaderPoolRank_;
 
-      public:
+	public:
 	// Add process to group
 	void addProcess(int poolRank, int worldRank);
 	// Return total number of processes in group

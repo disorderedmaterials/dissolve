@@ -33,22 +33,20 @@
 // Data3D Store
 class Data3DStore
 {
-      public:
-	// Constructor
+	public:
 	Data3DStore();
-	// Destructor
 	~Data3DStore();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// List of contained data
 	List<Data3D> data_;
 	// References for Data3D and associated file/format
 	RefDataList<Data3D, Data3DImportFileFormat> dataReferences_;
 
-      public:
+	public:
 	// Add named data reference to store, reading file and format from specified parser / starting argument
 	bool addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Check to see if the named data is present in the store

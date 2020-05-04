@@ -35,23 +35,21 @@ class ExportPairPotentialsModule : public Module
 	 * Export data in various formats
 	 */
 
-      public:
-	// Constructor
+	public:
 	ExportPairPotentialsModule();
-	// Destructor
 	~ExportPairPotentialsModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -64,21 +62,21 @@ class ExportPairPotentialsModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Basename and format for PairPotential export
 	PairPotentialExportFileFormat pairPotentialFormat_;
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 };

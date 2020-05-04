@@ -29,8 +29,7 @@
 // 4D vector
 template <class T> class Vec4
 {
-      public:
-	// Constructor
+	public:
 	Vec4<T>(T xx = 0, T yy = 0, T zz = 0, T ww = 0)
 	{
 		x = xx;
@@ -44,7 +43,7 @@ template <class T> class Vec4
 	/*
 	 * Set / adjust / retrieve
 	 */
-      public:
+	public:
 	// Set the vector to 0,0,0,0
 	void zero()
 	{
@@ -107,7 +106,7 @@ template <class T> class Vec4
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	// Operators + and +=
 	Vec4<T> &operator+=(Vec4<T> &v)
 	{
@@ -153,7 +152,6 @@ template <class T> class Vec4
 		z *= value;
 		w *= value;
 	}
-	// Element access operator
 	T operator[](int index)
 	{
 		if (index == 0)

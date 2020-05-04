@@ -26,5 +26,6 @@
 void ExportTrajectoryModule::initialise()
 {
 	// Format
-	keywords_.add("Format", new FileAndFormatKeyword(trajectoryFormat_, "EndFormat"), "Format", "File / format for trajectory");
+	keywords_.add("Format", new FileAndFormatKeyword(trajectoryFormat_, "EndFormat"), "Format",
+		      "File / format for trajectory");
 }

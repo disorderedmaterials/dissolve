@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include <math.h>
 
-// Constructor
 SampledDouble::SampledDouble() { clear(); }
 
 SampledDouble::SampledDouble(const double x)
@@ -84,11 +83,11 @@ void SampledDouble::operator=(const SampledDouble &source)
 	m2_ = source.m2_;
 }
 
-// Operator +=
 void SampledDouble::operator+=(double x)
 {
 	// Accumulate value using Welford's online algorithm
-	// B. P. Welford, "Note on a method for calculating corrected sums of squares and products", Technometrics, 4(3), 419–420 (1962).
+	// B. P. Welford, "Note on a method for calculating corrected sums of squares and products", Technometrics, 4(3),
+	// 419–420 (1962).
 
 	// Increase sample size counter
 	++count_;
@@ -103,15 +102,13 @@ void SampledDouble::operator+=(double x)
 	m2_ += delta * (x - mean_);
 }
 
-// Operator +=
 void SampledDouble::operator+=(int i) { (*this) += (double)i; }
 
-// Operator +=
 void SampledDouble::operator+=(const SampledDouble &source)
 {
 	// Accumulate other values using parallel algorithm of Chan
-	// T. F. Chan, G. H. Golub, R. J. LeVeque, "Updating Formulae and a Pairwise Algorithm for Computing Sample Variances.", Technical Report STAN-CS-79-773, Department of Computer Science,
-	// Stanford University (1979).
+	// T. F. Chan, G. H. Golub, R. J. LeVeque, "Updating Formulae and a Pairwise Algorithm for Computing Sample Variances.",
+	// Technical Report STAN-CS-79-773, Department of Computer Science, Stanford University (1979).
 
 	// Nothing to do if there are no samples in the source data
 	if (source.count_ == 0)
@@ -131,7 +128,6 @@ void SampledDouble::operator+=(const SampledDouble &source)
 	count_ += source.count_;
 }
 
-// Operator *=
 void SampledDouble::operator*=(double x)
 {
 	// Apply factor to mean and m2_
@@ -139,7 +135,6 @@ void SampledDouble::operator*=(double x)
 	m2_ *= x;
 }
 
-// Operator /=
 void SampledDouble::operator/=(double x)
 {
 	// Apply factor to mean and m2_
@@ -177,7 +172,8 @@ bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("%f  %i
 bool SampledDouble::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	// All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the final result
+	// All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the
+	// final result
 	for (int n = 1; n < procPool.nProcesses(); ++n)
 	{
 		if (procPool.poolRank() == 0)
@@ -234,11 +230,14 @@ bool SampledDouble::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(count_))
-		return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(), count_);
+		return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(),
+					count_);
 	if (!procPool.equality(mean_))
-		return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n", procPool.poolRank(), mean_);
+		return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), mean_);
 	if (!procPool.equality(m2_))
-		return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(), m2_);
+		return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					m2_);
 #endif
 	return true;
 }

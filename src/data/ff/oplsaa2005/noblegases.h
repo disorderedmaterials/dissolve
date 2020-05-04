@@ -36,15 +36,14 @@ class SpeciesTorsion;
 // OPLS-AA (2005) Noble Gases Forcefield
 class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 {
-      public:
-	// Constructor / Destructor
+	public:
 	Forcefield_OPLSAA2005_NobleGases();
 	~Forcefield_OPLSAA2005_NobleGases();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield
@@ -55,7 +54,7 @@ class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 	/*
 	 * Atom Type Data
 	 */
-      public:
+	public:
 	// Determine and return atom type for specified SpeciesAtom
 	ForcefieldAtomType *determineAtomType(SpeciesAtom *i) const;
 };

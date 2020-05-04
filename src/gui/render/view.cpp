@@ -29,10 +29,12 @@
 // Static Members
 const double View::defaultZTranslation_ = -10.0;
 
-// Constructor
-View::View(const List<Renderable> &renderables, FontInstance &fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance) { clear(); }
+View::View(const List<Renderable> &renderables, FontInstance &fontInstance)
+	: fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
+{
+	clear();
+}
 
-// Destructor
 View::~View() {}
 
 // Clear view, resetting to defaults
@@ -174,7 +176,8 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
 		right = aspectRatio_ * top;
 		result.setColumn(0, (nearClip * 2.0) / (right - left), 0.0, 0.0, 0.0);
 		result.setColumn(1, 0.0, (nearClip * 2.0) / (top - bottom), 0.0, 0.0);
-		result.setColumn(2, (right + left) / (right - left), (top + bottom) / (top - bottom), -(farClip + nearClip) / (farClip - nearClip), -1.0);
+		result.setColumn(2, (right + left) / (right - left), (top + bottom) / (top - bottom),
+				 -(farClip + nearClip) / (farClip - nearClip), -1.0);
 		result.setColumn(3, 0.0, 0.0, -(2.0 * nearClip * farClip) / (farClip - nearClip), 0.0);
 		// Equivalent to the following code:
 		// glMatrixMode(GL_PROJECTION);
@@ -431,8 +434,10 @@ Vec3<double> View::dataToScreen(Vec3<double> r, double &lengthScale) const
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
 }
 
-// Project given data coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
-Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation) const
+// Project given data coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation
+// vector
+Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix,
+				Vec3<double> translation) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
@@ -515,7 +520,8 @@ Vec3<double> View::screenToData(int x, int y, double z) const
 	int newx, newy;
 	double dx, dy;
 
-	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen coordinates
+	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen
+	// coordinates
 	worldr.set(0.0, 0.0, z, 1.0);
 	temp = projectionMatrix_ * worldr;
 	newx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5;
@@ -568,10 +574,12 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
 	// 	double angle = acos(abNorm.dp(amNorm));
 	//	printf("Angle = %f, %f\n", angle, angle * DEGRAD);
 
-	// Calculate slice axis value - no need to account for inverted axes here, since this is accounted for in the vectors axmin and axmax
+	// Calculate slice axis value - no need to account for inverted axes here, since this is accounted for in the vectors
+	// axmin and axmax
 	double axisValue;
 	if (axes_.logarithmic(axis))
-		axisValue = pow(10, abNorm.dp(amNorm) * ratio * (log10(axes_.max(axis)) - log10(axes_.min(axis))) + log10(axes_.min(axis)));
+		axisValue = pow(10, abNorm.dp(amNorm) * ratio * (log10(axes_.max(axis)) - log10(axes_.min(axis))) +
+					    log10(axes_.min(axis)));
 	else
 		axisValue = abNorm.dp(amNorm) * ratio * (axes_.max(axis) - axes_.min(axis)) + axes_.min(axis);
 	//	printf("slicevalue = %f (%f)\n", axisValue, abNorm.dp(amNorm)*ratio);
@@ -628,7 +636,8 @@ void View::recalculateView(bool force)
 	 * Doing this first will allow us to get much better values for the pixel overlaps we need later on
 	 */
 
-	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
+	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get
+	// literal 'pixels per unit' for (screen) X and Y
 	Vec3<double> unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
 	unit.x -= viewportMatrix_[0] + viewportMatrix_[2] / 2.0;
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3] / 2.0;
@@ -711,7 +720,8 @@ void View::recalculateView(bool force)
 			// Get bounding cuboid for axis text
 			Cuboid cuboid;
 			cuboid = axes_.labelPrimitive(axis).boundingCuboid(fontInstance_, viewMatrixInverse, textZScale_);
-			cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewMatrixInverse, textZScale_, cuboid);
+			cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewMatrixInverse, textZScale_,
+									   cuboid);
 
 			// Project cuboid extremes and store projected coordinates
 			a = dataToScreen(cuboid.minima(), tempProjection, viewMat);
@@ -742,11 +752,13 @@ void View::recalculateView(bool force)
 		// 		double labelWidth = labelMax.x - labelMin.x;
 		// 		double labelHeight = labelMax.y - labelMin.y;
 
-		// Now, we know the width and height of the axis on its own, and the extra 'added' by the labels, so work out how much we need to shrink the axis by
+		// Now, we know the width and height of the axis on its own, and the extra 'added' by the labels, so work out
+		// how much we need to shrink the axis by
 		double deltaWidth = (viewportMatrix_[2] - 2 * margin) - globalWidth;
 		double deltaHeight = (viewportMatrix_[3] - 2 * margin) - globalHeight;
 
-		// So, need to lose deltaWidth and deltaHeight pixels from the axis exents - we'll do this by scaling the stretchfactor
+		// So, need to lose deltaWidth and deltaHeight pixels from the axis exents - we'll do this by scaling the
+		// stretchfactor
 		double factor = axisPixelLength_[axisX] / (axisPixelLength_[axisX] - deltaWidth);
 		axes_.setStretch(axisX, axes_.stretch(axisX) * factor);
 		factor = axisPixelLength_[axisY] / (axisPixelLength_[axisY] - deltaHeight);
@@ -798,7 +810,8 @@ void View::resetViewMatrix()
 		// 		}
 
 		// Calculate zoom to show all data
-		viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0) * 0.5 * axes_.stretch(0), axes_.realRange(1) * 0.5 * axes_.stretch(1), 0.9);
+		viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0) * 0.5 * axes_.stretch(0),
+							   axes_.realRange(1) * 0.5 * axes_.stretch(1), 0.9);
 
 		// Recalculate projection matrix
 		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
@@ -934,7 +947,8 @@ void View::autoFollowData()
 	if (!Renderable::sourceDataAccessEnabled())
 		return;
 
-	// Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive regeneration further down the line
+	// Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
+	// regeneration further down the line
 	bool updateRequired = false;
 	ListIterator<Renderable> renderableIterator(renderables_);
 	while (Renderable *rend = renderableIterator.iterate())
@@ -1176,12 +1190,14 @@ void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 		if (fractions[axis] > 0.0)
 		{
 			dataMax[axis] = dataMin[axis] + (dataMax[axis] - dataMin[axis]) * fractions[axis];
-			dataMaxPositive[axis] = dataMinPositive[axis] + (dataMaxPositive[axis] - dataMinPositive[axis]) * fractions[axis];
+			dataMaxPositive[axis] =
+				dataMinPositive[axis] + (dataMaxPositive[axis] - dataMinPositive[axis]) * fractions[axis];
 		}
 		else
 		{
 			dataMin[axis] = dataMax[axis] - (dataMin[axis] - dataMax[axis]) * fractions[axis];
-			dataMinPositive[axis] = dataMaxPositive[axis] - (dataMinPositive[axis] - dataMaxPositive[axis]) * fractions[axis];
+			dataMinPositive[axis] =
+				dataMaxPositive[axis] - (dataMinPositive[axis] - dataMaxPositive[axis]) * fractions[axis];
 		}
 
 		// Set allowable range to avoid negative numbers if axis is now logarithmic

@@ -27,20 +27,16 @@
 // Simple class to convert between QVariant pointer (void*) and a custom class pointer
 template <class A> class VariantPointer
 {
-      private:
+	private:
 	// Pointer to target class
 	A *pointer_;
 
-      public:
-	// Constructor (from class pointer)
+	public:
 	VariantPointer(A *ptr) { pointer_ = ptr; }
-	// Constructor (from QVariant)
 	VariantPointer(QVariant variant) { pointer_ = (A *)variant.value<void *>(); }
 
-	// Conversion operator (to QVariant)
 	operator QVariant() { return QVariant::fromValue((void *)pointer_); }
 
-	// Conversion operator (to class pointer)
 	operator A *() { return dynamic_cast<A *>(pointer_); }
 };
 

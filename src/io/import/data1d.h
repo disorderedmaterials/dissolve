@@ -32,7 +32,7 @@ class ProcessPool;
 // Data1D Import Formats
 class Data1DImportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Data1D Formats
 	enum Data1DImportFormat
 	{
@@ -41,23 +41,21 @@ class Data1DImportFileFormat : public FileAndFormat
 		GudrunMintData1D,
 		nData1DImportFormats
 	};
-	// Constructors
 	Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
 	Data1DImportFileFormat(const char *filename, Data1DImportFormat format = XYData1D);
-	// Destructor
 	~Data1DImportFileFormat();
 
 	/*
 	 * Keyword Options
 	 */
-      private:
+	private:
 	// Set up keywords for the format
 	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for Data1DImportFormat
 	static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> data1DImportFormats();
 	// Return number of available formats
@@ -72,14 +70,14 @@ class Data1DImportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import Functions
 	 */
-      private:
+	private:
 	// Import simple XY data using specified parser
 	bool importXY(LineParser &parser, Data1D &data);
 	// Import simple histogram data using specified parser
@@ -87,7 +85,7 @@ class Data1DImportFileFormat : public FileAndFormat
 	// Import Gudrun merged interference cross-section (mint) data using specified parser
 	bool importGudrunMint(LineParser &parser, Data1D &data);
 
-      public:
+	public:
 	// Import Data1D using current filename and format
 	bool importData(Data1D &data, ProcessPool *procPool = NULL);
 	// Import Data1D using supplied parser and current format

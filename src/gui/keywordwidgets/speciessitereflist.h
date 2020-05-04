@@ -36,35 +36,34 @@ class SpeciesSiteRefListKeywordWidget : public KeywordDropDown, public KeywordWi
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	SpeciesSiteRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	SpeciesSiteRefListKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SpeciesSiteRefListWidget ui_;
 
-      private slots:
+	private slots:
 	void siteCheckBox_clicked(bool checked);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

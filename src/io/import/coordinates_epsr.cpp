@@ -113,8 +113,9 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
 				// partnerId = parser.argi(currentArg) - 1;
 				currentArg += 2;
 
-				// Create new bond between these atoms (only if the partnerId is less than the current atom index)  **IGNORED**
-				// 				if (partnerId < n) targetModel()->bondAtoms(atomOffset+n, atomOffset+partnerId, Bond::Single);
+				// Create new bond between these atoms (only if the partnerId is less than the current atom
+				// index)  **IGNORED** 				if (partnerId < n)
+				// targetModel()->bondAtoms(atomOffset+n, atomOffset+partnerId, Bond::Single);
 
 				--nRestraints;
 			}
@@ -135,7 +136,8 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
 			if (parser.skipLines(1) != LineParser::Success)
 				return false;
 
-			// If a DIHedral, we expect an integer which defines the number of constraints, and thus the number of lines to skip before the main
+			// If a DIHedral, we expect an integer which defines the number of constraints, and thus the number of
+			// lines to skip before the main
 			if (DissolveSys::sameString(parser.argc(0), "DIH"))
 			{
 				if (parser.getArgsDelim() != LineParser::Success)

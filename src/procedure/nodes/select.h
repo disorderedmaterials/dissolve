@@ -42,23 +42,21 @@ class SpeciesSite;
 // Select Node
 class SelectProcedureNode : public ProcedureNode
 {
-      public:
-	// Constructors
+	public:
 	SelectProcedureNode(SpeciesSite *site = NULL, bool axesRequired = false);
-	// Destructor
 	~SelectProcedureNode();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 	/*
 	 * Selection Targets
 	 */
-      private:
+	private:
 	// Whether sites must have a defined orientation
 	bool axesRequired_;
 	// List of sites within Species to select
@@ -69,7 +67,7 @@ class SelectProcedureNode : public ProcedureNode
 	/*
 	 * Selection Control
 	 */
-      private:
+	private:
 	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
 	RefList<SelectProcedureNode> sameMoleculeExclusions_;
 	// List of Molecules currently excluded from selection
@@ -85,7 +83,7 @@ class SelectProcedureNode : public ProcedureNode
 	// Range of distance to allow from distance reference site (if limiting)
 	Range inclusiveDistanceRange_;
 
-      public:
+	public:
 	// Return list of Molecules currently excluded from selection
 	const OrderedVector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
 	// List of Sites currently excluded from selection
@@ -96,7 +94,7 @@ class SelectProcedureNode : public ProcedureNode
 	/*
 	 * Selected Sites
 	 */
-      private:
+	private:
 	// Array containing pointers to our selected sites
 	Array<const Site *> sites_;
 	// Current Site index
@@ -106,7 +104,7 @@ class SelectProcedureNode : public ProcedureNode
 	// Cumulative number of sites ever selected
 	int nCumulativeSites_;
 
-      public:
+	public:
 	// Return the number of available sites in the current stack, if any
 	int nSitesInStack() const;
 	// Return the average number of sites selected
@@ -119,11 +117,11 @@ class SelectProcedureNode : public ProcedureNode
 	/*
 	 * Branch
 	 */
-      private:
+	private:
 	// Branch for ForEach (if defined)
 	SequenceProcedureNode *forEachBranch_;
 
-      public:
+	public:
 	// Return whether this node has a branch
 	bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
@@ -134,11 +132,12 @@ class SelectProcedureNode : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };

@@ -32,12 +32,12 @@
 template <class T, class D> class OrderedPointerDataListItem
 {
 	/*
-	 * OrderedPointerDataList maintains a list of OrderedPointerDataListItems, which contain a pointer to an object of the template class type
-	 * and an associated data item of thie second template class type. The objects in the list are ordered according to their address in memory.
+	 * OrderedPointerDataList maintains a list of OrderedPointerDataListItems, which contain a pointer to an object of the
+	 * template class type and an associated data item of thie second template class type. The objects in the list are
+	 * ordered according to their address in memory.
 	 */
 
-      public:
-	// Constructor
+	public:
 	OrderedPointerDataListItem<T, D>(T *object = NULL, D data = D()) : object_(object), data_(data)
 	{
 		prev = NULL;
@@ -46,13 +46,13 @@ template <class T, class D> class OrderedPointerDataListItem
 	// List pointers
 	OrderedPointerDataListItem<T, D> *prev, *next;
 
-      private:
+	private:
 	// Pointer to object
 	T *object_;
 	// Associated data
 	D data_;
 
-      public:
+	public:
 	// Set pointer to object
 	void setObject(T *object) { object_ = object; }
 	// Return pointer to object
@@ -72,8 +72,7 @@ template <class T, class D> class OrderedPointerDataList
 	 * Ordered, linked list of pointers to objects which exist elsewhere.
 	 */
 
-      public:
-	// Constructor
+	public:
 	OrderedPointerDataList<T, D>()
 	{
 		listHead_ = NULL;
@@ -86,15 +85,13 @@ template <class T, class D> class OrderedPointerDataList
 		items_ = NULL;
 		objects_ = NULL;
 	}
-	// Destructor
 	~OrderedPointerDataList() { clear(); }
-	// Copy constructor
 	OrderedPointerDataList<T, D>(const OrderedPointerDataList<T, D> &source) { (*this) = source; }
 
 	/*
 	 * Item List
 	 */
-      private:
+	private:
 	// Object factory
 	ObjectFactory<OrderedPointerDataListItem<T, D>> factory_;
 	// Pointers to head and tail of list
@@ -110,14 +107,14 @@ template <class T, class D> class OrderedPointerDataList
 	// Array regeneration flags
 	bool regenerateItemArray_, regenerateObjectArray_;
 
-      public:
+	public:
 	// Set chunksize to use in ObjectFactory
 	void setChunkSize(int size) { factory_.setChunkSize(size); }
 
 	/*
 	 * Access / Manipulation
 	 */
-      private:
+	private:
 	// Insert item pointing to specified object, after specified item
 	OrderedPointerDataListItem<T, D> *insertAfter(T *object, OrderedPointerDataListItem<T, D> *afterThis)
 	{
@@ -281,7 +278,7 @@ template <class T, class D> class OrderedPointerDataList
 		return NULL;
 	}
 
-      public:
+	public:
 	// Clear the list
 	void clear()
 	{
@@ -358,7 +355,9 @@ template <class T, class D> class OrderedPointerDataList
 		else if (listTail_->object() < object)
 			insertAfter(object, listTail_)->setData(data);
 		else
-			printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerDataList, but last item in list is %p\n", object, listTail_);
+			printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerDataList, but last item in list "
+			       "is %p\n",
+			       object, listTail_);
 	}
 	// Remove item reference from list
 	void remove(T *object)
@@ -368,7 +367,9 @@ template <class T, class D> class OrderedPointerDataList
 #ifdef CHECKS
 		if (item == NULL)
 		{
-			printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it cannot be removed.\n", object);
+			printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it "
+			       "cannot be removed.\n",
+			       object);
 			return;
 		}
 #endif
@@ -392,7 +393,9 @@ template <class T, class D> class OrderedPointerDataList
 #ifdef CHECKS
 		if (item == NULL)
 		{
-			printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it cannot be moved.\n", object);
+			printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it "
+			       "cannot be moved.\n",
+			       object);
 			return;
 		}
 #endif
@@ -461,7 +464,8 @@ template <class T, class D> class OrderedPointerDataList
 		regenerateObjectArray_ = 1;
 	}
 	// Given a second list, generate new lists containing unique items to each list, and those that appear in both
-	void difference(OrderedPointerDataList<T, D> &listB, OrderedPointerDataList<T, D> &uniqueToA, OrderedPointerDataList<T, D> &uniqueToB, OrderedPointerDataList<T, D> &commonItems)
+	void difference(OrderedPointerDataList<T, D> &listB, OrderedPointerDataList<T, D> &uniqueToA,
+			OrderedPointerDataList<T, D> &uniqueToB, OrderedPointerDataList<T, D> &commonItems)
 	{
 		// Clear supplied results lists
 		uniqueToA.clear();
@@ -524,15 +528,13 @@ template <class T, class D> class OrderedPointerDataList
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment operator
+	public:
 	void operator=(const OrderedPointerDataList<T, D> &other)
 	{
 		clear();
 		for (OrderedPointerDataListItem<T, D> *item = other.listHead_; item != NULL; item = item->next)
 			addAtEnd(item->object());
 	}
-	// Element access operator
 	OrderedPointerDataListItem<T, D> *operator[](int index)
 	{
 #ifdef CHECKS
@@ -551,15 +553,15 @@ template <class T, class D> class OrderedPointerDataList
  */
 template <class T, class D> class OrderedPointerDataListIterator
 {
-      public:
-	// Constructor
-	OrderedPointerDataListIterator<T, D>(const OrderedPointerDataList<T, D> &source, bool reverse = false) : targetList_(source), reverse_(reverse)
+	public:
+	OrderedPointerDataListIterator<T, D>(const OrderedPointerDataList<T, D> &source, bool reverse = false)
+		: targetList_(source), reverse_(reverse)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
 	}
 
-      private:
+	private:
 	// Whether the iterator has reached the end of the list
 	bool finished_;
 	// Whether the iterator operates in reverse (iterating tail to head)
@@ -569,7 +571,7 @@ template <class T, class D> class OrderedPointerDataListIterator
 	// Current item
 	OrderedPointerDataListItem<T, D> *currentItem_;
 
-      public:
+	public:
 	// Iterate
 	T *iterate()
 	{

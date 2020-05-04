@@ -23,14 +23,12 @@
 #include "classes/species.h"
 #include "data/elements.h"
 
-// Constructor
 EmpiricalFormula::EmpiricalFormula()
 {
 	// Initialise element counts array
 	elementCounts_.initialise(Elements::nElements());
 }
 
-// Destructor
 EmpiricalFormula::~EmpiricalFormula() {}
 
 /*

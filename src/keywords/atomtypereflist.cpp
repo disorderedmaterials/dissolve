@@ -24,10 +24,11 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 
-// Constructor
-AtomTypeRefListKeyword::AtomTypeRefListKeyword(RefList<AtomType> &targetRefList) : KeywordData<RefList<AtomType> &>(KeywordBase::AtomTypeRefListData, targetRefList) {}
+AtomTypeRefListKeyword::AtomTypeRefListKeyword(RefList<AtomType> &targetRefList)
+	: KeywordData<RefList<AtomType> &>(KeywordBase::AtomTypeRefListData, targetRefList)
+{
+}
 
-// Destructor
 AtomTypeRefListKeyword::~AtomTypeRefListKeyword() {}
 
 /*

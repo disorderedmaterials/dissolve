@@ -30,8 +30,8 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
-AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -99,7 +99,8 @@ void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData &coreData
 	refreshing_ = true;
 
 	// Update the list against the global AtomType list
-	ListWidgetUpdater<AtomTypeSelectionKeywordWidget, AtomType> listUpdater(ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<AtomTypeSelectionKeywordWidget, AtomType> listUpdater(
+		ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 

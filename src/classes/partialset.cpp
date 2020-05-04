@@ -27,10 +27,8 @@
 #include "genericitems/array2dbool.h"
 #include "io/export/data1d.h"
 
-// Constructor
 PartialSet::PartialSet() : ListItem<PartialSet>() { fingerprint_ = "NO_FINGERPRINT"; }
 
-// Destructor
 PartialSet::~PartialSet()
 {
 	fullHistograms_.clear();
@@ -48,7 +46,8 @@ PartialSet::~PartialSet()
  */
 
 // Set up PartialSet
-bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag, const char *suffix, const char *abscissaUnits)
+bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag,
+		       const char *suffix, const char *abscissaUnits)
 {
 	// Set up partial arrays
 	if (!setUpPartials(atomTypes, prefix, tag, suffix, abscissaUnits))
@@ -63,7 +62,8 @@ bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double bi
 }
 
 // Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix, const char *abscissaUnits)
+bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix,
+			       const char *abscissaUnits)
 {
 	abscissaUnits_ = abscissaUnits;
 
@@ -332,7 +332,8 @@ bool PartialSet::save()
 			Data1D &unbound = unboundPartials_.at(typeI, typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound");
 			for (n = 0; n < full.nValues(); ++n)
-				parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n));
+				parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n),
+						  bound.constValue(n), unbound.constValue(n));
 			parser.closeFiles();
 		}
 	}
@@ -360,9 +361,15 @@ void PartialSet::setObjectTags(const char *prefix, const char *suffix)
 		at2 = at1;
 		for (typeJ = typeI; typeJ < nTypes; ++typeJ, at2 = at2->next())
 		{
-			partials_.at(typeI, typeJ).setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			boundPartials_.at(typeI, typeJ).setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			unboundPartials_.at(typeI, typeJ).setObjectTag(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			partials_.at(typeI, typeJ)
+				.setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(),
+							 actualSuffix.get()));
+			boundPartials_.at(typeI, typeJ)
+				.setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(),
+							 actualSuffix.get()));
+			unboundPartials_.at(typeI, typeJ)
+				.setObjectTag(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(),
+							 at2->atomTypeName(), actualSuffix.get()));
 		}
 	}
 
@@ -435,11 +442,15 @@ void PartialSet::formPartials(double boxVolume)
 		for (m = n; m < nTypes; ++m, at2 = at2->next())
 		{
 			// Calculate RDFs from histogram data
-			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
-			calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
-			calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
+			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(),
+				     at2->population(), at1 == at2 ? 2.0 : 1.0);
+			calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(),
+				     at2->population(), at1 == at2 ? 2.0 : 1.0);
+			calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(),
+				     at2->population(), at1 == at2 ? 2.0 : 1.0);
 
-			// Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that type)
+			// Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that
+			// type)
 			emptyBoundPartials_.at(n, m) = boundHistograms_.at(n, m).nBinned() == 0;
 		}
 	}
@@ -458,7 +469,8 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
 		localI = atomTypes_.indexOf(atI);
 		if (localI == -1)
 		{
-			Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atI->name());
+			Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+					 atI->name());
 			return false;
 		}
 
@@ -468,16 +480,21 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
 			localJ = atomTypes_.indexOf(atJ);
 			if (localJ == -1)
 			{
-				Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atJ->name());
+				Messenger::error(
+					"AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+					atJ->name());
 				return false;
 			}
 
 			// Add interpolated source partials to our set
 			Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
-			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
-			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
+			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ),
+						      weighting);
+			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ),
+						      weighting);
 
-			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
+			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
+			// correctly
 			if (!source.isBoundPartialEmpty(typeI, typeJ))
 				emptyBoundPartials_.at(typeI, typeJ) = false;
 		}
@@ -490,7 +507,8 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier)
+void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+			      double multiplier)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.binWidth();
@@ -522,7 +540,8 @@ void PartialSet::operator+=(const PartialSet &source)
 	// If we currently contain no data, just copy the source data
 	if (atomTypes_.nItems() == 0)
 	{
-		// 		setUpPartials(source.atomTypes(), source.objectNamePrefix(), "", CharString("%p", this), source.abscissaUnits_.get());
+		// 		setUpPartials(source.atomTypes(), source.objectNamePrefix(), "", CharString("%p", this),
+		// source.abscissaUnits_.get());
 		(*this) = source;
 		return;
 	}
@@ -538,7 +557,8 @@ void PartialSet::operator+=(const PartialSet &source)
 		localI = atomTypes_.indexOf(atI);
 		if (localI == -1)
 		{
-			Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atI->name());
+			Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+					 atI->name());
 			return;
 		}
 
@@ -549,16 +569,21 @@ void PartialSet::operator+=(const PartialSet &source)
 			localJ = atomTypes_.indexOf(atJ);
 			if (localJ == -1)
 			{
-				Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atJ->name());
+				Messenger::error(
+					"AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+					atJ->name());
 				return;
 			}
 
 			// Add interpolated source partials to our set
 			Interpolator::addInterpolated(partials_.at(localI, localJ), source.constPartial(typeI, typeJ));
-			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.constBoundPartial(typeI, typeJ));
-			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.constUnboundPartial(typeI, typeJ));
+			Interpolator::addInterpolated(boundPartials_.at(localI, localJ),
+						      source.constBoundPartial(typeI, typeJ));
+			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ),
+						      source.constUnboundPartial(typeI, typeJ));
 
-			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
+			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
+			// correctly
 			if (!source.isBoundPartialEmpty(typeI, typeJ))
 				emptyBoundPartials_.at(typeI, typeJ) = false;
 		}
@@ -644,7 +669,8 @@ bool PartialSet::read(LineParser &parser, const CoreData &coreData)
 // Write data through specified LineParser
 bool PartialSet::write(LineParser &parser)
 {
-	// TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a common scale
+	// TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
+	// common scale
 
 	if (!parser.writeLineF("%s\n", objectNamePrefix_.get()))
 		return false;

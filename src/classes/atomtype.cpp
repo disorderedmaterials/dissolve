@@ -24,7 +24,6 @@
 #include "data/elements.h"
 #include <string.h>
 
-// Constructor
 AtomType::AtomType() : ListItem<AtomType>()
 {
 	element_ = NULL;
@@ -33,7 +32,6 @@ AtomType::AtomType() : ListItem<AtomType>()
 	shortRangeType_ = Forcefield::UndefinedType;
 }
 
-// Destructor
 AtomType::~AtomType() {}
 
 /*

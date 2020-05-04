@@ -24,7 +24,8 @@
 #include <QOpenGLFramebufferObject>
 
 // ViewerObject Keywords
-const char *ViewerObjectKeywords[] = {"No Object", "Axis Line", "Axis Tick Label", "Axis Title Label", "Major Grid Line", "Minor Grid Line", "Renderable"};
+const char *ViewerObjectKeywords[] = {"No Object",       "Axis Line",       "Axis Tick Label", "Axis Title Label",
+				      "Major Grid Line", "Minor Grid Line", "Renderable"};
 
 // Return description of viewer object
 const char *BaseViewer::viewerObject(BaseViewer::ViewerObject vo) { return ViewerObjectKeywords[vo]; }
@@ -111,7 +112,8 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
 		for (int dy = 0; dy < queryRegionHeight_; ++dy)
 		{
 			// Accumulate difference between stored and current colour
-			QColor pixelColour = tile.pixelColor(queryRegionLeft_ + dx, queryImageHeight_ - queryRegionBottom_ - dy);
+			QColor pixelColour =
+				tile.pixelColor(queryRegionLeft_ + dx, queryImageHeight_ - queryRegionBottom_ - dy);
 			delta += fabs(pixelColour.redF() - queryRegionR_[index]);
 			delta += fabs(pixelColour.greenF() - queryRegionG_[index]);
 			delta += fabs(pixelColour.blueF() - queryRegionB_[index]);
@@ -151,7 +153,8 @@ BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
 	queryObjectSubInfo_.clear();
 
 	// Set scale of query image and calculate size - we work in these coordinates from now on
-	// BUG Setting query image scale to anything other than 1.0 results in slight differences in object positions, and inaccuracies in picking
+	// BUG Setting query image scale to anything other than 1.0 results in slight differences in object positions, and
+	// inaccuracies in picking
 	queryImageScale_ = 1.0;
 	queryImageWidth_ = contextWidth_ * queryImageScale_;
 	queryImageHeight_ = contextHeight_ * queryImageScale_;

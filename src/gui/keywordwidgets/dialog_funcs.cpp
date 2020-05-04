@@ -24,7 +24,6 @@
 #include "classes/species.h"
 #include "gui/keywordwidgets/dialog.h"
 
-// Constructor
 KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordList &keywords, const CoreData &coreData) : coreData_(coreData)
 {
 	ui_.setupUi(this);
@@ -38,7 +37,6 @@ KeywordsDialog::KeywordsDialog(QWidget *parent, const KeywordList &keywords, con
 	setUpRequired_ = false;
 }
 
-// Destructor
 KeywordsDialog::~KeywordsDialog() {}
 
 // Run the dialog

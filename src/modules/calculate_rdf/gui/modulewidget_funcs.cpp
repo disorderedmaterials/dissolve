@@ -23,8 +23,8 @@
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
-// Constructor
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module) : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module)
+	: ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -97,8 +97,10 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
 	for (Configuration *cfg : module_->targetConfigurations())
 	{
 		// Calculated RDF
-		Renderable *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()),
-							      CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		Renderable *rdf = rdfGraph_->createRenderable(
+			Renderable::Data1DRenderable,
+			CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()),
+			CharString("RDF//%s", cfg->niceName()), cfg->niceName());
 		rdf->setColour(StockColours::BlueStockColour);
 	}
 }

@@ -30,23 +30,22 @@
 // Cell Distributor
 class CellDistributor : public Distributor
 {
-      public:
-	// Constructor
-	CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
-	// Destructor
+	public:
+	CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
+			bool repeatsAllowed);
 	~CellDistributor();
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Source CellArray
 	const CellArray &cells_;
 
 	/*
 	 * Cells
 	 */
-      private:
+	private:
 	// Return array of Cells that we must hard lock in order to modify the object with index specified
 	Array<Cell *> cellsToBeModifiedForObject(int objectId);
 };

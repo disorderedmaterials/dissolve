@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 SanityCheckModule::SanityCheckModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 SanityCheckModule::~SanityCheckModule() {}
 
 /*

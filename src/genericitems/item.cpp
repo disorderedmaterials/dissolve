@@ -24,7 +24,6 @@
 // Static Members
 List<GenericItem> GenericItem::itemClasses_;
 
-// Constructor
 GenericItem::GenericItem(const char *name, int flags) : ListItem<GenericItem>()
 {
 	name_ = name;

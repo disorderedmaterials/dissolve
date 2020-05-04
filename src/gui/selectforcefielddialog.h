@@ -36,23 +36,21 @@ class SelectForcefieldDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	SelectForcefieldDialog(QWidget *parent, const List<Forcefield> &forcefields);
-	// Destructor
 	~SelectForcefieldDialog();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::SelectForcefieldDialog ui_;
 
-      private slots:
+	private slots:
 	void on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid);
 	void on_ForcefieldWidget_forcefieldDoubleClicked();
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 
-      public:
+	public:
 	// Run the dialog, returning the selected Forcefield
 	std::shared_ptr<Forcefield> selectForcefield(std::shared_ptr<Forcefield> currentFF);
 };

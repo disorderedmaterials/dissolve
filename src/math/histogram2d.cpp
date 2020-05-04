@@ -30,7 +30,6 @@ template <class Histogram2D> int ObjectStore<Histogram2D>::objectCount_ = 0;
 template <class Histogram2D> int ObjectStore<Histogram2D>::objectType_ = ObjectInfo::Histogram2DObject;
 template <class Histogram2D> const char *ObjectStore<Histogram2D>::objectTypeName_ = "Histogram2D";
 
-// Constructor
 Histogram2D::Histogram2D() : ListItem<Histogram2D>(), ObjectStore<Histogram2D>(this)
 {
 	accumulatedData_.addErrors();
@@ -38,10 +37,8 @@ Histogram2D::Histogram2D() : ListItem<Histogram2D>(), ObjectStore<Histogram2D>(t
 	clear();
 }
 
-// Destructor
 Histogram2D::~Histogram2D() {}
 
-// Copy Constructor
 Histogram2D::Histogram2D(const Histogram2D &source) : ObjectStore<Histogram2D>(this) { (*this) = source; }
 
 // Clear Data
@@ -187,7 +184,9 @@ void Histogram2D::add(Histogram2D &other, int factor)
 {
 	if ((nXBins_ != other.nXBins_) || (nYBins_ != other.nYBins_))
 	{
-		Messenger::print("BAD_USAGE - Can't add Histogram2D data since arrays are not the same size (%ix%i vs %ix%i).\n", nXBins_, nYBins_, other.nXBins_, other.nYBins_);
+		Messenger::print(
+			"BAD_USAGE - Can't add Histogram2D data since arrays are not the same size (%ix%i vs %ix%i).\n",
+			nXBins_, nYBins_, other.nXBins_, other.nYBins_);
 		return;
 	}
 
@@ -205,7 +204,6 @@ const Data2D &Histogram2D::accumulatedData() const { return accumulatedData_; }
  * Operators
  */
 
-// Operator =
 void Histogram2D::operator=(const Histogram2D &source)
 {
 	xMinimum_ = source.xMinimum_;
@@ -340,31 +338,41 @@ bool Histogram2D::equality(ProcessPool &procPool)
 #ifdef PARALLEL
 	// Check number of items in arrays first
 	if (!procPool.equality(xMinimum_))
-		return Messenger::error("Histogram2D minimum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), xMinimum_);
+		return Messenger::error("Histogram2D minimum x value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), xMinimum_);
 	if (!procPool.equality(xMaximum_))
-		return Messenger::error("Histogram2D maximum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), xMaximum_);
+		return Messenger::error("Histogram2D maximum x value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), xMaximum_);
 	if (!procPool.equality(xBinWidth_))
-		return Messenger::error("Histogram2D bin x width is not equivalent (process %i has %e).\n", procPool.poolRank(), xBinWidth_);
+		return Messenger::error("Histogram2D bin x width is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					xBinWidth_);
 	if (!procPool.equality(nXBins_))
-		return Messenger::error("Histogram2D number of x bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nXBins_);
+		return Messenger::error("Histogram2D number of x bins is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), nXBins_);
 	if (!procPool.equality(xBinCentres_))
 		return Messenger::error("Histogram2D x bin centre values not equivalent.\n");
 	if (!procPool.equality(yMinimum_))
-		return Messenger::error("Histogram2D minimum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), yMinimum_);
+		return Messenger::error("Histogram2D minimum y value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), yMinimum_);
 	if (!procPool.equality(yMaximum_))
-		return Messenger::error("Histogram2D maximum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), yMaximum_);
+		return Messenger::error("Histogram2D maximum y value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), yMaximum_);
 	if (!procPool.equality(yBinWidth_))
-		return Messenger::error("Histogram2D bin y width is not equivalent (process %i has %e).\n", procPool.poolRank(), yBinWidth_);
+		return Messenger::error("Histogram2D bin y width is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					yBinWidth_);
 	if (!procPool.equality(nYBins_))
-		return Messenger::error("Histogram2D number of y bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nYBins_);
+		return Messenger::error("Histogram2D number of y bins is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), nYBins_);
 	if (!procPool.equality(yBinCentres_))
 		return Messenger::error("Histogram2D y bin centre values not equivalent.\n");
 	if (!procPool.equality(bins_.linearArray(), bins_.linearArraySize()))
 		return Messenger::error("Histogram2D bin values not equivalent.\n");
 	if (!procPool.equality(nBinned_))
-		return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+		return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process %i has %li).\n",
+					procPool.poolRank(), nBinned_);
 	if (!procPool.equality(nMissed_))
-		return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+		return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process %i has %li).\n",
+					procPool.poolRank(), nBinned_);
 	SampledDouble *avgs = averages_.linearArray();
 	for (int n = 0; n < averages_.linearArraySize(); ++n)
 		if (!avgs[n].equality(procPool))

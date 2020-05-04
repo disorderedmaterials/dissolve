@@ -27,18 +27,17 @@
 // Column-major 3x3 matrix
 class Matrix3
 {
-      public:
-	// Constructor
+	public:
 	Matrix3();
 
-      private:
+	private:
 	// Matrix
 	double matrix_[9];
 
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	Matrix3 operator*(const Matrix3 &B) const;
 	Matrix3 operator*(const double a) const;
 	Matrix3 operator+(const Matrix3 &B) const;
@@ -51,7 +50,7 @@ class Matrix3
 	/*
 	 * General Routines
 	 */
-      public:
+	public:
 	// Reset the matrix to the identity
 	void setIdentity();
 	// Prints the matrix to stdout
@@ -74,7 +73,7 @@ class Matrix3
 	/*
 	 * Column Operations
 	 */
-      public:
+	public:
 	// Copy column contents to supplied Vec3
 	Vec3<double> columnAsVec3(int col) const;
 	// Set specified row from supplied triplet of values
@@ -101,7 +100,7 @@ class Matrix3
 	/*
 	 * Rotations
 	 */
-      public:
+	public:
 	// Create rotation matrix about X
 	void createRotationX(double angle);
 	// Create XY rotation matrix
@@ -120,7 +119,7 @@ class Matrix3
 	/*
 	 * Scaling
 	 */
-      public:
+	public:
 	// Apply a general scaling to the matrix (as glScaled would to)
 	void applyScaling(double scalex, double scaley, double scalez);
 	// Apply a general scaling to the matrix (as glScaled would to)
@@ -137,7 +136,7 @@ class Matrix3
 	/*
 	 * Transforms
 	 */
-      public:
+	public:
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(double x, double y, double z) const;
 	// Transform coordinates supplied and return as Vec3<double>
@@ -146,7 +145,7 @@ class Matrix3
 	/*
 	 * Special Functions
 	 */
-      public:
+	public:
 	// Construct 'cross-product' matrix of the supplied vector using cyclic permutations
 	void makeCrossProductMatrix(Vec3<double> &v);
 };

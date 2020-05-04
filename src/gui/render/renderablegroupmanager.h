@@ -30,8 +30,7 @@
 // Renderable Group Manager
 class RenderableGroupManager
 {
-      public:
-	// Constructor
+	public:
 	RenderableGroupManager();
 	// Clear all groups
 	void clear();
@@ -39,13 +38,13 @@ class RenderableGroupManager
 	/*
 	 * Group Management
 	 */
-      private:
+	private:
 	// List of current RenderableGroups in use
 	List<RenderableGroup> groups_;
 	// Usage counters for stock colours
 	Array<int> stockColourUsageCount_;
 
-      public:
+	public:
 	// Create named group, or return existing group by the same name
 	RenderableGroup *createGroup(const char *name);
 	// Add Renderable to its specified group, creating / associating as necessary
@@ -64,7 +63,7 @@ class RenderableGroupManager
 	/*
 	 * Colouring
 	 */
-      public:
+	public:
 	// Set colouring style for named group
 	void setGroupColouring(const char *groupName, RenderableGroup::GroupColouring colouringStyle);
 	// Set fixed colour for named group
@@ -73,14 +72,14 @@ class RenderableGroupManager
 	/*
 	 * Line Styling
 	 */
-      public:
+	public:
 	// Line stipple to use for group
 	void setGroupStipple(const char *groupName, LineStipple::StippleType stipple);
 
 	/*
 	 * Vertical Shifting
 	 */
-      public:
+	public:
 	// Vertical Shift Amounts
 	enum VerticalShiftAmount
 	{
@@ -91,15 +90,15 @@ class RenderableGroupManager
 		nVerticalShifts
 	};
 
-      private:
+	private:
 	// Current vertical shift delta index being applied to groups
 	VerticalShiftAmount verticalShiftAmount_;
 
-      private:
+	private:
 	// Set vertical shifts for current RenderableGroups
 	void setRenderableGroupShifts();
 
-      public:
+	public:
 	// Set vertical shifting style for named group
 	void setGroupVerticalShifting(const char *groupName, RenderableGroup::VerticalShiftStyle shiftStyle);
 	// Cycle vertical shift amount applied to RenderableGroups

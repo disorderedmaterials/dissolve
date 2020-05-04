@@ -22,7 +22,6 @@
 #include "gui/charts/charthotspot.h"
 #include <stdio.h>
 
-// Constructor
 ChartHotSpot::ChartHotSpot() : ListItem<ChartHotSpot>()
 {
 	row_ = -1;

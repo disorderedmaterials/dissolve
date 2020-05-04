@@ -22,7 +22,6 @@
 #include "gui/render/renderablegroup.h"
 #include "gui/render/renderable.h"
 
-// Constructor
 RenderableGroup::RenderableGroup(const char *name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
 {
 	name_ = name;
@@ -56,7 +55,8 @@ void RenderableGroup::associateRenderable(Renderable *renderable)
 {
 	if (renderables_.contains(renderable))
 	{
-		Messenger::warn("Group '%s' already contains the Renderable '%s', so not adding it again.\n", name(), renderable->name());
+		Messenger::warn("Group '%s' already contains the Renderable '%s', so not adding it again.\n", name(),
+				renderable->name());
 		return;
 	}
 
@@ -77,7 +77,8 @@ void RenderableGroup::removeRenderable(Renderable *renderable)
 {
 	if (!renderables_.contains(renderable))
 	{
-		Messenger::warn("Renderable '%s' is not present in the group '%s', so can't remove it.\n", renderable->name(), name());
+		Messenger::warn("Renderable '%s' is not present in the group '%s', so can't remove it.\n", renderable->name(),
+				name());
 		return;
 	}
 
@@ -128,8 +129,10 @@ bool RenderableGroup::isVisible() const { return visible_; }
 // Return enum options for GroupColouring
 EnumOptions<RenderableGroup::GroupColouring> RenderableGroup::groupColourings()
 {
-	static EnumOptionsList GroupColouringOptions = EnumOptionsList() << EnumOption(RenderableGroup::NoGroupColouring, "None") << EnumOption(RenderableGroup::FixedGroupColouring, "Fixed")
-									 << EnumOption(RenderableGroup::AutomaticIndividualColouring, "Automatic");
+	static EnumOptionsList GroupColouringOptions =
+		EnumOptionsList() << EnumOption(RenderableGroup::NoGroupColouring, "None")
+				  << EnumOption(RenderableGroup::FixedGroupColouring, "Fixed")
+				  << EnumOption(RenderableGroup::AutomaticIndividualColouring, "Automatic");
 
 	static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring", GroupColouringOptions);
 
@@ -222,9 +225,10 @@ LineStipple::StippleType RenderableGroup::lineStipple() const { return lineStipp
 // Return enum options for VerticalShiftStyle
 EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftStyles()
 {
-	static EnumOptionsList VerticalShiftStyleOptions = EnumOptionsList()
-							   << EnumOption(RenderableGroup::PreventVerticalShifting, "Prevent") << EnumOption(RenderableGroup::GroupVerticalShifting, "Group")
-							   << EnumOption(RenderableGroup::IndividualVerticalShifting, "Individual");
+	static EnumOptionsList VerticalShiftStyleOptions =
+		EnumOptionsList() << EnumOption(RenderableGroup::PreventVerticalShifting, "Prevent")
+				  << EnumOption(RenderableGroup::GroupVerticalShifting, "Group")
+				  << EnumOption(RenderableGroup::IndividualVerticalShifting, "Individual");
 
 	static EnumOptions<RenderableGroup::VerticalShiftStyle> options("VerticalShiftStyle", VerticalShiftStyleOptions);
 

@@ -27,7 +27,6 @@
 #include "main/dissolve.h"
 #include <QButtonGroup>
 
-// Constructor
 ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -38,7 +37,6 @@ ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
 	connect(ui_.ConfigurationView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 }
 
-// Destructor
 ConfigurationWidget::~ConfigurationWidget() {}
 
 /*
@@ -60,8 +58,8 @@ void ConfigurationWidget::updateToolbar()
 	// Set current interaction mode
 	switch (configurationViewer()->interactionMode())
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	// Set checkable buttons
@@ -98,7 +96,8 @@ void ConfigurationWidget::on_ViewResetButton_clicked(bool checked)
 
 void ConfigurationWidget::on_ViewSpheresButton_clicked(bool checked)
 {
-	configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle : RenderableConfiguration::LinesStyle);
+	configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle
+							      : RenderableConfiguration::LinesStyle);
 
 	configurationViewer()->notifyStyleModified();
 
@@ -112,4 +111,7 @@ void ConfigurationWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 	configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { configurationViewer()->copyViewToClipboard(checked); }
+void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+{
+	configurationViewer()->copyViewToClipboard(checked);
+}

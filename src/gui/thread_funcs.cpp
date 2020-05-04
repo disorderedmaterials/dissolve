@@ -27,7 +27,6 @@
  * Dissolve Thread Worker
  */
 
-// Constructor
 DissolveThreadWorker::DissolveThreadWorker(Dissolve &dissolve) : dissolve_(dissolve) { nIterationsToRun_ = 1; }
 
 // Perform the specified number of iterations (or -1 to keep going)
@@ -62,7 +61,6 @@ void DissolveThreadWorker::stopIterating() { keepIterating_ = false; }
  * Dissolve Thread Controller
  */
 
-// Constructor
 DissolveThreadController::DissolveThreadController(DissolveWindow *parentWindow, Dissolve &dissolve, int nIterations)
 {
 	DissolveThreadWorker *worker = new DissolveThreadWorker(dissolve);
@@ -79,7 +77,6 @@ DissolveThreadController::DissolveThreadController(DissolveWindow *parentWindow,
 	workerThread_.start();
 }
 
-// Destructor
 DissolveThreadController::~DissolveThreadController()
 {
 	workerThread_.quit();

@@ -36,20 +36,18 @@ class LineParser;
 // IsotopologueSet - Isotopologues for one or more Species in a single Configuration
 class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	IsotopologueSet();
-	// Destructor
 	~IsotopologueSet();
 
 	/*
 	 * Parent Collection
 	 */
-      private:
+	private:
 	// Parent IsotopologueCollection in which this set exists
 	IsotopologueCollection *parentCollection_;
 
-      public:
+	public:
 	// Set parent IsotopologueCollection in which this set exists
 	void setParentCollection(IsotopologueCollection *parent);
 	// Parent IsotopologueCollection in which this set exists
@@ -58,13 +56,13 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	/*
 	 * Mix Definitions
 	 */
-      private:
+	private:
 	// Configuration in which the Species are used
 	Configuration *configuration_;
 	// Isotopologue mixtures for individual Species
 	List<Isotopologues> isotopologues_;
 
-      public:
+	public:
 	// Clear all existing data
 	void clear();
 	// Set Configuration in which the Species are used
@@ -91,7 +89,7 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser

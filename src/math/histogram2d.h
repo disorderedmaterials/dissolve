@@ -34,12 +34,9 @@ class ProcessPool;
 // One-Dimensional Histogram
 class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Histogram2D();
-	// Destructor
 	~Histogram2D();
-	// Copy Constructor
 	Histogram2D(const Histogram2D &source);
 	// Clear data
 	void clear();
@@ -47,7 +44,7 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	/*
 	 * Histogram Data
 	 */
-      private:
+	private:
 	// Minimum value for x data (hard left-edge of first bin)
 	double xMinimum_;
 	// Maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -79,7 +76,7 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	// Accumulated data
 	Data2D accumulatedData_;
 
-      public:
+	public:
 	// Initialise with specified bin range
 	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth);
 	// Zero histogram bins
@@ -120,14 +117,13 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment Operator
+	public:
 	void operator=(const Histogram2D &source);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -138,7 +134,7 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Sum histogram data onto all processes
 	bool allSum(ProcessPool &procPool);
 	// Broadcast data

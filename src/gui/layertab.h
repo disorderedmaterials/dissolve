@@ -35,22 +35,22 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
-	LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, ModuleLayer *layer);
+	public:
+	LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+		 ModuleLayer *layer);
 	~LayerTab();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::LayerTab ui_;
 
 	/*
 	 * MainTab Reimplementations
 	 */
-      public:
+	public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
@@ -63,18 +63,18 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	/*
 	 * ModuleLayer Target
 	 */
-      private:
+	private:
 	// ModuleLayer data to display
 	ModuleLayer *moduleLayer_;
 
-      public:
+	public:
 	// Return displayed ModuleLayer
 	ModuleLayer *moduleLayer() const;
 
 	/*
 	 * Widgets
 	 */
-      public slots:
+	public slots:
 	void on_ShowPaletteButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
@@ -82,7 +82,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	/*
 	 * Update
 	 */
-      protected:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -93,7 +93,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser

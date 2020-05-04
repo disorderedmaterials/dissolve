@@ -23,10 +23,8 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-// Constructor
 SpeciesRing::SpeciesRing() : ListItem<SpeciesRing>() {}
 
-// Destructor
 SpeciesRing::~SpeciesRing() {}
 
 /*
@@ -58,7 +56,6 @@ void SpeciesRing::print() const
  * Comparison
  */
 
-// Equality operator
 bool SpeciesRing::operator==(const SpeciesRing &other)
 {
 	// Check ring size first
@@ -79,7 +76,8 @@ bool SpeciesRing::operator==(const SpeciesRing &other)
 	// Go over atoms and compare in both directions around the other ring
 	for (int n = 1; n < nAtoms; ++n)
 	{
-		if ((atoms_.at(indexA + n) != other.atoms_.at((indexB + n) % nAtoms)) && (atoms_.at(indexA + n) != other.atoms_.at((nAtoms + indexB - n) % nAtoms)))
+		if ((atoms_.at(indexA + n) != other.atoms_.at((indexB + n) % nAtoms)) &&
+		    (atoms_.at(indexA + n) != other.atoms_.at((nAtoms + indexB - n) % nAtoms)))
 			return false;
 	}
 

@@ -28,12 +28,9 @@
 // Value and Enumeration
 template <class V, class E> class Venum
 {
-      public:
-	// Constructor
+	public:
 	Venum(V value = V(), EnumOptions<E> enumOptions = EnumOptions<E>()) : enumOptions_(enumOptions) { value_ = value; }
-	// Destructor
 	~Venum() {}
-	// Copy Constructor
 	Venum(const Venum &source) : enumOptions_(source.enumOptions_) { value_ = source.value_; }
 	// Assignment Operators
 	void operator=(const Venum &source)
@@ -47,11 +44,11 @@ template <class V, class E> class Venum
 	/*
 	 * Value Data
 	 */
-      private:
+	private:
 	// Value object
 	V value_;
 
-      public:
+	public:
 	// Return value
 	V &value() { return value_; }
 	// Return value (const)
@@ -62,11 +59,11 @@ template <class V, class E> class Venum
 	/*
 	 * Enumeration
 	 */
-      private:
+	private:
 	// Enumeration object
 	EnumOptions<E> enumOptions_;
 
-      public:
+	public:
 	// Return EnumOptionsBase
 	EnumOptionsBase &baseOptions() { return enumOptions_; }
 	// Return EnumOptionsBase (const)

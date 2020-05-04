@@ -35,12 +35,9 @@
 // Colour Scale
 class ColourScale
 {
-      public:
-	// Constructor
+	public:
 	ColourScale();
-	// Copy constructor
 	ColourScale(const ColourScale &);
-	// Assignment operator
 	void operator=(const ColourScale &source);
 	// Clear ColourScale
 	void clear();
@@ -48,11 +45,11 @@ class ColourScale
 	/*
 	 * Points
 	 */
-      private:
+	private:
 	// List of points in the ColourScale
 	Array<ColourScalePoint> points_;
 
-      public:
+	public:
 	// Add new point to ColourScale
 	void addPoint(double value, QColor colour);
 	// Return number of points in ColourScale
@@ -83,24 +80,24 @@ class ColourScale
 	/*
 	 * Deltas
 	 */
-      private:
+	private:
 	// List of colour deltas between points in the ColourScale
 	Array<ColourScaleDelta> deltas_;
 
-      private:
+	private:
 	// Calculate colour deltas for current list of points
 	void calculateDeltas();
 
 	/*
 	 * Style
 	 */
-      private:
+	private:
 	// Whether colours are interpolated between points in the scale
 	bool interpolated_;
 	// Whether interpolation should be performed with HSV instead of RGB
 	bool useHSV_;
 
-      public:
+	public:
 	// Set whether the ColourScale is interpolated
 	void setInterpolated(bool b);
 	// Return whether the ColourScale is interpolated

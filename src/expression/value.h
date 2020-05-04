@@ -28,22 +28,18 @@
 // Expression Value
 class ExpressionValue
 {
-      public:
-	// Constructors
+	public:
 	ExpressionValue();
 	ExpressionValue(int value);
 	ExpressionValue(double value);
-	// Destructor
 	~ExpressionValue();
-	// Copy constructor
 	ExpressionValue(const ExpressionValue &source);
-	// Assignment operator
 	void operator=(const ExpressionValue &source);
 
 	/*
 	 * Data
 	 */
-      public:
+	public:
 	// Value Type
 	enum ValueType
 	{
@@ -51,7 +47,7 @@ class ExpressionValue
 		DoubleType
 	};
 
-      private:
+	private:
 	// Current result type
 	ValueType type_;
 	// Whether current result type is fixed
@@ -61,12 +57,10 @@ class ExpressionValue
 	// Double value (if type_ == DoubleType)
 	double valueD_;
 
-      public:
+	public:
 	// Return the current result type
 	ValueType type() const;
-	// Assignment operator (integer)
 	void operator=(int i);
-	// Assignment operator (double)
 	void operator=(double d);
 	// Return as integer (regardless of current type)
 	int asInteger() const;
@@ -82,7 +76,7 @@ class ExpressionValue
 	/*
 	 * Tests
 	 */
-      public:
+	public:
 	// Return whether the contained type is an integer
 	bool isInteger() const;
 	// Return whether the contained type is an double

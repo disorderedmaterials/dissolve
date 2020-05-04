@@ -34,25 +34,24 @@ class DataWidget : public QWidget
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	DataWidget(QWidget *parent = 0);
 	~DataWidget();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::DataWidget ui_;
 	// Lock for widget refresh
 	Lock refreshLock_;
 
-      public:
+	public:
 	// Return contained DataViewer
 	DataViewer *dataViewer();
 
 	/*
 	 * Tools
 	 */
-      private slots:
+	private slots:
 	// Interaction
 	void on_InteractionViewButton_clicked(bool checked);
 	// Graph
@@ -70,17 +69,18 @@ class DataWidget : public QWidget
 	/*
 	 * Update Functions
 	 */
-      private:
+	private:
 	// Data tree top-level item update function
-	void dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data, bool createItem);
+	void dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data,
+					    bool createItem);
 	// Data tree item update function
 	void dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, Renderable *data, bool createItem);
 
-      private slots:
+	private slots:
 	// Data tree item changed
 	void on_DataTree_itemChanged(QTreeWidgetItem *item, int column);
 
-      public slots:
+	public slots:
 	// Clear renderable data
 	void clearRenderableData();
 	// Update toolbar

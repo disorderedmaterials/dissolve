@@ -32,8 +32,8 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 
-// Constructor / Destructor
-MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page) : dissolve_(dissolve)
+MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page)
+	: dissolve_(dissolve)
 {
 	dissolveWindow_ = dissolveWindow;
 	tabWidget_ = parent;
@@ -46,9 +46,13 @@ MainTab::~MainTab() {}
 // Return enum options for TabType
 EnumOptions<MainTab::TabType> MainTab::tabTypes()
 {
-	static EnumOptionsList TabTypeOptions = EnumOptionsList() << EnumOption(MainTab::ConfigurationTabType, "ConfigurationTab") << EnumOption(MainTab::ForcefieldTabType, "ForcefieldTab")
-								  << EnumOption(MainTab::LayerTabType, "LayerTab") << EnumOption(MainTab::ModuleTabType, "ModuleTab")
-								  << EnumOption(MainTab::SpeciesTabType, "SpeciesTab") << EnumOption(MainTab::WorkspaceTabType, "WorkspaceTab");
+	static EnumOptionsList TabTypeOptions = EnumOptionsList()
+						<< EnumOption(MainTab::ConfigurationTabType, "ConfigurationTab")
+						<< EnumOption(MainTab::ForcefieldTabType, "ForcefieldTab")
+						<< EnumOption(MainTab::LayerTabType, "LayerTab")
+						<< EnumOption(MainTab::ModuleTabType, "ModuleTab")
+						<< EnumOption(MainTab::SpeciesTabType, "SpeciesTab")
+						<< EnumOption(MainTab::WorkspaceTabType, "WorkspaceTab");
 
 	static EnumOptions<MainTab::TabType> options("TabType", TabTypeOptions);
 
@@ -60,7 +64,11 @@ EnumOptions<MainTab::TabType> MainTab::tabTypes()
  */
 
 // Raise suitable dialog for entering / checking new tab name
-QString MainTab::getNewTitle(bool &ok) { return QInputDialog::getText(page_, "Rename Tab", "Enter the new name for the tab", QLineEdit::Normal, title_.get(), &ok); }
+QString MainTab::getNewTitle(bool &ok)
+{
+	return QInputDialog::getText(page_, "Rename Tab", "Enter the new name for the tab", QLineEdit::Normal, title_.get(),
+				     &ok);
+}
 
 // Return page widget
 QWidget *MainTab::page() const { return page_; }

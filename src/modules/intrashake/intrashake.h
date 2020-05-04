@@ -34,23 +34,21 @@ class IntraShakeModule : public Module
 	 * Module for performing MC moves on intramolecular terms within Molecules
 	 */
 
-      public:
-	// Constructor
+	public:
 	IntraShakeModule();
-	// Destructor
 	~IntraShakeModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -63,14 +61,14 @@ class IntraShakeModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 };

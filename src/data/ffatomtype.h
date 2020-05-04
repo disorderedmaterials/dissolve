@@ -34,20 +34,21 @@ class ForcefieldParameters;
 // Forcefield AtomType Base Class
 class ForcefieldAtomType : public ElementReference
 {
-      public:
-	// Constructors
-	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL, const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
+	public:
+	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
+			   const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
 			   double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL, const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
+	ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
+			   const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
 			   const char *parameterReference = NULL);
-	ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition = NULL, const char *equivalentName = NULL);
-	// Destructor
+	ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
+			   const char *netaDefinition = NULL, const char *equivalentName = NULL);
 	virtual ~ForcefieldAtomType();
 
 	/*
 	 * Identity
 	 */
-      private:
+	private:
 	// Index of atom type
 	int index_;
 	// Name of atom type
@@ -59,7 +60,7 @@ class ForcefieldAtomType : public ElementReference
 	// NETA definition for the atom type
 	NETADefinition neta_;
 
-      public:
+	public:
 	// Return index of type
 	int index() const;
 	// Return name of type
@@ -74,13 +75,13 @@ class ForcefieldAtomType : public ElementReference
 	/*
 	 * Parameters
 	 */
-      private:
+	private:
 	// Parameters that this atom type references (if any)
 	const ForcefieldParameters *parameterReference_;
 	// Interatomic interaction parameters for this atom type
 	InteractionParameters parameters_;
 
-      public:
+	public:
 	// Return interatomic interaction parameters (referenced or otherwise)
 	const InteractionParameters &parameters() const;
 	// Return charge (from local parameters)

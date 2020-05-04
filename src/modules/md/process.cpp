@@ -45,7 +45,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	if (targetConfigurations_.nItems() == 0)
 		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
-	GenericList &moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
+	GenericList &moduleData =
+		configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	// Get control parameters
 	const bool capForce = keywords_.asBool("CapForces");
@@ -144,7 +145,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Read in or assign random velocities
 		// Realise the velocity array from the moduleData
 		bool created;
-		Array<Vec3<double>> &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag, &created);
+		Array<Vec3<double>> &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(),
+											 GenericItem::NoFlag, &created);
 		if (created)
 		{
 			randomVelocities = true;
@@ -202,7 +204,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			{
 				if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
 				{
-					Messenger::error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
+					Messenger::error("Failed to open MD trajectory output file '%s'.\n",
+							 trajectoryFile.get());
 					procPool.decideFalse();
 					return false;
 				}
@@ -216,7 +219,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		if (outputFrequency > 0)
 		{
 			Messenger::print("                                             Energies (kJ/mol)\n");
-			Messenger::print("  Step             T(K)         Kinetic      Inter        Intra        Total      deltaT(ps)\n");
+			Messenger::print("  Step             T(K)         Kinetic      Inter        Intra        Total      "
+					 "deltaT(ps)\n");
 		}
 
 		// Start a timer and reset the ProcessPool's time accumulator
@@ -317,10 +321,13 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 				{
 					peInter = EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
 					peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
-					Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke + peIntra + peInter, deltaT);
+					Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n",
+							 step, tInstant, ke, peInter, peIntra, ke + peIntra + peInter, deltaT);
 				}
 				else
-					Messenger::print("  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);
+					Messenger::print(
+						"  %-10i    %10.3e   %10.3e                                          %10.3e\n",
+						step, tInstant, ke, deltaT);
 			}
 
 			// Save trajectory frame
@@ -334,7 +341,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 					// Construct and write header
 					CharString header("Step %i of %i, T = %10.3e, ke = %10.3e", step, nSteps, tInstant, ke);
 					if ((energyFrequency > 0) && (step % energyFrequency == 0))
-						header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter, peIntra, ke + peInter + peIntra);
+						header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter,
+							       peIntra, ke + peInter + peIntra);
 					if (!trajParser.writeLineF("%s\n", header.get()))
 					{
 						procPool.decideFalse();
@@ -345,7 +353,9 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 					for (int n = 0; n < cfg->nAtoms(); ++n)
 					{
 						Atom *i = atoms[n];
-						if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
+						if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n",
+									   i->speciesAtom()->element()->symbol(), i->r().x,
+									   i->r().y, i->r().z))
 						{
 							procPool.decideFalse();
 							return false;
@@ -365,8 +375,10 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			trajParser.closeFiles();
 
 		if (capForce)
-			Messenger::print("A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
-		Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
+			Messenger::print("A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n",
+					 nCapped, double(nCapped) / nSteps);
+		Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(),
+				 procPool.accumulatedTimeString());
 
 		// Increment configuration changeCount
 		cfg->incrementContentsVersion();

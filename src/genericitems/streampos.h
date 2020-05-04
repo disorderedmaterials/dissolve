@@ -28,25 +28,24 @@
 // GenericItemContainer<streampos>
 template <> class GenericItemContainer<streampos> : public GenericItem
 {
-      public:
-	// Constructor
+	public:
 	GenericItemContainer<streampos>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Data item
 	streampos data_;
 
-      public:
+	public:
 	// Return data item
 	streampos &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-      protected:
+	protected:
 	// Create a new GenericItem containing same class as current type
 	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
@@ -55,14 +54,14 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 		return NULL;
 	}
 
-      public:
+	public:
 	// Return class name contained in item
 	const char *itemClassName() { return "streampos"; }
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write data through specified parser
 	bool write(LineParser &parser) { return parser.writeArg(data_); }
 	// Read data through specified parser
@@ -80,7 +79,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 	{

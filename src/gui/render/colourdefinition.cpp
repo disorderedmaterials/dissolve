@@ -22,7 +22,6 @@
 #include "gui/render/colourdefinition.h"
 #include "base/sysfunc.h"
 
-// Constructor
 ColourDefinition::ColourDefinition()
 {
 	// Colour Definitions
@@ -40,13 +39,10 @@ ColourDefinition::ColourDefinition()
 	globalAlpha_ = 0.5;
 }
 
-// Destructor
 ColourDefinition::~ColourDefinition() {}
 
-// Copy constructor
 ColourDefinition::ColourDefinition(const ColourDefinition &source) { (*this) = source; }
 
-// Assignment operator
 void ColourDefinition::operator=(const ColourDefinition &source)
 {
 	// Colour Definitions
@@ -281,7 +277,10 @@ const ColourScalePoint &ColourDefinition::customGradientPoint(int index) const {
 QColor ColourDefinition::customGradientColour(int index) const { return customGradient_.point(index).colour(); }
 
 // Return value of custom gradient point specified
-double ColourDefinition::customGradientValue(ColourStyle source, int index) const { return customGradient_.point(index).value(); }
+double ColourDefinition::customGradientValue(ColourStyle source, int index) const
+{
+	return customGradient_.point(index).value();
+}
 
 // Append point to custom gradient
 void ColourDefinition::appendCustomGradientPoint()

@@ -34,23 +34,21 @@ class ProcessPool;
 // SpeciesImproper Definition
 class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesImproper>
 {
-      public:
-	// Constructor
+	public:
 	SpeciesImproper();
-	// Destructor
 	~SpeciesImproper();
 
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-      public:
+	public:
 	// Clear object, ready for re-use
 	void clear();
 
 	/*
 	 * Atom Information
 	 */
-      private:
+	private:
 	// First SpeciesAtom in interaction
 	SpeciesAtom *i_;
 	// Second SpeciesAtom in interaction
@@ -60,7 +58,7 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	// Fourth SpeciesAtom in interaction
 	SpeciesAtom *l_;
 
-      public:
+	public:
 	// Set Atoms involved in Improper
 	void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
 	// Return first SpeciesAtom
@@ -91,7 +89,7 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	/*
 	 * Interaction Parameters
 	 */
-      public:
+	public:
 	// Improper functional forms
 	enum ImproperFunction
 	{
@@ -101,7 +99,7 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	// Return enum options for ImproperFunction
 	static EnumOptions<ImproperFunction> improperFunctions();
 
-      public:
+	public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -116,7 +114,7 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

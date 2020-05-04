@@ -36,22 +36,22 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
-	ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Configuration *cfg);
+	public:
+	ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+			 Configuration *cfg);
 	~ConfigurationTab();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ConfigurationTab ui_;
 
 	/*
 	 * MainTab Reimplementations
 	 */
-      public:
+	public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
@@ -64,24 +64,24 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	/*
 	 * Configuration Target
 	 */
-      private:
+	private:
 	// Configuration data to display
 	Configuration *configuration_;
 
-      public:
+	public:
 	// Return displayed Configuration
 	Configuration *configuration() const;
 
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// Row update function for BondsTable
 	void updateSpeciesInfoTableRow(int row, SpeciesInfo *speciesInfo, bool createItems);
 	// Update density label
 	void updateDensityLabel();
 
-      protected:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -92,7 +92,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	/*
 	 * Signals / Slots
 	 */
-      private slots:
+	private slots:
 	// Content
 	void on_GeneratorRegenerateButton_clicked(bool checked);
 	// Definition
@@ -108,7 +108,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser

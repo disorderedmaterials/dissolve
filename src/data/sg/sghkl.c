@@ -117,7 +117,8 @@ int BuildEq_hkl(const T_SgInfo *SgInfo, T_Eq_hkl *Eq_hkl, int h, int k, int l)
 
 		for (i = 0; i < Eq_hkl->N; i++)
 		{
-			if ((hm == Eq_hkl->h[i] && km == Eq_hkl->k[i] && lm == Eq_hkl->l[i]) || (-hm == Eq_hkl->h[i] && -km == Eq_hkl->k[i] && -lm == Eq_hkl->l[i]))
+			if ((hm == Eq_hkl->h[i] && km == Eq_hkl->k[i] && lm == Eq_hkl->l[i]) ||
+			    (-hm == Eq_hkl->h[i] && -km == Eq_hkl->k[i] && -lm == Eq_hkl->l[i]))
 				break;
 		}
 
@@ -186,29 +187,29 @@ void SetListMin_hkl(const T_SgInfo *SgInfo, int Maxk, int Maxl, int *Minh, int *
 
 	switch (SgInfo->XtalSystem)
 	{
-	case XS_Triclinic:
-		*Mink = -Maxk;
-		*Minl = -Maxl;
-		break;
-	case XS_Monoclinic:
-		if (SgInfo->UniqueRefAxis == 'z')
-		{
+		case XS_Triclinic:
 			*Mink = -Maxk;
-			*Minl = 0;
-		}
-		else
-		{
-			*Mink = 0;
 			*Minl = -Maxl;
-		}
-		break;
-	default:
-		if (SgInfo->XtalSystem == XS_Trigonal && SgInfo->UniqueDirCode == '*')
-			*Mink = -Maxk;
-		else
-			*Mink = 0;
-		*Minl = 0;
-		break;
+			break;
+		case XS_Monoclinic:
+			if (SgInfo->UniqueRefAxis == 'z')
+			{
+				*Mink = -Maxk;
+				*Minl = 0;
+			}
+			else
+			{
+				*Mink = 0;
+				*Minl = -Maxl;
+			}
+			break;
+		default:
+			if (SgInfo->XtalSystem == XS_Trigonal && SgInfo->UniqueDirCode == '*')
+				*Mink = -Maxk;
+			else
+				*Mink = 0;
+			*Minl = 0;
+			break;
 	}
 }
 
@@ -259,7 +260,7 @@ int IsSuppressed_hkl(const T_SgInfo *SgInfo, int Minh, int Mink, int Minl, int M
 				if (hm < h)
 					return (mate ? -(iList + 1) : iList + 1);
 				else /* if (hm == h) */
-				    if (km < k)
+					if (km < k)
 					return (mate ? -(iList + 1) : iList + 1);
 				else if (km == k)
 					if (lm < l)

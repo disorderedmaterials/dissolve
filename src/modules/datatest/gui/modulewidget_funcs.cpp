@@ -22,7 +22,6 @@
 #include "modules/datatest/datatest.h"
 #include "modules/datatest/gui/modulewidget.h"
 
-// Constructor
 DataTestModuleWidget::DataTestModuleWidget(QWidget *parent, DataTestModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface

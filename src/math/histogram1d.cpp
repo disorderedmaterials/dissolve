@@ -29,7 +29,6 @@ template <class Histogram1D> int ObjectStore<Histogram1D>::objectCount_ = 0;
 template <class Histogram1D> int ObjectStore<Histogram1D>::objectType_ = ObjectInfo::Histogram1DObject;
 template <class Histogram1D> const char *ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
 
-// Constructor
 Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this)
 {
 	accumulatedData_.addErrors();
@@ -37,10 +36,8 @@ Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(t
 	clear();
 }
 
-// Destructor
 Histogram1D::~Histogram1D() {}
 
-// Copy Constructor
 Histogram1D::Histogram1D(const Histogram1D &source) : ObjectStore<Histogram1D>(this) { (*this) = source; }
 
 // Clear Data
@@ -175,7 +172,8 @@ void Histogram1D::add(Histogram1D &other, int factor)
 {
 	if (nBins_ != other.nBins_)
 	{
-		Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n", nBins_, other.nBins_);
+		Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n",
+				 nBins_, other.nBins_);
 		return;
 	}
 	for (int n = 0; n < nBins_; ++n)
@@ -189,7 +187,6 @@ const Data1D &Histogram1D::accumulatedData() const { return accumulatedData_; }
  * Operators
  */
 
-// Operator =
 void Histogram1D::operator=(const Histogram1D &source)
 {
 	minimum_ = source.minimum_;
@@ -301,21 +298,27 @@ bool Histogram1D::equality(ProcessPool &procPool)
 #ifdef PARALLEL
 	// Check number of items in arrays first
 	if (!procPool.equality(minimum_))
-		return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n", procPool.poolRank(), minimum_);
+		return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), minimum_);
 	if (!procPool.equality(maximum_))
-		return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n", procPool.poolRank(), maximum_);
+		return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), maximum_);
 	if (!procPool.equality(binWidth_))
-		return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(), binWidth_);
+		return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					binWidth_);
 	if (!procPool.equality(nBins_))
-		return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nBins_);
+		return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), nBins_);
 	if (!procPool.equality(binCentres_))
 		return Messenger::error("Histogram1D bin centre values not equivalent.\n");
 	if (!procPool.equality(bins_))
 		return Messenger::error("Histogram1D bin values not equivalent.\n");
 	if (!procPool.equality(nBinned_))
-		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n",
+					procPool.poolRank(), nBinned_);
 	if (!procPool.equality(nMissed_))
-		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+		return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n",
+					procPool.poolRank(), nBinned_);
 	for (int n = 0; n < averages_.nItems(); ++n)
 		if (!averages_[n].equality(procPool))
 			return Messenger::error("Histogram1D average values not equivalent.\n");

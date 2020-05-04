@@ -24,10 +24,8 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 
-// Constructor
 ProcedureKeyword::ProcedureKeyword(Procedure &procedure) : KeywordData<Procedure &>(KeywordBase::ProcedureData, procedure) {}
 
-// Destructor
 ProcedureKeyword::~ProcedureKeyword() {}
 
 /*

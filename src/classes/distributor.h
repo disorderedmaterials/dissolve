@@ -33,10 +33,9 @@ class ProcessPool;
 // Distributor
 class Distributor
 {
-      public:
-	// Constructor
-	Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool allowRepeats);
-	// Destructor
+	public:
+	Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
+		    bool allowRepeats);
 	virtual ~Distributor();
 	// Object Status Flag
 	enum ObjectStatusFlag
@@ -61,7 +60,7 @@ class Distributor
 	/*
 	 * Cells
 	 */
-      private:
+	private:
 	// Source CellArray
 	const CellArray &cellArray_;
 	// Cell lock counters
@@ -69,7 +68,7 @@ class Distributor
 	// Cell contents modification indicators
 	Array<int> cellContentsModifiedBy_;
 
-      private:
+	private:
 	// Add soft lock to specified Cell index
 	bool addSoftLock(int cellIndex);
 	// Remove soft lock from specified Cell index
@@ -96,7 +95,7 @@ class Distributor
 	/*
 	 * Distribution
 	 */
-      private:
+	private:
 	// ProcessPool that we are using
 	const ProcessPool &processPool_;
 	// Division strategy to employ
@@ -122,7 +121,7 @@ class Distributor
 	// Number of times a change broadcast was required
 	int nChangeBroadcastsRequired_;
 
-      public:
+	public:
 	// Return next available object for calculation
 	int nextAvailableObject(bool &changesBroadcastRequired);
 	// Let the distributor know that the object is now finished with

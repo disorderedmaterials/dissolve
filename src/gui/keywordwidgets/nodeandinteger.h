@@ -35,36 +35,35 @@ class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	NodeAndIntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	NodeAndIntegerKeywordBase *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::NodeAndIntegerValueWidget ui_;
 
-      private slots:
+	private slots:
 	// Value changed
 	void on_NodeCombo_currentIndexChanged(int index);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 };

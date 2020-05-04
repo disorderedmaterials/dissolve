@@ -33,41 +33,40 @@ class SelectProcedureNode;
 // Keyword with DynamicSiteProcedureNode (Ref)List
 class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureNode> &>
 {
-      public:
-	// Constructor
-	DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes, bool axesRequired = false);
-	// Destructor
+	public:
+	DynamicSiteNodesKeyword(SelectProcedureNode *parentNode, RefList<DynamicSiteProcedureNode> &nodes,
+				bool axesRequired = false);
 	~DynamicSiteNodesKeyword();
 
 	/*
 	 * Parent Node
 	 */
-      private:
+	private:
 	// Parent SelectProcedureNode
 	SelectProcedureNode *parentNode_;
 
-      public:
+	public:
 	// Return parent SelectProcedureNode
 	const SelectProcedureNode *parentNode() const;
 
 	/*
 	 * Specification
 	 */
-      private:
+	private:
 	// Whether sites in the list must have a defined orientation
 	bool axesRequired_;
 
 	/*
 	 * Data
 	 */
-      protected:
+	protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -80,7 +79,7 @@ class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureN
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 };
 
 #endif

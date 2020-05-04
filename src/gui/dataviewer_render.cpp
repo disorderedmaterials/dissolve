@@ -53,8 +53,9 @@ void DataViewer::render2DOverlay()
 	if (groupManager_.verticalShiftAmount() > 0)
 		indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
 	TextPrimitive indicatorPrimitive;
-	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(),
-			       Matrix4(), overlayTextSize, false);
+	indicatorPrimitive.set(fontInstance_, indicatorText.get(),
+			       Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
+			       TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
 	glColor3d(0.0, 0.0, 0.0);
 	Matrix4 identity;
 	if (fontInstance_.fontOK())
@@ -82,7 +83,8 @@ void DataViewer::render2DOverlay()
 	// Simple column layout - set the render position to be the left-hand edge of the longest text item
 	glColor3d(0.0, 0.0, 0.0);
 	glLoadIdentity();
-	glTranslated(view_.viewportMatrix()[2] - maxTextWidth - overlaySpacing, view_.viewportMatrix()[3] - overlayTextSize - overlaySpacing, 0);
+	glTranslated(view_.viewportMatrix()[2] - maxTextWidth - overlaySpacing,
+		     view_.viewportMatrix()[3] - overlayTextSize - overlaySpacing, 0);
 
 	// Loop over legend entries
 	GLfloat colour[4];
@@ -132,18 +134,18 @@ void DataViewer::render2DOverlay()
 	if (interacting())
 		switch (interactionMode())
 		{
-		case (DataViewer::ZoomToAreaInteraction):
-			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
-			selectionBoxStyle.sendToGL();
-			glBegin(GL_LINE_LOOP);
-			glVertex2d(rMouseDown_.x, rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, rMouseLast_.y);
-			glVertex2d(rMouseDown_.x, rMouseLast_.y);
-			glEnd();
-			break;
-		default:
-			break;
+			case (DataViewer::ZoomToAreaInteraction):
+				// Draw dashed box indicating selection area, form clicked to current mouse coordinates
+				selectionBoxStyle.sendToGL();
+				glBegin(GL_LINE_LOOP);
+				glVertex2d(rMouseDown_.x, rMouseDown_.y);
+				glVertex2d(rMouseLast_.x, rMouseDown_.y);
+				glVertex2d(rMouseLast_.x, rMouseLast_.y);
+				glVertex2d(rMouseDown_.x, rMouseLast_.y);
+				glEnd();
+				break;
+			default:
+				break;
 		}
 }
 

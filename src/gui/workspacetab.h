@@ -36,8 +36,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title);
 	~WorkspaceTab();
 	// Main form declaration
@@ -46,7 +45,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	/*
 	 * MainTab Reimplementations
 	 */
-      public:
+	public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
@@ -57,7 +56,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	/*
 	 * Update
 	 */
-      protected:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -68,35 +67,35 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	/*
 	 * Gizmo Management
 	 */
-      private:
+	private:
 	// MDI area containing our Gizmos
 	TMdiArea *mdiArea_;
 	// List of current Gizmos in the MDI area
 	List<Gizmo> gizmos_;
 
-      private slots:
+	private slots:
 	// Remove Gizmo with specified unique name
 	void removeGizmo(QString uniqueName);
 
-      public:
+	public:
 	// Create Gizmo with specified type in this workspace
 	Gizmo *createGizmo(const char *type);
 
 	/*
 	 * Context Menu
 	 */
-      private slots:
+	private slots:
 	// Create Gizmo from context menu item
 	void contextMenuAddGizmo(bool checked);
 
-      public slots:
+	public slots:
 	// Custom context menu requested
 	void showContextMenu(const QPoint &pos);
 
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser

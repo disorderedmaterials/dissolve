@@ -36,16 +36,14 @@ class Interpolator;
 // Set of Partials
 class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	PartialSet();
-	// Destructor
 	~PartialSet();
 
 	/*
 	 * Partials Data
 	 */
-      private:
+	private:
 	// AtomTypes used to generate matrices
 	AtomTypeList atomTypes_;
 	// RDF range used to initialise arrays
@@ -75,11 +73,13 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Prefix applied to object names
 	CharString objectNamePrefix_;
 
-      public:
+	public:
 	// Set up PartialSet, including initialising histograms for g(r) use
-	bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag, const char *suffix, const char *abscissaUnits);
+	bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag,
+		   const char *suffix, const char *abscissaUnits);
 	// Set up PartialSet without initialising histogram arrays
-	bool setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix, const char *abscissaUnits);
+	bool setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix,
+			   const char *abscissaUnits);
 	// Set up histogram arrays for g(r) calculation
 	void setUpHistograms(double rdfRange, double binWidth);
 	// Reset partial arrays
@@ -138,22 +138,23 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	/*
 	 * Manipulation
 	 */
-      private:
+	private:
 	// Adjust all partials, adding specified delta to each
 	void adjust(double delta);
 
-      public:
+	public:
 	// Form partials from stored Histogram data
 	void formPartials(double boxVolume);
 	// Add in partials from source PartialSet to our own, with specified weighting
 	bool addPartials(PartialSet &source, double weighting);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier);
+	static void calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+				 double multiplier);
 
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	void operator+=(const double delta);
 	void operator+=(const PartialSet &source);
 	void operator-=(const double delta);
@@ -162,7 +163,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -173,7 +174,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from root to all other processes
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

@@ -32,16 +32,14 @@ class Cell;
 // Cell Array
 class CellArray
 {
-      public:
-	// Constructor
+	public:
 	CellArray();
-	// Destructor
 	~CellArray();
 
 	/*
 	 * Cell Data
 	 */
-      private:
+	private:
 	// Cell divisions along each axis
 	Vec3<int> divisions_;
 	// Fractional Cell size
@@ -61,7 +59,7 @@ class CellArray
 	// Box associated with this cell division scheme
 	const Box *box_;
 
-      public:
+	public:
 	// Generate array for provided Box
 	bool generate(const Box *box, double cellSize, double pairPotentialRange);
 	// Scale Cells sizes by supplied factor

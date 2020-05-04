@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// Constructors
 DoubleExp::DoubleExp()
 {
 	mantissa_ = 0.0;
@@ -50,13 +49,10 @@ DoubleExp::DoubleExp(double mantissa, int exponent)
 // Assignment from single value
 void DoubleExp::operator=(double d) { set(d); }
 
-// Equality Operator
 bool DoubleExp::operator==(const double other) { return value_ == other; }
 
-// Inequality Operator
 bool DoubleExp::operator!=(const double other) { return value_ != other; }
 
-// Conversion operators
 DoubleExp::operator double() { return value(); }
 
 /*
@@ -92,7 +88,8 @@ void DoubleExp::set(double value)
 	}
 
 	recalculate();
-	// 	printf("  -- Input value %f gives mantissa of %f and exponent of %i, giving value of %e\n", value, mantissa_, exponent_, value_);
+	// 	printf("  -- Input value %f gives mantissa of %f and exponent of %i, giving value of %e\n", value, mantissa_,
+	// exponent_, value_);
 }
 
 // Set from supplied text
@@ -148,7 +145,8 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
 	 * If using scientific notation, print the mantissa to a formatted string with maxDecimals. Otherwise, print the
 	 * actual value to a formatted string.
 	 *
-	 * Strip any unnecessary trailing zeroes from the formatted string (we always keep one after the decimal point, if present).
+	 * Strip any unnecessary trailing zeroes from the formatted string (we always keep one after the decimal point, if
+	 * present).
 	 *
 	 * Then, return the final formatted string, adding the exponent on if using scientificNotation.
 	 */
@@ -165,7 +163,8 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
 		int nZeroesAtEnd = 0;
 		int nDecimals = 0;
 
-		// Start the search at [dot+2], skipping the dot and the first char after it - we will always allow one lone zero after the decimal point
+		// Start the search at [dot+2], skipping the dot and the first char after it - we will always allow one lone
+		// zero after the decimal point
 		for (int n = dot + 2; n < mantissaString.length(); ++n)
 		{
 			// If this character is '0', increase our counter

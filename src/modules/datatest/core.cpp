@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 DataTestModule::DataTestModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 DataTestModule::~DataTestModule() {}
 
 /*

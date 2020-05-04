@@ -29,15 +29,14 @@
 #include "classes/species.h"
 #include <iterator>
 
-// Constructor
 EnergyKernel::EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
-    : configuration_(config), cells_(config->cells()), potentialMap_(potentialMap), processPool_(procPool)
+	: configuration_(config), cells_(config->cells()), potentialMap_(potentialMap), processPool_(procPool)
 {
 	box_ = configuration_->box();
-	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
+	cutoffDistanceSquared_ =
+		(energyCutoff < 0.0 ? potentialMap_.range() * potentialMap_.range() : energyCutoff * energyCutoff);
 }
 
-// Destructor
 EnergyKernel::~EnergyKernel() {}
 
 /*
@@ -48,13 +47,17 @@ EnergyKernel::~EnergyKernel() {}
 double EnergyKernel::pairPotentialEnergy(const Atom *i, const Atom *j, double r) { return potentialMap_.energy(i, j, r); }
 
 // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
-double EnergyKernel::energyWithoutMim(const Atom *i, const Atom *j) { return pairPotentialEnergy(i, j, (i->r() - j->r()).magnitude()); }
+double EnergyKernel::energyWithoutMim(const Atom *i, const Atom *j)
+{
+	return pairPotentialEnergy(i, j, (i->r() - j->r()).magnitude());
+}
 
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom *i, const Atom *j)
 {
-	// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()),
-	// pairPotentialEnergy(i->masterTypeIndex(), j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
+	// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n",
+	// min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(),
+	// j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
 	return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
 }
 
@@ -80,7 +83,8 @@ double EnergyKernel::energy(const Atom *i, const Atom *j, bool applyMim, bool ex
 	// If Atoms are the same, we refuse to calculate
 	if (i == j)
 	{
-		// 		printf("Warning: Refusing to calculate self-energy in EnergyKernel::energy(Atom,Atom,bool,bool).\n");
+		// 		printf("Warning: Refusing to calculate self-energy in
+		// EnergyKernel::energy(Atom,Atom,bool,bool).\n");
 		return 0.0;
 	}
 
@@ -95,17 +99,20 @@ double EnergyKernel::energy(const Atom *i, const Atom *j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,
+			    ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
+		Messenger::error(
+			"NULL_POINTER - NULL central Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
 		return 0.0;
 	}
 	if (otherCell == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
+		Messenger::error(
+			"NULL_POINTER - NULL other Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
 		return 0.0;
 	}
 #endif
@@ -196,7 +203,8 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
 }
 
 // Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy,
+			    bool performSum)
 {
 	double totalEnergy = 0.0;
 	OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
@@ -582,7 +590,9 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
 
 		// Cell neighbours requiring minimum image
 		for (auto *neighbour : cellI->mimCellNeighbours())
-			totalEnergy += energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+			totalEnergy +=
+				energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag,
+				       strategy, false);
 	}
 
 	// Perform relevant sum if requested
@@ -618,7 +628,8 @@ double EnergyKernel::correct(const Atom *i)
 }
 
 // Return total interatomic PairPotential energy of the system
-double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy,
+			    bool performSum)
 {
 	// Get sub-strategy to use
 	ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
@@ -742,13 +753,15 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
 	// Add energy from SpeciesAngle terms
 	for (const auto *angle : spAtom->angles())
 	{
-		intraEnergy += energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
+		intraEnergy +=
+			energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
 	}
 
 	// Add energy from SpeciesTorsion terms
 	for (const auto *torsion : spAtom->torsions())
 	{
-		intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
+		intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()),
+				      mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
 	}
 
 	return intraEnergy;

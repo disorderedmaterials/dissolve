@@ -26,7 +26,6 @@
 #include "math/interpolator.h"
 #include <string.h>
 
-// Constructor
 Box::Box()
 {
 	type_ = Box::nBoxTypes;
@@ -37,7 +36,6 @@ Box::Box()
 // Virtual Destructor
 Box::~Box() {}
 
-// Assignment operator
 void Box::operator=(const Box &source)
 {
 	// Basic Definition
@@ -66,8 +64,10 @@ const char *BoxTypeKeywords[] = {"NonPeriodic", "Cubic", "Orthorhombic", "Monocl
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-	static EnumOptionsList BoxTypeOptions = EnumOptionsList() << EnumOption(Box::NonPeriodicBoxType, "NonPeriodic") << EnumOption(Box::CubicBoxType, "Cubic")
-								  << EnumOption(Box::OrthorhombicBoxType, "Orthorhombic") << EnumOption(Box::MonoclinicBoxType, "Monoclinic")
+	static EnumOptionsList BoxTypeOptions = EnumOptionsList() << EnumOption(Box::NonPeriodicBoxType, "NonPeriodic")
+								  << EnumOption(Box::CubicBoxType, "Cubic")
+								  << EnumOption(Box::OrthorhombicBoxType, "Orthorhombic")
+								  << EnumOption(Box::MonoclinicBoxType, "Monoclinic")
 								  << EnumOption(Box::TriclinicBoxType, "Triclinic");
 
 	static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
@@ -98,14 +98,18 @@ void Box::finalise()
 	reciprocalAxes_.columnMultiply(0, TWOPI / volume_);
 	reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
 	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
-	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
+	reciprocalVolume_ =
+		(reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
 // Return volume
 double Box::volume() const { return volume_; }
 
 // Return axis lengths
-Vec3<double> Box::axisLengths() const { return Vec3<double>(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2)); }
+Vec3<double> Box::axisLengths() const
+{
+	return Vec3<double>(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2));
+}
 
 // Return axis length specified
 double Box::axisLength(int n) const
@@ -152,7 +156,11 @@ const Matrix3 &Box::inverseAxes() const { return inverseAxes_; }
 double Box::reciprocalVolume() const { return reciprocalVolume_; }
 
 // Return reciprocal axis lengths
-Vec3<double> Box::reciprocalAxisLengths() const { return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1), reciprocalAxes_.columnMagnitude(2)); }
+Vec3<double> Box::reciprocalAxisLengths() const
+{
+	return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1),
+			    reciprocalAxes_.columnMagnitude(2));
+}
 
 // Return reciprocal axes matrix
 const Matrix3 &Box::reciprocalAxes() const { return reciprocalAxes_; }
@@ -189,7 +197,8 @@ void Box::scale(double factor)
 	reciprocalAxes_.columnMultiply(0, TWOPI / volume_);
 	reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
 	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
-	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
+	reciprocalVolume_ =
+		(reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
 /*
@@ -249,7 +258,8 @@ double Box::inscribedSphereRadius() const
 }
 
 // Calculate the RDF normalisation for the Box
-bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
+bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth,
+				    int nPoints) const
 {
 	// Set up array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
 	const double binWidth = 0.1;
@@ -265,7 +275,8 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
 
 	// Divide points over processes
 	const int nPointsPerProcess = nPoints / procPool.nProcesses();
-	Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess, nPointsPerProcess * procPool.nProcesses());
+	Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess,
+			 nPointsPerProcess * procPool.nProcesses());
 
 	// Pre-waste random numbers so that the random number generators in all processes line up
 	for (int n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
@@ -382,7 +393,8 @@ double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecj
 }
 
 // Return torsion (in degrees) between supplied unnormalised vectors
-double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk)
+double Box::torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj,
+			     double &magxpj, Vec3<double> &xpk, double &magxpk)
 {
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk) * DEGRAD;
 }
@@ -398,7 +410,8 @@ double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecj
 }
 
 // Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk)
+double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj,
+			     double &magxpj, Vec3<double> &xpk, double &magxpk)
 {
 	xpj = vecjk * vecji;
 	xpk = vecjk * veckl;

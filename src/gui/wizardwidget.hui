@@ -42,7 +42,6 @@ class WizardWidget : public QWidget
 	WizardWidget();
 	~WizardWidget();
 
-
 	/*
 	 * Widgets
 	 */
@@ -60,11 +59,11 @@ class WizardWidget : public QWidget
 
 	protected:
 	// Attach header and footer to existing named widgets in specified widget
-	void setUpHeaderAndFooter(QWidget* widget);
+	void setUpHeaderAndFooter(QWidget *widget);
 	// Set icon in header
 	void setWizardHeaderIcon(QString iconResource);
 	// Update controls in header and footer widgets to reflect the specified page
-	void updateHeaderAndFooter(WizardWidgetPageInfo* page);
+	void updateHeaderAndFooter(WizardWidgetPageInfo *page);
 
 	public:
 	// Set whether the close button is available
@@ -73,7 +72,6 @@ class WizardWidget : public QWidget
 	bool headerAvailable() const;
 	// Return whether footer controls are available
 	bool footerAvailable() const;
-
 
 	/*
 	 * Page Management
@@ -88,21 +86,20 @@ class WizardWidget : public QWidget
 	// Clear all registered pages
 	void clearPages();
 	// Add empty page
-	WizardWidgetPageInfo* addPage();
+	WizardWidgetPageInfo *addPage();
 	// Register normal page
-	WizardWidgetPageInfo* registerPage(int index, const char* title, int nextIndex = -1);
+	WizardWidgetPageInfo *registerPage(int index, const char *title, int nextIndex = -1);
 	// Register choice page (no Finish / Next buttons)
-	void registerChoicePage(int index, const char* title);
+	void registerChoicePage(int index, const char *title);
 	// Find page with specified index
-	WizardWidgetPageInfo* findPage(int index);
-
+	WizardWidgetPageInfo *findPage(int index);
 
 	/*
 	 * Control
 	 */
 	private:
 	// Current page
-	WizardWidgetPageInfo* currentPage_;
+	WizardWidgetPageInfo *currentPage_;
 
 	protected:
 	// Go to specified page index in the controls widget

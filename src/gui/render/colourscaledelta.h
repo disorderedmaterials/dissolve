@@ -34,12 +34,11 @@ class ColourScalePoint;
 // Colour Scale Delta
 class ColourScaleDelta
 {
-      public:
-	// Constructors
+	public:
 	ColourScaleDelta();
 	ColourScaleDelta(const ColourScalePoint &start, const ColourScalePoint &end, bool useHSV);
 
-      private:
+	private:
 	// Value at which the delta starts
 	double start_;
 	// Range of the data from the start value
@@ -51,7 +50,7 @@ class ColourScaleDelta
 	// Whether to use HSV, rather than RGB, when generating colours
 	bool useHSV_;
 
-      public:
+	public:
 	// Check whether the delta 'contains' the supplied value
 	bool containsValue(double d) const;
 	// Create delta from ColourScalePoints

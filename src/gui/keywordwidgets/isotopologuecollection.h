@@ -36,47 +36,49 @@ class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public Keywo
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	IsotopologueCollectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	IsotopologueCollectionKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::IsotopologueRefListWidget ui_;
 
-      private slots:
+	private slots:
 	void autoButton_clicked(bool checked);
 	void addButton_clicked(bool checked);
 	void removeButton_clicked(bool checked);
 	void isotopologueTree_itemChanged(QTreeWidgetItem *w, int column);
 	void isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem, QTreeWidgetItem *previousItem);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// IsotopologueTree root (IsotopologueSet) item update function
-	void updateIsotopologueTreeRootItem(QTreeWidget *treeWidget, int topLevelItemIndex, IsotopologueSet *topeSet, bool createItem);
+	void updateIsotopologueTreeRootItem(QTreeWidget *treeWidget, int topLevelItemIndex, IsotopologueSet *topeSet,
+					    bool createItem);
 	// IsotopologueTree child (Isotopologues) update function
-	void updateIsotopologueTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, Isotopologues *topes, bool createItem);
+	void updateIsotopologueTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, Isotopologues *topes,
+					     bool createItem);
 	// IsotopologueTree sub-child (IsotopologueWeight) update function
-	void updateIsotopologueTreeSubChildItem(QTreeWidgetItem *parentItem, int childIndex, IsotopologueWeight *isoWeight, bool createItem);
+	void updateIsotopologueTreeSubChildItem(QTreeWidgetItem *parentItem, int childIndex, IsotopologueWeight *isoWeight,
+						bool createItem);
 
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

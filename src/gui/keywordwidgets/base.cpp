@@ -21,5 +21,4 @@
 
 #include "gui/keywordwidgets/base.h"
 
-// Constructor
 KeywordWidgetBase::KeywordWidgetBase(const CoreData &coreData) : coreData_(coreData) { refreshing_ = false; }

@@ -28,7 +28,6 @@
  * OPLS-AA (2005) Noble Gases
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_Triols::Forcefield_OPLSAA2005_Triols()
 {
 	// Copy required types from OPLS-AA (2005) core list
@@ -53,6 +52,7 @@ const char *Forcefield_OPLSAA2005_Triols::name() const { return "OPLSAA2005/Trio
 // Return description for Forcefield
 const char *Forcefield_OPLSAA2005_Triols::description() const
 {
-	static CharString desc("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: %s", publicationReferences());
+	static CharString desc("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: %s",
+			       publicationReferences());
 	return desc.get();
 }

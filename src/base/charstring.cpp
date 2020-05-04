@@ -28,7 +28,6 @@ using namespace std;
 #include <cstdio>
 #include <cstdlib>
 
-// Constructors
 CharString::CharString() : ListItem<CharString>()
 {
 	// Private variables
@@ -250,10 +249,8 @@ void CharString::replace(const char *fromChars, char toChar)
  * Operators
  */
 
-// Assignment operator (const char*)
 void CharString::operator=(const char *s) { set(s); }
 
-// Assignment operator (const CharString&)
 void CharString::operator=(const CharString &source)
 {
 	if (source.data_ == NULL)
@@ -262,7 +259,6 @@ void CharString::operator=(const CharString &source)
 		set(source.data_);
 }
 
-// Equality Operator (const char*)
 bool CharString::operator==(const char *s) const
 {
 	if (data_ == NULL)
@@ -270,7 +266,6 @@ bool CharString::operator==(const char *s) const
 	return (strcmp(data_, s) == 0);
 }
 
-// Inequality Operator (const char*)
 bool CharString::operator!=(const char *s) const
 {
 	if (data_ == NULL)
@@ -278,7 +273,6 @@ bool CharString::operator!=(const char *s) const
 	return (strcmp(data_, s) != 0);
 }
 
-// Equality Operator
 bool CharString::operator==(const CharString &s) const
 {
 	if (data_ == NULL)
@@ -293,7 +287,6 @@ bool CharString::operator==(const CharString &s) const
 	return (strcmp(data_, s.data_) == 0);
 }
 
-// Inequality Operator
 bool CharString::operator!=(const CharString &s) const
 {
 	if (data_ == NULL)
@@ -308,7 +301,6 @@ bool CharString::operator!=(const CharString &s) const
 	return (strcmp(data_, s.data_) != 0);
 }
 
-// Subscript operator
 char &CharString::operator[](int n)
 {
 	if ((n < 0) || (n >= size_))
@@ -380,7 +372,8 @@ bool CharString::asBool() const
 		result = true;
 	else
 	{
-		std::printf("Character constant '%s' doesn't translate directly to a boolean value - false assumed.\n", lcase.get());
+		std::printf("Character constant '%s' doesn't translate directly to a boolean value - false assumed.\n",
+			    lcase.get());
 		result = false;
 	}
 	return result;
@@ -396,27 +389,27 @@ bool CharString::isNumeric() const
 		++nChars;
 		switch (*c)
 		{
-		case (' '):
-		case ('e'):
-		case ('E'):
-		case ('+'):
-		case ('-'):
-		case ('.'):
-			++nSymbols;
-			break;
-		case ('0'):
-		case ('1'):
-		case ('2'):
-		case ('3'):
-		case ('4'):
-		case ('5'):
-		case ('6'):
-		case ('7'):
-		case ('8'):
-		case ('9'):
-			break;
-		default:
-			return false;
+			case (' '):
+			case ('e'):
+			case ('E'):
+			case ('+'):
+			case ('-'):
+			case ('.'):
+				++nSymbols;
+				break;
+			case ('0'):
+			case ('1'):
+			case ('2'):
+			case ('3'):
+			case ('4'):
+			case ('5'):
+			case ('6'):
+			case ('7'):
+			case ('8'):
+			case ('9'):
+				break;
+			default:
+				return false;
 		}
 	}
 	return (nSymbols != nChars);

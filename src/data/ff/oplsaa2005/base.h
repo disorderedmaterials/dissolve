@@ -30,15 +30,14 @@
 // OPLS-AA (2005) Base Forcefield
 class OPLSAA2005BaseForcefield : public Forcefield
 {
-      public:
-	// Constructor / Destructor
+	public:
 	OPLSAA2005BaseForcefield();
 	virtual ~OPLSAA2005BaseForcefield();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return formatted publication references
 	const char *publicationReferences() const;
 	// Return short-range interaction style for AtomTypes
@@ -47,22 +46,25 @@ class OPLSAA2005BaseForcefield : public Forcefield
 	/*
 	 * Atom Type Data
 	 */
-      public:
+	public:
 	// Return the base ForcefieldAtomType with specified id (if it exists)
 	const ForcefieldAtomType &oplsAtomTypeById(int id) const;
 
 	/*
 	 * Term Data
 	 */
-      public:
+	public:
 	// Return bond term for the supplied atom type pair (if it exists)
 	optional<const ForcefieldBondTerm &> bondTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
 	// Return angle term for the supplied atom type trio (if it exists)
-	optional<const ForcefieldAngleTerm &> angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
+	optional<const ForcefieldAngleTerm &> angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
+							const ForcefieldAtomType *k) const;
 	// Return torsion term for the supplied atom type quartet (if it exists)
-	optional<const ForcefieldTorsionTerm &> torsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+	optional<const ForcefieldTorsionTerm &> torsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
+							    const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
 	// Return improper term for the supplied atom type quartet (if it exists)
-	optional<const ForcefieldImproperTerm &> improperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+	optional<const ForcefieldImproperTerm &> improperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
+							      const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
 };
 
 #endif

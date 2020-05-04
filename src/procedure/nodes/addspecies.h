@@ -32,16 +32,15 @@ class Species;
 // AddSpecies Node
 class AddSpeciesProcedureNode : public ProcedureNode
 {
-      public:
-	// Constructor
-	AddSpeciesProcedureNode(Species *sp = NULL, NodeValue population = 0, NodeValue density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
-	// Destructor
+	public:
+	AddSpeciesProcedureNode(Species *sp = NULL, NodeValue population = 0, NodeValue density = 0.1,
+				Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
 	~AddSpeciesProcedureNode();
 
 	/*
 	 * Identity
 	 */
-      public:
+	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 	// Return whether a name for the node must be provided
@@ -50,7 +49,7 @@ class AddSpeciesProcedureNode : public ProcedureNode
 	/*
 	 * Node Data
 	 */
-      public:
+	public:
 	// Box Action Style
 	enum BoxActionStyle
 	{
@@ -75,11 +74,12 @@ class AddSpeciesProcedureNode : public ProcedureNode
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Prepare any necessary data, ready for execution
 	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 };
 
 #endif

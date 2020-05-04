@@ -22,14 +22,12 @@
 #include "classes/moleculedistributor.h"
 #include "classes/atom.h"
 
-// Constructor
-MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
-					 bool repeatsAllowed)
-    : Distributor(moleculeArray.size(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
+MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
+					 ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed)
+	: Distributor(moleculeArray.size(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
 {
 }
 
-// Destructor
 MoleculeDistributor::~MoleculeDistributor() {}
 
 /*

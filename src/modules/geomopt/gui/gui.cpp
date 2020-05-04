@@ -23,4 +23,7 @@
 #include "modules/geomopt/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *GeometryOptimisationModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new GeometryOptimisationModuleWidget(parent, this); }
+ModuleWidget *GeometryOptimisationModule::createWidget(QWidget *parent, Dissolve &dissolve)
+{
+	return new GeometryOptimisationModuleWidget(parent, this);
+}

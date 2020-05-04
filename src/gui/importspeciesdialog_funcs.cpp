@@ -21,7 +21,6 @@
 
 #include "gui/importspeciesdialog.h"
 
-// Constructor
 ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
@@ -33,7 +32,6 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDi
 	connect(ui_.ImportSpeciesWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }
 
-// Destructor
 ImportSpeciesDialog::~ImportSpeciesDialog() {}
 
 // Reset, ready for adding a new Species

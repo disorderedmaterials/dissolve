@@ -25,15 +25,14 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 
-// Constructor
-ScaledEnergyKernel::ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
-    : EnergyKernel(procPool, config, potentialMap, energyCutoff)
+ScaledEnergyKernel::ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool,
+				       Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
+	: EnergyKernel(procPool, config, potentialMap, energyCutoff)
 {
 	interMoleculeRScale_ = interMoleculeRScale;
 	intraMoleculeEScale_ = intraMoleculeEScale;
 }
 
-// Destructor
 ScaledEnergyKernel::~ScaledEnergyKernel() {}
 
 /*

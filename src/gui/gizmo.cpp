@@ -26,7 +26,6 @@
 // Static Singletons
 RefList<Gizmo> Gizmo::allGizmos_;
 
-// Constructor
 Gizmo::Gizmo(Dissolve &dissolve, const char *uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
 {
 	window_ = NULL;

@@ -31,22 +31,21 @@
 // Universal Forcefield AtomType Data
 class UFFAtomType : public ForcefieldAtomType
 {
-      public:
-	// Constructor
-	UFFAtomType(Forcefield *parent, int z = 0, int index = -1, const char *name = NULL, const char *neta = NULL, const char *description = NULL, double r = 0.0, double theta = 0.0, double x = 0.0,
-		    double D = 0.0, double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
-	// Assignment Operator
+	public:
+	UFFAtomType(Forcefield *parent, int z = 0, int index = -1, const char *name = NULL, const char *neta = NULL,
+		    const char *description = NULL, double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0,
+		    double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
 	UFFAtomType &operator=(const UFFAtomType &source);
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Generator parameters
 	double r_, theta_, x_, D_, zeta_, Z_, chi_, V_, U_;
 	int geom_;
 
-      public:
+	public:
 	// Return single bond radius (r, Angstroms)
 	double r() const;
 	// Return descriptive angle (theta, degrees)

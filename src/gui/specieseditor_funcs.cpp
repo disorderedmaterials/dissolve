@@ -29,7 +29,6 @@
 #include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
-// Constructor
 SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -52,7 +51,6 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
 	updateStatusBar();
 }
 
-// Destructor
 SpeciesEditor::~SpeciesEditor() {}
 
 // Set main CoreData pointer
@@ -77,12 +75,12 @@ void SpeciesEditor::updateToolbar()
 	// Set current interaction mode
 	switch (speciesViewer()->interactionMode())
 	{
-	case (SpeciesViewer::DefaultInteraction):
-		ui_.InteractionViewButton->setChecked(true);
-		break;
-	case (SpeciesViewer::DrawInteraction):
-		ui_.InteractionDrawButton->setChecked(true);
-		break;
+		case (SpeciesViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			ui_.InteractionDrawButton->setChecked(true);
+			break;
 	}
 
 	// Set drawing element symbol
@@ -104,7 +102,8 @@ void SpeciesEditor::updateStatusBar()
 
 	// Set / update empirical formula for the Species and its current atom selection
 	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
-	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
+	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true)
+								     : "--");
 }
 
 /*
@@ -143,7 +142,8 @@ void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 {
 	// Select a new element for drawing
 	bool ok;
-	Element *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms", speciesViewer()->drawElement(), &ok);
+	Element *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
+							  speciesViewer()->drawElement(), &ok);
 	if (!ok)
 		return;
 
@@ -230,7 +230,8 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
 	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0, 1.0, 1.0), Vec3<double>(90, 90, 90), true));
 	AddSpeciesProcedureNode *addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
 	addSpeciesNode->setKeyword<bool>("Rotate", false);
-	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
+	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
+										 AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
 	if (!temporaryCfg->initialiseContent(temporaryDissolve.worldPool(), 15.0))
 		return;

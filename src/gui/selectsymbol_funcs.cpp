@@ -24,7 +24,6 @@
 #include "templates/variantpointer.h"
 #include <QScrollBar>
 
-// Constructor
 SelectSymbolDialog::SelectSymbolDialog(QWidget *parent) : QDialog(parent), itemSize_(32)
 {
 	ui.setupUi(this);
@@ -34,7 +33,6 @@ SelectSymbolDialog::SelectSymbolDialog(QWidget *parent) : QDialog(parent), itemS
 	ui.SelectButton->setEnabled(false);
 }
 
-// Destructor
 SelectSymbolDialog::~SelectSymbolDialog() {}
 
 /*

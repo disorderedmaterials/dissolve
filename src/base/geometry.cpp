@@ -24,7 +24,6 @@
 // Forward Declarations
 /* none */
 
-// Constructor
 Geometry::Geometry()
 {
 	indices_[0] = -1;
@@ -34,7 +33,6 @@ Geometry::Geometry()
 	value_ = 0.0;
 }
 
-// Destructor
 Geometry::~Geometry() {}
 
 /*

@@ -24,7 +24,6 @@
 #include "base/processpool.h"
 #include "genericitems/array2ddouble.h"
 
-// Constructor
 BraggReflection::BraggReflection()
 {
 	q_ = 0.0;
@@ -32,10 +31,8 @@ BraggReflection::BraggReflection()
 	nKVectors_ = 0;
 }
 
-// Destructor
 BraggReflection::~BraggReflection() {}
 
-// Copy constructor
 BraggReflection::BraggReflection(const BraggReflection &source) { (*this) = source; }
 
 // Operator=
@@ -194,11 +191,14 @@ bool BraggReflection::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(q_))
-		return Messenger::error("BraggReflection Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
+		return Messenger::error("BraggReflection Q value is not equivalent (process %i has %e).\n", procPool.poolRank(),
+					q_);
 	if (!procPool.equality(index_))
-		return Messenger::error("BraggReflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
+		return Messenger::error("BraggReflection index is not equivalent (process %i has %i).\n", procPool.poolRank(),
+					index_);
 	if (!procPool.equality(nKVectors_))
-		return Messenger::error("BraggReflection nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(), nKVectors_);
+		return Messenger::error("BraggReflection nKVectors is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), nKVectors_);
 	if (!procPool.equality(intensities_))
 		return Messenger::error("BraggReflection intensities are not equivalent.\n");
 #endif

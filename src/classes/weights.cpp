@@ -28,7 +28,6 @@
 #include "genericitems/array2ddouble.h"
 #include "templates/broadcastlist.h"
 
-// Constructor
 Weights::Weights()
 {
 	boundCoherentSquareOfAverage_ = 0.0;
@@ -36,10 +35,8 @@ Weights::Weights()
 	valid_ = false;
 }
 
-// Copy Constructor
 Weights::Weights(const Weights &source) { (*this) = source; }
 
-// Assignment Operator
 void Weights::operator=(const Weights &source)
 {
 	// Isotopologue Mix
@@ -73,7 +70,8 @@ void Weights::clear()
 }
 
 // Add Isotopologue for Species
-bool Weights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso, double isotopologueRelativePopulation)
+bool Weights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+			      double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
 	Isotopologues *mix = hasIsotopologues(sp);
@@ -113,9 +111,12 @@ void Weights::print() const
 		while (IsotopologueWeight *isoWeight = weightIterator.iterate())
 		{
 			if (weightIterator.isFirst())
-				Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes->species()->name(), isoWeight->isotopologue()->name(), topes->speciesPopulation(), isoWeight->weight());
+				Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes->species()->name(),
+						 isoWeight->isotopologue()->name(), topes->speciesPopulation(),
+						 isoWeight->weight());
 			else
-				Messenger::print("                   %-15s              %f\n", isoWeight->isotopologue()->name(), isoWeight->weight());
+				Messenger::print("                   %-15s              %f\n",
+						 isoWeight->isotopologue()->name(), isoWeight->weight());
 		}
 	}
 
@@ -123,7 +124,8 @@ void Weights::print() const
 	Messenger::print("\n");
 	atomTypes_.print();
 
-	Messenger::print("\nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
+	Messenger::print("\nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentSquareOfAverage_,
+			 boundCoherentAverageOfSquares_);
 }
 
 /*
@@ -201,7 +203,8 @@ void Weights::calculateWeightingMatrices()
 				// Get AtomType for this Atom and find it in our local AtomTypeList
 				int typeJ = atomTypes_.indexOf(atd2->atomType());
 				if (typeJ == -1)
-					Messenger::error("Failed to find AtomType '%s' in local Weights.\n", atd2->atomTypeName());
+					Messenger::error("Failed to find AtomType '%s' in local Weights.\n",
+							 atd2->atomTypeName());
 
 				intraFlag.at(typeI, typeJ) = true;
 			}
@@ -211,7 +214,8 @@ void Weights::calculateWeightingMatrices()
 		ListIterator<IsotopologueWeight> weightIterator(topes->mix());
 		while (IsotopologueWeight *isoWeight = weightIterator.iterate())
 		{
-			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
+			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the
+			// fractional Isotopologue weight in the mix.
 			double weight = speciesWeight * isoWeight->weight();
 
 			const Isotopologue *tope = isoWeight->isotopologue();
@@ -222,7 +226,8 @@ void Weights::calculateWeightingMatrices()
 				int typeI = atomTypes_.indexOf(atd1->atomType());
 				AtomTypeData *localI = atomTypes_[typeI];
 
-				// If this AtomType is exchangeable, add the averaged scattering length from the local AtomTypesList instead of its actual isotopic length.
+				// If this AtomType is exchangeable, add the averaged scattering length from the local
+				// AtomTypesList instead of its actual isotopic length.
 				if (localI->exchangeable())
 					bi = localI->boundCoherent();
 				else
@@ -244,7 +249,8 @@ void Weights::calculateWeightingMatrices()
 					if (!intraFlag.at(typeI, typeJ))
 						continue;
 
-					// If this AtomType is exchangeable, add the averaged scattering length from the local AtomTypesList instead of its actual isotopic length.
+					// If this AtomType is exchangeable, add the averaged scattering length from the local
+					// AtomTypesList instead of its actual isotopic length.
 					if (localJ->exchangeable())
 						bj = localJ->boundCoherent();
 					else
@@ -291,7 +297,8 @@ void Weights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
 	for (Isotopologues *topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 		topes->normalise();
 
-	// Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species populations
+	// Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
+	// populations
 	atomTypes_.clear();
 	for (Isotopologues *topes = isotopologueMixtures_.first(); topes != NULL; topes = topes->next())
 	{
@@ -301,7 +308,8 @@ void Weights::createFromIsotopologues(const AtomTypeList &exchangeableTypes)
 		{
 			const Isotopologue *tope = isoWeight->isotopologue();
 
-			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
+			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
+			// Isotopologue
 			for (SpeciesAtom *i = topes->species()->firstAtom(); i != NULL; i = i->next())
 			{
 				Isotope *iso = tope->atomTypeIsotope(i->atomType());
@@ -484,11 +492,14 @@ bool Weights::equality(ProcessPool &procPool)
 	if (!procPool.equality(boundWeights_))
 		return Messenger::error("Bound weights matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentAverageOfSquares_))
-		return Messenger::error("Weights bound coherent average of squares is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentAverageOfSquares_);
+		return Messenger::error("Weights bound coherent average of squares is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), boundCoherentAverageOfSquares_);
 	if (!procPool.equality(boundCoherentSquareOfAverage_))
-		return Messenger::error("Weights bound coherent square of average is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentSquareOfAverage_);
+		return Messenger::error("Weights bound coherent square of average is not equivalent (process %i has %e).\n",
+					procPool.poolRank(), boundCoherentSquareOfAverage_);
 	if (!procPool.equality(valid_))
-		return Messenger::error("Weights validity is not equivalent (process %i has %i).\n", procPool.poolRank(), valid_);
+		return Messenger::error("Weights validity is not equivalent (process %i has %i).\n", procPool.poolRank(),
+					valid_);
 #endif
 	return true;
 }

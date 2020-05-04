@@ -33,8 +33,7 @@ class CoreData;
  */
 class GenericItem : public ListItem<GenericItem>
 {
-      public:
-	// Constructor
+	public:
 	GenericItem(const char *name, int flags);
 	virtual ~GenericItem();
 	// Item Flags
@@ -49,15 +48,15 @@ class GenericItem : public ListItem<GenericItem>
 	/*
 	 * Item Class
 	 */
-      protected:
+	protected:
 	// List of all available class names (as GenericItems)
 	static List<GenericItem> itemClasses_;
 
-      protected:
+	protected:
 	// Create a new GenericItem containing same class as current type
 	virtual GenericItem *createItem(const char *className, const char *name, int flags = 0) = 0;
 
-      public:
+	public:
 	// Return class name contained in item
 	virtual const char *itemClassName() = 0;
 	// Add class to list of representative itemClasses_
@@ -68,7 +67,7 @@ class GenericItem : public ListItem<GenericItem>
 	/*
 	 * Item Contents
 	 */
-      private:
+	private:
 	// Name associated to the item
 	CharString name_;
 	// Version of the item
@@ -76,7 +75,7 @@ class GenericItem : public ListItem<GenericItem>
 	// Flags
 	int flags_;
 
-      public:
+	public:
 	// Set item name
 	void setName(const char *name);
 	// Return item name
@@ -101,7 +100,7 @@ class GenericItem : public ListItem<GenericItem>
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write data through specified parser
 	virtual bool write(LineParser &parser) = 0;
 	// Read data through specified parser
@@ -110,7 +109,7 @@ class GenericItem : public ListItem<GenericItem>
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	virtual bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) = 0;
 	// Return equality between items

@@ -34,14 +34,12 @@ ExpressionFunctions expressionFunctions;
 // Default settings
 bool ExpressionFunctions::assumeDegrees_ = true;
 
-// Constructor
 ExpressionFunctions::ExpressionFunctions()
 {
 	// Create pointer list
 	initPointers();
 }
 
-// Constructor
 ExpressionFunctions::~ExpressionFunctions() {}
 
 /*
@@ -73,42 +71,42 @@ bool ExpressionFunctions::assumeDegrees() { return assumeDegrees_; }
 // Command action
 ExpressionFunctionData ExpressionFunctions::data[ExpressionFunctions::nFunctions] = {
 
-    // Operators
-    {"+", 0, "", "Operator (+)"},
-    {"&&", 0, "", "Operator (&&)"},
-    {"/", 0, "", "Operator (/)"},
-    {"==", 0, "", "Operator (==)"},
-    {"", 0, "", "Operator (>)"},
-    {">=", 0, "", "Operator (>=)"},
-    {"<", 0, "", "Operator (<)"},
-    {"<=", 0, "", "Operator (<=)"},
-    {"%", 0, "", "Operator (%)"},
-    {"*", 0, "", "Operator (*)"},
-    {"-NEG", 0, "", "Operator (negate)"},
-    {"!", 0, "", "Operator (!)"},
-    {"!=", 0, "", "Operator (!=)"},
-    {"||", 0, "", "Operator (||)"},
-    {"^", 0, "", "Operator (^)"},
-    {"-", 0, "", "Operator (-)"},
+	// Operators
+	{"+", 0, "", "Operator (+)"},
+	{"&&", 0, "", "Operator (&&)"},
+	{"/", 0, "", "Operator (/)"},
+	{"==", 0, "", "Operator (==)"},
+	{"", 0, "", "Operator (>)"},
+	{">=", 0, "", "Operator (>=)"},
+	{"<", 0, "", "Operator (<)"},
+	{"<=", 0, "", "Operator (<=)"},
+	{"%", 0, "", "Operator (%)"},
+	{"*", 0, "", "Operator (*)"},
+	{"-NEG", 0, "", "Operator (negate)"},
+	{"!", 0, "", "Operator (!)"},
+	{"!=", 0, "", "Operator (!=)"},
+	{"||", 0, "", "Operator (||)"},
+	{"^", 0, "", "Operator (^)"},
+	{"-", 0, "", "Operator (-)"},
 
-    // Flow control
-    {"*nofunction*", 0, "", ""},
-    {"*joiner*", 0, "", ""},
-    {"if", 0, "", "Perform a conditional test between the supplied expressions (or variables or constants)"},
+	// Flow control
+	{"*nofunction*", 0, "", ""},
+	{"*joiner*", 0, "", ""},
+	{"if", 0, "", "Perform a conditional test between the supplied expressions (or variables or constants)"},
 
-    // Math Commands.
-    {"abs", 1, "double number", "Return absolute (i.e. positive) of value"},
-    {"acos", 1, "double cosx", "Return inverse cosine of supplied argument"},
-    {"asin", 1, "double sinx", "Return inverse sine of supplied argument"},
-    {"atan", 1, "double tanx", "Return inverse tangent of supplied argument"},
-    {"cos", 1, "double angle", "Return cosine of specified angle"},
-    {"exp", 1, "double value", "Return exponential of the argument"},
-    {"ln", 1, "double value", "Return natural (base-e) logarithm"},
-    {"log", 1, "double value", "Return base-10 logarithm"},
-    {"nint", 1, "double number", "Return nearest integer to supplied real value"},
-    {"sin", 1, "double angle", "Return sine of specified angle"},
-    {"sqrt", 1, "double number", "Return square root of number"},
-    {"tan", 1, "double angle", "Return tangent of specified angle"}};
+	// Math Commands.
+	{"abs", 1, "double number", "Return absolute (i.e. positive) of value"},
+	{"acos", 1, "double cosx", "Return inverse cosine of supplied argument"},
+	{"asin", 1, "double sinx", "Return inverse sine of supplied argument"},
+	{"atan", 1, "double tanx", "Return inverse tangent of supplied argument"},
+	{"cos", 1, "double angle", "Return cosine of specified angle"},
+	{"exp", 1, "double value", "Return exponential of the argument"},
+	{"ln", 1, "double value", "Return natural (base-e) logarithm"},
+	{"log", 1, "double value", "Return base-10 logarithm"},
+	{"nint", 1, "double number", "Return nearest integer to supplied real value"},
+	{"sin", 1, "double angle", "Return sine of specified angle"},
+	{"sqrt", 1, "double number", "Return square root of number"},
+	{"tan", 1, "double angle", "Return tangent of specified angle"}};
 
 // Return enumerated command from string
 ExpressionFunctions::Function ExpressionFunctions::function(const char *s)
@@ -605,4 +603,7 @@ void ExpressionFunctions::initPointers()
 }
 
 // Execute command
-bool ExpressionFunctions::call(ExpressionFunctions::Function cf, ExpressionFunction *node, ExpressionValue &result) { return (this->pointers_[cf])(node, result); }
+bool ExpressionFunctions::call(ExpressionFunctions::Function cf, ExpressionFunction *node, ExpressionValue &result)
+{
+	return (this->pointers_[cf])(node, result);
+}

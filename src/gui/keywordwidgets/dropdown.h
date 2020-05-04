@@ -34,34 +34,33 @@ class KeywordDropDown : public QWidget
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	KeywordDropDown(QWidget *parent);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::KeywordDropDownControlWidget ui_;
 	// Widget to display as the drop-down
 	DropWidget dropWidget_;
 
-      public:
+	public:
 	// Return the drop widget
 	DropWidget *dropWidget();
 
 	/*
 	 * Signals / Slots
 	 */
-      private slots:
+	private slots:
 	void on_CallDropWidgetButton_clicked(bool checked);
 	void dropWidgetHidden();
 
 	/*
 	 * Update
 	 */
-      protected:
+	protected:
 	// Set summary text on call button
 	void setSummaryText(const char *text);
 	// Set icon on call button

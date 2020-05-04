@@ -26,10 +26,8 @@
 #include "data/atomicmass.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>() { clear(); }
 
-// Destructor
 SpeciesBond::~SpeciesBond() {}
 
 /*
@@ -82,7 +80,8 @@ int SpeciesBond::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -95,7 +94,8 @@ int SpeciesBond::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -130,7 +130,8 @@ bool SpeciesBond::isSelected() const
 #ifdef CHECKS
 	if (i_ == NULL || j_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
+		Messenger::error(
+			"NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
 		return false;
 	}
 #endif
@@ -176,8 +177,10 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
 // Return enum options for BondFunction
 EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-	static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None", 0, 0) << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2, 2)
-								       << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2, 2);
+	static EnumOptionsList BondFunctionOptions = EnumOptionsList()
+						     << EnumOption(SpeciesBond::NoForm, "None", 0, 0)
+						     << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2, 2)
+						     << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2, 2);
 
 	static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
@@ -193,7 +196,8 @@ void SpeciesBond::setUp()
 	/*
 	 * Depending on the form, we may have other dependent parameters to set up
 	 * These are always stored in the *local* SpeciesIntra array, rather than those in any associated master parameters
-	 * This way, we can reference both general master parameters as well as others which depend on the atoms involved, for instance
+	 * This way, we can reference both general master parameters as well as others which depend on the atoms involved, for
+	 * instance
 	 */
 	if (form() == SpeciesBond::EPSRForm)
 	{
@@ -217,7 +221,8 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 		k = params[0];
 	else
 	{
-		Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't determine fundamental frequency.\n");
+		Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't "
+				 "determine fundamental frequency.\n");
 		return 0.0;
 	}
 

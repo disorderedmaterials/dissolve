@@ -40,23 +40,21 @@ class RefineModule : public Module
 	 * Performs adjustment of interatomic potentials, based on differences between calculated and reference datasets.
 	 */
 
-      public:
-	// Constructor
+	public:
 	RefineModule();
-	// Destructor
 	~RefineModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -69,14 +67,16 @@ class RefineModule : public Module
 	/*
 	 * Initialisation
 	 */
-      public:
+	public:
 	// Potential Inversion Method Enum
 	enum PotentialInversionMethod
 	{
-		DirectFourierPotentialInversion,    /* Invert delta S(Q) by direct FT, and treat as addition to potential */
-		DirectGaussianPotentialInversion,   /* Invert delta S(Q) by approximating with Gaussians, and treat as addition to potential */
-		PercusYevickPotentialInversion,     /* Use Percus-Yevick closure to generate potential from delta S(Q) */
-		HypernettedChainPotentialInversion, /* Use the hypernetted chain closure to generate potential from delta S(Q) */
+		DirectFourierPotentialInversion,  /* Invert delta S(Q) by direct FT, and treat as addition to potential */
+		DirectGaussianPotentialInversion, /* Invert delta S(Q) by approximating with Gaussians, and treat as addition to
+						     potential */
+		PercusYevickPotentialInversion,   /* Use Percus-Yevick closure to generate potential from delta S(Q) */
+		HypernettedChainPotentialInversion, /* Use the hypernetted chain closure to generate potential from delta S(Q)
+						     */
 		nPotentialInversionMethods
 	};
 	// Return enum options for PotentialInversionMethod
@@ -91,21 +91,21 @@ class RefineModule : public Module
 	// Return enum options for MatrixAugmentationStyle
 	static EnumOptions<RefineModule::MatrixAugmentationStyle> matrixAugmentationStyles();
 
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-      private:
+	private:
 	// Target Modules, divided into groups
 	ModuleGroups groupedTargets_;
 	// Full scattering matrix containing reference dat
@@ -119,9 +119,10 @@ class RefineModule : public Module
 	// Starting position and maximum delta to allow on the x-intercept while fitting
 	double xCentreStart_, xCentreDeltaLimit_;
 
-      private:
+	private:
 	// Calculate c(r) from supplied S(Q)
-	Data1D calculateCR(const Data1D &sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(),
+	Data1D calculateCR(const Data1D &sq, double normFactor, double rMin, double rStep, double rMax,
+			   WindowFunction windowFunction = WindowFunction(),
 			   BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
 	bool modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, AtomType *typeI, AtomType *typeJ, Data1D &deltaBond);
@@ -134,7 +135,7 @@ class RefineModule : public Module
 	// Sum fitting equation with the specified parameters into the specified Data1D
 	void sumFitEquation(Data1D &target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 
-      public:
+	public:
 	// Return list of target Modules / data for fitting process
 	const RefDataList<Module, ModuleGroup *> &allTargets() const;
 	// Return grouped target Modules
@@ -143,7 +144,7 @@ class RefineModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

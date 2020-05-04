@@ -27,8 +27,7 @@
 // Enum Option
 class EnumOption
 {
-      public:
-	// Constructors
+	public:
 	EnumOption();
 	EnumOption(const int enumeration, const char *keyword, int minArgs = 0, int maxArgs = 0);
 	EnumOption(const int enumeration, const char *keyword, const char *description, int minArgs = 0, int maxArgs = 0);
@@ -36,7 +35,7 @@ class EnumOption
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Argument Numbers
 	enum ArgumentNumber
 	{
@@ -45,7 +44,7 @@ class EnumOption
 		OptionalSecondArgument = -2
 	};
 
-      private:
+	private:
 	// Option enumeration (i.e. from enum value)
 	int enumeration_;
 	// Option keyword
@@ -59,7 +58,7 @@ class EnumOption
 	// Maximum number of arguments the option takes
 	int maxArgs_;
 
-      public:
+	public:
 	// Return if the option is valid (true except in derived classes)
 	virtual bool isValid() const;
 	// Return option enumeration (i.e. from enum value)
@@ -79,11 +78,10 @@ class EnumOption
 // Unrecognised Enum Option
 class UnrecognisedEnumOption : public EnumOption
 {
-      public:
-	// Constructor
+	public:
 	UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD") {}
 
-      public:
+	public:
 	// Return if the option is valid (true except in derived classes)
 	bool isValid() const { return false; }
 };

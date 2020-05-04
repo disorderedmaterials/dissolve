@@ -23,8 +23,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/integer.hui"
 
-// Constructor
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QSpinBox(parent), KeywordWidgetBase(coreData)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QSpinBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IntegerKeyword *>(keyword);
@@ -33,7 +33,8 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword
 	else
 	{
 		// Set minimum and maximum values
-		setRange(keyword_->hasValidationMin() ? keyword_->validationMin() : -1e6, keyword_->hasValidationMax() ? keyword_->validationMax() : 1e6);
+		setRange(keyword_->hasValidationMin() ? keyword_->validationMin() : -1e6,
+			 keyword_->hasValidationMax() ? keyword_->validationMax() : 1e6);
 
 		// Set current value
 		setValue(keyword_->asInt());
@@ -42,7 +43,8 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword
 	// Connect the
 	connect(this, SIGNAL(valueChanged(int)), this, SLOT(myValueChanged(int)));
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
 }
 

@@ -24,10 +24,11 @@
 #include "classes/data1dstore.h"
 #include "io/import/data1d.h"
 
-// Constructor
-Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data1DStore) : KeywordData<Data1DStore &>(KeywordBase::Data1DStoreData, data1DStore) {}
+Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data1DStore)
+	: KeywordData<Data1DStore &>(KeywordBase::Data1DStoreData, data1DStore)
+{
+}
 
-// Destructor
 Data1DStoreKeyword::~Data1DStoreKeyword() {}
 
 /*
@@ -51,7 +52,8 @@ int Data1DStoreKeyword::maxArguments() const
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool Data1DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2), parser.argc(startArg + 1));
+	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg),
+			 parser.argc(startArg + 2), parser.argc(startArg + 1));
 
 	if (!data_.addData(parser.argc(startArg), parser, startArg + 1, CharString("End%s", name()), coreData))
 		return Messenger::error("Failed to add data.\n");

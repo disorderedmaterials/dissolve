@@ -34,20 +34,18 @@ class ProcedureModule;
 // Keyword with ProcedureModule base class
 class ModuleKeywordBase
 {
-      public:
-	// Constructor
+	public:
 	ModuleKeywordBase(const char *moduleType);
-	// Destructor
 	virtual ~ModuleKeywordBase();
 
 	/*
 	 * Target Module
 	 */
-      private:
+	private:
 	// Target module type to allow
 	const char *moduleType_;
 
-      public:
+	public:
 	// Return target module type to allow
 	const char *moduleType() const;
 	// Set the target module
@@ -58,7 +56,7 @@ class ModuleKeywordBase
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
@@ -66,16 +64,17 @@ class ModuleKeywordBase
 // Keyword with ProcedureModule
 template <class M> class ModuleKeyword : public ModuleKeywordBase, public KeywordData<M *>
 {
-      public:
-	// Constructor
-	ModuleKeyword(const char *moduleType, M *module = NULL) : ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module) {}
-	// Destructor
+	public:
+	ModuleKeyword(const char *moduleType, M *module = NULL)
+		: ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module)
+	{
+	}
 	~ModuleKeyword() {}
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
@@ -85,7 +84,8 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
 	{
 		Module *module = coreData.findModule(parser.argc(startArg));
 		if (!module)
-			return Messenger::error("Module '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+			return Messenger::error("Module '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+						KeywordBase::name());
 
 		return setModule(module);
 	}
@@ -105,7 +105,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
 	/*
 	 * Target Module
 	 */
-      public:
+	public:
 	// Set the target module
 	bool setModule(Module *module)
 	{
@@ -115,8 +115,9 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
 		// Attempt to case the supplied pointer to a Module of our type
 		M *castModule = dynamic_cast<M *>(module);
 		if (!castModule)
-			return Messenger::error("Module '%s' given to keyword %s is of the wrong type (%s) - only a module of type '%s' can be accepted.\n", module->uniqueName(), KeywordBase::name(),
-						module->type(), moduleType());
+			return Messenger::error("Module '%s' given to keyword %s is of the wrong type (%s) - only a module of "
+						"type '%s' can be accepted.\n",
+						module->uniqueName(), KeywordBase::name(), module->type(), moduleType());
 
 		KeywordData<M *>::data_ = castModule;
 
@@ -132,14 +133,14 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
 	/*
 	 * Access to KeywordBase
 	 */
-      public:
+	public:
 	// Return option mask for keyword
 	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied ProcedureModule in the contained data
 	void removeReferencesTo(Module *module)
 	{

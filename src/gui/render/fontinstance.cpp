@@ -22,7 +22,6 @@
 #include "gui/render/fontinstance.h"
 #include "base/messenger.h"
 
-// Constructor
 FontInstance::FontInstance()
 {
 	fontData_ = NULL;
@@ -75,7 +74,8 @@ bool FontInstance::setUp(QString fontFileName)
 
 		// Request unicode character mapping...
 		if (!font_->CharMap(ft_encoding_unicode))
-			Messenger::print("Failed to set unicode character mapping for font - special characters may not render correctly.\n");
+			Messenger::print("Failed to set unicode character mapping for font - special characters may not render "
+					 "correctly.\n");
 
 		// 		font_->Depth(3.0);
 		// 		font_->Outset(-.5, 1.5);
@@ -106,7 +106,8 @@ FTBBox FontInstance::boundingBox(QString text) const
 	if (!font_)
 		return FTBBox();
 
-	// Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with trailing spaces..
+	// Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
+	// trailing spaces..
 	FTBBox box = font_->BBox(qPrintable("." + text.toUtf8() + "."));
 	// 	double newWidth = box.Upper().X() - dotWidth_;
 	// 	box.Upper().X(newWidth);

@@ -37,22 +37,21 @@ class ModuleList;
 // ModuleList Chart - Manages display of a sequence of modules from a ModuleList
 class ModuleListChart : public ChartBase
 {
-      public:
-	// Constructor / Destructor
+	public:
 	ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = NULL);
 	~ModuleListChart();
 
 	/*
 	 * Dissolve Reference
 	 */
-      private:
+	private:
 	// Dissolve reference
 	Dissolve &dissolve_;
 
 	/*
 	 * Target ModuleList
 	 */
-      private:
+	private:
 	// Target ModuleList for display
 	ModuleList *moduleList_;
 	// Configuration in which the layer exists (if any)
@@ -61,28 +60,28 @@ class ModuleListChart : public ChartBase
 	/*
 	 * QWidget Reimplementations
 	 */
-      protected:
+	protected:
 	// Paint event
 	void paintEvent(QPaintEvent *event);
 
 	/*
 	 * Chart Blocks
 	 */
-      private:
+	private:
 	// Widgets for our Module blocks
 	RefList<ModuleBlock> moduleBlockWidgets_;
 	// Insertion block
 	ModuleInsertionBlock *insertionBlock_;
 
-      private:
+	private:
 	// Find ModuleBlock displaying specified Module
 	ModuleBlock *moduleBlock(Module *module);
 
-      protected:
+	protected:
 	// Update the content block widgets against the current target data
 	void updateContentBlocks();
 
-      public:
+	public:
 	// Set the currently-selected Module
 	void setCurrentModule(Module *module);
 	// Return the currently-selected molecule
@@ -91,7 +90,7 @@ class ModuleListChart : public ChartBase
 	/*
 	 * Block Interaction
 	 */
-      protected:
+	protected:
 	// Return whether to accept the dragged object (described by its mime info)
 	bool acceptDraggedObject(const MimeStrings *strings);
 	// Handle hover over specified hotspot
@@ -110,18 +109,18 @@ class ModuleListChart : public ChartBase
 	/*
 	 * Widget Layout
 	 */
-      private:
+	private:
 	// Chart metrics
 	ModuleListChartMetrics metrics_;
 
-      private:
+	private:
 	// Calculate new widget geometry according to the layout requirements, returning the entire area required
 	QSize calculateNewWidgetGeometry(QSize currentSize);
 
 	/*
 	 * State I/O (ChartBase Reimplementations)
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser

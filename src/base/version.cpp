@@ -22,10 +22,8 @@
 #include "base/version.h"
 #include "base/processpool.h"
 
-// Constructor
 VersionCounter::VersionCounter() { version_ = 0; }
 
-// Destructor
 VersionCounter::~VersionCounter() {}
 
 /*

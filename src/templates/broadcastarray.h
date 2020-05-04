@@ -31,8 +31,7 @@ template <class T> class BroadcastArray
 	 * Constructor-only template class which iterates over a supplied Array, broadcasting the object from master
 	 * to slave processes. The Array items must be trivially copyable (via an assignment operator) and broadcastable.
 	 */
-      public:
-	// Constructor
+	public:
 	BroadcastArray(ProcessPool &procPool, int root, Array<T> &array, const CoreData &coreData, bool &result)
 	{
 		result = false;

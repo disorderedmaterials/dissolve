@@ -35,8 +35,7 @@ class GradientBar : public QWidget
 
 	public:
 	// Constructor
-	GradientBar(QWidget* parent);
-
+	GradientBar(QWidget *parent);
 
 	/*
 	// ColourScale
@@ -49,11 +48,11 @@ class GradientBar : public QWidget
 
 	public:
 	// Set colourscale to display
-	void setColourScale(const ColourScale& colourScale);
+	void setColourScale(const ColourScale &colourScale);
 
 	protected:
 	// Paint event callback
-	void paintEvent(QPaintEvent* event);
+	void paintEvent(QPaintEvent *event);
 };
 
 #endif

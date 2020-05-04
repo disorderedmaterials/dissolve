@@ -29,7 +29,6 @@
 #include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
-// Constructor
 SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -52,7 +51,6 @@ SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
 	updateStatusBar();
 }
 
-// Destructor
 SiteWidget::~SiteWidget() {}
 
 // Set main CoreData pointer
@@ -77,9 +75,9 @@ void SiteWidget::updateToolbar()
 	// Set current interaction mode
 	switch (siteViewer()->interactionMode())
 	{
-	case (SiteViewer::DefaultInteraction):
-		ui_.InteractionViewButton->setChecked(true);
-		break;
+		case (SiteViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
 	}
 
 	// Set checkable buttons
@@ -104,7 +102,8 @@ void SiteWidget::updateStatusBar()
 
 	// Set / update empirical formula for the Species and its current atom selection
 	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
-	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
+	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true)
+								     : "--");
 }
 
 /*

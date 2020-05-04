@@ -23,10 +23,8 @@
 #include "base/sysfunc.h"
 #include "module/group.h"
 
-// Constructor
 ModuleGroups::ModuleGroups() {}
 
-// Destructor
 ModuleGroups::~ModuleGroups() {}
 
 /*

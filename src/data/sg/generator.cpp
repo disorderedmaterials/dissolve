@@ -25,7 +25,6 @@
 #include "data/sg/sginfo.h"
 #include <string.h>
 
-// Constructor
 SymmetryGenerator::SymmetryGenerator() {}
 
 // Set partial element of matrix or translation vector
@@ -52,24 +51,24 @@ void SymmetryGenerator::setMatrixPart(int row, const char *part)
 	// Now, check if this character is x, y, or z.
 	switch (part[pos])
 	{
-	case ('x'):
-	case ('X'):
-		matrix_[row] = multiplier;
-		break;
-	case ('y'):
-	case ('Y'):
-		matrix_[4 + row] = multiplier;
-		break;
-	case ('z'):
-	case ('Z'):
-		matrix_[8 + row] = multiplier;
-		break;
-	default:
-		// Must be a number, and hence part of the translation vector
-		a = DissolveSys::beforeStr(part, "/");
-		b = DissolveSys::afterStr(part, "/");
-		matrix_[12 + row] = a.asDouble() / b.asDouble();
-		break;
+		case ('x'):
+		case ('X'):
+			matrix_[row] = multiplier;
+			break;
+		case ('y'):
+		case ('Y'):
+			matrix_[4 + row] = multiplier;
+			break;
+		case ('z'):
+		case ('Z'):
+			matrix_[8 + row] = multiplier;
+			break;
+		default:
+			// Must be a number, and hence part of the translation vector
+			a = DissolveSys::beforeStr(part, "/");
+			b = DissolveSys::afterStr(part, "/");
+			matrix_[12 + row] = a.asDouble() / b.asDouble();
+			break;
 	}
 }
 
@@ -82,7 +81,8 @@ bool SymmetryGenerator::set(const char *s)
 	parser.getArgsDelim(LineParser::Defaults, s);
 	if (parser.nArgs() != 3)
 	{
-		Messenger::print("Tried to set a symmetry Generator from text ('%s') that didn't split into three arguments.", s);
+		Messenger::print("Tried to set a symmetry Generator from text ('%s') that didn't split into three arguments.",
+				 s);
 		return false;
 	}
 

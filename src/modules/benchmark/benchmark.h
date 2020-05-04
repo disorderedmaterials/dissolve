@@ -30,23 +30,21 @@
 // Benchmark Module
 class BenchmarkModule : public Module
 {
-      public:
-	// Constructor
+	public:
 	BenchmarkModule();
-	// Destructor
 	~BenchmarkModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -59,28 +57,29 @@ class BenchmarkModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-      private:
+	private:
 	// Print timing information, assessing it against last value in existing timings (if found)
-	void printTimingResult(const char *testFile, const char *testDescription, const SampledDouble &timing, bool storeNewTiming);
+	void printTimingResult(const char *testFile, const char *testDescription, const SampledDouble &timing,
+			       bool storeNewTiming);
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

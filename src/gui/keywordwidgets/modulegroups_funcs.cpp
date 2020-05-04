@@ -31,8 +31,8 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
-ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -106,23 +106,24 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem *item)
 	// Check the column of the item
 	switch (item->column())
 	{
-	// Module (checked if a target)
-	case (0):
-		if (isSelected)
-			keyword_->data().addModule(module, qPrintable(groupName));
-		else
-			keyword_->data().removeModule(module);
-		keyword_->hasBeenSet();
-		break;
-	// Group name
-	case (1):
-		// Take the new name and try to re-add the current Module to the (new) group (only if the Module is selected...)
-		if (isSelected)
-		{
-			keyword_->data().addModule(module, qPrintable(groupName));
+		// Module (checked if a target)
+		case (0):
+			if (isSelected)
+				keyword_->data().addModule(module, qPrintable(groupName));
+			else
+				keyword_->data().removeModule(module);
 			keyword_->hasBeenSet();
-		}
-		break;
+			break;
+		// Group name
+		case (1):
+			// Take the new name and try to re-add the current Module to the (new) group (only if the Module is
+			// selected...)
+			if (isSelected)
+			{
+				keyword_->data().addModule(module, qPrintable(groupName));
+				keyword_->hasBeenSet();
+			}
+			break;
 	}
 
 	updateSummaryText();
@@ -146,7 +147,8 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData &coreData)
 	RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
 	// Update the list widget
-	TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
+	TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
+									   &ModuleGroupsKeywordWidget::updateSelectionRow);
 
 	ui_.SelectionTable->resizeColumnToContents(0);
 

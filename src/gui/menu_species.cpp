@@ -82,7 +82,8 @@ void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 {
 	// Request a new file to open
-	QString xyzFile = QFileDialog::getOpenFileName(this, "Choose XYZ file to open", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
+	QString xyzFile =
+		QFileDialog::getOpenFileName(this, "Choose XYZ file to open", QDir().absolutePath(), "XYZ Coordinates (*.xyz)");
 	if (xyzFile.isEmpty())
 		return;
 

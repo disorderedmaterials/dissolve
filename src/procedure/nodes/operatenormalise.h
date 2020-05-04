@@ -30,17 +30,15 @@
 // Operate Value Normalise Node
 class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
 {
-      public:
-	// Constructors
+	public:
 	OperateNormaliseProcedureNode(double value = 1.0);
 	OperateNormaliseProcedureNode(int value);
-	// Destructor
 	~OperateNormaliseProcedureNode();
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target

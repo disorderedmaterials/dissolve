@@ -23,7 +23,6 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 
-// Constructor
 PlainValue::PlainValue()
 {
 	clear();
@@ -32,7 +31,6 @@ PlainValue::PlainValue()
 	valueI_ = 0;
 }
 
-// Constructor (bool)
 PlainValue::PlainValue(bool value)
 {
 	clear();
@@ -41,7 +39,6 @@ PlainValue::PlainValue(bool value)
 	valueB_ = value;
 }
 
-// Constructor (int)
 PlainValue::PlainValue(int value)
 {
 	clear();
@@ -50,7 +47,6 @@ PlainValue::PlainValue(int value)
 	valueI_ = value;
 }
 
-// Constructor (double)
 PlainValue::PlainValue(double value)
 {
 	clear();
@@ -59,7 +55,6 @@ PlainValue::PlainValue(double value)
 	valueD_ = value;
 }
 
-// Constructor (string)
 PlainValue::PlainValue(const char *value)
 {
 	clear();
@@ -68,7 +63,6 @@ PlainValue::PlainValue(const char *value)
 	valueC_ = value;
 }
 
-// Constructor (CharString)
 PlainValue::PlainValue(const CharString &value)
 {
 	clear();
@@ -77,10 +71,8 @@ PlainValue::PlainValue(const CharString &value)
 	valueC_ = value;
 }
 
-// Constructor (PlainValue)
 PlainValue::PlainValue(const PlainValue &value) { (*this) = value; }
 
-// Assignment operator
 void PlainValue::operator=(const PlainValue &value)
 {
 	name_ = value.name_;
@@ -97,7 +89,6 @@ void PlainValue::operator=(const PlainValue &value)
 	set(value);
 }
 
-// Destructor
 PlainValue::~PlainValue() {}
 
 // VariableType names
@@ -431,25 +422,26 @@ bool PlainValue::broadcast(ProcessPool &procPool)
 	type_ = (PlainValue::ValueType)tempType;
 	switch (type_)
 	{
-	case (PlainValue::BooleanType):
-		if (!procPool.broadcast(valueB_))
+		case (PlainValue::BooleanType):
+			if (!procPool.broadcast(valueB_))
+				return false;
+			break;
+		case (PlainValue::IntegerType):
+			if (!procPool.broadcast(&valueI_, 1))
+				return false;
+			break;
+		case (PlainValue::DoubleType):
+			if (!procPool.broadcast(&valueD_, 1))
+				return false;
+			break;
+		case (PlainValue::StringType):
+			if (!procPool.broadcast(valueC_))
+				return false;
+			break;
+		default:
+			Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n",
+					 PlainValue::valueType(type_));
 			return false;
-		break;
-	case (PlainValue::IntegerType):
-		if (!procPool.broadcast(&valueI_, 1))
-			return false;
-		break;
-	case (PlainValue::DoubleType):
-		if (!procPool.broadcast(&valueD_, 1))
-			return false;
-		break;
-	case (PlainValue::StringType):
-		if (!procPool.broadcast(valueC_))
-			return false;
-		break;
-	default:
-		Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n", PlainValue::valueType(type_));
-		return false;
 	}
 #endif
 	return true;

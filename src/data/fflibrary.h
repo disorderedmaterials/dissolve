@@ -32,15 +32,15 @@
 // Forcefield Library
 class ForcefieldLibrary
 {
-      private:
+	private:
 	// List of all available forcefields
 	static std::vector<std::shared_ptr<Forcefield>> forcefields_;
 
-      private:
+	private:
 	// Register Forcefields for use
 	static void registerForcefields();
 
-      public:
+	public:
 	// Return list of available Forcefields
 	static std::vector<std::shared_ptr<Forcefield>> &forcefields();
 	// Return named Forcefield, if it exists

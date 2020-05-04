@@ -23,7 +23,6 @@
 #include <math.h>
 #include <stdio.h>
 
-// Constructor
 VertexChunk::VertexChunk()
 {
 	// Public variables
@@ -41,7 +40,6 @@ VertexChunk::VertexChunk()
 	type_ = GL_TRIANGLES;
 }
 
-// Destructor
 VertexChunk::~VertexChunk()
 {
 	if (vertexData_ != NULL)
@@ -119,7 +117,8 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 }
 
 // Define next vertex and normal with specific colour (as array)
-void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat *colour, bool calcCentroid)
+void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat *colour,
+			       bool calcCentroid)
 {
 	if (nDefinedVertices_ == maxVertices_)
 		printf("Internal Error: Vertex limit for VertexChunk reached.\n");
@@ -153,7 +152,8 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 }
 
 // Define next vertex and normal with specific colour
-void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a, bool calcCentroid)
+void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g,
+			       GLfloat b, GLfloat a, bool calcCentroid)
 {
 	if (nDefinedVertices_ == maxVertices_)
 		printf("Internal Error: Vertex limit for VertexChunk reached.\n");

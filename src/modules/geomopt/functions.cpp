@@ -48,7 +48,8 @@ double GeometryOptimisationModule::rmsForce() const
 {
 	double rmsf = 0.0;
 	for (int n = 0; n < xForce_.nItems(); ++n)
-		rmsf += xForce_.constAt(n) * xForce_.constAt(n) + yForce_.constAt(n) * yForce_.constAt(n) + zForce_.constAt(n) * zForce_.constAt(n);
+		rmsf += xForce_.constAt(n) * xForce_.constAt(n) + yForce_.constAt(n) * yForce_.constAt(n) +
+			zForce_.constAt(n) * zForce_.constAt(n);
 	rmsf /= xForce_.nItems();
 
 	return sqrt(rmsf);
@@ -82,18 +83,21 @@ void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double> &bounds, Vec
 }
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
-double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg,
+							 const PotentialMap &potentialMap, double delta)
 {
 	Atom **atoms = cfg->atoms().array();
 	for (int n = 0; n < cfg->nAtoms(); ++n)
-		atoms[n]->setCoordinates(xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
+		atoms[n]->setCoordinates(xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta,
+					 zRef_[n] + zForce_[n] * delta);
 	cfg->updateCellContents();
 
 	return EnergyModule::totalEnergy(procPool, cfg, potentialMap);
 }
 
 // Perform Golden Search within specified bounds
-double GeometryOptimisationModule::goldenSearch(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, const double tolerance, Vec3<double> &bounds, Vec3<double> &energies,
+double GeometryOptimisationModule::goldenSearch(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+						const double tolerance, Vec3<double> &bounds, Vec3<double> &energies,
 						int &nPointsAccepted)
 {
 	// Ensure that the energy minimum is the midpoint
@@ -106,7 +110,8 @@ double GeometryOptimisationModule::goldenSearch(ProcessPool &procPool, Configura
 	// Calculate deltas between bound values
 	double dxy = bounds[0] - bounds[1];
 	double dyz = bounds[2] - bounds[1];
-	Messenger::printVerbose("Trying Golden Search -  %f-%f-%f, dxy = %12.5e, dyz = %12.5e", bounds.x, bounds.y, bounds.z, dxy, dyz);
+	Messenger::printVerbose("Trying Golden Search -  %f-%f-%f, dxy = %12.5e, dyz = %12.5e", bounds.x, bounds.y, bounds.z,
+				dxy, dyz);
 
 	// Select largest of two intervals to be the target of the search
 	bool xyLargest = fabs(dxy) > fabs(dyz);
@@ -144,7 +149,8 @@ double GeometryOptimisationModule::goldenSearch(ProcessPool &procPool, Configura
 }
 
 // Line minimise supplied Configuration from the reference coordinates along the stored force vectors
-double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, const double tolerance, double &stepSize)
+double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+						const double tolerance, double &stepSize)
 {
 	// Brent-style line minimiser with parabolic interpolation and Golden Search backup
 
@@ -157,7 +163,8 @@ double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configura
 	bounds.z = 2.0 * stepSize;
 	energies.z = energyAtGradientPoint(procPool, cfg, potentialMap, bounds.z);
 
-	Messenger::printVerbose("Initial bounding values/energies = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", bounds[0], energies[0], bounds[1], energies[1], bounds[2], energies[2]);
+	Messenger::printVerbose("Initial bounding values/energies = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", bounds[0],
+				energies[0], bounds[1], energies[1], bounds[2], energies[2]);
 
 	// Perform linesearch along the gradient vector
 	do
@@ -165,7 +172,8 @@ double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configura
 		// Sort w.r.t. energy so that the minimum is in the central point
 		sortBoundsAndEnergies(bounds, energies);
 
-		Messenger::printVerbose("Energies [Bounds] = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", energies[0], bounds[0], energies[1], bounds[1], energies[2], bounds[2]);
+		Messenger::printVerbose("Energies [Bounds] = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", energies[0],
+					bounds[0], energies[1], bounds[1], energies[2], bounds[2]);
 
 		// Perform parabolic interpolation to find new minimium point
 		double b10 = bounds[1] - bounds[0];

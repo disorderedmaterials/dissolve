@@ -22,7 +22,6 @@
 #include "base/parameters.h"
 #include "base/messenger.h"
 
-// Constructor
 InteractionParameters::InteractionParameters()
 {
 	for (int n = 0; n < MAXSRPARAMETERS; ++n)
@@ -31,7 +30,6 @@ InteractionParameters::InteractionParameters()
 	empty_ = true;
 }
 
-// Destructor
 InteractionParameters::~InteractionParameters() {}
 
 /*
@@ -47,7 +45,9 @@ void InteractionParameters::setParameter(int index, double value)
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
 	{
-		Messenger::error("OUT_OF_RANGE - Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be set.\n", index, MAXSRPARAMETERS);
+		Messenger::error(
+			"OUT_OF_RANGE - Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be set.\n",
+			index, MAXSRPARAMETERS);
 		return;
 	}
 #endif
@@ -62,7 +62,9 @@ double InteractionParameters::parameter(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
 	{
-		Messenger::error("OUT_OF_RANGE - Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be returned.\n", index, MAXSRPARAMETERS);
+		Messenger::error(
+			"OUT_OF_RANGE - Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be returned.\n",
+			index, MAXSRPARAMETERS);
 		return 0.0;
 	}
 #endif

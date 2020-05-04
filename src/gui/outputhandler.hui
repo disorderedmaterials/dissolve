@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_GUIOUTPUTHANDLER_H
 #define DISSOLVE_GUIOUTPUTHANDLER_H
 
-#include <QObject>
 #include "base/messenger.h"
+#include <QObject>
 
 // Forward Declarations
 /* none */
@@ -38,7 +38,6 @@ class GUIOutputHandler : public QObject, public OutputHandler
 	// Destructor
 	~GUIOutputHandler();
 
-
 	/*
 	 * Styling
 	 */
@@ -51,18 +50,17 @@ class GUIOutputHandler : public QObject, public OutputHandler
 	void resetStyling();
 
 	signals:
-	void setColour(const QColor&);
-
+	void setColour(const QColor &);
 
 	/*
 	 * Output
 	 */
 	public:
 	// Print text
-	void outputText(const char* text);
+	void outputText(const char *text);
 
 	signals:
-	void printText(const QString&);
+	void printText(const QString &);
 };
 
 #endif

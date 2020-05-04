@@ -24,10 +24,12 @@
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 
-// Constructor
-Procedure::Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword) : rootSequence_(context, this, NULL, blockTerminationKeyword) { context_ = context; }
+Procedure::Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword)
+	: rootSequence_(context, this, NULL, blockTerminationKeyword)
+{
+	context_ = context;
+}
 
-// Destructor
 Procedure::~Procedure() {}
 
 /*
@@ -70,7 +72,8 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, const char *p
 			// A Configuration we've processed before - check the index
 			if (cfg->contentsVersion() == ri->data())
 			{
-				Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
+				Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n",
+						cfg->name());
 				return true;
 			}
 			else

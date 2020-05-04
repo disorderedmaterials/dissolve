@@ -31,16 +31,15 @@ class SelectProcedureNode;
 // Calculate Angle Node
 class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
 {
-      public:
-	// Constructor
-	CalculateAngleProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL, SelectProcedureNode *site2 = NULL);
-	// Destructor
+	public:
+	CalculateAngleProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL,
+				    SelectProcedureNode *site2 = NULL);
 	~CalculateAngleProcedureNode();
 
 	/*
 	 * Observable Target (implements virtuals in CalculateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Return number of sites required to calculate observable
 	int nSitesRequired() const;
 	// Return dimensionality of calculated observable
@@ -49,9 +48,10 @@ class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
 	/*
 	 * Execute
 	 */
-      public:
+	public:
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+						   GenericList &targetList);
 };
 
 #endif

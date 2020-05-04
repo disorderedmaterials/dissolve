@@ -28,18 +28,18 @@
 
 template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 {
-      public:
-	// Constructor
-	SteepestDescentMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
-	    : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+	public:
+	SteepestDescentMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction,
+				    bool pokeBeforeCost = false)
+		: MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 
-		  private :
-	    // Pointers to double values to be fit
-	    Array<double *> targets_;
+			  private :
+		// Pointers to double values to be fit
+		Array<double *> targets_;
 	// Local values for fitting
 	Array<double> values_;
 
-      private:
+	private:
 	// Calculate gradient of current parameters
 	Array<double> gradient(const Array<double> &alpha)
 	{
@@ -67,7 +67,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 		return newAlpha;
 	}
 
-      public:
+	public:
 	// Add pointer to double value to be fit
 	void addTarget(double &var)
 	{

@@ -279,25 +279,42 @@ void CalculateAngleModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeAB",
-		      "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeBC",
-		      "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange",
-		      "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "RangeAB", "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "RangeBC", "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation",
+		      new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5),
+					    Vec3Labels::MinMaxBinwidthlabels),
+		      "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
 
 	// Sites
-	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Add site(s) which represent 'A' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Add site(s) which represent 'B' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-	keywords_.link("Sites", selectC_->keywords().find("Site"), "SiteC", "Add site(s) which represent 'C' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
-	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeAB", "Whether to exclude correlations between A and B sites on the same molecule", "<True|False>");
-	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeBC", "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
-	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameSiteAC", "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
+	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA",
+		       "Add site(s) which represent 'A' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
+	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB",
+		       "Add site(s) which represent 'B' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
+	keywords_.link("Sites", selectC_->keywords().find("Site"), "SiteC",
+		       "Add site(s) which represent 'C' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
+	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeAB",
+		      "Whether to exclude correlations between A and B sites on the same molecule", "<True|False>");
+	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMoleculeBC",
+		      "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
+	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameSiteAC",
+		      "Whether to exclude correlations between A and C sites on the same molecule", "<True|False>");
 
 	// Export
-	keywords_.link("Export", processAB_->keywords().find("Save"), "SaveAB", "Whether to save calculated A-B RDF to disk", "<True|False>");
-	keywords_.link("Export", processBC_->keywords().find("Save"), "SaveBC", "Whether to save calculated B-C RDF to disk", "<True|False>");
-	keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle", "Whether to save calculated A-B-C angle histrogram to disk", "<True|False>");
-	keywords_.link("Export", processDAngleAB_->keywords().find("Save"), "SaveDAngleAB", "Whether to save calculated (A-B)-C distance-angle map to disk", "<True|False>");
-	keywords_.link("Export", processDAngleBC_->keywords().find("Save"), "SaveDAngleBC", "Whether to save calculated A-(B-C) distance-angle map to disk", "<True|False>");
+	keywords_.link("Export", processAB_->keywords().find("Save"), "SaveAB", "Whether to save calculated A-B RDF to disk",
+		       "<True|False>");
+	keywords_.link("Export", processBC_->keywords().find("Save"), "SaveBC", "Whether to save calculated B-C RDF to disk",
+		       "<True|False>");
+	keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle",
+		       "Whether to save calculated A-B-C angle histrogram to disk", "<True|False>");
+	keywords_.link("Export", processDAngleAB_->keywords().find("Save"), "SaveDAngleAB",
+		       "Whether to save calculated (A-B)-C distance-angle map to disk", "<True|False>");
+	keywords_.link("Export", processDAngleBC_->keywords().find("Save"), "SaveDAngleBC",
+		       "Whether to save calculated A-(B-C) distance-angle map to disk", "<True|False>");
 }

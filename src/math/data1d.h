@@ -33,12 +33,9 @@ class Histogram1D;
 // One-Dimensional Data
 class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Data1D();
-	// Destructor
 	~Data1D();
-	// Copy Constructor
 	Data1D(const Data1D &source);
 	// Clear data
 	void clear();
@@ -46,7 +43,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// X array
 	Array<double> x_;
 	// Values at each x
@@ -58,7 +55,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	// Data version
 	VersionCounter version_;
 
-      public:
+	public:
 	// Initialise arrays to specified size
 	void initialise(int size, bool withError = false);
 	// Initialise to be consistent in size and x axis with supplied object
@@ -115,26 +112,19 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment Operator
+	public:
 	void operator=(const Data1D &source);
-	// Operator +=
 	void operator+=(const Data1D &source);
-	// Operator +=
 	void operator+=(const double delta);
-	// Operator -=
 	void operator-=(const Data1D &source);
-	// Operator -=
 	void operator-=(const double delta);
-	// Operator *=
 	void operator*=(const double factor);
-	// Operator /=
 	void operator/=(const double factor);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -145,7 +135,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

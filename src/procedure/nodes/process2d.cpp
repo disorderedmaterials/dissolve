@@ -32,15 +32,18 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
-Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target) : ProcedureNode(ProcedureNode::Process2DNode)
+Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target)
+	: ProcedureNode(ProcedureNode::Process2DNode)
 {
-	keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target), "SourceData", "Collect2D node containing the data to process");
+	keywords_.add("Target",
+		      new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
+		      "SourceData", "Collect2D node containing the data to process");
 	keywords_.add("Target", new CharStringKeyword("Counts"), "LabelValue", "Label for the value axis");
 	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
 	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
-	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation", "Branch providing normalisation operations for the data");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext),
+		      "Normalisation", "Branch providing normalisation operations for the data");
 
 	// Initialise branch
 	normalisationBranch_ = NULL;
@@ -49,7 +52,6 @@ Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *tar
 	processedData_ = NULL;
 }
 
-// Destructor
 Process2DProcedureNode::~Process2DProcedureNode() {}
 
 /*
@@ -57,7 +59,10 @@ Process2DProcedureNode::~Process2DProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool Process2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
+bool Process2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::AnalysisContext);
+}
 
 /*
  * Data
@@ -123,11 +128,13 @@ bool Process2DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+								   const char *prefix, GenericList &targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data2D &data = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	Data2D &data = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+							  GenericItem::InRestartFileFlag, &created);
 	processedData_ = &data;
 
 	data.setName(name());
@@ -178,4 +185,7 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+{
+	return true;
+}

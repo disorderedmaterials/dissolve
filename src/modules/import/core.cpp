@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 ImportModule::ImportModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 ImportModule::~ImportModule() {}
 
 /*

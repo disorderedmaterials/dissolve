@@ -28,7 +28,10 @@ const char *CalculateAvgMolModule::type() const { return "CalculateAvgMol"; }
 const char *CalculateAvgMolModule::category() const { return "Analysis / Geometry"; }
 
 // Return brief description of module
-const char *CalculateAvgMolModule::brief() const { return "Calculate average atomic positions of a species around an oriented site"; }
+const char *CalculateAvgMolModule::brief() const
+{
+	return "Calculate average atomic positions of a species around an oriented site";
+}
 
 // Return the number of Configuration targets this Module requires
 int CalculateAvgMolModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

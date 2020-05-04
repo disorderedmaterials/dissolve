@@ -27,15 +27,14 @@
 #include "math/extrema.h"
 #include "templates/array2d.h"
 
-// Constructor
-RenderableData2D::RenderableData2D(const Data2D *source, const char *objectTag) : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
+RenderableData2D::RenderableData2D(const Data2D *source, const char *objectTag)
+	: Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
 	colour().setStyle(ColourDefinition::HSVGradientStyle);
 }
 
-// Destructor
 RenderableData2D::~RenderableData2D() {}
 
 /*
@@ -73,7 +72,8 @@ void RenderableData2D::transformValues()
 	if (valuesTransformDataVersion_ == dataVersion())
 		return;
 
-	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
+	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have
+	// previously been active
 	if (!source_)
 		transformedData_.clear();
 	else
@@ -94,8 +94,10 @@ void RenderableData2D::transformValues()
 	{
 		valuesMin_ = transformedData_.minValue();
 		valuesMax_ = transformedData_.maxValue();
-		limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(), valuesMin_);
-		limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(), valuesMax_);
+		limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(),
+			       valuesMin_);
+		limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(),
+			       valuesMax_);
 	}
 
 	// Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
@@ -184,7 +186,8 @@ void RenderableData2D::recreatePrimitives(const View &view, const ColourDefiniti
 	}
 
 	reinitialisePrimitives(source_->constYAxis().nItems(), GL_LINE_STRIP, true);
-	constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(), view.constAxes(), colourDefinition);
+	constructLine(transformedData().constXAxis(), transformedData().constYAxis(), transformedData().constValues2D(),
+		      view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -204,7 +207,8 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array2D<double> &displayValues, const Axes &axes,
+void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
+				     const Array2D<double> &displayValues, const Axes &axes,
 				     const ColourDefinition &colourDefinition)
 {
 	// Copy and transform abscissa values (still in data space) into axes coordinates
@@ -278,7 +282,8 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
 			for (int m = 0; m < nX; ++m)
 			{
 				// Assigning colour based on value
-				double c = (vLogarithmic ? pow(displayValues.constAt(m, n), 10.0) : displayValues.constAt(m, n));
+				double c =
+					(vLogarithmic ? pow(displayValues.constAt(m, n), 10.0) : displayValues.constAt(m, n));
 				colourDef.colour(c, colour);
 				vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m, n), nrm, colour);
 
@@ -323,7 +328,8 @@ RenderableData2D::Data2DDisplayStyle RenderableData2D::displayStyle() const { re
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData2D::Data2DStyleKeyword> RenderableData2D::data2DStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData2D::DisplayKeyword, "Display", 1) << EnumOption(RenderableData2D::EndStyleKeyword, "EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData2D::DisplayKeyword, "Display", 1)
+								 << EnumOption(RenderableData2D::EndStyleKeyword, "EndStyle");
 
 	static EnumOptions<RenderableData2D::Data2DStyleKeyword> options("Data2DStyleKeyword", StyleKeywords);
 
@@ -339,7 +345,8 @@ bool RenderableData2D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 		indent[n] = ' ';
 	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, data2DStyleKeywords().keyword(RenderableData2D::DisplayKeyword), data2DDisplayStyles().keyword(displayStyle_)))
+	if (!parser.writeLineF("%s%s  %s\n", indent, data2DStyleKeywords().keyword(RenderableData2D::DisplayKeyword),
+			       data2DDisplayStyles().keyword(displayStyle_)))
 		return false;
 
 	return true;
@@ -364,20 +371,21 @@ bool RenderableData2D::readStyleBlock(LineParser &parser)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		// Display style
-		case (RenderableData2D::DisplayKeyword):
-			if (!data2DDisplayStyles().isValid(parser.argc(1)))
-				return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
-			displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
-			break;
-		// End of block
-		case (RenderableData2D::EndStyleKeyword):
-			return true;
-		// Unrecognised Keyword
-		default:
-			Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n", parser.argc(0));
-			return false;
-			break;
+			// Display style
+			case (RenderableData2D::DisplayKeyword):
+				if (!data2DDisplayStyles().isValid(parser.argc(1)))
+					return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
+				displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
+				break;
+			// End of block
+			case (RenderableData2D::EndStyleKeyword):
+				return true;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n",
+						parser.argc(0));
+				return false;
+				break;
 		}
 	}
 

@@ -41,7 +41,6 @@
  * All energy values are in kJ/mol.
  */
 
-// Constructor / Destructor
 Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
 {
 	// Short-Range Parameters
@@ -55,9 +54,12 @@ Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
 
 	// Atom Types
 	addAtomType(ELEMENT_N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.0749, "nc");
-	addAtomType(ELEMENT_C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0725, "ca");
-	addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2245, "ca");
-	addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)", "Carbon in aromatic ring, para", 0.1706, "ca");
+	addAtomType(ELEMENT_C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0725,
+		    "ca");
+	addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2245,
+		    "ca");
+	addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)", "Carbon in aromatic ring, para",
+		    0.1706, "ca");
 	addAtomType(ELEMENT_H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1751, "ha");
 	addAtomType(ELEMENT_H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1760, "ha");
 	addAtomType(ELEMENT_H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1293, "ha");
@@ -140,7 +142,8 @@ const char *Forcefield_Py5_Ludwig::name() const { return "1-pentylpyridinium cat
 // Return description for Forcefield
 const char *Forcefield_Py5_Ludwig::description() const
 {
-	return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American "
+	return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. "
+	       "Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American "
 	       "Chemical "
 	       "Society</i>, <b>118</b>, 11225 (1996).";
 }

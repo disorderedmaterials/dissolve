@@ -42,10 +42,9 @@ class SpeciesTorsion;
 // Energy Kernel
 class EnergyKernel
 {
-      public:
-	// Constructor
-	EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff = -1.0);
-	// Destructor
+	public:
+	EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap,
+		     double energyCutoff = -1.0);
 	~EnergyKernel();
 	// Clear all data
 	void clear();
@@ -53,7 +52,7 @@ class EnergyKernel
 	/*
 	 * Source Data
 	 */
-      protected:
+	protected:
 	// Source Configuration
 	const Configuration *configuration_;
 	// Source Box (from Configuration)
@@ -68,7 +67,7 @@ class EnergyKernel
 	/*
 	 * Internal Routines
 	 */
-      private:
+	private:
 	// Return PairPotential energy between atoms provided as pointers, at the distance specified
 	virtual double pairPotentialEnergy(const Atom *i, const Atom *j, double r);
 	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
@@ -79,13 +78,15 @@ class EnergyKernel
 	/*
 	 * PairPotential Terms
 	 */
-      public:
+	public:
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ);
 	// Return PairPotential energy between two cells
-	double energy(Cell *cell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
+	double energy(Cell *cell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,
+		      ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy between Cell and its neighbours
-	double energy(Cell *cell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
+	double energy(Cell *cell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy,
+		      bool performSum);
 	// Return PairPotential energy between Atom and Cell
 	double energy(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of atom with world
@@ -100,7 +101,7 @@ class EnergyKernel
 	/*
 	 * Intramolecular Terms
 	 */
-      public:
+	public:
 	// Return SpeciesBond energy
 	double energy(const SpeciesBond *b, const Atom *i, const Atom *j);
 	// Return SpeciesAngle energy
@@ -115,7 +116,7 @@ class EnergyKernel
 	/*
 	 * Parallel Comms
 	 */
-      private:
+	private:
 	// Process pool over which this kernel operates
 	ProcessPool &processPool_;
 };

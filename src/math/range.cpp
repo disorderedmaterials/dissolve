@@ -21,7 +21,6 @@
 
 #include "math/range.h"
 
-// Constructor
 Range::Range(double minimum, double maximum)
 {
 	minimum_ = minimum;

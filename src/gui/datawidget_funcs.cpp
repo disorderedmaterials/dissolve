@@ -26,7 +26,6 @@
 #include <QButtonGroup>
 #include <QInputDialog>
 
-// Constructor
 DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
@@ -53,7 +52,6 @@ DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 	updateDataTree();
 }
 
-// Destructor
 DataWidget::~DataWidget() {}
 
 // Return contained DataViewer
@@ -64,7 +62,10 @@ DataViewer *DataWidget::dataViewer() { return ui_.DataView; }
  */
 
 // Interaction
-void DataWidget::on_InteractionViewButton_clicked(bool checked) { dataViewer()->setInteractionMode(DataViewer::DefaultInteraction); }
+void DataWidget::on_InteractionViewButton_clicked(bool checked)
+{
+	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
+}
 
 // Graph
 void DataWidget::on_GraphResetButton_clicked(bool checked)
@@ -163,7 +164,8 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 		}
 
 		bool ok;
-		QString viewName = QInputDialog::getItem(this, "Set View Link", "Select the view to link to...", destinations, currentItem, false, &ok);
+		QString viewName = QInputDialog::getItem(this, "Set View Link", "Select the view to link to...", destinations,
+							 currentItem, false, &ok);
 		if (!ok)
 		{
 			ui_.ViewLinkedViewButton->setChecked(false);
@@ -207,7 +209,8 @@ void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { dataViewer
  */
 
 // Data tree top-level item update function
-void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data, bool createItem)
+void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data,
+						bool createItem)
 {
 	QTreeWidgetItem *item;
 	if (createItem)
@@ -226,7 +229,8 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
 	item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 
 	// Update child items
-	TreeWidgetRefListUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this, &DataWidget::dataTreeItemUpdateFunction);
+	TreeWidgetRefListUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
+									   &DataWidget::dataTreeItemUpdateFunction);
 }
 
 // Data tree item update function
@@ -255,7 +259,8 @@ void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem *item, int column)
 	if (refreshLock_.isLocked())
 		return;
 
-	// If this is a top-level item (parent() == NULL) then retrieve the Renderable Group. If not, get the associated Renderable.
+	// If this is a top-level item (parent() == NULL) then retrieve the Renderable Group. If not, get the associated
+	// Renderable.
 	if (item->parent())
 	{
 		Renderable *renderable = VariantPointer<Renderable>(item->data(0, Qt::UserRole));
@@ -293,12 +298,12 @@ void DataWidget::updateToolbar()
 	// Set current interaction mode
 	switch (dataViewer()->interactionMode())
 	{
-	case (DataViewer::DefaultInteraction):
-		ui_.InteractionViewButton->setChecked(true);
-		break;
-		// 		case (DataViewer::ZoomInteraction):
-		// 			ui_.InteractionZoomutton->setChecked(true);
-		// 			break;
+		case (DataViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+			// 		case (DataViewer::ZoomInteraction):
+			// 			ui_.InteractionZoomutton->setChecked(true);
+			// 			break;
 	}
 
 	// Controls reflecting the state of options in the underlying DataViewer
@@ -330,18 +335,18 @@ void DataWidget::updateStatusBar()
 	QString text;
 	switch (view.viewType())
 	{
-	case (View::FlatXYView):
-		text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
-		break;
-	case (View::FlatXZView):
-		text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
-		break;
-	case (View::FlatZYView):
-		text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
-		break;
-	default:
-		text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
-		break;
+		case (View::FlatXYView):
+			text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
+			break;
+		case (View::FlatXZView):
+			text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
+			break;
+		case (View::FlatZYView):
+			text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
+			break;
+		default:
+			text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
+			break;
 	}
 
 	ui_.CoordinateLabel->setText(text);
@@ -352,5 +357,6 @@ void DataWidget::updateDataTree()
 {
 	Locker refreshLock(refreshLock_);
 
-	TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this, &DataWidget::dataTreeTopLevelUpdateFunction);
+	TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(),
+								       this, &DataWidget::dataTreeTopLevelUpdateFunction);
 }

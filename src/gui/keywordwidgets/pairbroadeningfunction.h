@@ -36,38 +36,37 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	PairBroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	PairBroadeningFunctionKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::PairBroadeningFunctionWidget ui_;
 
-      private slots:
+	private slots:
 	// Function type radio changed
 	void functionRadioChanged(bool checked);
 	// Function parameter value changed
 	void functionParameterChanged(double value);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

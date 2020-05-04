@@ -27,25 +27,24 @@
 // GenericItemContainer<int>
 template <> class GenericItemContainer<int> : public GenericItem
 {
-      public:
-	// Constructor
+	public:
 	GenericItemContainer<int>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Data item
 	int data_;
 
-      public:
+	public:
 	// Return data item
 	int &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-      protected:
+	protected:
 	// Create a new GenericItem containing same class as current type
 	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
@@ -54,14 +53,14 @@ template <> class GenericItemContainer<int> : public GenericItem
 		return NULL;
 	}
 
-      public:
+	public:
 	// Return class name contained in item
 	const char *itemClassName() { return "int"; }
 
 	/*
 	 * I/O
 	 */
-      public:
+	public:
 	// Write data through specified parser
 	bool write(LineParser &parser) { return parser.writeLineF("%i\n", data_); }
 	// Read data through specified parser
@@ -76,9 +75,12 @@ template <> class GenericItemContainer<int> : public GenericItem
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
+	{
+		return procPool.broadcast(data_, root);
+	}
 	// Check item equality
 	bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
 };

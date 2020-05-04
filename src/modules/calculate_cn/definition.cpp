@@ -28,7 +28,10 @@ const char *CalculateCNModule::type() const { return "CalculateCN"; }
 const char *CalculateCNModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char *CalculateCNModule::brief() const { return "Calculate coordination numbers from an existing radial distribution function"; }
+const char *CalculateCNModule::brief() const
+{
+	return "Calculate coordination numbers from an existing radial distribution function";
+}
 
 // Return the number of Configuration targets this Module requires
 int CalculateCNModule::nRequiredTargets() const { return Module::ZeroTargets; }

@@ -35,30 +35,29 @@ class GraphGizmo : public QWidget, public Gizmo
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	GraphGizmo(Dissolve &dissolve, const char *uniqueName);
 	~GraphGizmo();
 
 	/*
 	 * Core
 	 */
-      public:
+	public:
 	// Return string specifying Gizmo type
 	const char *type() const;
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::GraphGizmo ui_;
 
-      protected:
+	protected:
 	// Window close event
 	void closeEvent(QCloseEvent *event);
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget
@@ -69,7 +68,7 @@ class GraphGizmo : public QWidget, public Gizmo
 	/*
 	 * Data Handling
 	 */
-      public:
+	public:
 	// Return whether this Gizmo accepts data of the specified type
 	bool acceptsData(const char *dataType);
 	// Send data (referenced by its object tag) to the Gizmo
@@ -78,18 +77,18 @@ class GraphGizmo : public QWidget, public Gizmo
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// Pointer to our DataViewer
 	DataViewer *dataViewer_;
 
-      public:
+	public:
 	// Return pointer to the contained DataViewer
 	DataViewer *dataViewer() const;
 
 	/*
 	 * State
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -98,9 +97,9 @@ class GraphGizmo : public QWidget, public Gizmo
 	/*
 	 * Widget Signals / Slots
 	 */
-      private slots:
+	private slots:
 
-      signals:
+	signals:
 	void windowClosed(QString windowTitle);
 };
 

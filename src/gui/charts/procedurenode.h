@@ -37,22 +37,21 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData);
 	~ProcedureChartNodeBlock();
 
 	/*
 	 * Node Target
 	 */
-      private:
+	private:
 	// Displayed node
 	ProcedureNode *node_;
 
 	// Widgets that exist in the branch of our Procedure node
 	RefList<ProcedureChartNodeBlock> branchWidgets_;
 
-      public:
+	public:
 	// Return displayed node
 	ProcedureNode *node() const;
 	// Return RefList of widgets that exist in the branch of our Procedure node
@@ -61,7 +60,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	/*
 	 * Controls
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ProcedureChartNodeWidget ui_;
 	// Whether the widget is currently refreshing
@@ -71,7 +70,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	// Colour to use for drawing
 	QColor displayColour_;
 
-      public:
+	public:
 	// Set display colour for widget
 	void setDisplayColour(QColor colour);
 	// Set whether the keywords widget is expanded or not, and whether this is permanent
@@ -79,32 +78,32 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	// Hide the remove button
 	void hideRemoveButton();
 
-      public slots:
+	public slots:
 	void on_ToggleKeywordsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
 
-      signals:
+	signals:
 	void keywordsToggled();
 	void remove(void *nodePointer);
 
 	/*
 	 * QWidget Reimplementations
 	 */
-      protected:
+	protected:
 	// Paint event
 	void paintEvent(QPaintEvent *event);
 
 	/*
 	 * Type (ChartBlock Reimplementations)
 	 */
-      public:
+	public:
 	// Return type of this block
 	const char *blockType();
 
 	/*
 	 * Widget (ChartBlock Reimplementations)
 	 */
-      public:
+	public:
 	// Return underlying widget
 	QWidget *widget();
 	// Return width of underlying widget
@@ -117,7 +116,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	/*
 	 * Update (ChartBlock Reimplementations)
 	 */
-      public:
+	public:
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls
@@ -128,11 +127,11 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	/*
 	 * Signals / Slots
 	 */
-      private slots:
+	private slots:
 	// Keyword data for node has been modified
 	void keywordDataModified();
 
-      signals:
+	signals:
 	// Notify that the node's keyword data has been modified
 	void dataModified();
 };

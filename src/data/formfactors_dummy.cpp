@@ -24,10 +24,8 @@
 #include <functional>
 #include <vector>
 
-// Constructor
 FormFactorData_Dummy::FormFactorData_Dummy() : FormFactorData(1, 0) {}
 
-// Assignment Operator
 FormFactorData_Dummy &FormFactorData_Dummy::operator=(const FormFactorData_Dummy &source)
 {
 	formalCharge_ = source.formalCharge_;

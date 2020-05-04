@@ -33,10 +33,8 @@ class Molecule;
 // PotentialMap Definition
 class PotentialMap
 {
-      public:
-	// Constructor
+	public:
 	PotentialMap();
-	// Destructor
 	~PotentialMap();
 	// Clear all data
 	void clear();
@@ -44,7 +42,7 @@ class PotentialMap
 	/*
 	 * Source Parameters
 	 */
-      private:
+	private:
 	// Number of unique types forming the matrix
 	int nTypes_;
 	// PairPotential matrix
@@ -52,16 +50,17 @@ class PotentialMap
 	// PairPotential range
 	double range_;
 
-      public:
+	public:
 	// Initialise map
-	bool initialise(const List<AtomType> &masterAtomTypes, const List<PairPotential> &pairPotentials, double pairPotentialRange);
+	bool initialise(const List<AtomType> &masterAtomTypes, const List<PairPotential> &pairPotentials,
+			double pairPotentialRange);
 	// Return PairPotential range
 	double range() const;
 
 	/*
 	 * Energy / Force
 	 */
-      public:
+	public:
 	// Return energy between Atom types at distance specified
 	double energy(const Atom *i, const Atom *j, double r) const;
 	// Return analytic energy between Atom types at distance specified

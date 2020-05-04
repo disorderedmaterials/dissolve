@@ -34,13 +34,11 @@ class GetSpeciesNameDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	GetSpeciesNameDialog(QWidget *parent, const CoreData &coreData);
-	// Destructor
 	~GetSpeciesNameDialog();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::GetSpeciesNameDialog ui_;
 	// CoreData reference
@@ -48,7 +46,7 @@ class GetSpeciesNameDialog : public QDialog
 	// Current Species that we are renaming
 	const Species *species_;
 
-      public:
+	public:
 	// Run the dialog
 	bool get(const Species *currentSpecies, const char *currentName);
 	// Return the name string
@@ -57,7 +55,7 @@ class GetSpeciesNameDialog : public QDialog
 	/*
 	 * Slots
 	 */
-      private slots:
+	private slots:
 	void on_NameEdit_textChanged(const QString text);
 	void on_CancelButton_clicked(bool checked);
 	void on_OKButton_clicked(bool checked);

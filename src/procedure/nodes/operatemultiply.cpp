@@ -25,13 +25,11 @@
 #include "keywords/types.h"
 #include "math/data1d.h"
 
-// Constructor
 OperateMultiplyProcedureNode::OperateMultiplyProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateMultiplyNode)
 {
 	keywords_.add("Multiplier", new NodeValueKeyword(this, 1.0), "Value", "Value expression to multiply by");
 }
 
-// Destructor
 OperateMultiplyProcedureNode::~OperateMultiplyProcedureNode() {}
 
 /*

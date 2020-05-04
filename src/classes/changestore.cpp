@@ -28,10 +28,8 @@
 #include "templates/orderedpointerlist.h"
 #include <memory>
 
-// Constructor
 ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 
-// Destructor
 ChangeStore::~ChangeStore() {}
 
 /*
@@ -85,7 +83,9 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int *indices)
 #ifdef CHECKS
 		if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
 		{
-			Messenger::print("OUT_OF_RANGE - Supplied indices_[n] (%i) is out of range in ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n", n, indices_[n], targetAtoms_.nItems());
+			Messenger::print("OUT_OF_RANGE - Supplied indices_[n] (%i) is out of range in "
+					 "ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n",
+					 n, indices_[n], targetAtoms_.nItems());
 			continue;
 		}
 #endif
@@ -100,7 +100,9 @@ void ChangeStore::updateAtom(int id)
 #ifdef CHECKS
 	if ((id < 0) || (id >= targetAtoms_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Specified index %i is out of range in ChangeStore::updateAtom() (nTargetAtoms = %i)\n", id, targetAtoms_.nItems());
+		Messenger::print(
+			"OUT_OF_RANGE - Specified index %i is out of range in ChangeStore::updateAtom() (nTargetAtoms = %i)\n",
+			id, targetAtoms_.nItems());
 		return;
 	}
 #endif
@@ -123,7 +125,8 @@ void ChangeStore::revert(int id)
 #ifdef CHECKS
 	if ((id < 0) || (id >= targetAtoms_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index of Atom (%i) is out of range in ChangeStore::revert() (nAtoms = %i).\n", id, targetAtoms_.nItems());
+		Messenger::print("OUT_OF_RANGE - Index of Atom (%i) is out of range in ChangeStore::revert() (nAtoms = %i).\n",
+				 id, targetAtoms_.nItems());
 		return;
 	}
 #endif
@@ -210,7 +213,9 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 #ifdef CHECKS
 		if ((indices_[n] < 0) || (indices_[n] >= cfg->nAtoms()))
 		{
-			Messenger::print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", indices_[n], cfg->nAtoms());
+			Messenger::print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in "
+					 "ChangeStore::distribute() (nAtoms = %i).\n",
+					 indices_[n], cfg->nAtoms());
 			continue;
 		}
 #endif

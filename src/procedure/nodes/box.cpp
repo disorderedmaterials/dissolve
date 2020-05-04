@@ -26,15 +26,15 @@
 #include "classes/configuration.h"
 #include "keywords/types.h"
 
-// Constructor
-BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic) : ProcedureNode(ProcedureNode::BoxNode)
+BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic)
+	: ProcedureNode(ProcedureNode::BoxNode)
 {
 	keywords_.add("Definition", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
-	keywords_.add("Definition", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
+	keywords_.add("Definition", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles",
+		      "Box angles");
 	keywords_.add("Definition", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
 }
 
-// Destructor
 BoxProcedureNode::~BoxProcedureNode() {}
 
 /*
@@ -42,7 +42,10 @@ BoxProcedureNode::~BoxProcedureNode() {}
  */
 
 // Return whether specified context is relevant for this node type
-bool BoxProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::GenerationContext); }
+bool BoxProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+	return (context == ProcedureNode::GenerationContext);
+}
 
 // Return whether a name for the node must be provided
 bool BoxProcedureNode::mustBeNamed() const { return false; }
@@ -55,7 +58,8 @@ bool BoxProcedureNode::mustBeNamed() const { return false; }
 bool BoxProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+							     GenericList &targetList)
 {
 	// Retrieve necessary parameters
 	Vec3<double> lengths = keywords_.asVec3Double("Lengths");
@@ -66,11 +70,13 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPo
 	if (!cfg->createBox(lengths, angles, nonPeriodic))
 		return ProcedureNode::Failure;
 
-	Messenger::print("[Box] Volume is %f cubic Angstroms (reciprocal volume = %e)\n", cfg->box()->volume(), cfg->box()->reciprocalVolume());
+	Messenger::print("[Box] Volume is %f cubic Angstroms (reciprocal volume = %e)\n", cfg->box()->volume(),
+			 cfg->box()->reciprocalVolume());
 	lengths = cfg->box()->axisLengths();
 	angles = cfg->box()->axisAngles();
-	Messenger::print("[Box] Type is %s: A = %10.4e B = %10.4e C = %10.4e, alpha = %10.4e beta = %10.4e gamma = %10.4e\n", Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y,
-			 lengths.z, angles.x, angles.y, angles.z);
+	Messenger::print("[Box] Type is %s: A = %10.4e B = %10.4e C = %10.4e, alpha = %10.4e beta = %10.4e gamma = %10.4e\n",
+			 Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y,
+			 angles.z);
 
 	return ProcedureNode::Success;
 }

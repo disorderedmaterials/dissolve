@@ -33,29 +33,27 @@ class EditSpeciesDialog : public QDialog
 {
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	EditSpeciesDialog(QWidget *parent, Species *sp);
-	// Destructor
 	~EditSpeciesDialog();
 
-      private:
+	private:
 	// Target Species
 	Species *species_;
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::EditSpeciesDialog ui_;
 
-      private slots:
+	private slots:
 	void on_CancelButton_clicked(bool checked);
 	void on_OKButton_clicked(bool checked);
 	void dataModified();
 
-      public:
+	public:
 	// Run the dialog, returning whether it was accepted
 	bool editSpecies();
 };

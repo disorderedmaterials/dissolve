@@ -31,8 +31,8 @@
 #include <QRadioButton>
 #include <QSpacerItem>
 
-// Constructor
-SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());

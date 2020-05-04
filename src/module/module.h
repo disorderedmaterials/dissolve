@@ -40,27 +40,25 @@ class QWidget;
 // Module
 class Module : public ListItem<Module>
 {
-      public:
-	// Constructor
+	public:
 	Module();
-	// Destructor
 	virtual ~Module();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	virtual Module *createInstance() const = 0;
 
 	/*
 	 * Definition
 	 */
-      protected:
+	protected:
 	// Unique name of Module
 	CharString uniqueName_;
 
-      public:
+	public:
 	// Target Configurations Enum
 	enum TargetConfigurationNumber
 	{
@@ -84,35 +82,36 @@ class Module : public ListItem<Module>
 	/*
 	 * Keywords
 	 */
-      protected:
+	protected:
 	// Keywords recognised by Module
 	KeywordList keywords_;
 
-      public:
+	public:
 	// Return list of recognised keywords
 	KeywordList &keywords();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList, const char *prefix);
+	KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,
+					      const char *prefix);
 	// Print valid keywords
 	void printValidKeywords();
 
 	/*
 	 * Initialisation
 	 */
-      public:
+	public:
 	// Perform any necessary initialisation for the Module
 	virtual void initialise() = 0;
 
 	/*
 	 * Control
 	 */
-      protected:
+	protected:
 	// Frequency at which to run Module (relative to layer execution count)
 	int frequency_;
 	// Whether the Module is enabled
 	bool enabled_;
 
-      public:
+	public:
 	// Set frequency at which to run Module (relative to layer execution count)
 	void setFrequency(int freq);
 	// Return frequency at which to run Module (relative to layer execution count)
@@ -131,13 +130,13 @@ class Module : public ListItem<Module>
 	/*
 	 * Targets
 	 */
-      protected:
+	protected:
 	// Configurations that are targeted by this Module
 	RefList<Configuration> targetConfigurations_;
 	// Whether this module is a local Module in a Configuration
 	bool configurationLocal_;
 
-      public:
+	public:
 	// Add Configuration target
 	bool addTargetConfiguration(Configuration *cfg);
 	// Add Configuration targets
@@ -162,11 +161,11 @@ class Module : public ListItem<Module>
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	virtual bool process(Dissolve &dissolve, ProcessPool &procPool) = 0;
 
-      public:
+	public:
 	// Run set-up stage
 	virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing stage
@@ -175,11 +174,11 @@ class Module : public ListItem<Module>
 	/*
 	 * Timing
 	 */
-      private:
+	private:
 	// Accumulated timing information (in seconds) for this Module
 	SampledDouble processTimes_;
 
-      public:
+	public:
 	// Return timing information (in seconds) for this Module
 	SampledDouble processTimes() const;
 	// Read timing information through specified parser
@@ -188,7 +187,7 @@ class Module : public ListItem<Module>
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	virtual ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

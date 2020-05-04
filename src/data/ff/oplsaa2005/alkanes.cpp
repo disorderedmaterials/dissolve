@@ -28,7 +28,6 @@
  * OPLS-AA (2005) Alkanes
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_Alkanes::Forcefield_OPLSAA2005_Alkanes()
 {
 	// Copy required types from OPLS-AA (2005) core list
@@ -52,6 +51,7 @@ const char *Forcefield_OPLSAA2005_Alkanes::name() const { return "OPLSAA2005/Alk
 // Return description for Forcefield
 const char *Forcefield_OPLSAA2005_Alkanes::description() const
 {
-	static CharString desc("Alkanes from OPLS-AA (2005), covering linear and branched alkanes.<br/><br/>References: %s", publicationReferences());
+	static CharString desc("Alkanes from OPLS-AA (2005), covering linear and branched alkanes.<br/><br/>References: %s",
+			       publicationReferences());
 	return desc.get();
 }

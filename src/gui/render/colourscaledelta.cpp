@@ -22,7 +22,6 @@
 #include "gui/render/colourscaledelta.h"
 #include "gui/render/colourscalepoint.h"
 
-// Constructor
 ColourScaleDelta::ColourScaleDelta()
 {
 	// Private variables
@@ -31,7 +30,10 @@ ColourScaleDelta::ColourScaleDelta()
 	useHSV_ = false;
 }
 
-ColourScaleDelta::ColourScaleDelta(const ColourScalePoint &start, const ColourScalePoint &end, bool useHSV) { set(start, end, useHSV); }
+ColourScaleDelta::ColourScaleDelta(const ColourScalePoint &start, const ColourScalePoint &end, bool useHSV)
+{
+	set(start, end, useHSV);
+}
 
 // Check whether the delta 'contains' the supplied value
 bool ColourScaleDelta::containsValue(double d) const
@@ -93,7 +95,9 @@ QColor ColourScaleDelta::colour(double value) const
 	QColor col;
 	if (useHSV_)
 	{
-		col.setHsvF(startColour_.hue() + deltaColourF_[0] * clampv, startColour_.saturationF() + deltaColourF_[1] * clampv, startColour_.valueF() + deltaColourF_[2] * clampv);
+		col.setHsvF(startColour_.hue() + deltaColourF_[0] * clampv,
+			    startColour_.saturationF() + deltaColourF_[1] * clampv,
+			    startColour_.valueF() + deltaColourF_[2] * clampv);
 	}
 	else
 	{
@@ -119,7 +123,9 @@ void ColourScaleDelta::colour(double v, GLfloat *rgba) const
 	if (useHSV_)
 	{
 		QColor col;
-		col.setHsvF(startColour_.hueF() + deltaColourF_[0] * clampv, startColour_.saturationF() + deltaColourF_[1] * clampv, startColour_.valueF() + deltaColourF_[2] * clampv);
+		col.setHsvF(startColour_.hueF() + deltaColourF_[0] * clampv,
+			    startColour_.saturationF() + deltaColourF_[1] * clampv,
+			    startColour_.valueF() + deltaColourF_[2] * clampv);
 		rgba[0] = col.redF();
 		rgba[1] = col.greenF();
 		rgba[2] = col.blueF();

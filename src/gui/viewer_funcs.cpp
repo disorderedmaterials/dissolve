@@ -22,7 +22,6 @@
 #include "base/messenger.h"
 #include "gui/viewer.hui"
 
-// Constructor
 BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderables_, fontInstance_)
 {
 	// Character / Setup
@@ -54,11 +53,11 @@ BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderabl
 	setAutoFillBackground(false);
 
 	// Set a surface format to enable multisampling
-	// NOTE This used to be performed by setting the default surface format within main(), but this created severe unwanted widget behaviour
+	// NOTE This used to be performed by setting the default surface format within main(), but this created severe unwanted
+	// widget behaviour
 	QSurfaceFormat surfaceFormat;
 	surfaceFormat.setSamples(4);
 	setFormat(surfaceFormat);
 }
 
-// Destructor
 BaseViewer::~BaseViewer() {}

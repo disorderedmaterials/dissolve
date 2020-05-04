@@ -25,8 +25,9 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
-// Constructor
-PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword,
+									 const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -40,8 +41,9 @@ PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget
 	connect(ui_.GaussianFWHMSpin, SIGNAL(valueChanged(double)), this, SLOT(functionParameterChanged(double)));
 	// 	connect(ui_.GaussianElementsRadio, SIGNAL(toggled(bool)), this, SLOT(functionRadioChanged(bool)));
 	// 	connect(ui_.FrequencyRadio, SIGNAL(toggled(bool)), this, SLOT(functionRadioChanged(bool)));
-	// 	connect(ui_.FrequencyBondConstantSpin, SIGNAL(valueChanged(double)), this, SLOT(functionParameterChanged(double)));
-	// 	connect(ui_.FrequencyAngleConstantSpin, SIGNAL(valueChanged(double)), this, SLOT(functionParameterChanged(double)));
+	// 	connect(ui_.FrequencyBondConstantSpin, SIGNAL(valueChanged(double)), this,
+	// SLOT(functionParameterChanged(double))); 	connect(ui_.FrequencyAngleConstantSpin, SIGNAL(valueChanged(double)),
+	// this, SLOT(functionParameterChanged(double)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<PairBroadeningFunctionKeyword *>(keyword);
@@ -100,20 +102,20 @@ void PairBroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &cor
 	// Radio button
 	switch (pairBroadeningFunction.function())
 	{
-	case (PairBroadeningFunction::NoFunction):
-		ui_.NoneRadio->setChecked(true);
-		break;
-	case (PairBroadeningFunction::GaussianFunction):
-		ui_.GaussianRadio->setChecked(true);
-		break;
-		// 		case (PairBroadeningFunction::GaussianElementPairFunction):
-		// 			ui_.GaussianElementsRadio->setChecked(true);
-		// 			break;
-		// 		case (PairBroadeningFunction::FrequencyFunction):
-		// 			ui_.FrequencyRadio->setChecked(true);
-		// 			break;
-	default:
-		break;
+		case (PairBroadeningFunction::NoFunction):
+			ui_.NoneRadio->setChecked(true);
+			break;
+		case (PairBroadeningFunction::GaussianFunction):
+			ui_.GaussianRadio->setChecked(true);
+			break;
+			// 		case (PairBroadeningFunction::GaussianElementPairFunction):
+			// 			ui_.GaussianElementsRadio->setChecked(true);
+			// 			break;
+			// 		case (PairBroadeningFunction::FrequencyFunction):
+			// 			ui_.FrequencyRadio->setChecked(true);
+			// 			break;
+		default:
+			break;
 	}
 
 	// Parameters
@@ -138,8 +140,9 @@ void PairBroadeningFunctionKeywordWidget::updateKeywordData()
 		pairBroadeningFunction.setFunction(PairBroadeningFunction::NoFunction);
 	else if (ui_.GaussianRadio->isChecked())
 		pairBroadeningFunction.setFunction(PairBroadeningFunction::GaussianFunction);
-	// 	else if (ui_.GaussianElementsRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::GaussianElementPairFunction);
-	// 	else if (ui_.FrequencyRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::FrequencyFunction);
+	// 	else if (ui_.GaussianElementsRadio->isChecked())
+	// pairBroadeningFunction.setFunction(PairBroadeningFunction::GaussianElementPairFunction); 	else if
+	// (ui_.FrequencyRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::FrequencyFunction);
 
 	// Parameters
 	pairBroadeningFunction.setGaussianFWHM(ui_.GaussianFWHMSpin->value());

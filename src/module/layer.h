@@ -32,16 +32,14 @@ class GenericList;
 // Module Layer - Named list of Modules with a defined processing frequency
 class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
 {
-      public:
-	// Constructor
+	public:
 	ModuleLayer();
-	// Destructor
 	~ModuleLayer();
 
 	/*
 	 * Layer Definition
 	 */
-      private:
+	private:
 	// Name of layer
 	CharString name_;
 	// Whether the layer is enabled
@@ -49,7 +47,7 @@ class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
 	// Frequency, relative to the main iteration counter, at which to execute the layer
 	int frequency_;
 
-      public:
+	public:
 	// Set name of layer
 	void setName(const char *name);
 	// Return name of layer

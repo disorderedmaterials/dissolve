@@ -25,15 +25,14 @@
 #include "expression/variable.h"
 #include "procedure/nodes/node.h"
 
-// Constructor
-ExpressionVariableListKeyword::ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables, ExpressionValue::ValueType variableType)
-    : KeywordData<List<ExpressionNode> &>(KeywordBase::ExpressionVariableListData, variables)
+ExpressionVariableListKeyword::ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables,
+							     ExpressionValue::ValueType variableType)
+	: KeywordData<List<ExpressionNode> &>(KeywordBase::ExpressionVariableListData, variables)
 {
 	parentNode_ = parentNode;
 	variableType_ = variableType;
 }
 
-// Destructor
 ExpressionVariableListKeyword::~ExpressionVariableListKeyword() {}
 
 /*
@@ -76,7 +75,8 @@ bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, const
 	// First argument is the name of the parameter to create - does it already exist in the node's current scope?
 	ExpressionVariable *parameter = parentNode_->parameterInScope(parser.argc(startArg));
 	if (parameter)
-		return Messenger::error("A parameter with the name '%s' is already in scope, and cannot be redefined.\n", parser.argc(startArg));
+		return Messenger::error("A parameter with the name '%s' is already in scope, and cannot be redefined.\n",
+					parser.argc(startArg));
 
 	// Create a new one
 	parameter = new ExpressionVariable;
@@ -110,7 +110,8 @@ bool ExpressionVariableListKeyword::write(LineParser &parser, const char *keywor
 		// Cast up to ExpressionVariable
 		ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
 		if (!var)
-			Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing ExpressionVariableList data.\n");
+			Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing "
+					 "ExpressionVariableList data.\n");
 		else if (variableType_ == ExpressionValue::IntegerType)
 		{
 			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, keywordName, var->name(), var->value().asInteger()))

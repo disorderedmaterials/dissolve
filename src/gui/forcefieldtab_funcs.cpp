@@ -34,8 +34,8 @@
 #include "main/dissolve.h"
 #include <QListWidgetItem>
 
-// Constructor / Destructor
-ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title)
+	: MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui_.setupUi(this);
 
@@ -47,10 +47,18 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
 	// Set item delegates for tables
 	// -- Functional Forms
-	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions())));
-	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions())));
-	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
-	ui_.MasterImpropersTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions())));
+	ui_.MasterBondsTable->setItemDelegateForColumn(
+		1, new ComboListDelegate(this,
+					 new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions())));
+	ui_.MasterAnglesTable->setItemDelegateForColumn(
+		1, new ComboListDelegate(
+			   this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions())));
+	ui_.MasterTorsionsTable->setItemDelegateForColumn(
+		1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(
+						       SpeciesTorsion::torsionFunctions())));
+	ui_.MasterImpropersTable->setItemDelegateForColumn(
+		1, new ComboListDelegate(this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(
+						       SpeciesImproper::improperFunctions())));
 
 	// -- Parameters
 	for (int n = 2; n < 6; ++n)
@@ -77,7 +85,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
 	// Set item delegates for tables
 	// -- Short Range Functional Forms
-	ui_.AtomTypesTable->setItemDelegateForColumn(3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
+	ui_.AtomTypesTable->setItemDelegateForColumn(
+		3, new ComboListDelegate(this,
+					 new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
 	// -- Charge / Parameters
 	for (int n = 4; n < 9; ++n)
 		ui_.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
@@ -92,9 +102,11 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
 	// Set up combo delegates
 	for (int n = 0; n < PairPotential::nCoulombTruncationSchemes; ++n)
-		ui_.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme((PairPotential::CoulombTruncationScheme)n));
+		ui_.CoulombTruncationCombo->addItem(
+			PairPotential::coulombTruncationScheme((PairPotential::CoulombTruncationScheme)n));
 	for (int n = 0; n < PairPotential::nShortRangeTruncationSchemes; ++n)
-		ui_.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)n));
+		ui_.ShortRangeTruncationCombo->addItem(
+			PairPotential::shortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)n));
 
 	// Set sensible lower limits and steps for range and delta
 	ui_.PairPotentialRangeSpin->setRange(1.0, 1.0e5);
@@ -451,23 +463,29 @@ void ForcefieldTab::updateControls()
 	Locker refreshLocker(refreshLock_);
 
 	// Master Bonds Table
-	TableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
+	TableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(),
+								    this, &ForcefieldTab::updateBondsTableRow);
 	ui_.MasterBondsTable->resizeColumnsToContents();
 
 	// Master Angles Table
-	TableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
+	TableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(),
+								     this, &ForcefieldTab::updateAnglesTableRow);
 	ui_.MasterAnglesTable->resizeColumnsToContents();
 
 	// Torsions Table
-	TableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
+	TableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(
+		ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
 	ui_.MasterTorsionsTable->resizeColumnsToContents();
 
 	// Impropers Table
-	TableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(ui_.MasterImpropersTable, dissolve_.coreData().masterImpropers(), this, &ForcefieldTab::updateImpropersTableRow);
+	TableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(ui_.MasterImpropersTable,
+									dissolve_.coreData().masterImpropers(), this,
+									&ForcefieldTab::updateImpropersTableRow);
 	ui_.MasterImpropersTable->resizeColumnsToContents();
 
 	// AtomTypes Table
-	TableWidgetUpdater<ForcefieldTab, AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	TableWidgetUpdater<ForcefieldTab, AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this,
+								     &ForcefieldTab::updateAtomTypesTableRow);
 	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials
@@ -486,13 +504,15 @@ void ForcefieldTab::updateControls()
 		ui_.PairPotentialsShortRangeOnlyRadio->setChecked(true);
 	ui_.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
 	ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
-	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() ==
+						      PairPotential::CosineShortRangeTruncation);
 	ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 
 	// -- Table
 	// -- Get current row index before we refresh...
 	int ppRowIndex = ui_.PairPotentialsTable->currentRow();
-	TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
+								   &ForcefieldTab::updatePairPotentialsTableRow);
 	ui_.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshLocker.unlock();
@@ -530,7 +550,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
 	// First, need to get target element for the new AtomType
 	bool ok;
-	Element *element = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", NULL, &ok);
+	Element *element =
+		ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", NULL, &ok);
 	if (!ok)
 		return;
 
@@ -538,7 +559,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
 	Locker refreshLocker(refreshLock_);
 
-	TableWidgetUpdater<ForcefieldTab, AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	TableWidgetUpdater<ForcefieldTab, AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this,
+								     &ForcefieldTab::updateAtomTypesTableRow);
 	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	dissolveWindow_->setModified();
@@ -559,34 +581,34 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		atomType->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Charge
-	case (2):
-		atomType->parameters().setCharge(w->text().toDouble());
-		atomTypeDataModified();
-		dissolveWindow_->setModified();
-		break;
-	// Short-range form
-	case (3):
-		atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
-		atomTypeDataModified();
-		break;
-	// Parameters
-	case (4):
-	case (5):
-	case (6):
-	case (7):
-		atomType->parameters().setParameter(w->column() - 4, w->text().toDouble());
-		atomTypeDataModified();
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			atomType->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Charge
+		case (2):
+			atomType->parameters().setCharge(w->text().toDouble());
+			atomTypeDataModified();
+			dissolveWindow_->setModified();
+			break;
+		// Short-range form
+		case (3):
+			atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
+			atomTypeDataModified();
+			break;
+		// Parameters
+		case (4):
+		case (5):
+		case (6):
+		case (7):
+			atomType->parameters().setParameter(w->column() - 4, w->text().toDouble());
+			atomTypeDataModified();
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
+			break;
 	}
 }
 
@@ -639,7 +661,10 @@ void ForcefieldTab::on_PairPotentialsIncludeCoulombRadio_clicked(bool checked)
 	dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_PairPotentialsShortRangeOnlyRadio_clicked(bool checked) { on_PairPotentialsIncludeCoulombRadio_clicked(false); }
+void ForcefieldTab::on_PairPotentialsShortRangeOnlyRadio_clicked(bool checked)
+{
+	on_PairPotentialsIncludeCoulombRadio_clicked(false);
+}
 
 void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 {
@@ -647,7 +672,8 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 		return;
 
 	PairPotential::setShortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)index);
-	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() ==
+						      PairPotential::CosineShortRangeTruncation);
 
 	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
 	{
@@ -710,14 +736,17 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
 	PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
 	if (pp)
 	{
-		Renderable *fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+		Renderable *fullPotential =
+			graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
 		fullPotential->setColour(StockColours::BlackStockColour);
 
-		Renderable *originalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+		Renderable *originalPotential =
+			graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
 		originalPotential->setColour(StockColours::RedStockColour);
 		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
-		Renderable *additionalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
+		Renderable *additionalPotential =
+			graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
 		additionalPotential->setColour(StockColours::BlueStockColour);
 		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
@@ -739,32 +768,33 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Functional form
-	case (2):
-		// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Charge I
-	case (3):
-		pairPotential->setChargeI(w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	// Charge J
-	case (4):
-		pairPotential->setChargeJ(w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (5):
-	case (6):
-	case (7):
-	case (8):
-		pairPotential->setParameter(w->column() - 5, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());
-		break;
+		// Functional form
+		case (2):
+			// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Charge I
+		case (3):
+			pairPotential->setChargeI(w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Charge J
+		case (4):
+			pairPotential->setChargeJ(w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			pairPotential->setParameter(w->column() - 5, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n",
+					 w->column());
+			break;
 	}
 }
 
@@ -785,27 +815,27 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesBond::bondFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 
@@ -826,27 +856,27 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 
@@ -867,27 +897,27 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 
@@ -908,27 +938,27 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
 	// Column of passed item tells us the type of data we need to change
 	switch (w->column())
 	{
-	// Name
-	case (0):
-		masterIntra->setName(qPrintable(w->text()));
-		dissolveWindow_->setModified();
-		break;
-	// Functional Form
-	case (1):
-		masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (2):
-	case (3):
-	case (4):
-	case (5):
-		masterIntra->setParameter(w->column() - 2, w->text().toDouble());
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-		break;
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
 	}
 }
 

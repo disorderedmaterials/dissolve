@@ -34,18 +34,17 @@ class SkeletonModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	SkeletonModule *module_;
 
-      public:
-	// Constructor
+	public:
 	SkeletonModuleWidget(QWidget *parent, SkeletonModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SkeletonModuleWidget ui_;
 };

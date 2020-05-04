@@ -23,7 +23,6 @@
 #include "base/processpool.h"
 #include "classes/braggreflection.h"
 
-// Constructor
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)
 {
 	hkl_.set(h, k, l);
@@ -34,10 +33,8 @@ KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes)
 	sinTerms_.initialise(nAtomTypes);
 }
 
-// Destructor
 KVector::~KVector() {}
 
-// Copy constructor
 KVector::KVector(const KVector &source) { (*this) = source; }
 
 // Operator=
@@ -95,7 +92,9 @@ void KVector::addCosTerm(int atomTypeIndex, double value)
 #ifdef CHECKS
 	if (atomTypeIndex >= cosTerms_.nItems())
 	{
-		Messenger::print("BAD_USAGE - KVector::cosTerms_ index supplied (%i) is greated than the size of the array (%i).\n", atomTypeIndex, cosTerms_.nItems());
+		Messenger::print(
+			"BAD_USAGE - KVector::cosTerms_ index supplied (%i) is greated than the size of the array (%i).\n",
+			atomTypeIndex, cosTerms_.nItems());
 		return;
 	}
 #endif
@@ -108,7 +107,9 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 #ifdef CHECKS
 	if (atomTypeIndex >= sinTerms_.nItems())
 	{
-		Messenger::print("BAD_USAGE - KVector::sinTerms_ index supplied (%i) is greated than the size of the array (%i).\n", atomTypeIndex, sinTerms_.nItems());
+		Messenger::print(
+			"BAD_USAGE - KVector::sinTerms_ index supplied (%i) is greated than the size of the array (%i).\n",
+			atomTypeIndex, sinTerms_.nItems());
 		return;
 	}
 #endif
@@ -127,7 +128,8 @@ void KVector::calculateIntensities(BraggReflection *reflectionArray)
 #endif
 	// Calculate final intensities from stored cos/sin terms
 	// Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
-	// Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with other objects
+	// Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with
+	// other objects
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
 	BraggReflection &braggReflection = reflectionArray[braggReflectionIndex_];
@@ -143,7 +145,10 @@ void KVector::calculateIntensities(BraggReflection *reflectionArray)
 }
 
 // Return specified intensity
-double KVector::intensity(int typeI, int typeJ) { return (cosTerms_[typeI] * cosTerms_[typeJ] + sinTerms_[typeI] * sinTerms_[typeJ]) * (hkl_.x == 0 ? 1 : 2); }
+double KVector::intensity(int typeI, int typeJ)
+{
+	return (cosTerms_[typeI] * cosTerms_[typeJ] + sinTerms_[typeI] * sinTerms_[typeJ]) * (hkl_.x == 0 ? 1 : 2);
+}
 
 /*
  * GenericItemBase Implementations
@@ -179,7 +184,8 @@ bool KVector::equality(ProcessPool &procPool)
 	if (!procPool.equality(hkl_))
 		return Messenger::error("KVector hkl value is not equivalent.\n");
 	if (!procPool.equality(braggReflectionIndex_))
-		return Messenger::error("KVector bragg reflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), braggReflectionIndex_);
+		return Messenger::error("KVector bragg reflection index is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), braggReflectionIndex_);
 	if (!procPool.equality(cosTerms_))
 		return Messenger::error("KVector cos terms are not equivalent.\n");
 	if (!procPool.equality(sinTerms_))

@@ -31,16 +31,14 @@ class Species;
 // Keyword with Species Data
 class SpeciesKeyword : public KeywordData<Species *>
 {
-      public:
-	// Constructor
+	public:
 	SpeciesKeyword(Species *sp = NULL);
-	// Destructor
 	~SpeciesKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -53,7 +51,7 @@ class SpeciesKeyword : public KeywordData<Species *>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied Species in the contained data
 	void removeReferencesTo(Species *sp);
 };

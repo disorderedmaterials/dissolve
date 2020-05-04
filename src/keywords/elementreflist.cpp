@@ -23,10 +23,11 @@
 #include "base/lineparser.h"
 #include "data/elements.h"
 
-// Constructor
-ElementRefListKeyword::ElementRefListKeyword(RefList<Element> &targetRefList) : KeywordData<RefList<Element> &>(KeywordBase::ElementRefListData, targetRefList) {}
+ElementRefListKeyword::ElementRefListKeyword(RefList<Element> &targetRefList)
+	: KeywordData<RefList<Element> &>(KeywordBase::ElementRefListData, targetRefList)
+{
+}
 
-// Destructor
 ElementRefListKeyword::~ElementRefListKeyword() {}
 
 /*

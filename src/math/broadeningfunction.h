@@ -34,7 +34,7 @@ class ProcessPool;
 // Broadening Function
 class BroadeningFunction : public GenericItemBase
 {
-      public:
+	public:
 	// Function Types
 	enum FunctionType
 	{
@@ -54,20 +54,17 @@ class BroadeningFunction : public GenericItemBase
 	// Return description for FunctionType
 	static const char *functionDescription(FunctionType func);
 
-      public:
-	// Constructor
-	BroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
-	// Destructor
+	public:
+	BroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0,
+			   double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	~BroadeningFunction();
-	// Copy Constructor
 	BroadeningFunction(const BroadeningFunction &source);
-	// Assignment Operator
 	void operator=(const BroadeningFunction &source);
 
 	/*
 	 * Function Data
 	 */
-      private:
+	private:
 	// Function Type
 	FunctionType function_;
 	// Parameters
@@ -77,9 +74,10 @@ class BroadeningFunction : public GenericItemBase
 	// Static value of omega to use if required
 	double staticOmega_;
 
-      public:
+	public:
 	// Set function data
-	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0,
+		 double p6 = 0.0);
 	// Set function data from LineParser source
 	bool set(LineParser &parser, int startArg);
 	// Return function type
@@ -114,17 +112,20 @@ class BroadeningFunction : public GenericItemBase
 	double yFT(double x) const;
 	// Return value of function given parameter x, and using static omega if necessary, regardless of inversion state
 	double yActual(double x) const;
-	// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of inversion state
+	// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of
+	// inversion state
 	double yFTActual(double x) const;
-	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth, and using static omega if necessary
+	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth, and
+	// using static omega if necessary
 	double discreteKernelNormalisation(double deltaX) const;
-	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth and omega value
+	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth and
+	// omega value
 	double discreteKernelNormalisation(double deltaX, double omega) const;
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -135,7 +136,7 @@ class BroadeningFunction : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

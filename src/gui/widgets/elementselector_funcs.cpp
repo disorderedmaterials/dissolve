@@ -29,7 +29,6 @@
 #include <QPushButton>
 #include <QToolButton>
 
-// Constructor
 ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 {
 	currentElement_ = NULL;
@@ -149,7 +148,6 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 	doubleClickTimer_.setInterval(QApplication::doubleClickInterval());
 }
 
-// Destructor
 ElementSelector::~ElementSelector() {}
 
 /*
@@ -215,7 +213,8 @@ Element *ElementSelector::currentElement() const { return currentElement_; }
  */
 
 // Get Element from user via input dialog
-Element *ElementSelector::getElement(QWidget *parent, const char *title, const char *labelText, Element *element, bool *ok, Qt::WindowFlags flags)
+Element *ElementSelector::getElement(QWidget *parent, const char *title, const char *labelText, Element *element, bool *ok,
+				     Qt::WindowFlags flags)
 {
 	// Create a QDialog for use
 	QDialog inputDialog(parent, flags);
@@ -231,11 +230,13 @@ Element *ElementSelector::getElement(QWidget *parent, const char *title, const c
 	QObject::connect(elementSelector, SIGNAL(elementDoubleClicked()), &inputDialog, SLOT(accept()));
 
 	// Create button box
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
+	QDialogButtonBox *buttonBox =
+		new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
 	QObject::connect(buttonBox, SIGNAL(accepted()), &inputDialog, SLOT(accept()));
 	QObject::connect(buttonBox, SIGNAL(rejected()), &inputDialog, SLOT(reject()));
 	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != NULL);
-	QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
+	QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok),
+			 SLOT(setEnabled(bool)));
 
 	QVBoxLayout *mainLayout = new QVBoxLayout(&inputDialog);
 	mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);

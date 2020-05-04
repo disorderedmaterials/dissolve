@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 DoubleKeyword::DoubleKeyword(double value) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
 	minimumLimit_ = false;
@@ -37,7 +36,8 @@ DoubleKeyword::DoubleKeyword(double value, double minValue) : KeywordData<double
 	maximumLimit_ = false;
 }
 
-DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue) : KeywordData<double>(KeywordBase::DoubleData, value)
+DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue)
+	: KeywordData<double>(KeywordBase::DoubleData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
@@ -45,7 +45,6 @@ DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue) : K
 	max_ = maxValue;
 }
 
-// Destructor
 DoubleKeyword::~DoubleKeyword() {}
 
 /*
@@ -102,11 +101,14 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreD
 		if (!setData(parser.argd(startArg)))
 		{
 			if (minimumLimit_ && maximumLimit_)
-				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_, min_, max_);
+				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_,
+						 min_, max_);
 			else if (minimumLimit_)
-				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_, min_);
+				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_,
+						 min_);
 			else
-				Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_, max_);
+				Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_,
+						 max_);
 
 			return false;
 		}
@@ -117,7 +119,10 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreD
 }
 
 // Write keyword data to specified LineParser
-bool DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_); }
+bool DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+{
+	return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_);
+}
 
 /*
  * Conversion

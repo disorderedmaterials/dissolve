@@ -41,16 +41,14 @@ class ProcessPool;
 // SpeciesAtom Definition
 class SpeciesAtom : public ListItem<SpeciesAtom>
 {
-      public:
-	// Constructor
+	public:
 	SpeciesAtom();
-	// Destructor
 	~SpeciesAtom();
 
 	/*
 	 * Properties
 	 */
-      private:
+	private:
 	// Parent Species
 	Species *parent_;
 	// Atomic Element
@@ -66,7 +64,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Whether the atom is currently selected
 	bool selected_;
 
-      public:
+	public:
 	// Set Species parent
 	void setSpecies(Species *sp);
 	// Return species parent
@@ -105,7 +103,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	/*
 	 * Intramolecular Information
 	 */
-      private:
+	private:
 	// List of bonds which this atom participates in
 	std::vector<SpeciesBond *> bonds_;
 	// List of angles which this atom participates in
@@ -115,7 +113,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Ordered list of Atoms with scaled or excluded interactions
 	OrderedPointerDataArray<SpeciesAtom, double> exclusions_;
 
-      public:
+	public:
 	// Add bond reference
 	void addBond(SpeciesBond *b);
 	// Remove bond reference
@@ -156,7 +154,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	/*
 	 * Coordinate Manipulation
 	 */
-      public:
+	public:
 	// Set coordinate
 	void setCoordinate(int index, double value);
 	// Set coordinates

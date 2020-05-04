@@ -34,22 +34,21 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	CalculateAvgMolModule *module_;
 
-      public:
-	// Constructor
+	public:
 	CalculateAvgMolModuleWidget(QWidget *parent, CalculateAvgMolModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::CalculateAvgMolModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
@@ -60,7 +59,7 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -69,8 +68,8 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
-      private slots:
+	private:
+	private slots:
 };
 
 #endif

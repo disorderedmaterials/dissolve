@@ -24,8 +24,10 @@
 #include "base/sysfunc.h"
 #include "math/data1d.h"
 
-// Constructor
-Data1DExportFileFormat::Data1DExportFileFormat(const char *filename, Data1DExportFormat format) : FileAndFormat(filename, format) {}
+Data1DExportFileFormat::Data1DExportFileFormat(const char *filename, Data1DExportFormat format)
+	: FileAndFormat(filename, format)
+{
+}
 
 /*
  * Format Access
@@ -34,7 +36,8 @@ Data1DExportFileFormat::Data1DExportFileFormat(const char *filename, Data1DExpor
 // Return enum options for Data1DExportFormat
 EnumOptions<Data1DExportFileFormat::Data1DExportFormat> Data1DExportFileFormat::data1DExportFormats()
 {
-	static EnumOptionsList Data1DExportFormats = EnumOptionsList() << EnumOption(Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)");
+	static EnumOptionsList Data1DExportFormats =
+		EnumOptionsList() << EnumOption(Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)");
 
 	static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> options("Data1DExportFileFormat", Data1DExportFormats);
 
@@ -51,7 +54,10 @@ const char *Data1DExportFileFormat::formatKeyword(int id) const { return data1DE
 const char *Data1DExportFileFormat::formatDescription(int id) const { return data1DExportFormats().descriptionByIndex(id); }
 
 // Return current format as CoordinateExportFormat
-Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat() const { return (Data1DExportFileFormat::Data1DExportFormat)format_; }
+Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat() const
+{
+	return (Data1DExportFileFormat::Data1DExportFormat)format_;
+}
 
 /*
  * Export Functions
@@ -66,7 +72,8 @@ bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
 	{
 		const Array<double> &errors = data.constErrors();
 		for (int n = 0; n < x.nItems(); ++n)
-			if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x.constAt(n), values.constAt(n), errors.constAt(n)))
+			if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x.constAt(n), values.constAt(n),
+					       errors.constAt(n)))
 				return false;
 	}
 	else

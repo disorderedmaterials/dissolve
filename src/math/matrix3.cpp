@@ -22,7 +22,6 @@
 #include "math/matrix3.h"
 #include "base/messenger.h"
 
-// Constructor
 Matrix3::Matrix3() { setIdentity(); }
 
 /*
@@ -186,8 +185,10 @@ Matrix3 &Matrix3::transpose()
 // Calculate determinant
 double Matrix3::determinant() const
 {
-	double det = matrix_[0] * matrix_[4] * matrix_[8] + matrix_[1] * matrix_[5] * matrix_[6] + matrix_[2] * matrix_[3] * matrix_[7];
-	det -= matrix_[2] * matrix_[4] * matrix_[6] + matrix_[1] * matrix_[3] * matrix_[8] + matrix_[0] * matrix_[5] * matrix_[7];
+	double det = matrix_[0] * matrix_[4] * matrix_[8] + matrix_[1] * matrix_[5] * matrix_[6] +
+		     matrix_[2] * matrix_[3] * matrix_[7];
+	det -= matrix_[2] * matrix_[4] * matrix_[6] + matrix_[1] * matrix_[3] * matrix_[8] +
+	       matrix_[0] * matrix_[5] * matrix_[7];
 	return det;
 }
 
@@ -380,7 +381,8 @@ void Matrix3::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix3::columnNormalise(int col)
 {
-	double mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] + matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
+	double mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] +
+				matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
 	matrix_[col * 3] *= mag;
 	matrix_[col * 3 + 1] *= mag;
 	matrix_[col * 3 + 2] *= mag;
@@ -674,7 +676,8 @@ void Matrix3::makeCrossProductMatrix(Vec3<double> &v)
 	Vec3<double> temp;
 	for (int n = 0; n < 3; ++n)
 	{
-		temp = Vec3<double>::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) - Vec3<double>::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1));
+		temp = Vec3<double>::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) -
+		       Vec3<double>::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1));
 		setColumn(n, temp);
 	}
 }

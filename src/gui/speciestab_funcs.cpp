@@ -32,9 +32,9 @@
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-// Constructor / Destructor
-SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species)
-    : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
+SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+		       Species *species)
+	: ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -44,7 +44,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
-	ui_.AtomTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
+	ui_.AtomTable->setItemDelegateForColumn(
+		1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
 	for (int n = 2; n < 6; ++n)
 		ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	ui_.AtomTable->horizontalHeader()->setFont(font());

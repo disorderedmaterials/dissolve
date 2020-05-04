@@ -24,13 +24,10 @@
 #include "base/sysfunc.h"
 #include "module/module.h"
 
-// Constructor
 ModuleList::ModuleList() {}
 
-// Destructor
 ModuleList::~ModuleList() {}
 
-// Conversion operator (List<Module>&)
 ModuleList::operator List<Module> &() { return modules_; }
 
 /*

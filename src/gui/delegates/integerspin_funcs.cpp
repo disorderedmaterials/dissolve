@@ -64,4 +64,8 @@ void IntegerSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 }
 
 // Update widget geometry
-void IntegerSpinDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
+void IntegerSpinDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+					       const QModelIndex &index) const
+{
+	editor->setGeometry(option.rect);
+}

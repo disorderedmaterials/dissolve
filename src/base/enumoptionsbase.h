@@ -27,8 +27,7 @@
 // Enum Options Base
 class EnumOptionsBase
 {
-      public:
-	// Constructors
+	public:
 	EnumOptionsBase();
 	EnumOptionsBase(const char *name, const EnumOptionsList &options);
 	EnumOptionsBase(const char *name, const EnumOptionsList &options, int defaultEnumeration);
@@ -36,28 +35,28 @@ class EnumOptionsBase
 	/*
 	 * Name
 	 */
-      protected:
+	protected:
 	// Name of options (e.g. from source enumeration)
 	const char *name_;
 
-      protected:
+	protected:
 	// Unrecognised option
 	static UnrecognisedEnumOption unrecognisedOption_;
 
-      public:
+	public:
 	// Return name of options (e.g. from source enumeration)
 	const char *name() const;
 
 	/*
 	 * Enum Option Data
 	 */
-      protected:
+	protected:
 	// Options
 	Array<EnumOption> options_;
 	// Current option index in local options_ array
 	int currentOptionIndex_;
 
-      public:
+	public:
 	// Return number of options available
 	int nOptions() const;
 	// Return nth keyword in the list
@@ -82,14 +81,14 @@ class EnumOptionsBase
 	/*
 	 * Error Reporting
 	 */
-      public:
+	public:
 	// Raise error, printing valid options
 	bool errorAndPrintValid(const char *badKeyword) const;
 
 	/*
 	 * Operators
 	 */
-      public:
+	public:
 	EnumOptionsBase &operator=(int index);
 };
 

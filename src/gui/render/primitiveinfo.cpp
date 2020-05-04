@@ -26,20 +26,18 @@
  * PrimitiveInfo
  */
 
-// Constructor
 PrimitiveInfo::PrimitiveInfo() {}
 
-// Destructor
 PrimitiveInfo::~PrimitiveInfo() {}
 
 /*
  * UncolouredPrimitiveInfo
  */
 
-// Constructor
-UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive *prim, Matrix4 transform) : primitive_(prim), transform_(transform) {}
+UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive *prim, Matrix4 transform) : primitive_(prim), transform_(transform)
+{
+}
 
-// Destructor
 UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo() {}
 
 // Expose contained info to GL
@@ -59,8 +57,8 @@ void UncolouredPrimitiveInfo::sendToGL(double pixelScaling)
  * ColouredPrimitiveInfo
  */
 
-// Constructor
-ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive *prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a) : primitive_(prim), transform_(transform)
+ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive *prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+	: primitive_(prim), transform_(transform)
 {
 	colour_[0] = r;
 	colour_[1] = g;
@@ -68,7 +66,6 @@ ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive *prim, Matrix4 transform,
 	colour_[3] = a;
 }
 
-// Destructor
 ColouredPrimitiveInfo::~ColouredPrimitiveInfo() {}
 
 // Expose contained info to GL
@@ -91,10 +88,10 @@ void ColouredPrimitiveInfo::sendToGL(double pixelScaling)
  * StylePrimitiveInfo
  */
 
-// Constructor
-StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode) {}
+StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode)
+{
+}
 
-// Destructor
 StylePrimitiveInfo::~StylePrimitiveInfo() {}
 
 // Expose contained info to GL
@@ -122,10 +119,8 @@ void StylePrimitiveInfo::sendToGL(double pixelScaling)
  * LineStylePrimitiveInfo
  */
 
-// Constructor
 LineStylePrimitiveInfo::LineStylePrimitiveInfo(LineStyle style) : lineStyle_(style) {}
 
-// Destructor
 LineStylePrimitiveInfo::~LineStylePrimitiveInfo() {}
 
 // Expose contained info to GL

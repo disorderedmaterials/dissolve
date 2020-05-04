@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 ChecksModule::ChecksModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 ChecksModule::~ChecksModule() {}
 
 /*

@@ -24,7 +24,6 @@
 #include "base/sysfunc.h"
 #include "module/module.h"
 
-// Constructor
 ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
 {
 	enabled_ = true;
@@ -32,7 +31,6 @@ ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
 	name_ = "Untitled Layer";
 }
 
-// Destructor
 ModuleLayer::~ModuleLayer() {}
 
 /*

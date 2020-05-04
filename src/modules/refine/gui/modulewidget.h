@@ -38,12 +38,11 @@ class RefineModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor / Destructor
+	public:
 	RefineModuleWidget(QWidget *parent, RefineModule *module, Dissolve &dissolve);
 	~RefineModuleWidget();
 
-      private:
+	private:
 	// Associated Module
 	RefineModule *module_;
 	// DataViewers contained within this widget
@@ -54,18 +53,18 @@ class RefineModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::RefineModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Read widget state through specified LineParser
 	bool readState(LineParser &parser);
 	// Write widget state through specified LineParser
@@ -74,7 +73,7 @@ class RefineModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(RefineModule *module);
 };

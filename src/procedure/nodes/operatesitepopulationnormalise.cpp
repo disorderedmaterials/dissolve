@@ -28,25 +28,27 @@
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
-OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
+OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode()
+	: OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site",
-		      "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites",
+		      new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_),
+		      "Site", "Site(s) by which to normalise data based on their population");
 }
 
-OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes)
-    : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
+OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(
+	RefList<const SelectProcedureNode> selectNodes)
+	: OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site",
-		      "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites",
+		      new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_),
+		      "Site", "Site(s) by which to normalise data based on their population");
 
 	selectNodes_ = selectNodes;
 }
 
-// Destructor
 OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProcedureNode() {}
 
 /*

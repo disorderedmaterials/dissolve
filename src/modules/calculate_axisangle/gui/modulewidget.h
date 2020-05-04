@@ -35,31 +35,30 @@ class CalculateAxisAngleModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	CalculateAxisAngleModule *module_;
 
-      public:
-	// Constructor
+	public:
 	CalculateAxisAngleModuleWidget(QWidget *parent, CalculateAxisAngleModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::CalculateAxisAngleModuleWidget ui_;
 	// DataViewers contained within this widget
 	DataViewer *rdfGraph_, *angleGraph_, *dAngleGraph_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -68,11 +67,11 @@ class CalculateAxisAngleModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(CalculateAxisAngleModule *module);
 
-      private slots:
+	private slots:
 };
 
 #endif

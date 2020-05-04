@@ -23,7 +23,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 IntegerKeyword::IntegerKeyword(int value) : KeywordData<int>(KeywordBase::IntegerData, value)
 {
 	minimumLimit_ = false;
@@ -45,7 +44,6 @@ IntegerKeyword::IntegerKeyword(int value, int minValue, int maxValue) : KeywordD
 	max_ = maxValue;
 }
 
-// Destructor
 IntegerKeyword::~IntegerKeyword() {}
 
 /*
@@ -102,11 +100,14 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &core
 		if (!setData(parser.argi(startArg)))
 		{
 			if (minimumLimit_ && maximumLimit_)
-				Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_, min_, max_);
+				Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_,
+						 min_, max_);
 			else if (minimumLimit_)
-				Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_, min_);
+				Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_,
+						 min_);
 			else
-				Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_, max_);
+				Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_,
+						 max_);
 
 			return false;
 		}
@@ -117,7 +118,10 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, const CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool IntegerKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %i\n", prefix, keywordName, data_); }
+bool IntegerKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+{
+	return parser.writeLineF("%s%s  %i\n", prefix, keywordName, data_);
+}
 
 /*
  * Conversion

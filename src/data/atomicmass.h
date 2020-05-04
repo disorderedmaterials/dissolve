@@ -27,15 +27,14 @@
 // Elemental (natural) atomic mass
 class AtomicMassData : public ElementReference
 {
-      public:
-	// Constructor
+	public:
 	AtomicMassData(int z, double massMin, double massMax = -1.0);
 
-      private:
+	private:
 	// Mass of element
 	double mass_;
 
-      public:
+	public:
 	// Return mass of element
 	double mass() const;
 };
@@ -43,11 +42,11 @@ class AtomicMassData : public ElementReference
 // Atomic Mass Helper Class
 class AtomicMass : public Elements
 {
-      private:
+	private:
 	// Return mass data for specified Z
 	static const AtomicMassData &massData(int Z);
 
-      public:
+	public:
 	// Return atomic mass for specified Z
 	static double mass(int Z);
 	// Return atomic mass for specified Element

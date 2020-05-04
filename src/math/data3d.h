@@ -33,12 +33,9 @@ class Histogram3D;
 // One-Dimensional Data
 class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore<Data3D>, public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	Data3D();
-	// Destructor
 	~Data3D();
-	// Copy Constructor
 	Data3D(const Data3D &source);
 	// Clear data
 	void clear();
@@ -46,7 +43,7 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// X axis array
 	Array<double> x_;
 	// Y axis array
@@ -62,7 +59,7 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	// Data version
 	VersionCounter version_;
 
-      public:
+	public:
 	// Initialise arrays to specified size
 	void initialise(int xSize, int ySize, int zSize, bool withError = false);
 	// Initialise to be consistent in size and axes with supplied object
@@ -127,26 +124,19 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment Operator
+	public:
 	void operator=(const Data3D &source);
-	// Operator +=
 	void operator+=(const Data3D &source);
-	// Operator +=
 	void operator+=(const double delta);
-	// Operator -=
 	void operator-=(const Data3D &source);
-	// Operator -=
 	void operator-=(const double delta);
-	// Operator *=
 	void operator*=(const double factor);
-	// Operator /=
 	void operator/=(const double factor);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -157,7 +147,7 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast data
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

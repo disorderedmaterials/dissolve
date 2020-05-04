@@ -34,8 +34,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 	/*
 	 * Chunk of objects, maintained by an ObjectFactory
 	 */
-      public:
-	// Constructor
+	public:
 	ObjectChunk<T>(int size) : ListItem<ObjectChunk<T>>(), nObjects_(size)
 	{
 		objectArray_ = new T[nObjects_];
@@ -44,7 +43,6 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 
 		markAllObjectsUnused();
 	}
-	// Destructor
 	~ObjectChunk()
 	{
 		if (objectArray_)
@@ -56,7 +54,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 	/*
 	 * Chunk Data
 	 */
-      private:
+	private:
 	// Number of objects in chunk
 	const int nObjects_;
 	// Size of individual object
@@ -70,7 +68,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 	// Index of next available object
 	int nextAvailableObject_;
 
-      private:
+	private:
 	// Determine array offset of object
 	int objectOffset(T *object)
 	{
@@ -83,7 +81,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 		return (index < nObjects_ ? index : -1);
 	}
 
-      public:
+	public:
 	// Return next available object
 	T *nextAvailable()
 	{
@@ -165,8 +163,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 // Object Factory Class
 template <class T> class ObjectFactory
 {
-      public:
-	// Constructor
+	public:
 	ObjectFactory<T>()
 	{
 		currentChunk_ = NULL;
@@ -176,7 +173,7 @@ template <class T> class ObjectFactory
 	/*
 	 * Object Store
 	 */
-      private:
+	private:
 	// Chunk size
 	int chunkSize_;
 	// List of object chunks maintained by this factory
@@ -184,14 +181,14 @@ template <class T> class ObjectFactory
 	// Current chunk from which objects are being taken
 	ObjectChunk<T> *currentChunk_;
 
-      public:
+	public:
 	// Set chunksize to use when creating new chunks
 	void setChunkSize(int chunkSize) { chunkSize_ = chunkSize; }
 
 	/*
 	 * Object Access
 	 */
-      public:
+	public:
 	// Produce a new object
 	T *produce()
 	{
@@ -205,7 +202,8 @@ template <class T> class ObjectFactory
 			return currentChunk_->nextAvailable();
 		else
 		{
-			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
+			// Must search current chunk list to see if any current chunks have available space. If not, we will
+			// create a new one
 			for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
 			{
 				if (chunk == currentChunk_)

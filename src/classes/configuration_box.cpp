@@ -89,10 +89,13 @@ void Configuration::applySizeFactor(const PotentialMap &potentialMap)
 		// Calculate ratio between current and applied size factors for use later on
 		const double sizeFactorRatio = requestedSizeFactor_ / appliedSizeFactor_;
 
-		// Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied size factor
+		// Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied
+		// size factor
 		if (fabs(sizeFactorRatio - 1.0) > 1.0e-5)
 		{
-			Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling Box contents.\n", requestedSizeFactor_, appliedSizeFactor_);
+			Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling "
+					 "Box contents.\n",
+					 requestedSizeFactor_, appliedSizeFactor_);
 
 			// Scale molecule centres of geometry
 			scaleMoleculeCentres(sizeFactorRatio);
@@ -123,11 +126,13 @@ void Configuration::applySizeFactor(const PotentialMap &potentialMap)
 			requestedSizeFactor_ *= reductionFactor;
 			if (requestedSizeFactor_ < 1.0)
 				requestedSizeFactor_ = 1.0;
-			Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to %f\n", requestedSizeFactor_);
+			Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to %f\n",
+					 requestedSizeFactor_);
 		}
 		else
 		{
-			Messenger::print("Intermolecular energy is positive, so SizeFactor remains at %f\n", requestedSizeFactor_);
+			Messenger::print("Intermolecular energy is positive, so SizeFactor remains at %f\n",
+					 requestedSizeFactor_);
 			break;
 		}
 	}

@@ -87,7 +87,9 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
 		item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
 	item->setSelected(speciesAtom->isSelected());
-	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+	item->setFlags(dissolve_.pairPotentialsIncludeCoulomb()
+			       ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+			       : Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 }
 
 // BondTable row update function
@@ -107,7 +109,8 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 		else
 			item = ui_.BondTable->item(row, n);
 		item->setText(QString::number(speciesBond->index(n) + 1));
-		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+							       : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -119,7 +122,8 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 	}
 	else
 		item = ui_.BondTable->item(row, 2);
-	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name()) : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
+	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name())
+						      : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -133,7 +137,8 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 		else
 			item = ui_.BondTable->item(row, n + 3);
 		item->setText(QString::number(speciesBond->parameter(n)));
-		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+							       : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -154,7 +159,8 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 		else
 			item = ui_.AngleTable->item(row, n);
 		item->setText(QString::number(speciesAngle->index(n) + 1));
-		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								: Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -166,7 +172,8 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 	}
 	else
 		item = ui_.AngleTable->item(row, 3);
-	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name()) : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
+	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name())
+						       : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -180,7 +187,8 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 		else
 			item = ui_.AngleTable->item(row, n + 4);
 		item->setText(QString::number(speciesAngle->parameter(n)));
-		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								: Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -201,7 +209,8 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 		else
 			item = ui_.TorsionTable->item(row, n);
 		item->setText(QString::number(speciesTorsion->index(n) + 1));
-		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								  : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -213,7 +222,9 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 	}
 	else
 		item = ui_.TorsionTable->item(row, 4);
-	item->setText(speciesTorsion->masterParameters() ? QString("@%1").arg(speciesTorsion->masterParameters()->name()) : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
+	item->setText(speciesTorsion->masterParameters()
+			      ? QString("@%1").arg(speciesTorsion->masterParameters()->name())
+			      : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -227,7 +238,8 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 		else
 			item = ui_.TorsionTable->item(row, n + 5);
 		item->setText(QString::number(speciesTorsion->parameter(n)));
-		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesTorsion->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								  : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -248,7 +260,8 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
 		else
 			item = ui_.ImproperTable->item(row, n);
 		item->setText(QString::number(speciesImproper->index(n) + 1));
-		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								   : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 
 	// Interaction Form
@@ -260,8 +273,9 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
 	}
 	else
 		item = ui_.ImproperTable->item(row, 4);
-	item->setText(speciesImproper->masterParameters() ? QString("@%1").arg(speciesImproper->masterParameters()->name())
-							  : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
+	item->setText(speciesImproper->masterParameters()
+			      ? QString("@%1").arg(speciesImproper->masterParameters()->name())
+			      : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
 
 	// Interaction Parameters
 	for (int n = 0; n < 4; ++n)
@@ -275,7 +289,8 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
 		else
 			item = ui_.ImproperTable->item(row, n + 5);
 		item->setText(QString::number(speciesImproper->parameter(n)));
-		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable : Qt::ItemIsEnabled | Qt::ItemIsEditable);
+		item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
+								   : Qt::ItemIsEnabled | Qt::ItemIsEditable);
 	}
 }
 
@@ -320,49 +335,49 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
 	AtomType *atomType;
 	switch (w->column())
 	{
-	// Element
-	case (0):
-		break;
-	// AtomType
-	case (1):
-		// Check the text to see if it is an existing AtomType - if not, we should create it
-		atomType = dissolve_.findAtomType(qPrintable(w->text()));
-		if (!atomType)
-		{
-			atomType = dissolve_.addAtomType(speciesAtom->element());
-			atomType->setName(qPrintable(w->text()));
-		}
-		speciesAtom->setAtomType(atomType);
-		dissolveWindow_->setModified();
-		break;
-	// Coordinates
-	case (2):
-	case (3):
-	case (4):
-		switch (w->column())
-		{
-		case 2:
-			r.x = w->text().toDouble();
+		// Element
+		case (0):
 			break;
-		case 3:
-			r.y = w->text().toDouble();
+		// AtomType
+		case (1):
+			// Check the text to see if it is an existing AtomType - if not, we should create it
+			atomType = dissolve_.findAtomType(qPrintable(w->text()));
+			if (!atomType)
+			{
+				atomType = dissolve_.addAtomType(speciesAtom->element());
+				atomType->setName(qPrintable(w->text()));
+			}
+			speciesAtom->setAtomType(atomType);
+			dissolveWindow_->setModified();
 			break;
-		case 4:
-			r.z = w->text().toDouble();
+		// Coordinates
+		case (2):
+		case (3):
+		case (4):
+			switch (w->column())
+			{
+				case 2:
+					r.x = w->text().toDouble();
+					break;
+				case 3:
+					r.y = w->text().toDouble();
+					break;
+				case 4:
+					r.z = w->text().toDouble();
+					break;
+			}
+			species_->setAtomCoordinates(speciesAtom, r);
+			dissolveWindow_->setModified();
 			break;
-		}
-		species_->setAtomCoordinates(speciesAtom, r);
-		dissolveWindow_->setModified();
-		break;
-	// Charge
-	case (5):
-		speciesAtom->setCharge(w->text().toDouble());
-		// TODO This change needs to be propagated to all Configurations->Molecules based on this Species
-		dissolveWindow_->setModified();
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
-		break;
+		// Charge
+		case (5):
+			speciesAtom->setCharge(w->text().toDouble());
+			// TODO This change needs to be propagated to all Configurations->Molecules based on this Species
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
+			break;
 	}
 }
 
@@ -406,48 +421,48 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
 	bool updateRow = false;
 	switch (w->column())
 	{
-	// Atom Indices
-	case (0):
-	case (1):
-		// Get both atom indices and set the atoms in the interaction
-		i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-		j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-		if (species_->reconnectBond(speciesBond, i, j))
-		{
+		// Atom Indices
+		case (0):
+		case (1):
+			// Get both atom indices and set the atoms in the interaction
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			if (species_->reconnectBond(speciesBond, i, j))
+			{
+				updateRow = true;
+				dissolveWindow_->setModified();
+			}
+			break;
+		// Functional Form
+		case (2):
+			// If the text starts with an '@' then its a reference to a master term
+			if (w->text().at(0) == '@')
+			{
+				MasterIntra *master = dissolve_.coreData().hasMasterBond(qPrintable(w->text()));
+				speciesBond->setMasterParameters(master);
+			}
+			else
+			{
+				SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(qPrintable(w->text()));
+				speciesBond->setMasterParameters(NULL);
+				speciesBond->setForm(bf);
+			}
 			updateRow = true;
 			dissolveWindow_->setModified();
-		}
-		break;
-	// Functional Form
-	case (2):
-		// If the text starts with an '@' then its a reference to a master term
-		if (w->text().at(0) == '@')
-		{
-			MasterIntra *master = dissolve_.coreData().hasMasterBond(qPrintable(w->text()));
-			speciesBond->setMasterParameters(master);
-		}
-		else
-		{
-			SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(qPrintable(w->text()));
-			speciesBond->setMasterParameters(NULL);
-			speciesBond->setForm(bf);
-		}
-		updateRow = true;
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (3):
-	case (4):
-	case (5):
-	case (6):
-		if (speciesBond->masterParameters())
-			Messenger::error("Refusing to set bond parameter since it belongs to a master term.\n");
-		else
-			speciesBond->setParameter(w->column() - 3, w->text().toDouble());
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of Bond table.\n", w->column());
-		break;
+			break;
+		// Parameters
+		case (3):
+		case (4):
+		case (5):
+		case (6):
+			if (speciesBond->masterParameters())
+				Messenger::error("Refusing to set bond parameter since it belongs to a master term.\n");
+			else
+				speciesBond->setParameter(w->column() - 3, w->text().toDouble());
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Bond table.\n", w->column());
+			break;
 	}
 
 	// Update the row if necessary
@@ -473,50 +488,51 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
 	bool updateRow = false;
 	switch (w->column())
 	{
-	// Atom Indices
-	case (0):
-	case (1):
-	case (2):
-		// Get all atom indices and set the atoms in the interaction
-		i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-		j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-		k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
-		if (species_->reconnectAngle(speciesAngle, i, j, k))
-		{
+		// Atom Indices
+		case (0):
+		case (1):
+		case (2):
+			// Get all atom indices and set the atoms in the interaction
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
+			if (species_->reconnectAngle(speciesAngle, i, j, k))
+			{
+				updateRow = true;
+				dissolveWindow_->setModified();
+			}
+			break;
+		// Functional Form
+		case (3):
+			// If the text starts with an '@' then its a reference to a master term
+			if (w->text().at(0) == '@')
+			{
+				MasterIntra *master = dissolve_.coreData().hasMasterAngle(qPrintable(w->text()));
+				speciesAngle->setMasterParameters(master);
+			}
+			else
+			{
+				SpeciesAngle::AngleFunction af =
+					SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text()));
+				speciesAngle->setMasterParameters(NULL);
+				speciesAngle->setForm(af);
+			}
 			updateRow = true;
 			dissolveWindow_->setModified();
-		}
-		break;
-	// Functional Form
-	case (3):
-		// If the text starts with an '@' then its a reference to a master term
-		if (w->text().at(0) == '@')
-		{
-			MasterIntra *master = dissolve_.coreData().hasMasterAngle(qPrintable(w->text()));
-			speciesAngle->setMasterParameters(master);
-		}
-		else
-		{
-			SpeciesAngle::AngleFunction af = SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text()));
-			speciesAngle->setMasterParameters(NULL);
-			speciesAngle->setForm(af);
-		}
-		updateRow = true;
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (4):
-	case (5):
-	case (6):
-	case (7):
-		if (speciesAngle->masterParameters())
-			Messenger::error("Refusing to set angle parameter since it belongs to a master term.\n");
-		else
-			speciesAngle->setParameter(w->column() - 4, w->text().toDouble());
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of Angle table.\n", w->column());
-		break;
+			break;
+		// Parameters
+		case (4):
+		case (5):
+		case (6):
+		case (7):
+			if (speciesAngle->masterParameters())
+				Messenger::error("Refusing to set angle parameter since it belongs to a master term.\n");
+			else
+				speciesAngle->setParameter(w->column() - 4, w->text().toDouble());
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Angle table.\n", w->column());
+			break;
 	}
 
 	// Update the row if necessary
@@ -542,52 +558,53 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
 	bool updateRow = false;
 	switch (w->column())
 	{
-	// Atom Indices
-	case (0):
-	case (1):
-	case (2):
-	case (3):
-		// Get all atom indices and set the atoms in the interaction
-		i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-		j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-		k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
-		l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
-		if (species_->reconnectTorsion(speciesTorsion, i, j, k, l))
-		{
+		// Atom Indices
+		case (0):
+		case (1):
+		case (2):
+		case (3):
+			// Get all atom indices and set the atoms in the interaction
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
+			l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
+			if (species_->reconnectTorsion(speciesTorsion, i, j, k, l))
+			{
+				updateRow = true;
+				dissolveWindow_->setModified();
+			}
+			break;
+		// Functional Form
+		case (4):
+			// If the text starts with an '@' then its a reference to a master term
+			if (w->text().at(0) == '@')
+			{
+				MasterIntra *master = dissolve_.coreData().hasMasterTorsion(qPrintable(w->text()));
+				speciesTorsion->setMasterParameters(master);
+			}
+			else
+			{
+				SpeciesTorsion::TorsionFunction tf =
+					SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
+				speciesTorsion->setMasterParameters(NULL);
+				speciesTorsion->setForm(tf);
+			}
 			updateRow = true;
 			dissolveWindow_->setModified();
-		}
-		break;
-	// Functional Form
-	case (4):
-		// If the text starts with an '@' then its a reference to a master term
-		if (w->text().at(0) == '@')
-		{
-			MasterIntra *master = dissolve_.coreData().hasMasterTorsion(qPrintable(w->text()));
-			speciesTorsion->setMasterParameters(master);
-		}
-		else
-		{
-			SpeciesTorsion::TorsionFunction tf = SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
-			speciesTorsion->setMasterParameters(NULL);
-			speciesTorsion->setForm(tf);
-		}
-		updateRow = true;
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (5):
-	case (6):
-	case (7):
-	case (8):
-		if (speciesTorsion->masterParameters())
-			Messenger::error("Refusing to set torsion parameter since it belongs to a master term.\n");
-		else
-			speciesTorsion->setParameter(w->column() - 5, w->text().toDouble());
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of Torsion table.\n", w->column());
-		break;
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			if (speciesTorsion->masterParameters())
+				Messenger::error("Refusing to set torsion parameter since it belongs to a master term.\n");
+			else
+				speciesTorsion->setParameter(w->column() - 5, w->text().toDouble());
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Torsion table.\n", w->column());
+			break;
 	}
 
 	// Update the row if necessary
@@ -613,52 +630,53 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
 	bool updateRow = false;
 	switch (w->column())
 	{
-	// Atom Indices
-	case (0):
-	case (1):
-	case (2):
-	case (3):
-		// Get all atom indices and set the atoms in the interaction
-		i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-		j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-		k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
-		l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
-		if (species_->reconnectImproper(speciesImproper, i, j, k, l))
-		{
+		// Atom Indices
+		case (0):
+		case (1):
+		case (2):
+		case (3):
+			// Get all atom indices and set the atoms in the interaction
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
+			l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
+			if (species_->reconnectImproper(speciesImproper, i, j, k, l))
+			{
+				updateRow = true;
+				dissolveWindow_->setModified();
+			}
+			break;
+		// Functional Form
+		case (4):
+			// If the text starts with an '@' then its a reference to a master term
+			if (w->text().at(0) == '@')
+			{
+				MasterIntra *master = dissolve_.coreData().hasMasterImproper(qPrintable(w->text()));
+				speciesImproper->setMasterParameters(master);
+			}
+			else
+			{
+				SpeciesImproper::ImproperFunction tf =
+					SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
+				speciesImproper->setMasterParameters(NULL);
+				speciesImproper->setForm(tf);
+			}
 			updateRow = true;
 			dissolveWindow_->setModified();
-		}
-		break;
-	// Functional Form
-	case (4):
-		// If the text starts with an '@' then its a reference to a master term
-		if (w->text().at(0) == '@')
-		{
-			MasterIntra *master = dissolve_.coreData().hasMasterImproper(qPrintable(w->text()));
-			speciesImproper->setMasterParameters(master);
-		}
-		else
-		{
-			SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
-			speciesImproper->setMasterParameters(NULL);
-			speciesImproper->setForm(tf);
-		}
-		updateRow = true;
-		dissolveWindow_->setModified();
-		break;
-	// Parameters
-	case (5):
-	case (6):
-	case (7):
-	case (8):
-		if (speciesImproper->masterParameters())
-			Messenger::error("Refusing to set improper parameter since it belongs to a master term.\n");
-		else
-			speciesImproper->setParameter(w->column() - 5, w->text().toDouble());
-		break;
-	default:
-		Messenger::error("Don't know what to do with data from column %i of Improper table.\n", w->column());
-		break;
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			if (speciesImproper->masterParameters())
+				Messenger::error("Refusing to set improper parameter since it belongs to a master term.\n");
+			else
+				speciesImproper->setParameter(w->column() - 5, w->text().toDouble());
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Improper table.\n", w->column());
+			break;
 	}
 
 	// Update the row if necessary
@@ -684,7 +702,8 @@ void SpeciesTab::updateGeometryTab()
 	if (!species_)
 		ui_.AtomTable->clearContents();
 	else
-		TableWidgetUpdater<SpeciesTab, SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this,
+									       &SpeciesTab::updateAtomTableRow);
 
 	// -- Intramolecular terms
 	if (!species_)
@@ -696,10 +715,14 @@ void SpeciesTab::updateGeometryTab()
 	}
 	else
 	{
-		TableWidgetUpdater<SpeciesTab, SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this, &SpeciesTab::updateBondTableRow);
-		TableWidgetUpdater<SpeciesTab, SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this, &SpeciesTab::updateAngleTableRow);
-		TableWidgetUpdater<SpeciesTab, SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this, &SpeciesTab::updateTorsionTableRow);
-		TableWidgetUpdater<SpeciesTab, SpeciesImproper> improperUpdater(ui_.ImproperTable, species_->impropers(), this, &SpeciesTab::updateImproperTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this,
+									&SpeciesTab::updateBondTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this,
+									  &SpeciesTab::updateAngleTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this,
+									      &SpeciesTab::updateTorsionTableRow);
+		TableWidgetUpdater<SpeciesTab, SpeciesImproper> improperUpdater(ui_.ImproperTable, species_->impropers(), this,
+										&SpeciesTab::updateImproperTableRow);
 	}
 	ui_.BondTable->resizeColumnsToContents();
 	ui_.AngleTable->resizeColumnsToContents();

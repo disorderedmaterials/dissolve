@@ -133,13 +133,15 @@ bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
 			PairPotential *pot = pairPotential(at1, at2);
 			if (pot)
 			{
-				Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+				Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n",
+						 at1->name(), at2->name());
 				if (!pot->setUp(at1, at2))
 					return false;
 			}
 			else
 			{
-				Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+				Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n",
+						 at1->name(), at2->name());
 				pot = addPairPotential(at1, at2);
 			}
 
@@ -153,7 +155,8 @@ bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
 			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
 			if (!processingModuleData_.contains(itemName, "Dissolve"))
 				continue;
-			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
+			pot->setUAdditional(
+				GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
 		}
 	}
 

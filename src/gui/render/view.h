@@ -35,14 +35,13 @@ class FontInstance;
 // Rendering View
 class View
 {
-      private:
+	private:
 	// Associated FontInstance from parent viewer
 	FontInstance &fontInstance_;
 	// List of Renderables that we are to display
 	const List<Renderable> &renderables_;
 
-      public:
-	// Constructor / Destructor
+	public:
 	View(const List<Renderable> &renderables, FontInstance &fontInstance);
 	~View();
 	// Clear view, resetting to defaults
@@ -51,7 +50,7 @@ class View
 	/*
 	 * Geometry
 	 */
-      private:
+	private:
 	// Pixel offsets for view
 	int xOffset_, yOffset_;
 	// Scale factors for view
@@ -63,7 +62,7 @@ class View
 	// Version of viewport matrix
 	int viewportVersion_;
 
-      public:
+	public:
 	// Set pixel offsets and scales to use
 	void setOffsetAndScale(int xOffset, int yOffset, double xScale, double yScale);
 	// Recalculate viewport matrix based on pixel dimensions provided
@@ -76,7 +75,7 @@ class View
 	/*
 	 * Projection / View
 	 */
-      public:
+	public:
 	// View type
 	enum ViewType
 	{
@@ -104,7 +103,7 @@ class View
 	// Convert AutoFollowType to text string
 	static const char *autoFollowType(AutoFollowType aft);
 
-      private:
+	private:
 	// Type of view to use
 	ViewType viewType_;
 	// Linked View, if any
@@ -142,11 +141,11 @@ class View
 	// Length of X region to follow, if autoFollowType_ == XFollow
 	double autoFollowXLength_;
 
-      private:
+	private:
 	// Return calculated projection matrix
 	Matrix4 calculateProjectionMatrix(bool hasPerspective, double orthoZoom = 0.0) const;
 
-      public:
+	public:
 	// Set view type
 	void setViewType(View::ViewType vt);
 	// Return view type
@@ -190,7 +189,8 @@ class View
 	// Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
 	Vec3<double> dataToScreen(Vec3<double> r, double &delta) const;
 	// Project given data coordinates into screen coordinates using supplied rotation matrix and translation vector
-	Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
+	Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix,
+				  Vec3<double> translation = Vec3<double>()) const;
 	// Return z translation necessary to display coordinates supplied, assuming the identity view matrix
 	double calculateRequiredZoom(double xMax, double yMax, double fraction) const;
 	// Convert screen coordinates into data space coordinates
@@ -225,13 +225,13 @@ class View
 	/*
 	 * Axes
 	 */
-      private:
+	private:
 	// Axes for the view
 	Axes axes_;
 	// Pixel 'lengths' of axes in flat views
 	Vec3<double> axisPixelLength_;
 
-      public:
+	public:
 	// Return data minima over all displayed renderables
 	Vec3<double> dataMinima();
 	// Return data maxima over all displayed renderables
@@ -254,7 +254,7 @@ class View
 	/*
 	 * Style
 	 */
-      private:
+	private:
 	// Font scaling for axis value labels
 	double labelPointSize_;
 	// Font scaling for titles
@@ -264,11 +264,11 @@ class View
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D_;
 
-      private:
+	private:
 	// Calculate font scaling factor
 	void calculateFontScaling();
 
-      public:
+	public:
 	// Set font point size for axis value labels
 	void setLabelPointSize(double value);
 	// Return font point size for axis value labels

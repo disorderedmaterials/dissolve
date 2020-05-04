@@ -30,7 +30,6 @@ template <class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
 template <class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
 template <class Data1D> const char *ObjectStore<Data1D>::objectTypeName_ = "Data1D";
 
-// Constructor
 Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
 {
 	static int count = 0;
@@ -41,11 +40,12 @@ Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data
 	clear();
 }
 
-// Destructor
 Data1D::~Data1D() {}
 
-// Copy Constructor
-Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable), ObjectStore<Data1D>(this) { (*this) = source; }
+Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable), ObjectStore<Data1D>(this)
+{
+	(*this) = source;
+}
 
 // Clear Data
 void Data1D::clear()
@@ -132,7 +132,9 @@ void Data1D::addPoint(double x, double value, double error)
 	if (hasError_)
 		errors_.add(error);
 	else
-		Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='%s', tag='%s') has no error information associated with it.\n", name(), objectTag());
+		Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='%s', tag='%s') has no "
+				"error information associated with it.\n",
+				name(), objectTag());
 
 	++version_;
 }
@@ -293,7 +295,8 @@ double &Data1D::error(int index)
 	if (!hasError_)
 	{
 		static double dummy;
-		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(), objectTag());
+		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n",
+				name(), objectTag());
 		return dummy;
 	}
 
@@ -307,7 +310,9 @@ double Data1D::constError(int index) const
 {
 	if (!hasError_)
 	{
-		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constError(int) was requested.\n", name(), objectTag());
+		Messenger::warn(
+			"This Data1D (name='%s', tag='%s') has no errors to return, but constError(int) was requested.\n",
+			name(), objectTag());
 		return 0.0;
 	}
 
@@ -318,7 +323,8 @@ double Data1D::constError(int index) const
 Array<double> &Data1D::errors()
 {
 	if (!hasError_)
-		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
+		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n",
+				name(), objectTag());
 
 	++version_;
 
@@ -329,7 +335,8 @@ Array<double> &Data1D::errors()
 const Array<double> &Data1D::constErrors() const
 {
 	if (!hasError_)
-		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
+		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n",
+				name(), objectTag());
 
 	return errors_;
 }
@@ -338,7 +345,6 @@ const Array<double> &Data1D::constErrors() const
  * Operators
  */
 
-// Operator =
 void Data1D::operator=(const Data1D &source)
 {
 	name_ = source.name_;
@@ -350,7 +356,6 @@ void Data1D::operator=(const Data1D &source)
 	++version_;
 }
 
-// Operator +=
 void Data1D::operator+=(const Data1D &source)
 {
 	// If no data is present, simply copy the other arrays
@@ -376,7 +381,9 @@ void Data1D::operator+=(const Data1D &source)
 		// Check x values for consistency
 		if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
 		{
-			Messenger::error("Failed to += these Data1D together since the x arrays are different (at point %i, x are %e and %e).\n", n, x_[n], source.constXAxis(n));
+			Messenger::error("Failed to += these Data1D together since the x arrays are different (at point %i, x "
+					 "are %e and %e).\n",
+					 n, x_[n], source.constXAxis(n));
 			return;
 		}
 #endif
@@ -384,7 +391,6 @@ void Data1D::operator+=(const Data1D &source)
 	}
 }
 
-// Operator +=
 void Data1D::operator+=(const double delta)
 {
 	for (int n = 0; n < values_.nItems(); ++n)
@@ -393,7 +399,6 @@ void Data1D::operator+=(const double delta)
 	++version_;
 }
 
-// Operator -=
 void Data1D::operator-=(const Data1D &source)
 {
 	// If no data is present, simply copy the other arrays and negate the y array
@@ -421,7 +426,9 @@ void Data1D::operator-=(const Data1D &source)
 		// Check x values for consistency
 		if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
 		{
-			Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point %i, x are %e and %e).\n", n, x_[n], source.constXAxis(n));
+			Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point %i, x "
+					 "are %e and %e).\n",
+					 n, x_[n], source.constXAxis(n));
 			return;
 		}
 #endif
@@ -429,7 +436,6 @@ void Data1D::operator-=(const Data1D &source)
 	}
 }
 
-// Operator -=
 void Data1D::operator-=(const double delta)
 {
 	for (int n = 0; n < values_.nItems(); ++n)
@@ -438,7 +444,6 @@ void Data1D::operator-=(const double delta)
 	++version_;
 }
 
-// Operator *=
 void Data1D::operator*=(const double factor)
 {
 	values_ *= factor;
@@ -448,7 +453,6 @@ void Data1D::operator*=(const double factor)
 	++version_;
 }
 
-// Operator /=
 void Data1D::operator/=(const double factor)
 {
 	++version_;

@@ -39,7 +39,6 @@ NumberFormat::FormatType NumberFormat::formatType(QString s)
 // Convert FormatType to text string
 const char *NumberFormat::formatType(NumberFormat::FormatType ft) { return FormatTypeKeywords[ft]; }
 
-// Constructor
 NumberFormat::NumberFormat()
 {
 	type_ = NumberFormat::DecimalFormat;
@@ -49,7 +48,6 @@ NumberFormat::NumberFormat()
 	useENotation_ = true;
 }
 
-// Destructor
 NumberFormat::~NumberFormat() {}
 
 /*
@@ -104,23 +102,24 @@ QString NumberFormat::format(double number)
 	// Construct rest of string
 	switch (type_)
 	{
-	case (NumberFormat::IntegerFormat):
-		result += QString::number(int(number));
-		break;
-	case (NumberFormat::DecimalFormat):
-		result += QString::number(number, 'f', nDecimals_);
-		break;
-	case (NumberFormat::ScientificFormat):
-		if (!useENotation_)
-			result += QString::number(x.mantissa(), 'f', nDecimals_) + QChar(0x00D7) + "10\\sup{" + QString::number(x.exponent()) + "}";
-		else if (useUpperCaseExponent_)
-			result += QString::number(x.mantissa(), 'f', nDecimals_) + "E" + QString::number(x.exponent());
-		else
-			result += QString::number(x.mantissa(), 'f', nDecimals_) + "e" + QString::number(x.exponent());
-		break;
-	default:
-		result += QString::number(number);
-		break;
+		case (NumberFormat::IntegerFormat):
+			result += QString::number(int(number));
+			break;
+		case (NumberFormat::DecimalFormat):
+			result += QString::number(number, 'f', nDecimals_);
+			break;
+		case (NumberFormat::ScientificFormat):
+			if (!useENotation_)
+				result += QString::number(x.mantissa(), 'f', nDecimals_) + QChar(0x00D7) + "10\\sup{" +
+					  QString::number(x.exponent()) + "}";
+			else if (useUpperCaseExponent_)
+				result += QString::number(x.mantissa(), 'f', nDecimals_) + "E" + QString::number(x.exponent());
+			else
+				result += QString::number(x.mantissa(), 'f', nDecimals_) + "e" + QString::number(x.exponent());
+			break;
+		default:
+			result += QString::number(number);
+			break;
 	}
 
 	return result;

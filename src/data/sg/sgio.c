@@ -19,21 +19,21 @@ typedef struct
 } T_ExtInfo;
 
 static const char *Ext_BT_or_UA[] = {
-    /*  0 */ "abc",
-    /*  1 */ "ba-c",
-    /*  2 */ "cab",
-    /*  3 */ "-cba",
-    /*  4 */ "bca",
-    /*  5 */ "a-cb",
-    /*  6 */ "bac",		       /* 6 -> 1 */
-    /*  7 */ "cba",		       /* 7 -> 3 */
-    /*  8 */ "acb",		       /* 8 -> 5 */
-    /*  9 */ "-b",   "b-", "bb", "bb", /* 10, 11, 12 ->  9 */
-    /* 13 */ "-c",   "c-", "bc", "cb", /* 14, 15, 16 -> 13 */
-    /* 17 */ "-a",   "a-", "ba", "ab", /* 18, 19, 20 -> 17 */
-    /* 21 */ "b",
-    /* 22 */ "c",
-    /* 23 */ "a",    NULL};
+	/*  0 */ "abc",
+	/*  1 */ "ba-c",
+	/*  2 */ "cab",
+	/*  3 */ "-cba",
+	/*  4 */ "bca",
+	/*  5 */ "a-cb",
+	/*  6 */ "bac",			   /* 6 -> 1 */
+	/*  7 */ "cba",			   /* 7 -> 3 */
+	/*  8 */ "acb",			   /* 8 -> 5 */
+	/*  9 */ "-b",   "b-", "bb", "bb", /* 10, 11, 12 ->  9 */
+	/* 13 */ "-c",   "c-", "bc", "cb", /* 14, 15, 16 -> 13 */
+	/* 17 */ "-a",   "a-", "ba", "ab", /* 18, 19, 20 -> 17 */
+	/* 21 */ "b",
+	/* 22 */ "c",
+	/* 23 */ "a",    NULL};
 
 typedef struct
 {
@@ -41,8 +41,8 @@ typedef struct
 	T_RTMx SeitzMx;
 } T_HallGenerator;
 
-#define SkipWhite(cp)                                                                                                                                                                                  \
-	while (*(cp) && (*(cp) == '_' || isspace(*(cp))))                                                                                                                                              \
+#define SkipWhite(cp)                                                                                                          \
+	while (*(cp) && (*(cp) == '_' || isspace(*(cp))))                                                                      \
 	(cp)++
 
 static const char *IErr_Corrupt_TabSgName = "Internal Error: Corrupt TabSgName";
@@ -259,24 +259,24 @@ static void ExpandMonoclinic(int unique_axis, const char *o, char *m)
 
 	switch (tolower(unique_axis))
 	{
-	case 'a':
-		while (*o)
-			*m++ = *o++;
-		*m++ = '1';
-		*m++ = '1';
-		break;
-	case 'c':
-		*m++ = '1';
-		*m++ = '1';
-		while (*o)
-			*m++ = *o++;
-		break;
-	default:
-		*m++ = '1';
-		while (*o)
-			*m++ = *o++;
-		*m++ = '1';
-		break;
+		case 'a':
+			while (*o)
+				*m++ = *o++;
+			*m++ = '1';
+			*m++ = '1';
+			break;
+		case 'c':
+			*m++ = '1';
+			*m++ = '1';
+			while (*o)
+				*m++ = *o++;
+			break;
+		default:
+			*m++ = '1';
+			while (*o)
+				*m++ = *o++;
+			*m++ = '1';
+			break;
 	}
 
 	*m = '\0';
@@ -466,7 +466,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 			{
 				if (tsgn->SgNumber >= 3 && tsgn->SgNumber < 16)
 				{
-					if (WtdLblOriginChoice != ' ' || WtdExtInfo.BasisChoice != ' ' || (int)strlen(WtdExtInfo.BT_or_UA) > 2)
+					if (WtdLblOriginChoice != ' ' || WtdExtInfo.BasisChoice != ' ' ||
+					    (int)strlen(WtdExtInfo.BT_or_UA) > 2)
 						continue; /* next tsgn */
 
 					if (WtdSgNumber == tsgn->SgNumber)
@@ -478,7 +479,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 							if (ExtInfo.BT_or_UA[0] != 'c' && ExtInfo.BT_or_UA[1] != 'c')
 								continue; /* next tsgn */
 
-							if (ExtInfo.CellChoice == ' ' && (WtdExtInfo.CellChoice == ' ' || WtdExtInfo.CellChoice == '1'))
+							if (ExtInfo.CellChoice == ' ' &&
+							    (WtdExtInfo.CellChoice == ' ' || WtdExtInfo.CellChoice == '1'))
 								return tsgn;
 
 							i = 0;
@@ -486,7 +488,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 								if (*sgl == '=')
 									i++;
 
-							if (i == 2 && (WtdExtInfo.CellChoice == ' ' || WtdExtInfo.CellChoice == ExtInfo.CellChoice))
+							if (i == 2 && (WtdExtInfo.CellChoice == ' ' ||
+								       WtdExtInfo.CellChoice == ExtInfo.CellChoice))
 								return tsgn;
 
 							continue; /* next tsgn */
@@ -527,7 +530,8 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 				}
 				else if (ExtInfo.BasisChoice != ' ')
 				{
-					if (WtdExtInfo.OriginChoice != ' ' || WtdExtInfo.CellChoice != ' ' || WtdExtInfo.BT_or_UA[0] != '\0')
+					if (WtdExtInfo.OriginChoice != ' ' || WtdExtInfo.CellChoice != ' ' ||
+					    WtdExtInfo.BT_or_UA[0] != '\0')
 						continue; /* next tsgn */
 
 					if (ExtInfo.BasisChoice == WtdExtInfo.BasisChoice)
@@ -543,14 +547,16 @@ const T_TabSgName *FindTabSgNameEntry(const char *UserSgName, int VolLetter)
 				}
 				else if (WtdExtInfo.BasisChoice == ' ')
 				{
-					if ((WtdExtInfo.OriginChoice == ' ' && ExtInfo.OriginChoice == '1') || (WtdExtInfo.OriginChoice == '1' && ExtInfo.OriginChoice == ' ') ||
+					if ((WtdExtInfo.OriginChoice == ' ' && ExtInfo.OriginChoice == '1') ||
+					    (WtdExtInfo.OriginChoice == '1' && ExtInfo.OriginChoice == ' ') ||
 					    WtdExtInfo.OriginChoice == ExtInfo.OriginChoice)
 					{
 						if (WtdExtInfo.BT_or_UA[0])
 						{
 							if (WtdExtInfo.BT_or_UA == ExtInfo.BT_or_UA)
 								return tsgn;
-							if (WtdExtInfo.BT_or_UA == Ext_BT_or_UA[0] && ExtInfo.BT_or_UA[0] == '\0')
+							if (WtdExtInfo.BT_or_UA == Ext_BT_or_UA[0] &&
+							    ExtInfo.BT_or_UA[0] == '\0')
 								return tsgn;
 						}
 						else
@@ -666,38 +672,38 @@ unsigned int SgID_Number(const T_TabSgName *tsgn)
 
 			switch (*UA)
 			{
-			case 'b':
-				ID += 10000;
-				break;
-			case 'c':
-				ID += 20000;
-				break;
-			case 'a':
-				ID += 30000;
-				break;
-			default:
-				ID = 0;
-				break;
+				case 'b':
+					ID += 10000;
+					break;
+				case 'c':
+					ID += 20000;
+					break;
+				case 'a':
+					ID += 30000;
+					break;
+				default:
+					ID = 0;
+					break;
 			}
 
 			if (ID != 0)
 			{
 				switch (ExtInfo.CellChoice)
 				{
-				case ' ':
-					break;
-				case '1':
-					ID += 1000;
-					break;
-				case '2':
-					ID += 2000;
-					break;
-				case '3':
-					ID += 3000;
-					break;
-				default:
-					ID = 0;
-					break;
+					case ' ':
+						break;
+					case '1':
+						ID += 1000;
+						break;
+					case '2':
+						ID += 2000;
+						break;
+					case '3':
+						ID += 3000;
+						break;
+					default:
+						ID = 0;
+						break;
 				}
 			}
 		}
@@ -768,130 +774,130 @@ int ParseSymXYZ(const char *SymXYZ, T_RTMx *SeitzMx, int FacTr)
 	{
 		switch (*SymXYZ)
 		{
-		case ' ':
-		case '\t':
-		case '_':
-			if ((P_mode & P_Blank) == 0)
-				return -1;
-			break;
-		case ',':
-		case ';':
-			if (Row == 2)
-				return -1;
-		case '\0':
-			if ((P_mode & P_Comma) == 0)
-				return -1;
-			if (GotXYZ == 0)
-				return -1;
-			if (P_mode & P_Slash)
-				Value += Value1;
-			Value *= FacTr;
-			if (Value < 0.)
-				i = Value - .5;
-			else
-				i = Value + .5;
-			Delta = Value - i;
-			if (Delta < 0.)
-				Delta = -Delta;
-			if (Delta > .01 * FacTr)
-				return -1;
-			i %= FacTr;
-			if (i < 0)
-				i += FacTr;
-			SeitzMx->s.T[Row] = i;
-			Row++;
-			Sign = 1;
-			Value = 0.;
-			P_mode = P_Blank | P_Plus | P_Dash | P_Value1 | P_XYZ;
-			GotXYZ = 0;
-			break;
-		case '+':
-			if ((P_mode & P_Plus) == 0)
-				return -1;
-			if (P_mode & P_Slash)
-				Value += Value1;
-			Sign = 1;
-			if (P_mode & P_Value2)
-				P_mode = P_Value2;
-			else
-				P_mode = P_Blank | P_Value1 | P_XYZ;
-			break;
-		case '-':
-			if ((P_mode & P_Dash) == 0)
-				return -1;
-			if (P_mode & P_Slash)
-				Value += Value1;
-			Sign = -1;
-			if (P_mode & P_Value2)
-				P_mode = P_Value2;
-			else
-				P_mode = P_Blank | P_Value1 | P_XYZ;
-			break;
-		case '/':
-		case ':':
-			if ((P_mode & P_Slash) == 0)
-				return -1;
-			Sign = 1;
-			P_mode = P_Blank | P_Plus | P_Dash | P_Value2;
-			break;
-		case '.':
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-			if (P_mode & P_Value1)
-			{
-				if (sscanf(SymXYZ, "%lf%n", &Value1, &i) != 1)
+			case ' ':
+			case '\t':
+			case '_':
+				if ((P_mode & P_Blank) == 0)
 					return -1;
-				if (Sign == -1)
-					Value1 = -Value1;
-				P_mode = P_Blank | P_Comma | P_Plus | P_Dash | P_Slash;
-			}
-			else if (P_mode & P_Value2)
-			{
-				if (sscanf(SymXYZ, "%lf%n", &Value2, &i) != 1)
+				break;
+			case ',':
+			case ';':
+				if (Row == 2)
 					return -1;
-				if (Sign == -1)
-					Value2 = -Value2;
-				if (Value1 != 0.)
+			case '\0':
+				if ((P_mode & P_Comma) == 0)
+					return -1;
+				if (GotXYZ == 0)
+					return -1;
+				if (P_mode & P_Slash)
+					Value += Value1;
+				Value *= FacTr;
+				if (Value < 0.)
+					i = Value - .5;
+				else
+					i = Value + .5;
+				Delta = Value - i;
+				if (Delta < 0.)
+					Delta = -Delta;
+				if (Delta > .01 * FacTr)
+					return -1;
+				i %= FacTr;
+				if (i < 0)
+					i += FacTr;
+				SeitzMx->s.T[Row] = i;
+				Row++;
+				Sign = 1;
+				Value = 0.;
+				P_mode = P_Blank | P_Plus | P_Dash | P_Value1 | P_XYZ;
+				GotXYZ = 0;
+				break;
+			case '+':
+				if ((P_mode & P_Plus) == 0)
+					return -1;
+				if (P_mode & P_Slash)
+					Value += Value1;
+				Sign = 1;
+				if (P_mode & P_Value2)
+					P_mode = P_Value2;
+				else
+					P_mode = P_Blank | P_Value1 | P_XYZ;
+				break;
+			case '-':
+				if ((P_mode & P_Dash) == 0)
+					return -1;
+				if (P_mode & P_Slash)
+					Value += Value1;
+				Sign = -1;
+				if (P_mode & P_Value2)
+					P_mode = P_Value2;
+				else
+					P_mode = P_Blank | P_Value1 | P_XYZ;
+				break;
+			case '/':
+			case ':':
+				if ((P_mode & P_Slash) == 0)
+					return -1;
+				Sign = 1;
+				P_mode = P_Blank | P_Plus | P_Dash | P_Value2;
+				break;
+			case '.':
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				if (P_mode & P_Value1)
 				{
-					if (Value2 == 0.)
+					if (sscanf(SymXYZ, "%lf%n", &Value1, &i) != 1)
 						return -1;
-					Value += Value1 / Value2;
+					if (Sign == -1)
+						Value1 = -Value1;
+					P_mode = P_Blank | P_Comma | P_Plus | P_Dash | P_Slash;
 				}
+				else if (P_mode & P_Value2)
+				{
+					if (sscanf(SymXYZ, "%lf%n", &Value2, &i) != 1)
+						return -1;
+					if (Sign == -1)
+						Value2 = -Value2;
+					if (Value1 != 0.)
+					{
+						if (Value2 == 0.)
+							return -1;
+						Value += Value1 / Value2;
+					}
+					P_mode = P_Blank | P_Comma | P_Plus | P_Dash;
+				}
+				else
+					return -1;
+				SymXYZ += (i - 1);
+				break;
+			case 'X':
+			case 'x':
+				Column = 0;
+				goto Process_XYZ;
+			case 'Y':
+			case 'y':
+				Column = 1;
+				goto Process_XYZ;
+			case 'Z':
+			case 'z':
+				Column = 2;
+			Process_XYZ:
+				if ((P_mode & P_XYZ) == 0)
+					return -1;
+				i = Row * 3 + Column;
+				if (SeitzMx->s.R[i] != 0)
+					return -1;
+				SeitzMx->s.R[i] = Sign;
+				GotXYZ = 1;
 				P_mode = P_Blank | P_Comma | P_Plus | P_Dash;
-			}
-			else
-				return -1;
-			SymXYZ += (i - 1);
-			break;
-		case 'X':
-		case 'x':
-			Column = 0;
-			goto Process_XYZ;
-		case 'Y':
-		case 'y':
-			Column = 1;
-			goto Process_XYZ;
-		case 'Z':
-		case 'z':
-			Column = 2;
-		Process_XYZ:
-			if ((P_mode & P_XYZ) == 0)
-				return -1;
-			i = Row * 3 + Column;
-			if (SeitzMx->s.R[i] != 0)
-				return -1;
-			SeitzMx->s.R[i] = Sign;
-			GotXYZ = 1;
-			P_mode = P_Blank | P_Comma | P_Plus | P_Dash;
-			break;
+				break;
 		}
 	} while (*SymXYZ++);
 
@@ -941,17 +947,17 @@ static int LookupRotMx(T_HallGenerator *HG)
 
 		switch (refaxis)
 		{
-		case 'z':
-			nNextBasis = 0;
-			break;
-		case 'x':
-			nNextBasis = 1;
-			break;
-		case 'y':
-			nNextBasis = 2;
-			break;
-		default:
-			return 0;
+			case 'z':
+				nNextBasis = 0;
+				break;
+			case 'x':
+				nNextBasis = 1;
+				break;
+			case 'y':
+				nNextBasis = 2;
+				break;
+			default:
+				return 0;
 		}
 	}
 
@@ -1051,36 +1057,36 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 
 				switch (c)
 				{
-				case 'P':
-					LatticeInfo = LI_P;
-					break;
-				case 'A':
-					LatticeInfo = LI_A;
-					break;
-				case 'B':
-					LatticeInfo = LI_B;
-					break;
-				case 'C':
-					LatticeInfo = LI_C;
-					break;
-				case 'I':
-					LatticeInfo = LI_I;
-					break;
-				case 'R':
-					LatticeInfo = LI_R;
-					break;
-				case 'S':
-					LatticeInfo = LI_S;
-					break;
-				case 'T':
-					LatticeInfo = LI_T;
-					break;
-				case 'F':
-					LatticeInfo = LI_F;
-					break;
-				default:
-					SetSgError("Error: Illegal lattice code");
-					return pos_hsym;
+					case 'P':
+						LatticeInfo = LI_P;
+						break;
+					case 'A':
+						LatticeInfo = LI_A;
+						break;
+					case 'B':
+						LatticeInfo = LI_B;
+						break;
+					case 'C':
+						LatticeInfo = LI_C;
+						break;
+					case 'I':
+						LatticeInfo = LI_I;
+						break;
+					case 'R':
+						LatticeInfo = LI_R;
+						break;
+					case 'S':
+						LatticeInfo = LI_S;
+						break;
+					case 'T':
+						LatticeInfo = LI_T;
+						break;
+					case 'F':
+						LatticeInfo = LI_F;
+						break;
+					default:
+						SetSgError("Error: Illegal lattice code");
+						return pos_hsym;
 				}
 
 				if (AddLatticeTr2ListSeitzMx(SgInfo, LatticeInfo) < 0)
@@ -1116,60 +1122,60 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 			{
 				switch (c)
 				{
-				case ' ':
-					FieldType = FT_Delimiter;
-					break;
+					case ' ':
+						FieldType = FT_Delimiter;
+						break;
 
-				case '-':
-					FieldType = FT_Improper;
-					break;
+					case '-':
+						FieldType = FT_Improper;
+						break;
 
-				case '1':
-					digit = 1;
-					FieldType = FT_Digit;
-					break;
-				case '2':
-					digit = 2;
-					FieldType = FT_Digit;
-					break;
-				case '3':
-					digit = 3;
-					FieldType = FT_Digit;
-					break;
-				case '4':
-					digit = 4;
-					FieldType = FT_Digit;
-					break;
-				case '5':
-					digit = 5;
-					FieldType = FT_Digit;
-					break;
-				case '6':
-					digit = 6;
-					FieldType = FT_Digit;
-					break;
+					case '1':
+						digit = 1;
+						FieldType = FT_Digit;
+						break;
+					case '2':
+						digit = 2;
+						FieldType = FT_Digit;
+						break;
+					case '3':
+						digit = 3;
+						FieldType = FT_Digit;
+						break;
+					case '4':
+						digit = 4;
+						FieldType = FT_Digit;
+						break;
+					case '5':
+						digit = 5;
+						FieldType = FT_Digit;
+						break;
+					case '6':
+						digit = 6;
+						FieldType = FT_Digit;
+						break;
 
-				case 'x':
-				case 'y':
-				case 'z':
-					refaxis = c;
-					FieldType = FT_RefAxis;
-					break;
+					case 'x':
+					case 'y':
+					case 'z':
+						refaxis = c;
+						FieldType = FT_RefAxis;
+						break;
 
-				case '"':
-				case '\'':
-				case '*':
-					dircode = c;
-					FieldType = FT_DirCode;
-					break;
+					case '"':
+					case '\'':
+					case '*':
+						dircode = c;
+						FieldType = FT_DirCode;
+						break;
 
-				case '(':
-					FieldType = FT_OriginShift;
-					break;
+					case '(':
+						FieldType = FT_OriginShift;
+						break;
 
-				default:
-					SetSgError("Error: Illegal character in Hall symbol");
-					return pos_hsym;
+					default:
+						SetSgError("Error: Illegal character in Hall symbol");
+						return pos_hsym;
 				}
 
 				if (FieldType == FT_Digit)
@@ -1192,7 +1198,9 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 				}
 			}
 
-			if (ClearHG == 0 && (FieldType == FT_Delimiter || FieldType == FT_OriginShift || FieldType < PreviousFT || (FieldType == PreviousFT && FieldType != FT_Translation)) &&
+			if (ClearHG == 0 &&
+			    (FieldType == FT_Delimiter || FieldType == FT_OriginShift || FieldType < PreviousFT ||
+			     (FieldType == PreviousFT && FieldType != FT_Translation)) &&
 			    !(FieldType == FT_RefAxis && HG.RefAxis == 0 && PreviousFT == FT_DirCode))
 			{
 				if (HG.RefAxis == 0)
@@ -1233,18 +1241,18 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 				{
 					switch (HG.RefAxis)
 					{
-					case 'x':
-						i = 0;
-						break;
-					case 'y':
-						i = 1;
-						break;
-					case 'z':
-						i = 2;
-						break;
-					default:
-						i = -1;
-						break;
+						case 'x':
+							i = 0;
+							break;
+						case 'y':
+							i = 1;
+							break;
+						case 'z':
+							i = 2;
+							break;
+						default:
+							i = -1;
+							break;
 					}
 
 					if (HG.DirCode != 0 || i < 0)
@@ -1289,25 +1297,25 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 
 				switch (FieldType)
 				{
-				case FT_Improper:
-					HG.Improper = 1;
-					break;
-				case FT_Rotation:
-					HG.Rotation = rotation;
-					break;
-				case FT_RefAxis:
-					HG.RefAxis = refaxis;
-					break;
-				case FT_DirCode:
-					HG.DirCode = dircode;
-					break;
-				case FT_Translation:
-					if (translation != NULL)
-					{
-						for (i = 0; i < 3; i++)
-							HG.SeitzMx.s.T[i] += *(++translation);
-					}
-					break;
+					case FT_Improper:
+						HG.Improper = 1;
+						break;
+					case FT_Rotation:
+						HG.Rotation = rotation;
+						break;
+					case FT_RefAxis:
+						HG.RefAxis = refaxis;
+						break;
+					case FT_DirCode:
+						HG.DirCode = dircode;
+						break;
+					case FT_Translation:
+						if (translation != NULL)
+						{
+							for (i = 0; i < 3; i++)
+								HG.SeitzMx.s.T[i] += *(++translation);
+						}
+						break;
 				}
 			}
 		}
@@ -1326,53 +1334,53 @@ int ParseHallSymbol(const char *hsym, T_SgInfo *SgInfo)
 
 			switch (c)
 			{
-			case ' ':
-				break;
+				case ' ':
+					break;
 
-			case ')':
-				if (iOriginShift != 3)
-				{
-					SetSgError("Error: Missing origin shift values");
-					return pos_hsym;
-				}
-				iOriginShift++;
-				FieldType = FT_Delimiter;
-				break;
+				case ')':
+					if (iOriginShift != 3)
+					{
+						SetSgError("Error: Missing origin shift values");
+						return pos_hsym;
+					}
+					iOriginShift++;
+					FieldType = FT_Delimiter;
+					break;
 
-			case '-':
-				if (SignOriginShift != 0)
-				{
+				case '-':
+					if (SignOriginShift != 0)
+					{
+						SetSgError(Err_Ill_ori_shi_val);
+						return pos_hsym;
+					}
+					SignOriginShift = 1;
+					break;
+
+				case '0':
+					digit = 0;
+					break;
+				case '1':
+					digit = 1;
+					break;
+				case '2':
+					digit = 2;
+					break;
+				case '3':
+					digit = 3;
+					break;
+				case '4':
+					digit = 4;
+					break;
+				case '5':
+					digit = 5;
+					break;
+				case '6':
+					digit = 6;
+					break;
+
+				default:
 					SetSgError(Err_Ill_ori_shi_val);
 					return pos_hsym;
-				}
-				SignOriginShift = 1;
-				break;
-
-			case '0':
-				digit = 0;
-				break;
-			case '1':
-				digit = 1;
-				break;
-			case '2':
-				digit = 2;
-				break;
-			case '3':
-				digit = 3;
-				break;
-			case '4':
-				digit = 4;
-				break;
-			case '5':
-				digit = 5;
-				break;
-			case '6':
-				digit = 6;
-				break;
-
-			default:
-				SetSgError(Err_Ill_ori_shi_val);
-				return pos_hsym;
 			}
 
 			if (digit >= 0)
@@ -1653,7 +1661,8 @@ const char *FormatFraction(int nume, int deno, int Decimal, char *Buffer, int Si
 	return Buffer;
 }
 
-const char *RTMx2XYZ(const T_RTMx *RTMx, int FacRo, int FacTr, int Decimal, int TrFirst, int Low, const char *Seperator, char *BufferXYZ, int SizeBufferXYZ)
+const char *RTMx2XYZ(const T_RTMx *RTMx, int FacRo, int FacTr, int Decimal, int TrFirst, int Low, const char *Seperator,
+		     char *BufferXYZ, int SizeBufferXYZ)
 {
 	static const char *UpperXYZ = "XYZ";
 	static const char *LowerXYZ = "xyz";
@@ -1866,7 +1875,9 @@ void ListSgInfo(const T_SgInfo *SgInfo, int F_XYZ, int F_Verbose, FILE *fpout)
 	{
 		fprintf(fpout, "s.i.Vector  Modulus\n");
 		for (i_si_v = 0; i_si_v < SgInfo->n_si_Vector; i_si_v++)
-			fprintf(fpout, " %2d %2d %2d   %d\n", SgInfo->si_Vector[i_si_v * 3 + 0], SgInfo->si_Vector[i_si_v * 3 + 1], SgInfo->si_Vector[i_si_v * 3 + 2], SgInfo->si_Modulus[i_si_v]);
+			fprintf(fpout, " %2d %2d %2d   %d\n", SgInfo->si_Vector[i_si_v * 3 + 0],
+				SgInfo->si_Vector[i_si_v * 3 + 1], SgInfo->si_Vector[i_si_v * 3 + 2],
+				SgInfo->si_Modulus[i_si_v]);
 		putc('\n', fpout);
 	}
 
@@ -1903,7 +1914,8 @@ void ListSgInfo(const T_SgInfo *SgInfo, int F_XYZ, int F_Verbose, FILE *fpout)
 				else
 					fprintf(fpout, "   ");
 
-				fprintf(fpout, " [%2d %2d %2d]", rmxi->EigenVector[0], rmxi->EigenVector[1], rmxi->EigenVector[2]);
+				fprintf(fpout, " [%2d %2d %2d]", rmxi->EigenVector[0], rmxi->EigenVector[1],
+					rmxi->EigenVector[2]);
 
 				if (rmxi->RefAxis)
 					fprintf(fpout, " '%c'", rmxi->RefAxis);

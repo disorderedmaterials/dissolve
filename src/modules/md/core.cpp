@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 MDModule::MDModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 MDModule::~MDModule() {}
 
 /*

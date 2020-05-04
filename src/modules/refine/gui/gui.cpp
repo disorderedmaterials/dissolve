@@ -23,4 +23,7 @@
 #include "modules/refine/refine.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *RefineModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new RefineModuleWidget(parent, this, dissolve); }
+ModuleWidget *RefineModule::createWidget(QWidget *parent, Dissolve &dissolve)
+{
+	return new RefineModuleWidget(parent, this, dissolve);
+}

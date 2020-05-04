@@ -39,13 +39,12 @@ class SelectForcefieldWidget : public QWidget
 {
 	Q_OBJECT
 
-      public:
-	// Constructor
-	SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields = ForcefieldLibrary::forcefields());
-	// Destructor
+	public:
+	SelectForcefieldWidget(QWidget *parent,
+			       const std::vector<std::shared_ptr<Forcefield>> &forcefields = ForcefieldLibrary::forcefields());
 	~SelectForcefieldWidget();
 
-      private:
+	private:
 	// Main form declaration
 	Ui::SelectForcefieldWidget ui_;
 	// Available forcefields
@@ -53,20 +52,20 @@ class SelectForcefieldWidget : public QWidget
 	// Whether the widget is refreshing
 	bool refreshing_;
 
-      private:
+	private:
 	// Update the list of Forcefields, optionally filtering them by name and description
 	void updateForcefieldsList(std::shared_ptr<Forcefield> current = NULL, QString filter = QString());
 
-      private slots:
+	private slots:
 	void on_FilterEdit_textChanged(const QString &text);
 	void on_ForcefieldsList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 	void on_ForcefieldsList_itemDoubleClicked(QListWidgetItem *item);
 
-      signals:
+	signals:
 	void forcefieldSelectionChanged(bool isValid);
 	void forcefieldDoubleClicked();
 
-      public:
+	public:
 	// Set the current forcefield
 	void setCurrentForcefield(std::shared_ptr<Forcefield> currentFF);
 	// Return the currently-selected Forcefield

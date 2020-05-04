@@ -41,20 +41,18 @@ class ChangeStore;
 // Dissolve Main Class
 class Dissolve
 {
-      public:
-	// Constructor
+	public:
 	Dissolve(CoreData &coreData);
-	// Destructor
 	~Dissolve();
 
 	/*
 	 * Core
 	 */
-      private:
+	private:
 	// Reference to CoreData
 	CoreData &coreData_;
 
-      public:
+	public:
 	// Return reference to CoreData
 	CoreData &coreData();
 	// Return const reference to CoreData
@@ -68,7 +66,7 @@ class Dissolve
 	 * Atom Types
 	 * (Exposes List<AtomType> in coreData_)
 	 */
-      public:
+	public:
 	// Add AtomType with specified Element
 	AtomType *addAtomType(Element *el);
 	// Return number of AtomTypes in list
@@ -86,7 +84,7 @@ class Dissolve
 	 * Master Terms
 	 * (Exposes lists in coreData_)
 	 */
-      public:
+	public:
 	// Return list of master Bond parameters
 	const List<MasterIntra> &masterBonds() const;
 	// Return list of master Angle parameters
@@ -100,7 +98,7 @@ class Dissolve
 	 * Species Definitions
 	 * (Exposes List<Species> in coreData_)
 	 */
-      public:
+	public:
 	// Add a new Species to the list
 	Species *addSpecies();
 	// Remove the specified Species from the list
@@ -123,7 +121,7 @@ class Dissolve
 	/*
 	 * Pair Potentials
 	 */
-      private:
+	private:
 	// Maximum distance for tabulated PairPotentials
 	double pairPotentialRange_;
 	// Maximum squared distance for tabulated PairPotentials
@@ -139,7 +137,7 @@ class Dissolve
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
 
-      public:
+	public:
 	// Set maximum distance for tabulated PairPotentials
 	void setPairPotentialRange(double range);
 	// Return maximum distance for tabulated PairPotentials
@@ -179,7 +177,7 @@ class Dissolve
 	 * Configurations
 	 * (Exposes List<Configuration> in coreData_)
 	 */
-      public:
+	public:
 	// Add new Configuration
 	Configuration *addConfiguration();
 	// Own the specified Configuration
@@ -200,17 +198,17 @@ class Dissolve
 	/*
 	 * Modules
 	 */
-      private:
+	private:
 	// List of all instances of all used Modules
 	RefList<Module> moduleInstances_;
 	// List of master Module instances
 	List<Module> masterModules_;
 
-      private:
+	private:
 	// Register master Module
 	bool registerMasterModule(Module *masterInstance);
 
-      public:
+	public:
 	// Register master instances for all Modules
 	bool registerMasterModules();
 	// Return master Module instances
@@ -233,13 +231,13 @@ class Dissolve
 	/*
 	 * Layers
 	 */
-      private:
+	private:
 	// List of defined processing layers
 	List<ModuleLayer> processingLayers_;
 	// Data associated with processing Modules
 	GenericList processingModuleData_;
 
-      public:
+	public:
 	// Add new processing layer
 	ModuleLayer *addProcessingLayer();
 	// Remove specified processing layer
@@ -262,7 +260,7 @@ class Dissolve
 	/*
 	 * Simulation
 	 */
-      private:
+	private:
 	// Random seed
 	int seed_;
 	// Frequency at which to write restart file
@@ -276,7 +274,7 @@ class Dissolve
 	// Accumulated timing information for main loop iterations
 	SampledDouble iterationTime_;
 
-      public:
+	public:
 	// Set number of test points to use when calculating Box normalisation arrays
 	void setNBoxNormalisationPoints(int nPoints);
 	// Return number of test points to use when calculating Box normalisation arrays
@@ -305,7 +303,7 @@ class Dissolve
 	/*
 	 * I/O
 	 */
-      private:
+	private:
 	// Filename of current input file
 	CharString inputFilename_;
 	// Filename of current restart file
@@ -315,11 +313,11 @@ class Dissolve
 	// Check if heartbeat file needs to be written or not
 	bool writeHeartBeat_;
 
-      private:
+	private:
 	// Load input file through supplied parser
 	bool loadInput(LineParser &parser);
 
-      public:
+	public:
 	// Load input file
 	bool loadInput(const char *filename);
 	// Load input from supplied string
@@ -354,7 +352,7 @@ class Dissolve
 	/*
 	 * Object Management
 	 */
-      public:
+	public:
 	// Remove all references to the specified Configuration
 	void removeReferencesTo(Configuration *cfg);
 	// Remove all references to the specified Module
@@ -367,7 +365,7 @@ class Dissolve
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Parallel Strategy
 	enum ParallelStrategy
 	{
@@ -378,13 +376,13 @@ class Dissolve
 	// Convert string to ParallelStrategy
 	static ParallelStrategy parallelStrategy(const char *s);
 
-      private:
+	private:
 	// Parallel strategy for Configuration work
 	ParallelStrategy parallelStrategy_;
 	// Default process group population (per Configuration)
 	int parallelGroupPopulation_;
 
-      public:
+	public:
 	// Set parallel strategy for Configuration work
 	void setParallelStrategy(ParallelStrategy ps);
 	// Return parallel strategy for Configuration work

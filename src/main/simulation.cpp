@@ -68,7 +68,9 @@ bool Dissolve::prepare()
 		double maxPPRange = cfg->box()->inscribedSphereRadius();
 		if (pairPotentialRange_ > maxPPRange)
 		{
-			Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange_, maxPPRange);
+			Messenger::error(
+				"PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n",
+				pairPotentialRange_, maxPPRange);
 			return false;
 		}
 
@@ -87,7 +89,8 @@ bool Dissolve::prepare()
 				totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
 		}
 		if (fabs(totalQ) > 1.0e-5)
-			return Messenger::error("Total charge for Configuration '%s' is non-zero (%e). Refusing to proceed!\n", cfg->name(), totalQ);
+			return Messenger::error("Total charge for Configuration '%s' is non-zero (%e). Refusing to proceed!\n",
+						cfg->name(), totalQ);
 	}
 
 	// Make sure pair potentials are up-to-date
@@ -151,13 +154,15 @@ bool Dissolve::iterate(int nIterations)
 			if (cfg->nModules() == 0)
 				continue;
 
-			Messenger::print("Configuration layer '%s'  (%s):\n\n", cfg->name(), cfg->moduleLayer().frequencyDetails(iteration_));
+			Messenger::print("Configuration layer '%s'  (%s):\n\n", cfg->name(),
+					 cfg->moduleLayer().frequencyDetails(iteration_));
 
 			int layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
 			ListIterator<Module> modIterator(cfg->modules());
 			while (Module *module = modIterator.iterate())
 			{
-				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
+				Messenger::print("      --> %20s  (%s)\n", module->type(),
+						 module->frequencyDetails(layerExecutionCount));
 
 				if (module->isEnabled())
 					++nEnabledModules;
@@ -171,7 +176,8 @@ bool Dissolve::iterate(int nIterations)
 		ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
 		while (ModuleLayer *layer = processingLayerIterator.iterate())
 		{
-			Messenger::print("Processing layer '%s'  (%s):\n\n", layer->name(), layer->frequencyDetails(iteration_));
+			Messenger::print("Processing layer '%s'  (%s):\n\n", layer->name(),
+					 layer->frequencyDetails(iteration_));
 
 			if (!layer->enabled())
 				continue;
@@ -180,7 +186,8 @@ bool Dissolve::iterate(int nIterations)
 			ListIterator<Module> processingIterator(layer->modules());
 			while (Module *module = processingIterator.iterate())
 			{
-				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
+				Messenger::print("      --> %20s  (%s)\n", module->type(),
+						 module->frequencyDetails(layerExecutionCount));
 
 				if (module->isEnabled())
 					++nEnabledModules;
@@ -233,7 +240,8 @@ bool Dissolve::iterate(int nIterations)
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe())
 			{
-				Messenger::print("Process rank %i not involved with this Configuration, so moving on...\n", ProcessPool::worldRank());
+				Messenger::print("Process rank %i not involved with this Configuration, so moving on...\n",
+						 ProcessPool::worldRank());
 				continue;
 			}
 
@@ -326,13 +334,16 @@ bool Dissolve::iterate(int nIterations)
 			 */
 
 			// Iteration number
-			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
+			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve",
+							GenericItem::InRestartFileFlag) = iteration_;
 
 			// Pair Potentials
 			for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 			{
-				GenericListHelper<Data1D>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
-								   GenericItem::InRestartFileFlag) = pot->uAdditional();
+				GenericListHelper<Data1D>::realise(
+					processingModuleData_,
+					CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()),
+					"Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
 			}
 
 			/*
@@ -377,7 +388,8 @@ bool Dissolve::iterate(int nIterations)
 			// All good. Carry on!
 			worldPool().decideTrue();
 		}
-		else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0) && (!worldPool().decision()))
+		else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0) &&
+			 (!worldPool().decision()))
 			return false;
 
 		// Sync up all processes
@@ -430,7 +442,8 @@ void Dissolve::printTiming()
 		while (Module *module = modIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(),
+					 timingInfo.value(), timingInfo.count());
 		}
 
 		Messenger::print("\n");
@@ -444,7 +457,8 @@ void Dissolve::printTiming()
 		while (Module *module = processingIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(),
+					 timingInfo.value(), timingInfo.count());
 		}
 
 		Messenger::print("\n");
@@ -457,7 +471,8 @@ void Dissolve::printTiming()
 	if (nIterationsPerformed_ == 0)
 		Messenger::print("No iterations performed, so no per-iteration timing available.\n");
 	else
-		Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, iterationTimer_.elapsedTimeString(), iterationTime_.value());
+		Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_,
+				 iterationTimer_.elapsedTimeString(), iterationTime_.value());
 
 	Messenger::print("\n");
 }

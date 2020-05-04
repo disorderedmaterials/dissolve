@@ -27,9 +27,11 @@
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 {
-	static EnumOptionsList SimulationKeywords = EnumOptionsList()
-						    << EnumOption(SimulationBlock::EndSimulationKeyword, "EndSimulation") << EnumOption(SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1)
-						    << EnumOption(SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1) << EnumOption(SimulationBlock::SeedKeyword, "Seed", 1);
+	static EnumOptionsList SimulationKeywords =
+		EnumOptionsList() << EnumOption(SimulationBlock::EndSimulationKeyword, "EndSimulation")
+				  << EnumOption(SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1)
+				  << EnumOption(SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1)
+				  << EnumOption(SimulationBlock::SeedKeyword, "Seed", 1);
 
 	static EnumOptions<SimulationBlock::SimulationKeyword> options("SimulationKeyword", SimulationKeywords);
 
@@ -59,30 +61,33 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-		case (SimulationBlock::EndSimulationKeyword):
-			Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
-			blockDone = true;
-			break;
-		case (SimulationBlock::ParallelStrategyKeyword):
-			if (Dissolve::parallelStrategy(parser.argc(1)) == Dissolve::nParallelStrategies)
-			{
-				Messenger::error("Unrecognised parallel strategy '%s'.\n", parser.argc(1));
+			case (SimulationBlock::EndSimulationKeyword):
+				Messenger::print("Found end of %s block.\n",
+						 BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
+				blockDone = true;
+				break;
+			case (SimulationBlock::ParallelStrategyKeyword):
+				if (Dissolve::parallelStrategy(parser.argc(1)) == Dissolve::nParallelStrategies)
+				{
+					Messenger::error("Unrecognised parallel strategy '%s'.\n", parser.argc(1));
+					error = true;
+				}
+				else
+					dissolve->setParallelStrategy(Dissolve::parallelStrategy(parser.argc(1)));
+				break;
+			case (SimulationBlock::ParallelGroupPopulationKeyword):
+				dissolve->setParallelGroupPopulation(parser.argi(1));
+				break;
+			case (SimulationBlock::SeedKeyword):
+				dissolve->setSeed(parser.argi(1));
+				Messenger::print("Random seed set to %i.\n", dissolve->seed());
+				break;
+			default:
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
+				       BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword),
+				       keywords().keyword(kwd));
 				error = true;
-			}
-			else
-				dissolve->setParallelStrategy(Dissolve::parallelStrategy(parser.argc(1)));
-			break;
-		case (SimulationBlock::ParallelGroupPopulationKeyword):
-			dissolve->setParallelGroupPopulation(parser.argi(1));
-			break;
-		case (SimulationBlock::SeedKeyword):
-			dissolve->setSeed(parser.argi(1));
-			Messenger::print("Random seed set to %i.\n", dissolve->seed());
-			break;
-		default:
-			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword), keywords().keyword(kwd));
-			error = true;
-			break;
+				break;
 		}
 
 		// Error encountered?
@@ -97,7 +102,8 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n",
+				 BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 		error = true;
 	}
 

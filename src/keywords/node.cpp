@@ -22,7 +22,6 @@
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
 
-// Constructor
 NodeKeywordBase::NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
 {
 	parentNode_ = parentNode;
@@ -30,7 +29,6 @@ NodeKeywordBase::NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeT
 	onlyInScope_ = onlyInScope;
 }
 
-// Destructor
 NodeKeywordBase::~NodeKeywordBase() {}
 
 /*

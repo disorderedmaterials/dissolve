@@ -27,9 +27,9 @@
 #include "classes/species.h"
 #include "procedure/nodes/select.h"
 
-// Constructor
-CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1, SelectProcedureNode *site2)
-    : CalculateProcedureNodeBase(ProcedureNode::CalculateAngleNode, site0, site1, site2)
+CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1,
+							 SelectProcedureNode *site2)
+	: CalculateProcedureNodeBase(ProcedureNode::CalculateAngleNode, site0, site1, site2)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
@@ -40,7 +40,6 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *si
 	keywords_.add("Sites", siteKeywords_[2], "K", "Site that represents 'k' in the angle i-j-k");
 }
 
-// Destructor
 CalculateAngleProcedureNode::~CalculateAngleProcedureNode() {}
 
 /*
@@ -58,7 +57,8 @@ int CalculateAngleProcedureNode::dimensionality() const { return 1; }
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+									const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
 	for (int n = 0; n < nSitesRequired(); ++n)
@@ -71,7 +71,8 @@ ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessP
 	}
 #endif
 	// Determine the value of the observable
-	value_.x = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
+	value_.x = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(),
+					      sites_[2]->currentSite()->origin());
 
 	return ProcedureNode::Success;
 }

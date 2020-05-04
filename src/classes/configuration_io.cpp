@@ -37,7 +37,8 @@ bool Configuration::write(LineParser &parser) const
 	// Write unit cell (box) lengths and angles
 	Vec3<double> lengths = box()->axisLengths();
 	Vec3<double> angles = box()->axisAngles();
-	if (!parser.writeLineF("%12e %12e %12e  %f  %s\n", lengths.x, lengths.y, lengths.z, requestedSizeFactor_, DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
+	if (!parser.writeLineF("%12e %12e %12e  %f  %s\n", lengths.x, lengths.y, lengths.z, requestedSizeFactor_,
+			       DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
 		return false;
 	if (!parser.writeLineF("%12e %12e %12e\n", angles.x, angles.y, angles.z))
 		return false;
@@ -127,7 +128,8 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
 			if (DissolveSys::sameString(sp->name(), parser.argc(1)))
 				break;
 		if (!sp)
-			return Messenger::error("Unrecognised Species '%s' found in Configuration '%s' in restart file.\n", parser.argc(1), name());
+			return Messenger::error("Unrecognised Species '%s' found in Configuration '%s' in restart file.\n",
+						parser.argc(1), name());
 
 		// Set Species pointers for this range of Molecules
 		int nMols = parser.argi(0);

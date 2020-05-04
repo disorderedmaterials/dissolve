@@ -24,8 +24,8 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
-// Constructor
-WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create the necessary subwidgets
 	QHBoxLayout *layout = new QHBoxLayout(this);

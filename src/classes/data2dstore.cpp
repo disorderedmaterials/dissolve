@@ -23,10 +23,8 @@
 #include "base/lineparser.h"
 #include "io/import/data2d.h"
 
-// Constructor
 Data2DStore::Data2DStore() {}
 
-// Destructor
 Data2DStore::~Data2DStore() {}
 
 /*
@@ -34,7 +32,8 @@ Data2DStore::~Data2DStore() {}
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
+bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword,
+			  const CoreData &coreData)
 {
 	// Create new data
 	Data2D *data = data_.add();
@@ -71,7 +70,8 @@ const Data2D &Data2DStore::data(const char *name) const
 			return (*xyData);
 
 	static Data2D dummy;
-	Messenger::warn("Data named '%s' was requested from Data2DStore, but it does not exist. Returning an empty Data2D...\n", name);
+	Messenger::warn("Data named '%s' was requested from Data2DStore, but it does not exist. Returning an empty Data2D...\n",
+			name);
 	return dummy;
 }
 

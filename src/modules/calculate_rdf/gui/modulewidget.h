@@ -35,31 +35,30 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	CalculateRDFModule *module_;
 	// DataViewer contained within this widget
 	DataViewer *rdfGraph_;
 
-      public:
-	// Constructor
+	public:
 	CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::CalculateRDFModuleWidget ui_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -68,11 +67,11 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets();
 
-      private slots:
+	private slots:
 };
 
 #endif

@@ -32,16 +32,14 @@ class ModuleGroups;
 // Keyword with ModuleGroups data
 class ModuleGroupsKeyword : public KeywordData<ModuleGroups &>
 {
-      public:
-	// Constructor
+	public:
 	ModuleGroupsKeyword(ModuleGroups &groups);
-	// Destructor
 	~ModuleGroupsKeyword();
 
 	/*
 	 * Arguments
 	 */
-      public:
+	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
@@ -54,7 +52,7 @@ class ModuleGroupsKeyword : public KeywordData<ModuleGroups &>
 	/*
 	 * Object Management
 	 */
-      protected:
+	protected:
 	// Prune any references to the supplied Module in the contained data
 	void removeReferencesTo(Module *module);
 };

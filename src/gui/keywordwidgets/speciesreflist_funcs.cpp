@@ -28,8 +28,8 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
-SpeciesRefListKeywordWidget::SpeciesRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesRefListKeywordWidget::SpeciesRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -97,7 +97,8 @@ void SpeciesRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 	refreshing_ = true;
 
 	// Update the list against the global Species list
-	ListWidgetUpdater<SpeciesRefListKeywordWidget, Species> listUpdater(ui_.SelectionList, coreData_.constSpecies(), this, &SpeciesRefListKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<SpeciesRefListKeywordWidget, Species> listUpdater(ui_.SelectionList, coreData_.constSpecies(), this,
+									    &SpeciesRefListKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 

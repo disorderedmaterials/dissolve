@@ -26,14 +26,12 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-// Constructor
 Isotopologues::Isotopologues() : ListItem<Isotopologues>()
 {
 	species_ = NULL;
 	speciesPopulation_ = 0;
 }
 
-// Destructor
 Isotopologues::~Isotopologues() {}
 
 /*
@@ -66,7 +64,8 @@ void Isotopologues::update()
 		if (!species_->hasIsotopologue(isoWeight->isotopologue()))
 		{
 			mix_.remove(isoWeight);
-			Messenger::print("Removed Isotopologue from mixture for Species '%s' since it no longer existed.\n", species_->name());
+			Messenger::print("Removed Isotopologue from mixture for Species '%s' since it no longer existed.\n",
+					 species_->name());
 		}
 
 		isoWeight = next;
@@ -86,7 +85,8 @@ bool Isotopologues::addNext()
 	// Check to see if the are any Isotopologues available to add
 	if (mix_.nItems() == species_->nIsotopologues())
 	{
-		Messenger::warn("Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
+		Messenger::warn("Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n",
+				species_->name());
 		return false;
 	}
 
@@ -113,7 +113,9 @@ bool Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 {
 	// Search current list to see if the specified Isotopologue already exists
 	if (contains(iso))
-		Messenger::warn("Isotopologue '%s' (of Species '%s') already exists in Isotopologues, and it is being added again...\n", iso->name(), species_->name());
+		Messenger::warn(
+			"Isotopologue '%s' (of Species '%s') already exists in Isotopologues, and it is being added again...\n",
+			iso->name(), species_->name());
 
 	IsotopologueWeight *newWeight = mix_.add();
 	newWeight->set(iso, relativeWeight);
@@ -138,7 +140,9 @@ bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 			break;
 	if (isoWeight == NULL)
 	{
-		Messenger::warn("Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n", iso->name());
+		Messenger::warn(
+			"Warning: Isotopologues does not contain the Isotopologue '%s', so its relative weight can't be set.\n",
+			iso->name());
 		return false;
 	}
 
@@ -235,7 +239,8 @@ bool Isotopologues::read(LineParser &parser, const CoreData &coreData)
 		Isotopologue *iso = species_->findIsotopologue(parser.argc(0));
 		if (!iso)
 		{
-			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading Isotopologues.\n", parser.argc(0), species_->name());
+			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading Isotopologues.\n",
+					 parser.argc(0), species_->name());
 			return false;
 		}
 
@@ -326,21 +331,27 @@ bool Isotopologues::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(species_->name()))
-		return Messenger::error("Isotopologues species is not equivalent (process %i has '%s').\n", procPool.poolRank(), species_->name());
+		return Messenger::error("Isotopologues species is not equivalent (process %i has '%s').\n", procPool.poolRank(),
+					species_->name());
 	if (!procPool.equality(speciesPopulation_))
-		return Messenger::error("Isotopologues species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
+		return Messenger::error("Isotopologues species population is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
 	if (!procPool.equality(mix_.nItems()))
-		return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
+		return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n",
+					procPool.poolRank(), mix_.nItems());
 	ListIterator<IsotopologueWeight> mixIterator(mix_);
 	int count = 0;
 	while (const IsotopologueWeight *isoWeight = mixIterator.iterate())
 	{
 		// Just check the name and the relative population
 		if (!procPool.equality(isoWeight->isotopologue()->name()))
-			return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->isotopologue()->name());
+			return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n",
+						count, procPool.poolRank(), isoWeight->isotopologue()->name());
 		if (!procPool.equality(isoWeight->weight()))
-			return Messenger::error("Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), isoWeight->weight());
+			return Messenger::error(
+				"Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n",
+				count, procPool.poolRank(), isoWeight->weight());
 		++count;
 	}
 #endif

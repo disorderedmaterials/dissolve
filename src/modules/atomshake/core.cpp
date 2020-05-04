@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 AtomShakeModule::AtomShakeModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 AtomShakeModule::~AtomShakeModule() {}
 
 /*

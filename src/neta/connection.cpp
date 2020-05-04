@@ -25,9 +25,9 @@
 #include "templates/dynamicarray.h"
 #include "templates/refdatalist.h"
 
-// Constructor
-NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
-    : NETANode(parent, NETANode::ConnectionNode)
+NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements,
+				       std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+	: NETANode(parent, NETANode::ConnectionNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;
@@ -45,7 +45,6 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
 	allowRootMatch_ = false;
 }
 
-// Destructor
 NETAConnectionNode::~NETAConnectionNode() {}
 
 /*
@@ -55,7 +54,9 @@ NETAConnectionNode::~NETAConnectionNode() {}
 // Return enum options for NETAConnectionModifiers
 EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh") << EnumOption(RepeatConnectionModifier, "n");
+	static EnumOptionsList ModifierOptions = EnumOptionsList()
+						 << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh")
+						 << EnumOption(RepeatConnectionModifier, "n");
 
 	static EnumOptions<NETAConnectionNode::NETAConnectionModifier> options("ConnectionModifier", ModifierOptions);
 
@@ -74,20 +75,20 @@ bool NETAConnectionNode::setModifier(const char *modifier, ComparisonOperator op
 
 	switch (modifiers().enumeration(modifier))
 	{
-	case (NETAConnectionNode::NBondsModifier):
-		nBondsValue_ = value;
-		nBondsValueOperator_ = op;
-		break;
-	case (NETAConnectionNode::NHydrogensModifier):
-		nHydrogensValue_ = value;
-		nHydrogensValueOperator_ = op;
-		break;
-	case (NETAConnectionNode::RepeatConnectionModifier):
-		repeatCount_ = value;
-		repeatCountOperator_ = op;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle modifier '%s' in connection node.\n", modifier);
+		case (NETAConnectionNode::NBondsModifier):
+			nBondsValue_ = value;
+			nBondsValueOperator_ = op;
+			break;
+		case (NETAConnectionNode::NHydrogensModifier):
+			nHydrogensValue_ = value;
+			nHydrogensValueOperator_ = op;
+			break;
+		case (NETAConnectionNode::RepeatConnectionModifier):
+			repeatCount_ = value;
+			repeatCountOperator_ = op;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle modifier '%s' in connection node.\n", modifier);
 	}
 
 	return true;
@@ -119,11 +120,11 @@ bool NETAConnectionNode::setFlag(const char *flag, bool state)
 
 	switch (flags().enumeration(flag))
 	{
-	case (NETAConnectionNode::RootFlag):
-		allowRootMatch_ = state;
-		break;
-	default:
-		return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
+		case (NETAConnectionNode::RootFlag):
+			allowRootMatch_ = state;
+			break;
+		default:
+			return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
 	}
 
 	return true;
@@ -137,8 +138,8 @@ bool NETAConnectionNode::setFlag(const char *flag, bool state)
 int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
 	// 	printf("I AM THE CONNECTION - matchPath size = %i:\n", matchPath.nItems());
-	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
-	// 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
+	// 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
+	// iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
 	// Get directly connected atoms about 'i', excluding any that have already been matched
 	RefDataList<const SpeciesAtom, int> neighbours;

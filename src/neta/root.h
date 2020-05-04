@@ -34,15 +34,14 @@ class NETADefinition;
 // NETA Root Node
 class NETARootNode : public NETANode
 {
-      public:
-	// Constructor / Destructor
+	public:
 	NETARootNode(NETADefinition *parent);
 	~NETARootNode();
 
 	/*
 	 * Modifiers
 	 */
-      private:
+	private:
 	// Number of bonds value
 	int nBondsValue_;
 	// Numbe of bonds value comparison operator
@@ -52,7 +51,7 @@ class NETARootNode : public NETANode
 	// Numbe of hydrogens value comparison operator
 	NETANode::ComparisonOperator nHydrogensValueOperator_;
 
-      public:
+	public:
 	// Available modifiers
 	enum NETARootModifier
 	{
@@ -70,7 +69,7 @@ class NETARootNode : public NETANode
 	/*
 	 * Scoring
 	 */
-      public:
+	public:
 	// Evaluate the node and return its score
 	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };

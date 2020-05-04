@@ -25,8 +25,9 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
-// Constructor
-BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword,
+								 const CoreData &coreData)
+	: KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -148,8 +149,8 @@ void BroadeningFunctionKeywordWidget::updateKeywordData()
 	// Get widget data
 	BroadeningFunction broadeningFunction;
 	BroadeningFunction::FunctionType func = (BroadeningFunction::FunctionType)ui_.FunctionCombo->currentIndex();
-	broadeningFunction.set(func, ui_.Parameter0Spin->value(), ui_.Parameter1Spin->value(), ui_.Parameter2Spin->value(), ui_.Parameter3Spin->value(), ui_.Parameter4Spin->value(),
-			       ui_.Parameter5Spin->value());
+	broadeningFunction.set(func, ui_.Parameter0Spin->value(), ui_.Parameter1Spin->value(), ui_.Parameter2Spin->value(),
+			       ui_.Parameter3Spin->value(), ui_.Parameter4Spin->value(), ui_.Parameter5Spin->value());
 
 	keyword_->setData(broadeningFunction);
 }

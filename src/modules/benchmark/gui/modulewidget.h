@@ -34,18 +34,17 @@ class BenchmarkModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      private:
+	private:
 	// Associated Module
 	BenchmarkModule *module_;
 
-      public:
-	// Constructor
+	public:
 	BenchmarkModuleWidget(QWidget *parent, BenchmarkModule *module);
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::BenchmarkModuleWidget ui_;
 };

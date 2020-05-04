@@ -39,11 +39,10 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData);
 
-      private:
+	private:
 	// Associated Module
 	CalculateSDFModule *module_;
 	// CoreData reference
@@ -52,7 +51,7 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::CalculateSDFModuleWidget ui_;
 	// DataViewers contained within this widget
@@ -64,14 +63,14 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	// Renderable for reference molecule
 	RenderableSpecies *referenceMoleculeRenderable_;
 
-      public:
+	public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 
 	/*
 	 * State I/O
 	 */
-      public:
+	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
@@ -80,11 +79,11 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	/*
 	 * Widgets / Functions
 	 */
-      private:
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets();
 
-      private slots:
+	private slots:
 	void on_LowerCutoffSpin_valueChanged(double value);
 	void on_UpperCutoffSpin_valueChanged(double value);
 	void on_ReferenceMoleculeCombo_currentIndexChanged(int index);

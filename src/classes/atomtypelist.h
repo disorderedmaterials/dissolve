@@ -34,14 +34,10 @@ class Isotope;
 // AtomTypeList
 class AtomTypeList : public GenericItemBase
 {
-      public:
-	// Constructor
+	public:
 	AtomTypeList();
-	// Destructor
 	~AtomTypeList();
-	// Copy Constructor
 	AtomTypeList(const AtomTypeList &source);
-	// Assignment Operator
 	void operator=(const AtomTypeList &source);
 	// Array access operator
 	AtomTypeData *operator[](int n);
@@ -49,11 +45,11 @@ class AtomTypeList : public GenericItemBase
 	/*
 	 * Type List
 	 */
-      private:
+	private:
 	// List of AtomTypeData
 	List<AtomTypeData> types_;
 
-      public:
+	public:
 	// Clear all data
 	void clear();
 	// Zero populations of all types in the list
@@ -98,7 +94,7 @@ class AtomTypeList : public GenericItemBase
 	/*
 	 * GenericItemBase Implementations
 	 */
-      public:
+	public:
 	// Return class name
 	static const char *itemClassName();
 	// Read data through specified LineParser
@@ -109,7 +105,7 @@ class AtomTypeList : public GenericItemBase
 	/*
 	 * Parallel Comms
 	 */
-      public:
+	public:
 	// Broadcast item contents
 	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality

@@ -25,7 +25,6 @@
  * Mime String
  */
 
-// Constructor
 MimeString::MimeString(MimeString::MimeStringType type, QString data)
 {
 	type_ = type;
@@ -42,16 +41,12 @@ QString MimeString::data() const { return data_; }
  * Mime Strings
  */
 
-// Constructor
 MimeStrings::MimeStrings() {}
 
-// Destructor
 MimeStrings::~MimeStrings() {}
 
-// Copy Constructor
 MimeStrings::MimeStrings(const MimeStrings &source) { (*this) = source; }
 
-// Assignment Operator
 void MimeStrings::operator=(const MimeStrings &source) { strings_ = source.strings_; }
 
 bool MimeStrings::hasFormat(const QString &mimeType) const

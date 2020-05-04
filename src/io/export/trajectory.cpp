@@ -26,8 +26,10 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-// Constructor
-TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char *filename, TrajectoryExportFormat format) : FileAndFormat(filename, format) {}
+TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char *filename, TrajectoryExportFormat format)
+	: FileAndFormat(filename, format)
+{
+}
 
 /*
  * Format Access
@@ -36,9 +38,11 @@ TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char *filename, Tra
 // Return enum options for TrajectoryExportFormat
 EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExportFileFormat::trajectoryExportFormats()
 {
-	static EnumOptionsList TrajectoryExportFormats = EnumOptionsList() << EnumOption(TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory");
+	static EnumOptionsList TrajectoryExportFormats =
+		EnumOptionsList() << EnumOption(TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory");
 
-	static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> options("TrajectoryExportFileFormat", TrajectoryExportFormats);
+	static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> options("TrajectoryExportFileFormat",
+										       TrajectoryExportFormats);
 
 	return options;
 }
@@ -50,10 +54,16 @@ int TrajectoryExportFileFormat::nFormats() const { return TrajectoryExportFileFo
 const char *TrajectoryExportFileFormat::formatKeyword(int id) const { return trajectoryExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *TrajectoryExportFileFormat::formatDescription(int id) const { return trajectoryExportFormats().descriptionByIndex(id); }
+const char *TrajectoryExportFileFormat::formatDescription(int id) const
+{
+	return trajectoryExportFormats().descriptionByIndex(id);
+}
 
 // Return current format as TrajectoryExportFormat
-TrajectoryExportFileFormat::TrajectoryExportFormat TrajectoryExportFileFormat::trajectoryFormat() const { return (TrajectoryExportFileFormat::TrajectoryExportFormat)format_; }
+TrajectoryExportFileFormat::TrajectoryExportFormat TrajectoryExportFileFormat::trajectoryFormat() const
+{
+	return (TrajectoryExportFileFormat::TrajectoryExportFormat)format_;
+}
 
 /*
  * Export Functions
@@ -72,7 +82,8 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 	for (int n = 0; n < cfg->nAtoms(); ++n)
 	{
 		Atom *i = cfg->atom(n);
-		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
+		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->speciesAtom()->element()->symbol(), i->r().x,
+				       i->r().y, i->r().z))
 			return false;
 	}
 
@@ -102,7 +113,8 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
 			headerResult = true;
 		// 		else if (format_ == OneThatNeedsAHeaderTrajectory) headerResult = writeAHeader(parser, cfg);
 		else
-			headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
+			headerResult =
+				Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
 		printAvailableFormats();
 
 		if (!headerResult)

@@ -25,7 +25,6 @@
  * Constructor / Destructor
  */
 
-// Constructor
 CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 {
 	// Set unique name for this instance of the Module
@@ -36,7 +35,6 @@ CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 	initialise();
 }
 
-// Destructor
 CalculateAvgMolModule::~CalculateAvgMolModule() {}
 
 /*

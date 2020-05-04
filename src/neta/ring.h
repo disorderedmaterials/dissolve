@@ -35,15 +35,14 @@ class NETADefinition;
 // NETA Ring Node
 class NETARingNode : public NETANode
 {
-      public:
-	// Constructor / Destructor
+	public:
 	NETARingNode(NETADefinition *parent);
 	~NETARingNode();
 
 	/*
 	 * Modifiers
 	 */
-      private:
+	private:
 	// Repeat count value
 	int repeatCount_;
 	// Repeat count comparison operator
@@ -53,7 +52,7 @@ class NETARingNode : public NETANode
 	// Ring size value comparison operator
 	NETANode::ComparisonOperator sizeValueOperator_;
 
-      public:
+	public:
 	// Available modifiers
 	enum NETARingModifier
 	{
@@ -71,11 +70,12 @@ class NETARingNode : public NETANode
 	/*
 	 * Scoring
 	 */
-      private:
+	private:
 	// Locate rings in which the specified atom is involved
-	void findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const;
+	void findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
+		       const int minSize, const int maxSize) const;
 
-      public:
+	public:
 	// Evaluate the node and return its score
 	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };

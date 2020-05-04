@@ -28,7 +28,6 @@
 #include "main/dissolve.h"
 #include <QToolButton>
 
-// Constructor
 MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
 {
 	// Create our own tab bar
@@ -252,7 +251,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 		// Loop over existing tabs
 		while (currentTabIndex < speciesTabs_.nItems())
 		{
-			// If the existing tab is displaying the current Species already, then we can move on. Otherwise, delete it
+			// If the existing tab is displaying the current Species already, then we can move on. Otherwise, delete
+			// it
 			if (speciesTabs_[currentTabIndex]->species() == sp)
 				break;
 			else
@@ -286,7 +286,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 		// Loop over existing tabs
 		while (currentTabIndex < configurationTabs_.nItems())
 		{
-			// If the existing tab is displaying the current Configuration already, then we can move on. Otherwise, delete it
+			// If the existing tab is displaying the current Configuration already, then we can move on. Otherwise,
+			// delete it
 			if (configurationTabs_[currentTabIndex]->configuration() == cfg)
 				break;
 			else
@@ -312,7 +313,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 	}
 	baseIndex += dissolve.nConfigurations();
 
-	// Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to 1+nSpecies+nConfigurations+nProcessingLayers
+	// Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to
+	// 1+nSpecies+nConfigurations+nProcessingLayers
 	ListIterator<ModuleLayer> processingLayerIterator(dissolve.processingLayers());
 	currentTabIndex = 0;
 	while (ModuleLayer *layer = processingLayerIterator.iterate())
@@ -320,7 +322,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 		// Loop over existing tabs
 		while (currentTabIndex < processingLayerTabs_.nItems())
 		{
-			// If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise, delete it
+			// If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise,
+			// delete it
 			if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer)
 				break;
 			else
@@ -466,7 +469,8 @@ MainTab *MainTabsWidget::currentTab() const
 	if (currentWidget() == NULL)
 		return NULL;
 
-	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets are derived
+	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets
+	// are derived
 	MainTab *currentTab = dynamic_cast<MainTab *>(currentWidget());
 	if (!currentTab)
 	{
@@ -650,7 +654,8 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 		int tabIndex = indexOf(item->data());
 		if (tabIndex == -1)
 		{
-			Messenger::error("MainTabsWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n", item->data());
+			Messenger::error("MainTabsWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n",
+					 item->data());
 			return;
 		}
 

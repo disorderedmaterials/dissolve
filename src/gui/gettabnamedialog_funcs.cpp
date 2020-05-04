@@ -23,7 +23,6 @@
 #include "gui/gettabnamedialog.h"
 #include "gui/maintab.h"
 
-// Constructor
 GetTabNameDialog::GetTabNameDialog(QWidget *parent, RefList<const MainTab> currentTabs)
 {
 	ui_.setupUi(this);
@@ -31,7 +30,6 @@ GetTabNameDialog::GetTabNameDialog(QWidget *parent, RefList<const MainTab> curre
 	currentTabs_ = currentTabs;
 }
 
-// Destructor
 GetTabNameDialog::~GetTabNameDialog() {}
 
 // Run the dialog

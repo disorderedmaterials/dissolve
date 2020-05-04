@@ -22,7 +22,6 @@
 #include "base/processgroup.h"
 #include "base/messenger.h"
 
-// Constructor
 ProcessGroup::ProcessGroup() : ListItem<ProcessGroup>() {}
 
 /*

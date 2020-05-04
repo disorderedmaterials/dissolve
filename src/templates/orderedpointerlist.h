@@ -30,28 +30,27 @@
 template <class T> class OrderedPointerListItem
 {
 	/*
-	 * OrderedPointerList maintains a list of OrderedPointerListItems, which contain a pointer to an object of the template class type.
-	 * The only requirement of the template class T is that is provides a member function 'int T::index()' which provides the index by which it should be sorted.
+	 * OrderedPointerList maintains a list of OrderedPointerListItems, which contain a pointer to an object of the template
+	 * class type. The only requirement of the template class T is that is provides a member function 'int T::index()' which
+	 * provides the index by which it should be sorted.
 	 */
 
-      public:
-	// Constructor
+	public:
 	OrderedPointerListItem<T>(T *object = NULL);
 	// List pointers
 	OrderedPointerListItem<T> *prev, *next;
 
-      private:
+	private:
 	// Pointer to object
 	T *object_;
 
-      public:
+	public:
 	// Set pointer to object
 	void setObject(T *object);
 	// Return pointer to object
 	T *object();
 };
 
-// Constructor
 template <class T> OrderedPointerListItem<T>::OrderedPointerListItem(T *object) : object_(object)
 {
 	prev = NULL;
@@ -71,18 +70,15 @@ template <class T> class OrderedPointerList
 	 * Ordered, linked list of pointers to objects which exist elsewhere.
 	 */
 
-      public:
-	// Constructor
+	public:
 	OrderedPointerList<T>();
-	// Destructor
 	~OrderedPointerList();
-	// Copy constructor
 	OrderedPointerList<T>(const OrderedPointerList<T> &source);
 
 	/*
 	 * Item List
 	 */
-      private:
+	private:
 	// Object factory
 	ObjectFactory<OrderedPointerListItem<T>> factory_;
 	// Pointers to head and tail of list
@@ -101,7 +97,7 @@ template <class T> class OrderedPointerList
 	/*
 	 * Access / Manipulation
 	 */
-      private:
+	private:
 	// Insert item pointing to specified object, after specified item
 	OrderedPointerListItem<T> *insertAfter(T *object, OrderedPointerListItem<T> *afterThis);
 	// Insert item pointing to specified object, before specified item
@@ -117,7 +113,7 @@ template <class T> class OrderedPointerList
 	// Find and return the item with the next highest index to the index specified
 	OrderedPointerListItem<T> *nextHighest(T *object);
 
-      public:
+	public:
 	// Clear the list
 	void clear();
 	// Returns the number of items referenced in the list
@@ -150,14 +146,11 @@ template <class T> class OrderedPointerList
 	/*
 	 * Operators
 	 */
-      public:
-	// Assignment operator
+	public:
 	void operator=(const OrderedPointerList<T> &other);
-	// Element access operator
 	OrderedPointerListItem<T> *operator[](int);
 };
 
-// Constructor
 template <class T> OrderedPointerList<T>::OrderedPointerList()
 {
 	listHead_ = NULL;
@@ -171,10 +164,8 @@ template <class T> OrderedPointerList<T>::OrderedPointerList()
 	objects_ = NULL;
 }
 
-// Destructor
 template <class T> OrderedPointerList<T>::~OrderedPointerList() { clear(); }
 
-// Copy constructor
 template <class T> OrderedPointerList<T>::OrderedPointerList(const OrderedPointerList<T> &source) { (*this) = source; }
 
 /*
@@ -182,7 +173,8 @@ template <class T> OrderedPointerList<T>::OrderedPointerList(const OrderedPointe
  */
 
 // Insert reference to specifed object after supplied item
-template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::insertAfter(T *object, OrderedPointerListItem<T> *afterThis)
+template <class T>
+OrderedPointerListItem<T> *OrderedPointerList<T>::insertAfter(T *object, OrderedPointerListItem<T> *afterThis)
 {
 	// Create new list item (from the ObjectFactory)
 	OrderedPointerListItem<T> *newItem = factory_.produce();
@@ -224,7 +216,8 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::insertAfter
 }
 
 // Insert reference to specifed object after supplied item
-template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::insertBefore(T *object, OrderedPointerListItem<T> *beforeThis)
+template <class T>
+OrderedPointerListItem<T> *OrderedPointerList<T>::insertBefore(T *object, OrderedPointerListItem<T> *beforeThis)
 {
 	// Create new list item (from the ObjectFactory)
 	OrderedPointerListItem<T> *newItem = factory_.produce();
@@ -234,7 +227,8 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::insertBefor
 }
 
 // Insert specified item, before specified item
-template <class T> void OrderedPointerList<T>::insertBefore(OrderedPointerListItem<T> *item, OrderedPointerListItem<T> *beforeThis)
+template <class T>
+void OrderedPointerList<T>::insertBefore(OrderedPointerListItem<T> *item, OrderedPointerListItem<T> *beforeThis)
 {
 	// Get pointer to prev item in list, after the list item 'beforeThis'
 	// If 'beforeThis' is NULL, then we insert at the end of the list (and make listTail_ point to the new item)
@@ -430,7 +424,8 @@ template <class T> void OrderedPointerList<T>::addAtEnd(T *object)
 	else if (listTail_->object() < object)
 		insertAfter(object, listTail_);
 	else
-		printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerList, but last item in list is %p\n", object, listTail_->object());
+		printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerList, but last item in list is %p\n",
+		       object, listTail_->object());
 }
 
 // Remove item reference from list
@@ -561,7 +556,6 @@ template <class T> void OrderedPointerList<T>::invalidateLists()
  * Operators
  */
 
-// Assignment operator
 template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerList<T> &other)
 {
 	clear();
@@ -569,7 +563,6 @@ template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerLis
 		addAtEnd(item->object());
 }
 
-// Element access operator
 template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](int index)
 {
 #ifdef CHECKS
@@ -589,15 +582,15 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](
 // Ordered Pointer List Iterator
 template <class T> class OrderedPointerListIterator
 {
-      public:
-	// Constructor
-	OrderedPointerListIterator<T>(const OrderedPointerList<T> &source, bool reverse = false) : reverse_(reverse), targetList_(source)
+	public:
+	OrderedPointerListIterator<T>(const OrderedPointerList<T> &source, bool reverse = false)
+		: reverse_(reverse), targetList_(source)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
 	}
 
-      private:
+	private:
 	// Whether the iterator has reached the end of the list
 	bool finished_;
 	// Whether the iterator operates in reverse (iterating tail to head)
@@ -607,7 +600,7 @@ template <class T> class OrderedPointerListIterator
 	// Current item
 	OrderedPointerListItem<T> *currentItem_;
 
-      public:
+	public:
 	// Iterate
 	T *iterate()
 	{

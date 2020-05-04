@@ -39,8 +39,8 @@ std::vector<ForcefieldAtomType *> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
-// Constructor
-NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, const char *definitionText, const Forcefield *associatedFF)
+NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, const char *definitionText,
+						 const Forcefield *associatedFF)
 {
 	// Clear any possible old data
 	contextStack_.clear();
@@ -58,7 +58,6 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
 	setSource(definitionText);
 }
 
-// Destructor
 NETADefinitionGenerator::~NETADefinitionGenerator() {}
 
 /*
@@ -173,7 +172,8 @@ int NETADefinitionGenerator::lex()
 			}
 			else if ((c == '-') || (c == '+'))
 			{
-				// We allow '-' or '+' only as part of an exponentiation, so if it is not preceeded by 'E' we stop parsing
+				// We allow '-' or '+' only as part of an exponentiation, so if it is not preceeded by 'E' we
+				// stop parsing
 				if ((!token.isEmpty()) && (!(token.lastChar() == 'E')))
 				{
 					unGetChar();
@@ -193,13 +193,15 @@ int NETADefinitionGenerator::lex()
 		if (isInteger)
 		{
 			NETADefinitionGenerator_lval.integerConst = token.asInteger();
-			Messenger::printVerbose("NETA (%p): found an integer constant [%s] [%i]\n", definition_, token.get(), NETADefinitionGenerator_lval.integerConst);
+			Messenger::printVerbose("NETA (%p): found an integer constant [%s] [%i]\n", definition_, token.get(),
+						NETADefinitionGenerator_lval.integerConst);
 			return DISSOLVE_NETA_INTEGERCONSTANT;
 		}
 		else
 		{
 			NETADefinitionGenerator_lval.doubleConst = token.asDouble();
-			Messenger::printVerbose("NETA (%p): found a double constant [%s] [%e]\n", definition_, token.get(), NETADefinitionGenerator_lval.doubleConst);
+			Messenger::printVerbose("NETA (%p): found a double constant [%s] [%e]\n", definition_, token.get(),
+						NETADefinitionGenerator_lval.doubleConst);
 			return DISSOLVE_NETA_DOUBLECONSTANT;
 		}
 	}
@@ -332,7 +334,9 @@ bool NETADefinitionGenerator::addAtomTypeTarget(int id)
 
 	ForcefieldAtomType *at = associatedForcefield_->atomTypeById(id);
 	if (!at)
-		return Messenger::error("No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id, associatedForcefield_->name());
+		return Messenger::error(
+			"No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id,
+			associatedForcefield_->name());
 
 	targetAtomTypes_.push_back(at);
 
@@ -348,7 +352,8 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
 
 	ForcefieldAtomType *at = associatedForcefield_->atomTypeByName(typeName);
 	if (!at)
-		return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n", typeName);
+		return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n",
+					typeName);
 
 	targetAtomTypes_.push_back(at);
 

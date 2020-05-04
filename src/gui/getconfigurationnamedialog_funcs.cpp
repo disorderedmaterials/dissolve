@@ -24,10 +24,11 @@
 #include "classes/coredata.h"
 #include "gui/getconfigurationnamedialog.h"
 
-// Constructor
-GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData) { ui_.setupUi(this); }
+GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData)
+{
+	ui_.setupUi(this);
+}
 
-// Destructor
 GetConfigurationNameDialog::~GetConfigurationNameDialog() {}
 
 // Run the dialog

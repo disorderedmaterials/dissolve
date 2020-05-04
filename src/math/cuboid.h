@@ -27,27 +27,26 @@
 // Orthogonal Cuboid
 class Cuboid
 {
-      public:
-	// Constructor / Destructor
+	public:
 	Cuboid();
 
 	/*
 	 * Definition
 	 */
-      private:
+	private:
 	// Minimum and maximum coordinates for cuboid
 	Vec3<double> minima_, maxima_;
 	// Whether minima and maxima have ever been set
 	bool minimaSet_, maximaSet_;
 
-      public:
+	public:
 	// Update extreme coordinates with supplied vector
 	void updateExtremes(Vec3<double> v);
 
 	/*
 	 * Functions
 	 */
-      public:
+	public:
 	// Return minima for cuboid
 	Vec3<double> minima() const;
 	// Return maxima for cuboid

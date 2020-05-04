@@ -30,7 +30,7 @@
 // Symbols
 class SymbolData
 {
-      public:
+	public:
 	// Symbol
 	enum Symbol
 	{
@@ -98,7 +98,7 @@ class SymbolData
 	/*
 	 * Singleton
 	 */
-      public:
+	public:
 	// Static list of symbols
 	static SymbolData symbols[];
 	// Return named symbol

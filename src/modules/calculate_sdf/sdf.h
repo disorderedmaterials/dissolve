@@ -35,23 +35,21 @@ class SpeciesSite;
 // CalculateSDF Module
 class CalculateSDFModule : public Module
 {
-      public:
-	// Constructor
+	public:
 	CalculateSDFModule();
-	// Destructor
 	~CalculateSDFModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -64,21 +62,21 @@ class CalculateSDFModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-      private:
+	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A (origin)
@@ -95,7 +93,7 @@ class CalculateSDFModule : public Module
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

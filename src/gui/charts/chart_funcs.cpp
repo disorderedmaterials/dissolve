@@ -27,7 +27,6 @@
 #include <QMimeData>
 #include <QMouseEvent>
 
-// Constructor
 ChartBase::ChartBase(QWidget *parent) : QWidget(parent)
 {
 	refreshing_ = false;

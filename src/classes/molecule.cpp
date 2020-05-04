@@ -23,10 +23,8 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-// Constructor
 Molecule::Molecule() { species_ = NULL; }
 
-// Destructor
 Molecule::~Molecule() {}
 
 /*
@@ -57,7 +55,8 @@ void Molecule::addAtom(Atom *i)
 	atoms_.push_back(i);
 
 	if (i->molecule() != NULL)
-		Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n", i->arrayIndex());
+		Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n",
+				i->arrayIndex());
 	std::shared_ptr<Molecule> parent = shared_from_this();
 	i->setMolecule(parent);
 }
@@ -128,7 +127,8 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin, int nTargetAtoms, int *targetAtoms)
+void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin, int nTargetAtoms,
+			 int *targetAtoms)
 {
 	// Loop over supplied Atoms
 	Vec3<double> newR;

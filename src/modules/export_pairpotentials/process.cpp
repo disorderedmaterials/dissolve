@@ -41,15 +41,18 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPo
 
 		for (PairPotential *pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next())
 		{
-			Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.description(), pp->atomTypeNameI(), pp->atomTypeNameJ());
+			Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n",
+					 pairPotentialFormat_.description(), pp->atomTypeNameI(), pp->atomTypeNameJ());
 
 			// Generate filename
-			pairPotentialFormat_.setFilename(CharString("%s-%s-%s.pp", rootPPName.get(), pp->atomTypeNameI(), pp->atomTypeNameJ()));
+			pairPotentialFormat_.setFilename(
+				CharString("%s-%s-%s.pp", rootPPName.get(), pp->atomTypeNameI(), pp->atomTypeNameJ()));
 
 			// Append pair potential
 			if (!pairPotentialFormat_.exportData(pp))
 			{
-				Messenger::print("Export: Failed to export pair potential file '%s'.\n", pairPotentialFormat_.filename());
+				Messenger::print("Export: Failed to export pair potential file '%s'.\n",
+						 pairPotentialFormat_.filename());
 				pairPotentialFormat_.setFilename(rootPPName);
 				procPool.decideFalse();
 				return false;

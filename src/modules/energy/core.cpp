@@ -25,14 +25,12 @@
  * Constructor / Destructor
  */
 
-// Constructor
 EnergyModule::EnergyModule() : Module()
 {
 	// Initialise Module - set up keywords etc.
 	initialise();
 }
 
-// Destructor
 EnergyModule::~EnergyModule() {}
 
 /*

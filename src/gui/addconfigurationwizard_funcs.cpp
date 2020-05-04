@@ -30,7 +30,6 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-// Constructor / Destructor
 AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
 {
 	dissolveReference_ = NULL;
@@ -42,12 +41,15 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
 
 	// Register pages with the wizard
 	registerChoicePage(AddConfigurationWizard::StartPage, "Create Configuration");
-	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template", AddConfigurationWizard::NameAndTemperaturePage);
-	registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature", WizardWidgetPageInfo::FinishHereFlag);
+	registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template",
+		     AddConfigurationWizard::NameAndTemperaturePage);
+	registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature",
+		     WizardWidgetPageInfo::FinishHereFlag);
 
 	// Connect signals / slots
-	// 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
-	// 	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
+	// 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this,
+	// SLOT(atomTypesListEdited(QWidget*))); 	connect(ui_.CreateAtomicElementSelector,
+	// SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
 
 	lockedForRefresh_ = 0;
 }
@@ -59,7 +61,10 @@ AddConfigurationWizard::~AddConfigurationWizard() {}
  */
 
 // Set Dissolve reference
-void AddConfigurationWizard::setMainDissolveReference(const Dissolve *dissolveReference) { dissolveReference_ = dissolveReference; }
+void AddConfigurationWizard::setMainDissolveReference(const Dissolve *dissolveReference)
+{
+	dissolveReference_ = dissolveReference;
+}
 
 // Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
 Configuration *AddConfigurationWizard::importConfiguration(Dissolve &dissolve)
@@ -96,8 +101,8 @@ bool AddConfigurationWizard::displayControlPage(int index)
 	// Update controls / check flow
 	switch (index)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	// Page index is valid, so show it - no need to switch/case
@@ -112,10 +117,10 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-	case (AddConfigurationWizard::NameAndTemperaturePage):
-		return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
-	default:
-		break;
+		case (AddConfigurationWizard::NameAndTemperaturePage):
+			return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
+		default:
+			break;
 	}
 
 	return true;
@@ -128,12 +133,12 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-	case (AddConfigurationWizard::SelectTemplatePage):
-		// Clear Configuration, and add used Species
-		importTarget_->clear();
-		break;
-	default:
-		break;
+		case (AddConfigurationWizard::SelectTemplatePage):
+			// Clear Configuration, and add used Species
+			importTarget_->clear();
+			break;
+		default:
+			break;
 	}
 
 	return true;
@@ -146,8 +151,8 @@ int AddConfigurationWizard::determineNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return result;
@@ -158,8 +163,8 @@ bool AddConfigurationWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return true;
@@ -188,9 +193,15 @@ void AddConfigurationWizard::reset()
  * Start Page
  */
 
-void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked) { goToPage(AddConfigurationWizard::NameAndTemperaturePage); }
+void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked)
+{
+	goToPage(AddConfigurationWizard::NameAndTemperaturePage);
+}
 
-void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked) { goToPage(AddConfigurationWizard::SelectTemplatePage); }
+void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked)
+{
+	goToPage(AddConfigurationWizard::SelectTemplatePage);
+}
 
 /*
  * Select Template Page

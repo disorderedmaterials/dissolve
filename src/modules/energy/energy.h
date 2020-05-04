@@ -34,23 +34,21 @@ class EnergyModule : public Module
 	 * Calculates the total energy of the system by one of several methods
 	 */
 
-      public:
-	// Constructor
+	public:
 	EnergyModule();
-	// Destructor
 	~EnergyModule();
 
 	/*
 	 * Instances
 	 */
-      public:
+	public:
 	// Create instance of this module
 	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return type of module
 	const char *type() const;
 	// Return category for module
@@ -63,46 +61,50 @@ class EnergyModule : public Module
 	/*
 	 * Initialisation
 	 */
-      protected:
+	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-      private:
+	private:
 	// Run main processing
 	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
-      public:
+	public:
 	// Run set-up stage
 	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-      public:
+	public:
 	// Return total intramolecular energy
 	static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
 	// Return total intramolecular energy, storing components in provided variables
-	static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+	static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+					   double &bondEnergy, double &angleEnergy, double &torsionEnergy);
 	// Return total interatomic energy
 	static double interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
 	// Return total energy (interatomic and intramolecular)
 	static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
 	// Return total energy (interatomic and intramolecular), storing components in provided variables
-	static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+	static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+				  double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy);
 	// Return total intermolecular energy
 	static double interMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
-	// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not be assessed
+	// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could
+	// not be assessed
 	static int checkStability(Configuration *cfg);
-	// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
+	// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be
+	// assessed
 	static int checkStability(const RefList<Configuration> &configurations);
 
 	/*
 	 * GUI Widget
 	 */
-      public:
+	public:
 	// Return a new widget controlling this Module
 	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };

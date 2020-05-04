@@ -30,14 +30,13 @@
 // Chunk of triangles
 class VertexChunk
 {
-      public:
-	// Constructor / Destructor
+	public:
 	VertexChunk();
 	~VertexChunk();
 	// List pointers
 	VertexChunk *prev, *next;
 
-      private:
+	private:
 	// Vertex data array (containing normal and possibly colour data)
 	GLfloat *vertexData_;
 	// Centroid array
@@ -55,11 +54,11 @@ class VertexChunk
 	// Number of vertices per primitive type
 	int verticesPerType_;
 
-      private:
+	private:
 	// Update (and finalise) centroid for current primitive type
 	void updateCentroid(GLfloat x, GLfloat y, GLfloat z, bool finalise);
 
-      public:
+	public:
 	// Initialise structure
 	void initialise(GLenum type, bool colourData);
 	// Forget all vertex data currently stored in array (but retain array)
@@ -67,9 +66,11 @@ class VertexChunk
 	// Define next vertex and normal
 	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, bool calcCentroid = true);
 	// Define next vertex, normal, and colour (as array)
-	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat *colour, bool calcCentroid = true);
+	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat *colour,
+			  bool calcCentroid = true);
 	// Define next vertex, normal, and colour
-	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a, bool calcCentroid = true);
+	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b,
+			  GLfloat a, bool calcCentroid = true);
 	// Return whether current array is full
 	bool full();
 	// Return number of defined primitive (GL) types

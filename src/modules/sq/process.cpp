@@ -51,16 +51,20 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	const WindowFunction &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
-	Messenger::print("SQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
+	Messenger::print("SQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n",
+			 qMin, qMax, qDelta);
 	if (windowFunction.function() == WindowFunction::NoWindow)
 		Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
 	else
-		Messenger::print("SQ: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()),
+		Messenger::print("SQ: Window function to be applied in Fourier transforms is %s (%s).",
+				 WindowFunction::functionType(windowFunction.function()),
 				 windowFunction.parameterSummary().get());
 	if (qBroadening.function() == BroadeningFunction::NoFunction)
 		Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
 	else
-		Messenger::print("SQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
+		Messenger::print("SQ: Broadening to be applied in calculated S(Q) is %s (%s).",
+				 BroadeningFunction::functionType(qBroadening.function()),
+				 qBroadening.parameterSummary().get());
 	Messenger::print("SQ: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("\n");
 
@@ -72,26 +76,31 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted g(r) may come from one of many RDF-type modules
+		// Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
+		// g(r) may come from one of many RDF-type modules
 		if (!cfg->moduleData().contains("UnweightedGR"))
 			return Messenger::error("Couldn't locate UnweightedGR for Configuration '%s'.\n", cfg->name());
 		const PartialSet &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
 		// Does a PartialSet already exist for this Configuration?
 		bool wasCreated;
-		PartialSet &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "SQ", GenericItem::InRestartFileFlag, &wasCreated);
+		PartialSet &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "SQ",
+										  GenericItem::InRestartFileFlag, &wasCreated);
 		if (wasCreated)
-			unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()), "unweighted", "sq", "Q, 1/Angstroms");
+			unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()),
+						   "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date?
-		if (DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->moduleData().version("UnweightedGR"))))
+		if (DissolveSys::sameString(unweightedsq.fingerprint(),
+					    CharString("%i", cfg->moduleData().version("UnweightedGR"))))
 		{
 			Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
 		}
 
 		// Transform g(r) into S(Q)
-		if (!calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening))
+		if (!calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(),
+					   windowFunction, qBroadening))
 			return false;
 
 		// Set names of resources (Data1D) within the PartialSet
@@ -104,14 +113,16 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	}
 
 	// Create/retrieve PartialSet for summed partial S(Q)
-	PartialSet &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
+										uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
 	if (!sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ))
 		return false;
 
 	// Create/retrieve PartialSet for summed unweighted g(r)
-	PartialSet &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
+										uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
 	if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR))

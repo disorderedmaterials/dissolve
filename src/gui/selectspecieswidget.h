@@ -36,16 +36,14 @@ class SelectSpeciesWidget : public QWidget
 {
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	SelectSpeciesWidget(QWidget *parent);
-	// Destructor
 	~SelectSpeciesWidget();
 
 	/*
 	 * UI
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::SelectSpeciesWidget ui_;
 	// Whether the widget is refreshing
@@ -54,7 +52,7 @@ class SelectSpeciesWidget : public QWidget
 	/*
 	 * Data
 	 */
-      private:
+	private:
 	// CoreData containing available Species
 	const CoreData *coreData_;
 	// Minimum number of Species in a valid selection
@@ -62,7 +60,7 @@ class SelectSpeciesWidget : public QWidget
 	// Maximum number of Species in a valid selection (-1 for no limit)
 	int maximumSelectionSize_;
 
-      public:
+	public:
 	// Set CoreData containing available Species
 	void setCoreData(const CoreData *coreData);
 	// Reset widget, applying specified min and max limits to selection
@@ -71,28 +69,28 @@ class SelectSpeciesWidget : public QWidget
 	/*
 	 * Update
 	 */
-      private:
+	private:
 	// Update the list of Species
 	void updateSpeciesList();
 
 	/*
 	 * Signals / Slots
 	 */
-      private slots:
+	private slots:
 	void on_SelectNoneButton_clicked(bool checked);
 	void on_SelectAllButton_clicked(bool checked);
 	void on_SpeciesList_itemSelectionChanged();
 	void on_SpeciesList_itemDoubleClicked(QListWidgetItem *item);
 
-      signals:
+	signals:
 	void speciesSelectionChanged(bool isValid);
 	void speciesDoubleClicked();
 
-      private:
+	private:
 	// Return whether number of selected items is valid
 	bool isSelectionValid() const;
 
-      public:
+	public:
 	// Return number of species currently selected
 	int nSelected() const;
 	// Return the currently-selected Species

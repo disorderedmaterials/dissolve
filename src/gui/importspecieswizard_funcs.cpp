@@ -29,7 +29,6 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-// Constructor / Destructor
 ImportSpeciesWizard::ImportSpeciesWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;
@@ -62,7 +61,8 @@ ImportSpeciesWizard::ImportSpeciesWizard(QWidget *parent) : temporaryDissolve_(t
 
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget *)), this, SLOT(atomTypesListEdited(QWidget *)));
-	connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget *)), this, SLOT(masterTermsTreeEdited(QWidget *)));
+	connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget *)), this,
+		SLOT(masterTermsTreeEdited(QWidget *)));
 
 	lockedForRefresh_ = 0;
 }
@@ -74,7 +74,10 @@ ImportSpeciesWizard::~ImportSpeciesWizard() {}
  */
 
 // Set Dissolve reference
-void ImportSpeciesWizard::setMainDissolveReference(const Dissolve *dissolveReference) { dissolveReference_ = dissolveReference; }
+void ImportSpeciesWizard::setMainDissolveReference(const Dissolve *dissolveReference)
+{
+	dissolveReference_ = dissolveReference;
+}
 
 // Copy imported Species over to the specified Dissolve object
 Species *ImportSpeciesWizard::importSpecies(Dissolve &dissolve)
@@ -112,8 +115,8 @@ bool ImportSpeciesWizard::displayControlPage(int index)
 	// Update controls in the target page if necessary
 	switch (index)
 	{
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return true;
@@ -125,14 +128,14 @@ bool ImportSpeciesWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-	case (ImportSpeciesWizard::SelectFilePage):
-		return ((!ui_.InputFileEdit->text().isEmpty()) && (QFile::exists(ui_.InputFileEdit->text())));
-	case (ImportSpeciesWizard::SelectSpeciesPage):
-		return (ui_.SpeciesList->currentRow() != -1);
-	case (ImportSpeciesWizard::SpeciesNamePage):
-		return (ui_.SpeciesNameIndicator->state() == CheckIndicator::OKState);
-	default:
-		break;
+		case (ImportSpeciesWizard::SelectFilePage):
+			return ((!ui_.InputFileEdit->text().isEmpty()) && (QFile::exists(ui_.InputFileEdit->text())));
+		case (ImportSpeciesWizard::SelectSpeciesPage):
+			return (ui_.SpeciesList->currentRow() != -1);
+		case (ImportSpeciesWizard::SpeciesNamePage):
+			return (ui_.SpeciesNameIndicator->state() == CheckIndicator::OKState);
+		default:
+			break;
 	}
 
 	return true;
@@ -145,31 +148,31 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-	case (ImportSpeciesWizard::SelectFilePage):
-		// Check that the input/species file exists, and can be read in successfully
-		if (!temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text())))
-		{
-			return false;
-		}
-		// Update the Species and AtomTypes lists
-		ui_.SpeciesList->clear();
-		for (Species *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
-		{
-			QListWidgetItem *item = new QListWidgetItem(sp->name());
-			item->setData(Qt::UserRole, VariantPointer<Species>(sp));
-			ui_.SpeciesList->addItem(item);
-		}
-		if (ui_.SpeciesList->count() > 0)
-		{
-			ui_.SpeciesList->setCurrentRow(0);
-			importTarget_ = temporaryCoreData_.species().first();
-		}
+		case (ImportSpeciesWizard::SelectFilePage):
+			// Check that the input/species file exists, and can be read in successfully
+			if (!temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text())))
+			{
+				return false;
+			}
+			// Update the Species and AtomTypes lists
+			ui_.SpeciesList->clear();
+			for (Species *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
+			{
+				QListWidgetItem *item = new QListWidgetItem(sp->name());
+				item->setData(Qt::UserRole, VariantPointer<Species>(sp));
+				ui_.SpeciesList->addItem(item);
+			}
+			if (ui_.SpeciesList->count() > 0)
+			{
+				ui_.SpeciesList->setCurrentRow(0);
+				importTarget_ = temporaryCoreData_.species().first();
+			}
 
-		updateAtomTypesPage();
-		updateMasterTermsPage();
-		break;
-	default:
-		break;
+			updateAtomTypesPage();
+			updateMasterTermsPage();
+			break;
+		default:
+			break;
 	}
 
 	return true;
@@ -180,14 +183,15 @@ int ImportSpeciesWizard::determineNextPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-	case (ImportSpeciesWizard::AtomTypesPage):
-		// If there are master terms present, go to that page first. Otherwise, skip straight to naming
-		if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() || temporaryCoreData_.nMasterTorsions())
-			return ImportSpeciesWizard::MasterTermsPage;
-		else
-			return ImportSpeciesWizard::SpeciesNamePage;
-	default:
-		break;
+		case (ImportSpeciesWizard::AtomTypesPage):
+			// If there are master terms present, go to that page first. Otherwise, skip straight to naming
+			if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() ||
+			    temporaryCoreData_.nMasterTorsions())
+				return ImportSpeciesWizard::MasterTermsPage;
+			else
+				return ImportSpeciesWizard::SpeciesNamePage;
+		default:
+			break;
 	}
 
 	return -1;
@@ -198,11 +202,11 @@ bool ImportSpeciesWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-	case (ImportSpeciesWizard::SelectSpeciesPage):
-		// Clear the temporary dissolve instance
-		temporaryDissolve_.clear();
-	default:
-		break;
+		case (ImportSpeciesWizard::SelectSpeciesPage):
+			// Clear the temporary dissolve instance
+			temporaryDissolve_.clear();
+		default:
+			break;
 	}
 
 	return true;
@@ -233,7 +237,8 @@ void ImportSpeciesWizard::on_InputFileEdit_textChanged(const QString text) { upd
 
 void ImportSpeciesWizard::on_InputFileSelectButton_clicked(bool checked)
 {
-	QString inputFile = QFileDialog::getOpenFileName(this, "Choose species / input file to open", QDir().absolutePath(), "Dissolve input / species files (*.txt *.dsp)");
+	QString inputFile = QFileDialog::getOpenFileName(this, "Choose species / input file to open", QDir().absolutePath(),
+							 "Dissolve input / species files (*.txt *.dsp)");
 	if (inputFile.isEmpty())
 		return;
 
@@ -277,14 +282,16 @@ void ImportSpeciesWizard::updateAtomTypesListRow(int row, AtomType *atomType, bo
 
 	// Set item data
 	item->setText(atomType->name());
-	item->setIcon(QIcon(dissolveReference_->findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setIcon(QIcon(dissolveReference_->findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
+									       : ":/general/icons/general_true.svg"));
 }
 
 // Update page with AtomTypes in our temporary Dissolve reference
 void ImportSpeciesWizard::updateAtomTypesPage()
 {
 	// Update the list against the global AtomType list
-	ListWidgetUpdater<ImportSpeciesWizard, AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this, &ImportSpeciesWizard::updateAtomTypesListRow);
+	ListWidgetUpdater<ImportSpeciesWizard, AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(),
+								     this, &ImportSpeciesWizard::updateAtomTypesListRow);
 
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
@@ -297,7 +304,8 @@ void ImportSpeciesWizard::updateAtomTypesPage()
 		}
 	ui_.AtomTypesIndicator->setNotOK(conflicts);
 	if (conflicts)
-		ui_.AtomTypesIndicatorLabel->setText("One or more AtomTypes in the imported Species conflict with existing types");
+		ui_.AtomTypesIndicatorLabel->setText(
+			"One or more AtomTypes in the imported Species conflict with existing types");
 	else
 		ui_.AtomTypesIndicatorLabel->setText("There are no naming conflicts with the imported AtomTypes");
 }
@@ -312,7 +320,8 @@ void ImportSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
 
 void ImportSpeciesWizard::atomTypesListEdited(QWidget *lineEdit)
 {
-	// Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before updating the page
+	// Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before
+	// updating the page
 	for (int n = 0; n < ui_.AtomTypesList->count(); ++n)
 	{
 		QListWidgetItem *item = ui_.AtomTypesList->item(n);
@@ -329,7 +338,8 @@ void ImportSpeciesWizard::atomTypesListEdited(QWidget *lineEdit)
 void ImportSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 {
 	bool ok;
-	QString prefix = QInputDialog::getText(this, "Prefix AtomTypes", "Enter prefix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
+	QString prefix = QInputDialog::getText(this, "Prefix AtomTypes", "Enter prefix to apply to all selected AtomTypes",
+					       QLineEdit::Normal, "", &ok);
 	if (!ok)
 		return;
 
@@ -347,7 +357,8 @@ void ImportSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 {
 	bool ok;
-	QString suffix = QInputDialog::getText(this, "Suffix AtomTypes", "Enter suffix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
+	QString suffix = QInputDialog::getText(this, "Suffix AtomTypes", "Enter suffix to apply to all selected AtomTypes",
+					       QLineEdit::Normal, "", &ok);
 	if (!ok)
 		return;
 
@@ -367,7 +378,8 @@ void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
  */
 
 // Row update function for MasterTermsList
-void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra, bool createItem)
+void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra,
+						     bool createItem)
 {
 	QTreeWidgetItem *item;
 	if (createItem)
@@ -382,16 +394,23 @@ void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, in
 
 	// Set item data
 	item->setText(0, masterIntra->name());
-	item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name()) ? ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name())
+				       ? ":/general/icons/general_warn.svg"
+				       : ":/general/icons/general_true.svg"));
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
 void ImportSpeciesWizard::updateMasterTermsPage()
 {
 	// Update the list against the global MasterTerm tree
-	TreeWidgetUpdater<ImportSpeciesWizard, MasterIntra> bondUpdater(masterBondItemParent_, temporaryCoreData_.masterBonds(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
-	TreeWidgetUpdater<ImportSpeciesWizard, MasterIntra> angleUpdater(masterAngleItemParent_, temporaryCoreData_.masterAngles(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
-	TreeWidgetUpdater<ImportSpeciesWizard, MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<ImportSpeciesWizard, MasterIntra> bondUpdater(masterBondItemParent_, temporaryCoreData_.masterBonds(),
+									this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<ImportSpeciesWizard, MasterIntra> angleUpdater(masterAngleItemParent_,
+									 temporaryCoreData_.masterAngles(), this,
+									 &ImportSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<ImportSpeciesWizard, MasterIntra> torsionUpdater(masterTorsionItemParent_,
+									   temporaryCoreData_.masterTorsions(), this,
+									   &ImportSpeciesWizard::updateMasterTermsTreeChild);
 
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
@@ -418,7 +437,8 @@ void ImportSpeciesWizard::updateMasterTermsPage()
 		}
 	ui_.MasterTermsIndicator->setNotOK(conflicts);
 	if (conflicts)
-		ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
+		ui_.MasterTermsIndicatorLabel->setText(
+			"One or more MasterTerms in the imported Species conflict with existing ones");
 	else
 		ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
 }
@@ -433,7 +453,8 @@ void ImportSpeciesWizard::on_MasterTermsTree_itemSelectionChanged()
 
 void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 {
-	// Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here before updating the page
+	// Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
+	// before updating the page
 	for (int n = 0; n < masterBondItemParent_->childCount(); ++n)
 	{
 		QTreeWidgetItem *item = masterBondItemParent_->child(n);
@@ -468,7 +489,8 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 void ImportSpeciesWizard::on_MasterTermsPrefixButton_clicked(bool checked)
 {
 	bool ok;
-	QString prefix = QInputDialog::getText(this, "Prefix MasterTerms", "Enter prefix to apply to all selected MasterTerms", QLineEdit::Normal, "", &ok);
+	QString prefix = QInputDialog::getText(this, "Prefix MasterTerms", "Enter prefix to apply to all selected MasterTerms",
+					       QLineEdit::Normal, "", &ok);
 	if (!ok)
 		return;
 
@@ -486,7 +508,8 @@ void ImportSpeciesWizard::on_MasterTermsPrefixButton_clicked(bool checked)
 void ImportSpeciesWizard::on_MasterTermsSuffixButton_clicked(bool checked)
 {
 	bool ok;
-	QString suffix = QInputDialog::getText(this, "Suffix MasterTerms", "Enter suffix to apply to all selected MasterTerms", QLineEdit::Normal, "", &ok);
+	QString suffix = QInputDialog::getText(this, "Suffix MasterTerms", "Enter suffix to apply to all selected MasterTerms",
+					       QLineEdit::Normal, "", &ok);
 	if (!ok)
 		return;
 

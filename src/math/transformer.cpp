@@ -27,7 +27,6 @@
 #include "math/data2d.h"
 #include "templates/array.h"
 
-// Constructor
 Transformer::Transformer()
 {
 	// Add persistent variable trio to equation
@@ -38,13 +37,10 @@ Transformer::Transformer()
 	valid_ = false;
 }
 
-// Destructor
 Transformer::~Transformer() {}
 
-// Copy constructor
 Transformer::Transformer(const Transformer &source) { (*this) = source; }
 
-// Assignment operator
 void Transformer::operator=(const Transformer &source)
 {
 	// Set equation from old expression

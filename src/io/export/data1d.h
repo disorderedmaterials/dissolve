@@ -30,20 +30,19 @@ class Data1D;
 // Data1D Export Formats
 class Data1DExportFileFormat : public FileAndFormat
 {
-      public:
+	public:
 	// Available data formats
 	enum Data1DExportFormat
 	{
 		XYData1D,
 		nData1DExportFormats
 	};
-	// Constructor
 	Data1DExportFileFormat(const char *filename = NULL, Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
 
 	/*
 	 * Format Access
 	 */
-      public:
+	public:
 	// Return enum options for Data1DExportFormat
 	static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> data1DExportFormats();
 	// Return number of available formats
@@ -58,18 +57,18 @@ class Data1DExportFileFormat : public FileAndFormat
 	/*
 	 * Filename / Basename
 	 */
-      public:
+	public:
 	// Return whether the file must exist
 	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-      private:
+	private:
 	// Export Data1D as simple XY (or XYE) data
 	bool exportXY(LineParser &parser, const Data1D &data);
 
-      public:
+	public:
 	// Export Data1D using current filename and format
 	bool exportData(const Data1D &data);
 };

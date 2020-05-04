@@ -29,7 +29,6 @@
  * OPLS-AA (2005) Noble Gases
  */
 
-// Constructor / Destructor
 Forcefield_OPLSAA2005_Alkenes::Forcefield_OPLSAA2005_Alkenes()
 {
 	// Add required types from OPLS-AA (2005) core list
@@ -55,6 +54,7 @@ const char *Forcefield_OPLSAA2005_Alkenes::name() const { return "OPLSAA2005/Alk
 // Return description for Forcefield
 const char *Forcefield_OPLSAA2005_Alkenes::description() const
 {
-	static CharString desc("Alkenes from OPLS-AA (2005), covering alkenes and dienes.<br/><br/>References: %s", publicationReferences());
+	static CharString desc("Alkenes from OPLS-AA (2005), covering alkenes and dienes.<br/><br/>References: %s",
+			       publicationReferences());
 	return desc.get();
 }

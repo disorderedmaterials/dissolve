@@ -59,16 +59,20 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 	}
 
 	// Set name and object tag for average species
-	averageSpecies_.setName(CharString("%s@%s", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
+	averageSpecies_.setName(
+		CharString("%s@%s", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 	averageSpecies_.setObjectTag(CharString("CalculateAvgMol_%s", averageSpecies_.name()));
 
 	// Realise arrays
 	updateArrays(dissolve);
 
 	// Retrieve data arrays
-	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
-	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
-	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
+	Array<SampledDouble> &x =
+		GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
+	Array<SampledDouble> &y =
+		GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
+	Array<SampledDouble> &z =
+		GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
 
 	// Update our Species
 	updateSpecies(x, y, z);
@@ -107,9 +111,12 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 	const SiteStack *stack = cfg->siteStack(site);
 
 	// Retrieve data arrays
-	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
-	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
-	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
+	Array<SampledDouble> &x =
+		GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
+	Array<SampledDouble> &y =
+		GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
+	Array<SampledDouble> &z =
+		GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
 
 	// Loop over sites
 	Vec3<double> r;

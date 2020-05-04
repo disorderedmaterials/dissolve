@@ -28,16 +28,14 @@
 // Messenger output handler
 class OutputHandler
 {
-      public:
-	// Constructor
+	public:
 	OutputHandler();
-	// Destructor
 	virtual ~OutputHandler();
 
 	/*
 	 * Styling
 	 */
-      public:
+	public:
 	// Set styling for warning message
 	virtual void styleForWarning() = 0;
 	// Set styling for error message
@@ -48,7 +46,7 @@ class OutputHandler
 	/*
 	 * Output
 	 */
-      public:
+	public:
 	// Output text to device
 	virtual void outputText(const char *text) = 0;
 };

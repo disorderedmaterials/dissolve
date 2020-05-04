@@ -31,15 +31,14 @@ class SpeciesAtom;
 // Py4OH Forcefield
 class Forcefield_Py4OH_Ludwig : public Forcefield
 {
-      public:
-	// Constructor / Destructor
+	public:
 	Forcefield_Py4OH_Ludwig();
 	~Forcefield_Py4OH_Ludwig();
 
 	/*
 	 * Definition
 	 */
-      public:
+	public:
 	// Return name of Forcefield
 	const char *name() const;
 	// Return description for Forcefield

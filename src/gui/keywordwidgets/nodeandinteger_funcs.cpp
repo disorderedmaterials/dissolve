@@ -23,8 +23,8 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/nodeandinteger.h"
 
-// Constructor
-NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+	: QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -40,7 +40,8 @@ NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, Keywor
 		updateValue();
 	}
 
-	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
+	// QScrollArea)
 	ui_.NodeCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.NodeCombo));
 	ui_.IntegerSpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.IntegerSpin));
 
@@ -74,7 +75,9 @@ void NodeAndIntegerKeywordWidget::updateValue()
 	refreshing_ = true;
 
 	// Get the list of available nodes of the specified type
-	RefList<ProcedureNode> availableNodes = keyword_->onlyInScope() ? keyword_->parentNode()->nodesInScope(keyword_->nodeType()) : keyword_->parentNode()->nodes(keyword_->nodeType());
+	RefList<ProcedureNode> availableNodes = keyword_->onlyInScope()
+							? keyword_->parentNode()->nodesInScope(keyword_->nodeType())
+							: keyword_->parentNode()->nodes(keyword_->nodeType());
 	ComboBoxUpdater<ProcedureNode> comboUpdater(ui_.NodeCombo, availableNodes, keyword_->node());
 
 	refreshing_ = false;

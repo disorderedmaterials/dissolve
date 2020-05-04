@@ -34,8 +34,7 @@ class AtomType;
 // PairPotential Definition
 class PairPotential : public ListItem<PairPotential>
 {
-      public:
-	// Constructor
+	public:
 	PairPotential();
 	// Coulomb Truncation Scheme enum
 	enum CoulombTruncationScheme
@@ -68,7 +67,7 @@ class PairPotential : public ListItem<PairPotential>
 	/*
 	 * Seed Interaction Type
 	 */
-      private:
+	private:
 	// Truncation scheme to apply to short-range part of potential
 	static ShortRangeTruncationScheme shortRangeTruncationScheme_;
 	// Width of short-range potential over which to truncate (if scheme = Cosine)
@@ -86,7 +85,7 @@ class PairPotential : public ListItem<PairPotential>
 	// Coulomb force at cutoff distance (used by truncation scheme)
 	double coulombForceAtCutoff_;
 
-      public:
+	public:
 	// Set short-ranged truncation scheme
 	static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
 	// Return short-ranged truncation scheme
@@ -107,7 +106,7 @@ class PairPotential : public ListItem<PairPotential>
 	/*
 	 * Source Parameters
 	 */
-      private:
+	private:
 	// Original source AtomTypes
 	AtomType *atomTypeI_, *atomTypeJ_;
 	// Parameters for short-range potential
@@ -119,11 +118,11 @@ class PairPotential : public ListItem<PairPotential>
 	// Charge on J (taken from AtomType)
 	double chargeJ_;
 
-      private:
+	private:
 	// Set Data1D names from source AtomTypes
 	void setData1DNames();
 
-      public:
+	public:
 	// Set up PairPotential parameters from specified AtomTypes
 	bool setUp(AtomType *typeI, AtomType *typeJ);
 	// Return short-ranged type
@@ -152,7 +151,7 @@ class PairPotential : public ListItem<PairPotential>
 	/*
 	 * Tabulated Potential
 	 */
-      private:
+	private:
 	// Number of points to tabulate
 	int nPoints_;
 	// Maximum distance of potential
@@ -172,17 +171,21 @@ class PairPotential : public ListItem<PairPotential>
 	// Interpolation of derivative of full potential
 	Interpolator dUFullInterpolation_;
 
-      private:
+	private:
 	// Return analytic short range potential energy
-	double analyticShortRangeEnergy(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+	double analyticShortRangeEnergy(
+		double r, Forcefield::ShortRangeType type,
+		PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
 	// Return analytic short range force
-	double analyticShortRangeForce(double r, Forcefield::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
+	double analyticShortRangeForce(
+		double r, Forcefield::ShortRangeType type,
+		PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
 	// Calculate full potential
 	void calculateUFull();
 	// Calculate derivative of potential
 	void calculateDUFull();
 
-      public:
+	public:
 	// Generate energy and force tables
 	bool tabulate(double maxR, double delta, bool includeCoulomb);
 	// Return number of tabulated points in potential
@@ -198,17 +201,23 @@ class PairPotential : public ListItem<PairPotential>
 	// Return analytic potential at specified r, including Coulomb term from local atomtype charges
 	double analyticEnergy(double r);
 	// Return analytic potential at specified r, including Coulomb term from supplied charge product
-	double analyticEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
+	double analyticEnergy(double qiqj, double r,
+			      PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return analytic coulomb potential energy of specified charge product
-	double analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
+	double
+	analyticCoulombEnergy(double qiqj, double r,
+			      PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return derivative of potential at specified r
 	double force(double r);
 	// Return analytic force at specified r, including Coulomb term from local atomtype charges
 	double analyticForce(double r);
 	// Return analytic force at specified r, including Coulomb term from supplied charge product
-	double analyticForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
+	double analyticForce(double qiqj, double r,
+			     PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return analytic coulomb force of specified charge product
-	double analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
+	double
+	analyticCoulombForce(double qiqj, double r,
+			     PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return full tabulated potential (original plus additional)
 	Data1D &uFull();
 	// Return full tabulated derivative

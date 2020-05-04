@@ -24,7 +24,6 @@
 #include "classes/cell.h"
 #include "templates/array.h"
 
-// Constructor
 NonPeriodicBox::NonPeriodicBox(double length) : Box()
 {
 	type_ = Box::NonPeriodicBoxType;
@@ -43,7 +42,6 @@ NonPeriodicBox::NonPeriodicBox(double length) : Box()
 	finalise();
 }
 
-// Destructor
 NonPeriodicBox::~NonPeriodicBox() {}
 
 /*
@@ -93,7 +91,10 @@ double NonPeriodicBox::minimumDistanceSquared(const Atom &i, const Atom &j) cons
 double NonPeriodicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const { return (j - i->r()).magnitudeSq(); }
 
 // Return minimum image squared distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const { return (j - i).magnitudeSq(); }
+double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
+{
+	return (j - i).magnitudeSq();
+}
 
 /*
  * Utility Routines (Virtual Implementations)

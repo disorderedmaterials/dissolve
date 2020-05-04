@@ -36,38 +36,37 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	BroadeningFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	BroadeningFunctionKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::BroadeningFunctionWidget ui_;
 
-      private slots:
+	private slots:
 	// Function type combo changed
 	void functionCombo_currentIndexChanged(int index);
 	// Parameter value changed
 	void parameterSpin_valueChanged(double value);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data

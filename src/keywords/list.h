@@ -33,31 +33,35 @@
 // Keyword List
 class KeywordList
 {
-      public:
-	// Constructor / Destructor
+	public:
 	KeywordList();
 	~KeywordList();
 
 	/*
 	 * Keyword List
 	 */
-      private:
+	private:
 	// List of defined keywords
 	List<KeywordBase> keywords_;
 
-      public:
+	public:
 	// Add keyword
 	bool add(KeywordBase *object, const char *name, const char *description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword (including argument description)
-	bool add(KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask = KeywordBase::NoOptions);
+	bool add(KeywordBase *object, const char *name, const char *description, const char *arguments,
+		 int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group
-	bool add(const char *groupName, KeywordBase *object, const char *name, const char *description, int optionMask = KeywordBase::NoOptions);
+	bool add(const char *groupName, KeywordBase *object, const char *name, const char *description,
+		 int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group (including argument description)
-	bool add(const char *groupName, KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask = KeywordBase::NoOptions);
+	bool add(const char *groupName, KeywordBase *object, const char *name, const char *description, const char *arguments,
+		 int optionMask = KeywordBase::NoOptions);
 	// Add link to specified keyword that exists elsewhere
-	bool link(const char *groupName, KeywordBase *object, const char *name, const char *description, int optionMask = KeywordBase::NoOptions);
+	bool link(const char *groupName, KeywordBase *object, const char *name, const char *description,
+		  int optionMask = KeywordBase::NoOptions);
 	// Add link to specified keyword that exists elsewhere (including argument description)
-	bool link(const char *groupName, KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask = KeywordBase::NoOptions);
+	bool link(const char *groupName, KeywordBase *object, const char *name, const char *description, const char *arguments,
+		  int optionMask = KeywordBase::NoOptions);
 	// Find named keyword
 	KeywordBase *find(const char *name) const;
 	// Return keywords list
@@ -66,22 +70,22 @@ class KeywordList
 	/*
 	 * Groups
 	 */
-      private:
+	private:
 	// Keywords organised by group
 	List<KeywordGroup> groups_;
 
-      private:
+	private:
 	// Create and/or return named keyword group
 	KeywordGroup *addGroup(const char *name);
 
-      public:
+	public:
 	// Return defined groups
 	const List<KeywordGroup> &groups() const;
 
 	/*
 	 * Set / Get
 	 */
-      public:
+	public:
 	// Retrieve named item from specified list as template-guided type
 	template <class T> T &retrieve(const char *name, T defaultValue = T(), bool *found = NULL)
 	{
@@ -89,7 +93,8 @@ class KeywordList
 		KeywordBase *item = find(name);
 		if (!item)
 		{
-			Messenger::printVerbose("No item named '%s' in the keyword list - default value item will be returned.\n", name);
+			Messenger::printVerbose(
+				"No item named '%s' in the keyword list - default value item will be returned.\n", name);
 			static T dummy;
 			dummy = defaultValue;
 			if (found != NULL)
@@ -167,7 +172,8 @@ class KeywordList
 		KeywordBase *item = find(name);
 		if (!item)
 		{
-			Messenger::error("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
+			Messenger::error(
+				"No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
 			if (found != NULL)
 				(*found) = false;
 			return (E)-1;
@@ -177,7 +183,8 @@ class KeywordList
 		KeywordData<EnumOptions<E>> *castItem = dynamic_cast<KeywordData<EnumOptions<E>> *>(item);
 		if (!castItem)
 		{
-			Messenger::error("Failed to cast keyword '%s' into EnumOptions<E> because it's of a different type.\n", name);
+			Messenger::error("Failed to cast keyword '%s' into EnumOptions<E> because it's of a different type.\n",
+					 name);
 			if (found != NULL)
 				(*found) = false;
 			return (E)-1;
@@ -191,7 +198,7 @@ class KeywordList
 	/*
 	 * Conversion
 	 */
-      public:
+	public:
 	// Return simple keyword value (as bool)
 	bool asBool(const char *name) const;
 	// Return simple keyword value (as int)
@@ -212,7 +219,7 @@ class KeywordList
 	/*
 	 * Read / Write
 	 */
-      public:
+	public:
 	// Try to parse keyword in specified LineParser
 	KeywordBase::ParseResult parse(LineParser &parser, const CoreData &coreData);
 	// Write all keywords to specified LineParser

@@ -30,16 +30,14 @@
 // Operate Spherical Shell Normalise Node
 class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeBase
 {
-      public:
-	// Constructors
+	public:
 	OperateSphericalShellNormaliseProcedureNode();
-	// Destructor
 	~OperateSphericalShellNormaliseProcedureNode();
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-      public:
+	public:
 	// Operate on Data1D target
 	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 };

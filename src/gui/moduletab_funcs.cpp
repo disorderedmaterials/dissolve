@@ -28,9 +28,9 @@
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
 
-// Constructor / Destructor
-ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Module *module)
-    : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
+ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+		     Module *module)
+	: ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
 	ui_.setupUi(this);
 
@@ -76,7 +76,9 @@ void ModuleTab::initialiseControls(Module *module)
 	// Check if we have already created a widget...
 	if (controlsWidget_)
 	{
-		Messenger::error("Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n", title());
+		Messenger::error(
+			"Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n",
+			title());
 		return;
 	}
 

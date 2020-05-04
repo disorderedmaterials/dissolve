@@ -23,7 +23,6 @@
 #include <QPropertyAnimation>
 #include <QWidget>
 
-// Constructor
 ChartBlock::ChartBlock() : ListItem<ChartBlock>() {}
 
 ChartBlock::~ChartBlock() {}

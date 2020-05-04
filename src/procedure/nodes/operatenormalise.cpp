@@ -26,19 +26,19 @@
 #include "math/data1d.h"
 #include "math/integrator.h"
 
-// Constructors
-OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value) : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
+OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
+	: OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
 {
 	keywords_.add("Normal", new NodeValueKeyword(this, value), "Value", "Value expression to normalise to");
 	keywords_.add("Normal", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
-OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value) : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
+OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value)
+	: OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
 {
 	keywords_.add("Normal", new NodeValueKeyword(this, value), "Value", "Value expression to normalise to");
 	keywords_.add("Normal", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
 
-// Destructor
 OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode() {}
 
 /*

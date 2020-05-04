@@ -37,40 +37,39 @@ class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-      public:
-	// Constructor
+	public:
 	ModuleGroupsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-      private:
+	private:
 	// Associated keyword
 	ModuleGroupsKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-      private:
+	private:
 	// Main form declaration
 	Ui::ModuleGroupsWidget ui_;
 
-      private:
+	private:
 	// Selection table update function
 	void updateSelectionRow(int row, Module *module, bool create);
 
-      private slots:
+	private slots:
 	// Table item changed
 	void itemChanged(QTableWidgetItem *item);
 
-      signals:
+	signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
 
 	/*
 	 * Update
 	 */
-      public:
+	public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
