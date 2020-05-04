@@ -10,7 +10,6 @@ stages:
         steps:
           - bash: |
               set -ex
-              sudo apt-get remove --yes clang libllvm6.0
               sudo add-apt-repository --yes 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main'
               sudo apt-get update
               sudo apt-get install --yes clang-format-7
