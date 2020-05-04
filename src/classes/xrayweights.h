@@ -38,11 +38,8 @@ class SpeciesInfo;
 class XRayWeights : public GenericItemBase
 {
 	public:
-	// Constructor
 	XRayWeights();
-	// Copy Constructor
 	XRayWeights(const XRayWeights &source);
-	// Assignment operator
 	void operator=(const XRayWeights &source);
 
 	/*

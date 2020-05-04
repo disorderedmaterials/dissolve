@@ -28,7 +28,6 @@
 #include "genericitems/array2ddouble.h"
 #include "templates/enumhelpers.h"
 
-// Constructor
 XRayWeights::XRayWeights()
 {
 	formFactors_ = XRayFormFactors::NoFormFactorData;
@@ -37,10 +36,8 @@ XRayWeights::XRayWeights()
 	valid_ = false;
 }
 
-// Copy Constructor
 XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
 
-// Assignment Operator
 void XRayWeights::operator=(const XRayWeights &source)
 {
 	formFactors_ = source.formFactors_;
