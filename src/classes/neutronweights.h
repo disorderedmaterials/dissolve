@@ -100,9 +100,9 @@ class NeutronWeights : public GenericItemBase
 	// Return full intramolecular weighting for types i and j
 	double intramolecularWeight(int i, int j) const;
 	// Return full scattering weights matrix
-	Array2D<double> &weights();
+	const Array2D<double> &weights() const;
 	// Return full intramolecular scattering weights matrix
-	Array2D<double> &intramolecularWeights();
+	const Array2D<double> &intramolecularWeights() const;
 	// Return bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage() const;
 	// Return bound coherent squared average scattering (<b**2>)

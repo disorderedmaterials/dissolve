@@ -354,10 +354,10 @@ double NeutronWeights::weight(int i, int j) const { return weights_.constAt(i, j
 double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_.constAt(i, j); }
 
 // Return full weights matrix
-Array2D<double> &NeutronWeights::weights() { return weights_; }
+const Array2D<double> &NeutronWeights::weights() const { return weights_; }
 
 // Return full intramolecular scattering weights matrix
-Array2D<double> &NeutronWeights::intramolecularWeights() { return intramolecularWeights_; }
+const Array2D<double> &NeutronWeights::intramolecularWeights() const { return intramolecularWeights_; }
 
 // Return bound coherent average squared scattering (<b>**2)
 double NeutronWeights::boundCoherentSquareOfAverage() const { return boundCoherentSquareOfAverage_; }
