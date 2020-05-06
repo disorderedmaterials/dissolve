@@ -128,7 +128,7 @@ bool IsotopologueSet::contains(const Species *sp) const
 optional<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *sp) const
 {
     auto it = std::find_if(isotopologues_.cbegin(), isotopologues_.cend(),
-                           [sp](const Isotopologues &data) { return data.species() == sp; });
+                           [sp](const Isotopologues &mix) { return mix.species() == sp; });
 
     return std::make_tuple(*it, it == isotopologues_.end());
 }

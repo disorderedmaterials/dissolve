@@ -137,10 +137,8 @@ optional<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(const
 // Return whether the Species has a defined set of isotopologues in the specified Configuration
 bool IsotopologueCollection::contains(const Configuration *cfg, const Species *sp) const
 {
-    auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
-                           [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
-
-    return (it != isotopologueSets_.end() ? it->contains(sp) : false);
+    return std::any_of(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
+                       [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
 }
 
 // Return Isotopologues for the Species in the specified Configuration
