@@ -85,9 +85,9 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
                                                                      const char *prefix, GenericList &targetList)
 {
     // Get ranges
-    Range rangeA = keywords_.retrieve<Range>("RangeA");
-    Range rangeB = keywords_.retrieve<Range>("RangeB");
-    Range rangeC = keywords_.retrieve<Range>("RangeC");
+    auto rangeA = keywords_.retrieve<Range>("RangeA");
+    auto rangeB = keywords_.retrieve<Range>("RangeB");
+    auto rangeC = keywords_.retrieve<Range>("RangeC");
 
     // Calculate integrals
     integral_[0] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeA"));

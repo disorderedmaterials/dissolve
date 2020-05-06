@@ -240,7 +240,7 @@ void MainTabsWidget::clearTabs()
 // Reconcile tabs, making them consistent with the provided data
 void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 {
-    Dissolve &dissolve = dissolveWindow->dissolve();
+    auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     ListIterator<Species> speciesIterator(dissolve.species());

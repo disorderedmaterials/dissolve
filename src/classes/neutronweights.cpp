@@ -173,7 +173,7 @@ void NeutronWeights::calculateWeightingMatrices()
     for (auto &topes : isotopologueMixtures_)
     {
         // Get weighting for associated Species population
-        double speciesWeight = double(topes.speciesPopulation());
+        auto speciesWeight = double(topes.speciesPopulation());
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
         Species *sp = topes.species();

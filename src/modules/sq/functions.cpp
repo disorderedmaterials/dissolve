@@ -105,15 +105,15 @@ bool SQModule::sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericLis
             fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
         // Get weighting factor for this Configuration to contribute to the summed partials
-        double weight = GenericListHelper<double>::value(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()),
-                                                         module->uniqueName(), 1.0);
+        auto weight = GenericListHelper<double>::value(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()),
+                                                       module->uniqueName(), 1.0);
         totalWeight += weight;
         Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
         // Grab partials for Configuration and add into our set
         if (!cfg->moduleData().contains("UnweightedSQ"))
             return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
-        PartialSet cfgPartialSQ = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ");
+        auto cfgPartialSQ = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ");
         summedUnweightedSQ.addPartials(cfgPartialSQ, weight);
     }
     summedUnweightedSQ.setFingerprint(fingerprint);

@@ -59,7 +59,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBas
 void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module *module, bool create)
 {
     // Grab the target groups
-    ModuleGroups &groups = keyword_->data();
+    auto &groups = keyword_->data();
 
     QTableWidgetItem *item;
 
@@ -167,7 +167,7 @@ void ModuleGroupsKeywordWidget::updateKeywordData()
 void ModuleGroupsKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
-    ModuleGroups &groups = keyword_->data();
+    auto &groups = keyword_->data();
     if (groups.modules().nItems() == 0)
         setSummaryText("<None>");
     else

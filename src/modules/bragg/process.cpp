@@ -104,7 +104,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Retrieve BraggReflection data from the Configuration's module data
             bool found = false;
-            const Array<BraggReflection> &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
+            const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
             if (!found)
                 return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n",

@@ -48,8 +48,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Get Keyword Options
      */
-    const RefineModule::MatrixAugmentationStyle augmentationStyle =
-        keywords_.enumeration<RefineModule::MatrixAugmentationStyle>("Augmentation");
+    const auto augmentationStyle = keywords_.enumeration<RefineModule::MatrixAugmentationStyle>("Augmentation");
     const double augmentationParam = keywords_.asDouble("AugmentationParam");
     const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
     const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
@@ -58,8 +57,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
     const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
     // const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
-    const RefineModule::PotentialInversionMethod inversionMethod =
-        keywords_.enumeration<RefineModule::PotentialInversionMethod>("InversionMethod");
+    const auto inversionMethod = keywords_.enumeration<RefineModule::PotentialInversionMethod>("InversionMethod");
     const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
     const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
     // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
@@ -70,7 +68,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const double qMax = keywords_.asDouble("QMax");
     const double qMin = keywords_.asDouble("QMin");
     const double truncationWidth = keywords_.asDouble("TruncationWidth");
-    const WindowFunction &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
+    const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print option summary
     if (augmentationStyle == RefineModule::NoAugmentation)
@@ -143,9 +141,9 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (Module *module : group->modules())
         {
             // Realise the error array and make sure its object name is set
-            Data1D &errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
-                                                                CharString("Error_%s", module->uniqueName()), uniqueName_,
-                                                                GenericItem::InRestartFileFlag);
+            auto &errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
+                                                              CharString("Error_%s", module->uniqueName()), uniqueName_,
+                                                              GenericItem::InRestartFileFlag);
             errors.setObjectTag(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
 
             // Calculate our error based on the type of Module
@@ -153,8 +151,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (DissolveSys::sameString(module->type(), "NeutronSQ"))
             {
                 // Retrieve the ReferenceData from the Module (as Data1D)
-                const Data1D &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
-                                                                               module->uniqueName(), Data1D(), &found);
+                const auto &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
+                                                                             module->uniqueName(), Data1D(), &found);
                 if (!found)
                 {
                     Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
@@ -162,8 +160,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Retrieve the PartialSet from the Module
-                const PartialSet &calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ",
-                                                                                module->uniqueName(), PartialSet(), &found);
+                const auto &calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ",
+                                                                          module->uniqueName(), PartialSet(), &found);
                 if (!found)
                 {
                     Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n",
@@ -175,7 +173,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 error = Error::percent(referenceData, calcSQTotal);
 
                 // Calculate difference
-                Data1D &differenceData = GenericListHelper<Data1D>::realise(
+                auto &differenceData = GenericListHelper<Data1D>::realise(
                     dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
                 differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
                 differenceData = referenceData;
@@ -255,7 +253,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Create temporary storage for our summed UnweightedSQ, and related quantities such as density and sum factors
-        Array2D<Data1D> &combinedUnweightedSQ = GenericListHelper<Array2D<Data1D>>::realise(
+        auto &combinedUnweightedSQ = GenericListHelper<Array2D<Data1D>>::realise(
             dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
         Array2D<double> combinedRho, combinedFactor, combinedCWeights;
         combinedUnweightedSQ.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
@@ -277,8 +275,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Realise storage for generated S(Q), and reinitialise the scattering matrix
-        Array2D<Data1D> &estimatedSQ = GenericListHelper<Array2D<Data1D>>::realise(
-            dissolve.processingModuleData(), "EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        auto &estimatedSQ = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "EstimatedSQ",
+                                                                        uniqueName_, GenericItem::InRestartFileFlag);
         scatteringMatrix_.initialise(dissolve.atomTypes(), estimatedSQ, uniqueName_, group->name());
 
         // Get factor with which to add data, based on the requested AugmentationStyle
@@ -290,20 +288,20 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (Module *module : targetModules)
         {
             // Retrieve the reference data and associated Weights matrix and source unweighted partials
-            const Data1D &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
-                                                                           module->uniqueName(), Data1D(), &found);
+            const auto &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
+                                                                         module->uniqueName(), Data1D(), &found);
             if (!found)
                 return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
-            NeutronWeights &weights = GenericListHelper<NeutronWeights>::retrieve(
-                dissolve.processingModuleData(), "FullWeights", module->uniqueName(), NeutronWeights(), &found);
+            auto &weights = GenericListHelper<NeutronWeights>::retrieve(dissolve.processingModuleData(), "FullWeights",
+                                                                        module->uniqueName(), NeutronWeights(), &found);
             if (!found)
                 return Messenger::error("Could not locate NeutronWeights for target '%s'.\n", module->uniqueName());
-            const PartialSet &unweightedSQ = GenericListHelper<PartialSet>::value(
-                dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
+            const auto &unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ",
+                                                                            module->uniqueName(), PartialSet(), &found);
             if (!found)
                 return Messenger::error("Could not locate UnweightedSQ for target '%s'.\n", module->uniqueName());
-            double rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(),
-                                                          0.0, &found);
+            auto rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(),
+                                                        0.0, &found);
             if (!found)
                 return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
@@ -398,8 +396,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Calculate g(r) from estimatedSQ
          */
 
-        Array2D<Data1D> &estimatedGR = GenericListHelper<Array2D<Data1D>>::realise(
-            dissolve.processingModuleData(), "EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
+        auto &estimatedGR = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "EstimatedGR",
+                                                                        uniqueName_, GenericItem::InRestartFileFlag);
         estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
         i = 0;
         for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
@@ -424,16 +422,16 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Generate summed unweighted g(r) from all source Module data
          */
 
-        PartialSet &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
-                                                                                uniqueName(), GenericItem::InRestartFileFlag);
+        auto &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
+                                                                          uniqueName(), GenericItem::InRestartFileFlag);
         if (!RDFModule::sumUnweightedGR(procPool, this, group, dissolve.processingModuleData(), summedUnweightedGR))
             return false;
 
         /*
          * Construct matrix of difference partials (deltaSQ) for all AtomTypes
          */
-        Array2D<Data1D> &deltaSQ = GenericListHelper<Array2D<Data1D>>::realise(
-            dissolve.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
+        auto &deltaSQ = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "DeltaSQ", uniqueName_,
+                                                                    GenericItem::InRestartFileFlag, &created);
         if (created)
             deltaSQ.initialise(nTypes, nTypes, true);
 
@@ -489,14 +487,14 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Create perturbations to interatomic potentials
          */
         const double weighting = keywords_.asDouble("Weighting");
-        Array2D<Data1D> &groupDeltaPhiR = GenericListHelper<Array2D<Data1D>>::realise(
+        auto &groupDeltaPhiR = GenericListHelper<Array2D<Data1D>>::realise(
             dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_,
             GenericItem::InRestartFileFlag, &created);
         if (created)
             groupDeltaPhiR.initialise(nTypes, nTypes, true);
-        Array2D<Data1D> &groupDeltaGR = GenericListHelper<Array2D<Data1D>>::realise(
-            dissolve.processingModuleData(), CharString("DeltaGR_%s", group->name()), uniqueName_,
-            GenericItem::InRestartFileFlag, &created);
+        auto &groupDeltaGR = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(),
+                                                                         CharString("DeltaGR_%s", group->name()), uniqueName_,
+                                                                         GenericItem::InRestartFileFlag, &created);
         if (created)
             groupDeltaGR.initialise(nTypes, nTypes, true);
         // 	if (modifyBonds)
@@ -507,8 +505,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // 	}
 
         // Set up / updated minimum radii array, considering all involved Configurations
-        Array2D<double> &minimumRadii = GenericListHelper<Array2D<double>>::realise(
-            dissolve.processingModuleData(), "MinimumRadii", uniqueName_, GenericItem::InRestartFileFlag, &created);
+        auto &minimumRadii = GenericListHelper<Array2D<double>>::realise(dissolve.processingModuleData(), "MinimumRadii",
+                                                                         uniqueName_, GenericItem::InRestartFileFlag, &created);
         if (created)
             minimumRadii.initialise(nTypes, nTypes, true);
         if (autoMinimumRadii)
@@ -763,9 +761,9 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         j = i;
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
-            Data1D &partialErrors = GenericListHelper<Data1D>::realise(
-                dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_,
-                GenericItem::InRestartFileFlag);
+            auto &partialErrors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
+                                                                     CharString("PartialError_%s-%s", at1->name(), at2->name()),
+                                                                     uniqueName_, GenericItem::InRestartFileFlag);
             // TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs
             // to be weighted?
             partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.constAt(i, j));
@@ -781,7 +779,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Get the delta phi(r) data for this group
             if (!dissolve.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName()))
                 return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
-            const Array2D<Data1D> &groupDeltaPhiR = GenericListHelper<Array2D<Data1D>>::value(
+            const auto &groupDeltaPhiR = GenericListHelper<Array2D<Data1D>>::value(
                 dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<Data1D>());
 
             i = 0;
@@ -793,7 +791,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     // Assess error of partial if requested, and decide whether to adjust potential
                     if (onlyWhenErrorStable)
                     {
-                        const Data1D &partialErrors = GenericListHelper<Data1D>::value(
+                        const auto &partialErrors = GenericListHelper<Data1D>::value(
                             dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()),
                             uniqueName_);
                         if (partialErrors.nValues() >= errorStabilityWindow)
@@ -863,9 +861,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
 
     // Realise the phiMag array and make sure its object name is set
-
-    Data1D &phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_,
-                                                          GenericItem::InRestartFileFlag);
+    auto &phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_,
+                                                        GenericItem::InRestartFileFlag);
     phiArray.setObjectTag(CharString("%s//PhiMag", uniqueName_.get()));
     phiArray.addPoint(dissolve.iteration(), phiMagTot);
 

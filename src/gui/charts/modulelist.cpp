@@ -105,7 +105,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     if (selectedBlock_)
     {
         // Cast up the selectedBlock_ to a ModuleBlock
-        ModuleBlock *selectedModule = dynamic_cast<ModuleBlock *>(selectedBlock_);
+        auto *selectedModule = dynamic_cast<ModuleBlock *>(selectedBlock_);
         if ((selectedModule) && (moduleBlockWidgets_.contains(selectedModule)))
         {
             QRect rect = selectedModule->geometry();
@@ -211,7 +211,7 @@ Module *ModuleListChart::currentModule() const
         return NULL;
 
     // Cast selectedBlock_ up to a ModuleBlock
-    ModuleBlock *moduleBlock = dynamic_cast<ModuleBlock *>(selectedBlock_);
+    auto *moduleBlock = dynamic_cast<ModuleBlock *>(selectedBlock_);
     if (!moduleBlock)
         return NULL;
 
@@ -265,7 +265,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         }
 
         // Cast the dragged block up to a ModuleBlock
-        ModuleBlock *draggedModuleBlock = dynamic_cast<ModuleBlock *>(draggedBlock_);
+        auto *draggedModuleBlock = dynamic_cast<ModuleBlock *>(draggedBlock_);
         if (!draggedModuleBlock)
             return;
 
@@ -273,9 +273,9 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         Module *draggedModule = draggedModuleBlock->module();
 
         // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
-        ModuleBlock *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
+        auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
         Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : NULL);
-        ModuleBlock *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
+        auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : NULL);
 
         // Check the blocks either side of the hotspot to see where our Module needs to be (or has been returned to)
@@ -302,9 +302,9 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         Module *newModule = dissolve_.createModuleInstance(qPrintable(strings->data(MimeString::ModuleType)));
 
         // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
-        ModuleBlock *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
+        auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
         Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : NULL);
-        ModuleBlock *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
+        auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : NULL);
 
         // Add the new modele
@@ -333,7 +333,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
 MimeStrings ModuleListChart::mimeInfo(ChartBlock *block)
 {
     // Try to cast the block into a ModuleBlock
-    ModuleBlock *moduleBlock = dynamic_cast<ModuleBlock *>(block);
+    auto *moduleBlock = dynamic_cast<ModuleBlock *>(block);
     if (!moduleBlock)
         return MimeStrings();
 
@@ -347,7 +347,7 @@ MimeStrings ModuleListChart::mimeInfo(ChartBlock *block)
 void ModuleListChart::blockDoubleClicked(ChartBlock *block)
 {
     // Cast block to a ModuleBlock
-    ModuleBlock *moduleBlock = dynamic_cast<ModuleBlock *>(block);
+    auto *moduleBlock = dynamic_cast<ModuleBlock *>(block);
     if (!moduleBlock)
         return;
 
@@ -408,7 +408,7 @@ void ModuleListChart::blockSelectionChanged(ChartBlock *block)
     }
 
     // Cast block to a ModuleBlock
-    ModuleBlock *moduleBlock = dynamic_cast<ModuleBlock *>(block);
+    auto *moduleBlock = dynamic_cast<ModuleBlock *>(block);
     if (!moduleBlock)
         return;
 

@@ -66,7 +66,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
     // Create a new DynamicSite and add it to our data RefList
-    DynamicSiteProcedureNode *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
+    auto *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
     data_.append(dynamicSite);
 
     // Attempt to read the DynamicSite data

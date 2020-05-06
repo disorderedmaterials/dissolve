@@ -58,10 +58,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         bool adjustAngles = keywords_.asBool("AdjustAngles");
         bool adjustBonds = keywords_.asBool("AdjustBonds");
         bool adjustTorsions = keywords_.asBool("AdjustTorsions");
-        double &angleStepSize = keywords_.retrieve<double>("AngleStepSize");
+        auto &angleStepSize = keywords_.retrieve<double>("AngleStepSize");
         const double angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
         const double angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");
-        double &bondStepSize = keywords_.retrieve<double>("BondStepSize");
+        auto &bondStepSize = keywords_.retrieve<double>("BondStepSize");
         const double bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
         const double bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
         double cutoffDistance = keywords_.asDouble("CutoffDistance");
@@ -70,7 +70,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
         const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
         const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
-        double &torsionStepSize = keywords_.retrieve<double>("TorsionStepSize");
+        auto &torsionStepSize = keywords_.retrieve<double>("TorsionStepSize");
         const double torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
         const double torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
         const double rRT = 1.0 / (.008314472 * cfg->temperature());

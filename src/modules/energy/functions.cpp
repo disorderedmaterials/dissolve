@@ -196,7 +196,7 @@ int EnergyModule::checkStability(Configuration *cfg)
     // Retrieve the EnergyStable flag from the Configuration's module data
     if (cfg->moduleData().contains("EnergyStable"))
     {
-        bool stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
+        auto stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
         if (!stable)
         {
             Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());

@@ -265,8 +265,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 {
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    PartialSet &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
-                                                                    GenericItem::InRestartFileFlag, &wasCreated);
+    auto &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
+                                                              GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
@@ -664,7 +664,7 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
     double rho0 = 0.0, totalWeight = 0.0;
     for (Configuration *cfg : module->targetConfigurations())
     {
-        double weight = GenericListHelper<double>::value(
+        auto weight = GenericListHelper<double>::value(
             processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
         totalWeight += weight;
 
@@ -699,7 +699,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
     for (Configuration *cfg : module->targetConfigurations())
     {
         // Get weighting factor for this Configuration to contribute to the summed partials
-        double weight = GenericListHelper<double>::value(
+        auto weight = GenericListHelper<double>::value(
             processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
         Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 
@@ -730,7 +730,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
         // Grab partials for Configuration and add into our set
         if (!cfg->moduleData().contains("UnweightedGR"))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
-        PartialSet cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
@@ -755,7 +755,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         for (Configuration *cfg : module->targetConfigurations())
         {
             // Get weighting factor for this Configuration to contribute to the summed partials
-            double weight = GenericListHelper<double>::value(
+            auto weight = GenericListHelper<double>::value(
                 processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
             Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 
@@ -804,7 +804,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
         if (!cfg->moduleData().contains("UnweightedGR"))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
-        PartialSet cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }

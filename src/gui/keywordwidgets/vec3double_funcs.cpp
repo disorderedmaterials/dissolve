@@ -82,7 +82,7 @@ void Vec3DoubleKeywordWidget::on_Spin1_valueChanged(double value)
     if (refreshing_)
         return;
 
-    Vec3<double> newVec = keyword_->data();
+    auto newVec = keyword_->data();
     newVec.x = value;
     keyword_->setData(newVec);
 
@@ -95,7 +95,7 @@ void Vec3DoubleKeywordWidget::on_Spin2_valueChanged(double value)
     if (refreshing_)
         return;
 
-    Vec3<double> newVec = keyword_->data();
+    auto newVec = keyword_->data();
     newVec.y = value;
     keyword_->setData(newVec);
 
@@ -108,7 +108,7 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
     if (refreshing_)
         return;
 
-    Vec3<double> newVec = keyword_->data();
+    auto newVec = keyword_->data();
     newVec.z = value;
     keyword_->setData(newVec);
 

@@ -98,7 +98,7 @@ NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElem
 NETARingNode *NETANode::createRingNode()
 {
     // Create the new node and own it
-    NETARingNode *node = new NETARingNode(parent_);
+    auto *node = new NETARingNode(parent_);
     branch_.own(node);
 
     return node;

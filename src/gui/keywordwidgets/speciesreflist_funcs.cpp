@@ -56,7 +56,7 @@ SpeciesRefListKeywordWidget::SpeciesRefListKeywordWidget(QWidget *parent, Keywor
 void SpeciesRefListKeywordWidget::updateSelectionRow(int row, Species *sp, bool createItem)
 {
     // Grab the target reference list
-    RefList<Species> &selection = keyword_->data();
+    auto &selection = keyword_->data();
 
     QListWidgetItem *item;
     if (createItem)
@@ -123,7 +123,7 @@ void SpeciesRefListKeywordWidget::updateKeywordData()
 void SpeciesRefListKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
-    RefList<Species> &selection = keyword_->data();
+    auto &selection = keyword_->data();
     if (selection.nItems() == 0)
         setSummaryText("<None>");
     else

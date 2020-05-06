@@ -28,7 +28,7 @@
 // Run set-up stage
 bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
-    SpeciesSite *site = keywords_.retrieve<SpeciesSite *>("Site");
+    auto *site = keywords_.retrieve<SpeciesSite *>("Site");
 
     // Clear species
     averageSpecies_.clear();
@@ -94,7 +94,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     procPool.assignProcessesToGroups(cfg->processPool());
 
     // Get the target site
-    SpeciesSite *site = keywords_.retrieve<SpeciesSite *>("Site");
+    auto *site = keywords_.retrieve<SpeciesSite *>("Site");
     if (!site)
         return Messenger::error("No target site defined.\n");
 

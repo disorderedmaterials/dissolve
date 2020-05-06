@@ -35,7 +35,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Get options and target Module
     const double testThreshold = keywords_.asDouble("Threshold");
     Module *targetModule = targetModule_.firstItem();
-    Error::ErrorType errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
+    auto errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
 
     // Print summary
     if (!targetModule)
@@ -52,8 +52,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         // Locate the target reference data
         bool found = false;
-        const Data1D &data =
-            findReferenceData<Data1D>(testData1D->name(), targetModule, dissolve.processingModuleData(), found);
+        const auto &data = findReferenceData<Data1D>(testData1D->name(), targetModule, dissolve.processingModuleData(), found);
 
         // Did we succeed?
         if (!found)
@@ -80,8 +79,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         // Locate the target reference data
         bool found = false;
-        const Data2D &data =
-            findReferenceData<Data2D>(testData2D->name(), targetModule, dissolve.processingModuleData(), found);
+        const auto &data = findReferenceData<Data2D>(testData2D->name(), targetModule, dissolve.processingModuleData(), found);
 
         // Did we succeed?
         if (!found)

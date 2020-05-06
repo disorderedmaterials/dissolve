@@ -133,7 +133,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
     }
 
     // Retrieve and zero the current potential coefficients file
-    Array2D<Array<double>> &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+    auto &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for (int n = 0; n < potentialCoefficients.linearArraySize(); ++n)

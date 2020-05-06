@@ -114,8 +114,8 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     }
 #endif
     double totalEnergy = 0.0;
-    OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
-    OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+    auto &centralAtoms = centralCell->atoms();
+    auto &otherAtoms = otherCell->atoms();
     Atom *ii, *jj;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
@@ -204,7 +204,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
                             bool performSum)
 {
     double totalEnergy = 0.0;
-    OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
+    auto &centralAtoms = centralCell->atoms();
     Atom *ii, *jj;
     Vec3<double> rJ;
     std::shared_ptr<Molecule> molJ;
@@ -217,7 +217,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     // Straight loop over Cells *not* requiring mim
     for (auto *otherCell : centralCell->cellNeighbours())
     {
-        OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+        auto &otherAtoms = otherCell->atoms();
 
         for (auto *jj : otherAtoms)
         {
@@ -255,7 +255,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     // Straight loop over Cells requiring mim
     for (auto *otherCell : centralCell->mimCellNeighbours())
     {
-        OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+        auto &otherAtoms = otherCell->atoms();
 
         for (auto *jj : otherAtoms)
         {
@@ -316,7 +316,7 @@ double EnergyKernel::energy(const Atom *i, Cell *cell, int flags, ProcessPool::D
     Atom *jj;
     int j;
     double rSq, scale;
-    OrderedVector<Atom *> &otherAtoms = cell->atoms();
+    auto &otherAtoms = cell->atoms();
     auto other = otherAtoms.begin();
     int nOtherAtoms = cell->nAtoms();
 

@@ -39,7 +39,7 @@ QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptio
                                               const QModelIndex &index) const
 {
     // Create editor widget (in this case a combo box) and add the available options
-    QComboBox *editor = new QComboBox(parent);
+    auto *editor = new QComboBox(parent);
 
     // Add on standard bond forms first
     items_->restartIterator();
@@ -57,7 +57,7 @@ QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptio
 void IntraFormComboDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     // Grab (cast) the QComboBox
-    QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    auto *comboBox = static_cast<QComboBox *>(editor);
 
     // Get the current text and search for it in the combo
     QString value = index.model()->data(index, Qt::EditRole).toString();
@@ -76,7 +76,7 @@ void IntraFormComboDelegate::setEditorData(QWidget *editor, const QModelIndex &i
 void IntraFormComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     // Grab (cast) the QComboBox
-    QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    auto *comboBox = static_cast<QComboBox *>(editor);
 
     // Set the current text in the model
     model->setData(index, comboBox->currentText(), Qt::EditRole);

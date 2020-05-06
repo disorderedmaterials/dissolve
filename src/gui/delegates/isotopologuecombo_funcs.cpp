@@ -34,7 +34,7 @@ QWidget *IsotopologueComboDelegate::createEditor(QWidget *parent, const QStyleOp
                                                  const QModelIndex &index) const
 {
     // Create editor widget (in this case a combo box) and add the available options
-    QComboBox *editor = new QComboBox(parent);
+    auto *editor = new QComboBox(parent);
 
     // Get the model UserData for the current index - it should be an Isotopologue
     const Isotopologue *iso = VariantPointer<const Isotopologue>(index.data(Qt::UserRole));
@@ -59,7 +59,7 @@ QWidget *IsotopologueComboDelegate::createEditor(QWidget *parent, const QStyleOp
 void IsotopologueComboDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     // Grab (cast) the QComboBox
-    QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    auto *comboBox = static_cast<QComboBox *>(editor);
 
     // Get the current text and search for it in the combo
     QString value = index.model()->data(index, Qt::EditRole).toString();
@@ -78,7 +78,7 @@ void IsotopologueComboDelegate::setEditorData(QWidget *editor, const QModelIndex
 void IsotopologueComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     // Grab (cast) the QComboBox
-    QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    auto *comboBox = static_cast<QComboBox *>(editor);
 
     // Set the current text in the model
     model->setData(index, comboBox->currentText(), Qt::EditRole);

@@ -54,8 +54,7 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     // Try to create a suitable widget
     if (type == KeywordBase::AtomTypeSelectionData)
     {
-        AtomTypeSelectionKeywordWidget *atomTypeSelectionWidget =
-            new AtomTypeSelectionKeywordWidget(NULL, keywordBase, coreData);
+        auto *atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keywordBase, coreData);
         connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = atomTypeSelectionWidget;
         base = atomTypeSelectionWidget;

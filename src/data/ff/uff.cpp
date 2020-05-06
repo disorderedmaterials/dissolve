@@ -638,7 +638,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
         if (keepExisting && i->atomType())
             continue;
 
-        UFFAtomType *uffType = dynamic_cast<UFFAtomType *>(determineAtomType(i));
+        auto *uffType = dynamic_cast<UFFAtomType *>(determineAtomType(i));
         if (!uffType)
             Messenger::print("No UFF type available for Atom %i of Species (%s).\n", i->index() + 1, i->element()->symbol());
         else
@@ -685,10 +685,10 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         if (selectionOnly && (!bond->isSelected()))
             continue;
 
-        UFFAtomType *typeI = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(i)
-                                                                        : atomTypeByName(i->atomType()->name(), i->element()));
-        UFFAtomType *typeJ = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(j)
-                                                                        : atomTypeByName(j->atomType()->name(), j->element()));
+        auto *typeI = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(i)
+                                                                 : atomTypeByName(i->atomType()->name(), i->element()));
+        auto *typeJ = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(j)
+                                                                 : atomTypeByName(j->atomType()->name(), j->element()));
 
         if (!generateBondTerm(sp, bond, typeI, typeJ))
             return Messenger::error("Failed to create parameters for bond %i-%i.\n", i->userIndex(), j->userIndex());
@@ -705,12 +705,12 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         if (selectionOnly && (!angle->isSelected()))
             continue;
 
-        UFFAtomType *typeI = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(i)
-                                                                        : atomTypeByName(i->atomType()->name(), i->element()));
-        UFFAtomType *typeJ = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(j)
-                                                                        : atomTypeByName(j->atomType()->name(), j->element()));
-        UFFAtomType *typeK = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(k)
-                                                                        : atomTypeByName(k->atomType()->name(), k->element()));
+        auto *typeI = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(i)
+                                                                 : atomTypeByName(i->atomType()->name(), i->element()));
+        auto *typeJ = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(j)
+                                                                 : atomTypeByName(j->atomType()->name(), j->element()));
+        auto *typeK = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(k)
+                                                                 : atomTypeByName(k->atomType()->name(), k->element()));
 
         if (!generateAngleTerm(sp, angle, typeI, typeJ, typeK))
             return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", i->userIndex(), j->userIndex(),
@@ -729,14 +729,14 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         if (selectionOnly && (!torsion->isSelected()))
             continue;
 
-        UFFAtomType *typeI = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(i)
-                                                                        : atomTypeByName(i->atomType()->name(), i->element()));
-        UFFAtomType *typeJ = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(j)
-                                                                        : atomTypeByName(j->atomType()->name(), j->element()));
-        UFFAtomType *typeK = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(k)
-                                                                        : atomTypeByName(k->atomType()->name(), k->element()));
-        UFFAtomType *typeL = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(l)
-                                                                        : atomTypeByName(l->atomType()->name(), l->element()));
+        auto *typeI = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(i)
+                                                                 : atomTypeByName(i->atomType()->name(), i->element()));
+        auto *typeJ = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(j)
+                                                                 : atomTypeByName(j->atomType()->name(), j->element()));
+        auto *typeK = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(k)
+                                                                 : atomTypeByName(k->atomType()->name(), k->element()));
+        auto *typeL = dynamic_cast<UFFAtomType *>(determineTypes ? determineAtomType(l)
+                                                                 : atomTypeByName(l->atomType()->name(), l->element()));
 
         if (!generateTorsionTerm(sp, torsion, typeI, typeJ, typeK, typeL))
             return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", i->userIndex(), j->userIndex(),

@@ -55,7 +55,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             cutoffDistance = dissolve.pairPotentialRange();
         const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
         const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        double &stepSize = keywords_.retrieve<double>("StepSize");
+        auto &stepSize = keywords_.retrieve<double>("StepSize");
         const double stepSizeMax = keywords_.asDouble("StepSizeMax");
         const double stepSizeMin = keywords_.asDouble("StepSizeMin");
         const double termScale = 1.0;

@@ -86,11 +86,11 @@ void EnergyModuleWidget::updateControls(int flags)
             ui_.GradientValueLabel->setText("N/A");
         else
         {
-            double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
+            auto grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
             ui_.GradientValueLabel->setText(QString::number(grad));
         }
 
-        bool stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
+        auto stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
 
         if (stable)
         {

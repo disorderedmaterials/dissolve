@@ -58,12 +58,12 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         double cutoffDistance = keywords_.asDouble("CutoffDistance");
         if (cutoffDistance < 0.0)
             cutoffDistance = dissolve.pairPotentialRange();
-        double &rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
+        auto &rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
         const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
         const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
         const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
         const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        double &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
+        auto &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
         const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
         const double translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
         const double rRT = 1.0 / (.008314472 * cfg->temperature());

@@ -47,10 +47,9 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const int averaging = keywords_.asInt("Averaging");
     if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
         return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
-    Averaging::AveragingScheme averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
-    PairBroadeningFunction &intraBroadening =
-        keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
-    RDFModule::PartialsMethod method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
+    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
+    auto &intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+    auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
     const double useHalfCellRange = keywords_.asBool("UseHalfCellRange");
     const double specifiedRange = keywords_.asDouble("Range");
     const double binWidth = keywords_.asDouble("BinWidth");
@@ -114,7 +113,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // uniqueName_)
         bool alreadyUpToDate;
         calculateGR(procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
-        PartialSet &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
+        auto &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
 
         // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
         if ((averaging > 1) && (!alreadyUpToDate))
@@ -129,7 +128,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             {
                 if (!cfg->moduleData().contains(CharString("OriginalGR_%i", n)))
                     continue;
-                PartialSet &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), CharString("OriginalGR_%i", n));
+                auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), CharString("OriginalGR_%i", n));
                 p.setObjectTags(CharString("%s//OriginalGR", cfg->niceName()), CharString("Avg%i", n));
             }
 

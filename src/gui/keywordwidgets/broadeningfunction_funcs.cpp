@@ -105,7 +105,7 @@ void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &coreDat
     refreshing_ = true;
 
     // Grab the target BroadeningFunction
-    BroadeningFunction &broadeningFunction = keyword_->data();
+    auto &broadeningFunction = keyword_->data();
 
     // Summary text on KeywordDropDown button
     setSummaryText(BroadeningFunction::functionType(broadeningFunction.function()));

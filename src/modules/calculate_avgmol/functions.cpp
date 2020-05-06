@@ -33,12 +33,12 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
     int requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
     // Retrieve / create the three data arrays, and size accordingly
-    Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "X",
-                                                                               uniqueName(), GenericItem::InRestartFileFlag);
-    Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Y",
-                                                                               uniqueName(), GenericItem::InRestartFileFlag);
-    Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Z",
-                                                                               uniqueName(), GenericItem::InRestartFileFlag);
+    auto &x = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "X", uniqueName(),
+                                                               GenericItem::InRestartFileFlag);
+    auto &y = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Y", uniqueName(),
+                                                               GenericItem::InRestartFileFlag);
+    auto &z = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Z", uniqueName(),
+                                                               GenericItem::InRestartFileFlag);
 
     if (requiredSize > 0)
     {

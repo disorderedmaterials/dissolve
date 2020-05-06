@@ -34,7 +34,7 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     currentElement_ = NULL;
 
     // Create grid layout for widget
-    QGridLayout *gl = new QGridLayout;
+    auto *gl = new QGridLayout;
     gl->setSpacing(4);
     gl->setMargin(0);
 
@@ -158,7 +158,7 @@ ElementSelector::~ElementSelector() {}
 void ElementSelector::elementButtonClicked(bool checked)
 {
     // Cast sender
-    QToolButton *button = qobject_cast<QToolButton *>(sender());
+    auto *button = qobject_cast<QToolButton *>(sender());
     if (!button)
     {
         printf("ElementSelector::elementButtonClicked - Sender was not a QToolButton.\n");
@@ -225,7 +225,7 @@ Element *ElementSelector::getElement(QWidget *parent, const char *title, const c
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     // Create ElementSelector widget
-    ElementSelector *elementSelector = new ElementSelector(&inputDialog);
+    auto *elementSelector = new ElementSelector(&inputDialog);
     elementSelector->setCurrentElement(element);
     QObject::connect(elementSelector, SIGNAL(elementDoubleClicked()), &inputDialog, SLOT(accept()));
 
@@ -238,7 +238,7 @@ Element *ElementSelector::getElement(QWidget *parent, const char *title, const c
     QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok),
                      SLOT(setEnabled(bool)));
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(&inputDialog);
+    auto *mainLayout = new QVBoxLayout(&inputDialog);
     mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
     mainLayout->addWidget(label);
     mainLayout->addWidget(elementSelector);

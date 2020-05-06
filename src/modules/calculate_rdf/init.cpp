@@ -86,7 +86,7 @@ void CalculateRDFModule::initialise()
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'rAB'
-    CalculateDistanceProcedureNode *calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
+    auto *calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
     forEachB->addNode(calcDistance);
 
     // -- -- Collect1D: 'RDF'

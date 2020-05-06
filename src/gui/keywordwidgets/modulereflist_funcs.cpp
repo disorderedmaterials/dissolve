@@ -57,7 +57,7 @@ ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordB
 void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module *module, bool createItem)
 {
     // Grab the target reference list
-    RefList<Module> &selection = keyword_->data();
+    auto &selection = keyword_->data();
 
     QListWidgetItem *item;
     if (createItem)
@@ -129,7 +129,7 @@ void ModuleRefListKeywordWidget::updateKeywordData()
 void ModuleRefListKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
-    RefList<Module> &selection = keyword_->data();
+    auto &selection = keyword_->data();
     if (selection.nItems() == 0)
         setSummaryText("<None>");
     else

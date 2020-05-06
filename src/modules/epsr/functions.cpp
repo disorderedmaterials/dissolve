@@ -46,7 +46,7 @@ void EPSRModule::addTargets(RefList<Module> targets, const char *groupName)
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
-    Array2D<Array<double>> &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+    auto &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     int arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
@@ -125,7 +125,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
 {
     const int nAtomTypes = dissolve.nAtomTypes();
-    ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
+    auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
     const double gsigma1 = keywords_.asDouble("GSigma1");
     const double gsigma2 = keywords_.asDouble("GSigma2");
     int ncoeffp = keywords_.asInt("NCoeffP");

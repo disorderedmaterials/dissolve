@@ -76,7 +76,7 @@ void Vec3IntegerKeywordWidget::on_Spin1_valueChanged(int value)
     if (refreshing_)
         return;
 
-    Vec3<int> newVec = keyword_->data();
+    auto newVec = keyword_->data();
     newVec.x = value;
     keyword_->setData(newVec);
 
@@ -89,7 +89,7 @@ void Vec3IntegerKeywordWidget::on_Spin2_valueChanged(int value)
     if (refreshing_)
         return;
 
-    Vec3<int> newVec = keyword_->data();
+    auto newVec = keyword_->data();
     newVec.y = value;
     keyword_->setData(newVec);
 
@@ -102,7 +102,7 @@ void Vec3IntegerKeywordWidget::on_Spin3_valueChanged(int value)
     if (refreshing_)
         return;
 
-    Vec3<int> newVec = keyword_->data();
+    auto newVec = keyword_->data();
     newVec.z = value;
     keyword_->setData(newVec);
 

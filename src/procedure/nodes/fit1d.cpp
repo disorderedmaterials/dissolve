@@ -187,8 +187,8 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
 
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
-    Data1D &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
-                                                      GenericItem::InRestartFileFlag);
+    auto &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+                                                    GenericItem::InRestartFileFlag);
 
     data.setName(name());
     data.setObjectTag(CharString("%s//Fit1D//%s//%s", prefix, cfg->name(), name()));

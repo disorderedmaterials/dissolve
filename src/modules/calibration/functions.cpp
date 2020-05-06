@@ -49,15 +49,14 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
     for (Module *rdfModule : intraBroadeningModules_)
     {
         // Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
-        PairBroadeningFunction &broadening =
-            rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+        auto &broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
         // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
         int smoothing = rdfModule->keywords().asInt("Smoothing");
         for (Configuration *cfg : rdfModule->targetConfigurations())
         {
-            const PartialSet &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
-            PartialSet &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+            const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
+            auto &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
             RDFModule::calculateUnweightedGR(processPool_, cfg, originalGR, unweightedGR, broadening, smoothing);
         }
     }

@@ -134,8 +134,8 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    Data3D &data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
-                                                      GenericItem::InRestartFileFlag, &created);
+    auto &data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+                                                    GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());
@@ -155,7 +155,7 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
                 continue;
 
             // Cast the node
-            OperateProcedureNodeBase *operateNode = dynamic_cast<OperateProcedureNodeBase *>(node);
+            auto *operateNode = dynamic_cast<OperateProcedureNodeBase *>(node);
             operateNode->setTarget(processedData_);
         }
 

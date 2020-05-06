@@ -37,7 +37,7 @@ QWidget *ExponentialSpinDelegate::createEditor(QWidget *parent, const QStyleOpti
                                                const QModelIndex &index) const
 {
     // Create editor widget (in this case a double spin box) and set some properties
-    ExponentialSpin *editor = new ExponentialSpin(parent);
+    auto *editor = new ExponentialSpin(parent);
     editor->setMinimum(min_);
     editor->setMaximum(max_);
     editor->setSingleStep(step_);
@@ -51,7 +51,7 @@ void ExponentialSpinDelegate::setEditorData(QWidget *editor, const QModelIndex &
 {
     double value = index.model()->data(index, Qt::EditRole).toDouble();
 
-    ExponentialSpin *spinBox = static_cast<ExponentialSpin *>(editor);
+    auto *spinBox = static_cast<ExponentialSpin *>(editor);
     spinBox->setValue(value);
     spinBox->selectAll();
 }
@@ -59,7 +59,7 @@ void ExponentialSpinDelegate::setEditorData(QWidget *editor, const QModelIndex &
 // Get value from editing widget, and set back in model
 void ExponentialSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    ExponentialSpin *spinBox = static_cast<ExponentialSpin *>(editor);
+    auto *spinBox = static_cast<ExponentialSpin *>(editor);
 
     double value = spinBox->value();
 

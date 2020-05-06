@@ -106,7 +106,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
                                                                     const char *prefix, GenericList &targetList)
 {
     const int requestedPopulation = keywords_.asInt("Population");
-    Species *sp = keywords_.retrieve<Species *>("Species");
+    auto *sp = keywords_.retrieve<Species *>("Species");
     if (!sp)
     {
         Messenger::error("No Species set in AddSpecies node.\n");
@@ -124,11 +124,9 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     Messenger::print("[AddSpecies] Adding species '%s' - population is %i.\n", sp->name(), requestedPopulation);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
-    Venum<NodeValue, Units::DensityUnits> &densityAndUnits =
-        keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
+    auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
     double density = densityAndUnits.value().asDouble();
-    AddSpeciesProcedureNode::BoxActionStyle boxAction =
-        keywords_.enumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction");
+    auto boxAction = keywords_.enumeration<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction");
     if (boxAction == AddSpeciesProcedureNode::None)
         Messenger::print("[AddSpecies] Current box geometry / volume will remain as-is.\n");
     else if (boxAction == AddSpeciesProcedureNode::AddVolume)
@@ -206,8 +204,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     }
 
     // Get the positioning type and rotation flag
-    AddSpeciesProcedureNode::PositioningType positioning =
-        keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
+    auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
     bool rotate = keywords_.asBool("Rotate");
 
     Messenger::print("[AddSpecies] Positioning type is '%s' and rotation is %s.\n",
