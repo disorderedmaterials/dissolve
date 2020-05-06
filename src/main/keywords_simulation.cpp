@@ -54,7 +54,7 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
-        SimulationKeyword kwd = keywords().enumeration(parser.argc(0));
+        auto kwd = keywords().enumeration(parser.argc(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

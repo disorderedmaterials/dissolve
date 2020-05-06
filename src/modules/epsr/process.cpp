@@ -199,7 +199,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     while (Module *module = allTargetsIterator.iterate())
     {
         // Realise the error array and make sure its object name is set
-        Data1D &errors =
+        auto &errors =
             GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("RFactor_%s", module->uniqueName()),
                                                uniqueName_, GenericItem::InRestartFileFlag);
         errors.setObjectTag(CharString("%s//RFactor//%s", uniqueName_.get(), module->uniqueName()));
@@ -235,7 +235,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 module->uniqueName());
                 return false;
             }
-            Data1D calcSQTotal = calcSQ.constTotal();
+            auto calcSQTotal = calcSQ.constTotal();
 
             // Determine overlapping Q range between the two datasets
             double FQMin = qMin, FQMax = qMax;
@@ -325,7 +325,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Could not locate WeightedSQ for target '%s'.\n", module->uniqueName());
 
         // Get difference and fit function objects
-        Data1D &deltaFQ =
+        auto &deltaFQ =
             GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", module->uniqueName()),
                                                uniqueName_, GenericItem::InRestartFileFlag);
         auto &deltaFQFit = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
@@ -338,7 +338,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         deltaFQ.clear();
         const Array<double> x1 = referenceData.constXAxis();
         const Array<double> y1 = referenceData.constValues();
-        Data1D simulatedFQ = weightedSQ.constTotal();
+        auto simulatedFQ = weightedSQ.constTotal();
         Interpolator interpolatedSimFQ(simulatedFQ);
 
         // Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
@@ -551,7 +551,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
-            Data1D refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
+            auto refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
             Interpolator::addInterpolated(refMinusIntra, boundTotal, -1.0);
 
             // Add a row to our scattering matrix
@@ -562,8 +562,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double factor = 1.0;
             auto &types = unweightedSQ.atomTypes();
             for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
-                double globalI = atd1.atomType().index();
-                double globalJ = atd2.atomType().index();
+                auto globalI = atd1.atomType().index();
+                auto globalJ = atd2.atomType().index();
 
                 Data1D partialIJ = unweightedSQ.constUnboundPartial(i, j);
                 Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
@@ -601,7 +601,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             {
                 // Copy the unweighted data and wight weight it according to the natural isotope / concentration
                 // factor calculated above
-                Data1D data = combinedUnweightedSQ.at(i, j);
+                auto data = combinedUnweightedSQ.at(i, j);
                 data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
                 // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)

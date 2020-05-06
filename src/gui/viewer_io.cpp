@@ -170,7 +170,7 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!axisKeywords().isValid(parser.argc(0)))
             return axisKeywords().errorAndPrintValid(parser.argc(0));
-        AxisKeyword kwd = axisKeywords().enumeration(parser.argc(0));
+        auto kwd = axisKeywords().enumeration(parser.argc(0));
         if (!axisKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -497,7 +497,7 @@ bool BaseViewer::readRenderableBlock(LineParser &parser, Renderable *renderable,
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!renderableKeywords().isValid(parser.argc(0)))
             return renderableKeywords().errorAndPrintValid(parser.argc(0));
-        RenderableKeyword kwd = renderableKeywords().enumeration(parser.argc(0));
+        auto kwd = renderableKeywords().enumeration(parser.argc(0));
         if (!renderableKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -747,7 +747,7 @@ bool BaseViewer::readRenderableGroupBlock(LineParser &parser, RenderableGroup *g
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!renderableGroupKeywords().isValid(parser.argc(0)))
             return renderableGroupKeywords().errorAndPrintValid(parser.argc(0));
-        BaseViewer::RenderableGroupKeyword kwd = renderableGroupKeywords().enumeration(parser.argc(0));
+        auto kwd = renderableGroupKeywords().enumeration(parser.argc(0));
         if (!renderableGroupKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -889,7 +889,7 @@ bool BaseViewer::readViewBlock(LineParser &parser, bool strictBlockEnd)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!viewKeywords().isValid(parser.argc(0)))
             return viewKeywords().errorAndPrintValid(parser.argc(0));
-        ViewKeyword kwd = viewKeywords().enumeration(parser.argc(0));
+        auto kwd = viewKeywords().enumeration(parser.argc(0));
         if (!viewKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

@@ -356,7 +356,7 @@ bool RenderableConfiguration::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!configurationStyleKeywords().isValid(parser.argc(0)))
             return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
-        ConfigurationStyleKeyword kwd = configurationStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = configurationStyleKeywords().enumeration(parser.argc(0));
         if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

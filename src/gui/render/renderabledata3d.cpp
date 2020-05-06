@@ -746,7 +746,7 @@ bool RenderableData3D::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!data3DStyleKeywords().isValid(parser.argc(0)))
             return data3DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        Data3DStyleKeyword kwd = data3DStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = data3DStyleKeywords().enumeration(parser.argc(0));
         if (!data3DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

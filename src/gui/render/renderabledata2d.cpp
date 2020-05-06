@@ -361,7 +361,7 @@ bool RenderableData2D::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!data2DStyleKeywords().isValid(parser.argc(0)))
             return data2DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        Data2DStyleKeyword kwd = data2DStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = data2DStyleKeywords().enumeration(parser.argc(0));
         if (!data2DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

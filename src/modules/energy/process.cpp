@@ -329,29 +329,29 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              bondEnergy, angleEnergy, torsionEnergy);
 
             // Store current energies in the Configuration in case somebody else needs them
-            Data1D &interData =
+            auto &interData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
             interData.addPoint(dissolve.iteration(), interEnergy);
             interData.setObjectTag(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
-            Data1D &intraData =
+            auto &intraData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
             intraData.addPoint(dissolve.iteration(), intraEnergy);
             intraData.setObjectTag(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
-            Data1D &bondData =
+            auto &bondData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
             bondData.addPoint(dissolve.iteration(), bondEnergy);
             bondData.setObjectTag(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
-            Data1D &angleData =
+            auto &angleData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
             angleData.addPoint(dissolve.iteration(), angleEnergy);
             angleData.setObjectTag(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
-            Data1D &torsionData =
+            auto &torsionData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
             torsionData.setObjectTag(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
             // Append to arrays of total energies
-            Data1D &totalEnergyArray =
+            auto &totalEnergyArray =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
             totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
             totalEnergyArray.setObjectTag(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));

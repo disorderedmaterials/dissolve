@@ -52,7 +52,7 @@ bool Dissolve::loadInput(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!BlockKeywords::keywords().isValid(parser.argc(0)))
             return BlockKeywords::keywords().errorAndPrintValid(parser.argc(0));
-        BlockKeywords::BlockKeyword kwd = BlockKeywords::keywords().enumeration(parser.argc(0));
+        auto kwd = BlockKeywords::keywords().enumeration(parser.argc(0));
 
         // All OK, so process the keyword
         switch (kwd)

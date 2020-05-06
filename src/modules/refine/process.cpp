@@ -168,7 +168,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     module->uniqueName());
                     return false;
                 }
-                Data1D calcSQTotal = calcSQ.constTotal();
+                auto calcSQTotal = calcSQ.constTotal();
 
                 error = Error::percent(referenceData, calcSQTotal);
 
@@ -360,7 +360,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     // Copy the unweighted data and wight weight it according to the natural isotope /
                     // concentration factor calculated above
-                    Data1D data = combinedUnweightedSQ.at(i, j);
+                    auto data = combinedUnweightedSQ.at(i, j);
                     data.values() *= factor;
                     data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
