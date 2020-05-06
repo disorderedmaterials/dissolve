@@ -267,9 +267,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 {
 	// Make sure that the scattering weights are valid
 	if (!dataWeights.isValid())
-	{
 		return Messenger::error("Reference data '%s' does not have valid scattering weights.\n", weightedData.name());
-	}
 
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());
