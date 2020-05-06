@@ -54,8 +54,8 @@ void XRayWeights::operator=(const XRayWeights &source)
  * Source AtomTypes
  */
 
-// Retrieve form factor data for the current atom types
-bool XRayWeights::getFormFactors()
+// Initialise form factor data for the current atom types
+bool XRayWeights::initialiseFormFactors()
 {
 	formFactorData_.clear();
 
@@ -125,7 +125,7 @@ bool XRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
 
 	// Retrieve form factor data for the current atom types
 	formFactors_ = formFactors;
-	if (!getFormFactors())
+	if (!initialiseFormFactors())
 		return false;
 
 	setUpMatrices();

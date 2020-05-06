@@ -56,8 +56,8 @@ class XRayWeights : public GenericItemBase
 	bool valid_;
 
 	private:
-	// Retrieve form factor data for the current atom types
-	bool getFormFactors();
+	// Initialise form factor data for the current atom types
+	bool initialiseFormFactors();
 
 	public:
 	// Clear contents
