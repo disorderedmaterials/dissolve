@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_CHARTBASE_H
-#define DISSOLVE_CHARTS_CHARTBASE_H
+#pragma once
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/charthotspot.h"
@@ -194,5 +193,3 @@ class ChartBase : public QWidget
     // Notify that our required size has changed
     void requiredSizeChanged();
 };
-
-#endif

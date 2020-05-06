@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUEWEIGHT_H
-#define DISSOLVE_ISOTOPOLOGUEWEIGHT_H
+#pragma once
 
 #include "genericitems/base.h"
 #include "templates/listitem.h"
@@ -60,5 +59,3 @@ class IsotopologueWeight
     // Return relative weight
     double weight() const;
 };
-
-#endif

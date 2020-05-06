@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARDWIDGETHIGHLIGHT_H
-#define DISSOLVE_WIZARDWIDGETHIGHLIGHT_H
+#pragma once
 
 #include "templates/listitem.h"
 #include <QPalette>
@@ -61,5 +60,3 @@ class WizardWidgetHighlight : public ListItem<WizardWidgetHighlight>
     // Remove highlight from the target widget
     void unHighlight();
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_COMBOPOPULATOR_H
-#define DISSOLVE_COMBOPOPULATOR_H
+#pragma once
 
 #include "base/enumoptionsbase.h"
 #include "templates/list.h"
@@ -84,5 +83,3 @@ template <class T> class ComboNameListPopulator
             combo->addItem(QString("%1%2").arg(prefix, item->name()), VariantPointer<T>(item));
     }
 };
-
-#endif

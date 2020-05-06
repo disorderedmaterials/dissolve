@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHANGEDATA_H
-#define DISSOLVE_CHANGEDATA_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/vector3.h"
@@ -65,5 +64,3 @@ class ChangeData : public ListItem<ChangeData>
     // Return position vector
     Vec3<double> r() const;
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_IMPORTSPECIES_H
-#define DISSOLVE_DIALOG_IMPORTSPECIES_H
+#pragma once
 
 #include "gui/ui_importspeciesdialog.h"
 #include <QDialog>
@@ -48,5 +47,3 @@ class ImportSpeciesDialog : public QDialog
     // Copy imported Species over to the specified Dissolve object
     Species *importSpecies(Dissolve &dissolve);
 };
-
-#endif

@@ -26,8 +26,7 @@
 #include "templates/variantpointer.h"
 #include <QComboBox>
 
-#ifndef DISSOLVE_COMBOBOXUPDATER_H
-#define DISSOLVE_COMBOBOXUPDATER_H
+#pragma once
 
 // ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as
 // possible
@@ -204,5 +203,3 @@ template <class T, class I> class ComboBoxTextUpdater
             comboBox->setCurrentIndex(-1);
     }
 };
-
-#endif

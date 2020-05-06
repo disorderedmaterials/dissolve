@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_IMPORT_FORCES_H
-#define DISSOLVE_IMPORT_FORCES_H
+#pragma once
 
 #include "io/fileandformat.h"
 #include "templates/array.h"
@@ -87,5 +86,3 @@ class ForceImportFileFormat : public FileAndFormat
     // Import forces using supplied parser and current format
     bool importData(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 };
-
-#endif

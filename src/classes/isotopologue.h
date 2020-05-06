@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUE_H
-#define DISSOLVE_ISOTOPOLOGUE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "data/elements.h"
@@ -80,5 +79,3 @@ class Isotopologue : public ListItem<Isotopologue>
     // Return nth Atom/Isotope pair
     RefDataItem<AtomType, Isotope *> *isotope(int n);
 };
-
-#endif

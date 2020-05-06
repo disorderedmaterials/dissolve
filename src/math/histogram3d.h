@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_HISTOGRAM3D_H
-#define DISSOLVE_HISTOGRAM3D_H
+#pragma once
 
 #include "genericitems/base.h"
 #include "math/data3d.h"
@@ -169,5 +168,3 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_ATOMTYPESELECTION_H
-#define DISSOLVE_KEYWORD_ATOMTYPESELECTION_H
+#pragma once
 
 #include "classes/atomtypelist.h"
 #include "keywords/data.h"
@@ -71,5 +70,3 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList &>
     // Prune any references to the supplied AtomType in the contained data
     void removeReferencesTo(AtomType *at);
 };
-
-#endif

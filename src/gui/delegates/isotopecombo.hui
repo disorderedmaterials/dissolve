@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DELEGATES_ISOTOPECOMBO_H
-#define DISSOLVE_DELEGATES_ISOTOPECOMBO_H
+#pragma once
 
 #include "data/isotopes.h"
 #include <QComboBox>
@@ -54,5 +53,3 @@ class IsotopeComboDelegate : public QItemDelegate
     // Return text for Isotope specified
     static QString textForIsotope(Isotope *isotope);
 };
-
-#endif

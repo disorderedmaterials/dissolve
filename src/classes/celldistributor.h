@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CELLDISTRIBUTOR_H
-#define DISSOLVE_CELLDISTRIBUTOR_H
+#pragma once
 
 #include "classes/distributor.h"
 
@@ -49,5 +48,3 @@ class CellDistributor : public Distributor
     // Return array of Cells that we must hard lock in order to modify the object with index specified
     Array<Cell *> cellsToBeModifiedForObject(int objectId);
 };
-
-#endif

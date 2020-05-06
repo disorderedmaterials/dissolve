@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_TEXTPRIMITIVE_H
-#define DISSOLVE_RENDER_TEXTPRIMITIVE_H
+#pragma once
 
 #include "gui/render/textformat.h"
 #include "gui/render/textfragment.h"
@@ -142,5 +141,3 @@ class TextPrimitive : public ListItem<TextPrimitive>
     // Remove escape marker
     static void removeEscape();
 };
-
-#endif

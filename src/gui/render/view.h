@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_VIEW_H
-#define DISSOLVE_RENDER_VIEW_H
+#pragma once
 
 #include "gui/render/axes.h"
 #include "gui/render/renderable.h"
@@ -284,5 +283,3 @@ class View
     // Whether axis text labels are drawn flat in 3D views
     bool flatLabelsIn3D() const;
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_ELEMENTS_H
-#define DISSOLVE_DATA_ELEMENTS_H
+#pragma once
 
 #include "templates/array.h"
 #include "templates/list.h"
@@ -130,7 +129,6 @@ class ElementReference
 
 // Element defines
 #ifndef ELEMENTS_DEFINED
-#define ELEMENTS_DEFINED
 #define ELEMENT_XX 0
 #define ELEMENT_H 1
 #define ELEMENT_HE 2
@@ -250,6 +248,4 @@ class ElementReference
 #define ELEMENT_LV 116
 #define ELEMENT_TS 117
 #define ELEMENT_OG 118
-#endif
-
 #endif

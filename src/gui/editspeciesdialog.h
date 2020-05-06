@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_EDITSPECIES_H
-#define DISSOLVE_DIALOG_EDITSPECIES_H
+#pragma once
 
 #include "gui/ui_editspeciesdialog.h"
 #include <QDialog>
@@ -57,5 +56,3 @@ class EditSpeciesDialog : public QDialog
     // Run the dialog, returning whether it was accepted
     bool editSpecies();
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARD_ADDFORCEFIELDTERMS_H
-#define DISSOLVE_WIZARD_ADDFORCEFIELDTERMS_H
+#pragma once
 
 #include "gui/ui_addforcefieldtermswizard.h"
 #include "gui/wizardwidget.hui"
@@ -159,5 +158,3 @@ class AddForcefieldTermsWizard : public WizardWidget
     void on_MasterTermsPrefixButton_clicked(bool checked);
     void on_MasterTermsSuffixButton_clicked(bool checked);
 };
-
-#endif

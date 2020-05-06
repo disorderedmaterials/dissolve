@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_VALUE_H
-#define DISSOLVE_EXPRESSION_VALUE_H
+#pragma once
 
 // Forward declarations
 /* none */
@@ -86,5 +85,3 @@ class ExpressionValue
     // Return the supplied ExpressionValues both contain double types
     static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
 };
-
-#endif

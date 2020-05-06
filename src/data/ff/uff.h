@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_UFF_H
-#define DISSOLVE_FORCEFIELD_UFF_H
+#pragma once
 
 #include "data/ff.h"
 #include "data/ff/uffatomtype.h"
@@ -79,5 +78,3 @@ class Forcefield_UFF : public Forcefield
     // Perform some test calculations
     void test() const;
 };
-
-#endif

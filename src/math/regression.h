@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REGRESSION_H
-#define DISSOLVE_REGRESSION_H
+#pragma once
 
 // Forward Declarations
 class Data1D;
@@ -34,5 +33,3 @@ class Regression
     // Return gradient of last n points, along with average y value
     static double linear(const Data1D &data, int nSamples, double &yBar);
 };
-
-#endif

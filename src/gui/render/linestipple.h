@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_LINESTIPPLE_H
-#define DISSOLVE_RENDER_LINESTIPPLE_H
+#pragma once
 
 #include <QString>
 #include <QVector>
@@ -81,5 +80,3 @@ class LineStipple
     // Static list of line stipples
     static LineStipple stipple[];
 };
-
-#endif

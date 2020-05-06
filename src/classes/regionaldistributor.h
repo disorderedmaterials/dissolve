@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REGIONALDISTRIBUTOR_H
-#define DISSOLVE_REGIONALDISTRIBUTOR_H
+#pragma once
 
 #include "base/processpool.h"
 #include "classes/cellarray.h"
@@ -144,5 +143,3 @@ class RegionalDistributor
     // Add to double variable, but only if the process should (depend on the current strategy)
     void increase(double &var, double value);
 };
-
-#endif

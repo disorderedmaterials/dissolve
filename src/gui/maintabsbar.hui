@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MAINTABSBAR_H
-#define DISSOLVE_MAINTABSBAR_H
+#pragma once
 
 #include <QTabBar>
 
@@ -36,5 +35,3 @@ class MainTabsBar : public QTabBar
     // Constructor
     MainTabsBar(QWidget *parent);
 };
-
-#endif

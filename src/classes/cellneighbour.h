@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CELLNEIGHBOUR_H
-#define DISSOLVE_CELLNEIGHBOUR_H
+#pragma once
 
 // Forward Declarations
 class Cell;
@@ -50,5 +49,3 @@ class CellNeighbour
     // Return whether mim should be applied
     bool useMim();
 };
-
-#endif

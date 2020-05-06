@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARD_IMPORTSPECIES_H
-#define DISSOLVE_WIZARD_IMPORTSPECIES_H
+#pragma once
 
 #include "gui/ui_importspecieswizard.h"
 #include "gui/wizardwidget.hui"
@@ -141,5 +140,3 @@ class ImportSpeciesWizard : public WizardWidget
     private slots:
     void on_SpeciesNameEdit_textChanged(const QString text);
 };
-
-#endif

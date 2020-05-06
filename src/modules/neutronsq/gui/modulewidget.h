@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
-#define DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/neutronsq/gui/ui_modulewidget.h"
@@ -76,5 +75,3 @@ class NeutronSQModuleWidget : public ModuleWidget
     // Set data targets in graphs
     void setGraphDataTargets(NeutronSQModule *module);
 };
-
-#endif

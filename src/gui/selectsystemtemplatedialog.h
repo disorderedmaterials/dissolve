@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_SELECTSYSTEMTEMPLATE_H
-#define DISSOLVE_DIALOG_SELECTSYSTEMTEMPLATE_H
+#pragma once
 
 #include "gui/ui_selectsystemtemplatedialog.h"
 #include "templates/list.h"
@@ -60,5 +59,3 @@ class SelectSystemTemplateDialog : public QDialog
     // Run the dialog, returning the selected SystemTemplate
     SystemTemplate *selectTemplate();
 };
-
-#endif

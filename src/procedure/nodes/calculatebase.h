@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_CALCULATEBASE_H
-#define DISSOLVE_PROCEDURENODE_CALCULATEBASE_H
+#pragma once
 
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
@@ -78,5 +77,3 @@ class CalculateProcedureNodeBase : public ProcedureNode
     // Prepare any necessary data, ready for execution
     bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 };
-
-#endif

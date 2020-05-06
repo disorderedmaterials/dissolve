@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMTYPELIST_H
-#define DISSOLVE_ATOMTYPELIST_H
+#pragma once
 
 #include "classes/atomtypedata.h"
 #include "genericitems/base.h"
@@ -111,5 +110,3 @@ class AtomTypeList : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

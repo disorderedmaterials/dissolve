@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_CONFIGURATION_H
-#define DISSOLVE_VIEWER_CONFIGURATION_H
+#pragma once
 
 #include "gui/render/renderableconfiguration.h"
 #include "gui/viewer.hui"
@@ -112,5 +111,3 @@ class ConfigurationViewer : public BaseViewer
     // Return current renderable draw style
     RenderableConfiguration::ConfigurationDisplayStyle renderableDrawStyle() const;
 };
-
-#endif

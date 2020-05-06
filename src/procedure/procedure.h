@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURE_H
-#define DISSOLVE_PROCEDURE_H
+#pragma once
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
@@ -79,5 +78,3 @@ class Procedure
     // Write procedure to specified LineParser
     bool write(LineParser &parser, const char *prefix);
 };
-
-#endif

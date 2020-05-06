@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFLIST_H
-#define DISSOLVE_REFLIST_H
+#pragma once
 
 #include <iterator>
 #include <stddef.h>
@@ -486,5 +485,3 @@ template <class T> class RefList
         return NULL;
     }
 };
-
-#endif

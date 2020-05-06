@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SVD_H
-#define DISSOLVE_SVD_H
+#pragma once
 
 // Forward Declarations
 template <class A> class Array2D;
@@ -37,5 +36,3 @@ class SVD
     // Compute in-place pseudoinverse of supplied matrix
     static bool pseudoinverse(Array2D<double> &A);
 };
-
-#endif

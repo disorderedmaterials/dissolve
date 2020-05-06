@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
-#define DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/atomshake/gui/ui_modulewidget.h"
@@ -49,5 +48,3 @@ class AtomShakeModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::AtomShakeModuleWidget ui_;
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPORT_DATA1D_H
-#define DISSOLVE_EXPORT_DATA1D_H
+#pragma once
 
 #include "io/fileandformat.h"
 
@@ -72,5 +71,3 @@ class Data1DExportFileFormat : public FileAndFormat
     // Export Data1D using current filename and format
     bool exportData(const Data1D &data);
 };
-
-#endif

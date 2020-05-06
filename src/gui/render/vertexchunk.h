@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_VERTEXCHUNK_H
-#define DISSOLVE_RENDER_VERTEXCHUNK_H
+#pragma once
 
 #include "math/constants.h"
 #include <QtGui/qopengl.h>
@@ -84,5 +83,3 @@ class VertexChunk
     // Send to OpenGL (i.e. render)
     void sendToGL();
 };
-
-#endif

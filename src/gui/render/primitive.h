@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_PRIMITIVE_H
-#define DISSOLVE_RENDER_PRIMITIVE_H
+#pragma once
 
 #include "gui/render/primitiveinstance.h"
 #include "math/matrix4.h"
@@ -139,5 +138,3 @@ class Primitive : public ListItem<Primitive>
     // Plot basic coloured axes object
     void colouredAxes(double axisLength);
 };
-
-#endif

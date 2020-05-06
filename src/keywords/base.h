@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_BASE_H
-#define DISSOLVE_KEYWORD_BASE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
@@ -229,5 +228,3 @@ class KeywordBase : public ListItem<KeywordBase>
             kwd->removeReferencesTo(object);
     }
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MATHFUNC_H
-#define DISSOLVE_MATHFUNC_H
+#pragma once
 
 // Forward Declarations
 template <class A> class Array2D;
@@ -59,5 +58,3 @@ class DissolveMath
     // Return the cyclic permutation of the integer 'i', span 3
     static int cp3(int i);
 };
-
-#endif

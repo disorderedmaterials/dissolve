@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIES_H
-#define DISSOLVE_SPECIES_H
+#pragma once
 
 #include "classes/atomtypelist.h"
 #include "classes/coordinateset.h"
@@ -386,5 +385,3 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Write Species definition to specified LineParser
     bool write(LineParser &parser, const char *prefix);
 };
-
-#endif

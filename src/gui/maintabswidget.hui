@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MAINTABSWIDGET_H
-#define DISSOLVE_MAINTABSWIDGET_H
+#pragma once
 
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
@@ -178,5 +177,3 @@ class MainTabsWidget : public QTabWidget
     void dataModified();
     void tabClosed(QWidget *);
 };
-
-#endif

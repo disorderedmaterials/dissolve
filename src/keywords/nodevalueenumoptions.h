@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEVALUEENUMOPTIONS_H
-#define DISSOLVE_KEYWORD_NODEVALUEENUMOPTIONS_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "keywords/data.h"
@@ -178,5 +177,3 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     // Return value (as double)
     double asDouble() { return KeywordData<Venum<NodeValue, E>>::data_.value().asDouble(); }
 };
-
-#endif

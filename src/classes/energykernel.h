@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYKERNEL_H
-#define DISSOLVE_ENERGYKERNEL_H
+#pragma once
 
 #include "base/processpool.h"
 #include "classes/kernelflags.h"
@@ -118,5 +117,3 @@ class EnergyKernel
     // Process pool over which this kernel operates
     ProcessPool &processPool_;
 };
-
-#endif

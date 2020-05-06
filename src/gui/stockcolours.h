@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_STOCKCOLOURS_H
-#define DISSOLVE_STOCKCOLOURS_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include <QColor>
@@ -57,5 +56,3 @@ class StockColours
     // Return stock colour (as QColor) given (wrapped) index supplied
     static QColor stockColourByIndex(int index);
 };
-
-#endif

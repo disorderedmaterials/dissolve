@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_CONFIGURATIONWIDGET_H
-#define DISSOLVE_VIEWER_CONFIGURATIONWIDGET_H
+#pragma once
 
 #include "gui/ui_configurationwidget.h"
 
@@ -83,5 +82,3 @@ class ConfigurationWidget : public QWidget
     void on_ViewAxesVisibleButton_clicked(bool checked);
     void on_ViewCopyToClipboardButton_clicked(bool checked);
 };
-
-#endif

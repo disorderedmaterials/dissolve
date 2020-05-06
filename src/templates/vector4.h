@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VECTOR4_H
-#define DISSOLVE_VECTOR4_H
+#pragma once
 
 #include "templates/vector3.h"
 #include <math.h>
@@ -188,5 +187,3 @@ template <class T> class Vec4
     // Print
     void print() const { printf("vec(xyzw) = %8.4f %8.4f %8.4f %8.4f\n", (double)x, (double)y, (double)z, (double)w); }
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_CHARSTRING_H
-#define DISSOLVE_KEYWORD_CHARSTRING_H
+#pragma once
 
 #include "keywords/data.h"
 
@@ -60,5 +59,3 @@ class CharStringKeyword : public KeywordData<CharString>
     // Return value (as string)
     const char *asString();
 };
-
-#endif

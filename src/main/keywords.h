@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDS_H
-#define DISSOLVE_KEYWORDS_H
+#pragma once
 
 #include "base/enumoptions.h"
 
@@ -191,5 +190,3 @@ EnumOptions<SimulationBlock::SimulationKeyword> keywords();
 // Parse Simulation block
 bool parse(LineParser &parser, Dissolve *dissolve);
 }; // namespace SimulationBlock
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_MODULE_H
-#define DISSOLVE_KEYWORD_MODULE_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "classes/coredata.h"
@@ -148,5 +147,3 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
             KeywordData<M *>::data_ = NULL;
     }
 };
-
-#endif

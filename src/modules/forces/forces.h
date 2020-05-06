@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_FORCES_H
-#define DISSOLVE_MODULE_FORCES_H
+#pragma once
 
 #include "io/import/forces.h"
 #include "module/module.h"
@@ -112,5 +111,3 @@ class ForcesModule : public Module
     static void totalForces(ProcessPool &procPool, Configuration *cfg, const Array<std::shared_ptr<Molecule>> &targetMolecules,
                             const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 };
-
-#endif

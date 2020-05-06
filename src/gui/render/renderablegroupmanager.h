@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_RENDERABLEGROUPMANAGER_H
-#define DISSOLVE_RENDER_RENDERABLEGROUPMANAGER_H
+#pragma once
 
 #include "gui/render/renderablegroup.h"
 
@@ -110,5 +109,3 @@ class RenderableGroupManager
     // Remove all vertical shifts from RenderableGroups
     void removeVerticalShifts();
 };
-
-#endif

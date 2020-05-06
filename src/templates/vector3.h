@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VECTOR3_H
-#define DISSOLVE_VECTOR3_H
+#pragma once
 
 #include "math/constants.h"
 #include "math/mathfunc.h"
@@ -449,5 +448,3 @@ template <class T> class ListVec3 : public Vec3<T>, public ListItem<ListVec3<T>>
         Vec3<T>::z = source.z;
     }
 };
-
-#endif

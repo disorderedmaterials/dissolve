@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MATRIX4_H
-#define DISSOLVE_MATRIX4_H
+#pragma once
 
 #include "templates/vector3.h"
 #include "templates/vector4.h"
@@ -223,5 +222,3 @@ class Matrix4
     // Apply a shearing along X
     void applyShearX(double shearx);
 };
-
-#endif

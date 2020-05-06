@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPORT_TRAJECTORY_H
-#define DISSOLVE_EXPORT_TRAJECTORY_H
+#pragma once
 
 #include "io/fileandformat.h"
 
@@ -72,5 +71,3 @@ class TrajectoryExportFileFormat : public FileAndFormat
     // Append trajectory using current filename and format
     bool exportData(Configuration *cfg);
 };
-
-#endif

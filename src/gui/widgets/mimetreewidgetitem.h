@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MIMETREEWIDGETITEM_H
-#define DISSOLVE_MIMETREEWIDGETITEM_H
+#pragma once
 
 #include "gui/widgets/mimestrings.h"
 #include "templates/list.h"
@@ -49,5 +48,3 @@ class MimeTreeWidgetItem : public QTreeWidgetItem
     // Return mime strings
     MimeStrings &mimeStrings();
 };
-
-#endif

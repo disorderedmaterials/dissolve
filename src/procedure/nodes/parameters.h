@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_PARAMETERS_H
-#define DISSOLVE_PROCEDURENODE_PARAMETERS_H
+#pragma once
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
@@ -74,5 +73,3 @@ class ParametersProcedureNode : public ProcedureNode
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

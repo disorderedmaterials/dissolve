@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_UFFATOMTYPE_H
-#define DISSOLVE_FORCEFIELD_UFFATOMTYPE_H
+#pragma once
 
 #include "data/ffatomtype.h"
 #include "templates/list.h"
@@ -67,5 +66,3 @@ class UFFAtomType : public ForcefieldAtomType
     // Return integer representing geometry about the type (geom)
     int geom() const;
 };
-
-#endif

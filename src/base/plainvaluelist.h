@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PLAINVALUELIST_H
-#define DISSOLVE_PLAINVALUELIST_H
+#pragma once
 
 #include "base/plainvalue.h"
 #include "templates/list.h"
@@ -70,5 +69,3 @@ class PlainValueList
     // Broadcast data
     bool broadcast(ProcessPool &procPool);
 };
-
-#endif

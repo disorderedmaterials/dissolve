@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_EXPORT_TRAJECTORY_H
-#define DISSOLVE_MODULE_EXPORT_TRAJECTORY_H
+#pragma once
 
 #include "io/export/trajectory.h"
 #include "module/module.h"
@@ -80,5 +79,3 @@ class ExportTrajectoryModule : public Module
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool);
 };
-
-#endif

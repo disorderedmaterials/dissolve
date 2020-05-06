@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICLISTHELPER_H
-#define DISSOLVE_GENERICLISTHELPER_H
+#pragma once
 
 #include "base/sysfunc.h"
 #include "genericitems/items.h"
@@ -197,5 +196,3 @@ template <class T> class GenericListHelper
         return items;
     }
 };
-
-#endif

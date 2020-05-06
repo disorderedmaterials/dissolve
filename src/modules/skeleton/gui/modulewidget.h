@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_SKELETON_H
-#define DISSOLVE_MODULEWIDGET_SKELETON_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/skeleton/gui/ui_modulewidget.h"
@@ -48,5 +47,3 @@ class SkeletonModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::SkeletonModuleWidget ui_;
 };
-
-#endif

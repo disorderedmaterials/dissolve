@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FILEANDFORMAT_H
-#define DISSOLVE_FILEANDFORMAT_H
+#pragma once
 
 #include "base/charstring.h"
 #include "keywords/list.h"
@@ -115,5 +114,3 @@ class FileAndFormat
     // Write options and end block
     bool writeBlock(LineParser &parser, const char *prefix);
 };
-
-#endif

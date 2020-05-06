@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOM_H
-#define DISSOLVE_ATOM_H
+#pragma once
 
 #include "templates/dynamicarrayobject.h"
 #include "templates/orderedpointerdataarray.h"
@@ -127,5 +126,3 @@ class Atom : public DynamicArrayObject<Atom>
     // Return scaling factor to employ with specified Atom
     double scaling(Atom *j) const;
 };
-
-#endif

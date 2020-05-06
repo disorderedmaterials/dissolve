@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SITEREFERENCE_H
-#define DISSOLVE_SITEREFERENCE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/list.h"
@@ -46,5 +45,3 @@ class SiteReference : public ListItem<SiteReference>
     // Return name of this site stack (in the context of an Analyser)
     const char *name() const;
 };
-
-#endif

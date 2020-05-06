@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARSTRINGLIST_H
-#define DISSOLVE_CHARSTRINGLIST_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/array.h"
@@ -57,5 +56,3 @@ class CharStringList
     // Return list as comma-separated string
     const char *asCommaSeparatedList() const;
 };
-
-#endif

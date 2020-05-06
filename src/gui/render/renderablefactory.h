@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_RENDERABLEFACTORY_H
-#define DISSOLVE_RENDER_RENDERABLEFACTORY_H
+#pragma once
 
 #include "gui/render/renderable.h"
 
@@ -33,5 +32,3 @@ class RenderableFactory
     // Create Renderable of specified type, from specified data (referenced by objectTag)
     static Renderable *create(Renderable::RenderableType renderableType, const char *objectTag);
 };
-
-#endif

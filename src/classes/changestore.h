@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHANGESTORE_H
-#define DISSOLVE_CHANGESTORE_H
+#pragma once
 
 #include "classes/changedata.h"
 #include "templates/array.h"
@@ -95,5 +94,3 @@ class ChangeStore
     // Distribute and apply change data to all processes
     bool distributeAndApply(Configuration *cfg);
 };
-
-#endif

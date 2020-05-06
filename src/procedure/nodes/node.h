@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_H
-#define DISSOLVE_PROCEDURENODE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -220,5 +219,3 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Write node data to specified LineParser
     virtual bool write(LineParser &parser, const char *prefix);
 };
-
-#endif

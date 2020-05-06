@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEARRAY_H
-#define DISSOLVE_KEYWORD_NODEARRAY_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "keywords/data.h"
@@ -295,5 +294,3 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
                 KeywordData<Array<N *> &>::data_[n] = NULL;
     }
 };
-
-#endif

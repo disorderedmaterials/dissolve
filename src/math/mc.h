@@ -1,8 +1,7 @@
 /*
  */
 
-#ifndef DISSOLVE_MCMIN_H
-#define DISSOLVE_MCMIN_H
+#pragma once
 
 #include "base/messenger.h"
 #include "math/minimiser.h"
@@ -175,5 +174,3 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
         return currentError;
     }
 };
-
-#endif

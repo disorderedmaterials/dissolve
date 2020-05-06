@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_CHECKS_H
-#define DISSOLVE_MODULE_CHECKS_H
+#pragma once
 
 #include "base/geometry.h"
 #include "module/module.h"
@@ -81,5 +80,3 @@ class ChecksModule : public Module
     // Angles between atoms
     List<Geometry> angles_;
 };
-
-#endif

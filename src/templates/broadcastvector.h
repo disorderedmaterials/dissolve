@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BROADCASTVECTOR_H
-#define DISSOLVE_BROADCASTVECTOR_H
+#pragma once
 
 #include "base/processpool.h"
 
@@ -75,5 +74,3 @@ template <class T> class BroadcastVector
     // Return whether broadcast failed
     bool failed() { return (!result_); }
 };
-
-#endif

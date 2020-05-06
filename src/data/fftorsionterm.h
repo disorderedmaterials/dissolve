@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_TORSIONTERM_H
-#define DISSOLVE_FORCEFIELD_TORSIONTERM_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/parameters.h"
@@ -59,5 +58,3 @@ class ForcefieldTorsionTerm
     // Return array of parameters
     const double *parameters() const;
 };
-
-#endif

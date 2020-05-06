@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_CALCULATECN_H
-#define DISSOLVE_MODULEWIDGET_CALCULATECN_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/calculate_cn/gui/ui_modulewidget.h"
@@ -70,5 +69,3 @@ class CalculateCNModuleWidget : public ModuleWidget
 
     private slots:
 };
-
-#endif

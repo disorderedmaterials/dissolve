@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FOURIERTRANSFORM_H
-#define DISSOLVE_FOURIERTRANSFORM_H
+#pragma once
 
 #include "math/broadeningfunction.h"
 #include "math/windowfunction.h"
@@ -37,5 +36,3 @@ class Fourier
     static bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax,
                        WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction());
 };
-
-#endif

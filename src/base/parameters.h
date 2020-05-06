@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTERACTIONPARAMETERS_H
-#define DISSOLVE_INTERACTIONPARAMETERS_H
+#pragma once
 
 #define MAXSRPARAMETERS 4
 
@@ -56,5 +55,3 @@ class InteractionParameters
     // Return atomic charge
     double charge() const;
 };
-
-#endif

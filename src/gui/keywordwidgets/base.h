@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_BASE_H
-#define DISSOLVE_KEYWORDWIDGET_BASE_H
+#pragma once
 
 // Forward Declarations
 class CoreData;
@@ -50,5 +49,3 @@ class KeywordWidgetBase
     // Update value displayed in widget
     virtual void updateValue() = 0;
 };
-
-#endif

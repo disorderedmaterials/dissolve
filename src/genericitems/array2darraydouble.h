@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY2DARRAYDOUBLE_H
-#define DISSOLVE_GENERICITEMCONTAINER_ARRAY2DARRAYDOUBLE_H
+#pragma once
 
 #include "genericitems/container.h"
 
@@ -207,5 +206,3 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
         return true;
     }
 };
-
-#endif

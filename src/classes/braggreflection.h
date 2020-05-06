@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGREFLECTION_H
-#define DISSOLVE_BRAGGREFLECTION_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "genericitems/base.h"
@@ -105,5 +104,3 @@ class BraggReflection : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

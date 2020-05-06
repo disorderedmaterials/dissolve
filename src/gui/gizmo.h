@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GIZMO_H
-#define DISSOLVE_GIZMO_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/sysfunc.h"
@@ -119,5 +118,3 @@ class Gizmo : public ListItem<Gizmo>
     // Read widget state through specified LineParser
     virtual bool readState(LineParser &parser) = 0;
 };
-
-#endif

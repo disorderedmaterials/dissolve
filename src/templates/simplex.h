@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SIMPLEX_H
-#define DISSOLVE_SIMPLEX_H
+#pragma once
 
 #include "templates/array.h"
 #include "templates/list.h"
@@ -514,5 +513,3 @@ template <class T> class Simplex
     // Return whether a better point was found by the Simplex
     bool betterPointFound() { return (betterPointsFound_ > 0); }
 };
-
-#endif

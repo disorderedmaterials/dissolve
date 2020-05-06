@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_COLOURSCALEPOINT_H
-#define DISSOLVE_RENDER_COLOURSCALEPOINT_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -65,5 +64,3 @@ class ColourScalePoint
     // Set alpha value
     void setAlpha(int alpha);
 };
-
-#endif

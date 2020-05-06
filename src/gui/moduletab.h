@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULETAB_H
-#define DISSOLVE_MODULETAB_H
+#pragma once
 
 #include "gui/maintab.h"
 #include "gui/ui_moduletab.h"
@@ -102,5 +101,3 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

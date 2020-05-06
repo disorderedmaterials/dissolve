@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_MODULEINSERTIONBLOCK_H
-#define DISSOLVE_CHARTS_MODULEINSERTIONBLOCK_H
+#pragma once
 
 #include "gui/charts/ui_moduleinsertionblock.h"
 #include "templates/reflist.h"
@@ -86,5 +85,3 @@ class ModuleInsertionBlock : public QWidget
     // Set icons to reflect moving existing Module to new position
     void setDisplayModuleMove();
 };
-
-#endif

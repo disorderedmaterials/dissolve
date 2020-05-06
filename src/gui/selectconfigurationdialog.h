@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_SELECTSPECIES_H
-#define DISSOLVE_DIALOG_SELECTSPECIES_H
+#pragma once
 
 #include "gui/ui_selectconfigurationdialog.h"
 #include "templates/list.h"
@@ -56,5 +55,3 @@ class SelectConfigurationDialog : public QDialog
     // Run the dialog, returning a list of selected Configuration
     RefList<Configuration> selectConfiguration(int minConfiguration, int maxConfiguration);
 };
-
-#endif

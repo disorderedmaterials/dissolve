@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WORKSPACETAB_H
-#define DISSOLVE_WORKSPACETAB_H
+#pragma once
 
 #include "gui/gizmo.h"
 #include "gui/maintab.h"
@@ -101,5 +100,3 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

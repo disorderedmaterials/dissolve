@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BROADENINGFUNCTION_H
-#define DISSOLVE_BROADENINGFUNCTION_H
+#pragma once
 
 #define MAXBROADENINGFUNCTIONPARAMS 6
 
@@ -142,5 +141,3 @@ class BroadeningFunction : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

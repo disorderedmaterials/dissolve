@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_ENERGY_H
-#define DISSOLVE_MODULEWIDGET_ENERGY_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/energy/gui/ui_modulewidget.h"
@@ -83,5 +82,3 @@ class EnergyModuleWidget : public ModuleWidget
     private slots:
     void on_TargetCombo_currentIndexChanged(int index);
 };
-
-#endif

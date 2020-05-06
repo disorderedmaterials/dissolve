@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SDMIN_H
-#define DISSOLVE_SDMIN_H
+#pragma once
 
 #include "base/messenger.h"
 #include "math/minimiser.h"
@@ -149,5 +148,3 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
         return currentError;
     }
 };
-
-#endif

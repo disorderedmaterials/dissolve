@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTEGRATOR_H
-#define DISSOLVE_INTEGRATOR_H
+#pragma once
 
 #include "math/range.h"
 
@@ -71,5 +70,3 @@ class Integrator
     // Return sum of all absolute values in supplied data
     static double absSum(const Data3D &data);
 };
-
-#endif

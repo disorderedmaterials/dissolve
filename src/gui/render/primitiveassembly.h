@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_PRIMITIVEASSEMBLY_H
-#define DISSOLVE_RENDER_PRIMITIVEASSEMBLY_H
+#pragma once
 
 #include "gui/render/primitiveinfo.h"
 #include "templates/array.h"
@@ -75,5 +74,3 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
     // Send to OpenGL (i.e. render)
     void sendToGL(double pixelScaling);
 };
-
-#endif

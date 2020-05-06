@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_NUMBERFORMAT_H
-#define DISSOLVE_RENDER_NUMBERFORMAT_H
+#pragma once
 
 #include <QString>
 
@@ -90,5 +89,3 @@ class NumberFormat
     // Return number formatted according to internal definition
     QString format(double number);
 };
-
-#endif

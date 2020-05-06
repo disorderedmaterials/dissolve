@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_MODULEREFLIST_H
-#define DISSOLVE_KEYWORD_MODULEREFLIST_H
+#pragma once
 
 #include "base/charstringlist.h"
 #include "keywords/data.h"
@@ -76,5 +75,3 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
     // Prune any references to the supplied Module in the contained data
     void removeReferencesTo(Module *module);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_NODEVALUEENUMOPTIONS_H
-#define DISSOLVE_KEYWORDWIDGET_NODEVALUEENUMOPTIONS_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_nodevalueenumoptions.h"
@@ -69,5 +68,3 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
     // Update value displayed in widget
     void updateValue();
 };
-
-#endif

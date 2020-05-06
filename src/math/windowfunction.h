@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WINDOWFUNCTION_H
-#define DISSOLVE_WINDOWFUNCTION_H
+#pragma once
 
 #define MAXWINDOWFUNCTIONPARAMS 6
 
@@ -111,5 +110,3 @@ class WindowFunction : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

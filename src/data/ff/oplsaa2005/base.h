@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_OPLSAA_BASE_H
-#define DISSOLVE_FORCEFIELD_OPLSAA_BASE_H
+#pragma once
 
 #include "data/ff.h"
 
@@ -66,5 +65,3 @@ class OPLSAA2005BaseForcefield : public Forcefield
     optional<const ForcefieldImproperTerm &> improperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
                                                           const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
 };
-
-#endif

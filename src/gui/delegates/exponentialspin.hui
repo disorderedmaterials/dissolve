@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DELEGATES_EXPONENTIALSPIN_H
-#define DISSOLVE_DELEGATES_EXPONENTIALSPIN_H
+#pragma once
 
 #include "gui/widgets/exponentialspin.hui"
 #include <QItemDelegate>
@@ -48,5 +47,3 @@ class ExponentialSpinDelegate : public QItemDelegate
     // Resize editor
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
-
-#endif

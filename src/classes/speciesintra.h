@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESINTRA_H
-#define DISSOLVE_SPECIESINTRA_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/array.h"
@@ -137,5 +136,3 @@ class SpeciesIntra
     // Return whether the term is contained within a cycle
     bool inCycle() const;
 };
-
-#endif

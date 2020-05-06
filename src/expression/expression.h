@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_H
-#define DISSOLVE_EXPRESSION_H
+#pragma once
 
 #include "base/charstring.h"
 #include "expression/functions.h"
@@ -129,5 +128,3 @@ class Expression
     // Execute and return as double
     double asDouble();
 };
-
-#endif

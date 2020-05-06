@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_H
-#define DISSOLVE_GENERICITEMCONTAINER_H
+#pragma once
 
 #include "base/processpool.h"
 #include "genericitems/item.h"
@@ -79,5 +78,3 @@ template <class T> class GenericItemContainer : public GenericItem
     // Check for equality
     bool equality(ProcessPool &procPool) { return data_.equality(procPool); }
 };
-
-#endif

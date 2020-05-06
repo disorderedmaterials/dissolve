@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFDATALIST_H
-#define DISSOLVE_REFDATALIST_H
+#pragma once
 
 #include <stddef.h>
 #include <stdio.h>
@@ -651,5 +650,3 @@ template <class T, class D> class RefDataListIterator
     // Return whether we are on the last item in the list
     bool isLast() const { return (currentItem_ == targetRefList_.last()); }
 };
-
-#endif

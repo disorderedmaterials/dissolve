@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICLIST_H
-#define DISSOLVE_GENERICLIST_H
+#pragma once
 
 #include "base/sysfunc.h"
 #include "genericitems/item.h"
@@ -80,5 +79,3 @@ class GenericList
     // Check equality of all data
     bool equality(ProcessPool &procPool);
 };
-
-#endif

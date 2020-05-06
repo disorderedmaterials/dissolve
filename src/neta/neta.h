@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_H
-#define DISSOLVE_NETA_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -72,5 +71,3 @@ class NETADefinition
     // Check supplied atom to see if it matches this NETA description
     int score(const SpeciesAtom *i) const;
 };
-
-#endif

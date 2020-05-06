@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GIZMOS_INTEGRATOR1D_H
-#define DISSOLVE_GIZMOS_INTEGRATOR1D_H
+#pragma once
 
 #include "gui/gizmo.h"
 #include "gui/ui_integrator1dgizmo.h"
@@ -98,5 +97,3 @@ class Integrator1DGizmo : public QWidget, public Gizmo
     signals:
     void windowClosed(QString windowTitle);
 };
-
-#endif

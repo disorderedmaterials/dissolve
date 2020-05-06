@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DELEGATES_INTRAFORMCOMBO_H
-#define DISSOLVE_DELEGATES_INTRAFORMCOMBO_H
+#pragma once
 
 #include "classes/masterintra.h"
 #include "templates/list.h"
@@ -57,5 +56,3 @@ class IntraFormComboDelegate : public QItemDelegate
     // Resize editor
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
-
-#endif

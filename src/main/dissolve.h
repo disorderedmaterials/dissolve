@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DISSOLVE_H
-#define DISSOLVE_DISSOLVE_H
+#pragma once
 
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -396,5 +395,3 @@ class Dissolve
     // Set up local MPI pools
     bool setUpMPIPools();
 };
-
-#endif

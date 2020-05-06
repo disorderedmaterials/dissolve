@@ -24,8 +24,7 @@
 #include "templates/variantpointer.h"
 #include <QListWidget>
 
-#ifndef DISSOLVE_LISTWIDGETUPDATER_H
-#define DISSOLVE_LISTWIDGETUPDATER_H
+#pragma once
 
 // ListWidgetUpdater - Constructor-only template class to update contents of a QListWidget, preserving original items as much as
 // possible
@@ -204,5 +203,3 @@ template <class T, class I> class ListWidgetUpdater
         }
     }
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA2DSTORE_H
-#define DISSOLVE_DATA2DSTORE_H
+#pragma once
 
 #include "io/import/data2d.h"
 #include "math/data2d.h"
@@ -58,5 +57,3 @@ class Data2DStore
     // Return list of all data references
     const RefDataList<Data2D, Data2DImportFileFormat> &dataReferences() const;
 };
-
-#endif

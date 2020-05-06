@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_ELEMENTREFLIST_H
-#define DISSOLVE_KEYWORD_ELEMENTREFLIST_H
+#pragma once
 
 #include "classes/atomtype.h"
 #include "keywords/data.h"
@@ -49,5 +48,3 @@ class ElementRefListKeyword : public KeywordData<RefList<Element> &>
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
-
-#endif

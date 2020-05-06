@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULELIST_H
-#define DISSOLVE_MODULELIST_H
+#pragma once
 
 #include "templates/list.h"
 
@@ -68,5 +67,3 @@ class ModuleList
     // Run set-up stages for all modules
     bool setUpAll(Dissolve &dissolve, ProcessPool &procPool);
 };
-
-#endif

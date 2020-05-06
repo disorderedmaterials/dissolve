@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SYSTEMTEMPLATE_H
-#define DISSOLVE_SYSTEMTEMPLATE_H
+#pragma once
 
 #include "templates/listitem.h"
 #include <QDir>
@@ -73,5 +72,3 @@ class SystemTemplate : public ListItem<SystemTemplate>
     // Create and return a button for this template
     QToolButton *createButton();
 };
-
-#endif

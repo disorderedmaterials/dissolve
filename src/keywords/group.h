@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_GROUP_H
-#define DISSOLVE_KEYWORD_GROUP_H
+#pragma once
 
 #include "base/charstring.h"
 #include "keywords/base.h"
@@ -71,5 +70,3 @@ class KeywordGroup : public ListItem<KeywordGroup>
     // Return reference list of keywords in group
     RefList<KeywordBase> &keywords();
 };
-
-#endif

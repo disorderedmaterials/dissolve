@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_LIST_H
-#define DISSOLVE_KEYWORD_LIST_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "keywords/data.h"
@@ -224,5 +223,3 @@ class KeywordList
     // Write all keywords in groups to specified LineParser
     bool writeGroups(LineParser &parser, const char *prefix, bool onlyIfSet = true);
 };
-
-#endif

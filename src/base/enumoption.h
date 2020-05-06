@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMOPTION_H
-#define DISSOLVE_ENUMOPTION_H
+#pragma once
 
 #include <stddef.h>
 
@@ -85,5 +84,3 @@ class UnrecognisedEnumOption : public EnumOption
     // Return if the option is valid (true except in derived classes)
     bool isValid() const { return false; }
 };
-
-#endif

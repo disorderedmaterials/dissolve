@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_PROCEDURE_NODE_H
-#define DISSOLVE_CHARTS_PROCEDURE_NODE_H
+#pragma once
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/ui_procedurenode.h"
@@ -135,5 +134,3 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
     // Notify that the node's keyword data has been modified
     void dataModified();
 };
-
-#endif

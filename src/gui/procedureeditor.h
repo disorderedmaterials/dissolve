@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDUREEDITOR_H
-#define DISSOLVE_PROCEDUREEDITOR_H
+#pragma once
 
 #include "base/charstring.h"
 #include "gui/ui_procedureeditor.h"
@@ -106,5 +105,3 @@ class ProcedureEditor : public QWidget
     // Notify that the Procedure's data has changed
     void dataModified();
 };
-
-#endif

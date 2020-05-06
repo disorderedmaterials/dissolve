@@ -27,8 +27,7 @@
 #include "templates/variantpointer.h"
 #include <QTableWidget>
 
-#ifndef DISSOLVE_TABLEWIDGETUPDATER_H
-#define DISSOLVE_TABLEWIDGETUPDATER_H
+#pragma once
 
 // TableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as much
 // as possible
@@ -233,5 +232,3 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
         table->setRowCount(rowCount);
     }
 };
-
-#endif

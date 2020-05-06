@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DYNAMICARRAYOBJECT_H
-#define DISSOLVE_DYNAMICARRAYOBJECT_H
+#pragma once
 
 // Forward Declarations
 template <class T> class DynamicArray;
@@ -49,5 +48,3 @@ template <class T> class DynamicArrayObject : public DynamicArrayObjectBase<T>
     // Return index of object within parent DynamicArray
     void setArrayIndex(int index) { DynamicArrayObjectBase<T>::arrayIndex_ = index; }
 };
-
-#endif

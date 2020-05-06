@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PAIRBROADENINGFUNCTION_H
-#define DISSOLVE_PAIRBROADENINGFUNCTION_H
+#pragma once
 
 #include "base/charstring.h"
 #include "genericitems/base.h"
@@ -125,5 +124,3 @@ class PairBroadeningFunction : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

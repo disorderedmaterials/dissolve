@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEREFLIST_H
-#define DISSOLVE_KEYWORD_NODEREFLIST_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "keywords/data.h"
@@ -227,5 +226,3 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
             KeywordData<RefList<N> &>::data_.remove(castNode);
     }
 };
-
-#endif

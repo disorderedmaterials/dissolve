@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PARTIALSET_H
-#define DISSOLVE_PARTIALSET_H
+#pragma once
 
 #include "classes/atomtypelist.h"
 #include "classes/neutronweights.h"
@@ -180,5 +179,3 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

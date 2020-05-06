@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_FONTINSTANCE_H
-#define DISSOLVE_RENDER_FONTINSTANCE_H
+#pragma once
 
 #include "templates/vector3.h"
 #include <FTGL/ftgl.h>
@@ -93,5 +92,3 @@ class FontInstance
     // Calculate bounding box height for specified string
     double boundingBoxHeight(QString text) const;
 };
-
-#endif

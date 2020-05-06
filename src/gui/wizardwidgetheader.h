@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARDWIDGETHEADER_H
-#define DISSOLVE_WIZARDWIDGETHEADER_H
+#pragma once
 
 #include <QWidget>
 
@@ -33,5 +32,3 @@ class WizardWidgetHeader : public QWidget
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 };
-
-#endif

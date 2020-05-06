@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MASTERINTRA_H
-#define DISSOLVE_MASTERINTRA_H
+#pragma once
 
 #include "base/charstring.h"
 #include "classes/speciesintra.h"
@@ -67,5 +66,3 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
     // Return type of this interaction
     SpeciesIntra::InteractionType type() const;
 };
-
-#endif

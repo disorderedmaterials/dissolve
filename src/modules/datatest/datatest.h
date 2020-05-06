@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_DATATEST_H
-#define DISSOLVE_MODULE_DATATEST_H
+#pragma once
 
 #include "classes/configuration.h"
 #include "classes/data1dstore.h"
@@ -165,5 +164,3 @@ class DataTestModule : public Module
     // Return a new widget controlling this Module
     ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif

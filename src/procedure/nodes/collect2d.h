@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_COLLECT2D_H
-#define DISSOLVE_PROCEDURENODE_COLLECT2D_H
+#pragma once
 
 #include "base/charstring.h"
 #include "math/histogram2d.h"
@@ -106,5 +105,3 @@ class Collect2DProcedureNode : public ProcedureNode
     // Finalise any necessary data after execution
     bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
-
-#endif

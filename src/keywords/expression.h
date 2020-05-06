@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_EXPRESSION_H
-#define DISSOLVE_KEYWORD_EXPRESSION_H
+#pragma once
 
 #include "keywords/data.h"
 
@@ -69,5 +68,3 @@ class ExpressionKeyword : public KeywordData<Expression &>
      */
     protected:
 };
-
-#endif

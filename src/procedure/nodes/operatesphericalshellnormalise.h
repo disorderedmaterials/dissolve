@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_OPERATESPHERICALSHELLNORMALISE_H
-#define DISSOLVE_PROCEDURENODE_OPERATESPHERICALSHELLNORMALISE_H
+#pragma once
 
 #include "procedure/nodes/operatebase.h"
 
@@ -41,5 +40,3 @@ class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeB
     // Operate on Data1D target
     bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 };
-
-#endif

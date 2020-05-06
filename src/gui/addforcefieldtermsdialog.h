@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_ADDFORCEFIELDTERMS_H
-#define DISSOLVE_DIALOG_ADDFORCEFIELDTERMS_H
+#pragma once
 
 #include "gui/ui_addforcefieldtermsdialog.h"
 #include <QDialog>
@@ -49,5 +48,3 @@ class AddForcefieldTermsDialog : public QDialog
     // Apply Forcefield terms to the targetted Species within the specified Dissolve object
     bool applyForcefieldTerms(Dissolve &dissolve);
 };
-
-#endif

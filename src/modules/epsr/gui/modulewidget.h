@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_EPSR_H
-#define DISSOLVE_MODULEWIDGET_EPSR_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/epsr/gui/ui_modulewidget.h"
@@ -93,5 +92,3 @@ class EPSRModuleWidget : public ModuleWidget
     void on_DebugFromSpin_valueChanged(int value);
     void on_DebugToSpin_valueChanged(int value);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_DYNAMICSITELIST_H
-#define DISSOLVE_KEYWORD_DYNAMICSITELIST_H
+#pragma once
 
 #include "expression/node.h"
 #include "keywords/data.h"
@@ -81,5 +80,3 @@ class DynamicSiteNodesKeyword : public KeywordData<RefList<DynamicSiteProcedureN
      */
     protected:
 };
-
-#endif

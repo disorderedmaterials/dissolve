@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_DOUBLE_H
-#define DISSOLVE_KEYWORD_DOUBLE_H
+#pragma once
 
 #include "keywords/data.h"
 
@@ -83,5 +82,3 @@ class DoubleKeyword : public KeywordData<double>
     // Return value (as string)
     const char *asString();
 };
-
-#endif

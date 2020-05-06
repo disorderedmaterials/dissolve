@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUECOLLECTION_H
-#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUECOLLECTION_H
+#pragma once
 
 #include "gui/helpers/treewidgetupdater.h"
 #include "gui/keywordwidgets/base.h"
@@ -90,5 +89,3 @@ class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public Keywo
     // Update keyword data based on widget values
     void updateKeywordData();
 };
-
-#endif

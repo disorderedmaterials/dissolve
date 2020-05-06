@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_CALCULATEANGLE_H
-#define DISSOLVE_MODULEWIDGET_CALCULATEANGLE_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/calculate_angle/gui/ui_modulewidget.h"
@@ -73,5 +72,3 @@ class CalculateAngleModuleWidget : public ModuleWidget
 
     private slots:
 };
-
-#endif

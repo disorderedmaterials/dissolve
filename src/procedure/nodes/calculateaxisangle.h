@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_CALCULATEAXISANGLE_H
-#define DISSOLVE_PROCEDURENODE_CALCULATEAXISANGLE_H
+#pragma once
 
 #include "classes/site.h"
 #include "procedure/nodes/calculatebase.h"
@@ -65,5 +64,3 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_PRIMITIVEINSTANCE_H
-#define DISSOLVE_RENDER_PRIMITIVEINSTANCE_H
+#pragma once
 
 #include "templates/listitem.h"
 #include <QtGui/qopengl.h>
@@ -80,5 +79,3 @@ class PrimitiveInstance : public ListItem<PrimitiveInstance>
     // Return VBO ID of index array for instance
     GLuint vboIndexObject() const;
 };
-
-#endif

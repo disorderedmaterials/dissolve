@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CONFIGURATION_H
-#define DISSOLVE_CONFIGURATION_H
+#pragma once
 
 #include "base/processpool.h"
 #include "base/version.h"
@@ -276,5 +275,3 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Broadcast coordinate from specified root process
     bool broadcastCoordinates(ProcessPool &procPool, int rootRank);
 };
-
-#endif

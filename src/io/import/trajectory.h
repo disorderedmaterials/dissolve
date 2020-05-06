@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_IMPORT_TRAJECTORY_H
-#define DISSOLVE_IMPORT_TRAJECTORY_H
+#pragma once
 
 #include "io/fileandformat.h"
 
@@ -70,5 +69,3 @@ class TrajectoryImportFileFormat : public FileAndFormat
     // Return whether the file must exist
     bool fileMustExist() const { return true; }
 };
-
-#endif

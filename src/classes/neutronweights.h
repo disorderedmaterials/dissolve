@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NEUTRONWEIGHTS_H
-#define DISSOLVE_NEUTRONWEIGHTS_H
+#pragma once
 
 #include "classes/atomtypelist.h"
 #include "classes/isotopologues.h"
@@ -130,5 +129,3 @@ class NeutronWeights : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

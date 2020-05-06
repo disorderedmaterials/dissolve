@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FILTERS_H
-#define DISSOLVE_FILTERS_H
+#pragma once
 
 #include "math/broadeningfunction.h"
 
@@ -51,5 +50,3 @@ class Filters
     // Convert bin boundaries to centre-bin values
     static void convertBinBoundaries(Data1D &data);
 };
-
-#endif

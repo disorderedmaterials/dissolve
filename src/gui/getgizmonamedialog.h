@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_GETGIZMONAME_H
-#define DISSOLVE_DIALOG_GETGIZMONAME_H
+#pragma once
 
 #include "gui/ui_getgizmonamedialog.h"
 #include <QDialog>
@@ -57,5 +56,3 @@ class GetGizmoNameDialog : public QDialog
     void on_CancelButton_clicked(bool checked);
     void on_OKButton_clicked(bool checked);
 };
-
-#endif

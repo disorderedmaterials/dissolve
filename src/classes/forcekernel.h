@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEKERNEL_H
-#define DISSOLVE_FORCEKERNEL_H
+#pragma once
 
 #include "base/processpool.h"
 #include "classes/cellarray.h"
@@ -115,5 +114,3 @@ class ForceKernel
     // Process pool over which this kernel operates
     ProcessPool &processPool_;
 };
-
-#endif

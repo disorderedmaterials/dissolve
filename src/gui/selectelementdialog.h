@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_SELECTELEMENT_H
-#define DISSOLVE_DIALOG_SELECTELEMENT_H
+#pragma once
 
 #include "gui/ui_selectelementdialog.h"
 #include <QDialog>
@@ -53,5 +52,3 @@ class SelectElementDialog : public QDialog
     // Run the dialog, returning the selected Element
     Element *selectElement(Element *currentElement = NULL);
 };
-
-#endif

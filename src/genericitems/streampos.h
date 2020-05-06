@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_STREAMPOS_H
-#define DISSOLVE_GENERICITEMCONTAINER_STREAMPOS_H
+#pragma once
 
 #include "genericitems/container.h"
 #include <ios>
@@ -90,5 +89,3 @@ template <> class GenericItemContainer<streampos> : public GenericItem
     // Check item equality
     bool equality(ProcessPool &procPool) { return procPool.equality((long int)data_); }
 };
-
-#endif

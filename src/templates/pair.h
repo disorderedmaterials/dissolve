@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PAIR_H
-#define DISSOLVE_PAIR_H
+#pragma once
 
 #include "templates/list.h"
 
@@ -93,5 +92,3 @@ template <class T1, class T2> class Pair : public ListItem<Pair<T1, T2>>
         setB(newB);
     }
 };
-
-#endif

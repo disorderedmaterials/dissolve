@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_FUNCTIONNODE_H
-#define DISSOLVE_EXPRESSION_FUNCTIONNODE_H
+#pragma once
 
 #include "expression/functions.h"
 #include "expression/node.h"
@@ -55,5 +54,3 @@ class ExpressionFunction : public ExpressionNode
     // Initialise node
     bool initialise();
 };
-
-#endif

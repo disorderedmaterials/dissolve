@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_PROCEDUREMETRICS_H
-#define DISSOLVE_CHARTS_PROCEDUREMETRICS_H
+#pragma once
 
 #include <QMargins>
 
@@ -61,5 +60,3 @@ class ProcedureChartMetrics
     // Spacing between rows
     static int chartRowSpacing() { return 0; }
 };
-
-#endif

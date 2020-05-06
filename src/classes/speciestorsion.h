@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESTORSION_H
-#define DISSOLVE_SPECIESTORSION_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
@@ -120,5 +119,3 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
     // Broadcast data from Master to all Slaves
     bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_HOTSPOT_H
-#define DISSOLVE_CHARTS_HOTSPOT_H
+#pragma once
 
 #include "templates/listitem.h"
 #include <QRect>
@@ -88,5 +87,3 @@ class ChartHotSpot : public ListItem<ChartHotSpot>
     // Return pointer to ChartBlock immediately after the hotspot
     ChartBlock *blockAfter() const;
 };
-
-#endif

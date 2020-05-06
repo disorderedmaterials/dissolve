@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_IMPORT_DATA3D_H
-#define DISSOLVE_IMPORT_DATA3D_H
+#pragma once
 
 #include "io/fileandformat.h"
 
@@ -104,5 +103,3 @@ class Data3DImportFileFormat : public FileAndFormat
     // Import Data3D using supplied parser and current format
     bool importData(LineParser &parser, Data3D &data);
 };
-
-#endif

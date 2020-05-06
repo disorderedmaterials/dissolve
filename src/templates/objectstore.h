@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_OBJECTSTORE_H
-#define DISSOLVE_OBJECTSTORE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/sysfunc.h"
@@ -315,5 +314,3 @@ template <class T> class ObjectStore
         return NULL;
     }
 };
-
-#endif

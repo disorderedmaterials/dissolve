@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFERENCEPOINT_H
-#define DISSOLVE_REFERENCEPOINT_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
@@ -54,5 +53,3 @@ class ReferencePoint : public ListItem<ReferencePoint>
     // Return restart file from which the reference point data was read
     const char *restartFile() const;
 };
-
-#endif

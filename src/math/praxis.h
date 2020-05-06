@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PRAXIS_H
-#define DISSOLVE_PRAXIS_H
+#pragma once
 
 #include "base/messenger.h"
 #include "math/minimiser.h"
@@ -2507,5 +2506,3 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         return fx;
     }
 };
-
-#endif

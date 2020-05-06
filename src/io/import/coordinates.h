@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_IMPORT_COORDINATES_H
-#define DISSOLVE_IMPORT_COORDINATES_H
+#pragma once
 
 #include "io/fileandformat.h"
 #include "templates/array.h"
@@ -90,5 +89,3 @@ class CoordinateImportFileFormat : public FileAndFormat
     // Import coordinates using supplied parser and current format
     bool importData(LineParser &parser, Array<Vec3<double>> &r);
 };
-
-#endif

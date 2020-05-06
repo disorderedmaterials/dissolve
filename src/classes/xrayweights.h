@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_XRAYWEIGHTS_H
-#define DISSOLVE_XRAYWEIGHTS_H
+#pragma once
 
 #include "classes/atomtypelist.h"
 #include "data/formfactors.h"
@@ -130,5 +129,3 @@ class XRayWeights : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

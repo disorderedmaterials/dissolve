@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATE_AVGMOLMODULEWIDGET_H
-#define DISSOLVE_CALCULATE_AVGMOLMODULEWIDGET_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/calculate_avgmol/gui/ui_modulewidget.h"
@@ -71,5 +70,3 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
     private:
     private slots:
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_IMPORT_DATA1D_H
-#define DISSOLVE_IMPORT_DATA1D_H
+#pragma once
 
 #include "io/fileandformat.h"
 #include "keywords/types.h"
@@ -91,5 +90,3 @@ class Data1DImportFileFormat : public FileAndFormat
     // Import Data1D using supplied parser and current format
     bool importData(LineParser &parser, Data1D &data);
 };
-
-#endif

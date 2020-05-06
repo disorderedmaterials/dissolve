@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_OPLSAA_ALKANES_H
-#define DISSOLVE_FORCEFIELD_OPLSAA_ALKANES_H
+#pragma once
 
 #include "data/ff/oplsaa2005/base.h"
 
@@ -43,5 +42,3 @@ class Forcefield_OPLSAA2005_Alkanes : public OPLSAA2005BaseForcefield
     // Return description for Forcefield
     const char *description() const;
 };
-
-#endif

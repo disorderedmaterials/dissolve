@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_TEST_H
-#define DISSOLVE_MODULEWIDGET_TEST_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/test/gui/ui_modulewidget.h"
@@ -48,5 +47,3 @@ class TestModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::TestModuleWidget ui_;
 };
-
-#endif

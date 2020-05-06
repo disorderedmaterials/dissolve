@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_FUNCTIONS_H
-#define DISSOLVE_EXPRESSION_FUNCTIONS_H
+#pragma once
 
 #include "expression/value.h"
 
@@ -172,5 +171,3 @@ class ExpressionFunctions
 
 // External Singleton
 extern ExpressionFunctions expressionFunctions;
-
-#endif

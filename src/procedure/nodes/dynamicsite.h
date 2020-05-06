@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_DYNAMICSITE_H
-#define DISSOLVE_PROCEDURENODE_DYNAMICSITE_H
+#pragma once
 
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
@@ -90,5 +89,3 @@ class DynamicSiteProcedureNode : public ProcedureNode
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

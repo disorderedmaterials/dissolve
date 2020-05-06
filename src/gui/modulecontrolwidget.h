@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULECONTROLWIDGET_H
-#define DISSOLVE_MODULECONTROLWIDGET_H
+#pragma once
 
 #include "gui/ui_modulecontrolwidget.h"
 #include "templates/variantpointer.h"
@@ -106,5 +105,3 @@ class ModuleControlWidget : public QWidget
     // Notify that the Module's data has been modified in some way
     void dataModified();
 };
-
-#endif

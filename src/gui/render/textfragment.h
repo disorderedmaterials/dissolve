@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_TEXTFRAGMENT_H
-#define DISSOLVE_RENDER_TEXTFRAGMENT_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/vector3.h"
@@ -66,5 +65,3 @@ class TextFragment : public ListItem<TextFragment>
     // Return whether fragment is to be drawn bold
     bool bold();
 };
-
-#endif

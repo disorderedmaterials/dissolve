@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_ISOTOPES_H
-#define DISSOLVE_DATA_ISOTOPES_H
+#pragma once
 
 #include "data/elements.h"
 #include "templates/array.h"
@@ -103,5 +102,3 @@ class Isotopes : public Elements
     // Return natural Isotope for given Element
     static Isotope *naturalIsotope(Element *el);
 };
-
-#endif

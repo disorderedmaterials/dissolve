@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TRANSFORMER_H
-#define DISSOLVE_TRANSFORMER_H
+#pragma once
 
 #include "base/charstring.h"
 #include "data3d.h"
@@ -86,5 +85,3 @@ class Transformer
     // Transform supplied Data3D values
     void transformValues(Data3D &data);
 };
-
-#endif

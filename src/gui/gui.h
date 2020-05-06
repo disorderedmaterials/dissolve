@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MAINWINDOW_H
-#define DISSOLVE_MAINWINDOW_H
+#pragma once
 
 #include "base/charstring.h"
 #include "gui/maintab.h"
@@ -328,5 +327,3 @@ class DissolveWindow : public QMainWindow
     // Load GUI state
     bool loadState();
 };
-
-#endif

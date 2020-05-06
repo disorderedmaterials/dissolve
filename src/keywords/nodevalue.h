@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEVALUE_H
-#define DISSOLVE_KEYWORD_NODEVALUE_H
+#pragma once
 
 #include "keywords/data.h"
 #include "procedure/nodevalue.h"
@@ -77,5 +76,3 @@ class NodeValueKeyword : public KeywordData<NodeValue>
      */
     protected:
 };
-
-#endif

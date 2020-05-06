@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESIMPROPER_H
-#define DISSOLVE_SPECIESIMPROPER_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
@@ -118,5 +117,3 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
     // Broadcast data from Master to all Slaves
     bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };
-
-#endif

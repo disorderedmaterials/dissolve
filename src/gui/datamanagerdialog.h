@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_DATAMANAGER_H
-#define DISSOLVE_DIALOG_DATAMANAGER_H
+#pragma once
 
 #include "gui/referencepoint.h"
 #include "gui/ui_datamanagerdialog.h"
@@ -78,5 +77,3 @@ class DataManagerDialog : public QDialog
     // Dialog
     void on_CloseButton_clicked(bool checked);
 };
-
-#endif

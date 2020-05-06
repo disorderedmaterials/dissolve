@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMOPTIONSBASE_H
-#define DISSOLVE_ENUMOPTIONSBASE_H
+#pragma once
 
 #include "base/enumoptionslist.h"
 
@@ -91,5 +90,3 @@ class EnumOptionsBase
     public:
     EnumOptionsBase &operator=(int index);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KERNELFLAGS_H
-#define DISSOLVE_KERNELFLAGS_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -40,5 +39,3 @@ class KernelFlags
         ApplyMinimumImageFlag = 8
     };
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_MODULEBLOCK_H
-#define DISSOLVE_CHARTS_MODULEBLOCK_H
+#pragma once
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/ui_moduleblock.h"
@@ -130,5 +129,3 @@ class ModuleBlock : public QWidget, public ChartBlock
     // Notify that the Module's data has been modified in some way
     void dataModified();
 };
-
-#endif

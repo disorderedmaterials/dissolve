@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_FORMFACTORS_H
-#define DISSOLVE_DATA_FORMFACTORS_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "data/elements.h"
@@ -52,5 +51,3 @@ optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Elem
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
 optional<const FormFactorData &> wk1995Data(int Z, int formalCharge = 0);
 }; // namespace XRayFormFactors
-
-#endif

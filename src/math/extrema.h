@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXTREMA_H
-#define DISSOLVE_EXTREMA_H
+#pragma once
 
 // Forward Declarations
 template <class T> class Array;
@@ -48,5 +47,3 @@ class Extrema
     // Return absolute maximum from 2D array provided
     static double absMax(const Array2D<double> &A);
 };
-
-#endif

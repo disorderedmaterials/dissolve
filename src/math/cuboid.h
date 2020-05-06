@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CUBOID_H
-#define DISSOLVE_CUBOID_H
+#pragma once
 
 #include "math/matrix4.h"
 
@@ -52,5 +51,3 @@ class Cuboid
     // Return maxima for cuboid
     Vec3<double> maxima() const;
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GAUSSFIT_H
-#define DISSOLVE_GAUSSFIT_H
+#pragma once
 
 #include "math/data1d.h"
 #include "math/functionspace.h"
@@ -142,5 +141,3 @@ class GaussFit
     // sum
     double costTabulatedA(const Array<double> &alpha);
 };
-
-#endif

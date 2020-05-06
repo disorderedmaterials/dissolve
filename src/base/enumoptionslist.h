@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMOPTIONSLIST_H
-#define DISSOLVE_ENUMOPTIONSLIST_H
+#pragma once
 
 #include "base/enumoption.h"
 #include "templates/array.h"
@@ -38,5 +37,3 @@ class EnumOptionsList
     // Add item
     EnumOptionsList &operator<<(EnumOption option);
 };
-
-#endif

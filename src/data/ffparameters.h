@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_PARAMETERS_H
-#define DISSOLVE_FORCEFIELD_PARAMETERS_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/parameters.h"
@@ -59,5 +58,3 @@ class ForcefieldParameters : public ListItem<ForcefieldParameters>
     // Return interatomic interaction parameters
     const InteractionParameters &parameters() const;
 };
-
-#endif

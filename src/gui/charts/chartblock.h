@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_BLOCK_H
-#define DISSOLVE_CHARTS_BLOCK_H
+#pragma once
 
 #include "templates/listitem.h"
 #include <QPoint>
@@ -79,5 +78,3 @@ class ChartBlock : public ListItem<ChartBlock>
     // Enable sensitive controls
     virtual void enableSensitiveControls() = 0;
 };
-
-#endif

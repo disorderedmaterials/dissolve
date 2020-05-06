@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_OPERATEEXPRESSION_H
-#define DISSOLVE_PROCEDURENODE_OPERATEEXPRESSION_H
+#pragma once
 
 #include "expression/expression.h"
 #include "procedure/nodes/operatebase.h"
@@ -61,5 +60,3 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
     // Operate on Data3D target
     bool operateData3D(ProcessPool &procPool, Configuration *cfg);
 };
-
-#endif

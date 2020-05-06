@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPORT_DATA3D_H
-#define DISSOLVE_EXPORT_DATA3D_H
+#pragma once
 
 #include "io/fileandformat.h"
 
@@ -78,5 +77,3 @@ class Data3DExportFileFormat : public FileAndFormat
     // Export Data3D using current filename and format
     bool exportData(const Data3D &data);
 };
-
-#endif

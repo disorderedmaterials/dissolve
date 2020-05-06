@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_NODE_H
-#define DISSOLVE_KEYWORDWIDGET_NODE_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_node.h"
@@ -67,5 +66,3 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
     // Update value displayed in widget
     void updateValue();
 };
-
-#endif

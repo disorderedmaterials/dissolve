@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_ATOMTYPE_H
-#define DISSOLVE_FORCEFIELD_ATOMTYPE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/parameters.h"
@@ -87,5 +86,3 @@ class ForcefieldAtomType : public ElementReference
     // Return charge (from local parameters)
     double charge() const;
 };
-
-#endif

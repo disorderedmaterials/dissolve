@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCESSGROUP_H
-#define DISSOLVE_PROCESSGROUP_H
+#pragma once
 
 #include "templates/array.h"
 // Include <mpi.h> only if we are compiling in parallel
@@ -64,5 +63,3 @@ class ProcessGroup : public ListItem<ProcessGroup>
     // Return nth pool rank of group processes
     int poolRank(int n) const;
 };
-
-#endif

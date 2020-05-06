@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_GENERATOR_H
-#define DISSOLVE_EXPRESSION_GENERATOR_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -106,5 +105,3 @@ class ExpressionGenerator
     static bool generate(Expression &expression);
     static bool generate(Expression &expression, RefList<ExpressionVariable> externalVariables);
 };
-
-#endif

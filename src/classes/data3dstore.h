@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA3DSTORE_H
-#define DISSOLVE_DATA3DSTORE_H
+#pragma once
 
 #include "io/import/data3d.h"
 #include "math/data3d.h"
@@ -58,5 +57,3 @@ class Data3DStore
     // Return list of all data references
     const RefDataList<Data3D, Data3DImportFileFormat> &dataReferences() const;
 };
-
-#endif

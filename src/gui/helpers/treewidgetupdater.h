@@ -27,8 +27,7 @@
 
 template <class T> using optional_ref = std::tuple<T &, bool>;
 
-#ifndef DISSOLVE_TREEWIDGETUPDATER_H
-#define DISSOLVE_TREEWIDGETUPDATER_H
+#pragma once
 
 // TreeWidgetUpdater - Constructor-only template class to update QTreeWidget items, preserving original items as much as
 // possible
@@ -563,5 +562,3 @@ template <class P, class T> class TreeWidgetItemManager
         }
     }
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_PRIMITIVEINFO_H
-#define DISSOLVE_RENDER_PRIMITIVEINFO_H
+#pragma once
 
 #include "gui/render/linestyle.h"
 #include "math/matrix4.h"
@@ -120,5 +119,3 @@ class LineStylePrimitiveInfo : public PrimitiveInfo
     // Expose contained info to GL
     void sendToGL(double pixelScaling);
 };
-
-#endif

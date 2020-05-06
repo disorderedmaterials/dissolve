@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_PRESENCE_H
-#define DISSOLVE_NETA_PRESENCE_H
+#pragma once
 
 #include "classes/speciesbond.h"
 #include "neta/node.h"
@@ -85,5 +84,3 @@ class NETAPresenceNode : public NETANode
     // Evaluate the node and return its score
     int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const;
 };
-
-#endif

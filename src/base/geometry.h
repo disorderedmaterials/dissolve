@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GEOMETRY_H
-#define DISSOLVE_GEOMETRY_H
+#pragma once
 
 #include "templates/listitem.h"
 #include <map>
@@ -59,5 +58,3 @@ class Geometry : public ListItem<Geometry>
     // Return specified index
     int indices(int i) const;
 };
-
-#endif

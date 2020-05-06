@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_KEYWORDS_H
-#define DISSOLVE_DIALOG_KEYWORDS_H
+#pragma once
 
 #include "gui/keywordwidgets/ui_dialog.h"
 #include <QDialog>
@@ -64,5 +63,3 @@ class KeywordsDialog : public QDialog
     void setUpRequired();
     void on_OKButton_clicked(bool checked);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEM_H
-#define DISSOLVE_GENERICITEM_H
+#pragma once
 
 #include "base/processpool.h"
 #include "base/sysfunc.h"
@@ -115,5 +114,3 @@ class GenericItem : public ListItem<GenericItem>
     // Return equality between items
     virtual bool equality(ProcessPool &procPool) = 0;
 };
-
-#endif

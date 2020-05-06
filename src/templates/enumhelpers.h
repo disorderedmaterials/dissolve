@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMHELPERS_H
-#define DISSOLVE_ENUMHELPERS_H
+#pragma once
 
 // Enum Broadcast Vessel
 template <class E> class EnumCast
@@ -65,5 +64,3 @@ template <class E> class EnumContainer
     // Return value
     E &value() { return value_; }
 };
-
-#endif

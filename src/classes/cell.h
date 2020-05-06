@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CELL_H
-#define DISSOLVE_CELL_H
+#pragma once
 
 #include "classes/atom.h"
 #include "templates/orderedvector.h"
@@ -121,5 +120,3 @@ class Cell
     // Return list of all Cell neighbours
     std::vector<CellNeighbour> allCellNeighbours();
 };
-
-#endif

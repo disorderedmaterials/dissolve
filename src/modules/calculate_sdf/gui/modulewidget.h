@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_CALCULATESDF_H
-#define DISSOLVE_MODULEWIDGET_CALCULATESDF_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/calculate_sdf/gui/ui_modulewidget.h"
@@ -88,5 +87,3 @@ class CalculateSDFModuleWidget : public ModuleWidget
     void on_UpperCutoffSpin_valueChanged(double value);
     void on_ReferenceMoleculeCombo_currentIndexChanged(int index);
 };
-
-#endif

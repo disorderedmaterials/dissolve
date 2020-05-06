@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_CALCULATERDF_H
-#define DISSOLVE_MODULEWIDGET_CALCULATERDF_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/calculate_rdf/gui/ui_modulewidget.h"
@@ -73,5 +72,3 @@ class CalculateRDFModuleWidget : public ModuleWidget
 
     private slots:
 };
-
-#endif

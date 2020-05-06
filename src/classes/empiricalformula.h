@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EMPIRICALFORMULA_H
-#define DISSOLVE_EMPIRICALFORMULA_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/array.h"
@@ -66,5 +65,3 @@ class EmpiricalFormula
     // Return empirical formula for supplied SpeciesAtom reflist
     static const char *formula(const RefList<SpeciesAtom> &atoms, bool richText = false);
 };
-
-#endif

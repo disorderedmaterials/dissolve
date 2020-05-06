@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ORDEREDVECTOR_H
-#define DISSOLVE_ORDEREDVECTOR_H
+#pragma once
 
 #include <algorithm>
 #include <functional>
@@ -69,5 +68,3 @@ template <class T> class OrderedVector : std::vector<T>
         return true;
     }
 };
-
-#endif

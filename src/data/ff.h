@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_H
-#define DISSOLVE_FORCEFIELD_H
+#pragma once
 
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
@@ -223,5 +222,3 @@ template <class T, typename... Args> optional<const T &> Forcefield::termMatch_(
     auto it = std::find_if(container.begin(), container.end(), [&](const T &item) { return item.isMatch(args...); });
     return std::make_tuple(*it, it == container.end());
 }
-
-#endif

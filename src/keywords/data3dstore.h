@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_DATA3DSTORE_H
-#define DISSOLVE_KEYWORD_DATA3DSTORE_H
+#pragma once
 
 #include "classes/data3dstore.h"
 #include "keywords/data.h"
@@ -48,5 +47,3 @@ class Data3DStoreKeyword : public KeywordData<Data3DStore &>
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
-
-#endif

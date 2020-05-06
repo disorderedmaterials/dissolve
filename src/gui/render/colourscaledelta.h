@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_COLOURSCALEDELTA_H
-#define DISSOLVE_RENDER_COLOURSCALEDELTA_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -68,5 +67,3 @@ class ColourScaleDelta
     // Return the range of the delta
     double delta() const;
 };
-
-#endif

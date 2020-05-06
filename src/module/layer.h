@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULELAYER_H
-#define DISSOLVE_MODULELAYER_H
+#pragma once
 
 #include "base/charstring.h"
 #include "module/list.h"
@@ -65,5 +64,3 @@ class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
     // Return whether the layer should execute this iteration
     bool runThisIteration(int iteration) const;
 };
-
-#endif

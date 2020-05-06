@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_OPERATENORMALISE_H
-#define DISSOLVE_PROCEDURENODE_OPERATENORMALISE_H
+#pragma once
 
 #include "procedure/nodes/operatebase.h"
 
@@ -46,5 +45,3 @@ class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
     // Operate on Data3D target
     bool operateData3D(ProcessPool &procPool, Configuration *cfg);
 };
-
-#endif

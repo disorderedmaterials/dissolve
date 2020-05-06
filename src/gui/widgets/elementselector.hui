@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ELEMENTSELECTOR_H
-#define DISSOLVE_ELEMENTSELECTOR_H
+#pragma once
 
 #include "templates/refdatalist.h"
 #include <QTimer>
@@ -79,5 +78,3 @@ class ElementSelector : public QWidget
     static Element *getElement(QWidget *parent, const char *title, const char *labelText, Element *element, bool *ok = NULL,
                                Qt::WindowFlags flags = Qt::Dialog);
 };
-
-#endif

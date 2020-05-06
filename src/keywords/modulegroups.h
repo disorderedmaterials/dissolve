@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_MODULEGROUPS_H
-#define DISSOLVE_KEYWORD_MODULEGROUPS_H
+#pragma once
 
 #include "base/charstringlist.h"
 #include "keywords/data.h"
@@ -56,5 +55,3 @@ class ModuleGroupsKeyword : public KeywordData<ModuleGroups &>
     // Prune any references to the supplied Module in the contained data
     void removeReferencesTo(Module *module);
 };
-
-#endif

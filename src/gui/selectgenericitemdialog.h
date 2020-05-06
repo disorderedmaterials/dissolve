@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_SELECTGENERICITEM_H
-#define DISSOLVE_DIALOG_SELECTGENERICITEM_H
+#pragma once
 
 #include "genericitems/listhelper.h"
 #include "gui/ui_selectgenericitemdialog.h"
@@ -120,5 +119,3 @@ class SelectGenericItemDialog : public QDialog
             return NULL;
     }
 };
-
-#endif

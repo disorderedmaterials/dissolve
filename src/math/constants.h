@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CONSTANTS_H
-#define DISSOLVE_CONSTANTS_H
+#pragma once
 
 // Permittivity of free space (m-3 kg-1 s4 A2)
 #define EPSILON0 8.85418782E-12
@@ -69,5 +68,3 @@
  *		 4 * pi * e0 * r2
  */
 #define COULCONVERT 1389.35444426359172669289
-
-#endif

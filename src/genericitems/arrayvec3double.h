@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAYVEC3DOUBLE_H
-#define DISSOLVE_GENERICITEMCONTAINER_ARRAYVEC3DOUBLE_H
+#pragma once
 
 #include "genericitems/container.h"
 
@@ -108,5 +107,3 @@ template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
         return true;
     }
 };
-
-#endif

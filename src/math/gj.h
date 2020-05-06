@@ -19,8 +19,7 @@
     along wit Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GAUSSJORDAN_H
-#define DISSOLVE_GAUSSJORDAN_H
+#pragma once
 
 // Forward Declarations
 template <class A> class Array2D;
@@ -32,5 +31,3 @@ class GaussJordan
     // Perform Gauss-Jordan inversion of the supplied Array2D<double>
     static bool invert(Array2D<double> &A);
 };
-
-#endif

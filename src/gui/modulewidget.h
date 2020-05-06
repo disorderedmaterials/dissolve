@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_H
-#define DISSOLVE_MODULEWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -64,5 +63,3 @@ class ModuleWidget : public QWidget
     // Write widget state through specified LineParser
     virtual bool writeState(LineParser &parser) const;
 };
-
-#endif

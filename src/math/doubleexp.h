@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DOUBLEEXP_H
-#define DISSOLVE_DOUBLEEXP_H
+#pragma once
 
 #include "base/charstring.h"
 
@@ -80,5 +79,3 @@ class DoubleExp
     // Return value as string
     CharString asString(const int exponentThreshold = 3, const int maxDecimals = 4) const;
 };
-
-#endif

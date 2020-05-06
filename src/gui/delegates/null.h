@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DELEGATES_NULL_H
-#define DISSOLVE_DELEGATES_NULL_H
+#pragma once
 
 #include <QtWidgets/QStyledItemDelegate>
 
@@ -31,5 +30,3 @@ class NullDelegate : public QStyledItemDelegate
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
-
-#endif

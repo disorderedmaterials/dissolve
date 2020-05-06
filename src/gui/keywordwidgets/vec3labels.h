@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_VEC3LABELS_H
-#define DISSOLVE_KEYWORDWIDGET_VEC3LABELS_H
+#pragma once
 
 #include "keywords/vec3labels.h"
 #include <QLabel>
@@ -35,5 +34,3 @@ class Vec3WidgetLabels
     // Set/hide/show label according to labelling type
     static void set(QLabel *label, Vec3Labels::LabelType labelType, int index);
 };
-
-#endif

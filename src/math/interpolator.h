@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTERPOLATOR_H
-#define DISSOLVE_INTERPOLATOR_H
+#pragma once
 
 #include "templates/array.h"
 
@@ -86,5 +85,3 @@ class Interpolator
     // Add interpolated data B to data A, with supplied multiplication factor
     static void addInterpolated(Data1D &A, const Data1D &B, double factor = 1.0);
 };
-
-#endif

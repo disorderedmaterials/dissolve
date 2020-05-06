@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_CALIBRATION_H
-#define DISSOLVE_MODULE_CALIBRATION_H
+#pragma once
 
 #include "module/module.h"
 #include "templates/refdatalist.h"
@@ -123,5 +122,3 @@ class CalibrationModuleCostFunctions
     // Cost function for intraBroadening minimisation
     double intraBroadeningCost(const Array<double> &alpha);
 };
-
-#endif

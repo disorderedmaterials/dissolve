@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESATOM_H
-#define DISSOLVE_SPECIESATOM_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -164,5 +163,3 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     // Translate coordinates
     void translateCoordinates(const Vec3<double> &delta);
 };
-
-#endif

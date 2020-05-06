@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_POISSONFIT_H
-#define DISSOLVE_POISSONFIT_H
+#pragma once
 
 #include "math/data1d.h"
 #include "math/functionspace.h"
@@ -143,5 +142,3 @@ class PoissonFit
     // sum
     double costTabulatedC(const Array<double> &alpha);
 };
-
-#endif

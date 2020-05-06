@@ -19,10 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VERSION_H
-#define DISSOLVE_VERSION_H
+#pragma once
 
 #define DISSOLVEVERSION "0.7.0"
 #define DISSOLVEREPO "https://github.com/trisyoungs/dissolve.git"
-
-#endif

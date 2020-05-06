@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ORDEREDPOINTERDATAARRAY_H
-#define DISSOLVE_ORDEREDPOINTERDATAARRAY_H
+#pragma once
 
 #include "base/messenger.h"
 #include <stdio.h>
@@ -289,5 +288,3 @@ template <class T, class D> class OrderedPointerDataArray
         return -1;
     }
 };
-
-#endif

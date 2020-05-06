@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_ISOTOPOLOGUECOLLECTION_H
-#define DISSOLVE_KEYWORD_ISOTOPOLOGUECOLLECTION_H
+#pragma once
 
 #include "classes/isotopologuecollection.h"
 #include "keywords/data.h"
@@ -70,5 +69,3 @@ class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection 
     // Prune any references to the supplied Isotopologue in the contained data
     void removeReferencesTo(Isotopologue *iso);
 };
-
-#endif

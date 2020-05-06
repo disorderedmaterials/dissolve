@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_TYPES_H
-#define DISSOLVE_KEYWORD_TYPES_H
+#pragma once
 
 /*
  * This file should be included if the use of Keywords is required.
@@ -70,5 +69,3 @@
 #include "keywords/vec3integer.h"
 #include "keywords/vec3nodevalue.h"
 #include "keywords/windowfunction.h"
-
-#endif

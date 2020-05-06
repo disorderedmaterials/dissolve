@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BOX_H
-#define DISSOLVE_BOX_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "math/matrix3.h"
@@ -475,5 +474,3 @@ class TriclinicBox : public Box
     // Convert supplied fractional coordinates to real space
     Vec3<double> fracToReal(const Vec3<double> &r) const;
 };
-
-#endif

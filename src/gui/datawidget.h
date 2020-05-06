@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_DATAWIDGET_H
-#define DISSOLVE_VIEWER_DATAWIDGET_H
+#pragma once
 
 #include "base/lock.h"
 #include "gui/ui_datawidget.h"
@@ -89,5 +88,3 @@ class DataWidget : public QWidget
     // Update data tree
     void updateDataTree();
 };
-
-#endif

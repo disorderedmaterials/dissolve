@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ARRAY3D_H
-#define DISSOLVE_ARRAY3D_H
+#pragma once
 
 #include "base/messenger.h"
 #include "templates/list.h"
@@ -530,5 +529,3 @@ template <class A> class OffsetArray3D
             array_[n] /= value;
     }
 };
-
-#endif

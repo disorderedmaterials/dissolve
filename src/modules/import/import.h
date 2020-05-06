@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_IMPORT_H
-#define DISSOLVE_MODULE_IMPORT_H
+#pragma once
 
 #include "io/import/trajectory.h"
 #include "module/module.h"
@@ -78,5 +77,3 @@ class ImportModule : public Module
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool);
 };
-
-#endif

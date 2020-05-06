@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA1D_H
-#define DISSOLVE_DATA1D_H
+#pragma once
 
 #include "base/version.h"
 #include "math/plottable.h"
@@ -141,5 +140,3 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

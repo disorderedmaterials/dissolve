@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_GETMODULELAYERNAME_H
-#define DISSOLVE_DIALOG_GETMODULELAYERNAME_H
+#pragma once
 
 #include "gui/ui_getmodulelayernamedialog.h"
 #include "templates/list.h"
@@ -61,5 +60,3 @@ class GetModuleLayerNameDialog : public QDialog
     void on_CancelButton_clicked(bool checked);
     void on_OKButton_clicked(bool checked);
 };
-
-#endif

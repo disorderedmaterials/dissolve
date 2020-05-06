@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CELLARRAY_H
-#define DISSOLVE_CELLARRAY_H
+#pragma once
 
 #include "math/matrix3.h"
 #include "templates/list.h"
@@ -91,5 +90,3 @@ class CellArray
     // Return the minimum image equivalent of the supplied grid delta
     Vec3<int> mimGridDelta(Vec3<int> delta) const;
 };
-
-#endif

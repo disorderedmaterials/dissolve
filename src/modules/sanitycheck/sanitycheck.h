@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_SANITYCHECK_H
-#define DISSOLVE_MODULE_SANITYCHECK_H
+#pragma once
 
 #include "module/module.h"
 
@@ -72,5 +71,3 @@ class SanityCheckModule : public Module
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DELEGATES_INTEGERSPIN_H
-#define DISSOLVE_DELEGATES_INTEGERSPIN_H
+#pragma once
 
 #include <QModelIndex>
 #include <QObject>
@@ -47,5 +46,3 @@ class IntegerSpinDelegate : public QItemDelegate
     // Resize editor
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
-
-#endif

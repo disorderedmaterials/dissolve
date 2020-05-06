@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_MODULELIST_METRICS_H
-#define DISSOLVE_CHARTS_MODULELIST_METRICS_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -61,5 +60,3 @@ class ModuleListChartMetrics
     // Additional horizontal spacing for insertion widget
     static int verticalInsertionSpacing() { return 64; }
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_PROCEDURE_H
-#define DISSOLVE_KEYWORD_PROCEDURE_H
+#pragma once
 
 #include "keywords/data.h"
 #include "procedure/procedure.h"
@@ -48,5 +47,3 @@ class ProcedureKeyword : public KeywordData<Procedure &>
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
-
-#endif

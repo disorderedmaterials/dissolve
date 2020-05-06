@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PLOTTABLEDATA_H
-#define DISSOLVE_PLOTTABLEDATA_H
+#pragma once
 
 #include "base/charstring.h"
 #include "math/sampleddouble.h"
@@ -97,5 +96,3 @@ class PlottableData
     // Return three-dimensional errors Array
     virtual const Array3D<double> &constErrors3D() const;
 };
-
-#endif

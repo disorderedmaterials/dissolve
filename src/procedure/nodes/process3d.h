@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_PROCESS3D_H
-#define DISSOLVE_PROCEDURENODE_PROCESS3D_H
+#pragma once
 
 #include "base/charstring.h"
 #include "io/export/data3d.h"
@@ -98,5 +97,3 @@ class Process3DProcedureNode : public ProcedureNode
     // Finalise any necessary data after execution
     bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
-
-#endif

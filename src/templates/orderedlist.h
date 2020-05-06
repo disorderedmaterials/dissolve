@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ORDEREDLIST_H
-#define DISSOLVE_ORDEREDLIST_H
+#pragma once
 
 #include "templates/factory.h"
 #include <stdio.h>
@@ -577,5 +576,3 @@ template <class T> OrderedListItem<T> *OrderedList<T>::operator[](int index)
 #endif
     return items()[index];
 }
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_DATA_H
-#define DISSOLVE_KEYWORD_DATA_H
+#pragma once
 
 #include "keywords/base.h"
 #include "templates/array.h"
@@ -76,5 +75,3 @@ template <class T> class KeywordData : public KeywordBase
     // Validate supplied value
     virtual bool isValid(T value) { return true; }
 };
-
-#endif

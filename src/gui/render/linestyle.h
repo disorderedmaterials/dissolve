@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_LINESTYLE_H
-#define DISSOLVE_RENDER_LINESTYLE_H
+#pragma once
 
 #include "gui/render/linestipple.h"
 #include <QColor>
@@ -78,5 +77,3 @@ class LineStyle
     // Send line styling to GL
     void sendToGL(const double pixelScaling = 1.0) const;
 };
-
-#endif

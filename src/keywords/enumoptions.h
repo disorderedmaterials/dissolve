@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_ENUMOPTIONS_H
-#define DISSOLVE_KEYWORD_ENUMOPTIONS_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
@@ -147,5 +146,3 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Return value (as string)
     const char *asString() { return KeywordData<EnumOptions<E>>::data_.currentOptionKeyword(); }
 };
-
-#endif

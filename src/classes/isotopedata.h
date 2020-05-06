@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPEDATA_H
-#define DISSOLVE_ISOTOPEDATA_H
+#pragma once
 
 #include "templates/listitem.h"
 
@@ -85,5 +84,3 @@ class IsotopeData : public ListItem<IsotopeData>
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

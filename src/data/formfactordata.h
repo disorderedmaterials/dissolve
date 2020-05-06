@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_FORMFACTORDATA_H
-#define DISSOLVE_DATA_FORMFACTORDATA_H
+#pragma once
 
 // Form Factor Base Class
 class FormFactorData
@@ -50,5 +49,3 @@ class FormFactorData
     // Return magnitude of form factor at specified Q value
     virtual double magnitude(double Q = 0.0) const = 0;
 };
-
-#endif

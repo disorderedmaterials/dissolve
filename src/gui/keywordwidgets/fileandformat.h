@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_FILEANDFORMAT_H
-#define DISSOLVE_KEYWORDWIDGET_FILEANDFORMAT_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_fileandformat.h"
@@ -79,5 +78,3 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
     // Update keyword data based on widget values
     void updateKeywordData();
 };
-
-#endif

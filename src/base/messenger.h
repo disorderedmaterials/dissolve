@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MESSENGER_H
-#define DISSOLVE_MESSENGER_H
+#pragma once
 
 #include "base/outputhandler.h"
 #include <stdarg.h>
@@ -117,5 +116,3 @@ class Messenger
     // Cease redirection of messaging to file
     static void ceaseRedirect();
 };
-
-#endif

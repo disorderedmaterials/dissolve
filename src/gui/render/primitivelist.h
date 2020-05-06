@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_PRIMITIVELIST_H
-#define DISSOLVE_RENDER_PRIMITIVELIST_H
+#pragma once
 
 #include "gui/render/primitive.h"
 #include "templates/list.h"
@@ -76,5 +75,3 @@ class PrimitiveList
     public:
     Primitive *operator[](int index);
 };
-
-#endif

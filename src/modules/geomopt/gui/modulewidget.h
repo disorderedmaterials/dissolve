@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_OPTIMISE_H
-#define DISSOLVE_MODULEWIDGET_OPTIMISE_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/geomopt/gui/ui_modulewidget.h"
@@ -48,5 +47,3 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::GeometryOptimisationModuleWidget ui_;
 };
-
-#endif

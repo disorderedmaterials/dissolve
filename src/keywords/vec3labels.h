@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_VEC3LABELS_H
-#define DISSOLVE_KEYWORD_VEC3LABELS_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -41,5 +40,3 @@ class Vec3Labels
         XYZLabels
     };
 };
-
-#endif

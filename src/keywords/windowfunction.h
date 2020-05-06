@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_WINDOWFUNCTION_H
-#define DISSOLVE_KEYWORD_WINDOWFUNCTION_H
+#pragma once
 
 #include "keywords/data.h"
 #include "math/windowfunction.h"
@@ -48,5 +47,3 @@ class WindowFunctionKeyword : public KeywordData<WindowFunction>
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
-
-#endif

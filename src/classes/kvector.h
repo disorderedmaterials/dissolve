@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KVECTOR_H
-#define DISSOLVE_KVECTOR_H
+#pragma once
 
 #include "genericitems/base.h"
 #include "templates/array.h"
@@ -93,5 +92,3 @@ class KVector : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

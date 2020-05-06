@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_ROOT_H
-#define DISSOLVE_NETA_ROOT_H
+#pragma once
 
 #include "classes/speciesbond.h"
 #include "neta/node.h"
@@ -73,5 +72,3 @@ class NETARootNode : public NETANode
     // Evaluate the node and return its score
     int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };
-
-#endif

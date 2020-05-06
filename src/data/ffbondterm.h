@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_BONDTERM_H
-#define DISSOLVE_FORCEFIELD_BONDTERM_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/parameters.h"
@@ -57,5 +56,3 @@ class ForcefieldBondTerm
     // Return array of parameters
     const double *parameters() const;
 };
-
-#endif

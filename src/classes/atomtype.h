@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMTYPE_H
-#define DISSOLVE_ATOMTYPE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/parameters.h"
@@ -81,5 +80,3 @@ class AtomType : public ListItem<AtomType>
     // Return index of this type in the master type index
     int index() const;
 };
-
-#endif

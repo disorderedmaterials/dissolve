@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMBASE_H
-#define DISSOLVE_GENERICITEMBASE_H
+#pragma once
 
 #include "base/messenger.h"
 
@@ -56,5 +55,3 @@ class GenericItemBase
     // Return equality between items
     virtual bool equality(ProcessPool &procPool);
 };
-
-#endif

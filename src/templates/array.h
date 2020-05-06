@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ARRAY_H
-#define DISSOLVE_ARRAY_H
+#pragma once
 
 #include "base/messenger.h"
 #include "templates/listitem.h"
@@ -503,5 +502,3 @@ template <class A> class Array : public ListItem<Array<A>>
         return result;
     };
 };
-
-#endif

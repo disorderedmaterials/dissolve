@@ -19,11 +19,8 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GIZMOS_H
-#define DISSOLVE_GIZMOS_H
+#pragma once
 
 /* Include file for all Gizmo types */
 #include "gui/graphgizmo.h"
 #include "gui/integrator1dgizmo.h"
-
-#endif

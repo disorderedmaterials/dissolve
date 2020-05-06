@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PAIRPOTENTIAL_H
-#define DISSOLVE_PAIRPOTENTIAL_H
+#pragma once
 
 #include "base/parameters.h"
 #include "data/ff.h"
@@ -231,5 +230,3 @@ class PairPotential : public ListItem<PairPotential>
     // Adjust additional potential, and recalculate UFull and dUFull
     void adjustUAdditional(Data1D deltaU, double factor = 1.0);
 };
-
-#endif

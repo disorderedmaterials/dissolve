@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_ADDSPECIES_H
-#define DISSOLVE_PROCEDURENODE_ADDSPECIES_H
+#pragma once
 
 #include "base/units.h"
 #include "procedure/nodes/node.h"
@@ -81,5 +80,3 @@ class AddSpeciesProcedureNode : public ProcedureNode
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

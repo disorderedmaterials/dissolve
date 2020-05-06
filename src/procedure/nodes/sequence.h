@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_SEQUENCE_H
-#define DISSOLVE_PROCEDURENODE_SEQUENCE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "expression/expression.h"
@@ -146,5 +145,3 @@ class SequenceProcedureNode : public ProcedureNode
     // Write structure to specified LineParser
     bool write(LineParser &parser, const char *prefix);
 };
-
-#endif

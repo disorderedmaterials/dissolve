@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_RENDERABLESPECIESSITE_H
-#define DISSOLVE_RENDER_RENDERABLESPECIESSITE_H
+#pragma once
 
 #include "classes/species.h"
 #include "classes/speciessite.h"
@@ -118,5 +117,3 @@ class RenderableSpeciesSite : public Renderable
     // Read style information
     bool readStyleBlock(LineParser &parser);
 };
-
-#endif

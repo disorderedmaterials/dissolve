@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PLAINVALUE_H
-#define DISSOLVE_PLAINVALUE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "math/doubleexp.h"
@@ -171,5 +170,3 @@ class PlainValue : public ListItem<PlainValue>
     // Broadcast data
     bool broadcast(ProcessPool &procPool);
 };
-
-#endif

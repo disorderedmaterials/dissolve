@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_EXCLUDE_H
-#define DISSOLVE_PROCEDURENODE_EXCLUDE_H
+#pragma once
 
 #include "procedure/nodes/node.h"
 #include "templates/reflist.h"
@@ -59,5 +58,3 @@ class ExcludeProcedureNode : public ProcedureNode
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

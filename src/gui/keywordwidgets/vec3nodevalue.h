@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_VEC3NODEVALUE_H
-#define DISSOLVE_KEYWORDWIDGET_VEC3NODEVALUE_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_vec3nodevalue.h"
@@ -72,5 +71,3 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
     // Update value displayed in widget
     void updateValue();
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_ATOMICRADIUS_H
-#define DISSOLVE_DATA_ATOMICRADIUS_H
+#pragma once
 
 #include "data/elements.h"
 
@@ -52,5 +51,3 @@ class AtomicRadius : public Elements
     // Return atomic radius for specified Element
     static double radius(Element *element);
 };
-
-#endif

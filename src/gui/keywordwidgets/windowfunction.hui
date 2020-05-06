@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_WINDOWFUNCTION_H
-#define DISSOLVE_KEYWORDWIDGET_WINDOWFUNCTION_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "keywords/windowfunction.h"
@@ -69,5 +68,3 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
     // Set widgets from supplied object
     void setWidgets(const WindowFunction &windowFunction);
 };
-
-#endif

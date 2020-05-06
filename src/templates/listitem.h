@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LISTITEM_H
-#define DISSOLVE_LISTITEM_H
+#pragma once
 
 #include <stdlib.h> // To get NULL
 
@@ -53,5 +52,3 @@ template <class T> class ListItem
     friend class List<T>;
     friend class ListIterator<T>;
 };
-
-#endif

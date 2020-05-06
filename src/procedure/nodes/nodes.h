@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_NODETYPES_H
-#define DISSOLVE_PROCEDURENODE_NODETYPES_H
+#pragma once
 
 /*
  * Include all procedure node types at once.
@@ -53,5 +52,3 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/sum1d.h"
-
-#endif

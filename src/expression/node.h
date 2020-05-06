@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_NODE_H
-#define DISSOLVE_EXPRESSION_NODE_H
+#pragma once
 
 #include "expression/value.h"
 #include "templates/listitem.h"
@@ -126,5 +125,3 @@ class ExpressionNode : public ListItem<ExpressionNode>
     // Reset node
     virtual bool initialise() = 0;
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FACTORY_H
-#define DISSOLVE_FACTORY_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -243,5 +242,3 @@ template <class T> class ObjectFactory
             chunk->markAllObjectsUnused();
     }
 };
-
-#endif

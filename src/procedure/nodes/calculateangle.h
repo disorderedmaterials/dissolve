@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_CALCULATEANGLE_H
-#define DISSOLVE_PROCEDURENODE_CALCULATEANGLE_H
+#pragma once
 
 #include "procedure/nodes/calculatebase.h"
 #include "templates/array.h"
@@ -53,5 +52,3 @@ class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

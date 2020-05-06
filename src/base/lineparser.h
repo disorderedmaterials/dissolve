@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LINEPARSER_H
-#define DISSOLVE_LINEPARSER_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/processpool.h"
@@ -238,5 +237,3 @@ class LineParser
     // Return specified argument as Vec3<double>, placing in variable provided
     bool argAs(int i, Vec3<double> &destination);
 };
-
-#endif

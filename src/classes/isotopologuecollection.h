@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUECOLLECTION_H
-#define DISSOLVE_ISOTOPOLOGUECOLLECTION_H
+#pragma once
 
 #include "classes/isotopologueset.h"
 #include "genericitems/base.h"
@@ -94,5 +93,3 @@ class IsotopologueCollection : public GenericItemBase
     // Write data through specified LineParser
     bool write(LineParser &parser);
 };
-
-#endif

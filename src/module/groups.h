@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEGROUPS_H
-#define DISSOLVE_MODULEGROUPS_H
+#pragma once
 
 #include "base/charstringlist.h"
 #include "templates/list.h"
@@ -79,5 +78,3 @@ class ModuleGroups
     // Return name of group assigned to specified Module (if present)
     const char *groupName(Module *module) const;
 };
-
-#endif

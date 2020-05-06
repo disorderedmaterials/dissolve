@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_PY5_H
-#define DISSOLVE_FORCEFIELD_PY5_H
+#pragma once
 
 #include "data/ff.h"
 
@@ -46,5 +45,3 @@ class Forcefield_Py5_Ludwig : public Forcefield
     // Return short-range interaction style for AtomTypes
     Forcefield::ShortRangeType shortRangeType() const;
 };
-
-#endif

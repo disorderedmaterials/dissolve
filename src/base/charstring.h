@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARSTRING_H
-#define DISSOLVE_CHARSTRING_H
+#pragma once
 
 #include "templates/listitem.h"
 
@@ -148,5 +147,3 @@ class CharString : public ListItem<CharString>
     // Static sprintf
     static const char *string(const char *fmt, ...);
 };
-
-#endif

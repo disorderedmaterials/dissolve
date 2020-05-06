@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LIST_H
-#define DISSOLVE_LIST_H
+#pragma once
 
 #include "base/messenger.h"
 #include <stdio.h>
@@ -903,5 +902,3 @@ template <class T> class ListIterator
             return (currentItem_ ? currentItem_->prev_ : NULL);
     }
 };
-
-#endif

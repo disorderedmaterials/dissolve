@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_TIMER_H
-#define DISSOLVE_TIMER_H
+#pragma once
 
 #include "base/charstring.h"
 #include <ctime>
@@ -75,5 +74,3 @@ class Timer
     // Return ETA string for number of seconds provided
     static const char *etaString(double seconds);
 };
-
-#endif

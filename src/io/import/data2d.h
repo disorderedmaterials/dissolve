@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_IMPORT_DATA2D_H
-#define DISSOLVE_IMPORT_DATA2D_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "io/fileandformat.h"
@@ -87,5 +86,3 @@ class Data2DImportFileFormat : public FileAndFormat
     // Import Data2D using supplied parser and current format
     bool importData(LineParser &parser, Data2D &data);
 };
-
-#endif

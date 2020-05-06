@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_TEXTPRIMITIVELIST_H
-#define DISSOLVE_RENDER_TEXTPRIMITIVELIST_H
+#pragma once
 
 #include "gui/render/textprimitive.h"
 #include "math/cuboid.h"
@@ -55,5 +54,3 @@ class TextPrimitiveList
     void renderAll(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
                    double baseFontSize);
 };
-
-#endif

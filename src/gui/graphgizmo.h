@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GIZMOS_GRAPH_H
-#define DISSOLVE_GIZMOS_GRAPH_H
+#pragma once
 
 #include "gui/gizmo.h"
 #include "gui/ui_graphgizmo.h"
@@ -102,5 +101,3 @@ class GraphGizmo : public QWidget, public Gizmo
     signals:
     void windowClosed(QString windowTitle);
 };
-
-#endif

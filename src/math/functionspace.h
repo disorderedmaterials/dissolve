@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FUNCTIONSPACE_H
-#define DISSOLVE_FUNCTIONSPACE_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -34,5 +33,3 @@ enum SpaceType
     ReciprocalSpace
 };
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_EXPORT_PAIRPOTENTIALS_H
-#define DISSOLVE_MODULE_EXPORT_PAIRPOTENTIALS_H
+#pragma once
 
 #include "io/export/pairpotential.h"
 #include "module/module.h"
@@ -80,5 +79,3 @@ class ExportPairPotentialsModule : public Module
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool);
 };
-
-#endif

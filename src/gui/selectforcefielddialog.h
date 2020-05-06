@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_SELECTFORCEFIELD_H
-#define DISSOLVE_DIALOG_SELECTFORCEFIELD_H
+#pragma once
 
 #include "gui/ui_selectforcefielddialog.h"
 #include "templates/list.h"
@@ -54,5 +53,3 @@ class SelectForcefieldDialog : public QDialog
     // Run the dialog, returning the selected Forcefield
     std::shared_ptr<Forcefield> selectForcefield(std::shared_ptr<Forcefield> currentFF);
 };
-
-#endif

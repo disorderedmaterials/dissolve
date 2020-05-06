@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODE_H
-#define DISSOLVE_KEYWORD_NODE_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "keywords/data.h"
@@ -166,5 +165,3 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
             KeywordData<N *>::data_ = NULL;
     }
 };
-
-#endif

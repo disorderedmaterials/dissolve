@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ORDEREDPOINTERDATALIST_H
-#define DISSOLVE_ORDEREDPOINTERDATALIST_H
+#pragma once
 
 #include "templates/factory.h"
 #include <stdio.h>
@@ -601,5 +600,3 @@ template <class T, class D> class OrderedPointerDataListIterator
         currentItem_ = NULL;
     }
 };
-
-#endif

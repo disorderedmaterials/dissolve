@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_SQ_H
-#define DISSOLVE_MODULE_SQ_H
+#pragma once
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
@@ -94,5 +93,3 @@ class SQModule : public Module
     // Return a new widget controlling this Module
     ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif

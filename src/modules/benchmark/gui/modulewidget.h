@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_BENCHMARK_H
-#define DISSOLVE_MODULEWIDGET_BENCHMARK_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/benchmark/gui/ui_modulewidget.h"
@@ -48,5 +47,3 @@ class BenchmarkModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::BenchmarkModuleWidget ui_;
 };
-
-#endif

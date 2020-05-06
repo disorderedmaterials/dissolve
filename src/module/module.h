@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_H
-#define DISSOLVE_MODULE_H
+#pragma once
 
 #include "base/messenger.h"
 #include "genericitems/list.h"
@@ -190,5 +189,3 @@ class Module : public ListItem<Module>
     // Return a new widget controlling this Module
     virtual ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif

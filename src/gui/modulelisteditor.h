@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULELISTEDITOR_H
-#define DISSOLVE_MODULELISTEDITOR_H
+#pragma once
 
 #include "base/charstring.h"
 #include "gui/ui_modulelisteditor.h"
@@ -106,5 +105,3 @@ class ModuleListEditor : public QWidget
     // Read widget state through specified LineParser
     bool readState(LineParser &parser);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_OPERATEBASE_H
-#define DISSOLVE_PROCEDURENODE_OPERATEBASE_H
+#pragma once
 
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
@@ -82,5 +81,3 @@ class OperateProcedureNodeBase : public ProcedureNode
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

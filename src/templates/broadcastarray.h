@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BROADCASTARRAY_H
-#define DISSOLVE_BROADCASTARRAY_H
+#pragma once
 
 #include "base/processpool.h"
 
@@ -61,5 +60,3 @@ template <class T> class BroadcastArray
         result = true;
     };
 };
-
-#endif

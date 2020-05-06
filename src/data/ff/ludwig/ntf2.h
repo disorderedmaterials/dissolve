@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_NTF2_H
-#define DISSOLVE_FORCEFIELD_NTF2_H
+#pragma once
 
 #include "data/ff.h"
 
@@ -46,5 +45,3 @@ class Forcefield_NTf2_Ludwig : public Forcefield
     // Return short-range interaction style for AtomTypes
     Forcefield::ShortRangeType shortRangeType() const;
 };
-
-#endif

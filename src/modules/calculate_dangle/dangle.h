@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_CALCULATEDANGLE_H
-#define DISSOLVE_MODULE_CALCULATEDANGLE_H
+#pragma once
 
 #include "module/module.h"
 #include "procedure/procedure.h"
@@ -108,5 +107,3 @@ class CalculateDAngleModule : public Module
     // Return a new widget controlling this Module
     ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif

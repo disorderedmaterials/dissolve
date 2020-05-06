@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESSITE_H
-#define DISSOLVE_SPECIESSITE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -154,5 +153,3 @@ class SpeciesSite : public ListItem<SpeciesSite>
     // Write site definition to specified LineParser
     bool write(LineParser &parser, const char *prefix);
 };
-
-#endif

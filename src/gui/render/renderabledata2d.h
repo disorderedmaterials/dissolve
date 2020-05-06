@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDERABLEDATA2D_H
-#define DISSOLVE_RENDERABLEDATA2D_H
+#pragma once
 
 #include "gui/render/renderable.h"
 #include "math/data2d.h"
@@ -121,5 +120,3 @@ class RenderableData2D : public Renderable
     // Read style information
     bool readStyleBlock(LineParser &parser);
 };
-
-#endif

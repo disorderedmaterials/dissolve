@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMOPTIONS_H
-#define DISSOLVE_ENUMOPTIONS_H
+#pragma once
 
 #include "base/enumoptionsbase.h"
 #include "base/sysfunc.h"
@@ -154,5 +153,3 @@ template <class T> class EnumOptions : public EnumOptionsBase
         return *this;
     }
 };
-
-#endif

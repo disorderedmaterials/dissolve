@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_GENERATOR_H
-#define DISSOLVE_NETA_GENERATOR_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -124,5 +123,3 @@ class NETADefinitionGenerator
     // Static generation function
     static bool generate(NETADefinition &neta, const char *netaDefinition, const Forcefield *associatedFF);
 };
-
-#endif

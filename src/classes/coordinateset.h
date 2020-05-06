@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_COORDINATESET_H
-#define DISSOLVE_COORDINATESET_H
+#pragma once
 
 #include "templates/array.h"
 #include "templates/listitem.h"
@@ -55,5 +54,3 @@ class CoordinateSet : public ListItem<CoordinateSet>
     // Return coordinates array
     Array<Vec3<double>> &coordinates();
 };
-
-#endif

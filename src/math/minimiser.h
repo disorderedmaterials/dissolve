@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MINIMISER_H
-#define DISSOLVE_MINIMISER_H
+#pragma once
 
 #include "base/messenger.h"
 #include "expression/variable.h"
@@ -182,5 +181,3 @@ template <class T> class MinimiserBase
         return finalCost;
     }
 };
-
-#endif

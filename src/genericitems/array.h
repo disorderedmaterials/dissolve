@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY_H
-#define DISSOLVE_GENERICITEMCONTAINER_ARRAY_H
+#pragma once
 
 #include "genericitems/container.h"
 #include "templates/broadcastarray.h"
@@ -106,5 +105,3 @@ template <class T> class GenericItemContainer<Array<T>> : public GenericItem
     // Return equality between items
     bool equality(ProcessPool &procPool) { return false; }
 };
-
-#endif

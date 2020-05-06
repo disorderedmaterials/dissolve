@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_SITEWIDGET_H
-#define DISSOLVE_VIEWER_SITEWIDGET_H
+#pragma once
 
 #include "gui/ui_sitewidget.h"
 
@@ -101,5 +100,3 @@ class SiteWidget : public QWidget
     void on_SiteSetXAxisButton_clicked(bool checked);
     void on_SiteSetYAxisButton_clicked(bool checked);
 };
-
-#endif

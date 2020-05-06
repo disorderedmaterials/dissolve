@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_BRAGG_H
-#define DISSOLVE_MODULEWIDGET_BRAGG_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/bragg/gui/ui_modulewidget.h"
@@ -87,5 +86,3 @@ class BraggModuleWidget : public ModuleWidget
     private slots:
     void on_TargetCombo_currentIndexChanged(int index);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_BOOL_H
-#define DISSOLVE_GENERICITEMCONTAINER_BOOL_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "genericitems/container.h"
@@ -82,5 +81,3 @@ template <> class GenericItemContainer<bool> : public GenericItem
     // Check item equality
     bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
 };
-
-#endif

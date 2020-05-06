@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MAINTAB_H
-#define DISSOLVE_MAINTAB_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -122,5 +121,3 @@ class MainTab
     // Read widget state through specified LineParser
     virtual bool readState(LineParser &parser, const CoreData &coreData) = 0;
 };
-
-#endif

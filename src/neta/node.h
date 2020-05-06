@@ -19,8 +19,7 @@
        along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_NODE_H
-#define DISSOLVE_NETA_NODE_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "templates/list.h"
@@ -149,5 +148,3 @@ class NETANode : public ListItem<NETANode>
     // Evaluate the node and return its score
     virtual int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const;
 };
-
-#endif

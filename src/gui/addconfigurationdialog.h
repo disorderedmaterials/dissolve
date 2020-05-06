@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_ADDCONFIGURATION_H
-#define DISSOLVE_DIALOG_ADDCONFIGURATION_H
+#pragma once
 
 #include "gui/ui_addconfigurationdialog.h"
 #include <QDialog>
@@ -48,5 +47,3 @@ class AddConfigurationDialog : public QDialog
     // Copy imported Configuration over to the specified Dissolve object
     Configuration *importConfiguration(Dissolve &dissolve);
 };
-
-#endif

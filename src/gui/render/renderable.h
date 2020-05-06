@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_RENDERABLE_H
-#define DISSOLVE_RENDER_RENDERABLE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "gui/render/colourdefinition.h"
@@ -242,5 +241,3 @@ class Renderable : public ListItem<Renderable>
     void updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context,
                                  double pixelScaling);
 };
-
-#endif

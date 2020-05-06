@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MATRIX3_H
-#define DISSOLVE_MATRIX3_H
+#pragma once
 
 #include "templates/vector3.h"
 
@@ -149,5 +148,3 @@ class Matrix3
     // Construct 'cross-product' matrix of the supplied vector using cyclic permutations
     void makeCrossProductMatrix(Vec3<double> &v);
 };
-
-#endif

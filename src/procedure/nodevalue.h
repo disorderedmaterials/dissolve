@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NODEVALUE_H
-#define DISSOLVE_NODEVALUE_H
+#pragma once
 
 #include "expression/expression.h"
 #include "templates/reflist.h"
@@ -86,5 +85,3 @@ class NodeValue
     // Return value represented as a string
     CharString asString(bool addQuotesIfRequired = false) const;
 };
-
-#endif

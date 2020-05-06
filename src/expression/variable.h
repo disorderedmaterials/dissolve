@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_VARIABLE_H
-#define DISSOLVE_EXPRESSION_VARIABLE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "expression/node.h"
@@ -75,5 +74,3 @@ class ExpressionVariable : public ExpressionNode
     // Initialise node
     bool initialise();
 };
-
-#endif

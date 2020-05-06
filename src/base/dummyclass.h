@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DUMMYCLASS_H
-#define DISSOLVE_DUMMYCLASS_H
+#pragma once
 
 // DummyClass
 class DummyClass
@@ -31,5 +30,3 @@ class DummyClass
     public:
     DummyClass() {}
 };
-
-#endif

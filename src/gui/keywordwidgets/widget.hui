@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDSWIDGET_H
-#define DISSOLVE_KEYWORDSWIDGET_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "templates/list.h"
@@ -75,5 +74,3 @@ class KeywordsWidget : public QToolBox
     // Set-up in encompassing class required after keyword change
     void setUpRequired();
 };
-
-#endif

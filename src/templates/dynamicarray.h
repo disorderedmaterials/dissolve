@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DYNAMICARRAY_H
-#define DISSOLVE_DYNAMICARRAY_H
+#pragma once
 
 #include "base/messenger.h"
 #include "templates/list.h"
@@ -478,5 +477,3 @@ template <class T> class DynamicArrayConstIterator
         return result_;
     }
 };
-
-#endif

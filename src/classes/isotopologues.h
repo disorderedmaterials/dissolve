@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUES_H
-#define DISSOLVE_ISOTOPOLOGUES_H
+#pragma once
 
 #include "classes/isotopologueweight.h"
 #include "genericitems/base.h"
@@ -102,5 +101,3 @@ class Isotopologues : public GenericItemBase
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

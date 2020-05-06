@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_GETCONFIGURATIONNAME_H
-#define DISSOLVE_DIALOG_GETCONFIGURATIONNAME_H
+#pragma once
 
 #include "gui/ui_getconfigurationnamedialog.h"
 #include <QDialog>
@@ -60,5 +59,3 @@ class GetConfigurationNameDialog : public QDialog
     void on_CancelButton_clicked(bool checked);
     void on_OKButton_clicked(bool checked);
 };
-
-#endif

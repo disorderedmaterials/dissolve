@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NOCONTROLSWIDGET_H
-#define DISSOLVE_NOCONTROLSWIDGET_H
+#pragma once
 
 #include "gui/widgets/ui_nocontrols.h"
 
@@ -37,5 +36,3 @@ class NoControlsWidget : public QWidget
     NoControlsWidget(QWidget *parent);
     virtual ~NoControlsWidget();
 };
-
-#endif

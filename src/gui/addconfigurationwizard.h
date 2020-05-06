@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARD_ADDCONFIGURATION_H
-#define DISSOLVE_WIZARD_ADDCONFIGURATION_H
+#pragma once
 
 #include "gui/ui_addconfigurationwizard.h"
 #include "gui/wizardwidget.hui"
@@ -105,5 +104,3 @@ class AddConfigurationWizard : public WizardWidget
     private slots:
     void on_FinishNameEdit_textChanged(const QString text);
 };
-
-#endif

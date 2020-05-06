@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_CALIBRATION_H
-#define DISSOLVE_MODULEWIDGET_CALIBRATION_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/calibration/gui/ui_modulewidget.h"
@@ -73,5 +72,3 @@ class CalibrationModuleWidget : public ModuleWidget
      */
     private:
 };
-
-#endif

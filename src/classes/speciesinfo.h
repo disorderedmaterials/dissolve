@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESINFO_H
-#define DISSOLVE_SPECIESINFO_H
+#pragma once
 
 #include "templates/listitem.h"
 
@@ -57,5 +56,3 @@ class SpeciesInfo : public ListItem<SpeciesInfo>
     // Return population of the Species
     int population() const;
 };
-
-#endif

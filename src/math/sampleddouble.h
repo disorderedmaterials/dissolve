@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SAMPLEDDOUBLE_H
-#define DISSOLVE_SAMPLEDDOUBLE_H
+#pragma once
 
 #include "genericitems/base.h"
 #include <ctime>
@@ -95,5 +94,3 @@ class SampledDouble : public GenericItemBase
     // Check equality of all data
     bool equality(ProcessPool &procPool);
 };
-
-#endif

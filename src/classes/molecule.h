@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MOLECULE_H
-#define DISSOLVE_MOLECULE_H
+#pragma once
 
 #include "templates/dynamicarrayobject.h"
 #include "templates/vector3.h"
@@ -88,5 +87,3 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Translate specified atoms by the delta specified
     void translate(const Vec3<double> &delta, int nTargetAtoms, int *targetAtoms);
 };
-
-#endif

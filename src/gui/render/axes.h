@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_AXES_H
-#define DISSOLVE_RENDER_AXES_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/version.h"
@@ -414,5 +413,3 @@ class Axes
     // Return minor gridline style
     const LineStyle &gridLineMinorStyle(int axis) const;
 };
-
-#endif

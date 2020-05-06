@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NETA_LOGIC_H
-#define DISSOLVE_NETA_LOGIC_H
+#pragma once
 
 #include "neta/node.h"
 
@@ -54,5 +53,3 @@ class NETALogicNode : public NETANode
     // Evaluate the node and return its score
     int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SCALEDENERGYKERNEL_H
-#define DISSOLVE_SCALEDENERGYKERNEL_H
+#pragma once
 
 #include "classes/energykernel.h"
 
@@ -54,5 +53,3 @@ class ScaledEnergyKernel : public EnergyKernel
     // Return PairPotential energy between atoms provided as pointers, at the distance specified
     double pairPotentialEnergy(const Atom *i, const Atom *j, double r);
 };
-
-#endif

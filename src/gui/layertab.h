@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LAYERTAB_H
-#define DISSOLVE_LAYERTAB_H
+#pragma once
 
 #include "gui/maintab.h"
 #include "gui/ui_layertab.h"
@@ -98,5 +97,3 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

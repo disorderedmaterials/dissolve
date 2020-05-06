@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESTAB_H
-#define DISSOLVE_SPECIESTAB_H
+#pragma once
 
 #include "gui/maintab.h"
 #include "gui/ui_speciestab.h"
@@ -168,5 +167,3 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

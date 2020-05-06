@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_MODULEREFLIST_H
-#define DISSOLVE_KEYWORDWIDGET_MODULEREFLIST_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -78,5 +77,3 @@ class ModuleRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetB
     // Update summary text
     void updateSummaryText();
 };
-
-#endif

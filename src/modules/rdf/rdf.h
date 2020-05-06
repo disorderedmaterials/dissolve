@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_RDF_H
-#define DISSOLVE_MODULE_RDF_H
+#pragma once
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
@@ -135,5 +134,3 @@ class RDFModule : public Module
     // Return a new widget controlling this Module
     ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DROPWIDGET_H
-#define DISSOLVE_DROPWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -49,5 +48,3 @@ class DropWidget : public QWidget
     signals:
     void hidden();
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_FORMFACTORS_DUMMY_H
-#define DISSOLVE_DATA_FORMFACTORS_DUMMY_H
+#pragma once
 
 #include "data/formfactordata.h"
 #include <vector>
@@ -39,5 +38,3 @@ class FormFactorData_Dummy : public FormFactorData
     // Return magnitude of form factor at specified Q value
     double magnitude(double Q = 0.0) const;
 };
-
-#endif

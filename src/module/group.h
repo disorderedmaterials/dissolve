@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEGROUP_H
-#define DISSOLVE_MODULEGROUP_H
+#pragma once
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
@@ -61,5 +60,3 @@ class ModuleGroup : public ListItem<ModuleGroup>
     // Return reflist of Modules
     const RefList<Module> &modules() const;
 };
-
-#endif

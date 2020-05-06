@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPONENTIALSPIN_H
-#define DISSOLVE_EXPONENTIALSPIN_H
+#pragma once
 
 #include <QDoubleSpinBox>
 
@@ -65,5 +64,3 @@ class ExponentialSpin : public QDoubleSpinBox
     // Return which steps should be enabled
     // 	StepEnabled stepEnabled() const;
 };
-
-#endif

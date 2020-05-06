@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_TEXTFORMAT_H
-#define DISSOLVE_RENDER_TEXTFORMAT_H
+#pragma once
 
 #include "templates/listitem.h"
 
@@ -76,5 +75,3 @@ class TextFormat : public ListItem<TextFormat>
     // Return whether text is actually a symbol
     bool symbol();
 };
-
-#endif

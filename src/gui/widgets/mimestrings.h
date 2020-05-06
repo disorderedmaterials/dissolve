@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MIMESTRINGS_H
-#define DISSOLVE_MIMESTRINGS_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -92,5 +91,3 @@ class MimeStrings : public QMimeData
     // Return mime strings
     List<MimeString> &strings();
 };
-
-#endif

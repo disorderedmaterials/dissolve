@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_VEC3INTEGER_H
-#define DISSOLVE_KEYWORD_VEC3INTEGER_H
+#pragma once
 
 #include "keywords/data.h"
 #include "vec3labels.h"
@@ -94,5 +93,3 @@ class Vec3IntegerKeyword : public KeywordData<Vec3<int>>
     // Return value (as Vec3<double>)
     Vec3<double> asVec3Double();
 };
-
-#endif

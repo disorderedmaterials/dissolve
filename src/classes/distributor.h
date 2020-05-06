@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DISTRIBUTOR_H
-#define DISSOLVE_DISTRIBUTOR_H
+#pragma once
 
 #include "base/processpool.h"
 #include "classes/cellarray.h"
@@ -131,5 +130,3 @@ class Distributor
     // Return number of times a change broadcast was required
     int nChangeBroadcastsRequired() const;
 };
-
-#endif

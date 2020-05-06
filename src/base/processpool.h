@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCESSPOOL_H
-#define DISSOLVE_PROCESSPOOL_H
+#pragma once
 
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
@@ -476,6 +475,4 @@ class ProcessPool
     (pool.isMaster() ? (x ? (pool.decideTrue(), true) : (pool.decideFalse(), false)) : pool.decision())
 #else
 #define MPIRunMaster(pool, x) x
-#endif
-
 #endif

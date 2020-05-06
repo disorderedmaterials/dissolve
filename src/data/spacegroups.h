@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPACEGROUPS_H
-#define DISSOLVE_SPACEGROUPS_H
+#pragma once
 
 // Spacegroup Name Data
 class SpacegroupNameData
@@ -48,5 +47,3 @@ class Spacegroups
     // Return SpacegroupNameData with index specified
     static const SpacegroupNameData &spacegroupNameData(int id);
 };
-
-#endif

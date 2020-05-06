@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMTYPEDATA_H
-#define DISSOLVE_ATOMTYPEDATA_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -117,5 +116,3 @@ class AtomTypeData : public ListItem<AtomTypeData>
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

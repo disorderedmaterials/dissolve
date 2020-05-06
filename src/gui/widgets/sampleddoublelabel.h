@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIDGETS_SAMPLEDDOUBLELABEL_H
-#define DISSOLVE_WIDGETS_SAMPLEDDOUBLELABEL_H
+#pragma once
 
 #include "gui/widgets/ui_sampleddoublelabel.h"
 
@@ -50,5 +49,3 @@ class SampledDoubleLabel : public QLabel
     // Set label values
     void setText(const SampledDouble &sampledDouble);
 };
-
-#endif

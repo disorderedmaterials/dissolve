@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_PROCEDURE_H
-#define DISSOLVE_CHARTS_PROCEDURE_H
+#pragma once
 
 #include "gui/charts/chart.hui"
 #include "gui/charts/proceduremetrics.h"
@@ -109,5 +108,3 @@ class ProcedureChart : public ChartBase
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

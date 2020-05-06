@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_OUTPUTHANDLER_H
-#define DISSOLVE_OUTPUTHANDLER_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -50,5 +49,3 @@ class OutputHandler
     // Output text to device
     virtual void outputText(const char *text) = 0;
 };
-
-#endif

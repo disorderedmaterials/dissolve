@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_DROPDOWN_H
-#define DISSOLVE_KEYWORDWIDGET_DROPDOWN_H
+#pragma once
 
 #include "gui/keywordwidgets/dropwidget.hui"
 #include "gui/keywordwidgets/ui_dropdown.h"
@@ -70,5 +69,3 @@ class KeywordDropDown : public QWidget
     // Update keyword data based on widget values
     virtual void updateKeywordData() = 0;
 };
-
-#endif

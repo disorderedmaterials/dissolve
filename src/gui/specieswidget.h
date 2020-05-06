@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_SPECIESWIDGET_H
-#define DISSOLVE_VIEWER_SPECIESWIDGET_H
+#pragma once
 
 #include "gui/ui_specieswidget.h"
 
@@ -94,5 +93,3 @@ class SpeciesWidget : public QWidget
     void on_ToolsCalculateBondingButton_clicked(bool checked);
     void on_ToolsMinimiseButton_clicked(bool checked);
 };
-
-#endif

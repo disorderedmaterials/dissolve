@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_AVERAGING_H
-#define DISSOLVE_AVERAGING_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "genericitems/listhelper.h"
@@ -183,5 +182,3 @@ class Averaging
         return true;
     };
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_COLOURSCALE_H
-#define DISSOLVE_RENDER_COLOURSCALE_H
+#pragma once
 
 #include "gui/render/colourscaledelta.h"
 #include "gui/render/colourscalepoint.h"
@@ -107,5 +106,3 @@ class ColourScale
     // Return whether or not to use HSV interpolation
     bool useHSV() const;
 };
-
-#endif

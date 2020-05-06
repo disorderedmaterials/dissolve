@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_VEC3INTEGER_H
-#define DISSOLVE_KEYWORDWIDGET_VEC3INTEGER_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_vec3integer.h"
@@ -69,5 +68,3 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
     // Update value displayed in widget
     void updateValue();
 };
-
-#endif

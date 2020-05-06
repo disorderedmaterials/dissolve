@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_MD_H
-#define DISSOLVE_MODULE_MD_H
+#pragma once
 
 #include "module/module.h"
 
@@ -85,5 +84,3 @@ class MDModule : public Module
     // Determine timestep based on maximal force component
     double determineTimeStep(const Array<double> &fx, const Array<double> &fy, const Array<double> &fz);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA3D_H
-#define DISSOLVE_DATA3D_H
+#pragma once
 
 #include "base/version.h"
 #include "math/plottable.h"
@@ -153,5 +152,3 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     // Check item equality
     bool equality(ProcessPool &procPool);
 };
-
-#endif

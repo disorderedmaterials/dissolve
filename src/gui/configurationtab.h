@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CONFIGURATIONTAB_H
-#define DISSOLVE_CONFIGURATIONTAB_H
+#pragma once
 
 #include "base/units.h"
 #include "gui/maintab.h"
@@ -114,5 +113,3 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

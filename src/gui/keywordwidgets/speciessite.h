@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_SPECIESSITE_H
-#define DISSOLVE_KEYWORDWIDGET_SPECIESSITE_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -73,5 +72,3 @@ class SpeciesSiteKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     // Update summary text
     void updateSummaryText();
 };
-
-#endif

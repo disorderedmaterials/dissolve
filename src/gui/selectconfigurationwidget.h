@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIDGET_SELECTSPECIES_H
-#define DISSOLVE_WIDGET_SELECTSPECIES_H
+#pragma once
 
 #include "data/fflibrary.h"
 #include "gui/ui_selectconfigurationwidget.h"
@@ -96,5 +95,3 @@ class SelectConfigurationWidget : public QWidget
     // Return the currently-selected Configuration
     RefList<Configuration> currentConfiguration() const;
 };
-
-#endif

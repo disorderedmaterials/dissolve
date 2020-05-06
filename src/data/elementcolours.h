@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA_ELEMENTCOLOURS_H
-#define DISSOLVE_DATA_ELEMENTCOLOURS_H
+#pragma once
 
 #include "data/elements.h"
 
@@ -35,5 +34,3 @@ const float *colour(int Z);
 const float *colour(Element *el);
 
 } // namespace ElementColours
-
-#endif

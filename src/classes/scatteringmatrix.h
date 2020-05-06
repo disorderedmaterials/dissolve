@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SCATTERINGMATRIX_H
-#define DISSOLVE_SCATTERINGMATRIX_H
+#pragma once
 
 #include "math/data1d.h"
 #include "templates/array2d.h"
@@ -89,5 +88,3 @@ class ScatteringMatrix
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
     bool addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight, double factor = 1.0);
 };
-
-#endif

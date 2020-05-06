@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_COLOURDEFINITION_H
-#define DISSOLVE_RENDER_COLOURDEFINITION_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "base/version.h"
@@ -190,5 +189,3 @@ class ColourDefinition
     // Return (set) colour for specified value
     void colour(double value, GLfloat *rgba) const;
 };
-
-#endif

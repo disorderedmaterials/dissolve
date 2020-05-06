@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIDGET_SELECTFORCEFIELD_H
-#define DISSOLVE_WIDGET_SELECTFORCEFIELD_H
+#pragma once
 
 #include "data/fflibrary.h"
 #include "gui/ui_selectforcefieldwidget.h"
@@ -71,5 +70,3 @@ class SelectForcefieldWidget : public QWidget
     // Return the currently-selected Forcefield
     std::shared_ptr<Forcefield> currentForcefield() const;
 };
-
-#endif

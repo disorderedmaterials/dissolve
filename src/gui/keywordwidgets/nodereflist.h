@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_NODEREFLIST_H
-#define DISSOLVE_KEYWORDWIDGET_NODEREFLIST_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -77,5 +76,3 @@ class NodeRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     // Update summary text
     void updateSummaryText();
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELDTAB_H
-#define DISSOLVE_FORCEFIELDTAB_H
+#pragma once
 
 #include "gui/maintab.h"
 #include "gui/ui_forcefieldtab.h"
@@ -128,5 +127,3 @@ class ForcefieldTab : public QWidget, public MainTab
     // Write widget state through specified LineParser
     bool writeState(LineParser &parser) const;
 };
-
-#endif

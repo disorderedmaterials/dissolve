@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMICMASSDATA_H
-#define DISSOLVE_ATOMICMASSDATA_H
+#pragma once
 
 #include "data/elements.h"
 
@@ -56,5 +55,3 @@ class AtomicMass : public Elements
     // Return reduced mass for specified pair of Elements
     static double reducedMass(Element *e1, Element *e2);
 };
-
-#endif

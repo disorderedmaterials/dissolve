@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_SELECTSYMBOL_H
-#define DISSOLVE_VIEWER_SELECTSYMBOL_H
+#pragma once
 
 #include "gui/ui_selectsymbol.h"
 #include <QDialog>
@@ -77,5 +76,3 @@ class SelectSymbolDialog : public QDialog
     // Update symbol table
     void updateTable(bool force = false);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LOCK_H
-#define DISSOLVE_LOCK_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -65,5 +64,3 @@ class Locker
     // Manually release the lock
     void unlock();
 };
-
-#endif

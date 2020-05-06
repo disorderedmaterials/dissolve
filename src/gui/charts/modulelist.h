@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_MODULELIST_H
-#define DISSOLVE_CHARTS_MODULELIST_H
+#pragma once
 
 #include "gui/charts/chart.hui"
 #include "gui/charts/modulelistmetrics.h"
@@ -126,5 +125,3 @@ class ModuleListChart : public ChartBase
     // Read widget state through specified LineParser
     bool readState(LineParser &parser);
 };
-
-#endif

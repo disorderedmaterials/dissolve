@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEANDINTEGER_H
-#define DISSOLVE_KEYWORD_NODEANDINTEGER_H
+#pragma once
 
 #include "base/lineparser.h"
 #include "keywords/data.h"
@@ -205,5 +204,3 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
      */
     protected:
 };
-
-#endif

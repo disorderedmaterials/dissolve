@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_EXPRESSIONVARIABLELIST_H
-#define DISSOLVE_KEYWORD_EXPRESSIONVARIABLELIST_H
+#pragma once
 
 #include "expression/node.h"
 #include "keywords/data.h"
@@ -84,5 +83,3 @@ class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
      */
     protected:
 };
-
-#endif

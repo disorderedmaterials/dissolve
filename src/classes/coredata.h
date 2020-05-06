@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_COREDATA_H
-#define DISSOLVE_COREDATA_H
+#pragma once
 
 #include "base/charstringlist.h"
 #include "base/version.h"
@@ -228,5 +227,3 @@ class CoreData
     // Return the current input filename (from Dissolve)
     const char *inputFilename() const;
 };
-
-#endif

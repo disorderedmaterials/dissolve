@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VARIANTPOINTER_H
-#define DISSOLVE_VARIANTPOINTER_H
+#pragma once
 
 #include <QVariant>
 
@@ -39,5 +38,3 @@ template <class A> class VariantPointer
 
     operator A *() { return dynamic_cast<A *>(pointer_); }
 };
-
-#endif

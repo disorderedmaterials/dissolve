@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RENDER_RENDERABLEGROUP_H
-#define DISSOLVE_RENDER_RENDERABLEGROUP_H
+#pragma once
 
 #include "base/charstring.h"
 #include "gui/render/colourdefinition.h"
@@ -177,5 +176,3 @@ class RenderableGroup : public ListItem<RenderableGroup>
     // Apply the specified vertical shift (if VerticalShiftStyle != PreventVerticalShifting)
     void applyVerticalShift(double dy, int groupIndex);
 };
-
-#endif

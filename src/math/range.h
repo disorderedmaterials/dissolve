@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RANGE_H
-#define DISSOLVE_RANGE_H
+#pragma once
 
 #include "math/matrix4.h"
 
@@ -51,5 +50,3 @@ class Range
     // Return whether the range contains the specified value
     bool contains(double d) const;
 };
-
-#endif

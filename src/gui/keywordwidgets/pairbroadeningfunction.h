@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_PAIRBROADENINGFUNCTION_H
-#define DISSOLVE_KEYWORDWIDGET_PAIRBROADENINGFUNCTION_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -74,5 +73,3 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
     // Update keyword data based on widget values
     void updateKeywordData();
 };
-
-#endif

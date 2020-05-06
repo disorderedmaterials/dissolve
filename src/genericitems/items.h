@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMS_H
-#define DISSOLVE_GENERICITEMS_H
+#pragma once
 
 /*
  * This file should be included if the use of GenericItems is required.
@@ -50,5 +49,3 @@
 #include "genericitems/arrayvec3int.h"
 
 #include "genericitems/container.h"
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_NODEREFERENCE_H
-#define DISSOLVE_PROCEDURENODE_NODEREFERENCE_H
+#pragma once
 
 #include "base/charstring.h"
 #include "procedure/nodes/node.h"
@@ -76,5 +75,3 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
     // Write structure to specified LineParser
     bool write(LineParser &parser, const char *prefix);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SITE_H
-#define DISSOLVE_SITE_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "math/matrix3.h"
@@ -86,5 +85,3 @@ class OrientedSite : public Site
     // Return local axes
     const Matrix3 &axes() const;
 };
-
-#endif

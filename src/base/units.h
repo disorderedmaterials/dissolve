@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UNITS_H
-#define DISSOLVE_UNITS_H
+#pragma once
 
 #include "base/enumoptions.h"
 
@@ -37,5 +36,3 @@ class Units
     // Return enum options for DensityUnits
     static EnumOptions<Units::DensityUnits> densityUnits();
 };
-
-#endif

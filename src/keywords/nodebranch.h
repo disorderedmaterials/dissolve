@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEBRANCH_H
-#define DISSOLVE_KEYWORD_NODEBRANCH_H
+#pragma once
 
 #include "keywords/data.h"
 #include "procedure/nodes/node.h"
@@ -71,5 +70,3 @@ class NodeBranchKeyword : public KeywordData<SequenceProcedureNode **>
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SYSFUNC_H
-#define DISSOLVE_SYSFUNC_H
+#pragma once
 
 // System Functions
 class DissolveSys
@@ -101,5 +100,3 @@ class DissolveSys
     // Return string of current time / date
     static const char *currentTimeAndDate();
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ARRAY2D_H
-#define DISSOLVE_ARRAY2D_H
+#pragma once
 
 #include "base/charstring.h"
 #include "base/messenger.h"
@@ -445,5 +444,3 @@ template <class A> class Array2D
         return result;
     }
 };
-
-#endif

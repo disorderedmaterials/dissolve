@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_SPECIESREFLIST_H
-#define DISSOLVE_KEYWORD_SPECIESREFLIST_H
+#pragma once
 
 #include "keywords/data.h"
 #include "templates/reflist.h"
@@ -62,5 +61,3 @@ class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
     // Prune any references to the supplied Species in the contained data
     void removeReferencesTo(Species *sp);
 };
-
-#endif

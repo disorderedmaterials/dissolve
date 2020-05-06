@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIDGET_SELECTSPECIES_H
-#define DISSOLVE_WIDGET_SELECTSPECIES_H
+#pragma once
 
 #include "data/fflibrary.h"
 #include "gui/ui_selectspecieswidget.h"
@@ -96,5 +95,3 @@ class SelectSpeciesWidget : public QWidget
     // Return the currently-selected Species
     RefList<Species> currentSpecies() const;
 };
-
-#endif

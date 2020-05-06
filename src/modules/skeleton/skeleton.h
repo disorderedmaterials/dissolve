@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULE_SKELETON_H
-#define DISSOLVE_MODULE_SKELETON_H
+#pragma once
 
 #include "module/module.h"
 
@@ -75,5 +74,3 @@ class SkeletonModule : public Module
     // Return a new widget controlling this Module
     ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif

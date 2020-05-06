@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VENUM_H
-#define DISSOLVE_VENUM_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -86,5 +85,3 @@ template <class V, class E> class Venum
         return false;
     }
 };
-
-#endif

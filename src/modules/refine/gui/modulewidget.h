@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_REFINE_H
-#define DISSOLVE_MODULEWIDGET_REFINE_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/refine/gui/ui_modulewidget.h"
@@ -77,5 +76,3 @@ class RefineModuleWidget : public ModuleWidget
     // Set data targets in graphs
     void setGraphDataTargets(RefineModule *module);
 };
-
-#endif

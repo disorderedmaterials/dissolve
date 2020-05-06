@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_LIBRARY_H
-#define DISSOLVE_FORCEFIELD_LIBRARY_H
+#pragma once
 
 #include "data/ff.h"
 #include <memory>
@@ -46,5 +45,3 @@ class ForcefieldLibrary
     // Return named Forcefield, if it exists
     static std::shared_ptr<Forcefield> forcefield(const string name);
 };
-
-#endif

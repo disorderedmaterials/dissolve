@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_BOX_H
-#define DISSOLVE_PROCEDURENODE_BOX_H
+#pragma once
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
@@ -56,5 +55,3 @@ class BoxProcedureNode : public ProcedureNode
     ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
                                                GenericList &targetList);
 };
-
-#endif

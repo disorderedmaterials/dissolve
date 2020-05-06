@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VERSIONCOUNTER_H
-#define DISSOLVE_VERSIONCOUNTER_H
+#pragma once
 
 // Forward Declarations
 class CoreData;
@@ -60,5 +59,3 @@ class VersionCounter
     // Broadcast data from Master to all Slaves
     bool broadcast(ProcessPool &procPool, const int root);
 };
-
-#endif

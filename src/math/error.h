@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ERROR_H
-#define DISSOLVE_ERROR_H
+#pragma once
 
 #include "base/enumoptions.h"
 
@@ -65,5 +64,3 @@ class Error
     // Return R-Factor (average squared error per point) between supplied data
     static double rFactor(const Data1D &A, const Data1D &B, bool quiet = false);
 };
-
-#endif

@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEWIDGET_ANALYSE_H
-#define DISSOLVE_MODULEWIDGET_ANALYSE_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/analyse/gui/ui_modulewidget.h"
@@ -50,5 +49,3 @@ class AnalyseModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::AnalyseModuleWidget ui_;
 };
-
-#endif

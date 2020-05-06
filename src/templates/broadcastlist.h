@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BROADCASTLIST_H
-#define DISSOLVE_BROADCASTLIST_H
+#pragma once
 
 #include "base/processpool.h"
 
@@ -76,5 +75,3 @@ template <class T> class BroadcastList
     // Return whether broadcast failed
     bool failed() { return (!result_); }
 };
-
-#endif

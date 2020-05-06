@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SITESTACK_H
-#define DISSOLVE_SITESTACK_H
+#pragma once
 
 #include "classes/site.h"
 #include "templates/array.h"
@@ -80,5 +79,3 @@ class SiteStack : public ListItem<SiteStack>
     // Return site with index specified
     const Site &site(int index) const;
 };
-
-#endif

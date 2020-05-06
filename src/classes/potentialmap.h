@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_POTENTIALMAP_H
-#define DISSOLVE_POTENTIALMAP_H
+#pragma once
 
 #include "classes/atomtypelist.h"
 #include "templates/array2d.h"
@@ -70,5 +69,3 @@ class PotentialMap
     // Return analytic force between Atom types at distance specified
     double analyticForce(const Atom *i, const Atom *j, double r) const;
 };
-
-#endif

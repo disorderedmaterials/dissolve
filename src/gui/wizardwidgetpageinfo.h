@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARDWIDGETPAGEINFO_H
-#define DISSOLVE_WIZARDWIDGETPAGEINFO_H
+#pragma once
 
 #include "base/charstring.h"
 #include "gui/wizardwidgethighlight.h"
@@ -102,5 +101,3 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
     // Un-highlight all defined widgets
     void unHighlightWidgets();
 };
-
-#endif

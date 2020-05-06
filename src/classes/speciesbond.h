@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESBOND_H
-#define DISSOLVE_SPECIESBOND_H
+#pragma once
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
@@ -140,5 +139,3 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
     // Broadcast data from Master to all Slaves
     bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };
-
-#endif

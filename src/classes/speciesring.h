@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESRING_H
-#define DISSOLVE_SPECIESRING_H
+#pragma once
 
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -64,5 +63,3 @@ class SpeciesRing : public ListItem<SpeciesRing>
     public:
     bool operator==(const SpeciesRing &other);
 };
-
-#endif
