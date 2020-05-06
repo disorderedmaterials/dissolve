@@ -24,7 +24,6 @@
 
 #include "classes/isotopologueset.h"
 #include "genericitems/base.h"
-#include "templates/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations

@@ -24,7 +24,6 @@
 
 #include "classes/isotopologues.h"
 #include "genericitems/base.h"
-#include "templates/list.h"
 #include <vector>
 
 template <class T> using optional = std::tuple<T, bool>;
@@ -37,7 +36,7 @@ class IsotopologueCollection;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species in a single Configuration
-class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
+class IsotopologueSet : public GenericItemBase
 {
 	public:
 	IsotopologueSet(IsotopologueCollection* parent = nullptr, Configuration* cfg = nullptr);

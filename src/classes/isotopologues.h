@@ -33,7 +33,7 @@ class ProcessPool;
 class LineParser;
 
 // Isotopologues
-class Isotopologues : public ListItem<Isotopologues>, public GenericItemBase
+class Isotopologues : public GenericItemBase
 {
 	public:
 	Isotopologues(Species* species = nullptr, int speciesPopulation = 0);

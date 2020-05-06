@@ -27,7 +27,7 @@
 #include "classes/species.h"
 #include <algorithm>
 
-IsotopologueSet::IsotopologueSet(IsotopologueCollection* parent, Configuration* cfg) : ListItem<IsotopologueSet>(), parentCollection_(parent), configuration_(cfg) { }
+IsotopologueSet::IsotopologueSet(IsotopologueCollection* parent, Configuration* cfg) : parentCollection_(parent), configuration_(cfg) { }
 
 IsotopologueSet::~IsotopologueSet() {}
 

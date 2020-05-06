@@ -26,7 +26,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 
-Isotopologues::Isotopologues(Species* species, int speciesPopulation) : ListItem<Isotopologues>(), species_(species), speciesPopulation_(speciesPopulation) {}
+Isotopologues::Isotopologues(Species* species, int speciesPopulation) : species_(species), speciesPopulation_(speciesPopulation) {}
 
 Isotopologues::~Isotopologues() {}
 
