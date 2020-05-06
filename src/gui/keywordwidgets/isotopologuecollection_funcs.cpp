@@ -165,17 +165,20 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
 
 		Species *sp = isoWeight->isotopologue()->parent();
 
-		Isotopologues *topes = set->isotopologues(sp);
+		auto data = set->getIsotopologues(sp);
+
+		// TODO Raise exception if isotopologue set not found
+		auto &topes = std::get<0>(data);
 
 		// Natural first
-		if (!topes->contains(sp->naturalIsotopologue()))
+		if (!topes.contains(sp->naturalIsotopologue()))
 			set->add(sp->naturalIsotopologue(), 1.0);
 		else
 		{
 			ListIterator<Isotopologue> topeIterator(sp->isotopologues());
 			while (Isotopologue *tope = topeIterator.iterate())
 			{
-				if (topes->contains(tope))
+				if (topes.contains(tope))
 					continue;
 
 				set->add(tope, 1.0);
