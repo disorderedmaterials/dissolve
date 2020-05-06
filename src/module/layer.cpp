@@ -1,22 +1,22 @@
 /*
-	*** Module Layer
-	*** src/module/layer.cpp
-	Copyright T. Youngs 2012-2020
+    *** Module Layer
+    *** src/module/layer.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "module/layer.h"
@@ -26,9 +26,9 @@
 
 ModuleLayer::ModuleLayer() : ModuleList(), ListItem<ModuleLayer>()
 {
-	enabled_ = true;
-	frequency_ = 1;
-	name_ = "Untitled Layer";
+    enabled_ = true;
+    frequency_ = 1;
+    name_ = "Untitled Layer";
 }
 
 ModuleLayer::~ModuleLayer() {}
@@ -58,35 +58,35 @@ int ModuleLayer::frequency() const { return frequency_; }
 // Return short descriptive text relating frequency to supplied iteration number
 const char *ModuleLayer::frequencyDetails(int iteration) const
 {
-	static CharString result;
+    static CharString result;
 
-	if (frequency_ < 0)
-		return "NEGATIVE?";
-	else if ((!enabled_) || (frequency_ == 0))
-		return "disabled";
-	else if (frequency_ == 1)
-		return "every time";
-	else if ((iteration % frequency_) == 0)
-		return "this iteration";
-	else
-	{
-		// Calculate number of steps necessary to get to next multiple of the frequency_
-		int nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
-		if (nToGo == 1)
-			return "next iteration";
+    if (frequency_ < 0)
+        return "NEGATIVE?";
+    else if ((!enabled_) || (frequency_ == 0))
+        return "disabled";
+    else if (frequency_ == 1)
+        return "every time";
+    else if ((iteration % frequency_) == 0)
+        return "this iteration";
+    else
+    {
+        // Calculate number of steps necessary to get to next multiple of the frequency_
+        int nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
+        if (nToGo == 1)
+            return "next iteration";
 
-		result.sprintf("in %i steps time", nToGo);
-		return result.get();
-	}
+        result.sprintf("in %i steps time", nToGo);
+        return result.get();
+    }
 }
 
 // Return whether the layer should execute this iteration
 bool ModuleLayer::runThisIteration(int iteration) const
 {
-	if ((frequency_ < 1) || (!enabled_))
-		return false;
-	else if ((iteration % frequency_) == 0)
-		return true;
-	else
-		return false;
+    if ((frequency_ < 1) || (!enabled_))
+        return false;
+    else if ((iteration % frequency_) == 0)
+        return true;
+    else
+        return false;
 }

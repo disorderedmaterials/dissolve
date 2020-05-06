@@ -1,31 +1,31 @@
 /*
-	*** Colour Scale Point
-	*** src/gui/render/colourscalepoint.cpp
-	Copyright T. Youngs 2013-2020
+    *** Colour Scale Point
+    *** src/gui/render/colourscalepoint.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/render/colourscalepoint.h"
 
 ColourScalePoint::ColourScalePoint(double value, QColor colour)
 {
-	// Private variables
-	value_ = value;
-	setColour(colour);
+    // Private variables
+    value_ = value;
+    setColour(colour);
 }
 ColourScalePoint::~ColourScalePoint() {}
 
@@ -33,8 +33,8 @@ ColourScalePoint::ColourScalePoint(const ColourScalePoint &source) { (*this) = s
 
 void ColourScalePoint::operator=(const ColourScalePoint &source)
 {
-	value_ = source.value_;
-	colour_ = source.colour_;
+    value_ = source.value_;
+    colour_ = source.colour_;
 }
 
 /*
@@ -44,8 +44,8 @@ void ColourScalePoint::operator=(const ColourScalePoint &source)
 // Set value and colour for point
 void ColourScalePoint::set(double value, QColor colour)
 {
-	value_ = value;
-	colour_ = colour;
+    value_ = value;
+    colour_ = colour;
 }
 
 // Set value of point
@@ -63,10 +63,10 @@ QColor ColourScalePoint::colour() const { return colour_; }
 // Return colour as GLfloat*
 void ColourScalePoint::colour(GLfloat *rgba) const
 {
-	rgba[0] = colour_.redF();
-	rgba[1] = colour_.greenF();
-	rgba[2] = colour_.blueF();
-	rgba[3] = colour_.alphaF();
+    rgba[0] = colour_.redF();
+    rgba[1] = colour_.greenF();
+    rgba[2] = colour_.blueF();
+    rgba[3] = colour_.alphaF();
 }
 
 // Set alpha value

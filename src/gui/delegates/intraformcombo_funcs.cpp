@@ -1,22 +1,22 @@
 /*
-	*** IntraFormComboDelegate Functions
-	*** src/gui/delegates/intraformcombo_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** IntraFormComboDelegate Functions
+    *** src/gui/delegates/intraformcombo_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/speciesbond.h"
@@ -27,64 +27,64 @@
 #include "templates/variantpointer.h"
 
 IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms)
-	: QItemDelegate(parent), masterTerms_(masterTerms)
+    : QItemDelegate(parent), masterTerms_(masterTerms)
 {
-	items_ = items;
+    items_ = items;
 }
 
 IntraFormComboDelegate::~IntraFormComboDelegate() {}
 
 // Create editor
 QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-					      const QModelIndex &index) const
+                                              const QModelIndex &index) const
 {
-	// Create editor widget (in this case a combo box) and add the available options
-	QComboBox *editor = new QComboBox(parent);
+    // Create editor widget (in this case a combo box) and add the available options
+    QComboBox *editor = new QComboBox(parent);
 
-	// Add on standard bond forms first
-	items_->restartIterator();
-	while (items_->nextItem())
-		editor->addItem(items_->currentItemText());
+    // Add on standard bond forms first
+    items_->restartIterator();
+    while (items_->nextItem())
+        editor->addItem(items_->currentItemText());
 
-	// Now append any MasterBonds we have
-	if (masterTerms_.nItems() > 0)
-		ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);
+    // Now append any MasterBonds we have
+    if (masterTerms_.nItems() > 0)
+        ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);
 
-	return editor;
+    return editor;
 }
 
 // Set initial value in editor
 void IntraFormComboDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-	// Grab (cast) the QComboBox
-	QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    // Grab (cast) the QComboBox
+    QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
-	// Get the current text and search for it in the combo
-	QString value = index.model()->data(index, Qt::EditRole).toString();
+    // Get the current text and search for it in the combo
+    QString value = index.model()->data(index, Qt::EditRole).toString();
 
-	for (int n = 0; n < comboBox->count(); ++n)
-	{
-		if (comboBox->itemText(n) == value)
-		{
-			comboBox->setCurrentIndex(n);
-			break;
-		}
-	}
+    for (int n = 0; n < comboBox->count(); ++n)
+    {
+        if (comboBox->itemText(n) == value)
+        {
+            comboBox->setCurrentIndex(n);
+            break;
+        }
+    }
 }
 
 // Get value from editing widget, and set back in model
 void IntraFormComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-	// Grab (cast) the QComboBox
-	QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    // Grab (cast) the QComboBox
+    QComboBox *comboBox = static_cast<QComboBox *>(editor);
 
-	// Set the current text in the model
-	model->setData(index, comboBox->currentText(), Qt::EditRole);
+    // Set the current text in the model
+    model->setData(index, comboBox->currentText(), Qt::EditRole);
 }
 
 // Update widget geometry
 void IntraFormComboDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-						  const QModelIndex &index) const
+                                                  const QModelIndex &index) const
 {
-	editor->setGeometry(option.rect);
+    editor->setGeometry(option.rect);
 }

@@ -1,22 +1,22 @@
 /*
-	*** Cell Definition
-	*** src/classes/cell.cpp
-	Copyright T. Youngs 2012-2020
+    *** Cell Definition
+    *** src/classes/cell.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/cell.h"
@@ -28,9 +28,9 @@
 
 Cell::Cell()
 {
-	index_ = -1;
-	nCellNeighbours_ = 0;
-	nMimCellNeighbours_ = 0;
+    index_ = -1;
+    nCellNeighbours_ = 0;
+    nMimCellNeighbours_ = 0;
 }
 
 Cell::~Cell() {}
@@ -48,11 +48,11 @@ const Vec3<int> &Cell::gridReference() const { return gridReference_; }
 // Set unique index
 void Cell::setIndex(int id)
 {
-	// To prevent misuse, the identity of a Cell can be changed from its starting value of -1 only once.
-	if (id == -1)
-		Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
-	else
-		index_ = id;
+    // To prevent misuse, the identity of a Cell can be changed from its starting value of -1 only once.
+    if (id == -1)
+        Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
+    else
+        index_ = id;
 }
 
 // Return unique index
@@ -81,47 +81,46 @@ int Cell::nAtoms() const { return atoms_.size(); }
 bool Cell::addAtom(Atom *i)
 {
 #ifdef CHECKS
-	if (i == NULL)
-	{
-		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
-		return false;
-	}
+    if (i == NULL)
+    {
+        Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
+        return false;
+    }
 #endif
-	// Add Atom to our pointer- and index-ordered arrays
-	atoms_.insert(i);
-	indexOrderedAtoms_.insert(i);
+    // Add Atom to our pointer- and index-ordered arrays
+    atoms_.insert(i);
+    indexOrderedAtoms_.insert(i);
 
-	if (i->cell())
-		Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n",
-				i->arrayIndex());
-	i->setCell(this);
+    if (i->cell())
+        Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
+    i->setCell(this);
 
-	return true;
+    return true;
 }
 
 // Remove Atom from Cell
 bool Cell::removeAtom(Atom *i)
 {
 #ifdef CHECKS
-	if (i == NULL)
-	{
-		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::removeAtom().\n");
-		return false;
-	}
+    if (i == NULL)
+    {
+        Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::removeAtom().\n");
+        return false;
+    }
 #endif
-	// Remove atom from this cell
-	if (atoms_.erase(i))
-	{
-		indexOrderedAtoms_.erase(i);
-		i->setCell(NULL);
-	}
-	else
-	{
-		Messenger::error("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
-		return false;
-	}
+    // Remove atom from this cell
+    if (atoms_.erase(i))
+    {
+        indexOrderedAtoms_.erase(i);
+        i->setCell(NULL);
+    }
+    else
+    {
+        Messenger::error("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 /*
@@ -131,35 +130,35 @@ bool Cell::removeAtom(Atom *i)
 // Add Cell neighbours
 void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours)
 {
-	int n;
+    int n;
 
-	// Create near-neighbour array of Cells not requiring minimum image to be applied
-	nCellNeighbours_ = nearNeighbours.size();
-	cellNeighbours_.resize(nCellNeighbours_);
-	std::copy(nearNeighbours.begin(), nearNeighbours.end(), cellNeighbours_.begin());
+    // Create near-neighbour array of Cells not requiring minimum image to be applied
+    nCellNeighbours_ = nearNeighbours.size();
+    cellNeighbours_.resize(nCellNeighbours_);
+    std::copy(nearNeighbours.begin(), nearNeighbours.end(), cellNeighbours_.begin());
 
-	// Create array of neighbours that require minimum image calculation
-	nMimCellNeighbours_ = mimNeighbours.size();
-	mimCellNeighbours_.clear();
-	mimCellNeighbours_.resize(nMimCellNeighbours_);
-	std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
+    // Create array of neighbours that require minimum image calculation
+    nMimCellNeighbours_ = mimNeighbours.size();
+    mimCellNeighbours_.clear();
+    mimCellNeighbours_.resize(nMimCellNeighbours_);
+    std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
 
-	// Create ordered list of CellNeighbours (including cells from both lists)
-	OrderedVector<std::pair<Cell *, bool>> allCells;
-	for (auto *near : nearNeighbours)
-		allCells.emplace(near, false);
-	for (auto *mim : mimNeighbours)
-		allCells.emplace(mim, true);
+    // Create ordered list of CellNeighbours (including cells from both lists)
+    OrderedVector<std::pair<Cell *, bool>> allCells;
+    for (auto *near : nearNeighbours)
+        allCells.emplace(near, false);
+    for (auto *mim : mimNeighbours)
+        allCells.emplace(mim, true);
 
-	if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
-		Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-	allCellNeighbours_.resize(allCells.size());
-	auto destination = allCellNeighbours_.begin();
-	for (auto source : allCells)
-	{
-		(*destination).set(source.first, source.second);
-		++destination;
-	}
+    if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
+        Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+    allCellNeighbours_.resize(allCells.size());
+    auto destination = allCellNeighbours_.begin();
+    for (auto source : allCells)
+    {
+        (*destination).set(source.first, source.second);
+        ++destination;
+    }
 }
 
 // Return number of Cell near-neighbours, not requiring minimum image calculation
@@ -186,10 +185,10 @@ Cell *Cell::mimCellNeighbour(int id) const { return mimCellNeighbours_[id]; }
 // Return if the specified Cell requires minimum image calculation
 bool Cell::mimRequired(const Cell *otherCell) const
 {
-	for (int n = 0; n < nMimCellNeighbours_; ++n)
-		if (mimCellNeighbours_[n] == otherCell)
-			return true;
-	return false;
+    for (int n = 0; n < nMimCellNeighbours_; ++n)
+        if (mimCellNeighbours_[n] == otherCell)
+            return true;
+    return false;
 }
 
 // Return list of all Cell neighbours

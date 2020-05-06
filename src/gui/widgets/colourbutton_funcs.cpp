@@ -1,22 +1,22 @@
 /*
-	*** Colour Button
-	*** src/gui/widgets/colourbutton_funcs.cpp
-	Copyright T. Youngs 2013-2020
+    *** Colour Button
+    *** src/gui/widgets/colourbutton_funcs.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/widgets/colourbutton.hui"
@@ -32,8 +32,8 @@ ColourButton::ColourButton(QWidget *parent) : QPushButton(parent) {}
 // Set displayed colour
 void ColourButton::setColour(QColor colour)
 {
-	colour_ = colour;
-	repaint();
+    colour_ = colour;
+    repaint();
 }
 
 // Return displayed colour
@@ -42,25 +42,25 @@ QColor ColourButton::colour() { return colour_; }
 // Select new colour
 bool ColourButton::selectColour()
 {
-	// Request a colour dialog
-	QColor newcol = QColorDialog::getColor(colour_.rgba(), this, "Select new colour", QColorDialog::ShowAlphaChannel);
-	if (!newcol.isValid())
-		return false;
+    // Request a colour dialog
+    QColor newcol = QColorDialog::getColor(colour_.rgba(), this, "Select new colour", QColorDialog::ShowAlphaChannel);
+    if (!newcol.isValid())
+        return false;
 
-	colour_ = newcol;
-	repaint();
-	return true;
+    colour_ = newcol;
+    repaint();
+    return true;
 }
 
 // Paint event callback
 void ColourButton::paintEvent(QPaintEvent *event)
 {
-	QPainter painter(this);
+    QPainter painter(this);
 
-	// Draw single rectangle and we're done
-	QBrush brush(colour_);
-	QRectF rect(3.0, 3.0, width() - 3.0, height() - 3.0);
-	painter.setBrush(brush);
-	painter.drawRect(rect);
-	painter.end();
+    // Draw single rectangle and we're done
+    QBrush brush(colour_);
+    QRectF rect(3.0, 3.0, width() - 3.0, height() - 3.0);
+    painter.setBrush(brush);
+    painter.drawRect(rect);
+    painter.end();
 }

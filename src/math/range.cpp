@@ -1,30 +1,30 @@
 /*
-	*** Range
-	*** src/math/range.cpp
-	Copyright T. Youngs 2013-2020
+    *** Range
+    *** src/math/range.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "math/range.h"
 
 Range::Range(double minimum, double maximum)
 {
-	minimum_ = minimum;
-	maximum_ = maximum;
+    minimum_ = minimum;
+    maximum_ = maximum;
 }
 
 /*
@@ -34,8 +34,8 @@ Range::Range(double minimum, double maximum)
 // Set range
 void Range::set(double minimum, double maximum)
 {
-	minimum_ = minimum;
-	maximum_ = maximum;
+    minimum_ = minimum;
+    maximum_ = maximum;
 }
 
 // Set minimum for range
@@ -53,7 +53,7 @@ double Range::maximum() const { return maximum_; }
 // Return whether the range contains the specified value
 bool Range::contains(double d) const
 {
-	if ((d < minimum_) || (d > maximum_))
-		return false;
-	return true;
+    if ((d < minimum_) || (d > maximum_))
+        return false;
+    return true;
 }

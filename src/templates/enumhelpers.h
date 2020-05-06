@@ -1,22 +1,22 @@
 /*
-	*** Enum Helper Templates
-	*** src/templates/enumhelpers.h
-	Copyright T. Youngs 2012-2020
+    *** Enum Helper Templates
+    *** src/templates/enumhelpers.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef DISSOLVE_ENUMHELPERS_H
@@ -25,45 +25,45 @@
 // Enum Broadcast Vessel
 template <class E> class EnumCast
 {
-	/*
-	 * Template-only class that takes reference to an enum and allows the integer conversion to be passed by reference to
-	 * the broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the
-	 * original enum ref.
-	 */
-	public:
-	EnumCast(E &originalEnum) : originalEnum_(originalEnum) { integerValue_ = originalEnum_; }
-	~EnumCast()
-	{
-		// Cast integer variable back into enum
-		originalEnum_ = (E)integerValue_;
-	}
-	operator int &() { return integerValue_; }
+    /*
+     * Template-only class that takes reference to an enum and allows the integer conversion to be passed by reference to
+     * the broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the
+     * original enum ref.
+     */
+    public:
+    EnumCast(E &originalEnum) : originalEnum_(originalEnum) { integerValue_ = originalEnum_; }
+    ~EnumCast()
+    {
+        // Cast integer variable back into enum
+        originalEnum_ = (E)integerValue_;
+    }
+    operator int &() { return integerValue_; }
 
-	private:
-	// Original enum object
-	E &originalEnum_;
-	// Integer conversion of enum
-	int integerValue_;
+    private:
+    // Original enum object
+    E &originalEnum_;
+    // Integer conversion of enum
+    int integerValue_;
 };
 
 // Enum Container
 template <class E> class EnumContainer
 {
-	/*
-	 * Template-only class that stores an enum for inclusion in a list or similar.
-	 */
-	public:
-	EnumContainer(E value = 0) : value_(value) {}
-	operator E() { return value_; }
-	void operator=(const E value) { value_ = value; }
+    /*
+     * Template-only class that stores an enum for inclusion in a list or similar.
+     */
+    public:
+    EnumContainer(E value = 0) : value_(value) {}
+    operator E() { return value_; }
+    void operator=(const E value) { value_ = value; }
 
-	private:
-	// Original enum
-	E value_;
+    private:
+    // Original enum
+    E value_;
 
-	public:
-	// Return value
-	E &value() { return value_; }
+    public:
+    // Return value
+    E &value() { return value_; }
 };
 
 #endif

@@ -1,22 +1,22 @@
 /*
-	*** Integrator1D Gizmo
-	*** src/gui/integrator1dgizmo_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Integrator1D Gizmo
+    *** src/gui/integrator1dgizmo_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/integrator1dgizmo.h"
@@ -29,23 +29,23 @@
 
 Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
 {
-	// Set up user interface
-	ui_.setupUi(this);
+    // Set up user interface
+    ui_.setupUi(this);
 
-	// Grab the DataViewer pointer from the
-	View &view = ui_.PlotWidget->view();
-	view.setViewType(View::FlatXYView);
-	view.axes().setTitle(0, "X");
-	view.axes().setRange(0, 0.0, 10.0);
-	view.axes().setTitle(1, "Y");
-	view.axes().setRange(1, 0.0, 10.0);
+    // Grab the DataViewer pointer from the
+    View &view = ui_.PlotWidget->view();
+    view.setViewType(View::FlatXYView);
+    view.axes().setTitle(0, "X");
+    view.axes().setRange(0, 0.0, 10.0);
+    view.axes().setTitle(1, "Y");
+    view.axes().setRange(1, 0.0, 10.0);
 
-	integrationTarget_ = NULL;
-	integrals_[0] = 0.0;
-	integrals_[1] = 0.0;
-	integrals_[2] = 0.0;
+    integrationTarget_ = NULL;
+    integrals_[0] = 0.0;
+    integrals_[1] = 0.0;
+    integrals_[2] = 0.0;
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 Integrator1DGizmo::~Integrator1DGizmo() {}
@@ -67,18 +67,18 @@ void Integrator1DGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqu
 // Update controls within widget
 void Integrator1DGizmo::updateControls()
 {
-	refreshing_ = true;
+    refreshing_ = true;
 
-	// Refresh the graph
-	ui_.PlotWidget->postRedisplay();
+    // Refresh the graph
+    ui_.PlotWidget->postRedisplay();
 
-	// Get limits from data
-	double xMin = integrationTarget_ ? integrationTarget_->xAxis().first() : 0.0;
-	double xMax = integrationTarget_ ? integrationTarget_->xAxis().last() : 1.0;
-	ui_.Region1MinSpin->setRange(xMin, xMax);
-	ui_.Region1MaxSpin->setRange(xMin, xMax);
+    // Get limits from data
+    double xMin = integrationTarget_ ? integrationTarget_->xAxis().first() : 0.0;
+    double xMax = integrationTarget_ ? integrationTarget_->xAxis().last() : 1.0;
+    ui_.Region1MinSpin->setRange(xMin, xMax);
+    ui_.Region1MaxSpin->setRange(xMin, xMax);
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 // Disable sensitive controls within widget
@@ -94,25 +94,25 @@ void Integrator1DGizmo::enableSensitiveControls() {}
 // Calculate integrals from current limits
 void Integrator1DGizmo::calculateIntegrals()
 {
-	// Check for a valid Data target
-	// Region 1
-	// 	if (ui_.Region1Group->isChecked())
-	// 	{
-	// 		double integral = Integrator::trapezoid(
-	// 	}
+    // Check for a valid Data target
+    // Region 1
+    // 	if (ui_.Region1Group->isChecked())
+    // 	{
+    // 		double integral = Integrator::trapezoid(
+    // 	}
 }
 
 // Set data targets in graphs
 void Integrator1DGizmo::setGraphDataTargets()
 {
-	// Remove any current data
-	ui_.PlotWidget->clearRenderables();
+    // Remove any current data
+    ui_.PlotWidget->clearRenderables();
 
-	if (!integrationTarget_)
-		return;
+    if (!integrationTarget_)
+        return;
 
-	Renderable *data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(),
-							    integrationTarget_->name());
+    Renderable *data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(),
+                                                        integrationTarget_->name());
 }
 
 /*
@@ -123,21 +123,21 @@ void Integrator1DGizmo::setGraphDataTargets()
 bool Integrator1DGizmo::writeState(LineParser &parser) const
 {
 
-	// Write DataViewer state
-	if (!ui_.PlotWidget->writeSession(parser))
-		return false;
+    // Write DataViewer state
+    if (!ui_.PlotWidget->writeSession(parser))
+        return false;
 
-	return true;
+    return true;
 }
 
 // Read widget state through specified LineParser
 bool Integrator1DGizmo::readState(LineParser &parser)
 {
-	// Read the DataViewer session info
-	if (!ui_.PlotWidget->readSession(parser))
-		return false;
+    // Read the DataViewer session info
+    if (!ui_.PlotWidget->readSession(parser))
+        return false;
 
-	return true;
+    return true;
 }
 
 /*
@@ -146,17 +146,17 @@ bool Integrator1DGizmo::readState(LineParser &parser)
 
 void Integrator1DGizmo::on_TargetSelectButton_clicked(bool checked)
 {
-	SelectGenericItemDialog genericItemDialog(this, dissolve_);
-	Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
-	if (!item)
-		return;
+    SelectGenericItemDialog genericItemDialog(this, dissolve_);
+    Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
+    if (!item)
+        return;
 
-	// Set target
-	integrationTarget_ = item;
+    // Set target
+    integrationTarget_ = item;
 
-	// Refresh graph data
-	setGraphDataTargets();
+    // Refresh graph data
+    setGraphDataTargets();
 
-	// Set limits in controls etc.
-	updateControls();
+    // Set limits in controls etc.
+    updateControls();
 }

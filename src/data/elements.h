@@ -1,22 +1,22 @@
 /*
-	*** Element Data
-	*** src/data/elements.h
-	Copyright T. Youngs 2012-2020
+    *** Element Data
+    *** src/data/elements.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef DISSOLVE_DATA_ELEMENTS_H
@@ -29,103 +29,103 @@
 // Basic Element Definition (Z, name, symbol)
 class Element
 {
-	public:
-	Element(int Z, const char *name, const char *symbol, int group);
+    public:
+    Element(int Z, const char *name, const char *symbol, int group);
 
-	private:
-	// Atomic number (Z)
-	int Z_;
-	// Element name
-	const char *name_;
-	// Element symbol
-	const char *symbol_;
-	// Group in periodic table
-	int group_;
+    private:
+    // Atomic number (Z)
+    int Z_;
+    // Element name
+    const char *name_;
+    // Element symbol
+    const char *symbol_;
+    // Group in periodic table
+    int group_;
 
-	public:
-	// Return atomic number (Z)
-	int Z() const;
-	// Return whether the element is unknown
-	bool isUnknown() const;
-	// Return name of element
-	const char *name() const;
-	// Return symbol of element
-	const char *symbol() const;
-	// Return group for element
-	int group() const;
+    public:
+    // Return atomic number (Z)
+    int Z() const;
+    // Return whether the element is unknown
+    bool isUnknown() const;
+    // Return name of element
+    const char *name() const;
+    // Return symbol of element
+    const char *symbol() const;
+    // Return group for element
+    int group() const;
 };
 
 // Basic Elements Base Class
 class Elements
 {
-	/*
-	 * Element Data
-	 */
-	private:
-	// Instantiate / return array of element data
-	static Element *elements();
+    /*
+     * Element Data
+     */
+    private:
+    // Instantiate / return array of element data
+    static Element *elements();
 
-	public:
-	// Return Element with corresponding Z
-	static Element &element(int Z);
-	// Return Element with corresponding symbol
-	static Element &element(const char *symbol);
-	// Return pointer to Element with corresponding Z
-	static Element *elementPointer(int Z);
-	// Return pointer to Element with corresponding symbol
-	static Element *elementPointer(const char *symbol);
-	// Return total number of defined elements
-	static int nElements();
-	// Return name of element with specified Z
-	static const char *name(int Z);
-	// Return symbol of element with specified Z
-	static const char *symbol(int Z);
-	// Return group for element with specified Z
-	static int group(int Z);
+    public:
+    // Return Element with corresponding Z
+    static Element &element(int Z);
+    // Return Element with corresponding symbol
+    static Element &element(const char *symbol);
+    // Return pointer to Element with corresponding Z
+    static Element *elementPointer(int Z);
+    // Return pointer to Element with corresponding symbol
+    static Element *elementPointer(const char *symbol);
+    // Return total number of defined elements
+    static int nElements();
+    // Return name of element with specified Z
+    static const char *name(int Z);
+    // Return symbol of element with specified Z
+    static const char *symbol(int Z);
+    // Return group for element with specified Z
+    static int group(int Z);
 
-	/*
-	 * Helper Functions
-	 */
-	public:
-	// Create array of Lists, with array size equal to number of elements defined
-	template <class T> static void createElementListArray(Array<List<T>> &listArray)
-	{
-		/*
-		 * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
-		 * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
-		 * again from the destruction of the static array.
-		 */
-		listArray.initialise(Elements::nElements());
-		for (int n = 0; n < nElements(); ++n)
-			listArray[n].setDisownOnDestruction(true);
-	}
-	// Create array of RefLists, with array size equal to number of elements defined
-	template <class T> static void createElementRefListArray(Array<RefList<T>> &listArray)
-	{
-		listArray.initialise(Elements::nElements());
-	}
+    /*
+     * Helper Functions
+     */
+    public:
+    // Create array of Lists, with array size equal to number of elements defined
+    template <class T> static void createElementListArray(Array<List<T>> &listArray)
+    {
+        /*
+         * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
+         * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
+         * again from the destruction of the static array.
+         */
+        listArray.initialise(Elements::nElements());
+        for (int n = 0; n < nElements(); ++n)
+            listArray[n].setDisownOnDestruction(true);
+    }
+    // Create array of RefLists, with array size equal to number of elements defined
+    template <class T> static void createElementRefListArray(Array<RefList<T>> &listArray)
+    {
+        listArray.initialise(Elements::nElements());
+    }
 };
 
 // Reference to Element, for use in constructing derived/associated data classes
 class ElementReference
 {
-	public:
-	ElementReference(int Z);
-	virtual ~ElementReference();
+    public:
+    ElementReference(int Z);
+    virtual ~ElementReference();
 
-	private:
-	// Referenced Element
-	const Element &element_;
+    private:
+    // Referenced Element
+    const Element &element_;
 
-	public:
-	// Return referenced element
-	const Element &element() const;
-	// Return atomic number (Z)
-	int Z() const;
-	// Return name of element
-	const char *name() const;
-	// Return symbol of element
-	const char *symbol() const;
+    public:
+    // Return referenced element
+    const Element &element() const;
+    // Return atomic number (Z)
+    int Z() const;
+    // Return name of element
+    const char *name() const;
+    // Return symbol of element
+    const char *symbol() const;
 };
 
 // Element defines

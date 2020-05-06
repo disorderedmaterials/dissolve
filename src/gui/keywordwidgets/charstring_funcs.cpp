@@ -1,41 +1,41 @@
 /*
-	*** Keyword Widget - CharString
-	*** src/gui/keywordwidgets/charstring_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Keyword Widget - CharString
+    *** src/gui/keywordwidgets/charstring_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "genericitems/listhelper.h"
 #include "gui/keywordwidgets/charstring.hui"
 
 CharStringKeywordWidget::CharStringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
-	: QLineEdit(parent), KeywordWidgetBase(coreData)
+    : QLineEdit(parent), KeywordWidgetBase(coreData)
 {
-	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<CharStringKeyword *>(keyword);
-	if (!keyword_)
-		Messenger::error("Couldn't cast base keyword '%s' into CharStringKeyword.\n", keyword->name());
-	else
-	{
-		setText(keyword_->asString());
-	}
+    // Cast the pointer up into the parent class type
+    keyword_ = dynamic_cast<CharStringKeyword *>(keyword);
+    if (!keyword_)
+        Messenger::error("Couldn't cast base keyword '%s' into CharStringKeyword.\n", keyword->name());
+    else
+    {
+        setText(keyword_->asString());
+    }
 
-	// Connect the currentTextChanged signal to our own slot
-	connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
+    // Connect the currentTextChanged signal to our own slot
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
 }
 
 /*
@@ -45,12 +45,12 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget *parent, KeywordBase *k
 // Line edit text changed
 void CharStringKeywordWidget::myTextChanged(const QString &text)
 {
-	if (refreshing_)
-		return;
+    if (refreshing_)
+        return;
 
-	keyword_->setData(qPrintable(text));
+    keyword_->setData(qPrintable(text));
 
-	emit(keywordValueChanged(keyword_->optionMask()));
+    emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
@@ -60,9 +60,9 @@ void CharStringKeywordWidget::myTextChanged(const QString &text)
 // Update value displayed in widget
 void CharStringKeywordWidget::updateValue()
 {
-	refreshing_ = true;
+    refreshing_ = true;
 
-	setText(keyword_->asString());
+    setText(keyword_->asString());
 
-	refreshing_ = false;
+    refreshing_ = false;
 }

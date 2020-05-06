@@ -1,22 +1,22 @@
 /*
-	*** SpeciesAtom Definition
-	*** src/classes/speciesatom.cpp
-	Copyright T. Youngs 2012-2020
+    *** SpeciesAtom Definition
+    *** src/classes/speciesatom.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/speciesatom.h"
@@ -29,12 +29,12 @@
 
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
-	element_ = NULL;
-	charge_ = 0.0;
-	atomType_ = NULL;
-	r_.zero();
-	index_ = -1;
-	selected_ = false;
+    element_ = NULL;
+    charge_ = 0.0;
+    atomType_ = NULL;
+    r_.zero();
+    index_ = -1;
+    selected_ = false;
 }
 
 SpeciesAtom::~SpeciesAtom() {}
@@ -48,17 +48,17 @@ const Species *SpeciesAtom::species() const { return parent_; }
 // Set basic SpeciesAtom properties
 void SpeciesAtom::set(Element *element, double rx, double ry, double rz, double q)
 {
-	element_ = element;
-	r_.set(rx, ry, rz);
-	charge_ = q;
+    element_ = element;
+    r_.set(rx, ry, rz);
+    charge_ = q;
 }
 
 // Set basic SpeciesAtom properties
 void SpeciesAtom::set(Element *element, const Vec3<double> r, double q)
 {
-	element_ = element;
-	r_ = r;
-	charge_ = q;
+    element_ = element;
+    r_ = r;
+    charge_ = q;
 }
 
 // Set atomic element
@@ -79,18 +79,17 @@ double SpeciesAtom::charge() const { return charge_; }
 // Set AtomType of SpeciesAtom
 void SpeciesAtom::setAtomType(AtomType *at)
 {
-	// Check elements
-	if (at && (at->element() != element_))
-	{
-		Messenger::warn(
-			"Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n",
-			at->name(), element_->symbol(), at->element()->symbol());
-		return;
-	}
+    // Check elements
+    if (at && (at->element() != element_))
+    {
+        Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n",
+                        at->name(), element_->symbol(), at->element()->symbol());
+        return;
+    }
 
-	atomType_ = at;
-	if (parent_)
-		parent_->bumpAtomTypesVersion();
+    atomType_ = at;
+    if (parent_)
+        parent_->bumpAtomTypesVersion();
 }
 
 // Return SpeciesAtomType of SpeciesAtom
@@ -118,10 +117,10 @@ bool SpeciesAtom::isSelected() const { return selected_; }
 // Add Bond reference
 void SpeciesAtom::addBond(SpeciesBond *bond)
 {
-	if (find(bonds_.begin(), bonds_.end(), bond) == bonds_.end())
-	{
-		bonds_.push_back(bond);
-	}
+    if (find(bonds_.begin(), bonds_.end(), bond) == bonds_.end())
+    {
+        bonds_.push_back(bond);
+    }
 }
 
 // Remove Bond reference
@@ -142,23 +141,23 @@ const std::vector<SpeciesBond *> &SpeciesAtom::bonds() const { return bonds_; }
 // Return whether Bond to specified Atom exists
 SpeciesBond *SpeciesAtom::hasBond(SpeciesAtom *partner)
 {
-	auto result =
-		find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond *bond) { return bond->partner(this) == partner; });
-	return result == bonds_.end() ? nullptr : *result;
+    auto result =
+        find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond *bond) { return bond->partner(this) == partner; });
+    return result == bonds_.end() ? nullptr : *result;
 }
 
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle *angle)
 {
-	angles_.push_back(angle);
+    angles_.push_back(angle);
 
-	// Insert the pointers to the other Atoms into the exclusions_ list
-	if (angle->i() != this)
-		exclusions_.add(angle->i());
-	if (angle->j() != this)
-		exclusions_.add(angle->j());
-	if (angle->k() != this)
-		exclusions_.add(angle->k());
+    // Insert the pointers to the other Atoms into the exclusions_ list
+    if (angle->i() != this)
+        exclusions_.add(angle->i());
+    if (angle->j() != this)
+        exclusions_.add(angle->j());
+    if (angle->k() != this)
+        exclusions_.add(angle->k());
 }
 
 // Remove angle reference
@@ -176,30 +175,30 @@ const std::vector<SpeciesAngle *> &SpeciesAtom::angles() const { return angles_;
 // Add specified SpeciesTorsion to Atom
 void SpeciesAtom::addTorsion(SpeciesTorsion *torsion, double scaling14)
 {
-	torsions_.push_back(torsion);
+    torsions_.push_back(torsion);
 
-	// Insert the pointers to the other Atoms into the exclusions_ list
-	if (torsion->i() == this)
-	{
-		exclusions_.add(torsion->j());
-		exclusions_.add(torsion->k());
-		exclusions_.add(torsion->l(), scaling14);
-	}
-	else if (torsion->l() == this)
-	{
-		exclusions_.add(torsion->i(), scaling14);
-		exclusions_.add(torsion->j());
-		exclusions_.add(torsion->k());
-	}
-	else
-	{
-		exclusions_.add(torsion->i());
-		exclusions_.add(torsion->l());
-		if (torsion->j() != this)
-			exclusions_.add(torsion->j());
-		if (torsion->k() != this)
-			exclusions_.add(torsion->k());
-	}
+    // Insert the pointers to the other Atoms into the exclusions_ list
+    if (torsion->i() == this)
+    {
+        exclusions_.add(torsion->j());
+        exclusions_.add(torsion->k());
+        exclusions_.add(torsion->l(), scaling14);
+    }
+    else if (torsion->l() == this)
+    {
+        exclusions_.add(torsion->i(), scaling14);
+        exclusions_.add(torsion->j());
+        exclusions_.add(torsion->k());
+    }
+    else
+    {
+        exclusions_.add(torsion->i());
+        exclusions_.add(torsion->l());
+        if (torsion->j() != this)
+            exclusions_.add(torsion->j());
+        if (torsion->k() != this)
+            exclusions_.add(torsion->k());
+    }
 }
 
 // Remove torsion reference
@@ -217,20 +216,20 @@ const std::vector<SpeciesTorsion *> &SpeciesAtom::torsions() const { return tors
 // Return scaling factor to employ with specified Atom
 double SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
-	// Look through our ordered list of excluded Atom interactions
-	for (int n = 0; n < exclusions_.nItems(); ++n)
-	{
-		// If the current item matches our Atom 'j', we have found a match
-		if (exclusions_.pointer(n) == j)
-			return exclusions_.data(n);
+    // Look through our ordered list of excluded Atom interactions
+    for (int n = 0; n < exclusions_.nItems(); ++n)
+    {
+        // If the current item matches our Atom 'j', we have found a match
+        if (exclusions_.pointer(n) == j)
+            return exclusions_.data(n);
 
-		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the
-		// list
-		if (exclusions_.pointer(n) > j)
-			return 1.0;
-	}
+        // If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the
+        // list
+        if (exclusions_.pointer(n) > j)
+            return 1.0;
+    }
 
-	return 1.0;
+    return 1.0;
 }
 
 /*
@@ -243,9 +242,9 @@ void SpeciesAtom::setCoordinate(int index, double value) { r_.set(index, value);
 // Set coordinates
 void SpeciesAtom::setCoordinates(double x, double y, double z)
 {
-	r_.x = x;
-	r_.y = y;
-	r_.z = z;
+    r_.x = x;
+    r_.y = y;
+    r_.z = z;
 }
 
 // Set coordinates (from Vec3)

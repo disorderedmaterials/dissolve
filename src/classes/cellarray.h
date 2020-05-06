@@ -1,22 +1,22 @@
 /*
-	*** Cell Array
-	*** src/classes/cellarray.h
-	Copyright T. Youngs 2012-2020
+    *** Cell Array
+    *** src/classes/cellarray.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef DISSOLVE_CELLARRAY_H
@@ -32,64 +32,64 @@ class Cell;
 // Cell Array
 class CellArray
 {
-	public:
-	CellArray();
-	~CellArray();
+    public:
+    CellArray();
+    ~CellArray();
 
-	/*
-	 * Cell Data
-	 */
-	private:
-	// Cell divisions along each axis
-	Vec3<int> divisions_;
-	// Fractional Cell size
-	Vec3<double> fractionalCellSize_;
-	// Real Cell size
-	Vec3<double> realCellSize_;
-	// Cell extents out from given central cell
-	Vec3<int> extents_;
-	// List of Cell neighbour indices (within pair potential range)
-	List<ListVec3<int>> neighbourIndices_;
-	// Cell axes
-	Matrix3 axes_;
-	// Total number of Cells in Box
-	int nCells_;
-	// Cell array (one-dimensional)
-	Cell *cells_;
-	// Box associated with this cell division scheme
-	const Box *box_;
+    /*
+     * Cell Data
+     */
+    private:
+    // Cell divisions along each axis
+    Vec3<int> divisions_;
+    // Fractional Cell size
+    Vec3<double> fractionalCellSize_;
+    // Real Cell size
+    Vec3<double> realCellSize_;
+    // Cell extents out from given central cell
+    Vec3<int> extents_;
+    // List of Cell neighbour indices (within pair potential range)
+    List<ListVec3<int>> neighbourIndices_;
+    // Cell axes
+    Matrix3 axes_;
+    // Total number of Cells in Box
+    int nCells_;
+    // Cell array (one-dimensional)
+    Cell *cells_;
+    // Box associated with this cell division scheme
+    const Box *box_;
 
-	public:
-	// Generate array for provided Box
-	bool generate(const Box *box, double cellSize, double pairPotentialRange);
-	// Scale Cells sizes by supplied factor
-	void scale(double factor);
-	// Clear Cell arrays
-	void clear();
-	// Return number of Cells for box
-	int nCells() const;
-	// Return cell divisions along each axis
-	Vec3<int> divisions() const;
-	// Return real Cell dimensions
-	Vec3<double> realCellSize() const;
-	// Return cell extents out from given central cell
-	Vec3<int> extents() const;
-	// Return list of Cell neighbour indices
-	List<ListVec3<int>> neighbourIndices() const;
-	// Retrieve Cell with (wrapped) grid reference specified
-	Cell *cell(int x, int y, int z) const;
-	// Retrieve Cell with id specified
-	Cell *cell(int id) const;
-	// Return Cell which contains specified coordinate
-	Cell *cell(const Vec3<double> r) const;
-	// Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
-	bool withinRange(const Cell *a, const Cell *b, double distance);
-	// Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
-	bool minimumImageRequired(const Cell *a, const Cell *b, double distance);
-	// Return the minimum image grid delta between the two specified Cells
-	Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
-	// Return the minimum image equivalent of the supplied grid delta
-	Vec3<int> mimGridDelta(Vec3<int> delta) const;
+    public:
+    // Generate array for provided Box
+    bool generate(const Box *box, double cellSize, double pairPotentialRange);
+    // Scale Cells sizes by supplied factor
+    void scale(double factor);
+    // Clear Cell arrays
+    void clear();
+    // Return number of Cells for box
+    int nCells() const;
+    // Return cell divisions along each axis
+    Vec3<int> divisions() const;
+    // Return real Cell dimensions
+    Vec3<double> realCellSize() const;
+    // Return cell extents out from given central cell
+    Vec3<int> extents() const;
+    // Return list of Cell neighbour indices
+    List<ListVec3<int>> neighbourIndices() const;
+    // Retrieve Cell with (wrapped) grid reference specified
+    Cell *cell(int x, int y, int z) const;
+    // Retrieve Cell with id specified
+    Cell *cell(int id) const;
+    // Return Cell which contains specified coordinate
+    Cell *cell(const Vec3<double> r) const;
+    // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
+    bool withinRange(const Cell *a, const Cell *b, double distance);
+    // Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
+    bool minimumImageRequired(const Cell *a, const Cell *b, double distance);
+    // Return the minimum image grid delta between the two specified Cells
+    Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
+    // Return the minimum image equivalent of the supplied grid delta
+    Vec3<int> mimGridDelta(Vec3<int> delta) const;
 };
 
 #endif
