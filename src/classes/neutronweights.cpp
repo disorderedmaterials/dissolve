@@ -74,9 +74,8 @@ void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 				     double isotopologueRelativePopulation)
 {
 	// Does an Isotopologues definition already exist for the supplied Species?
-	auto it = std::find_if(isotopologueMixtures_.begin(), isotopologueMixtures_.end(), [&](Isotopologues &data) {
-		return data.species() == sp;
-	});
+	auto it = std::find_if(isotopologueMixtures_.begin(), isotopologueMixtures_.end(),
+			       [&](Isotopologues &data) { return data.species() == sp; });
 	if (it == isotopologueMixtures_.end())
 	{
 		isotopologueMixtures_.emplace_back(sp, speciesPopulation);
@@ -90,9 +89,8 @@ void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 bool NeutronWeights::containsIsotopologues(Species *sp) const
 {
 	// Does an Isotopologues definition already exist for the supplied Species?
-	auto it = std::find_if(isotopologueMixtures_.cbegin(), isotopologueMixtures_.cend(), [&](const Isotopologues &data) {
-		return data.species() == sp;
-	});
+	auto it = std::find_if(isotopologueMixtures_.cbegin(), isotopologueMixtures_.cend(),
+			       [&](const Isotopologues &data) { return data.species() == sp; });
 
 	return it != isotopologueMixtures_.end();
 }
@@ -108,11 +106,10 @@ void NeutronWeights::print() const
 		{
 			if (it == topes.mix().begin())
 				Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes.species()->name(),
-						 it->isotopologue()->name(), topes.speciesPopulation(),
-						 it->weight());
+						 it->isotopologue()->name(), topes.speciesPopulation(), it->weight());
 			else
-				Messenger::print("                   %-15s              %f\n",
-						 it->isotopologue()->name(), it->weight());
+				Messenger::print("                   %-15s              %f\n", it->isotopologue()->name(),
+						 it->weight());
 		}
 	}
 

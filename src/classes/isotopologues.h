@@ -36,7 +36,7 @@ class LineParser;
 class Isotopologues : public GenericItemBase
 {
 	public:
-	Isotopologues(Species* species = nullptr, int speciesPopulation = 0);
+	Isotopologues(Species *species = nullptr, int speciesPopulation = 0);
 	~Isotopologues();
 
 	/*

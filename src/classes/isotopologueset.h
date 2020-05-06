@@ -39,7 +39,7 @@ class LineParser;
 class IsotopologueSet : public GenericItemBase
 {
 	public:
-	IsotopologueSet(IsotopologueCollection* parent = nullptr, Configuration* cfg = nullptr);
+	IsotopologueSet(IsotopologueCollection *parent = nullptr, Configuration *cfg = nullptr);
 	~IsotopologueSet();
 
 	/*
