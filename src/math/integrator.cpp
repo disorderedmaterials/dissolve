@@ -37,8 +37,8 @@ double Integrator::trapezoid(const Data1D &data)
         return 0.0;
 
     // Grab data arrays
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &y = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &y = data.constValues();
 
     double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
     for (int n = 1; n < x.nItems(); ++n)
@@ -60,8 +60,8 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
         return 0.0;
 
     // Grab data arrays
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &y = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &y = data.constValues();
 
     double total = 0.0, y0, y1, x0, x1;
     int nPoints = 0;
@@ -103,8 +103,8 @@ double Integrator::absTrapezoid(const Data1D &data)
         return 0.0;
 
     // Grab data arrays
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &y = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &y = data.constValues();
 
     double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
     for (int n = 1; n < x.nItems(); ++n)
@@ -122,7 +122,7 @@ double Integrator::absTrapezoid(const Data1D &data)
 double Integrator::sum(const Data1D &data)
 {
     // Grab data array
-    const Array<double> &values = data.constValues();
+    const auto &values = data.constValues();
 
     double total = 0.0;
 
@@ -136,8 +136,8 @@ double Integrator::sum(const Data1D &data)
 double Integrator::sum(const Data1D &data, double xMin, double xMax)
 {
     // Grab data arrays
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &values = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &values = data.constValues();
 
     double total = 0.0;
 
@@ -161,7 +161,7 @@ double Integrator::sum(const Data1D &data, const Range range) { return sum(data,
 double Integrator::absSum(const Data1D &data)
 {
     // Grab data array
-    const Array<double> &values = data.constValues();
+    const auto &values = data.constValues();
 
     double total = 0.0;
 
@@ -175,8 +175,8 @@ double Integrator::absSum(const Data1D &data)
 double Integrator::absSum(const Data1D &data, double xMin, double xMax)
 {
     // Grab data arrays
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &values = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &values = data.constValues();
 
     double total = 0.0;
 
@@ -200,7 +200,7 @@ double Integrator::absSum(const Data1D &data, const Range range) { return absSum
 double Integrator::sumOfSquares(const Data1D &data)
 {
     // Grab data array
-    const Array<double> &values = data.constValues();
+    const auto &values = data.constValues();
 
     double total = 0.0;
 
@@ -214,8 +214,8 @@ double Integrator::sumOfSquares(const Data1D &data)
 double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
 {
     // Grab data arrays
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &values = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &values = data.constValues();
 
     double total = 0.0;
 

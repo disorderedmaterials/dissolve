@@ -66,11 +66,11 @@ Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat(
 // Export Data1D as simple XY (or XYE) data
 bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
 {
-    const Array<double> &x = data.constXAxis();
-    const Array<double> &values = data.constValues();
+    const auto &x = data.constXAxis();
+    const auto &values = data.constValues();
     if (data.valuesHaveErrors())
     {
-        const Array<double> &errors = data.constErrors();
+        const auto &errors = data.constErrors();
         for (int n = 0; n < x.nItems(); ++n)
             if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x.constAt(n), values.constAt(n), errors.constAt(n)))
                 return false;

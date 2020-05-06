@@ -37,11 +37,11 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
         return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
 
     // Set up our data
-    const Vec3<double> xRange = keywords_.asVec3Double("XRange");
+    const auto xRange = keywords_.asVec3Double("XRange");
     const double xMin = xRange.x;
     const double xMax = xRange.y;
     const double xDelta = xRange.z;
-    const Vec3<double> yRange = keywords_.asVec3Double("YRange");
+    const auto yRange = keywords_.asVec3Double("YRange");
     const double yMin = yRange.x;
     const double yMax = yRange.y;
     const double yDelta = yRange.z;

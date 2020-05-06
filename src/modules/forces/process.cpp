@@ -504,7 +504,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 moduleData.contains("ReferenceFZ", uniqueName()))
             {
                 // Grab reference force arrays and check sizes
-                const Array<double> &referenceFx =
+                const auto &referenceFx =
                     GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
                 {
@@ -513,7 +513,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      referenceFx.nItems(), cfg->name(), cfg->nAtoms());
                     return false;
                 }
-                const Array<double> &referenceFy =
+                const auto &referenceFy =
                     GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
                 {
@@ -522,7 +522,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      referenceFy.nItems(), cfg->name(), cfg->nAtoms());
                     return false;
                 }
-                const Array<double> &referenceFz =
+                const auto &referenceFz =
                     GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
                 {

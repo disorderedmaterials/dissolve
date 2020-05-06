@@ -35,9 +35,9 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    const Vec3<double> rangeX = keywords_.asVec3Double("RangeX");
-    const Vec3<double> rangeY = keywords_.asVec3Double("RangeY");
-    const Vec3<double> rangeZ = keywords_.asVec3Double("RangeZ");
+    const auto rangeX = keywords_.asVec3Double("RangeX");
+    const auto rangeY = keywords_.asVec3Double("RangeY");
+    const auto rangeZ = keywords_.asVec3Double("RangeZ");
     collectVector_->setKeyword<Vec3<double>>("RangeX", rangeX);
     collectVector_->setKeyword<Vec3<double>>("RangeY", rangeY);
     collectVector_->setKeyword<Vec3<double>>("RangeZ", rangeZ);
@@ -48,7 +48,7 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", sameMoleculeExclusions);
 
     // Grab Configuration pointer
-    Configuration *cfg = targetConfigurations_.firstItem();
+    auto *cfg = targetConfigurations_.firstItem();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

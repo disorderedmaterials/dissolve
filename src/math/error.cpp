@@ -69,8 +69,8 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const Array<double> &aX = A.constXAxis();
-    const Array<double> &aY = A.constValues();
+    const auto &aX = A.constXAxis();
+    const auto &aY = A.constValues();
 
     // Generate RMSE at x values of A
     double rmse = 0.0, delta;
@@ -116,8 +116,8 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const Array<double> &aX = A.constXAxis();
-    const Array<double> &aY = A.constValues();
+    const auto &aX = A.constXAxis();
+    const auto &aY = A.constValues();
 
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
@@ -166,8 +166,8 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const Array<double> &aX = A.constXAxis();
-    const Array<double> &aY = A.constValues();
+    const auto &aX = A.constXAxis();
+    const auto &aY = A.constValues();
 
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
@@ -214,8 +214,8 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const Array<double> &aX = A.constXAxis();
-    const Array<double> &aY = A.constValues();
+    const auto &aX = A.constXAxis();
+    const auto &aY = A.constValues();
 
     // Calculate summed absolute error and absolute y value deviations from average
     double sume = 0.0, sumy = 0.0;
@@ -270,8 +270,8 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const Array<double> &aX = A.constXAxis();
-    const Array<double> &aY = A.constValues();
+    const auto &aX = A.constXAxis();
+    const auto &aY = A.constValues();
 
     // Accumulate sum-of-squares error at x values of A
     double rfac = 0.0, delta;

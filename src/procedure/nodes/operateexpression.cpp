@@ -49,7 +49,7 @@ OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
 // Operate on Data1D target
 bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    const Array<double> &x = targetData1D_->constXAxis();
+    const auto &x = targetData1D_->constXAxis();
     Array<double> &values = targetData1D_->values();
 
     y_->set(0.0);
@@ -72,8 +72,8 @@ bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Config
 // Operate on Data2D target
 bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    const Array<double> &x = targetData2D_->constXAxis();
-    const Array<double> &y = targetData2D_->constYAxis();
+    const auto &x = targetData2D_->constXAxis();
+    const auto &y = targetData2D_->constYAxis();
     Array2D<double> &values = targetData2D_->values();
 
     z_->set(0.0);
@@ -101,9 +101,9 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
 // Operate on Data3D target
 bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    const Array<double> &x = targetData3D_->constXAxis();
-    const Array<double> &y = targetData3D_->constYAxis();
-    const Array<double> &z = targetData3D_->constZAxis();
+    const auto &x = targetData3D_->constXAxis();
+    const auto &y = targetData3D_->constYAxis();
+    const auto &z = targetData3D_->constZAxis();
     Array3D<double> &values = targetData3D_->values();
 
     z_->set(0.0);

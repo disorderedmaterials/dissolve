@@ -97,9 +97,9 @@ bool Data3DExportFileFormat::exportCartesian(LineParser &parser, const Data3D &d
 {
     // Four-column format (x  y  z  value) in blocks of similar x and y value, separated by blank lines
     const Array3D<double> &values = data.constValues3D();
-    const Array<double> &xAxis = data.constXAxis();
-    const Array<double> &yAxis = data.constYAxis();
-    const Array<double> &zAxis = data.constZAxis();
+    const auto &xAxis = data.constXAxis();
+    const auto &yAxis = data.constYAxis();
+    const auto &zAxis = data.constZAxis();
     for (int x = 0; x < values.nX(); ++x)
     {
         double xVal = xAxis.constAt(x);

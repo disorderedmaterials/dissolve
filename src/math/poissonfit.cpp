@@ -225,7 +225,7 @@ bool PoissonFit::saveCoefficients(const char *filename) const
 void PoissonFit::preCalculateTerms()
 {
     // Factors involving Q
-    const Array<double> &Q = referenceData_.constXAxis();
+    const auto &Q = referenceData_.constXAxis();
     sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nValues());
     oneMinusQSqSigmaSq_.initialise(referenceData_.nValues());
     arcTanQSigma_.initialise(referenceData_.nValues());

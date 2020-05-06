@@ -87,7 +87,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
     // Grab Configuration and Box pointers
-    Configuration *cfg = targetConfigurations_.firstItem();
+    auto *cfg = targetConfigurations_.firstItem();
     const Box *box = cfg->box();
 
     // Set up process pool - must do this to ensure we are using all available processes

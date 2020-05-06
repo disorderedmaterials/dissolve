@@ -85,7 +85,7 @@ void Transformer::transformValues(Data1D &data)
         return;
 
     // Get references to x and value arrays, and take copies of each
-    const Array<double> &xAxis = data.constXAxis();
+    const auto &xAxis = data.constXAxis();
     Array<double> &values = data.values();
 
     // Data1D x and value (y) arrays are of same size - loop over number of values
@@ -109,8 +109,8 @@ void Transformer::transformValues(Data2D &data)
         return;
 
     // Get references to x and value arrays, and take copies of each
-    const Array<double> &xAxis = data.constXAxis();
-    const Array<double> &yAxis = data.constYAxis();
+    const auto &xAxis = data.constXAxis();
+    const auto &yAxis = data.constYAxis();
     Array2D<double> &values = data.values();
 
     // Data2D x and y arrays may be of different sizes
@@ -141,9 +141,9 @@ void Transformer::transformValues(Data3D &data)
         return;
 
     // Get references to x and value arrays, and take copies of each
-    const Array<double> &xAxis = data.constXAxis();
-    const Array<double> &yAxis = data.constYAxis();
-    const Array<double> &zAxis = data.constZAxis();
+    const auto &xAxis = data.constXAxis();
+    const auto &yAxis = data.constYAxis();
+    const auto &zAxis = data.constZAxis();
     Array3D<double> &values = data.values();
 
     // Data3D x, y and z arrays may be of different sizes
