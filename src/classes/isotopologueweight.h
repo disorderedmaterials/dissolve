@@ -36,7 +36,7 @@ class LineParser;
 class IsotopologueWeight : public ListItem<IsotopologueWeight>
 {
 	public:
-	IsotopologueWeight(const Isotopologue *iso = NULL, double weight = 1.0);
+	IsotopologueWeight(const Isotopologue *iso = nullptr, double weight = 1.0);
 	~IsotopologueWeight();
 
 	/*

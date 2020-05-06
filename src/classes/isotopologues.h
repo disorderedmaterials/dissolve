@@ -24,7 +24,7 @@
 
 #include "classes/isotopologueweight.h"
 #include "genericitems/base.h"
-#include "templates/list.h"
+#include <vector>
 
 // Forward Declarations
 class Species;
@@ -48,7 +48,7 @@ class Isotopologues : public GenericItemBase
 	// Integer population of associated Species
 	int speciesPopulation_;
 	// Weighted Isotopologue mixture
-	List<IsotopologueWeight> mix_;
+	std::vector<IsotopologueWeight> mix_;
 
 	public:
 	// Set associated Species and population
@@ -57,12 +57,12 @@ class Isotopologues : public GenericItemBase
 	Species *species() const;
 	// Return associated Species population
 	int speciesPopulation() const;
-	// Update Isotopologue RefList
-	void update();
+	/// Prune defunct Isotopologue entries
+	void pruneMissing();
 	// Add next available Isotopologue to list
 	bool addNext();
 	// Add specific Isotopologue to list
-	bool add(const Isotopologue *iso, double relativeWeight);
+	void add(const Isotopologue *iso, double relativeWeight);
 	// Set Isotopologue component in list
 	bool set(const Isotopologue *iso, double relativeWeight);
 	// Remove references to the specified Isotopologue
@@ -70,9 +70,9 @@ class Isotopologues : public GenericItemBase
 	// Remove the specified IsotopologueWeight
 	void remove(IsotopologueWeight *isoWeight);
 	// Return whether the mix contains the specified Isotopologue
-	const IsotopologueWeight *contains(const Isotopologue *iso) const;
-	// Return Isotopologue mix
-	const List<IsotopologueWeight> &mix() const;
+	bool contains(const Isotopologue *iso) const;
+	// Return Isotopologue/weight mix
+	const std::vector<IsotopologueWeight> &mix() const;
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
 	// Return total relative population

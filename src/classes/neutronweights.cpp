@@ -70,7 +70,7 @@ void NeutronWeights::clear()
 }
 
 // Add Isotopologue for Species
-bool NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
 				     double isotopologueRelativePopulation)
 {
 	// Does an Isotopologues definition already exist for the supplied Species?
@@ -80,13 +80,10 @@ bool NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 	if (it == isotopologueMixtures_.end())
 	{
 		isotopologueMixtures_.emplace_back(sp, speciesPopulation);
-		if (!isotopologueMixtures_.back().add(iso, isotopologueRelativePopulation))
-			return Messenger::error("Failed to add Isotopologue to IsotopologueSet.\n");
+		isotopologueMixtures_.back().add(iso, isotopologueRelativePopulation);
 	}
-	else if (!it->add(iso, isotopologueRelativePopulation))
-		return Messenger::error("Failed to add Isotopologue to IsotopologueSet.\n");
-	
-	return true;
+	else
+		it->add(iso, isotopologueRelativePopulation);
 }
 
 // Return whether an Isotopologues definition exists for the provided Species
@@ -107,16 +104,15 @@ void NeutronWeights::print() const
 	Messenger::print("  ------------------------------------------------------\n");
 	for (auto &topes : isotopologueMixtures_)
 	{
-		ListIterator<IsotopologueWeight> weightIterator(topes.mix());
-		while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+		for (auto it = topes.mix().begin(); it != topes.mix().end(); ++it)
 		{
-			if (weightIterator.isFirst())
+			if (it == topes.mix().begin())
 				Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes.species()->name(),
-						 isoWeight->isotopologue()->name(), topes.speciesPopulation(),
-						 isoWeight->weight());
+						 it->isotopologue()->name(), topes.speciesPopulation(),
+						 it->weight());
 			else
 				Messenger::print("                   %-15s              %f\n",
-						 isoWeight->isotopologue()->name(), isoWeight->weight());
+						 it->isotopologue()->name(), it->weight());
 		}
 	}
 
@@ -212,14 +208,13 @@ void NeutronWeights::calculateWeightingMatrices()
 		}
 
 		// Loop over Isotopologues defined for this mixture
-		ListIterator<IsotopologueWeight> weightIterator(topes.mix());
-		while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+		for (auto isoWeight : topes.mix())
 		{
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the
 			// fractional Isotopologue weight in the mix.
-			double weight = speciesWeight * isoWeight->weight();
+			double weight = speciesWeight * isoWeight.weight();
 
-			const Isotopologue *tope = isoWeight->isotopologue();
+			const Isotopologue *tope = isoWeight.isotopologue();
 
 			for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next())
 			{
@@ -304,17 +299,16 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
 	for (auto &topes : isotopologueMixtures_)
 	{
 		// We must now loop over the Isotopologues in the topesture
-		ListIterator<IsotopologueWeight> weightIterator(topes.mix());
-		while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+		for (auto isoWeight : topes.mix())
 		{
-			const Isotopologue *tope = isoWeight->isotopologue();
+			const Isotopologue *tope = isoWeight.isotopologue();
 
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
 			// Isotopologue
 			for (SpeciesAtom *i = topes.species()->firstAtom(); i != NULL; i = i->next())
 			{
 				Isotope *iso = tope->atomTypeIsotope(i->atomType());
-				atomTypes_.addIsotope(i->atomType(), iso, isoWeight->weight() * topes.speciesPopulation());
+				atomTypes_.addIsotope(i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
 			}
 		}
 	}

@@ -97,12 +97,11 @@ bool IsotopologueCollectionKeyword::write(LineParser &parser, const char *keywor
 	{
 		for (auto topes : set.isotopologues())
 		{
-			ListIterator<IsotopologueWeight> weightIterator(topes.mix());
-			while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+			for (auto isoWeight : topes.mix())
 			{
 				if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName,
 						       set.configuration()->name(), topes.species()->name(),
-						       isoWeight->isotopologue()->name(), isoWeight->weight()))
+						       isoWeight.isotopologue()->name(), isoWeight.weight()))
 					return false;
 			}
 		}
