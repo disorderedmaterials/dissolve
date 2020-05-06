@@ -685,7 +685,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab experimental g(r) container and make sure its object name is set
-                Data1D &expGR = estimatedGR.at(i, j);
+                auto &expGR = estimatedGR.at(i, j);
                 expGR.setObjectTag(
                     CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 

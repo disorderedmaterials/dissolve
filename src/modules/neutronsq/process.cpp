@@ -165,8 +165,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     CharString varName;
 
     const bool includeBragg = keywords_.asBool("IncludeBragg");
-    const BroadeningFunction &braggQBroadening =
-        keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
+    const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
     auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
     const double qDelta = keywords_.asDouble("QDelta");
@@ -338,10 +337,10 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     // Note: Intramolecular broadening will not be applied to bound terms within the
                     // calculated Bragg scattering
-                    Data1D &bound = unweightedsq.boundPartial(i, j);
-                    Data1D &unbound = unweightedsq.unboundPartial(i, j);
-                    Data1D &partial = unweightedsq.partial(i, j);
-                    Data1D &bragg = braggPartials.at(i, j);
+                    auto &bound = unweightedsq.boundPartial(i, j);
+                    auto &unbound = unweightedsq.unboundPartial(i, j);
+                    auto &partial = unweightedsq.partial(i, j);
+                    auto &bragg = braggPartials.at(i, j);
 
                     for (int n = 0; n < bound.nValues(); ++n)
                     {
@@ -386,7 +385,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (Isotopologues &topes : std::get<0>(topeSet).isotopologues())
             {
                 // Find the referenced Species in our SpeciesInfo list
-                SpeciesInfo *spInfo = cfg->usedSpeciesInfo(topes.species());
+                auto *spInfo = cfg->usedSpeciesInfo(topes.species());
                 if (!spInfo)
                     return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n",
                                             topes.species()->name(), cfg->niceName());

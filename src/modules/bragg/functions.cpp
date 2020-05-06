@@ -394,7 +394,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     auto &types = cfg->usedAtomTypesList();
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
         // Retrieve partial container and make sure its object tag is set
-        Data1D &partial = braggPartials.at(typeI, typeJ);
+        auto &partial = braggPartials.at(typeI, typeJ);
         partial.setObjectTag(CharString("%s//OriginalBragg//%s-%s", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
 
         // Loop over defined Bragg reflections

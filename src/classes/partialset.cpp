@@ -307,9 +307,9 @@ bool PartialSet::save()
                 return false;
             }
 
-            Data1D &full = partials_.at(typeI, typeJ);
-            Data1D &bound = boundPartials_.at(typeI, typeJ);
-            Data1D &unbound = unboundPartials_.at(typeI, typeJ);
+            auto &full = partials_.at(typeI, typeJ);
+            auto &bound = boundPartials_.at(typeI, typeJ);
+            auto &unbound = unboundPartials_.at(typeI, typeJ);
             parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound");
             for (n = 0; n < full.nValues(); ++n)
                 parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n),

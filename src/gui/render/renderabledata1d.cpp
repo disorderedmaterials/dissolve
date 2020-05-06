@@ -166,7 +166,7 @@ const Data1D &RenderableData1D::transformedData()
 bool RenderableData1D::yRangeOverX(double xMin, double xMax, double &yMin, double &yMax)
 {
     // Grab reference to transformed data
-    const Data1D &data = transformedData();
+    const auto &data = transformedData();
 
     bool first = true;
     for (int n = 0; n < data.nValues(); ++n)

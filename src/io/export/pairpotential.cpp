@@ -77,10 +77,10 @@ PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFile
 bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotential *pp)
 {
     // Get array references for convenience
-    const Data1D &uOriginal = pp->uOriginal();
-    const Data1D &uAdditional = pp->uAdditional();
-    const Data1D &uFull = pp->uFull();
-    const Data1D &dUFull = pp->dUFull();
+    const auto &uOriginal = pp->uOriginal();
+    const auto &uAdditional = pp->uAdditional();
+    const auto &uFull = pp->uFull();
+    const auto &dUFull = pp->dUFull();
     const int nPoints = pp->nPoints();
 
     // Write header comment
@@ -104,8 +104,8 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
 bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotential *pp)
 {
     // Get array references for convenience
-    const Data1D &uFull = pp->uFull();
-    const Data1D &dUFull = pp->dUFull();
+    const auto &uFull = pp->uFull();
+    const auto &dUFull = pp->dUFull();
     const int nPoints = pp->nPoints();
 
     // Write header (record 1)

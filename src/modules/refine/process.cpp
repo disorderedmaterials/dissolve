@@ -406,7 +406,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab experimental g(r) contained and make sure its object name is set
-                Data1D &expGR = estimatedGR.at(i, j);
+                auto &expGR = estimatedGR.at(i, j);
                 expGR.setObjectTag(
                     CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
@@ -442,7 +442,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab difference partial and make sure its object name is set
-                Data1D &dSQ = deltaSQ.at(i, j);
+                auto &dSQ = deltaSQ.at(i, j);
                 dSQ.setObjectTag(
                     CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
@@ -452,7 +452,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Create the difference partial
                 const Array<double> x1 = estimatedSQ.at(i, j).constXAxis();
                 const Array<double> y1 = estimatedSQ.at(i, j).constValues();
-                Data1D &simulatedSQ = combinedUnweightedSQ.at(i, j);
+                auto &simulatedSQ = combinedUnweightedSQ.at(i, j);
                 Interpolator interpolatedSimSQ(simulatedSQ);
 
                 // Determine allowable range for fit, based on requested values and limits of generated /
@@ -521,7 +521,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
                 {
                     // Grab unbound g(r)
-                    Data1D &gr = summedUnweightedGR.unboundPartial(i, j);
+                    auto &gr = summedUnweightedGR.unboundPartial(i, j);
 
                     // Find first non-zero (above the threshold value) point in g(r)
                     int n;
@@ -562,13 +562,13 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab potential perturbation container, clear it, and make sure its object name is set
-                Data1D &dPhiR = groupDeltaPhiR.at(i, j);
+                auto &dPhiR = groupDeltaPhiR.at(i, j);
                 dPhiR.clear();
                 dPhiR.setObjectTag(
                     CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
                 // Grab delta g(r) container and make sure its object name is set
-                Data1D &inversion = groupDeltaGR.at(i, j);
+                auto &inversion = groupDeltaGR.at(i, j);
                 inversion.setObjectTag(
                     CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
