@@ -26,7 +26,7 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 #include "genericitems/array2ddouble.h"
-#include "templates/broadcastlist.h"
+#include "templates/broadcastvector.h"
 
 NeutronWeights::NeutronWeights()
 {
@@ -448,7 +448,7 @@ bool NeutronWeights::write(LineParser &parser)
 bool NeutronWeights::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
-	BroadcastList<Isotopologues> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
+	BroadcastVector<Isotopologues> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
 	if (isoMixBroadcaster.failed())
 		return false;
 	if (!atomTypes_.broadcast(procPool, root, coreData))

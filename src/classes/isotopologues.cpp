@@ -262,7 +262,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
 		return false;
 
 	// Isotopologue list (mix_)
-	int nIso = mix_.nItems();
+	int nIso = mix_.size();
 	if (!procPool.broadcast(nIso, root))
 		return false;
 	int topIndex;
@@ -272,12 +272,12 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
 		for (int n = 0; n < nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
-			topIndex = species_->indexOfIsotopologue(mix_[n]->isotopologue());
+			topIndex = species_->indexOfIsotopologue(mix_[n].isotopologue());
 			if (!procPool.broadcast(topIndex, root))
 				return false;
 
 			// Broadcast relative population data
-			weight = mix_[n]->weight();
+			weight = mix_[n].weight();
 			if (!procPool.broadcast(weight, root))
 				return false;
 		}
@@ -296,7 +296,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
 				return false;
 
 			// Add mix data
-			mix_.add()->set(species_->isotopologue(topIndex), weight);
+			mix_.emplace_back(species_->isotopologue(topIndex), weight);
 		}
 	}
 #endif
@@ -314,21 +314,20 @@ bool Isotopologues::equality(ProcessPool &procPool)
 		return Messenger::error("Isotopologues species population is not equivalent (process %i has %i).\n",
 					procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
-	if (!procPool.equality(mix_.nItems()))
+	if (!procPool.equality((int)mix_.size()))
 		return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n",
-					procPool.poolRank(), mix_.nItems());
-	ListIterator<IsotopologueWeight> mixIterator(mix_);
+					procPool.poolRank(), mix_.size());
 	int count = 0;
-	while (const IsotopologueWeight *isoWeight = mixIterator.iterate())
+	for (const auto isoWeight : mix_)
 	{
 		// Just check the name and the relative population
-		if (!procPool.equality(isoWeight->isotopologue()->name()))
+		if (!procPool.equality(isoWeight.isotopologue()->name()))
 			return Messenger::error("Isotopologues isotopologue %i name is not equivalent (process %i has '%s').\n",
-						count, procPool.poolRank(), isoWeight->isotopologue()->name());
-		if (!procPool.equality(isoWeight->weight()))
+						count, procPool.poolRank(), isoWeight.isotopologue()->name());
+		if (!procPool.equality(isoWeight.weight()))
 			return Messenger::error(
 				"Isotopologues isotopologue %i relative population is not equivalent (process %i has '%s').\n",
-				count, procPool.poolRank(), isoWeight->weight());
+				count, procPool.poolRank(), isoWeight.weight());
 		++count;
 	}
 #endif
