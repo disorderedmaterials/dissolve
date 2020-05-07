@@ -1,8 +1,7 @@
 ![Dissolve's Logo](icon/logo.png)
 
 _Current Version: 0.6.99, Tuesday 10th March 2020_
-
-![](https://github.com/projectdissolve/dissolve/workflows/Win64%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/projectdissolve/dissolve/workflows/OSX%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/projectdissolve/dissolve/workflows/AppImage%20(GUI%2FSerial)/badge.svg?branch=develop) ![](https://github.com/projectdissolve/dissolve/workflows/System%20Tests%20(Serial)/badge.svg) ![](https://github.com/projectdissolve/dissolve/workflows/System%20Tests%20(Parallel)/badge.svg)
+_Continuous Build Status:_ [![Continuous Build Status](https://dev.azure.com/ProjectDissolve/Dissolve/_apis/build/status/Continuous%20Build?branchName=develop)](https://dev.azure.com/ProjectDissolve/Dissolve/_build/latest?definitionId=1&branchName=develop)
 
 **Dissolve** is a simulation tool for the interrogation of neutron scattering data, typically total neutron scattering data. It builds on the techniques established in the Empirical Potential Structure Refinement (EPSR) method by Soper.
 
