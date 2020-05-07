@@ -1169,7 +1169,7 @@ void Axes::updateAxisPrimitives()
             int count = 0;
             double power = floor(min);
             double value = pow(10, power);
-            Vec3<double> u = coordMin_[axis];
+            auto u = coordMin_[axis];
             while (value <= max_[axis])
             {
                 // Check break condition

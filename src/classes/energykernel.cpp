@@ -606,7 +606,7 @@ double EnergyKernel::correct(const Atom *i)
     Atom *j;
     std::vector<Atom *> atoms = i->molecule()->atoms();
     double scale, r, correctionEnergy = 0.0;
-    Vec3<double> rI = i->r();
+    const auto rI = i->r();
 
     for (auto *j : atoms)
     {

@@ -339,7 +339,7 @@ Site *SpeciesSite::createFromParent() const
         v /= xAxisIndices.nItems();
 
         // Get vector from site origin and normalise it
-        Vec3<double> x = v - origin;
+        auto x = v - origin;
         x.normalise();
 
         // Get average position of supplied y-axis atoms
@@ -349,7 +349,7 @@ Site *SpeciesSite::createFromParent() const
         v /= yAxisIndices.nItems();
 
         // Get vector from site origin, normalise it, and orthogonalise
-        Vec3<double> y = v - origin;
+        auto y = v - origin;
         y.orthogonalise(x);
         y.normalise();
 

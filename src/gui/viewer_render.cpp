@@ -414,8 +414,8 @@ void BaseViewer::enableClipping()
     glLoadMatrixd(view_.viewMatrix().matrix());
 
     // Get clip plane coordinates and indices
-    Vec3<double> clipMin = view_.axes().clipMin();
-    Vec3<double> clipMax = view_.axes().clipMax();
+    auto clipMin = view_.axes().clipMin();
+    auto clipMax = view_.axes().clipMax();
     static GLenum planes[6] = {GL_CLIP_PLANE0, GL_CLIP_PLANE1, GL_CLIP_PLANE2, GL_CLIP_PLANE3, GL_CLIP_PLANE4, GL_CLIP_PLANE5};
 
     // Loop over axes

@@ -29,7 +29,7 @@ void GeometryOptimisationModule::setReferenceCoordinates(Configuration *cfg)
 {
     for (int n = 0; n < cfg->nAtoms(); ++n)
     {
-        Vec3<double> r = cfg->atom(n)->r();
+        auto r = cfg->atom(n)->r();
         xRef_[n] = r.x;
         yRef_[n] = r.y;
         zRef_[n] = r.z;

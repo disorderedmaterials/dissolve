@@ -1011,7 +1011,7 @@ bool BaseViewer::writeViewBlock(LineParser &parser) const
                            view_.titlePointSize()))
         return false;
     Matrix4 mat = view_.viewRotation();
-    Vec3<double> trans = view_.viewTranslation();
+    auto trans = view_.viewTranslation();
     if (!parser.writeLineF("  %s  %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationXKeyword), mat[0], mat[1],
                            mat[2]))
         return false;

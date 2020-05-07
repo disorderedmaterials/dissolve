@@ -331,7 +331,7 @@ void DataWidget::updateStatusBar()
 
     // Update coordinate information
     View &view = dataViewer()->view();
-    Vec3<double> rLocal = dataViewer()->current2DAxesCoordinates();
+    const auto rLocal = dataViewer()->current2DAxesCoordinates();
     QString text;
     switch (view.viewType())
     {

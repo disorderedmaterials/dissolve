@@ -35,8 +35,8 @@ bool Configuration::write(LineParser &parser) const
         return false;
 
     // Write unit cell (box) lengths and angles
-    Vec3<double> lengths = box()->axisLengths();
-    Vec3<double> angles = box()->axisAngles();
+    const auto lengths = box()->axisLengths();
+    const auto angles = box()->axisAngles();
     if (!parser.writeLineF("%12e %12e %12e  %f  %s\n", lengths.x, lengths.y, lengths.z, requestedSizeFactor_,
                            DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
         return false;
@@ -100,14 +100,14 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
      */
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    Vec3<double> scaledLengths = parser.arg3d(0);
+    auto scaledLengths = parser.arg3d(0);
     requestedSizeFactor_ = (parser.hasArg(3) ? parser.argd(3) : 1.0);
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
 
     appliedSizeFactor_ = requestedSizeFactor_;
-    Vec3<double> lengths = scaledLengths / appliedSizeFactor_;
-    Vec3<double> angles = parser.arg3d(0);
+    const auto lengths = scaledLengths / appliedSizeFactor_;
+    const auto angles = parser.arg3d(0);
     if (!createBox(lengths, angles))
         return false;
 

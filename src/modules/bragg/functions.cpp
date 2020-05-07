@@ -76,7 +76,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     rAxes.columnMultiply(0, multiplicity.x);
     rAxes.columnMultiply(1, multiplicity.y);
     rAxes.columnMultiply(2, multiplicity.z);
-    Vec3<double> rLengths = box->reciprocalAxisLengths();
+    auto rLengths = box->reciprocalAxisLengths();
     rLengths.x *= multiplicity.x;
     rLengths.y *= multiplicity.y;
     rLengths.z *= multiplicity.z;

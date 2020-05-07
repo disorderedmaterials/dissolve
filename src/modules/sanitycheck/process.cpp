@@ -71,7 +71,7 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Failed sanity check for Configuration '%s' nAtoms (%i).\n", cfg->name(), cfg->nAtoms());
         for (int n = 0; n < cfg->nAtoms(); ++n)
         {
-            Vec3<double> r = cfg->atom(n)->r();
+            auto r = cfg->atom(n)->r();
             if (!procPool.equality(cfg->atom(n)->r()))
                 return Messenger::error("Failed sanity check for Configuration '%s' atom position %i (%f %f %f).\n",
                                         cfg->name(), n, r.x, r.y, r.z);

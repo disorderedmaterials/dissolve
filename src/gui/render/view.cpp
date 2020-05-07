@@ -559,16 +559,16 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     // 	rMouseLast_.print();
     // 	axisCoordMin_[0].print();
     // Project axis coordinates to get a screen-based yardstick
-    Vec3<double> axmin = dataToScreen(axes_.coordMin(axis));
-    Vec3<double> axmax = dataToScreen(axes_.coordMax(axis));
+    auto axmin = dataToScreen(axes_.coordMin(axis));
+    auto axmax = dataToScreen(axes_.coordMax(axis));
     // 	axmin.print();
     // 	axmax.print();
 
     // Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
     Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
     Vec3<double> am(x - axmin.x, y - axmin.y, 0.0);
-    Vec3<double> amNorm = am, abNorm = ab;
-    double ratio = am.magnitude() / ab.magnitude();
+    auto amNorm = am, abNorm = ab;
+    auto ratio = am.magnitude() / ab.magnitude();
     abNorm.normalise();
     amNorm.normalise();
     // 	double angle = acos(abNorm.dp(amNorm));
@@ -638,7 +638,7 @@ void View::recalculateView(bool force)
 
     // -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get
     // literal 'pixels per unit' for (screen) X and Y
-    Vec3<double> unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
+    auto unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
     unit.x -= viewportMatrix_[0] + viewportMatrix_[2] / 2.0;
     unit.y -= viewportMatrix_[1] + viewportMatrix_[3] / 2.0;
     unit.z = unit.y;
@@ -907,12 +907,12 @@ void View::scaleRange(double factor)
 void View::centre2DAt(Vec3<double> centre, double fraction)
 {
     // Get delta distance
-    Vec3<double> delta = (centre - axes_.centre()) * fraction;
+    const auto delta = (centre - axes_.centre()) * fraction;
 
     // Add to current axis limits
-    axes_.setRange(0, axes_.min(0) + delta[0], axes_.max(0) + delta[0]);
-    axes_.setRange(1, axes_.min(1) + delta[1], axes_.max(1) + delta[1]);
-    axes_.setRange(2, axes_.min(2) + delta[2], axes_.max(2) + delta[2]);
+    axes_.setRange(0, axes_.min(0) + delta.x, axes_.max(0) + delta.x);
+    axes_.setRange(1, axes_.min(1) + delta.y, axes_.max(1) + delta.y);
+    axes_.setRange(2, axes_.min(2) + delta.z, axes_.max(2) + delta.z);
 }
 
 // Set auto-follow type in effect
@@ -1170,10 +1170,10 @@ Vec3<double> View::positiveDataMaxima()
 void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 {
     // Get transformed data extents
-    Vec3<double> dataMin = dataMinima();
-    Vec3<double> dataMax = dataMaxima();
-    Vec3<double> dataMinPositive = positiveDataMinima();
-    Vec3<double> dataMaxPositive = positiveDataMaxima();
+    auto dataMin = dataMinima();
+    auto dataMax = dataMaxima();
+    auto dataMinPositive = positiveDataMinima();
+    auto dataMaxPositive = positiveDataMaxima();
 
     // The fractional values we've been passed tell us how much of the 'data' to include in the limits
     // A positive value, 0.0 < f < 1.0, tells us to shrink the maximum limit.
@@ -1303,7 +1303,7 @@ void View::calculateFontScaling()
     Vec3<double> translate(0.0, 0.0, viewTranslation_.z);
     if (hasPerspective_)
         translate.z = 0.5;
-    Vec3<double> unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
+    auto unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
     unit.y -= viewportMatrix_[1] + viewportMatrix_[3] * 0.5;
     textZScale_ = unit.y;
 }

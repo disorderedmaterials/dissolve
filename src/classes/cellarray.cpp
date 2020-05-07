@@ -353,7 +353,7 @@ Cell *CellArray::cell(int id) const
 // Return Cell which contains specified coordinate
 Cell *CellArray::cell(const Vec3<double> r) const
 {
-    Vec3<double> foldFracR = box_->foldFrac(r);
+    auto foldFracR = box_->foldFrac(r);
     Vec3<int> indices;
     indices.x = foldFracR.x / fractionalCellSize_.x;
     indices.y = foldFracR.y / fractionalCellSize_.y;
@@ -395,7 +395,7 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     u.z -= DissolveMath::sgn(u.z);
 
     // Turn this grid reference delta into a real distamce by multiplying by the Cell axes_ matrix
-    Vec3<double> v = axes_ * Vec3<double>(u.x, u.y, u.z);
+    auto v = axes_ * Vec3<double>(u.x, u.y, u.z);
 
     // Check ths vector magnitude against the supplied distance
     return (v.magnitude() <= distance);

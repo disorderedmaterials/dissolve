@@ -29,7 +29,7 @@ Vec3<double> Species::centreOfGeometry(const Box *box) const
         return Vec3<double>();
 
     // Calculate center relative to first atom in molecule
-    Vec3<double> cog = atoms_.first()->r();
+    auto cog = atoms_.first()->r();
     for (auto *i = atoms_.first()->next(); i != NULL; i = i->next())
         cog += box->minimumImage(i->r(), cog);
 
@@ -40,7 +40,8 @@ Vec3<double> Species::centreOfGeometry(const Box *box) const
 void Species::setCentre(const Box *box, const Vec3<double> newCentre)
 {
     // Calculate Molecule centre of geometry
-    Vec3<double> newR, cog = centreOfGeometry(box);
+    Vec3<double> newR;
+    const auto cog = centreOfGeometry(box);
 
     // Apply transform
     for (int n = 0; n < atoms_.nItems(); ++n)

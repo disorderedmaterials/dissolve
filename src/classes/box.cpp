@@ -268,7 +268,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
     for (int n = 0; n < nBins; ++n)
         normData.xAxis(n) = (n + 0.5) * binWidth;
 
-    Vec3<double> centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
+    auto centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
 
     // Divide points over processes
     const auto nPointsPerProcess = nPoints / procPool.nProcesses();

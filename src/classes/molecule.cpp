@@ -87,7 +87,8 @@ Atom *Molecule::atom(int n) const
 void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
 {
     // Calculate Molecule centre of geometry
-    Vec3<double> newR, cog = centreOfGeometry(box);
+    Vec3<double> newR;
+    const auto cog = centreOfGeometry(box);
 
     // Apply transform
     for (int n = 0; n < nAtoms(); ++n)
@@ -104,7 +105,7 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
         return Vec3<double>();
 
     // Calculate center relative to first atom in molecule
-    Vec3<double> cog = atom(0)->r();
+    auto cog = atom(0)->r();
     for (int n = 1; n < nAtoms(); ++n)
         cog += box->minimumImage(atom(n), atom(0)->r());
 
@@ -115,7 +116,8 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
 void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 {
     // Calculate Molecule centre of geometry
-    Vec3<double> newR, cog = centreOfGeometry(box);
+    Vec3<double> newR;
+    const auto cog = centreOfGeometry(box);
 
     // Apply transform
     for (int n = 0; n < nAtoms(); ++n)

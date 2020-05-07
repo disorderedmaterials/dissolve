@@ -150,7 +150,7 @@ void BaseViewer::mouseWheeled(int delta)
     view_.translateView(0.0, 0.0, 0.5 * zrange * (scrollup ? -1.0 : 1.0));
 
     // Never let camera z go above z = 1.0...
-    Vec3<double> trans = view_.viewTranslation();
+    auto trans = view_.viewTranslation();
     if (trans.z > 1.0)
         trans.z = 1.0;
     view_.setViewTranslation(trans.x, trans.y, trans.z);
