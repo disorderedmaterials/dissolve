@@ -260,8 +260,8 @@ double RefineModule::fitEquation(double x, double xCentre, double delta, double 
      *
      */
 
-    const double dx = x - xCentre;
-    const double widthSquared = width * width;
+    const auto dx = x - xCentre;
+    const auto widthSquared = width * width;
     return AL * exp(-((dx - delta) * (dx - delta)) / widthSquared) + AC * exp(-(dx * dx) / widthSquared) +
            AR * exp(-((dx + delta) * (dx + delta)) / widthSquared);
 }
@@ -281,12 +281,12 @@ double RefineModule::costFunction3Exp(const Array<double> &alpha)
      */
 
     // We will evaluate the fit over r +/- window
-    const double window = 0.5;
-    const double windowDelta = 0.01;
+    const auto window = 0.5;
+    const auto windowDelta = 0.01;
     double sos = 0.0, delta, func;
     int nPoints = 0;
     double x = alpha.constAt(0) - window;
-    const double xMax = alpha.constAt(0) + window;
+    const auto xMax = alpha.constAt(0) + window;
     while (x <= xMax)
     {
         // Check x against limits of function
@@ -332,12 +332,12 @@ double RefineModule::costFunction2Exp(const Array<double> &alpha)
      */
 
     // We will evaluate the fit over r +/- window
-    const double window = 0.5;
-    const double windowDelta = 0.01;
+    const auto window = 0.5;
+    const auto windowDelta = 0.01;
     double sos = 0.0, delta, func;
     int nPoints = 0;
     double x = alpha.constAt(0) - window;
-    const double xMax = alpha.constAt(0) + window;
+    const auto xMax = alpha.constAt(0) + window;
     while (x <= xMax)
     {
         // Check x against limits of function

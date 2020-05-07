@@ -85,7 +85,7 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) const
 {
     double c = FWHM / TWOSQRT2LN2;
-    const double xCx = xCentre * x;
+    const auto xCx = xCentre * x;
     return xCx > 0.0 ? A * exp(-(x * x * c * c) / 2.0) * sin(xCx) / (xCx) : A * exp(-(x * x * c * c) / 2.0);
 }
 

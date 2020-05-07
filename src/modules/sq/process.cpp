@@ -42,8 +42,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     CharString varName;
 
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto qDelta = keywords_.asDouble("QDelta");
+    const auto qMin = keywords_.asDouble("QMin");
     double qMax = keywords_.asDouble("QMax");
     if (qMax < 0.0)
         qMax = 30.0;

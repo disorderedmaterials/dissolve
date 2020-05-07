@@ -48,9 +48,9 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
     Averaging::AveragingScheme averagingScheme =
         Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMax = keywords_.asDouble("QMax");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto qDelta = keywords_.asDouble("QDelta");
+    const auto qMax = keywords_.asDouble("QMax");
+    const auto qMin = keywords_.asDouble("QMin");
     const Vec3<int> multiplicity = keywords_.asVec3Int("Multiplicity");
     // TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was
     // used in the generation of the Configuration).

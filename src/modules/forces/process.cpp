@@ -79,7 +79,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testInter = keywords_.asBool("TestInter");
         const bool testIntra = keywords_.asBool("TestIntra");
-        const double testThreshold = keywords_.asDouble("TestThreshold");
+        const auto testThreshold = keywords_.asDouble("TestThreshold");
 
         // Calculate the total forces
         if (testMode)

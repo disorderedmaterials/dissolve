@@ -53,8 +53,8 @@ double FormFactorData_WK1995::magnitude(double Q) const
      * So, remove factor of 4Pi implicit in our Q value before squaring.
      */
 
-    const double k = Q / (4 * PI);
-    const double k2 = k * k;
+    const auto k = Q / (4 * PI);
+    const auto k2 = k * k;
     double mag = c_;
     for (int n = 0; n < 5; ++n)
         mag += a_[n] * exp(-b_[0] * k2);

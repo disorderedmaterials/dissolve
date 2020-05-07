@@ -127,8 +127,8 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
     }
 
     // Set the object info if the colour change threshold was reached
-    const double threshold = 1.0; //(0.5 * queryRegionHeight_*queryRegionWidth_) * 0.25;
-                                  // 	printf("Delta = %f, threshold = %f\n", delta, threshold);
+    const auto threshold = 1.0; //(0.5 * queryRegionHeight_*queryRegionWidth_) * 0.25;
+                                // 	printf("Delta = %f, threshold = %f\n", delta, threshold);
     if (delta > threshold)
     {
         queryObjectType_ = objectType;

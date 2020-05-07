@@ -331,7 +331,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
 
     // Normalise intensities against number of atoms and unit cell multiplicity
     auto &types = cfg->usedAtomTypesList();
-    const double divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
+    const auto divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
     for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
         for (m = 0; m < nReflections; ++m)
             reflections[m].scaleIntensity(i, j, divisor);
@@ -431,7 +431,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
     const int nTypes = cfg->nUsedAtomTypes();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
-    const double qDelta = braggPartials.at(0, 0).xAxis(1) - braggPartials.at(0, 0).xAxis(0);
+    const auto qDelta = braggPartials.at(0, 0).xAxis(1) - braggPartials.at(0, 0).xAxis(0);
     const int nBins = braggPartials.at(0, 0).nValues();
     Array<int> nAdded(nBins);
 

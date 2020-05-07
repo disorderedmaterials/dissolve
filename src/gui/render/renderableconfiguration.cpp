@@ -113,7 +113,7 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, co
 {
     Matrix4 A;
     Vec3<double> unit = vij;
-    const double mag = unit.magAndNormalise();
+    const auto mag = unit.magAndNormalise();
 
     // Create rotation matrix for Bond
     A.setColumn(2, unit.x, unit.y, unit.z, 0.0);

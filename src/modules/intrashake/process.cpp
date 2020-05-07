@@ -59,21 +59,21 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         bool adjustBonds = keywords_.asBool("AdjustBonds");
         bool adjustTorsions = keywords_.asBool("AdjustTorsions");
         auto &angleStepSize = keywords_.retrieve<double>("AngleStepSize");
-        const double angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
-        const double angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");
+        const auto angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
+        const auto angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");
         auto &bondStepSize = keywords_.retrieve<double>("BondStepSize");
-        const double bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
-        const double bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
+        const auto bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
+        const auto bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
         double cutoffDistance = keywords_.asDouble("CutoffDistance");
         if (cutoffDistance < 0.0)
             cutoffDistance = dissolve.pairPotentialRange();
         const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
-        const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
+        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
         const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
         auto &torsionStepSize = keywords_.retrieve<double>("TorsionStepSize");
-        const double torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
-        const double torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
-        const double rRT = 1.0 / (.008314472 * cfg->temperature());
+        const auto torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
+        const auto torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
+        const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
         Messenger::print("IntraShake: Cutoff distance is %f\n", cutoffDistance);

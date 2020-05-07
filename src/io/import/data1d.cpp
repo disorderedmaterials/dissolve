@@ -123,7 +123,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 
     // Handle any additional options
     // --Subtract average level from data?
-    const double removeAverage = keywords_.asDouble("RemoveAverage");
+    const auto removeAverage = keywords_.asDouble("RemoveAverage");
     if (removeAverage > 0.0)
     {
         double level = Filters::subtractAverage(data, removeAverage);

@@ -670,7 +670,7 @@ void View::recalculateView(bool force)
             axes_.setStretch(axis, 1.0);
     }
 
-    const double margin = 10.0 * fontInstance_.scaleFactor();
+    const auto margin = 10.0 * fontInstance_.scaleFactor();
     Matrix4 viewMat, B, viewMatrixInverse;
     double tempMin, tempMax;
     Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;

@@ -421,20 +421,20 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, 
         return Messenger::error("One or more NULL type pointers passed (%p-%p).\n", i, j);
 
     // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
-    const double sumr = i->r() + j->r();
-    const double rBO = -0.1332 * sumr * log(bondTerm->bondOrder());
+    const auto sumr = i->r() + j->r();
+    const auto rBO = -0.1332 * sumr * log(bondTerm->bondOrder());
 
     // Calculate rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
-    const double chi = sqrt(i->chi()) - sqrt(j->chi());
-    const double rEN = i->r() * j->r() * chi * chi / (i->chi() * i->r() + j->chi() * j->r());
+    const auto chi = sqrt(i->chi()) - sqrt(j->chi());
+    const auto rEN = i->r() * j->r() * chi * chi / (i->chi() * i->r() + j->chi() * j->r());
 
     // rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
     // Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term
     // should be subtracted
-    const double rij = sumr + rBO - rEN;
+    const auto rij = sumr + rBO - rEN;
 
     // k : Force constant : = 664.12 * (Zi * Zj) / rij**3     (note 664.12 in kcal)
-    const double k = 664.12 * 4.184 * (i->Z() * j->Z()) / (rij * rij * rij);
+    const auto k = 664.12 * 4.184 * (i->Z() * j->Z()) / (rij * rij * rij);
 
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
@@ -461,16 +461,16 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
     if (!jk)
         return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
 
-    const double sumrij = i->r() + j->r();
-    const double sumrjk = j->r() + k->r();
-    const double rBOij = -0.1332 * sumrij * log(ij->bondOrder());
-    const double rBOjk = -0.1332 * sumrjk * log(jk->bondOrder());
+    const auto sumrij = i->r() + j->r();
+    const auto sumrjk = j->r() + k->r();
+    const auto rBOij = -0.1332 * sumrij * log(ij->bondOrder());
+    const auto rBOjk = -0.1332 * sumrjk * log(jk->bondOrder());
 
     // rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
-    const double chiij = sqrt(i->chi()) - sqrt(j->chi());
-    const double rENij = i->r() * j->r() * chiij * chiij / (i->chi() * i->r() + j->chi() * j->r());
-    const double chijk = sqrt(j->chi()) - sqrt(k->chi());
-    const double rENjk = j->r() * k->r() * chijk * chijk / (j->chi() * j->r() + k->chi() * k->r());
+    const auto chiij = sqrt(i->chi()) - sqrt(j->chi());
+    const auto rENij = i->r() * j->r() * chiij * chiij / (i->chi() * i->r() + j->chi() * j->r());
+    const auto chijk = sqrt(j->chi()) - sqrt(k->chi());
+    const auto rENjk = j->r() * k->r() * chijk * chijk / (j->chi() * j->r() + k->chi() * k->r());
 
     // rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
     // Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term
@@ -479,14 +479,14 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
     double rjk = sumrjk + rBOjk - rENjk;
 
     // Get theta for the central atom
-    const double theta = j->theta();
-    const double cosTheta = cos(theta);
+    const auto theta = j->theta();
+    const auto cosTheta = cos(theta);
 
     // Determine rik2 and rik5 values
     // rik2 = rij**2 + rjk**2 - 2 * rij * rjk * cos(theta)
-    const double rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta;
-    const double rik5 = rik2 * rik2 * sqrt(rik2);
-    const double forcek =
+    const auto rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta;
+    const auto rik5 = rik2 * rik2 * sqrt(rik2);
+    const auto forcek =
         664.12 * 4.184 * (i->Z() * k->Z() / rik5) * (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik2 * cosTheta);
 
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
@@ -507,9 +507,9 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
     else
     {
         // General nonlinear case:  U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
-        const double c2 = 1.0 / (4.0 * sin(theta) * sin(theta));
-        const double c1 = -4.0 * c2 * cosTheta;
-        const double c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
+        const auto c2 = 1.0 / (4.0 * sin(theta) * sin(theta));
+        const auto c1 = -4.0 * c2 * cosTheta;
+        const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
         angleTerm->setForm(SpeciesAngle::Cos2Form);
         angleTerm->setParameters(forcek, c0, c1, c2);

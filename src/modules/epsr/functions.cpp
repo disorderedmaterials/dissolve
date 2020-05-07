@@ -126,13 +126,13 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
 {
     const int nAtomTypes = dissolve.nAtomTypes();
     auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
-    const double gsigma1 = keywords_.asDouble("GSigma1");
-    const double gsigma2 = keywords_.asDouble("GSigma2");
+    const auto gsigma1 = keywords_.asDouble("GSigma1");
+    const auto gsigma2 = keywords_.asDouble("GSigma2");
     int ncoeffp = keywords_.asInt("NCoeffP");
-    const double psigma1 = keywords_.asDouble("PSigma1");
-    const double psigma2 = keywords_.asDouble("PSigma2");
-    const double qMax = keywords_.asDouble("QMax");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto psigma1 = keywords_.asDouble("PSigma1");
+    const auto psigma2 = keywords_.asDouble("PSigma2");
+    const auto qMax = keywords_.asDouble("QMax");
+    const auto qMin = keywords_.asDouble("QMin");
     double rmaxpt = keywords_.asDouble("RMaxPT");
     double rminpt = keywords_.asDouble("RMinPT");
 
@@ -226,7 +226,7 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
     // Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
     double x;
     Array<double> &y = data.values();
-    const double decay = rMax - rMin;
+    const auto decay = rMax - rMin;
     for (int n = 0; n < data.nValues(); ++n)
     {
         x = data.xAxis(n);

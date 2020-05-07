@@ -38,13 +38,13 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
 
     // Set up our data
     const auto xRange = keywords_.asVec3Double("XRange");
-    const double xMin = xRange.x;
-    const double xMax = xRange.y;
-    const double xDelta = xRange.z;
+    const auto xMin = xRange.x;
+    const auto xMax = xRange.y;
+    const auto xDelta = xRange.z;
     const auto yRange = keywords_.asVec3Double("YRange");
-    const double yMin = yRange.x;
-    const double yMax = yRange.y;
-    const double yDelta = yRange.z;
+    const auto yMin = yRange.x;
+    const auto yMax = yRange.y;
+    const auto yDelta = yRange.z;
     data.initialise(xMin, xMax, xDelta, yMin, yMax, yDelta);
 
     // Loop over lines in the file - we expect blocks with three columns (x, y, f(x,y))

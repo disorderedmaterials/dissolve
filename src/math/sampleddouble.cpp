@@ -93,7 +93,7 @@ void SampledDouble::operator+=(double x)
     ++count_;
 
     // Determine difference between supplied value and current mean
-    const double delta = x - mean_;
+    const auto delta = x - mean_;
 
     // Accumulate mean
     mean_ += delta / count_;
@@ -115,8 +115,8 @@ void SampledDouble::operator+=(const SampledDouble &source)
         return;
 
     // Determine difference in mean values between samples B and A and reciprocal of total counts
-    const double deltaMean = source.value() - mean_;
-    const double rCountNew = 1.0 / (count_ + source.count_);
+    const auto deltaMean = source.value() - mean_;
+    const auto rCountNew = 1.0 / (count_ + source.count_);
 
     // Calculate new mean
     mean_ += deltaMean * source.count_ * rCountNew;

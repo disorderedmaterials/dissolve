@@ -50,9 +50,9 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     auto &intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
     auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
-    const double useHalfCellRange = keywords_.asBool("UseHalfCellRange");
-    const double specifiedRange = keywords_.asDouble("Range");
-    const double binWidth = keywords_.asDouble("BinWidth");
+    const auto useHalfCellRange = keywords_.asBool("UseHalfCellRange");
+    const auto specifiedRange = keywords_.asDouble("Range");
+    const auto binWidth = keywords_.asDouble("BinWidth");
     const bool allIntra = true;
     const bool internalTest = keywords_.asBool("InternalTest");
     const bool saveData = keywords_.asBool("Save");

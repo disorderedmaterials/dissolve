@@ -30,8 +30,8 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
 {
     // Retrieve Module options
     const int nCycles = keywords_.asInt("NCycles");
-    const double tolerance = keywords_.asDouble("Tolerance");
-    const double initialStepSize = keywords_.asDouble("StepSize");
+    const auto tolerance = keywords_.asDouble("Tolerance");
+    const auto initialStepSize = keywords_.asDouble("StepSize");
     const int nStepSizeResetsAllowed = 5;
 
     // Print argument/parameter summary

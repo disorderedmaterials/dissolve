@@ -53,7 +53,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     // 3) Require Cells to be roughly 'cubic' as far as is possible.
 
     const int minCellsPerSide = 3;
-    const double tolerance = 0.01;
+    const auto tolerance = 0.01;
     int n, x, y, z;
 
     box_ = box;

@@ -63,15 +63,15 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Retrieve control parameters from Configuration
         const bool saveData = keywords_.asBool("Save");
-        const double stabilityThreshold = keywords_.asDouble("StabilityThreshold");
+        const auto stabilityThreshold = keywords_.asDouble("StabilityThreshold");
         const int stabilityWindow = keywords_.asInt("StabilityWindow");
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testMode = keywords_.asBool("Test");
-        const double testThreshold = keywords_.asDouble("TestThreshold");
+        const auto testThreshold = keywords_.asDouble("TestThreshold");
         bool hasReferenceInter = keywords_.isSet("TestReferenceInter");
-        const double testReferenceInter = keywords_.asDouble("TestReferenceInter");
+        const auto testReferenceInter = keywords_.asDouble("TestReferenceInter");
         bool hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
-        const double testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
+        const auto testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
 
         // Print parameter summary
         if (testMode)
@@ -110,7 +110,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             std::shared_ptr<Molecule> molN, molM;
             const Box *box = cfg->box();
             double scale;
-            const double cutoff = dissolve.potentialMap().range();
+            const auto cutoff = dissolve.potentialMap().range();
 
             Timer testTimer;
 

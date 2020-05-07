@@ -49,25 +49,25 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Get Keyword Options
      */
     const auto augmentationStyle = keywords_.enumeration<RefineModule::MatrixAugmentationStyle>("Augmentation");
-    const double augmentationParam = keywords_.asDouble("AugmentationParam");
+    const auto augmentationParam = keywords_.asDouble("AugmentationParam");
     const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
     const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
     const int phiRSmoothK = keywords_.asInt("DeltaPhiRSmoothK");
     const int phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
-    const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
+    const auto errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
     const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
     // const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
     const auto inversionMethod = keywords_.enumeration<RefineModule::PotentialInversionMethod>("InversionMethod");
-    const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
-    const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
+    const auto globalMinimumRadius = keywords_.asDouble("MinimumRadius");
+    const auto globalMaximumRadius = keywords_.asDouble("MaximumRadius");
     // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
     const bool modifyPotential = keywords_.asBool("ModifyPotential");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const bool onlyWhenErrorStable = keywords_.asBool("OnlyWhenErrorStable");
-    const double phiMax = keywords_.asDouble("PhiMax");
-    const double qMax = keywords_.asDouble("QMax");
-    const double qMin = keywords_.asDouble("QMin");
-    const double truncationWidth = keywords_.asDouble("TruncationWidth");
+    const auto phiMax = keywords_.asDouble("PhiMax");
+    const auto qMax = keywords_.asDouble("QMax");
+    const auto qMin = keywords_.asDouble("QMin");
+    const auto truncationWidth = keywords_.asDouble("TruncationWidth");
     const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print option summary
@@ -486,7 +486,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         /*
          * Create perturbations to interatomic potentials
          */
-        const double weighting = keywords_.asDouble("Weighting");
+        const auto weighting = keywords_.asDouble("Weighting");
         auto &groupDeltaPhiR = GenericListHelper<Array2D<Data1D>>::realise(
             dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_,
             GenericItem::InRestartFileFlag, &created);
@@ -512,8 +512,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (autoMinimumRadii)
         {
             // Define a fraction of the determined g(r) non-zero point that will become our radius limit
-            const double rFraction = 0.95;
-            const double thresholdValue = 0.1;
+            const auto rFraction = 0.95;
+            const auto thresholdValue = 0.1;
             i = 0;
             for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
             {
@@ -550,8 +550,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         else
             minimumRadii = globalMinimumRadius;
 
-        const double ppRange = dissolve.pairPotentialRange();
-        const double ppDelta = dissolve.pairPotentialDelta();
+        const auto ppRange = dissolve.pairPotentialRange();
+        const auto ppDelta = dissolve.pairPotentialDelta();
         double weight;
         Data1D cr;
         Array<double> crgr;
@@ -724,7 +724,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Apply smooth zeroing of potential up to the minimum distance, and truncate at the end
                 double minimumRadius = minimumRadii.constAt(i, j);
-                const double truncationStart = minimumRadius - truncationWidth;
+                const auto truncationStart = minimumRadius - truncationWidth;
                 double r;
                 Array<double> &y = dPhiR.values();
                 for (int n = 0; n < dPhiR.nValues(); ++n)

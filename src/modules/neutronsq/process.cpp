@@ -52,7 +52,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Truncate data beyond QMax
-        const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
+        const auto qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
         if (referenceData.constXAxis().lastValue() < qMax)
             Messenger::warn("Qmax limit of %e Angstroms**-1 for calculated NeutronSQ (%s) is beyond limit of "
                             "reference data (Qmax = %e Angstroms**-1).\n",
@@ -168,8 +168,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
     auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto qDelta = keywords_.asDouble("QDelta");
+    const auto qMin = keywords_.asDouble("QMin");
     double qMax = keywords_.asDouble("QMax");
     if (qMax < 0.0)
         qMax = 30.0;
@@ -273,7 +273,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
             const int nReflections = braggReflections.nItems();
-            const double braggQMax = braggReflections.constAt(nReflections - 1).q();
+            const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
             Messenger::print("Found BraggReflections data for Configuration '%s' (nReflections = %i, QMax = %f "
                              "Angstroms**-1).\n",
                              cfg->name(), nReflections, braggQMax);
@@ -344,7 +344,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     for (int n = 0; n < bound.nValues(); ++n)
                     {
-                        const double q = bound.xAxis(n);
+                        const auto q = bound.xAxis(n);
                         if (q <= braggQMax)
                         {
                             bound.value(n) = 0.0;

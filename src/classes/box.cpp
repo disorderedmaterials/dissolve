@@ -259,8 +259,8 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
                                     int nPoints) const
 {
     // Set up array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
-    const double binWidth = 0.1;
-    const double rBinWidth = 1.0 / binWidth;
+    const auto binWidth = 0.1;
+    const auto rBinWidth = 1.0 / binWidth;
     int bin, nBins = rdfRange / binWidth;
     Data1D normData;
     normData.initialise(nBins);

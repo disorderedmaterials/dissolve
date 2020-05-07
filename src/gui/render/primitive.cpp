@@ -605,7 +605,7 @@ void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented
 void Primitive::cross(double width)
 {
     Vec3<double> v;
-    const double halfWidth = 0.5 * width;
+    const auto halfWidth = 0.5 * width;
     for (int i = 0; i < 3; ++i)
     {
         v.zero();
@@ -720,7 +720,7 @@ void Primitive::wireOrthorhomboid(double sizex, double sizey, double sizez, doub
 // Plot basic axes object
 void Primitive::axes(double axisLength)
 {
-    const double arrowSize = axisLength * 0.05;
+    const auto arrowSize = axisLength * 0.05;
 
     // X (first vertex = 0)
     defineVertex(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
@@ -777,7 +777,7 @@ void Primitive::axes(double axisLength)
 // Plot basic coloured axes object
 void Primitive::colouredAxes(double axisLength)
 {
-    const double arrowSize = axisLength * 0.05;
+    const auto arrowSize = axisLength * 0.05;
     GLfloat rgba[4], black[4];
     black[0] = 0.0;
     black[1] = 0.0;

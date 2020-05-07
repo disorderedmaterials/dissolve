@@ -33,7 +33,7 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
 
     // Grab x and y arrays
     const auto &x = data.constXAxis();
-    const double xDelta = x.constAt(1) - x.constAt(0);
+    const auto xDelta = x.constAt(1) - x.constAt(0);
     Array<double> &y = data.values();
 
     Array<double> newY(data.nValues());

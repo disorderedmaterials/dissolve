@@ -538,13 +538,13 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
         vecjk = k->r() - j->r();
 
     // Calculate angle
-    const double magji = vecji.magAndNormalise();
-    const double magjk = vecjk.magAndNormalise();
+    const auto magji = vecji.magAndNormalise();
+    const auto magjk = vecjk.magAndNormalise();
     double dp;
-    const double angle = Box::angleInDegrees(vecji, vecjk, dp);
+    const auto angle = Box::angleInDegrees(vecji, vecjk, dp);
 
     // Determine Angle force vectors for atoms
-    const double force = a->force(angle);
+    const auto force = a->force(angle);
     const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
     const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
 
@@ -587,13 +587,13 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
         vecjk = k->r() - j->r();
 
     // Calculate angle
-    const double magji = vecji.magAndNormalise();
-    const double magjk = vecjk.magAndNormalise();
+    const auto magji = vecji.magAndNormalise();
+    const auto magjk = vecjk.magAndNormalise();
     double dp;
-    const double angle = Box::angleInDegrees(vecji, vecjk, dp);
+    const auto angle = Box::angleInDegrees(vecji, vecjk, dp);
 
     // Determine Angle force vectors for atoms
-    const double force = a->force(angle);
+    const auto force = a->force(angle);
     const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
     const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
 
@@ -640,15 +640,15 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
     // Calculate cross products and torsion angle formed (in radians)
     Vec3<double> xpj = vecji * vecjk;
     Vec3<double> xpk = veckl * vecjk;
-    const double magxpj = xpj.magAndNormalise();
-    const double magxpk = xpk.magAndNormalise();
+    const auto magxpj = xpj.magAndNormalise();
+    const auto magxpk = xpk.magAndNormalise();
     double dp = xpj.dp(xpk);
     if (dp < -1.0)
         dp = -1.0;
     else if (dp > 1.0)
         dp = 1.0;
-    const double phi = acos(dp);
-    const double du_dphi = t->force(phi * DEGRAD);
+    const auto phi = acos(dp);
+    const auto du_dphi = t->force(phi * DEGRAD);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
@@ -732,15 +732,15 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
     // Calculate cross products and torsion angle formed (in radians)
     Vec3<double> xpj = vecji * vecjk;
     Vec3<double> xpk = veckl * vecjk;
-    const double magxpj = xpj.magAndNormalise();
-    const double magxpk = xpk.magAndNormalise();
+    const auto magxpj = xpj.magAndNormalise();
+    const auto magxpk = xpk.magAndNormalise();
     double dp = xpj.dp(xpk);
     if (dp < -1.0)
         dp = -1.0;
     else if (dp > 1.0)
         dp = 1.0;
-    const double phi = acos(dp);
-    const double du_dphi = t->force(phi * DEGRAD);
+    const auto phi = acos(dp);
+    const auto du_dphi = t->force(phi * DEGRAD);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.

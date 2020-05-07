@@ -54,12 +54,12 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (cutoffDistance < 0.0)
             cutoffDistance = dissolve.pairPotentialRange();
         const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
-        const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
+        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
         auto &stepSize = keywords_.retrieve<double>("StepSize");
-        const double stepSizeMax = keywords_.asDouble("StepSizeMax");
-        const double stepSizeMin = keywords_.asDouble("StepSizeMin");
-        const double termScale = 1.0;
-        const double rRT = 1.0 / (.008314472 * cfg->temperature());
+        const auto stepSizeMax = keywords_.asDouble("StepSizeMax");
+        const auto stepSizeMin = keywords_.asDouble("StepSizeMin");
+        const auto termScale = 1.0;
+        const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
         Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);

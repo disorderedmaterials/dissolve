@@ -31,9 +31,9 @@ void DataViewer::postResizeGL() {}
 void DataViewer::render2DOverlay()
 {
     // Set up some metrics
-    const double overlaySpacing = 2.0 * pixelScaling_;
-    const double overlayTextSize = 12.0 * pixelScaling_;
-    const double legendLineLength = 20.0 * pixelScaling_;
+    const auto overlaySpacing = 2.0 * pixelScaling_;
+    const auto overlayTextSize = 12.0 * pixelScaling_;
+    const auto legendLineLength = 20.0 * pixelScaling_;
 
     LineStyle(1.0).sendToGL(pixelScaling_);
     glDisable(GL_LIGHTING);

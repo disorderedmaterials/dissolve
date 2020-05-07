@@ -148,7 +148,7 @@ void RenderableSpecies::createCylinderBond(PrimitiveAssembly &assembly, const Sp
     // Get vector between Atoms i->j and move to Bond centre
     Vec3<double> vij = j->r() - i->r();
     A.setTranslation(i->r() + vij * 0.5);
-    const double mag = vij.magAndNormalise();
+    const auto mag = vij.magAndNormalise();
 
     // Create rotation matrix for Bond
     A.setColumn(2, vij.x, vij.y, vij.z, 0.0);

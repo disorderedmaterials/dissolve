@@ -80,15 +80,15 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
         if (functionType == EPSRModule::GaussianExpansionFunction)
         {
-            const double gsigma1 = keywords_.asDouble("GSigma1");
-            const double gsigma2 = keywords_.asDouble("GSigma2");
+            const auto gsigma1 = keywords_.asDouble("GSigma1");
+            const auto gsigma2 = keywords_.asDouble("GSigma2");
             if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2))
                 return false;
         }
         else
         {
-            const double psigma1 = keywords_.asDouble("PSigma1");
-            const double psigma2 = keywords_.asDouble("PSigma2");
+            const auto psigma1 = keywords_.asDouble("PSigma1");
+            const auto psigma2 = keywords_.asDouble("PSigma2");
             if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, psigma1, psigma2))
                 return false;
         }
@@ -106,19 +106,19 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Get Keyword Options
      */
-    const double ereq = keywords_.asDouble("EReq");
+    const auto ereq = keywords_.asDouble("EReq");
     auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
-    const double feedback = keywords_.asDouble("Feedback");
-    const double gsigma1 = keywords_.asDouble("GSigma1");
-    const double gsigma2 = keywords_.asDouble("GSigma2");
+    const auto feedback = keywords_.asDouble("Feedback");
+    const auto gsigma1 = keywords_.asDouble("GSigma1");
+    const auto gsigma2 = keywords_.asDouble("GSigma2");
     const bool modifyPotential = keywords_.asBool("ModifyPotential");
     int ncoeffp = keywords_.asInt("NCoeffP");
     const int npitss = keywords_.asInt("NPItSs");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
-    const double psigma1 = keywords_.asDouble("PSigma1");
-    const double psigma2 = keywords_.asDouble("PSigma2");
-    const double qMax = keywords_.asDouble("QMax");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto psigma1 = keywords_.asDouble("PSigma1");
+    const auto psigma2 = keywords_.asDouble("PSigma2");
+    const auto qMax = keywords_.asDouble("QMax");
+    const auto qMin = keywords_.asDouble("QMin");
     double rmaxpt = keywords_.asDouble("RMaxPT");
     double rminpt = keywords_.asDouble("RMinPT");
     const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
@@ -127,8 +127,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const bool savePotentialCoefficients = keywords_.asBool("SavePCof");
     const bool testMode = keywords_.asBool("Test");
     const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
-    const double testThreshold = keywords_.asDouble("TestThreshold");
-    const double weighting = keywords_.asDouble("Weighting");
+    const auto testThreshold = keywords_.asDouble("TestThreshold");
+    const auto weighting = keywords_.asDouble("Weighting");
 
     // EPSR constants
     const int mcoeff = 200;
