@@ -258,7 +258,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
         return false;
 
     // Isotopologue list (mix_)
-    int nIso = mix_.size();
+    auto nIso = mix_.size();
     if (!procPool.broadcast(nIso, root))
         return false;
     int topIndex;

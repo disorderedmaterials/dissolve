@@ -140,7 +140,7 @@ bool PlainValueList::broadcast(ProcessPool &procPool)
         values_.clear();
 
     // Broadcast number of values to expect
-    int varCount = values_.nItems();
+    auto varCount = values_.nItems();
     if (!procPool.broadcast(&varCount, 1))
         return false;
     for (int n = 0; n < varCount; ++n)

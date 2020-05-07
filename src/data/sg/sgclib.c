@@ -671,7 +671,7 @@ int CompareSeitzMx(const T_LatticeInfo *LatticeInfo, const T_RTMx *SeitzMxA, con
 
 int GetRotMxOrder(const int *RotMx)
 {
-    int deter = deterRotMx(RotMx);
+    auto deter = deterRotMx(RotMx);
 
     if (deter == -1 || deter == 1)
     {
@@ -1646,7 +1646,7 @@ int FindSeitzMx(const T_SgInfo *SgInfo, int Order, int HonorSign, int RefAxis, i
 static int FindXtalSystem(T_SgInfo *SgInfo)
 {
     int iList, i;
-    int HonorSign = 0, CheckEnantiomorph;
+    auto HonorSign = 0, CheckEnantiomorph;
     const T_RTMx *lsmx;
     T_RotMxInfo RotMxInfo;
     const T_RotMxInfo *lrmxi;
