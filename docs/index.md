@@ -13,7 +13,7 @@ permalink: /
 - Simona (September 2019-present)
 - J. Busch (October 2019-present)
 
-_Current Version: 0.6.99, Tuesday 10th March 2020_
+_Last Release: 0.6.99, Tuesday 10th March 2020_
 
 ## Introduction
 
