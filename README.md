@@ -1,6 +1,6 @@
 ![Dissolve's Logo](icon/logo.png)
 
-_Last Release: 0.6.99, Thursday 7th May 2020_
+_Last Release: 0.6.1, Wednesday 18th March 2020_
 _Continuous Build Status:_ [![Continuous Build Status](https://dev.azure.com/ProjectDissolve/Dissolve/_apis/build/status/Continuous%20Build?branchName=develop)](https://dev.azure.com/ProjectDissolve/Dissolve/_build/latest?definitionId=1&branchName=develop)
 
 **Dissolve** is a simulation tool for the interrogation of neutron scattering data, typically total neutron scattering data. It builds on the techniques established in the Empirical Potential Structure Refinement (EPSR) method by Soper.

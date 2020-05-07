@@ -3,8 +3,8 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "6")
-set(VERSION_PATCH "99")
+set(VERSION_MINOR "7")
+set(VERSION_PATCH "0")
 
 set(CMAKE_BUILD_TYPE "Release")
 
