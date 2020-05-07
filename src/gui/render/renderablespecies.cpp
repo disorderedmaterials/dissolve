@@ -199,7 +199,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
             if (i->nBonds() != 0)
                 continue;
 
-            const Vec3<double> r = i->r();
+            const auto r = i->r();
             colour = ElementColours::colour(i->element());
 
             lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
@@ -212,9 +212,9 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         while (const SpeciesBond *b = bondIterator.iterate())
         {
             // Determine half delta i-j for bond
-            const Vec3<double> ri = b->i()->r();
-            const Vec3<double> rj = b->j()->r();
-            const Vec3<double> dij = (rj - ri) * 0.5;
+            const auto ri = b->i()->r();
+            const auto rj = b->j()->r();
+            const auto dij = (rj - ri) * 0.5;
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
@@ -308,7 +308,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
             // If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
             if (i->nBonds() == 0)
             {
-                const Vec3<double> r = i->r();
+                const auto r = i->r();
 
                 lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
                 lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
@@ -373,9 +373,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
         interactionAssembly_.add(lineInteractionPrimitive_, A);
 
         // Determine half delta i-j for bond
-        const Vec3<double> ri = fromAtom->r();
-        const Vec3<double> rj = toAtom->r();
-        const Vec3<double> dij = (rj - ri) * 0.5;
+        const auto ri = fromAtom->r();
+        const auto rj = toAtom->r();
+        const auto dij = (rj - ri) * 0.5;
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
@@ -414,9 +414,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
         interactionAssembly_.add(lineInteractionPrimitive_, A);
 
         // Determine half delta i-j for bond
-        const Vec3<double> ri = fromAtom->r();
-        const Vec3<double> rj = j.r();
-        const Vec3<double> dij = (rj - ri) * 0.5;
+        const auto ri = fromAtom->r();
+        const auto rj = j.r();
+        const auto dij = (rj - ri) * 0.5;
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
@@ -464,9 +464,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
         interactionAssembly_.add(lineInteractionPrimitive_, A);
 
         // Determine half delta i-j for bond
-        const Vec3<double> ri = i.r();
-        const Vec3<double> rj = j.r();
-        const Vec3<double> dij = (rj - ri) * 0.5;
+        const auto ri = i.r();
+        const auto rj = j.r();
+        const auto dij = (rj - ri) * 0.5;
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,

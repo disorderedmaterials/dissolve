@@ -545,8 +545,8 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
 
     // Determine Angle force vectors for atoms
     const auto force = a->force(angle);
-    const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
-    const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
+    const auto forcei = (vecjk - vecji * dp) * force / magji;
+    const auto forcek = (vecji - vecjk * dp) * force / magjk;
 
     // Store forces
     int index = i->arrayIndex();
@@ -594,8 +594,8 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
 
     // Determine Angle force vectors for atoms
     const auto force = a->force(angle);
-    const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
-    const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
+    const auto forcei = (vecjk - vecji * dp) * force / magji;
+    const auto forcek = (vecji - vecjk * dp) * force / magjk;
 
     // Store forces
     int index = onlyThis->arrayIndex();
@@ -678,8 +678,8 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
     dxpk_dlk.makeCrossProductMatrix(vecjk);
 
     // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-    const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
-    const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
+    const auto dcos_dxpj = (xpk - xpj * dp) / magxpj;
+    const auto dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
     // 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
     // Calculate forces on atom i
@@ -770,8 +770,8 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
     dxpk_dlk.makeCrossProductMatrix(vecjk);
 
     // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-    const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
-    const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
+    const auto dcos_dxpj = (xpk - xpj * dp) / magxpj;
+    const auto dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
     // 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
     // Calculate forces for specified atom

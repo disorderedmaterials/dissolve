@@ -191,7 +191,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             // If the atom has no bonds draw it as a 'cross'
             if (i->speciesAtom()->nBonds() == 0)
             {
-                const Vec3<double> r = i->r();
+                const auto r = i->r();
                 colour = ElementColours::colour(i->speciesAtom()->element());
 
                 lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
@@ -213,7 +213,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                     rj = partner->r();
 
                     // Determine half delta i-j for bond
-                    const Vec3<double> dij =
+                    const auto dij =
                         (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
 
                     // Draw bond halves

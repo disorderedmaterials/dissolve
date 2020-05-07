@@ -322,7 +322,7 @@ double EnergyKernel::energy(const Atom *i, Cell *cell, int flags, ProcessPool::D
 
     // Grab some information on the supplied Atom
     std::shared_ptr<Molecule> moleculeI = i->molecule();
-    const Vec3<double> rI = i->r();
+    const auto rI = i->r();
 
     // Get start/stride for specified loop context
     int start = processPool_.interleavedLoopStart(strategy);

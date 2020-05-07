@@ -51,7 +51,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto qDelta = keywords_.asDouble("QDelta");
     const auto qMax = keywords_.asDouble("QMax");
     const auto qMin = keywords_.asDouble("QMin");
-    const Vec3<int> multiplicity = keywords_.asVec3Int("Multiplicity");
+    const auto multiplicity = keywords_.asVec3Int("Multiplicity");
     // TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was
     // used in the generation of the Configuration).
     const bool saveReflections = keywords_.asBool("SaveReflections");
