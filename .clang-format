@@ -4,6 +4,5 @@ BreakBeforeBraces: Allman
 ColumnLimit: 128
 IndentWidth: 4
 TabWidth: 4
-ConstructorInitializerIndentWidth: 4
 AccessModifierOffset: 0
 IndentCaseLabels: true
