@@ -251,8 +251,8 @@ const char *DissolveSys::afterStr(const char *s, const char *search)
 bool DissolveSys::endsWith(const char *target, const char *ending)
 {
     // Check for enough characters to compare
-    const int targetLength = strlen(target);
-    const int endingLength = strlen(ending);
+    const auto targetLength = strlen(target);
+    const auto endingLength = strlen(ending);
     if (targetLength < endingLength)
         return false;
 
@@ -443,7 +443,7 @@ bool DissolveSys::isNumber(const char *text, bool &isFloatingPoint)
 
     int exponentIndex = -1;
 
-    const int length = strlen(text);
+    const auto length = strlen(text);
     for (int n = 0; n < length; ++n)
     {
         char c = text[n];

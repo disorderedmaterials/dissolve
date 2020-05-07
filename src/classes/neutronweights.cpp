@@ -178,7 +178,7 @@ void NeutronWeights::calculateWeightingMatrices()
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
         Species *sp = topes.species();
         const AtomTypeList &speciesAtomTypes = sp->usedAtomTypes();
-        const int nAtoms = sp->nAtoms();
+        const auto nAtoms = sp->nAtoms();
         intraFlag = false;
         for_each_pair(atomTypes_.begin(), atomTypes_.end(),
                       [&](int i_, const AtomTypeData &atd1, int j_, const AtomTypeData &atd2) {

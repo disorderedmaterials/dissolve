@@ -161,7 +161,7 @@ bool IsotopologueSet::read(LineParser &parser, const CoreData &coreData)
         Messenger::error("Error reading IsotopologueSet - no Configuration named '%s' exists.\n", parser.argc(0));
         return false;
     }
-    const int nSpecies = parser.argi(1);
+    const auto nSpecies = parser.argi(1);
 
     for (int n = 0; n < nSpecies; ++n)
     {

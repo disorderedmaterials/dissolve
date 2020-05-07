@@ -271,10 +271,10 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.nItems());
-    const int rowIndex = A_.nRows() - 1;
+    const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    const int nUsedTypes = dataWeights.nUsedTypes();
+    const auto nUsedTypes = dataWeights.nUsedTypes();
     AtomTypeList &usedTypes = dataWeights.atomTypes();
     for (int n = 0; n < nUsedTypes; ++n)
     {
@@ -307,7 +307,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *a
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.nItems());
-    const int rowIndex = A_.nRows() - 1;
+    const auto rowIndex = A_.nRows() - 1;
 
     int colIndex = pairIndex(at1, at2);
     if (colIndex == -1)

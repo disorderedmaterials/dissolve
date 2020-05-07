@@ -114,7 +114,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
     // Read total number of Molecules to expect
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    const int expectedNMols = parser.argi(0);
+    const auto expectedNMols = parser.argi(0);
 
     // Read Species types for Molecules
     int nMolsRead = 0;

@@ -271,7 +271,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
     Vec3<double> centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
 
     // Divide points over processes
-    const int nPointsPerProcess = nPoints / procPool.nProcesses();
+    const auto nPointsPerProcess = nPoints / procPool.nProcesses();
     Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess,
                      nPointsPerProcess * procPool.nProcesses());
 

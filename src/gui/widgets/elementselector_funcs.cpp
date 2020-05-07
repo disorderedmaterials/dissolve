@@ -244,7 +244,7 @@ Element *ElementSelector::getElement(QWidget *parent, const char *title, const c
     mainLayout->addWidget(elementSelector);
     mainLayout->addWidget(buttonBox);
 
-    const int ret = inputDialog.exec();
+    const auto ret = inputDialog.exec();
     if (ok)
         *ok = (ret == QDialog::Accepted);
     return (ret == QDialog::Accepted ? elementSelector->currentElement() : element);

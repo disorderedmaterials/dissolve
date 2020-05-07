@@ -61,7 +61,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
         const auto rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
         const auto rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
-        const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
+        const auto nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
         const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
         auto &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
         const auto translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");

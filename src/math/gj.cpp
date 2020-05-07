@@ -37,7 +37,7 @@ bool GaussJordan::invert(Array2D<double> &A)
         return false;
     }
 
-    const int rank = A.nRows();
+    const auto rank = A.nRows();
     double *array = A.linearArray();
 
     int pivotrows[rank], pivotcols[rank], pivotrow = 0, pivotcol = 0;

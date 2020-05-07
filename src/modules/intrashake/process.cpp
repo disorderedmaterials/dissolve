@@ -67,7 +67,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         double cutoffDistance = keywords_.asDouble("CutoffDistance");
         if (cutoffDistance < 0.0)
             cutoffDistance = dissolve.pairPotentialRange();
-        const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
+        const auto nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
         const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
         const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
         auto &torsionStepSize = keywords_.retrieve<double>("TorsionStepSize");
@@ -163,7 +163,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Get Molecule index and pointer
                 std::shared_ptr<Molecule> mol = cfg->molecule(molId);
-                const int indexOffset = mol->atom(0)->arrayIndex();
+                const auto indexOffset = mol->atom(0)->arrayIndex();
 
                 // Set current atom targets in ChangeStore (whole molecule)
                 changeStore.add(mol);

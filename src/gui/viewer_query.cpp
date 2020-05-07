@@ -145,7 +145,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
 BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
 {
     // Sampling size around central pixel
-    const int sampleSize = 2;
+    const auto sampleSize = 2;
 
     queryObjectType_ = BaseViewer::NoObject;
     queryObjectInfo_.clear();

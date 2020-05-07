@@ -199,7 +199,7 @@ bool IsotopologueCollection::read(LineParser &parser, const CoreData &coreData)
     clear();
 
     // Read in number of Configurations in the collection
-    const int nConfigurations = parser.argi(0);
+    const auto nConfigurations = parser.argi(0);
 
     for (int n = 0; n < nConfigurations; ++n)
     {

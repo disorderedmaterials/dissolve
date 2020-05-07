@@ -492,7 +492,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
     // atom name. This idea is shamelessly stolen from MCCCS Towhee!
     int n = 0;
-    const int geom = j->geom();
+    const auto geom = j->geom();
 
     if (geom == 0)
         Messenger::error("Unable to generate angle function around central atom '%s'.\n", j->name());
@@ -544,13 +544,13 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
     // Therefore: forcek = 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#
     // eq = 0.0
 
-    const int groupJ = group(j->Z());
-    const int groupK = group(k->Z());
+    const auto groupJ = group(j->Z());
+    const auto groupK = group(k->Z());
 
-    const int geomI = i->geom() == 9 ? 2 : i->geom();
-    const int geomJ = j->geom() == 9 ? 2 : j->geom();
-    const int geomK = k->geom() == 9 ? 2 : k->geom();
-    const int geomL = l->geom() == 9 ? 2 : l->geom();
+    const auto geomI = i->geom() == 9 ? 2 : i->geom();
+    const auto geomJ = j->geom() == 9 ? 2 : j->geom();
+    const auto geomK = k->geom() == 9 ? 2 : k->geom();
+    const auto geomL = l->geom() == 9 ? 2 : l->geom();
     double V, n, phi0;
 
     // Selection begins

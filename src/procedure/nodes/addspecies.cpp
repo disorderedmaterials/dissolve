@@ -105,14 +105,14 @@ bool AddSpeciesProcedureNode::prepare(Configuration *cfg, const char *prefix, Ge
 ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                     const char *prefix, GenericList &targetList)
 {
-    const int requestedPopulation = keywords_.asInt("Population");
+    const auto requestedPopulation = keywords_.asInt("Population");
     auto *sp = keywords_.retrieve<Species *>("Species");
     if (!sp)
     {
         Messenger::error("No Species set in AddSpecies node.\n");
         return ProcedureNode::Failure;
     }
-    const int nAtomsToAdd = requestedPopulation * sp->nAtoms();
+    const auto nAtomsToAdd = requestedPopulation * sp->nAtoms();
 
     // Can't add the Species if it has any missing core information
     if (!sp->checkSetUp())

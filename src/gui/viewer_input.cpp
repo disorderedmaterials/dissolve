@@ -75,8 +75,8 @@ void BaseViewer::mouseReleaseEvent(QMouseEvent *event)
 // Mouse move event
 void BaseViewer::mouseMoveEvent(QMouseEvent *event)
 {
-    const int dx = event->x() - rMouseLast_.x;
-    const int dy = (contextHeight_ - event->y()) - rMouseLast_.y;
+    const auto dx = event->x() - rMouseLast_.x;
+    const auto dy = (contextHeight_ - event->y()) - rMouseLast_.y;
 
     // Store the new mouse coordinate with inverted y coordinate
     rMouseLast_.set(event->x(), contextHeight_ - event->y(), 0.0);

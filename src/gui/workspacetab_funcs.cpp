@@ -240,7 +240,7 @@ bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
     // Read tab state information:   nGizmos
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    const int nGizmos = parser.argi(0);
+    const auto nGizmos = parser.argi(0);
 
     // Read in widgets
     for (int n = 0; n < nGizmos; ++n)

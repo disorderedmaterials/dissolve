@@ -1132,7 +1132,7 @@ bool LineParser::writeLineF(const char *fmt, ...) const
 bool LineParser::writeBannerComment(const char *fmt, ...)
 {
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);

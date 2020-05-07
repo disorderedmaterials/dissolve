@@ -52,7 +52,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     // 2) TODO Need to check distances properly for monoclinic and triclinic cells
     // 3) Require Cells to be roughly 'cubic' as far as is possible.
 
-    const int minCellsPerSide = 3;
+    const auto minCellsPerSide = 3;
     const auto tolerance = 0.01;
     int n, x, y, z;
 

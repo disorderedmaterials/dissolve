@@ -68,7 +68,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
                                              double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1,
                                              double sigma2)
 {
-    const int nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.nAtomTypes();
     int i, j;
 
     // Get coefficients array
@@ -124,7 +124,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 // Generate and return single empirical potential function
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
 {
-    const int nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.nAtomTypes();
     auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
     const auto gsigma1 = keywords_.asDouble("GSigma1");
     const auto gsigma2 = keywords_.asDouble("GSigma2");
@@ -137,7 +137,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
     double rminpt = keywords_.asDouble("RMinPT");
 
     // EPSR constants
-    const int mcoeff = 200;
+    const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
     if (rmaxpt < 0.0)

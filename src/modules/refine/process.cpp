@@ -52,10 +52,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto augmentationParam = keywords_.asDouble("AugmentationParam");
     const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
     const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
-    const int phiRSmoothK = keywords_.asInt("DeltaPhiRSmoothK");
-    const int phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
+    const auto phiRSmoothK = keywords_.asInt("DeltaPhiRSmoothK");
+    const auto phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
     const auto errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
-    const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
+    const auto errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
     // const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
     const auto inversionMethod = keywords_.enumeration<RefineModule::PotentialInversionMethod>("InversionMethod");
     const auto globalMinimumRadius = keywords_.asDouble("MinimumRadius");
@@ -235,7 +235,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Loop over groups of defined Module targets.
      * We will generate a contribution to dPhiR from each and blend them together.
      */
-    const int nTypes = dissolve.nAtomTypes();
+    const auto nTypes = dissolve.nAtomTypes();
     Array2D<double> globalCombinedErrors;
     globalCombinedErrors.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     globalCombinedErrors = 0.0;

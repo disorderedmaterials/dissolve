@@ -622,7 +622,7 @@ void Axes::transformZ(Array2D<double> &zArray) const
 // Recalculate tick deltas for specified axis
 void Axes::calculateTickDeltas(int axis)
 {
-    const int nBaseValues = 5, maxIterations = 10, maxTicks = 10;
+    const auto nBaseValues = 5, maxIterations = 10, maxTicks = 10;
     int power = 1, baseValues[nBaseValues] = {1, 2, 3, 4, 5}, baseValueIndex = 0, nTicks, iteration, minTicks = maxTicks / 2;
 
     baseValueIndex = 0;

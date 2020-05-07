@@ -342,7 +342,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
     nGaussians_ = 0;
     approximateData_.initialise(referenceData_);
 
-    const int regionWidth = 5, regionDelta = regionWidth / 2;
+    const auto regionWidth = 5, regionDelta = regionWidth / 2;
     int lastSign = 0;
     double gradient, trialX, trialA, trialFWHM, lastX;
     Data1D referenceDelta;
@@ -631,7 +631,7 @@ double GaussFit::costAnalyticA(const Array<double> &alpha)
 // data into sum
 double GaussFit::costAnalyticAF(const Array<double> &alpha)
 {
-    const int nGauss = alpha.nItems() / 2;
+    const auto nGauss = alpha.nItems() / 2;
 
     double sose = 0.0;
     double multiplier = 1.0;
@@ -671,7 +671,7 @@ double GaussFit::costAnalyticAF(const Array<double> &alpha)
 // approximate data into sum
 double GaussFit::costAnalyticAX(const Array<double> &alpha)
 {
-    const int nGauss = alpha.nItems() / 2;
+    const auto nGauss = alpha.nItems() / 2;
 
     double sose = 0.0;
     double multiplier = 1.0;
@@ -711,7 +711,7 @@ double GaussFit::costAnalyticAX(const Array<double> &alpha)
 // approximate data into sum
 double GaussFit::costAnalyticAFX(const Array<double> &alpha)
 {
-    const int nGauss = alpha.nItems() / 2;
+    const auto nGauss = alpha.nItems() / 2;
 
     double sose = 0.0;
     double multiplier = 1.0;

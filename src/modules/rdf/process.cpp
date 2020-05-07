@@ -44,7 +44,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     CharString varName;
 
-    const int averaging = keywords_.asInt("Averaging");
+    const auto averaging = keywords_.asInt("Averaging");
     if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
         return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
@@ -56,7 +56,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const bool allIntra = true;
     const bool internalTest = keywords_.asBool("InternalTest");
     const bool saveData = keywords_.asBool("Save");
-    const int smoothing = keywords_.asInt("Smoothing");
+    const auto smoothing = keywords_.asInt("Smoothing");
 
     // Print argument/parameter summary
     if (useHalfCellRange)

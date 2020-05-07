@@ -55,12 +55,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (cutoffDistance < 0.0)
         cutoffDistance = dissolve.pairPotentialRange();
     double deltaT = keywords_.asDouble("DeltaT");
-    const int energyFrequency = keywords_.asInt("EnergyFrequency");
-    const int nSteps = keywords_.asInt("NSteps");
-    const int outputFrequency = keywords_.asInt("OutputFrequency");
+    const auto energyFrequency = keywords_.asInt("EnergyFrequency");
+    const auto nSteps = keywords_.asInt("NSteps");
+    const auto outputFrequency = keywords_.asInt("OutputFrequency");
     bool randomVelocities = keywords_.asBool("RandomVelocities");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
-    const int trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
+    const auto trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
     const bool variableTimestep = keywords_.asBool("VariableTimestep");
     bool writeTraj = trajectoryFrequency > 0;
 

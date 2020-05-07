@@ -232,7 +232,7 @@ Data1D PartialSet::constTotal() const { return total_; }
 // Calculate and return total bound function
 Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
 {
-    const int nTypes = atomTypes_.nItems();
+    const auto nTypes = atomTypes_.nItems();
     if (nTypes == 0)
         return Data1D();
 
@@ -260,7 +260,7 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
 // Calculate and return total unbound function
 Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 {
-    const int nTypes = atomTypes_.nItems();
+    const auto nTypes = atomTypes_.nItems();
     if (nTypes == 0)
         return Data1D();
 

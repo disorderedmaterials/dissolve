@@ -224,7 +224,7 @@ void Messenger::banner(const char *fmt, ...)
         return;
 
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);
@@ -257,7 +257,7 @@ void Messenger::heading(const char *fmt, ...)
         return;
 
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);

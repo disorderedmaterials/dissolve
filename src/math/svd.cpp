@@ -49,8 +49,8 @@ bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double
     double anorm, c, f, g, h, s, scale, x, y, z;
 
     // Get matrix dimensions and create / initialise arrays
-    const int nCols = A.nColumns();
-    const int nRows = A.nRows();
+    const auto nCols = A.nColumns();
+    const auto nRows = A.nRows();
 
     // Check for nRows >= nCols
     if (nRows < nCols)

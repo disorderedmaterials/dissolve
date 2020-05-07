@@ -272,7 +272,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                         cfg->name());
             const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
-            const int nReflections = braggReflections.nItems();
+            const auto nReflections = braggReflections.nItems();
             const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
             Messenger::print("Found BraggReflections data for Configuration '%s' (nReflections = %i, QMax = %f "
                              "Angstroms**-1).\n",

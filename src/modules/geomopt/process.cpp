@@ -29,10 +29,10 @@
 bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Retrieve Module options
-    const int nCycles = keywords_.asInt("NCycles");
+    const auto nCycles = keywords_.asInt("NCycles");
     const auto tolerance = keywords_.asDouble("Tolerance");
     const auto initialStepSize = keywords_.asDouble("StepSize");
-    const int nStepSizeResetsAllowed = 5;
+    const auto nStepSizeResetsAllowed = 5;
 
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is %i.\n", nCycles);

@@ -114,7 +114,7 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
      * where a = arctan(Q*sigma).
      */
 
-    const int n = n_.constAt(nIndex);
+    const auto n = n_.constAt(nIndex);
 
     double na = n * arcTanQSigma_.constAt(qIndex);
 

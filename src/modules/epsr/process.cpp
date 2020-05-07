@@ -113,7 +113,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto gsigma2 = keywords_.asDouble("GSigma2");
     const bool modifyPotential = keywords_.asBool("ModifyPotential");
     int ncoeffp = keywords_.asInt("NCoeffP");
-    const int npitss = keywords_.asInt("NPItSs");
+    const auto npitss = keywords_.asInt("NPItSs");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto psigma1 = keywords_.asDouble("PSigma1");
     const auto psigma2 = keywords_.asDouble("PSigma2");
@@ -131,7 +131,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto weighting = keywords_.asDouble("Weighting");
 
     // EPSR constants
-    const int mcoeff = 200;
+    const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
     if (rmaxpt < 0.0)
@@ -475,7 +475,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
-    const int nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.nAtomTypes();
     Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
     fluctuationCoefficients = 0.0;
 

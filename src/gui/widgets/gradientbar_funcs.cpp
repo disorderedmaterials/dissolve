@@ -42,7 +42,7 @@ void GradientBar::setColourScale(const ColourScale &colourScale)
         colourScale_.setUseHSV(false);
         if (colourScale.nPoints() > 0)
         {
-            const int nPoints = 101;
+            const auto nPoints = 101;
             double value = colourScale.firstPoint().value();
             double delta = (colourScale.lastPoint().value() - value) / nPoints;
             for (int n = 0; n < nPoints; ++n)

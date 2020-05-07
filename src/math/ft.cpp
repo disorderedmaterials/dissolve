@@ -54,7 +54,7 @@ bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep,
     const auto &y = data.constValues();
 
     int m;
-    const int nX = x.nItems();
+    const auto nX = x.nItems();
     double window, broaden;
 
     // Create working arrays

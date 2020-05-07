@@ -64,7 +64,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Retrieve control parameters from Configuration
         const bool saveData = keywords_.asBool("Save");
         const auto stabilityThreshold = keywords_.asDouble("StabilityThreshold");
-        const int stabilityWindow = keywords_.asInt("StabilityWindow");
+        const auto stabilityWindow = keywords_.asInt("StabilityWindow");
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testMode = keywords_.asBool("Test");
         const auto testThreshold = keywords_.asDouble("TestThreshold");

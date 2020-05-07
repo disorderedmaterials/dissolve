@@ -272,7 +272,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
 
     // Calculate k-vector contributions
     KVector *kVectors = braggKVectors.array();
-    const int nKVectors = braggKVectors.nItems();
+    const auto nKVectors = braggKVectors.nItems();
     int localTypeIndex;
 
     // Zero kvector cos/sin contributions
@@ -353,10 +353,10 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
                                                                                     Array<BraggReflection>(), &found);
     if (!found)
         return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
-    const int nReflections = braggReflections.nItems();
+    const auto nReflections = braggReflections.nItems();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
-    const int nTypes = cfg->nUsedAtomTypes();
+    const auto nTypes = cfg->nUsedAtomTypes();
     bool wasCreated;
     auto &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(cfg->moduleData(), "OriginalBragg", "",
                                                                       GenericItem::InRestartFileFlag, &wasCreated);
@@ -426,13 +426,13 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
                                                                                     Array<BraggReflection>(), &found);
     if (!found)
         return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
-    const int nReflections = braggReflections.nItems();
+    const auto nReflections = braggReflections.nItems();
 
-    const int nTypes = cfg->nUsedAtomTypes();
+    const auto nTypes = cfg->nUsedAtomTypes();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials.at(0, 0).xAxis(1) - braggPartials.at(0, 0).xAxis(0);
-    const int nBins = braggPartials.at(0, 0).nValues();
+    const auto nBins = braggPartials.at(0, 0).nValues();
     Array<int> nAdded(nBins);
 
     nAdded = 0;

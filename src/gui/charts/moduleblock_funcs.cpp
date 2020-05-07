@@ -160,7 +160,7 @@ void ModuleBlock::paintEvent(QPaintEvent *event)
     painter.setPen(borderPen);
 
     QPainterPath borderPath;
-    const int blockDentLeft = width() * 0.5 - metrics.blockDentRadius();
+    const auto blockDentLeft = width() * 0.5 - metrics.blockDentRadius();
     borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
     borderPath.arcTo(blockDentLeft, metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentRadius() * 2,
                      metrics.blockDentRadius() * 2, 180, 180);

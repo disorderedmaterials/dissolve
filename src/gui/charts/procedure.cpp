@@ -194,7 +194,7 @@ void ProcedureChart::updateContentBlocks()
 void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeWidgets, QSize &requiredSize, int &indentLevel)
 {
     // Precalculate some useful metrics
-    const int leftIndent = indentLevel * metrics_.indentWidth();
+    const auto leftIndent = indentLevel * metrics_.indentWidth();
 
     // Loop over widgets in this sequence
     for (ProcedureChartNodeBlock *block : nodeWidgets)
