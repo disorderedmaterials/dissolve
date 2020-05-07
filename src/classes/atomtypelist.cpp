@@ -393,10 +393,17 @@ bool AtomTypeList::equality(ProcessPool &procPool)
     // Check number of types in list first
     if (!procPool.equality((long int)types_.size()))
         return Messenger::error("AtomTypeList size is not equivalent (process %i has %i).\n", procPool.poolRank(),
+<<<<<<< HEAD
                                 types_.size());
     for (auto &atd : types_)
         if (!atd.equality(procPool))
             return Messenger::error("AtomTypeList entry for type '%s' is not equivalent.\n", atd.atomTypeName());
+=======
+                                types_.nItems());
+    for (auto *atd = types_.first(); atd != NULL; atd = atd->next())
+        if (!atd->equality(procPool))
+            return Messenger::error("AtomTypeList entry for type '%s' is not equivalent.\n", atd->atomTypeName());
+>>>>>>> 05cd4d3af... Use auto in for-loop variable declarations.
 #endif
     return true;
 }
