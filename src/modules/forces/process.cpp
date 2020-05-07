@@ -504,8 +504,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 moduleData.contains("ReferenceFZ", uniqueName()))
             {
                 // Grab reference force arrays and check sizes
-                const auto &referenceFx =
-                    GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
+                const auto &referenceFx = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
                 {
                     Messenger::error("Number of force components in ReferenceFX is %i, but the "
@@ -513,8 +512,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      referenceFx.nItems(), cfg->name(), cfg->nAtoms());
                     return false;
                 }
-                const auto &referenceFy =
-                    GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
+                const auto &referenceFy = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
                 {
                     Messenger::error("Number of force components in ReferenceFY is %i, but the "
@@ -522,8 +520,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      referenceFy.nItems(), cfg->name(), cfg->nAtoms());
                     return false;
                 }
-                const auto &referenceFz =
-                    GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
+                const auto &referenceFz = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
                 {
                     Messenger::error("Number of force components in ReferenceFZ is %i, but the "

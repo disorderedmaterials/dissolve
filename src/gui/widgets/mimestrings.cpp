@@ -71,14 +71,14 @@ void MimeStrings::add(MimeString::MimeStringType type, QString data)
 // Add mime strings from source MimeStrings
 void MimeStrings::add(MimeStrings &sourceStrings)
 {
-    for (MimeString *mimeString = sourceStrings.strings().first(); mimeString != NULL; mimeString = mimeString->next())
+    for (auto *mimeString = sourceStrings.strings().first(); mimeString != NULL; mimeString = mimeString->next())
         add(mimeString->type(), mimeString->data());
 }
 
 // Return whether the specified MimeString data is present
 bool MimeStrings::hasData(MimeString::MimeStringType type) const
 {
-    for (MimeString *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
+    for (auto *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
         if (mimeString->type() == type)
             return true;
 
@@ -88,7 +88,7 @@ bool MimeStrings::hasData(MimeString::MimeStringType type) const
 // Return the data for the specified type
 QString MimeStrings::data(MimeString::MimeStringType type) const
 {
-    for (MimeString *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
+    for (auto *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
         if (mimeString->type() == type)
             return mimeString->data();
 

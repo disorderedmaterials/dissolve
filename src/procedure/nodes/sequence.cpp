@@ -215,7 +215,7 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, c
     }
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         if (DissolveSys::sameString(node->name(), name))
         {
@@ -249,7 +249,7 @@ RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryi
     RefList<ProcedureNode> matches;
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         // Check type
         if (nt == ProcedureNode::nNodeTypes)
@@ -289,7 +289,7 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
     }
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         ExpressionVariable *param = node->hasParameter(name, excludeParameter);
         if (param)
@@ -329,7 +329,7 @@ RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNo
     }
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         parameters += node->parameterReferences();
     }

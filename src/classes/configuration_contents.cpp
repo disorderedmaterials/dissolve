@@ -87,7 +87,7 @@ SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 // Return SpeciesInfo for specified Species
 SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
 {
-    for (SpeciesInfo *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
         if (spInfo->species() == sp)
             return spInfo;
 
@@ -100,7 +100,7 @@ List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species *sp)
 {
-    for (SpeciesInfo *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
         if (spInfo->species() == sp)
             return true;
 

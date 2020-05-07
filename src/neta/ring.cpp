@@ -160,7 +160,7 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
     {
         // Check this ring against others in the list - if we find a duplicate, we can remove it and then move on with
         // the next ring.
-        for (SpeciesRing *other = ring->next(); other != NULL; other = other->next())
+        for (auto *other = ring->next(); other != NULL; other = other->next())
         {
             if ((*ring) == (*other))
             {

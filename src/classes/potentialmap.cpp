@@ -56,7 +56,7 @@ bool PotentialMap::initialise(const List<AtomType> &masterAtomTypes, const List<
 
     // Loop over defined PairPotentials
     int indexI, indexJ;
-    for (PairPotential *pot = pairPotentials.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials.first(); pot != NULL; pot = pot->next())
     {
         indexI = pot->atomTypeI()->index();
         indexJ = pot->atomTypeJ()->index();

@@ -26,7 +26,7 @@
 // Update current Isotopologues
 void Species::updateIsotopologues()
 {
-    for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
         iso->update();
 }
 
@@ -127,7 +127,7 @@ Isotopologue *Species::findIsotopologue(const char *name)
     if (DissolveSys::sameString("Natural", name))
         return naturalIsotopologue();
 
-    for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
         if (DissolveSys::sameString(name, iso->name()))
             return iso;
 

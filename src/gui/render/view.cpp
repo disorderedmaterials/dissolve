@@ -977,7 +977,7 @@ void View::autoFollowData()
         // Get y range over the horizontal range we've established
         bool first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+        for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -1043,7 +1043,7 @@ Vec3<double> View::dataMinima()
 
     int nCounted = 0;
     Vec3<double> v, minima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1076,7 +1076,7 @@ Vec3<double> View::dataMaxima()
 
     int nCounted = 0;
     Vec3<double> v, maxima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1105,7 +1105,7 @@ Vec3<double> View::positiveDataMinima()
 {
     int nCounted = 0;
     Vec3<double> v, minima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1138,7 +1138,7 @@ Vec3<double> View::positiveDataMaxima()
 {
     int nCounted = 0;
     Vec3<double> v, maxima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())

@@ -78,7 +78,7 @@ Configuration *Dissolve::findConfiguration(const char *name) const { return core
 // Find configuration by 'nice' name
 Configuration *Dissolve::findConfigurationByNiceName(const char *name) const
 {
-    for (Configuration *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
         if (DissolveSys::sameString(name, cfg->niceName()))
             return cfg;
 

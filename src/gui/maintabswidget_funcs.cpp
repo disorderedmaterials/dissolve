@@ -104,7 +104,7 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 // Find SpeciesTab containing specified page widget
 SpeciesTab *MainTabsWidget::speciesTab(QWidget *page)
 {
-    for (SpeciesTab *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -114,7 +114,7 @@ SpeciesTab *MainTabsWidget::speciesTab(QWidget *page)
 // Find ConfigurationTab containing specified page widget
 ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
 {
-    for (ConfigurationTab *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -124,7 +124,7 @@ ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
 // Find LayerTab containing specified page widget
 LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
 {
-    for (LayerTab *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -134,7 +134,7 @@ LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
 // Find ModuleTab containing specified page widget
 ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
 {
-    for (ModuleTab *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -144,7 +144,7 @@ ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
 // Find ModuleTab containing specified Module
 ModuleTab *MainTabsWidget::moduleTab(Module *module)
 {
-    for (ModuleTab *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->module() == module)
             return tab;
 
@@ -154,7 +154,7 @@ ModuleTab *MainTabsWidget::moduleTab(Module *module)
 // Find WorkspaceTab containing specified page widget
 WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
 {
-    for (WorkspaceTab *tab = workspaceTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = workspaceTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -493,7 +493,7 @@ void MainTabsWidget::setCurrentTab(Species *species)
     if (!species)
         return;
 
-    for (SpeciesTab *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->species() == species)
         {
             setCurrentWidget(tab->page());
@@ -509,7 +509,7 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
     if (!cfg)
         return;
 
-    for (ConfigurationTab *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->configuration() == cfg)
         {
             setCurrentWidget(tab->page());
@@ -525,7 +525,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
     if (!layer)
         return;
 
-    for (LayerTab *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->moduleLayer() == layer)
         {
             setCurrentWidget(tab->page());

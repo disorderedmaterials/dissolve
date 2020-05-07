@@ -92,12 +92,12 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
-    for (SpeciesInfo *spInfo = speciesInfoList.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = speciesInfoList.first(); spInfo != NULL; spInfo = spInfo->next())
     {
         const Species *sp = spInfo->species();
 
         // Loop over Atoms in the Species
-        for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
+        for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
             atomTypes_.add(*i->atomType(), spInfo->population());
     }
 
@@ -108,7 +108,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 // Add Species to weights in the specified population
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
-    for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
+    for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
         atomTypes_.add(*i->atomType(), population);
 
     valid_ = false;

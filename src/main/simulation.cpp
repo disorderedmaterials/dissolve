@@ -53,17 +53,17 @@ bool Dissolve::prepare()
         srand(seed_);
 
     // Check Species
-    for (Species *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
         if (!sp->checkSetUp())
             return false;
 
     // Reassign AtomType indices (in case one or more have been added / removed)
     int count = 0;
-    for (AtomType *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
+    for (auto *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
         at->setIndex(count);
 
     // Check Configurations
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         // Check Box extent against pair potential range
         double maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -150,7 +150,7 @@ bool Dissolve::iterate(int nIterations)
         double thisTime = 0.0;
         int nEnabledModules = 0;
 
-        for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             if (cfg->nModules() == 0)
                 continue;
@@ -220,7 +220,7 @@ bool Dissolve::iterate(int nIterations)
         Messenger::banner("Configuration Processing");
 
         bool result = true;
-        for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             // Check for failure of one or more processes / processing tasks
             if (!worldPool().allTrue(result))
@@ -270,7 +270,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Reassemble Data");
         // Loop over Configurations
-        for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
             if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
@@ -336,7 +336,7 @@ bool Dissolve::iterate(int nIterations)
                 iteration_;
 
             // Pair Potentials
-            for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+            for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
             {
                 GenericListHelper<Data1D>::realise(
                     processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()),
@@ -428,7 +428,7 @@ void Dissolve::printTiming()
     CharString timingFormat("      --> %%20s  %%-%is  %%7.2f s/iteration (%%i iterations)\n", maxLength + 2);
     CharString restartFormat("      --> %%20s  %%-%is  %%7.2f s/write     (%%i writes)\n", maxLength + 2);
 
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         if (cfg->nModules() == 0)
             continue;

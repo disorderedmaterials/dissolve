@@ -94,7 +94,7 @@ void AtomTypeList::add(const AtomTypeList &source)
         AtomTypeData &atd = add(newType.atomType());
 
         // Now add Isotope data
-        for (IsotopeData *topeData = newType.isotopeData(); topeData != NULL; topeData = topeData->next())
+        for (auto *topeData = newType.isotopeData(); topeData != NULL; topeData = topeData->next())
             atd.add(topeData->isotope(), topeData->population());
     }
 }
@@ -121,7 +121,7 @@ void AtomTypeList::finalise()
 {
     // Finalise AtomTypeData
     double total = totalPopulation();
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
         atd.finalise(total);
 }
 
@@ -133,7 +133,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
 
     // Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
     double totalFraction = 0.0, boundCoherent = 0.0;
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
     {
         // If this type is not exchangable, move on
         if (!exchangeable.contains(atd.atomType()))
@@ -146,7 +146,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
     boundCoherent /= totalFraction;
 
     // Now go back through the list and set the new scattering length for exchangeable components
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
     {
         // If this type is not exchangable, move on
         if (!exchangeable.contains(atd.atomType()))
@@ -162,7 +162,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
 void AtomTypeList::naturalise()
 {
     // Loop over AtomTypes in the source list
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
         atd.naturalise();
 }
 
@@ -278,7 +278,7 @@ void AtomTypeList::print() const
             Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd.atomTypeName(),
                              atd.atomType().element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (IsotopeData *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
+            for (auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
             {
                 Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(),
                                  topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());

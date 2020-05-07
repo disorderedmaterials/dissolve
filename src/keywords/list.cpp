@@ -87,7 +87,7 @@ bool KeywordList::link(const char *groupName, KeywordBase *object, const char *n
 // Find named keyword
 KeywordBase *KeywordList::find(const char *name) const
 {
-    for (KeywordBase *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
+    for (auto *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
         if (DissolveSys::sameString(name, kwd->name()))
             return kwd->base();
 

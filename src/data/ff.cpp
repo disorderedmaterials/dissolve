@@ -280,7 +280,7 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
 
     // Loop over Species atoms
     int nFailed = 0;
-    for (SpeciesAtom *i = sp->atoms().first(); i != NULL; i = i->next())
+    for (auto *i = sp->atoms().first(); i != NULL; i = i->next())
     {
         // Obey the supplied strategy:
         // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)

@@ -590,7 +590,7 @@ bool Species::write(LineParser &parser, const char *prefix)
     // Atoms
     parser.writeLineF("%s# Atoms\n", newPrefix.get());
     int count = 0;
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
     {
         if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(),
                                keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y,
@@ -768,7 +768,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         if (!parser.writeLineF("\n%s# Isotopologues\n", newPrefix.get()))
             return false;
 
-        for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+        for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
         {
             if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword),
                                    iso->name()))

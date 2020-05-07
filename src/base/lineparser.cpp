@@ -515,7 +515,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
                 // Now, see if our line contains only blanks
                 nchars = 0;
                 nspaces = 0;
-                for (char *c = line_; *c != '\0'; c++)
+                for (auto *c = line_; *c != '\0'; c++)
                 {
                     nchars++;
                     if (isspace(*c))

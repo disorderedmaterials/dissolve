@@ -112,7 +112,7 @@ const char *CoreData::uniqueAtomTypeName(const char *base) const
 // Search for AtomType by name
 AtomType *CoreData::findAtomType(const char *name) const
 {
-    for (AtomType *at = atomTypes_.first(); at != NULL; at = at->next())
+    for (auto *at = atomTypes_.first(); at != NULL; at = at->next())
         if (DissolveSys::sameString(at->name(), name))
             return at;
 
@@ -162,7 +162,7 @@ MasterIntra *CoreData::hasMasterBond(const char *name) const
     // Remove leading '@' if necessary
     const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (MasterIntra *b = masterBonds_.first(); b != NULL; b = b->next())
+    for (auto *b = masterBonds_.first(); b != NULL; b = b->next())
         if (DissolveSys::sameString(trimmedName, b->name()))
             return b;
     return NULL;
@@ -201,7 +201,7 @@ MasterIntra *CoreData::hasMasterAngle(const char *name) const
     // Remove leading '@' if necessary
     const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (MasterIntra *a = masterAngles_.first(); a != NULL; a = a->next())
+    for (auto *a = masterAngles_.first(); a != NULL; a = a->next())
         if (DissolveSys::sameString(trimmedName, a->name()))
             return a;
     return NULL;
@@ -240,7 +240,7 @@ MasterIntra *CoreData::hasMasterTorsion(const char *name) const
     // Remove leading '@' if necessary
     const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (MasterIntra *t = masterTorsions_.first(); t != NULL; t = t->next())
+    for (auto *t = masterTorsions_.first(); t != NULL; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
             return t;
     return NULL;
@@ -280,7 +280,7 @@ MasterIntra *CoreData::hasMasterImproper(const char *name) const
     // Remove leading '@' if necessary
     const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (MasterIntra *t = masterImpropers_.first(); t != NULL; t = t->next())
+    for (auto *t = masterImpropers_.first(); t != NULL; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
             return t;
     return NULL;
@@ -292,16 +292,16 @@ MasterIntra *CoreData::findMasterTerm(const char *name) const
     // Remove leading '@' if necessary
     const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (MasterIntra *b = masterBonds_.first(); b != NULL; b = b->next())
+    for (auto *b = masterBonds_.first(); b != NULL; b = b->next())
         if (DissolveSys::sameString(trimmedName, b->name()))
             return b;
-    for (MasterIntra *a = masterAngles_.first(); a != NULL; a = a->next())
+    for (auto *a = masterAngles_.first(); a != NULL; a = a->next())
         if (DissolveSys::sameString(trimmedName, a->name()))
             return a;
-    for (MasterIntra *t = masterTorsions_.first(); t != NULL; t = t->next())
+    for (auto *t = masterTorsions_.first(); t != NULL; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
             return t;
-    for (MasterIntra *i = masterImpropers_.first(); i != NULL; i = i->next())
+    for (auto *i = masterImpropers_.first(); i != NULL; i = i->next())
         if (DissolveSys::sameString(trimmedName, i->name()))
             return i;
 
@@ -372,7 +372,7 @@ const char *CoreData::uniqueSpeciesName(const char *base) const
 // Search for Species by name
 Species *CoreData::findSpecies(const char *name) const
 {
-    for (Species *sp = species_.first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species_.first(); sp != NULL; sp = sp->next())
         if (DissolveSys::sameString(sp->name(), name))
             return sp;
 
@@ -435,7 +435,7 @@ const char *CoreData::uniqueConfigurationName(const char *base) const
 // Search for Configuration by name
 Configuration *CoreData::findConfiguration(const char *name) const
 {
-    for (Configuration *cfg = configurations_.first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations_.first(); cfg != NULL; cfg = cfg->next())
         if (DissolveSys::sameString(cfg->name(), name))
             return cfg;
 

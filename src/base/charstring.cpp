@@ -383,7 +383,7 @@ bool CharString::isNumeric() const
 {
     // Go through string - if we find a 'non-number' character, return false
     int nSymbols = 0, nChars = 0;
-    for (char *c = data_; *c != '\0'; ++c)
+    for (auto *c = data_; *c != '\0'; ++c)
     {
         ++nChars;
         switch (*c)

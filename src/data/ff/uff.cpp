@@ -632,7 +632,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
 bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepExisting) const
 {
     // Loop over Species atoms
-    for (SpeciesAtom *i = sp->atoms().first(); i != NULL; i = i->next())
+    for (auto *i = sp->atoms().first(); i != NULL; i = i->next())
     {
         // If keepExisting == true, don't reassign a type to this atom if one already exists
         if (keepExisting && i->atomType())

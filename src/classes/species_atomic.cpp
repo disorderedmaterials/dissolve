@@ -110,7 +110,7 @@ void Species::transmuteAtom(SpeciesAtom *i, Element *el)
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
         i->setSelected(false);
 
     selectedAtoms_.clear();
@@ -192,7 +192,7 @@ SpeciesAtom *Species::selectedAtom(int n)
 double Species::totalChargeOnAtoms()
 {
     double totalQ = 0.0;
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
         totalQ += i->charge();
     return totalQ;
 }
@@ -210,7 +210,7 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 double Species::mass() const
 {
     double m = 0.0;
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
         m += AtomicMass::mass(i->element());
     return m;
 }
@@ -224,7 +224,7 @@ const AtomTypeList &Species::usedAtomTypes()
     if (usedAtomTypesPoint_ != atomTypesVersion_)
     {
         usedAtomTypes_.clear();
-        for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+        for (auto *i = atoms_.first(); i != NULL; i = i->next())
             if (i->atomType())
                 usedAtomTypes_.add(*i->atomType(), 1);
 
@@ -237,7 +237,7 @@ const AtomTypeList &Species::usedAtomTypes()
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
 {
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
         i->setAtomType(NULL);
 
     ++atomTypesVersion_;
