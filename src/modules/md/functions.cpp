@@ -27,7 +27,7 @@ int MDModule::capForces(Configuration *cfg, double maxForce, Array<double> &fx, 
 {
     double fMag;
     const auto maxForceSq = maxForce * maxForce;
-    int nCapped = 0;
+    auto nCapped = 0;
     for (int n = 0; n < cfg->nAtoms(); ++n)
     {
         fMag = fx[n] * fx[n] + fy[n] * fy[n] + fz[n] * fz[n];

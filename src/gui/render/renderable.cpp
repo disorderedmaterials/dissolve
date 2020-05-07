@@ -116,7 +116,7 @@ const char *Renderable::objectTag() const { return objectTag_.get(); }
 // Invalidate renderable data for specified object tag
 int Renderable::invalidate(const char *objectTag)
 {
-    int count = 0;
+    auto count = 0;
     for (Renderable *rend : instances_)
     {
         if (!DissolveSys::sameString(objectTag, rend->objectTag_))

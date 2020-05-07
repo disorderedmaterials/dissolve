@@ -78,7 +78,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
                          "Step Size");
         Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------", stepSize);
 
-        int nStepSizeResets = 0;
+        auto nStepSizeResets = 0;
         for (int cycle = 1; cycle <= nCycles; ++cycle)
         {
             // Copy current Configuration coordinates as our reference (they will be modified by lineMinimise())

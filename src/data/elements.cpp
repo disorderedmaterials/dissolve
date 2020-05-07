@@ -148,7 +148,7 @@ Element &Elements::element(const char *symbol)
     // Pure digit given?
     if (count == nDigits)
     {
-        int Z = atoi(cleaned.get());
+        auto Z = atoi(cleaned.get());
         if ((Z < 0) || (Z > nElements()))
             return elements()[0];
         else

@@ -70,7 +70,7 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, const char *prefix
 
     // Copy type array
     atomTypes_ = atomTypes;
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     partials_.initialise(nTypes, nTypes, true);
     boundPartials_.initialise(nTypes, nTypes, true);
@@ -103,7 +103,7 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     rdfRange_ = rdfRange;
     rdfBinWidth_ = binWidth;
 
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     fullHistograms_.initialise(nTypes, nTypes, true);
     boundHistograms_.initialise(nTypes, nTypes, true);
@@ -124,7 +124,7 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
 // Reset partial arrays
 void PartialSet::reset()
 {
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
     for (int n = 0; n < nTypes; ++n)
     {
         for (int m = n; m < nTypes; ++m)
@@ -195,7 +195,7 @@ bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPart
 // Sum partials into total
 void PartialSet::formTotal(bool applyConcentrationWeights)
 {
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
     if (nTypes == 0)
     {
         total_.clear();
@@ -291,7 +291,7 @@ bool PartialSet::save()
     LineParser parser;
     int typeI, typeJ, n;
 
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
     for (typeI = 0; typeI < nTypes; ++typeI)
     {
         for (typeJ = typeI; typeJ < nTypes; ++typeJ)
@@ -355,7 +355,7 @@ const char *PartialSet::objectNamePrefix() const { return objectNamePrefix_.get(
 // Set underlying Data1D file names
 void PartialSet::setFileNames(const char *prefix, const char *tag, const char *suffix)
 {
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     // Set titles for partials
     CharString title;
@@ -379,7 +379,7 @@ void PartialSet::setFileNames(const char *prefix, const char *tag, const char *s
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         partials_.at(n, m).values() += delta;
@@ -393,7 +393,7 @@ void PartialSet::adjust(double delta)
 // Form partials from stored Histogram data
 void PartialSet::formPartials(double boxVolume)
 {
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         // Calculate RDFs from histogram data
@@ -415,7 +415,7 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     // Loop over partials in source set
     int typeI, typeJ, localI, localJ;
 
-    int sourceNTypes = source.atomTypes_.nItems();
+    auto sourceNTypes = source.atomTypes_.nItems();
     for (typeI = 0; typeI < sourceNTypes; ++typeI)
     {
         AtomType &atI = source.atomTypes_.atomType(typeI);
@@ -460,7 +460,7 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
 void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
                               double multiplier)
 {
-    int nBins = histogram.nBins();
+    auto nBins = histogram.nBins();
     double delta = histogram.binWidth();
     const Array<long int> &bins = histogram.bins();
 
@@ -496,7 +496,7 @@ void PartialSet::operator+=(const PartialSet &source)
         return;
     }
 
-    int sourceNTypes = source.atomTypes_.nItems();
+    auto sourceNTypes = source.atomTypes_.nItems();
 
     // Loop over partials in source set
     const auto &types = source.atomTypes();
@@ -536,7 +536,7 @@ void PartialSet::operator-=(const double delta) { adjust(-delta); }
 
 void PartialSet::operator*=(const double factor)
 {
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     for (int n = 0; n < nTypes; ++n)
     {
@@ -572,7 +572,7 @@ bool PartialSet::read(LineParser &parser, const CoreData &coreData)
     atomTypes_.clear();
     if (!atomTypes_.read(parser, coreData))
         return false;
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     // Read partials
     partials_.initialise(nTypes, nTypes, true);
@@ -620,7 +620,7 @@ bool PartialSet::write(LineParser &parser)
 
     // Write out AtomTypes first
     atomTypes_.write(parser);
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
     for (int typeI = 0; typeI < nTypes; ++typeI)
@@ -656,7 +656,7 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 {
 #ifdef PARALLEL
     // The structure should have already been setup(), so arrays should be ready to copy
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
     for (int typeI = 0; typeI < nTypes; ++typeI)
     {
         for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
@@ -685,7 +685,7 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 bool PartialSet::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    int nTypes = atomTypes_.nItems();
+    auto nTypes = atomTypes_.nItems();
     for (int typeI = 0; typeI < nTypes; ++typeI)
     {
         for (int typeJ = typeI; typeJ < nTypes; ++typeJ)

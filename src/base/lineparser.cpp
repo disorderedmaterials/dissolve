@@ -709,7 +709,7 @@ bool LineParser::getNextN(int optionMask, int length, CharString *destarg)
 {
     // Put the next 'length' characters from line_ into temparg (and put into supplied arg if supplied)
     // A negative length may be supplied, which we interpret as 'strip trailing spaces'
-    int arglen = 0;
+    auto arglen = 0;
     char c;
     if (lineLength_ == 0)
         return false;
@@ -791,12 +791,12 @@ LineParser::ParseReturnValue LineParser::getArgsDelim(int optionMask)
 // Get rest of current line starting at next delimited part (and put into destination argument if supplied)
 bool LineParser::getRestDelim(CharString *destarg)
 {
-    int arglen = 0, n, length;
+    auto arglen = 0;
     char c;
     if (lineLength_ == 0)
         return false;
-    length = lineLength_ - linePos_;
-    for (n = 0; n < length; n++)
+    const auto length = lineLength_ - linePos_;
+    for (int n = 0; n < length; ++n)
     {
         c = line_[linePos_];
         switch (c)
@@ -815,7 +815,7 @@ bool LineParser::getRestDelim(CharString *destarg)
     }
     // Add terminating character to temparg - strip whitespace at end if there is any...
     tempArg_[arglen] = '\0';
-    for (n = arglen - 1; n > 0; --n)
+    for (int n = arglen - 1; n > 0; --n)
     {
         if ((tempArg_[n] != ' ') && (tempArg_[n] != '\t'))
             break;
@@ -846,7 +846,7 @@ void LineParser::getArgsDelim(int optionMask, const char *s)
 // Get next delimited chunk from input stream (not line)
 bool LineParser::getCharsDelim(CharString *destarg)
 {
-    int length = 0;
+    auto length = 0;
     bool result = true;
     char c;
     while (!inputStream()->eof())
@@ -1001,7 +1001,7 @@ const char *LineParser::getChars(int nchars, bool skipeol)
 {
     char c;
     // Check number of characters requested
-    int i = 0;
+    auto i = 0;
     if (nchars == 0)
         return NULL;
     else if (nchars > MAXLINELENGTH)
@@ -1149,8 +1149,8 @@ bool LineParser::writeBannerComment(const char *fmt, ...)
     CharString bannerText = workingText_;
 
     // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    int leftPad = (width - bannerText.length()) / 2 - 1;
-    int rightPad = width - bannerText.length() - leftPad - 2;
+    auto leftPad = (width - bannerText.length()) / 2 - 1;
+    auto rightPad = width - bannerText.length() - leftPad - 2;
     char bannerFormat[64];
     sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
 

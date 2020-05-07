@@ -147,7 +147,7 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, const char *pref
             return false;
     }
 
-    int count = 0;
+    auto count = 0;
     switch (function_)
     {
         case (PairBroadeningFunction::NoFunction):
@@ -380,7 +380,7 @@ bool PairBroadeningFunction::read(LineParser &parser, const CoreData &coreData)
                 elementPairGaussianFWHM_ = 0.12;
                 elementPairGaussianFlags_ = false;
 
-                int nPairs = parser.argi(0);
+                auto nPairs = parser.argi(0);
                 for (int n = 0; n < nPairs; ++n)
                 {
                     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

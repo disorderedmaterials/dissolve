@@ -225,7 +225,7 @@ double Filters::subtractAverage(Data1D &data, double xStart)
     Array<double> &y = data.values();
 
     double sum = 0.0;
-    int nPoints = 0;
+    auto nPoints = 0;
     for (int n = 0; n < x.nItems(); ++n)
     {
         if (x.constAt(n) >= xStart)

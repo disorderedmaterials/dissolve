@@ -86,7 +86,7 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     paramsNode->addParameter("rho", 0.1);
     generator.addRootSequenceNode(paramsNode);
     generator.addRootSequenceNode(new BoxProcedureNode);
-    int count = 0;
+    auto count = 0;
     for (Species *sp : mixSpecies)
     {
         // Add a parameter for the ratio of this species to the first (or the population of the first)

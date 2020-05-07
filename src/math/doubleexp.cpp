@@ -157,11 +157,11 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
 
     // Print the mantissa or full value to a formatted string, and strip any trailing zeroes
     CharString mantissaString(formatString, scientificNotation ? mantissa_ : value_);
-    int dot = mantissaString.find('.');
+    auto dot = mantissaString.find('.');
     if (dot != -1)
     {
-        int nZeroesAtEnd = 0;
-        int nDecimals = 0;
+        auto nZeroesAtEnd = 0;
+        auto nDecimals = 0;
 
         // Start the search at [dot+2], skipping the dot and the first char after it - we will always allow one lone
         // zero after the decimal point

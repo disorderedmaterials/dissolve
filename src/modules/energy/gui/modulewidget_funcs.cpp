@@ -74,7 +74,7 @@ EnergyModuleWidget::~EnergyModuleWidget() {}
 void EnergyModuleWidget::updateControls(int flags)
 {
     // Set gradient and stability labels
-    int stabilityWindow = module_->keywords().asInt("StabilityWindow");
+    auto stabilityWindow = module_->keywords().asInt("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
     QPalette labelPalette = ui_.StableLabel->palette();

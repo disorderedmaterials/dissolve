@@ -230,7 +230,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
     // Copy and transform abscissa values (still in data space) into axes coordinates
     Array<double> x = displayAbscissa;
     axes.transformX(x);
-    int nX = x.nItems();
+    auto nX = x.nItems();
     if (nX < 2)
         return;
 

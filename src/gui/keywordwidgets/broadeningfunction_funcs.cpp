@@ -114,7 +114,7 @@ void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &coreDat
     ui_.FunctionCombo->setCurrentIndex(broadeningFunction.function());
     ui_.FunctionDescriptionLabel->setText(BroadeningFunction::functionDescription(broadeningFunction.function()));
 
-    int nParams = BroadeningFunction::nFunctionParameters(broadeningFunction.function());
+    auto nParams = BroadeningFunction::nFunctionParameters(broadeningFunction.function());
     ui_.Parameter0Spin->setValue(nParams > 0 ? broadeningFunction.parameter(0) : 0.0);
     ui_.Parameter0Label->setText(nParams > 0 ? broadeningFunction.parameterName(0) : "N/A");
     ui_.Parameter0Spin->setEnabled(nParams > 0);

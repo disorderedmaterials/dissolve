@@ -104,7 +104,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         printf("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
 
     // Loop over the provided possible list of atoms
-    int nMatches = 0, totalScore = 0;
+    auto nMatches = 0, totalScore = 0;
     RefList<const SpeciesAtom> matches;
     for (auto j : availableAtoms)
     {
@@ -117,7 +117,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
 
             // Process branch definition via the base class, using a fresh path
             RefList<const SpeciesAtom> emptyPath;
-            int branchScore = NETANode::score(j, emptyPath);
+            auto branchScore = NETANode::score(j, emptyPath);
             if (branchScore == NETANode::NoMatch)
                 continue;
 
@@ -131,13 +131,13 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
             for (const auto *type : allowedAtomTypes_)
             {
                 // Evaluate the neighbour against the atom type
-                int typeScore = type->neta().score(j);
+                auto typeScore = type->neta().score(j);
                 if (typeScore == NETANode::NoMatch)
                     continue;
 
                 // Process branch definition via the base class, using an empty path
                 RefList<const SpeciesAtom> emptyPath;
-                int branchScore = NETANode::score(j, emptyPath);
+                auto branchScore = NETANode::score(j, emptyPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
 
@@ -163,7 +163,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         if (nHydrogensValue_ >= 0)
         {
             // Count number of hydrogens attached to this atom
-            int nH = 0;
+            auto nH = 0;
             for (const auto *bond : j->bonds())
                 if (bond->partner(j)->element()->Z() == ELEMENT_H)
                     ++nH;

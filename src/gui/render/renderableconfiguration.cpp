@@ -213,8 +213,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                     rj = partner->r();
 
                     // Determine half delta i-j for bond
-                    const auto dij =
-                        (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
+                    const auto dij = (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,

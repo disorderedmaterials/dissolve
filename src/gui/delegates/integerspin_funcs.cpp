@@ -45,7 +45,7 @@ QWidget *IntegerSpinDelegate::createEditor(QWidget *parent, const QStyleOptionVi
 // Set initial value in editor
 void IntegerSpinDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    int value = index.model()->data(index, Qt::EditRole).toInt();
+    auto value = index.model()->data(index, Qt::EditRole).toInt();
 
     auto *spinBox = static_cast<QSpinBox *>(editor);
     spinBox->setValue(value);
@@ -58,7 +58,7 @@ void IntegerSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 
     // Make sure the value in the spinBox has been updated from the current text
     spinBox->interpretText();
-    int value = spinBox->value();
+    auto value = spinBox->value();
 
     model->setData(index, value, Qt::EditRole);
 }

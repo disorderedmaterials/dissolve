@@ -93,7 +93,7 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo *page)
         footerUi_.BackButton->setEnabled(history_.nItems() > 1);
         if (page)
         {
-            int nextIndex = page->nextIndex();
+            auto nextIndex = page->nextIndex();
             if (nextIndex == -1)
                 nextIndex = determineNextPage(page->index());
             footerUi_.NextButton->setVisible((page->pageType() == WizardWidgetPageInfo::NormalPage) &&
@@ -231,7 +231,7 @@ void WizardWidget::goToNextPage()
         return;
 
     // Move to the next page defined for the current page
-    int nextIndex = currentPage_->nextIndex();
+    auto nextIndex = currentPage_->nextIndex();
     if (nextIndex == -1)
         nextIndex = determineNextPage(currentPage_->index());
 

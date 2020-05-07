@@ -103,7 +103,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         if (onlyWhenEnergyStable)
         {
-            int stabilityResult = EnergyModule::checkStability(cfg);
+            auto stabilityResult = EnergyModule::checkStability(cfg);
             if (stabilityResult == -1)
                 return false;
             else if (stabilityResult == 1)

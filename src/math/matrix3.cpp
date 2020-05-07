@@ -294,7 +294,7 @@ double Matrix3::value(int n) const
 // Return maximal element
 double Matrix3::max() const
 {
-    int maxId = 0;
+    auto maxId = 0;
     for (int n = 1; n < 9; ++n)
         if (matrix_[n] > matrix_[maxId])
             maxId = n;

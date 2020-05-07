@@ -105,7 +105,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Set initial random offset for our counter determining whether to perform R+T, R, or T.
-        int count = procPool.random() * 10;
+        auto count = procPool.random() * 10;
         bool rotate, translate;
 
         Timer timer;

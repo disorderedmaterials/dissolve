@@ -511,9 +511,9 @@ bool Data3D::read(LineParser &parser, const CoreData &coreData)
     // Read axis sizes and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int xSize = parser.argi(0);
-    int ySize = parser.argi(1);
-    int zSize = parser.argi(2);
+    auto xSize = parser.argi(0);
+    auto ySize = parser.argi(1);
+    auto zSize = parser.argi(2);
     bool errors = parser.argb(3);
     initialise(xSize, ySize, zSize, errors);
 

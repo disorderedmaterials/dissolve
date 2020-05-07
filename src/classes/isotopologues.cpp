@@ -205,7 +205,7 @@ bool Isotopologues::read(LineParser &parser, const CoreData &coreData)
         return false;
     }
     speciesPopulation_ = parser.argi(1);
-    int nIso = parser.argi(2);
+    auto nIso = parser.argi(2);
     mix_.clear();
     for (int n = 0; n < nIso; ++n)
     {
@@ -260,7 +260,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
         return false;
 
     // Isotopologue list (mix_)
-    int nIso = mix_.size();
+    auto nIso = mix_.size();
     if (!procPool.broadcast(nIso, root))
         return false;
     int topIndex;
@@ -315,7 +315,7 @@ bool Isotopologues::equality(ProcessPool &procPool)
     if (!procPool.equality((int)mix_.size()))
         return Messenger::error("Isotopologues mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(),
                                 mix_.size());
-    int count = 0;
+    auto count = 0;
     for (const auto isoWeight : mix_)
     {
         // Just check the name and the relative population

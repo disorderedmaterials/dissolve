@@ -74,7 +74,7 @@ void PrimitiveList::remove(Primitive *primitive) { primitives_.remove(primitive)
 // Return total number of defined vertices
 int PrimitiveList::nDefinedVertices()
 {
-    int totalVertices = 0;
+    auto totalVertices = 0;
     for (auto *prim = primitives_.first(); prim != NULL; prim = prim->next())
         totalVertices += prim->nDefinedVertices();
     return totalVertices;
@@ -83,7 +83,7 @@ int PrimitiveList::nDefinedVertices()
 // Return total number of defined indices
 int PrimitiveList::nDefinedIndices()
 {
-    int totalIndices = 0;
+    auto totalIndices = 0;
     for (auto *prim = primitives_.first(); prim != NULL; prim = prim->next())
         totalIndices += prim->nDefinedIndices();
     return totalIndices;

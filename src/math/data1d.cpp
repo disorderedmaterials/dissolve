@@ -486,7 +486,7 @@ bool Data1D::read(LineParser &parser, const CoreData &coreData)
     // Read number of points and whether errors are present
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nPoints = parser.argi(0);
+    auto nPoints = parser.argi(0);
     bool errors = parser.argb(1);
     initialise(nPoints, errors);
 

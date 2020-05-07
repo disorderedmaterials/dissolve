@@ -106,7 +106,7 @@ bool ConfigurationTab::canClose() const
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
-    int ret = queryBox.exec();
+    auto ret = queryBox.exec();
 
     if (ret != QMessageBox::Yes)
         return false;
@@ -201,7 +201,7 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
-    int ret = queryBox.exec();
+    auto ret = queryBox.exec();
 
     if (ret == QMessageBox::Yes)
     {

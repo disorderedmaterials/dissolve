@@ -142,7 +142,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 
     if (axesVisible_)
     {
-        int skipAxis = -1;
+        auto skipAxis = -1;
         if (view_.viewType() == View::FlatXYView)
             skipAxis = 2;
         else if (view_.viewType() == View::FlatXZView)
@@ -474,8 +474,8 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
     offscreenContext_.makeCurrent(&offscreenSurface_);
 
     // Set tile size
-    int tileWidth = 512;
-    int tileHeight = 512;
+    auto tileWidth = 512;
+    auto tileHeight = 512;
 
     // Initialise framebuffer format and object
     QOpenGLFramebufferObjectFormat fboFormat;
@@ -498,8 +498,8 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
     painter.drawRect(0, 0, imageWidth, imageHeight);
 
     // Calculate the number of tiles required to cover the requested image size
-    int nX = imageWidth / tileWidth + ((imageWidth % tileWidth) ? 1 : 0);
-    int nY = imageHeight / tileHeight + ((imageHeight % tileHeight) ? 1 : 0);
+    auto nX = imageWidth / tileWidth + ((imageWidth % tileWidth) ? 1 : 0);
+    auto nY = imageHeight / tileHeight + ((imageHeight % tileHeight) ? 1 : 0);
 
     // Set the viewport of our View to be the new image size
     view_.recalculateViewport(imageWidth, imageHeight);

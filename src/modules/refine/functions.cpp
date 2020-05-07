@@ -45,7 +45,7 @@ Data1D RefineModule::calculateCR(const Data1D &sq, double normFactor, double rMi
     // Get delta0
     // const double delta0 = PI / sq.xLast();
 
-    int nQ = sq.nValues();
+    auto nQ = sq.nValues();
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
     double ft, window, broaden;
@@ -284,7 +284,7 @@ double RefineModule::costFunction3Exp(const Array<double> &alpha)
     const auto window = 0.5;
     const auto windowDelta = 0.01;
     double sos = 0.0, delta, func;
-    int nPoints = 0;
+    auto nPoints = 0;
     double x = alpha.constAt(0) - window;
     const auto xMax = alpha.constAt(0) + window;
     while (x <= xMax)
@@ -335,7 +335,7 @@ double RefineModule::costFunction2Exp(const Array<double> &alpha)
     const auto window = 0.5;
     const auto windowDelta = 0.01;
     double sos = 0.0, delta, func;
-    int nPoints = 0;
+    auto nPoints = 0;
     double x = alpha.constAt(0) - window;
     const auto xMax = alpha.constAt(0) + window;
     while (x <= xMax)

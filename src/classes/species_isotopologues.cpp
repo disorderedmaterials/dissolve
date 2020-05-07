@@ -95,7 +95,7 @@ const char *Species::uniqueIsotopologueName(const char *base, const Isotopologue
     static CharString uniqueName;
     CharString baseName = base;
     Isotopologue *iso;
-    int highest = -1;
+    auto highest = -1;
 
     if (baseName.isEmpty())
         baseName = "Unnamed";

@@ -295,7 +295,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
             // Assign intramolecular terms
             if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
             {
-                int flags = 0;
+                auto flags = 0;
                 if (ui_.IgnoreCurrentTypesCheck->isChecked())
                     flags += Forcefield::DetermineTypesFlag;
                 if (!ui_.NoImproperTermsCheck->isChecked())
@@ -539,7 +539,7 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsPage()
 void AddForcefieldTermsWizard::checkForAtomTypeConflicts()
 {
     // Determine whether we have any naming conflicts
-    int nConflicts = 0;
+    auto nConflicts = 0;
     for (int i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
     {
         QListWidgetItem *item = ui_.AtomTypesConflictsList->item(i);

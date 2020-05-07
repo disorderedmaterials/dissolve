@@ -48,7 +48,7 @@ Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, co
 {
     auto &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
-    int arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
+    auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
     {
@@ -128,7 +128,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
     auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
     const auto gsigma1 = keywords_.asDouble("GSigma1");
     const auto gsigma2 = keywords_.asDouble("GSigma2");
-    int ncoeffp = keywords_.asInt("NCoeffP");
+    auto ncoeffp = keywords_.asInt("NCoeffP");
     const auto psigma1 = keywords_.asDouble("PSigma1");
     const auto psigma2 = keywords_.asDouble("PSigma2");
     const auto qMax = keywords_.asDouble("QMax");
@@ -190,10 +190,10 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     double absEnergyEP = 0.0;
 
-    int i = 0;
+    auto i = 0;
     for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
-        int j = i;
+        auto j = i;
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             Array<double> &potCoeff = coefficients.at(i, j);

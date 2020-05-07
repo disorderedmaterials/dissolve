@@ -57,7 +57,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 
     // Read keyword section (terminated by the 'q' command)
     bool done = false;
-    int ncoeffp = 0;
+    auto ncoeffp = 0;
     while (!parser.eofOrBlank())
     {
         // Parse arguments, and attempt to convert the first into a keyword
@@ -146,7 +146,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
     // coefficients for
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
-    int nPots = parser.argi(0);
+    auto nPots = parser.argi(0);
     Messenger::print("Number of potentials in pcof file = %i\n", nPots);
     for (int n = 0; n < nPots; ++n)
     {

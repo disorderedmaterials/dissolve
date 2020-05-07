@@ -116,7 +116,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         else
         {
             // Might be a keyword defined in the Module itself?
-            int result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
+            auto result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
             if (result == 0)
                 error = true;
             else if (result == -1)

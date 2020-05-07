@@ -48,7 +48,7 @@ bool Configuration::write(LineParser &parser) const
         return false;
 
     // Write Molecule types - write sequential Molecules with same type as single line
-    int moleculeCount = 0;
+    auto moleculeCount = 0;
     const Species *lastType = NULL;
     for (int n = 0; n < molecules_.size(); ++n)
     {
@@ -117,7 +117,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
     const auto expectedNMols = parser.argi(0);
 
     // Read Species types for Molecules
-    int nMolsRead = 0;
+    auto nMolsRead = 0;
     Species *sp = NULL;
     while (nMolsRead < expectedNMols)
     {
@@ -132,7 +132,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
                                     name());
 
         // Set Species pointers for this range of Molecules
-        int nMols = parser.argi(0);
+        auto nMols = parser.argi(0);
         for (int n = 0; n < nMols; ++n)
             addMolecule(sp);
 
@@ -143,7 +143,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
     // Read in Atoms
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nAtoms = parser.argi(0);
+    auto nAtoms = parser.argi(0);
     for (int n = 0; n < nAtoms; ++n)
     {
         // Each line contains molecule ID and coordinates only

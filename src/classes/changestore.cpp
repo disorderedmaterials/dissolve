@@ -162,7 +162,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 {
 #ifdef PARALLEL
     // First, get total number of changes across all processes
-    int nTotalChanges = changes_.nItems();
+    auto nTotalChanges = changes_.nItems();
     if (!processPool_.allSum(&nTotalChanges, 1))
         return false;
 

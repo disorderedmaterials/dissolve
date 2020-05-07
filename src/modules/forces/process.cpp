@@ -335,7 +335,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
                         // Sum forces on Atoms
-                        int index = i->arrayIndex();
+                        auto index = i->arrayIndex();
                         intraFx[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
                         intraFy[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
                         intraFz[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));

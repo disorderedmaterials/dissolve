@@ -73,7 +73,7 @@ void ComboListDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     QString value = index.model()->data(index, Qt::EditRole).toString();
 
     // Find this AtomType in the master list
-    int typeIndex = 0;
+    auto typeIndex = 0;
     items_->restartIterator();
     while (items_->nextItem())
     {

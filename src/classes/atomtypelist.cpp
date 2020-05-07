@@ -206,7 +206,7 @@ std::vector<AtomTypeData>::const_iterator AtomTypeList::end() const { return typ
 // Return index of AtomType in list
 int AtomTypeList::indexOf(AtomType &atomtype) const
 {
-    int count = 0;
+    auto count = 0;
     for (auto &atd : types_)
     {
         if (&atd.atomType() == &atomtype)
@@ -220,7 +220,7 @@ int AtomTypeList::indexOf(AtomType &atomtype) const
 // Return index of names AtomType in list
 int AtomTypeList::indexOf(const char *name) const
 {
-    int count = 0;
+    auto count = 0;
     for (auto &atd : types_)
     {
         if (DissolveSys::sameString(atd.atomType().name(), name))
@@ -306,7 +306,7 @@ bool AtomTypeList::read(LineParser &parser, const CoreData &coreData)
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nItems = parser.argi(0);
+    auto nItems = parser.argi(0);
     for (int n = 0; n < nItems; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

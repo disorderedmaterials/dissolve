@@ -133,7 +133,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Calculate current percentage errors in calculated vs reference target data
      */
-    int nUnstableData = 0;
+    auto nUnstableData = 0;
     ListIterator<ModuleGroup> groupIterator(groupedTargets_.groups());
     while (ModuleGroup *group = groupIterator.iterate())
     {
@@ -220,7 +220,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
     if (onlyWhenEnergyStable)
     {
-        int stabilityResult = EnergyModule::checkStability(configs);
+        auto stabilityResult = EnergyModule::checkStability(configs);
         if (stabilityResult == -1)
             return false;
         else if (stabilityResult != 0)

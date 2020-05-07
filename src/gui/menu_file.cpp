@@ -36,7 +36,7 @@ bool DissolveWindow::checkSaveCurrentInput()
         queryBox.setInformativeText("Would you like to save it first?");
         queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         queryBox.setDefaultButton(QMessageBox::Cancel);
-        int ret = queryBox.exec();
+        auto ret = queryBox.exec();
 
         if (ret == QMessageBox::Cancel)
             return false;

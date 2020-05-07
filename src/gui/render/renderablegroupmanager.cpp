@@ -54,7 +54,7 @@ RenderableGroup *RenderableGroupManager::createGroup(const char *name)
     {
         // No existing group, so must add a new one
         // First, find the StockColour with the lowest usage count
-        int lowestId = 0;
+        auto lowestId = 0;
         for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
         {
             if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId])
@@ -205,7 +205,7 @@ double VerticalShiftAmounts[] = {0.0, 0.5, 1.0, 2.0};
 void RenderableGroupManager::setRenderableGroupShifts()
 {
     // Loop over RenderableGroups
-    int groupIndex = 0;
+    auto groupIndex = 0;
     for (auto *group = groups_.first(); group != NULL; group = group->next())
     {
         group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);

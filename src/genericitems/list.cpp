@@ -173,7 +173,7 @@ RefList<GenericItem> GenericList::itemsWithClassName(const char *className)
 // List all items
 void GenericList::listItems()
 {
-    int count = 0;
+    auto count = 0;
     for (auto *item = items_.first(); item != NULL; item = item->next(), ++count)
         Messenger::print("  %3i  %s", count, item->name());
 }
@@ -256,7 +256,7 @@ bool GenericList::equality(ProcessPool &procPool)
     // If we can't find the data, we'll complain but move on.
     RefList<GenericItem> checkedItems;
     CharString itemName, itemClassName;
-    int nFailed = 0;
+    auto nFailed = 0;
     for (int n = 0; n < procPool.nProcesses(); ++n)
     {
         // The master process - rank 'n' - will control the loop

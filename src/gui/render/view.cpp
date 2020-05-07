@@ -480,10 +480,10 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
         return 1.0;
 
     // Calculate target screen coordinate
-    int targetX = viewportMatrix_[0] + (1.0 + fraction) * viewportMatrix_[2] * 0.5;
-    int targetY = viewportMatrix_[1] + (1.0 + fraction) * viewportMatrix_[3] * 0.5;
+    auto targetX = viewportMatrix_[0] + (1.0 + fraction) * viewportMatrix_[2] * 0.5;
+    auto targetY = viewportMatrix_[1] + (1.0 + fraction) * viewportMatrix_[3] * 0.5;
 
-    int count = 0;
+    auto count = 0;
     do
     {
         // If not using perspective, must recalculate the projection matrix
@@ -652,7 +652,7 @@ void View::recalculateView(bool force)
     }
 
     // Decide how we will set stretch factors for each axis (initially set to standard xyy)
-    int axisX = 0, axisY = 1;
+    auto axisX = 0, axisY = 1;
     Vec3<int> axisDir(0, 1, 1);
     if (viewType_ == View::FlatXZView)
         axisY = 2;
@@ -857,7 +857,7 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
     // Check the view type and set relevant coordinates
     if (isFlatView())
     {
-        int axisX = 0, axisY = 1;
+        auto axisX = 0, axisY = 1;
         if (viewType_ == View::FlatXZView)
             axisY = 2;
         else if (viewType_ == View::FlatZYView)
@@ -880,7 +880,7 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
 void View::scaleRange(double factor)
 {
     // Set the axis to skip (if any)
-    int skipAxis = -1;
+    auto skipAxis = -1;
     if (viewType_ == View::FlatXYView)
         skipAxis = 2;
     else if (viewType_ == View::FlatXZView)
@@ -1041,7 +1041,7 @@ Vec3<double> View::dataMinima()
     if (renderables_.nItems() == 0)
         return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, minima;
     for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
@@ -1074,7 +1074,7 @@ Vec3<double> View::dataMaxima()
     if (renderables_.nItems() == 0)
         return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, maxima;
     for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
@@ -1103,7 +1103,7 @@ Vec3<double> View::dataMaxima()
 // Return positive data minima over all displayed renderables
 Vec3<double> View::positiveDataMinima()
 {
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, minima;
     for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
@@ -1136,7 +1136,7 @@ Vec3<double> View::positiveDataMinima()
 // Return positive data minima over all displayed renderables
 Vec3<double> View::positiveDataMaxima()
 {
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, maxima;
     for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {

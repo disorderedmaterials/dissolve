@@ -51,7 +51,7 @@ void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &
     QIcon locationIcon = QPixmap(locationIconResource);
 
     QTableWidgetItem *item;
-    int count = table->rowCount();
+    auto count = table->rowCount();
     table->setRowCount(count + items.nItems());
     ListIterator<GenericItem> itemIterator(items);
     while (GenericItem *genericItem = itemIterator.iterate())

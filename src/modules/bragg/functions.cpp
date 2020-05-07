@@ -67,8 +67,8 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
 
     // Grab some useful values
     const Box *box = cfg->box();
-    int nTypes = cfg->nUsedAtomTypes();
-    int nAtoms = cfg->nAtoms();
+    auto nTypes = cfg->nUsedAtomTypes();
+    auto nAtoms = cfg->nAtoms();
     Atom **atoms = cfg->atoms().array();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
@@ -105,7 +105,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
         timer.start();
 
         double qMaxSq = qMax * qMax, qMinSQ = qMin * qMin;
-        int nBraggBins = qMax / qDelta + 1;
+        auto nBraggBins = qMax / qDelta + 1;
 
         // Determine extents of hkl indices to use
         braggMaximumHKL.x = qMax / rLengths.x;
@@ -320,7 +320,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
 
     // Zero Bragg reflection intensities
     BraggReflection *reflections = braggReflections.array();
-    int nReflections = braggReflections.nItems();
+    auto nReflections = braggReflections.nItems();
     for (m = 0; m < nReflections; ++m)
         reflections[m].reset();
 

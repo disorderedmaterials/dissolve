@@ -105,8 +105,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
-    int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     Messenger::printVerbose("Self terms..\n");
 
@@ -185,8 +185,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     CellArray &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
-    int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     for (n = start; n < cellArray.nCells(); n += stride)
     {
@@ -321,8 +321,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     CellArray &cellArray = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
-    int start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    int stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
@@ -881,8 +881,8 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     else
     {
         // Get indices of AtomTypes
-        int indexI = partials.atomTypes().indexOf(typeIorTotal);
-        int indexJ = partials.atomTypes().indexOf(typeJ);
+        auto indexI = partials.atomTypes().indexOf(typeIorTotal);
+        auto indexJ = partials.atomTypes().indexOf(typeJ);
         if ((indexI == -1) || (indexJ == -1))
             return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
 

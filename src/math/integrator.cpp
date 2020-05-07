@@ -64,7 +64,7 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
     const auto &y = data.constValues();
 
     double total = 0.0, y0, y1, x0, x1;
-    int nPoints = 0;
+    auto nPoints = 0;
     for (int n = 0; n < x.nItems(); ++n)
     {
         // Get current x and y values and check limit

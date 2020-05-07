@@ -238,7 +238,7 @@ void ColourScale::colour(double value, GLfloat *rgba) const
 // Set all alpha values to that specified
 void ColourScale::setAllAlpha(double alpha)
 {
-    int alphai = alpha * 255;
+    auto alphai = alpha * 255;
     if (alphai < 0)
         alphai = 0;
     else if (alphai > 255)

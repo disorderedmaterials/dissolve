@@ -1589,7 +1589,7 @@ static int FindGCD2(int ri, int rj)
 
 static void SimplifyFraction(int nume, int deno, int *o_nume, int *o_deno)
 {
-    int gcd = FindGCD2(nume, deno);
+    auto gcd = FindGCD2(nume, deno);
     if (gcd)
     {
         *o_nume = nume / gcd;

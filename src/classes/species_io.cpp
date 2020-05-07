@@ -61,7 +61,7 @@ bool Species::loadFromXYZ(const char *filename)
 
     // Simple format - first line is number of atoms, next line is title, then follow atoms/coordinates, one atom per line
     parser.getArgsDelim(LineParser::Defaults);
-    int nAtoms = parser.argi(0);
+    auto nAtoms = parser.argi(0);
     parser.readNextLine(LineParser::Defaults);
     name_ = parser.line();
     int success;
@@ -589,7 +589,7 @@ bool Species::write(LineParser &parser, const char *prefix)
 
     // Atoms
     parser.writeLineF("%s# Atoms\n", newPrefix.get());
-    int count = 0;
+    auto count = 0;
     for (auto *i = atoms_.first(); i != NULL; i = i->next())
     {
         if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(),

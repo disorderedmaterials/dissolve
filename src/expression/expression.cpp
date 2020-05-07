@@ -104,7 +104,7 @@ const char *Expression::expressionString() const { return expressionString_.get(
 void Expression::print()
 {
     printf("Leaf Structure (%i statements):\n", statements_.nItems());
-    int n = 1;
+    auto n = 1;
     for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
     {
         printf("-------------------------------------------------------------\n");

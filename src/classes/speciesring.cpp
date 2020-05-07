@@ -64,7 +64,8 @@ bool SpeciesRing::operator==(const SpeciesRing &other)
         return false;
 
     // Find equivalent atom in second ring to determine starting index
-    int indexA = 0, indexB;
+    auto indexA = 0;
+    int indexB;
     for (indexB = 0; indexB < nAtoms; ++indexB)
         if (atoms_.at(indexA) == other.atoms_.at(indexB))
             break;

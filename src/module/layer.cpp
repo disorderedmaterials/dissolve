@@ -71,7 +71,7 @@ const char *ModuleLayer::frequencyDetails(int iteration) const
     else
     {
         // Calculate number of steps necessary to get to next multiple of the frequency_
-        int nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
+        auto nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
         if (nToGo == 1)
             return "next iteration";
 

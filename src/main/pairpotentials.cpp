@@ -118,7 +118,7 @@ bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
         return true;
     }
 
-    int nUndefined = 0;
+    auto nUndefined = 0;
 
     // Loop over all atomtype pairs and update / add pair potentials as necessary
     for (AtomType *at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())

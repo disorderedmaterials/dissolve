@@ -129,7 +129,7 @@ int Histogram2D::nYBins() const { return nYBins_; }
 bool Histogram2D::bin(double x, double y)
 {
     // Calculate target bin along x
-    int xBin = (x - xMinimum_) / xBinWidth_;
+    auto xBin = (x - xMinimum_) / xBinWidth_;
     if ((xBin < 0) || (xBin >= nXBins_))
     {
         ++nMissed_;
@@ -137,7 +137,7 @@ bool Histogram2D::bin(double x, double y)
     }
 
     // Calculate target bin along y
-    int yBin = (y - yMinimum_) / yBinWidth_;
+    auto yBin = (y - yMinimum_) / yBinWidth_;
     if ((yBin < 0) || (yBin >= nYBins_))
     {
         ++nMissed_;

@@ -75,7 +75,7 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
     // Generate RMSE at x values of A
     double rmse = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
-    int nPointsConsidered = 0;
+    auto nPointsConsidered = 0;
     for (int n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value
@@ -121,7 +121,7 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
 
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
-    int nPointsConsidered = 0;
+    auto nPointsConsidered = 0;
     for (int n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value
@@ -171,7 +171,7 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
 
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
-    int nPointsConsidered = 0;
+    auto nPointsConsidered = 0;
     for (int n = 0; n < 1; ++n)
     {
         // Grab x value
@@ -219,7 +219,7 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
 
     // Calculate summed absolute error and absolute y value deviations from average
     double sume = 0.0, sumy = 0.0;
-    int firstPoint = -1, lastPoint = -1;
+    auto firstPoint = -1, lastPoint = -1;
     double x, y;
     for (int n = 0; n < aX.nItems(); ++n)
     {
@@ -276,7 +276,7 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
     // Accumulate sum-of-squares error at x values of A
     double rfac = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
-    int nPointsConsidered = 0;
+    auto nPointsConsidered = 0;
     for (int n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value

@@ -52,7 +52,7 @@ VertexChunk::~VertexChunk()
 void VertexChunk::updateCentroid(GLfloat x, GLfloat y, GLfloat z, bool finalise)
 {
     // Accumulate centroid
-    int coff = nDefinedTypes_ * 3;
+    auto coff = nDefinedTypes_ * 3;
     centroids_[coff] += x;
     centroids_[coff + 1] += y;
     centroids_[coff + 2] += z;
@@ -92,7 +92,7 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 {
     if (nDefinedVertices_ == maxVertices_)
         printf("Internal Error: Vertex limit for VertexChunk reached.\n");
-    int index = nDefinedVertices_ * dataPerVertex_;
+    auto index = nDefinedVertices_ * dataPerVertex_;
     if (dataPerVertex_ == 10)
     {
         printf("Internal Error: No colour specified in vertex creation, but the primitive requires one.\n");
@@ -122,7 +122,7 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 {
     if (nDefinedVertices_ == maxVertices_)
         printf("Internal Error: Vertex limit for VertexChunk reached.\n");
-    int index = nDefinedVertices_ * dataPerVertex_;
+    auto index = nDefinedVertices_ * dataPerVertex_;
     // Store colour
     if (dataPerVertex_ != 10)
         printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");
@@ -157,7 +157,7 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 {
     if (nDefinedVertices_ == maxVertices_)
         printf("Internal Error: Vertex limit for VertexChunk reached.\n");
-    int index = nDefinedVertices_ * dataPerVertex_;
+    auto index = nDefinedVertices_ * dataPerVertex_;
     // Store colour
     if (dataPerVertex_ != 10)
         printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");

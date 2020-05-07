@@ -44,7 +44,7 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
 double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &alpha)
 {
     // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-    int alphaIndex = 0;
+    auto alphaIndex = 0;
     const auto nAlpha = alpha.nItems();
     for (Module *rdfModule : intraBroadeningModules_)
     {
@@ -52,7 +52,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
         auto &broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
         // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
-        int smoothing = rdfModule->keywords().asInt("Smoothing");
+        auto smoothing = rdfModule->keywords().asInt("Smoothing");
         for (Configuration *cfg : rdfModule->targetConfigurations())
         {
             const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");

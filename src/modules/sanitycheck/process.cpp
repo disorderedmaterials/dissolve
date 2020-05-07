@@ -33,10 +33,10 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Basic checks on data from Dissolve
-    int i = 0;
+    auto i = 0;
     for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
-        int j = i;
+        auto j = i;
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             PairPotential *pp = dissolve.pairPotential(at1, at2);

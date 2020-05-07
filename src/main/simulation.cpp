@@ -58,7 +58,7 @@ bool Dissolve::prepare()
             return false;
 
     // Reassign AtomType indices (in case one or more have been added / removed)
-    int count = 0;
+    auto count = 0;
     for (auto *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
         at->setIndex(count);
 
@@ -148,7 +148,7 @@ bool Dissolve::iterate(int nIterations)
          *  0)	Print schedule of tasks to run, and write heartbeat file
          */
         double thisTime = 0.0;
-        int nEnabledModules = 0;
+        auto nEnabledModules = 0;
 
         for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
@@ -158,7 +158,7 @@ bool Dissolve::iterate(int nIterations)
             Messenger::print("Configuration layer '%s'  (%s):\n\n", cfg->name(),
                              cfg->moduleLayer().frequencyDetails(iteration_));
 
-            int layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
+            auto layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
             ListIterator<Module> modIterator(cfg->modules());
             while (Module *module = modIterator.iterate())
             {
@@ -181,7 +181,7 @@ bool Dissolve::iterate(int nIterations)
             if (!layer->enabled())
                 continue;
 
-            int layerExecutionCount = iteration_ / layer->frequency();
+            auto layerExecutionCount = iteration_ / layer->frequency();
             ListIterator<Module> processingIterator(layer->modules());
             while (Module *module = processingIterator.iterate())
             {
@@ -296,7 +296,7 @@ bool Dissolve::iterate(int nIterations)
                 continue;
 
             Messenger::banner("Layer '%s'", layer->name());
-            int layerExecutionCount = iteration_ / layer->frequency();
+            auto layerExecutionCount = iteration_ / layer->frequency();
 
             ListIterator<Module> processingIterator(layer->modules());
             while (Module *module = processingIterator.iterate())
@@ -418,10 +418,10 @@ void Dissolve::printTiming()
     Messenger::banner("Timing Information");
 
     // Determine format for timing information output, accounting for the longest Module name we have
-    int maxLength = 0, length;
+    auto maxLength = 0;
     for (Module *module : moduleInstances_)
     {
-        length = strlen(module->uniqueName());
+        const auto length = strlen(module->uniqueName());
         if (length > maxLength)
             maxLength = length;
     }

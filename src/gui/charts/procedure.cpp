@@ -174,7 +174,7 @@ void ProcedureChart::updateContentBlocks()
         return;
 
     // Set initial indent level
-    int indentLevel = 0;
+    auto indentLevel = 0;
 
     // Start with the root sequence node of the Procedure - we deal recursively with the rest
     updateContentBlocks(&procedure_->rootSequence(), rootSequenceNodeWidgets_, indentLevel);
@@ -207,7 +207,7 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeW
         block->setNewSize(minSize.width(), minSize.height());
 
         // Update the maximum width if necessary
-        int blockWidth = block->widgetWidth() + leftIndent;
+        auto blockWidth = block->widgetWidth() + leftIndent;
         if (blockWidth > requiredSize.width())
             requiredSize.setWidth(blockWidth);
 
@@ -237,7 +237,7 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
      */
 
     // Set initial indent level and widget position
-    int indentLevel = 0;
+    auto indentLevel = 0;
     QSize requiredSize(0, 0);
 
     // Begin by calling the layout function for the root sequence - we recurse from there

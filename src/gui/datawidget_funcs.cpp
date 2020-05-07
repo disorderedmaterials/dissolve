@@ -153,7 +153,7 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 
         // Construct a list of targets as a QStringList
         QStringList destinations;
-        int currentItem = -1, count = 0;
+        auto currentItem = -1, count = 0;
         RefDataListIterator<DataViewer, GraphGizmo *> targetIterator(targets);
         while (DataViewer *viewer = targetIterator.iterate())
         {
@@ -173,7 +173,7 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
         }
 
         // The destination view from the
-        int viewIndex = destinations.indexOf(viewName);
+        auto viewIndex = destinations.indexOf(viewName);
         DataViewer *viewParent = targets.item(viewIndex);
         if (!viewParent)
             return;

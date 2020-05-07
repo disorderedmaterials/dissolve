@@ -70,7 +70,7 @@ const char *Species::uniqueSiteName(const char *baseName, SpeciesSite *exclude) 
 {
     static CharString uniqueName;
     CharString existingName = baseName;
-    int highest = -1;
+    auto highest = -1;
 
     if (existingName.isEmpty())
         existingName = "NewSite";

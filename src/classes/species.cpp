@@ -71,7 +71,7 @@ const char *Species::name() const { return name_.get(); }
 // Check set-up of Species
 bool Species::checkSetUp()
 {
-    int nErrors = 0;
+    auto nErrors = 0;
 
     // Must have at least one atom...
     if (atoms_.nItems() == 0)

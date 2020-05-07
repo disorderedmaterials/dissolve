@@ -66,7 +66,7 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
         copyViewToClipboard(true);
     else if (addDataAction.contains(selectedAction))
     {
-        int dimensionality = addDataAction.dataForItem(selectedAction);
+        auto dimensionality = addDataAction.dataForItem(selectedAction);
         SelectGenericItemDialog genericItemDialog(this, *dissolve_);
         if (dimensionality == 1)
         {

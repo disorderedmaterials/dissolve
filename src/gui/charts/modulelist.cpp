@@ -82,7 +82,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     // Draw lines between module widgets
     painter.setPen(solidPen);
     QPoint p1, p2;
-    int top = 0;
+    auto top = 0;
     ModuleBlock *lastBlock = NULL;
     for (ModuleBlock *block : moduleBlockWidgets_)
     {
@@ -184,7 +184,7 @@ void ModuleListChart::updateContentBlocks()
     moduleBlockWidgets_ = newWidgets;
 
     // Set the correct number of hotspots (number of block widgets + 1)
-    int nHotSpots = moduleBlockWidgets_.nItems() + 1;
+    auto nHotSpots = moduleBlockWidgets_.nItems() + 1;
     while (nHotSpots < hotSpots_.nItems())
         hotSpots_.removeLast();
     while (nHotSpots > hotSpots_.nItems())
@@ -375,7 +375,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
     queryBox.setInformativeText("This cannot be undone. Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
-    int ret = queryBox.exec();
+    auto ret = queryBox.exec();
 
     if (ret == QMessageBox::Yes)
     {
@@ -431,9 +431,9 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     ModuleListChartMetrics metrics;
 
     // Left edge of next widget, and maximum height
-    int top = metrics.chartMargin();
-    int hotSpotTop = 0;
-    int maxWidth = 0;
+    auto top = metrics.chartMargin();
+    auto hotSpotTop = 0;
+    auto maxWidth = 0;
 
     // Get the first hot spot in the list (the list should have been made the correct size in updateContentBlocks()).
     ChartHotSpot *hotSpot = hotSpots_.first();

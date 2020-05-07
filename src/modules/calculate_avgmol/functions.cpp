@@ -30,7 +30,7 @@
 // Ensure arrays are the correct size for the current target Species
 void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
 {
-    int requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
+    auto requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
     // Retrieve / create the three data arrays, and size accordingly
     auto &x = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "X", uniqueName(),

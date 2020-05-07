@@ -416,7 +416,7 @@ bool PlainValue::broadcast(ProcessPool &procPool)
         return false;
 
     // Broadcast type first, then value
-    int tempType = type_;
+    auto tempType = type_;
     if (!procPool.broadcast(&tempType, 1))
         return false;
     type_ = (PlainValue::ValueType)tempType;

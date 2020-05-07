@@ -44,7 +44,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, 
     procPool.resetAccumulatedTime();
     Timer timer;
     timer.start();
-    int nTypes = unweightedgr.nAtomTypes();
+    auto nTypes = unweightedgr.nAtomTypes();
     for (int n = 0; n < nTypes; ++n)
     {
         for (int m = n; m < nTypes; ++m)

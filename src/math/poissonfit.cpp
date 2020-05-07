@@ -247,8 +247,8 @@ void PoissonFit::preCalculateTerms()
     n_.clear();
     lnNPlusTwoFactorial_.clear();
     double r = rStep_;
-    int deltaN = floor(rStep_ / sigmaR_ + 0.5);
-    int n = deltaN - 1;
+    auto deltaN = floor(rStep_ / sigmaR_ + 0.5);
+    auto n = deltaN - 1;
     for (int i = 0; i < nPoissons_; ++i)
     {
         // Store n at this r value
@@ -305,7 +305,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
     for (int loop = 0; loop < nLoops; ++loop)
     {
         // Index of the function in the C_ array is given by 'p'
-        int p = loop * (sampleSize / nLoops);
+        auto p = loop * (sampleSize / nLoops);
         if ((p == 0) && ignoreZerothTerm_)
             p = 1;
         while (p < nPoissons_)
@@ -505,7 +505,7 @@ double PoissonFit::costTabulatedC(const Array<double> &alpha)
     double sose = 0.0;
 
     double y, dy;
-    int nAlpha = alpha.nItems();
+    auto nAlpha = alpha.nItems();
     for (int i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point

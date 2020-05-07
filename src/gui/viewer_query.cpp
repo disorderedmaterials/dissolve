@@ -105,7 +105,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
     offscreenBuffer_->bind();
 
     // Compare the stored colours in the region with those in the current buffer
-    int index = 0;
+    auto index = 0;
     double delta = 0.0;
     for (int dx = 0; dx < queryRegionWidth_; ++dx)
     {
@@ -169,10 +169,10 @@ BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
     }
 
     // Set up region to sample
-    int left = x - sampleSize;
-    int right = x + sampleSize;
-    int top = y + sampleSize;
-    int bottom = y - sampleSize;
+    auto left = x - sampleSize;
+    auto right = x + sampleSize;
+    auto top = y + sampleSize;
+    auto bottom = y - sampleSize;
     if (left < 0)
         left = 0;
     if (right >= queryImageWidth_)

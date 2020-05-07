@@ -51,7 +51,7 @@ const char *LineStipple::stippleType(LineStipple::StippleType st) { return LineS
 // Add stipple pattern to specified QComboBox
 void LineStipple::addStippleItem(QComboBox *combo, int lineHeight)
 {
-    int lineWidth = combo->width() - 8;
+    auto lineWidth = combo->width() - 8;
     QLine line(0, lineHeight / 2, lineWidth, lineHeight / 2);
     QPalette palette = combo->palette();
     QPen pen;
@@ -82,7 +82,8 @@ QVector<qreal> &LineStipple::dashPattern()
     // Look at each of the first 16 bits of the stipple in turn...
     // 	char test[17];
     // 	test[16] = '\0';
-    int consecutive = 0, last = -1, bit, nEntries = 0;
+    auto consecutive = 0, last = -1, nEntries = 0;
+    int bit;
     for (int n = 15; n >= 0; --n)
     {
         bit = (stipplePattern & (1 << n) ? 1 : 0);

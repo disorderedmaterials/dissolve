@@ -396,7 +396,7 @@ double Interpolator::approximate(const Data1D &data, double x)
         return yData.lastValue();
 
     // Perform binary chop search
-    int left = 0;
+    auto left = 0;
     int i, right = data.constXAxis().nItems() - 1;
     while ((right - left) > 1)
     {

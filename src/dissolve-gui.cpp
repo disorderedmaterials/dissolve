@@ -42,9 +42,9 @@ int main(int argc, char **argv)
     Dissolve dissolve(coreData);
 
     // Parse CLI options...
-    int n = 1;
+    auto n = 1;
     CharString inputFile, restartFile;
-    int nIterations = 0;
+    auto nIterations = 0;
     bool ignoreRestart = false, ignoreLayout = false;
     while (n < argc)
     {
@@ -219,7 +219,7 @@ int main(int argc, char **argv)
     dissolveWindow.addOutputHandler();
     dissolveWindow.show();
 
-    int result = app.exec();
+    auto result = app.exec();
 
     // Clear all data
     dissolve.clear();

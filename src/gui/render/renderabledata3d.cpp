@@ -511,19 +511,19 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformX(x);
-    int nX = x.nItems();
+    auto nX = x.nItems();
     if (nX < 2)
         return;
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformY(y);
-    int nY = y.nItems();
+    auto nY = y.nItems();
     if (nY < 2)
         return;
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformZ(z);
-    int nZ = z.nItems();
+    auto nZ = z.nItems();
     if (nZ < 2)
         return;
 

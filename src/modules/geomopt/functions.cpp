@@ -74,7 +74,7 @@ double GeometryOptimisationModule::gradientStepSize()
 void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double> &bounds, Vec3<double> &energies)
 {
     // Ensure that the energy minimum is the midpoint
-    int minVal = energies.minElement();
+    auto minVal = energies.minElement();
     if (minVal != 1)
     {
         energies.swap(1, minVal);
@@ -191,7 +191,7 @@ double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configura
             Messenger::printVerbose("--> PARABOLIC point is new minimum...");
 
             // Overwrite the largest of bounds[0] and bounds[2] with the old minimum
-            int largest = energies[2] > energies[0] ? 2 : 0;
+            auto largest = energies[2] > energies[0] ? 2 : 0;
             bounds.swap(1, largest);
             energies.swap(1, largest);
 
@@ -219,7 +219,7 @@ double GeometryOptimisationModule::lineMinimise(ProcessPool &procPool, Configura
             revertToReferenceCoordinates(cfg);
 
             // Try recursive Golden Search instead, into the largest of the two sections
-            int nPointsAccepted = 0;
+            auto nPointsAccepted = 0;
             goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies, nPointsAccepted);
             if (nPointsAccepted == 0)
                 break;

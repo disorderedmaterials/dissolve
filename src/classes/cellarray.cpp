@@ -98,7 +98,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     // We try to get all lengths as similar as possible
     for (n = 1; n < 3; ++n)
     {
-        int el = (minEl + n) % 3;
+        auto el = (minEl + n) % 3;
         double x = boxLengths[el] / realCellSize_[minEl];
         double remainder = x - int(x);
 
@@ -160,7 +160,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Constructing array of %i cells...\n", nCells_);
     cells_ = new Cell[nCells_];
     Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
-    int count = 0;
+    auto count = 0;
     for (x = 0; x < divisions_.x; ++x)
     {
         fracCentre.y = fractionalCellSize_.y * 0.5;

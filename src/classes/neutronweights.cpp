@@ -207,7 +207,7 @@ void NeutronWeights::calculateWeightingMatrices()
             for (auto atd1 = speciesAtomTypes.begin(); atd1 != speciesAtomTypes.end(); ++atd1)
             {
                 // Get the local index of this AtomType, as well as its pointer
-                int typeI = atomTypes_.indexOf(atd1->atomType());
+                auto typeI = atomTypes_.indexOf(atd1->atomType());
                 auto &localI = atomTypes_[typeI];
 
                 // If this AtomType is exchangeable, add the averaged scattering length from the local
@@ -226,8 +226,8 @@ void NeutronWeights::calculateWeightingMatrices()
                 for (auto atd2 = atd1; atd2 != speciesAtomTypes.end(); ++atd2)
                 {
                     // Get the local index of this AtomType, as well as its pointer
-                    int typeJ = atomTypes_.indexOf(atd2->atomType());
-                    AtomTypeData &localJ = atomTypes_[typeJ];
+                    auto typeJ = atomTypes_.indexOf(atd2->atomType());
+                    auto &localJ = atomTypes_[typeJ];
 
                     // Check to see if this interaction is present in the current Species
                     if (!intraFlag.at(typeI, typeJ))
@@ -364,7 +364,7 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
     isotopologueMixtures_.clear();
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nItems = parser.argi(0);
+    auto nItems = parser.argi(0);
     for (int n = 0; n < nItems; ++n)
     {
         isotopologueMixtures_.emplace_back();

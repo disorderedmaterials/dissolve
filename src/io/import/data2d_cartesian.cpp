@@ -63,14 +63,14 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
 
         double x = parser.argd(0);
         double y = parser.argd(1);
-        int xBin = (x - xMin) / xDelta;
+        auto xBin = (x - xMin) / xDelta;
         if ((xBin < 0) || (xBin >= data.constXAxis().nItems()))
         {
             Messenger::warn("Coordinates x=%e y=%e are out-of-range (xBin = %i, nBins = %i).\n", x, y, xBin,
                             data.constXAxis().nItems());
             continue;
         }
-        int yBin = (y - yMin) / yDelta;
+        auto yBin = (y - yMin) / yDelta;
         if ((yBin < 0) || (yBin >= data.constYAxis().nItems()))
         {
             Messenger::warn("Coordinates x=%e y=%e are out-of-range (yBin = %i, nBins = %i).\n", x, y, yBin,

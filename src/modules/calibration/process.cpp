@@ -63,7 +63,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
         if (onlyWhenEnergyStable)
         {
-            int stabilityResult = EnergyModule::checkStability(configs);
+            auto stabilityResult = EnergyModule::checkStability(configs);
             if (stabilityResult == -1)
                 return false;
             else if (stabilityResult != 0)
@@ -151,7 +151,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              broadening.summary().get());
 
             // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
-            int smoothing = rdfModule->keywords().asInt("Smoothing");
+            auto smoothing = rdfModule->keywords().asInt("Smoothing");
             for (Configuration *cfg : rdfModule->targetConfigurations())
             {
                 const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");

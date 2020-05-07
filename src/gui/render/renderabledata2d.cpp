@@ -212,14 +212,14 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
     // Copy and transform abscissa values (still in data space) into axes coordinates
     Array<double> x = displayXAbscissa;
     axes.transformX(x);
-    int nX = x.nItems();
+    auto nX = x.nItems();
     if (nX < 2)
         return;
 
     // Copy and transform abscissa values (still in data space) into axes coordinates
     Array<double> y = displayYAbscissa;
     axes.transformY(y);
-    int nY = y.nItems();
+    auto nY = y.nItems();
     if (nY < 2)
         return;
 

@@ -125,7 +125,7 @@ void Primitive::pushInstance(const QOpenGLContext *context)
         }
 
         // Determine total size of array (in bytes) for VBO
-        int vboSize = nDefinedVertices_ * (colouredVertexData_ ? 10 : 6) * sizeof(GLfloat);
+        auto vboSize = nDefinedVertices_ * (colouredVertexData_ ? 10 : 6) * sizeof(GLfloat);
 
         // Generate vertex array object
         glFunctions->glGenBuffers(1, &vertexVBO);
@@ -174,7 +174,7 @@ void Primitive::pushInstance(const QOpenGLContext *context)
     else
     {
         // Generate display list
-        int listId = glGenLists(1);
+        auto listId = glGenLists(1);
         if (listId == 0)
             printf("Internal Error: Primitive::pushInstance - glGenLists(1) returned 0!\n!");
         else

@@ -126,7 +126,7 @@ const char *Module::frequencyDetails(int iteration) const
     else
     {
         // Calculate number of steps necessary to get to next multiple of the frequency_
-        int nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
+        auto nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
         if (nToGo == 1)
             return "next iteration";
 
@@ -193,7 +193,7 @@ bool Module::addTargetConfigurations(const List<Configuration> &configs)
                                 configs.nItems(), uniqueName(), nRequiredTargets());
     else
     {
-        int spaces = nRequiredTargets() - nTargetConfigurations();
+        auto spaces = nRequiredTargets() - nTargetConfigurations();
         Messenger::print("Adding up to %i configurations from the %i provided as targets for module '%s'...\n", spaces,
                          configs.nItems(), uniqueName());
 

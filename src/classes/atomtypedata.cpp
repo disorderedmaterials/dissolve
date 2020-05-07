@@ -264,7 +264,7 @@ bool AtomTypeData::equality(ProcessPool &procPool)
         return Messenger::error("AtomTypeData number of isotopes is not equivalent (process %i has %i).\n", procPool.poolRank(),
                                 isotopes_.nItems());
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
-    int count = 0;
+    auto count = 0;
     while (IsotopeData *topeData = isotopeIterator.iterate())
     {
         if (!topeData->equality(procPool))

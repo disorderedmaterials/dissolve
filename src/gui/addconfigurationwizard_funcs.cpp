@@ -146,7 +146,7 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 // Determine next page for the current page, based on current data
 int AddConfigurationWizard::determineNextPage(int currentIndex)
 {
-    int result = -1;
+    auto result = -1;
 
     switch (currentIndex)
     {

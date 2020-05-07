@@ -55,7 +55,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get some control parameters
         // const double ereq = keywords_.asDouble("EReq");
-        int ncoeffp = keywords_.asInt("NCoeffP");
+        auto ncoeffp = keywords_.asInt("NCoeffP");
         double rmaxpt = keywords_.asDouble("RMaxPT");
         double rminpt = keywords_.asDouble("RMinPT");
 
@@ -112,7 +112,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto gsigma1 = keywords_.asDouble("GSigma1");
     const auto gsigma2 = keywords_.asDouble("GSigma2");
     const bool modifyPotential = keywords_.asBool("ModifyPotential");
-    int ncoeffp = keywords_.asInt("NCoeffP");
+    auto ncoeffp = keywords_.asInt("NCoeffP");
     const auto npitss = keywords_.asInt("NPItSs");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto psigma1 = keywords_.asDouble("PSigma1");
@@ -290,7 +290,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
     if (onlyWhenEnergyStable)
     {
-        int stabilityResult = EnergyModule::checkStability(configs);
+        auto stabilityResult = EnergyModule::checkStability(configs);
         if (stabilityResult == -1)
             return false;
         else if (stabilityResult != 0)
@@ -711,7 +711,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Multiply each coefficient by the associated weight in the inverse scattering matrix.
          * Note: the data were added to the scattering matrix in the order they appear in the targets iterator.
          */
-        int dataIndex = 0;
+        auto dataIndex = 0;
         for (Module *module : targetModules)
         {
             // For this Module, retrive the coefficents of the fit performed above.

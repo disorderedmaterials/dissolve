@@ -327,8 +327,8 @@ bool ProcessPool::assignProcessesToGroups()
      * Afterwards, an MPI communicator is constructed for each group.
      */
 #ifdef PARALLEL
-    int baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
-    int remainder = worldRanks_.nItems() % maxProcessGroups_;
+    auto baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
+    auto remainder = worldRanks_.nItems() % maxProcessGroups_;
     ProcessGroup *group;
     CharString rankString;
     for (int n = 0; n < maxProcessGroups_; ++n)
@@ -339,12 +339,12 @@ bool ProcessPool::assignProcessesToGroups()
         Messenger::printVerbose("Created process group %i\n", n);
 
         // Create array of ranks to put in new group
-        int firstRank = baseAlloc * n + (n < remainder ? n : remainder);
-        int lastRank = firstRank + baseAlloc - (n >= remainder ? 1 : 0);
+        auto firstRank = baseAlloc * n + (n < remainder ? n : remainder);
+        auto lastRank = firstRank + baseAlloc - (n >= remainder ? 1 : 0);
         rankString.clear();
         for (int localRank = firstRank; localRank <= lastRank; ++localRank)
         {
-            int wr = worldRanks_[localRank];
+            auto wr = worldRanks_[localRank];
             group.addProcess(localRank, wr);
             rankString.strcatf(" %i", wr);
 
@@ -381,7 +381,7 @@ bool ProcessPool::assignProcessesToGroups()
             // Query each process in the group to see if it is the leader...
             for (int n = 0; n < nProcessesInGroup(group); ++n)
             {
-                int prank = processGroups_[group].poolRank(n);
+                auto prank = processGroups_[group].poolRank(n);
 
                 // Is this us, the master process?
                 if (prank == poolRank_)
@@ -664,7 +664,7 @@ int ProcessPool::twoBodyLoopStart(int nItems) const
 
     // Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
     double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
-    int startAtom = 0, finishAtom;
+    auto startAtom = 0, finishAtom = -1;
 
     // Loop over processes
     for (int process = 0; process < worldRanks_.nItems(); ++process)
@@ -821,7 +821,7 @@ bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-    int data = value;
+    auto data = value;
     if (MPI_Send(&data, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
@@ -1133,7 +1133,7 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-    int result = source;
+    auto result = source;
     if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
@@ -2067,7 +2067,7 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
-    int summedResult = (value ? 1 : 0);
+    auto summedResult = (value ? 1 : 0);
     if (!allSum(&summedResult, 1, commType))
         return false;
     if (commType == ProcessPool::GroupLeadersCommunicator)
@@ -2087,7 +2087,7 @@ bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
-    int summedResult = (b ? 1 : 0);
+    auto summedResult = (b ? 1 : 0);
     if (!allSum(&summedResult, 1, commType))
         return false;
     // Now check the sum - if it's zero, then everything must have been 'false'.

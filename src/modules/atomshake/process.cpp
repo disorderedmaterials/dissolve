@@ -83,7 +83,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
         int shake, n, m;
-        int nAttempts = 0, nAccepted = 0;
+        auto nAttempts = 0, nAccepted = 0;
         bool accept;
         double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
         Vec3<double> rDelta;

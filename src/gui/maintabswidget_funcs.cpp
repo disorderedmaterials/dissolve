@@ -187,7 +187,7 @@ const char *MainTabsWidget::uniqueTabName(const char *base)
     static CharString uniqueName;
     CharString baseName = base;
     uniqueName = baseName;
-    int suffix = 0;
+    auto suffix = 0;
 
     // Must always have a baseName
     if (baseName.isEmpty())
@@ -244,8 +244,8 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     ListIterator<Species> speciesIterator(dissolve.species());
-    int currentTabIndex = 0;
-    int baseIndex = 1;
+    auto currentTabIndex = 0;
+    auto baseIndex = 1;
     while (Species *sp = speciesIterator.iterate())
     {
         // Loop over existing tabs
@@ -354,7 +354,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 void MainTabsWidget::removeByPage(QWidget *page)
 {
     // Delete the tab from the tabwidget first - find its index (based on the page widget pointer) and remove that
-    int indexToRemove = indexOf(page);
+    auto indexToRemove = indexOf(page);
     if (indexToRemove == -1)
         printf("Couldn't remove tab since its page widget (%p) could not be found.\n", page);
     else
@@ -586,7 +586,7 @@ void MainTabsWidget::enableSensitiveControls()
 void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
 {
     // Find the tab containing the specified page
-    int tabIndex = indexOf(pageWidget);
+    auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
     {
         Messenger::error("MainTabsWidget::setTabTextColour - Failed to find tab containing widget %p.\n", pageWidget);
@@ -601,7 +601,7 @@ void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
 void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
 {
     // Find the tab containing the specified page
-    int tabIndex = indexOf(pageWidget);
+    auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
     {
         Messenger::error("MainTabsWidget::setTabIcon - Failed to find tab containing widget %p.\n", pageWidget);
@@ -616,7 +616,7 @@ void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
 QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
 {
     // Find the tab containing the specified page
-    int tabIndex = indexOf(pageWidget);
+    auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
     {
         Messenger::error("MainTabsWidget::addTabCloseButton - Failed to find tab containing widget %p.\n", pageWidget);
@@ -651,7 +651,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
     if (item)
     {
         // Find the tab containing the page widget (stored as the RefListItem's data)
-        int tabIndex = indexOf(item->data());
+        auto tabIndex = indexOf(item->data());
         if (tabIndex == -1)
         {
             Messenger::error("MainTabsWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n",

@@ -39,9 +39,9 @@ int main(int argc, char **argv)
     Dissolve dissolve(coreData);
 
     // Parse CLI options...
-    int n = 1;
+    auto n = 1;
     CharString inputFile, redirectFileName, restartDataFile, outputInputFile;
-    int nIterations = 5;
+    auto nIterations = 5;
     bool ignoreRestart = false;
     while (n < argc)
     {
