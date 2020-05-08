@@ -137,7 +137,6 @@ Configuration  'Hexane1k'
     AddSpecies
       Population  1000
       Species  'Hexane'
-      ScaleBox  False
     EndAddSpecies
   EndGenerator
 EndConfiguration

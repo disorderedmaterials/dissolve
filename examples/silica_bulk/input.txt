@@ -60,7 +60,6 @@ Configuration  'Bulk'
     AddSpecies
       Species  'Si'
       Population  'populationA'
-      ScaleBox  True
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
@@ -68,7 +67,6 @@ Configuration  'Bulk'
     AddSpecies
       Species  'O'
       Population  'populationA*ratioB'
-      ScaleBox  True
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
