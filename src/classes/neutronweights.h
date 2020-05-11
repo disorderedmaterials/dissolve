@@ -1,6 +1,6 @@
 /*
-	*** Weights Container
-	*** src/classes/weights.h
+	*** Neutron Weights Container
+	*** src/classes/neutronweights.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WEIGHTS_H
-#define DISSOLVE_WEIGHTS_H
+#ifndef DISSOLVE_NEUTRONWEIGHTS_H
+#define DISSOLVE_NEUTRONWEIGHTS_H
 
 #include "classes/atomtypelist.h"
 #include "classes/isotopologues.h"
@@ -31,13 +31,13 @@
 // Forward Declarations
 /* none */
 
-// Weights Container
-class Weights : public GenericItemBase
+// Neutron Weights Container
+class NeutronWeights : public GenericItemBase
 {
 	public:
-	Weights();
-	Weights(const Weights &source);
-	void operator=(const Weights &source);
+	NeutronWeights();
+	NeutronWeights(const NeutronWeights &source);
+	void operator=(const NeutronWeights &source);
 
 	/*
 	 * Construction
@@ -69,8 +69,8 @@ class Weights : public GenericItemBase
 	Array2D<double> boundCoherentProducts_;
 	// Full scattering weights
 	Array2D<double> weights_;
-	// Bound scattering weights
-	Array2D<double> boundWeights_;
+	// Intramolecular scattering weights
+	Array2D<double> intramolecularWeights_;
 	// Bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage_;
 	// Bound coherent squared average scattering (<b**2>)
@@ -97,12 +97,12 @@ class Weights : public GenericItemBase
 	double boundCoherentProduct(int i, int j) const;
 	// Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
 	double weight(int i, int j) const;
-	// Return bound weighting for types i and j
-	double boundWeight(int i, int j) const;
+	// Return full intramolecular weighting for types i and j
+	double intramolecularWeight(int i, int j) const;
 	// Return full scattering weights matrix
-	Array2D<double> &weights();
-	// Return full bound scattering weights matrix
-	Array2D<double> &boundWeights();
+	const Array2D<double> &weights() const;
+	// Return full intramolecular scattering weights matrix
+	const Array2D<double> &intramolecularWeights() const;
 	// Return bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage() const;
 	// Return bound coherent squared average scattering (<b**2>)

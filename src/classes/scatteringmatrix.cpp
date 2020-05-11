@@ -21,7 +21,7 @@
 
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
-#include "classes/weights.h"
+#include "classes/neutronweights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
 #include <algorithm>
@@ -263,13 +263,11 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, Weights &dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeights &dataWeights, double factor)
 {
 	// Make sure that the scattering weights are valid
 	if (!dataWeights.isValid())
-	{
 		return Messenger::error("Reference data '%s' does not have valid scattering weights.\n", weightedData.name());
-	}
 
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());

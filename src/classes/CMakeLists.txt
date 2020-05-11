@@ -41,6 +41,7 @@ add_library(classes
   masterintra.cpp
   molecule.cpp
   moleculedistributor.cpp
+  neutronweights.cpp
   pairpotential.cpp
   potentialmap.cpp
   partialset.cpp
@@ -67,7 +68,7 @@ add_library(classes
   speciesring.cpp
   speciessite.cpp
   speciestorsion.cpp
-  weights.cpp
+  xrayweights.cpp
   
   atom.h
   atomtypedata.h
@@ -102,6 +103,7 @@ add_library(classes
   masterintra.h
   molecule.h
   moleculedistributor.h
+  neutronweights.h
   pairpotential.h
   potentialmap.h
   partialset.h
@@ -121,7 +123,7 @@ add_library(classes
   speciesring.h
   speciessite.h
   speciestorsion.h
-  weights.h
+  xrayweights.h
 )
 
 include_directories(

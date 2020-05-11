@@ -26,7 +26,6 @@
 #include "classes/configuration.h"
 #include "classes/kvector.h"
 #include "classes/species.h"
-#include "classes/weights.h"
 #include "genericitems/listhelper.h"
 #include "math/broadeningfunction.h"
 #include "math/filters.h"

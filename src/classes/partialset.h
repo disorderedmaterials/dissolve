@@ -23,7 +23,7 @@
 #define DISSOLVE_PARTIALSET_H
 
 #include "classes/atomtypelist.h"
-#include "classes/weights.h"
+#include "classes/neutronweights.h"
 #include "math/data1d.h"
 #include "math/histogram1d.h"
 #include "templates/array2d.h"
