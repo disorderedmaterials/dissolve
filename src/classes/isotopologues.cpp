@@ -117,7 +117,7 @@ bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 
 	// Find the specified Isotopologue
 	auto it = std::find_if(mix_.begin(), mix_.end(),
-			       [&](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
+			       [iso](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
 
 	if (it == mix_.end())
 	{
@@ -138,20 +138,20 @@ bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 void Isotopologues::remove(const Isotopologue *iso)
 {
 	mix_.erase(std::remove_if(mix_.begin(), mix_.end(),
-		       [&](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; }), mix_.end());
+		       [iso](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; }), mix_.end());
 }
 
 // Remove the specified IsotopologueWeight
 void Isotopologues::remove(IsotopologueWeight *isoWeight)
 {
-	mix_.erase(std::remove_if(mix_.begin(), mix_.end(), [&](IsotopologueWeight &data) { return isoWeight == &data; }), mix_.end());
+	mix_.erase(std::remove_if(mix_.begin(), mix_.end(), [isoWeight](IsotopologueWeight &data) { return isoWeight == &data; }), mix_.end());
 }
 
 // Return whether the mix contains the specified Isotopologue
 bool Isotopologues::contains(const Isotopologue *iso) const
 {
 	return std::any_of(mix_.cbegin(), mix_.cend(),
-			       [&](const IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
+			       [iso](const IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
 }
 
 // Return Isotopologue/weight mix
