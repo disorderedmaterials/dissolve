@@ -48,7 +48,6 @@ void IsotopologueCollection::clear() { isotopologueSets_.clear(); }
 // Add Isotopologue weight for the specified Configuration / Species
 void IsotopologueCollection::add(Configuration *cfg, Isotopologue *iso, double relativeWeight)
 {
-	printf("TRYING TO ADD ISO %s TO CFG %s...\n", iso->name(), cfg->name());
 	// Check if a set already exists for this Configuration
 	auto it = std::find_if(isotopologueSets_.begin(), isotopologueSets_.end(),
 			       [&](IsotopologueSet &set) { return set.configuration() == cfg; });
