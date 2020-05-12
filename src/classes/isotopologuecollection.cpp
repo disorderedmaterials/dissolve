@@ -38,8 +38,8 @@ IsotopologueCollection::~IsotopologueCollection() {}
 // Remove any sets from the collection that are empty
 void IsotopologueCollection::pruneEmptySets()
 {
-	std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-		       [&](IsotopologueSet &set) { return set.nIsotopologues() == 0; });
+	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
+		       [&](IsotopologueSet &set) { return set.nIsotopologues() == 0; }), isotopologueSets_.end());
 }
 
 // Clear all existing data
@@ -63,14 +63,14 @@ void IsotopologueCollection::add(Configuration *cfg, Isotopologue *iso, double r
 // Remove the specified set from the collection
 void IsotopologueCollection::remove(IsotopologueSet *set)
 {
-	std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(), [&](IsotopologueSet &data) { return &data == set; });
+	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(), [&](IsotopologueSet &data) { return &data == set; }), isotopologueSets_.end());
 }
 
 // Remove the Configuration from the collection
 void IsotopologueCollection::remove(Configuration *cfg)
 {
-	std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-		       [&](IsotopologueSet &set) { return set.configuration() == cfg; });
+	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
+		       [&](IsotopologueSet &set) { return set.configuration() == cfg; }), isotopologueSets_.end());
 }
 
 // Remove the Species from the specified set

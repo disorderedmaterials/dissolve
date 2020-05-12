@@ -54,8 +54,8 @@ int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 void Isotopologues::pruneMissing()
 {
 	// Go through list of Isotopologues present in this mix, removing any that no longer exist
-	std::remove_if(mix_.begin(), mix_.end(),
-		       [&](IsotopologueWeight &isoWeight) { return !species_->hasIsotopologue(isoWeight.isotopologue()); });
+	mix_.erase(std::remove_if(mix_.begin(), mix_.end(),
+		       [&](IsotopologueWeight &isoWeight) { return !species_->hasIsotopologue(isoWeight.isotopologue()); }), mix_.end());
 }
 
 // Add next available Isotopologue to list
@@ -137,8 +137,8 @@ bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 // Remove references to the specified Isotopologue
 void Isotopologues::remove(const Isotopologue *iso)
 {
-	std::remove_if(mix_.begin(), mix_.end(),
-		       [&](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
+	mix_.erase(std::remove_if(mix_.begin(), mix_.end(),
+		       [&](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; }), mix_.end());
 }
 
 // Remove the specified IsotopologueWeight

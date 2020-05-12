@@ -78,7 +78,7 @@ void IsotopologueSet::add(Isotopologue *iso, double relativeWeight)
 // Remove specified Species from the list (if it exists)
 void IsotopologueSet::remove(Species *sp)
 {
-	std::remove_if(isotopologues_.begin(), isotopologues_.end(), [&](Isotopologues &data) { return data.species() == sp; });
+	isotopologues_.erase(std::remove_if(isotopologues_.begin(), isotopologues_.end(), [&](Isotopologues &data) { return data.species() == sp; }), isotopologues_.end());
 }
 
 // Remove any occurrences of the specified Isotopologue
