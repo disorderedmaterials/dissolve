@@ -29,11 +29,9 @@
 #include "templates/enumhelpers.h"
 
 XRayWeights::XRayWeights()
+	: formFactors_(XRayFormFactors::NoFormFactorData), valid_(false), boundCoherentSquareOfAverage_(0.0),
+	  boundCoherentAverageOfSquares_(0.0)
 {
-	formFactors_ = XRayFormFactors::NoFormFactorData;
-	boundCoherentSquareOfAverage_ = 0.0;
-	boundCoherentAverageOfSquares_ = 0.0;
-	valid_ = false;
 }
 
 XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
