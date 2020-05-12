@@ -144,9 +144,7 @@ void Isotopologues::remove(const Isotopologue *iso)
 // Remove the specified IsotopologueWeight
 void Isotopologues::remove(IsotopologueWeight *isoWeight)
 {
-	auto it = std::find_if(mix_.begin(), mix_.end(), [&](IsotopologueWeight &data) { return isoWeight == &data; });
-	if (it != mix_.end())
-		mix_.erase(it);
+	mix_.erase(std::remove_if(mix_.begin(), mix_.end(), [&](IsotopologueWeight &data) { return isoWeight == &data; }), mix_.end());
 }
 
 // Return whether the mix contains the specified Isotopologue
