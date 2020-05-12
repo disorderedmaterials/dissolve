@@ -113,9 +113,8 @@ const std::vector<IsotopologueSet> &IsotopologueCollection::isotopologueSets() c
 // Return whether a set exists for the supplied Configuration
 bool IsotopologueCollection::contains(const Configuration *cfg) const
 {
-	auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
+	return std::any_of(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
 			       [&](const IsotopologueSet &set) { return set.configuration() == cfg; });
-	return (it != isotopologueSets_.end());
 }
 
 // Return IsotopologueSet for the specified Configuration

@@ -118,10 +118,8 @@ void IsotopologueSet::remove(IsotopologueWeight *isoWeight)
 // Return whether Isotopologues for the specified Species exists
 bool IsotopologueSet::contains(const Species *sp) const
 {
-	auto it = std::find_if(isotopologues_.cbegin(), isotopologues_.cend(),
+	return std::any_of(isotopologues_.cbegin(), isotopologues_.cend(),
 			       [&](const Isotopologues &data) { return data.species() == sp; });
-
-	return (it != isotopologues_.end());
 }
 
 // Return IsotopologueSet for the specified Species
