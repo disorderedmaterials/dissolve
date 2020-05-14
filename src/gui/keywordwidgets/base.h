@@ -22,8 +22,6 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_BASE_H
 #define DISSOLVE_KEYWORDWIDGET_BASE_H
 
-#include "templates/listitem.h"
-
 // Forward Declarations
 class CoreData;
 class GenericList;
