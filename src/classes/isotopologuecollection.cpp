@@ -39,7 +39,8 @@ IsotopologueCollection::~IsotopologueCollection() {}
 void IsotopologueCollection::pruneEmptySets()
 {
 	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-		       [](IsotopologueSet &set) { return set.nIsotopologues() == 0; }), isotopologueSets_.end());
+					       [](IsotopologueSet &set) { return set.nIsotopologues() == 0; }),
+				isotopologueSets_.end());
 }
 
 // Clear all existing data
@@ -64,14 +65,19 @@ void IsotopologueCollection::add(Configuration *cfg, Isotopologue *iso, double r
 // Remove the specified set from the collection
 void IsotopologueCollection::remove(IsotopologueSet *set)
 {
-	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(), [set](IsotopologueSet &data) { return &data == set; }), isotopologueSets_.end());
+	printf("REMOVINT SET %p (%p)\n", set, &isotopologueSets_[0]);
+	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
+					       [set](IsotopologueSet &data) { return &data == set; }),
+				isotopologueSets_.end());
+	printf("NUMBER of set now in data is %i\n", isotopologueSets_.size());
 }
 
 // Remove the Configuration from the collection
 void IsotopologueCollection::remove(Configuration *cfg)
 {
 	isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-		       [cfg](IsotopologueSet &set) { return set.configuration() == cfg; }), isotopologueSets_.end());
+					       [cfg](IsotopologueSet &set) { return set.configuration() == cfg; }),
+				isotopologueSets_.end());
 }
 
 // Remove the Species from the specified set
@@ -109,13 +115,16 @@ void IsotopologueCollection::remove(Isotopologue *iso)
 }
 
 // Return defined sets
-const std::vector<IsotopologueSet> &IsotopologueCollection::isotopologueSets() const { return isotopologueSets_; }
+std::vector<IsotopologueSet> &IsotopologueCollection::isotopologueSets() { return isotopologueSets_; }
+
+// Return defined sets (const)
+const std::vector<IsotopologueSet> &IsotopologueCollection::constIsotopologueSets() const { return isotopologueSets_; }
 
 // Return whether a set exists for the supplied Configuration
 bool IsotopologueCollection::contains(const Configuration *cfg) const
 {
 	return std::any_of(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
-			       [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
+			   [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
 }
 
 // Return IsotopologueSet for the specified Configuration

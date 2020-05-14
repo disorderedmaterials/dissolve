@@ -78,7 +78,9 @@ void IsotopologueSet::add(Isotopologue *iso, double relativeWeight)
 // Remove specified Species from the list (if it exists)
 void IsotopologueSet::remove(Species *sp)
 {
-	isotopologues_.erase(std::remove_if(isotopologues_.begin(), isotopologues_.end(), [sp](Isotopologues &data) { return data.species() == sp; }), isotopologues_.end());
+	isotopologues_.erase(std::remove_if(isotopologues_.begin(), isotopologues_.end(),
+					    [sp](Isotopologues &data) { return data.species() == sp; }),
+			     isotopologues_.end());
 }
 
 // Remove any occurrences of the specified Isotopologue
@@ -102,8 +104,9 @@ void IsotopologueSet::remove(Isotopologue *iso)
 void IsotopologueSet::remove(IsotopologueWeight *isoWeight)
 {
 	// Get Isotopologues related to the IsotopologueWeight's Species pointer
-	auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
-			       [isoWeight](Isotopologues &data) { return data.species() == isoWeight->isotopologue()->parent(); });
+	auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(), [isoWeight](Isotopologues &data) {
+		return data.species() == isoWeight->isotopologue()->parent();
+	});
 
 	if (it != isotopologues_.end())
 	{
@@ -119,7 +122,7 @@ void IsotopologueSet::remove(IsotopologueWeight *isoWeight)
 bool IsotopologueSet::contains(const Species *sp) const
 {
 	return std::any_of(isotopologues_.cbegin(), isotopologues_.cend(),
-			       [sp](const Isotopologues &data) { return data.species() == sp; });
+			   [sp](const Isotopologues &data) { return data.species() == sp; });
 }
 
 // Return IsotopologueSet for the specified Species
