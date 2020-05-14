@@ -391,7 +391,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 			auto &topeSet = std::get<0>(data);
 
 			// Iterate over Species present in the set
-			for (auto topes : topeSet.isotopologues())
+			for (auto topes : topeSet.constIsotopologues())
 			{
 				// Find the referenced Species in our SpeciesInfo list
 				SpeciesInfo *spInfo = cfg->usedSpeciesInfo(topes.species());

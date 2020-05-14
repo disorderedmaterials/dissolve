@@ -130,7 +130,7 @@ bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) cons
 				const auto &topes = std::get<0>(data);
 
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-				for (auto isoWeight : topes.mix())
+				for (auto isoWeight : topes.constMix())
 					summedWeights.addIsotopologue(spInfo->species(), spInfo->population(),
 								      isoWeight.isotopologue(), isoWeight.weight());
 			}

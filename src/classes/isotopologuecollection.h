@@ -69,7 +69,9 @@ class IsotopologueCollection : public GenericItemBase
 	// Remove any occurrences of the specified Isotopologue from the collection
 	void remove(Isotopologue *iso);
 	// Return defined sets
-	const std::vector<IsotopologueSet> &isotopologueSets() const;
+	std::vector<IsotopologueSet> &isotopologueSets();
+	// Return defined sets (const)
+	const std::vector<IsotopologueSet> &constIsotopologueSets() const;
 	// Return whether a set exists for the supplied Configuration
 	bool contains(const Configuration *cfg) const;
 	// Return IsotopologueSet for the specified Configuration

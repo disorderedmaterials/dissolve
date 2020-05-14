@@ -138,7 +138,10 @@ optional<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *s
 int IsotopologueSet::nIsotopologues() const { return isotopologues_.size(); }
 
 // Return vector of all Isotopologues
-const std::vector<Isotopologues> &IsotopologueSet::isotopologues() const { return isotopologues_; }
+std::vector<Isotopologues> &IsotopologueSet::isotopologues() { return isotopologues_; }
+
+// Return vector of all Isotopologues (const)
+const std::vector<Isotopologues> &IsotopologueSet::constIsotopologues() const { return isotopologues_; }
 
 /*
  * GenericItemBase Implementations
