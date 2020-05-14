@@ -21,8 +21,11 @@
 
 #include "templates/list.h"
 #include "templates/refdatalist.h"
+#include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QTreeWidget>
+
+template <class T> using optional_ref = std::tuple<T &, bool>;
 
 #ifndef DISSOLVE_TREEWIDGETUPDATER_H
 #define DISSOLVE_TREEWIDGETUPDATER_H
@@ -140,7 +143,7 @@ template <class T, class I> class TreeWidgetUpdater
 	{
 		int count = 0;
 
-		for (auto dataItem : data)
+		for (auto &dataItem : data)
 		{
 			// Our QTreeWidget may or may not be populated, and with different items to those in the list.
 
@@ -189,7 +192,7 @@ template <class T, class I> class TreeWidgetUpdater
 	{
 		int count = 0;
 
-		for (auto dataItem : data)
+		for (auto &dataItem : data)
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -388,6 +391,178 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 		// If there are still items remaining in the widget, delete them now
 		while (count < parentItem->childCount())
 			parentItem->removeChild(parentItem->child(count));
+	}
+};
+
+// Tree Widget Top Level Item Manager
+template <class P, class T> class TreeWidgetItemManager
+{
+	// Typedef for function pointers
+	typedef void (P::*TreeWidgetItemUpdateFunction)(QTreeWidgetItem *item, T &data, bool itemIsNew);
+
+	private:
+	// Parent object for function pointers
+	P *functionParent_;
+
+	public:
+	TreeWidgetItemManager(P *functionParent) : functionParent_(functionParent){};
+
+	/*
+	 * Data References
+	 */
+	private:
+	// Map of references to objects represented by items anywhere in the tree, keyed by QTreeWidgetItem
+	std::map<QTreeWidgetItem *, std::reference_wrapper<T>> referenceMap_;
+
+	public:
+	// Return whether the specified QTreeWidgetItem is mapped to a reference
+	bool isMapped(QTreeWidgetItem *item) const { return (referenceMap_.find(item) != referenceMap_.end()); }
+	// Retrieve reference associated to specified QTreeWidgetItem
+	optional_ref<T> reference(QTreeWidgetItem *item) const
+	{
+		auto it = referenceMap_.find(item);
+
+		return std::make_tuple(it->second, it == referenceMap_.end());
+	}
+
+	/*
+	 * Update Functions
+	 */
+	public:
+	// Perform update top level items, making them consistent with the supplied vector
+	void update(QTreeWidget *treeWidget, std::vector<T> &items, TreeWidgetItemUpdateFunction itemUpdateFunction)
+	{
+		int count = 0;
+
+		for (auto &dataItem : items)
+		{
+			// Our QTreeWidget may or may not be populated, and with different items to those in the list.
+
+			// If there is an item already at this top level position, check its reference against that in our
+			// vector If it is the same identity, just call the update function and move on. Otherwise, delete it
+			// and check again
+			while (count < treeWidget->topLevelItemCount())
+			{
+				QTreeWidgetItem *treeItem = treeWidget->topLevelItem(count);
+
+				// Does our old map contain a referenced value for this tree item?
+				auto it = referenceMap_.find(treeItem);
+				if (it != referenceMap_.end())
+				{
+					T &referencedData = it->second;
+
+					// Check consistency of the referenced value in the map with the current data
+					if (&referencedData == &dataItem)
+					{
+						// Update the item at the current position and quit the loop
+						(functionParent_->*itemUpdateFunction)(treeItem, dataItem, false);
+
+						break;
+					}
+					else
+					{
+						treeWidget->takeTopLevelItem(count);
+						delete treeItem;
+
+						referenceMap_.erase(it);
+					}
+				}
+				else
+				{
+					treeWidget->takeTopLevelItem(count);
+					delete treeItem;
+				}
+			}
+
+			// If the current child index is (now) out of range, add a new item to the parent
+			if (count == treeWidget->topLevelItemCount())
+			{
+				// Create new item and update it
+				QTreeWidgetItem *treeItem = new QTreeWidgetItem;
+				treeWidget->insertTopLevelItem(count, treeItem);
+				(functionParent_->*itemUpdateFunction)(treeItem, dataItem, true);
+
+				// Add reference to the internal vector
+				referenceMap_.insert(std::make_pair(treeItem, std::reference_wrapper<T>(dataItem)));
+			}
+
+			++count;
+		}
+
+		// If there are still items remaining in the tree, delete them now
+		while (count < treeWidget->topLevelItemCount())
+		{
+			QTreeWidgetItem *treeItem = treeWidget->takeTopLevelItem(count);
+			referenceMap_.erase(treeItem);
+			delete treeItem;
+		}
+	}
+	// Perform update on children of the specified item, making them consistent with the supplied vector
+	void updateChildren(QTreeWidgetItem *parentItem, std::vector<T> &items, TreeWidgetItemUpdateFunction itemUpdateFunction)
+	{
+		int count = 0;
+
+		for (auto &dataItem : items)
+		{
+			// Our QTreeWidgetItem may or may not have children, and with different items to those in the list.
+
+			// If there is an item already at this child position, check it
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
+			// again
+			while (count < parentItem->childCount())
+			{
+				QTreeWidgetItem *treeItem = parentItem->child(count);
+
+				// Does our old map contain a referenced value for this tree item?
+				auto it = referenceMap_.find(treeItem);
+				if (it != referenceMap_.end())
+				{
+					const T &referencedData = it->second;
+
+					if (&referencedData == &dataItem)
+					{
+						// Update the current row and quit the loop
+						(functionParent_->*itemUpdateFunction)(treeItem, dataItem, false);
+
+						break;
+					}
+					else
+					{
+						parentItem->removeChild(treeItem);
+						delete treeItem;
+
+						referenceMap_.erase(it);
+					}
+				}
+				else
+				{
+					parentItem->removeChild(treeItem);
+					delete treeItem;
+				}
+			}
+
+			// If the current child index is (now) out of range, add a new item to the parent
+			if (count == parentItem->childCount())
+			{
+				// Create new item and update it
+				QTreeWidgetItem *treeItem = new QTreeWidgetItem;
+				parentItem->insertChild(count, treeItem);
+				(functionParent_->*itemUpdateFunction)(treeItem, dataItem, true);
+
+				// Add reference to the internal vector
+				referenceMap_.insert(std::make_pair(treeItem, std::reference_wrapper<T>(dataItem)));
+			}
+
+			++count;
+		}
+
+		// If there are still items remaining in the parent, delete them now
+		while (count < parentItem->childCount())
+		{
+			QTreeWidgetItem *treeItem = parentItem->child(count);
+			parentItem->removeChild(treeItem);
+			referenceMap_.erase(treeItem);
+		}
 	}
 };
 
