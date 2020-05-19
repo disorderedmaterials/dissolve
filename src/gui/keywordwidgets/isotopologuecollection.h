@@ -53,6 +53,10 @@ class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public Keywo
     // Main form declaration
     Ui::IsotopologueRefListWidget ui_;
 
+    private:
+    // Return Species context for current item (if any)
+    const Species *speciesContext() const;
+
     private slots:
     void autoButton_clicked(bool checked);
     void addButton_clicked(bool checked);

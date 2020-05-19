@@ -37,39 +37,72 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
     : KeywordDropDown(this), KeywordWidgetBase(coreData), isotopologueSetsItemManager_(this), isotopologuesItemManager_(this),
       isotopologueWeightItemManager_(this)
 {
-    // Create and set up the UI for our widget in the drop-down's widget container
-    ui_.setupUi(dropWidget());
+	// Create and set up the UI for our widget in the drop-down's widget container
+	ui_.setupUi(dropWidget());
 
-    // Set delegates for table
-    ui_.IsotopologueTree->setItemDelegateForColumn(2, new IsotopologueComboDelegate(this));
-    ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
+	// Set delegates for table
+	ui_.IsotopologueTree->setItemDelegateForColumn(2, new IsotopologueComboDelegate(this, &IsotopologueCollectionKeywordWidget::speciesContext);
+	ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
-    // Connect signals / slots
-    connect(ui_.AutoButton, SIGNAL(clicked(bool)), this, SLOT(autoButton_clicked(bool)));
-    connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
-    connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
-    connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this,
-            SLOT(isotopologueTree_itemChanged(QTreeWidgetItem *, int)));
-    connect(ui_.IsotopologueTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this,
-            SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+	// Connect signals / slots
+	connect(ui_.AutoButton, SIGNAL(clicked(bool)), this, SLOT(autoButton_clicked(bool)));
+	connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
+	connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
+	connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this,
+		SLOT(isotopologueTree_itemChanged(QTreeWidgetItem *, int)));
+	connect(ui_.IsotopologueTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this,
+		SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
 
-    // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
-    if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into IsotopologueCollectionKeyword.\n", keyword->name());
-    else
-    {
-        // Set current information
-        updateWidgetValues(coreData_);
-    }
+	// Cast the pointer up into the parent class type
+	keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into IsotopologueCollectionKeyword.\n", keyword->name());
+	else
+	{
+		// Set current information
+		updateWidgetValues(coreData_);
+	}
 
-    // Summary text on KeywordDropDown button
-    setSummaryText("Edit...");
+	// Summary text on KeywordDropDown button
+	setSummaryText("Edit...");
 }
 
 /*
  * Widgets
  */
+
+// Return Species context for current item (if any)
+const Species *IsotopologueCollectionKeywordWidget::speciesContext() const
+{
+    QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
+
+    if (isotopologuesItemManager_.isMapped(item))
+    {
+		// Get Isotopologues reference
+		auto topesData = isotopologuesItemManager_.reference(item);
+		if (std::get<1>(topesData))
+		{
+			// TODO Raise Exception
+			Messenger::error("Reference for Isotopologues not in map.\n");
+			return nullptr;
+		}
+        return std::get<0>(topesData).species();
+    }
+    else if (isotopologueWeightItemManager_.isMapped(item))
+    {
+        // Get parent item to obtain Isotopologues reference
+		auto topesData = isotopologuesItemManager_.reference(item->parent());
+		if (std::get<1>(topesData))
+		{
+			// TODO Raise Exception
+			Messenger::error("Reference for Isotopologues not in map.\n");
+			return nullptr;
+		}
+        return std::get<0>(topesData).species();
+    }
+
+    return nullptr;
+}
 
 void IsotopologueCollectionKeywordWidget::autoButton_clicked(bool checked)
 {
