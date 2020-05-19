@@ -19,8 +19,7 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SYMMETRYGENERATOR_H
-#define DISSOLVE_SYMMETRYGENERATOR_H
+#pragma once
 
 #include "base/charstring.h"
 #include "math/matrix4.h"
@@ -59,5 +58,3 @@ class SymmetryGenerator
     // Return matrix for generator
     const Matrix4 &matrix() const;
 };
-
-#endif
