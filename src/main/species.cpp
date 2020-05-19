@@ -1,22 +1,22 @@
 /*
-	*** Dissolve - Species Functions
-	*** src/main/species.cpp
-	Copyright T. Youngs 2012-2020
+    *** Dissolve - Species Functions
+    *** src/main/species.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/species.h"
@@ -28,22 +28,22 @@
 // Add a new Species to the list
 Species *Dissolve::addSpecies()
 {
-	Species *newSpecies = coreData_.addSpecies();
+    Species *newSpecies = coreData_.addSpecies();
 
-	return newSpecies;
+    return newSpecies;
 }
 
 // Remove the specified Species from the list
 void Dissolve::removeSpecies(Species *sp)
 {
-	if (!sp)
-		return;
+    if (!sp)
+        return;
 
-	// Remove references to the Species itself
-	removeReferencesTo(sp);
+    // Remove references to the Species itself
+    removeReferencesTo(sp);
 
-	// Now safe to remove the Species
-	coreData_.removeSpecies(sp);
+    // Now safe to remove the Species
+    coreData_.removeSpecies(sp);
 }
 
 // Return number of defined Species
@@ -61,156 +61,156 @@ Species *Dissolve::findSpecies(const char *name) const { return coreData_.findSp
 // Copy AtomType, creating a new one if necessary
 void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom)
 {
-	// Check for no AtomType being set
-	if (!sourceAtom->atomType())
-	{
-		destAtom->setAtomType(NULL);
-		return;
-	}
+    // Check for no AtomType being set
+    if (!sourceAtom->atomType())
+    {
+        destAtom->setAtomType(NULL);
+        return;
+    }
 
-	// Search for the existing atom's AtomType by name, and create it if it doesn't exist
-	AtomType *at = findAtomType(sourceAtom->atomType()->name());
-	if (!at)
-	{
-		at = addAtomType(sourceAtom->element());
-		at->setName(sourceAtom->atomType()->name());
-		at->parameters() = sourceAtom->atomType()->parameters();
-		at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
-	}
+    // Search for the existing atom's AtomType by name, and create it if it doesn't exist
+    AtomType *at = findAtomType(sourceAtom->atomType()->name());
+    if (!at)
+    {
+        at = addAtomType(sourceAtom->element());
+        at->setName(sourceAtom->atomType()->name());
+        at->parameters() = sourceAtom->atomType()->parameters();
+        at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
+    }
 
-	destAtom->setAtomType(at);
+    destAtom->setAtomType(at);
 }
 
 // Copy intramolecular interaction parameters, adding MasterIntra if necessary
 void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *destIntra)
 {
-	// Remove any existing master parameters link from the destination object
-	if (destIntra->masterParameters())
-		destIntra->detachFromMasterIntra();
+    // Remove any existing master parameters link from the destination object
+    if (destIntra->masterParameters())
+        destIntra->detachFromMasterIntra();
 
-	// If sourceIntra references a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if
-	// necessary
-	if (sourceIntra->masterParameters())
-	{
-		// Search for MasterIntra by the same name in our main Dissolve instance
-		MasterIntra *master = NULL;
-		if (sourceIntra->type() == SpeciesIntra::BondInteraction)
-		{
-			master = coreData_.hasMasterBond(sourceIntra->masterParameters()->name());
-			if (!master)
-			{
-				master = coreData_.addMasterBond(sourceIntra->masterParameters()->name());
-				master->setParameters(sourceIntra->parametersAsArray());
-			}
-		}
-		else if (sourceIntra->type() == SpeciesIntra::AngleInteraction)
-		{
-			master = coreData_.hasMasterAngle(sourceIntra->masterParameters()->name());
-			if (!master)
-			{
-				master = coreData_.addMasterAngle(sourceIntra->masterParameters()->name());
-				master->setParameters(sourceIntra->parametersAsArray());
-			}
-		}
-		else if (sourceIntra->type() == SpeciesIntra::TorsionInteraction)
-		{
-			master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
-			if (!master)
-			{
-				master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
-				master->setParameters(sourceIntra->parametersAsArray());
-			}
-		}
-		else if (sourceIntra->type() == SpeciesIntra::ImproperInteraction)
-		{
-			master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
-			if (!master)
-			{
-				master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
-				master->setParameters(sourceIntra->parametersAsArray());
-			}
-		}
+    // If sourceIntra references a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if
+    // necessary
+    if (sourceIntra->masterParameters())
+    {
+        // Search for MasterIntra by the same name in our main Dissolve instance
+        MasterIntra *master = NULL;
+        if (sourceIntra->type() == SpeciesIntra::BondInteraction)
+        {
+            master = coreData_.hasMasterBond(sourceIntra->masterParameters()->name());
+            if (!master)
+            {
+                master = coreData_.addMasterBond(sourceIntra->masterParameters()->name());
+                master->setParameters(sourceIntra->parametersAsArray());
+            }
+        }
+        else if (sourceIntra->type() == SpeciesIntra::AngleInteraction)
+        {
+            master = coreData_.hasMasterAngle(sourceIntra->masterParameters()->name());
+            if (!master)
+            {
+                master = coreData_.addMasterAngle(sourceIntra->masterParameters()->name());
+                master->setParameters(sourceIntra->parametersAsArray());
+            }
+        }
+        else if (sourceIntra->type() == SpeciesIntra::TorsionInteraction)
+        {
+            master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
+            if (!master)
+            {
+                master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
+                master->setParameters(sourceIntra->parametersAsArray());
+            }
+        }
+        else if (sourceIntra->type() == SpeciesIntra::ImproperInteraction)
+        {
+            master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
+            if (!master)
+            {
+                master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
+                master->setParameters(sourceIntra->parametersAsArray());
+            }
+        }
 
-		// Copy the form of the parameters
-		master->setForm(sourceIntra->masterParameters()->form());
+        // Copy the form of the parameters
+        master->setForm(sourceIntra->masterParameters()->form());
 
-		// Set the master pointer in the interaction
-		destIntra->setMasterParameters(master);
-	}
-	else
-	{
-		// Just copy over form / parameters
-		destIntra->setForm(sourceIntra->form());
-		destIntra->setParameters(sourceIntra->parametersAsArray());
-	}
+        // Set the master pointer in the interaction
+        destIntra->setMasterParameters(master);
+    }
+    else
+    {
+        // Just copy over form / parameters
+        destIntra->setForm(sourceIntra->form());
+        destIntra->setParameters(sourceIntra->parametersAsArray());
+    }
 }
 
 // Copy Species from supplied instance
 Species *Dissolve::copySpecies(const Species *species)
 {
-	// Create our new Species
-	Species *newSpecies = addSpecies();
-	newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
+    // Create our new Species
+    Species *newSpecies = addSpecies();
+    newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
 
-	// Turn off autoupdate of intramolecular terms, since we want an exact copy of the Species contents
-	newSpecies->setAutoUpdateIntramolecularTerms(false);
+    // Turn off autoupdate of intramolecular terms, since we want an exact copy of the Species contents
+    newSpecies->setAutoUpdateIntramolecularTerms(false);
 
-	// Duplicate atoms
-	ListIterator<SpeciesAtom> atomIterator(species->atoms());
-	while (SpeciesAtom *i = atomIterator.iterate())
-	{
-		// Create the Atom in our new Species
-		SpeciesAtom *newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
-		if (i->isSelected())
-			newSpecies->selectAtom(newAtom);
+    // Duplicate atoms
+    ListIterator<SpeciesAtom> atomIterator(species->atoms());
+    while (SpeciesAtom *i = atomIterator.iterate())
+    {
+        // Create the Atom in our new Species
+        SpeciesAtom *newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
+        if (i->isSelected())
+            newSpecies->selectAtom(newAtom);
 
-		// Search for the existing atom's AtomType by name, and create it if it doesn't exist
-		copyAtomType(i, newAtom);
-	}
+        // Search for the existing atom's AtomType by name, and create it if it doesn't exist
+        copyAtomType(i, newAtom);
+    }
 
-	// Duplicate bonds
-	DynamicArrayConstIterator<SpeciesBond> bondIterator(species->constBonds());
-	while (const SpeciesBond *b = bondIterator.iterate())
-	{
-		// Create the bond in the new Species
-		SpeciesBond *newBond = newSpecies->addBond(b->indexI(), b->indexJ());
+    // Duplicate bonds
+    DynamicArrayConstIterator<SpeciesBond> bondIterator(species->constBonds());
+    while (const SpeciesBond *b = bondIterator.iterate())
+    {
+        // Create the bond in the new Species
+        SpeciesBond *newBond = newSpecies->addBond(b->indexI(), b->indexJ());
 
-		// Copy interaction parameters, including MasterIntra if necessary
-		copySpeciesIntra(b, newBond);
-	}
+        // Copy interaction parameters, including MasterIntra if necessary
+        copySpeciesIntra(b, newBond);
+    }
 
-	// Duplicate angles
-	DynamicArrayConstIterator<SpeciesAngle> angleIterator(species->constAngles());
-	while (const SpeciesAngle *a = angleIterator.iterate())
-	{
-		// Create the angle in the new Species
-		SpeciesAngle *newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
+    // Duplicate angles
+    DynamicArrayConstIterator<SpeciesAngle> angleIterator(species->constAngles());
+    while (const SpeciesAngle *a = angleIterator.iterate())
+    {
+        // Create the angle in the new Species
+        SpeciesAngle *newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
 
-		// Copy interaction parameters, including MasterIntra if necessary
-		copySpeciesIntra(a, newAngle);
-	}
+        // Copy interaction parameters, including MasterIntra if necessary
+        copySpeciesIntra(a, newAngle);
+    }
 
-	// Duplicate torsions
-	DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(species->constTorsions());
-	while (const SpeciesTorsion *t = torsionIterator.iterate())
-	{
-		// Create the torsion in the new Species
-		SpeciesTorsion *newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+    // Duplicate torsions
+    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(species->constTorsions());
+    while (const SpeciesTorsion *t = torsionIterator.iterate())
+    {
+        // Create the torsion in the new Species
+        SpeciesTorsion *newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
 
-		// Copy interaction parameters, including MasterIntra if necessary
-		copySpeciesIntra(t, newTorsion);
-	}
+        // Copy interaction parameters, including MasterIntra if necessary
+        copySpeciesIntra(t, newTorsion);
+    }
 
-	// Duplicate impropers
-	DynamicArrayConstIterator<SpeciesImproper> improperIterator(species->constImpropers());
-	while (const SpeciesImproper *t = improperIterator.iterate())
-	{
-		// Create the improper in the new Species
-		SpeciesImproper *newImproper = newSpecies->addImproper(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+    // Duplicate impropers
+    DynamicArrayConstIterator<SpeciesImproper> improperIterator(species->constImpropers());
+    while (const SpeciesImproper *t = improperIterator.iterate())
+    {
+        // Create the improper in the new Species
+        SpeciesImproper *newImproper = newSpecies->addImproper(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
 
-		// Copy interaction parameters, including MasterIntra if necessary
-		copySpeciesIntra(t, newImproper);
-	}
+        // Copy interaction parameters, including MasterIntra if necessary
+        copySpeciesIntra(t, newImproper);
+    }
 
-	return newSpecies;
+    return newSpecies;
 }

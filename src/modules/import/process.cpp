@@ -1,22 +1,22 @@
 /*
-	*** Import Module
-	*** src/modules/import.cpp
-	Copyright T. Youngs 2012-2020
+    *** Import Module
+    *** src/modules/import.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/lineparser.h"
@@ -29,69 +29,68 @@
 // Run main processing
 bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-	/*
-	 * Import data to the target Configuration(s)
-	 */
+    /*
+     * Import data to the target Configuration(s)
+     */
 
-	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
-		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+    // Check for zero Configuration targets
+    if (targetConfigurations_.nItems() == 0)
+        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
-	// Loop over target Configurations
-	for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
-	{
-		// Grab Configuration pointer
-		Configuration *cfg = ri->item();
+    // Loop over target Configurations
+    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+    {
+        // Grab Configuration pointer
+        Configuration *cfg = ri->item();
 
-		// Set up process pool - must do this to ensure we are using all available processes
-		procPool.assignProcessesToGroups(cfg->processPool());
+        // Set up process pool - must do this to ensure we are using all available processes
+        procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Retrieve control parameters
-		bool readTrajectory = keywords_.asBool("ReadTrajectory");
+        // Retrieve control parameters
+        bool readTrajectory = keywords_.asBool("ReadTrajectory");
 
-		/*
-		 * Import Trajectory Frame?
-		 */
-		if (readTrajectory)
-		{
-			Messenger::print("Import: Reading trajectory file frame from '%s' into Configuration '%s'...\n",
-					 trajectoryFile_.filename(), cfg->name());
+        /*
+         * Import Trajectory Frame?
+         */
+        if (readTrajectory)
+        {
+            Messenger::print("Import: Reading trajectory file frame from '%s' into Configuration '%s'...\n",
+                             trajectoryFile_.filename(), cfg->name());
 
-			// Open the file
-			LineParser parser(&procPool);
-			if ((!parser.openInput(trajectoryFile_.filename())) || (!parser.isFileGoodForReading()))
-				return Messenger::error("Couldn't open trajectory file '%s'.\n", trajectoryFile_.filename());
+            // Open the file
+            LineParser parser(&procPool);
+            if ((!parser.openInput(trajectoryFile_.filename())) || (!parser.isFileGoodForReading()))
+                return Messenger::error("Couldn't open trajectory file '%s'.\n", trajectoryFile_.filename());
 
-			// Does a seek position exist in the processing module info?
-			CharString streamPosName("TrajectoryPosition_%s", cfg->niceName());
-			if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
-			{
-				// Retrieve the streampos and go to it in the file
-				streampos trajPos = GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(),
-											   streamPosName, uniqueName());
-				parser.seekg(trajPos);
-			}
+            // Does a seek position exist in the processing module info?
+            CharString streamPosName("TrajectoryPosition_%s", cfg->niceName());
+            if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
+            {
+                // Retrieve the streampos and go to it in the file
+                streampos trajPos =
+                    GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
+                parser.seekg(trajPos);
+            }
 
-			// Read the frame
-			switch (trajectoryFile_.trajectoryFormat())
-			{
-				case (TrajectoryImportFileFormat::XYZTrajectory):
-					if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
-						return false;
-					cfg->incrementContentsVersion();
-					break;
-				default:
-					return Messenger::error(
-						"Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n",
-						trajectoryFile_.trajectoryFormat());
-					break;
-			}
+            // Read the frame
+            switch (trajectoryFile_.trajectoryFormat())
+            {
+                case (TrajectoryImportFileFormat::XYZTrajectory):
+                    if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
+                        return false;
+                    cfg->incrementContentsVersion();
+                    break;
+                default:
+                    return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n",
+                                            trajectoryFile_.trajectoryFormat());
+                    break;
+            }
 
-			// Set the trajectory file position in the restart file
-			GenericListHelper<streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(),
-							      GenericItem::InRestartFileFlag) = parser.tellg();
-		}
-	}
+            // Set the trajectory file position in the restart file
+            GenericListHelper<streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(),
+                                                  GenericItem::InRestartFileFlag) = parser.tellg();
+        }
+    }
 
-	return true;
+    return true;
 }

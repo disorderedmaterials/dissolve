@@ -1,22 +1,22 @@
 /*
-	*** Layer Tab Functions
-	*** src/gui/layertab_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Layer Tab Functions
+    *** src/gui/layertab_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/lineparser.h"
@@ -27,23 +27,23 @@
 #include <QMessageBox>
 
 LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
-		   ModuleLayer *layer)
-	: ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
+                   ModuleLayer *layer)
+    : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {
-	ui_.setupUi(this);
+    ui_.setupUi(this);
 
-	Locker refreshLocker(refreshLock_);
+    Locker refreshLocker(refreshLock_);
 
-	moduleLayer_ = layer;
+    moduleLayer_ = layer;
 
-	// Set up ModuleEditor
-	ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
+    // Set up ModuleEditor
+    ui_.ModuleListPanel->setUp(dissolveWindow, moduleLayer_);
 }
 
 LayerTab::~LayerTab()
 {
-	// Remove the Configuration represented in this tab
-	dissolve_.removeProcessingLayer(moduleLayer_);
+    // Remove the Configuration represented in this tab
+    dissolve_.removeProcessingLayer(moduleLayer_);
 }
 
 /*
@@ -56,19 +56,19 @@ MainTab::TabType LayerTab::type() const { return MainTab::LayerTabType; }
 // Raise suitable dialog for entering / checking new tab name
 QString LayerTab::getNewTitle(bool &ok)
 {
-	// Get a new, valid name for the layer
-	GetModuleLayerNameDialog nameDialog(this, dissolve_.processingLayers());
-	ok = nameDialog.get(moduleLayer_, moduleLayer_->name());
+    // Get a new, valid name for the layer
+    GetModuleLayerNameDialog nameDialog(this, dissolve_.processingLayers());
+    ok = nameDialog.get(moduleLayer_, moduleLayer_->name());
 
-	if (ok)
-	{
-		// Rename our layer, and flag that our data has been modified
-		moduleLayer_->setName(qPrintable(nameDialog.newName()));
+    if (ok)
+    {
+        // Rename our layer, and flag that our data has been modified
+        moduleLayer_->setName(qPrintable(nameDialog.newName()));
 
-		dissolveWindow_->setModified();
-	}
+        dissolveWindow_->setModified();
+    }
 
-	return nameDialog.newName();
+    return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed
@@ -77,23 +77,23 @@ bool LayerTab::canChangeTitle() const { return true; }
 // Return whether the tab can be closed (after any necessary user querying, etc.)
 bool LayerTab::canClose() const
 {
-	// Check that we really want to delete this tab
-	QMessageBox queryBox;
-	queryBox.setText(QString("Really delete the layer '%1'?\nThis cannot be undone!").arg(moduleLayer_->name()));
-	queryBox.setInformativeText("Proceed?");
-	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	queryBox.setDefaultButton(QMessageBox::No);
-	int ret = queryBox.exec();
+    // Check that we really want to delete this tab
+    QMessageBox queryBox;
+    queryBox.setText(QString("Really delete the layer '%1'?\nThis cannot be undone!").arg(moduleLayer_->name()));
+    queryBox.setInformativeText("Proceed?");
+    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    queryBox.setDefaultButton(QMessageBox::No);
+    int ret = queryBox.exec();
 
-	if (ret != QMessageBox::Yes)
-		return false;
+    if (ret != QMessageBox::Yes)
+        return false;
 
-	// Before closing, we must close any tabs that are displaying our associated Modules
-	ListIterator<Module> moduleIterator(moduleLayer_->modules());
-	while (Module *module = moduleIterator.iterate())
-		dissolveWindow_->removeModuleTab(module->uniqueName());
+    // Before closing, we must close any tabs that are displaying our associated Modules
+    ListIterator<Module> moduleIterator(moduleLayer_->modules());
+    while (Module *module = moduleIterator.iterate())
+        dissolveWindow_->removeModuleTab(module->uniqueName());
 
-	return true;
+    return true;
 }
 
 /*
@@ -109,31 +109,31 @@ ModuleLayer *LayerTab::moduleLayer() const { return moduleLayer_; }
 
 void LayerTab::on_ShowPaletteButton_clicked(bool checked)
 {
-	// Show / hide the module palette
-	ui_.ModuleListPanel->setModulePaletteVisible(checked);
+    // Show / hide the module palette
+    ui_.ModuleListPanel->setModulePaletteVisible(checked);
 
-	// Set correct text on our button
-	ui_.ShowPaletteButton->setText(checked ? "Hide Palette" : "Show Palette");
+    // Set correct text on our button
+    ui_.ShowPaletteButton->setText(checked ? "Hide Palette" : "Show Palette");
 }
 
 void LayerTab::on_EnabledButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked() || (!moduleLayer_))
-		return;
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
 
-	moduleLayer_->setEnabled(checked);
+    moduleLayer_->setEnabled(checked);
 
-	dissolveWindow_->setModified();
+    dissolveWindow_->setModified();
 }
 
 void LayerTab::on_FrequencySpin_valueChanged(int value)
 {
-	if (refreshLock_.isLocked() || (!moduleLayer_))
-		return;
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
 
-	moduleLayer_->setFrequency(value);
+    moduleLayer_->setFrequency(value);
 
-	dissolveWindow_->setModified();
+    dissolveWindow_->setModified();
 }
 
 /*
@@ -143,31 +143,31 @@ void LayerTab::on_FrequencySpin_valueChanged(int value)
 // Update controls in tab
 void LayerTab::updateControls()
 {
-	if (!moduleLayer_)
-		return;
+    if (!moduleLayer_)
+        return;
 
-	Locker refreshLocker(refreshLock_);
+    Locker refreshLocker(refreshLock_);
 
-	ui_.EnabledButton->setChecked(moduleLayer_->enabled());
-	ui_.FrequencySpin->setValue(moduleLayer_->frequency());
+    ui_.EnabledButton->setChecked(moduleLayer_->enabled());
+    ui_.FrequencySpin->setValue(moduleLayer_->frequency());
 
-	ui_.ModuleListPanel->updateControls();
+    ui_.ModuleListPanel->updateControls();
 }
 
 // Disable sensitive controls within tab
 void LayerTab::disableSensitiveControls()
 {
-	ui_.EnabledButton->setEnabled(false);
-	ui_.FrequencySpin->setEnabled(false);
-	ui_.ModuleListPanel->disableSensitiveControls();
+    ui_.EnabledButton->setEnabled(false);
+    ui_.FrequencySpin->setEnabled(false);
+    ui_.ModuleListPanel->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
 void LayerTab::enableSensitiveControls()
 {
-	ui_.EnabledButton->setEnabled(true);
-	ui_.FrequencySpin->setEnabled(true);
-	ui_.ModuleListPanel->enableSensitiveControls();
+    ui_.EnabledButton->setEnabled(true);
+    ui_.FrequencySpin->setEnabled(true);
+    ui_.ModuleListPanel->enableSensitiveControls();
 }
 
 /*
@@ -177,17 +177,17 @@ void LayerTab::enableSensitiveControls()
 // Read widget state through specified LineParser
 bool LayerTab::readState(LineParser &parser, const CoreData &coreData)
 {
-	if (!ui_.ModuleListPanel->readState(parser))
-		return false;
+    if (!ui_.ModuleListPanel->readState(parser))
+        return false;
 
-	return true;
+    return true;
 }
 
 // Write widget state through specified LineParser
 bool LayerTab::writeState(LineParser &parser) const
 {
-	if (!ui_.ModuleListPanel->writeState(parser))
-		return false;
+    if (!ui_.ModuleListPanel->writeState(parser))
+        return false;
 
-	return true;
+    return true;
 }

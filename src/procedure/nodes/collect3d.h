@@ -1,26 +1,25 @@
 /*
-	*** Procedure Node - Collect3D
-	*** src/procedure/nodes/collect3d.h
-	Copyright T. Youngs 2012-2020
+    *** Procedure Node - Collect3D
+    *** src/procedure/nodes/collect3d.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_COLLECT3D_H
-#define DISSOLVE_PROCEDURENODE_COLLECT3D_H
+#pragma once
 
 #include "base/charstring.h"
 #include "math/histogram3d.h"
@@ -35,90 +34,88 @@ class NodeScopeStack;
 // Procedure Node - Collect3D
 class Collect3DProcedureNode : public ProcedureNode
 {
-	public:
-	Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable = NULL, CalculateProcedureNodeBase *yObservable = NULL,
-			       CalculateProcedureNodeBase *zObservable = NULL, double xMin = 0.0, double xMax = 10.0,
-			       double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
-			       double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-	Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin = 0.0, double xMax = 10.0,
-			       double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
-			       double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-	~Collect3DProcedureNode();
+    public:
+    Collect3DProcedureNode(CalculateProcedureNodeBase *xObservable = NULL, CalculateProcedureNodeBase *yObservable = NULL,
+                           CalculateProcedureNodeBase *zObservable = NULL, double xMin = 0.0, double xMax = 10.0,
+                           double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
+                           double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+    Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin = 0.0, double xMax = 10.0,
+                           double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05,
+                           double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+    ~Collect3DProcedureNode();
 
-	/*
-	 * Identity
-	 */
-	public:
-	// Return whether specified context is relevant for this node type
-	bool isContextRelevant(ProcedureNode::NodeContext context);
+    /*
+     * Identity
+     */
+    public:
+    // Return whether specified context is relevant for this node type
+    bool isContextRelevant(ProcedureNode::NodeContext context);
 
-	/*
-	 * Data
-	 */
-	private:
-	// Observable to bin along x (retrieved from keyword)
-	CalculateProcedureNodeBase *xObservable_;
-	// Index of x observable data to use (retrieved from keyword)
-	int xObservableIndex_;
-	// Observable to bin along y (retrieved from keyword)
-	CalculateProcedureNodeBase *yObservable_;
-	// Index of y observable data to use (retrieved from keyword)
-	int yObservableIndex_;
-	// Observable to bin along z (retrieved from keyword)
-	CalculateProcedureNodeBase *zObservable_;
-	// Index of z observable data to use (retrieved from keyword)
-	int zObservableIndex_;
-	// Histogram in which to accumulate data
-	Histogram3D *histogram_;
+    /*
+     * Data
+     */
+    private:
+    // Observable to bin along x (retrieved from keyword)
+    CalculateProcedureNodeBase *xObservable_;
+    // Index of x observable data to use (retrieved from keyword)
+    int xObservableIndex_;
+    // Observable to bin along y (retrieved from keyword)
+    CalculateProcedureNodeBase *yObservable_;
+    // Index of y observable data to use (retrieved from keyword)
+    int yObservableIndex_;
+    // Observable to bin along z (retrieved from keyword)
+    CalculateProcedureNodeBase *zObservable_;
+    // Index of z observable data to use (retrieved from keyword)
+    int zObservableIndex_;
+    // Histogram in which to accumulate data
+    Histogram3D *histogram_;
 
-	public:
-	// Return accumulated data
-	const Data3D &accumulatedData() const;
-	// Return x range minimum
-	double xMinimum() const;
-	// Return x range maximum
-	double xMaximum() const;
-	// Return x bin width
-	double xBinWidth() const;
-	// Return y range minimum
-	double yMinimum() const;
-	// Return y range maximum
-	double yMaximum() const;
-	// Return y bin width
-	double yBinWidth() const;
-	// Return z range minimum
-	double zMinimum() const;
-	// Return z range maximum
-	double zMaximum() const;
-	// Return z bin width
-	double zBinWidth() const;
+    public:
+    // Return accumulated data
+    const Data3D &accumulatedData() const;
+    // Return x range minimum
+    double xMinimum() const;
+    // Return x range maximum
+    double xMaximum() const;
+    // Return x bin width
+    double xBinWidth() const;
+    // Return y range minimum
+    double yMinimum() const;
+    // Return y range maximum
+    double yMaximum() const;
+    // Return y bin width
+    double yBinWidth() const;
+    // Return z range minimum
+    double zMinimum() const;
+    // Return z range maximum
+    double zMaximum() const;
+    // Return z bin width
+    double zBinWidth() const;
 
-	/*
-	 * Branches
-	 */
-	private:
-	// Branch for subcollection (if defined), run if the target quantity is successfully binned
-	SequenceProcedureNode *subCollectBranch_;
+    /*
+     * Branches
+     */
+    private:
+    // Branch for subcollection (if defined), run if the target quantity is successfully binned
+    SequenceProcedureNode *subCollectBranch_;
 
-	public:
-	// Add and return subcollection sequence branch
-	SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
-	// Return whether this node has a branch
-	bool hasBranch() const;
-	// Return SequenceNode for the branch (if it exists)
-	SequenceProcedureNode *branch();
+    public:
+    // Add and return subcollection sequence branch
+    SequenceProcedureNode *addSubCollectBranch(ProcedureNode::NodeContext context);
+    // Return whether this node has a branch
+    bool hasBranch() const;
+    // Return SequenceNode for the branch (if it exists)
+    SequenceProcedureNode *branch();
 
-	/*
-	 * Execute
-	 */
-	public:
-	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
-	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
-						   GenericList &targetList);
-	// Finalise any necessary data after execution
-	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+    /*
+     * Execute
+     */
+    public:
+    // Prepare any necessary data, ready for execution
+    bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
+    // Execute node, targetting the supplied Configuration
+    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+                                               GenericList &targetList);
+    // Finalise any necessary data after execution
+    bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
-
-#endif

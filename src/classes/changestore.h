@@ -1,26 +1,25 @@
 /*
-	*** ChangeStore
-	*** src/classes/changestore.h
-	Copyright T. Youngs 2012-2020
+    *** ChangeStore
+    *** src/classes/changestore.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHANGESTORE_H
-#define DISSOLVE_CHANGESTORE_H
+#pragma once
 
 #include "classes/changedata.h"
 #include "templates/array.h"
@@ -38,62 +37,60 @@ class ProcessPool;
 // ChangeStore
 class ChangeStore
 {
-	public:
-	ChangeStore(ProcessPool &procPool);
-	~ChangeStore();
+    public:
+    ChangeStore(ProcessPool &procPool);
+    ~ChangeStore();
 
-	/*
-	 * Watch Targets
-	 */
-	private:
-	// List of target atoms (and modification data)
-	List<ChangeData> targetAtoms_;
+    /*
+     * Watch Targets
+     */
+    private:
+    // List of target atoms (and modification data)
+    List<ChangeData> targetAtoms_;
 
-	public:
-	// Add atom to watch
-	void add(Atom *i);
-	// Add molecule to watch
-	void add(std::shared_ptr<Molecule> mol);
-	// Add cell to watch
-	void add(Cell *cell);
+    public:
+    // Add atom to watch
+    void add(Atom *i);
+    // Add molecule to watch
+    void add(std::shared_ptr<Molecule> mol);
+    // Add cell to watch
+    void add(Cell *cell);
 
-	/*
-	 * Change Data
-	 */
-	private:
-	// List of local changes
-	List<ChangeData> changes_;
-	// Coordinate broadcast arrays
-	Array<double> x_, y_, z_;
-	// Index broadcast array
-	Array<int> indices_;
+    /*
+     * Change Data
+     */
+    private:
+    // List of local changes
+    List<ChangeData> changes_;
+    // Coordinate broadcast arrays
+    Array<double> x_, y_, z_;
+    // Index broadcast array
+    Array<int> indices_;
 
-	public:
-	// Reset ChangeStore, forgetting all changes
-	void reset();
-	// Update all Atom positions
-	void updateAll();
-	// Update single atom position
-	void updateAtom(int id);
-	// Update Atom positions using list indices
-	void updateAtomsLocal(int nAtoms, int *indices);
-	// Revert all atoms to stored positions
-	void revertAll();
-	// Revert specified index to stored position
-	void revert(int id);
-	// Save Atom changes for broadcast, and reset arrays for new data
-	void storeAndReset();
+    public:
+    // Reset ChangeStore, forgetting all changes
+    void reset();
+    // Update all Atom positions
+    void updateAll();
+    // Update single atom position
+    void updateAtom(int id);
+    // Update Atom positions using list indices
+    void updateAtomsLocal(int nAtoms, int *indices);
+    // Revert all atoms to stored positions
+    void revertAll();
+    // Revert specified index to stored position
+    void revert(int id);
+    // Save Atom changes for broadcast, and reset arrays for new data
+    void storeAndReset();
 
-	/*
-	 * Parallel Comms
-	 */
-	private:
-	// ProcessPool over which this ChangeStore should broadcast
-	ProcessPool &processPool_;
+    /*
+     * Parallel Comms
+     */
+    private:
+    // ProcessPool over which this ChangeStore should broadcast
+    ProcessPool &processPool_;
 
-	public:
-	// Distribute and apply change data to all processes
-	bool distributeAndApply(Configuration *cfg);
+    public:
+    // Distribute and apply change data to all processes
+    bool distributeAndApply(Configuration *cfg);
 };
-
-#endif

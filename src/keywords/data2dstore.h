@@ -1,26 +1,25 @@
 /*
-	*** Keyword - Data2D Store
-	*** src/keywords/data2dstore.h
-	Copyright T. Youngs 2012-2020
+    *** Keyword - Data2D Store
+    *** src/keywords/data2dstore.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_DATA2DSTORE_H
-#define DISSOLVE_KEYWORD_DATA2DSTORE_H
+#pragma once
 
 #include "classes/data2dstore.h"
 #include "keywords/data.h"
@@ -31,22 +30,20 @@
 // Keyword with a store of Data2D
 class Data2DStoreKeyword : public KeywordData<Data2DStore &>
 {
-	public:
-	Data2DStoreKeyword(Data2DStore &dataStore);
-	~Data2DStoreKeyword();
+    public:
+    Data2DStoreKeyword(Data2DStore &dataStore);
+    ~Data2DStoreKeyword();
 
-	/*
-	 * Arguments
-	 */
-	public:
-	// Return minimum number of arguments accepted
-	int minArguments() const;
-	// Return maximum number of arguments accepted
-	int maxArguments() const;
-	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser &parser, int startArg, const CoreData &coreData);
-	// Write keyword data to specified LineParser
-	bool write(LineParser &parser, const char *keywordName, const char *prefix);
+    /*
+     * Arguments
+     */
+    public:
+    // Return minimum number of arguments accepted
+    int minArguments() const;
+    // Return maximum number of arguments accepted
+    int maxArguments() const;
+    // Parse arguments from supplied LineParser, starting at given argument offset
+    bool read(LineParser &parser, int startArg, const CoreData &coreData);
+    // Write keyword data to specified LineParser
+    bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
-
-#endif

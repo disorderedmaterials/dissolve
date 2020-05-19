@@ -1,22 +1,22 @@
 /*
-	*** NETA Definition
-	*** src/neta/neta.cpp
-	Copyright T. Youngs 2015-2020
+    *** NETA Definition
+    *** src/neta/neta.cpp
+    Copyright T. Youngs 2015-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "neta/neta.h"
@@ -30,7 +30,7 @@
 
 NETADefinition::NETADefinition(const char *netaDefinition, const Forcefield *associatedFF) : rootNode_(this)
 {
-	set(netaDefinition, associatedFF);
+    set(netaDefinition, associatedFF);
 }
 
 NETADefinition::~NETADefinition() { clear(); }
@@ -42,8 +42,8 @@ NETADefinition::~NETADefinition() { clear(); }
 // Clear contents of definition
 void NETADefinition::clear()
 {
-	definitionString_.clear();
-	rootNode_.clear();
+    definitionString_.clear();
+    rootNode_.clear();
 }
 
 // Return root node pointer
@@ -52,13 +52,13 @@ NETARootNode *NETADefinition::rootNode() { return &rootNode_; }
 // Set NETADefinition from supplied string
 bool NETADefinition::set(const char *netaDefinition, const Forcefield *associatedFF)
 {
-	clear();
+    clear();
 
-	definitionString_ = netaDefinition;
+    definitionString_ = netaDefinition;
 
-	bool result = NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF);
+    bool result = NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF);
 
-	return result;
+    return result;
 }
 
 // Set generating string
@@ -74,6 +74,6 @@ const char *NETADefinition::definitionString() const { return definitionString_.
 // Check supplied atom to see if it matches this NETA description
 int NETADefinition::score(const SpeciesAtom *i) const
 {
-	RefList<const SpeciesAtom> matchPath;
-	return rootNode_.score(i, matchPath);
+    RefList<const SpeciesAtom> matchPath;
+    return rootNode_.score(i, matchPath);
 }

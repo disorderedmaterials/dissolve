@@ -1,22 +1,22 @@
 /*
-	*** Module Control Widget - Functions
-	*** src/gui/modulecontrolwidget_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Module Control Widget - Functions
+    *** src/gui/modulecontrolwidget_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/lineparser.h"
@@ -32,13 +32,13 @@
 
 ModuleControlWidget::ModuleControlWidget(QWidget *parent)
 {
-	// Set up user interface
-	ui_.setupUi(this);
+    // Set up user interface
+    ui_.setupUi(this);
 
-	dissolve_ = NULL;
-	module_ = NULL;
+    dissolve_ = NULL;
+    module_ = NULL;
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 ModuleControlWidget::~ModuleControlWidget() {}
@@ -50,8 +50,8 @@ ModuleControlWidget::~ModuleControlWidget() {}
 // Set up links to main window
 void ModuleControlWidget::setUp(DissolveWindow *dissolveWindow)
 {
-	connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
-	connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
+    connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
+    connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 }
 
 /*
@@ -61,34 +61,34 @@ void ModuleControlWidget::setUp(DissolveWindow *dissolveWindow)
 // Set target Module to display
 void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
 {
-	module_ = module;
-	dissolve_ = dissolve;
-	if ((!module_) || (!dissolve_))
-	{
-		ui_.ModuleKeywordsWidget->setUp(KeywordList(), CoreData());
-		return;
-	}
+    module_ = module;
+    dissolve_ = dissolve;
+    if ((!module_) || (!dissolve_))
+    {
+        ui_.ModuleKeywordsWidget->setUp(KeywordList(), CoreData());
+        return;
+    }
 
-	// Set the icon and module type label
-	ui_.TopLabel->setText(module_->type());
-	ui_.IconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
+    // Set the icon and module type label
+    ui_.TopLabel->setText(module_->type());
+    ui_.IconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
 
-	// Set up our keywords widget
-	ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
+    // Set up our keywords widget
+    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
 
-	updateControls();
+    updateControls();
 }
 
 // Run the set-up stage of the associated Module
 void ModuleControlWidget::setUpModule()
 {
-	if ((!module_) || (!dissolve_))
-		return;
+    if ((!module_) || (!dissolve_))
+        return;
 
-	// Run the Module's set-up stage
-	module_->setUp(*dissolve_, dissolve_->worldPool());
+    // Run the Module's set-up stage
+    module_->setUp(*dissolve_, dissolve_->worldPool());
 
-	emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
+    emit(updateModuleWidget(ModuleWidget::ResetGraphDataTargetsFlag));
 }
 
 /*
@@ -98,67 +98,67 @@ void ModuleControlWidget::setUpModule()
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
-	if ((!module_) || (!dissolve_))
-		return;
+    if ((!module_) || (!dissolve_))
+        return;
 
-	refreshing_ = true;
+    refreshing_ = true;
 
-	// Set unique name
-	ui_.NameEdit->setText(module_->uniqueName());
+    // Set unique name
+    ui_.NameEdit->setText(module_->uniqueName());
 
-	// Set 'enabled' button status
-	ui_.EnabledButton->setChecked(module_->isEnabled());
-	ui_.IconFrame->setEnabled(module_->isEnabled());
+    // Set 'enabled' button status
+    ui_.EnabledButton->setChecked(module_->isEnabled());
+    ui_.IconFrame->setEnabled(module_->isEnabled());
 
-	// Set frequency spin
-	ui_.FrequencySpin->setValue(module_->frequency());
+    // Set frequency spin
+    ui_.FrequencySpin->setValue(module_->frequency());
 
-	// Update Configuration list and HeaderFrame tooltip
-	ui_.ConfigurationTargetList->clear();
-	CharString toolTip("Targets: ");
-	ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
-	while (Configuration *cfg = configIterator.iterate())
-	{
-		QListWidgetItem *item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
+    // Update Configuration list and HeaderFrame tooltip
+    ui_.ConfigurationTargetList->clear();
+    CharString toolTip("Targets: ");
+    ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
+    while (Configuration *cfg = configIterator.iterate())
+    {
+        QListWidgetItem *item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
 
-		if (module_->isTargetConfiguration(cfg))
-		{
-			item->setCheckState(Qt::Checked);
+        if (module_->isTargetConfiguration(cfg))
+        {
+            item->setCheckState(Qt::Checked);
 
-			if (configIterator.isFirst())
-				toolTip.strcatf("%s", cfg->name());
-			else
-				toolTip.strcatf(", %s", cfg->name());
-		}
-		else
-			item->setCheckState(Qt::Unchecked);
-	}
-	ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) &&
-						 (module_->nRequiredTargets() != Module::ZeroTargets));
-	ui_.HeaderFrame->setToolTip(toolTip.get());
+            if (configIterator.isFirst())
+                toolTip.strcatf("%s", cfg->name());
+            else
+                toolTip.strcatf(", %s", cfg->name());
+        }
+        else
+            item->setCheckState(Qt::Unchecked);
+    }
+    ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) &&
+                                             (module_->nRequiredTargets() != Module::ZeroTargets));
+    ui_.HeaderFrame->setToolTip(toolTip.get());
 
-	// Update keywords
-	ui_.ModuleKeywordsWidget->updateControls();
+    // Update keywords
+    ui_.ModuleKeywordsWidget->updateControls();
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 // Disable sensitive controls
 void ModuleControlWidget::disableSensitiveControls()
 {
-	ui_.ModuleKeywordsWidget->setEnabled(false);
-	ui_.ConfigurationTargetGroup->setEnabled(false);
-	ui_.HeaderFrame->setEnabled(false);
+    ui_.ModuleKeywordsWidget->setEnabled(false);
+    ui_.ConfigurationTargetGroup->setEnabled(false);
+    ui_.HeaderFrame->setEnabled(false);
 }
 
 // Enable sensitive controls
 void ModuleControlWidget::enableSensitiveControls()
 {
-	ui_.ModuleKeywordsWidget->setEnabled(true);
-	ui_.ConfigurationTargetGroup->setEnabled(true);
-	ui_.HeaderFrame->setEnabled(true);
+    ui_.ModuleKeywordsWidget->setEnabled(true);
+    ui_.ConfigurationTargetGroup->setEnabled(true);
+    ui_.HeaderFrame->setEnabled(true);
 }
 
 /*
@@ -170,65 +170,65 @@ void ModuleControlWidget::keywordDataModified() { emit(dataModified()); }
 
 void ModuleControlWidget::on_NameEdit_editingFinished()
 {
-	if (refreshing_ || (!module_) || (!dissolve_))
-		return;
+    if (refreshing_ || (!module_) || (!dissolve_))
+        return;
 
-	// If the name is the same, return now
-	if (ui_.NameEdit->text() == module_->uniqueName())
-		return;
+    // If the name is the same, return now
+    if (ui_.NameEdit->text() == module_->uniqueName())
+        return;
 
-	// Check that the new name is unique
-	CharString uniqueName = dissolve_->uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
+    // Check that the new name is unique
+    CharString uniqueName = dissolve_->uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
 
-	module_->setUniqueName(uniqueName);
+    module_->setUniqueName(uniqueName);
 
-	ui_.NameEdit->setText(uniqueName.get());
+    ui_.NameEdit->setText(uniqueName.get());
 
-	emit(dataModified());
+    emit(dataModified());
 }
 
 void ModuleControlWidget::on_NameEdit_returnPressed()
 {
-	// Call the editingFinished() function
-	on_NameEdit_editingFinished();
+    // Call the editingFinished() function
+    on_NameEdit_editingFinished();
 }
 
 void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
 {
-	if (refreshing_ || (!module_))
-		return;
+    if (refreshing_ || (!module_))
+        return;
 
-	module_->setEnabled(checked);
+    module_->setEnabled(checked);
 
-	ui_.IconFrame->setEnabled(checked);
+    ui_.IconFrame->setEnabled(checked);
 
-	emit(dataModified());
+    emit(dataModified());
 }
 
 void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 {
-	if (refreshing_ || (!module_))
-		return;
+    if (refreshing_ || (!module_))
+        return;
 
-	module_->setFrequency(value);
+    module_->setFrequency(value);
 
-	emit(dataModified());
+    emit(dataModified());
 }
 
 void ModuleControlWidget::on_ConfigurationTargetList_itemChanged(QListWidgetItem *item)
 {
-	if (refreshing_ || (!module_) || (!item))
-		return;
+    if (refreshing_ || (!module_) || (!item))
+        return;
 
-	// Get configuration from item
-	Configuration *cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
-	if (!cfg)
-		return;
+    // Get configuration from item
+    Configuration *cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
+    if (!cfg)
+        return;
 
-	if (item->checkState() == Qt::Checked)
-		module_->addTargetConfiguration(cfg);
-	else
-		module_->removeTargetConfiguration(cfg);
+    if (item->checkState() == Qt::Checked)
+        module_->addTargetConfiguration(cfg);
+    else
+        module_->removeTargetConfiguration(cfg);
 
-	emit(dataModified());
+    emit(dataModified());
 }

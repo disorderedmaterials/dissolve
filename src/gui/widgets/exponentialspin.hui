@@ -1,69 +1,66 @@
 /*
-	*** ExponentialSpin
-	*** src/gui/widgets/exponentialspin.hui
-	Copyright T. Youngs 2012-2020
+    *** ExponentialSpin
+    *** src/gui/widgets/exponentialspin.hui
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPONENTIALSPIN_H
-#define DISSOLVE_EXPONENTIALSPIN_H
+#pragma once
 
 #include <QDoubleSpinBox>
 
 // Real-Value Spinbox with Exponential Notation
 class ExponentialSpin : public QDoubleSpinBox
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-	// Constructor
-	ExponentialSpin(QWidget *parent = 0);
+    public:
+    // Constructor
+    ExponentialSpin(QWidget *parent = 0);
 
-	/*
-	 * Data
-	 */
-	private:
-	// Validator for line edit
-	QDoubleValidator validator_;
-	// Whether limits are enabled
-	bool limitMinValue_, limitMaxValue_;
+    /*
+     * Data
+     */
+    private:
+    // Validator for line edit
+    QDoubleValidator validator_;
+    // Whether limits are enabled
+    bool limitMinValue_, limitMaxValue_;
 
-	public:
-	// Set minimum limit
-	void setMinimumLimit(double value);
-	// Set maximum limit
-	void setMaximumLimit(double value);
-	// Remove range limits
-	void removeLimits();
+    public:
+    // Set minimum limit
+    void setMinimumLimit(double value);
+    // Set maximum limit
+    void setMaximumLimit(double value);
+    // Remove range limits
+    void removeLimits();
 
-	/*
-	 * Reimplementations
-	 */
-	public:
-	// Convert supplied value to text
-	QString textFromValue(double value) const;
-	// Validate supplied text
-	QValidator::State validate(QString &text, int &pos) const;
-	// Interpret text into value
-	double valueFromText(const QString &text) const;
+    /*
+     * Reimplementations
+     */
+    public:
+    // Convert supplied value to text
+    QString textFromValue(double value) const;
+    // Validate supplied text
+    QValidator::State validate(QString &text, int &pos) const;
+    // Interpret text into value
+    double valueFromText(const QString &text) const;
 
-	protected:
-	// Return which steps should be enabled
-	// 	StepEnabled stepEnabled() const;
+    protected:
+    // Return which steps should be enabled
+    // 	StepEnabled stepEnabled() const;
 };
-
-#endif

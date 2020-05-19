@@ -1,26 +1,25 @@
 /*
-	*** Add Configuration Wizard
-	*** src/gui/addconfigurationwizard.h
-	Copyright T. Youngs 2012-2020
+    *** Add Configuration Wizard
+    *** src/gui/addconfigurationwizard.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARD_ADDCONFIGURATION_H
-#define DISSOLVE_WIZARD_ADDCONFIGURATION_H
+#pragma once
 
 #include "gui/ui_addconfigurationwizard.h"
 #include "gui/wizardwidget.hui"
@@ -32,78 +31,76 @@
 // Add Configuration Wizard
 class AddConfigurationWizard : public WizardWidget
 {
-	// All Qt declarations derived from QObject must include this macro
-	Q_OBJECT
+    // All Qt declarations derived from QObject must include this macro
+    Q_OBJECT
 
-	public:
-	AddConfigurationWizard(QWidget *parent);
-	~AddConfigurationWizard();
+    public:
+    AddConfigurationWizard(QWidget *parent);
+    ~AddConfigurationWizard();
 
-	/*
-	 * Data
-	 */
-	private:
-	// Main instance of Dissolve that we're using as a reference
-	const Dissolve *dissolveReference_;
-	// Target Configuration for import
-	Configuration *importTarget_;
+    /*
+     * Data
+     */
+    private:
+    // Main instance of Dissolve that we're using as a reference
+    const Dissolve *dissolveReference_;
+    // Target Configuration for import
+    Configuration *importTarget_;
 
-	public:
-	// Set Dissolve reference
-	void setMainDissolveReference(const Dissolve *dissolveReference);
-	// Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
-	Configuration *importConfiguration(Dissolve &dissolve);
+    public:
+    // Set Dissolve reference
+    void setMainDissolveReference(const Dissolve *dissolveReference);
+    // Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
+    Configuration *importConfiguration(Dissolve &dissolve);
 
-	/*
-	 * Controls
-	 */
-	private:
-	// Main form declaration
-	Ui::AddConfigurationWizard ui_;
-	// Lock counter for the widget refreshing
-	int lockedForRefresh_;
-	// Pages Enum
-	enum WidgetPage
-	{
-		StartPage,		/* Starting page, offering choices of how to proceed */
-		SelectTemplatePage,     /* Select template to apply  */
-		NameAndTemperaturePage, /* Set name and temperature for Configuration */
-		nPages
-	};
+    /*
+     * Controls
+     */
+    private:
+    // Main form declaration
+    Ui::AddConfigurationWizard ui_;
+    // Lock counter for the widget refreshing
+    int lockedForRefresh_;
+    // Pages Enum
+    enum WidgetPage
+    {
+        StartPage,              /* Starting page, offering choices of how to proceed */
+        SelectTemplatePage,     /* Select template to apply  */
+        NameAndTemperaturePage, /* Set name and temperature for Configuration */
+        nPages
+    };
 
-	protected:
-	// Go to specified page index in the controls widget
-	bool displayControlPage(int index);
-	// Return whether progression to the next page from the current page is allowed
-	bool progressionAllowed(int index) const;
-	// Perform any necessary actions before moving to the next page
-	bool prepareForNextPage(int currentIndex);
-	// Determine next page for the current page, based on current data
-	int determineNextPage(int currentIndex);
-	// Perform any necessary actions before moving to the previous page
-	bool prepareForPreviousPage(int currentIndex);
+    protected:
+    // Go to specified page index in the controls widget
+    bool displayControlPage(int index);
+    // Return whether progression to the next page from the current page is allowed
+    bool progressionAllowed(int index) const;
+    // Perform any necessary actions before moving to the next page
+    bool prepareForNextPage(int currentIndex);
+    // Determine next page for the current page, based on current data
+    int determineNextPage(int currentIndex);
+    // Perform any necessary actions before moving to the previous page
+    bool prepareForPreviousPage(int currentIndex);
 
-	public:
-	// Reset, ready for adding a new Configuration
-	void reset();
+    public:
+    // Reset, ready for adding a new Configuration
+    void reset();
 
-	/*
-	 * Start Page
-	 */
-	private slots:
-	void on_StartCreateEmptyButton_clicked(bool checked);
-	void on_StartCreateTemplateButton_clicked(bool checked);
+    /*
+     * Start Page
+     */
+    private slots:
+    void on_StartCreateEmptyButton_clicked(bool checked);
+    void on_StartCreateTemplateButton_clicked(bool checked);
 
-	/*
-	 * Select Template Page
-	 */
-	// TODO
+    /*
+     * Select Template Page
+     */
+    // TODO
 
-	/*
-	 * Configuration Name Page (final page)
-	 */
-	private slots:
-	void on_FinishNameEdit_textChanged(const QString text);
+    /*
+     * Configuration Name Page (final page)
+     */
+    private slots:
+    void on_FinishNameEdit_textChanged(const QString text);
 };
-
-#endif

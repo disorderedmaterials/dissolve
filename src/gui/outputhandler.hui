@@ -1,26 +1,25 @@
 /*
-	*** GUI Output Handler
-	*** src/gui/outputhandler.hui
-	Copyright T. Youngs 2012-2020
+    *** GUI Output Handler
+    *** src/gui/outputhandler.hui
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GUIOUTPUTHANDLER_H
-#define DISSOLVE_GUIOUTPUTHANDLER_H
+#pragma once
 
 #include "base/messenger.h"
 #include <QObject>
@@ -30,37 +29,35 @@
 
 class GUIOutputHandler : public QObject, public OutputHandler
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-	// Constructor
-	GUIOutputHandler();
-	// Destructor
-	~GUIOutputHandler();
+    public:
+    // Constructor
+    GUIOutputHandler();
+    // Destructor
+    ~GUIOutputHandler();
 
-	/*
-	 * Styling
-	 */
-	public:
-	// Set styling for warning message
-	void styleForWarning();
-	// Set styling for error message
-	void styleForError();
-	// Reset styling for normal text
-	void resetStyling();
+    /*
+     * Styling
+     */
+    public:
+    // Set styling for warning message
+    void styleForWarning();
+    // Set styling for error message
+    void styleForError();
+    // Reset styling for normal text
+    void resetStyling();
 
-	signals:
-	void setColour(const QColor &);
+    signals:
+    void setColour(const QColor &);
 
-	/*
-	 * Output
-	 */
-	public:
-	// Print text
-	void outputText(const char *text);
+    /*
+     * Output
+     */
+    public:
+    // Print text
+    void outputText(const char *text);
 
-	signals:
-	void printText(const QString &);
+    signals:
+    void printText(const QString &);
 };
-
-#endif

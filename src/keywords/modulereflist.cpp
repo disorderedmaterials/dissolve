@@ -1,22 +1,22 @@
 /*
-	*** Keyword - Module RefList
-	*** src/keywords/modulereflist.cpp
-	Copyright T. Youngs 2012-2020
+    *** Keyword - Module RefList
+    *** src/keywords/modulereflist.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "keywords/modulereflist.h"
@@ -26,16 +26,16 @@
 #include "module/module.h"
 
 ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxModules)
-	: KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
+    : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
-	maxModules_ = maxModules;
+    maxModules_ = maxModules;
 }
 
 ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules)
-	: KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
+    : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
-	moduleTypes_ = allowedModuleTypes;
-	maxModules_ = maxModules;
+    moduleTypes_ = allowedModuleTypes;
+    maxModules_ = maxModules;
 }
 
 ModuleRefListKeyword::~ModuleRefListKeyword() {}
@@ -66,45 +66,44 @@ int ModuleRefListKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool ModuleRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	// Loop over arguments provided to the keyword
-	for (int n = startArg; n < parser.nArgs(); ++n)
-	{
-		// Find specified Module by its unique name
-		Module *module = coreData.findModule(parser.argc(n));
-		if (!module)
-		{
-			Messenger::error("No Module named '%s' exists.\n", parser.argc(n));
-			return false;
-		}
+    // Loop over arguments provided to the keyword
+    for (int n = startArg; n < parser.nArgs(); ++n)
+    {
+        // Find specified Module by its unique name
+        Module *module = coreData.findModule(parser.argc(n));
+        if (!module)
+        {
+            Messenger::error("No Module named '%s' exists.\n", parser.argc(n));
+            return false;
+        }
 
-		// Check the module's type
-		if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
-		{
-			Messenger::error(
-				"Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n",
-				parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
-			return false;
-		}
+        // Check the module's type
+        if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
+        {
+            Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n",
+                             parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
+            return false;
+        }
 
-		data_.append(module);
-	}
+        data_.append(module);
+    }
 
-	set_ = true;
+    set_ = true;
 
-	return true;
+    return true;
 }
 
 // Write keyword data to specified LineParser
 bool ModuleRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	// Loop over list of referenced Modules
-	for (Module *module : data_)
-	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, module->uniqueName()))
-			return false;
-	}
+    // Loop over list of referenced Modules
+    for (Module *module : data_)
+    {
+        if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, module->uniqueName()))
+            return false;
+    }
 
-	return true;
+    return true;
 }
 
 /*

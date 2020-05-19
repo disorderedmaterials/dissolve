@@ -1,22 +1,22 @@
 /*
-	*** Keyword - Double
-	*** src/keywords/double.cpp
-	Copyright T. Youngs 2012-2020
+    *** Keyword - Double
+    *** src/keywords/double.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "keywords/double.h"
@@ -25,24 +25,24 @@
 
 DoubleKeyword::DoubleKeyword(double value) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
-	minimumLimit_ = false;
-	maximumLimit_ = false;
+    minimumLimit_ = false;
+    maximumLimit_ = false;
 }
 
 DoubleKeyword::DoubleKeyword(double value, double minValue) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
-	minimumLimit_ = true;
-	min_ = minValue;
-	maximumLimit_ = false;
+    minimumLimit_ = true;
+    min_ = minValue;
+    maximumLimit_ = false;
 }
 
 DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue)
-	: KeywordData<double>(KeywordBase::DoubleData, value)
+    : KeywordData<double>(KeywordBase::DoubleData, value)
 {
-	minimumLimit_ = true;
-	min_ = minValue;
-	maximumLimit_ = true;
-	max_ = maxValue;
+    minimumLimit_ = true;
+    min_ = minValue;
+    maximumLimit_ = true;
+    max_ = maxValue;
 }
 
 DoubleKeyword::~DoubleKeyword() {}
@@ -66,21 +66,21 @@ double DoubleKeyword::validationMax() { return max_; }
 // Validate supplied value
 bool DoubleKeyword::isValid(double value)
 {
-	// Check minimum limit
-	if (minimumLimit_)
-	{
-		if (value < min_)
-			return false;
-	}
+    // Check minimum limit
+    if (minimumLimit_)
+    {
+        if (value < min_)
+            return false;
+    }
 
-	// Check maximum limit
-	if (maximumLimit_)
-	{
-		if (value > max_)
-			return false;
-	}
+    // Check maximum limit
+    if (maximumLimit_)
+    {
+        if (value > max_)
+            return false;
+    }
 
-	return true;
+    return true;
 }
 
 /*
@@ -96,32 +96,29 @@ int DoubleKeyword::maxArguments() const { return 1; }
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	if (parser.hasArg(startArg))
-	{
-		if (!setData(parser.argd(startArg)))
-		{
-			if (minimumLimit_ && maximumLimit_)
-				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_,
-						 min_, max_);
-			else if (minimumLimit_)
-				Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_,
-						 min_);
-			else
-				Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_,
-						 max_);
+    if (parser.hasArg(startArg))
+    {
+        if (!setData(parser.argd(startArg)))
+        {
+            if (minimumLimit_ && maximumLimit_)
+                Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_, min_, max_);
+            else if (minimumLimit_)
+                Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_, min_);
+            else
+                Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_, max_);
 
-			return false;
-		}
+            return false;
+        }
 
-		return true;
-	}
-	return false;
+        return true;
+    }
+    return false;
 }
 
 // Write keyword data to specified LineParser
 bool DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_);
+    return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_);
 }
 
 /*

@@ -1,22 +1,22 @@
 /*
-	*** Chart Block - Functions
-	*** src/gui/charts/chartblock.cpp
-	Copyright T. Youngs 2012-2020
+    *** Chart Block - Functions
+    *** src/gui/charts/chartblock.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/charts/chartblock.h"
@@ -34,8 +34,8 @@ ChartBlock::~ChartBlock() {}
 // Set underlying widget position
 void ChartBlock::setNewPosition(int left, int top)
 {
-	newGeometry_.setLeft(left);
-	newGeometry_.setTop(top);
+    newGeometry_.setLeft(left);
+    newGeometry_.setTop(top);
 }
 
 // Set right-hand side position of widget, adjusting its width
@@ -44,20 +44,20 @@ void ChartBlock::setNewRightEdge(int right) { newGeometry_.setWidth(right - newG
 // Set underlying widget geometry
 void ChartBlock::setNewSize(int width, int height)
 {
-	newGeometry_.setWidth(width);
-	newGeometry_.setHeight(height);
+    newGeometry_.setWidth(width);
+    newGeometry_.setHeight(height);
 }
 
 // Commit new geometry for widget
 void ChartBlock::setNewGeometry(bool animate)
 {
-	if (animate)
-	{
-		QPropertyAnimation *animation = new QPropertyAnimation(widget(), "geometry");
-		animation->setDuration(100);
-		animation->setEndValue(newGeometry_);
-		animation->start();
-	}
-	else
-		widget()->setGeometry(newGeometry_);
+    if (animate)
+    {
+        QPropertyAnimation *animation = new QPropertyAnimation(widget(), "geometry");
+        animation->setDuration(100);
+        animation->setEndValue(newGeometry_);
+        animation->start();
+    }
+    else
+        widget()->setGeometry(newGeometry_);
 }

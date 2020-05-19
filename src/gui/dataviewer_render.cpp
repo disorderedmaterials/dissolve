@@ -1,22 +1,22 @@
 /*
-	*** Data Viewer - Rendering
-	*** src/gui/dataviewer_render.cpp
-	Copyright T. Youngs 2013-2020
+    *** Data Viewer - Rendering
+    *** src/gui/dataviewer_render.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/dataviewer.hui"
@@ -30,123 +30,123 @@ void DataViewer::postResizeGL() {}
 // Render 2D overlay content
 void DataViewer::render2DOverlay()
 {
-	// Set up some metrics
-	const double overlaySpacing = 2.0 * pixelScaling_;
-	const double overlayTextSize = 12.0 * pixelScaling_;
-	const double legendLineLength = 20.0 * pixelScaling_;
+    // Set up some metrics
+    const double overlaySpacing = 2.0 * pixelScaling_;
+    const double overlayTextSize = 12.0 * pixelScaling_;
+    const double legendLineLength = 20.0 * pixelScaling_;
 
-	LineStyle(1.0).sendToGL(pixelScaling_);
-	glDisable(GL_LIGHTING);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDisable(GL_POINT_SMOOTH);
-	glDisable(GL_LINE_SMOOTH);
+    LineStyle(1.0).sendToGL(pixelScaling_);
+    glDisable(GL_LIGHTING);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_LINE_SMOOTH);
 
-	/*
-	 * Draw indicators in top-left corner
-	 */
+    /*
+     * Draw indicators in top-left corner
+     */
 
-	CharString indicatorText;
-	if (view_.autoFollowType() == View::AllAutoFollow)
-		indicatorText += "|A| ";
-	else if (view_.autoFollowType() == View::XAutoFollow)
-		indicatorText += "A\\sub{X} ";
-	if (groupManager_.verticalShiftAmount() > 0)
-		indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
-	TextPrimitive indicatorPrimitive;
-	indicatorPrimitive.set(fontInstance_, indicatorText.get(),
-			       Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
-			       TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
-	glColor3d(0.0, 0.0, 0.0);
-	Matrix4 identity;
-	if (fontInstance_.fontOK())
-		indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
+    CharString indicatorText;
+    if (view_.autoFollowType() == View::AllAutoFollow)
+        indicatorText += "|A| ";
+    else if (view_.autoFollowType() == View::XAutoFollow)
+        indicatorText += "A\\sub{X} ";
+    if (groupManager_.verticalShiftAmount() > 0)
+        indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
+    TextPrimitive indicatorPrimitive;
+    indicatorPrimitive.set(fontInstance_, indicatorText.get(),
+                           Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
+                           TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
+    glColor3d(0.0, 0.0, 0.0);
+    Matrix4 identity;
+    if (fontInstance_.fontOK())
+        indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
 
-	/*
-	 * Draw legend in top-right corner
-	 */
+    /*
+     * Draw legend in top-right corner
+     */
 
-	// Create RefList of legend entries
-	RefDataList<Renderable, double> legendEntries;
+    // Create RefList of legend entries
+    RefDataList<Renderable, double> legendEntries;
 
-	double maxTextWidth = -1.0;
-	for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
-	{
-		if (!rend->isVisible())
-			continue;
+    double maxTextWidth = -1.0;
+    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    {
+        if (!rend->isVisible())
+            continue;
 
-		double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
-		legendEntries.append(rend, textWidth);
-		if (textWidth > maxTextWidth)
-			maxTextWidth = textWidth;
-	}
+        double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
+        legendEntries.append(rend, textWidth);
+        if (textWidth > maxTextWidth)
+            maxTextWidth = textWidth;
+    }
 
-	// Simple column layout - set the render position to be the left-hand edge of the longest text item
-	glColor3d(0.0, 0.0, 0.0);
-	glLoadIdentity();
-	glTranslated(view_.viewportMatrix()[2] - maxTextWidth - overlaySpacing,
-		     view_.viewportMatrix()[3] - overlayTextSize - overlaySpacing, 0);
+    // Simple column layout - set the render position to be the left-hand edge of the longest text item
+    glColor3d(0.0, 0.0, 0.0);
+    glLoadIdentity();
+    glTranslated(view_.viewportMatrix()[2] - maxTextWidth - overlaySpacing,
+                 view_.viewportMatrix()[3] - overlayTextSize - overlaySpacing, 0);
 
-	// Loop over legend entries
-	GLfloat colour[4];
-	RefDataListIterator<Renderable, double> legendEntryIterator(legendEntries);
-	while (Renderable *rend = legendEntryIterator.iterate())
-	{
-		// Grab copy of the relevant colour definition for this Renderable
-		const ColourDefinition &colourDefinition = rend->colour();
+    // Loop over legend entries
+    GLfloat colour[4];
+    RefDataListIterator<Renderable, double> legendEntryIterator(legendEntries);
+    while (Renderable *rend = legendEntryIterator.iterate())
+    {
+        // Grab copy of the relevant colour definition for this Renderable
+        const ColourDefinition &colourDefinition = rend->colour();
 
-		// Draw line indicator
-		glPushMatrix();
-		glTranslated(-overlaySpacing, (overlayTextSize / 2.0) - (rend->lineStyle().width() / 2.0), 0.0);
-		// -- What are we drawing for the line indicator?
-		if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
-		{
-			rend->lineStyle().sendToGL(pixelScaling_);
-			GLfloat lineWidth;
-			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
-			glLineWidth(lineWidth * 2.0);
-			colourDefinition.colour(0.0, colour);
-			glColor4f(colour[0], colour[1], colour[2], colour[3]);
-			glBegin(GL_LINES);
-			glVertex2i(0.0, 0.0);
-			glVertex2i(-legendLineLength, 0.0);
-			glEnd();
-		}
-		glPopMatrix();
+        // Draw line indicator
+        glPushMatrix();
+        glTranslated(-overlaySpacing, (overlayTextSize / 2.0) - (rend->lineStyle().width() / 2.0), 0.0);
+        // -- What are we drawing for the line indicator?
+        if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
+        {
+            rend->lineStyle().sendToGL(pixelScaling_);
+            GLfloat lineWidth;
+            glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+            glLineWidth(lineWidth * 2.0);
+            colourDefinition.colour(0.0, colour);
+            glColor4f(colour[0], colour[1], colour[2], colour[3]);
+            glBegin(GL_LINES);
+            glVertex2i(0.0, 0.0);
+            glVertex2i(-legendLineLength, 0.0);
+            glEnd();
+        }
+        glPopMatrix();
 
-		// Draw text
-		glPushMatrix();
-		glColor3d(0.0, 0.0, 0.0);
-		glScaled(overlayTextSize, overlayTextSize, overlayTextSize);
-		fontInstance_.renderText(rend->name());
-		glPopMatrix();
+        // Draw text
+        glPushMatrix();
+        glColor3d(0.0, 0.0, 0.0);
+        glScaled(overlayTextSize, overlayTextSize, overlayTextSize);
+        fontInstance_.renderText(rend->name());
+        glPopMatrix();
 
-		// Shift to next position
-		glTranslated(0.0, -(overlayTextSize + overlaySpacing), 0.0);
-	}
+        // Shift to next position
+        glTranslated(0.0, -(overlayTextSize + overlaySpacing), 0.0);
+    }
 
-	/*
-	 * Draw interaction mode embellishments
-	 */
-	glLoadIdentity();
+    /*
+     * Draw interaction mode embellishments
+     */
+    glLoadIdentity();
 
-	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
+    static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interacting())
-		switch (interactionMode())
-		{
-			case (DataViewer::ZoomToAreaInteraction):
-				// Draw dashed box indicating selection area, form clicked to current mouse coordinates
-				selectionBoxStyle.sendToGL();
-				glBegin(GL_LINE_LOOP);
-				glVertex2d(rMouseDown_.x, rMouseDown_.y);
-				glVertex2d(rMouseLast_.x, rMouseDown_.y);
-				glVertex2d(rMouseLast_.x, rMouseLast_.y);
-				glVertex2d(rMouseDown_.x, rMouseLast_.y);
-				glEnd();
-				break;
-			default:
-				break;
-		}
+    if (interacting())
+        switch (interactionMode())
+        {
+            case (DataViewer::ZoomToAreaInteraction):
+                // Draw dashed box indicating selection area, form clicked to current mouse coordinates
+                selectionBoxStyle.sendToGL();
+                glBegin(GL_LINE_LOOP);
+                glVertex2d(rMouseDown_.x, rMouseDown_.y);
+                glVertex2d(rMouseLast_.x, rMouseDown_.y);
+                glVertex2d(rMouseLast_.x, rMouseLast_.y);
+                glVertex2d(rMouseDown_.x, rMouseLast_.y);
+                glEnd();
+                break;
+            default:
+                break;
+        }
 }
 
 // // Grab axes, and knock out values in the supplied vectors which correspond to the activated axis
