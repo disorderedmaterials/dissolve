@@ -93,18 +93,15 @@ bool IsotopologueCollectionKeyword::read(LineParser &parser, int startArg, const
 bool IsotopologueCollectionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over list of IsotopologueReferences
-	ListIterator<IsotopologueSet> setIterator(data_.isotopologueSets());
-	while (IsotopologueSet *set = setIterator.iterate())
+	for (auto set : data_.isotopologueSets())
 	{
-		ListIterator<Isotopologues> topesIterator(set->isotopologues());
-		while (Isotopologues *topes = topesIterator.iterate())
+		for (auto topes : set.isotopologues())
 		{
-			ListIterator<IsotopologueWeight> weightIterator(topes->mix());
-			while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+			for (auto isoWeight : topes.mix())
 			{
 				if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName,
-						       set->configuration()->name(), topes->species()->name(),
-						       isoWeight->isotopologue()->name(), isoWeight->weight()))
+						       set.configuration()->name(), topes.species()->name(),
+						       isoWeight.isotopologue()->name(), isoWeight.weight()))
 					return false;
 			}
 		}

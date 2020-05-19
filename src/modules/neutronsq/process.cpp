@@ -385,24 +385,25 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		if (isotopologues_.contains(cfg))
 		{
 			// Get the set...
-			const IsotopologueSet *topeSet = isotopologues_.isotopologueSet(cfg);
+			const auto data = isotopologues_.getIsotopologueSet(cfg);
+
+			// TODO Raise exception if no isotopologue set found
+			auto &topeSet = std::get<0>(data);
 
 			// Iterate over Species present in the set
-			ListIterator<Isotopologues> topeIterator(topeSet->isotopologues());
-			while (Isotopologues *topes = topeIterator.iterate())
+			for (auto topes : topeSet.constIsotopologues())
 			{
 				// Find the referenced Species in our SpeciesInfo list
-				SpeciesInfo *spInfo = cfg->usedSpeciesInfo(topes->species());
+				SpeciesInfo *spInfo = cfg->usedSpeciesInfo(topes.species());
 				if (!spInfo)
 					return Messenger::error(
 						"Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n",
-						topes->species()->name(), cfg->niceName());
+						topes.species()->name(), cfg->niceName());
 
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
-				while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+				for (auto isoWeight : topes.mix())
 					weights.addIsotopologue(spInfo->species(), spInfo->population(),
-								isoWeight->isotopologue(), isoWeight->weight());
+								isoWeight.isotopologue(), isoWeight.weight());
 			}
 		}
 
@@ -410,7 +411,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 		// one Isotopologue definition
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 		while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
-			if (!weights.hasIsotopologues(spInfo->species()))
+			if (!weights.containsIsotopologues(spInfo->species()))
 			{
 				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing "
 						 "- natural isotopologue will be used.\n",

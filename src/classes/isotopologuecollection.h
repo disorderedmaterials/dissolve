@@ -19,12 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUECOLLETION_H
-#define DISSOLVE_ISOTOPOLOGUECOLLETION_H
+#ifndef DISSOLVE_ISOTOPOLOGUECOLLECTION_H
+#define DISSOLVE_ISOTOPOLOGUECOLLECTION_H
 
 #include "classes/isotopologueset.h"
 #include "genericitems/base.h"
-#include "templates/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -46,7 +45,7 @@ class IsotopologueCollection : public GenericItemBase
 	 */
 	private:
 	// IsotopologueSets for individual Configurations
-	List<IsotopologueSet> isotopologueSets_;
+	std::vector<IsotopologueSet> isotopologueSets_;
 
 	private:
 	// Remove any sets from the collection that are empty
@@ -70,15 +69,17 @@ class IsotopologueCollection : public GenericItemBase
 	// Remove any occurrences of the specified Isotopologue from the collection
 	void remove(Isotopologue *iso);
 	// Return defined sets
-	List<IsotopologueSet> &isotopologueSets();
+	std::vector<IsotopologueSet> &isotopologueSets();
+	// Return defined sets (const)
+	const std::vector<IsotopologueSet> &constIsotopologueSets() const;
 	// Return whether a set exists for the supplied Configuration
 	bool contains(const Configuration *cfg) const;
 	// Return IsotopologueSet for the specified Configuration
-	const IsotopologueSet *isotopologueSet(const Configuration *cfg) const;
+	optional<const IsotopologueSet> getIsotopologueSet(const Configuration *cfg) const;
 	// Return whether the Species has a defined set of isotopologues in the specified Configuration
 	bool contains(const Configuration *cfg, const Species *sp) const;
 	// Return Isotopologues for the Species in the specified Configuration
-	const Isotopologues *isotopologues(const Configuration *cfg, const Species *sp) const;
+	optional<const Isotopologues> getIsotopologues(const Configuration *cfg, const Species *sp) const;
 	// Complete the collection by making sure it contains every Species in every Configuration in the supplied list
 	void complete(const RefList<Configuration> &configurations);
 

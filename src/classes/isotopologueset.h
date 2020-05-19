@@ -24,7 +24,9 @@
 
 #include "classes/isotopologues.h"
 #include "genericitems/base.h"
-#include "templates/list.h"
+#include <vector>
+
+template <class T> using optional = std::tuple<T, bool>;
 
 // Forward Declarations
 class Configuration;
@@ -34,10 +36,10 @@ class IsotopologueCollection;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species in a single Configuration
-class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
+class IsotopologueSet : public GenericItemBase
 {
 	public:
-	IsotopologueSet();
+	IsotopologueSet(IsotopologueCollection *parent = nullptr, Configuration *cfg = nullptr);
 	~IsotopologueSet();
 
 	/*
@@ -60,7 +62,7 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	// Configuration in which the Species are used
 	Configuration *configuration_;
 	// Isotopologue mixtures for individual Species
-	List<Isotopologues> isotopologues_;
+	std::vector<Isotopologues> isotopologues_;
 
 	public:
 	// Clear all existing data
@@ -77,14 +79,16 @@ class IsotopologueSet : public ListItem<IsotopologueSet>, public GenericItemBase
 	void remove(Isotopologue *iso);
 	// Remove the specified IsotopologueWeight
 	void remove(IsotopologueWeight *isoWeight);
-	// Return whether an IsotopologueSet for the specified Species exists
+	// Return whether Isotopologues for the specified Species exists
 	bool contains(const Species *sp) const;
 	// Return Isotopologues for the specified Species
-	Isotopologues *isotopologues(const Species *sp);
+	optional<const Isotopologues> getIsotopologues(const Species *sp) const;
 	// Return number of Isotopologues defined
 	int nIsotopologues() const;
-	// Return list of all Isotopologues
-	const List<Isotopologues> &isotopologues() const;
+	// Return vector of all Isotopologues
+	std::vector<Isotopologues> &isotopologues();
+	// Return vector of all Isotopologues (const)
+	const std::vector<Isotopologues> &constIsotopologues() const;
 
 	/*
 	 * GenericItemBase Implementations

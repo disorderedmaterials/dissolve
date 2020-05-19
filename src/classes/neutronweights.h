@@ -27,6 +27,7 @@
 #include "genericitems/base.h"
 #include "templates/array2d.h"
 #include "templates/list.h"
+#include <vector>
 
 // Forward Declarations
 /* none */
@@ -44,16 +45,16 @@ class NeutronWeights : public GenericItemBase
 	 */
 	private:
 	// List of Isotopologues for Species
-	List<Isotopologues> isotopologueMixtures_;
+	std::vector<Isotopologues> isotopologueMixtures_;
 
 	public:
 	// Clear contents
 	void clear();
 	// Add Species Isotopologue to the relevant mixture
-	bool addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+	void addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
 			     double isotopologueRelativePopulation);
-	// Return whether we have a mixtures definition for the provided Species
-	Isotopologues *hasIsotopologues(Species *sp) const;
+	// Return whether an Isotopologues definition exists for the provided Species
+	bool containsIsotopologues(Species *sp) const;
 	// Print atomtype / weights information
 	void print() const;
 

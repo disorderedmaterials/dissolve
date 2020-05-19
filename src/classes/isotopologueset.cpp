@@ -25,12 +25,11 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include <algorithm>
 
-IsotopologueSet::IsotopologueSet() : ListItem<IsotopologueSet>()
+IsotopologueSet::IsotopologueSet(IsotopologueCollection *parent, Configuration *cfg)
+	: parentCollection_(parent), configuration_(cfg)
 {
-	parentCollection_ = NULL;
-
-	clear();
 }
 
 IsotopologueSet::~IsotopologueSet() {}
@@ -65,83 +64,84 @@ Configuration *IsotopologueSet::configuration() const { return configuration_; }
 // Add Isotopologue with the specified relative weight
 void IsotopologueSet::add(Isotopologue *iso, double relativeWeight)
 {
-	// Find the parent Species of the isotopologue in our list
-	Isotopologues *topes = NULL;
-	for (topes = isotopologues_.first(); topes != NULL; topes = topes->next())
-		if (topes->species() == iso->parent())
-			break;
-
-	// Create a new Isotopologues if we need it
-	if (!topes)
+	auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
+			       [iso](Isotopologues &data) { return data.species() == iso->parent(); });
+	if (it != isotopologues_.end())
+		it->add(iso, relativeWeight);
+	else
 	{
-		topes = isotopologues_.add();
-		topes->setSpecies(iso->parent(), 0);
+		isotopologues_.emplace_back(iso->parent(), 0);
+		isotopologues_.back().add(iso, relativeWeight);
 	}
-
-	topes->add(iso, relativeWeight);
 }
 
 // Remove specified Species from the list (if it exists)
 void IsotopologueSet::remove(Species *sp)
 {
-	Isotopologues *topes = isotopologues(sp);
-	if (topes)
-		isotopologues_.remove(topes);
+	isotopologues_.erase(std::remove_if(isotopologues_.begin(), isotopologues_.end(),
+					    [sp](Isotopologues &data) { return data.species() == sp; }),
+			     isotopologues_.end());
 }
 
 // Remove any occurrences of the specified Isotopologue
 void IsotopologueSet::remove(Isotopologue *iso)
 {
-	Isotopologues *topes = isotopologues(iso->parent());
-	if (topes)
-	{
-		topes->remove(iso);
+	// Get parent Isotopologues from the contained Species pointer
+	auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
+			       [iso](Isotopologues &data) { return data.species() == iso->parent(); });
 
-		// Check for an empty list...
-		if (topes->nIsotopologues() == 0)
-			isotopologues_.remove(topes);
+	if (it != isotopologues_.end())
+	{
+		it->remove(iso);
+
+		// Check for Isotopologues now being empty
+		if (it->nIsotopologues() == 0)
+			isotopologues_.erase(it);
 	}
 }
 
 // Remove the specified IsotopologueWeight
 void IsotopologueSet::remove(IsotopologueWeight *isoWeight)
 {
-	Isotopologues *topes = isotopologues(isoWeight->isotopologue()->parent());
-	if (topes)
-	{
-		topes->remove(isoWeight);
+	// Get Isotopologues related to the IsotopologueWeight's Species pointer
+	auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(), [isoWeight](Isotopologues &data) {
+		return data.species() == isoWeight->isotopologue()->parent();
+	});
 
-		// Check for an empty list...
-		if (topes->nIsotopologues() == 0)
-			isotopologues_.remove(topes);
+	if (it != isotopologues_.end())
+	{
+		it->remove(isoWeight);
+
+		// Check for Isotopologues now being empty
+		if (it->nIsotopologues() == 0)
+			isotopologues_.erase(it);
 	}
 }
 
-// Return whether an IsotopologueSet for the specified Species exists
+// Return whether Isotopologues for the specified Species exists
 bool IsotopologueSet::contains(const Species *sp) const
 {
-	for (Isotopologues *topes = isotopologues_.first(); topes != NULL; topes = topes->next())
-		if (topes->species() == sp)
-			return true;
-
-	return false;
+	return std::any_of(isotopologues_.cbegin(), isotopologues_.cend(),
+			   [sp](const Isotopologues &data) { return data.species() == sp; });
 }
 
 // Return IsotopologueSet for the specified Species
-Isotopologues *IsotopologueSet::isotopologues(const Species *sp)
+optional<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *sp) const
 {
-	for (Isotopologues *topes = isotopologues_.first(); topes != NULL; topes = topes->next())
-		if (topes->species() == sp)
-			return topes;
+	auto it = std::find_if(isotopologues_.cbegin(), isotopologues_.cend(),
+			       [sp](const Isotopologues &data) { return data.species() == sp; });
 
-	return NULL;
+	return std::make_tuple(*it, it == isotopologues_.end());
 }
 
 // Return number of Isotopologues defined
-int IsotopologueSet::nIsotopologues() const { return isotopologues_.nItems(); }
+int IsotopologueSet::nIsotopologues() const { return isotopologues_.size(); }
 
-// Return list of all Isotopologues
-const List<Isotopologues> &IsotopologueSet::isotopologues() const { return isotopologues_; }
+// Return vector of all Isotopologues
+std::vector<Isotopologues> &IsotopologueSet::isotopologues() { return isotopologues_; }
+
+// Return vector of all Isotopologues (const)
+const std::vector<Isotopologues> &IsotopologueSet::constIsotopologues() const { return isotopologues_; }
 
 /*
  * GenericItemBase Implementations
@@ -167,8 +167,8 @@ bool IsotopologueSet::read(LineParser &parser, const CoreData &coreData)
 	for (int n = 0; n < nSpecies; ++n)
 	{
 		// Add a new isotopologue set and read it
-		Isotopologues *topes = isotopologues_.add();
-		if (!topes->read(parser, coreData))
+		isotopologues_.emplace_back();
+		if (!isotopologues_.back().read(parser, coreData))
 			return false;
 	}
 
@@ -179,13 +179,12 @@ bool IsotopologueSet::read(LineParser &parser, const CoreData &coreData)
 bool IsotopologueSet::write(LineParser &parser)
 {
 	// Write Configuration name and number of Isotopologues we have defined
-	if (!parser.writeLineF("'%s'  %i\n", configuration_->name(), isotopologues_.nItems()))
+	if (!parser.writeLineF("'%s'  %i\n", configuration_->name(), isotopologues_.size()))
 		return false;
 
 	// Write details for each set of Isotopologues
-	ListIterator<Isotopologues> isotopologuesIterator(isotopologues_);
-	while (Isotopologues *topes = isotopologuesIterator.iterate())
-		if (!topes->write(parser))
+	for (auto topes : isotopologues_)
+		if (!topes.write(parser))
 			return false;
 
 	return true;

@@ -21,10 +21,7 @@
 
 #include "classes/isotopologueweight.h"
 
-IsotopologueWeight::IsotopologueWeight(const Isotopologue *iso, double weight) : ListItem<IsotopologueWeight>()
-{
-	set(iso, weight);
-}
+IsotopologueWeight::IsotopologueWeight(const Isotopologue *iso, double weight) : isotopologue_(iso), weight_(weight) {}
 
 IsotopologueWeight::~IsotopologueWeight() {}
 

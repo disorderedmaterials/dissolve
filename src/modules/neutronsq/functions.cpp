@@ -112,11 +112,11 @@ bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) cons
 		while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
 		{
 			// Find the Isotopologues for the Configuration/Species, if they have been defined
-			const Isotopologues *topes = isotopologues_.isotopologues(cfg, spInfo->species());
+			auto data = isotopologues_.getIsotopologues(cfg, spInfo->species());
 
 			// Use the natural isotopologue if a species in the Configuration is not covered by at least one
 			// explicit Isotopologue definition
-			if (!topes)
+			if (std::get<1>(data))
 			{
 				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is "
 						 "missing, so the natural isotopologue will be used.\n",
@@ -127,11 +127,12 @@ bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) cons
 			}
 			else
 			{
+				const auto &topes = std::get<0>(data);
+
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
-				while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+				for (auto isoWeight : topes.constMix())
 					summedWeights.addIsotopologue(spInfo->species(), spInfo->population(),
-								      isoWeight->isotopologue(), isoWeight->weight());
+								      isoWeight.isotopologue(), isoWeight.weight());
 			}
 		}
 	}
