@@ -42,7 +42,7 @@ int BroadeningFunctionKeyword::maxArguments() const { return MAXBROADENINGFUNCTI
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    bool result = data_.set(parser, startArg);
+    auto result = data_.set(parser, startArg);
     if (result)
         set_ = true;
 

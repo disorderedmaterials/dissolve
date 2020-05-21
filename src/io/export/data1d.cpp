@@ -95,7 +95,7 @@ bool Data1DExportFileFormat::exportData(const Data1D &data)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (data1DFormat() == Data1DExportFileFormat::XYData1D)
         result = exportXY(parser, data);
     else

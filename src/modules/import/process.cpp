@@ -47,7 +47,7 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters
-        bool readTrajectory = keywords_.asBool("ReadTrajectory");
+        auto readTrajectory = keywords_.asBool("ReadTrajectory");
 
         /*
          * Import Trajectory Frame?

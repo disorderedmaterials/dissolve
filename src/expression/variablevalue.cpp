@@ -63,7 +63,7 @@ bool ExpressionVariableValue::execute(ExpressionValue &result)
     }
 
     // Call the local variable's execute() function to get the base value
-    bool success = variable_->execute(result);
+    auto success = variable_->execute(result);
     if (!success)
         printf("Variable retrieval ('%s') failed.\n", variable_->name());
 
@@ -90,7 +90,7 @@ bool ExpressionVariableValue::set(ExpressionValue value)
         printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be set.\n");
         return false;
     }
-    bool result = true;
+    auto result = true;
 
     // Call the local variable's set() function
     result = variable_->set(value);

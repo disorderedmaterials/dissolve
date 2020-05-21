@@ -116,7 +116,7 @@ bool Data2DExportFileFormat::exportData(const Data2D &data)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (data2DFormat() == Data2DExportFileFormat::BlockData2D)
         result = exportBlock(parser, data);
     // 	else if (data2DFormat() == Data2DExportFileFormat::CartesianData2D) result = exportCartesian(parser, data);

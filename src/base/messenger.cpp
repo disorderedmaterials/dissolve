@@ -57,7 +57,7 @@ void Messenger::createText(const char *indentText, const char *format, va_list a
     CharString prependedLine;
     char *startChar = workingText_;
     char *endChar = workingText_;
-    bool lastPart = (*endChar == '\0');
+    auto lastPart = (*endChar == '\0');
     while (!lastPart)
     {
         // Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is

@@ -48,7 +48,7 @@ void AtomTypeSelectionKeyword::checkSelection()
     // Loop over existing selection, checking for each AtomType existing in any source Configuration
     for (const AtomTypeData &atd : data_)
     {
-        bool found = false;
+        auto found = false;
         for (auto cfg : sourceConfigurations_)
         {
             if (cfg->usedAtomTypesList().contains(atd.atomType()))

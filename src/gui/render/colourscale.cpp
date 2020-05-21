@@ -114,7 +114,7 @@ void ColourScale::setPoint(int position, double value, QColor colour)
 void ColourScale::setValue(int position, double value)
 {
     // Store whether the new value is higher or lower than the existing one...
-    bool newValueHigher = value >= points_[position].value();
+    auto newValueHigher = value >= points_[position].value();
 
     // Set the new value of the point
     points_[position].setValue(value);

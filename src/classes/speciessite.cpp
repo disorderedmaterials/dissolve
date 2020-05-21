@@ -389,7 +389,7 @@ bool SpeciesSite::read(LineParser &parser)
 {
     Messenger::printVerbose("\nReading information for Site '%s'...\n", name());
 
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {

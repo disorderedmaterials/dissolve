@@ -348,7 +348,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
                                           const double qMax)
 {
     // Retrieve BraggReflection data from the Configuration's module data
-    bool found = false;
+    auto found = false;
     const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "",
                                                                                     Array<BraggReflection>(), &found);
     if (!found)
@@ -421,7 +421,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
 bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Array2D<Data1D> &braggPartials)
 {
     // Retrieve BraggReflection data from the Configuration's module data
-    bool found = false;
+    auto found = false;
     const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "",
                                                                                     Array<BraggReflection>(), &found);
     if (!found)

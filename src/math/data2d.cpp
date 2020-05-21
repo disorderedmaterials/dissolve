@@ -496,7 +496,7 @@ bool Data2D::read(LineParser &parser, const CoreData &coreData)
         return false;
     auto xSize = parser.argi(0);
     auto ySize = parser.argi(1);
-    bool errors = parser.argb(2);
+    auto errors = parser.argb(2);
     initialise(xSize, ySize, errors);
 
     // Read x axis

@@ -93,7 +93,7 @@ bool CoordinateImportFileFormat::importData(Array<Vec3<double>> &r, ProcessPool 
         return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
 
     // Import the data
-    bool result = importData(parser, r);
+    auto result = importData(parser, r);
 
     parser.closeFiles();
 
@@ -104,7 +104,7 @@ bool CoordinateImportFileFormat::importData(Array<Vec3<double>> &r, ProcessPool 
 bool CoordinateImportFileFormat::importData(LineParser &parser, Array<Vec3<double>> &r)
 {
     // Import the data
-    bool result = false;
+    auto result = false;
     if (coordinateFormat() == CoordinateImportFileFormat::XYZCoordinates)
         result = importXYZ(parser, r);
     else if (coordinateFormat() == CoordinateImportFileFormat::DLPOLYCoordinates)

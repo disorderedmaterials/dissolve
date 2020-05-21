@@ -172,7 +172,7 @@ bool Data3DExportFileFormat::exportData(const Data3D &data)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (data3DFormat() == Data3DExportFileFormat::BlockData3D)
         result = exportBlock(parser, data);
     else if (data3DFormat() == Data3DExportFileFormat::CartesianData3D)

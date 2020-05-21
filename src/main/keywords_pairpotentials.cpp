@@ -54,7 +54,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     AtomType *at1;
     PairPotential::CoulombTruncationScheme cTrunc;
     PairPotential::ShortRangeTruncationScheme srTrunc;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {

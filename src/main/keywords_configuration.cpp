@@ -53,7 +53,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
     Module *module;
     CharString niceName;
     SpeciesInfo *spInfo;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {

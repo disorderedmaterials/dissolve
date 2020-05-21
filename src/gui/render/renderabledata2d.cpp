@@ -224,7 +224,7 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
         return;
 
     // Get some values from axes so we can calculate colours properly
-    bool vLogarithmic = axes.logarithmic(2);
+    auto vLogarithmic = axes.logarithmic(2);
     // double vStretch = axes.stretch(2);
 
     // Temporary variables

@@ -68,9 +68,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testMode = keywords_.asBool("Test");
         const auto testThreshold = keywords_.asDouble("TestThreshold");
-        bool hasReferenceInter = keywords_.isSet("TestReferenceInter");
+        auto hasReferenceInter = keywords_.isSet("TestReferenceInter");
         const auto testReferenceInter = keywords_.asDouble("TestReferenceInter");
-        bool hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
+        auto hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
         const auto testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
 
         // Print parameter summary
@@ -359,7 +359,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Determine stability of energy
             // Check number of points already stored for the Configuration
             double grad = 0.0;
-            bool stable = false;
+            auto stable = false;
             if (stabilityWindow > totalEnergyArray.nValues())
                 Messenger::print("Too few points to assess stability.\n");
             else

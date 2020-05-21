@@ -66,14 +66,14 @@ void SelectForcefieldWidget::updateForcefieldsList(std::shared_ptr<Forcefield> c
         {
             // Check name
             QString name = ff->name();
-            bool inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Check description
             QString description = ff->description();
-            bool inDescription = description.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inDescription = description.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Hide the item?
-            bool hide = (!inName) && (!inDescription);
+            auto hide = (!inName) && (!inDescription);
             item->setHidden(hide);
 
             // If the item was hidden, and it was selected, reset the current index

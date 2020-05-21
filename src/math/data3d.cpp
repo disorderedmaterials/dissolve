@@ -514,7 +514,7 @@ bool Data3D::read(LineParser &parser, const CoreData &coreData)
     auto xSize = parser.argi(0);
     auto ySize = parser.argi(1);
     auto zSize = parser.argi(2);
-    bool errors = parser.argb(3);
+    auto errors = parser.argb(3);
     initialise(xSize, ySize, zSize, errors);
 
     // Read x axis

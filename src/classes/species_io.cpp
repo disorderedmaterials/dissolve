@@ -132,7 +132,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesTorsion::TorsionFunction tf;
     SpeciesBond::BondType bt;
     Isotope *tope;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     // Turn off intramolecular term autogeneration while we're reading
     autoUpdateIntramolecularTerms_ = false;
@@ -636,7 +636,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         }
 
         // Any bond type information to write?
-        bool bondTypeHeaderWritten = false;
+        auto bondTypeHeaderWritten = false;
         for (int bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
             if (bondTypes[bt].nItems() > 0)
             {

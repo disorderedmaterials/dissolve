@@ -96,7 +96,7 @@ bool Data1DImportFileFormat::importData(Data1D &data, ProcessPool *procPool)
         return Messenger::error("Couldn't open file '%s' for loading Data1D data.\n", filename_.get());
 
     // Import the data
-    bool result = importData(parser, data);
+    auto result = importData(parser, data);
 
     parser.closeFiles();
 
@@ -107,7 +107,7 @@ bool Data1DImportFileFormat::importData(Data1D &data, ProcessPool *procPool)
 bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 {
     // Import the data
-    bool result = false;
+    auto result = false;
     if (data1DFormat() == Data1DImportFileFormat::XYData1D)
         result = importXY(parser, data);
     else if (data1DFormat() == Data1DImportFileFormat::HistogramData1D)

@@ -206,15 +206,15 @@ void Box::scale(double factor)
 Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
     // Determine box type from supplied lengths / angles
-    bool rightAlpha = (fabs(angles.x - 90.0) < 0.001);
-    bool rightBeta = (fabs(angles.y - 90.0) < 0.001);
-    bool rightGamma = (fabs(angles.z - 90.0) < 0.001);
+    auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
+    auto rightBeta = (fabs(angles.y - 90.0) < 0.001);
+    auto rightGamma = (fabs(angles.z - 90.0) < 0.001);
 
     if (rightAlpha && rightBeta && rightGamma)
     {
         // Cubic or orthorhombic
-        bool abSame = (fabs(lengths.x - lengths.y) < 0.0001);
-        bool acSame = (fabs(lengths.x - lengths.z) < 0.0001);
+        auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
+        auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
         if (abSame && acSame)
             return new CubicBox(lengths.x);
         else

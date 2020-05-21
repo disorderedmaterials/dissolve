@@ -179,7 +179,7 @@ const char *DissolveSys::afterChar(const char *s, char delim)
 {
     static CharString result(1024);
     result.clear();
-    bool found = false;
+    auto found = false;
     for (int i = 0; s[i] != '\0'; i++)
     {
         if (found)
@@ -273,7 +273,7 @@ bool DissolveSys::endsWith(const char *target, const char *ending)
 void DissolveSys::removeComments(char *s)
 {
     char *c, quotechar = '\0';
-    bool escaped = false;
+    auto escaped = false;
     for (c = s; *c != '\0'; ++c)
     {
         // Remember current quoting info...

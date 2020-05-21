@@ -64,7 +64,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
         yForce_.initialise(cfg->nAtoms());
         zForce_.initialise(cfg->nAtoms());
 
-        bool converged = false, lineDone = false;
+        auto converged = false, lineDone = false;
 
         // Get the initial energy and forces of the Configuration
         double oldEnergy = EnergyModule::totalEnergy(procPool, cfg, dissolve.potentialMap());

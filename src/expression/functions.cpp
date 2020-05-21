@@ -152,8 +152,8 @@ bool ExpressionFunctions::function_OperatorAnd(ExpressionFunction *c, Expression
     if (!c->arg(1, b))
         return false;
 
-    bool aa = a.isInteger() ? a.asInteger() > 0 : a.asDouble() > 0.0;
-    bool bb = b.isInteger() ? b.asInteger() > 0 : b.asDouble() > 0.0;
+    auto aa = a.isInteger() ? a.asInteger() > 0 : a.asDouble() > 0.0;
+    auto bb = b.isInteger() ? b.asInteger() > 0 : b.asDouble() > 0.0;
 
     result = (aa && bb ? 1 : 0);
 
@@ -376,8 +376,8 @@ bool ExpressionFunctions::function_OperatorOr(ExpressionFunction *c, ExpressionV
     if (!c->arg(1, b))
         return false;
 
-    bool aa = a.isInteger() ? a.asInteger() > 0 : a.asDouble() > 0.0;
-    bool bb = b.isInteger() ? b.asInteger() > 0 : b.asDouble() > 0.0;
+    auto aa = a.isInteger() ? a.asInteger() > 0 : a.asDouble() > 0.0;
+    auto bb = b.isInteger() ? b.asInteger() > 0 : b.asDouble() > 0.0;
 
     result = (aa || bb ? 1 : 0);
 
@@ -433,7 +433,7 @@ bool ExpressionFunctions::function_NoFunction(ExpressionFunction *c, ExpressionV
 bool ExpressionFunctions::function_Joiner(ExpressionFunction *c, ExpressionValue &result)
 {
     // Execute both commands
-    bool success = true;
+    auto success = true;
 
     if (c->hasArg(0))
         success = c->arg(0, result);

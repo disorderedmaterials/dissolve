@@ -790,7 +790,7 @@ void Axes::determineLabelFormat(int axis)
         while (true)
         {
             // Loop over labels and check that they are all different
-            bool allDifferent = true;
+            auto allDifferent = true;
             QString tickLabel, oldLabel;
             auto nTicks = (max_[axis] - min_[axis]) / tickDelta_[axis];
             double axisValue = tickFirst_[axis];

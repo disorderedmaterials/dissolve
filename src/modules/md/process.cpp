@@ -58,11 +58,11 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto energyFrequency = keywords_.asInt("EnergyFrequency");
     const auto nSteps = keywords_.asInt("NSteps");
     const auto outputFrequency = keywords_.asInt("OutputFrequency");
-    bool randomVelocities = keywords_.asBool("RandomVelocities");
+    auto randomVelocities = keywords_.asBool("RandomVelocities");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
     const bool variableTimestep = keywords_.asBool("VariableTimestep");
-    bool writeTraj = trajectoryFrequency > 0;
+    auto writeTraj = trajectoryFrequency > 0;
 
     // Print argument/parameter summary
     Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);

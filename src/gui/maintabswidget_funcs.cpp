@@ -361,7 +361,7 @@ void MainTabsWidget::removeByPage(QWidget *page)
         removeTab(indexToRemove);
 
     // Now delete the tab from its list - this will delete the actual page widget
-    bool updateAll = false;
+    auto updateAll = false;
     if (speciesTab(page))
     {
         allTabs_.remove(speciesTab(page));

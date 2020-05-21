@@ -158,7 +158,7 @@ void SpeciesSiteRefListKeywordWidget::updateSummaryText()
         siteText = "<None>";
     else
     {
-        bool first = true;
+        auto first = true;
         for (SpeciesSite *site : keyword_->data())
         {
             if (first)

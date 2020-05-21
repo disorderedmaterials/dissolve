@@ -109,7 +109,7 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
     // Increase vertex counter
     ++nDefinedVertices_;
     // Update centroid
-    bool finalise = (nDefinedVertices_ % verticesPerType_) == 0;
+    auto finalise = (nDefinedVertices_ % verticesPerType_) == 0;
     if (calcCentroid)
         updateCentroid(x, y, z, finalise);
     if (finalise)
@@ -144,7 +144,7 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
     // Increase vertex counter
     ++nDefinedVertices_;
     // Update centroid
-    bool finalise = (nDefinedVertices_ % verticesPerType_) == 0;
+    auto finalise = (nDefinedVertices_ % verticesPerType_) == 0;
     if (calcCentroid)
         updateCentroid(x, y, z, finalise);
     if (finalise)
@@ -179,7 +179,7 @@ void VertexChunk::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
     // Increase vertex counter
     ++nDefinedVertices_;
     // Update centroid
-    bool finalise = (nDefinedVertices_ % verticesPerType_) == 0;
+    auto finalise = (nDefinedVertices_ % verticesPerType_) == 0;
     if (calcCentroid)
         updateCentroid(x, y, z, finalise);
     if (finalise)

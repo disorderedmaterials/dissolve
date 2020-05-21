@@ -869,7 +869,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
                                      const char *typeIorTotal, const char *typeJ, const char *target)
 {
     // We either expect two AtomType names and a target next, or the target 'total'
-    bool testResult = false;
+    auto testResult = false;
     if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == NULL) && (target == NULL))
     {
         double error = Error::percent(partials.constTotal(), testData);
@@ -957,7 +957,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
             return Messenger::error("Test data has no name?");
 
         // Check first argument to determine PartialSet, then pass on the data
-        bool setA = false;
+        auto setA = false;
         if (DissolveSys::sameString(prefixA, parser.argc(0)))
             setA = true;
         else if (DissolveSys::sameString(prefixB, parser.argc(0)))

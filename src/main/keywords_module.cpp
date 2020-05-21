@@ -49,7 +49,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 
     Configuration *targetCfg;
     CharString varName, dataName;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {

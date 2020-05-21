@@ -328,7 +328,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
     const ColourDefinition &colourDefinition = colour();
 
     // Check whether the primitive for this Renderable needs updating
-    bool upToDate = true;
+    auto upToDate = true;
     if (forceUpdate)
         upToDate = false;
     else if (lastAxesVersion_ != axes.version())

@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     auto n = 1;
     CharString inputFile, restartFile;
     auto nIterations = 0;
-    bool ignoreRestart = false, ignoreLayout = false;
+    auto ignoreRestart = false, ignoreLayout = false;
     while (n < argc)
     {
         if (argv[n][0] == '-')
@@ -209,7 +209,7 @@ int main(int argc, char **argv)
             return 1;
 
         // Run main simulation
-        bool result = dissolve.iterate(nIterations);
+        auto result = dissolve.iterate(nIterations);
         if (!result)
             return 1;
     }

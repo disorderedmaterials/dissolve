@@ -51,7 +51,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     while (Data1D *testData1D = data1DIterator.iterate())
     {
         // Locate the target reference data
-        bool found = false;
+        auto found = false;
         const auto &data = findReferenceData<Data1D>(testData1D->name(), targetModule, dissolve.processingModuleData(), found);
 
         // Did we succeed?
@@ -78,7 +78,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     while (Data2D *testData2D = data2DIterator.iterate())
     {
         // Locate the target reference data
-        bool found = false;
+        auto found = false;
         const auto &data = findReferenceData<Data2D>(testData2D->name(), targetModule, dissolve.processingModuleData(), found);
 
         // Did we succeed?

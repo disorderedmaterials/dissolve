@@ -103,7 +103,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (saveReflections)
         {
             // Retrieve BraggReflection data from the Configuration's module data
-            bool found = false;
+            auto found = false;
             const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
             if (!found)

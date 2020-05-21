@@ -382,7 +382,7 @@ RefList<ExpressionVariable> &Expression::constants() { return constants_; }
 // Execute expression
 bool Expression::execute(ExpressionValue &result)
 {
-    bool success = true;
+    auto success = true;
     for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
     {
         // 		ri->item()->nodePrint(1);

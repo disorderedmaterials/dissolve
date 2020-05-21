@@ -248,7 +248,7 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
     }
 
     // Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
-    bool zeroSum = sumy == 0;
+    auto zeroSum = sumy == 0;
     double percentError = (zeroSum ? sume : 100.0 * sume / sumy);
     if (!quiet)
     {

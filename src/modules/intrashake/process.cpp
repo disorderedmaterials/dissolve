@@ -55,9 +55,9 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters from Configuration
-        bool adjustAngles = keywords_.asBool("AdjustAngles");
-        bool adjustBonds = keywords_.asBool("AdjustBonds");
-        bool adjustTorsions = keywords_.asBool("AdjustTorsions");
+        auto adjustAngles = keywords_.asBool("AdjustAngles");
+        auto adjustBonds = keywords_.asBool("AdjustBonds");
+        auto adjustTorsions = keywords_.asBool("AdjustTorsions");
         auto &angleStepSize = keywords_.retrieve<double>("AngleStepSize");
         const auto angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
         const auto angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");

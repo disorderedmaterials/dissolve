@@ -151,7 +151,7 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
      * Then, return the final formatted string, adding the exponent on if using scientificNotation.
      */
 
-    bool scientificNotation = abs(exponent_) > exponentThreshold;
+    auto scientificNotation = abs(exponent_) > exponentThreshold;
     char formatString[32];
     sprintf(formatString, "%%.%if", maxDecimals);
 

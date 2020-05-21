@@ -131,7 +131,7 @@ bool NETANode::setFlag(const char *flag, bool state) { return false; }
 // Return result of comparison between values provided
 bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 {
-    bool result = false;
+    auto result = false;
 
     switch (op)
     {

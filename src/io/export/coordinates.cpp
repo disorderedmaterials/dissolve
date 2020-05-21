@@ -155,7 +155,7 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (coordinateFormat() == CoordinateExportFileFormat::XYZCoordinates)
         result = exportXYZ(parser, cfg);
     else if (coordinateFormat() == CoordinateExportFileFormat::DLPOLYCoordinates)

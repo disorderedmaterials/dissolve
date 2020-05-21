@@ -31,7 +31,7 @@ void ConfigurationViewer::mouseMoved(int dx, int dy)
     if (!interacting())
         return;
 
-    bool refresh = false;
+    auto refresh = false;
     Atom *currentAtom = NULL;
 
     // What we do here depends on the current mode

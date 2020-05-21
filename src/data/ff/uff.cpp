@@ -672,8 +672,8 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
 // Assign intramolecular parameters to the supplied Species
 bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
 {
-    bool determineTypes = flags & Forcefield::DetermineTypesFlag;
-    bool selectionOnly = flags & Forcefield::SelectionOnlyFlag;
+    auto determineTypes = flags & Forcefield::DetermineTypesFlag;
+    auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Generate bond terms
     DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());

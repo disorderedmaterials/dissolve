@@ -219,7 +219,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Configuration Processing");
 
-        bool result = true;
+        auto result = true;
         for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             // Check for failure of one or more processes / processing tasks

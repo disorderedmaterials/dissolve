@@ -356,7 +356,7 @@ long int CharString::asLongInteger() const { return (data_ != NULL ? atol(data_)
 bool CharString::asBool() const
 {
     // Convert string to boolean
-    bool result = false;
+    auto result = false;
     CharString lcase(DissolveSys::lowerCase(data_));
     if (lcase == "off")
         result = false;

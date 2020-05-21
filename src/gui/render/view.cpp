@@ -609,7 +609,7 @@ void View::recalculateView(bool force)
         return;
 
     // If we are already up-to-date (w.r.t. the associated axes) then we can also return now
-    bool upToDate = true;
+    auto upToDate = true;
     if (force)
         upToDate = false;
     else if (viewAxesUsedAt_ != axes().version())
@@ -948,7 +948,7 @@ void View::autoFollowData()
 
     // Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
     // regeneration further down the line
-    bool updateRequired = false;
+    auto updateRequired = false;
     ListIterator<Renderable> renderableIterator(renderables_);
     while (Renderable *rend = renderableIterator.iterate())
     {
@@ -975,7 +975,7 @@ void View::autoFollowData()
             xMin = xMax - autoFollowXLength_;
 
         // Get y range over the horizontal range we've established
-        bool first = true;
+        auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
         for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
         {
@@ -1239,7 +1239,7 @@ void View::shiftFlatAxisLimits(double deltaH, double deltaV)
     for (int n = 0; n < 2; ++n)
     {
         double range = axes_.realRange(axes[n]);
-        bool logarithmic = axes_.logarithmic(axes[n]);
+        auto logarithmic = axes_.logarithmic(axes[n]);
         double ppUnit = axisPixelLength_[axes[n]] / range;
 
         // Flip sign of delta if the axis is inverted

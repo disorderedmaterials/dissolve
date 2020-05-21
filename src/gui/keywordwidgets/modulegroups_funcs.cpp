@@ -98,7 +98,7 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem *item)
     Module *module = VariantPointer<Module>(ui_.SelectionTable->item(item->row(), 0)->data(Qt::UserRole));
     if (!module)
         return;
-    bool isSelected = (ui_.SelectionTable->item(item->row(), 0)->checkState() == Qt::Checked);
+    auto isSelected = (ui_.SelectionTable->item(item->row(), 0)->checkState() == Qt::Checked);
 
     // Get group text from column 1 of the current row
     QString groupName = ui_.SelectionTable->item(item->row(), 1)->text();

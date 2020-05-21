@@ -159,7 +159,7 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential)
         result = exportBlock(parser, pp);
     else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential)

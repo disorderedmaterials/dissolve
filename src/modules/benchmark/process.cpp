@@ -212,7 +212,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 void BenchmarkModule::printTimingResult(const char *testFile, const char *testDescription, const SampledDouble &timing,
                                         bool storeNewTiming)
 {
-    bool existingDataAvailable = false;
+    auto existingDataAvailable = false;
 
     // Open the existing timings file if it exists
     Data1D existingTimings;

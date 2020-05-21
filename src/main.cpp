@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     auto n = 1;
     CharString inputFile, redirectFileName, restartDataFile, outputInputFile;
     auto nIterations = 5;
-    bool ignoreRestart = false;
+    auto ignoreRestart = false;
     while (n < argc)
     {
         if (argv[n][0] == '-')
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 #endif
 
     // Run main simulation
-    bool result = dissolve.iterate(nIterations);
+    auto result = dissolve.iterate(nIterations);
 
     // Print timing information
     dissolve.printTiming();

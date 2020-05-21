@@ -50,7 +50,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
     SpeciesAngle::AngleFunction af;
     SpeciesImproper::ImproperFunction impf;
     SpeciesTorsion::TorsionFunction tf;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {

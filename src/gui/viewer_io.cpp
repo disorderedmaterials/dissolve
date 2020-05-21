@@ -52,7 +52,7 @@ bool BaseViewer::parseInputBlocks(LineParser &parser)
     Renderable *renderable;
     RenderableGroup *group;
     Renderable::RenderableType rt;
-    bool success = true;
+    auto success = true;
     while (!parser.eofOrBlank())
     {
         if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
@@ -1059,7 +1059,7 @@ bool BaseViewer::readSession(LineParser &parser)
     clear();
 
     // Parse input blocks
-    bool success = parseInputBlocks(parser);
+    auto success = parseInputBlocks(parser);
 
     // Show a message if we encountered problems...
     if (!success)

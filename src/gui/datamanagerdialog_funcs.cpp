@@ -104,10 +104,10 @@ void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, Q
         {
             // Check name
             QString name = genericItem->name();
-            bool inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Hide the item?
-            bool hide = (!inName);
+            auto hide = (!inName);
             table->setRowHidden(n, hide);
 
             // If the item was hidden, and it was selected, reset the current index

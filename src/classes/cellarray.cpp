@@ -228,7 +228,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
                 // Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of
                 // corners are in range
-                bool close = false;
+                auto close = false;
                 for (int iCorner = 0; iCorner < 8; ++iCorner)
                 {
                     // Set integer vertex of corner on 'central' box

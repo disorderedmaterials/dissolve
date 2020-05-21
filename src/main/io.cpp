@@ -41,7 +41,7 @@ bool Dissolve::loadInput(LineParser &parser)
     ModuleLayer *layer = NULL;
     CharString niceName;
     Species *sp;
-    bool error = false;
+    auto error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -153,7 +153,7 @@ bool Dissolve::loadInputFromString(const char *inputString)
     if (!parser.openInputString(inputString))
         return false;
 
-    bool result = loadInput(parser);
+    auto result = loadInput(parser);
 
     if (result)
         Messenger::print("Finished reading input.\n");
@@ -169,7 +169,7 @@ bool Dissolve::loadInput(const char *filename)
     if (!parser.openInput(filename))
         return false;
 
-    bool result = loadInput(parser);
+    auto result = loadInput(parser);
 
     if (result)
     {
@@ -408,7 +408,7 @@ bool Dissolve::saveInput(const char *filename)
                 return false;
 
             // Write Configuration target(s)
-            bool first = true;
+            auto first = true;
             for (Configuration *cfg : module->targetConfigurations())
             {
                 if (first && (!parser.writeLineF("\n")))
@@ -459,7 +459,7 @@ bool Dissolve::loadRestart(const char *filename)
     // Variables
     Configuration *cfg;
     Module *module;
-    bool error = false;
+    auto error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -619,7 +619,7 @@ bool Dissolve::loadRestartAsReference(const char *filename, const char *dataSuff
     // Variables
     Configuration *cfg;
     CharString newName;
-    bool error = false, skipCurrentItem = false;
+    auto error = false, skipCurrentItem = false;
 
     // Enable suffixing of all ObjectStore types
     ObjectInfo::enableAutoSuffixing(dataSuffix);

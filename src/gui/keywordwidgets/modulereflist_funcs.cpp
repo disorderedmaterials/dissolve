@@ -135,7 +135,7 @@ void ModuleRefListKeywordWidget::updateSummaryText()
     else
     {
         CharString summaryText;
-        bool first = true;
+        auto first = true;
         for (Module *module : selection)
         {
             if (first)

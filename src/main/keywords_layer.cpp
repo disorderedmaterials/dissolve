@@ -45,7 +45,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
     Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                      layer->name());
 
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
     Module *module = NULL;
     CharString niceName;
 

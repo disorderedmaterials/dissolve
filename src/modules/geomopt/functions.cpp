@@ -113,7 +113,7 @@ double GeometryOptimisationModule::goldenSearch(ProcessPool &procPool, Configura
                             dyz);
 
     // Select largest of two intervals to be the target of the search
-    bool xyLargest = fabs(dxy) > fabs(dyz);
+    auto xyLargest = fabs(dxy) > fabs(dyz);
     double newMinimum = bounds[1] + 0.3819660 * (xyLargest ? dxy : dyz);
 
     // Test energy at new trial minimum

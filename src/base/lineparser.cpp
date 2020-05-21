@@ -120,7 +120,7 @@ bool LineParser::openInput(const char *filename)
     fileInput_ = true;
 
     // Master will open the file
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         inputFile_ = new ifstream(filename, ios::in | ios::binary);
@@ -174,7 +174,7 @@ bool LineParser::openInputString(const char *string)
 // Open new stream for writing
 bool LineParser::openOutput(const char *filename, bool directOutput)
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the opening of the output file
     if ((!processPool_) || processPool_->isMaster())
@@ -224,7 +224,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
 // Open existing stream for writing
 bool LineParser::appendOutput(const char *filename)
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the opening of the output file
     if ((!processPool_) || processPool_->isMaster())
@@ -293,7 +293,7 @@ void LineParser::closeFiles()
 bool LineParser::isFileGoodForReading() const
 {
     // Master performs the checks
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         if (fileInput_ && (inputFile_ == NULL))
@@ -315,7 +315,7 @@ bool LineParser::isFileGoodForReading() const
 bool LineParser::isFileGoodForWriting() const
 {
     // Master performs the checks
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         if (directOutput_)
@@ -388,7 +388,7 @@ void LineParser::rewind()
 bool LineParser::eofOrBlank() const
 {
     // If no process pool is defined, or we are the master, do the check
-    bool result = false;
+    auto result = false;
     if ((!processPool_) || processPool_->isMaster())
     {
         // Do we have a valid input stream?
@@ -715,7 +715,7 @@ bool LineParser::getNextN(int optionMask, int length, CharString *destarg)
         return false;
 
     int n, charsleft = lineLength_ - linePos_;
-    bool striptrailing = (length < 0);
+    auto striptrailing = (length < 0);
     length = abs(length);
     if (length > charsleft)
         length = charsleft;
@@ -829,7 +829,7 @@ bool LineParser::getRestDelim(CharString *destarg)
 // Get next argument (delimited) from file stream
 bool LineParser::getArgDelim(int optionMask, CharString *destarg)
 {
-    bool result = getNextArg(optionMask, destarg);
+    auto result = getNextArg(optionMask, destarg);
     // 	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
     return result;
 }
@@ -847,7 +847,7 @@ void LineParser::getArgsDelim(int optionMask, const char *s)
 bool LineParser::getCharsDelim(CharString *destarg)
 {
     auto length = 0;
-    bool result = true;
+    auto result = true;
     char c;
     while (!inputStream()->eof())
     {
@@ -1047,7 +1047,7 @@ const char *LineParser::getChars(int nchars, bool skipeol)
 // Write line to file
 bool LineParser::writeLine(const char *s) const
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1081,7 +1081,7 @@ bool LineParser::writeLine(const char *s) const
 // Write formatted line to file
 bool LineParser::writeLineF(const char *fmt, ...) const
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1197,7 +1197,7 @@ bool LineParser::readArg(long long int &i)
 // Commit cached output stream to actual output file
 bool LineParser::commitCache()
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())

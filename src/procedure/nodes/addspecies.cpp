@@ -205,7 +205,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
 
     // Get the positioning type and rotation flag
     auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
-    bool rotate = keywords_.asBool("Rotate");
+    auto rotate = keywords_.asBool("Rotate");
 
     Messenger::print("[AddSpecies] Positioning type is '%s' and rotation is %s.\n",
                      AddSpeciesProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");

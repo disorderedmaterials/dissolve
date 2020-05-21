@@ -102,7 +102,7 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo *page)
             footerUi_.FinishButton->setVisible(nextIndex == WizardWidgetPageInfo::FinishHereFlag);
 
             // Disable controls if we're not allowed to progress yet
-            bool allowProgression = progressionAllowed(page->index());
+            auto allowProgression = progressionAllowed(page->index());
             footerUi_.FinishButton->setEnabled(allowProgression);
             footerUi_.NextButton->setEnabled(allowProgression);
         }

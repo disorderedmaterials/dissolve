@@ -168,7 +168,7 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double &yMin, doubl
     // Grab reference to transformed data
     const auto &data = transformedData();
 
-    bool first = true;
+    auto first = true;
     for (int n = 0; n < data.nValues(); ++n)
     {
         if (data.constXAxis(n) < xMin)
@@ -235,7 +235,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
         return;
 
     // Get some values from axes so we can calculate colours properly
-    bool yLogarithmic = axes.logarithmic(1);
+    auto yLogarithmic = axes.logarithmic(1);
     double yStretch = axes.stretch(1);
 
     // Temporary variables

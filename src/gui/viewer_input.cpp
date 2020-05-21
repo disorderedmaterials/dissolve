@@ -141,7 +141,7 @@ void BaseViewer::mouseMoved(int dx, int dy) {}
 // Mouse 'wheeled'
 void BaseViewer::mouseWheeled(int delta)
 {
-    bool scrollup = delta > 0;
+    auto scrollup = delta > 0;
 
     // Perform camera zoom
     double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);

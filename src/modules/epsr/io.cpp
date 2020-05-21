@@ -56,7 +56,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
         return Messenger::error("Couldn't open pcof file for reading.\n");
 
     // Read keyword section (terminated by the 'q' command)
-    bool done = false;
+    auto done = false;
     auto ncoeffp = 0;
     while (!parser.eofOrBlank())
     {

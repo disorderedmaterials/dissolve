@@ -312,8 +312,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
     Messenger::print("Assigning intramolecular terms to species '%s' from forcefield '%s'...\n", sp->name(), name());
 
-    bool determineTypes = flags & Forcefield::DetermineTypesFlag;
-    bool selectionOnly = flags & Forcefield::SelectionOnlyFlag;
+    auto determineTypes = flags & Forcefield::DetermineTypesFlag;
+    auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Assign bond terms
     DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
