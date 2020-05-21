@@ -2041,7 +2041,7 @@ bool ProcessPool::assemble(Array<double> &array, int nData, Array<double> &rootD
 bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool decision = true;
+    auto decision = true;
     if (!broadcast(decision, rootRank, commType))
         return Messenger::error("Error telling processes to proceed.\n");
 #endif
@@ -2052,7 +2052,7 @@ bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commTyp
 bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool decision = false;
+    auto decision = false;
     if (!broadcast(decision, rootRank, commType))
         return Messenger::error("Error telling processes to stop.\n");
 #endif
