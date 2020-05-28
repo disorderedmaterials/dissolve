@@ -10,8 +10,6 @@ add_library(base
   messenger.cpp
   outputhandler.cpp
   parameters.cpp
-  plainvalue.cpp
-  plainvaluelist.cpp
   processgroup.cpp
   processpool.cpp
   sysfunc.cpp
@@ -31,8 +29,6 @@ add_library(base
   messenger.h
   outputhandler.h
   parameters.h
-  plainvalue.h
-  plainvaluelist.h
   processgroup.h
   processpool.h
   sysfunc.h
