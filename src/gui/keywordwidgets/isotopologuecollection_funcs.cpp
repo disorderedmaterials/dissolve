@@ -25,7 +25,7 @@
 #include "genericitems/listhelper.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/exponentialspin.hui"
-#include "gui/delegates/isotopologuecombo.hui"
+#include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/isotopologuecollection.h"
@@ -41,7 +41,7 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
 	ui_.setupUi(dropWidget());
 
 	// Set delegates for table
-	ui_.IsotopologueTree->setItemDelegateForColumn(2, new IsotopologueComboDelegate(this, &IsotopologueCollectionKeywordWidget::speciesContext);
+	ui_.IsotopologueTree->setItemDelegateForColumn(2, new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(this, &IsotopologueCollectionKeywordWidget::validIsotopologueNames);
 	ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
 	// Connect signals / slots
@@ -71,38 +71,44 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
  * Widgets
  */
 
-// Return Species context for current item (if any)
-const Species *IsotopologueCollectionKeywordWidget::speciesContext() const
+// Return valid Isotopologue names for specified model index
+std::vector<std::string> IsotopologueCollectionKeywordWidget::validIsotopologueNames(QModelIndex &index)
 {
-    QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
-
-    if (isotopologuesItemManager_.isMapped(item))
-    {
-		// Get Isotopologues reference
-		auto topesData = isotopologuesItemManager_.reference(item);
-		if (std::get<1>(topesData))
-		{
-			// TODO Raise Exception
-			Messenger::error("Reference for Isotopologues not in map.\n");
-			return nullptr;
-		}
-        return std::get<0>(topesData).species();
-    }
-    else if (isotopologueWeightItemManager_.isMapped(item))
-    {
-        // Get parent item to obtain Isotopologues reference
-		auto topesData = isotopologuesItemManager_.reference(item->parent());
-		if (std::get<1>(topesData))
-		{
-			// TODO Raise Exception
-			Messenger::error("Reference for Isotopologues not in map.\n");
-			return nullptr;
-		}
-        return std::get<0>(topesData).species();
-    }
-
-    return nullptr;
+    
 }
+
+// // Return Species context for current item (if any)
+// const Species *IsotopologueCollectionKeywordWidget::speciesContext() const
+// {
+//     QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
+// 
+//     if (isotopologuesItemManager_.isMapped(item))
+//     {
+// 		// Get Isotopologues reference
+// 		auto topesData = isotopologuesItemManager_.reference(item);
+// 		if (std::get<1>(topesData))
+// 		{
+// 			// TODO Raise Exception
+// 			Messenger::error("Reference for Isotopologues not in map.\n");
+// 			return nullptr;
+// 		}
+//         return std::get<0>(topesData).species();
+//     }
+//     else if (isotopologueWeightItemManager_.isMapped(item))
+//     {
+//         // Get parent item to obtain Isotopologues reference
+// 		auto topesData = isotopologuesItemManager_.reference(item->parent());
+// 		if (std::get<1>(topesData))
+// 		{
+// 			// TODO Raise Exception
+// 			Messenger::error("Reference for Isotopologues not in map.\n");
+// 			return nullptr;
+// 		}
+//         return std::get<0>(topesData).species();
+//     }
+// 
+//     return nullptr;
+// }
 
 void IsotopologueCollectionKeywordWidget::autoButton_clicked(bool checked)
 {

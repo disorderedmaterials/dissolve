@@ -54,8 +54,8 @@ class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public Keywo
     Ui::IsotopologueRefListWidget ui_;
 
     private:
-    // Return Species context for current item (if any)
-    const Species *speciesContext() const;
+    // Return valid Isotopologue names for specified model index
+    std::vector<std::string> validIsotopologueNames(QModelIndex &index);
 
     private slots:
     void autoButton_clicked(bool checked);

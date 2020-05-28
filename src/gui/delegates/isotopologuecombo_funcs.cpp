@@ -25,7 +25,8 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IsotopologueComboDelegate::IsotopologueComboDelegate(QObject *parent, ParentSpeciesFunction parentSpeciesFunction) : QItemDelegate(parent), parentSpeciesFunction_(parentSpeciesFunction) {}
+
+IsotopologueComboDelegate::IsotopologueComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 
 IsotopologueComboDelegate::~IsotopologueComboDelegate() {}
 

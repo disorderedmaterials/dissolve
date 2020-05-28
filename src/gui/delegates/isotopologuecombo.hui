@@ -33,21 +33,19 @@ class Species;
 // Delegate class, providing list of Isotopologues available in a Species
 class IsotopologueComboDelegate : public QItemDelegate
 {
-    private:
-    // Typedef for function pointers
-	typedef const Species *(QObject::*ParentSpeciesFunction)() const;
-    // Function to acquire Species containing available Isotopologues
-    ParentSpeciesFunction parentSpeciesFunction_;
-    
-	public:
-	IsotopologueComboDelegate(QObject *parent, ParentSpeciesFunction parentSpeciesFunction);
-	virtual ~IsotopologueComboDelegate();
-	// Reimplemented virtual function to create editing widget
-	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-	// Set the data to appear when the editor is called
-	void setEditorData(QWidget *editor, const QModelIndex &index) const;
-	// Extract data from editor, and place back into source model
-	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-	// Resize editor
-	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    Q_OBJECT
+
+    public:
+    // Constructor
+    IsotopologueComboDelegate(QObject *parent);
+    // Destructor
+    virtual ~IsotopologueComboDelegate();
+    // Reimplemented virtual function to create editing widget
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    // Set the data to appear when the editor is called
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    // Extract data from editor, and place back into source model
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+    // Resize editor
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };

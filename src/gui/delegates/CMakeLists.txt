@@ -29,6 +29,7 @@ SET(delegates_SRCS
   null.cpp
   usedspeciescombo_funcs.cpp
 
+  customcombodelegate.h
   null.h
 )
 
