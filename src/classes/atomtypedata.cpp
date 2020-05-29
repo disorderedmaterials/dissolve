@@ -32,42 +32,42 @@
 #include <string.h>
 
 AtomTypeData::AtomTypeData(AtomType &type, double population, double fraction, double boundCoherent, int nIso)
-	: atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
+    : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
-	isotopes_.clear();
-	for (int n = 0; n < nIso; ++n)
-	{
-		isotopes_.add();
-	}
+    isotopes_.clear();
+    for (int n = 0; n < nIso; ++n)
+    {
+        isotopes_.add();
+    }
 }
 
 AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomType_), listIndex_(source.listIndex())
 {
-	(*this) = source;
+    (*this) = source;
 }
 
 // Read data through specified LineParser
 AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex)
-	: atomType_(*coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
+    : atomType_(*coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
 {
-	population_ = parser.argd(1);
-	fraction_ = parser.argd(2);
-	boundCoherent_ = parser.argd(3);
-	isotopes_.clear();
-	int nIso = parser.argi(4);
-	for (int n = 0; n < nIso; ++n)
-	{
-		IsotopeData *tope = isotopes_.add();
-	}
+    population_ = parser.argd(1);
+    fraction_ = parser.argd(2);
+    boundCoherent_ = parser.argd(3);
+    isotopes_.clear();
+    int nIso = parser.argi(4);
+    for (int n = 0; n < nIso; ++n)
+    {
+        IsotopeData *tope = isotopes_.add();
+    }
 }
 
 // Initialise Constructor
 AtomTypeData::AtomTypeData(int listIndex, AtomType &type, double population)
-	: atomType_(type), listIndex_(listIndex), population_(population)
+    : atomType_(type), listIndex_(listIndex), population_(population)
 {
-	exchangeable_ = false;
-	fraction_ = 0.0;
-	boundCoherent_ = 0.0;
+    exchangeable_ = false;
+    fraction_ = 0.0;
+    boundCoherent_ = 0.0;
 }
 
 void AtomTypeData::operator=(const AtomTypeData &source)
@@ -151,13 +151,13 @@ void AtomTypeData::finalise(double totalAtoms)
 // Remove any existing isotopes, and add only the natural isotope
 void AtomTypeData::naturalise()
 {
-	// Clear the isotopes list and add on the natural isotope, keeping the current population
-	isotopes_.clear();
-	IsotopeData *topeData = isotopes_.add();
-	topeData->initialise(Isotopes::naturalIsotope(atomType_.element()));
-	topeData->add(population_);
-	topeData->finalise(population_);
-	boundCoherent_ = topeData->isotope()->boundCoherent();
+    // Clear the isotopes list and add on the natural isotope, keeping the current population
+    isotopes_.clear();
+    IsotopeData *topeData = isotopes_.add();
+    topeData->initialise(Isotopes::naturalIsotope(atomType_.element()));
+    topeData->add(population_);
+    topeData->finalise(population_);
+    boundCoherent_ = topeData->isotope()->boundCoherent();
 }
 
 // Return if specified Isotope is already in the list
@@ -206,15 +206,14 @@ const char *AtomTypeData::atomTypeName() const { return atomType_.name(); }
 // Write data through specified LineParser
 bool AtomTypeData::write(LineParser &parser)
 {
-	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-	if (!parser.writeLineF("%s %f %f %f %i\n", atomType_.name(), population_, fraction_, boundCoherent_,
-			       isotopes_.nItems()))
-		return false;
-	ListIterator<IsotopeData> isotopeIterator(isotopes_);
-	while (IsotopeData *topeData = isotopeIterator.iterate())
-		if (!topeData->write(parser))
-			return false;
-	return true;
+    // Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
+    if (!parser.writeLineF("%s %f %f %f %i\n", atomType_.name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
+        return false;
+    ListIterator<IsotopeData> isotopeIterator(isotopes_);
+    while (IsotopeData *topeData = isotopeIterator.iterate())
+        if (!topeData->write(parser))
+            return false;
+    return true;
 }
 
 /*
@@ -225,21 +224,21 @@ bool AtomTypeData::write(LineParser &parser)
 // Broadcast data from Master to all Slaves
 bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
-	// For the atomType_, use the fact that the AtomType names are unique...
-	CharString typeName;
-	if (procPool.poolRank() == root)
-		typeName = atomType_.name();
-	procPool.broadcast(typeName, root);
-	atomType_ = *coreData.findAtomType(typeName);
+    // For the atomType_, use the fact that the AtomType names are unique...
+    CharString typeName;
+    if (procPool.poolRank() == root)
+        typeName = atomType_.name();
+    procPool.broadcast(typeName, root);
+    atomType_ = *coreData.findAtomType(typeName);
 
-	// Broadcast the IsotopeData list
-	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
-	// if (topeBroadcaster.failed())
-	//   Messenger("Broadcase of AtomTypeData failed");
+    // Broadcast the IsotopeData list
+    BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
+    // if (topeBroadcaster.failed())
+    //   Messenger("Broadcase of AtomTypeData failed");
 
-	procPool.broadcast(population_, root);
-	procPool.broadcast(fraction_, root);
-	procPool.broadcast(boundCoherent_, root);
+    procPool.broadcast(population_, root);
+    procPool.broadcast(fraction_, root);
+    procPool.broadcast(boundCoherent_, root);
 }
 #endif
 
