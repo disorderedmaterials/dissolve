@@ -37,6 +37,7 @@
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
+#include "templates/algorithms.h"
 
 // Run main processing
 bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
@@ -312,22 +313,17 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Sum up the unweighted partials and density from this target
             double factor = 1.0;
-            i = 0;
-            for (AtomTypeData *atd1 = unweightedSQ.atomTypes().first(); atd1 != NULL; atd1 = atd1->next(), ++i)
-            {
-                j = i;
-                for (AtomTypeData *atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++j)
-                {
-                    double globalI = atd1->atomType()->index();
-                    double globalJ = atd2->atomType()->index();
+            auto &types = unweightedSQ.atomTypes();
+            for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
+                auto globalI = atd1.atomType().index();
+                auto globalJ = atd2.atomType().index();
 
-                    Data1D partialIJ = unweightedSQ.constPartial(i, j);
-                    Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
-                    combinedRho.at(globalI, globalJ) += rho * factor;
-                    combinedFactor.at(globalI, globalJ) += factor;
-                    combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i, j);
-                }
-            }
+                Data1D partialIJ = unweightedSQ.constPartial(i, j);
+                Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
+                combinedRho.at(globalI, globalJ) += rho * factor;
+                combinedFactor.at(globalI, globalJ) += factor;
+                combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i, j);
+            });
         }
 
         // Normalise the combined values
@@ -867,6 +863,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
 
     // Realise the phiMag array and make sure its object name is set
+
     Data1D &phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_,
                                                           GenericItem::InRestartFileFlag);
     phiArray.setObjectTag(CharString("%s//PhiMag", uniqueName_.get()));

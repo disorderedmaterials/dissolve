@@ -29,6 +29,7 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
+#include <algorithm>
 
 AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
@@ -55,7 +56,7 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, 
  */
 
 // Selection list update function
-void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType *atomType, bool createItem)
+void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType &atomType, bool createItem)
 {
     // Grab the target AtomTypeSelection
     AtomTypeList &selection = keyword_->data();
@@ -63,8 +64,16 @@ void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType *atomT
     QListWidgetItem *item;
     if (createItem)
     {
-        item = new QListWidgetItem(atomType->name());
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        auto location =
+            std::find_if(atomTypes_.begin(), atomTypes_.end(), [&atomType](const AtomType &at) { return &at == &atomType; });
+        if (location == atomTypes_.end())
+        {
+            atomTypes_.push_back(atomType);
+            location = std::find_if(atomTypes_.begin(), atomTypes_.end(),
+                                    [&atomType](const AtomType &at) { return &at == &atomType; });
+        }
+        item = new QListWidgetItem(atomType.name());
+        item->setData(Qt::UserRole, QVariant::fromValue(location - atomTypes_.begin()));
         item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         ui.SelectionList->insertItem(row, item);
     }
@@ -116,7 +125,7 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
     {
         QListWidgetItem *item = ui.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)
-            newSelection.add(VariantPointer<AtomType>(item->data(Qt::UserRole)));
+            newSelection.add(atomTypes_[item->data(Qt::UserRole).value<std::vector<AtomType>::difference_type>()]);
     }
     keyword_->setData(newSelection);
 }
@@ -130,15 +139,12 @@ void AtomTypeSelectionKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
     {
-        CharString summaryText;
-        ListIterator<AtomTypeData> atomTypeIterator(selection.types());
-        while (AtomTypeData *atd = atomTypeIterator.iterate())
-        {
-            if (atomTypeIterator.isFirst())
-                summaryText = atd->atomTypeName();
-            else
-                summaryText.strcatf(", %s", atd->atomTypeName());
-        }
+        CharString summaryText =
+            std::accumulate(std::next(selection.begin()), selection.end(), CharString(selection.first().atomTypeName()),
+                            [](CharString &acc, const AtomTypeData &atd) {
+                                acc.strcatf(", %s", atd.atomTypeName());
+                                return acc;
+                            });
         setSummaryText(summaryText);
     }
 }

@@ -22,7 +22,6 @@
 #pragma once
 
 #include "templates/list.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class AtomType;
@@ -34,11 +33,16 @@ class ProcessPool;
 /*
  * AtomTypeData Definition
  */
-class AtomTypeData : public ListItem<AtomTypeData>
+class AtomTypeData
 {
     public:
-    AtomTypeData();
+    AtomTypeData(AtomType &type, double population = 0, double fraction = 0, double boundCoherent = 0, int nIso = 0);
     AtomTypeData(const AtomTypeData &source);
+    // Read data through specified LineParser
+    AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex);
+    // Old Initialise
+    AtomTypeData(int listIndex, AtomType &atomType, double population);
+    // Assignment Operator
     void operator=(const AtomTypeData &source);
 
     /*
@@ -48,7 +52,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
     // List index of AtomTypeData in AtomTypeList
     int listIndex_;
     // Reference AtomType
-    AtomType *atomType_;
+    AtomType &atomType_;
     // Whether the AtomType has been marked as exchangeable
     bool exchangeable_;
     // Isotopes information (if any)
@@ -61,8 +65,6 @@ class AtomTypeData : public ListItem<AtomTypeData>
     double boundCoherent_;
 
     public:
-    // Initialise
-    bool initialise(int listIndex, AtomType *atomType, double population = 0);
     // Add to population
     void add(double nAdd);
     // Add to population of Isotope
@@ -72,7 +74,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
     // Return list index of AtomTypeData in AtomTypeList
     int listIndex() const;
     // Return reference AtomType
-    AtomType *atomType() const;
+    AtomType &atomType() const;
     // Set exchangeable flag
     void setAsExchangeable();
     // Return whether the associated AtomType is exchangeable
@@ -86,7 +88,7 @@ class AtomTypeData : public ListItem<AtomTypeData>
     // Set this AtomType to have only the single Isotope provided
     void setSingleIsotope(Isotope *tope);
     // Return first IsotopeData
-    IsotopeData *isotopeData();
+    IsotopeData *isotopeData() const;
     // Return total population over all isotopes
     int population() const;
     // Return total fractional population including all isotopes
@@ -102,8 +104,6 @@ class AtomTypeData : public ListItem<AtomTypeData>
      * I/O
      */
     public:
-    // Read data through specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 

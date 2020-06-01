@@ -26,6 +26,7 @@
 #include "gui/keywordwidgets/ui_atomtypeselection.h"
 #include "keywords/atomtypeselection.h"
 #include <QWidget>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -46,13 +47,14 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
     private:
     // Associated keyword
     AtomTypeSelectionKeyword *keyword_;
+    std::vector<std::reference_wrapper<AtomType>> atomTypes_;
 
     /*
      * Signals / Slots
      */
     private:
     // Selection list update function
-    void updateSelectionRow(int row, AtomType *atomType, bool createItem);
+    void updateSelectionRow(int row, AtomType &atomType, bool createItem);
 
     private slots:
     // List item changed

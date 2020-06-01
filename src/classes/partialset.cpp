@@ -26,6 +26,7 @@
 #include "classes/configuration.h"
 #include "genericitems/array2dbool.h"
 #include "io/export/data1d.h"
+#include "templates/algorithms.h"
 
 PartialSet::PartialSet() : ListItem<PartialSet>() { fingerprint_ = "NO_FINGERPRINT"; }
 
@@ -79,18 +80,12 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, const char *prefix
 
     // Set up array matrices for partials
     CharString title;
-    AtomTypeData *at1 = atomTypes_.first(), *at2;
-    for (int n = 0; n < nTypes; ++n, at1 = at1->next())
-    {
-        at2 = at1;
-        for (int m = n; m < nTypes; ++m, at2 = at2->next())
-        {
-            title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
-            partials_.at(n, m).setName(title.get());
-            boundPartials_.at(n, m).setName(title.get());
-            unboundPartials_.at(n, m).setName(title.get());
-        }
-    }
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+        title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
+        partials_.at(n, m).setName(title.get());
+        boundPartials_.at(n, m).setName(title.get());
+        unboundPartials_.at(n, m).setName(title.get());
+    });
 
     // Set up array for total
     title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
@@ -212,23 +207,20 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
     total_.values() = 0.0;
 
     int typeI, typeJ;
-    for (typeI = 0; typeI < nTypes; ++typeI)
-    {
-        for (typeJ = typeI; typeJ < nTypes; ++typeJ)
-        {
-            // Calculate weighting factor if requested
-            double factor = 1.0;
-            if (applyConcentrationWeights)
-            {
-                double ci = atomTypes_[typeI]->fraction();
-                double cj = atomTypes_[typeJ]->fraction();
-                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-            }
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+                      // Calculate weighting factor if requested
+                      double factor = 1.0;
+                      if (applyConcentrationWeights)
+                      {
+                          double ci = at1.fraction();
+                          double cj = at2.fraction();
+                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+                      }
 
-            // Add contribution from partials (bound + unbound)
-            total_.values() += partials_.at(typeI, typeJ).values() * factor;
-        }
-    }
+                      // Add contribution from partials (bound + unbound)
+                      total_.values() += partials_.at(typeI, typeJ).values() * factor;
+                  });
 }
 
 // Return total function
@@ -247,26 +239,20 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
     Data1D bound;
     bound.initialise(boundPartials_.constAt(0, 0));
 
-    int typeI, typeJ;
-    AtomTypeData *atd1 = atomTypes_.first();
-    for (typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next())
-    {
-        AtomTypeData *atd2 = atd1;
-        for (typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next())
-        {
-            // Calculate weighting factor if requested
-            double factor = 1.0;
-            if (applyConcentrationWeights)
-            {
-                double ci = atd1->fraction();
-                double cj = atd2->fraction();
-                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-            }
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                      // Calculate weighting factor if requested
+                      double factor = 1.0;
+                      if (applyConcentrationWeights)
+                      {
+                          double ci = atd1.fraction();
+                          double cj = atd2.fraction();
+                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+                      }
 
-            // Add contribution
-            bound.values() += boundPartials_.constAt(typeI, typeJ).values() * factor;
-        }
-    }
+                      // Add contribution
+                      bound.values() += boundPartials_.constAt(typeI, typeJ).values() * factor;
+                  });
 
     return bound;
 }
@@ -281,26 +267,20 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
     Data1D unbound;
     unbound.initialise(boundPartials_.constAt(0, 0));
 
-    int typeI, typeJ;
-    AtomTypeData *atd1 = atomTypes_.first();
-    for (typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next())
-    {
-        AtomTypeData *atd2 = atd1;
-        for (typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next())
-        {
-            // Calculate weighting factor if requested
-            double factor = 1.0;
-            if (applyConcentrationWeights)
-            {
-                double ci = atd1->fraction();
-                double cj = atd2->fraction();
-                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-            }
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                      // Calculate weighting factor if requested
+                      double factor = 1.0;
+                      if (applyConcentrationWeights)
+                      {
+                          double ci = atd1.fraction();
+                          double cj = atd2.fraction();
+                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+                      }
 
-            // Add contribution
-            unbound.values() += unboundPartials_.constAt(typeI, typeJ).values() * factor;
-        }
-    }
+                      // Add contribution
+                      unbound.values() += unboundPartials_.constAt(typeI, typeJ).values() * factor;
+                  });
 
     return unbound;
 }
@@ -353,25 +333,18 @@ void PartialSet::setObjectTags(const char *prefix, const char *suffix)
 
     objectNamePrefix_ = prefix;
 
-    int typeI, typeJ;
-    int nTypes = atomTypes_.nItems();
-    AtomTypeData *at1 = atomTypes_.first(), *at2;
-    for (typeI = 0; typeI < nTypes; ++typeI, at1 = at1->next())
-    {
-        at2 = at1;
-        for (typeJ = typeI; typeJ < nTypes; ++typeJ, at2 = at2->next())
-        {
-            partials_.at(typeI, typeJ)
-                .setObjectTag(
-                    CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-            boundPartials_.at(typeI, typeJ)
-                .setObjectTag(
-                    CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-            unboundPartials_.at(typeI, typeJ)
-                .setObjectTag(
-                    CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-        }
-    }
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+                      partials_.at(typeI, typeJ)
+                          .setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1.atomTypeName(), at2.atomTypeName(),
+                                                   actualSuffix.get()));
+                      boundPartials_.at(typeI, typeJ)
+                          .setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1.atomTypeName(), at2.atomTypeName(),
+                                                   actualSuffix.get()));
+                      unboundPartials_.at(typeI, typeJ)
+                          .setObjectTag(CharString("%s//%s-%s//Unbound%s", prefix, at1.atomTypeName(), at2.atomTypeName(),
+                                                   actualSuffix.get()));
+                  });
 
     total_.setObjectTag(CharString("%s//Total%s", prefix, actualSuffix.get()));
 }
@@ -386,18 +359,13 @@ void PartialSet::setFileNames(const char *prefix, const char *tag, const char *s
 
     // Set titles for partials
     CharString title;
-    AtomTypeData *at1 = atomTypes_.first(), *at2;
-    for (int n = 0; n < nTypes; ++n, at1 = at1->next())
-    {
-        at2 = at1;
-        for (int m = n; m < nTypes; ++m, at2 = at2->next())
-        {
-            title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
-            partials_.at(n, m).setName(title.get());
-            boundPartials_.at(n, m).setName(title.get());
-            unboundPartials_.at(n, m).setName(title.get());
-        }
-    }
+    int n = 0, m = 0;
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+        title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
+        partials_.at(n, m).setName(title.get());
+        boundPartials_.at(n, m).setName(title.get());
+        unboundPartials_.at(n, m).setName(title.get());
+    });
 
     // Set up array for total
     title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
@@ -411,20 +379,13 @@ void PartialSet::setFileNames(const char *prefix, const char *tag, const char *s
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    int n, m;
     int nTypes = atomTypes_.nItems();
 
-    AtomTypeData *at1 = atomTypes_.first(), *at2;
-    for (n = 0; n < nTypes; ++n, at1 = at1->next())
-    {
-        at2 = at1;
-        for (m = n; m < nTypes; ++m, at2 = at2->next())
-        {
-            partials_.at(n, m).values() += delta;
-            boundPartials_.at(n, m).values() += delta;
-            unboundPartials_.at(n, m).values() += delta;
-        }
-    }
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+        partials_.at(n, m).values() += delta;
+        boundPartials_.at(n, m).values() += delta;
+        unboundPartials_.at(n, m).values() += delta;
+    });
 
     total_.values() += delta;
 }
@@ -432,28 +393,20 @@ void PartialSet::adjust(double delta)
 // Form partials from stored Histogram data
 void PartialSet::formPartials(double boxVolume)
 {
-    int n, m;
     int nTypes = atomTypes_.nItems();
 
-    AtomTypeData *at1 = atomTypes_.first(), *at2;
-    for (n = 0; n < nTypes; ++n, at1 = at1->next())
-    {
-        at2 = at1;
-        for (m = n; m < nTypes; ++m, at2 = at2->next())
-        {
-            // Calculate RDFs from histogram data
-            calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(),
-                         at1 == at2 ? 2.0 : 1.0);
-            calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(),
-                         at1 == at2 ? 2.0 : 1.0);
-            calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(),
-                         at2->population(), at1 == at2 ? 2.0 : 1.0);
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
+        // Calculate RDFs from histogram data
+        calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
+                     &at1 == &at2 ? 2.0 : 1.0);
+        calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
+                     &at1 == &at2 ? 2.0 : 1.0);
+        calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
+                     &at1 == &at2 ? 2.0 : 1.0);
 
-            // Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that
-            // type)
-            emptyBoundPartials_.at(n, m) = boundHistograms_.at(n, m).nBinned() == 0;
-        }
-    }
+        // Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that type)
+        emptyBoundPartials_.at(n, m) = boundHistograms_.at(n, m).nBinned() == 0;
+    });
 }
 
 // Add in partials from source PartialSet to our own
@@ -465,23 +418,23 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     int sourceNTypes = source.atomTypes_.nItems();
     for (typeI = 0; typeI < sourceNTypes; ++typeI)
     {
-        AtomType *atI = source.atomTypes_.atomType(typeI);
+        AtomType &atI = source.atomTypes_.atomType(typeI);
         localI = atomTypes_.indexOf(atI);
         if (localI == -1)
         {
             Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                             atI->name());
+                             atI.name());
             return false;
         }
 
         for (typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
         {
-            AtomType *atJ = source.atomTypes_.atomType(typeJ);
+            auto &atJ = source.atomTypes_.atomType(typeJ);
             localJ = atomTypes_.indexOf(atJ);
             if (localJ == -1)
             {
                 Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ->name());
+                                 atJ.name());
                 return false;
             }
 
@@ -543,45 +496,37 @@ void PartialSet::operator+=(const PartialSet &source)
         return;
     }
 
-    int typeI, typeJ, localI, localJ;
     int sourceNTypes = source.atomTypes_.nItems();
 
     // Loop over partials in source set
-    AtomTypeData *atd1 = source.atomTypes().first();
-    for (typeI = 0; typeI < sourceNTypes; ++typeI, atd1 = atd1->next())
-    {
-        AtomType *atI = atd1->atomType();
-        localI = atomTypes_.indexOf(atI);
+    const auto &types = source.atomTypes();
+    for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+        AtomType &atI = atd1.atomType();
+        AtomType &atJ = atd2.atomType();
+        int localI = atomTypes_.indexOf(atI);
+        int localJ = atomTypes_.indexOf(atJ);
         if (localI == -1)
         {
             Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                             atI->name());
+                             atI.name());
+            return;
+        }
+        if (localJ == -1)
+        {
+            Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+                             atJ.name());
             return;
         }
 
-        AtomTypeData *atd2 = atd1;
-        for (typeJ = typeI; typeJ < sourceNTypes; ++typeJ, atd2 = atd2->next())
-        {
-            AtomType *atJ = atd2->atomType();
-            localJ = atomTypes_.indexOf(atJ);
-            if (localJ == -1)
-            {
-                Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ->name());
-                return;
-            }
+        // Add interpolated source partials to our set
+        Interpolator::addInterpolated(partials_.at(localI, localJ), source.constPartial(typeI, typeJ));
+        Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.constBoundPartial(typeI, typeJ));
+        Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.constUnboundPartial(typeI, typeJ));
 
-            // Add interpolated source partials to our set
-            Interpolator::addInterpolated(partials_.at(localI, localJ), source.constPartial(typeI, typeJ));
-            Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.constBoundPartial(typeI, typeJ));
-            Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.constUnboundPartial(typeI, typeJ));
-
-            // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
-            // correctly
-            if (!source.isBoundPartialEmpty(typeI, typeJ))
-                emptyBoundPartials_.at(typeI, typeJ) = false;
-        }
-    }
+        // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
+        if (!source.isBoundPartialEmpty(typeI, typeJ))
+            emptyBoundPartials_.at(typeI, typeJ) = false;
+    });
 
     // Add total function
     Interpolator::addInterpolated(total_, source.constTotal());

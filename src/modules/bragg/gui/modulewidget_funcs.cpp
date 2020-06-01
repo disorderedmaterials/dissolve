@@ -26,6 +26,7 @@
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/modulewidget.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
 BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : ModuleWidget(parent), module_(module)
@@ -148,20 +149,14 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         return;
 
     CharString blockData;
-    const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
-    int n = 0;
-    for (AtomTypeData *atd1 = cfgTypes.first(); atd1 != NULL; atd1 = atd1->next(), ++n)
-    {
-        int m = n;
-        for (AtomTypeData *atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++m)
-        {
-            CharString id("%s-%s", atd1->atomTypeName(), atd2->atomTypeName());
+    auto &types = currentConfiguration_->usedAtomTypesList();
+    for_each_pair(types.begin(), types.end(), [&](int n, const AtomTypeData &atd1, int m, const AtomTypeData &atd2) {
+        CharString id("%s-%s", atd1.atomTypeName(), atd2.atomTypeName());
 
-            // Original S(Q)
-            Renderable *originalSQ = reflectionsGraph_->createRenderable(
-                Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()),
-                CharString("Full//%s", id.get()), "Full");
-        }
-    }
+        // Original S(Q)
+        Renderable *originalSQ = reflectionsGraph_->createRenderable(
+            Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()),
+            CharString("Full//%s", id.get()), "Full");
+    });
     reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
 }

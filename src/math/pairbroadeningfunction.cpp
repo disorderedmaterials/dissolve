@@ -276,7 +276,7 @@ CharString PairBroadeningFunction::summary() const
 }
 
 // Return a BroadeningFunction tailored to the specified AtomType pair, using intramolecular data if required
-BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, AtomType *at2, SpeciesIntra *intra)
+BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType &at1, AtomType &at2, SpeciesIntra *intra)
 {
     BroadeningFunction result;
 
@@ -290,10 +290,10 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
             // If this matrix value has never been used/read, set the flag now
-            if (!elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()))
-                elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()) = true;
+            if (!elementPairGaussianFlags_.at(at1.element()->Z(), at2.element()->Z()))
+                elementPairGaussianFlags_.at(at1.element()->Z(), at2.element()->Z()) = true;
             result.set(BroadeningFunction::GaussianFunction,
-                       elementPairGaussianFWHM_.at(at1->element()->Z(), at2->element()->Z()));
+                       elementPairGaussianFWHM_.at(at1.element()->Z(), at2.element()->Z()));
             break;
         case (PairBroadeningFunction::FrequencyFunction):
             // Broadening based on fundamental frequency of interaction - requires SpeciesIntra
@@ -311,8 +311,8 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
                 else
                 {
                     // Bond or an angle, so calculate the fundamental frequency
-                    printf("NEWBROAD : %s %s\n", at1->name(), at2->name());
-                    double v = intra->fundamentalFrequency(AtomicMass::reducedMass(at1->element(), at2->element()));
+                    printf("NEWBROAD : %s %s\n", at1.name(), at2.name());
+                    double v = intra->fundamentalFrequency(AtomicMass::reducedMass(at1.element(), at2.element()));
 
                     // Convert to cm-1?
                     double wno = v / (SPEEDOFLIGHT * 100.0);
@@ -328,9 +328,9 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType *at1, Ato
             // POSSIBLE USE AS FUNCTION FOR ELEMENT/ATOMTYPE-DEPENDENT BROADENING?
             // 		case (PairBroadeningFunction::GaussianElementFunction):
             // 			// Calculate reduced mass (store in parameters_[1])
-            // 			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) *
-            // AtomicMass::mass(at2->element())) / (AtomicMass::mass(at1->element()) +
-            // AtomicMass::mass(at2->element())));
+            // 			parameters_[1] = sqrt((AtomicMass::mass(at1.element()) *
+            // AtomicMass::mass(at2.element())) / (AtomicMass::mass(at1.element()) +
+            // AtomicMass::mass(at2.element())));
             //
             // 			// Calculate final broadening
             // 			parameters_[0] = 1.0 / (2.0 * sqrt(2.0) * parameters_[1]);

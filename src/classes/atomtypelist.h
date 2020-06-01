@@ -22,13 +22,16 @@
 #pragma once
 
 #include "classes/atomtypedata.h"
+#include "classes/coredata.h"
 #include "genericitems/base.h"
-#include "templates/list.h"
+#include <tuple>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
-class CoreData;
 class Isotope;
+
+template <class T> using optional = std::tuple<T, bool>;
 
 // AtomTypeList
 class AtomTypeList : public GenericItemBase
@@ -38,15 +41,14 @@ class AtomTypeList : public GenericItemBase
     ~AtomTypeList();
     AtomTypeList(const AtomTypeList &source);
     void operator=(const AtomTypeList &source);
-    // Array access operator
-    AtomTypeData *operator[](int n);
+    AtomTypeData &operator[](unsigned int n);
 
     /*
      * Type List
      */
     private:
     // List of AtomTypeData
-    List<AtomTypeData> types_;
+    std::vector<AtomTypeData> types_;
 
     public:
     // Clear all data
@@ -54,13 +56,13 @@ class AtomTypeList : public GenericItemBase
     // Zero populations of all types in the list
     void zero();
     // Add the specified AtomType to the list, returning the AtomTypeData
-    AtomTypeData *add(AtomType *atomType, double popAdd = 0);
+    AtomTypeData &add(AtomType &atomType, double popAdd = 0);
     // Add the AtomTypes in the supplied list into this one, increasing populations etc.
     void add(const AtomTypeList &source);
     // Remove specified AtomType from the list
-    void remove(AtomType *atomType);
+    void remove(AtomType &atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-    void addIsotope(AtomType *atomType, Isotope *tope = NULL, double popAdd = 0);
+    void addIsotope(AtomType &atomType, Isotope *tope = NULL, double popAdd = 0);
     // Finalise list, calculating fractional populations etc.
     void finalise();
     // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
@@ -68,25 +70,27 @@ class AtomTypeList : public GenericItemBase
     // Make all AtomTypeData in the list reference only their natural isotope
     void naturalise();
     // Check for presence of AtomType in list
-    bool contains(AtomType *atomType) const;
+    bool contains(AtomType &atomType) const;
     // Check for presence of AtomType/Isotope pair in list
-    bool contains(AtomType *atomType, Isotope *tope);
+    bool contains(AtomType &atomType, Isotope *tope);
     // Return number of AtomType/Isotopes in list
     int nItems() const;
     // Return first item in list
-    AtomTypeData *first() const;
-    // Return types list
-    const List<AtomTypeData> &types() const;
+    const AtomTypeData &first() const;
+    // Return opening iterator
+    std::vector<AtomTypeData>::const_iterator begin() const;
+    // Return opening iterator
+    std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType in list
-    int indexOf(AtomType *atomtype) const;
+    int indexOf(AtomType &atomtype) const;
     // Return index of names AtomType in list
     int indexOf(const char *name) const;
     // Return total population of all types in list
     double totalPopulation() const;
     // Return nth referenced AtomType
-    AtomType *atomType(int n);
+    AtomType &atomType(int n);
     // Return AtomTypeData for specified AtomType
-    AtomTypeData *atomTypeData(AtomType *atomType);
+    optional<const AtomTypeData &> atomTypeData(AtomType &atomType);
     // Print AtomType populations
     void print() const;
 
