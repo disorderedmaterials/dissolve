@@ -327,9 +327,8 @@ bool ProcessPool::assignProcessesToGroups()
      * Afterwards, an MPI communicator is constructed for each group.
      */
 #ifdef PARALLEL
-    auto baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
-    auto remainder = worldRanks_.nItems() % maxProcessGroups_;
-    ProcessGroup *group;
+    int baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
+    int remainder = worldRanks_.nItems() % maxProcessGroups_;
     CharString rankString;
     for (int n = 0; n < maxProcessGroups_; ++n)
     {
@@ -664,7 +663,7 @@ int ProcessPool::twoBodyLoopStart(int nItems) const
 
     // Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
     double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
-    auto startAtom = 0, finishAtom = -1;
+    int startAtom = 0, finishAtom = -1;
 
     // Loop over processes
     for (int process = 0; process < worldRanks_.nItems(); ++process)
@@ -821,7 +820,7 @@ bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-    auto data = value;
+    int data = value;
     if (MPI_Send(&data, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
@@ -1133,7 +1132,7 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-    auto result = source;
+    bool result = source;
     if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
@@ -2032,7 +2031,7 @@ bool ProcessPool::assemble(Array<double> &array, int nData, Array<double> &rootD
 bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    auto decision = true;
+    bool decision = true;
     if (!broadcast(decision, rootRank, commType))
         return Messenger::error("Error telling processes to proceed.\n");
 #endif
@@ -2043,7 +2042,7 @@ bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commTyp
 bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    auto decision = false;
+    bool decision = false;
     if (!broadcast(decision, rootRank, commType))
         return Messenger::error("Error telling processes to stop.\n");
 #endif
@@ -2067,7 +2066,7 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
-    auto summedResult = (value ? 1 : 0);
+    int summedResult = (value ? 1 : 0);
     if (!allSum(&summedResult, 1, commType))
         return false;
     if (commType == ProcessPool::GroupLeadersCommunicator)
@@ -2087,7 +2086,7 @@ bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
-    auto summedResult = (b ? 1 : 0);
+    int summedResult = (b ? 1 : 0);
     if (!allSum(&summedResult, 1, commType))
         return false;
     // Now check the sum - if it's zero, then everything must have been 'false'.
