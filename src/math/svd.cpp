@@ -137,7 +137,7 @@ bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double
                     U.at(i, k) *= scale;
             }
         }
-        anorm = max(anorm, (fabs(S.constAt(i, i)) + fabs(rv1[i])));
+        anorm = std::max(anorm, (fabs(S.constAt(i, i)) + fabs(rv1[i])));
     }
 
     // Accumulate right-hand transformation

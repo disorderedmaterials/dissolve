@@ -89,7 +89,7 @@ class AtomTypeList : public GenericItemBase
     // Return nth referenced AtomType
     AtomType &atomType(int n);
     // Return AtomTypeData for specified AtomType
-    optional<std::reference_wrapper<const AtomTypeData>> atomTypeData(AtomType &atomType);
+    std::optional<std::reference_wrapper<const AtomTypeData>> atomTypeData(AtomType &atomType);
     // Print AtomType populations
     void print() const;
 

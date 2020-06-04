@@ -219,7 +219,7 @@ class Forcefield : public Elements
 };
 
 template <class T, typename... Args>
-optional<std::reference_wrapper<const T>> Forcefield::termMatch_(std::vector<T> container, Args... args)
+std::optional<std::reference_wrapper<const T>> Forcefield::termMatch_(std::vector<T> container, Args... args)
 {
     auto it = std::find_if(container.begin(), container.end(), [&](const T &item) { return item.isMatch(args...); });
     if (it == container.end())
