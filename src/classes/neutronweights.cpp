@@ -77,7 +77,7 @@ void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 {
     // Does an Isotopologues definition already exist for the supplied Species?
     auto it = std::find_if(isotopologueMixtures_.begin(), isotopologueMixtures_.end(),
-                           [sp](Isotopologues &data) { return data.species() == sp; });
+                           [sp](auto &data) { return data.species() == sp; });
 
     if (it == isotopologueMixtures_.end())
     {

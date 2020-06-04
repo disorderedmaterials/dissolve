@@ -70,8 +70,8 @@ void AtomTypeList::zero()
 AtomTypeData &AtomTypeList::add(AtomType &atomType, double population)
 {
     // Search the list for the AtomType provided.
-    auto atd = std::find_if(types_.begin(), types_.end(),
-                            [&atomType](const AtomTypeData &data) { return &data.atomType() == &atomType; });
+    auto atd =
+        std::find_if(types_.begin(), types_.end(), [&atomType](const auto &data) { return &data.atomType() == &atomType; });
 
     // Return the entry if we found it
     if (atd != types_.end())
@@ -102,8 +102,8 @@ void AtomTypeList::add(const AtomTypeList &source)
 // Remove specified AtomType from the list
 void AtomTypeList::remove(AtomType &atomType)
 {
-    types_.erase(std::remove_if(types_.begin(), types_.end(),
-                                [&atomType](const AtomTypeData &atd) { return &atd.atomType() == &atomType; }));
+    types_.erase(
+        std::remove_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return &atd.atomType() == &atomType; }));
 }
 
 // Add/increase this AtomType/Isotope pair
@@ -255,8 +255,7 @@ AtomType &AtomTypeList::atomType(int n)
 // Return AtomTypeData for specified AtomType
 std::optional<std::reference_wrapper<const AtomTypeData>> AtomTypeList::atomTypeData(AtomType &atomType)
 {
-    auto it = std::find_if(types_.begin(), types_.end(),
-                           [&atomType](const AtomTypeData &atd) { return &atomType == &atd.atomType(); });
+    auto it = std::find_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return &atomType == &atd.atomType(); });
     if (it == types_.end())
         return {};
     return *it;

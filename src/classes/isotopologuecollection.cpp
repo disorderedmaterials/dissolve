@@ -39,7 +39,7 @@ IsotopologueCollection::~IsotopologueCollection() {}
 void IsotopologueCollection::pruneEmptySets()
 {
     isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-                                           [](IsotopologueSet &set) { return set.nIsotopologues() == 0; }),
+                                           [](const auto &set) { return set.nIsotopologues() == 0; }),
                             isotopologueSets_.end());
 }
 
@@ -51,7 +51,7 @@ void IsotopologueCollection::add(Configuration *cfg, Isotopologue *iso, double r
 {
     // Check if a set already exists for this Configuration
     auto it = std::find_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-                           [cfg](IsotopologueSet &set) { return set.configuration() == cfg; });
+                           [cfg](const auto &set) { return set.configuration() == cfg; });
 
     if (it == isotopologueSets_.end())
     {
@@ -65,16 +65,16 @@ void IsotopologueCollection::add(Configuration *cfg, Isotopologue *iso, double r
 // Remove the specified set from the collection
 void IsotopologueCollection::remove(IsotopologueSet *set)
 {
-    isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-                                           [set](IsotopologueSet &data) { return &data == set; }),
-                            isotopologueSets_.end());
+    isotopologueSets_.erase(
+        std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(), [set](const auto &data) { return &data == set; }),
+        isotopologueSets_.end());
 }
 
 // Remove the Configuration from the collection
 void IsotopologueCollection::remove(Configuration *cfg)
 {
     isotopologueSets_.erase(std::remove_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-                                           [cfg](IsotopologueSet &set) { return set.configuration() == cfg; }),
+                                           [cfg](const auto &set) { return set.configuration() == cfg; }),
                             isotopologueSets_.end());
 }
 
@@ -129,7 +129,7 @@ bool IsotopologueCollection::contains(const Configuration *cfg) const
 std::optional<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(const Configuration *cfg) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
-                           [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
+                           [cfg](const auto &set) { return set.configuration() == cfg; });
     if (it == isotopologueSets_.end())
         return {};
 
@@ -140,7 +140,7 @@ std::optional<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(
 bool IsotopologueCollection::contains(const Configuration *cfg, const Species *sp) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
-                           [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
+                           [cfg](const auto &set) { return set.configuration() == cfg; });
 
     return (it != isotopologueSets_.end() ? it->contains(sp) : false);
 }
@@ -149,7 +149,7 @@ bool IsotopologueCollection::contains(const Configuration *cfg, const Species *s
 std::optional<const Isotopologues> IsotopologueCollection::getIsotopologues(const Configuration *cfg, const Species *sp) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
-                           [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
+                           [cfg](const auto &set) { return set.configuration() == cfg; });
 
     if (it != isotopologueSets_.end())
         return it->getIsotopologues(sp);
@@ -164,7 +164,7 @@ void IsotopologueCollection::complete(const RefList<Configuration> &configuratio
     {
         // Retrieve / create a set for this Configuration
         auto it = std::find_if(isotopologueSets_.begin(), isotopologueSets_.end(),
-                               [cfg](IsotopologueSet &set) { return set.configuration() == cfg; });
+                               [cfg](const auto &set) { return set.configuration() == cfg; });
 
         IsotopologueSet *setForCfg = nullptr;
         if (it == isotopologueSets_.end())

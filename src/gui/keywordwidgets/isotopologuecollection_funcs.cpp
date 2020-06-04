@@ -168,7 +168,11 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
         auto data = set->getIsotopologues(sp);
 
         // TODO Raise exception if isotopologue set not found
-        auto &topes = std::get<0>(data);
+        if (!data)
+        {
+            Messenger::error("IsotopologueSet does not contain Species.\n");
+        }
+        auto &topes = *data;
 
         // Natural first
         if (!topes.contains(sp->naturalIsotopologue()))
