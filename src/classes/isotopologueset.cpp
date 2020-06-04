@@ -125,7 +125,7 @@ bool IsotopologueSet::contains(const Species *sp) const
 }
 
 // Return IsotopologueSet for the specified Species
-optional<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *sp) const
+std::optional<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *sp) const
 {
     auto it =
         std::find_if(isotopologues_.cbegin(), isotopologues_.cend(), [sp](const auto &data) { return data.species() == sp; });

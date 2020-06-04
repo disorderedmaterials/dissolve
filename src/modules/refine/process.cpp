@@ -461,9 +461,9 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // simulated datasets
                 double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
                 if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xAxis().firstValue()))
-                    deltaSQMin = max(x1.firstValue(), simulatedSQ.xAxis().firstValue());
+                    deltaSQMin = std::max(x1.firstValue(), simulatedSQ.xAxis().firstValue());
                 if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xAxis().lastValue()))
-                    deltaSQMax = min(x1.lastValue(), simulatedSQ.xAxis().lastValue());
+                    deltaSQMax = std::min(x1.lastValue(), simulatedSQ.xAxis().lastValue());
 
                 Data1D refSQTrimmed;
                 double x;
