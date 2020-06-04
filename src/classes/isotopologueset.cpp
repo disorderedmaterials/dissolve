@@ -129,8 +129,10 @@ optional<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *s
 {
     auto it = std::find_if(isotopologues_.cbegin(), isotopologues_.cend(),
                            [sp](const Isotopologues &data) { return data.species() == sp; });
+    if (it == isotopologues_.end())
+        return {};
 
-    return std::make_tuple(*it, it == isotopologues_.end());
+    return *it;
 }
 
 // Return number of Isotopologues defined

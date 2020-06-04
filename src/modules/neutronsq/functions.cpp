@@ -116,7 +116,7 @@ bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) cons
 
             // Use the natural isotopologue if a species in the Configuration is not covered by at least one
             // explicit Isotopologue definition
-            if (std::get<1>(data))
+            if (!data)
             {
                 Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is "
                                  "missing, so the natural isotopologue will be used.\n",
@@ -127,7 +127,7 @@ bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) cons
             }
             else
             {
-                const auto &topes = std::get<0>(data);
+                const Isotopologues &topes = *data;
 
                 // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
                 for (auto isoWeight : topes.constMix())

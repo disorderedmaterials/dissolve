@@ -66,7 +66,7 @@ namespace XRayFormFactors
 {
 
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
-optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
+std::optional<std::reference_wrapper<const FormFactorData>> wk1995Data(int Z, int formalCharge)
 {
     /*
      * New Analytical Scattering Factor Functions for Free Atoms and Ions
@@ -1149,7 +1149,9 @@ optional<const FormFactorData &> wk1995Data(int Z, int formalCharge)
     auto it = std::find_if(wk1995.cbegin(), wk1995.cend(), [&](const FormFactorData_WK1995 &data) {
         return data.Z() == Z && data.formalCharge() == formalCharge;
     });
-    return std::make_tuple(std::ref(*it), it == wk1995.end());
+    if (it == wk1995.end())
+        return {};
+    return *it;
 }
 
 } // namespace XRayFormFactors

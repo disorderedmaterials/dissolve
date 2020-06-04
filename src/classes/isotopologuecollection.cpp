@@ -126,12 +126,14 @@ bool IsotopologueCollection::contains(const Configuration *cfg) const
 }
 
 // Return IsotopologueSet for the specified Configuration
-optional<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(const Configuration *cfg) const
+std::optional<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(const Configuration *cfg) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
                            [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
+    if (it == isotopologueSets_.end())
+        return {};
 
-    return std::make_tuple(*it, it == isotopologueSets_.end());
+    return *it;
 }
 
 // Return whether the Species has a defined set of isotopologues in the specified Configuration
@@ -144,7 +146,7 @@ bool IsotopologueCollection::contains(const Configuration *cfg, const Species *s
 }
 
 // Return Isotopologues for the Species in the specified Configuration
-optional<const Isotopologues> IsotopologueCollection::getIsotopologues(const Configuration *cfg, const Species *sp) const
+std::optional<const Isotopologues> IsotopologueCollection::getIsotopologues(const Configuration *cfg, const Species *sp) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
                            [cfg](const IsotopologueSet &set) { return set.configuration() == cfg; });
@@ -152,8 +154,7 @@ optional<const Isotopologues> IsotopologueCollection::getIsotopologues(const Con
     if (it != isotopologueSets_.end())
         return it->getIsotopologues(sp);
 
-    static const Isotopologues dummyTopes;
-    return std::make_tuple(dummyTopes, true);
+    return {};
 }
 
 // Complete the collection by making sure it contains every Species in every Configuration in the supplied list

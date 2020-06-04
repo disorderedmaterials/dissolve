@@ -21,6 +21,8 @@
 
 #include "data/formfactors.h"
 #include "data/formfactors_dummy.h"
+#include <functional>
+#include <optional>
 
 namespace XRayFormFactors
 {
@@ -38,7 +40,7 @@ EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
+std::optional<std::reference_wrapper<const FormFactorData>> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
 {
     switch (dataSet)
     {
@@ -48,12 +50,12 @@ optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int 
             Messenger::error("Form factor data set type %i not recognised.\n");
     }
 
-    static const FormFactorData_Dummy dummyData;
-    return std::make_tuple(dummyData, true);
+    return {};
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge)
+std::optional<std::reference_wrapper<const FormFactorData>> formFactorData(XRayFormFactorData dataSet, Element *el,
+                                                                           int formalCharge)
 {
     return formFactorData(dataSet, el->Z(), formalCharge);
 }

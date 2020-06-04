@@ -253,14 +253,13 @@ AtomType &AtomTypeList::atomType(int n)
 }
 
 // Return AtomTypeData for specified AtomType
-optional<const AtomTypeData &> AtomTypeList::atomTypeData(AtomType &atomType)
+std::optional<std::reference_wrapper<const AtomTypeData>> AtomTypeList::atomTypeData(AtomType &atomType)
 {
     auto it = std::find_if(types_.begin(), types_.end(),
                            [&atomType](const AtomTypeData &atd) { return &atomType == &atd.atomType(); });
-    bool found = false;
-    if (it != types_.end())
-        found = true;
-    return std::make_tuple(*it, found);
+    if (it == types_.end())
+        return {};
+    return *it;
 }
 
 // Print AtomType populations
