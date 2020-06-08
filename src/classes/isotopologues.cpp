@@ -193,7 +193,7 @@ void Isotopologues::normalise()
 const char *Isotopologues::itemClassName() { return "Isotopologues"; }
 
 // Read data through specified LineParser
-bool Isotopologues::read(LineParser &parser, const CoreData &coreData)
+bool Isotopologues::read(LineParser &parser, CoreData &coreData)
 {
     // Read Species name
     if (parser.getArgsDelim() != LineParser::Success)

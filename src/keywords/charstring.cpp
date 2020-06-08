@@ -38,7 +38,7 @@ int CharStringKeyword::minArguments() const { return 1; }
 int CharStringKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool CharStringKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool CharStringKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {

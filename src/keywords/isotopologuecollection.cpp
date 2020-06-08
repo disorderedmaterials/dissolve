@@ -52,7 +52,7 @@ int IsotopologueCollectionKeyword::minArguments() const { return 4; }
 int IsotopologueCollectionKeyword::maxArguments() const { return 4; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IsotopologueCollectionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool IsotopologueCollectionKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Find target Configuration (first argument)
     Configuration *cfg = coreData.findConfiguration(parser.argc(startArg));

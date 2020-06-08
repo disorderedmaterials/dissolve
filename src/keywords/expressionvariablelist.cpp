@@ -67,7 +67,7 @@ int ExpressionVariableListKeyword::minArguments() const { return 2; }
 int ExpressionVariableListKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableList data.\n");

@@ -229,7 +229,7 @@ void Histogram2D::operator=(const Histogram2D &source)
 const char *Histogram2D::itemClassName() { return "Histogram2D"; }
 
 // Read data through specified LineParser
-bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
+bool Histogram2D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

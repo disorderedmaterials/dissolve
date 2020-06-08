@@ -245,7 +245,7 @@ void KeywordList::hasBeenSet(const char *name)
  */
 
 // Try to parse node keyword in specified LineParser
-KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &coreData)
+KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreData)
 {
     // Do we recognise the first item (the 'keyword')?
     KeywordBase *keyword = find(parser.argc(0));

@@ -629,7 +629,7 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
 const char *BroadeningFunction::itemClassName() { return "BroadeningFunction"; }
 
 // Read data through specified LineParser
-bool BroadeningFunction::read(LineParser &parser, const CoreData &coreData)
+bool BroadeningFunction::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

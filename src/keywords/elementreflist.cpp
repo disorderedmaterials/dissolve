@@ -41,7 +41,7 @@ int ElementRefListKeyword::minArguments() const { return 1; }
 int ElementRefListKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ElementRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ElementRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments (which are Element names) and add them to our list
     for (int n = startArg; n < parser.nArgs(); ++n)

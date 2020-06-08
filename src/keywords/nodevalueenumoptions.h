@@ -101,7 +101,7 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     // Return maximum number of arguments accepted
     int maxArguments() const { return 2; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         // Check that the parent node has been set
         if (!parentNode_)

@@ -352,7 +352,7 @@ bool NeutronWeights::isValid() const { return valid_; }
 const char *NeutronWeights::itemClassName() { return "NeutronWeights"; }
 
 // Read data through specified LineParser
-bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
+bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

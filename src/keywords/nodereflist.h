@@ -91,7 +91,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
     // Return maximum number of arguments accepted
     int maxArguments() const { return 99; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",

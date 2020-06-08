@@ -108,7 +108,7 @@ class FileAndFormat
      */
     public:
     // Read format / filename from specified parser
-    bool read(LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
+    bool read(LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData);
     // Write format / filename to specified parser
     bool writeFilenameAndFormat(LineParser &parser, const char *prefix);
     // Write options and end block
