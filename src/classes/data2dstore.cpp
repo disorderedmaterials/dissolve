@@ -32,8 +32,7 @@ Data2DStore::~Data2DStore() {}
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword,
-                          CoreData &coreData)
+bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData)
 {
     // Create new data
     Data2D *data = data_.add();

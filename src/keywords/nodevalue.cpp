@@ -42,10 +42,7 @@ int NodeValueKeyword::minArguments() const { return 1; }
 int NodeValueKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
-{
-    return setValue(parser.argc(startArg));
-}
+bool NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &coreData) { return setValue(parser.argc(startArg)); }
 
 // Write keyword data to specified LineParser
 bool NodeValueKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
