@@ -24,8 +24,9 @@
 #include "math/data1d.h"
 #include "templates/array2d.h"
 #include "templates/list.h"
-#include "templates/pair.h"
 #include "templates/reflist.h"
+#include <tuple>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -48,7 +49,7 @@ class ScatteringMatrix
      */
     private:
     // Reference pairs of AtomTypes
-    List<Pair<AtomType *, AtomType *>> typePairs_;
+    std::vector<tuple<AtomType *, AtomType *>> typePairs_;
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
     Array2D<double> A_;
     // Inverse of coefficients matrix

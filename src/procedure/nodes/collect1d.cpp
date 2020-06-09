@@ -132,9 +132,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     histogram_ = &target;
 
     // Retrieve the observable
-    Pair<CalculateProcedureNodeBase *, int> xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
-    xObservable_ = xObs.a();
-    xObservableIndex_ = xObs.b();
+    auto [xObservable_, xObservableIndex_] = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '%s'.\n", name());
 

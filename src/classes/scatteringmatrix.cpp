@@ -33,17 +33,17 @@ ScatteringMatrix::ScatteringMatrix() {}
  */
 
 // Return number of reference AtomType pairs
-int ScatteringMatrix::nPairs() const { return typePairs_.nItems(); }
+int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
 
 // Return index of specified AtomType pair
 int ScatteringMatrix::pairIndex(AtomType *typeI, AtomType *typeJ) const
 {
     int index = 0;
-    for (Pair<AtomType *, AtomType *> *pair = typePairs_.first(); pair != NULL; pair = pair->next())
+    for (auto [i, j] : typePairs_)
     {
-        if ((pair->a() == typeI) && (pair->b() == typeJ))
+        if ((i == typeI) && (j == typeJ))
             return index;
-        if ((pair->a() == typeJ) && (pair->b() == typeI))
+        if ((i == typeJ) && (j == typeI))
             return index;
         ++index;
     }
@@ -69,9 +69,9 @@ void ScatteringMatrix::print() const
     // Write header
     CharString text, line;
     int nColsWritten = 0;
-    for (Pair<AtomType *, AtomType *> *pair = typePairs_.first(); pair != NULL; pair = pair->next())
+    for (auto [i, j] : typePairs_)
     {
-        text.sprintf("%s-%s", pair->a()->name(), pair->b()->name());
+        text.sprintf("%s-%s", i->name(), j->name());
         line.strcatf("%10s ", text.get());
 
         // Limit output to sensible length
@@ -120,9 +120,9 @@ void ScatteringMatrix::printInverse() const
     // Write header
     CharString text, line;
     int nColsWritten = 0;
-    for (Pair<AtomType *, AtomType *> *pair = typePairs_.first(); pair != NULL; pair = pair->next())
+    for (auto [i, j] : typePairs_)
     {
-        text.sprintf("%s-%s", pair->a()->name(), pair->b()->name());
+        text.sprintf("%s-%s", i->name(), j->name());
         line.strcatf("%10s ", text.get());
 
         // Limit output to sensible length
@@ -225,8 +225,7 @@ void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &
     {
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next())
         {
-            Pair<AtomType *, AtomType *> *pair = typePairs_.add();
-            pair->set(at1, at2);
+            typePairs_.emplace_back(at1, at2);
         }
     }
 
@@ -234,11 +233,11 @@ void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &
     estimatedSQ.initialise(types.nItems(), types.nItems(), true);
     Data1D *partials = estimatedSQ.linearArray();
     int index = 0;
-    for (Pair<AtomType *, AtomType *> *pair = typePairs_.first(); pair != NULL; pair = pair->next())
+    for (auto [i, j] : typePairs_)
     {
-        partials[index].setName(CharString("EstimatedSQ-%s-%s-%s.sq", pair->a()->name(), pair->b()->name(), groupName));
+        partials[index].setName(CharString("EstimatedSQ-%s-%s-%s.sq", i->name(), j->name(), groupName));
         partials[index].setObjectTag(
-            CharString("%s//EstimatedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a()->name(), pair->b()->name()));
+            CharString("%s//EstimatedSQ//%s//%s-%s", objectNamePrefix, groupName, i->name(), j->name()));
         ++index;
     }
 }
@@ -270,7 +269,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
         return Messenger::error("Reference data '%s' does not have valid scattering weights.\n", weightedData.name());
 
     // Extend the scattering matrix by one row
-    A_.addRow(typePairs_.nItems());
+    A_.addRow(typePairs_.size());
     const int rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
@@ -306,7 +305,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *a
                                                double factor)
 {
     // Extend the scattering matrix by one row
-    A_.addRow(typePairs_.nItems());
+    A_.addRow(typePairs_.size());
     const int rowIndex = A_.nRows() - 1;
 
     int colIndex = pairIndex(at1, at2);
