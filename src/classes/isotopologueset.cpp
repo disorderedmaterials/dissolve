@@ -152,7 +152,7 @@ const std::vector<Isotopologues> &IsotopologueSet::constIsotopologues() const { 
 const char *IsotopologueSet::itemClassName() { return "IsotopologueSet"; }
 
 // Read data through specified LineParser
-bool IsotopologueSet::read(LineParser &parser, const CoreData &coreData)
+bool IsotopologueSet::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

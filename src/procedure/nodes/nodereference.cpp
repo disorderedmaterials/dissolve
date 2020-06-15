@@ -78,7 +78,7 @@ void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
  */
 
 // Read structure from specified LineParser
-bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreData &coreData, const Procedure *procedure)
+bool ProcedureNodeReference::read(LineParser &parser, int startArg, CoreData &coreData, const Procedure *procedure)
 {
     node_ = NULL;
 

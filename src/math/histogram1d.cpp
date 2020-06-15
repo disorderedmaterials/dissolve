@@ -208,7 +208,7 @@ void Histogram1D::operator=(const Histogram1D &source)
 const char *Histogram1D::itemClassName() { return "Histogram1D"; }
 
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser &parser, const CoreData &coreData)
+bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

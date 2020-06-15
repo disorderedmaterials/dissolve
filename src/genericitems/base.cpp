@@ -32,7 +32,7 @@ bool GenericItemBase::write(LineParser &parser)
 }
 
 // Read data through specified parser
-bool GenericItemBase::read(LineParser &parser, const CoreData &coreData)
+bool GenericItemBase::read(LineParser &parser, CoreData &coreData)
 {
     return Messenger::error("Tried to read() a class that doesn't support it.\n");
 }

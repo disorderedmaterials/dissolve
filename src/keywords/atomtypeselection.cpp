@@ -86,7 +86,7 @@ int AtomTypeSelectionKeyword::minArguments() const { return 1; }
 int AtomTypeSelectionKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Make sure our list is up-to-date
     checkSelection();

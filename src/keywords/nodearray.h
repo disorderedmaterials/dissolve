@@ -121,7 +121,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     // Return maximum number of arguments accepted
     int maxArguments() const { return NodeArrayKeywordBase::isVariableSize() ? 99 : NodeArrayKeywordBase::fixedArraySize(); }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",

@@ -273,7 +273,7 @@ double WindowFunction::y(double x, double omega) const
 const char *WindowFunction::itemClassName() { return "WindowFunction"; }
 
 // Read data through specified LineParser
-bool WindowFunction::read(LineParser &parser, const CoreData &coreData)
+bool WindowFunction::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

@@ -63,7 +63,7 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return write(data_, parser); }
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData) { return read(data_, parser); }
+    bool read(LineParser &parser, CoreData &coreData) { return read(data_, parser); }
     // Write specified data through specified parser
     static bool write(const Array2D<bool> &thisData, LineParser &parser)
     {

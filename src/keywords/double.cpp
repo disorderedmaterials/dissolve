@@ -94,7 +94,7 @@ int DoubleKeyword::minArguments() const { return 1; }
 int DoubleKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool DoubleKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {

@@ -74,7 +74,7 @@ class Procedure
      */
     public:
     // Read procedure from specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool read(LineParser &parser, CoreData &coreData);
     // Write procedure to specified LineParser
     bool write(LineParser &parser, const char *prefix);
 };

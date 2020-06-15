@@ -250,7 +250,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
  */
 
 // Read structure from specified LineParser
-bool Fit1DProcedureNode::read(LineParser &parser, const CoreData &coreData)
+bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
 {
     // The current line in the parser may contain a node name for us
     if (parser.nArgs() == 2)

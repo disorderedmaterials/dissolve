@@ -197,7 +197,7 @@ void IsotopologueCollection::complete(const RefList<Configuration> &configuratio
 const char *IsotopologueCollection::itemClassName() { return "IsotopologueCollection"; }
 
 // Read data through specified LineParser
-bool IsotopologueCollection::read(LineParser &parser, const CoreData &coreData)
+bool IsotopologueCollection::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

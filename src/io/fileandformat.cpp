@@ -127,7 +127,7 @@ KeywordList &FileAndFormat::keywords() { return keywords_; }
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
+bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData)
 {
     // Convert first argument to format type
     format_ = format(parser.argc(startArg));

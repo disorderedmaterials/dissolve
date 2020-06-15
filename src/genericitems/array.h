@@ -78,7 +78,7 @@ template <class T> class GenericItemContainer<Array<T>> : public GenericItem
         return true;
     }
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData)
+    bool read(LineParser &parser, CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;

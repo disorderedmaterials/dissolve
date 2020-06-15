@@ -47,7 +47,7 @@ int RangeKeyword::minArguments() const { return 2; }
 int RangeKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool RangeKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool RangeKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (parser.hasArg(startArg + 1))
     {

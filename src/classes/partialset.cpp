@@ -559,7 +559,7 @@ void PartialSet::operator*=(const double factor)
 const char *PartialSet::itemClassName() { return "PartialSet"; }
 
 // Read data through specified LineParser
-bool PartialSet::read(LineParser &parser, const CoreData &coreData)
+bool PartialSet::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
         return false;

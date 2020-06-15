@@ -96,7 +96,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Return maximum number of arguments accepted
     int maxArguments() const { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData)
+    bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (parser.hasArg(startArg))
         {

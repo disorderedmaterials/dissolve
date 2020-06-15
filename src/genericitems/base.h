@@ -42,7 +42,7 @@ class GenericItemBase
      */
     public:
     // Read data through specified parser
-    virtual bool read(LineParser &parser, const CoreData &coreData);
+    virtual bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified parser
     virtual bool write(LineParser &parser);
 
