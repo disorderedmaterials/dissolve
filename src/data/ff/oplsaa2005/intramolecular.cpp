@@ -26,6 +26,7 @@
 #include "data/fftorsionterm.h"
 #include <algorithm>
 #include <functional>
+#include <optional>
 #include <vector>
 
 /*
@@ -33,8 +34,8 @@
  */
 
 // Return bond term for the supplied atom type pair (if it exists)
-optional<const ForcefieldBondTerm &> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType *i,
-                                                                        const ForcefieldAtomType *j) const
+std::optional<std::reference_wrapper<const ForcefieldBondTerm>>
+OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const
 {
     static std::vector<ForcefieldBondTerm> bondTerms = {
         //	i	j	Type (Harmonic)			k	eq
@@ -397,7 +398,7 @@ optional<const ForcefieldBondTerm &> OPLSAA2005BaseForcefield::bondTerm(const Fo
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-optional<const ForcefieldAngleTerm &>
+std::optional<std::reference_wrapper<const ForcefieldAngleTerm>>
 OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const
 {
     static std::vector<ForcefieldAngleTerm> angleTerms = {
@@ -1412,10 +1413,9 @@ OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType *i, const Forcefiel
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-optional<const ForcefieldTorsionTerm &> OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType *i,
-                                                                              const ForcefieldAtomType *j,
-                                                                              const ForcefieldAtomType *k,
-                                                                              const ForcefieldAtomType *l) const
+std::optional<std::reference_wrapper<const ForcefieldTorsionTerm>>
+OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
+                                      const ForcefieldAtomType *l) const
 {
     static std::vector<ForcefieldTorsionTerm> torsionTerms = {
         //	i	j	k	l	Type (CosineForm)		k		n	eq	s
@@ -2171,10 +2171,9 @@ optional<const ForcefieldTorsionTerm &> OPLSAA2005BaseForcefield::torsionTerm(co
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-optional<const ForcefieldImproperTerm &> OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType *i,
-                                                                                const ForcefieldAtomType *j,
-                                                                                const ForcefieldAtomType *k,
-                                                                                const ForcefieldAtomType *l) const
+std::optional<std::reference_wrapper<const ForcefieldImproperTerm>>
+OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
+                                       const ForcefieldAtomType *l) const
 {
     static std::vector<ForcefieldImproperTerm> improperTerms = {};
     return Forcefield::termMatch_(improperTerms, i, j, k, l);

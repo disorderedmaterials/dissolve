@@ -79,7 +79,7 @@ bool Dissolve::prepare()
         if (pairPotentialsIncludeCoulomb_)
         {
             auto &types = cfg->usedAtomTypesList();
-            totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](double acc, const AtomTypeData &atd) {
+            totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](auto acc, const auto &atd) {
                 return acc + atd.population() * atd.atomType().parameters().charge();
             });
         }

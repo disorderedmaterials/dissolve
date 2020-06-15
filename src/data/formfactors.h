@@ -24,9 +24,10 @@
 #include "base/enumoptions.h"
 #include "data/elements.h"
 #include "data/formfactordata.h"
+#include <optional>
 #include <tuple>
 
-template <class T> using optional = std::tuple<T, bool>;
+template <class T> using optional_reference_wrapper = std::optional<std::reference_wrapper<T>>;
 
 // X-Ray Form Factors
 namespace XRayFormFactors
@@ -43,11 +44,11 @@ enum XRayFormFactorData
 EnumOptions<XRayFormFactorData> xRayFormFactorData();
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge = 0);
+optional_reference_wrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge = 0);
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional<const FormFactorData &> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge = 0);
+optional_reference_wrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge = 0);
 
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
-optional<const FormFactorData &> wk1995Data(int Z, int formalCharge = 0);
+optional_reference_wrapper<const FormFactorData> wk1995Data(int Z, int formalCharge = 0);
 }; // namespace XRayFormFactors

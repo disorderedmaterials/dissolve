@@ -23,9 +23,8 @@
 
 #include "classes/isotopologues.h"
 #include "genericitems/base.h"
+#include <optional>
 #include <vector>
-
-template <class T> using optional = std::tuple<T, bool>;
 
 // Forward Declarations
 class Configuration;
@@ -81,7 +80,7 @@ class IsotopologueSet : public GenericItemBase
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
     // Return Isotopologues for the specified Species
-    optional<const Isotopologues> getIsotopologues(const Species *sp) const;
+    std::optional<const Isotopologues> getIsotopologues(const Species *sp) const;
     // Return number of Isotopologues defined
     int nIsotopologues() const;
     // Return vector of all Isotopologues

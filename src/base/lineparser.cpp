@@ -50,7 +50,7 @@ LineParser::~LineParser()
 }
 
 // Return current stream for input
-istream *LineParser::inputStream() const
+std::istream *LineParser::inputStream() const
 {
     if (fileInput_)
         return inputFile_;
@@ -123,7 +123,7 @@ bool LineParser::openInput(const char *filename)
     bool result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
-        inputFile_ = new ifstream(filename, ios::in | ios::binary);
+        inputFile_ = new std::ifstream(filename, std::ios::in | std::ios::binary);
         if (!inputFile_->is_open())
         {
             closeFiles();
@@ -162,9 +162,9 @@ bool LineParser::openInputString(const char *string)
     fileInput_ = false;
 
     // Create a new stringstream and copy the input string to it
-    inputStrings_ = new stringstream;
+    inputStrings_ = new std::stringstream;
     (*inputStrings_) << string;
-    inputStrings_->seekg(ios_base::beg);
+    inputStrings_->seekg(std::ios_base::beg);
 
     lastLineNo_ = 0;
 
@@ -200,7 +200,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
         directOutput_ = directOutput;
         if (directOutput_)
         {
-            outputFile_ = new ofstream(filename, ios::out);
+            outputFile_ = new std::ofstream(filename, std::ios::out);
             if (!outputFile_->is_open())
             {
                 closeFiles();
@@ -209,7 +209,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
             }
         }
         else
-            cachedFile_ = new stringstream;
+            cachedFile_ = new std::stringstream;
     }
 
     // Broadcast result of open
@@ -248,7 +248,7 @@ bool LineParser::appendOutput(const char *filename)
 
         // Open file for appending
         directOutput_ = true;
-        outputFile_ = new ofstream(filename, ios::app);
+        outputFile_ = new std::ofstream(filename, std::ios::app);
         if (!outputFile_->is_open())
         {
             closeFiles();
@@ -343,9 +343,9 @@ char LineParser::peek() const
 }
 
 // Tell current position of input stream
-streampos LineParser::tellg() const
+std::streampos LineParser::tellg() const
 {
-    streampos result = 0;
+    std::streampos result = 0;
     if (inputStream() != NULL)
         result = inputStream()->tellg();
     else
@@ -354,7 +354,7 @@ streampos LineParser::tellg() const
 }
 
 // Seek position in input stream
-void LineParser::seekg(streampos pos)
+void LineParser::seekg(std::streampos pos)
 {
     if (inputFile_ != NULL)
     {
@@ -367,7 +367,7 @@ void LineParser::seekg(streampos pos)
 }
 
 // Seek n bytes in specified direction in input stream
-void LineParser::seekg(streamoff off, ios_base::seekdir dir)
+void LineParser::seekg(std::streamoff off, std::ios_base::seekdir dir)
 {
     if (inputStream() != NULL)
         inputFile_->seekg(off, dir);
@@ -379,7 +379,7 @@ void LineParser::seekg(streamoff off, ios_base::seekdir dir)
 void LineParser::rewind()
 {
     if (inputStream() != NULL)
-        inputFile_->seekg(0, ios::beg);
+        inputFile_->seekg(0, std::ios::beg);
     else
         Messenger::print("No file currently open to rewind.\n");
 }
@@ -410,7 +410,7 @@ bool LineParser::eofOrBlank() const
         }
 
         // Otherwise, store the current file position and search for a non-whitespace character (or end of file)
-        streampos pos = inputStream()->tellg();
+        std::streampos pos = inputStream()->tellg();
 
         // Skip through whitespace, searching for 'hard' character
         char c;
@@ -1212,7 +1212,7 @@ bool LineParser::commitCache()
             return false;
         }
 
-        ofstream outputFile(outputFilename_);
+        std::ofstream outputFile(outputFilename_);
         if (outputFile.is_open())
         {
             outputFile << cachedFile_->str();

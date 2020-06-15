@@ -54,10 +54,9 @@ int Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 void Isotopologues::pruneMissing()
 {
     // Go through list of Isotopologues present in this mix, removing any that no longer exist
-    mix_.erase(
-        std::remove_if(mix_.begin(), mix_.end(),
-                       [&](IsotopologueWeight &isoWeight) { return !species_->hasIsotopologue(isoWeight.isotopologue()); }),
-        mix_.end());
+    mix_.erase(std::remove_if(mix_.begin(), mix_.end(),
+                              [&](const auto &isoWeight) { return !species_->hasIsotopologue(isoWeight.isotopologue()); }),
+               mix_.end());
 }
 
 // Add next available Isotopologue to list
@@ -117,8 +116,7 @@ bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
     }
 
     // Find the specified Isotopologue
-    auto it = std::find_if(mix_.begin(), mix_.end(),
-                           [iso](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
+    auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
 
     if (it == mix_.end())
     {
@@ -137,15 +135,15 @@ bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 // Remove references to the specified Isotopologue
 void Isotopologues::remove(const Isotopologue *iso)
 {
-    mix_.erase(std::remove_if(mix_.begin(), mix_.end(),
-                              [iso](IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; }),
-               mix_.end());
+    mix_.erase(
+        std::remove_if(mix_.begin(), mix_.end(), [iso](const auto &isoWeight) { return isoWeight.isotopologue() == iso; }),
+        mix_.end());
 }
 
 // Remove the specified IsotopologueWeight
 void Isotopologues::remove(IsotopologueWeight *isoWeight)
 {
-    mix_.erase(std::remove_if(mix_.begin(), mix_.end(), [isoWeight](IsotopologueWeight &data) { return isoWeight == &data; }),
+    mix_.erase(std::remove_if(mix_.begin(), mix_.end(), [isoWeight](const auto &data) { return isoWeight == &data; }),
                mix_.end());
 }
 
