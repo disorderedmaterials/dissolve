@@ -49,7 +49,7 @@ class ScatteringMatrix
      */
     private:
     // Reference pairs of AtomTypes
-    std::vector<tuple<AtomType *, AtomType *>> typePairs_;
+    std::vector<std::tuple<AtomType *, AtomType *>> typePairs_;
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
     Array2D<double> A_;
     // Inverse of coefficients matrix
