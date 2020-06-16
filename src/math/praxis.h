@@ -407,7 +407,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
             y = fabs(q[i - 1]) + fabs(e[i - 1]);
 
-            x = max(x, y);
+            x = std::max(x, y);
         }
         //
         //  Accumulation of right-hand transformations.
@@ -781,8 +781,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             t2 = s;
         }
 
-        t2 = max(t2, small);
-        t2 = min(t2, 0.01 * h);
+        t2 = std::max(t2, small);
+        t2 = std::min(t2, 0.01 * h);
 
         if (fk && f1 <= fm)
         {
@@ -928,7 +928,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             }
         }
 
-        d2 = max(d2, small);
+        d2 = std::max(d2, small);
 
         x1 = x2;
         fx = fm;
@@ -2058,7 +2058,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         t2 = t;
         dmin = small;
         h = h0;
-        h = max(h, 100.0 * t);
+        h = std::max(h, 100.0 * t);
         ldt = h;
         //
         //  The initial set of search directions V is the identity matrix.
@@ -2290,7 +2290,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 }
 
                 ldt = ldfac * ldt;
-                ldt = max(ldt, lds);
+                ldt = std::max(ldt, lds);
 
                 if (0 < prin)
                 {
@@ -2367,7 +2367,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                         s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
                     }
                     s = sqrt(s);
-                    z[i] = max(m4, s);
+                    z[i] = std::max(m4, s);
                 }
 
                 s = r8vec_min(nAlpha, z);
@@ -2456,7 +2456,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             //
             //  Determine the smallest eigenvalue.
             //
-            dmin = max(d[nAlpha - 1], small);
+            dmin = std::max(d[nAlpha - 1], small);
             //
             //  The ratio of the smallest to largest eigenvalue determines whether
             //  the system is ill conditioned.

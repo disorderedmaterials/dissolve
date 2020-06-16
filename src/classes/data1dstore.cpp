@@ -32,8 +32,7 @@ Data1DStore::~Data1DStore() {}
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data1DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword,
-                          const CoreData &coreData)
+bool Data1DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData)
 {
     // Create new data
     Data1D *data = data_.add();

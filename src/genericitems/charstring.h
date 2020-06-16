@@ -63,7 +63,7 @@ template <> class GenericItemContainer<CharString> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return parser.writeLineF("%s\n", data_.get()); }
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData)
+    bool read(LineParser &parser, CoreData &coreData)
     {
         if (parser.readNextLine(LineParser::Defaults) == LineParser::Success)
             return false;

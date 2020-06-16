@@ -63,7 +63,7 @@ template <> class GenericItemContainer<Vec3<double>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return parser.writeLineF("%16.9e %16.9e %16.9e\n", data_.x, data_.y, data_.z); }
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData)
+    bool read(LineParser &parser, CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;

@@ -73,7 +73,7 @@ std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 }
 
 // Return named Forcefield, if it exists
-std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const string name)
+std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const std::string name)
 {
     for (auto &ff : forcefields())
     {

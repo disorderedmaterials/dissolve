@@ -24,14 +24,13 @@
 #include "classes/atomtypedata.h"
 #include "classes/coredata.h"
 #include "genericitems/base.h"
+#include <optional>
 #include <tuple>
 #include <vector>
 
 // Forward Declarations
 class AtomType;
 class Isotope;
-
-template <class T> using optional = std::tuple<T, bool>;
 
 // AtomTypeList
 class AtomTypeList : public GenericItemBase
@@ -90,7 +89,7 @@ class AtomTypeList : public GenericItemBase
     // Return nth referenced AtomType
     AtomType &atomType(int n);
     // Return AtomTypeData for specified AtomType
-    optional<const AtomTypeData &> atomTypeData(AtomType &atomType);
+    std::optional<std::reference_wrapper<const AtomTypeData>> atomTypeData(AtomType &atomType);
     // Print AtomType populations
     void print() const;
 
@@ -101,7 +100,7 @@ class AtomTypeList : public GenericItemBase
     // Return class name
     static const char *itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 

@@ -141,8 +141,7 @@ const std::vector<SpeciesBond *> &SpeciesAtom::bonds() const { return bonds_; }
 // Return whether Bond to specified Atom exists
 SpeciesBond *SpeciesAtom::hasBond(SpeciesAtom *partner)
 {
-    auto result =
-        find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond *bond) { return bond->partner(this) == partner; });
+    auto result = find_if(bonds_.begin(), bonds_.end(), [&](const auto *bond) { return bond->partner(this) == partner; });
     return result == bonds_.end() ? nullptr : *result;
 }
 

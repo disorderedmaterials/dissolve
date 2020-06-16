@@ -77,7 +77,7 @@ void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 {
     // Does an Isotopologues definition already exist for the supplied Species?
     auto it = std::find_if(isotopologueMixtures_.begin(), isotopologueMixtures_.end(),
-                           [sp](Isotopologues &mix) { return mix.species() == sp; });
+                           [sp](auto &data) { return data.species() == sp; });
 
     if (it == isotopologueMixtures_.end())
     {
@@ -352,7 +352,7 @@ bool NeutronWeights::isValid() const { return valid_; }
 const char *NeutronWeights::itemClassName() { return "NeutronWeights"; }
 
 // Read data through specified LineParser
-bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
+bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

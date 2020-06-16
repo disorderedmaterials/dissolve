@@ -26,8 +26,6 @@
 #include <new>
 #include <stdint.h>
 
-using namespace std;
-
 // Array Chunk
 template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 {
@@ -91,7 +89,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
         {
             objectArray_ = new T[nObjects_];
         }
-        catch (bad_alloc &alloc)
+        catch (std::bad_alloc &alloc)
         {
             Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : %s\n",
                              alloc.what());
@@ -103,7 +101,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
         {
             objectUsed_ = new bool[nObjects_];
         }
-        catch (bad_alloc &alloc)
+        catch (std::bad_alloc &alloc)
         {
             Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : %s\n",
                              alloc.what());

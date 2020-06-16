@@ -53,7 +53,7 @@ int GeometryListKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool GeometryListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool GeometryListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     Geometry *g = data_.add();
     for (int i = startArg; i <= (startArg + maxArguments() - 1); i++)

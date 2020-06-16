@@ -23,8 +23,8 @@ set(CMAKE_AUTOMOC OFF)
 # Set policy for automatic linkage of Qt libs to project
 CMAKE_POLICY(SET CMP0020 NEW)
 
-# Request C++11 Standard Support (Required for Qt 5.7 and certain other parts of the code)
-set(CMAKE_CXX_STANDARD 11)
+# Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
+set(CMAKE_CXX_STANDARD 17)
 
 # Catch defines
 if(PARALLEL)

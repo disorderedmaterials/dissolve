@@ -139,12 +139,11 @@ void AtomTypeSelectionKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
     {
-        CharString summaryText =
-            std::accumulate(std::next(selection.begin()), selection.end(), CharString(selection.first().atomTypeName()),
-                            [](CharString &acc, const AtomTypeData &atd) {
-                                acc.strcatf(", %s", atd.atomTypeName());
-                                return acc;
-                            });
+        CharString summaryText = std::accumulate(std::next(selection.begin()), selection.end(),
+                                                 CharString(selection.first().atomTypeName()), [](auto &acc, const auto &atd) {
+                                                     acc.strcatf(", %s", atd.atomTypeName());
+                                                     return acc;
+                                                 });
         setSummaryText(summaryText);
     }
 }

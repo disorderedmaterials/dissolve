@@ -215,7 +215,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     public:
     // Read node data from specified LineParser
-    virtual bool read(LineParser &parser, const CoreData &coreData);
+    virtual bool read(LineParser &parser, CoreData &coreData);
     // Write node data to specified LineParser
     virtual bool write(LineParser &parser, const char *prefix);
 };

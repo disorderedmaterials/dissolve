@@ -150,7 +150,7 @@ void SampledDouble::operator/=(double x)
 const char *SampledDouble::itemClassName() { return "SampledDouble"; }
 
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser &parser, const CoreData &coreData)
+bool SampledDouble::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

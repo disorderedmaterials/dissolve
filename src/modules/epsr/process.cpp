@@ -240,9 +240,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Determine overlapping Q range between the two datasets
             double FQMin = qMin, FQMax = qMax;
             if ((FQMin < differenceData.xAxis().firstValue()) || (FQMin < calcSQTotal.xAxis().firstValue()))
-                FQMin = max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
+                FQMin = std::max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
             if ((FQMax > differenceData.xAxis().lastValue()) || (FQMax > calcSQTotal.xAxis().lastValue()))
-                FQMax = min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
+                FQMax = std::min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
 
             // Trim both datasets to the common range
             Filters::trim(calcSQTotal, FQMin, FQMax, true);
@@ -344,9 +344,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
         double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
         if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xAxis().firstValue()))
-            deltaSQMin = max(x1.firstValue(), simulatedFQ.xAxis().firstValue());
+            deltaSQMin = std::max(x1.firstValue(), simulatedFQ.xAxis().firstValue());
         if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xAxis().lastValue()))
-            deltaSQMax = min(x1.lastValue(), simulatedFQ.xAxis().lastValue());
+            deltaSQMax = std::min(x1.lastValue(), simulatedFQ.xAxis().lastValue());
 
         double x;
         for (int n = 0; n < x1.nItems(); ++n)

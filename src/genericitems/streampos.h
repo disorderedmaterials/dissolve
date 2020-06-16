@@ -25,21 +25,21 @@
 #include <ios>
 
 // GenericItemContainer<streampos>
-template <> class GenericItemContainer<streampos> : public GenericItem
+template <> class GenericItemContainer<std::streampos> : public GenericItem
 {
     public:
-    GenericItemContainer<streampos>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<std::streampos>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
      */
     private:
     // Data item
-    streampos data_;
+    std::streampos data_;
 
     public:
     // Return data item
-    streampos &data() { return data_; }
+    std::streampos &data() { return data_; }
 
     /*
      * Item Class
@@ -49,7 +49,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
     GenericItem *createItem(const char *className, const char *name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
-            return new GenericItemContainer<streampos>(name, flags);
+            return new GenericItemContainer<std::streampos>(name, flags);
         return NULL;
     }
 
@@ -64,7 +64,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return parser.writeArg(data_); }
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData)
+    bool read(LineParser &parser, CoreData &coreData)
     {
         // NOTE Can't implicit cast streampos into the arg for readArg(), so assume long long int for now.
         long long int pos;
@@ -84,7 +84,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
     {
         long int pos = (long int)data_;
         return procPool.broadcast(pos, root);
-        data_ = (streampos)pos;
+        data_ = (std::streampos)pos;
     }
     // Check item equality
     bool equality(ProcessPool &procPool) { return procPool.equality((long int)data_); }

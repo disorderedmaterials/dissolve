@@ -40,7 +40,7 @@ int WindowFunctionKeyword::minArguments() const { return 1; }
 int WindowFunctionKeyword::maxArguments() const { return MAXWINDOWFUNCTIONPARAMS; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool WindowFunctionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool WindowFunctionKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     auto result = data_.set(parser, startArg);
     if (result)

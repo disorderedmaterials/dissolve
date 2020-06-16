@@ -51,7 +51,7 @@ int SpeciesSiteRefListKeyword::minArguments() const { return 2; }
 int SpeciesSiteRefListKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments
     for (int n = startArg; n < parser.nArgs() - 1; n += 2)

@@ -64,7 +64,7 @@ int ModuleRefListKeyword::minArguments() const { return 1; }
 int ModuleRefListKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 : maxModules_); }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ModuleRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments provided to the keyword
     for (int n = startArg; n < parser.nArgs(); ++n)

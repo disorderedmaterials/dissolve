@@ -64,11 +64,11 @@ bool XRayWeights::initialiseFormFactors()
 
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
         auto data = XRayFormFactors::formFactorData(formFactors_, at.element());
-        if (std::get<1>(data))
+        if (!data)
             return Messenger::error("No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n",
                                     at.element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
-        formFactorData_.push_back(std::reference_wrapper<const FormFactorData>(std::get<0>(data)));
+        formFactorData_.push_back(*data);
     }
 
     return true;
@@ -267,7 +267,7 @@ bool XRayWeights::isValid() const { return valid_; }
 const char *XRayWeights::itemClassName() { return "XRayWeights"; }
 
 // Read data through specified LineParser
-bool XRayWeights::read(LineParser &parser, const CoreData &coreData)
+bool XRayWeights::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

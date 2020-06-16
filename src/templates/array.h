@@ -26,8 +26,6 @@
 #include "templates/vector3.h"
 #include <new>
 
-using namespace std;
-
 // Array
 template <class A> class Array : public ListItem<Array<A>>
 {
@@ -113,7 +111,7 @@ template <class A> class Array : public ListItem<Array<A>>
         {
             array_ = new A[size_];
         }
-        catch (bad_alloc &alloc)
+        catch (std::bad_alloc &alloc)
         {
             Messenger::error("Array<T>() - Failed to allocate sufficient memory for array_. Exception was : %s\n",
                              alloc.what());

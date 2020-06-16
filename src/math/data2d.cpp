@@ -477,7 +477,7 @@ void Data2D::operator/=(const double factor)
 const char *Data2D::itemClassName() { return "Data2D"; }
 
 // Read data through specified LineParser
-bool Data2D::read(LineParser &parser, const CoreData &coreData)
+bool Data2D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

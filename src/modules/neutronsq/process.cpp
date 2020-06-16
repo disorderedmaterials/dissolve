@@ -375,14 +375,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (isotopologues_.contains(cfg))
         {
             // Get the set...
-            optional<IsotopologueSet> topeSet = isotopologues_.getIsotopologueSet(cfg);
-            if (std::get<1>(topeSet))
+            auto topeSet = isotopologues_.getIsotopologueSet(cfg);
+            if (!topeSet)
             {
                 return Messenger::error("Could not locate IsotopologueSet");
             }
 
             // Iterate over Species present in the set
-            for (Isotopologues &topes : std::get<0>(topeSet).isotopologues())
+            for (auto &topes : (*topeSet).constIsotopologues())
             {
                 // Find the referenced Species in our SpeciesInfo list
                 auto *spInfo = cfg->usedSpeciesInfo(topes.species());
@@ -391,7 +391,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                             topes.species()->name(), cfg->niceName());
 
                 // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-                for (IsotopologueWeight &isoWeight : topes.mix())
+                for (const auto &isoWeight : topes.constMix())
                     weights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight.isotopologue(),
                                             isoWeight.weight());
             }
