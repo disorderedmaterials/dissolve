@@ -22,6 +22,7 @@
 #include "gui/charts/moduleinsertionblock.h"
 #include "gui/charts/modulelistmetrics.h"
 #include <QPainter>
+#include <QPainterPath>
 
 ModuleInsertionBlock::ModuleInsertionBlock(QWidget *parent) : QWidget(parent)
 {
