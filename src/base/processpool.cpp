@@ -1132,7 +1132,7 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-    bool result = source;
+    int result = (source ? 1 : 0);
     if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
