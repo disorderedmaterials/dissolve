@@ -1,5 +1,5 @@
 /*
-    *** Isotopologues Weight
+    *** Isotopologue Weight
     *** src/classes/isotopologueweight.h
     Copyright T. Youngs 2012-2020
 
